@@ -1,0 +1,1114 @@
+Unity Player [version: Unity 5.6.0f3_497a0f351392]
+
+Unknown caused an Access Violation (0xc0000005)
+  in module Unknown at 0023:026b9c08.
+
+Error occurred at 2017-09-09_103514.
+C:\Users\Creswell\TaskForceAI\Task Force AI\k.exe, run by Creswell.
+45% memory in use.
+0 MB physical memory [0 MB free].
+0 MB paging file [0 MB free].
+0 MB user address space [3688 MB free].
+Write to location 026b9c08 caused an access violation.
+
+Context:
+EDI:    0x026bbfc0  ESI: 0x026bbfc8  EAX:   0x026b9c08
+EBX:    0x026b9c08  ECX: 0x026b9c08  EDX:   0x6d00c830
+EIP:    0x026b9c08  EBP: 0x024ff8bc  SegCs: 0x00000023
+EFlags: 0x00210287  ESP: 0x024ff88c  SegSs: 0x0000002b
+
+Bytes at CS:EIP:
+f8 8f 70 02 68 dd a9 0d 00 00 00 00 12 03 01 00 
+
+Stack:
+0x024ff88c: 6cf464f8 026b9c08 04bce250 6ced1720 .d.l..k.P... ..l
+0x024ff89c: 05120f98 026b9c08 00000000 026b9c08 ......k.......k.
+0x024ff8ac: 05120f98 04bce250 00000000 5a9e3309 ....P........3.Z
+0x024ff8bc: 024ff8d0 6d00c871 026bbfc0 00000000 ..O.q..m..k.....
+0x024ff8cc: 5a9e3365 024ff8f8 011bbf63 026bc08c e3.Z..O.c.....k.
+0x024ff8dc: 047d48b0 0511eac0 011bdff5 047df510 .H}...........}.
+0x024ff8ec: 0511eac0 00000000 00000000 024ff904 ..............O.
+0x024ff8fc: 011beb2b 0511eac0 024ff92c 01192b35 +.......,.O.5+..
+0x024ff90c: 00000000 04bcdd10 011f8520 00000000 ........ .......
+0x024ff91c: 00000000 04bcdd10 011f969b 0511d2a0 ................
+0x024ff92c: 024ff94c 01201d89 00000001 00000000 L.O... .........
+0x024ff93c: 0511d2a0 00000004 007413e4 007413e0 ..........t...t.
+0x024ff94c: 024ff958 012026ab 0511d2a0 024ffabc X.O..& .......O.
+0x024ff95c: 01192ad3 00000000 00000001 00f78c0e .*..............
+0x024ff96c: 00f875b6 01791b27 00000000 023f8000 .u..'.y.......?.
+0x024ff97c: 047b38d0 0000003b 0000000d 00000001 .8{.;...........
+0x024ff98c: 00000000 0000003b 00000042 00000000 ....;...B.......
+0x024ff99c: 044c3aa8 96eb433d 00000000 00000001 .:L.=C..........
+0x024ff9ac: c6d750eb 044c2ef8 047b7d00 00000041 .P....L..}{.A...
+0x024ff9bc: 000306a9 017b18bd 044c2ef8 00000041 ......{...L.A...
+0x024ff9cc: 00000042 1c004121 01c0003f 0000003f B...!A..?...?...
+0x024ff9dc: 00000000 1c004122 01c0003f 0000003f ...."A..?...?...
+0x024ff9ec: 047b39d0 00000032 01c0003f 000001ff .9{.2...?.......
+0x024ff9fc: 00000000 00000032 00000042 047b7b20 ....2...B... {{.
+0x024ffa0c: 00000040 044c1e40 044c05a8 024ffa00 @...@.L...L...O.
+0x024ffa1c: 00000040 00000042 047b3950 00000037 @...B...P9{.7...
+0x024ffa2c: 0000000f 00000000 044c211c 00000037 .........!L.7...
+0x024ffa3c: 00000042 02ab22b0 00000000 00637465 B...."......etc.
+0x024ffa4c: 00646567 017a13d9 044c2ef8 00000003 ged...z...L.....
+0x024ffa5c: 00000042 047b3a10 047b3a48 047b3a48 B....:{.H:{.H:{.
+0x024ffa6c: 023f8000 00000000 65646968 646e6957 ..?.....hideWind
+0x024ffa7c: 0200776f 01798650 0000000a 00000042 ow..P.y.....B...
+0x024ffa8c: 00000000 65726170 5748746e 0100444e ....parentHWND..
+0x024ffa9c: 02675402 0000000a 00000042 02ab22b0 .Tg.....B...."..
+0x024ffaac: 00000000 00000000 00000000 003f8001 ..............?.
+0x024ffabc: 024ffad4 01753e58 00f10000 00000000 ..O.X>u.........
+0x024ffacc: 02675404 00000001 024ffb64 01791ad4 .Tg.....d.O...y.
+0x024ffadc: 00f10000 00000000 02675404 00000001 .........Tg.....
+0x024ffaec: af2af15e 01791b27 01791b27 023f8000 ^.*.'.y.'.y...?.
+0x024ffafc: 00000044 02672dae 02672d8e 02672d2a D....-g..-g.*-g.
+0x024ffb0c: 00000000 00000000 00000000 00000000 ................
+0x024ffb1c: 00000000 00000000 00000000 00000401 ................
+0x024ffb2c: 00000001 00000000 00000000 00010001 ................
+0x024ffb3c: 00000000 c0000005 01791b27 00000000 ........'.y.....
+0x024ffb4c: 024ffaec 024fef14 024ffbb0 01793a30 ..O...O...O.0:y.
+0x024ffb5c: ac8a61fa 00000000 024ffb78 75f78744 .a......x.O.D..u
+0x024ffb6c: 023f8000 75f78720 41bf1e73 024ffbc0 ..?. ..us..A..O.
+0x024ffb7c: 77d6582d 023f8000 405ed498 00000000 -X.w..?...^@....
+0x024ffb8c: 00000000 023f8000 c0000005 00000000 ......?.........
+0x024ffb9c: 024feef0 7561a170 405ed498 024ffb84 ..O.p.au..^@..O.
+0x024ffbac: 024feef0 024ffbc8 77d79fd0 35f12e68 ..O...O....wh..5
+0x024ffbbc: 00000000 024ffbd0 77d657fd ffffffff ......O..W.w....
+0x024ffbcc: 77d86373 00000000 00000000 01791b27 sc.w........'.y.
+0x024ffbdc: 023f8000 00000000 00000000 00000000 ..?.............
+0x024ffbec: 00000000 00000000 00000000 00000000 ................
+0x024ffbfc: 00000000 00000000 00000000 00000000 ................
+0x024ffc0c: 00000000 00000000 00000000 00000000 ................
+0x024ffc1c: 00000000 00000000 00000000 00000000 ................
+0x024ffc2c: 00000000 00000000 00000000 00000000 ................
+0x024ffc3c: 00000000 00000000 00000000 00000000 ................
+0x024ffc4c: 00000000 00000000 00000000 00000000 ................
+0x024ffc5c: 00000000 00000000 00000000 00000000 ................
+0x024ffc6c: 00000000 00000000 00000000 00000000 ................
+0x024ffc7c: 00000000 00000000 00000000 00000000 ................
+0x024ffc8c: 00000000 00000000 00000000 00000000 ................
+0x024ffc9c: 00000000 00000000 00000000 00000000 ................
+0x024ffcac: 00000000 00000000 00000000 00000000 ................
+0x024ffcbc: 00000000 00000000 00000000 00000000 ................
+0x024ffccc: 00000000 00000000 00000000 00000000 ................
+0x024ffcdc: 00000000 00000000 00000000 00000000 ................
+0x024ffcec: 00000000 00000000 00000000 00000000 ................
+0x024ffcfc: 00000000 00000000 00000000 00000000 ................
+0x024ffd0c: 00000000 00000000 00000000 00000000 ................
+0x024ffd1c: 00000000 00000000 00000000 00000000 ................
+0x024ffd2c: 00000000 00000000 00000000 00000000 ................
+0x024ffd3c: 00000000 00000000 00000000 00000000 ................
+0x024ffd4c: 00000000 00000000 00000000 00000000 ................
+0x024ffd5c: 00000000 00000000 00000000 00000000 ................
+0x024ffd6c: 00000000 00000000 00000000 00000000 ................
+0x024ffd7c: 00000000 00000000 00000000 00000000 ................
+0x024ffd8c: 00000000 00000000 00000000 00000000 ................
+0x024ffd9c: 00000000 00000000 00000000 00000000 ................
+0x024ffdac: 00000000 00000000 00000000 00000000 ................
+0x024ffdbc: 00000000 00000000 00000000 00000000 ................
+0x024ffdcc: 00000000 00000000 00000000 00000000 ................
+0x024ffddc: 00000000 00000000 00000000 00000000 ................
+0x024ffdec: 00000000 00000000 00000000 00000000 ................
+0x024ffdfc: 00000000 00000000 00000000 00000000 ................
+0x024ffe0c: 00000000 00000000 00000000 00000000 ................
+0x024ffe1c: 00000000 00000000 00000000 00000000 ................
+0x024ffe2c: 00000000 00000000 00000000 00000000 ................
+0x024ffe3c: 00000000 00000000 00000000 00000000 ................
+0x024ffe4c: 00000000 00000000 00000000 00000000 ................
+0x024ffe5c: 00000000 00000000 00000000 00000000 ................
+0x024ffe6c: 00000000 00000000 00000000 00000000 ................
+0x024ffe7c: 00000000 00000000 00000000 00000000 ................
+0x024ffe8c: 00000000 00000000 00000000 00000000 ................
+0x024ffe9c: 00000000 00000000 00000000 00000000 ................
+0x024ffeac: 00000000 00000000 00000000 00000000 ................
+0x024ffebc: 00000000 00000000 00000000 00000000 ................
+0x024ffecc: 00000000 00000000 00000000 00000000 ................
+0x024ffedc: 00000000 00000000 00000000 00000000 ................
+0x024ffeec: 00000000 00000000 00000000 00000000 ................
+0x024ffefc: 00000000 00000000 00000000 00000000 ................
+0x024fff0c: 00000000 00000000 00000000 00000000 ................
+0x024fff1c: 00000000 00000000 00000000 00000000 ................
+0x024fff2c: 00000000 00000000 00000000 00000000 ................
+0x024fff3c: 00000000 00000000 00000000 00000000 ................
+0x024fff4c: 00000000 00000000 00000000 00000000 ................
+0x024fff5c: 00000000 00000000 00000000 00000000 ................
+0x024fff6c: 00000000 00000000 00000000 00000000 ................
+0x024fff7c: 00000000 00000000 00000000 00000000 ................
+0x024fff8c: 00000000 00000000 00000000 00000000 ................
+0x024fff9c: 00000000 00000000 00000000 00000000 ................
+0x024fffac: 00000000 00000000 00000000 00000000 ................
+0x024fffbc: 00000000 00000000 00000000 00000000 ................
+0x024fffcc: 00000000 00000000 00000000 00000000 ................
+0x024fffdc: 00000000 00000000 00000000 00000000 ................
+0x024fffec: 00000000 00000000 00000000 00000000 ................
+0x024ffffc: 00000000                            ....
+
+Module 1
+C:\Users\Creswell\TaskForceAI\Task Force AI\k.exe
+Image Base: 0x00f10000  Image Size: 0x01219000
+File Size:  18136576    File Time:  2017-03-30_032054
+Version:
+   Company:    
+   Product:    
+   FileDesc:   
+   FileVer:    5.6.0.31247
+   ProdVer:    5.6.0.31247
+
+Module 2
+C:\Users\Creswell\TaskForceAI\Task Force AI\k_Data\Mono\mono.dll
+Image Base: 0x10000000  Image Size: 0x00231000
+File Size:  2115008     File Time:  2017-03-30_032856
+Version:
+   Company:    Unity Technologies
+   Product:    libmono
+   FileDesc:   Unity Technologies fork of mono runtime
+   FileVer:    1.0.0.1
+   ProdVer:    1.0.0.1
+
+Module 3
+C:\PROGRA~2\RAPTRI~1\Raptr\ltc_game32-119906.dll
+Image Base: 0x58cd0000  Image Size: 0x001e2000
+File Size:  1874128     File Time:  2017-05-04_133344
+Version:
+   Company:    Raptr Inc.
+   Product:    Raptr In-Game Overlay
+   FileDesc:   Game Module
+   FileVer:    1.0.0.1
+   ProdVer:    1.0.0.1
+
+Module 4
+C:\WINDOWS\SYSTEM32\wdmaud.drv
+Image Base: 0x60170000  Image Size: 0x00039000
+File Size:  209920      File Time:  2017-06-20_003054
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Winmm  audio system driver
+   FileVer:    10.0.15063.447
+   ProdVer:    10.0.15063.447
+
+Module 5
+C:\WINDOWS\SYSTEM32\MSACM32.dll
+Image Base: 0x60430000  Image Size: 0x00018000
+File Size:  90464       File Time:  2017-07-28_003620
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft ACM Audio Filter
+   FileVer:    10.0.15063.502
+   ProdVer:    10.0.15063.502
+
+Module 6
+C:\WINDOWS\SYSTEM32\dhcpcsvc6.DLL
+Image Base: 0x63650000  Image Size: 0x00013000
+File Size:  57344       File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   DHCPv6 Client
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 7
+C:\WINDOWS\SYSTEM32\WINNSI.DLL
+Image Base: 0x64710000  Image Size: 0x00008000
+File Size:  26912       File Time:  2017-03-18_165736
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Network Store Information RPC interface
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 8
+C:\Windows\System32\cryptnet.dll
+Image Base: 0x64720000  Image Size: 0x00025000
+File Size:  135168      File Time:  2017-03-18_165850
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Crypto Network Related API
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 9
+C:\WINDOWS\SYSTEM32\gpapi.dll
+Image Base: 0x6c870000  Image Size: 0x0001e000
+File Size:  111128      File Time:  2017-03-18_165844
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Group Policy Client API
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 10
+C:\WINDOWS\System32\DEVOBJ.dll
+Image Base: 0x6cc50000  Image Size: 0x00022000
+File Size:  131784      File Time:  2017-03-18_165850
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Device Information Set DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 11
+C:\WINDOWS\SYSTEM32\GLU32.dll
+Image Base: 0x6cc90000  Image Size: 0x00025000
+File Size:  138240      File Time:  2017-03-18_165852
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   OpenGL Utility Library DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 12
+C:\WINDOWS\SYSTEM32\OPENGL32.dll
+Image Base: 0x6ccc0000  Image Size: 0x000df000
+File Size:  776704      File Time:  2017-03-18_165852
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   OpenGL Client DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 13
+C:\WINDOWS\SYSTEM32\d3d11.dll
+Image Base: 0x6ce90000  Image Size: 0x00252000
+File Size:  2417840     File Time:  2017-03-18_165854
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Direct3D 11 Runtime
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 14
+C:\PROGRA~2\RAPTRI~1\Raptr\ltc_help32-119906.dll
+Image Base: 0x6d600000  Image Size: 0x00026000
+File Size:  138448      File Time:  2017-05-04_133330
+Version:
+   Company:    Raptr Inc.
+   Product:    Raptr In-Game Overlay
+   FileDesc:   Help Module
+   FileVer:    1.0.0.1
+   ProdVer:    1.0.0.1
+
+Module 15
+C:\WINDOWS\SYSTEM32\ksuser.dll
+Image Base: 0x70220000  Image Size: 0x00007000
+File Size:  20216       File Time:  2017-03-18_165840
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   User CSA Library
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 16
+C:\WINDOWS\SYSTEM32\dxgi.dll
+Image Base: 0x70360000  Image Size: 0x0008a000
+File Size:  551200      File Time:  2017-07-28_004046
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   DirectX Graphics Infrastructure
+   FileVer:    10.0.15063.502
+   ProdVer:    10.0.15063.502
+
+Module 17
+C:\WINDOWS\system32\wbem\fastprox.dll
+Image Base: 0x70800000  Image Size: 0x000c0000
+File Size:  770560      File Time:  2017-03-18_165852
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   WMI Custom Marshaller
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 18
+C:\WINDOWS\SYSTEM32\wbemcomn.dll
+Image Base: 0x708c0000  Image Size: 0x00068000
+File Size:  399360      File Time:  2017-03-18_165850
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   WMI
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 19
+C:\WINDOWS\System32\MMDevApi.dll
+Image Base: 0x70d50000  Image Size: 0x00059000
+File Size:  354400      File Time:  2017-06-20_010258
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   MMDevice API
+   FileVer:    10.0.15063.447
+   ProdVer:    10.0.15063.447
+
+Module 20
+C:\WINDOWS\SYSTEM32\AUDIOSES.DLL
+Image Base: 0x70db0000  Image Size: 0x000d7000
+File Size:  864248      File Time:  2017-07-28_003620
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Audio Session
+   FileVer:    10.0.15063.502
+   ProdVer:    10.0.15063.502
+
+Module 21
+C:\WINDOWS\SYSTEM32\midimap.dll
+Image Base: 0x71c50000  Image Size: 0x00008000
+File Size:  18944       File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft MIDI Mapper
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 22
+C:\WINDOWS\SYSTEM32\CoreUIComponents.dll
+Image Base: 0x71f40000  Image Size: 0x00227000
+File Size:  2259768     File Time:  2017-07-28_004712
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft Core UI Components Dll
+   FileVer:    10.0.15063.502
+   ProdVer:    10.0.15063.502
+
+Module 23
+C:\WINDOWS\SYSTEM32\ntmarta.dll
+Image Base: 0x72170000  Image Size: 0x00028000
+File Size:  152440      File Time:  2017-03-18_165852
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Windows NT MARTA provider
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 24
+C:\WINDOWS\System32\fwpuclnt.dll
+Image Base: 0x721a0000  Image Size: 0x0004a000
+File Size:  285184      File Time:  2017-03-18_165850
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   FWP/IPsec User-Mode API
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 25
+C:\Windows\System32\rasadhlp.dll
+Image Base: 0x721f0000  Image Size: 0x00008000
+File Size:  12800       File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Remote Access AutoDial Helper
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 26
+C:\Program Files (x86)\Bonjour\mdnsNSP.dll
+Image Base: 0x72200000  Image Size: 0x00021000
+File Size:  122128      File Time:  2015-08-12_160338
+Version:
+   Company:    Apple Inc.
+   Product:    Bonjour
+   FileDesc:   Bonjour Namespace Provider
+   FileVer:    3.1.0.1
+   ProdVer:    3.1.0.1
+
+Module 27
+C:\WINDOWS\SYSTEM32\MSWSOCK.dll
+Image Base: 0x72230000  Image Size: 0x0004e000
+File Size:  305568      File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft Windows Sockets 2.0 Service Provider
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 28
+C:\WINDOWS\SYSTEM32\dbghelp.dll
+Image Base: 0x72290000  Image Size: 0x0015d000
+File Size:  1285120     File Time:  2017-06-20_003830
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Windows Image Helper
+   FileVer:    10.0.15063.447
+   ProdVer:    10.0.15063.447
+
+Module 29
+C:\WINDOWS\SYSTEM32\winmmbase.dll
+Image Base: 0x72400000  Image Size: 0x00023000
+File Size:  129736      File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Base Multimedia Extension API DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 30
+C:\WINDOWS\system32\dwmapi.dll
+Image Base: 0x728d0000  Image Size: 0x00023000
+File Size:  125344      File Time:  2017-07-07_025724
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft Desktop Window Manager API
+   FileVer:    10.0.15063.483
+   ProdVer:    10.0.15063.483
+
+Module 31
+C:\WINDOWS\SYSTEM32\bcrypt.dll
+Image Base: 0x72a90000  Image Size: 0x00018000
+File Size:  93536       File Time:  2017-03-18_165848
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Windows Cryptographic Primitives Library
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 32
+C:\WINDOWS\SYSTEM32\WINMM.dll
+Image Base: 0x72f30000  Image Size: 0x00024000
+File Size:  135440      File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   MCI API DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 33
+C:\WINDOWS\SYSTEM32\wintypes.dll
+Image Base: 0x73020000  Image Size: 0x000d1000
+File Size:  856416      File Time:  2017-03-18_165850
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Windows Base Types DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 34
+C:\WINDOWS\SYSTEM32\WINHTTP.dll
+Image Base: 0x73230000  Image Size: 0x000ad000
+File Size:  703576      File Time:  2017-03-18_165850
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Windows HTTP Services
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 35
+C:\WINDOWS\system32\rsaenh.dll
+Image Base: 0x73300000  Image Size: 0x0002f000
+File Size:  183448      File Time:  2017-03-18_165848
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft Enhanced Cryptographic Provider
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 36
+C:\WINDOWS\SYSTEM32\HID.DLL
+Image Base: 0x73360000  Image Size: 0x0000a000
+File Size:  25600       File Time:  2017-03-18_165850
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Hid User Library
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 37
+C:\WINDOWS\SYSTEM32\dhcpcsvc.DLL
+Image Base: 0x73430000  Image Size: 0x00014000
+File Size:  62976       File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   DHCP Client Service
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 38
+C:\WINDOWS\system32\wbem\wbemsvc.dll
+Image Base: 0x73450000  Image Size: 0x00010000
+File Size:  48640       File Time:  2017-03-18_165850
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   WMI
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 39
+C:\WINDOWS\System32\CRYPTSP.dll
+Image Base: 0x73560000  Image Size: 0x00013000
+File Size:  67760       File Time:  2017-03-18_165850
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Cryptographic Service Provider API
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 40
+C:\WINDOWS\system32\wbem\wbemprox.dll
+Image Base: 0x735d0000  Image Size: 0x0000d000
+File Size:  35840       File Time:  2017-03-18_165850
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   WMI
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 41
+C:\WINDOWS\SYSTEM32\CoreMessaging.dll
+Image Base: 0x73850000  Image Size: 0x0008f000
+File Size:  583160      File Time:  2017-07-28_003318
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft CoreMessaging Dll
+   FileVer:    10.0.15063.502
+   ProdVer:    10.0.15063.502
+
+Module 42
+C:\WINDOWS\SYSTEM32\IPHLPAPI.DLL
+Image Base: 0x738f0000  Image Size: 0x0002f000
+File Size:  187544      File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   IP Helper API
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 43
+C:\WINDOWS\SYSTEM32\DNSAPI.dll
+Image Base: 0x73920000  Image Size: 0x0007f000
+File Size:  508344      File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   DNS Client API DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 44
+C:\WINDOWS\System32\PROPSYS.dll
+Image Base: 0x73ca0000  Image Size: 0x00164000
+File Size:  1465360     File Time:  2017-03-18_165852
+Version:
+   Company:    Microsoft Corporation
+   Product:    Windows® Search
+   FileDesc:   Microsoft Property System
+   FileVer:    7.0.15063.0
+   ProdVer:    7.0.15063.0
+
+Module 45
+C:\WINDOWS\SYSTEM32\AVRT.dll
+Image Base: 0x73e10000  Image Size: 0x00009000
+File Size:  28992       File Time:  2017-03-18_165840
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Multimedia Realtime Runtime
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 46
+C:\WINDOWS\SYSTEM32\usermgrcli.dll
+Image Base: 0x73e80000  Image Size: 0x00010000
+File Size:  55872       File Time:  2017-03-18_165850
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   UserMgr API DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 47
+C:\WINDOWS\SYSTEM32\TextInputFramework.dll
+Image Base: 0x73e90000  Image Size: 0x00067000
+File Size:  414296      File Time:  2017-07-28_003308
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   "TextInputFramework.DYNLINK"
+   FileVer:    10.0.15063.502
+   ProdVer:    10.0.15063.502
+
+Module 48
+C:\WINDOWS\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.15063.483_none_6dad63fefc436da8\comctl32.dll
+Image Base: 0x73f20000  Image Size: 0x0020e000
+File Size:  2139040     File Time:  2017-03-18_165900
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   User Experience Controls Library
+   FileVer:    6.10.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 49
+C:\WINDOWS\system32\uxtheme.dll
+Image Base: 0x74130000  Image Size: 0x00078000
+File Size:  474112      File Time:  2017-03-18_165858
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft UxTheme Library
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 50
+C:\WINDOWS\SYSTEM32\msacm32.drv
+Image Base: 0x74270000  Image Size: 0x0000a000
+File Size:  24576       File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft Sound Mapper
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 51
+C:\WINDOWS\SYSTEM32\VERSION.dll
+Image Base: 0x747b0000  Image Size: 0x00008000
+File Size:  27424       File Time:  2017-03-18_165900
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Version Checking and File Installation Libraries
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 52
+C:\WINDOWS\System32\CRYPTBASE.dll
+Image Base: 0x747c0000  Image Size: 0x0000a000
+File Size:  31592       File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Base cryptographic API DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 53
+C:\WINDOWS\System32\SspiCli.dll
+Image Base: 0x747d0000  Image Size: 0x00020000
+File Size:  124544      File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Security Support Provider Interface
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 54
+C:\WINDOWS\System32\WINTRUST.dll
+Image Base: 0x74960000  Image Size: 0x00044000
+File Size:  276880      File Time:  2017-03-18_165848
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft Trust Verification APIs
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 55
+C:\WINDOWS\System32\SHLWAPI.dll
+Image Base: 0x749b0000  Image Size: 0x00045000
+File Size:  277432      File Time:  2017-07-28_003534
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Shell Light-weight Utility Library
+   FileVer:    10.0.15063.502
+   ProdVer:    10.0.15063.502
+
+Module 56
+C:\WINDOWS\System32\MSCTF.dll
+Image Base: 0x74a00000  Image Size: 0x00146000
+File Size:  1333136     File Time:  2017-07-10_064836
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   MSCTF Server DLL
+   FileVer:    10.0.15063.332
+   ProdVer:    10.0.15063.332
+
+Module 57
+C:\WINDOWS\System32\ole32.dll
+Image Base: 0x74b50000  Image Size: 0x000f3000
+File Size:  988168      File Time:  2017-07-28_003558
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft OLE for Windows
+   FileVer:    10.0.15063.502
+   ProdVer:    10.0.15063.502
+
+Module 58
+C:\WINDOWS\System32\windows.storage.dll
+Image Base: 0x74c50000  Image Size: 0x00584000
+File Size:  5820984     File Time:  2017-07-28_004020
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft WinRT Storage API
+   FileVer:    10.0.15063.502
+   ProdVer:    10.0.15063.502
+
+Module 59
+C:\WINDOWS\System32\GDI32.dll
+Image Base: 0x751e0000  Image Size: 0x00021000
+File Size:  129184      File Time:  2017-07-07_023126
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   GDI Client DLL
+   FileVer:    10.0.15063.483
+   ProdVer:    10.0.15063.483
+
+Module 60
+C:\WINDOWS\System32\msvcrt.dll
+Image Base: 0x75210000  Image Size: 0x000bd000
+File Size:  769608      File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Windows NT CRT DLL
+   FileVer:    7.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 61
+C:\WINDOWS\System32\ucrtbase.dll
+Image Base: 0x752d0000  Image Size: 0x00118000
+File Size:  1150784     File Time:  2017-06-20_011500
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft® C Runtime Library
+   FileVer:    10.0.15063.447
+   ProdVer:    10.0.15063.447
+
+Module 62
+C:\WINDOWS\System32\MSASN1.dll
+Image Base: 0x753f0000  Image Size: 0x0000e000
+File Size:  49656       File Time:  2017-06-20_010452
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   ASN.1 Runtime APIs
+   FileVer:    10.0.15063.447
+   ProdVer:    10.0.15063.447
+
+Module 63
+C:\WINDOWS\System32\OLEAUT32.dll
+Image Base: 0x75400000  Image Size: 0x00096000
+File Size:  606960      File Time:  2017-07-10_064836
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   OLEAUT32.DLL
+   FileVer:    10.0.15063.332
+   ProdVer:    10.0.15063.332
+
+Module 64
+C:\WINDOWS\System32\KERNELBASE.dll
+Image Base: 0x754a0000  Image Size: 0x001c2000
+File Size:  1839872     File Time:  2017-07-28_004822
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Windows NT BASE API Client DLL
+   FileVer:    10.0.15063.502
+   ProdVer:    10.0.15063.502
+
+Module 65
+C:\WINDOWS\System32\powrprof.dll
+Image Base: 0x75680000  Image Size: 0x00045000
+File Size:  276400      File Time:  2017-03-18_165850
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Power Profile Helper DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 66
+C:\WINDOWS\System32\gdi32full.dll
+Image Base: 0x756d0000  Image Size: 0x00158000
+File Size:  1409048     File Time:  2017-07-10_064836
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   GDI Client DLL
+   FileVer:    10.0.15063.413
+   ProdVer:    10.0.15063.413
+
+Module 67
+C:\WINDOWS\System32\CRYPT32.dll
+Image Base: 0x75830000  Image Size: 0x0017d000
+File Size:  1557288     File Time:  2017-07-10_064836
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Crypto API32
+   FileVer:    10.0.15063.296
+   ProdVer:    10.0.15063.296
+
+Module 68
+C:\WINDOWS\System32\IMM32.dll
+Image Base: 0x759b0000  Image Size: 0x00025000
+File Size:  143672      File Time:  2017-03-18_165902
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Multi-User Windows IMM32 API Client DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 69
+C:\WINDOWS\System32\imagehlp.dll
+Image Base: 0x759e0000  Image Size: 0x00019000
+File Size:  95584       File Time:  2017-07-10_064840
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Windows NT Image Helper
+   FileVer:    10.0.15063.168
+   ProdVer:    10.0.15063.168
+
+Module 70
+C:\WINDOWS\System32\cfgmgr32.dll
+Image Base: 0x75a60000  Image Size: 0x00039000
+File Size:  226816      File Time:  2017-03-18_165850
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Configuration Manager DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 71
+C:\WINDOWS\System32\bcryptPrimitives.dll
+Image Base: 0x75aa0000  Image Size: 0x00057000
+File Size:  354360      File Time:  2017-07-10_064836
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Windows Cryptographic Primitives Library
+   FileVer:    10.0.15063.138
+   ProdVer:    10.0.15063.138
+
+Module 72
+C:\WINDOWS\System32\WS2_32.dll
+Image Base: 0x75b00000  Image Size: 0x00067000
+File Size:  415864      File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Windows Socket 2.0 32-Bit DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 73
+C:\WINDOWS\System32\msvcp_win.dll
+Image Base: 0x75bd0000  Image Size: 0x00079000
+File Size:  491232      File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft® C Runtime Library
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 74
+C:\WINDOWS\System32\combase.dll
+Image Base: 0x75c50000  Image Size: 0x00238000
+File Size:  2330520     File Time:  2017-06-20_010440
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Microsoft COM for Windows
+   FileVer:    10.0.15063.447
+   ProdVer:    10.0.15063.447
+
+Module 75
+C:\WINDOWS\System32\sechost.dll
+Image Base: 0x75e90000  Image Size: 0x00041000
+File Size:  257792      File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Host for SCM/SDDL/LSA Lookup APIs
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 76
+C:\WINDOWS\System32\ADVAPI32.dll
+Image Base: 0x75ee0000  Image Size: 0x00077000
+File Size:  480920      File Time:  2017-03-18_165840
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Advanced Windows 32 Base API
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 77
+C:\WINDOWS\System32\KERNEL32.DLL
+Image Base: 0x75f60000  Image Size: 0x000d0000
+File Size:  599576      File Time:  2017-07-10_064844
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Windows NT BASE API Client DLL
+   FileVer:    10.0.15063.296
+   ProdVer:    10.0.15063.296
+
+Module 78
+C:\WINDOWS\System32\NSI.dll
+Image Base: 0x76030000  Image Size: 0x00007000
+File Size:  20216       File Time:  2017-03-18_165736
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   NSI User-mode interface DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 79
+C:\WINDOWS\System32\win32u.dll
+Image Base: 0x76040000  Image Size: 0x00016000
+File Size:  81176       File Time:  2017-03-18_165900
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Win32u
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 80
+C:\WINDOWS\System32\clbcatq.dll
+Image Base: 0x760f0000  Image Size: 0x00083000
+File Size:  521728      File Time:  2017-03-18_165842
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   COM+ Configuration Catalog
+   FileVer:    2001.12.10941.16384
+   ProdVer:    10.0.15063.0
+
+Module 81
+C:\WINDOWS\System32\shcore.dll
+Image Base: 0x76690000  Image Size: 0x0008c000
+File Size:  569264      File Time:  2017-03-18_165856
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   SHCORE
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 82
+C:\WINDOWS\System32\PSAPI.DLL
+Image Base: 0x76720000  Image Size: 0x00006000
+File Size:  17112       File Time:  2017-03-18_165840
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Process Status Helper
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 83
+C:\WINDOWS\System32\kernel.appcore.dll
+Image Base: 0x76730000  Image Size: 0x0000e000
+File Size:  47096       File Time:  2017-03-18_165848
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   AppModel API Host
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 84
+C:\WINDOWS\System32\profapi.dll
+Image Base: 0x76740000  Image Size: 0x00010000
+File Size:  59456       File Time:  2017-03-18_165846
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   User Profile Basic API
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 85
+C:\WINDOWS\System32\SHELL32.dll
+Image Base: 0x76750000  Image Size: 0x01348000
+File Size:  20373408    File Time:  2017-07-28_003622
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Windows Shell Common Dll
+   FileVer:    10.0.15063.502
+   ProdVer:    10.0.15063.502
+
+Module 86
+C:\WINDOWS\System32\USER32.dll
+Image Base: 0x77b00000  Image Size: 0x0013c000
+File Size:  1292872     File Time:  2017-03-18_165902
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Multi-User Windows USER API Client DLL
+   FileVer:    10.0.15063.0
+   ProdVer:    10.0.15063.0
+
+Module 87
+C:\WINDOWS\System32\RPCRT4.dll
+Image Base: 0x77c40000  Image Size: 0x000c0000
+File Size:  787712      File Time:  2017-06-20_011326
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   Remote Procedure Call Runtime
+   FileVer:    10.0.15063.447
+   ProdVer:    10.0.15063.447
+
+Module 88
+C:\WINDOWS\SYSTEM32\ntdll.dll
+Image Base: 0x77d00000  Image Size: 0x0018e000
+File Size:  1620368     File Time:  2017-06-20_011512
+Version:
+   Company:    Microsoft Corporation
+   Product:    Microsoft® Windows® Operating System
+   FileDesc:   NT Layer DLL
+   FileVer:    10.0.15063.447
+   ProdVer:    10.0.15063.447
+
+
+== [end of error.log] ==
