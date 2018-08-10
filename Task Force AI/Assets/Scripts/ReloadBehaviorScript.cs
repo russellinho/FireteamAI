@@ -17,8 +17,13 @@ public class ReloadBehaviorScript : StateMachineBehaviour {
 		if (hasReloaded)
 			return;
 		if (stateInfo.normalizedTime >= reloadTime) {
-			animator.GetComponentInParent<WeaponScript> ().Reload ();
-			hasReloaded = true;
+			if (animator.GetComponentInParent<WeaponTestingScript> () == null) {
+				animator.GetComponentInParent<WeaponScript> ().Reload ();
+				hasReloaded = true;
+			} else {
+				animator.GetComponentInParent<WeaponTestingScript> ().Reload ();
+				hasReloaded = true;
+			}
 		}
 	}
 
