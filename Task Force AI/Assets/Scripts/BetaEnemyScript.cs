@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class BetaEnemyScript : NetworkBehaviour {
 
-	enum ActionStates {Idle, Firing, Moving, Dead, Reloading, Melee};
+	enum ActionStates {Idle, Firing, Moving, Dead, Reloading, Melee, Pursue};
 	public enum EnemyType {Patrol, Scout};
 
 	// Gun stuff
@@ -37,6 +37,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 
 	// TODO: Player detection system needs to be refactored for networking
 	private GameObject player;
+	private Transform lastSeenPlayerPos;
 	private Animator animator;
 	[SyncVar] public int health;
 	private Rigidbody rigid;
@@ -104,7 +105,9 @@ public class BetaEnemyScript : NetworkBehaviour {
 		} else {
 			// If we do, check if it's still in range
 			if (Vector3.Distance (transform.position, player.transform.position) >= range + 30f) {
+				lastSeenPlayerPos = player.transform;
 				player = null;
+
 			}
 		}
 	}
@@ -134,6 +137,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 				Fire ();
 			}
 		}
+
 		if (fireTimer < fireRate) {
 			fireTimer += Time.deltaTime;
 		}
@@ -181,6 +185,11 @@ public class BetaEnemyScript : NetworkBehaviour {
 
 	void Movement() {
 		// If the player is not in sight, move between waypoints
+		if (actionState == ActionStates.Pursue) {
+			navMesh.isStopped = false;
+			navMesh.SetDestination (lastSeenPlayerPos.position);
+			return;
+		}
 		if (player == null) {
 			if (!navMesh.hasPath) {
 				int r = Random.Range (0, navPoints.Length);
@@ -261,6 +270,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 	// Decision tree for patrol type enemy
 	void DecideActionPatrol() {
 		if (actionState != ActionStates.Dead) {
+			bool wasInSight = player == null ? false : true;
 			PlayerScan();
 			if (player != null) {
 				if (Vector3.Distance (transform.position, player.transform.position) <= 2.3f) {
@@ -271,7 +281,12 @@ public class BetaEnemyScript : NetworkBehaviour {
 					actionState = ActionStates.Reloading;
 				}
 			} else {
-				actionState = ActionStates.Idle;
+				// If the player was in sight but is now too far, then pursue the player
+				if (wasInSight) {
+					actionState = ActionStates.Pursue;
+				} else {
+					actionState = ActionStates.Idle;
+				}
 			}
 
 			if (navMesh.hasPath) {
@@ -309,6 +324,11 @@ public class BetaEnemyScript : NetworkBehaviour {
 	void DecideAnimation() {
 		if (actionState == ActionStates.Dead) {
 			if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Die")) animator.Play ("Die");
+		}
+
+		if (actionState == ActionStates.Pursue) {
+			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint"))
+				animator.Play ("Sprint");
 		}
 
 		if (actionState == ActionStates.Moving) {
