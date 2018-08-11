@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GameControllerTestScript : MonoBehaviour {
 
+	public static ArrayList playerList = new ArrayList();
+
 	// Use this for initialization
 	void Start () {
 		Cursor.lockState = CursorLockMode.Locked;

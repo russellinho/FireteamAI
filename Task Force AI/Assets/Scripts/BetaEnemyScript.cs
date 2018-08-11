@@ -65,6 +65,11 @@ public class BetaEnemyScript : NetworkBehaviour {
 	private bool inCover;
 	private int crouchMode = 2;
 
+	private bool wasInSight = false;
+
+	// Testing mode - set in inspector
+	public bool testingMode;
+
 	// Use this for initialization
 	void Start () {
 
@@ -89,25 +94,51 @@ public class BetaEnemyScript : NetworkBehaviour {
 
 	void PlayerScan() {
 		// If we do not have a target player, try to find one
-		if (player == null) {
-			ArrayList indicesNearBy = new ArrayList ();
-			for (int i = 0; i < GameControllerScript.playerList.Count; i++) {
-				GameObject p = (GameObject)GameControllerScript.playerList [i];
-				if (Vector3.Distance (transform.position, p.transform.position) < range + 30f) {
-					Vector3 toPlayer = p.transform.position - transform.position;
-					float angleBetween = Vector3.Angle (transform.forward, toPlayer);
-					if (angleBetween <= 60f) {
-						indicesNearBy.Add (i);
+		if (testingMode) {
+			if (player == null) {
+				ArrayList indicesNearBy = new ArrayList ();
+				for (int i = 0; i < GameControllerTestScript.playerList.Count; i++) {
+					GameObject p = (GameObject)GameControllerTestScript.playerList [i];
+					if (Vector3.Distance (transform.position, p.transform.position) < range + 12f) {
+						Vector3 toPlayer = p.transform.position - transform.position;
+						float angleBetween = Vector3.Angle (transform.forward, toPlayer);
+						if (angleBetween <= 60f) {
+							indicesNearBy.Add (i);
+						}
 					}
 				}
-			}
-			if (indicesNearBy.Count != 0) player = (GameObject) GameControllerScript.playerList [Random.Range (0, indicesNearBy.Count)];
-		} else {
-			// If we do, check if it's still in range
-			if (Vector3.Distance (transform.position, player.transform.position) >= range + 30f) {
-				lastSeenPlayerPos = player.transform;
-				player = null;
+				if (indicesNearBy.Count != 0)
+					player = (GameObject)GameControllerTestScript.playerList [Random.Range (0, indicesNearBy.Count)];
+			} else {
+				// If we do, check if it's still in range
+				if (Vector3.Distance (transform.position, player.transform.position) >= range + 12f) {
+					lastSeenPlayerPos = player.transform;
+					player = null;
 
+				}
+			}
+		} else {
+			if (player == null) {
+				ArrayList indicesNearBy = new ArrayList ();
+				for (int i = 0; i < GameControllerScript.playerList.Count; i++) {
+					GameObject p = (GameObject)GameControllerScript.playerList [i];
+					if (Vector3.Distance (transform.position, p.transform.position) < range + 12f) {
+						Vector3 toPlayer = p.transform.position - transform.position;
+						float angleBetween = Vector3.Angle (transform.forward, toPlayer);
+						if (angleBetween <= 60f) {
+							indicesNearBy.Add (i);
+						}
+					}
+				}
+				if (indicesNearBy.Count != 0)
+					player = (GameObject)GameControllerScript.playerList [Random.Range (0, indicesNearBy.Count)];
+			} else {
+				// If we do, check if it's still in range
+				if (Vector3.Distance (transform.position, player.transform.position) >= range + 12f) {
+					lastSeenPlayerPos = player.transform;
+					player = null;
+
+				}
 			}
 		}
 	}
@@ -186,9 +217,12 @@ public class BetaEnemyScript : NetworkBehaviour {
 	void Movement() {
 		// If the player is not in sight, move between waypoints
 		if (actionState == ActionStates.Pursue) {
+			navMesh.speed = 6f;
 			navMesh.isStopped = false;
 			navMesh.SetDestination (lastSeenPlayerPos.position);
 			return;
+		} else {
+			navMesh.speed = 3f;
 		}
 		if (player == null) {
 			if (!navMesh.hasPath) {
@@ -270,9 +304,9 @@ public class BetaEnemyScript : NetworkBehaviour {
 	// Decision tree for patrol type enemy
 	void DecideActionPatrol() {
 		if (actionState != ActionStates.Dead) {
-			bool wasInSight = player == null ? false : true;
 			PlayerScan();
 			if (player != null) {
+				wasInSight = true;
 				if (Vector3.Distance (transform.position, player.transform.position) <= 2.3f) {
 					actionState = ActionStates.Melee;
 				} else if (currentBullets > 0) {
@@ -284,19 +318,20 @@ public class BetaEnemyScript : NetworkBehaviour {
 				// If the player was in sight but is now too far, then pursue the player
 				if (wasInSight) {
 					actionState = ActionStates.Pursue;
-				} else {
+				} else if (!wasInSight && actionState != ActionStates.Pursue) {
 					actionState = ActionStates.Idle;
 				}
 			}
+			Debug.Log (actionState);
 
 			if (navMesh.hasPath) {
-				if (actionState != ActionStates.Firing && actionState != ActionStates.Reloading && actionState != ActionStates.Melee) {
+				if (actionState != ActionStates.Firing && actionState != ActionStates.Reloading && actionState != ActionStates.Melee && actionState != ActionStates.Pursue) {
 					actionState = ActionStates.Moving;
 				}
 			}
 
 			if (!navMesh.hasPath) {
-				if (actionState != ActionStates.Firing && actionState != ActionStates.Reloading && actionState != ActionStates.Melee) {
+				if (actionState != ActionStates.Firing && actionState != ActionStates.Reloading && actionState != ActionStates.Melee && actionState != ActionStates.Pursue) {
 					actionState = ActionStates.Idle;
 				}
 			}

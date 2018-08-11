@@ -53,6 +53,8 @@ public class PlayerTestingScript : NetworkBehaviour {
 	public float hitTimer = 1f;
 	public Vector3 hitLocation;
 
+	public GameObject gameController;
+
 	// Use this for initialization
 	void Start () {
 		invincibility = true;
@@ -65,6 +67,8 @@ public class PlayerTestingScript : NetworkBehaviour {
 		if (SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetworkTest") || SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
 			bombs = GameObject.FindGameObjectsWithTag ("Bomb");
 		}
+		gameController = GameObject.Find ("GameControllerTest");
+		GameControllerTestScript.playerList.Add (gameObject);
 		isCrouching = false;
 		health = 100;
 		crouchSpeed = 3f;
