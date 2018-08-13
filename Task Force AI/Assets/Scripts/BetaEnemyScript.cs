@@ -5,8 +5,8 @@ using UnityEngine.Networking;
 using UnityEngine.AI;
 
 public class BetaEnemyScript : NetworkBehaviour {
-
-	enum ActionStates {Idle, Firing, Moving, Dead, Reloading, Melee, Pursue};
+	// Finite state machine states
+	enum ActionStates {Idle, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover};
 	public enum EnemyType {Patrol, Scout};
 
 	// Gun stuff
@@ -63,9 +63,11 @@ public class BetaEnemyScript : NetworkBehaviour {
 	// Time to wait to be in cover again
 	private float coverWaitTimer = 0f;
 	private bool inCover;
+	private Vector3 coverPos;
 	private int crouchMode = 2;
+	private float coverScanRange = 50f;
 
-	private bool wasInSight = false;
+	private bool alerted = false;
 
 	// Testing mode - set in inspector
 	public bool testingMode;
@@ -147,6 +149,35 @@ public class BetaEnemyScript : NetworkBehaviour {
 	void Update () {
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die")) {
 			return;
+		}
+
+		// Debug for take cover
+		if (Input.GetKeyDown (KeyCode.J)) {
+			if (actionState != ActionStates.TakingCover) {
+				bool coverFound = DynamicTakeCover ();
+				if (coverFound) {
+					actionState = ActionStates.TakingCover;
+				}
+			} else {
+				actionState = ActionStates.Moving;
+				coverPos = Vector3.negativeInfinity;
+			}
+		}
+
+		if (actionState == ActionStates.TakingCover) {
+			// If the enemy is not near the cover spot, run towards it
+			if (Vector3.Distance (transform.position, coverPos) > 3f) {
+				// Set the target and move towards it
+				if (coverPos != null) {
+					navMesh.speed = 3f;
+					navMesh.isStopped = false;
+					navMesh.SetDestination (coverPos);
+					coverPos = Vector3.negativeInfinity;
+				}
+			} else {
+				inCover = true;
+				navMesh.isStopped = true;
+			}
 		}
 			
 		if (inCover)
@@ -304,25 +335,31 @@ public class BetaEnemyScript : NetworkBehaviour {
 	// Decision tree for patrol type enemy
 	void DecideActionPatrol() {
 		if (actionState != ActionStates.Dead) {
+			// Scan for a new player
 			PlayerScan();
+			// Actions for if the enemy is engaged with a player
 			if (player != null) {
-				wasInSight = true;
+				// The enemy has seen a player and is now alerted
+				alerted = true;
+				// If the enemy is alerted and the player has come up close to the enemy, then the enemy will attempt to melee
 				if (Vector3.Distance (transform.position, player.transform.position) <= 2.3f) {
 					actionState = ActionStates.Melee;
+				// If the enemy has ammo but the player is at a distance, the enemy will shoot
 				} else if (currentBullets > 0) {
 					actionState = ActionStates.Firing;
+				// If the enemy is out of ammo, then he will reload
 				} else {
 					actionState = ActionStates.Reloading;
 				}
 			} else {
 				// If the player was in sight but is now too far, then pursue the player
-				if (wasInSight) {
+				if (alerted) {
 					actionState = ActionStates.Pursue;
-				} else if (!wasInSight && actionState != ActionStates.Pursue) {
+				// If the enemy is not alerted, default to the idle phase
+				} else if (!alerted && actionState != ActionStates.Pursue) {
 					actionState = ActionStates.Idle;
 				}
 			}
-			Debug.Log (actionState);
 
 			if (navMesh.hasPath) {
 				if (actionState != ActionStates.Firing && actionState != ActionStates.Reloading && actionState != ActionStates.Melee && actionState != ActionStates.Pursue) {
@@ -509,6 +546,32 @@ public class BetaEnemyScript : NetworkBehaviour {
 				inCover = false;
 			}
 		}
+	}
+
+	// Take cover algorithm for moving enemies - returns true if cover was found, false if not
+	// TODO: So far all this does is find the nearest object that you can take cover on. Needs to be improved to ensure that
+	// the cover is blocking the enemy from the players
+	bool DynamicTakeCover() {
+		// Scan for cover first
+		Collider[] nearbyCover = Physics.OverlapBox(transform.position, new Vector3(coverScanRange, 20f, coverScanRange));
+		if (nearbyCover == null || nearbyCover.Length == 0) {
+			inCover = false;
+			return false;
+		}
+		// If cover is nearby, find the closest one
+		float minDist = Vector3.Distance (transform.position, nearbyCover [0].gameObject.transform.position);
+		int minCoverIndex = 0;
+		for (int i = 1; i < nearbyCover.Length; i++) {
+			float dist = Vector3.Distance (transform.position, nearbyCover [i].transform.position);
+			if (dist < minDist) {
+				minDist = dist;
+				minCoverIndex = i;
+			}
+		}
+		// Once the closest cover is found, set the AI to be in cover, pick a cover side opposite of the player and run to it (TODO: random for now)
+		Transform[] coverSpots = nearbyCover [minCoverIndex].gameObject.GetComponentsInChildren<Transform>();
+		coverPos = coverSpots [Random.Range (0, coverSpots.Length)].position;
+		return true;
 	}
 
 }
