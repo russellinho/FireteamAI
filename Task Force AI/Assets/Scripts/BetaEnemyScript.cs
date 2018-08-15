@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class BetaEnemyScript : NetworkBehaviour {
 	// Finite state machine states
-	enum ActionStates {Idle, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover};
+	enum ActionStates {Idle, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover};
 	public enum EnemyType {Patrol, Scout};
 
 	// Gun stuff
@@ -150,33 +150,41 @@ public class BetaEnemyScript : NetworkBehaviour {
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die")) {
 			return;
 		}
-
+		Debug.Log (navMesh.destination);
+		Debug.Log (actionState);
+		//Debug.Log ("Pos: " + transform.position);
+		Debug.Log (navMesh.speed);
+		Debug.Log (navMesh.isStopped);
 		// Debug for take cover
 		if (Input.GetKeyDown (KeyCode.J)) {
+			Debug.Log (1);
 			if (actionState != ActionStates.TakingCover) {
 				bool coverFound = DynamicTakeCover ();
 				if (coverFound) {
 					actionState = ActionStates.TakingCover;
 				}
 			} else {
-				actionState = ActionStates.Moving;
+				Debug.Log (2);
 				coverPos = Vector3.negativeInfinity;
 			}
 		}
 
 		if (actionState == ActionStates.TakingCover) {
 			// If the enemy is not near the cover spot, run towards it
-			if (Vector3.Distance (transform.position, coverPos) > 3f) {
-				// Set the target and move towards it
-				if (coverPos != null) {
-					navMesh.speed = 3f;
-					navMesh.isStopped = false;
-					navMesh.SetDestination (coverPos);
-					coverPos = Vector3.negativeInfinity;
-				}
+			if (!coverPos.Equals(Vector3.negativeInfinity)) {
+				Debug.Log ("uhoj");
+				navMesh.speed = 3f;
+				navMesh.isStopped = false;
+				navMesh.SetDestination (coverPos);
+				coverPos = Vector3.negativeInfinity;
+				//navMesh.stoppingDistance = 0.5f;
 			} else {
-				inCover = true;
-				navMesh.isStopped = true;
+				// If the enemy has finally reached cover, then he will duck down
+				if (navMesh.isStopped) {
+					Debug.Log ("shit");
+					inCover = true;
+					actionState = ActionStates.InCover;
+				}
 			}
 		}
 			
@@ -247,6 +255,9 @@ public class BetaEnemyScript : NetworkBehaviour {
 
 	void Movement() {
 		// If the player is not in sight, move between waypoints
+		if (actionState == ActionStates.TakingCover || actionState == ActionStates.InCover) {
+			return;
+		}
 		if (actionState == ActionStates.Pursue) {
 			navMesh.speed = 6f;
 			navMesh.isStopped = false;
@@ -336,40 +347,44 @@ public class BetaEnemyScript : NetworkBehaviour {
 	void DecideActionPatrol() {
 		if (actionState != ActionStates.Dead) {
 			// Scan for a new player
-			PlayerScan();
-			// Actions for if the enemy is engaged with a player
-			if (player != null) {
-				// The enemy has seen a player and is now alerted
-				alerted = true;
-				// If the enemy is alerted and the player has come up close to the enemy, then the enemy will attempt to melee
-				if (Vector3.Distance (transform.position, player.transform.position) <= 2.3f) {
-					actionState = ActionStates.Melee;
-				// If the enemy has ammo but the player is at a distance, the enemy will shoot
-				} else if (currentBullets > 0) {
-					actionState = ActionStates.Firing;
-				// If the enemy is out of ammo, then he will reload
+			if (actionState != ActionStates.TakingCover && actionState != ActionStates.InCover) {
+				PlayerScan ();
+				// Actions for if the enemy is engaged with a player
+				if (player != null) {
+					// The enemy has seen a player and is now alerted
+					alerted = true;
+					// If the enemy is alerted and the player has come up close to the enemy, then the enemy will attempt to melee
+					if (Vector3.Distance (transform.position, player.transform.position) <= 2.3f) {
+						actionState = ActionStates.Melee;
+						// If the enemy has ammo but the player is at a distance, the enemy will shoot
+					} else if (currentBullets > 0) {
+						actionState = ActionStates.Firing;
+						// If the enemy is out of ammo, then he will reload
+					} else {
+						actionState = ActionStates.Reloading;
+					}
 				} else {
-					actionState = ActionStates.Reloading;
-				}
-			} else {
-				// If the player was in sight but is now too far, then pursue the player
-				if (alerted) {
-					actionState = ActionStates.Pursue;
-				// If the enemy is not alerted, default to the idle phase
-				} else if (!alerted && actionState != ActionStates.Pursue) {
-					actionState = ActionStates.Idle;
+					// If the player was in sight but is now too far, then pursue the player
+					if (alerted) {
+						actionState = ActionStates.Pursue;
+						// If the enemy is not alerted, default to the idle phase
+					} else if (!alerted && actionState != ActionStates.Pursue) {
+						actionState = ActionStates.Idle;
+					}
 				}
 			}
 
-			if (navMesh.hasPath) {
-				if (actionState != ActionStates.Firing && actionState != ActionStates.Reloading && actionState != ActionStates.Melee && actionState != ActionStates.Pursue) {
-					actionState = ActionStates.Moving;
+			if (actionState != ActionStates.TakingCover && actionState != ActionStates.InCover) {
+				if (navMesh.hasPath) {
+					if (actionState != ActionStates.Firing && actionState != ActionStates.Reloading && actionState != ActionStates.Melee && actionState != ActionStates.Pursue) {
+						actionState = ActionStates.Moving;
+					}
 				}
-			}
 
-			if (!navMesh.hasPath) {
-				if (actionState != ActionStates.Firing && actionState != ActionStates.Reloading && actionState != ActionStates.Melee && actionState != ActionStates.Pursue) {
-					actionState = ActionStates.Idle;
+				if (!navMesh.hasPath) {
+					if (actionState != ActionStates.Firing && actionState != ActionStates.Reloading && actionState != ActionStates.Melee && actionState != ActionStates.Pursue) {
+						actionState = ActionStates.Idle;
+					}
 				}
 			}
 		}
@@ -394,8 +409,19 @@ public class BetaEnemyScript : NetworkBehaviour {
 	}
 
 	void DecideAnimation() {
+		if (actionState == ActionStates.TakingCover) {
+			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint"))
+				animator.Play ("Sprint");
+		}
+
+		if (actionState == ActionStates.InCover) {
+			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Crouching"))
+				animator.Play ("Crouching");
+		}
+
 		if (actionState == ActionStates.Dead) {
-			if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Die")) animator.Play ("Die");
+			if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
+				animator.Play ("Die");
 		}
 
 		if (actionState == ActionStates.Pursue) {
@@ -555,7 +581,6 @@ public class BetaEnemyScript : NetworkBehaviour {
 		// Scan for cover first
 		Collider[] nearbyCover = Physics.OverlapBox(transform.position, new Vector3(coverScanRange, 20f, coverScanRange));
 		if (nearbyCover == null || nearbyCover.Length == 0) {
-			inCover = false;
 			return false;
 		}
 		// If cover is nearby, find the closest one
