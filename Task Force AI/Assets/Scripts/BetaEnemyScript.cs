@@ -152,7 +152,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 		}
 		Debug.Log (navMesh.destination);
 		Debug.Log (actionState);
-		//Debug.Log ("Pos: " + transform.position);
+		Debug.Log ("Pos: " + transform.position);
 		Debug.Log (navMesh.speed);
 		Debug.Log (navMesh.isStopped);
 		// Debug for take cover
@@ -172,18 +172,23 @@ public class BetaEnemyScript : NetworkBehaviour {
 		if (actionState == ActionStates.TakingCover) {
 			// If the enemy is not near the cover spot, run towards it
 			if (!coverPos.Equals(Vector3.negativeInfinity)) {
-				Debug.Log ("uhoj");
-				navMesh.speed = 3f;
+				navMesh.isStopped = true;
+				navMesh.speed = 6f;
 				navMesh.isStopped = false;
 				navMesh.SetDestination (coverPos);
 				coverPos = Vector3.negativeInfinity;
 				//navMesh.stoppingDistance = 0.5f;
 			} else {
 				// If the enemy has finally reached cover, then he will duck down
-				if (navMesh.isStopped) {
-					Debug.Log ("shit");
-					inCover = true;
-					actionState = ActionStates.InCover;
+				if (!navMesh.pathPending && !navMesh.isStopped) {
+					if (navMesh.remainingDistance <= navMesh.stoppingDistance) {
+						if (!navMesh.hasPath || navMesh.velocity.sqrMagnitude == 0f) {
+							// Done
+							navMesh.isStopped = true;
+							inCover = true;
+							actionState = ActionStates.InCover;
+						}
+					}
 				}
 			}
 		}
@@ -584,14 +589,20 @@ public class BetaEnemyScript : NetworkBehaviour {
 			return false;
 		}
 		// If cover is nearby, find the closest one
-		float minDist = Vector3.Distance (transform.position, nearbyCover [0].gameObject.transform.position);
-		int minCoverIndex = 0;
-		for (int i = 1; i < nearbyCover.Length; i++) {
+		float minDist = -1f;
+		int minCoverIndex = -1;
+		for (int i = 0; i < nearbyCover.Length; i++) {
+			if (!nearbyCover [i].gameObject.tag.Equals ("Cover")) {
+				continue;
+			}
 			float dist = Vector3.Distance (transform.position, nearbyCover [i].transform.position);
-			if (dist < minDist) {
+			if (minDist == -1f || dist < minDist) {
 				minDist = dist;
 				minCoverIndex = i;
 			}
+		}
+		if (minCoverIndex == -1) {
+			return false;
 		}
 		// Once the closest cover is found, set the AI to be in cover, pick a cover side opposite of the player and run to it (TODO: random for now)
 		Transform[] coverSpots = nearbyCover [minCoverIndex].gameObject.GetComponentsInChildren<Transform>();
