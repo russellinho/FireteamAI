@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class BetaEnemyScript : NetworkBehaviour {
 	// Finite state machine states
-	enum ActionStates {Idle, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover};
+	enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, };
 	public enum EnemyType {Patrol, Scout};
 
 	// Gun stuff
@@ -62,6 +62,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 	private float coverTimer = 0f;
 	// Time to wait to be in cover again
 	private float coverWaitTimer = 0f;
+	private float wanderStallDelay = -1f;
 	private bool inCover;
 	private Vector3 coverPos;
 	private int crouchMode = 2;
@@ -201,7 +202,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 
 		if (enemyType == EnemyType.Patrol) {
 			DecideActionPatrol ();
-			Movement ();
+			HandleMovementPatrol ();
 		} else {
 			DecideActionScout ();
 		}
@@ -258,9 +259,34 @@ public class BetaEnemyScript : NetworkBehaviour {
 
 	}
 
-	void Movement() {
-		// If the player is not in sight, move between waypoints
-		if (actionState == ActionStates.TakingCover || actionState == ActionStates.InCover) {
+	void HandleMovementPatrol() {
+		// Handle movement for wandering
+		if (actionState == ActionStates.Wander) {
+			navMesh.speed = 1.5f;
+			// Initial spawn value
+			if (wanderStallDelay == -1f) {
+				wanderStallDelay = Random.Range (0f, 7f);
+			}
+			// Take away from the stall delay if the enemy is standing still
+			if (navMesh.isStopped) {
+				wanderStallDelay -= Time.deltaTime;
+			} else {
+				// Else, check if the enemy has reached its destination
+				if (navMeshReachedDestination ()) {
+					navMesh.isStopped = true;
+				}
+			}
+			// If the stall delay is done, the enemy needs to move to a wander point
+			if (wanderStallDelay < 0f) {
+				int r = Random.Range (0, navPoints.Length);
+				RotateTowards (navPoints [r].transform.position);
+				navMesh.SetDestination (navPoints [r].transform.position);
+				navMesh.isStopped = false;
+				wanderStallDelay = Random.Range (0f, 7f);
+			}
+		}
+		//----------------------------------------------------------------------------------------------------
+		/**if (actionState == ActionStates.TakingCover || actionState == ActionStates.InCover) {
 			return;
 		}
 		if (actionState == ActionStates.Pursue) {
@@ -288,7 +314,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 				// Else, stop and shoot at player
 				navMesh.isStopped = true;
 			}
-		}
+		}*/
 	}
 
 	// Decision tree for scout type enemy
@@ -350,7 +376,39 @@ public class BetaEnemyScript : NetworkBehaviour {
 
 	// Decision tree for patrol type enemy
 	void DecideActionPatrol() {
-		if (actionState != ActionStates.Dead) {
+		// Root - is the enemy alerted by any type of player presence (gunshots, sight, getting shot, other enemies alerted nearby)
+		// TODO: Still in construction, do not uncomment unless testing
+		if (alerted) {
+			// Scan for enemies
+			PlayerScan();
+			if (player != null) {
+				// If the enemy has seen a player
+				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue) {
+					// TODO: Needs to be updated to include heuristics - if nearby players are firing, then they are more likely to take cover, else, they are more likely to shoot at the players
+					int r = Random.Range (1, 2);
+					if (r == 1) {
+						actionState = ActionStates.Firing;
+					} else {
+						actionState = ActionStates.TakingCover;
+					}
+				}
+			} else {
+				// If the enemy has not seen a player
+				if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover) {
+					int r = Random.Range (1, 6);
+					if (r > 2) {
+						actionState = ActionStates.TakingCover;
+					} else {
+						actionState = ActionStates.Seeking;
+					}
+				}
+			}
+		} else {
+			// Else, wander around the patrol points
+			actionState = ActionStates.Wander;
+		}
+
+		/**if (actionState != ActionStates.Dead) {
 			// Scan for a new player
 			if (actionState != ActionStates.TakingCover && actionState != ActionStates.InCover) {
 				PlayerScan ();
@@ -410,10 +468,15 @@ public class BetaEnemyScript : NetworkBehaviour {
 			GetComponentInChildren<SpriteRenderer> ().enabled = false;
 			//GetComponent<CapsuleCollider> ().isTrigger = true;
 			StartCoroutine(Despawn ());
-		}
+		}*/
 	}
 
 	void DecideAnimation() {
+		if (actionState == ActionStates.Wander) {
+			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Walk"))
+				animator.Play ("Walk");
+		}
+
 		if (actionState == ActionStates.TakingCover) {
 			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint"))
 				animator.Play ("Sprint");
@@ -608,6 +671,18 @@ public class BetaEnemyScript : NetworkBehaviour {
 		Transform[] coverSpots = nearbyCover [minCoverIndex].gameObject.GetComponentsInChildren<Transform>();
 		coverPos = coverSpots [Random.Range (0, coverSpots.Length)].position;
 		return true;
+	}
+
+	private bool navMeshReachedDestination() {
+		if (!navMesh.pathPending && !navMesh.isStopped) {
+			if (navMesh.remainingDistance <= navMesh.stoppingDistance) {
+				if (!navMesh.hasPath || navMesh.velocity.sqrMagnitude == 0f) {
+					// Done
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }
