@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class BetaEnemyScript : NetworkBehaviour {
 	// Finite state machine states
-	enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, };
+	enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking};
 	public enum EnemyType {Patrol, Scout};
 
 	// Gun stuff
@@ -151,13 +151,16 @@ public class BetaEnemyScript : NetworkBehaviour {
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die")) {
 			return;
 		}
-		Debug.Log (navMesh.destination);
+		if (!Vector3.Equals (GameControllerTestScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
+			alerted = true;
+		}
+		/**Debug.Log (navMesh.destination);
 		Debug.Log (actionState);
 		Debug.Log ("Pos: " + transform.position);
 		Debug.Log (navMesh.speed);
-		Debug.Log (navMesh.isStopped);
+		Debug.Log (navMesh.isStopped);*/
 		// Debug for take cover
-		if (Input.GetKeyDown (KeyCode.J)) {
+		/**if (Input.GetKeyDown (KeyCode.J)) {
 			Debug.Log (1);
 			if (actionState != ActionStates.TakingCover) {
 				bool coverFound = DynamicTakeCover ();
@@ -192,7 +195,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 					}
 				}
 			}
-		}
+		}*/
 			
 		if (inCover)
 			isCrouching = true;
@@ -283,6 +286,31 @@ public class BetaEnemyScript : NetworkBehaviour {
 				navMesh.SetDestination (navPoints [r].transform.position);
 				navMesh.isStopped = false;
 				wanderStallDelay = Random.Range (0f, 7f);
+			}
+		}
+
+		if (actionState == ActionStates.Idle) {
+			navMesh.isStopped = true;
+			wanderStallDelay = -1f;
+		}
+
+		if (actionState == ActionStates.Dead) {
+			navMesh.isStopped = true;
+		}
+
+		if (actionState == ActionStates.Seeking) {
+			navMesh.isStopped = false;
+			navMesh.speed = 3f;
+
+			// Seek behavior: use navMesh to move towards the last area of gunshot. If the enemy moves towards that location
+			// and there's nobody there, take cover in that area
+
+			if (testingMode) {
+				Vector3 currDest = navMesh.destination;
+				if (!Vector3.Equals (currDest, GameControllerTestScript.lastGunshotHeardPos)) {
+					//RotateTowards (GameControllerTestScript.lastGunshotHeardPos);
+					navMesh.SetDestination (GameControllerTestScript.lastGunshotHeardPos);
+				}
 			}
 		}
 		//----------------------------------------------------------------------------------------------------
@@ -377,7 +405,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 	// Decision tree for patrol type enemy
 	void DecideActionPatrol() {
 		// Root - is the enemy alerted by any type of player presence (gunshots, sight, getting shot, other enemies alerted nearby)
-		// TODO: Still in construction, do not uncomment unless testing
+		// TODO: Still in construction
 		if (alerted) {
 			// Scan for enemies
 			PlayerScan();
@@ -472,9 +500,20 @@ public class BetaEnemyScript : NetworkBehaviour {
 	}
 
 	void DecideAnimation() {
+		if (actionState == ActionStates.Seeking) {
+			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Moving"))
+				animator.Play ("Moving");
+		}
+
 		if (actionState == ActionStates.Wander) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Walk"))
-				animator.Play ("Walk");
+			if (navMesh.isStopped) {
+				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
+					animator.Play ("Idle");
+			} else {
+				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Walk"))
+					animator.Play ("Walk");
+			}
+
 		}
 
 		if (actionState == ActionStates.TakingCover) {
@@ -495,11 +534,6 @@ public class BetaEnemyScript : NetworkBehaviour {
 		if (actionState == ActionStates.Pursue) {
 			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint"))
 				animator.Play ("Sprint");
-		}
-
-		if (actionState == ActionStates.Moving) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Moving"))
-				animator.Play ("Moving");
 		}
 
 		if (actionState == ActionStates.Idle) {

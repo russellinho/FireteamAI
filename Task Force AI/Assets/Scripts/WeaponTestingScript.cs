@@ -88,6 +88,7 @@ public class WeaponTestingScript : NetworkBehaviour {
 				} else {
 					if (networkMan.numPlayers >= 2) RpcFire ();
 				}
+				GameControllerTestScript.lastGunshotHeardPos = transform.position;
 				Fire ();
 			} else if (totalBulletsLeft > 0) {
 				ReloadAction ();

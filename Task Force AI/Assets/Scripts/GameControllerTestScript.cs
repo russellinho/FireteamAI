@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameControllerTestScript : MonoBehaviour {
 
 	public static ArrayList playerList = new ArrayList();
+	public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
 
 	// Use this for initialization
 	void Start () {
