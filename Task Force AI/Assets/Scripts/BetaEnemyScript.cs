@@ -114,6 +114,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 					player = (GameObject)GameControllerTestScript.playerList [Random.Range (0, indicesNearBy.Count)];
 			} else {
 				// If we do, check if it's still in range
+				Debug.Log("Dist: " + Vector3.Distance(transform.position, player.transform.position) + " Range:" + (range + 12f));
 				if (Vector3.Distance (transform.position, player.transform.position) >= range + 12f) {
 					lastSeenPlayerPos = player.transform;
 					player = null;
@@ -159,49 +160,16 @@ public class BetaEnemyScript : NetworkBehaviour {
 		Debug.Log ("Pos: " + transform.position);
 		Debug.Log (navMesh.speed);
 		Debug.Log (navMesh.isStopped);*/
-		// Debug for take cover
-		/**if (Input.GetKeyDown (KeyCode.J)) {
-			Debug.Log (1);
-			if (actionState != ActionStates.TakingCover) {
-				bool coverFound = DynamicTakeCover ();
-				if (coverFound) {
-					actionState = ActionStates.TakingCover;
-				}
-			} else {
-				Debug.Log (2);
-				coverPos = Vector3.negativeInfinity;
-			}
-		}
-
-		if (actionState == ActionStates.TakingCover) {
-			// If the enemy is not near the cover spot, run towards it
-			if (!coverPos.Equals(Vector3.negativeInfinity)) {
-				navMesh.isStopped = true;
-				navMesh.speed = 6f;
-				navMesh.isStopped = false;
-				navMesh.SetDestination (coverPos);
-				coverPos = Vector3.negativeInfinity;
-				//navMesh.stoppingDistance = 0.5f;
-			} else {
-				// If the enemy has finally reached cover, then he will duck down
-				if (!navMesh.pathPending && !navMesh.isStopped) {
-					if (navMesh.remainingDistance <= navMesh.stoppingDistance) {
-						if (!navMesh.hasPath || navMesh.velocity.sqrMagnitude == 0f) {
-							// Done
-							navMesh.isStopped = true;
-							inCover = true;
-							actionState = ActionStates.InCover;
-						}
-					}
-				}
-			}
-		}*/
 			
 		if (inCover)
 			isCrouching = true;
 		else
 			isCrouching = false;
 		//Debug.DrawRay (transform.position, transform.forward * range, Color.blue);
+
+		if (alerted && (range == 10f)) {
+			range *= 1.5f;
+		}
 
 		if (enemyType == EnemyType.Patrol) {
 			DecideActionPatrol ();
@@ -234,6 +202,9 @@ public class BetaEnemyScript : NetworkBehaviour {
 		if (coverWaitTimer > 0f && actionState != ActionStates.Idle) {
 			coverWaitTimer -= Time.deltaTime;
 		}
+
+		//Debug.Log (player == null);
+		//Debug.Log (lastSeenPlayerPos);
 		//Debug.Log (coverWaitTimer + " " + inCover);
 	}
 
@@ -275,7 +246,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 				wanderStallDelay -= Time.deltaTime;
 			} else {
 				// Else, check if the enemy has reached its destination
-				if (navMeshReachedDestination ()) {
+				if (navMeshReachedDestination (0f)) {
 					navMesh.isStopped = true;
 				}
 			}
@@ -294,8 +265,16 @@ public class BetaEnemyScript : NetworkBehaviour {
 			wanderStallDelay = -1f;
 		}
 
-		if (actionState == ActionStates.Dead) {
+		if (actionState == ActionStates.Dead || actionState == ActionStates.InCover) {
 			navMesh.isStopped = true;
+		}
+
+		if (actionState == ActionStates.Pursue && lastSeenPlayerPos != null) {
+			navMesh.speed = 6f;
+			navMesh.isStopped = false;
+			navMesh.SetDestination (lastSeenPlayerPos.position);
+			lastSeenPlayerPos = null;
+			return;
 		}
 
 		if (actionState == ActionStates.Seeking) {
@@ -311,21 +290,47 @@ public class BetaEnemyScript : NetworkBehaviour {
 					//RotateTowards (GameControllerTestScript.lastGunshotHeardPos);
 					navMesh.SetDestination (GameControllerTestScript.lastGunshotHeardPos);
 				}
+
+				if (navMeshReachedDestination (0.5f)) {
+					bool coverFound = DynamicTakeCover ();
+					if (coverFound) {
+						actionState = ActionStates.TakingCover;
+					} else {
+						actionState = ActionStates.InCover;
+					}
+				}
 			}
 		}
+
+		if (actionState == ActionStates.TakingCover) {
+			// If the enemy is not near the cover spot, run towards it
+			if (!coverPos.Equals (Vector3.negativeInfinity)) {
+				navMesh.isStopped = true;
+				navMesh.speed = 6f;
+				navMesh.isStopped = false;
+				navMesh.SetDestination (coverPos);
+				coverPos = Vector3.negativeInfinity;
+				//navMesh.stoppingDistance = 0.5f;
+			} else {
+				// If the enemy has finally reached cover, then he will duck down
+				if (navMeshReachedDestination(0f)) {
+					// Done
+					navMesh.isStopped = true;
+					inCover = true;
+					actionState = ActionStates.InCover;
+				}
+			}
+		}
+
+		if (actionState == ActionStates.Firing) {
+			navMesh.isStopped = true;
+
+			// TODO: Add behavior for dodging/strafing while shooting
+		}
+
 		//----------------------------------------------------------------------------------------------------
-		/**if (actionState == ActionStates.TakingCover || actionState == ActionStates.InCover) {
-			return;
-		}
-		if (actionState == ActionStates.Pursue) {
-			navMesh.speed = 6f;
-			navMesh.isStopped = false;
-			navMesh.SetDestination (lastSeenPlayerPos.position);
-			return;
-		} else {
-			navMesh.speed = 3f;
-		}
-		if (player == null) {
+
+		/**if (player == null) {
 			if (!navMesh.hasPath) {
 				int r = Random.Range (0, navPoints.Length);
 				RotateTowards (navPoints [r].transform.position);
@@ -410,6 +415,10 @@ public class BetaEnemyScript : NetworkBehaviour {
 			// Scan for enemies
 			PlayerScan();
 			if (player != null) {
+				if (actionState == ActionStates.InCover) {
+					actionState = ActionStates.Firing;
+					isCrouching = true;
+				}
 				// If the enemy has seen a player
 				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue) {
 					// TODO: Needs to be updated to include heuristics - if nearby players are firing, then they are more likely to take cover, else, they are more likely to shoot at the players
@@ -417,17 +426,37 @@ public class BetaEnemyScript : NetworkBehaviour {
 					if (r == 1) {
 						actionState = ActionStates.Firing;
 					} else {
-						actionState = ActionStates.TakingCover;
+						bool coverFound = DynamicTakeCover ();
+						if (coverFound) {
+							actionState = ActionStates.TakingCover;
+						} else {
+							actionState = ActionStates.InCover;
+						}
 					}
 				}
 			} else {
 				// If the enemy has not seen a player
-				if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover) {
+				if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Firing) {
 					int r = Random.Range (1, 6);
 					if (r > 2) {
-						actionState = ActionStates.TakingCover;
+						bool coverFound = DynamicTakeCover ();
+						if (coverFound) {
+							actionState = ActionStates.TakingCover;
+						} else {
+							actionState = ActionStates.InCover;
+						}
 					} else {
 						actionState = ActionStates.Seeking;
+					}
+				}
+
+				// If the enemy has seen a player before but no longer does, then possibly (60% chance) pursue the player or take cover (40% chance)
+				if (actionState == ActionStates.Firing && lastSeenPlayerPos != null) {
+					int r = Random.Range (1, 5);
+					if (r <= 2) {
+						actionState = ActionStates.TakingCover;
+					} else {
+						actionState = ActionStates.Pursue;
 					}
 				}
 			}
@@ -435,68 +464,6 @@ public class BetaEnemyScript : NetworkBehaviour {
 			// Else, wander around the patrol points
 			actionState = ActionStates.Wander;
 		}
-
-		/**if (actionState != ActionStates.Dead) {
-			// Scan for a new player
-			if (actionState != ActionStates.TakingCover && actionState != ActionStates.InCover) {
-				PlayerScan ();
-				// Actions for if the enemy is engaged with a player
-				if (player != null) {
-					// The enemy has seen a player and is now alerted
-					alerted = true;
-					// If the enemy is alerted and the player has come up close to the enemy, then the enemy will attempt to melee
-					if (Vector3.Distance (transform.position, player.transform.position) <= 2.3f) {
-						actionState = ActionStates.Melee;
-						// If the enemy has ammo but the player is at a distance, the enemy will shoot
-					} else if (currentBullets > 0) {
-						actionState = ActionStates.Firing;
-						// If the enemy is out of ammo, then he will reload
-					} else {
-						actionState = ActionStates.Reloading;
-					}
-				} else {
-					// If the player was in sight but is now too far, then pursue the player
-					if (alerted) {
-						actionState = ActionStates.Pursue;
-						// If the enemy is not alerted, default to the idle phase
-					} else if (!alerted && actionState != ActionStates.Pursue) {
-						actionState = ActionStates.Idle;
-					}
-				}
-			}
-
-			if (actionState != ActionStates.TakingCover && actionState != ActionStates.InCover) {
-				if (navMesh.hasPath) {
-					if (actionState != ActionStates.Firing && actionState != ActionStates.Reloading && actionState != ActionStates.Melee && actionState != ActionStates.Pursue) {
-						actionState = ActionStates.Moving;
-					}
-				}
-
-				if (!navMesh.hasPath) {
-					if (actionState != ActionStates.Firing && actionState != ActionStates.Reloading && actionState != ActionStates.Melee && actionState != ActionStates.Pursue) {
-						actionState = ActionStates.Idle;
-					}
-				}
-			}
-		}
-
-		if (health <= 0 && actionState != ActionStates.Dead) {
-			actionState = ActionStates.Dead;
-			// Choose a death sound
-			int r = Random.Range (0, 3);
-			if (r == 0) {
-				aud.clip = (AudioClip)Resources.Load ("Grunts/grunt1");
-			} else if (r == 1) {
-				aud.clip = (AudioClip)Resources.Load ("Grunts/grunt2");
-			} else {
-				aud.clip = (AudioClip)Resources.Load ("Grunts/grunt4");
-			}
-			aud.Play ();
-
-			GetComponentInChildren<SpriteRenderer> ().enabled = false;
-			//GetComponent<CapsuleCollider> ().isTrigger = true;
-			StartCoroutine(Despawn ());
-		}*/
 	}
 
 	void DecideAnimation() {
@@ -635,13 +602,6 @@ public class BetaEnemyScript : NetworkBehaviour {
 		}
 	}
 
-	/**private void ReloadAction() {
-		if (isReloading)
-			return;
-		//animator.CrossFadeInFixedTime ("Reloading", 0.1f);
-		animator.Play("Reloading");
-	}*/
-
 	private void RotateTowards(Vector3 r) {
 		Vector3 rotDir = (r - transform.position).normalized;
 		Quaternion lookRot = Quaternion.LookRotation (rotDir);
@@ -707,9 +667,9 @@ public class BetaEnemyScript : NetworkBehaviour {
 		return true;
 	}
 
-	private bool navMeshReachedDestination() {
+	private bool navMeshReachedDestination(float bufferRange) {
 		if (!navMesh.pathPending && !navMesh.isStopped) {
-			if (navMesh.remainingDistance <= navMesh.stoppingDistance) {
+			if (navMesh.remainingDistance <= (navMesh.stoppingDistance + bufferRange)) {
 				if (!navMesh.hasPath || navMesh.velocity.sqrMagnitude == 0f) {
 					// Done
 					return true;
