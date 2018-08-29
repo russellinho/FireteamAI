@@ -62,6 +62,8 @@ public class BetaEnemyScript : NetworkBehaviour {
 	private float coverTimer = 0f;
 	// Time to wait to be in cover again
 	private float coverWaitTimer = 0f;
+	// Time to wait to maneuver to another cover position
+	private float coverSwitchPositionsTimer = 0f;
 	private float wanderStallDelay = -1f;
 	private bool inCover;
 	private Vector3 coverPos;
@@ -91,7 +93,8 @@ public class BetaEnemyScript : NetworkBehaviour {
 		GetComponent<Rigidbody> ().freezeRotation = true;
 		aud = GetComponent<AudioSource> ();
 		coverTimer = 0f;
-		coverWaitTimer = Random.Range (4f, 15f);
+		coverWaitTimer = Random.Range (2f, 7f);
+		coverSwitchPositionsTimer = Random.Range (12f, 18f);
 		inCover = false;
 	}
 
@@ -160,11 +163,44 @@ public class BetaEnemyScript : NetworkBehaviour {
 		Debug.Log ("Pos: " + transform.position);
 		Debug.Log (navMesh.speed);
 		Debug.Log (navMesh.isStopped);*/
+
+		// Timer for maneuvering while in cover
+		if (actionState == ActionStates.InCover) {
+			if (navMesh.isStopped) {
+				coverWaitTimer -= Time.deltaTime;
+			}
+			if (inCover) {
+				coverSwitchPositionsTimer -= Time.deltaTime;
+			}
+
+			// Three modes in cover - defensive, offensive, maneuvering; only used when engaging a player
+			if (player != null) {
+				// If the cover wait timer has ran out, switch from defensive to offensive and vice versa
+				if (coverWaitTimer <= 0f) {
+					inCover = !inCover;
+					coverWaitTimer = Random.Range (2f, 7f);
+				}
+				// If it's time to switch cover positions, then switch actions to taking cover again
+				if (coverSwitchPositionsTimer <= 0f) {
+					bool coverFound = DynamicTakeCover ();
+					if (coverFound) {
+						inCover = false;
+						actionState = ActionStates.TakingCover;
+					} else {
+						coverPos = Vector3.negativeInfinity;
+						actionState = ActionStates.InCover;
+					}
+				}
+			}
+
+			// Get down if in defense mode
+			if (inCover) {
+				isCrouching = true;
+			} else {
+				isCrouching = false;
+			}
+		}
 			
-		if (inCover)
-			isCrouching = true;
-		else
-			isCrouching = false;
 		//Debug.DrawRay (transform.position, transform.forward * range, Color.blue);
 
 		if (alerted && (range == 10f)) {
@@ -195,13 +231,13 @@ public class BetaEnemyScript : NetworkBehaviour {
 			alertTimer -= Time.deltaTime;
 		}
 
-		if (coverTimer > 0f && actionState != ActionStates.Idle) {
+		/**if (coverTimer > 0f && actionState != ActionStates.Idle) {
 			coverTimer -= Time.deltaTime;
 		}
 
 		if (coverWaitTimer > 0f && actionState != ActionStates.Idle) {
 			coverWaitTimer -= Time.deltaTime;
-		}
+		}*/
 
 		//Debug.Log (player == null);
 		//Debug.Log (lastSeenPlayerPos);
@@ -388,20 +424,20 @@ public class BetaEnemyScript : NetworkBehaviour {
 						crouchMode = 1;
 					else if (crouchMode == 1)
 						crouchMode = 2;
-					TakeCover ();
+					TakeCoverScout ();
 				} else {
 					actionState = ActionStates.Reloading;
 					crouchMode = 0;
-					TakeCover ();
+					TakeCoverScout ();
 				}
 			}
 		} else {
 			if (alertTimer > 0f) {
 				crouchMode = 0;
-				TakeCover ();
+				TakeCoverScout ();
 			} else {
 				crouchMode = 1;
-				TakeCover ();
+				TakeCoverScout ();
 			}
 			actionState = ActionStates.Idle;
 		}
@@ -423,7 +459,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue) {
 					// TODO: Needs to be updated to include heuristics - if nearby players are firing, then they are more likely to take cover, else, they are more likely to shoot at the players
 					int r = Random.Range (1, 2);
-					if (r == 0) {
+					if (r == 1) {
 						actionState = ActionStates.Firing;
 					} else {
 						bool coverFound = DynamicTakeCover ();
@@ -461,8 +497,12 @@ public class BetaEnemyScript : NetworkBehaviour {
 				}
 			}
 		} else {
-			// Else, wander around the patrol points
+			// Else, wander around the patrol points until alerted or enemy seen
 			actionState = ActionStates.Wander;
+			PlayerScan ();
+			if (player != null) {
+				alerted = true;
+			}
 		}
 	}
 
@@ -488,11 +528,6 @@ public class BetaEnemyScript : NetworkBehaviour {
 				animator.Play ("Sprint");
 		}
 
-		if (actionState == ActionStates.InCover) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Crouching"))
-				animator.Play ("Crouching");
-		}
-
 		if (actionState == ActionStates.Dead) {
 			if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
 				animator.Play ("Die");
@@ -508,7 +543,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 				animator.Play ("Idle");
 		}
 
-		if (actionState == ActionStates.Firing || actionState == ActionStates.Reloading) {
+		if (actionState == ActionStates.Firing || actionState == ActionStates.Reloading || actionState == ActionStates.InCover) {
 
 			// Set proper animation
 			if (currentBullets > 0) {
@@ -618,7 +653,8 @@ public class BetaEnemyScript : NetworkBehaviour {
 
 	// b is the mode the AI is in. 0 means override everything and take cover, 1 is override everything and leave cover
 	// 2 is use the natural timer to decide
-	void TakeCover() {
+	// Used for Scout AI
+	void TakeCoverScout() {
 		if (crouchMode == 0) {
 			coverWaitTimer = 0f;
 			inCover = true;
@@ -652,6 +688,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 			if (!nearbyCover [i].gameObject.tag.Equals ("Cover")) {
 				continue;
 			}
+			// TODO: Needs to randomly choose a cover spot instead of the closest one
 			float dist = Vector3.Distance (transform.position, nearbyCover [i].transform.position);
 			if (minDist == -1f || dist < minDist) {
 				minDist = dist;
@@ -667,13 +704,21 @@ public class BetaEnemyScript : NetworkBehaviour {
 		if (player == null) {
 			coverPos = coverSpots [Random.Range (0, coverSpots.Length)].position;
 		} else {
+			// Determines if a unique cover spot was found or not
 			bool foundOne = false;
 			for (int i = 0; i < coverSpots.Length; i++) {
+				// Don't want to hide in the same place again
+				if (Vector3.Distance (transform.position, coverSpots[i].position) <= 0.5f) {
+					continue;
+				}
+				// If there's something blocking the player and the enemy, then the enemy wants to hide behind it
 				if (Physics.Linecast (coverSpots[i].position, player.transform.position)) {
 					coverPos = coverSpots [i].position;
+					foundOne = true;
 					break;
 				}
 			}
+			// If a unique cover spot wasn't found, then just choose a random spot
 			if (!foundOne) {
 				coverPos = coverSpots [Random.Range (0, coverSpots.Length)].position;
 			}
