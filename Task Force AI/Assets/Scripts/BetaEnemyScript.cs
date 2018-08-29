@@ -423,7 +423,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue) {
 					// TODO: Needs to be updated to include heuristics - if nearby players are firing, then they are more likely to take cover, else, they are more likely to shoot at the players
 					int r = Random.Range (1, 2);
-					if (r == 1) {
+					if (r == 0) {
 						actionState = ActionStates.Firing;
 					} else {
 						bool coverFound = DynamicTakeCover ();
@@ -661,9 +661,23 @@ public class BetaEnemyScript : NetworkBehaviour {
 		if (minCoverIndex == -1) {
 			return false;
 		}
-		// Once the closest cover is found, set the AI to be in cover, pick a cover side opposite of the player and run to it (TODO: random for now)
+		// Once the closest cover is found, set the AI to be in cover, pick a cover side opposite of the player and run to it
+		// If there is no target player, just choose a random cover
 		Transform[] coverSpots = nearbyCover [minCoverIndex].gameObject.GetComponentsInChildren<Transform>();
-		coverPos = coverSpots [Random.Range (0, coverSpots.Length)].position;
+		if (player == null) {
+			coverPos = coverSpots [Random.Range (0, coverSpots.Length)].position;
+		} else {
+			bool foundOne = false;
+			for (int i = 0; i < coverSpots.Length; i++) {
+				if (Physics.Linecast (coverSpots[i].position, player.transform.position)) {
+					coverPos = coverSpots [i].position;
+					break;
+				}
+			}
+			if (!foundOne) {
+				coverPos = coverSpots [Random.Range (0, coverSpots.Length)].position;
+			}
+		}
 		return true;
 	}
 
