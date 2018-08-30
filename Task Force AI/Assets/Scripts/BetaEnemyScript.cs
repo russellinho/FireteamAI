@@ -57,6 +57,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 	private NavMeshAgent navMesh;
 	private AudioSource aud;
 
+	// Timers
 	private float alertTimer = 0f;
 	// Time in cover
 	private float coverTimer = 0f;
@@ -64,6 +65,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 	private float coverWaitTimer = 0f;
 	// Time to wait to maneuver to another cover position
 	private float coverSwitchPositionsTimer = 0f;
+
 	private float wanderStallDelay = -1f;
 	private bool inCover;
 	private Vector3 coverPos;
@@ -98,58 +100,6 @@ public class BetaEnemyScript : NetworkBehaviour {
 		inCover = false;
 	}
 
-	void PlayerScan() {
-		// If we do not have a target player, try to find one
-		if (testingMode) {
-			if (player == null) {
-				ArrayList indicesNearBy = new ArrayList ();
-				for (int i = 0; i < GameControllerTestScript.playerList.Count; i++) {
-					GameObject p = (GameObject)GameControllerTestScript.playerList [i];
-					if (Vector3.Distance (transform.position, p.transform.position) < range + 12f) {
-						Vector3 toPlayer = p.transform.position - transform.position;
-						float angleBetween = Vector3.Angle (transform.forward, toPlayer);
-						if (angleBetween <= 60f) {
-							indicesNearBy.Add (i);
-						}
-					}
-				}
-				if (indicesNearBy.Count != 0)
-					player = (GameObject)GameControllerTestScript.playerList [Random.Range (0, indicesNearBy.Count)];
-			} else {
-				// If we do, check if it's still in range
-				Debug.Log("Dist: " + Vector3.Distance(transform.position, player.transform.position) + " Range:" + (range + 12f));
-				if (Vector3.Distance (transform.position, player.transform.position) >= range + 12f) {
-					lastSeenPlayerPos = player.transform;
-					player = null;
-
-				}
-			}
-		} else {
-			if (player == null) {
-				ArrayList indicesNearBy = new ArrayList ();
-				for (int i = 0; i < GameControllerScript.playerList.Count; i++) {
-					GameObject p = (GameObject)GameControllerScript.playerList [i];
-					if (Vector3.Distance (transform.position, p.transform.position) < range + 12f) {
-						Vector3 toPlayer = p.transform.position - transform.position;
-						float angleBetween = Vector3.Angle (transform.forward, toPlayer);
-						if (angleBetween <= 60f) {
-							indicesNearBy.Add (i);
-						}
-					}
-				}
-				if (indicesNearBy.Count != 0)
-					player = (GameObject)GameControllerScript.playerList [Random.Range (0, indicesNearBy.Count)];
-			} else {
-				// If we do, check if it's still in range
-				if (Vector3.Distance (transform.position, player.transform.position) >= range + 12f) {
-					lastSeenPlayerPos = player.transform;
-					player = null;
-
-				}
-			}
-		}
-	}
-
 	// Update is called once per frame
 	void Update () {
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die")) {
@@ -164,43 +114,8 @@ public class BetaEnemyScript : NetworkBehaviour {
 		Debug.Log (navMesh.speed);
 		Debug.Log (navMesh.isStopped);*/
 
-		// Timer for maneuvering while in cover
-		if (actionState == ActionStates.InCover) {
-			if (navMesh.isStopped) {
-				coverWaitTimer -= Time.deltaTime;
-			}
-			if (inCover) {
-				coverSwitchPositionsTimer -= Time.deltaTime;
-			}
+		DecideActionPatrolInCombat ();
 
-			// Three modes in cover - defensive, offensive, maneuvering; only used when engaging a player
-			if (player != null) {
-				// If the cover wait timer has ran out, switch from defensive to offensive and vice versa
-				if (coverWaitTimer <= 0f) {
-					inCover = !inCover;
-					coverWaitTimer = Random.Range (2f, 7f);
-				}
-				// If it's time to switch cover positions, then switch actions to taking cover again
-				if (coverSwitchPositionsTimer <= 0f) {
-					bool coverFound = DynamicTakeCover ();
-					if (coverFound) {
-						inCover = false;
-						actionState = ActionStates.TakingCover;
-					} else {
-						coverPos = Vector3.negativeInfinity;
-						actionState = ActionStates.InCover;
-					}
-				}
-			}
-
-			// Get down if in defense mode
-			if (inCover) {
-				isCrouching = true;
-			} else {
-				isCrouching = false;
-			}
-		}
-			
 		//Debug.DrawRay (transform.position, transform.forward * range, Color.blue);
 
 		if (alerted && (range == 10f)) {
@@ -231,6 +146,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 			alertTimer -= Time.deltaTime;
 		}
 
+		// Scout stuff
 		/**if (coverTimer > 0f && actionState != ActionStates.Idle) {
 			coverTimer -= Time.deltaTime;
 		}
@@ -315,7 +231,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 
 		if (actionState == ActionStates.Seeking) {
 			navMesh.isStopped = false;
-			navMesh.speed = 3f;
+			navMesh.speed = 4f;
 
 			// Seek behavior: use navMesh to move towards the last area of gunshot. If the enemy moves towards that location
 			// and there's nobody there, take cover in that area
@@ -363,27 +279,50 @@ public class BetaEnemyScript : NetworkBehaviour {
 
 			// TODO: Add behavior for dodging/strafing while shooting
 		}
+	}
 
-		//----------------------------------------------------------------------------------------------------
-
-		/**if (player == null) {
-			if (!navMesh.hasPath) {
-				int r = Random.Range (0, navPoints.Length);
-				RotateTowards (navPoints [r].transform.position);
-				navMesh.SetDestination (navPoints [r].transform.position);
-				navMesh.isStopped = false;
+	// Action Decision while in combat
+	void DecideActionPatrolInCombat() {
+		// Action Decision while in combat
+		//Debug.Log("Cover wait timer: " + coverWaitTimer);
+		//Debug.Log ("Cover switch positions timer: " + coverSwitchPositionsTimer);
+		if (actionState == ActionStates.InCover || actionState == ActionStates.Firing) {
+			if (navMesh.isStopped) {
+				coverWaitTimer -= Time.deltaTime;
 			}
-		} else {
-			// If the player has been spotted
-			// If the player is too far, move closer
-			if (Vector3.Distance (transform.position, player.transform.position) > range) {
-				navMesh.isStopped = false;
-				navMesh.SetDestination (player.transform.position);
+			if (inCover) {
+				coverSwitchPositionsTimer -= Time.deltaTime;
+			}
+
+			// Three modes in cover - defensive, offensive, maneuvering; only used when engaging a player
+			if (player != null) {
+				// If the cover wait timer has ran out, switch from defensive to offensive and vice versa
+				if (coverWaitTimer <= 0f) {
+					inCover = !inCover;
+					coverWaitTimer = Random.Range (2f, 7f);
+				}
+				// Maneuvering through cover; if the maneuver timer runs out, it's time to move to another cover position
+				// TODO: Broken - coverswitch timer is never reset
+				/**if (coverSwitchPositionsTimer <= 0f) {
+					bool coverFound = DynamicTakeCover ();
+					if (coverFound) {
+						inCover = false;
+						actionState = ActionStates.TakingCover;
+					} else {
+						coverPos = Vector3.negativeInfinity;
+						actionState = ActionStates.InCover;
+					}
+				}*/
+			}
+
+			Debug.Log ("inCover: " + inCover);
+			// Get down if in defense mode
+			if (inCover) {
+				isCrouching = true;
 			} else {
-				// Else, stop and shoot at player
-				navMesh.isStopped = true;
+				isCrouching = false;
 			}
-		}*/
+		}
 	}
 
 	// Decision tree for scout type enemy
@@ -544,7 +483,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 		}
 
 		if (actionState == ActionStates.Firing || actionState == ActionStates.Reloading || actionState == ActionStates.InCover) {
-
+			Debug.Log ("isCrouching: " + isCrouching);
 			// Set proper animation
 			if (currentBullets > 0) {
 				if (isCrouching) {
@@ -673,8 +612,6 @@ public class BetaEnemyScript : NetworkBehaviour {
 	}
 
 	// Take cover algorithm for moving enemies - returns true if cover was found, false if not
-	// TODO: So far all this does is find the nearest object that you can take cover on. Needs to be improved to ensure that
-	// the cover is blocking the enemy from the players
 	bool DynamicTakeCover() {
 		// Scan for cover first
 		Collider[] nearbyCover = Physics.OverlapBox(transform.position, new Vector3(coverScanRange, 20f, coverScanRange));
@@ -682,22 +619,21 @@ public class BetaEnemyScript : NetworkBehaviour {
 			return false;
 		}
 		// If cover is nearby, find the closest one
-		float minDist = -1f;
-		int minCoverIndex = -1;
-		for (int i = 0; i < nearbyCover.Length; i++) {
-			if (!nearbyCover [i].gameObject.tag.Equals ("Cover")) {
-				continue;
-			}
-			// TODO: Needs to randomly choose a cover spot instead of the closest one
-			float dist = Vector3.Distance (transform.position, nearbyCover [i].transform.position);
-			if (minDist == -1f || dist < minDist) {
-				minDist = dist;
-				minCoverIndex = i;
-			}
-		}
-		if (minCoverIndex == -1) {
+		if (nearbyCover.Length == 0) {
 			return false;
 		}
+		ArrayList coverIndices = new ArrayList ();
+		for (int i = 0; i < nearbyCover.Length; i++) {
+			if (nearbyCover [i].gameObject.tag.Equals ("Cover")) {
+				coverIndices.Add (i);
+			}
+		}
+		if (coverIndices.Count == 0) {
+			return false;
+		}
+
+		int minCoverIndex = (int)coverIndices [Random.Range (0, coverIndices.Count - 1)];
+
 		// Once the closest cover is found, set the AI to be in cover, pick a cover side opposite of the player and run to it
 		// If there is no target player, just choose a random cover
 		Transform[] coverSpots = nearbyCover [minCoverIndex].gameObject.GetComponentsInChildren<Transform>();
@@ -736,6 +672,58 @@ public class BetaEnemyScript : NetworkBehaviour {
 			}
 		}
 		return false;
+	}
+
+	void PlayerScan() {
+		// If we do not have a target player, try to find one
+		if (testingMode) {
+			if (player == null) {
+				ArrayList indicesNearBy = new ArrayList ();
+				for (int i = 0; i < GameControllerTestScript.playerList.Count; i++) {
+					GameObject p = (GameObject)GameControllerTestScript.playerList [i];
+					if (Vector3.Distance (transform.position, p.transform.position) < range + 12f) {
+						Vector3 toPlayer = p.transform.position - transform.position;
+						float angleBetween = Vector3.Angle (transform.forward, toPlayer);
+						if (angleBetween <= 60f) {
+							indicesNearBy.Add (i);
+						}
+					}
+				}
+				if (indicesNearBy.Count != 0)
+					player = (GameObject)GameControllerTestScript.playerList [Random.Range (0, indicesNearBy.Count)];
+			} else {
+				// If we do, check if it's still in range
+				//Debug.Log("Dist: " + Vector3.Distance(transform.position, player.transform.position) + " Range:" + (range + 12f));
+				if (Vector3.Distance (transform.position, player.transform.position) >= range + 12f) {
+					lastSeenPlayerPos = player.transform;
+					player = null;
+
+				}
+			}
+		} else {
+			if (player == null) {
+				ArrayList indicesNearBy = new ArrayList ();
+				for (int i = 0; i < GameControllerScript.playerList.Count; i++) {
+					GameObject p = (GameObject)GameControllerScript.playerList [i];
+					if (Vector3.Distance (transform.position, p.transform.position) < range + 12f) {
+						Vector3 toPlayer = p.transform.position - transform.position;
+						float angleBetween = Vector3.Angle (transform.forward, toPlayer);
+						if (angleBetween <= 60f) {
+							indicesNearBy.Add (i);
+						}
+					}
+				}
+				if (indicesNearBy.Count != 0)
+					player = (GameObject)GameControllerScript.playerList [Random.Range (0, indicesNearBy.Count)];
+			} else {
+				// If we do, check if it's still in range
+				if (Vector3.Distance (transform.position, player.transform.position) >= range + 12f) {
+					lastSeenPlayerPos = player.transform;
+					player = null;
+
+				}
+			}
+		}
 	}
 
 }
