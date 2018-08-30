@@ -264,7 +264,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 				coverPos = Vector3.negativeInfinity;
 				//navMesh.stoppingDistance = 0.5f;
 			} else {
-				// If the enemy has finally reached cover, then he will duck down
+				// If the enemy has finally reached cover, then he will get into cover mode
 				if (navMeshReachedDestination(0f)) {
 					// Done
 					navMesh.isStopped = true;
@@ -274,10 +274,11 @@ public class BetaEnemyScript : NetworkBehaviour {
 			}
 		}
 
-		if (actionState == ActionStates.Firing) {
+		if (actionState == ActionStates.Firing && !inCover) {
 			navMesh.isStopped = true;
 
 			// TODO: Add behavior for dodging/strafing while shooting
+
 		}
 	}
 
@@ -298,7 +299,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 			if (player != null) {
 				// If the cover wait timer has ran out, switch from defensive to offensive and vice versa
 				if (coverWaitTimer <= 0f) {
-					inCover = !inCover;
+					isCrouching = !isCrouching;
 					coverWaitTimer = Random.Range (2f, 7f);
 				}
 				// Maneuvering through cover; if the maneuver timer runs out, it's time to move to another cover position
@@ -315,13 +316,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 				}*/
 			}
 
-			Debug.Log ("inCover: " + inCover);
-			// Get down if in defense mode
-			if (inCover) {
-				isCrouching = true;
-			} else {
-				isCrouching = false;
-			}
+			//Debug.Log ("inCover: " + inCover);
 		}
 	}
 
@@ -390,10 +385,6 @@ public class BetaEnemyScript : NetworkBehaviour {
 			// Scan for enemies
 			PlayerScan();
 			if (player != null) {
-				if (actionState == ActionStates.InCover) {
-					actionState = ActionStates.Firing;
-					isCrouching = true;
-				}
 				// If the enemy has seen a player
 				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue) {
 					// TODO: Needs to be updated to include heuristics - if nearby players are firing, then they are more likely to take cover, else, they are more likely to shoot at the players
