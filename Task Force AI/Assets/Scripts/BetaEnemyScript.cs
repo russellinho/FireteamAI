@@ -7,6 +7,10 @@ using UnityEngine.AI;
 public class BetaEnemyScript : NetworkBehaviour {
 	// Finite state machine states
 	enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking};
+	// FSM used for determining movement while attacking and not in cover
+	enum FiringStates {StandingStill, StrafeLeft, StrafeRight, Backpedal, Forward};
+
+	// Enemy combat style
 	public enum EnemyType {Patrol, Scout};
 
 	// Gun stuff
