@@ -52,6 +52,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 	public GameObject[] navPoints;
 	[SyncVar] public int currNavPointIndex;
 	[SyncVar] private ActionStates actionState;
+	[SyncVar] private FiringStates firingState;
 	private bool isCrouching;
 
 	private Transform spine;
@@ -69,6 +70,8 @@ public class BetaEnemyScript : NetworkBehaviour {
 	private float coverWaitTimer = 0f;
 	// Time to wait to maneuver to another cover position
 	private float coverSwitchPositionsTimer = 0f;
+	// Time to change firing positions
+	private float firingModeTimer = 0f;
 
 	private float wanderStallDelay = -1f;
 	private bool inCover;
@@ -148,6 +151,10 @@ public class BetaEnemyScript : NetworkBehaviour {
 
 		if (alertTimer > 0f) {
 			alertTimer -= Time.deltaTime;
+		}
+
+		if (firingModeTimer > 0f) {
+			firingModeTimer -= Time.deltaTime;
 		}
 
 		// Scout stuff
@@ -279,10 +286,52 @@ public class BetaEnemyScript : NetworkBehaviour {
 		}
 
 		if (actionState == ActionStates.Firing && !inCover) {
-			navMesh.isStopped = true;
-
+			navMesh.speed = 4f;
+			if (firingModeTimer <= 0f) {
+				firingModeTimer = Random.Range (2f, 3.2f);
+				int r = Random.Range (0, 4);
+				if (r == 0) {
+					firingState = FiringStates.StandingStill;
+				} else if (r == 1) {
+					firingState = FiringStates.Forward;
+				} else if (r == 2) {
+					firingState = FiringStates.Backpedal;
+				} else if (r == 3) {
+					firingState = FiringStates.StrafeLeft;
+				} else if (r == 4) {
+					firingState = FiringStates.StrafeRight;
+				}
+			}
 			// TODO: Add behavior for dodging/strafing while shooting
+			if (firingState == FiringStates.StandingStill) {
+				navMesh.isStopped = true;
+			}
 
+			if (firingState == FiringStates.Forward) {
+				navMesh.SetDestination (player.transform.position);
+				navMesh.isStopped = false;
+			}
+
+			if (firingState == FiringStates.Backpedal) {
+				RotateTowards (player.transform.position);
+				//navMesh.SetDestination (new Vector3(transform.position.x, transform.position.y, transform.position.z - 5f));
+				navMesh.SetDestination (transform.forward * -2f);
+				navMesh.isStopped = false;
+			}
+
+			if (firingState == FiringStates.StrafeLeft) {
+				RotateTowards (player.transform.position);
+				//navMesh.SetDestination (new Vector3(transform.position.x - 5f, transform.position.y, transform.position.z));
+				navMesh.SetDestination (transform.right * -2f);
+				navMesh.isStopped = false;
+			}
+
+			if (firingState == FiringStates.StrafeRight) {
+				RotateTowards (player.transform.position);
+				//navMesh.SetDestination (new Vector3(transform.position.x + 5f, transform.position.y, transform.position.z));
+				navMesh.SetDestination (transform.right * 2f);
+				navMesh.isStopped = false;
+			}
 		}
 	}
 
@@ -478,26 +527,44 @@ public class BetaEnemyScript : NetworkBehaviour {
 		}
 
 		if (actionState == ActionStates.Firing || actionState == ActionStates.Reloading || actionState == ActionStates.InCover) {
-			Debug.Log ("isCrouching: " + isCrouching);
+			//Debug.Log ("isCrouching: " + isCrouching);
 			// Set proper animation
-			if (currentBullets > 0) {
-				if (isCrouching) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Crouching"))
-						animator.Play ("Crouching");
-				} else {
+			if (actionState == ActionStates.Firing) {
+				if (firingState == FiringStates.StandingStill) {
 					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Firing"))
 						animator.Play ("Firing");
+				} else if (firingState == FiringStates.Forward) {
+					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Moving"))
+						animator.Play ("Moving");
+				} else if (firingState == FiringStates.Backpedal) {
+					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Backpedal"))
+						animator.Play ("Backpedal");
+				} else if (firingState == FiringStates.StrafeLeft) {
+					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("StrafeLeft"))
+						animator.Play ("StrafeLeft");
+				} else if (firingState == FiringStates.StrafeRight) {
+					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("StrafeRight"))
+						animator.Play ("StrafeRight");
 				}
 			} else {
-				if (isCrouching) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("CrouchReload"))
-						animator.Play ("CrouchReload");
+				if (currentBullets > 0) {
+					if (isCrouching) {
+						if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Crouching"))
+							animator.Play ("Crouching");
+					} else {
+						if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Firing"))
+							animator.Play ("Firing");
+					}
 				} else {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Reloading"))
-						animator.Play ("Reloading");
+					if (isCrouching) {
+						if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("CrouchReload"))
+							animator.Play ("CrouchReload");
+					} else {
+						if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Reloading"))
+							animator.Play ("Reloading");
+					}
 				}
 			}
-
 		}
 
 		if (actionState == ActionStates.Melee) {
