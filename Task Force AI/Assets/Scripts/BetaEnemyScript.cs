@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class BetaEnemyScript : NetworkBehaviour {
 	// Finite state machine states
-	enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking};
+	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking};
 	// FSM used for determining movement while attacking and not in cover
 	enum FiringStates {StandingStill, StrafeLeft, StrafeRight, Backpedal, Forward};
 
@@ -41,6 +41,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 
 	// TODO: Player detection system needs to be refactored for networking
 	private GameObject player;
+	private GameObject playerToHit;
 	private Transform lastSeenPlayerPos;
 	private Animator animator;
 	[SyncVar] public int health;
@@ -51,7 +52,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 	// All patrol pathfinding points for an enemy
 	public GameObject[] navPoints;
 	[SyncVar] public int currNavPointIndex;
-	[SyncVar] private ActionStates actionState;
+	[SyncVar] public ActionStates actionState;
 	[SyncVar] private FiringStates firingState;
 	private bool isCrouching;
 
@@ -157,6 +158,10 @@ public class BetaEnemyScript : NetworkBehaviour {
 			firingModeTimer -= Time.deltaTime;
 		}
 
+		//Debug.Log (isReloading);
+		//Debug.Log ("Firing State: " + firingState);
+		//Debug.Log ("Action State: " + actionState);
+
 		// Scout stuff
 		/**if (coverTimer > 0f && actionState != ActionStates.Idle) {
 			coverTimer -= Time.deltaTime;
@@ -197,6 +202,11 @@ public class BetaEnemyScript : NetworkBehaviour {
 	}
 
 	void HandleMovementPatrol() {
+		// Melee attack trumps all
+		if (actionState == ActionStates.Melee) {
+			navMesh.isStopped = true;
+			return;
+		}
 		// Handle movement for wandering
 		if (actionState == ActionStates.Wander) {
 			navMesh.speed = 1.5f;
@@ -294,15 +304,19 @@ public class BetaEnemyScript : NetworkBehaviour {
 					firingState = FiringStates.StandingStill;
 				} else if (r == 1) {
 					firingState = FiringStates.Forward;
+					navMesh.speed = 4f;
 				} else if (r == 2) {
 					firingState = FiringStates.Backpedal;
+					navMesh.speed = 3f;
 				} else if (r == 3) {
 					firingState = FiringStates.StrafeLeft;
+					navMesh.speed = 2.5f;
 				} else if (r == 4) {
 					firingState = FiringStates.StrafeRight;
+					navMesh.speed = 2.5f;
 				}
 			}
-			// TODO: Add behavior for dodging/strafing while shooting
+
 			if (firingState == FiringStates.StandingStill) {
 				navMesh.isStopped = true;
 			}
@@ -314,22 +328,25 @@ public class BetaEnemyScript : NetworkBehaviour {
 
 			if (firingState == FiringStates.Backpedal) {
 				RotateTowards (player.transform.position);
+				Vector3 oppositeDirVector = player.transform.position - transform.position;
 				//navMesh.SetDestination (new Vector3(transform.position.x, transform.position.y, transform.position.z - 5f));
-				navMesh.SetDestination (transform.forward * -2f);
+				navMesh.SetDestination (new Vector3(-oppositeDirVector.x, oppositeDirVector.y, -oppositeDirVector.z));
 				navMesh.isStopped = false;
 			}
 
 			if (firingState == FiringStates.StrafeLeft) {
 				RotateTowards (player.transform.position);
+				Vector3 rotatedVector = Quaternion.AngleAxis(-90, Vector3.up) * (player.transform.position - transform.position);
 				//navMesh.SetDestination (new Vector3(transform.position.x - 5f, transform.position.y, transform.position.z));
-				navMesh.SetDestination (transform.right * -2f);
+				navMesh.SetDestination (rotatedVector);
 				navMesh.isStopped = false;
 			}
 
 			if (firingState == FiringStates.StrafeRight) {
 				RotateTowards (player.transform.position);
+				Vector3 rotatedVector = Quaternion.AngleAxis(90, Vector3.up) * (player.transform.position - transform.position);
 				//navMesh.SetDestination (new Vector3(transform.position.x + 5f, transform.position.y, transform.position.z));
-				navMesh.SetDestination (transform.right * 2f);
+				navMesh.SetDestination (rotatedVector);
 				navMesh.isStopped = false;
 			}
 		}
@@ -430,17 +447,31 @@ public class BetaEnemyScript : NetworkBehaviour {
 		}
 	}
 
+	void OnTriggerEnter(Collider other) {
+		if (!other.gameObject.tag.Equals ("Player") && !other.gameObject.tag.Equals ("PlayerTesting")) {
+			return;
+		}
+		if (!alerted) {
+			alerted = true;
+		}
+
+		actionState = ActionStates.Melee;
+		playerToHit = other.gameObject;
+	}
+
 	// Decision tree for patrol type enemy
 	void DecideActionPatrol() {
+		// Melee attack trumps all
+		if (actionState == ActionStates.Melee) {
+			return;
+		}
 		// Root - is the enemy alerted by any type of player presence (gunshots, sight, getting shot, other enemies alerted nearby)
-		// TODO: Still in construction
 		if (alerted) {
 			// Scan for enemies
 			PlayerScan();
 			if (player != null) {
 				// If the enemy has seen a player
 				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue) {
-					// TODO: Needs to be updated to include heuristics - if nearby players are firing, then they are more likely to take cover, else, they are more likely to shoot at the players
 					int r = Random.Range (1, 2);
 					if (r == 1) {
 						actionState = ActionStates.Firing;
@@ -529,7 +560,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 		if (actionState == ActionStates.Firing || actionState == ActionStates.Reloading || actionState == ActionStates.InCover) {
 			//Debug.Log ("isCrouching: " + isCrouching);
 			// Set proper animation
-			if (actionState == ActionStates.Firing) {
+			if (actionState == ActionStates.Firing && currentBullets > 0) {
 				if (firingState == FiringStates.StandingStill) {
 					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Firing"))
 						animator.Play ("Firing");
@@ -547,22 +578,13 @@ public class BetaEnemyScript : NetworkBehaviour {
 						animator.Play ("StrafeRight");
 				}
 			} else {
-				if (currentBullets > 0) {
-					if (isCrouching) {
-						if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Crouching"))
-							animator.Play ("Crouching");
-					} else {
-						if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Firing"))
-							animator.Play ("Firing");
-					}
+				navMesh.isStopped = true;
+				if (isCrouching) {
+					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("CrouchReload"))
+						animator.Play ("CrouchReload");
 				} else {
-					if (isCrouching) {
-						if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("CrouchReload"))
-							animator.Play ("CrouchReload");
-					} else {
-						if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Reloading"))
-							animator.Play ("Reloading");
-					}
+					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Reloading"))
+						animator.Play ("Reloading");
 				}
 			}
 		}
@@ -632,9 +654,9 @@ public class BetaEnemyScript : NetworkBehaviour {
 	}
 
 	public void MeleeAttack() {
-		if (player != null) {
-			player.GetComponent<PlayerScript> ().health -= 50;
-			player.transform.GetComponent<PlayerScript> ().hitTimer = 0f;
+		if (playerToHit != null) {
+			playerToHit.GetComponent<PlayerScript> ().health -= 50;
+			playerToHit.GetComponent<PlayerScript> ().hitTimer = 0f;
 		}
 	}
 
