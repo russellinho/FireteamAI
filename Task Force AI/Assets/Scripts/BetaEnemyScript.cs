@@ -336,17 +336,18 @@ public class BetaEnemyScript : NetworkBehaviour {
 
 			if (firingState == FiringStates.StrafeLeft) {
 				RotateTowards (player.transform.position);
-				Vector3 rotatedVector = Quaternion.AngleAxis(-90, Vector3.up) * (player.transform.position - transform.position);
+				//Vector3 rotatedVector = Quaternion.AngleAxis(-90, Vector3.up) * (player.transform.position - transform.position);
 				//navMesh.SetDestination (new Vector3(transform.position.x - 5f, transform.position.y, transform.position.z));
-				navMesh.SetDestination (rotatedVector);
+				//navMesh.SetDestination (rotatedVector);
+				navMesh.SetDestination (transform.right * -2f);
 				navMesh.isStopped = false;
 			}
 
 			if (firingState == FiringStates.StrafeRight) {
 				RotateTowards (player.transform.position);
-				Vector3 rotatedVector = Quaternion.AngleAxis(90, Vector3.up) * (player.transform.position - transform.position);
+				//Vector3 rotatedVector = Quaternion.AngleAxis(90, Vector3.up) * (player.transform.position - transform.position);
 				//navMesh.SetDestination (new Vector3(transform.position.x + 5f, transform.position.y, transform.position.z));
-				navMesh.SetDestination (rotatedVector);
+				navMesh.SetDestination (transform.right * 2f);
 				navMesh.isStopped = false;
 			}
 		}
@@ -471,7 +472,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 			PlayerScan();
 			if (player != null) {
 				// If the enemy has seen a player
-				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue) {
+				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue && actionState != ActionStates.Reloading) {
 					int r = Random.Range (1, 2);
 					if (r == 1) {
 						actionState = ActionStates.Firing;
@@ -486,7 +487,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 				}
 			} else {
 				// If the enemy has not seen a player
-				if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Firing) {
+				if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Firing && actionState != ActionStates.Reloading) {
 					int r = Random.Range (1, 6);
 					if (r > 2) {
 						bool coverFound = DynamicTakeCover ();
@@ -654,9 +655,10 @@ public class BetaEnemyScript : NetworkBehaviour {
 	}
 
 	public void MeleeAttack() {
-		if (playerToHit != null) {
+		if (playerToHit != null && !testingMode) {
 			playerToHit.GetComponent<PlayerScript> ().health -= 50;
 			playerToHit.GetComponent<PlayerScript> ().hitTimer = 0f;
+			playerToHit = null;
 		}
 	}
 
