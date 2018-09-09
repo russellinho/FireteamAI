@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using UnityEngine.Networking;
 
-public class PlayerScript : NetworkBehaviour {
+public class PlayerScript : MonoBehaviour {
 
 	public GameObject gameController;
 
@@ -13,8 +12,8 @@ public class PlayerScript : NetworkBehaviour {
 
 	public int health;
 	private Text healthText;
-	private GameObject hitFlare;
-	private GameObject hitDir;
+	//private GameObject hitFlare;
+	//private GameObject hitDir;
 	public bool isCrouching;
 	public bool canShoot;
 
@@ -38,7 +37,7 @@ public class PlayerScript : NetworkBehaviour {
 
 	public GameObject fpsHands;
 
-	private NetworkManager networkMan;
+	//private NetworkManager networkMan;
 
 	// Level stuff
 	public GameObject[] bombs;
@@ -56,21 +55,21 @@ public class PlayerScript : NetworkBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		if (!isLocalPlayer) {
+		/**if (!isLocalPlayer) {
 			Destroy (GetComponentInChildren<AudioListener>());
 			GetComponentInChildren<Camera> ().enabled = false;
 			return;
-		}
+		}*/
 
 		if (SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetworkTest") || SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
 			bombs = GameObject.FindGameObjectsWithTag ("Bomb");
 		}
 		gameController = GameObject.Find ("GameController");
-		GameControllerScript.playerList.Add (gameObject);
+		//GameControllerScript.playerList.Add (gameObject);
 		isCrouching = false;
 		health = 100;
 		crouchSpeed = 3f;
-		healthText = GameObject.Find ("HealthBar").GetComponent<Text>();
+		//healthText = GameObject.Find ("HealthBar").GetComponent<Text>();
 
 		// Setting original positions to return from crouching
 		charController = GetComponent<CharacterController>();
@@ -83,45 +82,45 @@ public class PlayerScript : NetworkBehaviour {
 		isCrouching = false;
 
 		// Get weapon and ammo UI
-		weaponLabelTxt = GameObject.Find("WeaponLabel").GetComponent<Text>();
-		ammoTxt = GameObject.Find ("AmmoCount").GetComponent<Text>();
+///		weaponLabelTxt = GameObject.Find("WeaponLabel").GetComponent<Text>();
+		//ammoTxt = GameObject.Find ("AmmoCount").GetComponent<Text>();
 		wepScript = gameObject.GetComponent<WeaponScript> ();
-		gameController.GetComponent<GameControllerScript> ().hudMap.SetActive (true);
+		//gameController.GetComponent<GameControllerScript> ().hudMap.SetActive (true);
 		canShoot = true;
 
-		hitFlare = GameObject.Find ("HitFlare");
+		/**hitFlare = GameObject.Find ("HitFlare");
 		hitDir = GameObject.Find ("HitDir");
 		hitFlare.GetComponent<RawImage> ().enabled = false;
-		hitDir.GetComponent<RawImage> ().enabled = false;
+		hitDir.GetComponent<RawImage> ().enabled = false;*/
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if (!isLocalPlayer) {
+		/**if (!isLocalPlayer) {
 			return;
-		}
-		healthText.text = HEALTH_TEXT + health;
+		}*/
+//		healthText.text = HEALTH_TEXT + health;
 
 		Crouch ();
 		BombCheck ();
 		DeathCheck ();
 		// Update UI
-		weaponLabelTxt.text = currWep;
-		ammoTxt.text = "" + wepScript.currentBullets + '/' + wepScript.totalBulletsLeft;
+//		weaponLabelTxt.text = currWep;
+		//ammoTxt.text = "" + wepScript.currentBullets + '/' + wepScript.totalBulletsLeft;
 	}
 
 	void FixedUpdate() {
 		// Hit timer is set to 0 every time the player is hit, if player has been hit recently, make sure the hit flare and dir is set
 		if (hitTimer < 1f) {
-			hitFlare.GetComponent<RawImage> ().enabled = true;
-			hitDir.GetComponent<RawImage> ().enabled = true;
+			//hitFlare.GetComponent<RawImage> ().enabled = true;
+			//hitDir.GetComponent<RawImage> ().enabled = true;
 			hitTimer += Time.deltaTime;
 		} else {
-			hitFlare.GetComponent<RawImage> ().enabled = false;
-			hitDir.GetComponent<RawImage> ().enabled = false;
+			//hitFlare.GetComponent<RawImage> ().enabled = false;
+			//hitDir.GetComponent<RawImage> ().enabled = false;
 			float a = Vector3.Angle (transform.forward,hitLocation);
-			Vector3 temp = hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
-			hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(temp.x,temp.y,a));
+			//Vector3 temp = hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
+			//hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(temp.x,temp.y,a));
 		}
 	}
 
@@ -147,10 +146,10 @@ public class PlayerScript : NetworkBehaviour {
 			bodyScale = bodyScaleOriginal;
 		}
 
-		if (!isServer)
+		/**if (!isServer)
 			CmdCrouch (bodyScale);
 		else
-			RpcCrouch (bodyScale);
+			RpcCrouch (bodyScale);*/
 
 		float lastHeight = charController.height;
 		float lastCameraHeight = fpcPosition.position.y;
@@ -161,15 +160,15 @@ public class PlayerScript : NetworkBehaviour {
 		transform.position = new Vector3 (transform.position.x, transform.position.y + ((charController.height - lastHeight) / 2), transform.position.z);
 	}
 
-	[Command]
+	/**[Command]
 	public void CmdCrouch(float bodyScale) {
 		bodyScaleTrans.localScale = new Vector3 (bodyScaleTrans.localScale.x, bodyScale, bodyScaleTrans.localScale.z);
-	}
+	}*/
 
-	[ClientRpc]
+	/**[ClientRpc]
 	public void RpcCrouch(float bodyScale) {
 		bodyScaleTrans.localScale = new Vector3 (bodyScaleTrans.localScale.x, bodyScale, bodyScaleTrans.localScale.z);
-	}
+	}*/
 
 	void DeathCheck() {
 		if (health <= 0) {
@@ -200,14 +199,14 @@ public class PlayerScript : NetworkBehaviour {
 		}
 	}*/
 
-	public void disconnectFromGame() {
+	/**public void disconnectFromGame() {
 		Debug.Log (1);
 		if (!isServer) {
 			Debug.Log (2);
 			// Disconnect from server
 			NetworkManager.singleton.StopHost();
 		}
-	}
+	}*/
 
 	// If map objective is defusing bombs, this method checks if the player is near any bombs
 	void BombCheck() {

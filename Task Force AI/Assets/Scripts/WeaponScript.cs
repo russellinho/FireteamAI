@@ -1,17 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 
-public class WeaponScript : NetworkBehaviour {
+public class WeaponScript : MonoBehaviour {
 
 	public Animator gunAnimator;
 	public AudioSource audioSource;
 
 	public float range = 100f;
 	public int bulletsPerMag = 30;
-	[SyncVar] public int totalBulletsLeft = 120;
-	[SyncVar] public int currentBullets;
+	public int totalBulletsLeft = 120;
+	public int currentBullets;
 	public AudioClip shootSound;
 	public AudioClip reloadSound;
 
@@ -29,10 +28,10 @@ public class WeaponScript : NetworkBehaviour {
 
 	public enum FireMode {Auto, Semi}
 	public FireMode firingMode;
-	[SyncVar] private bool shootInput;
+	private bool shootInput;
 
 	// Once it equals fireRate, it will allow us to shoot
-	[SyncVar] float fireTimer = 0.0f;
+	float fireTimer = 0.0f;
 
 	// Aiming down sights
 	public Transform originalTrans;
@@ -41,25 +40,22 @@ public class WeaponScript : NetworkBehaviour {
 	// Aiming speed
 	public float aodSpeed = 8f;
 
-	// Network manager reference
-	private NetworkManager networkMan;
-
 	// Use this for initialization
 	void Start () {
 		//gunAnimator = GetComponent<Animator> ();
 		currentBullets = bulletsPerMag;
 		//audioSource = GetComponent<AudioSource> ();
 		originalPos = originalTrans.localPosition;
-		if (isServer) {
+		/**if (isServer) {
 			networkMan = GameObject.Find ("NetworkMan").GetComponent<NetworkManager>();
-		}
+		}*/
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (!isLocalPlayer) {
+		/**if (!isLocalPlayer) {
 			return;
-		}
+		}*/
 		if (Input.GetKeyDown (KeyCode.Q)) {
 			if (firingMode == FireMode.Semi)
 				firingMode = FireMode.Auto;
@@ -79,11 +75,11 @@ public class WeaponScript : NetworkBehaviour {
 		}
 		if (shootInput) {
 			if (currentBullets > 0) {
-				if (!isServer) {
+				/**if (!isServer) {
 					CmdFire ();
 				} else {
 					if (networkMan.numPlayers >= 2) RpcFire ();
-				}
+				}*/
 				Fire ();
 			} else if (totalBulletsLeft > 0) {
 				ReloadAction ();
@@ -94,17 +90,17 @@ public class WeaponScript : NetworkBehaviour {
 				ReloadAction ();
 			}
 		}
-		if (!isServer) CmdRefillFireTimer ();
+		//if (!isServer) CmdRefillFireTimer ();
 		RefillFireTimer ();
 		AimDownSights ();
 	}
 
-	[Command]
+	/**[Command]
 	public void CmdRefillFireTimer() {
 		if (fireTimer < fireRate) {
 			fireTimer += Time.deltaTime;
 		}
-	}
+	}*/
 		
 	public void RefillFireTimer() {
 		if (fireTimer < fireRate) {
@@ -113,18 +109,18 @@ public class WeaponScript : NetworkBehaviour {
 	}
 
 	void FixedUpdate() {
-		if (!isLocalPlayer) {
+		/**if (!isLocalPlayer) {
 			return;
-		}
+		}*/
 		AnimatorStateInfo info = gunAnimator.GetCurrentAnimatorStateInfo (0);
 		isReloading = info.IsName ("Reloading");
 		gunAnimator.SetBool ("Aim", isAiming);
 	}
 
-	[Command]
+	/**[Command]
 	public void CmdAimDownSights(Vector3 p) {
 		originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, p, Time.deltaTime * aodSpeed);
-	}
+	}*/
 
 	public void AimDownSights() {
 		if (Input.GetButton ("Fire2") && !isReloading) {
@@ -136,7 +132,7 @@ public class WeaponScript : NetworkBehaviour {
 		}
 	}
 
-	[ClientRpc]
+	/**[ClientRpc]
 	public void RpcFire() {
 		if (fireTimer < fireRate || currentBullets < 0 || isReloading) {
 			return;
@@ -168,9 +164,9 @@ public class WeaponScript : NetworkBehaviour {
 		currentBullets--;
 		// Reset fire timer
 		fireTimer = 0.0f;
-	}
+	}*/
 
-	[Command]
+	/**[Command]
 	public void CmdFire() {
 		if (fireTimer < fireRate || currentBullets < 0 || isReloading) {
 			return;
@@ -202,7 +198,7 @@ public class WeaponScript : NetworkBehaviour {
 		currentBullets--;
 		// Reset fire timer
 		fireTimer = 0.0f;
-	}
+	}*/
 
 	// Comment
 	public void Fire() {
