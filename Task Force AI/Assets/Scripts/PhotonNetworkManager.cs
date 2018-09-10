@@ -12,6 +12,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 	public GameObject mainCam;
 	public GameObject playerPrefab;
 
+	private char buttonClicked = 'a';
+
 	void Start() {
 		if (SceneManager.GetActiveScene ().name.Equals ("photon-testing-action")) {
 			PhotonNetwork.Instantiate (playerPrefab.name, Vector3.zero, Quaternion.Euler(Vector3.zero));
@@ -19,21 +21,23 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 	}
 
 	public override void OnConnectedToMaster() {
-		Debug.Log ("Connected to master");
-		PhotonNetwork.CreateRoom("bullshit");
-		//PhotonNetwork.ConnectUsingSettings ();
-		//Debug.Log ("Connecting to photon...");
+		if (buttonClicked == 'a') {
+			PhotonNetwork.CreateRoom("bullshit");
+		} else if (buttonClicked == 'b') {
+			PhotonNetwork.JoinRoom ("bullshit");
+		}
+
 		startButton.SetActive(false);
 		mainCam.SetActive (false);
-		//panel.SetActive (true);
+
 	}
 
 	public override void OnJoinedRoom() {
-		if (PhotonNetwork.CurrentRoom.PlayerCount == 1) {
-
+		//if (PhotonNetwork.CurrentRoom.PlayerCount == 1) {
+			PhotonNetwork.AutomaticallySyncScene = true;
 			PhotonNetwork.LoadLevel("photon-testing-action");
 			Instantiate (playerPrefab, Vector3.zero, Quaternion.Euler(Vector3.zero));
-		}
+		//}
 	}
 
 /**	private void OnConnectedToPhoton() {
@@ -51,6 +55,14 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 
 	public void CreateMatch() {
 		PhotonNetwork.GameVersion = "0.1";
-		PhotonNetwork.ConnectUsingSettings();
+		buttonClicked = 'a';
+		PhotonNetwork.ConnectUsingSettings ();
+	}
+
+	public void JoinMatch() {
+		PhotonNetwork.GameVersion = "0.1";
+		buttonClicked = 'b';
+		PhotonNetwork.ConnectUsingSettings ();
+
 	}
 }
