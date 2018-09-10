@@ -33,11 +33,11 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 	}
 
 	public override void OnJoinedRoom() {
-		//if (PhotonNetwork.CurrentRoom.PlayerCount == 1) {
+		if (PhotonNetwork.CurrentRoom.PlayerCount == 1) {
 			PhotonNetwork.AutomaticallySyncScene = true;
 			PhotonNetwork.LoadLevel("photon-testing-action");
-			Instantiate (playerPrefab, Vector3.zero, Quaternion.Euler(Vector3.zero));
-		//}
+			//Instantiate (playerPrefab, Vector3.zero, Quaternion.Euler(Vector3.zero));
+		}
 	}
 
 /**	private void OnConnectedToPhoton() {
