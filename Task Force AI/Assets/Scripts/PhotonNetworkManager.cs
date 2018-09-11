@@ -15,9 +15,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 	private char buttonClicked = 'a';
 
 	void Start() {
-		if (SceneManager.GetActiveScene ().name.Equals ("photon-testing-action")) {
-			PhotonNetwork.Instantiate (playerPrefab.name, Vector3.zero, Quaternion.Euler(Vector3.zero));
-		}
+		DontDestroyOnLoad (this);
+		SceneManager.sceneLoaded += OnSceneFinishedLoading;
 	}
 
 	public override void OnConnectedToMaster() {
@@ -30,6 +29,12 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 		startButton.SetActive(false);
 		mainCam.SetActive (false);
 
+	}
+
+	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
+		if (scene.name.Equals ("photon-testing-action")) {
+			PhotonNetwork.Instantiate (playerPrefab.name, Vector3.zero, Quaternion.Euler(Vector3.zero));
+		}
 	}
 
 	public override void OnJoinedRoom() {
