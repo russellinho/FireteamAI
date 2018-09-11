@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 
 	public GameObject startButton;
+	public GameObject joinButton;
 	public GameObject panel;
 	public GameObject mainCam;
 	public GameObject playerPrefab;
@@ -28,21 +29,21 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 
 		startButton.SetActive(false);
 		mainCam.SetActive (false);
-
+		joinButton.SetActive (false);
 	}
 
 	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
-		if (scene.name.Equals ("photon-testing-action")) {
+		if (scene.name.Equals ("photon-testing-action") && PhotonNetwork.IsMasterClient) {
 			PhotonNetwork.Instantiate (playerPrefab.name, Vector3.zero, Quaternion.Euler(Vector3.zero));
 		}
 	}
 
 	public override void OnJoinedRoom() {
-		if (PhotonNetwork.CurrentRoom.PlayerCount == 1) {
+		//if (PhotonNetwork.CurrentRoom.PlayerCount == 1) {
 			PhotonNetwork.AutomaticallySyncScene = true;
 			PhotonNetwork.LoadLevel("photon-testing-action");
 			//Instantiate (playerPrefab, Vector3.zero, Quaternion.Euler(Vector3.zero));
-		}
+		//}
 	}
 
 /**	private void OnConnectedToPhoton() {

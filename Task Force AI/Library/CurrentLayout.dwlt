@@ -106,9 +106,9 @@ MonoBehaviour:
     width: 1366
     height: 635
   m_MinSize: {x: 679, y: 492}
-  m_MaxSize: {x: 14002, y: 14042}
+  m_MaxSize: {x: 14004, y: 14042}
   vertical: 1
-  controlID: 52
+  controlID: 125
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -130,9 +130,9 @@ MonoBehaviour:
     width: 1366
     height: 635
   m_MinSize: {x: 679, y: 492}
-  m_MaxSize: {x: 14002, y: 14042}
+  m_MaxSize: {x: 14004, y: 14042}
   vertical: 0
-  controlID: 53
+  controlID: 126
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -153,7 +153,7 @@ MonoBehaviour:
     y: 0
     width: 1052
     height: 635
-  m_MinSize: {x: 404, y: 492}
+  m_MinSize: {x: 402, y: 492}
   m_MaxSize: {x: 10002, y: 14042}
   vertical: 1
   controlID: 54
@@ -177,8 +177,8 @@ MonoBehaviour:
     y: 0
     width: 1052
     height: 337
-  m_MinSize: {x: 404, y: 221}
-  m_MaxSize: {x: 8004, y: 4021}
+  m_MinSize: {x: 402, y: 221}
+  m_MaxSize: {x: 8002, y: 4021}
   vertical: 0
   controlID: 55
 --- !u!114 &9
@@ -199,8 +199,8 @@ MonoBehaviour:
     y: 0
     width: 202
     height: 337
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 202, y: 221}
+  m_MaxSize: {x: 4002, y: 4021}
   m_ActualView: {fileID: 14}
   m_Panes:
   - {fileID: 14}
@@ -278,8 +278,8 @@ MonoBehaviour:
     y: 0
     width: 314
     height: 635
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 277, y: 71}
+  m_MaxSize: {x: 4002, y: 4021}
   m_ActualView: {fileID: 20}
   m_Panes:
   - {fileID: 20}
@@ -393,9 +393,9 @@ MonoBehaviour:
   m_PersistentViewDataDictionary: {fileID: 0}
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 
-    m_LastClickedID: 0
-    m_ExpandedIDs: a4f6ffffe6fbffff00000000
+    m_SelectedIDs: 763e0000
+    m_LastClickedID: 15990
+    m_ExpandedIDs: defbffff00000000523e0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -647,9 +647,9 @@ MonoBehaviour:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 716}
-    m_SelectedIDs: f8320000
-    m_LastClickedID: 13048
-    m_ExpandedIDs: 000000001c2c0000462d0000762d00003c2e0000782e0000ce2e00001a2f0000c22f0000ca2f0000e02f0000ec310000f4310000063300000a340000aa340000d83500005e360000883600009e370000783800007a390000da3a0000943b0000ce3b00003a3c0000524000005440000000ca9a3b
+    m_SelectedIDs: fe320000
+    m_LastClickedID: 13054
+    m_ExpandedIDs: 00000000222c00004c2d00007c2d0000422e00007e2e0000d42e0000202f0000c82f0000d02f0000e62f0000f2310000fa3100000c33000010340000b0340000de350000643600008e360000a43700007e38000080390000e03a00009a3b0000d43b0000403c0000544000005640000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -677,7 +677,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000001c2c0000462d0000762d00003c2e0000782e0000ce2e00001a2f0000c22f0000ca2f0000e02f0000ec310000f4310000063300000a340000aa340000d83500005e360000883600009e370000783800007a390000da3a0000943b0000ce3b00003a3c00005240000054400000
+    m_ExpandedIDs: 00000000222c00004c2d00007c2d0000422e00007e2e0000d42e0000202f0000c82f0000d02f0000e62f0000f2310000fa3100000c33000010340000b0340000de350000643600008e360000a43700007e38000080390000e03a00009a3b0000d43b0000403c00005440000056400000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -704,7 +704,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 0
+    m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: 5c1f00008e1f0000080001006e050000be0500001a1e00003e11fbff6874020012c3f9ffd0260000d42300001e240000e2230000ea230000e6230000ee230000f0230000fc230000343a0000242e00003a28000082290000542a0000aa2d0000dc2a0000da660000122800009c49ffff362800002aa8feff664f000084500000a430000034300000e23000005e260000842700002c2b00002c2900006e64ffffc623fbff0cb5feff68290000622b0000302d00008228000002280000702a00004ae1fbff762d00007232000040340000262b0000142e0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
