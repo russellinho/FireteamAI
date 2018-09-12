@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
 
 public class PlayerScript : MonoBehaviour {
 
@@ -55,11 +56,13 @@ public class PlayerScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		/**if (!isLocalPlayer) {
+        if (!GetComponent<PhotonView>().IsMine) {
 			Destroy (GetComponentInChildren<AudioListener>());
 			GetComponentInChildren<Camera> ().enabled = false;
 			return;
-		}*/
+		}
+
+        Debug.Log(GetComponent<Photon.Pun.PhotonView>().ViewID);
 
 		if (SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetworkTest") || SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
 			bombs = GameObject.FindGameObjectsWithTag ("Bomb");
@@ -96,9 +99,9 @@ public class PlayerScript : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		/**if (!isLocalPlayer) {
+        if (!GetComponent<PhotonView>().IsMine) {
 			return;
-		}*/
+		}
 //		healthText.text = HEALTH_TEXT + health;
 
 		Crouch ();
