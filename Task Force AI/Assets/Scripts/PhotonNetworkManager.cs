@@ -33,7 +33,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 	}
 
 	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
-		if (scene.name.Equals ("photon-testing-action")) {
+		if (scene.name.Equals ("photon-testing-action") && PhotonNetwork.LocalPlayer.IsLocal) {
 			PhotonNetwork.Instantiate (playerPrefab.name, Vector3.zero, Quaternion.Euler(Vector3.zero));
 		}
 	}
@@ -41,9 +41,11 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 	public override void OnJoinedRoom() {
         Debug.Log(PhotonNetwork.CurrentRoom.PlayerCount);
 		//if (PhotonNetwork.CurrentRoom.PlayerCount == 1) {
+		//if (PhotonNetwork.IsMasterClient) {
 			PhotonNetwork.AutomaticallySyncScene = true;
 			PhotonNetwork.LoadLevel("photon-testing-action");
 			//Instantiate (playerPrefab, Vector3.zero, Quaternion.Euler(Vector3.zero));
+		//}
 		//}
 	}
 
