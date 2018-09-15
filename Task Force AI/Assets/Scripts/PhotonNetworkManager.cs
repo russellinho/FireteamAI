@@ -60,7 +60,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 	}
 
 	public override void OnJoinedRoom() {
-        Debug.Log(PhotonNetwork.CurrentRoom.PlayerCount);
+        //Debug.Log(PhotonNetwork.CurrentRoom.PlayerCount);
 		//if (PhotonNetwork.CurrentRoom.PlayerCount == 1) {
 		if (PhotonNetwork.IsMasterClient) {
 			PhotonNetwork.LoadLevel("photon-testing-action");

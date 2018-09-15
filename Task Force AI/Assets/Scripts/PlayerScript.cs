@@ -1,101 +1,83 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
+using Photon.Realtime;
 
 public class PlayerScript : MonoBehaviour {
 
+	// Object references
 	public GameObject gameController;
+	private CharacterController charController;
+	private PhotonView photonView;
+	public GameObject fpsHands;
+	private WeaponScript wepScript;
 
-	private const string HEALTH_TEXT = "Health: ";
-
+	// Player variables
+	private string currWep; // TODO: Needs to be changed soon to account for other weps
 	public int health;
-	private Text healthText;
-	//private GameObject hitFlare;
-	//private GameObject hitDir;
 	public bool isCrouching;
 	public bool canShoot;
-
-	private CharacterController charController;
-	private float charHeight;
+	private float charHeightOriginal;
 	private float crouchSpeed;
 
 	public Transform fpcPosition;
 	private float fpcPositionYOriginal;
+
 	public Transform bodyScaleTrans;
 	private float bodyScaleOriginal;
 
-	private float crouchPosY = 0.3f;
-	private float crouchBodyPosY = 0.25f;
-	private float crouchBodyScaleY = 0.66f;
+	private float crouchPosY;
+	private float crouchBodyPosY;
+	private float crouchBodyScaleY;
 
 	private Vector3 alivePosition;
 	private Vector3 deadPosition;
 	private float fraction;
 	private bool rotationSaved;
 
-	public GameObject fpsHands;
-
-	//private NetworkManager networkMan;
-
-	// Level stuff
-	public GameObject[] bombs;
-	private GameObject currentBomb;
-	private int currentBombIndex = 0;
-	private float bombDefuseCounter = 0f;
-
-	private Text weaponLabelTxt;
-	private Text ammoTxt;
-	private string currWep = "AK-47"; // TODO: Needs to be changed soon to account for other weps
-
-	private WeaponScript wepScript;
-	public float hitTimer = 1f;
+	public float hitTimer;
 	public Vector3 hitLocation;
 
 	// Use this for initialization
 	void Start () {
+		// Setting original positions for returning from crouching
+		charController = GetComponent<CharacterController>();
+		charHeightOriginal = charController.height;
+		fpcPositionYOriginal = fpcPosition.localPosition.y;
+		bodyScaleOriginal = bodyScaleTrans.lossyScale.y;
+		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
         if (!GetComponent<PhotonView>().IsMine) {
 			Destroy (GetComponentInChildren<AudioListener>());
 			GetComponentInChildren<Camera> ().enabled = false;
 			enabled = false;
 			return;
 		}
+			
+		photonView = GetComponent<PhotonView> ();
 
-        Debug.Log(GetComponent<Photon.Pun.PhotonView>().ViewID);
-
-		if (SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetworkTest") || SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
-			bombs = GameObject.FindGameObjectsWithTag ("Bomb");
-		}
 		gameController = GameObject.Find ("GameController");
 		//GameControllerScript.playerList.Add (gameObject);
-		isCrouching = false;
-		health = 100;
-		crouchSpeed = 3f;
-		//healthText = GameObject.Find ("HealthBar").GetComponent<Text>();
 
-		// Setting original positions to return from crouching
-		charController = GetComponent<CharacterController>();
-		charHeight = charController.height;
-		fpcPositionYOriginal = fpcPosition.localPosition.y;
-		bodyScaleOriginal = bodyScaleTrans.lossyScale.y;
+		wepScript = gameObject.GetComponent<WeaponScript> ();
+
+		// Initialize variables
+		currWep = "AK-47";
+		health = 100;
+		isCrouching = false;
+		canShoot = true;
+		crouchSpeed = 3f;
+
+		crouchPosY = 0.3f;
+		crouchBodyPosY = 0.25f;
+		crouchBodyScaleY = 0.66f;
 
 		fraction = 0f;
 		rotationSaved = false;
-		isCrouching = false;
 
-		// Get weapon and ammo UI
-///		weaponLabelTxt = GameObject.Find("WeaponLabel").GetComponent<Text>();
-		//ammoTxt = GameObject.Find ("AmmoCount").GetComponent<Text>();
-		wepScript = gameObject.GetComponent<WeaponScript> ();
-		//gameController.GetComponent<GameControllerScript> ().hudMap.SetActive (true);
-		canShoot = true;
+		hitTimer = 1f;
 
-		/**hitFlare = GameObject.Find ("HitFlare");
-		hitDir = GameObject.Find ("HitDir");
-		hitFlare.GetComponent<RawImage> ().enabled = false;
-		hitDir.GetComponent<RawImage> ().enabled = false;*/
 	}
 
 	// Update is called once per frame
@@ -103,43 +85,65 @@ public class PlayerScript : MonoBehaviour {
         if (!GetComponent<PhotonView>().IsMine) {
 			return;
 		}
-//		healthText.text = HEALTH_TEXT + health;
 
 		Crouch ();
-		BombCheck ();
+		//BombCheck ();
 		DeathCheck ();
-		// Update UI
-//		weaponLabelTxt.text = currWep;
-		//ammoTxt.text = "" + wepScript.currentBullets + '/' + wepScript.totalBulletsLeft;
-	}
-
-	void FixedUpdate() {
-		// Hit timer is set to 0 every time the player is hit, if player has been hit recently, make sure the hit flare and dir is set
-		if (hitTimer < 1f) {
-			//hitFlare.GetComponent<RawImage> ().enabled = true;
-			//hitDir.GetComponent<RawImage> ().enabled = true;
-			hitTimer += Time.deltaTime;
-		} else {
-			//hitFlare.GetComponent<RawImage> ().enabled = false;
-			//hitDir.GetComponent<RawImage> ().enabled = false;
-			float a = Vector3.Angle (transform.forward,hitLocation);
-			//Vector3 temp = hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
-			//hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(temp.x,temp.y,a));
-		}
 	}
 
 	public void Crouch() {
-		float h = charHeight;
-		float viewH = fpcPositionYOriginal;
-		//float speed = charController.velocity;
-		float bodyScale = bodyScaleTrans.lossyScale.y;
-
+		bool originalCrouch = isCrouching;
 		if (Input.GetKeyDown (KeyCode.LeftControl)) {
 			isCrouching = !isCrouching;
 		}
 
+		// Collecting the original character height
+		float h = charHeightOriginal;
+		// Collect the original y position of the FPS controller since we're going to move it downwards to crouch
+		float viewH = fpcPositionYOriginal;
+		//float speed = charController.velocity;
+		float bodyScale = bodyScaleTrans.lossyScale.y;
+
 		if (isCrouching) {
-			h = charHeight * .65f;
+			h = charHeightOriginal * .65f;
+			viewH = .55f;
+			bodyScale = .7f;
+			//TODO: Change speed
+			//TODO: Make it impossible to jump
+			//TODO: Make it impossible to sprint
+		} else {
+			viewH = .8f;
+			bodyScale = bodyScaleOriginal;
+		}
+
+		float lastHeight = charController.height;
+		float lastCameraHeight = fpcPosition.position.y;
+		charController.height = Mathf.Lerp (lastHeight, h, 10 * Time.deltaTime);
+		fpcPosition.localPosition = new Vector3 (fpcPosition.localPosition.x, viewH, fpcPosition.localPosition.z);
+		bodyScaleTrans.localScale = new Vector3 (bodyScaleTrans.localScale.x, bodyScale, bodyScaleTrans.localScale.z);
+		//Debug.Log (fpcPosition.position.y);
+		transform.position = new Vector3 (transform.position.x, transform.position.y + ((charController.height - lastHeight) / 2), transform.position.z);
+
+		if (isCrouching != originalCrouch) {
+			photonView.RPC ("RpcCrouch", RpcTarget.OthersBuffered, isCrouching);
+		}
+	}
+
+	/**[Command]
+	public void CmdCrouch(float bodyScale) {
+		bodyScaleTrans.localScale = new Vector3 (bodyScaleTrans.localScale.x, bodyScale, bodyScaleTrans.localScale.z);
+	}*/
+
+	[PunRPC]
+	public void RpcCrouch(bool crouch) {
+		isCrouching = crouch;
+		float h = charHeightOriginal;
+		float viewH = fpcPositionYOriginal;
+		//float speed = charController.velocity;
+		float bodyScale = bodyScaleTrans.lossyScale.y;
+
+		if (isCrouching) {
+			h = charHeightOriginal * .65f;
 			viewH = .55f;
 			bodyScale = .7f;
 			//Change speed
@@ -150,29 +154,13 @@ public class PlayerScript : MonoBehaviour {
 			bodyScale = bodyScaleOriginal;
 		}
 
-		/**if (!isServer)
-			CmdCrouch (bodyScale);
-		else
-			RpcCrouch (bodyScale);*/
-
 		float lastHeight = charController.height;
 		float lastCameraHeight = fpcPosition.position.y;
 		charController.height = Mathf.Lerp (charController.height, h, 10 * Time.deltaTime);
 		fpcPosition.localPosition = new Vector3 (fpcPosition.localPosition.x, viewH, fpcPosition.localPosition.z);
 		bodyScaleTrans.localScale = new Vector3 (bodyScaleTrans.localScale.x, bodyScale, bodyScaleTrans.localScale.z);
-		//Debug.Log (fpcPosition.position.y);
 		transform.position = new Vector3 (transform.position.x, transform.position.y + ((charController.height - lastHeight) / 2), transform.position.z);
 	}
-
-	/**[Command]
-	public void CmdCrouch(float bodyScale) {
-		bodyScaleTrans.localScale = new Vector3 (bodyScaleTrans.localScale.x, bodyScale, bodyScaleTrans.localScale.z);
-	}*/
-
-	/**[ClientRpc]
-	public void RpcCrouch(float bodyScale) {
-		bodyScaleTrans.localScale = new Vector3 (bodyScaleTrans.localScale.x, bodyScale, bodyScaleTrans.localScale.z);
-	}*/
 
 	void DeathCheck() {
 		if (health <= 0) {
@@ -180,8 +168,6 @@ public class PlayerScript : MonoBehaviour {
 			if (!rotationSaved) {
 				alivePosition = new Vector3 (0f, transform.eulerAngles.y, 0f);
 				deadPosition = new Vector3 (-90f, transform.eulerAngles.y, 0f);
-				Debug.Log (alivePosition.y);
-				Debug.Log (deadPosition.y);
 				rotationSaved = true;
 			}
 			GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ().enabled = false;
@@ -192,28 +178,8 @@ public class PlayerScript : MonoBehaviour {
 		}
 	}
 
-	/**	void OnDisconnectedFromServer(NetworkDisconnection info) {
-		if (Network.isServer) {
-			Debug.Log ("Local server connection disconnected");
-		} else {
-			if (info == NetworkDisconnection.LostConnection)
-				Debug.Log ("Lost connection to the server");
-			else
-				Debug.Log ("Successfully diconnected from the server");
-		}
-	}*/
-
-	/**public void disconnectFromGame() {
-		Debug.Log (1);
-		if (!isServer) {
-			Debug.Log (2);
-			// Disconnect from server
-			NetworkManager.singleton.StopHost();
-		}
-	}*/
-
 	// If map objective is defusing bombs, this method checks if the player is near any bombs
-	void BombCheck() {
+	/**void BombCheck() {
 		if (bombs == null) {
 			return;
 		}
@@ -284,6 +250,6 @@ public class PlayerScript : MonoBehaviour {
 				bombDefuseCounter = 0f;
 			}
 		}
-	}
+	}*/
 
 }

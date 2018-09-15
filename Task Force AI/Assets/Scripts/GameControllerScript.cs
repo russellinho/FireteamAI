@@ -33,6 +33,7 @@ public class GameControllerScript : MonoBehaviour {
     private ObjectivesTextScript objectiveFormatter;
 
     // BetaLevelNetworkTest mission variables
+	public GameObject[] bombs;
     public int bombsRemaining;
 
 	private ArrayList missionWaypoints;
@@ -62,6 +63,10 @@ public class GameControllerScript : MonoBehaviour {
 		endGameButton.GetComponent<Button> ().onClick.AddListener (ReturnToMenu);
 		pauseExitBtn.GetComponent<Button> ().onClick.AddListener (ReturnToMenu);
 		pauseResumeBtn.GetComponent<Button> ().onClick.AddListener (Pause);
+
+		if (SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetworkTest") || SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
+			bombs = GameObject.FindGameObjectsWithTag ("Bomb");
+		}
 
         objectiveFormatter = new ObjectivesTextScript();
 		missionWaypoints = new ArrayList ();
