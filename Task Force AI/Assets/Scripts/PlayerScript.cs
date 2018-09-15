@@ -59,6 +59,7 @@ public class PlayerScript : MonoBehaviour {
         if (!GetComponent<PhotonView>().IsMine) {
 			Destroy (GetComponentInChildren<AudioListener>());
 			GetComponentInChildren<Camera> ().enabled = false;
+			enabled = false;
 			return;
 		}
 

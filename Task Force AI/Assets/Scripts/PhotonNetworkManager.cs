@@ -13,10 +13,25 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 	public GameObject mainCam;
 	public GameObject playerPrefab;
 
+	public static GameObject localPlayer;
+
 	private char buttonClicked = 'a';
 
+	public static PhotonNetworkManager instance;
+
+	void Awake()
+	{
+		if(instance != null)
+		{
+			DestroyImmediate(gameObject);
+			return;
+		}
+		DontDestroyOnLoad(gameObject);
+		instance = this;
+		PhotonNetwork.AutomaticallySyncScene = true;
+	}
+
 	void Start() {
-		DontDestroyOnLoad (this);
 		SceneManager.sceneLoaded += OnSceneFinishedLoading;
 	}
 
@@ -33,19 +48,24 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 	}
 
 	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
-		if (scene.name.Equals ("photon-testing-action") && PhotonNetwork.LocalPlayer.IsLocal) {
+		/**if (scene.name.Equals ("photon-testing-action") && PhotonNetwork.LocalPlayer.IsLocal) {
 			PhotonNetwork.Instantiate (playerPrefab.name, Vector3.zero, Quaternion.Euler(Vector3.zero));
-		}
+		}*/
+		if(!PhotonNetwork.InRoom) return;
+
+		localPlayer = PhotonNetwork.Instantiate(
+			"PlayerPho",
+			new Vector3(0,0.5f,0),
+			Quaternion.identity, 0);
 	}
 
 	public override void OnJoinedRoom() {
         Debug.Log(PhotonNetwork.CurrentRoom.PlayerCount);
 		//if (PhotonNetwork.CurrentRoom.PlayerCount == 1) {
-		//if (PhotonNetwork.IsMasterClient) {
-			PhotonNetwork.AutomaticallySyncScene = true;
+		if (PhotonNetwork.IsMasterClient) {
 			PhotonNetwork.LoadLevel("photon-testing-action");
 			//Instantiate (playerPrefab, Vector3.zero, Quaternion.Euler(Vector3.zero));
-		//}
+		}
 		//}
 	}
 
@@ -74,4 +94,14 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 		PhotonNetwork.ConnectUsingSettings ();
 
 	}
+
+	/**void OnLevelWasLoaded(int levelNumber)
+	{
+		if(!PhotonNetwork.InRoom) return;
+
+		localPlayer = PhotonNetwork.Instantiate(
+			"Player",
+			new Vector3(0,0.5f,0),
+			Quaternion.identity, 0);
+	}*/
 }
