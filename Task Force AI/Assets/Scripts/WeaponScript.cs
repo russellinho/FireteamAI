@@ -214,7 +214,7 @@ public class WeaponScript : MonoBehaviour {
 				bloodSpill = Instantiate (bloodEffect, hit.point, Quaternion.FromToRotation (Vector3.forward, hit.normal));
 				bloodSpill.transform.Rotate (180f, 0f, 0f);
 				//Debug.Log ("hes hit");
-				hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health -= (int)damage;
+				hit.transform.gameObject.GetComponent<BetaEnemyScript> ().TakeDamage((int)damage);
 			} else {
 				GameObject hitParticleEffect = Instantiate (hitParticles, hit.point, Quaternion.FromToRotation (Vector3.up, hit.normal));
 				GameObject bulletHoleEffect = Instantiate (bulletImpact, hit.point, Quaternion.FromToRotation (Vector3.forward, hit.normal));

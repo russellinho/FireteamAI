@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine.AI;
 
-public class BetaEnemyScript : NetworkBehaviour {
+public class BetaEnemyScript : MonoBehaviour {
 	// Finite state machine states
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking};
 	// FSM used for determining movement while attacking and not in cover
@@ -32,28 +33,28 @@ public class BetaEnemyScript : NetworkBehaviour {
 	public float fireRate = 0.4f;
 	public float damage = 10f;
 
-	[SyncVar] public EnemyType enemyType;
+	public EnemyType enemyType;
 
 	// Once it equals fireRate, it will allow us to shoot
 	float fireTimer = 0.0f;
 
 	//-----------------------------------------------------
 
-	// TODO: Player detection system needs to be refactored for networking
 	private GameObject player;
 	private GameObject playerToHit;
 	private Transform lastSeenPlayerPos;
 	private Animator animator;
-	[SyncVar] public int health;
+	public int health;
 	private Rigidbody rigid;
 
 	private float rotationSpeed = 6f;
 
 	// All patrol pathfinding points for an enemy
 	public GameObject[] navPoints;
-	[SyncVar] public int currNavPointIndex;
-	[SyncVar] public ActionStates actionState;
-	[SyncVar] private FiringStates firingState;
+	// TODO: SyncVar
+	public ActionStates actionState;
+	// TODO: SyncVar
+	private FiringStates firingState;
 	private bool isCrouching;
 
 	private Transform spine;
@@ -85,6 +86,8 @@ public class BetaEnemyScript : NetworkBehaviour {
 	// Testing mode - set in inspector
 	public bool testingMode;
 
+	private PhotonView pView;
+
 	// Use this for initialization
 	void Start () {
 
@@ -106,6 +109,7 @@ public class BetaEnemyScript : NetworkBehaviour {
 		coverWaitTimer = Random.Range (2f, 7f);
 		coverSwitchPositionsTimer = Random.Range (12f, 18f);
 		inCover = false;
+		pView = GetComponent<PhotonView> ();
 	}
 
 	// Update is called once per frame
@@ -209,27 +213,30 @@ public class BetaEnemyScript : NetworkBehaviour {
 		}
 		// Handle movement for wandering
 		if (actionState == ActionStates.Wander) {
-			navMesh.speed = 1.5f;
-			// Initial spawn value
-			if (wanderStallDelay == -1f) {
-				wanderStallDelay = Random.Range (0f, 7f);
-			}
-			// Take away from the stall delay if the enemy is standing still
-			if (navMesh.isStopped) {
-				wanderStallDelay -= Time.deltaTime;
-			} else {
-				// Else, check if the enemy has reached its destination
-				if (navMeshReachedDestination (0f)) {
-					navMesh.isStopped = true;
+			if (PhotonNetwork.IsMasterClient) {
+				navMesh.speed = 1.5f;
+				// Only server should be updating the delays and they should sync across the network
+				// Initial spawn value
+				if (wanderStallDelay == -1f) {
+					wanderStallDelay = Random.Range (0f, 7f);
 				}
-			}
-			// If the stall delay is done, the enemy needs to move to a wander point
-			if (wanderStallDelay < 0f) {
-				int r = Random.Range (0, navPoints.Length);
-				RotateTowards (navPoints [r].transform.position);
-				navMesh.SetDestination (navPoints [r].transform.position);
-				navMesh.isStopped = false;
-				wanderStallDelay = Random.Range (0f, 7f);
+				// Take away from the stall delay if the enemy is standing still
+				if (navMesh.isStopped) {
+					wanderStallDelay -= Time.deltaTime;
+				} else {
+					// Else, check if the enemy has reached its destination
+					if (navMeshReachedDestination (0f)) {
+						navMesh.isStopped = true;
+					}
+				}
+				// If the stall delay is done, the enemy needs to move to a wander point
+				if (wanderStallDelay < 0f) {
+					int r = Random.Range (0, navPoints.Length);
+					RotateTowards (navPoints [r].transform.position);
+					navMesh.SetDestination (navPoints [r].transform.position);
+					navMesh.isStopped = false;
+					wanderStallDelay = Random.Range (0f, 7f);
+				}
 			}
 		}
 
@@ -810,6 +817,25 @@ public class BetaEnemyScript : NetworkBehaviour {
 				}
 			}
 		}
+	}
+
+	public void TakeDamage(int d) {
+		pView.RPC ("RpcTakeDamage", RpcTarget.AllBuffered, d);
+	}
+
+	[PunRPC]
+	public void RpcTakeDamage(int d) {
+		health -= d;
+	}
+
+	[PunRPC]
+	private void RpcUpdateActionState(ActionStates action) {
+		
+	}
+
+	[PunRPC]
+	private void RpcUpdateFiringState(FiringStates firing) {
+		
 	}
 
 }
