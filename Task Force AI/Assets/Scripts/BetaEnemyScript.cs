@@ -62,7 +62,6 @@ public class BetaEnemyScript : MonoBehaviour {
 	private GameObject[] players;
 
 	private NavMeshAgent navMesh;
-	private AudioSource aud;
 
 	// Timers
 	private float alertTimer = 0f;
@@ -90,6 +89,10 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		if (PhotonNetwork.IsMasterClient) {
+			coverWaitTimer = Random.Range (2f, 7f);
+			coverSwitchPositionsTimer = Random.Range (12f, 18f);
+		}
 
 		player = null;
 		spine = GetComponentInChildren<SpineScript> ().gameObject.transform;
@@ -99,26 +102,24 @@ public class BetaEnemyScript : MonoBehaviour {
 		currentBullets = bulletsPerMag;
 		audioSource = GetComponent<AudioSource> ();
 		rigid = GetComponent<Rigidbody> ();
+		rigid.freezeRotation = true;
 		isCrouching = false;
 		// Get nav points
 		navMesh = GetComponent<NavMeshAgent>();
 		navPoints = GameObject.FindGameObjectsWithTag("PatrolPoint");
-		GetComponent<Rigidbody> ().freezeRotation = true;
-		aud = GetComponent<AudioSource> ();
 		coverTimer = 0f;
-		coverWaitTimer = Random.Range (2f, 7f);
-		coverSwitchPositionsTimer = Random.Range (12f, 18f);
 		inCover = false;
 		pView = GetComponent<PhotonView> ();
+
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die")) {
+		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo (0).IsName ("Die")) {
 			return;
 		}
 		if (!Vector3.Equals (GameControllerTestScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
-			alerted = true;
+			pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, true);
 		}
 		/**Debug.Log (navMesh.destination);
 		Debug.Log (actionState);
@@ -129,10 +130,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		DecideActionPatrolInCombat ();
 
 		//Debug.DrawRay (transform.position, transform.forward * range, Color.blue);
-
-		if (alerted && (range == 10f)) {
-			range *= 1.5f;
-		}
 
 		if (enemyType == EnemyType.Patrol) {
 			DecideActionPatrol ();
@@ -181,17 +178,32 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		if (animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
+		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
 			return;
+		// Handle animations independent of frame rate
 		DecideAnimation ();
 		AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo (0);
 		isReloading = (info.IsName ("Reloading") || info.IsName("CrouchReload"));
 	}
 
 	void LateUpdate() {
-		if (animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
+		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
 			return;
 		// If the enemy sees the player, rotate the enemy towards the player
+		RotateTowardsPlayer();
+
+	}
+
+	// What happens when the enemy is alerted
+	[PunRPC]
+	void RpcSetAlerted(bool b) {
+		alerted = b;
+		if (range == 10f) {
+			range *= 1.5f;
+		}
+	}
+
+	void RotateTowardsPlayer() {
 		if (player != null) {
 			Vector3 rotDir = (player.transform.position - transform.position).normalized;
 			Quaternion lookRot = Quaternion.LookRotation (rotDir);
@@ -202,7 +214,6 @@ public class BetaEnemyScript : MonoBehaviour {
 			//spine.transform.localRotation = Quaternion.Euler (new Vector3 (tempRot.x, 0f, 0f));
 			spine.transform.forward = new Vector3(spine.transform.forward.x, player.transform.position.y - spine.transform.position.y + 0.3f, spine.transform.forward.z);
 		}
-
 	}
 
 	void HandleMovementPatrol() {
@@ -274,9 +285,9 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (navMeshReachedDestination (0.5f)) {
 					bool coverFound = DynamicTakeCover ();
 					if (coverFound) {
-						actionState = ActionStates.TakingCover;
+						pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
 					} else {
-						actionState = ActionStates.InCover;
+						pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.InCover);
 					}
 				}
 			}
@@ -297,7 +308,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					// Done
 					navMesh.isStopped = true;
 					inCover = true;
-					actionState = ActionStates.InCover;
+					pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.InCover);
 				}
 			}
 		}
@@ -308,18 +319,18 @@ public class BetaEnemyScript : MonoBehaviour {
 				firingModeTimer = Random.Range (2f, 3.2f);
 				int r = Random.Range (0, 4);
 				if (r == 0) {
-					firingState = FiringStates.StandingStill;
+					pView.RPC ("RpcUpdateFiringState", RpcTarget.AllBuffered, FiringStates.StandingStill);
 				} else if (r == 1) {
-					firingState = FiringStates.Forward;
+					pView.RPC ("RpcUpdateFiringState", RpcTarget.AllBuffered, FiringStates.Forward);
 					navMesh.speed = 4f;
 				} else if (r == 2) {
-					firingState = FiringStates.Backpedal;
+					pView.RPC ("RpcUpdateFiringState", RpcTarget.AllBuffered, FiringStates.Backpedal);
 					navMesh.speed = 3f;
 				} else if (r == 3) {
-					firingState = FiringStates.StrafeLeft;
+					pView.RPC ("RpcUpdateFiringState", RpcTarget.AllBuffered, FiringStates.StrafeLeft);
 					navMesh.speed = 2.5f;
 				} else if (r == 4) {
-					firingState = FiringStates.StrafeRight;
+					pView.RPC ("RpcUpdateFiringState", RpcTarget.AllBuffered, FiringStates.StrafeRight);
 					navMesh.speed = 2.5f;
 				}
 			}
@@ -386,10 +397,10 @@ public class BetaEnemyScript : MonoBehaviour {
 					bool coverFound = DynamicTakeCover ();
 					if (coverFound) {
 						inCover = false;
-						actionState = ActionStates.TakingCover;
+						pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
 					} else {
 						coverPos = Vector3.negativeInfinity;
-						actionState = ActionStates.InCover;
+						pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.InCover);
 					}
 				}*/
 			}
@@ -398,24 +409,35 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
+	[PunRPC]
+	void RpcPlaySound(AudioClip a) {
+		audioSource.clip = a;
+		audioSource.Play ();
+	}
+
+	[PunRPC]
+	void RpcDie() {
+		GetComponentInChildren<SpriteRenderer> ().enabled = false;
+		//GetComponent<CapsuleCollider> ().isTrigger = true;
+	}
+
 	// Decision tree for scout type enemy
 	void DecideActionScout() {
 		// Check for death first
 		if (health <= 0 && actionState != ActionStates.Dead) {
-			actionState = ActionStates.Dead;
+			pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Dead);
 			// Choose a death sound
 			int r = Random.Range (0, 3);
 			if (r == 0) {
-				aud.clip = (AudioClip)Resources.Load ("Grunts/grunt1");
+				pView.RPC ("RpcPlaySound", RpcTarget.AllBuffered, (AudioClip)Resources.Load ("Grunts/grunt1"));
 			} else if (r == 1) {
-				aud.clip = (AudioClip)Resources.Load ("Grunts/grunt2");
+				pView.RPC ("RpcPlaySound", RpcTarget.AllBuffered, (AudioClip)Resources.Load ("Grunts/grunt2"));
 			} else {
-				aud.clip = (AudioClip)Resources.Load ("Grunts/grunt4");
+				pView.RPC ("RpcPlaySound", RpcTarget.AllBuffered, (AudioClip)Resources.Load ("Grunts/grunt4"));
 			}
-			aud.Play ();
 
-			GetComponentInChildren<SpriteRenderer> ().enabled = false;
-			//GetComponent<CapsuleCollider> ().isTrigger = true;
+			pView.RPC ("RpcDie", RpcTarget.AllBuffered);
+
 			StartCoroutine(Despawn ());
 			return;
 		}
@@ -428,17 +450,17 @@ public class BetaEnemyScript : MonoBehaviour {
 			alertTimer = 10f;
 
 			if (Vector3.Distance (player.transform.position, transform.position) <= 2.3f) {
-				actionState = ActionStates.Melee;
+				pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Melee);
 			} else {
 				if (currentBullets > 0) {
-					actionState = ActionStates.Firing;
+					pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Firing);
 					if (crouchMode == 0)
 						crouchMode = 1;
 					else if (crouchMode == 1)
 						crouchMode = 2;
 					TakeCoverScout ();
 				} else {
-					actionState = ActionStates.Reloading;
+					pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Reloading);
 					crouchMode = 0;
 					TakeCoverScout ();
 				}
@@ -451,19 +473,22 @@ public class BetaEnemyScript : MonoBehaviour {
 				crouchMode = 1;
 				TakeCoverScout ();
 			}
-			actionState = ActionStates.Idle;
+			pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Idle);
 		}
 	}
 
 	void OnTriggerEnter(Collider other) {
+		if (!PhotonNetwork.IsMasterClient) {
+			return;
+		}
 		if (!other.gameObject.tag.Equals ("Player") && !other.gameObject.tag.Equals ("PlayerTesting")) {
 			return;
 		}
 		if (!alerted) {
-			alerted = true;
+			pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, true);
 		}
 
-		actionState = ActionStates.Melee;
+		pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Melee);
 		playerToHit = other.gameObject;
 	}
 
@@ -482,13 +507,13 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue && actionState != ActionStates.Reloading) {
 					int r = Random.Range (1, 2);
 					if (r == 1) {
-						actionState = ActionStates.Firing;
+						pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Firing);
 					} else {
 						bool coverFound = DynamicTakeCover ();
 						if (coverFound) {
-							actionState = ActionStates.TakingCover;
+							pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
 						} else {
-							actionState = ActionStates.InCover;
+							pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.InCover);
 						}
 					}
 				}
@@ -499,12 +524,12 @@ public class BetaEnemyScript : MonoBehaviour {
 					if (r > 2) {
 						bool coverFound = DynamicTakeCover ();
 						if (coverFound) {
-							actionState = ActionStates.TakingCover;
+							pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
 						} else {
-							actionState = ActionStates.InCover;
+							pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.InCover);
 						}
 					} else {
-						actionState = ActionStates.Seeking;
+						pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Seeking);
 					}
 				}
 
@@ -512,18 +537,18 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (actionState == ActionStates.Firing && lastSeenPlayerPos != null) {
 					int r = Random.Range (1, 5);
 					if (r <= 2) {
-						actionState = ActionStates.TakingCover;
+						pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
 					} else {
-						actionState = ActionStates.Pursue;
+						pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Pursue);
 					}
 				}
 			}
 		} else {
 			// Else, wander around the patrol points until alerted or enemy seen
-			actionState = ActionStates.Wander;
+			pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Wander);
 			PlayerScan ();
 			if (player != null) {
-				alerted = true;
+				pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, true);
 			}
 		}
 	}
@@ -680,7 +705,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	IEnumerator Despawn() {
 		yield return new WaitForSeconds(5f);
-		Destroy(gameObject);
+		PhotonNetwork.Destroy (gameObject);
 	}
 
 	// b is the mode the AI is in. 0 means override everything and take cover, 1 is override everything and leave cover
@@ -830,12 +855,12 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	private void RpcUpdateActionState(ActionStates action) {
-		
+		actionState = action;
 	}
 
 	[PunRPC]
 	private void RpcUpdateFiringState(FiringStates firing) {
-		
+		firingState = firing;
 	}
 
 }
