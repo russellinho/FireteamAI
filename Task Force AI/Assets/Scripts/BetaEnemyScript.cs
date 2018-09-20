@@ -141,6 +141,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Shoot at player
 		if (actionState == ActionStates.Firing) {
 			if (currentBullets > 0) {
+               // pView.RPC("Fire", RpcTarget.AllBuffered);
 				Fire ();
 			}
 		}
@@ -178,7 +179,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
+		if (animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
 			return;
 		// Handle animations independent of frame rate
 		DecideAnimation ();
@@ -203,7 +204,13 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
-	void RotateTowardsPlayer() {
+    [PunRPC]
+    void RpcSetIsCrouching(bool b)
+    {
+        isCrouching = b;
+    }
+
+    void RotateTowardsPlayer() {
 		if (player != null) {
 			Vector3 rotDir = (player.transform.position - transform.position).normalized;
 			Quaternion lookRot = Quaternion.LookRotation (rotDir);
@@ -388,7 +395,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (player != null) {
 				// If the cover wait timer has ran out, switch from defensive to offensive and vice versa
 				if (coverWaitTimer <= 0f) {
-					isCrouching = !isCrouching;
+                    pView.RPC("RpcSetIsCrouching", RpcTarget.AllBuffered, !isCrouching);
 					coverWaitTimer = Random.Range (2f, 7f);
 				}
 				// Maneuvering through cover; if the maneuver timer runs out, it's time to move to another cover position
@@ -611,7 +618,10 @@ public class BetaEnemyScript : MonoBehaviour {
 						animator.Play ("StrafeRight");
 				}
 			} else {
-				navMesh.isStopped = true;
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    navMesh.isStopped = true;
+                }
 				if (isCrouching) {
 					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("CrouchReload"))
 						animator.Play ("CrouchReload");
@@ -647,35 +657,40 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (Physics.Raycast (shootPoint.position, dir, out hit)) {
 				GameObject bloodSpill = null;
 				if (hit.transform.tag.Equals ("Player") || hit.transform.tag.Equals ("Human")) {
-					bloodSpill = Instantiate (bloodEffect, hit.point, Quaternion.FromToRotation (Vector3.forward, hit.normal));
+                    bloodSpill = PhotonNetwork.Instantiate(bloodEffect, hit.point, Quaternion.FromToRotation (Vector3.forward, hit.normal));
 					bloodSpill.transform.Rotate (180f, 0f, 0f);
 					Debug.Log (transform.name + " has hit you");
 					if (hit.transform.tag.Equals ("Player")) {
-						hit.transform.GetComponent<PlayerScript> ().health -= (int)damage;
+                        hit.transform.GetComponent<PlayerScript>().TakeDamage((int)damage);
 						hit.transform.GetComponent<PlayerScript> ().hitTimer = 0f;
 						hit.transform.GetComponent<PlayerScript> ().hitLocation = transform.position;
 					} else {
-						hit.transform.GetComponent<BetaEnemyScript> ().health -= (int)damage;
+                        hit.transform.GetComponent<BetaEnemyScript>().TakeDamage((int)damage);
 					}
 				} else {
-					GameObject hitParticleEffect = Instantiate (hitParticles, hit.point, Quaternion.FromToRotation (Vector3.up, hit.normal));
-					GameObject bulletHoleEffect = Instantiate (bulletImpact, hit.point, Quaternion.FromToRotation (Vector3.forward, hit.normal));
+					GameObject hitParticleEffect = PhotonNetwork.Instantiate (hitParticles, hit.point, Quaternion.FromToRotation (Vector3.up, hit.normal));
+					GameObject bulletHoleEffect = PhotonNetwork.Instantiate (bulletImpact, hit.point, Quaternion.FromToRotation (Vector3.forward, hit.normal));
 					bulletHoleEffect.transform.SetParent (hit.transform);
-					Destroy (hitParticleEffect, 1f);
-					Destroy (bulletHoleEffect, 3f);
+                    PhotonNetwork.Destroy (hitParticleEffect, 1f);
+					PhotonNetwork.Destroy (bulletHoleEffect, 3f);
 				}
 				if (bloodSpill != null)
-					Destroy (bloodSpill, 1.5f);
+					PhotonNetwork.Destroy (bloodSpill, 1.5f);
 			}
 		}
 
-		//animator.CrossFadeInFixedTime ("Firing", 0.01f);
-		muzzleFlash.Play ();
-		PlayShootSound ();
-		currentBullets--;
-		// Reset fire timer
-		fireTimer = 0.0f;
+        //animator.CrossFadeInFixedTime ("Firing", 0.01f);
+        pView.RPC("RpcShootAction", RpcTarget.AllBuffered);
 	}
+
+    [PunRPC]
+    void RpcShootAction() {
+        muzzleFlash.Play();
+        PlayShootSound();
+        currentBullets--;
+        // Reset fire timer
+        fireTimer = 0.0f;
+    }
 
 	private void PlayShootSound() {
 		audioSource.PlayOneShot (shootSound);

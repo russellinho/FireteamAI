@@ -91,6 +91,15 @@ public class PlayerScript : MonoBehaviour {
 		DeathCheck ();
 	}
 
+    public void TakeDamage(int d) {
+        photonView.RPC("RpcTakeDamage", RpcTarget.AllBuffered, d);
+    }
+
+    [PunRPC]
+    void RpcTakeDamage(int d) {
+        health -= d;
+    }
+
 	public void Crouch() {
 		bool originalCrouch = isCrouching;
 		if (Input.GetKeyDown (KeyCode.LeftControl)) {
