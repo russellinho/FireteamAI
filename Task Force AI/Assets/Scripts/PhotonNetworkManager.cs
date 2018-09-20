@@ -55,7 +55,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 
 		localPlayer = PhotonNetwork.Instantiate(
 			"PlayerPho",
-			new Vector3(0,0.5f,0),
+			new Vector3(-25f,0.5f,-9f),
 			Quaternion.identity, 0);
 	}
 
@@ -63,7 +63,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
         //Debug.Log(PhotonNetwork.CurrentRoom.PlayerCount);
 		//if (PhotonNetwork.CurrentRoom.PlayerCount == 1) {
 		if (PhotonNetwork.IsMasterClient) {
-			PhotonNetwork.LoadLevel("photon-testing-action");
+			PhotonNetwork.LoadLevel("AITesting2");
 			//Instantiate (playerPrefab, Vector3.zero, Quaternion.Euler(Vector3.zero));
 		}
 		//}

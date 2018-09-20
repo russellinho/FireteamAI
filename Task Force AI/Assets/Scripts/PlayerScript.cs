@@ -261,4 +261,22 @@ public class PlayerScript : MonoBehaviour {
 		}
 	}*/
 
+	public void ResetHitTimer() {
+		photonView.RPC ("RpcResetHitTimer", RpcTarget.AllBuffered);
+	}
+
+	[PunRPC]
+	void RpcResetHitTimer() {
+		hitTimer = 0f;
+	}
+
+	public void SetHitLocation(Vector3 pos) {
+		photonView.RPC ("RpcSetHitLocation", RpcTarget.AllBuffered, pos);
+	}
+
+	[PunRPC]
+	void RpcSetHitLocation(Vector3 pos) {
+		hitLocation = pos;
+	}
+
 }
