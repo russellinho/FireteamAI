@@ -1,11 +1,11 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PhotonNetworkManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\BetaEnemyScript.cs">
     <Files>
-      <File FileName="Assets\Scripts\PlayerScript.cs" Line="273" Column="28" />
+      <File FileName="Assets\Scripts\PlayerScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\GameControllerScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Photon\PhotonUnityNetworking\Code\PhotonNetwork.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PhotonNetworkManager.cs" Line="58" Column="29" />
+      <File FileName="Assets\Photon\PhotonUnityNetworking\Code\PhotonNetwork.cs" Line="2259" Column="1" />
+      <File FileName="Assets\Scripts\PhotonNetworkManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Photon\PhotonUnityNetworking\Demos\PunBasics-Tutorial\Scripts\Launcher.cs" Line="1" Column="1" />
       <File FileName="Assets\Photon\PhotonUnityNetworking\Demos\PunBasics-Tutorial\Scripts\PlayerManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Photon\PhotonUnityNetworking\Demos\PunBasics-Tutorial\Scripts\GameManager.cs" Line="1" Column="1" />
@@ -14,12 +14,16 @@
       <File FileName="Assets\Scripts\FirstPersonController.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\MouseLook.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\WeaponScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\BetaEnemyScript.cs" Line="665" Column="41" />
-      <File FileName="Assets\Scripts\PlayerHUDScript.cs" Line="18" Column="5" />
+      <File FileName="Assets\Scripts\BetaEnemyScript.cs" Line="684" Column="44" />
+      <File FileName="Assets\Scripts\PlayerHUDScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\GameControllerTestScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Photon\PhotonRealtime\Code\LoadbalancingPeer.cs" Line="853" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <RunToCursorBreakpoint file="C:\Users\rncre\TaskForceAI\Task Force AI\Assets\Scripts\BetaEnemyScript.cs" line="677" column="127" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

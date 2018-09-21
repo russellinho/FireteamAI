@@ -639,11 +639,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
-	[PunRPC]
-	void RpcInstantiateBloodSpill(GameObject bloodSpill) {
-		bloodSpill.transform.Rotate (180f, 0f, 0f);
-	}
-
 	private void Fire() {
 		if (fireTimer < fireRate || currentBullets < 0 || isReloading)
 			return;
@@ -662,8 +657,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (Physics.Raycast (shootPoint.position, dir, out hit)) {
 				GameObject bloodSpill = null;
 				if (hit.transform.tag.Equals ("Player") || hit.transform.tag.Equals ("Human")) {
-					bloodSpill = PhotonNetwork.Instantiate(bloodEffect.name, hit.point, Quaternion.FromToRotation (Vector3.forward, hit.normal));
-					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.AllBuffered, bloodSpill);
+					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit);
 
 					Debug.Log (transform.name + " has hit you");
 					if (hit.transform.tag.Equals ("Player")) {
@@ -674,14 +668,9 @@ public class BetaEnemyScript : MonoBehaviour {
                         hit.transform.GetComponent<BetaEnemyScript>().TakeDamage((int)damage);
 					}
 				} else {
-					GameObject hitParticleEffect = PhotonNetwork.Instantiate (hitParticles.name, hit.point, Quaternion.FromToRotation (Vector3.up, hit.normal));
-					GameObject bulletHoleEffect = PhotonNetwork.Instantiate (bulletImpact.name, hit.point, Quaternion.FromToRotation (Vector3.forward, hit.normal));
-					pView.RPC ("RpcSetBulletHoleParent", RpcTarget.AllBuffered, bulletHoleEffect, hit);
-                    PhotonNetwork.Destroy (hitParticleEffect);
-					PhotonNetwork.Destroy (bulletHoleEffect);
+					pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit);
+					pView.RPC ("RpcInstantiateHitParticleEffect", RpcTarget.All, hit);
 				}
-				if (bloodSpill != null)
-					PhotonNetwork.Destroy (bloodSpill);
 			}
 		}
 
@@ -690,8 +679,23 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcSetBulletHoleParent(GameObject bulletHole, RaycastHit par) {
-		bulletHole.transform.SetParent (par.transform);
+	void RpcInstantiateBloodSpill(RaycastHit h) {
+		GameObject bloodSpill = Instantiate(bloodEffect, h.point, Quaternion.FromToRotation (Vector3.forward, h.normal));
+		bloodSpill.transform.Rotate (180f, 0f, 0f);
+		Destroy (bloodSpill, 1.5f);
+	}
+
+	[PunRPC]
+	void RpcInstantiateBulletHole(RaycastHit h) {
+		GameObject bulletHoleEffect = Instantiate (bulletImpact, h.point, Quaternion.FromToRotation (Vector3.forward, h.normal));
+		bulletHoleEffect.transform.SetParent (h.transform);
+		Destroy (bulletHoleEffect, 3f);
+	}
+
+	[PunRPC]
+	void RpcInstantiateHitParticleEffect(RaycastHit h) {
+		GameObject hitParticleEffect = Instantiate (hitParticles, h.point, Quaternion.FromToRotation (Vector3.up, h.normal));
+		Destroy (hitParticleEffect, 1f);
 	}
 
     [PunRPC]

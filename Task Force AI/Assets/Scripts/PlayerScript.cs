@@ -47,6 +47,15 @@ public class PlayerScript : MonoBehaviour {
 		charHeightOriginal = charController.height;
 		fpcPositionYOriginal = fpcPosition.localPosition.y;
 		bodyScaleOriginal = bodyScaleTrans.lossyScale.y;
+
+		if (SceneManager.GetActiveScene ().name.Contains ("Testing")) {
+			gameController = GameObject.Find ("GameControllerTest");
+			GameControllerTestScript.playerList.Add (gameObject);
+		} else {
+			gameController = GameObject.Find ("GameController");
+			GameControllerScript.playerList.Add (gameObject);
+		}
+
 		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
         if (!GetComponent<PhotonView>().IsMine) {
 			Destroy (GetComponentInChildren<AudioListener>());
@@ -56,9 +65,6 @@ public class PlayerScript : MonoBehaviour {
 		}
 			
 		photonView = GetComponent<PhotonView> ();
-
-		gameController = GameObject.Find ("GameController");
-		//GameControllerScript.playerList.Add (gameObject);
 
 		wepScript = gameObject.GetComponent<WeaponScript> ();
 
