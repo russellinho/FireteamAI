@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
 public class WeaponScript : MonoBehaviour {
 
@@ -39,23 +41,22 @@ public class WeaponScript : MonoBehaviour {
 	public Vector3 aimPos;
 	// Aiming speed
 	public float aodSpeed = 8f;
+	private PhotonView pView;
 
 	// Use this for initialization
 	void Start () {
-		//gunAnimator = GetComponent<Animator> ();
+		pView = GetComponent<PhotonView> ();
+		gunAnimator = GetComponent<Animator> ();
 		currentBullets = bulletsPerMag;
-		//audioSource = GetComponent<AudioSource> ();
+		audioSource = GetComponent<AudioSource> ();
 		originalPos = originalTrans.localPosition;
-		/**if (isServer) {
-			networkMan = GameObject.Find ("NetworkMan").GetComponent<NetworkManager>();
-		}*/
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		/**if (!isLocalPlayer) {
+		if (!pView.IsMine) {
 			return;
-		}*/
+		}
 		if (Input.GetKeyDown (KeyCode.Q)) {
 			if (firingMode == FireMode.Semi)
 				firingMode = FireMode.Auto;
@@ -75,11 +76,7 @@ public class WeaponScript : MonoBehaviour {
 		}
 		if (shootInput) {
 			if (currentBullets > 0) {
-				/**if (!isServer) {
-					CmdFire ();
-				} else {
-					if (networkMan.numPlayers >= 2) RpcFire ();
-				}*/
+				// TODO: audio play on clients, reload anim on clients, muzzle flash on clients
 				Fire ();
 			} else if (totalBulletsLeft > 0) {
 				ReloadAction ();
@@ -90,17 +87,9 @@ public class WeaponScript : MonoBehaviour {
 				ReloadAction ();
 			}
 		}
-		//if (!isServer) CmdRefillFireTimer ();
 		RefillFireTimer ();
 		AimDownSights ();
 	}
-
-	/**[Command]
-	public void CmdRefillFireTimer() {
-		if (fireTimer < fireRate) {
-			fireTimer += Time.deltaTime;
-		}
-	}*/
 		
 	public void RefillFireTimer() {
 		if (fireTimer < fireRate) {
@@ -109,18 +98,15 @@ public class WeaponScript : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		/**if (!isLocalPlayer) {
+		if (!pView.IsMine) {
 			return;
-		}*/
-		AnimatorStateInfo info = gunAnimator.GetCurrentAnimatorStateInfo (0);
-		isReloading = info.IsName ("Reloading");
-		gunAnimator.SetBool ("Aim", isAiming);
+		}
+		if (gunAnimator.gameObject.activeSelf) {
+			AnimatorStateInfo info = gunAnimator.GetCurrentAnimatorStateInfo (0);
+			isReloading = info.IsName ("Reloading");
+			gunAnimator.SetBool ("Aim", isAiming);
+		}
 	}
-
-	/**[Command]
-	public void CmdAimDownSights(Vector3 p) {
-		originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, p, Time.deltaTime * aodSpeed);
-	}*/
 
 	public void AimDownSights() {
 		if (Input.GetButton ("Fire2") && !isReloading) {
@@ -131,74 +117,6 @@ public class WeaponScript : MonoBehaviour {
 			isAiming = false;
 		}
 	}
-
-	/**[ClientRpc]
-	public void RpcFire() {
-		if (fireTimer < fireRate || currentBullets < 0 || isReloading) {
-			return;
-		}
-
-		RaycastHit hit;
-		if (Physics.Raycast (shootPoint.position, shootPoint.transform.forward, out hit, range)) {
-			
-			GameObject bloodSpill = null;
-			if (hit.transform.tag.Equals ("Human")) {
-				bloodSpill = Instantiate (bloodEffect, hit.point, Quaternion.FromToRotation (Vector3.forward, hit.normal));
-				bloodSpill.transform.Rotate (180f, 0f, 0f);
-				//hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health -= (int)damage;
-			} else {
-				GameObject hitParticleEffect = Instantiate (hitParticles, hit.point, Quaternion.FromToRotation (Vector3.up, hit.normal));
-				GameObject bulletHoleEffect = Instantiate (bulletImpact, hit.point, Quaternion.FromToRotation (Vector3.forward, hit.normal));
-				bulletHoleEffect.transform.SetParent (hit.transform);
-				Destroy (hitParticleEffect, 1f);
-				Destroy (bulletHoleEffect, 3f);
-			}
-			if (bloodSpill != null)
-				Destroy (bloodSpill, 1.5f);
-		}
-
-		gunAnimator.CrossFadeInFixedTime ("Firing", 0.01f);
-
-		muzzleFlash.Play ();
-		PlayShootSound ();
-		currentBullets--;
-		// Reset fire timer
-		fireTimer = 0.0f;
-	}*/
-
-	/**[Command]
-	public void CmdFire() {
-		if (fireTimer < fireRate || currentBullets < 0 || isReloading) {
-			return;
-		}
-
-		RaycastHit hit;
-		if (Physics.Raycast (shootPoint.position, shootPoint.transform.forward, out hit, range)) {
-			
-			GameObject bloodSpill = null;
-			if (hit.transform.tag.Equals ("Human")) {
-				bloodSpill = Instantiate (bloodEffect, hit.point, Quaternion.FromToRotation (Vector3.forward, hit.normal));
-				bloodSpill.transform.Rotate (180f, 0f, 0f);
-				hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health -= (int)damage;
-			} else {
-				GameObject hitParticleEffect = Instantiate (hitParticles, hit.point, Quaternion.FromToRotation (Vector3.up, hit.normal));
-				GameObject bulletHoleEffect = Instantiate (bulletImpact, hit.point, Quaternion.FromToRotation (Vector3.forward, hit.normal));
-				bulletHoleEffect.transform.SetParent (hit.transform);
-				Destroy (hitParticleEffect, 1f);
-				Destroy (bulletHoleEffect, 3f);
-			}
-			if (bloodSpill != null)
-				Destroy (bloodSpill, 1.5f);
-		}
-
-		gunAnimator.CrossFadeInFixedTime ("Firing", 0.01f);
-
-		muzzleFlash.Play ();
-		PlayShootSound ();
-		currentBullets--;
-		// Reset fire timer
-		fireTimer = 0.0f;
-	}*/
 
 	// Comment
 	public void Fire() {
@@ -211,23 +129,41 @@ public class WeaponScript : MonoBehaviour {
 			
 			GameObject bloodSpill = null;
 			if (hit.transform.tag.Equals ("Human")) {
-				bloodSpill = Instantiate (bloodEffect, hit.point, Quaternion.FromToRotation (Vector3.forward, hit.normal));
-				bloodSpill.transform.Rotate (180f, 0f, 0f);
-				//Debug.Log ("hes hit");
+				pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal);
 				hit.transform.gameObject.GetComponent<BetaEnemyScript> ().TakeDamage((int)damage);
 			} else {
-				GameObject hitParticleEffect = Instantiate (hitParticles, hit.point, Quaternion.FromToRotation (Vector3.up, hit.normal));
-				GameObject bulletHoleEffect = Instantiate (bulletImpact, hit.point, Quaternion.FromToRotation (Vector3.forward, hit.normal));
-				bulletHoleEffect.transform.SetParent (hit.transform);
-				Destroy (hitParticleEffect, 1f);
-				Destroy (bulletHoleEffect, 3f);
+				pView.RPC ("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
+				pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
 			}
-			if (bloodSpill != null)
-				Destroy (bloodSpill, 1.5f);
 		}
+			
+		pView.RPC ("FireEffects", RpcTarget.All);
+	}
 
+	[PunRPC]
+	void RpcInstantiateBloodSpill(Vector3 point, Vector3 normal) {
+		GameObject bloodSpill = Instantiate(bloodEffect, point, Quaternion.FromToRotation (Vector3.forward, normal));
+		bloodSpill.transform.Rotate (180f, 0f, 0f);
+		Destroy (bloodSpill, 1.5f);
+	}
+
+	[PunRPC]
+	void RpcInstantiateBulletHole(Vector3 point, Vector3 normal, string parentName) {
+		GameObject bulletHoleEffect = Instantiate (bulletImpact, point, Quaternion.FromToRotation (Vector3.forward, normal));
+		bulletHoleEffect.transform.SetParent (GameObject.Find(parentName).transform);
+		Destroy (bulletHoleEffect, 3f);
+	}
+
+
+	[PunRPC]
+	void RpcInstantiateHitParticleEffect(Vector3 point, Vector3 normal) {
+		GameObject hitParticleEffect = Instantiate (hitParticles, point, Quaternion.FromToRotation (Vector3.up, normal));
+		Destroy (hitParticleEffect, 1f);
+	}
+
+	[PunRPC]
+	void FireEffects() {
 		gunAnimator.CrossFadeInFixedTime ("Firing", 0.01f);
-
 		muzzleFlash.Play ();
 		PlayShootSound ();
 		currentBullets--;
@@ -243,14 +179,24 @@ public class WeaponScript : MonoBehaviour {
 		int bulletsToDeduct = (totalBulletsLeft >= bulletsToLoad) ? bulletsToLoad : totalBulletsLeft;
 		totalBulletsLeft -= bulletsToDeduct;
 		currentBullets += bulletsToDeduct;
-		audioSource.PlayOneShot (reloadSound);
+		pView.RPC ("RpcPlayReloadSound", RpcTarget.All);
 	}
 		
 	private void ReloadAction() {
-		AnimatorStateInfo info = gunAnimator.GetCurrentAnimatorStateInfo (0);
+		//AnimatorStateInfo info = gunAnimator.GetCurrentAnimatorStateInfo (0);
 		if (isReloading)
 			return;
+		pView.RPC ("RpcReloadAnim", RpcTarget.All);
+	}
+
+	[PunRPC]
+	void RpcReloadAnim() {
 		gunAnimator.CrossFadeInFixedTime ("Reloading", 0.1f);
+	}
+
+	[PunRPC]
+	void RpcPlayReloadSound() {
+		audioSource.PlayOneShot (reloadSound);
 	}
 
 	private void PlayShootSound() {
