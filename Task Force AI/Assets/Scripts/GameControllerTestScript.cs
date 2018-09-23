@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Chat;
 
 public class GameControllerTestScript : MonoBehaviour {
 
-	public static ArrayList playerList = new ArrayList();
 	public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
 
 	// Use this for initialization

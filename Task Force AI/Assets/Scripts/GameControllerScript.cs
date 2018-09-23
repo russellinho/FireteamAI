@@ -7,8 +7,6 @@ using UnityEngine.Networking;
 
 public class GameControllerScript : MonoBehaviour {
 
-	public static ArrayList playerList;
-
 	public GameObject pauseMenuGUI;
 	public Text objectivesText;
 	public GameObject missionText;
@@ -103,7 +101,6 @@ public class GameControllerScript : MonoBehaviour {
 		ToggleActionBar(false);
 		defusingText.enabled = false;
 		hintText.enabled = false;
-		playerList = new ArrayList();
 		missionDisplayed = false;
 		hudMap.SetActive (false);
 		exitPoint = GameObject.Find ("ExitPoint");
@@ -209,7 +206,7 @@ public class GameControllerScript : MonoBehaviour {
 		missionText.SetActive (true);
 	}
 
-	public bool CheckEscape() {
+	/**public bool CheckEscape() {
 		for (int i = 0; i < playerList.Count; i++) {
 			GameObject p = (GameObject) playerList [i];
 			if (p.GetComponent<PlayerScript> ().health <= 0f) {
@@ -236,7 +233,7 @@ public class GameControllerScript : MonoBehaviour {
 		// Show the scoreboard
 		DisableHUD();
 		ToggleScoreboard ();
-	}
+	}*/
 
 	public void DisableHUD() {
 		healthBar.GetComponent<Text> ().enabled = false;

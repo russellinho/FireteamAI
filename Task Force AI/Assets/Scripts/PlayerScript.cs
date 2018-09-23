@@ -15,8 +15,6 @@ public class PlayerScript : MonoBehaviour {
 	private WeaponScript wepScript;
 
 	// Player variables
-	public int playerListIndex;
-
 	private string currWep; // TODO: Needs to be changed soon to account for other weps
 	public int health;
 	public bool isCrouching;
@@ -52,11 +50,8 @@ public class PlayerScript : MonoBehaviour {
 
 		if (SceneManager.GetActiveScene ().name.Contains ("Testing")) {
 			gameController = GameObject.Find ("GameControllerTest");
-			GameControllerTestScript.playerList.Add (gameObject);
-			playerListIndex = GameControllerTestScript.playerList.Count - 1;
 		} else {
 			gameController = GameObject.Find ("GameController");
-			GameControllerScript.playerList.Add (gameObject);
 		}
 
 		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
@@ -281,10 +276,6 @@ public class PlayerScript : MonoBehaviour {
 	[PunRPC]
 	void RpcSetHitLocation(Vector3 pos) {
 		hitLocation = pos;
-	}
-
-	void OnLeftRoom() {
-		GameControllerTestScript.playerList.RemoveAt (playerListIndex);
 	}
 
 }

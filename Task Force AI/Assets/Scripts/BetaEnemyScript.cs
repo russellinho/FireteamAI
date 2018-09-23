@@ -491,12 +491,27 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (!other.gameObject.tag.Equals ("Player") && !other.gameObject.tag.Equals ("PlayerTesting")) {
 			return;
 		}
-		if (!alerted) {
-			pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, true);
-		}
+	
+		// If the player enters the enemy's sight range, determine if the player is in the right angle. If he is and there is no current player to target, then
+		// assign the player and stop searching
+		if (Vector3.Distance(transform.position, other.transform.position) < 2.3f) {
+			if (!alerted) {
+				pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, true);
+			}
 
-		pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Melee);
-		playerToHit = other.gameObject;
+			pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Melee);
+			playerToHit = other.gameObject;
+
+		} else {
+			Vector3 toPlayer = other.transform.position - transform.position;
+			float angleBetween = Vector3.Angle (transform.forward, toPlayer);
+			if (angleBetween <= 60f) {
+				if (!alerted) {
+					pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, true);
+				}
+				player = other.gameObject;
+			}
+		}
 	}
 
 	// Decision tree for patrol type enemy
@@ -823,7 +838,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		return false;
 	}
 
-	void PlayerScan() {
+	/**void PlayerScan() {
 		// If we do not have a target player, try to find one
 		if (testingMode) {
 			if (player == null) {
@@ -873,7 +888,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 			}
 		}
-	}
+	}*/
 
 	public void TakeDamage(int d) {
 		pView.RPC ("RpcTakeDamage", RpcTarget.AllBuffered, d);
