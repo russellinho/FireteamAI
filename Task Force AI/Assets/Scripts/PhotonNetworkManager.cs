@@ -12,6 +12,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 	public GameObject panel;
 	public GameObject mainCam;
 	public GameObject playerPrefab;
+	//public GameControllerTestScript gameController;
 
 	public static GameObject localPlayer;
 
@@ -57,6 +58,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 			"PlayerPho",
 			new Vector3(-25f,0.5f,-9f),
 			Quaternion.identity, 0);
+
+		//gameController = GameObject.Find ("GameControllerTest").GetComponent<GameControllerTestScript>();
 	}
 
 	public override void OnJoinedRoom() {
@@ -68,19 +71,6 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 		}
 		//}
 	}
-
-/**	private void OnConnectedToPhoton() {
-		Debug.Log ("Connected to master");
-		PhotonNetwork.JoinLobby (TypedLobby.Default);
-	}
-
-	private void OnJoinedLobby() {
-		Debug.Log ("Lobby joined");
-	}
-
-	private void OnDisconnectedFromPhoton() {
-		Debug.Log ("Disconnected from photon");
-	}*/
 
 	public void CreateMatch() {
 		PhotonNetwork.GameVersion = "0.1";
@@ -95,13 +85,4 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 
 	}
 
-	/**void OnLevelWasLoaded(int levelNumber)
-	{
-		if(!PhotonNetwork.InRoom) return;
-
-		localPlayer = PhotonNetwork.Instantiate(
-			"Player",
-			new Vector3(0,0.5f,0),
-			Quaternion.identity, 0);
-	}*/
 }

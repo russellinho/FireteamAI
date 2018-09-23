@@ -225,7 +225,6 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	void HandleMovementPatrol() {
 		// Melee attack trumps all
-		Debug.Log("papapa");
 		if (actionState == ActionStates.Melee) {
 			navMesh.isStopped = true;
 			return;

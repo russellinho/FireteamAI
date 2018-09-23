@@ -46,9 +46,7 @@ public class WeaponScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		pView = GetComponent<PhotonView> ();
-		gunAnimator = GetComponent<Animator> ();
 		currentBullets = bulletsPerMag;
-		audioSource = GetComponent<AudioSource> ();
 		originalPos = originalTrans.localPosition;
 	}
 	
@@ -76,7 +74,6 @@ public class WeaponScript : MonoBehaviour {
 		}
 		if (shootInput) {
 			if (currentBullets > 0) {
-				// TODO: audio play on clients, reload anim on clients, muzzle flash on clients
 				Fire ();
 			} else if (totalBulletsLeft > 0) {
 				ReloadAction ();
@@ -137,6 +134,7 @@ public class WeaponScript : MonoBehaviour {
 			}
 		}
 			
+		GameControllerTestScript.lastGunshotHeardPos = transform.position;
 		pView.RPC ("FireEffects", RpcTarget.All);
 	}
 

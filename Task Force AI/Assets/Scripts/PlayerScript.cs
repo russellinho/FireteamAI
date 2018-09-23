@@ -15,6 +15,8 @@ public class PlayerScript : MonoBehaviour {
 	private WeaponScript wepScript;
 
 	// Player variables
+	public int playerListIndex;
+
 	private string currWep; // TODO: Needs to be changed soon to account for other weps
 	public int health;
 	public bool isCrouching;
@@ -51,6 +53,7 @@ public class PlayerScript : MonoBehaviour {
 		if (SceneManager.GetActiveScene ().name.Contains ("Testing")) {
 			gameController = GameObject.Find ("GameControllerTest");
 			GameControllerTestScript.playerList.Add (gameObject);
+			playerListIndex = GameControllerTestScript.playerList.Count - 1;
 		} else {
 			gameController = GameObject.Find ("GameController");
 			GameControllerScript.playerList.Add (gameObject);
@@ -143,11 +146,6 @@ public class PlayerScript : MonoBehaviour {
 			photonView.RPC ("RpcCrouch", RpcTarget.OthersBuffered, isCrouching);
 		}
 	}
-
-	/**[Command]
-	public void CmdCrouch(float bodyScale) {
-		bodyScaleTrans.localScale = new Vector3 (bodyScaleTrans.localScale.x, bodyScale, bodyScaleTrans.localScale.z);
-	}*/
 
 	[PunRPC]
 	public void RpcCrouch(bool crouch) {
@@ -283,6 +281,10 @@ public class PlayerScript : MonoBehaviour {
 	[PunRPC]
 	void RpcSetHitLocation(Vector3 pos) {
 		hitLocation = pos;
+	}
+
+	void OnLeftRoom() {
+		GameControllerTestScript.playerList.RemoveAt (playerListIndex);
 	}
 
 }
