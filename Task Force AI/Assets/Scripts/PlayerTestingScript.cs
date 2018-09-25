@@ -68,7 +68,6 @@ public class PlayerTestingScript : NetworkBehaviour {
 			bombs = GameObject.FindGameObjectsWithTag ("Bomb");
 		}
 		gameController = GameObject.Find ("GameControllerTest");
-		GameControllerTestScript.playerList.Add (gameObject);
 		isCrouching = false;
 		health = 100;
 		crouchSpeed = 3f;

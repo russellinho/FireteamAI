@@ -47,8 +47,9 @@ public class PlayerScript : MonoBehaviour {
 		charHeightOriginal = charController.height;
 		fpcPositionYOriginal = fpcPosition.localPosition.y;
 		bodyScaleOriginal = bodyScaleTrans.lossyScale.y;
+        photonView = GetComponent<PhotonView>();
 
-		if (SceneManager.GetActiveScene ().name.Contains ("Testing")) {
+        if (SceneManager.GetActiveScene ().name.Contains ("Testing")) {
 			gameController = GameObject.Find ("GameControllerTest");
 		} else {
 			gameController = GameObject.Find ("GameController");
@@ -61,8 +62,6 @@ public class PlayerScript : MonoBehaviour {
 			enabled = false;
 			return;
 		}
-			
-		photonView = GetComponent<PhotonView> ();
 
 		wepScript = gameObject.GetComponent<WeaponScript> ();
 

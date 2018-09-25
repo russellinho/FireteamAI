@@ -7,30 +7,12 @@ using UnityEngine.Networking;
 
 public class GameControllerScript : MonoBehaviour {
 
-	public GameObject pauseMenuGUI;
-	public Text objectivesText;
-	public GameObject missionText;
-	public GameObject actionBar;
-	public Text defusingText;
-	public Text hintText;
-	public GameObject hudMap;
-	public GameObject hudWaypoint;
-	public GameObject healthBar;
-	public GameObject ammoCount;
-	public GameObject weaponLabel;
-	public GameObject scoreboard;
-	public GameObject endGameText;
-	public GameObject endGameButton;
-	public GameObject pauseExitBtn;
-	public GameObject pauseResumeBtn;
-	public GameObject pauseOptionsBtn;
-
 	private int currentMap;
 	private bool missionDisplayed;
 
     private ObjectivesTextScript objectiveFormatter;
 
-    // BetaLevelNetworkTest mission variables
+    // Bomb defusal mission variables
 	public GameObject[] bombs;
     public int bombsRemaining;
 
@@ -41,27 +23,6 @@ public class GameControllerScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		// Find stuff
-		pauseMenuGUI = GameObject.Find("PausePanel");
-		objectivesText = GameObject.Find ("ObjectivesText").GetComponent<Text>();
-		missionText = GameObject.Find ("IntroMissionText");
-		actionBar = GameObject.Find ("ActionBar");
-		defusingText = GameObject.Find ("DefusingText").GetComponent<Text>();
-		hintText = GameObject.Find ("HintText").GetComponent<Text>();
-		hudMap = GameObject.Find ("HUDMap");
-		healthBar = GameObject.Find ("HealthBar");
-		ammoCount = GameObject.Find ("AmmoCount");
-		weaponLabel = GameObject.Find ("WeaponLabel");
-		scoreboard = GameObject.Find ("Scoreboard");
-		endGameText = GameObject.Find ("EndGameTxt");
-		endGameButton = GameObject.Find ("EndGameBtn");
-		pauseExitBtn = GameObject.Find ("QuitBtn");
-		pauseResumeBtn = GameObject.Find ("ResumeBtn");
-		pauseOptionsBtn = GameObject.Find ("OptionsBtn");
-		endGameButton.GetComponent<Button> ().onClick.AddListener (ReturnToMenu);
-		pauseExitBtn.GetComponent<Button> ().onClick.AddListener (ReturnToMenu);
-		pauseResumeBtn.GetComponent<Button> ().onClick.AddListener (Pause);
-
 		if (SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetworkTest") || SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
 			bombs = GameObject.FindGameObjectsWithTag ("Bomb");
 		}
@@ -112,101 +73,64 @@ public class GameControllerScript : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		// If the server starts, display the objectives for that mission
-		if (currentMap == 1) {
-			if (!missionDisplayed) {
-				StartCoroutine (ShowMissionText ());
-				missionDisplayed = true;
-			}
-			// Update waypoints
-			if (c == null) {
-				GameObject temp = GameObject.FindWithTag ("MainCamera");
-				if (temp != null) c = temp.GetComponent<Camera> ();
-			}
-			if (bs == null) bs = GameObject.FindGameObjectsWithTag ("Bomb");
-			for (int i = 0; i < missionWaypoints.Count; i++) {
-				if (c == null)
-					break;
-				if (i == missionWaypoints.Count - 1) {
-					float renderCheck = Vector3.Dot ((exitPoint.transform.position - c.transform.position).normalized, c.transform.forward);
-					if (renderCheck <= 0)
-						continue;
-					if (bombsRemaining == 0) {
-						((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled = true;
-						((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ().position = c.WorldToScreenPoint (exitPoint.transform.position);
-					}
-				} else {
-					float renderCheck = Vector3.Dot ((bs [i].transform.position - c.transform.position).normalized, c.transform.forward);
-					if (renderCheck <= 0)
-						continue;
-					if (!bs [i].GetComponent<BombScript> ().defused && c != null) {
-						Vector3 p = new Vector3 (bs [i].transform.position.x,bs [i].transform.position.y + bs[i].transform.lossyScale.y,bs [i].transform.position.z);
-						((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ().position = c.WorldToScreenPoint (p);
-					}
-					if (((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled && bs [i].GetComponent<BombScript> ().defused) {
-						((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled = false;
-					}
-				}
-			}
-			// Check if the mission is over
-			if (bombsRemaining == 0) {
+        // If the server starts, display the objectives for that mission
+        if (currentMap == 1)
+        {
+            if (!missionDisplayed)
+            {
+                StartCoroutine(ShowMissionText());
+                missionDisplayed = true;
+            }
+            // Update waypoints
+            if (c == null)
+            {
+                GameObject temp = GameObject.FindWithTag("MainCamera");
+                if (temp != null) c = temp.GetComponent<Camera>();
+            }
+            if (bs == null) bs = GameObject.FindGameObjectsWithTag("Bomb");
+            for (int i = 0; i < missionWaypoints.Count; i++)
+            {
+                if (c == null)
+                    break;
+                if (i == missionWaypoints.Count - 1)
+                {
+                    float renderCheck = Vector3.Dot((exitPoint.transform.position - c.transform.position).normalized, c.transform.forward);
+                    if (renderCheck <= 0)
+                        continue;
+                    if (bombsRemaining == 0)
+                    {
+                        ((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled = true;
+                        ((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = c.WorldToScreenPoint(exitPoint.transform.position);
+                    }
+                }
+                else
+                {
+                    float renderCheck = Vector3.Dot((bs[i].transform.position - c.transform.position).normalized, c.transform.forward);
+                    if (renderCheck <= 0)
+                        continue;
+                    if (!bs[i].GetComponent<BombScript>().defused && c != null)
+                    {
+                        Vector3 p = new Vector3(bs[i].transform.position.x, bs[i].transform.position.y + bs[i].transform.lossyScale.y, bs[i].transform.position.z);
+                        ((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = c.WorldToScreenPoint(p);
+                    }
+                    if (((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled && bs[i].GetComponent<BombScript>().defused)
+                    {
+                        ((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled = false;
+                    }
+                }
+            }
+            // Check if the mission is over
+            /**if (bombsRemaining == 0) {
 				if (CheckEscape ()) {
 					// If they can escape, end the game and bring up the stat board
 					EndGame();
 				}
-			}
-		}
-
-		if (Input.GetKeyDown(KeyCode.Escape) && !scoreboard.GetComponent<Image>().enabled) 
-			Pause ();
-
-		if (pauseMenuGUI.activeInHierarchy || endGameText.activeInHierarchy) {
-			Cursor.lockState = CursorLockMode.None;
-			Cursor.visible = true;
-		} else {
-			Cursor.lockState = CursorLockMode.Locked;
-			Cursor.visible = false;
-		}
+			}*/
+        }
 
 	}
 
-	void Pause () {
-		if (!pauseMenuGUI.activeInHierarchy) {
-			pauseMenuGUI.SetActive (true);
-		} else {
-			pauseMenuGUI.SetActive (false);
-		}
-	}
-
-	IEnumerator ShowMissionText() {
-		yield return new WaitForSeconds (5f);
-		missionText.SetActive (true);
-	}
-
-	public void ToggleActionBar(bool enable) {
-		int c = actionBar.GetComponentsInChildren<Image>().Length;
-		if (!enable) {
-			// Disable all actionbar components
-			for (int i = 0; i < c; i++) {
-				actionBar.GetComponentsInChildren<Image> () [i].enabled = false;
-			}
-		} else {
-			for (int i = 0; i < c; i++) {
-				actionBar.GetComponentsInChildren<Image> () [i].enabled = true;
-			}
-		}
-	}
-
-	public void UpdateObjectives() {
-		objectivesText.text = objectiveFormatter.LoadObjectives(currentMap, bombsRemaining);
-	}
-
-	public void EscapePopup() {
-		missionText.GetComponent<Text> ().text = "Escape available! Head to the waypoint!";
-		missionText.SetActive (true);
-	}
-
-	/**public bool CheckEscape() {
+	public bool CheckEscape() {
 		for (int i = 0; i < playerList.Count; i++) {
 			GameObject p = (GameObject) playerList [i];
 			if (p.GetComponent<PlayerScript> ().health <= 0f) {
@@ -233,24 +157,6 @@ public class GameControllerScript : MonoBehaviour {
 		// Show the scoreboard
 		DisableHUD();
 		ToggleScoreboard ();
-	}*/
-
-	public void DisableHUD() {
-		healthBar.GetComponent<Text> ().enabled = false;
-		weaponLabel.GetComponent<Text> ().enabled = false;
-		ammoCount.GetComponent<Text> ().enabled = false;
-		hudMap.SetActive (false);
-	}
-
-	public void ToggleScoreboard() {
-		scoreboard.GetComponent<Image> ().enabled = true;
-		endGameText.SetActive (true);
-		endGameButton.SetActive (true);
-	}
-
-	public void ReturnToMenu() {
-		SceneManager.LoadScene ("Title");
-		GameObject.Find ("NetworkMan").GetComponent<NetworkManager> ().StopHost ();
 	}
 
 }

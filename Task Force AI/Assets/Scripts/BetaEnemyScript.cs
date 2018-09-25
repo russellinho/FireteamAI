@@ -451,7 +451,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		// Continue with decision tree
 		// Scan for a target player
-		PlayerScan();
+		//PlayerScan();
 		// Sees a player?
 		if (player != null) {
 			alertTimer = 10f;
@@ -523,7 +523,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Root - is the enemy alerted by any type of player presence (gunshots, sight, getting shot, other enemies alerted nearby)
 		if (alerted) {
 			// Scan for enemies
-			PlayerScan();
+		//	PlayerScan();
 			if (player != null) {
 				// If the enemy has seen a player
 				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue && actionState != ActionStates.Reloading) {
@@ -568,7 +568,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		} else {
 			// Else, wander around the patrol points until alerted or enemy seen
 			pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Wander);
-			PlayerScan ();
+		//	PlayerScan ();
 			if (player != null) {
 				pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, true);
 			}
