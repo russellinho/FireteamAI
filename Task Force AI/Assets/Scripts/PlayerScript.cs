@@ -15,7 +15,7 @@ public class PlayerScript : MonoBehaviour {
 	private WeaponScript wepScript;
 
 	// Player variables
-	private string currWep; // TODO: Needs to be changed soon to account for other weps
+	public string currWep; // TODO: Needs to be changed soon to account for other weps
 	public int health;
 	public bool isCrouching;
 	public bool canShoot;

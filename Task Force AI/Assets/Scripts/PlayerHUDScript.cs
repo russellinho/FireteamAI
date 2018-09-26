@@ -4,8 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using UnityEngine.SceneManagement;
 
 public class PlayerHUDScript : MonoBehaviour {
+
+	// Player reference
+	private PlayerScript playerScript;
+	private WeaponScript wepScript;
+	private GameControllerScript gameController;
 
     // Health HUD
     private const string HEALTH_TEXT = "Health: ";
@@ -24,8 +30,6 @@ public class PlayerHUDScript : MonoBehaviour {
     public GameObject endGameText;
     public GameObject endGameButton;
 
-    // Menu HUD
-
     // Hit indication HUD
     private GameObject hitFlare;
     private GameObject hitDir;
@@ -33,6 +37,7 @@ public class PlayerHUDScript : MonoBehaviour {
     // Map HUD
     public GameObject hudMap;
     public GameObject hudWaypoint;
+	private ArrayList missionWaypoints;
 
     // On-screen indication HUD
     public Text objectivesText;
@@ -40,72 +45,154 @@ public class PlayerHUDScript : MonoBehaviour {
     public GameObject actionBar;
     public Text defusingText;
     public Text hintText;
+	private ObjectivesTextScript objectiveFormatter;
 
     // Use this for initialization
     void Start () {
         if (!GetComponent<PhotonView>().IsMine) {
             this.enabled = false;
         }
-
-		hitFlare = GameObject.Find ("HitFlare");
-		hitDir = GameObject.Find ("HitDir");
+			
 		hitFlare.GetComponent<RawImage> ().enabled = false;
 		hitDir.GetComponent<RawImage> ().enabled = false;
 
-		healthText = GameObject.Find ("HealthBar").GetComponent<Text>();
-		weaponLabelTxt = GameObject.Find("WeaponLabel").GetComponent<Text>();
-		ammoTxt = GameObject.Find ("AmmoCount").GetComponent<Text>();
-        hudMap = GameObject.Find("HUDMap");
+		pauseMenuGUI.SetActive (false);
+		ToggleActionBar(false);
+		defusingText.enabled = false;
+		hintText.enabled = false;
+		scoreboard.GetComponent<Image> ().enabled = false;
+		endGameText.SetActive (false);
+		endGameButton.SetActive (false);
+
 		hudMap.SetActive (true);
+
+		playerScript = GetComponent<PlayerScript> ();
+		wepScript = GetComponent<WeaponScript> ();
+
+		objectiveFormatter = new ObjectivesTextScript();
+		if (SceneManager.GetActiveScene().name.Equals("BetaLevelNetworkTest") || SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
+			gameController.bombsRemaining = 4;
+			gameController.currentMap = 1;
+			objectivesText.text = objectiveFormatter.LoadObjectives(gameController.currentMap, gameController.bombsRemaining);
+
+			GameObject m1 = GameObject.Instantiate (hudWaypoint);
+			m1.GetComponent<RectTransform> ().SetParent (hudMap.transform.parent);
+			GameObject m2 = GameObject.Instantiate (hudWaypoint);
+			m2.GetComponent<RectTransform> ().SetParent (hudMap.transform.parent);
+			GameObject m3 = GameObject.Instantiate (hudWaypoint);
+			m3.GetComponent<RectTransform> ().SetParent (hudMap.transform.parent);
+			GameObject m4 = GameObject.Instantiate (hudWaypoint);
+			m4.GetComponent<RectTransform> ().SetParent (hudMap.transform.parent);
+			GameObject m5 = GameObject.Instantiate (hudWaypoint);
+			m5.GetComponent<RectTransform> ().SetParent (hudMap.transform.parent);
+			m5.GetComponent<RawImage> ().enabled = false;
+
+			missionWaypoints.Add (m1);
+			missionWaypoints.Add (m2);
+			missionWaypoints.Add (m3);
+			missionWaypoints.Add (m4);
+			missionWaypoints.Add (m5);
+
+			StartCoroutine(ShowMissionText());
+
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        healthText.text = HEALTH_TEXT + health;
+		healthText.text = (healthText ? HEALTH_TEXT + playerScript.health : "");
 
 		// Update UI
-		weaponLabelTxt.text = currWep;
+		weaponLabelTxt.text = playerScript.currWep;
 		ammoTxt.text = "" + wepScript.currentBullets + '/' + wepScript.totalBulletsLeft;
+		if (!gameController.gameOver) {
+			UpdateWaypoints ();
+		} else {
+			missionWaypoints = null;
+		}
 
-        if (Input.GetKeyDown(KeyCode.Escape) && !scoreboard.GetComponent<Image>().enabled)
-            Pause();
+		UpdateCursorStatus ();
 
-        if (pauseMenuGUI.activeInHierarchy || endGameText.activeInHierarchy)
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
+		if (gameController.gameOver && healthText.enabled) {
+			DisableHUD();
+			ToggleScoreboard ();
+		}
     }
 
 	void FixedUpdate() {
 		UpdateHitFlare();
 	}
 
+	void UpdateCursorStatus() {
+		if (Input.GetKeyDown(KeyCode.Escape) && !scoreboard.GetComponent<Image>().enabled)
+			Pause();
+
+		if (pauseMenuGUI.activeInHierarchy || endGameText.activeInHierarchy)
+		{
+			Cursor.lockState = CursorLockMode.None;
+			Cursor.visible = true;
+		}
+		else
+		{
+			Cursor.lockState = CursorLockMode.Locked;
+			Cursor.visible = false;
+		}
+	}
+
+	void UpdateWaypoints() {
+		for (int i = 0; i < missionWaypoints.Count; i++)
+		{
+			if (gameController.c == null)
+				break;
+			if (i == missionWaypoints.Count - 1)
+			{
+				float renderCheck = Vector3.Dot((gameController.exitPoint.transform.position - gameController.c.transform.position).normalized, gameController.c.transform.forward);
+				if (renderCheck <= 0)
+					continue;
+				if (gameController.bombsRemaining == 0)
+				{
+					((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled = true;
+					((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = gameController.c.WorldToScreenPoint(gameController.exitPoint.transform.position);
+				}
+			}
+			else
+			{
+				float renderCheck = Vector3.Dot((gameController.bombs[i].transform.position - gameController.c.transform.position).normalized, gameController.c.transform.forward);
+				if (renderCheck <= 0)
+					continue;
+				if (!gameController.bombs[i].GetComponent<BombScript>().defused && c != null)
+				{
+					Vector3 p = new Vector3(gameController.bombs[i].transform.position.x, gameController.bombs[i].transform.position.y + gameController.bombs[i].transform.lossyScale.y, gameController.bombs[i].transform.position.z);
+					((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = gameController.c.WorldToScreenPoint(p);
+				}
+				if (((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled && gameController.bombs[i].GetComponent<BombScript>().defused)
+				{
+					((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled = false;
+				}
+			}
+		}
+	}
+
 	void UpdateHitFlare() {
 		// Hit timer is set to 0 every time the player is hit, if player has been hit recently, make sure the hit flare and dir is set
-		if (hitTimer < 1f) {
-			//hitFlare.GetComponent<RawImage> ().enabled = true;
-			//hitDir.GetComponent<RawImage> ().enabled = true;
-			hitTimer += Time.deltaTime;
+		if (playerScript.hitTimer < 1f) {
+			hitFlare.GetComponent<RawImage> ().enabled = true;
+			hitDir.GetComponent<RawImage> ().enabled = true;
+			playerScript.hitTimer += Time.deltaTime;
 		} else {
-			//hitFlare.GetComponent<RawImage> ().enabled = false;
-			//hitDir.GetComponent<RawImage> ().enabled = false;
-			float a = Vector3.Angle (transform.forward,hitLocation);
-			//Vector3 temp = hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
-			//hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(temp.x,temp.y,a));
+			hitFlare.GetComponent<RawImage> ().enabled = false;
+			hitDir.GetComponent<RawImage> ().enabled = false;
+			float a = Vector3.Angle (transform.forward, playerScript.hitLocation);
+			Vector3 temp = hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
+			hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(temp.x,temp.y,a));
 		}
 	}
 
     public void DisableHUD()
     {
-        healthBar.GetComponent<Text>().enabled = false;
-        weaponLabel.GetComponent<Text>().enabled = false;
-        ammoCount.GetComponent<Text>().enabled = false;
+        healthText.enabled = false;
+        weaponLabelTxt.enabled = false;
+        ammoTxt.enabled = false;
         hudMap.SetActive(false);
     }
 
@@ -119,7 +206,7 @@ public class PlayerHUDScript : MonoBehaviour {
     public void ReturnToMenu()
     {
         SceneManager.LoadScene("Title");
-        GameObject.Find("NetworkMan").GetComponent<NetworkManager>().StopHost();
+		PhotonNetwork.Disconnect ();
     }
 
     void Pause()
@@ -136,7 +223,7 @@ public class PlayerHUDScript : MonoBehaviour {
 
     IEnumerator ShowMissionText()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(7f);
         missionText.SetActive(true);
     }
 
@@ -162,7 +249,7 @@ public class PlayerHUDScript : MonoBehaviour {
 
     public void UpdateObjectives()
     {
-        objectivesText.text = objectiveFormatter.LoadObjectives(currentMap, bombsRemaining);
+        objectivesText.text = objectiveFormatter.LoadObjectives(gameController.currentMap, gameController.bombsRemaining);
     }
 
     public void EscapePopup()
