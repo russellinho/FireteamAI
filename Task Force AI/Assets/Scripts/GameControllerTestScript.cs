@@ -5,7 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using Photon.Chat;
 
-public class GameControllerTestScript : MonoBehaviour {
+public class GameControllerTestScript : MonoBehaviourPunCallbacks {
 
 	public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
 

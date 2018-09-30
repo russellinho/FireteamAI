@@ -21,6 +21,7 @@ public class PlayerScript : MonoBehaviour {
 	public bool canShoot;
 	private float charHeightOriginal;
 	private float crouchSpeed;
+	private bool escapeValueSent;
 
 	public Transform fpcPosition;
 	private float fpcPositionYOriginal;
@@ -48,6 +49,7 @@ public class PlayerScript : MonoBehaviour {
 		fpcPositionYOriginal = fpcPosition.localPosition.y;
 		bodyScaleOriginal = bodyScaleTrans.lossyScale.y;
         photonView = GetComponent<PhotonView>();
+		escapeValueSent = false;
 
         if (SceneManager.GetActiveScene ().name.Contains ("Testing")) {
 			gameController = GameObject.Find ("GameControllerTest");
@@ -275,6 +277,25 @@ public class PlayerScript : MonoBehaviour {
 	[PunRPC]
 	void RpcSetHitLocation(Vector3 pos) {
 		hitLocation = pos;
+	}
+
+	void DetermineEscaped() {
+		if (gameController.GetComponent<GameControllerScript>().escapeAvailable) {
+			if (!escapeValueSent) {
+				escapeValueSent = true;
+				// If dead, 
+				if (health <= 0) {
+					gameController.GetComponent<GameControllerScript> ().IncrementDeathCount ();
+				} else {
+					gameController.GetComponent<GameControllerScript> ().IncrementEscapeCount ();
+				}
+			}
+		}
+	}
+
+	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
+	public override void OnPlayerLeftRoom(Player otherPlayer) {
+		escapeValueSent = false;
 	}
 
 }

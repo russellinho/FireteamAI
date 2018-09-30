@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using Photon.Pun;
+using Photon.Realtime;
 
 public class GameControllerScript : MonoBehaviour {
 
@@ -13,9 +15,15 @@ public class GameControllerScript : MonoBehaviour {
 	public GameObject[] bombs;
     public int bombsRemaining;
 	public bool gameOver;
+	public bool escapeAvailable;
 
 	public Camera c;
 	public GameObject exitPoint;
+
+	public int deadCount;
+	public int escaperCount;
+
+	private PhotonView pView;
 
 	// Use this for initialization
 	void Start () {
@@ -24,6 +32,10 @@ public class GameControllerScript : MonoBehaviour {
 		}
 		gameOver = false;
 		exitPoint = GameObject.Find ("ExitPoint");
+		deadCount = 0;
+		escaperCount = 0;
+		escapeAvailable = false;
+		pView = GetComponent<PhotonView> ();
 
 	}
 
@@ -53,16 +65,10 @@ public class GameControllerScript : MonoBehaviour {
 	}
 
 	public bool CheckEscape() {
-		for (int i = 0; i < playerList.Count; i++) {
-			GameObject p = (GameObject) playerList [i];
-			if (p.GetComponent<PlayerScript> ().health <= 0f) {
-				continue;
-			}
-			if (p.transform.position.y < exitPoint.transform.position.y - 0.5f || Vector3.Distance (p.transform.position, exitPoint.transform.position) > 5f) {
-				return false;
-			}
+		if (deadCount + escaperCount == PhotonNetwork.CurrentRoom.PlayerCount) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	void EndGame() {
@@ -77,6 +83,38 @@ public class GameControllerScript : MonoBehaviour {
 			es[i].GetComponent<PlayerScript> ().canShoot = false;
 		}
 
+	}
+
+	public void IncrementDeathCount() {
+		pView.RPC ("RpcIncrementDeathCount", RpcTarget.MasterClient);
+	}
+
+	[PunRPC]
+	void RpcIncrementDeathCount() {
+		deadCount++;
+	}
+
+	public void IncrementEscapeCount() {
+		pView.RPC ("RpcIncrementEscapeCount", RpcTarget.MasterClient);
+	}
+
+	[PunRPC]
+	void RpcIncrementEscapeCount() {
+		escaperCount++;
+	}
+
+	// When someone leaves the game in the middle of an escape, reset the values to recount
+	void ResetEscapeValues() {
+		deadCount = 0;
+		escaperCount = 0;
+	}
+
+	public override void OnPlayerLeftRoom(Player otherPlayer) {
+		ResetEscapeValues ();
+	}
+
+	public override void OnPlayerEnteredRoom(Player newPlayer) {
+		Debug.Log (newPlayer.NickName + " has joined the room");
 	}
 
 }

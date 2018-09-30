@@ -160,7 +160,7 @@ public class PlayerHUDScript : MonoBehaviour {
 				float renderCheck = Vector3.Dot((gameController.bombs[i].transform.position - gameController.c.transform.position).normalized, gameController.c.transform.forward);
 				if (renderCheck <= 0)
 					continue;
-				if (!gameController.bombs[i].GetComponent<BombScript>().defused && c != null)
+				if (!gameController.bombs[i].GetComponent<BombScript>().defused && gameController.c != null)
 				{
 					Vector3 p = new Vector3(gameController.bombs[i].transform.position.x, gameController.bombs[i].transform.position.y + gameController.bombs[i].transform.lossyScale.y, gameController.bombs[i].transform.position.z);
 					((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = gameController.c.WorldToScreenPoint(p);
