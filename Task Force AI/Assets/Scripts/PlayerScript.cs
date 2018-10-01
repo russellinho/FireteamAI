@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class PlayerScript : MonoBehaviour {
+public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	// Object references
 	public GameObject gameController;
@@ -51,12 +51,6 @@ public class PlayerScript : MonoBehaviour {
         photonView = GetComponent<PhotonView>();
 		escapeValueSent = false;
 
-        if (SceneManager.GetActiveScene ().name.Contains ("Testing")) {
-			gameController = GameObject.Find ("GameControllerTest");
-		} else {
-			gameController = GameObject.Find ("GameController");
-		}
-
 		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
         if (!GetComponent<PhotonView>().IsMine) {
 			Destroy (GetComponentInChildren<AudioListener>());
@@ -87,6 +81,9 @@ public class PlayerScript : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		if (gameController == null) {
+			gameController = GameObject.Find ("GameController");
+		}
         if (!GetComponent<PhotonView>().IsMine) {
 			return;
 		}
@@ -94,6 +91,7 @@ public class PlayerScript : MonoBehaviour {
 		Crouch ();
 		//BombCheck ();
 		DeathCheck ();
+		DetermineEscaped ();
 	}
 
     public void TakeDamage(int d) {
@@ -280,7 +278,7 @@ public class PlayerScript : MonoBehaviour {
 	}
 
 	void DetermineEscaped() {
-		if (gameController.GetComponent<GameControllerScript>().escapeAvailable) {
+		if (gameController.GetComponent<GameControllerScript> ().escapeAvailable) {
 			if (!escapeValueSent) {
 				escapeValueSent = true;
 				// If dead, 

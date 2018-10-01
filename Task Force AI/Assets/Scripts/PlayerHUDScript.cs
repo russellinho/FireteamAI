@@ -31,7 +31,7 @@ public class PlayerHUDScript : MonoBehaviour {
     public GameObject endGameButton;
 
     // Hit indication HUD
-    private GameObject hitFlare;
+    public GameObject hitFlare;
     private GameObject hitDir;
 
     // Map HUD
@@ -52,7 +52,9 @@ public class PlayerHUDScript : MonoBehaviour {
         if (!GetComponent<PhotonView>().IsMine) {
             this.enabled = false;
         }
-			
+		// Find/load HUD components
+		LoadHUDComponents ();
+
 		hitFlare.GetComponent<RawImage> ().enabled = false;
 		hitDir.GetComponent<RawImage> ().enabled = false;
 
@@ -64,12 +66,11 @@ public class PlayerHUDScript : MonoBehaviour {
 		endGameText.SetActive (false);
 		endGameButton.SetActive (false);
 
-		hudMap.SetActive (true);
+		//hudMap.SetActive (true);
 
 		playerScript = GetComponent<PlayerScript> ();
 		wepScript = GetComponent<WeaponScript> ();
 
-		objectiveFormatter = new ObjectivesTextScript();
 		if (SceneManager.GetActiveScene().name.Equals("BetaLevelNetworkTest") || SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
 			gameController.bombsRemaining = 4;
 			gameController.currentMap = 1;
@@ -97,9 +98,51 @@ public class PlayerHUDScript : MonoBehaviour {
 
 		}
 	}
+
+	void LoadHUDComponents() {
+		// Health HUD
+		healthText = GameObject.Find ("HealthBar").GetComponent<Text>();
+
+		// Weapon HUD
+		weaponLabelTxt = GameObject.Find ("WeaponLabel").GetComponent<Text>();
+		ammoTxt = GameObject.Find ("AmmoCount").GetComponent<Text>();
+
+		// Pause/in-game menu HUD
+		pauseMenuGUI = GameObject.Find ("PausePanel");
+		pauseExitBtn = GameObject.Find ("QuitBtn");
+		pauseResumeBtn = GameObject.Find ("ResumeBtn");
+		pauseOptionsBtn = GameObject.Find ("OptionsBtn");
+		scoreboard = GameObject.Find ("Scoreboard");
+		endGameText = GameObject.Find ("EndGameTxt");
+		endGameButton = GameObject.Find ("EndGameBtn");
+
+		// Hit indication HUD
+		hitFlare = GameObject.Find ("HitFlare");
+		hitDir = GameObject.Find ("HitDir");
+
+		// Map HUD
+		//hudMap = GameObject.Find ("HUDMap");
+		missionWaypoints = new ArrayList ();
+
+		// On-screen indication HUD
+		objectivesText = GameObject.Find ("ObjectivesText").GetComponent<Text>();
+		missionText = GameObject.Find ("IntroMissionText");
+		actionBar = GameObject.Find ("ActionBar");
+		defusingText = GameObject.Find ("DefusingText").GetComponent<Text>();
+		hintText = GameObject.Find ("HintText").GetComponent<Text>();
+		objectiveFormatter = new ObjectivesTextScript();
+
+	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (playerScript == null || wepScript == null) {
+			playerScript = GetComponent<PlayerScript> ();
+			wepScript = GetComponent<WeaponScript> ();
+		}
+		if (gameController == null) {
+			gameController = GameObject.Find ("GameController").GetComponent<GameControllerScript> ();
+		}
 		healthText.text = (healthText ? HEALTH_TEXT + playerScript.health : "");
 
 		// Update UI

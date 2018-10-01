@@ -7,9 +7,11 @@ using UnityEngine.Networking;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class GameControllerScript : MonoBehaviour {
+public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public int currentMap;
+	// variable for last gunshot position
+	public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
 
     // Bomb defusal mission variables
 	public GameObject[] bombs;
@@ -30,12 +32,16 @@ public class GameControllerScript : MonoBehaviour {
 		if (SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetworkTest") || SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
 			bombs = GameObject.FindGameObjectsWithTag ("Bomb");
 		}
+
 		gameOver = false;
 		exitPoint = GameObject.Find ("ExitPoint");
 		deadCount = 0;
 		escaperCount = 0;
 		escapeAvailable = false;
 		pView = GetComponent<PhotonView> ();
+
+		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
 
 	}
 
@@ -54,6 +60,7 @@ public class GameControllerScript : MonoBehaviour {
 
             // Check if the mission is over
             if (bombsRemaining == 0) {
+				escapeAvailable = true;
 				if (!gameOver || CheckEscape ()) {
 					// If they can escape, end the game and bring up the stat board
 					gameOver = true;
@@ -115,6 +122,18 @@ public class GameControllerScript : MonoBehaviour {
 
 	public override void OnPlayerEnteredRoom(Player newPlayer) {
 		Debug.Log (newPlayer.NickName + " has joined the room");
+	}
+
+	void ChangeCursorStatus() {
+		if (Input.GetKeyDown (KeyCode.Escape)) {
+			if (Cursor.lockState == CursorLockMode.Locked) {
+				Cursor.lockState = CursorLockMode.None;
+				Cursor.visible = true;
+			} else {
+				Cursor.lockState = CursorLockMode.Locked;
+				Cursor.visible = false;
+			}
+		}
 	}
 
 }
