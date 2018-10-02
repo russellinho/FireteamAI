@@ -71,6 +71,10 @@ public class PlayerHUDScript : MonoBehaviour {
 		playerScript = GetComponent<PlayerScript> ();
 		wepScript = GetComponent<WeaponScript> ();
 
+		LoadBetaLevel ();
+	}
+
+	void LoadBetaLevel() {
 		if (SceneManager.GetActiveScene().name.Equals("BetaLevelNetworkTest") || SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
 			gameController.bombsRemaining = 4;
 			gameController.currentMap = 1;

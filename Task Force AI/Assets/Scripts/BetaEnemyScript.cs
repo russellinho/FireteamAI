@@ -121,6 +121,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (!Vector3.Equals (GameControllerTestScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
 			pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, true);
 		}
+
+		CheckTargetDead ();
+
 		/**Debug.Log (navMesh.destination);
 		Debug.Log (actionState);
 		Debug.Log ("Pos: " + transform.position);
@@ -141,7 +144,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Shoot at player
 		if (actionState == ActionStates.Firing) {
 			if (currentBullets > 0) {
-               // pView.RPC("Fire", RpcTarget.AllBuffered);
 				Fire ();
 			}
 		}
@@ -240,15 +242,18 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 				// Take away from the stall delay if the enemy is standing still
 				if (navMesh.isStopped) {
+					Debug.Log ("enemy stalled");
 					wanderStallDelay -= Time.deltaTime;
 				} else {
 					// Else, check if the enemy has reached its destination
-					if (navMeshReachedDestination (0f)) {
+					if (navMeshReachedDestination (0.3f)) {
+						Debug.Log ("enemy reached dest");
 						navMesh.isStopped = true;
 					}
 				}
 				// If the stall delay is done, the enemy needs to move to a wander point
-				if (wanderStallDelay < 0f) {
+				if (wanderStallDelay < 0f && navMesh.isStopped) {
+					Debug.Log ("enemy chose path");
 					int r = Random.Range (0, navPoints.Length);
 					RotateTowards (navPoints [r].transform.position);
 					navMesh.SetDestination (navPoints [r].transform.position);
@@ -346,34 +351,36 @@ public class BetaEnemyScript : MonoBehaviour {
 				navMesh.isStopped = true;
 			}
 
-			if (firingState == FiringStates.Forward) {
-				navMesh.SetDestination (player.transform.position);
-				navMesh.isStopped = false;
-			}
+			if (player != null) {
+				if (firingState == FiringStates.Forward) {
+					navMesh.SetDestination (player.transform.position);
+					navMesh.isStopped = false;
+				}
 
-			if (firingState == FiringStates.Backpedal) {
-				RotateTowards (player.transform.position);
-				Vector3 oppositeDirVector = player.transform.position - transform.position;
-				//navMesh.SetDestination (new Vector3(transform.position.x, transform.position.y, transform.position.z - 5f));
-				navMesh.SetDestination (new Vector3(-oppositeDirVector.x, oppositeDirVector.y, -oppositeDirVector.z));
-				navMesh.isStopped = false;
-			}
+				if (firingState == FiringStates.Backpedal) {
+					RotateTowards (player.transform.position);
+					Vector3 oppositeDirVector = player.transform.position - transform.position;
+					//navMesh.SetDestination (new Vector3(transform.position.x, transform.position.y, transform.position.z - 5f));
+					navMesh.SetDestination (new Vector3 (-oppositeDirVector.x, oppositeDirVector.y, -oppositeDirVector.z));
+					navMesh.isStopped = false;
+				}
 
-			if (firingState == FiringStates.StrafeLeft) {
-				RotateTowards (player.transform.position);
-				//Vector3 rotatedVector = Quaternion.AngleAxis(-90, Vector3.up) * (player.transform.position - transform.position);
-				//navMesh.SetDestination (new Vector3(transform.position.x - 5f, transform.position.y, transform.position.z));
-				//navMesh.SetDestination (rotatedVector);
-				navMesh.SetDestination (transform.right * -2f);
-				navMesh.isStopped = false;
-			}
+				if (firingState == FiringStates.StrafeLeft) {
+					RotateTowards (player.transform.position);
+					//Vector3 rotatedVector = Quaternion.AngleAxis(-90, Vector3.up) * (player.transform.position - transform.position);
+					//navMesh.SetDestination (new Vector3(transform.position.x - 5f, transform.position.y, transform.position.z));
+					//navMesh.SetDestination (rotatedVector);
+					navMesh.SetDestination (transform.right * -2f);
+					navMesh.isStopped = false;
+				}
 
-			if (firingState == FiringStates.StrafeRight) {
-				RotateTowards (player.transform.position);
-				//Vector3 rotatedVector = Quaternion.AngleAxis(90, Vector3.up) * (player.transform.position - transform.position);
-				//navMesh.SetDestination (new Vector3(transform.position.x + 5f, transform.position.y, transform.position.z));
-				navMesh.SetDestination (transform.right * 2f);
-				navMesh.isStopped = false;
+				if (firingState == FiringStates.StrafeRight) {
+					RotateTowards (player.transform.position);
+					//Vector3 rotatedVector = Quaternion.AngleAxis(90, Vector3.up) * (player.transform.position - transform.position);
+					//navMesh.SetDestination (new Vector3(transform.position.x + 5f, transform.position.y, transform.position.z));
+					navMesh.SetDestination (transform.right * 2f);
+					navMesh.isStopped = false;
+				}
 			}
 		}
 	}
@@ -395,7 +402,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (player != null) {
 				// If the cover wait timer has ran out, switch from defensive to offensive and vice versa
 				if (coverWaitTimer <= 0f) {
-                    pView.RPC("RpcSetIsCrouching", RpcTarget.AllBuffered, !isCrouching);
+					pView.RPC ("RpcSetIsCrouching", RpcTarget.AllBuffered, !isCrouching);
 					coverWaitTimer = Random.Range (2f, 7f);
 				}
 				// Maneuvering through cover; if the maneuver timer runs out, it's time to move to another cover position
@@ -484,11 +491,15 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
-	void OnTriggerEnter(Collider other) {
+	void OnTriggerStay(Collider other) {
 		if (!PhotonNetwork.IsMasterClient) {
 			return;
 		}
 		if (!other.gameObject.tag.Equals ("Player") && !other.gameObject.tag.Equals ("PlayerTesting")) {
+			return;
+		}
+		// Don't consider dead players
+		if (other.gameObject.GetComponent<PlayerScript> ().health <= 0f) {
 			return;
 		}
 	
@@ -503,6 +514,10 @@ public class BetaEnemyScript : MonoBehaviour {
 			playerToHit = other.gameObject;
 
 		} else {
+			// If enemy is already preoccupied with a target, don't change targets
+			if (player != null) {
+				return;
+			}
 			Vector3 toPlayer = other.transform.position - transform.position;
 			float angleBetween = Vector3.Angle (transform.forward, toPlayer);
 			if (angleBetween <= 60f) {
@@ -522,10 +537,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 		// Root - is the enemy alerted by any type of player presence (gunshots, sight, getting shot, other enemies alerted nearby)
 		if (alerted) {
-			// Scan for enemies
-		//	PlayerScan();
 			if (player != null) {
 				// If the enemy has seen a player
+				alertTimer = 8f;
 				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue && actionState != ActionStates.Reloading) {
 					int r = Random.Range (1, 2);
 					if (r == 1) {
@@ -541,6 +555,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 			} else {
 				// If the enemy has not seen a player
+				UpdateAlertedStatus();
 				if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Firing && actionState != ActionStates.Reloading) {
 					int r = Random.Range (1, 6);
 					if (r > 2) {
@@ -568,7 +583,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		} else {
 			// Else, wander around the patrol points until alerted or enemy seen
 			pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Wander);
-		//	PlayerScan ();
 			if (player != null) {
 				pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, true);
 			}
@@ -665,8 +679,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 			// Adding artificial stupidity - ensures that the player isn't hit every time by offsetting
 			// the shooting direction in x and y by two random numbers
-			float xOffset = Random.Range (-2.5f, 2.5f);
-			float yOffset = Random.Range (-2.5f, 2.5f);
+			float xOffset = Random.Range (-3.5f, 3.5f);
+			float yOffset = Random.Range (-3.5f, 3.5f);
 			dir = new Vector3 (dir.x + xOffset, dir.y + yOffset, dir.z);
 			Debug.DrawRay (shootPoint.position, dir * range, Color.red);
 			if (Physics.Raycast (shootPoint.position, dir, out hit)) {
@@ -733,7 +747,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	public void MeleeAttack() {
-		if (playerToHit != null && !testingMode) {
+		if (playerToHit != null) {
 			playerToHit.GetComponent<PlayerScript> ().health -= 50;
 			playerToHit.GetComponent<PlayerScript> ().hitTimer = 0f;
 			playerToHit = null;
@@ -907,6 +921,20 @@ public class BetaEnemyScript : MonoBehaviour {
 	[PunRPC]
 	private void RpcUpdateFiringState(FiringStates firing) {
 		firingState = firing;
+	}
+
+	void CheckTargetDead() {
+		if (player != null && player.GetComponent<PlayerScript> ().health <= 0f) {
+			player = null;
+		}
+	}
+
+	void UpdateAlertedStatus() {
+		if (alertTimer <= 0f) {
+			alerted = false;
+		} else {
+			alertTimer -= Time.deltaTime;
+		}
 	}
 
 }
