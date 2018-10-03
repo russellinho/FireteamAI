@@ -142,7 +142,8 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		// Shoot at player
-		if (actionState == ActionStates.Firing) {
+		// Add !isCrouching if you don't want the AI to fire while crouched behind cover
+		if (actionState == ActionStates.Firing || (actionState == ActionStates.InCover && player != null)) {
 			if (currentBullets > 0) {
 				Fire ();
 			}
@@ -370,7 +371,10 @@ public class BetaEnemyScript : MonoBehaviour {
 					//Vector3 rotatedVector = Quaternion.AngleAxis(-90, Vector3.up) * (player.transform.position - transform.position);
 					//navMesh.SetDestination (new Vector3(transform.position.x - 5f, transform.position.y, transform.position.z));
 					//navMesh.SetDestination (rotatedVector);
-					navMesh.SetDestination (transform.right * -2f);
+					float r = Vector3.Distance(player.transform.position, transform.position);
+					float xMove = player.transform.position.x + (r * Mathf.Cos(-30f));
+					float zMove = player.transform.position.z + (r * Mathf.Sin(-30f));
+					navMesh.SetDestination (new Vector3(xMove, transform.position.y, zMove));
 					navMesh.isStopped = false;
 				}
 
@@ -378,7 +382,10 @@ public class BetaEnemyScript : MonoBehaviour {
 					RotateTowards (player.transform.position);
 					//Vector3 rotatedVector = Quaternion.AngleAxis(90, Vector3.up) * (player.transform.position - transform.position);
 					//navMesh.SetDestination (new Vector3(transform.position.x + 5f, transform.position.y, transform.position.z));
-					navMesh.SetDestination (transform.right * 2f);
+					float r = Vector3.Distance(player.transform.position, transform.position);
+					float xMove = player.transform.position.x + (r * Mathf.Cos(30f));
+					float zMove = player.transform.position.z + (r * Mathf.Sin(30f));
+					navMesh.SetDestination (new Vector3(xMove, transform.position.y, zMove));
 					navMesh.isStopped = false;
 				}
 			}
@@ -401,7 +408,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			// Three modes in cover - defensive, offensive, maneuvering; only used when engaging a player
 			if (player != null) {
 				// If the cover wait timer has ran out, switch from defensive to offensive and vice versa
-				if (coverWaitTimer <= 0f) {
+				if (coverWaitTimer <= 0f && !isReloading) {
 					pView.RPC ("RpcSetIsCrouching", RpcTarget.AllBuffered, !isCrouching);
 					coverWaitTimer = Random.Range (2f, 7f);
 				}
@@ -558,7 +565,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				UpdateAlertedStatus();
 				if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Firing && actionState != ActionStates.Reloading) {
 					int r = Random.Range (1, 6);
-					if (r > 2) {
+					if (r > 1) {
 						bool coverFound = DynamicTakeCover ();
 						if (coverFound) {
 							pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
@@ -646,7 +653,19 @@ public class BetaEnemyScript : MonoBehaviour {
 					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("StrafeRight"))
 						animator.Play ("StrafeRight");
 				}
-			} else {
+			} else if (actionState == ActionStates.InCover && currentBullets > 0) {
+				if (PhotonNetwork.IsMasterClient)
+				{
+					navMesh.isStopped = true;
+				}
+				if (isCrouching) {
+					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Crouching"))
+						animator.Play ("Crouching");
+				} else {
+					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Aim"))
+						animator.Play ("Aim");
+				}
+			} else if (currentBullets <= 0) {
                 if (PhotonNetwork.IsMasterClient)
                 {
                     navMesh.isStopped = true;
