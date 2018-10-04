@@ -83,7 +83,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	private bool alerted = false;
 
 	// Testing mode - set in inspector
-	public bool testingMode;
+	//public bool testingMode;
 
 	private PhotonView pView;
 
@@ -116,7 +116,8 @@ public class BetaEnemyScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo (0).IsName ("Die")) {
-			return;
+            navMesh.isStopped = true;
+            return;
 		}
 		if (!Vector3.Equals (GameControllerTestScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
 			pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, true);
@@ -130,12 +131,11 @@ public class BetaEnemyScript : MonoBehaviour {
 		Debug.Log (navMesh.speed);
 		Debug.Log (navMesh.isStopped);*/
 
-		DecideActionPatrolInCombat ();
-
 		//Debug.DrawRay (transform.position, transform.forward * range, Color.blue);
 
 		if (enemyType == EnemyType.Patrol) {
-			DecideActionPatrol ();
+            DecideActionPatrolInCombat();
+            DecideActionPatrol ();
 			HandleMovementPatrol ();
 		} else {
 			DecideActionScout ();
@@ -243,12 +243,12 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 				// Take away from the stall delay if the enemy is standing still
 				if (navMesh.isStopped) {
-					Debug.Log ("enemy stalled");
+//					Debug.Log ("enemy stalled");
 					wanderStallDelay -= Time.deltaTime;
 				} else {
 					// Else, check if the enemy has reached its destination
 					if (navMeshReachedDestination (0.3f)) {
-						Debug.Log ("enemy reached dest");
+//						Debug.Log ("enemy reached dest");
 						navMesh.isStopped = true;
 					}
 				}
@@ -288,7 +288,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			// Seek behavior: use navMesh to move towards the last area of gunshot. If the enemy moves towards that location
 			// and there's nobody there, take cover in that area
 
-			if (testingMode) {
+			//if (testingMode) {
 				Vector3 currDest = navMesh.destination;
 				if (!Vector3.Equals (currDest, GameControllerTestScript.lastGunshotHeardPos)) {
 					//RotateTowards (GameControllerTestScript.lastGunshotHeardPos);
@@ -303,7 +303,7 @@ public class BetaEnemyScript : MonoBehaviour {
 						pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.InCover);
 					}
 				}
-			}
+			//}
 		}
 
 		if (actionState == ActionStates.TakingCover) {
@@ -431,7 +431,8 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcPlaySound(AudioClip a) {
+	void RpcPlaySound(string s) {
+        AudioClip a = (AudioClip)Resources.Load(s);
 		audioSource.clip = a;
 		audioSource.Play ();
 	}
@@ -450,11 +451,11 @@ public class BetaEnemyScript : MonoBehaviour {
 			// Choose a death sound
 			int r = Random.Range (0, 3);
 			if (r == 0) {
-				pView.RPC ("RpcPlaySound", RpcTarget.AllBuffered, (AudioClip)Resources.Load ("Grunts/grunt1"));
+				pView.RPC ("RpcPlaySound", RpcTarget.AllBuffered, "Grunts/grunt1");
 			} else if (r == 1) {
-				pView.RPC ("RpcPlaySound", RpcTarget.AllBuffered, (AudioClip)Resources.Load ("Grunts/grunt2"));
+				pView.RPC ("RpcPlaySound", RpcTarget.AllBuffered, "Grunts/grunt2");
 			} else {
-				pView.RPC ("RpcPlaySound", RpcTarget.AllBuffered, (AudioClip)Resources.Load ("Grunts/grunt4"));
+				pView.RPC ("RpcPlaySound", RpcTarget.AllBuffered, "Grunts/grunt4");
 			}
 
 			pView.RPC ("RpcDie", RpcTarget.AllBuffered);
@@ -464,8 +465,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		// Continue with decision tree
-		// Scan for a target player
-		//PlayerScan();
 		// Sees a player?
 		if (player != null) {
 			alertTimer = 10f;
@@ -538,10 +537,37 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Decision tree for patrol type enemy
 	void DecideActionPatrol() {
-		// Melee attack trumps all
-		if (actionState == ActionStates.Melee) {
+        // Check for death first
+        if (health <= 0 && actionState != ActionStates.Dead)
+        {
+            navMesh.isStopped = true;
+            pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Dead);
+            // Choose a death sound
+            int r = Random.Range(0, 3);
+            if (r == 0)
+            {
+                pView.RPC("RpcPlaySound", RpcTarget.AllBuffered, "Grunts/grunt1");
+            }
+            else if (r == 1)
+            {
+                pView.RPC("RpcPlaySound", RpcTarget.AllBuffered, "Grunts/grunt2");
+            }
+            else
+            {
+                pView.RPC("RpcPlaySound", RpcTarget.AllBuffered, "Grunts/grunt4");
+            }
+
+            pView.RPC("RpcDie", RpcTarget.AllBuffered);
+
+            StartCoroutine(Despawn());
+            return;
+        }
+
+        // Melee attack trumps all
+        if (actionState == ActionStates.Melee) {
 			return;
 		}
+
 		// Root - is the enemy alerted by any type of player presence (gunshots, sight, getting shot, other enemies alerted nearby)
 		if (alerted) {
 			if (player != null) {
