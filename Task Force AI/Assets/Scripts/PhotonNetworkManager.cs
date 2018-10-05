@@ -56,7 +56,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
 
 		localPlayer = PhotonNetwork.Instantiate(
 			"PlayerPho",
-			new Vector3(-25f,0.5f,-9f),
+			new Vector3(-27f,0.4f,-27f),
 			Quaternion.identity, 0);
 
 		//gameController = GameObject.Find ("GameControllerTest").GetComponent<GameControllerTestScript>();
@@ -66,7 +66,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks {
         //Debug.Log(PhotonNetwork.CurrentRoom.PlayerCount);
 		//if (PhotonNetwork.CurrentRoom.PlayerCount == 1) {
 		if (PhotonNetwork.IsMasterClient) {
-			PhotonNetwork.LoadLevel("AITesting2");
+			PhotonNetwork.LoadLevel("BetaLevelNetwork");
 			//Instantiate (playerPrefab, Vector3.zero, Quaternion.Euler(Vector3.zero));
 		}
 		//}

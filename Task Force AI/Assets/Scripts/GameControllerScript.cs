@@ -34,7 +34,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		gameOver = false;
-		exitPoint = GameObject.Find ("ExitPoint");
+		//exitPoint = GameObject.Find ("ExitPoint");
 		deadCount = 0;
 		escaperCount = 0;
 		escapeAvailable = false;

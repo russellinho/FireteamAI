@@ -70,6 +70,7 @@ public class PlayerHUDScript : MonoBehaviour {
 
 		playerScript = GetComponent<PlayerScript> ();
 		wepScript = GetComponent<WeaponScript> ();
+		gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameControllerScript> ();
 
 		LoadBetaLevel ();
 	}
