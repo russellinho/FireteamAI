@@ -1,11 +1,11 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PlayerHUDScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Photon\PhotonUnityNetworking\Code\PhotonNetworkPart.cs">
     <Files>
       <File FileName="Assets\Scripts\PlayerTestingScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PlayerScript.cs" Line="5" Column="13" />
-      <File FileName="Assets\Photon\PhotonUnityNetworking\Code\PhotonNetwork.cs" Line="363" Column="88" />
-      <File FileName="Assets\Scripts\PhotonNetworkManager.cs" Line="59" Column="29" />
+      <File FileName="Assets\Scripts\PlayerScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Photon\PhotonUnityNetworking\Code\PhotonNetwork.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PhotonNetworkManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Photon\PhotonUnityNetworking\Demos\PunBasics-Tutorial\Scripts\Launcher.cs" Line="1" Column="1" />
       <File FileName="Assets\Photon\PhotonUnityNetworking\Demos\PunBasics-Tutorial\Scripts\PlayerManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Photon\PhotonUnityNetworking\Demos\PunBasics-Tutorial\Scripts\GameManager.cs" Line="1" Column="1" />
@@ -14,16 +14,17 @@
       <File FileName="Assets\Scripts\FirstPersonController.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\MouseLook.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\WeaponScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\BetaEnemyScript.cs" Line="745" Column="32" />
-      <File FileName="Assets\Scripts\PlayerHUDScript.cs" Line="84" Column="1" />
+      <File FileName="Assets\Scripts\BetaEnemyScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PlayerHUDScript.cs" Line="84" Column="55" />
       <File FileName="Assets\Scripts\GameControllerTestScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Photon\PhotonRealtime\Code\LoadbalancingPeer.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\MeleeAIScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\GameControllerScript.cs" Line="23" Column="29" />
+      <File FileName="Assets\Scripts\GameControllerScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\ReloadBehaviorAIScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\ReloadBehaviorScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\SpawnPointScript.cs" Line="45" Column="20" />
-      <File FileName="Assets\Scripts\TitleControllerScript.cs" Line="11" Column="1" />
+      <File FileName="Assets\Scripts\SpawnPointScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\TitleControllerScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Photon\PhotonUnityNetworking\Code\PhotonNetworkPart.cs" Line="712" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
