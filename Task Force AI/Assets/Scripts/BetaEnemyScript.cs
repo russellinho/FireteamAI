@@ -51,6 +51,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// All patrol pathfinding points for an enemy
 	public GameObject[] navPoints;
+	private Vector3 spawnPos;
+	private Quaternion spawnRot;
 	// TODO: SyncVar
 	public ActionStates actionState;
 	// TODO: SyncVar
@@ -95,6 +97,8 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		player = null;
+		spawnPos = transform.position;
+		spawnRot = transform.rotation;
 		spine = GetComponentInChildren<SpineScript> ().gameObject.transform;
 		animator = GetComponent<Animator> ();
 		players = new GameObject[8];
@@ -254,7 +258,6 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 				// If the stall delay is done, the enemy needs to move to a wander point
 				if (wanderStallDelay < 0f && navMesh.isStopped) {
-					Debug.Log ("enemy chose path");
 					int r = Random.Range (0, navPoints.Length);
 					RotateTowards (navPoints [r].transform.position);
 					navMesh.SetDestination (navPoints [r].transform.position);

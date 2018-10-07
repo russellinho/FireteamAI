@@ -12,6 +12,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public int currentMap;
 	// variable for last gunshot position
 	public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
+	public GameObject[] enemyList;
 
     // Bomb defusal mission variables
 	public GameObject[] bombs;

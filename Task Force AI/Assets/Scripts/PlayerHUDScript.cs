@@ -126,7 +126,7 @@ public class PlayerHUDScript : MonoBehaviour {
 		hitDir = GameObject.Find ("HitDir");
 
 		// Map HUD
-		//hudMap = GameObject.Find ("HUDMap");
+		hudMap = GameObject.Find ("HUDMap");
 		missionWaypoints = new ArrayList ();
 
 		// On-screen indication HUD
