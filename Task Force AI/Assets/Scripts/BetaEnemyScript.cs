@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.AI;
+using ExitGames.Client.Photon;
 
 public class BetaEnemyScript : MonoBehaviour {
 	// Finite state machine states
@@ -88,6 +89,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	//public bool testingMode;
 
 	private PhotonView pView;
+	public Transform headTransform;
 
 	// Use this for initialization
 	void Start () {
@@ -110,6 +112,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		isCrouching = false;
 		// Get nav points
 		navMesh = GetComponent<NavMeshAgent>();
+		if (enemyType == EnemyType.Scout) {
+			navMesh.enabled = false;
+		}
 		navPoints = GameObject.FindGameObjectsWithTag("PatrolPoint");
 		coverTimer = 0f;
 		inCover = false;
@@ -120,7 +125,9 @@ public class BetaEnemyScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo (0).IsName ("Die")) {
-            navMesh.isStopped = true;
+			if (enemyType != EnemyType.Scout) {
+				navMesh.isStopped = true;
+			}
             return;
 		}
 		if (!Vector3.Equals (GameControllerTestScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
@@ -136,6 +143,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		Debug.Log (navMesh.isStopped);*/
 
 		//Debug.DrawRay (transform.position, transform.forward * range, Color.blue);
+		Debug.DrawRay (headTransform.position, headTransform.forward * 22f, Color.blue);
 
 		if (enemyType == EnemyType.Patrol) {
             DecideActionPatrolInCombat();
@@ -467,7 +475,13 @@ public class BetaEnemyScript : MonoBehaviour {
 			return;
 		}
 
+		// Melee attack trumps all
+		if (actionState == ActionStates.Melee) {
+			return;
+		}
+
 		// Continue with decision tree
+		PlayerScan();
 		// Sees a player?
 		if (player != null) {
 			alertTimer = 10f;
@@ -500,7 +514,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
-	void OnTriggerStay(Collider other) {
+	void OnTriggerEnter(Collider other) {
 		if (!PhotonNetwork.IsMasterClient) {
 			return;
 		}
@@ -522,19 +536,6 @@ public class BetaEnemyScript : MonoBehaviour {
 			pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Melee);
 			playerToHit = other.gameObject;
 
-		} else {
-			// If enemy is already preoccupied with a target, don't change targets
-			if (player != null) {
-				return;
-			}
-			Vector3 toPlayer = other.transform.position - transform.position;
-			float angleBetween = Vector3.Angle (transform.forward, toPlayer);
-			if (angleBetween <= 60f) {
-				if (!alerted) {
-					pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, true);
-				}
-				player = other.gameObject;
-			}
 		}
 	}
 
@@ -571,6 +572,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			return;
 		}
 
+		PlayerScan ();
 		// Root - is the enemy alerted by any type of player presence (gunshots, sight, getting shot, other enemies alerted nearby)
 		if (alerted) {
 			if (player != null) {
@@ -900,57 +902,38 @@ public class BetaEnemyScript : MonoBehaviour {
 		return false;
 	}
 
-	/**void PlayerScan() {
+	void PlayerScan() {
 		// If we do not have a target player, try to find one
-		if (testingMode) {
-			if (player == null) {
-				ArrayList indicesNearBy = new ArrayList ();
-				for (int i = 0; i < GameControllerTestScript.playerList.Count; i++) {
-					GameObject p = (GameObject)GameControllerTestScript.playerList [i];
-					if (Vector3.Distance (transform.position, p.transform.position) < range + 12f) {
-						Vector3 toPlayer = p.transform.position - transform.position;
-						float angleBetween = Vector3.Angle (transform.forward, toPlayer);
-						if (angleBetween <= 60f) {
-							indicesNearBy.Add (i);
+		if (player == null) {
+			ArrayList indicesNearBy = new ArrayList ();
+			for (int i = 0; i < GameControllerScript.playerList.Length; i++) {
+				GameObject p = (GameObject)GameControllerScript.playerList [i];
+				if (Vector3.Distance (transform.position, p.transform.position) < range + 12f) {
+					RaycastHit hit;
+					// Cast a ray to make sure there's nothing in between the player and the enemy
+					if (Physics.Raycast (headTransform.position, headTransform.forward * 22f, out hit)) {
+						if (!hit.transform.gameObject.tag.Equals ("Player")) {
+							continue;
 						}
 					}
-				}
-				if (indicesNearBy.Count != 0)
-					player = (GameObject)GameControllerTestScript.playerList [Random.Range (0, indicesNearBy.Count)];
-			} else {
-				// If we do, check if it's still in range
-				//Debug.Log("Dist: " + Vector3.Distance(transform.position, player.transform.position) + " Range:" + (range + 12f));
-				if (Vector3.Distance (transform.position, player.transform.position) >= range + 12f) {
-					lastSeenPlayerPos = player.transform;
-					player = null;
-
+ 					Vector3 toPlayer = p.transform.position - transform.position;
+					float angleBetween = Vector3.Angle (transform.forward, toPlayer);
+					if (angleBetween <= 60f) {
+						indicesNearBy.Add (i);
+					}
 				}
 			}
+			if (indicesNearBy.Count != 0)
+				player = (GameObject)GameControllerScript.playerList [Random.Range (0, indicesNearBy.Count)];
 		} else {
-			if (player == null) {
-				ArrayList indicesNearBy = new ArrayList ();
-				for (int i = 0; i < GameControllerScript.playerList.Count; i++) {
-					GameObject p = (GameObject)GameControllerScript.playerList [i];
-					if (Vector3.Distance (transform.position, p.transform.position) < range + 12f) {
-						Vector3 toPlayer = p.transform.position - transform.position;
-						float angleBetween = Vector3.Angle (transform.forward, toPlayer);
-						if (angleBetween <= 60f) {
-							indicesNearBy.Add (i);
-						}
-					}
-				}
-				if (indicesNearBy.Count != 0)
-					player = (GameObject)GameControllerScript.playerList [Random.Range (0, indicesNearBy.Count)];
-			} else {
-				// If we do, check if it's still in range
-				if (Vector3.Distance (transform.position, player.transform.position) >= range + 12f) {
-					lastSeenPlayerPos = player.transform;
-					player = null;
+			// If we do, check if it's still in range
+			if (Vector3.Distance (transform.position, player.transform.position) >= range + 12f) {
+				lastSeenPlayerPos = player.transform;
+				player = null;
 
-				}
 			}
 		}
-	}*/
+	}
 
 	public void TakeDamage(int d) {
 		pView.RPC ("RpcTakeDamage", RpcTarget.AllBuffered, d);
