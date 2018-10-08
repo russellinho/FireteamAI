@@ -7,9 +7,9 @@ using UnityEngine.AI;
 
 public class BetaEnemyScript : MonoBehaviour {
 	// Finite state machine states
-	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking};
+	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Null};
 	// FSM used for determining movement while attacking and not in cover
-	enum FiringStates {StandingStill, StrafeLeft, StrafeRight, Backpedal, Forward};
+	enum FiringStates {StandingStill, StrafeLeft, StrafeRight, Backpedal, Forward, Null};
 
 	// Enemy combat style
 	public enum EnemyType {Patrol, Scout};
@@ -98,8 +98,8 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		player = null;
-		spawnPos = transform.position;
-		spawnRot = transform.rotation;
+		spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+		spawnRot = Quaternion.Euler (transform.rotation.x, transform.rotation.y, transform.rotation.z);
 		spine = GetComponentInChildren<SpineScript> ().gameObject.transform;
 		animator = GetComponent<Animator> ();
 		players = new GameObject[8];
@@ -796,7 +796,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
         //animator.CrossFadeInFixedTime ("Firing", 0.01f);
-        pView.RPC("RpcShootAction", RpcTarget.AllBuffered);
+        pView.RPC("RpcShootAction", RpcTarget.All);
 	}
 
 	[PunRPC]
@@ -861,7 +861,13 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	IEnumerator Despawn() {
 		yield return new WaitForSeconds(5f);
-		PhotonNetwork.Destroy (gameObject);
+		pView.RPC ("RpcDespawn", RpcTarget.All);
+		StartCoroutine ("Respawn");
+	}
+
+	[PunRPC]
+	void RpcDespawn() {
+		gameObject.SetActive (false);
 	}
 
 	// b is the mode the AI is in. 0 means override everything and take cover, 1 is override everything and leave cover
@@ -1021,6 +1027,42 @@ public class BetaEnemyScript : MonoBehaviour {
 			pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, false);
 			GameControllerScript.lastGunshotHeardPos = Vector3.negativeInfinity;
 		}
+	}
+
+	// Reset values to respawn
+	IEnumerator Respawn() {
+		yield return new WaitForSeconds (25f);
+		pView.RPC ("RpcRespawn", RpcTarget.All);
+	}
+
+	[PunRPC]
+	void RpcRespawn() {
+		health = 100;
+		transform.position = new Vector3 (spawnPos.x, spawnPos.y, spawnPos.z);
+		transform.rotation = Quaternion.Euler (spawnRot.x, spawnRot.y, spawnRot.z);
+		coverWaitTimer = Random.Range (2f, 7f);
+		coverSwitchPositionsTimer = Random.Range (12f, 18f);
+		player = null;
+		currentBullets = bulletsPerMag;
+		isCrouching = false;
+
+		coverTimer = 0f;
+		inCover = false;
+		isReloading = false;
+		fireTimer = 0.0f;
+
+		playerToHit = null;
+		lastSeenPlayerPos = null;
+
+		actionState = ActionStates.Null;
+		firingState = FiringStates.Null;
+		firingModeTimer = 0f;
+
+		wanderStallDelay = -1f;
+		coverPos = Vector3.negativeInfinity;
+		crouchMode = 2;
+		coverScanRange = 50f;
+		gameObject.SetActive (true);
 	}
 
 }
