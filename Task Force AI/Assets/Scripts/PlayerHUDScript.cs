@@ -306,5 +306,9 @@ public class PlayerHUDScript : MonoBehaviour {
         missionText.SetActive(true);
     }
 
+	public void SetActionBarSlider(float val) {
+		actionBar.GetComponent<Slider> ().value = val;
+	}
+
 
 }

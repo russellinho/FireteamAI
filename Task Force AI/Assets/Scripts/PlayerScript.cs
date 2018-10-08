@@ -41,6 +41,11 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	public float hitTimer;
 	public Vector3 hitLocation;
 
+	// Mission references
+	private GameObject currentBomb;
+	private int currentBombIndex;
+	private float bombDefuseCounter = 0f;
+
 	// Use this for initialization
 	void Start () {
 		// Setting original positions for returning from crouching
@@ -89,7 +94,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		}
 
 		Crouch ();
-		//BombCheck ();
+		BombCheck ();
 		DeathCheck ();
 		DetermineEscaped ();
 	}
@@ -186,15 +191,15 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	// If map objective is defusing bombs, this method checks if the player is near any bombs
-	/**void BombCheck() {
-		if (bombs == null) {
+	void BombCheck() {
+		if (gameController.GetComponent<GameControllerScript>().bombs == null) {
 			return;
 		}
 
-		if (currentBomb == null) {
+		if (!currentBomb) {
 			bool found = false;
 			int count = 0;
-			foreach (GameObject i in bombs) {
+			foreach (GameObject i in gameController.GetComponent<GameControllerScript>().bombs) {
 				BombScript b = i.GetComponent<BombScript> ();
 				if (!b.defused) {
 					if (Vector3.Distance (gameObject.transform.position, i.transform.position) <= 4.5f) {
@@ -215,7 +220,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			// Check if the player is still near the bomb
 			if (Vector3.Distance (gameObject.transform.position, currentBomb.transform.position) > 4.5f || currentBomb.GetComponent<BombScript>().defused) {
 				currentBomb = null;
-				gameController.GetComponent<GameControllerScript> ().hintText.enabled = false;
+				GetComponent<PlayerHUDScript> ().hintText.enabled = false;
 				return;
 			}
 
@@ -223,41 +228,41 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 				// TODO: Disallow movement
 				gameObject.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().canMove = false;
 
-				gameController.GetComponent<GameControllerScript> ().hintText.enabled = false;
-				gameController.GetComponent<GameControllerScript> ().ToggleActionBar (true);
-				gameController.GetComponent<GameControllerScript> ().defusingText.enabled = true;
+				GetComponent<PlayerHUDScript> ().hintText.enabled = false;
+				GetComponent<PlayerHUDScript> ().ToggleActionBar (true);
+				GetComponent<PlayerHUDScript> ().defusingText.enabled = true;
 				bombDefuseCounter += (Time.deltaTime / 8f);
 				Debug.Log (bombDefuseCounter);
-				gameController.GetComponent<GameControllerScript> ().actionBar.GetComponent<Slider> ().value = bombDefuseCounter;
+				GetComponent<PlayerHUDScript> ().SetActionBarSlider(bombDefuseCounter);
 				if (bombDefuseCounter >= 1f) {
 					bombDefuseCounter = 0f;
 
-					bombs[currentBombIndex].GetComponent<BombScript>().Defuse ();
+					gameController.GetComponent<GameControllerScript> ().bombs[currentBombIndex].GetComponent<BombScript>().Defuse ();
 					gameController.GetComponent<GameControllerScript> ().bombsRemaining--;
-					gameController.GetComponent<GameControllerScript> ().UpdateObjectives ();
+					GetComponent<PlayerHUDScript> ().UpdateObjectives ();
 					currentBomb = null;
 
-					gameController.GetComponent<GameControllerScript> ().ToggleActionBar (false);
-					gameController.GetComponent<GameControllerScript> ().defusingText.enabled = false;
-					gameController.GetComponent<GameControllerScript> ().hintText.enabled = false;
+					GetComponent<PlayerHUDScript> ().ToggleActionBar (false);
+					GetComponent<PlayerHUDScript> ().defusingText.enabled = false;
+					GetComponent<PlayerHUDScript> ().hintText.enabled = false;
 					// Enable movement again
 					gameObject.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().canMove = true;
 					if (gameController.GetComponent<GameControllerScript> ().bombsRemaining == 0) {
-						gameController.GetComponent<GameControllerScript> ().EscapePopup ();
+						GetComponent<PlayerHUDScript> ().EscapePopup ();
 					}
 				}
 			} else {
 				// Enable movement again
 				gameObject.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().canMove = true;
 
-				gameController.GetComponent<GameControllerScript> ().ToggleActionBar (false);
-				gameController.GetComponent<GameControllerScript> ().defusingText.enabled = false;
-				gameController.GetComponent<GameControllerScript> ().hintText.enabled = true;
+				GetComponent<PlayerHUDScript> ().ToggleActionBar (false);
+				GetComponent<PlayerHUDScript> ().defusingText.enabled = false;
+				GetComponent<PlayerHUDScript> ().hintText.enabled = true;
 				//Debug.Log (gameController.GetComponent<GameControllerScript> ().hintText.enabled);
 				bombDefuseCounter = 0f;
 			}
 		}
-	}*/
+	}
 
 	public void ResetHitTimer() {
 		photonView.RPC ("RpcResetHitTimer", RpcTarget.AllBuffered);
@@ -284,7 +289,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 				// If dead, 
 				if (health <= 0) {
 					gameController.GetComponent<GameControllerScript> ().IncrementDeathCount ();
-				} else {
+				} else if (health > 0 && Vector3.Distance(gameController.GetComponent<GameControllerScript>().exitPoint.transform.position, transform.position) <= 10f) {
 					gameController.GetComponent<GameControllerScript> ().IncrementEscapeCount ();
 				}
 			}

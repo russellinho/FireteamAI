@@ -113,7 +113,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (enemyType != EnemyType.Scout) {
 			navMesh = GetComponent<NavMeshAgent>();
 		}
-		navPoints = GameObject.FindGameObjectsWithTag("PatrolPoint");
+		//navPoints = GameObject.FindGameObjectsWithTag("PatrolPoint");
 		coverTimer = 0f;
 		inCover = false;
 		pView = GetComponent<PhotonView> ();

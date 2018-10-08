@@ -37,7 +37,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 		playerList = GameObject.FindGameObjectsWithTag ("Player");
 		gameOver = false;
-		//exitPoint = GameObject.Find ("ExitPoint");
+		exitPoint = GameObject.Find ("ExitPoint");
 		deadCount = 0;
 		escaperCount = 0;
 		escapeAvailable = false;
@@ -64,7 +64,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             // Check if the mission is over
             if (bombsRemaining == 0) {
 				escapeAvailable = true;
-				if (!gameOver || CheckEscape ()) {
+				if (!gameOver && CheckEscape ()) {
 					// If they can escape, end the game and bring up the stat board
 					gameOver = true;
 					EndGame();
