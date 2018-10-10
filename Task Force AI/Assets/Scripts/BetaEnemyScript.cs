@@ -564,6 +564,7 @@ public class BetaEnemyScript : MonoBehaviour {
         // Check for death first
         if (health <= 0 && actionState != ActionStates.Dead)
         {
+			GetComponentInChildren<SpriteRenderer> ().enabled = false;
             navMesh.isStopped = true;
 			if (actionState != ActionStates.Dead) {
 				pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Dead);
@@ -867,7 +868,15 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcDespawn() {
-		gameObject.SetActive (false);
+		GetComponent<CapsuleCollider>().enabled = false;
+		GetComponent<BoxCollider>().enabled = false;
+		GetComponent<CapsuleCollider>().enabled = false;
+		SkinnedMeshRenderer[] s = GetComponentsInChildren<SkinnedMeshRenderer> ();
+		for (int i = 0; i < s.Length; i++) {
+			s [i].enabled = false;
+		}
+		GetComponentInChildren<SpriteRenderer> ().enabled = false;
+		GetComponentInChildren<MeshRenderer> ().enabled = false;
 	}
 
 	// b is the mode the AI is in. 0 means override everything and take cover, 1 is override everything and leave cover
@@ -1062,7 +1071,17 @@ public class BetaEnemyScript : MonoBehaviour {
 		coverPos = Vector3.negativeInfinity;
 		crouchMode = 2;
 		coverScanRange = 50f;
-		gameObject.SetActive (true);
+
+		GetComponent<CapsuleCollider>().enabled = false;
+		GetComponent<BoxCollider>().enabled = false;
+		GetComponent<CapsuleCollider>().enabled = false;
+		SkinnedMeshRenderer[] s = GetComponentsInChildren<SkinnedMeshRenderer> ();
+		for (int i = 0; i < s.Length; i++) {
+			s [i].enabled = false;
+		}
+		GetComponentInChildren<SpriteRenderer> ().enabled = false;
+		GetComponentInChildren<MeshRenderer> ().enabled = false;
+
 	}
 
 }
