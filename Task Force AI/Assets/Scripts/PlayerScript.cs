@@ -13,6 +13,9 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	private PhotonView photonView;
 	public GameObject fpsHands;
 	private WeaponScript wepScript;
+	private AudioSource aud;
+	public AudioClip ammoPickupSound;
+	public AudioClip healthPickupSound;
 
 	// Player variables
 	public string currWep; // TODO: Needs to be changed soon to account for other weps
@@ -65,6 +68,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		}
 
 		wepScript = gameObject.GetComponent<WeaponScript> ();
+		aud = GetComponent<AudioSource> ();
 
 		// Initialize variables
 		currWep = "AK-47";
@@ -299,6 +303,19 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
 		escapeValueSent = false;
+	}
+
+	void OnTriggerEnter(Collider other) {
+		if (other.gameObject.name.Equals ("AmmoBox")) {
+			wepScript.totalBulletsLeft = 120 + (wepScript.bulletsPerMag - wepScript.currentBullets);
+			aud.clip = ammoPickupSound;
+			aud.Play ();
+		} else if (other.gameObject.name.Equals("HealthBox")) {
+			health = 100;
+			aud.clip = healthPickupSound;
+			aud.Play ();
+		}
+		PhotonNetwork.Destroy (other.gameObject);
 	}
 
 }

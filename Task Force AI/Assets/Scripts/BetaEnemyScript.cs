@@ -6,6 +6,10 @@ using Photon.Realtime;
 using UnityEngine.AI;
 
 public class BetaEnemyScript : MonoBehaviour {
+
+	public GameObject ammoBoxPickup;
+	public GameObject healthBoxPickup;
+
 	// Finite state machine states
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Null};
 	// FSM used for determining movement while attacking and not in cover
@@ -468,9 +472,19 @@ public class BetaEnemyScript : MonoBehaviour {
 	void DecideActionScout() {
 		// Check for death first
 		if (health <= 0 && actionState != ActionStates.Dead) {
+			// Spawn a drop box
+			int r = Random.Range (1,6);
+			if (r == 6) {
+				// 1/6 chance of getting a health box
+				PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
+			} else if (r > 1 && r < 6) {
+				// 1/3 chance of getting ammo box
+				PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
+			}
+
 			pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Dead);
 			// Choose a death sound
-			int r = Random.Range (0, 3);
+			r = Random.Range (0, 3);
 			if (r == 0) {
 				pView.RPC ("RpcPlaySound", RpcTarget.AllBuffered, "Grunts/grunt1");
 			} else if (r == 1) {
