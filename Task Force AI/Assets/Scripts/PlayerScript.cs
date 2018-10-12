@@ -14,8 +14,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	public GameObject fpsHands;
 	private WeaponScript wepScript;
 	private AudioSource aud;
-	public AudioClip ammoPickupSound;
-	public AudioClip healthPickupSound;
 
 	// Player variables
 	public string currWep; // TODO: Needs to be changed soon to account for other weps
@@ -58,6 +56,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		bodyScaleOriginal = bodyScaleTrans.lossyScale.y;
         photonView = GetComponent<PhotonView>();
 		escapeValueSent = false;
+		Physics.IgnoreLayerCollision (9, 12);
 
 		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
         if (!GetComponent<PhotonView>().IsMine) {
@@ -306,16 +305,13 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		if (other.gameObject.name.Equals ("AmmoBox")) {
+		if (other.gameObject.tag.Equals ("AmmoBox")) {
 			wepScript.totalBulletsLeft = 120 + (wepScript.bulletsPerMag - wepScript.currentBullets);
-			aud.clip = ammoPickupSound;
-			aud.Play ();
-		} else if (other.gameObject.name.Equals("HealthBox")) {
+			other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
+		} else if (other.gameObject.tag.Equals("HealthBox")) {
 			health = 100;
-			aud.clip = healthPickupSound;
-			aud.Play ();
+			other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
 		}
-		PhotonNetwork.Destroy (other.gameObject);
 	}
 
 }

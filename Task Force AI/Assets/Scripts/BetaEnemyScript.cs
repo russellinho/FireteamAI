@@ -217,7 +217,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	// What happens when the enemy is alerted
 	[PunRPC]
 	void RpcSetAlerted(bool b) {
-		Debug.Log ("h");
+		//Debug.Log ("h");
 		alerted = b;
 		if (range == 10f) {
 			range *= 1.5f;
@@ -227,7 +227,7 @@ public class BetaEnemyScript : MonoBehaviour {
     [PunRPC]
     void RpcSetIsCrouching(bool b)
     {
-		Debug.Log ("i");
+		//Debug.Log ("i");
         isCrouching = b;
     }
 
@@ -455,7 +455,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcPlaySound(string s) {
-		Debug.Log ("j");
+		//Debug.Log ("j");
         AudioClip a = (AudioClip)Resources.Load(s);
 		audioSource.clip = a;
 		audioSource.Play ();
@@ -463,7 +463,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcDie() {
-		Debug.Log ("k");
+		//Debug.Log ("k");
 		GetComponentInChildren<SpriteRenderer> ().enabled = false;
 		//GetComponent<CapsuleCollider> ().isTrigger = true;
 	}
@@ -476,9 +476,11 @@ public class BetaEnemyScript : MonoBehaviour {
 			int r = Random.Range (1,6);
 			if (r == 6) {
 				// 1/6 chance of getting a health box
+				Debug.Log("health pickup spawned");
 				PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			} else if (r > 1 && r < 6) {
 				// 1/3 chance of getting ammo box
+				Debug.Log("ammo pickup spawned");
 				PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			}
 
@@ -816,7 +818,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcInstantiateBloodSpill(Vector3 point, Vector3 normal) {
-		Debug.Log ("a");
+		//Debug.Log ("a");
 		GameObject bloodSpill = Instantiate(bloodEffect, point, Quaternion.FromToRotation (Vector3.forward, normal));
 		bloodSpill.transform.Rotate (180f, 0f, 0f);
 		Destroy (bloodSpill, 1.5f);
@@ -824,7 +826,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcInstantiateBulletHole(Vector3 point, Vector3 normal, string parentName) {
-		Debug.Log ("b");
+		//Debug.Log ("b");
 		GameObject bulletHoleEffect = Instantiate (bulletImpact, point, Quaternion.FromToRotation (Vector3.forward, normal));
 		bulletHoleEffect.transform.SetParent (GameObject.Find(parentName).transform);
 		Destroy (bulletHoleEffect, 3f);
@@ -833,14 +835,14 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcInstantiateHitParticleEffect(Vector3 point, Vector3 normal) {
-		Debug.Log ("c");
+		//Debug.Log ("c");
 		GameObject hitParticleEffect = Instantiate (hitParticles, point, Quaternion.FromToRotation (Vector3.up, normal));
 		Destroy (hitParticleEffect, 1f);
 	}
 
     [PunRPC]
     void RpcShootAction() {
-		Debug.Log ("d");
+		//Debug.Log ("d");
         muzzleFlash.Play();
         PlayShootSound();
         currentBullets--;
@@ -875,6 +877,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	IEnumerator Despawn() {
+		gameObject.layer = 12;
 		yield return new WaitForSeconds(5f);
 		pView.RPC ("RpcDespawn", RpcTarget.All);
 		StartCoroutine ("Respawn");
@@ -884,7 +887,6 @@ public class BetaEnemyScript : MonoBehaviour {
 	void RpcDespawn() {
 		GetComponent<CapsuleCollider>().enabled = false;
 		GetComponent<BoxCollider>().enabled = false;
-		GetComponent<CapsuleCollider>().enabled = false;
 		SkinnedMeshRenderer[] s = GetComponentsInChildren<SkinnedMeshRenderer> ();
 		for (int i = 0; i < s.Length; i++) {
 			s [i].enabled = false;
@@ -1023,19 +1025,19 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	public void RpcTakeDamage(int d) {
-		Debug.Log ("e");
+		//Debug.Log ("e");
 		health -= d;
 	}
 
 	[PunRPC]
 	private void RpcUpdateActionState(ActionStates action) {
-		Debug.Log ("f");
+		//Debug.Log ("f");
 		actionState = action;
 	}
 
 	[PunRPC]
 	private void RpcUpdateFiringState(FiringStates firing) {
-		Debug.Log ("g");
+		//Debug.Log ("g");
 		firingState = firing;
 	}
 
@@ -1060,6 +1062,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcRespawn() {
+		gameObject.layer = 0;
 		health = 100;
 		transform.position = new Vector3 (spawnPos.x, spawnPos.y, spawnPos.z);
 		transform.rotation = Quaternion.Euler (spawnRot.x, spawnRot.y, spawnRot.z);
