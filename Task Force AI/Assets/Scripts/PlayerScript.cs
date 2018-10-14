@@ -14,6 +14,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	public GameObject fpsHands;
 	private WeaponScript wepScript;
 	private AudioSource aud;
+	public Camera viewCam;
 
 	// Player variables
 	public string currWep; // TODO: Needs to be changed soon to account for other weps
@@ -179,11 +180,15 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	void DeathCheck() {
 		if (health <= 0) {
-			if (fpsHands.activeInHierarchy) fpsHands.SetActive (false);
+			/**if (fpsHands.activeInHierarchy) {
+				//fpsHands.SetActive (false);
+			}*/
 			if (!rotationSaved) {
+				DisableFPSHands ();
 				alivePosition = new Vector3 (0f, transform.eulerAngles.y, 0f);
 				deadPosition = new Vector3 (-90f, transform.eulerAngles.y, 0f);
 				rotationSaved = true;
+				DeathCameraEffect ();
 			}
 			GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ().enabled = false;
 			if (transform.rotation.x > -90f) {
@@ -312,6 +317,16 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			health = 100;
 			other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
 		}
+	}
+
+	void DeathCameraEffect() {
+		viewCam.transform.LookAt (GetComponentInParent<Transform>());
+		viewCam.transform.position = new Vector3 (viewCam.transform.position.x, viewCam.transform.position.y, viewCam.transform.position.z + 20f);
+	}
+
+	void DisableFPSHands() {
+		viewCam.gameObject.GetComponentInChildren<SkinnedMeshRenderer> ().enabled = false;
+		viewCam.gameObject.GetComponentInChildren<MeshRenderer> ().enabled = false;
 	}
 
 }
