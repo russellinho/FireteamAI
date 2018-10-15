@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class PlayerScript : MonoBehaviourPunCallbacks {
 
@@ -25,6 +26,9 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	private float charHeightOriginal;
 	private float crouchSpeed;
 	private bool escapeValueSent;
+
+	public GameObject[] subComponents;
+	public FirstPersonController fpc;
 
 	public Transform fpcPosition;
 	private float fpcPositionYOriginal;
@@ -193,6 +197,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 				deathCameraLerpPos = new Vector3 (viewCam.transform.localPosition.x, viewCam.transform.localPosition.y, viewCam.transform.localPosition.z - 5.5f);
 				alivePosition = new Vector3 (0f, bodyTrans.eulerAngles.y, 0f);
 				deadPosition = new Vector3 (-90f, bodyTrans.eulerAngles.y, 0f);
+				StartCoroutine ("EnterSpectatorMode");
 				rotationSaved = true;
 			}
 			if (bodyTrans.rotation.x > -90f) {
@@ -332,6 +337,22 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	void DisableFPSHands() {
 		viewCam.gameObject.GetComponentInChildren<SkinnedMeshRenderer> ().enabled = false;
 		viewCam.gameObject.GetComponentInChildren<MeshRenderer> ().enabled = false;
+	}
+
+	IEnumerator EnterSpectatorMode() {
+		if (gameObject.activeInHierarchy) {
+			
+		}
+		yield return new WaitForSeconds (6f);
+
+	}
+
+	void ChangePlayerDisableStatus(bool status) {
+		for (int i = 0; i < subComponents.Length; i++) {
+			subComponents [i].SetActive (status);
+		}
+		charController.enabled = status;
+		fpc.enabled = status;
 	}
 
 }
