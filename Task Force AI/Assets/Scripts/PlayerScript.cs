@@ -15,6 +15,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	private WeaponScript wepScript;
 	private AudioSource aud;
 	public Camera viewCam;
+	public Transform bodyTrans;
 
 	// Player variables
 	public string currWep; // TODO: Needs to be changed soon to account for other weps
@@ -38,6 +39,8 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	private Vector3 alivePosition;
 	private Vector3 deadPosition;
 	private float fraction;
+	private float deathCameraLerpVar;
+	private Vector3 deathCameraLerpPos;
 	private bool rotationSaved;
 
 	public float hitTimer;
@@ -82,6 +85,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		crouchBodyScaleY = 0.66f;
 
 		fraction = 0f;
+		deathCameraLerpVar = 0f;
 		rotationSaved = false;
 
 		hitTimer = 1f;
@@ -183,18 +187,19 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			/**if (fpsHands.activeInHierarchy) {
 				//fpsHands.SetActive (false);
 			}*/
+			GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ().enabled = false;
 			if (!rotationSaved) {
 				DisableFPSHands ();
-				alivePosition = new Vector3 (0f, transform.eulerAngles.y, 0f);
-				deadPosition = new Vector3 (-90f, transform.eulerAngles.y, 0f);
+				deathCameraLerpPos = new Vector3 (viewCam.transform.localPosition.x, viewCam.transform.localPosition.y, viewCam.transform.localPosition.z - 5.5f);
+				alivePosition = new Vector3 (0f, bodyTrans.eulerAngles.y, 0f);
+				deadPosition = new Vector3 (-90f, bodyTrans.eulerAngles.y, 0f);
 				rotationSaved = true;
-				DeathCameraEffect ();
 			}
-			GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ().enabled = false;
-			if (transform.rotation.x > -90f) {
+			if (bodyTrans.rotation.x > -90f) {
 				fraction += Time.deltaTime * 8f;
-				transform.rotation = Quaternion.Euler (Vector3.Lerp(alivePosition, deadPosition, fraction));
+				bodyTrans.rotation = Quaternion.Euler (Vector3.Lerp(alivePosition, deadPosition, fraction));
 			}
+			DeathCameraEffect ();
 		}
 	}
 
@@ -320,8 +325,8 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void DeathCameraEffect() {
-		viewCam.transform.LookAt (GetComponentInParent<Transform>());
-		viewCam.transform.position = new Vector3 (viewCam.transform.position.x, viewCam.transform.position.y, viewCam.transform.position.z + 20f);
+		deathCameraLerpVar += (Time.deltaTime / 4f);
+		viewCam.transform.localPosition = Vector3.Lerp (viewCam.transform.localPosition, deathCameraLerpPos, deathCameraLerpVar);
 	}
 
 	void DisableFPSHands() {

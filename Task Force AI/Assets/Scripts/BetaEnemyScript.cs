@@ -788,8 +788,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 			// Adding artificial stupidity - ensures that the player isn't hit every time by offsetting
 			// the shooting direction in x and y by two random numbers
-			float xOffset = Random.Range (-3.5f, 3.5f);
-			float yOffset = Random.Range (-3.5f, 3.5f);
+			float xOffset = Random.Range (-3f, 3f);
+			float yOffset = Random.Range (-3f, 3f);
 			dir = new Vector3 (dir.x + xOffset, dir.y + yOffset, dir.z);
 			Debug.DrawRay (shootPoint.position, dir * range, Color.red);
 			if (Physics.Raycast (shootPoint.position, dir, out hit)) {
