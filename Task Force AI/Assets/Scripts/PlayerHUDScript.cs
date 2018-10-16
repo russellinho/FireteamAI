@@ -46,6 +46,7 @@ public class PlayerHUDScript : MonoBehaviour {
     public Text defusingText;
     public Text hintText;
 	private ObjectivesTextScript objectiveFormatter;
+	public Text spectatorText;
 
     // Use this for initialization
     void Start () {
@@ -135,6 +136,7 @@ public class PlayerHUDScript : MonoBehaviour {
 		actionBar = GameObject.Find ("ActionBar");
 		defusingText = GameObject.Find ("DefusingText").GetComponent<Text>();
 		hintText = GameObject.Find ("HintText").GetComponent<Text>();
+		spectatorText = GameObject.Find ("SpectatorTxt").GetComponent<Text> ();
 		objectiveFormatter = new ObjectivesTextScript();
 
 	}
@@ -310,5 +312,8 @@ public class PlayerHUDScript : MonoBehaviour {
 		actionBar.GetComponent<Slider> ().value = val;
 	}
 
+	public void EnableSpectatorMessage() {
+		spectatorText.enabled = true;
+	}
 
 }

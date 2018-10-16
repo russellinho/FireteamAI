@@ -17,6 +17,9 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	private AudioSource aud;
 	public Camera viewCam;
 	public Transform bodyTrans;
+	public GameObject spectatorCam;
+	private GameObject thisSpectatorCam;
+	private PlayerHUDScript hud;
 
 	// Player variables
 	public string currWep; // TODO: Needs to be changed soon to account for other weps
@@ -76,6 +79,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 		wepScript = gameObject.GetComponent<WeaponScript> ();
 		aud = GetComponent<AudioSource> ();
+		hud = GetComponent<PlayerHUDScript> ();
 
 		// Initialize variables
 		currWep = "AK-47";
@@ -194,6 +198,8 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ().enabled = false;
 			if (!rotationSaved) {
 				DisableFPSHands ();
+				hud.DisableHUD ();
+				hud.EnableSpectatorMessage ();
 				deathCameraLerpPos = new Vector3 (viewCam.transform.localPosition.x, viewCam.transform.localPosition.y, viewCam.transform.localPosition.z - 5.5f);
 				alivePosition = new Vector3 (0f, bodyTrans.eulerAngles.y, 0f);
 				deadPosition = new Vector3 (-90f, bodyTrans.eulerAngles.y, 0f);
@@ -340,11 +346,15 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	IEnumerator EnterSpectatorMode() {
-		if (gameObject.activeInHierarchy) {
-			
-		}
 		yield return new WaitForSeconds (6f);
+		ChangePlayerDisableStatus (false);
+		thisSpectatorCam = Instantiate (spectatorCam, Vector3.zero, Quaternion.Euler(Vector3.zero));
+	}
 
+	void LeaveSpectatorMode() {
+		Destroy (thisSpectatorCam);
+		thisSpectatorCam = null;
+		ChangePlayerDisableStatus (true);
 	}
 
 	void ChangePlayerDisableStatus(bool status) {
@@ -353,6 +363,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		}
 		charController.enabled = status;
 		fpc.enabled = status;
+		viewCam.enabled = status;
 	}
 
 }
