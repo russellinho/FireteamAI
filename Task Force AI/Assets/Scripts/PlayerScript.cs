@@ -68,6 +68,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
         photonView = GetComponent<PhotonView>();
 		escapeValueSent = false;
 		Physics.IgnoreLayerCollision (9, 12);
+		health = 100;
 
 		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
         if (!GetComponent<PhotonView>().IsMine) {
@@ -83,7 +84,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 		// Initialize variables
 		currWep = "AK-47";
-		health = 100;
 		isCrouching = false;
 		canShoot = true;
 		crouchSpeed = 3f;
@@ -103,6 +103,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	// Update is called once per frame
 	void Update () {
 		if (gameController == null) {
+			Debug.Log ("im famous");
 			gameController = GameObject.Find ("GameController");
 			GameControllerScript.playerList.Add (gameObject);
 		}

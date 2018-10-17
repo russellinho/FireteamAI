@@ -6,7 +6,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
 
-public class PlayerHUDScript : MonoBehaviour {
+public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	// Player reference
 	private PlayerScript playerScript;
@@ -316,6 +316,12 @@ public class PlayerHUDScript : MonoBehaviour {
 
 	public void EnableSpectatorMessage() {
 		spectatorText.gameObject.SetActive (true);
+	}
+
+	public override void OnPlayerEnteredRoom(Player newPlayer) {
+		Debug.Log (newPlayer.NickName + " has joined the room");
+		GameControllerScript.playerList.Add (gameObject);
+		Debug.Log ("anotha one");
 	}
 
 }
