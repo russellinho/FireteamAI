@@ -95,7 +95,7 @@ public class WeaponScript : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		if (!pView.IsMine) {
+		if (!pView.IsMine || GetComponent<PlayerScript>().health <= 0) {
 			return;
 		}
 		if (gunAnimator.gameObject.activeSelf) {

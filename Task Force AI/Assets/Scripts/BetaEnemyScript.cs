@@ -983,9 +983,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		// If we do not have a target player, try to find one
 		if (player == null) {
 			ArrayList indicesNearBy = new ArrayList ();
-			for (int i = 0; i < GameControllerScript.playerList.Length; i++) {
+			for (int i = 0; i < GameControllerScript.playerList.Count; i++) {
 				GameObject p = (GameObject)GameControllerScript.playerList [i];
-				if (!p)
+				if (!p || p.GetComponent<PlayerScript>().health <= 0)
 					continue;
 				if (Vector3.Distance (transform.position, p.transform.position) < range + 12f) {
  					Vector3 toPlayer = p.transform.position - transform.position;

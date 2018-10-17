@@ -28,12 +28,16 @@ public class SpectatorScript : MonoBehaviour {
 		camTransform = transform;
 		cam = GetComponent<Camera> ();
 
-		for (int i = 0; i < GameControllerScript.playerList.Length; i++) {
-			if (GameControllerScript.playerList [i].GetComponent<PlayerScript> ().health > 0 && !GameControllerScript.playerList [i].GetComponent<PhotonView>().IsMine) {
-				following = GameControllerScript.playerList [i];
+		for (int i = 0; i < GameControllerScript.playerList.Count; i++) {
+			Debug.Log (i);
+			if (((GameObject)GameControllerScript.playerList [i]).GetComponent<PlayerScript> ().health > 0 && !((GameObject)GameControllerScript.playerList [i]).GetComponent<PhotonView>().IsMine) {
+				following = (GameObject)GameControllerScript.playerList [i];
+				Debug.Log ("found one");
+				playerListIndex = i;
 				break;
 			}
-			if (i == GameControllerScript.playerList.Length - 1) {
+			if (i == GameControllerScript.playerList.Count - 1) {
+				Debug.Log ("is null");
 				following = null;
 			}
 		}
@@ -66,22 +70,22 @@ public class SpectatorScript : MonoBehaviour {
 	}
 
 	void SwitchFollowing() {
-		if (lastPlayerListSize != GameControllerScript.playerList.Length) {
-			lastPlayerListSize = GameControllerScript.playerList.Length;
+		if (lastPlayerListSize != GameControllerScript.playerList.Count) {
+			lastPlayerListSize = GameControllerScript.playerList.Count;
 			playerListIndex = -1;
 		}
 		int numberSkipped = 0;
-		while (GameControllerScript.playerList [++playerListIndex].GetComponent<PlayerScript> ().health <= 0 || GameControllerScript.playerList [playerListIndex].GetComponent<PhotonView> ().IsMine) {
+		while (((GameObject)GameControllerScript.playerList [++playerListIndex]).GetComponent<PlayerScript> ().health <= 0 || ((GameObject)GameControllerScript.playerList [playerListIndex]).GetComponent<PhotonView> ().IsMine) {
 			numberSkipped++;
 			// Checks if there are any players available to spectate
-			if (numberSkipped >= GameControllerScript.playerList.Length) {
+			if (numberSkipped >= GameControllerScript.playerList.Count) {
 				// If there aren't, set the following index back to -1 for default position
 				playerListIndex = -1;
 				following = null;
 				return;
 			}
 		}
-		following = GameControllerScript.playerList [playerListIndex];
+		following = (GameObject)GameControllerScript.playerList [playerListIndex];
 	}
 
 }

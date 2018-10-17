@@ -104,6 +104,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	void Update () {
 		if (gameController == null) {
 			gameController = GameObject.Find ("GameController");
+			GameControllerScript.playerList.Add (gameObject);
 		}
         if (!GetComponent<PhotonView>().IsMine) {
 			return;

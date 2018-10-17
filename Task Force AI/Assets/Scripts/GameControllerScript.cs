@@ -12,7 +12,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public int currentMap;
 	// variable for last gunshot position
 	public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
-	public static GameObject[] playerList;
+	public static ArrayList playerList;
 	public GameObject[] enemyList;
 
     // Bomb defusal mission variables
@@ -35,7 +35,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			bombs = GameObject.FindGameObjectsWithTag ("Bomb");
 		}
 
-		playerList = GameObject.FindGameObjectsWithTag ("Player");
+		//playerList = GameObject.FindGameObjectsWithTag ("Player");
 		gameOver = false;
 		exitPoint = GameObject.Find ("ExitPoint");
 		deadCount = 0;
@@ -121,13 +121,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
 		ResetEscapeValues ();
-		playerList = GameObject.FindGameObjectsWithTag ("Player");
+		playerList = new ArrayList(GameObject.FindGameObjectsWithTag ("Player"));
 	}
 
-	public override void OnPlayerEnteredRoom(Player newPlayer) {
+	/**public override void OnPlayerEnteredRoom(Player newPlayer) {
 		Debug.Log (newPlayer.NickName + " has joined the room");
-		playerList = GameObject.FindGameObjectsWithTag ("Player");
-	}
+		//playerList = GameObject.FindGameObjectsWithTag ("Player");
+	}*/
 
 	void ChangeCursorStatus() {
 		if (Input.GetKeyDown (KeyCode.Escape)) {
