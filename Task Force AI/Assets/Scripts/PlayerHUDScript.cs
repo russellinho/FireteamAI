@@ -52,6 +52,7 @@ public class PlayerHUDScript : MonoBehaviour {
     void Start () {
         if (!GetComponent<PhotonView>().IsMine) {
             this.enabled = false;
+			return;
         }
 		// Find/load HUD components
 		LoadHUDComponents ();
@@ -66,6 +67,7 @@ public class PlayerHUDScript : MonoBehaviour {
 		scoreboard.GetComponent<Image> ().enabled = false;
 		endGameText.SetActive (false);
 		endGameButton.SetActive (false);
+		spectatorText.gameObject.SetActive (false);
 
 		//hudMap.SetActive (true);
 
@@ -313,7 +315,7 @@ public class PlayerHUDScript : MonoBehaviour {
 	}
 
 	public void EnableSpectatorMessage() {
-		spectatorText.enabled = true;
+		spectatorText.gameObject.SetActive (true);
 	}
 
 }

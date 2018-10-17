@@ -985,6 +985,8 @@ public class BetaEnemyScript : MonoBehaviour {
 			ArrayList indicesNearBy = new ArrayList ();
 			for (int i = 0; i < GameControllerScript.playerList.Length; i++) {
 				GameObject p = (GameObject)GameControllerScript.playerList [i];
+				if (!p)
+					continue;
 				if (Vector3.Distance (transform.position, p.transform.position) < range + 12f) {
  					Vector3 toPlayer = p.transform.position - transform.position;
 					float angleBetween = Vector3.Angle (transform.forward, toPlayer);
