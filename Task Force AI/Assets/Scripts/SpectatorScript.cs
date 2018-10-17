@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
 public class SpectatorScript : MonoBehaviour {
 
@@ -18,7 +20,8 @@ public class SpectatorScript : MonoBehaviour {
 	private float sensitivityY = 1f;
 
 	private bool rotationLock = false;
-	private int playerListIndex = 0;
+	private int playerListIndex = -1;
+	private int lastPlayerListSize = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -26,7 +29,7 @@ public class SpectatorScript : MonoBehaviour {
 		cam = GetComponent<Camera> ();
 
 		for (int i = 0; i < GameControllerScript.playerList.Length; i++) {
-			if (GameControllerScript.playerList [i].GetComponent<PlayerScript> ().health > 0) {
+			if (GameControllerScript.playerList [i].GetComponent<PlayerScript> ().health > 0 && !GameControllerScript.playerList [i].GetComponent<PhotonView>().IsMine) {
 				following = GameControllerScript.playerList [i];
 				break;
 			}
@@ -38,6 +41,9 @@ public class SpectatorScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (Input.GetKeyDown (KeyCode.Space)) {
+			SwitchFollowing ();
+		}
 		if (!following) {
 			camTransform.position = Vector3.zero;
 			camTransform.rotation = Quaternion.Euler (Vector3.zero);
@@ -60,7 +66,22 @@ public class SpectatorScript : MonoBehaviour {
 	}
 
 	void SwitchFollowing() {
-		
+		if (lastPlayerListSize != GameControllerScript.playerList.Length) {
+			lastPlayerListSize = GameControllerScript.playerList.Length;
+			playerListIndex = -1;
+		}
+		int numberSkipped = 0;
+		while (GameControllerScript.playerList [++playerListIndex].GetComponent<PlayerScript> ().health <= 0 || GameControllerScript.playerList [playerListIndex].GetComponent<PhotonView> ().IsMine) {
+			numberSkipped++;
+			// Checks if there are any players available to spectate
+			if (numberSkipped >= GameControllerScript.playerList.Length) {
+				// If there aren't, set the following index back to -1 for default position
+				playerListIndex = -1;
+				following = null;
+				return;
+			}
+		}
+		following = GameControllerScript.playerList [playerListIndex];
 	}
 
 }
