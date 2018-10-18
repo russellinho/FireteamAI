@@ -30,7 +30,9 @@ public class SpectatorScript : MonoBehaviour {
 
 		for (int i = 0; i < GameControllerScript.playerList.Count; i++) {
 			Debug.Log (i);
-			if (((GameObject)GameControllerScript.playerList [i]).GetComponent<PlayerScript> ().health > 0 && !((GameObject)GameControllerScript.playerList [i]).GetComponent<PhotonView>().IsMine) {
+            Debug.Log (((GameObject)GameControllerScript.playerList[i]).GetComponent<PlayerScript>().health);
+            Debug.Log(((GameObject)GameControllerScript.playerList[i]).GetComponent<PhotonView>().IsMine);
+            if (((GameObject)GameControllerScript.playerList [i]).GetComponent<PlayerScript> ().health > 0 && !((GameObject)GameControllerScript.playerList [i]).GetComponent<PhotonView>().IsMine) {
 				following = (GameObject)GameControllerScript.playerList [i];
 				Debug.Log ("found one");
 				playerListIndex = i;

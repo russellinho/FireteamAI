@@ -60,6 +60,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
 	void Start () {
+
 		// Setting original positions for returning from crouching
 		charController = GetComponent<CharacterController>();
 		charHeightOriginal = charController.height;
@@ -69,6 +70,13 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		escapeValueSent = false;
 		Physics.IgnoreLayerCollision (9, 12);
 		health = 100;
+
+        if (gameController != null) {
+            GameControllerScript.playerList.Add(gameObject);
+        } else {
+            gameController = GameObject.Find("GameController");
+            GameControllerScript.playerList.Add(gameObject);
+        }
 
 		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
         if (!GetComponent<PhotonView>().IsMine) {
@@ -103,7 +111,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	// Update is called once per frame
 	void Update () {
 		if (gameController == null) {
-			Debug.Log ("im famous");
 			gameController = GameObject.Find ("GameController");
 			GameControllerScript.playerList.Add (gameObject);
 		}

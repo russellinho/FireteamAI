@@ -318,10 +318,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		spectatorText.gameObject.SetActive (true);
 	}
 
-	public override void OnPlayerEnteredRoom(Player newPlayer) {
-		Debug.Log (newPlayer.NickName + " has joined the room");
-		GameControllerScript.playerList.Add (gameObject);
-		Debug.Log ("anotha one");
-	}
+	//public override void OnPlayerEnteredRoom(Player newPlayer) {
+	//	Debug.Log (newPlayer.NickName + " has joined the room");
+	//	GameControllerScript.playerList.Add (gameObject);
+	//	Debug.Log ("anotha one");
+	//}
 
 }
