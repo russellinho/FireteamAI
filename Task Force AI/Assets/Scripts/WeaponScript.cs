@@ -6,15 +6,15 @@ using Photon.Realtime;
 
 public class WeaponScript : MonoBehaviour {
 
-	private const float MAX_SPREAD = 0.2f;
-	private const float SPREAD_RECOVER_TIME = 0.02f;
+	public const float MAX_SPREAD = 0.2f;
+	public const float SPREAD_ACCELERATION = 0.02f;
+	public const float SPREAD_DECELERATION = 0.12f;
 
 	public Animator gunAnimator;
 	public AudioSource audioSource;
 
 	public float range = 100f;
-	public float spreadX = 0f;
-	public float spreadY = 0f;
+	public float spread = 0f;
 	public int bulletsPerMag = 30;
 	public int totalBulletsLeft = 120;
 	public int currentBullets;
@@ -207,5 +207,23 @@ public class WeaponScript : MonoBehaviour {
 		audioSource.PlayOneShot (shootSound);
 		//audioSource.clip = shootSound;
 		//audioSource.Play ();
+	}
+
+	public void IncreaseSpread() {
+		if (spread < MAX_SPREAD) {
+			spread += SPREAD_ACCELERATION * Time.deltaTime;
+			if (spread > MAX_SPREAD) {
+				spread = MAX_SPREAD;
+			}
+		}
+	}
+
+	public void DecreaseSpread() {
+		if (spread > 0f) {
+			spread -= SPREAD_DECELERATION * Time.deltaTime;
+			if (spread < 0f) {
+				spread = 0f;
+			}
+		}
 	}
 }
