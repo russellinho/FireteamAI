@@ -6,19 +6,27 @@ using Photon.Realtime;
 
 public class WeaponScript : MonoBehaviour {
 
+	public Camera viewCam;
+
 	// Projectile spread constants
 	public const float MAX_SPREAD = 0.35f;
 	public const float SPREAD_ACCELERATION = 0.15f;
 	public const float SPREAD_DECELERATION = 0.1f;
 
 	// Projectile recoil constants
+	public const float MAX_RECOIL = 10f;
+	public const float RECOIL_ACCELERATION = 3f;
+	public const float RECOIL_DECELERATION = 1f;
 
+	// Projectile variables
+	public float range = 100f;
+	public float spread = 0f;
+	public float recoil = 0f;
+	private Vector3 originalGunPos = Vector3.negativeInfinity;
 
 	public Animator gunAnimator;
 	public AudioSource audioSource;
 
-	public float range = 100f;
-	public float spread = 0f;
 	public int bulletsPerMag = 30;
 	public int totalBulletsLeft = 120;
 	public int currentBullets;
@@ -85,6 +93,8 @@ public class WeaponScript : MonoBehaviour {
 			if (currentBullets > 0) {
 				Fire ();
 				IncreaseSpread ();
+				if ()
+				IncreaseRecoil ();
 			} else if (totalBulletsLeft > 0) {
 				ReloadAction ();
 			}
@@ -219,7 +229,7 @@ public class WeaponScript : MonoBehaviour {
 		//audioSource.Play ();
 	}
 
-	public void IncreaseSpread() {
+	private void IncreaseSpread() {
 		if (spread < MAX_SPREAD) {
 			spread += SPREAD_ACCELERATION * Time.deltaTime;
 			if (spread > MAX_SPREAD) {
@@ -228,7 +238,7 @@ public class WeaponScript : MonoBehaviour {
 		}
 	}
 
-	public void DecreaseSpread() {
+	private void DecreaseSpread() {
 		if (spread > 0f) {
 			spread -= SPREAD_DECELERATION * Time.deltaTime;
 			if (spread < 0f) {
@@ -236,4 +246,17 @@ public class WeaponScript : MonoBehaviour {
 			}
 		}
 	}
+
+	private void IncreaseRecoil()
+	{
+		float targetRot = Quaternion.Euler (-xRot, 0f, 0f);
+		viewCam.gameObject.transform.localRotation = Quaternion.Slerp (viewCam.gameObject.transform.localRotation, targetRot, RECOIL_ACCELERATION * Time.deltaTime);
+		//Debug.Log (m_CameraTargetRot.x + "," + m_CameraTargetRot.y);
+
+	}
+
+	private void DecreaseRecoil() {
+		
+	}
+
 }
