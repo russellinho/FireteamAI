@@ -6,9 +6,13 @@ using Photon.Realtime;
 
 public class WeaponScript : MonoBehaviour {
 
-	public const float MAX_SPREAD = 0.2f;
-	public const float SPREAD_ACCELERATION = 0.02f;
-	public const float SPREAD_DECELERATION = 0.12f;
+	// Projectile spread constants
+	public const float MAX_SPREAD = 0.35f;
+	public const float SPREAD_ACCELERATION = 0.15f;
+	public const float SPREAD_DECELERATION = 0.1f;
+
+	// Projectile recoil constants
+
 
 	public Animator gunAnimator;
 	public AudioSource audioSource;
@@ -77,12 +81,15 @@ public class WeaponScript : MonoBehaviour {
 		if (!GetComponent<PlayerScript> ().canShoot) {
 			return;
 		}
-		if (shootInput) {
+		if (shootInput && !isReloading) {
 			if (currentBullets > 0) {
 				Fire ();
+				IncreaseSpread ();
 			} else if (totalBulletsLeft > 0) {
 				ReloadAction ();
 			}
+		} else {
+			DecreaseSpread ();
 		}
 		if (Input.GetKeyDown (KeyCode.R)) {
 			if (currentBullets < bulletsPerMag && totalBulletsLeft > 0) {
@@ -127,9 +134,12 @@ public class WeaponScript : MonoBehaviour {
 		}
 
 		RaycastHit hit;
-		Vector3 impactDir = new Vector3 (shootPoint.transform.forward.x);
-		if (Physics.Raycast (shootPoint.position, shootPoint.transform.forward, out hit, range)) {
-			
+		float xSpread = Random.Range (-spread, spread);
+		float ySpread = Random.Range (-spread, spread);
+		float zSpread = Random.Range (-spread, spread);
+		Debug.Log ("xSpread: " + xSpread + " ySpread: " + ySpread);
+		Vector3 impactDir = new Vector3 (shootPoint.transform.forward.x + xSpread, shootPoint.transform.forward.y + ySpread, shootPoint.transform.forward.z + zSpread);
+		if (Physics.Raycast (shootPoint.position, impactDir, out hit, range)) {
 			GameObject bloodSpill = null;
 			if (hit.transform.tag.Equals ("Human")) {
 				pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal);
