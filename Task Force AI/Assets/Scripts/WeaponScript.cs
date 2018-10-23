@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class WeaponScript : MonoBehaviour {
 
@@ -21,8 +22,8 @@ public class WeaponScript : MonoBehaviour {
 	// Projectile variables
 	public float range = 100f;
 	public float spread = 0f;
-	public float recoil = 0f;
-	private Vector3 originalGunPos = Vector3.negativeInfinity;
+	private Quaternion originalGunRot;
+	private Quaternion targetGunRot;
 
 	public Animator gunAnimator;
 	public AudioSource audioSource;
@@ -65,6 +66,9 @@ public class WeaponScript : MonoBehaviour {
 		pView = GetComponent<PhotonView> ();
 		currentBullets = bulletsPerMag;
 		originalPos = originalTrans.localPosition;
+
+		originalGunRot = viewCam.transform.localRotation;
+		targetGunRot = viewCam.transform.localRotation * Quaternion.Euler(MAX_RECOIL, 0f, 0f);
 	}
 	
 	// Update is called once per frame
@@ -93,13 +97,21 @@ public class WeaponScript : MonoBehaviour {
 			if (currentBullets > 0) {
 				Fire ();
 				IncreaseSpread ();
-				if ()
+
+				if (CrossPlatformInputManager.GetAxis ("Mouse X") != 0 || CrossPlatformInputManager.GetAxis ("Mouse Y") != 0) {
+					originalGunRot = viewCam.transform.localRotation;
+					targetGunRot = originalGunRot * Quaternion.Euler (MAX_RECOIL, 0f, 0f);
+				}
+
 				IncreaseRecoil ();
 			} else if (totalBulletsLeft > 0) {
 				ReloadAction ();
 			}
 		} else {
 			DecreaseSpread ();
+			if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0) {
+				DecreaseRecoil ();
+			}
 		}
 		if (Input.GetKeyDown (KeyCode.R)) {
 			if (currentBullets < bulletsPerMag && totalBulletsLeft > 0) {
@@ -249,14 +261,19 @@ public class WeaponScript : MonoBehaviour {
 
 	private void IncreaseRecoil()
 	{
-		float targetRot = Quaternion.Euler (-xRot, 0f, 0f);
-		viewCam.gameObject.transform.localRotation = Quaternion.Slerp (viewCam.gameObject.transform.localRotation, targetRot, RECOIL_ACCELERATION * Time.deltaTime);
+		// If the current camera rotation is not at its maximum recoil, then increase its recoil
+		if (!viewCam.transform.localRotation.Equals(targetGunRot)) {
+			viewCam.transform.localRotation = Quaternion.Slerp (viewCam.transform.localRotation, targetGunRot, RECOIL_ACCELERATION * Time.deltaTime);
+		}
 		//Debug.Log (m_CameraTargetRot.x + "," + m_CameraTargetRot.y);
 
 	}
 
 	private void DecreaseRecoil() {
-		
+		// If the current camera rotation is not at its original pos before recoil, then decrease its recoil
+		if (!viewCam.transform.localRotation.Equals (originalGunRot)) {
+			viewCam.transform.localRotation = Quaternion.Slerp (viewCam.transform.localRotation, originalGunRot, RECOIL_DECELERATION * Time.deltaTime);
+		}
 	}
 
 }
