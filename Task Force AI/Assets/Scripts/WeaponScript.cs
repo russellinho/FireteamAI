@@ -15,15 +15,16 @@ public class WeaponScript : MonoBehaviour {
 	public const float SPREAD_DECELERATION = 0.1f;
 
 	// Projectile recoil constants
-	public const float MAX_RECOIL = 10f;
-	public const float RECOIL_ACCELERATION = 3f;
-	public const float RECOIL_DECELERATION = 1f;
+	public const float MAX_RECOIL = 100f;
+	public const float RECOIL_ACCELERATION = 0.8f;
+	public const float RECOIL_DECELERATION = 0.08f;
 
 	// Projectile variables
 	public float range = 100f;
 	public float spread = 0f;
 	private Quaternion originalGunRot;
 	private Quaternion targetGunRot;
+	private bool voidRecoilRecover = true;
 
 	public Animator gunAnimator;
 	public AudioSource audioSource;
@@ -68,7 +69,7 @@ public class WeaponScript : MonoBehaviour {
 		originalPos = originalTrans.localPosition;
 
 		originalGunRot = viewCam.transform.localRotation;
-		targetGunRot = viewCam.transform.localRotation * Quaternion.Euler(MAX_RECOIL, 0f, 0f);
+		targetGunRot = viewCam.transform.localRotation * Quaternion.Euler(-MAX_RECOIL, 0f, 0f);
 	}
 	
 	// Update is called once per frame
@@ -76,6 +77,7 @@ public class WeaponScript : MonoBehaviour {
 		if (!pView.IsMine) {
 			return;
 		}
+
 		if (Input.GetKeyDown (KeyCode.Q)) {
 			if (firingMode == FireMode.Semi)
 				firingMode = FireMode.Auto;
@@ -97,10 +99,11 @@ public class WeaponScript : MonoBehaviour {
 			if (currentBullets > 0) {
 				Fire ();
 				IncreaseSpread ();
+				voidRecoilRecover = false;
 
 				if (CrossPlatformInputManager.GetAxis ("Mouse X") != 0 || CrossPlatformInputManager.GetAxis ("Mouse Y") != 0) {
 					originalGunRot = viewCam.transform.localRotation;
-					targetGunRot = originalGunRot * Quaternion.Euler (MAX_RECOIL, 0f, 0f);
+					targetGunRot = viewCam.transform.localRotation * Quaternion.Euler (-MAX_RECOIL, 0f, 0f);
 				}
 
 				IncreaseRecoil ();
@@ -109,8 +112,10 @@ public class WeaponScript : MonoBehaviour {
 			}
 		} else {
 			DecreaseSpread ();
-			if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0) {
+			if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0 && !voidRecoilRecover) {
 				DecreaseRecoil ();
+			} else {
+				voidRecoilRecover = true;
 			}
 		}
 		if (Input.GetKeyDown (KeyCode.R)) {
