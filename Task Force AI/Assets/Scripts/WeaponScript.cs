@@ -15,9 +15,9 @@ public class WeaponScript : MonoBehaviour {
 	public const float SPREAD_DECELERATION = 0.1f;
 
 	// Projectile recoil constants
-	public const float MAX_RECOIL = 100f;
-	public const float RECOIL_ACCELERATION = 0.8f;
-	public const float RECOIL_DECELERATION = 0.08f;
+	public const float MAX_RECOIL = 7f;
+	public const float RECOIL_ACCELERATION = 3.2f;
+	public const float RECOIL_DECELERATION = 2f;
 
 	// Projectile variables
 	public float range = 100f;
@@ -25,6 +25,7 @@ public class WeaponScript : MonoBehaviour {
 	private Quaternion originalGunRot;
 	private Quaternion targetGunRot;
 	private bool voidRecoilRecover = true;
+	private float recoilSlerp = 0f;
 
 	public Animator gunAnimator;
 	public AudioSource audioSource;
@@ -102,10 +103,11 @@ public class WeaponScript : MonoBehaviour {
 				voidRecoilRecover = false;
 
 				if (CrossPlatformInputManager.GetAxis ("Mouse X") != 0 || CrossPlatformInputManager.GetAxis ("Mouse Y") != 0) {
+					recoilSlerp = 0f;
 					originalGunRot = viewCam.transform.localRotation;
 					targetGunRot = viewCam.transform.localRotation * Quaternion.Euler (-MAX_RECOIL, 0f, 0f);
 				}
-
+				//Debug.Log ("one");
 				IncreaseRecoil ();
 			} else if (totalBulletsLeft > 0) {
 				ReloadAction ();
@@ -113,9 +115,11 @@ public class WeaponScript : MonoBehaviour {
 		} else {
 			DecreaseSpread ();
 			if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0 && !voidRecoilRecover) {
+				//Debug.Log ("two");
 				DecreaseRecoil ();
 			} else {
 				voidRecoilRecover = true;
+				recoilSlerp = 0f;
 			}
 		}
 		if (Input.GetKeyDown (KeyCode.R)) {
@@ -164,7 +168,7 @@ public class WeaponScript : MonoBehaviour {
 		float xSpread = Random.Range (-spread, spread);
 		float ySpread = Random.Range (-spread, spread);
 		float zSpread = Random.Range (-spread, spread);
-		Debug.Log ("xSpread: " + xSpread + " ySpread: " + ySpread);
+		//Debug.Log ("xSpread: " + xSpread + " ySpread: " + ySpread);
 		Vector3 impactDir = new Vector3 (shootPoint.transform.forward.x + xSpread, shootPoint.transform.forward.y + ySpread, shootPoint.transform.forward.z + zSpread);
 		if (Physics.Raycast (shootPoint.position, impactDir, out hit, range)) {
 			GameObject bloodSpill = null;
@@ -267,8 +271,12 @@ public class WeaponScript : MonoBehaviour {
 	private void IncreaseRecoil()
 	{
 		// If the current camera rotation is not at its maximum recoil, then increase its recoil
-		if (!viewCam.transform.localRotation.Equals(targetGunRot)) {
-			viewCam.transform.localRotation = Quaternion.Slerp (viewCam.transform.localRotation, targetGunRot, RECOIL_ACCELERATION * Time.deltaTime);
+		if (viewCam.transform.localRotation.x > targetGunRot.x) {
+			if (recoilSlerp < 1f) {
+				recoilSlerp += RECOIL_ACCELERATION * Time.deltaTime;
+			}
+			Debug.Log (recoilSlerp);
+			viewCam.transform.localRotation = Quaternion.Slerp (viewCam.transform.localRotation, targetGunRot, recoilSlerp);
 		}
 		//Debug.Log (m_CameraTargetRot.x + "," + m_CameraTargetRot.y);
 
@@ -276,8 +284,12 @@ public class WeaponScript : MonoBehaviour {
 
 	private void DecreaseRecoil() {
 		// If the current camera rotation is not at its original pos before recoil, then decrease its recoil
-		if (!viewCam.transform.localRotation.Equals (originalGunRot)) {
-			viewCam.transform.localRotation = Quaternion.Slerp (viewCam.transform.localRotation, originalGunRot, RECOIL_DECELERATION * Time.deltaTime);
+		if (viewCam.transform.localRotation.x < originalGunRot.x) {
+			if (recoilSlerp > 0f) {
+				recoilSlerp -= RECOIL_DECELERATION * Time.deltaTime;
+			}
+			Debug.Log (1f - recoilSlerp);
+			viewCam.transform.localRotation = Quaternion.Slerp (viewCam.transform.localRotation, originalGunRot, (1f - recoilSlerp));
 		}
 	}
 
