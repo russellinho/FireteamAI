@@ -16,17 +16,19 @@ public class WeaponScript : MonoBehaviour {
 	public const float SPREAD_DECELERATION = 0.1f;
 
 	// Projectile recoil constants
-	public const float MAX_RECOIL = 7f;
-	public const float RECOIL_ACCELERATION = 3.2f;
-	public const float RECOIL_DECELERATION = 2f;
+	public const float MAX_RECOIL_TIME = 1.4f;
+	public const float RECOIL_ACCELERATION = 4.2f;
+	public const float RECOIL_DECELERATION = 4.2f;
 
 	// Projectile variables
 	public float range = 100f;
 	public float spread = 0f;
-	private Quaternion targetGunRot;
-	private Quaternion originalGunRot;
+	//private Quaternion targetGunRot;
+	//private Quaternion originalGunRot;
+	private float recoil = 0.5f;
+	private float recoilTime = 0f;
 	private bool voidRecoilRecover = true;
-	private float recoilSlerp = 0f;
+	//private float recoilSlerp = 0f;
 
 	public Animator gunAnimator;
 	public AudioSource audioSource;
@@ -71,9 +73,9 @@ public class WeaponScript : MonoBehaviour {
 		originalPos = originalTrans.localPosition;
 
 		mouseLook = GetComponent<FirstPersonController> ().m_MouseLook;
-		targetGunRot = mouseLook.m_CameraTargetRot * Quaternion.Euler(-MAX_RECOIL, 0f, 0f);
+		//targetGunRot = mouseLook.m_CameraTargetRot * Quaternion.Euler(-MAX_RECOIL, 0f, 0f);
 		//originalGunRot = new Quaternion(mouseLook.m_CameraTargetRot.x, mouseLook.m_CameraTargetRot.y, mouseLook.m_CameraTargetRot.z, mouseLook.m_CameraTargetRot.w);
-		originalGunRot = mouseLook.m_CameraTargetRot;
+		//originalGunRot = mouseLook.m_CameraTargetRot;
 	}
 	
 	// Update is called once per frame
@@ -99,32 +101,6 @@ public class WeaponScript : MonoBehaviour {
 		if (!GetComponent<PlayerScript> ().canShoot) {
 			return;
 		}
-		if (shootInput && !isReloading) {
-			if (currentBullets > 0) {
-				Fire ();
-				IncreaseSpread ();
-				voidRecoilRecover = false;
-
-				if (CrossPlatformInputManager.GetAxis ("Mouse X") != 0 || CrossPlatformInputManager.GetAxis ("Mouse Y") != 0) {
-					recoilSlerp = 0f;
-					targetGunRot = mouseLook.m_CameraTargetRot * Quaternion.Euler (-MAX_RECOIL, 0f, 0f);
-					originalGunRot = new Quaternion(mouseLook.m_CameraTargetRot.x, mouseLook.m_CameraTargetRot.y, mouseLook.m_CameraTargetRot.z, mouseLook.m_CameraTargetRot.w);
-				}
-				//Debug.Log ("one");
-				IncreaseRecoil ();
-			} else if (totalBulletsLeft > 0) {
-				ReloadAction ();
-			}
-		} else {
-			DecreaseSpread ();
-			if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0 && !voidRecoilRecover) {
-				Debug.Log ("two");
-				DecreaseRecoil ();
-			} else {
-				voidRecoilRecover = true;
-				recoilSlerp = 0f;
-			}
-		}
 		if (Input.GetKeyDown (KeyCode.R)) {
 			if (currentBullets < bulletsPerMag && totalBulletsLeft > 0) {
 				ReloadAction ();
@@ -148,6 +124,29 @@ public class WeaponScript : MonoBehaviour {
 			AnimatorStateInfo info = gunAnimator.GetCurrentAnimatorStateInfo (0);
 			isReloading = info.IsName ("Reloading");
 			gunAnimator.SetBool ("Aim", isAiming);
+		}
+		// Shooting mechanics
+		if (shootInput && !isReloading) {
+			if (currentBullets > 0) {
+				Fire ();
+				IncreaseSpread ();
+				voidRecoilRecover = false;
+				IncreaseRecoil ();
+				UpdateRecoil (true);
+			} else if (totalBulletsLeft > 0) {
+				ReloadAction ();
+			}
+		} else {
+			DecreaseSpread ();
+			DecreaseRecoil ();
+			UpdateRecoil (false);
+			/**if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0 && !voidRecoilRecover) {
+				DecreaseRecoil ();
+				UpdateRecoil (false);
+			} else {
+				voidRecoilRecover = true;
+				recoilTime = 0f;
+			}*/
 		}
 	}
 
@@ -274,25 +273,29 @@ public class WeaponScript : MonoBehaviour {
 	private void IncreaseRecoil()
 	{
 		// If the current camera rotation is not at its maximum recoil, then increase its recoil
-		if (mouseLook.m_CameraTargetRot.x > targetGunRot.x) {
-			if (recoilSlerp < 1f) {
-				recoilSlerp += RECOIL_ACCELERATION * Time.deltaTime;
-			}
-			Debug.Log (recoilSlerp);
-			mouseLook.m_CameraTargetRot = Quaternion.Slerp (originalGunRot, targetGunRot, recoilSlerp);
+		if (recoilTime < MAX_RECOIL_TIME) {
+			recoilTime += RECOIL_ACCELERATION * Time.deltaTime;
 		}
-		//Debug.Log (m_CameraTargetRot.x + "," + m_CameraTargetRot.y);
 
 	}
 
 	private void DecreaseRecoil() {
 		// If the current camera rotation is not at its original pos before recoil, then decrease its recoil
-		if (mouseLook.m_CameraTargetRot.x < originalGunRot.x) {
-			if (recoilSlerp > 0f) {
-				recoilSlerp -= RECOIL_DECELERATION * Time.deltaTime;
+		if (recoilTime > 0f) {
+			recoilTime -= RECOIL_DECELERATION * Time.deltaTime;
+		}
+	}
+
+	void UpdateRecoil(bool increase) {
+		Debug.Log (recoilTime);
+		if (increase) {
+			if (recoilTime < MAX_RECOIL_TIME) {
+				mouseLook.m_CameraTargetRot *= Quaternion.Euler (-recoil, 0f, 0f);
 			}
-			Debug.Log (1f - recoilSlerp);
-			mouseLook.m_CameraTargetRot = Quaternion.Slerp (targetGunRot, originalGunRot, (1f - recoilSlerp));
+		} else {
+			if (recoilTime > 0f) {
+				mouseLook.m_CameraTargetRot *= Quaternion.Euler (recoil, 0f, 0f);
+			}
 		}
 	}
 
