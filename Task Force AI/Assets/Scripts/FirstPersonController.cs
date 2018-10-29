@@ -12,7 +12,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
     public class FirstPersonController : MonoBehaviour
     {
         [SerializeField] private bool m_IsWalking;
+        [SerializeField] public bool m_IsCrouching;
         [SerializeField] private float m_WalkSpeed;
+        [SerializeField] private float m_CrouchSpeed;
         [SerializeField] private float m_RunSpeed;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
         [SerializeField] private float m_JumpSpeed;
@@ -59,6 +61,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_StepCycle = 0f;
             m_NextStep = m_StepCycle/2f;
             m_Jumping = false;
+            m_IsCrouching = false;
             m_AudioSource = GetComponent<AudioSource>();
 			m_MouseLook.Init(transform , m_Camera.transform);
 			canMove = true;
@@ -130,10 +133,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
                 if (m_Jump)
                 {
-                    m_MoveDir.y = m_JumpSpeed;
-                    PlayJumpSound();
+                    if (m_IsCrouching)
+                    {
+                        m_IsCrouching = false;
+                    }
+                    else
+                    {
+                        m_MoveDir.y = m_JumpSpeed;
+                        PlayJumpSound();
+                        m_Jumping = true;
+                    }
                     m_Jump = false;
-                    m_Jumping = true;
                 }
             }
             else
@@ -228,10 +238,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
 #if !MOBILE_INPUT
             // On standalone builds, walk/run speed is modified by a key press.
             // keep track of whether or not the character is walking or running
-            m_IsWalking = !Input.GetKey(KeyCode.LeftShift);
+            m_IsWalking = (!Input.GetKey(KeyCode.LeftShift) || m_IsCrouching);
 #endif
             // set the desired speed to be walking or running
-            speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
+            //speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
+            speed = m_RunSpeed;
+            if (m_IsCrouching) {
+                speed = m_CrouchSpeed;
+            } else if (m_IsWalking) {
+                speed = m_WalkSpeed;
+            }
+
             m_Input = new Vector2(horizontal, vertical);
 
             // normalize input if it exceeds 1 in combined length:

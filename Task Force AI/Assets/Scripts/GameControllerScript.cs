@@ -30,11 +30,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private PhotonView pView;
 
 	// Use this for initialization
-	void Start () {
-		if (SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetworkTest") || SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
-			bombs = GameObject.FindGameObjectsWithTag ("Bomb");
-		}
-
+    void Start () {
 		//playerList = GameObject.FindGameObjectsWithTag ("Player");
 		gameOver = false;
 		exitPoint = GameObject.Find ("ExitPoint");
@@ -59,7 +55,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                 GameObject temp = GameObject.FindWithTag("MainCamera");
                 if (temp != null) c = temp.GetComponent<Camera>();
             }
-            if (bombs == null) bombs = GameObject.FindGameObjectsWithTag("Bomb");
+            if (bombs == null || bombs.Length == 0)
+            {
+                Debug.Log("bombs found");
+                bombs = GameObject.FindGameObjectsWithTag("Bomb");
+            }
 
             // Check if the mission is over
             if (bombsRemaining == 0) {

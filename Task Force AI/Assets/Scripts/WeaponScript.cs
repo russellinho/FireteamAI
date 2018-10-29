@@ -287,7 +287,6 @@ public class WeaponScript : MonoBehaviour {
 	}
 
 	void UpdateRecoil(bool increase) {
-		Debug.Log (recoilTime);
 		if (increase) {
 			if (recoilTime < MAX_RECOIL_TIME) {
 				mouseLook.m_CameraTargetRot *= Quaternion.Euler (-recoil, 0f, 0f);

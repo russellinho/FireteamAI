@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio for Mac
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task Force AI", "Assembly-CSharp.csproj", "{D41636CE-7353-CC09-BDFA-330A2E77FC79}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task Force AI", "Assembly-CSharp-firstpass.csproj", "{B585C9E2-CE4B-F4FB-8EE3-7497A5193246}"
@@ -34,8 +34,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Assembly-CSharp.csproj
 	EndGlobalSection
 EndGlobal

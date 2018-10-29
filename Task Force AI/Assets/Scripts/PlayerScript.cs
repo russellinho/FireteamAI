@@ -24,10 +24,8 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	// Player variables
 	public string currWep; // TODO: Needs to be changed soon to account for other weps
 	public int health;
-	public bool isCrouching;
 	public bool canShoot;
 	private float charHeightOriginal;
-	private float crouchSpeed;
 	private bool escapeValueSent;
 
 	public GameObject[] subComponents;
@@ -92,9 +90,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 		// Initialize variables
 		currWep = "AK-47";
-		isCrouching = false;
 		canShoot = true;
-		crouchSpeed = 3f;
 
 		crouchPosY = 0.3f;
 		crouchBodyPosY = 0.25f;
@@ -134,9 +130,9 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
     }
 
 	public void Crouch() {
-		bool originalCrouch = isCrouching;
+        bool originalCrouch = fpc.m_IsCrouching;
 		if (Input.GetKeyDown (KeyCode.LeftControl)) {
-			isCrouching = !isCrouching;
+            fpc.m_IsCrouching = !fpc.m_IsCrouching;
 		}
 
 		// Collecting the original character height
@@ -146,13 +142,10 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		//float speed = charController.velocity;
 		float bodyScale = bodyScaleTrans.lossyScale.y;
 
-		if (isCrouching) {
+		if (fpc.m_IsCrouching) {
 			h = charHeightOriginal * .65f;
 			viewH = .55f;
 			bodyScale = .7f;
-			//TODO: Change speed
-			//TODO: Make it impossible to jump
-			//TODO: Make it impossible to sprint
 		} else {
 			viewH = .8f;
 			bodyScale = bodyScaleOriginal;
@@ -166,26 +159,23 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		//Debug.Log (fpcPosition.position.y);
 		transform.position = new Vector3 (transform.position.x, transform.position.y + ((charController.height - lastHeight) / 2), transform.position.z);
 
-		if (isCrouching != originalCrouch) {
-			photonView.RPC ("RpcCrouch", RpcTarget.OthersBuffered, isCrouching);
+		if (fpc.m_IsCrouching != originalCrouch) {
+			photonView.RPC ("RpcCrouch", RpcTarget.OthersBuffered, fpc.m_IsCrouching);
 		}
 	}
 
 	[PunRPC]
 	public void RpcCrouch(bool crouch) {
-		isCrouching = crouch;
+        fpc.m_IsCrouching = crouch;
 		float h = charHeightOriginal;
 		float viewH = fpcPositionYOriginal;
 		//float speed = charController.velocity;
 		float bodyScale = bodyScaleTrans.lossyScale.y;
 
-		if (isCrouching) {
+		if (fpc.m_IsCrouching) {
 			h = charHeightOriginal * .65f;
 			viewH = .55f;
 			bodyScale = .7f;
-			//Change speed
-			//Make it impossible to jump
-			//Make it impossible to sprint
 		} else {
 			viewH = .8f;
 			bodyScale = bodyScaleOriginal;
