@@ -275,8 +275,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     IEnumerator ShowMissionText()
     {
-        yield return new WaitForSeconds(7f);
-        missionText.SetActive(true);
+        yield return new WaitForSeconds(5f);
+		missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();
     }
 
     public void ToggleActionBar(bool enable)
@@ -307,7 +307,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     public void EscapePopup()
     {
         missionText.GetComponent<Text>().text = "Escape available! Head to the waypoint!";
-        missionText.SetActive(true);
+		missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();
     }
 
 	public void SetActionBarSlider(float val) {
