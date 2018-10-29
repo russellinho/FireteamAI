@@ -4,10 +4,11 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityStandardAssets.CrossPlatformInput;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class WeaponScript : MonoBehaviour {
 
-	public Camera viewCam;
+	private MouseLook mouseLook;
 
 	// Projectile spread constants
 	public const float MAX_SPREAD = 0.35f;
@@ -22,8 +23,8 @@ public class WeaponScript : MonoBehaviour {
 	// Projectile variables
 	public float range = 100f;
 	public float spread = 0f;
-	private Quaternion originalGunRot;
 	private Quaternion targetGunRot;
+	private Quaternion originalGunRot;
 	private bool voidRecoilRecover = true;
 	private float recoilSlerp = 0f;
 
@@ -69,8 +70,10 @@ public class WeaponScript : MonoBehaviour {
 		currentBullets = bulletsPerMag;
 		originalPos = originalTrans.localPosition;
 
-		originalGunRot = viewCam.transform.localRotation;
-		targetGunRot = viewCam.transform.localRotation * Quaternion.Euler(-MAX_RECOIL, 0f, 0f);
+		mouseLook = GetComponent<FirstPersonController> ().m_MouseLook;
+		targetGunRot = mouseLook.m_CameraTargetRot * Quaternion.Euler(-MAX_RECOIL, 0f, 0f);
+		//originalGunRot = new Quaternion(mouseLook.m_CameraTargetRot.x, mouseLook.m_CameraTargetRot.y, mouseLook.m_CameraTargetRot.z, mouseLook.m_CameraTargetRot.w);
+		originalGunRot = mouseLook.m_CameraTargetRot;
 	}
 	
 	// Update is called once per frame
@@ -78,7 +81,7 @@ public class WeaponScript : MonoBehaviour {
 		if (!pView.IsMine) {
 			return;
 		}
-
+			
 		if (Input.GetKeyDown (KeyCode.Q)) {
 			if (firingMode == FireMode.Semi)
 				firingMode = FireMode.Auto;
@@ -104,8 +107,8 @@ public class WeaponScript : MonoBehaviour {
 
 				if (CrossPlatformInputManager.GetAxis ("Mouse X") != 0 || CrossPlatformInputManager.GetAxis ("Mouse Y") != 0) {
 					recoilSlerp = 0f;
-					originalGunRot = viewCam.transform.localRotation;
-					targetGunRot = viewCam.transform.localRotation * Quaternion.Euler (-MAX_RECOIL, 0f, 0f);
+					targetGunRot = mouseLook.m_CameraTargetRot * Quaternion.Euler (-MAX_RECOIL, 0f, 0f);
+					originalGunRot = new Quaternion(mouseLook.m_CameraTargetRot.x, mouseLook.m_CameraTargetRot.y, mouseLook.m_CameraTargetRot.z, mouseLook.m_CameraTargetRot.w);
 				}
 				//Debug.Log ("one");
 				IncreaseRecoil ();
@@ -115,7 +118,7 @@ public class WeaponScript : MonoBehaviour {
 		} else {
 			DecreaseSpread ();
 			if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0 && !voidRecoilRecover) {
-				//Debug.Log ("two");
+				Debug.Log ("two");
 				DecreaseRecoil ();
 			} else {
 				voidRecoilRecover = true;
@@ -271,12 +274,12 @@ public class WeaponScript : MonoBehaviour {
 	private void IncreaseRecoil()
 	{
 		// If the current camera rotation is not at its maximum recoil, then increase its recoil
-		if (viewCam.transform.localRotation.x > targetGunRot.x) {
+		if (mouseLook.m_CameraTargetRot.x > targetGunRot.x) {
 			if (recoilSlerp < 1f) {
 				recoilSlerp += RECOIL_ACCELERATION * Time.deltaTime;
 			}
 			Debug.Log (recoilSlerp);
-			viewCam.transform.localRotation = Quaternion.Slerp (viewCam.transform.localRotation, targetGunRot, recoilSlerp);
+			mouseLook.m_CameraTargetRot = Quaternion.Slerp (originalGunRot, targetGunRot, recoilSlerp);
 		}
 		//Debug.Log (m_CameraTargetRot.x + "," + m_CameraTargetRot.y);
 
@@ -284,12 +287,12 @@ public class WeaponScript : MonoBehaviour {
 
 	private void DecreaseRecoil() {
 		// If the current camera rotation is not at its original pos before recoil, then decrease its recoil
-		if (viewCam.transform.localRotation.x < originalGunRot.x) {
+		if (mouseLook.m_CameraTargetRot.x < originalGunRot.x) {
 			if (recoilSlerp > 0f) {
 				recoilSlerp -= RECOIL_DECELERATION * Time.deltaTime;
 			}
 			Debug.Log (1f - recoilSlerp);
-			viewCam.transform.localRotation = Quaternion.Slerp (viewCam.transform.localRotation, originalGunRot, (1f - recoilSlerp));
+			mouseLook.m_CameraTargetRot = Quaternion.Slerp (targetGunRot, originalGunRot, (1f - recoilSlerp));
 		}
 	}
 
