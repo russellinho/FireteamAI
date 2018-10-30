@@ -11,6 +11,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     // Timer
     public static float missionTime;
+    private const float MAX_MISSION_TIME = 1800f;
 
 	public int currentMap;
     // variable for last gunshot position
@@ -79,6 +80,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             if (PhotonNetwork.IsMasterClient) {
                 UpdateMissionTime();
             }
+
+            // Check if out of time (30 mins)
         }
 
 	}
@@ -159,5 +162,12 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			}
 		}
 	}
+
+    void CheckOutOfTime() {
+        if (missionTime >= MAX_MISSION_TIME) {
+            gameOver = true;
+            EndGame();
+        }
+    }
 
 }
