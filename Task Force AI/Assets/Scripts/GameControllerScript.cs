@@ -9,9 +9,12 @@ using Photon.Realtime;
 
 public class GameControllerScript : MonoBehaviourPunCallbacks {
 
+    // Timer
+    public static float missionTime;
+
 	public int currentMap;
-	// variable for last gunshot position
-	public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
+    // variable for last gunshot position
+    public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
 	public static ArrayList playerList = new ArrayList();
 	public GameObject[] enemyList;
 
@@ -19,7 +22,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject[] bombs;
     public int bombsRemaining;
 	public bool gameOver;
-	public bool escapeAvailable;
+    public bool escapeAvailable;
 
 	public Camera c;
 	public GameObject exitPoint;
@@ -42,6 +45,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
 
+        missionTime = 0f;
+
 	}
 
 	// Update is called once per frame
@@ -57,7 +62,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             }
             if (bombs == null || bombs.Length == 0)
             {
-                Debug.Log("bombs found");
+                //Debug.Log("bombs found");
                 bombs = GameObject.FindGameObjectsWithTag("Bomb");
             }
 
@@ -70,6 +75,10 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					EndGame();
 				}
 			}
+
+            if (PhotonNetwork.IsMasterClient) {
+                UpdateMissionTime();
+            }
         }
 
 	}
@@ -112,6 +121,16 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void RpcIncrementEscapeCount() {
 		escaperCount++;
 	}
+
+    void UpdateMissionTime() {
+        missionTime += Time.deltaTime;
+        pView.RPC ("RpcUpdateMissionTime", RpcTarget.Others, missionTime);
+    }
+
+    [PunRPC]
+    void RpcUpdateMissionTime(float t) {
+        missionTime = t;
+    }
 
 	// When someone leaves the game in the middle of an escape, reset the values to recount
 	void ResetEscapeValues() {

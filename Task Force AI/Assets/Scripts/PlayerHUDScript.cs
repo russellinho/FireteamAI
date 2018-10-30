@@ -47,6 +47,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     public Text hintText;
 	private ObjectivesTextScript objectiveFormatter;
 	public Text spectatorText;
+    public Text missionTimeText;
 
     // Use this for initialization
     void Start () {
@@ -140,6 +141,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		hintText = GameObject.Find ("HintText").GetComponent<Text>();
 		spectatorText = GameObject.Find ("SpectatorTxt").GetComponent<Text> ();
 		objectiveFormatter = new ObjectivesTextScript();
+        missionTimeText = GameObject.Find ("MissionTimeTxt").GetComponent<Text> ();
 
 	}
 	
@@ -169,6 +171,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			DisableHUD();
 			ToggleScoreboard ();
 		}
+
+        UpdateMissionTimeText();
     }
 
 	void FixedUpdate() {
@@ -323,5 +327,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	//	GameControllerScript.playerList.Add (gameObject);
 	//	Debug.Log ("anotha one");
 	//}
+
+    private void UpdateMissionTimeText() {
+        float totalSecs = GameControllerScript.missionTime;
+        int mins = (int)(totalSecs / 60f);
+        int remainingSecs = (int)(totalSecs - (mins * 60f));
+        missionTimeText.text = (remainingSecs < 10 ? (mins + ":0" + remainingSecs) : (mins + ":" + remainingSecs));
+    }
 
 }
