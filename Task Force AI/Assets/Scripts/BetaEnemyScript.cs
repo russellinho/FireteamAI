@@ -130,7 +130,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (enemyType != EnemyType.Scout) {
 				navMesh.isStopped = true;
 			}
-            return;
+			return;
 		}
 		if (!Vector3.Equals (GameControllerTestScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
 			if (!alerted) {
@@ -150,8 +150,8 @@ public class BetaEnemyScript : MonoBehaviour {
 		//Debug.DrawRay (transform.position, transform.forward * range, Color.blue);
 
 		if (enemyType == EnemyType.Patrol) {
-            DecideActionPatrolInCombat();
-            DecideActionPatrol ();
+			DecideActionPatrolInCombat();
+			DecideActionPatrol ();
 			HandleMovementPatrol ();
 		} else {
 			DecideActionScout ();
@@ -224,14 +224,14 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
-    [PunRPC]
-    void RpcSetIsCrouching(bool b)
-    {
+	[PunRPC]
+	void RpcSetIsCrouching(bool b)
+	{
 		//Debug.Log ("i");
-        isCrouching = b;
-    }
+		isCrouching = b;
+	}
 
-    void RotateTowardsPlayer() {
+	void RotateTowardsPlayer() {
 		if (player != null) {
 			Vector3 rotDir = (player.transform.position - transform.position).normalized;
 			Quaternion lookRot = Quaternion.LookRotation (rotDir);
@@ -261,12 +261,12 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 				// Take away from the stall delay if the enemy is standing still
 				if (navMesh.isStopped) {
-//					Debug.Log ("enemy stalled");
+					//					Debug.Log ("enemy stalled");
 					wanderStallDelay -= Time.deltaTime;
 				} else {
 					// Else, check if the enemy has reached its destination
 					if (navMeshReachedDestination (0.3f)) {
-//						Debug.Log ("enemy reached dest");
+						//						Debug.Log ("enemy reached dest");
 						navMesh.isStopped = true;
 					}
 				}
@@ -306,24 +306,24 @@ public class BetaEnemyScript : MonoBehaviour {
 			// and there's nobody there, take cover in that area
 
 			//if (testingMode) {
-				Vector3 currDest = navMesh.destination;
-				if (!Vector3.Equals (currDest, GameControllerTestScript.lastGunshotHeardPos)) {
-					//RotateTowards (GameControllerTestScript.lastGunshotHeardPos);
-					navMesh.SetDestination (GameControllerTestScript.lastGunshotHeardPos);
-				}
+			Vector3 currDest = navMesh.destination;
+			if (!Vector3.Equals (currDest, GameControllerTestScript.lastGunshotHeardPos)) {
+				//RotateTowards (GameControllerTestScript.lastGunshotHeardPos);
+				navMesh.SetDestination (GameControllerTestScript.lastGunshotHeardPos);
+			}
 
-				if (navMeshReachedDestination (0.5f)) {
-					bool coverFound = DynamicTakeCover ();
-					if (coverFound) {
-						if (actionState != ActionStates.TakingCover) {
-							pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
-						}
-					} else {
-						if (actionState != ActionStates.InCover) {
-							pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.InCover);
-						}
+			if (navMeshReachedDestination (0.5f)) {
+				bool coverFound = DynamicTakeCover ();
+				if (coverFound) {
+					if (actionState != ActionStates.TakingCover) {
+						pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
+					}
+				} else {
+					if (actionState != ActionStates.InCover) {
+						pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.InCover);
 					}
 				}
+			}
 			//}
 		}
 
@@ -352,21 +352,24 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (actionState == ActionStates.Firing && !inCover) {
 			navMesh.speed = 4f;
 			if (firingModeTimer <= 0f) {
-				firingModeTimer = Random.Range (2f, 3.2f);
 				int r = Random.Range (0, 4);
 				if (r == 0) {
 					pView.RPC ("RpcUpdateFiringState", RpcTarget.AllBuffered, FiringStates.StandingStill);
+					firingModeTimer = Random.Range (2f, 3.2f);
 				} else if (r == 1) {
 					pView.RPC ("RpcUpdateFiringState", RpcTarget.AllBuffered, FiringStates.Forward);
+					firingModeTimer = Random.Range (2f, 3.2f);
 					navMesh.speed = 4f;
 				} else if (r == 2) {
 					pView.RPC ("RpcUpdateFiringState", RpcTarget.AllBuffered, FiringStates.Backpedal);
 					navMesh.speed = 3f;
 				} else if (r == 3) {
 					pView.RPC ("RpcUpdateFiringState", RpcTarget.AllBuffered, FiringStates.StrafeLeft);
+					firingModeTimer = 1.7f;
 					navMesh.speed = 2.5f;
 				} else if (r == 4) {
 					pView.RPC ("RpcUpdateFiringState", RpcTarget.AllBuffered, FiringStates.StrafeRight);
+					firingModeTimer = 1.7f;
 					navMesh.speed = 2.5f;
 				}
 			}
@@ -391,24 +394,15 @@ public class BetaEnemyScript : MonoBehaviour {
 
 				if (firingState == FiringStates.StrafeLeft) {
 					RotateTowards (player.transform.position);
-					//Vector3 rotatedVector = Quaternion.AngleAxis(-90, Vector3.up) * (player.transform.position - transform.position);
-					//navMesh.SetDestination (new Vector3(transform.position.x - 5f, transform.position.y, transform.position.z));
-					//navMesh.SetDestination (rotatedVector);
-					float r = Vector3.Distance(player.transform.position, transform.position);
-					float xMove = player.transform.position.x + (r * Mathf.Cos(-30f));
-					float zMove = player.transform.position.z + (r * Mathf.Sin(-30f));
-					navMesh.SetDestination (new Vector3(xMove, transform.position.y, zMove));
+					Vector3 dest = new Vector3 (transform.right.x * navMesh.speed * 2f, transform.right.y * navMesh.speed * 2f, transform.right.z * navMesh.speed * 2f);
+					navMesh.SetDestination (new Vector3(transform.position.x + dest.x, transform.position.y + dest.y, transform.position.z + dest.z));
 					navMesh.isStopped = false;
 				}
 
 				if (firingState == FiringStates.StrafeRight) {
 					RotateTowards (player.transform.position);
-					//Vector3 rotatedVector = Quaternion.AngleAxis(90, Vector3.up) * (player.transform.position - transform.position);
-					//navMesh.SetDestination (new Vector3(transform.position.x + 5f, transform.position.y, transform.position.z));
-					float r = Vector3.Distance(player.transform.position, transform.position);
-					float xMove = player.transform.position.x + (r * Mathf.Cos(30f));
-					float zMove = player.transform.position.z + (r * Mathf.Sin(30f));
-					navMesh.SetDestination (new Vector3(xMove, transform.position.y, zMove));
+					Vector3 dest = new Vector3 (transform.right.x * -navMesh.speed * 2f, transform.right.y * -navMesh.speed * 2f, transform.right.z * -navMesh.speed * 2f);
+					navMesh.SetDestination (new Vector3(transform.position.x + dest.x, transform.position.y + dest.y, transform.position.z + dest.z));
 					navMesh.isStopped = false;
 				}
 			}
@@ -456,7 +450,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	[PunRPC]
 	void RpcPlaySound(string s) {
 		//Debug.Log ("j");
-        AudioClip a = (AudioClip)Resources.Load(s);
+		AudioClip a = (AudioClip)Resources.Load(s);
 		audioSource.clip = a;
 		audioSource.Play ();
 	}
@@ -559,7 +553,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (other.gameObject.GetComponent<PlayerScript> ().health <= 0f) {
 			return;
 		}
-	
+
 		// If the player enters the enemy's sight range, determine if the player is in the right angle. If he is and there is no current player to target, then
 		// assign the player and stop searching
 		if (Vector3.Distance(transform.position, other.transform.position) < 2.3f) {
@@ -577,37 +571,37 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Decision tree for patrol type enemy
 	void DecideActionPatrol() {
-        // Check for death first
-        if (health <= 0 && actionState != ActionStates.Dead)
-        {
+		// Check for death first
+		if (health <= 0 && actionState != ActionStates.Dead)
+		{
 			GetComponentInChildren<SpriteRenderer> ().enabled = false;
-            navMesh.isStopped = true;
+			navMesh.isStopped = true;
 			if (actionState != ActionStates.Dead) {
 				pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Dead);
 			}
-            // Choose a death sound
-            int r = Random.Range(0, 3);
-            if (r == 0)
-            {
-                pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt1");
-            }
-            else if (r == 1)
-            {
-                pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt2");
-            }
-            else
-            {
-                pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt4");
-            }
+			// Choose a death sound
+			int r = Random.Range(0, 3);
+			if (r == 0)
+			{
+				pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt1");
+			}
+			else if (r == 1)
+			{
+				pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt2");
+			}
+			else
+			{
+				pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt4");
+			}
 
-            pView.RPC("RpcDie", RpcTarget.AllBuffered);
+			pView.RPC("RpcDie", RpcTarget.AllBuffered);
 
-            StartCoroutine(Despawn());
-            return;
-        }
+			StartCoroutine(Despawn());
+			return;
+		}
 
-        // Melee attack trumps all
-        if (actionState == ActionStates.Melee) {
+		// Melee attack trumps all
+		if (actionState == ActionStates.Melee) {
 			return;
 		}
 
@@ -754,12 +748,12 @@ public class BetaEnemyScript : MonoBehaviour {
 						animator.Play ("Aim");
 				}
 			} else if (currentBullets <= 0) {
-                if (PhotonNetwork.IsMasterClient)
-                {
+				if (PhotonNetwork.IsMasterClient)
+				{
 					if (enemyType != EnemyType.Scout) {
 						navMesh.isStopped = true;
 					}
-                }
+				}
 				if (isCrouching) {
 					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("CrouchReload"))
 						animator.Play ("CrouchReload");
@@ -799,11 +793,11 @@ public class BetaEnemyScript : MonoBehaviour {
 
 					Debug.Log (transform.name + " has hit you");
 					if (hit.transform.tag.Equals ("Player")) {
-                        hit.transform.GetComponent<PlayerScript>().TakeDamage((int)damage);
+						hit.transform.GetComponent<PlayerScript>().TakeDamage((int)damage);
 						hit.transform.GetComponent<PlayerScript> ().ResetHitTimer ();
 						hit.transform.GetComponent<PlayerScript> ().SetHitLocation (transform.position);
 					} else {
-                        hit.transform.GetComponent<BetaEnemyScript>().TakeDamage((int)damage);
+						hit.transform.GetComponent<BetaEnemyScript>().TakeDamage((int)damage);
 					}
 				} else {
 					pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
@@ -812,8 +806,8 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 		}
 
-        //animator.CrossFadeInFixedTime ("Firing", 0.01f);
-        pView.RPC("RpcShootAction", RpcTarget.All);
+		//animator.CrossFadeInFixedTime ("Firing", 0.01f);
+		pView.RPC("RpcShootAction", RpcTarget.All);
 	}
 
 	[PunRPC]
@@ -840,15 +834,15 @@ public class BetaEnemyScript : MonoBehaviour {
 		Destroy (hitParticleEffect, 1f);
 	}
 
-    [PunRPC]
-    void RpcShootAction() {
+	[PunRPC]
+	void RpcShootAction() {
 		//Debug.Log ("d");
-        muzzleFlash.Play();
-        PlayShootSound();
-        currentBullets--;
-        // Reset fire timer
-        fireTimer = 0.0f;
-    }
+		muzzleFlash.Play();
+		PlayShootSound();
+		currentBullets--;
+		// Reset fire timer
+		fireTimer = 0.0f;
+	}
 
 	private void PlayShootSound() {
 		audioSource.PlayOneShot (shootSound);
@@ -988,7 +982,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (!p || p.GetComponent<PlayerScript>().health <= 0)
 					continue;
 				if (Vector3.Distance (transform.position, p.transform.position) < range + 12f) {
- 					Vector3 toPlayer = p.transform.position - transform.position;
+					Vector3 toPlayer = p.transform.position - transform.position;
 					float angleBetween = Vector3.Angle (transform.forward, toPlayer);
 					if (angleBetween <= 60f) {
 						// Cast a ray to make sure there's nothing in between the player and the enemy
