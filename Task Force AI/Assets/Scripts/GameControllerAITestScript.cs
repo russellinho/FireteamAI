@@ -9,7 +9,7 @@ public class GameControllerAITestScript : MonoBehaviour {
 
 	void Update() {
 		if (redTeam.Length == 0) {
-			redTeam = GameObject.FindGameObjectsWithTag ("Red")
+            redTeam = GameObject.FindGameObjectsWithTag("Red");
 		}
 
 		if (blueTeam.Length == 0) {
