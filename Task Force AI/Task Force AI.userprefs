@@ -1,37 +1,9 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PlayerData.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Lobby System Photon\Scripts\Photon\Connexion.cs">
     <Files>
-      <File FileName="Assets\Scripts\BetaEnemyScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\GameControllerScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PlayerScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\WeaponScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PlayerHUDScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PickupScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\SpectatorScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\FirstPersonController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\MouseLook.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\MissionTextAnimScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\FreeFormCameraScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\GameControllerAITestScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\TitleControllerScript.cs" Line="18" Column="1" />
-      <File FileName="Assets\Scripts\PlayerData.cs" Line="59" Column="29" />
+      <File FileName="Assets\Lobby System Photon\Scripts\Photon\Connexion.cs" Line="16" Column="6" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State name="__root__">
-          <Node name="Task Force AI" expanded="True">
-            <Node name="Assembly-CSharp" expanded="True">
-              <Node name="Assets" expanded="True">
-                <Node name="Scripts" expanded="True">
-                  <Node name="PlayerData.cs" selected="True" />
-                </Node>
-              </Node>
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

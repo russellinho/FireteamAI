@@ -13,10 +13,10 @@ namespace Photon.Pun.LobbySystemPhoton
 		void Start()
 		{
 			nbrPlayersInLobby = PhotonNetwork.CountOfPlayers;
-			templateUIClass.PlayerNameInput.text = "Player " + Random.Range(1000, 10000);
+			//templateUIClass.PlayerNameInput.text = 
 		}
 
-		public void OnLoginButtonClicked()
+		/**public void OnLoginButtonClicked()
 		{
 
 			string playerName = templateUIClass.PlayerNameInput.text;
@@ -33,7 +33,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			{
 				Debug.LogError("Player Name is invalid.");
 			}
-		}
+		}*/
 
 		public override void OnJoinedLobby()  
 		{
