@@ -5,12 +5,12 @@ namespace UITemplate
 {
 	public class Template : MonoBehaviour	{
 
-		[Header("Input Panel")]
-		public GameObject InputPanel;
-		public InputField PlayerNameInput;
+		//[Header("Input Panel")]
+		//public GameObject InputPanel;
+		//public InputField PlayerNameInput;
 
-		[Header("Login Panel")]
-		public GameObject LoginPanel;
+		//[Header("Login Panel")]
+		//public GameObject LoginPanel;
 
 		[Header("ListRoom Panel")]
 		public GameObject ListRoomPanel;

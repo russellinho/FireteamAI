@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Photon.Realtime;
+using Photon.Pun;
 
 public class TitleControllerScript : MonoBehaviour {
 
@@ -21,15 +23,23 @@ public class TitleControllerScript : MonoBehaviour {
 	}
 
 	public void GoToMatchmakingMenu() {
+		if (!PhotonNetwork.IsConnectedAndReady) {
+			PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.playername;
+			PhotonNetwork.ConnectUsingSettings();
+		}
+
 		mainMenu.SetActive (false);
 		customizationMenu.SetActive (false);
 		matchmakingMenu.SetActive (true);
 	}
-
+		
 	public void ReturnToMainMenu() {
 		// Save settings if the settings are active
 		if (customizationMenu.activeInHierarchy) {
 			PlayerData.playerdata.SavePlayerData ();
+		}
+		if (PhotonNetwork.IsConnectedAndReady) {
+			PhotonNetwork.Disconnect ();
 		}
 		customizationMenu.SetActive (false);
 		mainMenu.SetActive (true);
