@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace UITemplate
 {
@@ -26,6 +27,6 @@ namespace UITemplate
 		public Text TitleRoom;
 
 		[Header("Chat Panel")]
-		public Text ChatText;
+		public TextMeshProUGUI ChatText;
 	}
 }

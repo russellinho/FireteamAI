@@ -64,7 +64,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			{
 				Destroy(entry.gameObject);
 			}
-
+				
 			playerListEntries.Clear();
 			playerListEntries = null;
 			templateUIClass.ChatText.text = "";

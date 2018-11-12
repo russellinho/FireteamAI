@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 using Photon.Realtime;
 using Photon.Pun;
 
-public class TitleControllerScript : MonoBehaviour {
+public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public GameObject mainMenu;
 	public GameObject networkMan;
@@ -23,7 +23,7 @@ public class TitleControllerScript : MonoBehaviour {
 	}
 
 	public void GoToMatchmakingMenu() {
-		if (!PhotonNetwork.IsConnectedAndReady) {
+		if (!PhotonNetwork.IsConnected) {
 			PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.playername;
 			PhotonNetwork.ConnectUsingSettings();
 		}

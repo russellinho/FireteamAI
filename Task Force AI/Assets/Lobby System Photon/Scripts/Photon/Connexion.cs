@@ -37,8 +37,8 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnJoinedLobby()  
 		{
-			Debug.Log ("anything");
 			templateUIClass.BtnCreatRoom.interactable = true;
+			Debug.Log (PhotonNetwork.PlayerList.Length);
 			StartCoroutine("AutoRefreshListRoom");
 		}
 
@@ -63,7 +63,6 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnConnectedToMaster()
 		{
-			Debug.Log ("night show");
 			templateUIClass.LoadingPanel.SetActive(false);
 			templateUIClass.ListRoomPanel.SetActive(true);
 			PhotonNetwork.JoinLobby();
@@ -73,7 +72,6 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void OnCreateRoomButtonClicked()
 		{
-			Debug.Log ("at the");
 			string roomName = "Table_"+ Random.Range(1000, 10000);
 			roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
