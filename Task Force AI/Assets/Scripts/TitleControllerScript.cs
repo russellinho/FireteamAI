@@ -44,7 +44,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
     public void ExitMatchmaking() {
-        if (PhotonNetwork.IsConnectedAndReady)
+        if (PhotonNetwork.IsConnected)
         {
             PhotonNetwork.Disconnect();
         }

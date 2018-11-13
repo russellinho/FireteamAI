@@ -38,7 +38,6 @@ namespace Photon.Pun.LobbySystemPhoton
 		public override void OnJoinedLobby()  
 		{
 			templateUIClass.BtnCreatRoom.interactable = true;
-			Debug.Log (PhotonNetwork.PlayerList.Length);
 			StartCoroutine("AutoRefreshListRoom");
 		}
 
@@ -65,13 +64,18 @@ namespace Photon.Pun.LobbySystemPhoton
 		{
 			templateUIClass.LoadingPanel.SetActive(false);
 			templateUIClass.ListRoomPanel.SetActive(true);
-			PhotonNetwork.JoinLobby();
+			if (!PhotonNetwork.InLobby) {
+				PhotonNetwork.JoinLobby ();
+			}
 			nbrPlayersInLobby = PhotonNetwork.CountOfPlayers;
 			templateUIClass.NbrPlayers.text = nbrPlayersInLobby.ToString("00");
 		}
 
 		public void OnCreateRoomButtonClicked()
 		{
+			if (PhotonNetwork.InRoom) {
+				return;
+			}
 			string roomName = "Table_"+ Random.Range(1000, 10000);
 			roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
@@ -88,6 +92,9 @@ namespace Photon.Pun.LobbySystemPhoton
 		
 		public void theJoinRoom(string roomName)
 		{
+			if (PhotonNetwork.InRoom) {
+				return;
+			}
 			PhotonNetwork.JoinRoom(roomName);
 		}
 
