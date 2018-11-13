@@ -38,15 +38,26 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (customizationMenu.activeInHierarchy) {
 			PlayerData.playerdata.SavePlayerData ();
 		}
-		if (PhotonNetwork.IsConnectedAndReady) {
-			PhotonNetwork.Disconnect ();
-		}
 		customizationMenu.SetActive (false);
 		mainMenu.SetActive (true);
 		matchmakingMenu.SetActive (false);
 	}
 
-	public void GoToCustomization() {
+    public void ExitMatchmaking() {
+        if (PhotonNetwork.IsConnectedAndReady)
+        {
+            PhotonNetwork.Disconnect();
+        }
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        base.OnDisconnected(cause);
+        matchmakingMenu.SetActive(false);
+        mainMenu.SetActive(true);
+    }
+
+    public void GoToCustomization() {
 		mainMenu.SetActive (false);
 		matchmakingMenu.SetActive (false);
 		customizationMenu.SetActive (true);
