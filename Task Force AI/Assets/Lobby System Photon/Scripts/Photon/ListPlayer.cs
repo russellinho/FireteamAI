@@ -20,9 +20,6 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnJoinedRoom()
 		{
-			if (PhotonNetwork.InRoom) {
-				return;
-			}
 			templateUIClass.ListRoomPanel.SetActive(false);
 			templateUIClass.RoomPanel.SetActive(true);
 

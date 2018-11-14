@@ -9,7 +9,7 @@ using Photon.Pun;
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public GameObject mainMenu;
-	public GameObject networkMan;
+	//public GameObject networkMan;
 	public GameObject matchmakingMenu;
 	public GameObject customizationMenu;
 

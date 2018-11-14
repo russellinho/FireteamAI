@@ -44,10 +44,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public void OnRefreshButtonClicked()
 		{
             StopCoroutine("AutoRefreshListRoom");
-			if (!PhotonNetwork.InLobby)
-			{
-				PhotonNetwork.JoinLobby();
-			}
+			PhotonNetwork.JoinLobby();
 			if (PhotonNetwork.CountOfRooms == 0)
 			{
 				templateUIClass.ListRoomEmpty.SetActive(true);
@@ -73,9 +70,6 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void OnCreateRoomButtonClicked()
 		{
-			if (PhotonNetwork.InRoom) {
-				return;
-			}
 			string roomName = "Table_"+ Random.Range(1000, 10000);
 			roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
@@ -92,9 +86,6 @@ namespace Photon.Pun.LobbySystemPhoton
 		
 		public void theJoinRoom(string roomName)
 		{
-			if (PhotonNetwork.InRoom) {
-				return;
-			}
 			PhotonNetwork.JoinRoom(roomName);
 		}
 
