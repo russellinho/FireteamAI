@@ -17,6 +17,26 @@ namespace Photon.Pun.LobbySystemPhoton
 		public GameObject PlayerListEntryPrefab;
 		public Dictionary<int, GameObject> playerListEntries;
 		public TChat chat;
+		public GameObject readyButton;
+		public GameObject mapPreview;
+		public Button mapNext;
+		public Button mapPrev;
+
+		private int mapIndex;
+
+		void Update() {
+			if (PhotonNetwork.IsMasterClient) {
+				readyButton.GetComponentInChildren<Text> ().text = "START";
+			} else {
+				readyButton.GetComponentInChildren<Text> ().text = "READY";
+			}
+		}
+
+		public void goToNextMap() {
+		}
+
+		public void goToPreviousMap() {
+		}
 
 		public override void OnJoinedRoom()
 		{
@@ -70,5 +90,8 @@ namespace Photon.Pun.LobbySystemPhoton
 			templateUIClass.ChatText.text = "";
 			PhotonNetwork.JoinLobby();
 		}
+
+
+
 	}
 }
