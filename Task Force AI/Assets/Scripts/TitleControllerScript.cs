@@ -36,7 +36,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void ReturnToMainMenu() {
 		// Save settings if the settings are active
 		if (customizationMenu.activeInHierarchy) {
-			PlayerData.playerdata.SavePlayerData ();
+			savePlayerData ();
 		}
 		customizationMenu.SetActive (false);
 		mainMenu.SetActive (true);

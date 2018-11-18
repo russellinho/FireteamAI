@@ -21,6 +21,7 @@ namespace UITemplate
 
 		[Header("Loading Panel")]
 		public GameObject LoadingPanel;
+		public GameObject popup;
 
 		[Header("Room Panel")]
 		public GameObject RoomPanel;

@@ -103,5 +103,9 @@ namespace Photon.Pun.LobbySystemPhoton
             StopCoroutine("AutoRefreshListRoom");
             StartCoroutine("AutoRefreshListRoom");
 		}
+
+		public void ClosePopup() {
+			templateUIClass.popup.SetActive (false);
+		}
 	}
 }

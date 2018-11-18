@@ -12,6 +12,8 @@ namespace Photon.Pun.LobbySystemPhoton
 	public class ListPlayer : MonoBehaviourPunCallbacks
 	{
 
+		private PhotonView photonView;
+
 		[Header("Inside Room Panel")]
 		public GameObject InsideRoomPanel;
 
@@ -38,13 +40,32 @@ namespace Photon.Pun.LobbySystemPhoton
 		private bool isReady = false;
 		private bool gameStarting = false;
 
+		void Awake() {
+			photonView = GetComponent<PhotonView> ();
+		}
+
 		void Start() {
 			SetMapInfo ();
+		}
+
+		public void DisplayPopup(string message) {
+			ToggleButtons (false);
+			templateUIClass.popup.GetComponentsInChildren<Text> () [0].text = message;
+			templateUIClass.popup.SetActive (true);
 		}
 
 		public void StartGameBtn() {
 			// If we're the host, start the game assuming there are at least two ready players
 			if (PhotonNetwork.IsMasterClient) {
+				// Testing - comment in release
+				if (PlayerData.playerdata.testMode == true) {
+					Debug.Log ("plug");
+					gameStarting = true;
+					photonView.RPC ("RpcToggleButtons", RpcTarget.All, false);
+					StartCoroutine ("StartGameCountdown");
+					return;
+				}
+
 				int readyCount = 0;
 
 				// Loops through player entry prefabs and checks if they're ready by their color
@@ -63,6 +84,8 @@ namespace Photon.Pun.LobbySystemPhoton
 					gameStarting = true;
 					ToggleButtons (false);
 					StartCoroutine ("StartGameCountdown");
+				} else {
+					DisplayPopup ("There must be at least two ready players to start the game!");
 				}
 			} else {
 				ChangeReadyStatus ();
@@ -78,12 +101,27 @@ namespace Photon.Pun.LobbySystemPhoton
 			leaveGameBtn.interactable = status;
 		}
 
+		[PunRPC]
+		void RpcToggleButtons(bool status) {
+			mapNext.interactable = status;
+			mapPrev.interactable = status;
+			readyButton.GetComponent<Button> ().interactable = status;
+			sendMsgBtn.interactable = status;
+			emojiBtn.interactable = status;
+			leaveGameBtn.interactable = status;
+		}
+
 		void ChangeReadyStatus() {
 			isReady = !isReady;
-			if (isReady) {
-				myPlayerListEntry.GetComponentInChildren<Image> ().color = Color.green;
+			photonView.RPC ("RpcChangeReadyStatus", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.ActorNumber, isReady);
+		}
+
+		[PunRPC]
+		public void RpcChangeReadyStatus(int playerId, bool readyStatus) {
+			if (readyStatus) {
+				playerListEntries [playerId].GetComponentInChildren<Image> ().color = Color.green;
 			} else {
-				myPlayerListEntry.GetComponentInChildren<Image> ().color = Color.red;
+				playerListEntries [playerId].GetComponentInChildren<Image> ().color = Color.red;
 			}
 		}
 
@@ -105,10 +143,18 @@ namespace Photon.Pun.LobbySystemPhoton
 			yield return new WaitForSeconds (1f);
 			chat.sendChatOfMaster ("Game starting in 1");
 			yield return new WaitForSeconds (1f);
-			StartGame (mapNames[mapIndex]);
+			if (PhotonNetwork.IsMasterClient) {
+				StartGame (mapNames [mapIndex]);
+			}
 		}
 
 		void Update() {
+			if (!templateUIClass.popup.activeInHierarchy) {
+				if (!mapNext.interactable) {
+					ToggleButtons (true);
+				}
+			}
+
 			if (PhotonNetwork.IsMasterClient) {
 				readyButton.GetComponentInChildren<Text> ().text = "START";
 			} else {
@@ -195,8 +241,6 @@ namespace Photon.Pun.LobbySystemPhoton
 			templateUIClass.ChatText.text = "";
 			PhotonNetwork.JoinLobby();
 		}
-
-
 
 	}
 }

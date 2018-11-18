@@ -16,7 +16,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public GameObject FrameSmiley;
 		public string[] ShortcutSmileys;
 		public bool isSelect = false;
-		private PhotonView photonView;
+		public PhotonView photonView;
 
 		public void Awake()
 		{

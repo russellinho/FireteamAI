@@ -13,6 +13,7 @@ public class PlayerData : MonoBehaviour {
 	public static PlayerData playerdata;
 	public Vector3 color;
 	public string playername;
+	public bool testMode;
 
 	public MeshRenderer bodyColorReference;
 	public GameObject inGamePlayerReference;
@@ -53,6 +54,8 @@ public class PlayerData : MonoBehaviour {
 		info.b = color.z;
 		bf.Serialize(file, info);
 		file.Close();
+
+		PhotonNetwork.NickName = playername;
 	}
 
 	public void LoadPlayerData()
@@ -70,6 +73,7 @@ public class PlayerData : MonoBehaviour {
 			color = new Vector3 (255, 255, 255);
 		}
 		UpdateBodyColor ();
+		PhotonNetwork.NickName = playername;
 	}
 
 	public void UpdateBodyColor() {
