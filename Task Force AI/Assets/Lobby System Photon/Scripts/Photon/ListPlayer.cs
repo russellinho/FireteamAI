@@ -215,7 +215,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			GameObject entry = Instantiate(PlayerListEntryPrefab);
 			entry.transform.SetParent(InsideRoomPanel.transform);
 			entry.transform.localScale = Vector3.one;
-			entry.GetComponent<Text>().text = newPlayer.NickName;
+			entry.GetComponent<TextMeshProUGUI>().text = newPlayer.NickName;
 
 			playerListEntries.Add(newPlayer.ActorNumber, entry);
 		}
