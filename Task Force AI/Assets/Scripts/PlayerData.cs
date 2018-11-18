@@ -4,6 +4,9 @@ using UnityEngine;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using UnityEngine.SceneManagement;
+using Photon.Realtime;
+using Photon.Pun;
 
 public class PlayerData : MonoBehaviour {
 
@@ -12,6 +15,7 @@ public class PlayerData : MonoBehaviour {
 	public string playername;
 
 	public MeshRenderer bodyColorReference;
+	public GameObject inGamePlayerReference;
 
 	void Awake () {
 		if(playerdata == null)
@@ -19,8 +23,20 @@ public class PlayerData : MonoBehaviour {
 			DontDestroyOnLoad(gameObject);
 			LoadPlayerData ();
 			playerdata = this;
-		}else if(playerdata != this){
+			SceneManager.sceneLoaded += OnSceneFinishedLoading;
+		} else if(playerdata != this) {
 			Destroy(gameObject);
+		}
+
+	}
+
+	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
+		if(!PhotonNetwork.InRoom) return;
+		if (SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetwork")) {
+			PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
+				"PlayerPho",
+				Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
+				Quaternion.identity, 0);	
 		}
 
 	}

@@ -1,7 +1,9 @@
 ﻿using Photon.Realtime;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using UITemplate;
 using TMPro;
 
@@ -21,8 +23,90 @@ namespace Photon.Pun.LobbySystemPhoton
 		public GameObject mapPreview;
 		public Button mapNext;
 		public Button mapPrev;
+		public Button sendMsgBtn;
+		public Button emojiBtn;
+		public Button leaveGameBtn;
 
-		private int mapIndex;
+		// Map options
+		private int mapIndex = 0;
+		private string[] mapNames = new string[1]{"Cape Town"};
+		private string[] mapStrings = new string[1]{"MapImages/cape_town"};
+		public static Vector3[] mapSpawnPoints = new Vector3[]{ new Vector3(-27f,0.4f,-27f) };
+
+		// Ready status
+		private GameObject myPlayerListEntry;
+		private bool isReady = false;
+		private bool gameStarting = false;
+
+		void Start() {
+			SetMapInfo ();
+		}
+
+		public void StartGameBtn() {
+			// If we're the host, start the game assuming there are at least two ready players
+			if (PhotonNetwork.IsMasterClient) {
+				int readyCount = 0;
+
+				// Loops through player entry prefabs and checks if they're ready by their color
+				foreach (GameObject o in playerListEntries.Values) {
+					Image indicator = o.GetComponentInChildren<Image> ();
+					// If the ready status is green or the indicator doesn't exist (master)
+					if (!indicator || indicator.color.g == 1f) {
+						readyCount++;
+					}
+					if (readyCount >= 2) {
+						break;
+					}
+				}
+
+				if (readyCount >= 2) {
+					gameStarting = true;
+					ToggleButtons (false);
+					StartCoroutine ("StartGameCountdown");
+				}
+			} else {
+				ChangeReadyStatus ();
+			}
+		}
+
+		void ToggleButtons(bool status) {
+			mapNext.interactable = status;
+			mapPrev.interactable = status;
+			readyButton.GetComponent<Button> ().interactable = status;
+			sendMsgBtn.interactable = status;
+			emojiBtn.interactable = status;
+			leaveGameBtn.interactable = status;
+		}
+
+		void ChangeReadyStatus() {
+			isReady = !isReady;
+			if (isReady) {
+				myPlayerListEntry.GetComponentInChildren<Image> ().color = Color.green;
+			} else {
+				myPlayerListEntry.GetComponentInChildren<Image> ().color = Color.red;
+			}
+		}
+
+		void StartGame(string level) {
+			// Photon switch scene from lobby to loading screen to actual game. automaticallySyncScene should load map on clients.
+			if (level.Equals ("Cape Town")) {
+				PhotonNetwork.LoadLevel ("BetaLevelNetwork");
+			} else {
+				PhotonNetwork.LoadLevel (level);
+			}
+		}
+
+		private IEnumerator StartGameCountdown() {
+			chat.sendChatOfMaster ("Game starting in 4");
+			yield return new WaitForSeconds (1f);
+			chat.sendChatOfMaster ("Game starting in 3");
+			yield return new WaitForSeconds (1f);
+			chat.sendChatOfMaster ("Game starting in 2");
+			yield return new WaitForSeconds (1f);
+			chat.sendChatOfMaster ("Game starting in 1");
+			yield return new WaitForSeconds (1f);
+			StartGame (mapNames[mapIndex]);
+		}
 
 		void Update() {
 			if (PhotonNetwork.IsMasterClient) {
@@ -32,10 +116,25 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 		}
 
+		void SetMapInfo() {
+			mapPreview.GetComponent<RawImage> ().texture = (Texture) Resources.Load (mapStrings[mapIndex]);
+			mapPreview.GetComponentInChildren<Text>().text = mapNames [mapIndex];
+		}
+
 		public void goToNextMap() {
+			mapIndex++;
+			if (mapIndex >= mapNames.Length) {
+				mapIndex = 0;
+			}
+			SetMapInfo ();
 		}
 
 		public void goToPreviousMap() {
+			mapIndex--;
+			if (mapIndex < 0) {
+				mapIndex = mapNames.Length - 1;
+			}
+			SetMapInfo ();
 		}
 
 		public override void OnJoinedRoom()
@@ -51,6 +150,12 @@ namespace Photon.Pun.LobbySystemPhoton
 			foreach (Player p in PhotonNetwork.PlayerList)
 			{
 				GameObject entry = Instantiate(PlayerListEntryPrefab);
+				if (p.IsLocal) {
+					myPlayerListEntry = entry;
+				}
+				if (p.IsMasterClient) {
+					entry.GetComponentInChildren<Text> ().gameObject.SetActive (false);
+				}
 				entry.transform.SetParent(InsideRoomPanel.transform);
 				entry.GetComponent<TMP_Text>().text = p.NickName;
 				playerListEntries.Add(p.ActorNumber, entry);
