@@ -15,7 +15,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		private PhotonView photonView;
 
 		[Header("Inside Room Panel")]
-		public GameObject InsideRoomPanel;
+		public GameObject[] InsideRoomPanel;
+		private int lastSlotUsed;
 
 		public Template templateUIClass;
 		public GameObject PlayerListEntryPrefab;
@@ -193,6 +194,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				playerListEntries = new Dictionary<int, GameObject>();
 			}
 
+			lastSlotUsed = 0;
 			foreach (Player p in PhotonNetwork.PlayerList)
 			{
 				GameObject entry = Instantiate(PlayerListEntryPrefab);
@@ -202,7 +204,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				if (p.IsMasterClient) {
 					entry.GetComponentInChildren<Text> ().gameObject.SetActive (false);
 				}
-				entry.transform.SetParent(InsideRoomPanel.transform);
+				entry.transform.SetParent(InsideRoomPanel[lastSlotUsed++].transform);
+				entry.transform.localPosition = Vector3.zero;
 				entry.GetComponent<TMP_Text>().text = p.NickName;
 				playerListEntries.Add(p.ActorNumber, entry);
 			}
@@ -213,7 +216,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		public override void OnPlayerEnteredRoom(Player newPlayer)
 		{
 			GameObject entry = Instantiate(PlayerListEntryPrefab);
-			entry.transform.SetParent(InsideRoomPanel.transform);
+			entry.transform.SetParent(InsideRoomPanel[lastSlotUsed++].transform);
+			entry.transform.localPosition = Vector3.zero;
 			entry.transform.localScale = Vector3.one;
 			entry.GetComponent<TextMeshProUGUI>().text = newPlayer.NickName;
 
@@ -223,7 +227,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		public override void OnPlayerLeftRoom(Player otherPlayer)
 		{
 			Destroy(playerListEntries[otherPlayer.ActorNumber].gameObject);
-			playerListEntries.Remove(otherPlayer.ActorNumber); 
+			playerListEntries.Remove(otherPlayer.ActorNumber);
+			RearrangePlayerSlots ();
 		}
 
 		public override void OnLeftRoom()
@@ -240,6 +245,14 @@ namespace Photon.Pun.LobbySystemPhoton
 			playerListEntries = null;
 			templateUIClass.ChatText.text = "";
 			PhotonNetwork.JoinLobby();
+		}
+
+		void RearrangePlayerSlots() {
+			lastSlotUsed = 0;
+			foreach (GameObject entry in playerListEntries.Values) {
+				entry.transform.SetParent(InsideRoomPanel[lastSlotUsed++].transform);
+				entry.transform.localPosition = Vector3.zero;
+			}
 		}
 
 	}
