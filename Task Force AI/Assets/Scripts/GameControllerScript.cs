@@ -14,8 +14,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     private const float MAX_MISSION_TIME = 1800f;
 
 	public int currentMap;
+	public AudioSource bgm;
+	public AudioClip stealthMusic;
+	public AudioClip assaultMusic;
     // variable for last gunshot position
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
+	private Vector3 lastGunshotHeardPosClone = Vector3.negativeInfinity;
+	private float lastGunshotTimer = 0f;
 	public static ArrayList playerList = new ArrayList();
 	public GameObject[] enemyList;
 
@@ -30,12 +35,14 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public int deadCount;
 	public int escaperCount;
+	public bool assaultMode;
 
 	private PhotonView pView;
 
 	// Use this for initialization
     void Start () {
 		//playerList = GameObject.FindGameObjectsWithTag ("Player");
+		assaultMode = false;
 		gameOver = false;
 		exitPoint = GameObject.Find ("ExitPoint");
 		deadCount = 0;
@@ -47,6 +54,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		Cursor.visible = false;
 
         missionTime = 0f;
+		lastGunshotTimer = 10f;
 
 	}
 
@@ -54,6 +62,19 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void Update () {
         if (currentMap == 1)
         {
+			// Control BGM
+			if (assaultMode) {
+				if (!bgm.isPlaying || !bgm.clip.name.Equals(assaultMusic.name)) {
+					bgm.clip = assaultMusic;
+					bgm.Play ();
+					StartCoroutine (RestartBgmTimer(assaultMusic.length - bgm.time));
+				}
+			} else {
+				if (!bgm.isPlaying || !bgm.clip.name.Equals (stealthMusic.name)) {
+					bgm.clip = stealthMusic;
+					bgm.Play ();
+				}
+			}
 
             // Update waypoints
             if (c == null)
@@ -82,8 +103,28 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             }
 
             // Check if out of time (30 mins)
+
+			// Cbeck if mode has been changed to assault or not
+			if (!assaultMode) {
+				if (!lastGunshotHeardPos.Equals (Vector3.negativeInfinity)) {
+					pView.RPC ("UpdateAssaultMode", RpcTarget.All, true);
+				}
+			}
         }
 
+	}
+
+	IEnumerator RestartBgmTimer(float secs) {
+		yield return new WaitForSeconds (secs);
+		bgm.Stop ();
+		bgm.time = 1.15f;
+		bgm.Play ();
+		StartCoroutine (RestartBgmTimer(assaultMusic.length - bgm.time));
+	}
+
+	[PunRPC]
+	public void UpdateAssaultMode(bool assaultInProgress) {
+		assaultMode = assaultInProgress;
 	}
 
 	public bool CheckEscape() {
@@ -91,6 +132,20 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			return true;
 		}
 		return false;
+	}
+
+	void ResetLastGunshotPos() {
+		if (!Vector3.Equals (lastGunshotHeardPos, lastGunshotHeardPosClone)) {
+			lastGunshotTimer = 10f;
+			lastGunshotHeardPosClone = new Vector3 (lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z);
+		} else {
+			lastGunshotTimer -= Time.deltaTime;
+			if (lastGunshotTimer <= 0f) {
+				lastGunshotTimer = 10f;
+				lastGunshotHeardPos = Vector3.negativeInfinity;
+				lastGunshotHeardPosClone = Vector3.negativeInfinity;
+			}
+		}
 	}
 
 	void EndGame() {

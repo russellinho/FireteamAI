@@ -118,6 +118,9 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		BombCheck ();
 		DeathCheck ();
 		DetermineEscaped ();
+		// Update assault mode
+		hud.UpdateAssaultModeIndHud (gameController.GetComponent<GameControllerScript>().assaultMode);
+
 	}
 
     public void TakeDamage(int d) {

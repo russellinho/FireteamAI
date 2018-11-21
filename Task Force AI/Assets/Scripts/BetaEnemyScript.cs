@@ -10,6 +10,9 @@ public class BetaEnemyScript : MonoBehaviour {
 	public GameObject ammoBoxPickup;
 	public GameObject healthBoxPickup;
 
+	// Enemy variables
+	public int aggression;
+
 	// Finite state machine states
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Null};
 	// FSM used for determining movement while attacking and not in cover
@@ -46,7 +49,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	private GameObject player;
 	private GameObject playerToHit;
-	private Transform lastSeenPlayerPos;
+	public Vector3 lastSeenPlayerPos = Vector3.negativeInfinity;
 	private Animator animator;
 	public int health;
 	private Rigidbody rigid;
@@ -65,12 +68,10 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	private Transform spine;
 
-	private GameObject[] players;
-
 	private NavMeshAgent navMesh;
 
 	// Timers
-	private float alertTimer = 0f;
+	private float alertTimer;
 	// Time in cover
 	private float coverTimer = 0f;
 	// Time to wait to be in cover again
@@ -86,7 +87,8 @@ public class BetaEnemyScript : MonoBehaviour {
 	private int crouchMode = 2;
 	private float coverScanRange = 50f;
 
-	private bool alerted = false;
+	public bool alerted = false;
+	private GameObject[] players;
 
 	// Testing mode - set in inspector
 	//public bool testingMode;
@@ -97,6 +99,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		if (PhotonNetwork.IsMasterClient) {
+			alertTimer = -100f;
 			coverWaitTimer = Random.Range (2f, 7f);
 			coverSwitchPositionsTimer = Random.Range (12f, 18f);
 		}
@@ -126,16 +129,16 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo (0).IsName ("Die")) {
+		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
 			if (enemyType != EnemyType.Scout) {
 				navMesh.isStopped = true;
 			}
 			return;
 		}
-		if (!Vector3.Equals (GameControllerTestScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
+		if (!Vector3.Equals (GameControllerScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
 			if (!alerted) {
 				pView.RPC ("RpcSetAlerted", RpcTarget.All, true);
-				alertTimer = 9f;
+				alertTimer = 12f;
 			}
 		}
 
@@ -198,7 +201,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		if (animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
+		if (animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot"))
 			return;
 		// Handle animations independent of frame rate
 		DecideAnimation ();
@@ -207,7 +210,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void LateUpdate() {
-		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
+		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot"))
 			return;
 		// If the enemy sees the player, rotate the enemy towards the player
 		RotateTowardsPlayer();
@@ -220,7 +223,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		//Debug.Log ("h");
 		alerted = b;
 		if (range == 10f) {
-			range *= 1.5f;
+			range *= 2.5f;
+		} else if ((range / 2.5f) == 10f) {
+			range = 10f;
 		}
 	}
 
@@ -233,14 +238,15 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	void RotateTowardsPlayer() {
 		if (player != null) {
-			Vector3 rotDir = (player.transform.position - transform.position).normalized;
+			Vector3 rotDir = (player.GetComponentInChildren<SpineScript>().transform.position - transform.position).normalized;
 			Quaternion lookRot = Quaternion.LookRotation (rotDir);
 			Quaternion tempQuat = Quaternion.Slerp (transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
 			Vector3 tempRot = tempQuat.eulerAngles;
 			//tempRot = new Vector3 (0f, tempRot.y, 0f);
 			transform.rotation = Quaternion.Euler (new Vector3 (0f, tempRot.y, 0f));
 			//spine.transform.localRotation = Quaternion.Euler (new Vector3 (tempRot.x, 0f, 0f));
-			spine.transform.forward = new Vector3(spine.transform.forward.x, player.transform.position.y - spine.transform.position.y + 0.3f, spine.transform.forward.z);
+			spine.transform.LookAt(player.GetComponentInChildren<SpineScript>().transform);
+			//spine.transform.forward = new Vector3(spine.transform.forward.x, player.transform.position.y - spine.transform.position.y + 0.3f, spine.transform.forward.z);
 		}
 	}
 
@@ -293,44 +299,27 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (actionState == ActionStates.Pursue && lastSeenPlayerPos != null) {
 			navMesh.speed = 6f;
 			navMesh.isStopped = false;
-			navMesh.SetDestination (lastSeenPlayerPos.position);
-			lastSeenPlayerPos = null;
+			navMesh.SetDestination (lastSeenPlayerPos);
+			lastSeenPlayerPos = Vector3.negativeInfinity;
 			return;
 		}
 
 		if (actionState == ActionStates.Seeking) {
-			navMesh.isStopped = false;
-			navMesh.speed = 4f;
-
 			// Seek behavior: use navMesh to move towards the last area of gunshot. If the enemy moves towards that location
-			// and there's nobody there, take cover in that area
+			// and there's nobody there, go back to wandering the area
 
-			//if (testingMode) {
-			Vector3 currDest = navMesh.destination;
-			if (!Vector3.Equals (currDest, GameControllerTestScript.lastGunshotHeardPos)) {
+			if (navMesh.isStopped) {
 				//RotateTowards (GameControllerTestScript.lastGunshotHeardPos);
-				navMesh.SetDestination (GameControllerTestScript.lastGunshotHeardPos);
+				navMesh.SetDestination (GameControllerScript.lastGunshotHeardPos);
+				navMesh.isStopped = false;
+				navMesh.speed = 4f;
 			}
-
-			if (navMeshReachedDestination (0.5f)) {
-				bool coverFound = DynamicTakeCover ();
-				if (coverFound) {
-					if (actionState != ActionStates.TakingCover) {
-						pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
-					}
-				} else {
-					if (actionState != ActionStates.InCover) {
-						pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.InCover);
-					}
-				}
-			}
-			//}
 		}
 
 		if (actionState == ActionStates.TakingCover) {
 			// If the enemy is not near the cover spot, run towards it
 			if (!coverPos.Equals (Vector3.negativeInfinity)) {
-				navMesh.isStopped = true;
+				//navMesh.isStopped = true;
 				navMesh.speed = 6f;
 				navMesh.isStopped = false;
 				navMesh.SetDestination (coverPos);
@@ -352,7 +341,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (actionState == ActionStates.Firing && !inCover) {
 			navMesh.speed = 4f;
 			if (firingModeTimer <= 0f) {
-				int r = Random.Range (0, 4);
+				int r = Random.Range (0, 5);
 				if (r == 0) {
 					pView.RPC ("RpcUpdateFiringState", RpcTarget.AllBuffered, FiringStates.StandingStill);
 					firingModeTimer = Random.Range (2f, 3.2f);
@@ -467,7 +456,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Check for death first
 		if (health <= 0 && actionState != ActionStates.Dead) {
 			// Spawn a drop box
-			int r = Random.Range (1,6);
+			int r = Random.Range (1,12);
 			if (r == 6) {
 				// 1/6 chance of getting a health box
 				Debug.Log("health pickup spawned");
@@ -482,14 +471,14 @@ public class BetaEnemyScript : MonoBehaviour {
 			// Choose a death sound
 			r = Random.Range (0, 3);
 			if (r == 0) {
-				pView.RPC ("RpcPlaySound", RpcTarget.AllBuffered, "Grunts/grunt1");
+				pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/grunt1");
 			} else if (r == 1) {
-				pView.RPC ("RpcPlaySound", RpcTarget.AllBuffered, "Grunts/grunt2");
+				pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/grunt2");
 			} else {
-				pView.RPC ("RpcPlaySound", RpcTarget.AllBuffered, "Grunts/grunt4");
+				pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/grunt4");
 			}
 
-			pView.RPC ("RpcDie", RpcTarget.AllBuffered);
+			//pView.RPC ("RpcDie", RpcTarget.All);
 
 			StartCoroutine(Despawn ());
 			return;
@@ -546,7 +535,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (!PhotonNetwork.IsMasterClient) {
 			return;
 		}
-		if (!other.gameObject.tag.Equals ("Player") && !other.gameObject.tag.Equals ("PlayerTesting")) {
+		if (!other.gameObject.tag.Equals ("Player")) {
 			return;
 		}
 		// Don't consider dead players
@@ -556,7 +545,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		// If the player enters the enemy's sight range, determine if the player is in the right angle. If he is and there is no current player to target, then
 		// assign the player and stop searching
-		if (Vector3.Distance(transform.position, other.transform.position) < 2.3f) {
+		float dist = Vector3.Distance(transform.position, other.transform.position);
+		if (dist < 2.3f) {
 			if (!alerted) {
 				pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, true);
 			}
@@ -574,13 +564,23 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Check for death first
 		if (health <= 0 && actionState != ActionStates.Dead)
 		{
-			GetComponentInChildren<SpriteRenderer> ().enabled = false;
+			int r = Random.Range (1,12);
+			if (r == 6) {
+				// 1/6 chance of getting a health box
+				Debug.Log("health pickup spawned");
+				PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
+			} else if (r > 1 && r < 6) {
+				// 1/3 chance of getting ammo box
+				Debug.Log("ammo pickup spawned");
+				PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
+			}
+
 			navMesh.isStopped = true;
 			if (actionState != ActionStates.Dead) {
 				pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Dead);
 			}
 			// Choose a death sound
-			int r = Random.Range(0, 3);
+			r = Random.Range(0, 3);
 			if (r == 0)
 			{
 				pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt1");
@@ -594,7 +594,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt4");
 			}
 
-			pView.RPC("RpcDie", RpcTarget.AllBuffered);
+			//pView.RPC("RpcDie", RpcTarget.AllBuffered);
 
 			StartCoroutine(Despawn());
 			return;
@@ -610,59 +610,89 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (alerted) {
 			if (player != null) {
 				// If the enemy has seen a player
-				alertTimer = 8f;
+				alertTimer = 12f;
 				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue && actionState != ActionStates.Reloading) {
-					int r = Random.Range (1, 2);
-					if (r == 1) {
-						if (actionState != ActionStates.Firing) {
-							pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Firing);
-						}
-					} else {
+					int r = Random.Range (1, aggression - 2);
+					if (r <= 2) {
 						bool coverFound = DynamicTakeCover ();
 						if (coverFound) {
 							if (actionState != ActionStates.TakingCover) {
-								pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
+								pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
 							}
 						} else {
 							if (actionState != ActionStates.InCover) {
-								pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.InCover);
+								pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.InCover);
 							}
+						}
+					} else {
+						if (actionState != ActionStates.Firing) {
+							pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Firing);
 						}
 					}
 				}
 			} else {
 				// If the enemy has not seen a player
-				//UpdateAlertedStatus();
+				UpdateAlertedStatus();
 				if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Firing && actionState != ActionStates.Reloading) {
-					int r = Random.Range (1, 6);
-					if (r > 1) {
+					int r = Random.Range (1, aggression - 1);
+					if (r <= 2) {
 						bool coverFound = DynamicTakeCover ();
 						if (coverFound) {
 							if (actionState != ActionStates.TakingCover) {
-								pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
+								pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
 							}
 						} else {
 							if (actionState != ActionStates.InCover) {
-								pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.InCover);
+								pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.InCover);
 							}
 						}
 					} else {
 						if (actionState != ActionStates.Seeking) {
-							pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Seeking);
+							pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Seeking);
 						}
 					}
 				}
 
+				if (actionState == ActionStates.Seeking) {
+					if (navMeshReachedDestination (0.5f) && player == null) {
+						pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Wander);
+					}
+				}
+
 				// If the enemy has seen a player before but no longer does, then possibly (60% chance) pursue the player or take cover (40% chance)
-				if (actionState == ActionStates.Firing && lastSeenPlayerPos != null) {
-					int r = Random.Range (1, 5);
-					if (r <= 2) {
-						if (actionState != ActionStates.TakingCover) {
-							pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
+				if (actionState == ActionStates.Firing) {
+					if (!Vector3.Equals (lastSeenPlayerPos, Vector3.negativeInfinity)) {
+						int r = Random.Range (1, aggression);
+						if (r <= 2) {
+							if (actionState != ActionStates.TakingCover) {
+								pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.TakingCover);
+							}
+						} else {
+							if (actionState != ActionStates.Pursue) {
+								pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Pursue);
+							}
 						}
 					} else {
-						if (actionState != ActionStates.Pursue) {
-							pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Pursue);
+						pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Idle);
+					}
+				}
+
+				// If the enemy was in pursuit of a player but has lost track of him, then go back to wandering
+				if (actionState == ActionStates.Pursue && Vector3.Equals(lastSeenPlayerPos, Vector3.negativeInfinity)) {
+					if (navMeshReachedDestination(0.5f)) {
+						pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Wander);
+					}
+				}
+
+				// If the enemy is in cover, stay there for a while and then go back to seeking the last gunshot position, or wandering if there isn't one
+				if (actionState == ActionStates.InCover) {
+					coverSwitchPositionsTimer -= Time.deltaTime;
+					if (coverSwitchPositionsTimer <= 0f) {
+						coverSwitchPositionsTimer = Random.Range (6f, 10f);
+						if (GameControllerScript.lastGunshotHeardPos != Vector3.negativeInfinity) {
+							pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Seeking);
+						} else {
+							pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Wander);
 						}
 					}
 				}
@@ -670,18 +700,24 @@ public class BetaEnemyScript : MonoBehaviour {
 		} else {
 			// Else, wander around the patrol points until alerted or enemy seen
 			if (actionState != ActionStates.Wander) {
-				pView.RPC ("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Wander);
+				pView.RPC("RpcUpdateActionState", RpcTarget.AllBuffered, ActionStates.Wander);
 			}
 			if (player != null && !alerted) {
-				pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, true);
+				pView.RPC("RpcSetAlerted", RpcTarget.AllBuffered, true);
 			}
 		}
 	}
 
 	void DecideAnimation() {
 		if (actionState == ActionStates.Seeking) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Moving"))
-				animator.Play ("Moving");
+			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Moving") && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint")) {
+				int r = Random.Range (1, 4);
+				if (r >= 1 && r <= 2) {
+					animator.Play ("Moving");
+				} else {
+					animator.Play ("Sprint");
+				}
+			}
 		}
 
 		if (actionState == ActionStates.Wander) {
@@ -689,8 +725,11 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
 					animator.Play ("Idle");
 			} else {
-				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Walk"))
+				if (!alerted && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Walk")) {
 					animator.Play ("Walk");
+				} else if (alerted && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Moving")) {
+					animator.Play ("Moving");
+				}
 			}
 
 		}
@@ -701,8 +740,15 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		if (actionState == ActionStates.Dead) {
-			if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
-				animator.Play ("Die");
+			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") && !animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
+				// TODO: Later change headshot death to when hit in the head
+				int r = Random.Range (1, 3);
+				if (r == 1) {
+					animator.Play ("Die");
+				} else {
+					animator.Play ("DieHeadshot");
+				}
+			}
 		}
 
 		if (actionState == ActionStates.Pursue) {
@@ -736,10 +782,7 @@ public class BetaEnemyScript : MonoBehaviour {
 						animator.Play ("StrafeRight");
 				}
 			} else if (actionState == ActionStates.InCover && currentBullets > 0) {
-				if (PhotonNetwork.IsMasterClient)
-				{
-					navMesh.isStopped = true;
-				}
+				navMesh.isStopped = true;
 				if (isCrouching) {
 					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Crouching"))
 						animator.Play ("Crouching");
@@ -748,11 +791,8 @@ public class BetaEnemyScript : MonoBehaviour {
 						animator.Play ("Aim");
 				}
 			} else if (currentBullets <= 0) {
-				if (PhotonNetwork.IsMasterClient)
-				{
-					if (enemyType != EnemyType.Scout) {
-						navMesh.isStopped = true;
-					}
+				if (enemyType != EnemyType.Scout) {
+					navMesh.isStopped = true;
 				}
 				if (isCrouching) {
 					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("CrouchReload"))
@@ -775,6 +815,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (fireTimer < fireRate || currentBullets < 0 || isReloading)
 			return;
 
+		GameControllerScript.lastGunshotHeardPos = transform.position;
 		if (player != null) {
 			RaycastHit hit;
 			// Locks onto the player and shoots at him
@@ -785,13 +826,13 @@ public class BetaEnemyScript : MonoBehaviour {
 			float xOffset = Random.Range (-3f, 3f);
 			float yOffset = Random.Range (-3f, 3f);
 			dir = new Vector3 (dir.x + xOffset, dir.y + yOffset, dir.z);
-			Debug.DrawRay (shootPoint.position, dir * range, Color.red);
+			//Debug.DrawRay (shootPoint.position, dir * range, Color.red);
 			if (Physics.Raycast (shootPoint.position, dir, out hit)) {
 				GameObject bloodSpill = null;
 				if (hit.transform.tag.Equals ("Player") || hit.transform.tag.Equals ("Human")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal);
 
-					Debug.Log (transform.name + " has hit you");
+					//Debug.Log (transform.name + " has hit you");
 					if (hit.transform.tag.Equals ("Player")) {
 						hit.transform.GetComponent<PlayerScript>().TakeDamage((int)damage);
 						hit.transform.GetComponent<PlayerScript> ().ResetHitTimer ();
@@ -845,7 +886,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	private void PlayShootSound() {
-		audioSource.PlayOneShot (shootSound);
+		GetComponentInChildren<AudioSource>().PlayOneShot (shootSound);
 	}
 
 	public void Reload() {
@@ -872,6 +913,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	IEnumerator Despawn() {
 		gameObject.layer = 12;
+		RpcRemoveHitboxes ();
+		pView.RPC ("RpcRemoveHitboxes", RpcTarget.All);
 		yield return new WaitForSeconds(5f);
 		pView.RPC ("RpcDespawn", RpcTarget.All);
 		StartCoroutine ("Respawn");
@@ -879,14 +922,21 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcDespawn() {
-		GetComponent<CapsuleCollider>().enabled = false;
+		gameObject.SetActive (false);
+		/**GetComponent<CapsuleCollider>().enabled = false;
 		GetComponent<BoxCollider>().enabled = false;
 		SkinnedMeshRenderer[] s = GetComponentsInChildren<SkinnedMeshRenderer> ();
 		for (int i = 0; i < s.Length; i++) {
 			s [i].enabled = false;
 		}
 		GetComponentInChildren<SpriteRenderer> ().enabled = false;
-		GetComponentInChildren<MeshRenderer> ().enabled = false;
+		GetComponentInChildren<MeshRenderer> ().enabled = false;*/
+	}
+
+	[PunRPC]
+	void RpcRemoveHitboxes() {
+		GetComponent<CapsuleCollider>().enabled = false;
+		GetComponent<BoxCollider>().enabled = false;
 	}
 
 	// b is the mode the AI is in. 0 means override everything and take cover, 1 is override everything and leave cover
@@ -921,17 +971,25 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (nearbyCover.Length == 0) {
 			return false;
 		}
-		ArrayList coverIndices = new ArrayList ();
+		//ArrayList coverIndices = new ArrayList ();
+		int minCoverIndex = -1;
 		for (int i = 0; i < nearbyCover.Length; i++) {
 			if (nearbyCover [i].gameObject.tag.Equals ("Cover")) {
-				coverIndices.Add (i);
+				if (minCoverIndex == -1) {
+					minCoverIndex = i;
+				} else {
+					if (Vector3.Distance (transform.position, nearbyCover [i].transform.position) < Vector3.Distance (transform.position, nearbyCover [minCoverIndex].transform.position)) {
+						minCoverIndex = i;
+					}
+				}
+				//coverIndices.Add (i);
 			}
 		}
-		if (coverIndices.Count == 0) {
+		/**if (coverIndices.Count == 0) {
 			return false;
-		}
+		}*/
 
-		int minCoverIndex = (int)coverIndices [Random.Range (0, coverIndices.Count - 1)];
+		//int minCoverIndex = (int)coverIndices [Random.Range (0, coverIndices.Count - 1)];
 
 		// Once the closest cover is found, set the AI to be in cover, pick a cover side opposite of the player and run to it
 		// If there is no target player, just choose a random cover
@@ -975,13 +1033,13 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	void PlayerScan() {
 		// If we do not have a target player, try to find one
-		if (player == null) {
+		if (player == null || player.GetComponent<PlayerScript>().health <= 0) {
 			ArrayList indicesNearBy = new ArrayList ();
 			for (int i = 0; i < GameControllerScript.playerList.Count; i++) {
 				GameObject p = (GameObject)GameControllerScript.playerList [i];
 				if (!p || p.GetComponent<PlayerScript>().health <= 0)
 					continue;
-				if (Vector3.Distance (transform.position, p.transform.position) < range + 12f) {
+				if (Vector3.Distance (transform.position, p.transform.position) < range + 20f) {
 					Vector3 toPlayer = p.transform.position - transform.position;
 					float angleBetween = Vector3.Angle (transform.forward, toPlayer);
 					if (angleBetween <= 60f) {
@@ -989,14 +1047,11 @@ public class BetaEnemyScript : MonoBehaviour {
 						Debug.DrawRay (headTransform.position, toPlayer, Color.blue);
 						RaycastHit hit1;
 						RaycastHit hit2;
-						RaycastHit hit3;
-						Vector3 bottomHalfCheck = new Vector3 (p.transform.position.x, p.transform.position.y - 0.4f, p.transform.position.z);
 						Vector3 middleHalfCheck = new Vector3 (p.transform.position.x, p.transform.position.y, p.transform.position.z);
 						Vector3 topHalfCheck = new Vector3 (p.transform.position.x, p.transform.position.y + 0.4f, p.transform.position.z);
-						Physics.Linecast (headTransform.position, bottomHalfCheck, out hit1);
 						Physics.Linecast (headTransform.position, middleHalfCheck, out hit2);
-						Physics.Linecast (headTransform.position, topHalfCheck, out hit3);
-						if (!hit1.transform.gameObject.tag.Equals ("Player") && !hit2.transform.gameObject.tag.Equals ("Player") && !hit3.transform.gameObject.tag.Equals ("Player")) {
+						Physics.Linecast (headTransform.position, topHalfCheck, out hit1);
+						if (!hit1.transform.gameObject.tag.Equals ("Player") && !hit2.transform.gameObject.tag.Equals ("Player")) {
 							continue;
 						}
 						indicesNearBy.Add (i);
@@ -1007,10 +1062,9 @@ public class BetaEnemyScript : MonoBehaviour {
 				player = (GameObject)GameControllerScript.playerList [Random.Range (0, indicesNearBy.Count)];
 		} else {
 			// If we do, check if it's still in range
-			if (Vector3.Distance (transform.position, player.transform.position) >= range + 12f) {
-				lastSeenPlayerPos = player.transform;
+			if (Vector3.Distance (transform.position, player.transform.position) >= range + 20f) {
+				lastSeenPlayerPos = player.transform.position;
 				player = null;
-
 			}
 		}
 	}
@@ -1044,9 +1098,11 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void UpdateAlertedStatus() {
-		if (alertTimer <= 0f && alerted) {
-			pView.RPC ("RpcSetAlerted", RpcTarget.AllBuffered, false);
+		if (alertTimer <= 0f && alertTimer != -100f && alerted) {
+			pView.RPC ("RpcSetAlerted", RpcTarget.All, false);
 			GameControllerScript.lastGunshotHeardPos = Vector3.negativeInfinity;
+			player = null;
+			lastSeenPlayerPos = Vector3.negativeInfinity;
 		}
 	}
 
@@ -1063,7 +1119,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		transform.position = new Vector3 (spawnPos.x, spawnPos.y, spawnPos.z);
 		transform.rotation = Quaternion.Euler (spawnRot.x, spawnRot.y, spawnRot.z);
 		coverWaitTimer = Random.Range (2f, 7f);
-		coverSwitchPositionsTimer = Random.Range (12f, 18f);
+		coverSwitchPositionsTimer = Random.Range (6f, 10f);
 		player = null;
 		currentBullets = bulletsPerMag;
 		isCrouching = false;
@@ -1074,7 +1130,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		fireTimer = 0.0f;
 
 		playerToHit = null;
-		lastSeenPlayerPos = null;
+		lastSeenPlayerPos = Vector3.negativeInfinity;
 
 		actionState = ActionStates.Null;
 		firingState = FiringStates.Null;
@@ -1094,7 +1150,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 		GetComponentInChildren<SpriteRenderer> ().enabled = false;
 		GetComponentInChildren<MeshRenderer> ().enabled = false;
-
 	}
 
 }

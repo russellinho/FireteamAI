@@ -183,7 +183,7 @@ public class WeaponScript : MonoBehaviour {
 			}
 		}
 			
-		GameControllerTestScript.lastGunshotHeardPos = transform.position;
+		GameControllerScript.lastGunshotHeardPos = transform.position;
 		pView.RPC ("FireEffects", RpcTarget.All);
 	}
 

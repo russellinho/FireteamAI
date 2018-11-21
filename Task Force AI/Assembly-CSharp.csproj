@@ -231,9 +231,7 @@
      <Compile Include="Assets\Scripts\EnemySpawnerScript.cs" />
      <Compile Include="Assets\Scripts\FirstPersonController.cs" />
      <Compile Include="Assets\Scripts\FreeFormCameraScript.cs" />
-     <Compile Include="Assets\Scripts\GameControllerAITestScript.cs" />
      <Compile Include="Assets\Scripts\GameControllerScript.cs" />
-     <Compile Include="Assets\Scripts\GameControllerTestScript.cs" />
      <Compile Include="Assets\Scripts\HeadBob.cs" />
      <Compile Include="Assets\Scripts\HealthScript.cs" />
      <Compile Include="Assets\Scripts\MeleeAIScript.cs" />
@@ -249,7 +247,6 @@
      <Compile Include="Assets\Scripts\PlayerData.cs" />
      <Compile Include="Assets\Scripts\PlayerHUDScript.cs" />
      <Compile Include="Assets\Scripts\PlayerScript.cs" />
-     <Compile Include="Assets\Scripts\PlayerTestingScript.cs" />
      <Compile Include="Assets\Scripts\ReloadBehaviorAIScript.cs" />
      <Compile Include="Assets\Scripts\ReloadBehaviorScript.cs" />
      <Compile Include="Assets\Scripts\RigidbodyFirstPersonController.cs" />
@@ -258,7 +255,6 @@
      <Compile Include="Assets\Scripts\SpineScript.cs" />
      <Compile Include="Assets\Scripts\TitleControllerScript.cs" />
      <Compile Include="Assets\Scripts\WeaponScript.cs" />
-     <Compile Include="Assets\Scripts\WeaponTestingScript.cs" />
      <None Include="Assets\_Barking_Dog\Readme_Please.txt" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
