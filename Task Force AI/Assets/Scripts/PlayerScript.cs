@@ -69,12 +69,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		Physics.IgnoreLayerCollision (9, 12);
 		health = 100;
 
-        if (gameController != null) {
-            GameControllerScript.playerList.Add(gameObject);
-        } else {
-            gameController = GameObject.Find("GameController");
-            GameControllerScript.playerList.Add(gameObject);
-        }
+        gameController = GameObject.FindWithTag("GameController");
 
 		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
         if (!GetComponent<PhotonView>().IsMine) {
@@ -107,8 +102,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	// Update is called once per frame
 	void Update () {
 		if (gameController == null) {
-			gameController = GameObject.Find ("GameController");
-			GameControllerScript.playerList.Add (gameObject);
+			gameController = GameObject.FindWithTag ("GameController");
 		}
         if (!GetComponent<PhotonView>().IsMine) {
 			return;
@@ -322,11 +316,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
-	public override void OnPlayerLeftRoom(Player otherPlayer) {
-		escapeValueSent = false;
-	}
-
 	void OnTriggerEnter(Collider other) {
 		if (other.gameObject.tag.Equals ("AmmoBox")) {
 			wepScript.totalBulletsLeft = 120 + (wepScript.bulletsPerMag - wepScript.currentBullets);
@@ -366,6 +355,10 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		charController.enabled = status;
 		fpc.enabled = status;
 		viewCam.enabled = status;
+	}
+
+	public override void OnPlayerLeftRoom(Player otherPlayer) {
+		escapeValueSent = false;
 	}
 
 }

@@ -11,7 +11,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     // Timer
     public static float missionTime;
-    private const float MAX_MISSION_TIME = 1800f;
+    public static float MAX_MISSION_TIME = 1800f;
 
 	public int currentMap;
 	public AudioSource bgm;
@@ -21,7 +21,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
 	private Vector3 lastGunshotHeardPosClone = Vector3.negativeInfinity;
 	private float lastGunshotTimer = 0f;
-	public static ArrayList playerList = new ArrayList();
+	public static Dictionary<int, GameObject> playerList = new Dictionary<int, GameObject> ();
 	public GameObject[] enemyList;
 
     // Bomb defusal mission variables
@@ -196,16 +196,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		escaperCount = 0;
 	}
 
-	public override void OnPlayerLeftRoom(Player otherPlayer) {
-		ResetEscapeValues ();
-		playerList = new ArrayList(GameObject.FindGameObjectsWithTag ("Player"));
-	}
-
-	/**public override void OnPlayerEnteredRoom(Player newPlayer) {
-		Debug.Log (newPlayer.NickName + " has joined the room");
-		//playerList = GameObject.FindGameObjectsWithTag ("Player");
-	}*/
-
 	void ChangeCursorStatus() {
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 			if (Cursor.lockState == CursorLockMode.Locked) {
@@ -224,5 +214,46 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             EndGame();
         }
     }
+
+	public override void OnJoinedRoom()
+	{
+		GameObject[] playerPrefabs = GameObject.FindGameObjectsWithTag ("Player");
+		for (int i = 0; i < playerPrefabs.Length; i++)
+		{
+			playerList.Add (playerPrefabs[i].GetComponent<PhotonView>().OwnerActorNr, playerPrefabs[i]);
+		}
+
+	}
+
+	// TODO: Need to clear player list, go back to lobby upon leaving match
+	public override void OnLeftRoom()
+	{
+		// Destroy the 
+		foreach (GameObject entry in playerList.Values)
+		{
+			Destroy(entry.gameObject);
+		}
+
+		playerList.Clear();
+		playerList = null;
+		PhotonNetwork.JoinLobby();
+	}
+
+	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
+	public override void OnPlayerLeftRoom(Player otherPlayer) {
+		Destroy (playerList[otherPlayer.ActorNumber].gameObject);
+		playerList.Remove (otherPlayer.ActorNumber);
+		Debug.Log (playerList.Count);
+	}
+
+	public override void OnPlayerEnteredRoom(Player newPlayer) {
+		GameObject[] playerPrefabs = GameObject.FindGameObjectsWithTag ("Player");
+		for (int i = 0; i < playerPrefabs.Length; i++) {
+			if (playerPrefabs [i].GetComponent<PhotonView> ().OwnerActorNr == newPlayer.ActorNumber) {
+				playerList.Add (newPlayer.ActorNumber, playerPrefabs[i]);
+				Debug.Log ("Added new player " + newPlayer.ActorNumber);
+			}
+		}
+	}
 
 }

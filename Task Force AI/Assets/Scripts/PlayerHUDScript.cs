@@ -48,6 +48,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private ObjectivesTextScript objectiveFormatter;
 	public Text spectatorText;
     public Text missionTimeText;
+	public Text missionTimeRemainingText;
 	public Text assaultModeIndText;
 
     // Use this for initialization
@@ -143,6 +144,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		spectatorText = GameObject.Find ("SpectatorTxt").GetComponent<Text> ();
 		objectiveFormatter = new ObjectivesTextScript();
         missionTimeText = GameObject.Find ("MissionTimeTxt").GetComponent<Text> ();
+		missionTimeRemainingText = GameObject.Find ("MissionTimeRemainingTxt").GetComponent<Text>();
 		assaultModeIndText = GameObject.Find ("AssaultModeInd").GetComponent<Text>();
 
 	}
@@ -335,6 +337,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         int mins = (int)(totalSecs / 60f);
         int remainingSecs = (int)(totalSecs - (mins * 60f));
         missionTimeText.text = (remainingSecs < 10 ? (mins + ":0" + remainingSecs) : (mins + ":" + remainingSecs));
+
+		// Set remaining time
+		mins = (int)((GameControllerScript.MAX_MISSION_TIME - totalSecs) / 60f);
+		remainingSecs = (int)((GameControllerScript.MAX_MISSION_TIME - totalSecs) - (mins * 60f));
+		missionTimeRemainingText.text = (remainingSecs < 10 ? (mins + ":0" + remainingSecs) : (mins + ":" + remainingSecs));
     }
 
 	public void UpdateAssaultModeIndHud(bool assaultInProgress) {
