@@ -36,6 +36,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	public GameObject hitParticles;
 	public GameObject bulletImpact;
 	public GameObject bloodEffect;
+	public GameObject bloodEffectHeadshot;
 
 	public float fireRate = 0.4f;
 	public float damage = 10f;
@@ -936,6 +937,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	[PunRPC]
 	void RpcRemoveHitboxes() {
 		GetComponent<CapsuleCollider>().enabled = false;
+		GetComponentInChildren<CapsuleCollider> ().enabled = false;
 		GetComponent<BoxCollider>().enabled = false;
 	}
 
@@ -1141,15 +1143,15 @@ public class BetaEnemyScript : MonoBehaviour {
 		crouchMode = 2;
 		coverScanRange = 50f;
 
-		GetComponent<CapsuleCollider>().enabled = false;
-		GetComponent<BoxCollider>().enabled = false;
-		GetComponent<CapsuleCollider>().enabled = false;
+		GetComponent<CapsuleCollider>().enabled = true;
+		GetComponent<BoxCollider>().enabled = true;
+		GetComponentInChildren<CapsuleCollider>().enabled = true;
 		SkinnedMeshRenderer[] s = GetComponentsInChildren<SkinnedMeshRenderer> ();
 		for (int i = 0; i < s.Length; i++) {
-			s [i].enabled = false;
+			s [i].enabled = true;
 		}
-		GetComponentInChildren<SpriteRenderer> ().enabled = false;
-		GetComponentInChildren<MeshRenderer> ().enabled = false;
+		GetComponentInChildren<SpriteRenderer> ().enabled = true;
+		GetComponentInChildren<MeshRenderer> ().enabled = true;
 	}
 
 }

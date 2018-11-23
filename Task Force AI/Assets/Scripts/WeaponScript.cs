@@ -175,8 +175,12 @@ public class WeaponScript : MonoBehaviour {
 		if (Physics.Raycast (shootPoint.position, impactDir, out hit, range)) {
 			GameObject bloodSpill = null;
 			if (hit.transform.tag.Equals ("Human")) {
-				pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal);
-				hit.transform.gameObject.GetComponent<BetaEnemyScript> ().TakeDamage((int)damage);
+				pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+				hit.transform.gameObject.GetComponent<BetaEnemyScript> ().TakeDamage ((int)damage);
+			} else if (hit.transform.tag.Equals("EnemyHead")) {
+				pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
+				hit.transform.gameObject.GetComponentInParent<BetaEnemyScript> ().TakeDamage (100);
+				GetComponentInParent<PlayerHUDScript> ().OnScreenEffect ("HEADSHOT", true);
 			} else {
 				pView.RPC ("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
 				pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
@@ -188,8 +192,14 @@ public class WeaponScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcInstantiateBloodSpill(Vector3 point, Vector3 normal) {
-		GameObject bloodSpill = Instantiate(bloodEffect, point, Quaternion.FromToRotation (Vector3.forward, normal));
+	void RpcInstantiateBloodSpill(Vector3 point, Vector3 normal, bool headshot) {
+		GameObject bloodSpill;
+		if (headshot) {
+			bloodEffect = (GameObject)Resources.Load ("BloodEffectHeadshot");
+		} else {
+			bloodEffect = (GameObject)Resources.Load ("BloodEffect");
+		}
+		bloodSpill = Instantiate (bloodEffect, point, Quaternion.FromToRotation (Vector3.forward, normal));
 		bloodSpill.transform.Rotate (180f, 0f, 0f);
 		Destroy (bloodSpill, 1.5f);
 	}

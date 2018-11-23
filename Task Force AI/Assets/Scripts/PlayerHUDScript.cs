@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
@@ -50,6 +51,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     public Text missionTimeText;
 	public Text missionTimeRemainingText;
 	public Text assaultModeIndText;
+	public TextMeshProUGUI killPopupText;
+
+	// Other vars
+	private float killPopupTimer;
+	private bool popupIsStarting;
 
     // Use this for initialization
     void Start () {
@@ -77,6 +83,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		playerScript = GetComponent<PlayerScript> ();
 		wepScript = GetComponent<WeaponScript> ();
 		gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameControllerScript> ();
+		killPopupTimer = 0f;
+		popupIsStarting = false;
 
 		LoadBetaLevel ();
 	}
@@ -146,6 +154,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         missionTimeText = GameObject.Find ("MissionTimeTxt").GetComponent<Text> ();
 		missionTimeRemainingText = GameObject.Find ("MissionTimeRemainingTxt").GetComponent<Text>();
 		assaultModeIndText = GameObject.Find ("AssaultModeInd").GetComponent<Text>();
+		killPopupText = GameObject.Find ("KillPopup").GetComponent<TextMeshProUGUI>();
 
 	}
 	
@@ -177,6 +186,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 
         UpdateMissionTimeText();
+
+		// Update kill popups
+		if (killPopupText.enabled) {
+			KillPopupUpdate ();
+		}
     }
 
 	void FixedUpdate() {
@@ -353,6 +367,42 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			assaultModeIndText.fontStyle = FontStyle.Italic;
 			assaultModeIndText.text = "Stealth";
 			assaultModeIndText.color = Color.blue;
+		}
+	}
+
+	public void OnScreenEffect(string message, bool headshot) {
+		StartCoroutine (StartOnScreenEffect(message, headshot));
+	}
+
+	IEnumerator StartOnScreenEffect(string message, bool headshot) {
+		ResetOnScreenEffect ();
+		killPopupText.text = message;
+		popupIsStarting = true;
+		killPopupText.enabled = true;
+		yield return new WaitForSeconds (3f);
+		popupIsStarting = false;
+		ResetOnScreenEffect ();
+	}
+
+	void ResetOnScreenEffect() {
+		if (popupIsStarting) {
+			killPopupText.alpha = 0.1f;
+			killPopupText.gameObject.transform.localScale = new Vector3 (10f, 10f, 10f);
+		}
+		killPopupTimer = 0f;
+	}
+
+	void KillPopupUpdate() {
+		killPopupTimer += Time.deltaTime;
+		if (popupIsStarting) {
+			killPopupText.alpha += Time.deltaTime;
+			killPopupText.gameObject.transform.localScale = Vector3.Lerp (new Vector3(10f,10f,10f), new Vector3(1f,1f,1f), killPopupTimer / 1.3f);
+		} else {
+			killPopupText.alpha -= Time.deltaTime;
+			killPopupText.gameObject.transform.localScale = Vector3.Lerp (new Vector3(1f,1f,1f), new Vector3(10f,10f,10f), killPopupTimer / 1.3f);
+			if (killPopupTimer >= 1f) {
+				killPopupText.enabled = false;
+			}
 		}
 	}
 
