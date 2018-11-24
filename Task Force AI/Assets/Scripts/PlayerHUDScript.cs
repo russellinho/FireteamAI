@@ -52,10 +52,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	public Text missionTimeRemainingText;
 	public Text assaultModeIndText;
 	public TextMeshProUGUI killPopupText;
+	public Image screenColor;
 
 	// Other vars
 	private float killPopupTimer;
 	private bool popupIsStarting;
+	private bool roundStartFadeIn;
 
     // Use this for initialization
     void Start () {
@@ -87,10 +89,19 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		popupIsStarting = false;
 
 		LoadBetaLevel ();
+		StartMatchCameraFade ();
+	}
+
+	public void StartMatchCameraFade() {
+		Debug.Log ("hello2");
+		screenColor.enabled = true;
+		screenColor.color = new Color (0f, 0f, 0f, 1f);
+		roundStartFadeIn = true;
 	}
 
 	void LoadBetaLevel() {
-		if (SceneManager.GetActiveScene().name.Equals("BetaLevelNetworkTest") || SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
+		if (SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
+			screenColor.color = new Color (0f, 0f, 0f, 1f);
 			gameController.bombsRemaining = 4;
 			gameController.currentMap = 1;
 			objectivesText.text = objectiveFormatter.LoadObjectives(gameController.currentMap, gameController.bombsRemaining);
@@ -115,6 +126,17 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 			StartCoroutine(ShowMissionText());
 
+		}
+	}
+
+	void OnStartScreenFade() {
+		if (roundStartFadeIn) {
+			float newAlpha = screenColor.color.a - (Time.deltaTime * 1.75f);
+			Debug.Log (newAlpha);
+			screenColor.color = new Color (0f, 0f, 0f, newAlpha);
+			if (screenColor.color.a <= 0f) {
+				roundStartFadeIn = false;
+			}
 		}
 	}
 
@@ -155,6 +177,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		missionTimeRemainingText = GameObject.Find ("MissionTimeRemainingTxt").GetComponent<Text>();
 		assaultModeIndText = GameObject.Find ("AssaultModeInd").GetComponent<Text>();
 		killPopupText = GameObject.Find ("KillPopup").GetComponent<TextMeshProUGUI>();
+		screenColor = GameObject.Find ("ScreenColor").GetComponent<Image>();
 
 	}
 	
@@ -191,6 +214,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		if (killPopupText.enabled) {
 			KillPopupUpdate ();
 		}
+
+		OnStartScreenFade ();
     }
 
 	void FixedUpdate() {
@@ -326,9 +351,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         objectivesText.text = objectiveFormatter.LoadObjectives(gameController.currentMap, gameController.bombsRemaining);
     }
 
-    public void EscapePopup()
+	public void MessagePopup(string message)
     {
-        missionText.GetComponent<Text>().text = "Escape available! Head to the waypoint!";
+		missionText.GetComponent<MissionTextAnimScript> ().Reset ();
+		missionText.GetComponent<Text> ().text = message;
 		missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();
     }
 
@@ -387,7 +413,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	void ResetOnScreenEffect() {
 		if (popupIsStarting) {
 			killPopupText.alpha = 0.1f;
-			killPopupText.gameObject.transform.localScale = new Vector3 (10f, 10f, 10f);
+			killPopupText.gameObject.transform.localScale = new Vector3 (12f, 8f, 1f);
 		}
 		killPopupTimer = 0f;
 	}
@@ -396,10 +422,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		killPopupTimer += Time.deltaTime;
 		if (popupIsStarting) {
 			killPopupText.alpha += Time.deltaTime;
-			killPopupText.gameObject.transform.localScale = Vector3.Lerp (new Vector3(10f,10f,10f), new Vector3(1f,1f,1f), killPopupTimer / 1.3f);
+			killPopupText.gameObject.transform.localScale = Vector3.Lerp (new Vector3(12f,8f,1f), new Vector3(1f,1f,1f), killPopupTimer);
 		} else {
 			killPopupText.alpha -= Time.deltaTime;
-			killPopupText.gameObject.transform.localScale = Vector3.Lerp (new Vector3(1f,1f,1f), new Vector3(10f,10f,10f), killPopupTimer / 1.3f);
+			killPopupText.gameObject.transform.localScale = Vector3.Lerp (new Vector3(1f,1f,1f), new Vector3(12f,8f,1f), killPopupTimer);
 			if (killPopupTimer >= 1f) {
 				killPopupText.enabled = false;
 			}

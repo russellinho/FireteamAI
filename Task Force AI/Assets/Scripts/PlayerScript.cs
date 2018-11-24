@@ -27,6 +27,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	public bool canShoot;
 	private float charHeightOriginal;
 	private bool escapeValueSent;
+	private bool assaultModeChangedIndicator;
 
 	public GameObject[] subComponents;
 	public FirstPersonController fpc;
@@ -66,6 +67,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		bodyScaleOriginal = bodyScaleTrans.lossyScale.y;
         photonView = GetComponent<PhotonView>();
 		escapeValueSent = false;
+		assaultModeChangedIndicator = false;
 		Physics.IgnoreLayerCollision (9, 12);
 		health = 100;
 
@@ -107,7 +109,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
         if (!GetComponent<PhotonView>().IsMine) {
 			return;
 		}
-
+			
 		Crouch ();
 		BombCheck ();
 		DeathCheck ();
@@ -115,9 +117,18 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		// Update assault mode
 		hud.UpdateAssaultModeIndHud (gameController.GetComponent<GameControllerScript>().assaultMode);
 
+		// On assault mode changed
+		bool h = gameController.GetComponent<GameControllerScript> ().assaultMode;
+		if (h != assaultModeChangedIndicator) {
+			assaultModeChangedIndicator = h;
+			hud.MessagePopup ("Your cover is blown!");
+		}
+
 	}
 
-    public void TakeDamage(int d) {
+	public void TakeDamage(int d) {
+		gameController.GetComponent<GameControllerScript> ().PlayHitSound ();
+		gameController.GetComponent<GameControllerScript> ().PlayGruntSound ();
         photonView.RPC("RpcTakeDamage", RpcTarget.AllBuffered, d);
     }
 
@@ -268,7 +279,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 					// Enable movement again
 					gameObject.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().canMove = true;
 					if (gameController.GetComponent<GameControllerScript> ().bombsRemaining == 0) {
-						GetComponent<PlayerHUDScript> ().EscapePopup ();
+						GetComponent<PlayerHUDScript> ().MessagePopup ("Escape available! Head to the waypoint!");
 					}
 				}
 			} else {

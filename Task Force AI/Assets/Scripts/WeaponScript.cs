@@ -175,12 +175,15 @@ public class WeaponScript : MonoBehaviour {
 		if (Physics.Raycast (shootPoint.position, impactDir, out hit, range)) {
 			GameObject bloodSpill = null;
 			if (hit.transform.tag.Equals ("Human")) {
+				GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHitmarkerSound ();
 				pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
 				hit.transform.gameObject.GetComponent<BetaEnemyScript> ().TakeDamage ((int)damage);
 			} else if (hit.transform.tag.Equals("EnemyHead")) {
+				GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHitmarkerSound ();
 				pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
 				hit.transform.gameObject.GetComponentInParent<BetaEnemyScript> ().TakeDamage (100);
 				GetComponentInParent<PlayerHUDScript> ().OnScreenEffect ("HEADSHOT", true);
+				GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript>().PlayHeadshotSound ();
 			} else {
 				pView.RPC ("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
 				pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);

@@ -923,15 +923,14 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcDespawn() {
-		gameObject.SetActive (false);
-		/**GetComponent<CapsuleCollider>().enabled = false;
+		GetComponent<CapsuleCollider>().enabled = false;
 		GetComponent<BoxCollider>().enabled = false;
 		SkinnedMeshRenderer[] s = GetComponentsInChildren<SkinnedMeshRenderer> ();
 		for (int i = 0; i < s.Length; i++) {
 			s [i].enabled = false;
 		}
 		GetComponentInChildren<SpriteRenderer> ().enabled = false;
-		GetComponentInChildren<MeshRenderer> ().enabled = false;*/
+		GetComponentInChildren<MeshRenderer> ().enabled = false;
 	}
 
 	[PunRPC]
@@ -992,6 +991,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		}*/
 
 		//int minCoverIndex = (int)coverIndices [Random.Range (0, coverIndices.Count - 1)];
+		if (minCoverIndex == -1) {
+			return false;
+		}
 
 		// Once the closest cover is found, set the AI to be in cover, pick a cover side opposite of the player and run to it
 		// If there is no target player, just choose a random cover

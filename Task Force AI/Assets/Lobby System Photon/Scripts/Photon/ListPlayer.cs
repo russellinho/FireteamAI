@@ -29,6 +29,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		public Button sendMsgBtn;
 		public Button emojiBtn;
 		public Button leaveGameBtn;
+		public GameObject titleController;
+		public AudioClip countdownSfx;
 
 		// Map options
 		private int mapIndex = 0;
@@ -136,12 +138,20 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		private IEnumerator StartGameCountdown() {
+			titleController.GetComponent<AudioSource> ().clip = countdownSfx;
+			titleController.GetComponent<AudioSource> ().Play ();
+			chat.sendChatOfMaster ("Game starting in 5");
+			yield return new WaitForSeconds (1f);
+			titleController.GetComponent<AudioSource> ().Play ();
 			chat.sendChatOfMaster ("Game starting in 4");
 			yield return new WaitForSeconds (1f);
+			titleController.GetComponent<AudioSource> ().Play ();
 			chat.sendChatOfMaster ("Game starting in 3");
 			yield return new WaitForSeconds (1f);
+			titleController.GetComponent<AudioSource> ().Play ();
 			chat.sendChatOfMaster ("Game starting in 2");
 			yield return new WaitForSeconds (1f);
+			titleController.GetComponent<AudioSource> ().Play ();
 			chat.sendChatOfMaster ("Game starting in 1");
 			yield return new WaitForSeconds (1f);
 			if (PhotonNetwork.IsMasterClient) {

@@ -1,14 +1,16 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PlayerHUDScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\MissionTextAnimScript.cs">
     <Files>
-      <File FileName="Assets\Scripts\PlayerHUDScript.cs" Line="379" Column="32" />
-      <File FileName="Assets\Scripts\GameControllerScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PlayerScript.cs" Line="12" Column="6" />
-      <File FileName="Assets\Scripts\WeaponScript.cs" Line="183" Column="71" />
-      <File FileName="Assets\Scripts\BetaEnemyScript.cs" Line="39" Column="40" />
+      <File FileName="Assets\Scripts\PlayerHUDScript.cs" Line="356" Column="63" />
+      <File FileName="Assets\Scripts\GameControllerScript.cs" Line="132" Column="59" />
+      <File FileName="Assets\Scripts\PlayerScript.cs" Line="124" Column="43" />
+      <File FileName="Assets\Scripts\WeaponScript.cs" Line="30" Column="1" />
+      <File FileName="Assets\Scripts\BetaEnemyScript.cs" Line="316" Column="18" />
       <File FileName="Assets\Scripts\ReloadBehaviorScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Lobby System Photon\Scripts\Photon\ListPlayer.cs" Line="222" Column="31" />
+      <File FileName="Assets\Lobby System Photon\Scripts\Photon\ListPlayer.cs" Line="154" Column="57" />
+      <File FileName="Assets\Scripts\PlayerData.cs" Line="34" Column="1" />
+      <File FileName="Assets\Scripts\MissionTextAnimScript.cs" Line="54" Column="100" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

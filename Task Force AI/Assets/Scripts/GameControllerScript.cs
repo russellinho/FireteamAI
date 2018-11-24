@@ -14,9 +14,23 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public static float MAX_MISSION_TIME = 1800f;
 
 	public int currentMap;
+
+	// Audio stuff
 	public AudioSource bgm;
+	private AudioSource fxSound1;
+	private AudioSource fxSound2;
+	private AudioSource fxSound3;
+	private AudioSource fxSound4;
+	private AudioSource fxSound5;
 	public AudioClip stealthMusic;
 	public AudioClip assaultMusic;
+	public AudioClip headshotSound;
+	public AudioClip playerHitSound;
+	public AudioClip playerGruntSound1;
+	public AudioClip playerGruntSound2;
+	public AudioClip hitmarkerSound;
+	public AudioClip sirenSound;
+
     // variable for last gunshot position
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
 	private Vector3 lastGunshotHeardPosClone = Vector3.negativeInfinity;
@@ -42,6 +56,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	// Use this for initialization
     void Start () {
 		//playerList = GameObject.FindGameObjectsWithTag ("Player");
+		fxSound1 = GetComponentsInChildren<AudioSource>() [1];
+		fxSound2 = GetComponentsInChildren<AudioSource>() [2];
+		fxSound3 = GetComponentsInChildren<AudioSource>() [3];
+		fxSound4 = GetComponentsInChildren<AudioSource>() [4];
+		fxSound5 = GetComponentsInChildren<AudioSource> () [5];
 		assaultMode = false;
 		gameOver = false;
 		exitPoint = GameObject.Find ("ExitPoint");
@@ -67,6 +86,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				if (!bgm.isPlaying || !bgm.clip.name.Equals(assaultMusic.name)) {
 					bgm.clip = assaultMusic;
 					bgm.Play ();
+					fxSound5.clip = sirenSound;
+					fxSound5.loop = true;
+					fxSound5.Play ();
 					StartCoroutine (RestartBgmTimer(assaultMusic.length - bgm.time));
 				}
 			} else {
@@ -111,7 +133,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				}
 			}
         }
-
 	}
 
 	IEnumerator RestartBgmTimer(float secs) {
@@ -124,6 +145,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	[PunRPC]
 	public void UpdateAssaultMode(bool assaultInProgress) {
+		StartCoroutine (UpdateAssaultModeTimer(5f, assaultInProgress));
+	}
+
+	IEnumerator UpdateAssaultModeTimer(float secs, bool assaultInProgress) {
+		yield return new WaitForSeconds (secs);
 		assaultMode = assaultInProgress;
 	}
 
@@ -254,6 +280,31 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				Debug.Log ("Added new player " + newPlayer.ActorNumber);
 			}
 		}
+	}
+
+	public void PlayHeadshotSound() {
+		fxSound1.clip = headshotSound;
+		fxSound1.Play ();
+	}
+
+	public void PlayGruntSound() {
+		int r = Random.Range (1, 3);
+		if (r == 1) {
+			fxSound2.clip = playerGruntSound1;
+		} else {
+			fxSound2.clip = playerGruntSound2;
+		}
+		fxSound2.Play ();
+	}
+
+	public void PlayHitmarkerSound() {
+		fxSound3.clip = hitmarkerSound;
+		fxSound3.Play ();
+	}
+
+	public void PlayHitSound() {
+		fxSound4.clip = playerHitSound;
+		fxSound4.Play ();
 	}
 
 }
