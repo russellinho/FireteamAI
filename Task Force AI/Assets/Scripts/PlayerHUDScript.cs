@@ -93,7 +93,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void StartMatchCameraFade() {
-		Debug.Log ("hello2");
 		screenColor.enabled = true;
 		screenColor.color = new Color (0f, 0f, 0f, 1f);
 		roundStartFadeIn = true;
@@ -132,7 +131,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	void OnStartScreenFade() {
 		if (roundStartFadeIn) {
 			float newAlpha = screenColor.color.a - (Time.deltaTime * 1.75f);
-			Debug.Log (newAlpha);
 			screenColor.color = new Color (0f, 0f, 0f, newAlpha);
 			if (screenColor.color.a <= 0f) {
 				roundStartFadeIn = false;

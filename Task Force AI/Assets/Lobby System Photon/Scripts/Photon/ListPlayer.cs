@@ -34,8 +34,8 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		// Map options
 		private int mapIndex = 0;
-		private string[] mapNames = new string[1]{"Cape Town"};
-		private string[] mapStrings = new string[1]{"MapImages/cape_town"};
+		private string[] mapNames = new string[1]{"Citadel"};
+		private string[] mapStrings = new string[1]{"MapImages/citadel"};
 		public static Vector3[] mapSpawnPoints = new Vector3[]{ new Vector3(-27f,0.4f,-27f) };
 
 		// Ready status
@@ -62,7 +62,6 @@ namespace Photon.Pun.LobbySystemPhoton
 			if (PhotonNetwork.IsMasterClient) {
 				// Testing - comment in release
 				if (PlayerData.playerdata.testMode == true) {
-					Debug.Log ("plug");
 					gameStarting = true;
 					photonView.RPC ("RpcToggleButtons", RpcTarget.All, false);
 					StartCoroutine ("StartGameCountdown");
@@ -130,7 +129,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		void StartGame(string level) {
 			// Photon switch scene from lobby to loading screen to actual game. automaticallySyncScene should load map on clients.
-			if (level.Equals ("Cape Town")) {
+			if (level.Equals ("Citadel")) {
 				PhotonNetwork.LoadLevel ("BetaLevelNetwork");
 			} else {
 				PhotonNetwork.LoadLevel (level);
@@ -154,6 +153,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			titleController.GetComponent<AudioSource> ().Play ();
 			chat.sendChatOfMaster ("Game starting in 1");
 			yield return new WaitForSeconds (1f);
+			titleController.GetComponent<TitleControllerScript> ().InstantiateLoadingScreen (mapNames[mapIndex]);
 			if (PhotonNetwork.IsMasterClient) {
 				StartGame (mapNames [mapIndex]);
 			}
