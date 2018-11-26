@@ -41,6 +41,7 @@ public class WeaponScript : MonoBehaviour {
 
 	public Transform shootPoint;
 	public ParticleSystem muzzleFlash;
+	public ParticleSystem bulletTrace;
 	private bool isReloading = false;
 	private bool isAiming;
 
@@ -142,6 +143,9 @@ public class WeaponScript : MonoBehaviour {
 			DecreaseRecoil ();
 			UpdateRecoil (false);
 			GetComponentInParent<CameraShakeScript> ().SetShake (false);
+			if (bulletTrace.isPlaying) {
+				pView.RPC ("StopFireEffects", RpcTarget.All);
+			}
 			/**if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0 && !voidRecoilRecover) {
 				DecreaseRecoil ();
 				UpdateRecoil (false);
@@ -223,6 +227,10 @@ public class WeaponScript : MonoBehaviour {
 		Destroy (bulletHoleEffect, 3f);
 	}
 
+	[PunRPC]
+	void StopFireEffects() {
+		bulletTrace.Stop ();
+	}
 
 	[PunRPC]
 	void RpcInstantiateHitParticleEffect(Vector3 point, Vector3 normal) {
@@ -234,6 +242,9 @@ public class WeaponScript : MonoBehaviour {
 	void FireEffects() {
 		gunAnimator.CrossFadeInFixedTime ("Firing", 0.01f);
 		muzzleFlash.Play ();
+		if (!bulletTrace.isPlaying) {
+			bulletTrace.Play ();
+		}
 		PlayShootSound ();
 		currentBullets--;
 		// Reset fire timer
