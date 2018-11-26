@@ -184,6 +184,7 @@ GameObject:
   - component: {fileID: 114720000592978930}
   - component: {fileID: 114766418645260732}
   - component: {fileID: 114870458661680654}
+  - component: {fileID: 114448456475777420}
   m_Layer: 9
   m_Name: PlayerPho
   m_TagString: Player
@@ -2496,6 +2497,7 @@ MonoBehaviour:
   currWep: 
   health: 0
   canShoot: 0
+  kills: 0
   subComponents:
   - {fileID: 1846543175668508}
   - {fileID: 1122696565283694}
@@ -2504,9 +2506,22 @@ MonoBehaviour:
   - {fileID: 1400693483926518}
   fpc: {fileID: 114929743923996308}
   fpcPosition: {fileID: 4229175316152352}
-  bodyScaleTrans: {fileID: 4323335807701884}
   hitTimer: 1
   hitLocation: {x: 0, y: 0, z: 0}
+--- !u!114 &114448456475777420
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1169066660904442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13f73eefe07da574480f34bb3bcb4298, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camTransform: {fileID: 4229175316152352}
+  shake: 0
+  shakeAmount: 0.7
 --- !u!114 &114521612197257648
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2582,9 +2597,11 @@ MonoBehaviour:
   endGameText: {fileID: 0}
   endGameButton: {fileID: 0}
   hitFlare: {fileID: 0}
+  hitMarker: {fileID: 0}
   hudMap: {fileID: 0}
   hudWaypoint: {fileID: 1272327452645242, guid: afd6749c9932bfd428f00c6da8b4f41b,
     type: 2}
+  hudPlayerMarker: {fileID: 0}
   objectivesText: {fileID: 0}
   missionText: {fileID: 0}
   actionBar: {fileID: 0}
@@ -2595,6 +2612,7 @@ MonoBehaviour:
   missionTimeRemainingText: {fileID: 0}
   assaultModeIndText: {fileID: 0}
   killPopupText: {fileID: 0}
+  screenColor: {fileID: 0}
 --- !u!114 &114929743923996308
 MonoBehaviour:
   m_ObjectHideFlags: 1

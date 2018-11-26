@@ -34,11 +34,14 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     // Hit indication HUD
     public GameObject hitFlare;
     private GameObject hitDir;
+	public GameObject hitMarker;
 
     // Map HUD
     public GameObject hudMap;
     public GameObject hudWaypoint;
+	public GameObject hudPlayerMarker;
 	private ArrayList missionWaypoints;
+	private Dictionary<int, GameObject> playerMarkers = new Dictionary<int, GameObject> ();
 
     // On-screen indication HUD
     public Text objectivesText;
@@ -58,6 +61,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private float killPopupTimer;
 	private bool popupIsStarting;
 	private bool roundStartFadeIn;
+	private float hitmarkerTimer;
 
     // Use this for initialization
     void Start () {
@@ -70,6 +74,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		hitFlare.GetComponent<RawImage> ().enabled = false;
 		hitDir.GetComponent<RawImage> ().enabled = false;
+		hitMarker.GetComponent<RawImage> ().enabled = false;
 
 		pauseMenuGUI.SetActive (false);
 		ToggleActionBar(false);
@@ -86,6 +91,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		wepScript = GetComponent<WeaponScript> ();
 		gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameControllerScript> ();
 		killPopupTimer = 0f;
+		hitmarkerTimer = 0f;
 		popupIsStarting = false;
 
 		LoadBetaLevel ();
@@ -128,6 +134,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+
+
 	void OnStartScreenFade() {
 		if (roundStartFadeIn) {
 			float newAlpha = screenColor.color.a - (Time.deltaTime * 1.75f);
@@ -158,6 +166,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		// Hit indication HUD
 		hitFlare = GameObject.Find ("HitFlare");
 		hitDir = GameObject.Find ("HitDir");
+		hitMarker = GameObject.Find ("Hitmarker");
 
 		// Map HUD
 		hudMap = GameObject.Find ("HUDMap");
@@ -190,12 +199,16 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 		healthText.text = (healthText ? HEALTH_TEXT + playerScript.health : "");
 
+		UpdateHitmarker ();
+
 		// Update UI
 		weaponLabelTxt.text = playerScript.currWep;
 		ammoTxt.text = "" + wepScript.currentBullets + '/' + wepScript.totalBulletsLeft;
 		if (!gameController.gameOver) {
+			UpdatePlayerMarkers ();
 			UpdateWaypoints ();
 		} else {
+			playerMarkers = null;
 			missionWaypoints = null;
 		}
 
@@ -267,6 +280,51 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled = false;
 				}
 			}
+		}
+	}
+
+	void UpdatePlayerMarkers() {
+		foreach (GameObject p in GameControllerScript.playerList.Values) {
+			int actorNo = p.GetComponent<PhotonView> ().OwnerActorNr;
+			if (actorNo == PhotonNetwork.LocalPlayer.ActorNumber) {
+				continue;
+			}
+			if (!playerMarkers.ContainsKey (actorNo)) {
+				GameObject marker = GameObject.Instantiate (hudPlayerMarker);
+				marker.GetComponent<TextMeshProUGUI> ().text = p.GetComponent<PhotonView> ().Owner.NickName;
+				marker.GetComponent<RectTransform> ().SetParent (hudMap.transform.parent);
+				playerMarkers.Add (actorNo, marker);
+			}
+			// Check if it can be rendered to the screen
+			float renderCheck = Vector3.Dot((p.transform.position - gameController.c.transform.position).normalized, gameController.c.transform.forward);
+			if (renderCheck <= 0)
+				continue;
+			// If the player is alive and on camera, then render the player name and health bar
+			if (p.GetComponent<PlayerScript>().health > 0 && gameController.c != null)
+			{
+				playerMarkers [actorNo].SetActive (true);
+				playerMarkers[actorNo].GetComponentInChildren<Slider>().value = ((float)(p.GetComponent<PlayerScript>().health / 100));
+				Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + p.transform.lossyScale.y, p.transform.position.z);
+				playerMarkers[actorNo].GetComponent<RectTransform>().position = gameController.c.WorldToScreenPoint(o);
+			}
+			if (playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled && p.GetComponent<PlayerScript>().health <= 0)
+			{
+				playerMarkers [actorNo].SetActive (false);
+				//playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled = false;
+			}
+		}
+	}
+
+	public void InstantiateHitmarker() {
+		hitmarkerTimer = 1.5f;
+	}
+
+	void UpdateHitmarker() {
+		if (hitmarkerTimer > 0f) {
+			hitMarker.GetComponent<RawImage> ().enabled = true;
+			hitmarkerTimer -= Time.deltaTime;
+		} else {
+			hitMarker.GetComponent<RawImage> ().enabled = false;
 		}
 	}
 

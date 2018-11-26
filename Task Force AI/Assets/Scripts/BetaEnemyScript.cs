@@ -1038,9 +1038,8 @@ public class BetaEnemyScript : MonoBehaviour {
 	void PlayerScan() {
 		// If we do not have a target player, try to find one
 		if (player == null || player.GetComponent<PlayerScript>().health <= 0) {
-			ArrayList indicesNearBy = new ArrayList ();
-			for (int i = 0; i < GameControllerScript.playerList.Count; i++) {
-				GameObject p = (GameObject)GameControllerScript.playerList [i];
+			ArrayList keysNearBy = new ArrayList ();
+			foreach (GameObject p in GameControllerScript.playerList.Values) {
 				if (!p || p.GetComponent<PlayerScript>().health <= 0)
 					continue;
 				if (Vector3.Distance (transform.position, p.transform.position) < range + 20f) {
@@ -1058,12 +1057,12 @@ public class BetaEnemyScript : MonoBehaviour {
 						if (!hit1.transform.gameObject.tag.Equals ("Player") && !hit2.transform.gameObject.tag.Equals ("Player")) {
 							continue;
 						}
-						indicesNearBy.Add (i);
+						keysNearBy.Add (p.GetComponent<PhotonView>().OwnerActorNr);
 					}
 				}
 			}
-			if (indicesNearBy.Count != 0)
-				player = (GameObject)GameControllerScript.playerList [Random.Range (0, indicesNearBy.Count)];
+			if (keysNearBy.Count != 0)
+				player = (GameObject)GameControllerScript.playerList [(int)keysNearBy[Random.Range (0, keysNearBy.Count)]];
 		} else {
 			// If we do, check if it's still in range
 			if (Vector3.Distance (transform.position, player.transform.position) >= range + 20f) {

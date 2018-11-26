@@ -28,6 +28,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	private float charHeightOriginal;
 	private bool escapeValueSent;
 	private bool assaultModeChangedIndicator;
+	public int kills;
 
 	public GameObject[] subComponents;
 	public FirstPersonController fpc;
@@ -35,7 +36,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	public Transform fpcPosition;
 	private float fpcPositionYOriginal;
 
-	public Transform bodyScaleTrans;
 	private float bodyScaleOriginal;
 
 	private float crouchPosY;
@@ -64,14 +64,17 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		charController = GetComponent<CharacterController>();
 		charHeightOriginal = charController.height;
 		fpcPositionYOriginal = fpcPosition.localPosition.y;
-		bodyScaleOriginal = bodyScaleTrans.lossyScale.y;
+		bodyScaleOriginal = bodyTrans.lossyScale.y;
         photonView = GetComponent<PhotonView>();
 		escapeValueSent = false;
 		assaultModeChangedIndicator = false;
 		Physics.IgnoreLayerCollision (9, 12);
 		health = 100;
+		kills = 0;
 
         gameController = GameObject.FindWithTag("GameController");
+		AddMyselfToPlayerList ();
+		photonView.RPC ("SyncPlayerColor", RpcTarget.AllBuffered, PlayerData.playerdata.color);
 
 		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
         if (!GetComponent<PhotonView>().IsMine) {
@@ -126,6 +129,10 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	}
 
+	void AddMyselfToPlayerList() {
+		GameControllerScript.playerList.Add(photonView.OwnerActorNr, gameObject);
+	}
+
 	public void TakeDamage(int d) {
 		gameController.GetComponent<GameControllerScript> ().PlayHitSound ();
 		gameController.GetComponent<GameControllerScript> ().PlayGruntSound ();
@@ -148,7 +155,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		// Collect the original y position of the FPS controller since we're going to move it downwards to crouch
 		float viewH = fpcPositionYOriginal;
 		//float speed = charController.velocity;
-		float bodyScale = bodyScaleTrans.lossyScale.y;
+		float bodyScale = bodyTrans.lossyScale.y;
 
 		if (fpc.m_IsCrouching) {
 			h = charHeightOriginal * .65f;
@@ -163,7 +170,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		float lastCameraHeight = fpcPosition.position.y;
 		charController.height = Mathf.Lerp (lastHeight, h, 10 * Time.deltaTime);
 		fpcPosition.localPosition = new Vector3 (fpcPosition.localPosition.x, viewH, fpcPosition.localPosition.z);
-		bodyScaleTrans.localScale = new Vector3 (bodyScaleTrans.localScale.x, bodyScale, bodyScaleTrans.localScale.z);
+		bodyTrans.localScale = new Vector3 (bodyTrans.localScale.x, bodyScale, bodyTrans.localScale.z);
 		//Debug.Log (fpcPosition.position.y);
 		transform.position = new Vector3 (transform.position.x, transform.position.y + ((charController.height - lastHeight) / 2), transform.position.z);
 
@@ -178,7 +185,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		float h = charHeightOriginal;
 		float viewH = fpcPositionYOriginal;
 		//float speed = charController.velocity;
-		float bodyScale = bodyScaleTrans.lossyScale.y;
+		float bodyScale = bodyTrans.lossyScale.y;
 
 		if (fpc.m_IsCrouching) {
 			h = charHeightOriginal * .65f;
@@ -193,7 +200,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		float lastCameraHeight = fpcPosition.position.y;
 		charController.height = Mathf.Lerp (charController.height, h, 10 * Time.deltaTime);
 		fpcPosition.localPosition = new Vector3 (fpcPosition.localPosition.x, viewH, fpcPosition.localPosition.z);
-		bodyScaleTrans.localScale = new Vector3 (bodyScaleTrans.localScale.x, bodyScale, bodyScaleTrans.localScale.z);
+		bodyTrans.localScale = new Vector3 (bodyTrans.localScale.x, bodyScale, bodyTrans.localScale.z);
 		transform.position = new Vector3 (transform.position.x, transform.position.y + ((charController.height - lastHeight) / 2), transform.position.z);
 	}
 
@@ -372,4 +379,9 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		escapeValueSent = false;
 	}
 
+	[PunRPC]
+	void SyncPlayerColor(Vector3 c) {
+		bodyTrans.gameObject.GetComponent<MeshRenderer> ().material.color = new Color (c.x / 255f, c.y / 255f, c.z / 255f, 1f);
+	}
+		
 }

@@ -241,7 +241,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         }
     }
 
-	public override void OnJoinedRoom()
+	/**public override void OnJoinedRoom()
 	{
 		GameObject[] playerPrefabs = GameObject.FindGameObjectsWithTag ("Player");
 		for (int i = 0; i < playerPrefabs.Length; i++)
@@ -249,7 +249,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			playerList.Add (playerPrefabs[i].GetComponent<PhotonView>().OwnerActorNr, playerPrefabs[i]);
 		}
 
-	}
+	}*/
 
 	// TODO: Need to clear player list, go back to lobby upon leaving match
 	public override void OnLeftRoom()
@@ -272,7 +272,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		Debug.Log (playerList.Count);
 	}
 
-	public override void OnPlayerEnteredRoom(Player newPlayer) {
+	/**public override void OnPlayerEnteredRoom(Player newPlayer) {
 		GameObject[] playerPrefabs = GameObject.FindGameObjectsWithTag ("Player");
 		for (int i = 0; i < playerPrefabs.Length; i++) {
 			if (playerPrefabs [i].GetComponent<PhotonView> ().OwnerActorNr == newPlayer.ActorNumber) {
@@ -280,7 +280,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				Debug.Log ("Added new player " + newPlayer.ActorNumber);
 			}
 		}
-	}
+	}*/
 
 	public void PlayHeadshotSound() {
 		fxSound1.clip = headshotSound;

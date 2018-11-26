@@ -129,6 +129,7 @@ public class WeaponScript : MonoBehaviour {
 		if (shootInput && !isReloading) {
 			if (currentBullets > 0) {
 				Fire ();
+				GetComponentInParent<CameraShakeScript> ().SetShake (true);
 				IncreaseSpread ();
 				voidRecoilRecover = false;
 				IncreaseRecoil ();
@@ -140,6 +141,7 @@ public class WeaponScript : MonoBehaviour {
 			DecreaseSpread ();
 			DecreaseRecoil ();
 			UpdateRecoil (false);
+			GetComponentInParent<CameraShakeScript> ().SetShake (false);
 			/**if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0 && !voidRecoilRecover) {
 				DecreaseRecoil ();
 				UpdateRecoil (false);
@@ -175,10 +177,17 @@ public class WeaponScript : MonoBehaviour {
 		if (Physics.Raycast (shootPoint.position, impactDir, out hit, range)) {
 			GameObject bloodSpill = null;
 			if (hit.transform.tag.Equals ("Human")) {
+				GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
 				GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHitmarkerSound ();
 				pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+				int beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health;
 				hit.transform.gameObject.GetComponent<BetaEnemyScript> ().TakeDamage ((int)damage);
+				if (hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health <= 0 && beforeHp > 0) {
+					GetComponentInParent<PlayerScript> ().kills++;
+					GetComponentInParent<PlayerHUDScript> ().OnScreenEffect (GetComponentInParent<PlayerScript> ().kills + " Kills", true);
+				}
 			} else if (hit.transform.tag.Equals("EnemyHead")) {
+				GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
 				GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHitmarkerSound ();
 				pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
 				hit.transform.gameObject.GetComponentInParent<BetaEnemyScript> ().TakeDamage (100);
