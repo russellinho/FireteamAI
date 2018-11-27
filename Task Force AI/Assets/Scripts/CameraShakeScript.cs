@@ -9,9 +9,9 @@ public class CameraShakeScript : MonoBehaviour
 	
 	// How long the object should shake for.
 	public bool shake;
-	
-	// Amplitude of the shake. A larger value shakes the camera harder.
-	public float shakeAmount = 0.7f;
+
+    // Amplitude of the shake. A larger value shakes the camera harder.
+    private float shakeAmount = 0.1f;
 
 	Vector3 originalPos;
 	
@@ -38,7 +38,7 @@ public class CameraShakeScript : MonoBehaviour
 		{
 			Vector2 offset = Random.insideUnitCircle;
 			camTransform.localPosition = originalPos + new Vector3(offset.x, offset.y, 0f) * shakeAmount;
-		}
+        }
 		else
 		{
 			camTransform.localPosition = originalPos;

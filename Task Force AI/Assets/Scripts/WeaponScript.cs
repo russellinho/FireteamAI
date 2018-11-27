@@ -136,7 +136,8 @@ public class WeaponScript : MonoBehaviour {
 				IncreaseRecoil ();
 				UpdateRecoil (true);
 			} else if (totalBulletsLeft > 0) {
-				ReloadAction ();
+                GetComponentInParent<CameraShakeScript>().SetShake(false);
+                ReloadAction ();
 			}
 		} else {
 			DecreaseSpread ();
@@ -144,7 +145,7 @@ public class WeaponScript : MonoBehaviour {
 			UpdateRecoil (false);
 			GetComponentInParent<CameraShakeScript> ().SetShake (false);
 			if (bulletTrace.isPlaying) {
-				pView.RPC ("StopFireEffects", RpcTarget.All);
+                pView.RPC ("StopFireEffects", RpcTarget.Others);
 			}
 			/**if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0 && !voidRecoilRecover) {
 				DecreaseRecoil ();
@@ -242,7 +243,7 @@ public class WeaponScript : MonoBehaviour {
 	void FireEffects() {
 		gunAnimator.CrossFadeInFixedTime ("Firing", 0.01f);
 		muzzleFlash.Play ();
-		if (!bulletTrace.isPlaying) {
+        if (!bulletTrace.isPlaying && !pView.IsMine) {
 			bulletTrace.Play ();
 		}
 		PlayShootSound ();
