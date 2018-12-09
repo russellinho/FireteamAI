@@ -222,9 +222,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         UpdateMissionTimeText();
 
 		// Update kill popups
-		if (killPopupText.enabled) {
-			KillPopupUpdate ();
-		}
+		OnScreenEffectUpdate ();
 
 		OnStartScreenFade ();
     }
@@ -316,7 +314,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void InstantiateHitmarker() {
-		hitmarkerTimer = 1.5f;
+		hitmarkerTimer = 0.75f;
 	}
 
 	void UpdateHitmarker() {
@@ -453,37 +451,37 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void OnScreenEffect(string message, bool headshot) {
-		StartCoroutine (StartOnScreenEffect(message, headshot));
-	}
-
-	IEnumerator StartOnScreenEffect(string message, bool headshot) {
 		ResetOnScreenEffect ();
 		killPopupText.text = message;
 		popupIsStarting = true;
 		killPopupText.enabled = true;
-		yield return new WaitForSeconds (3f);
-		popupIsStarting = false;
-		ResetOnScreenEffect ();
 	}
 
 	void ResetOnScreenEffect() {
-		if (popupIsStarting) {
-			killPopupText.alpha = 0.1f;
-			killPopupText.gameObject.transform.localScale = new Vector3 (12f, 8f, 1f);
-		}
+		killPopupText.alpha = 0.1f;
+		killPopupText.gameObject.transform.localScale = new Vector3 (12f, 8f, 1f);
 		killPopupTimer = 0f;
 	}
 
-	void KillPopupUpdate() {
-		killPopupTimer += Time.deltaTime;
-		if (popupIsStarting) {
-			killPopupText.alpha += Time.deltaTime;
-			killPopupText.gameObject.transform.localScale = Vector3.Lerp (new Vector3(12f,8f,1f), new Vector3(1f,1f,1f), killPopupTimer);
-		} else {
-			killPopupText.alpha -= Time.deltaTime;
-			killPopupText.gameObject.transform.localScale = Vector3.Lerp (new Vector3(1f,1f,1f), new Vector3(12f,8f,1f), killPopupTimer);
-			if (killPopupTimer >= 1f) {
-				killPopupText.enabled = false;
+	void OnScreenEffectUpdate() {
+		if (killPopupText.enabled) {
+			killPopupTimer += Time.deltaTime;
+			if (popupIsStarting) {
+				if (killPopupText.alpha < 1f) {
+					killPopupText.alpha += (Time.deltaTime * 3f);
+				}
+				killPopupText.gameObject.transform.localScale = Vector3.Lerp (new Vector3 (12f, 8f, 1f), new Vector3 (1f, 1f, 1f), killPopupTimer * 3f);
+				if (killPopupTimer >= 1.8f) {
+					popupIsStarting = false;
+				}
+			} else {
+				if (killPopupText.alpha > 0f) {
+					killPopupText.alpha -= (Time.deltaTime * 3f);
+				}
+				killPopupText.gameObject.transform.localScale = Vector3.Lerp (new Vector3 (1f, 1f, 1f), new Vector3 (12f, 8f, 1f), (killPopupTimer - 1.8f) * 3f);
+				if (killPopupTimer >= 2.8f) {
+					killPopupText.enabled = false;
+				}
 			}
 		}
 	}

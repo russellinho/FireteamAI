@@ -154,6 +154,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		//Debug.DrawRay (transform.position, transform.forward * range, Color.blue);
 
 		if (enemyType == EnemyType.Patrol) {
+			Debug.Log (navMesh.speed);
 			DecideActionPatrolInCombat();
 			DecideActionPatrol ();
 			HandleMovementPatrol ();
@@ -239,15 +240,14 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	void RotateTowardsPlayer() {
 		if (player != null) {
-			Vector3 rotDir = (player.GetComponentInChildren<SpineScript>().transform.position - transform.position).normalized;
+			Vector3 rotDir = (player.transform.position - transform.position).normalized;
 			Quaternion lookRot = Quaternion.LookRotation (rotDir);
 			Quaternion tempQuat = Quaternion.Slerp (transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
 			Vector3 tempRot = tempQuat.eulerAngles;
 			//tempRot = new Vector3 (0f, tempRot.y, 0f);
 			transform.rotation = Quaternion.Euler (new Vector3 (0f, tempRot.y, 0f));
 			//spine.transform.localRotation = Quaternion.Euler (new Vector3 (tempRot.x, 0f, 0f));
-			spine.transform.LookAt(player.GetComponentInChildren<SpineScript>().transform);
-			//spine.transform.forward = new Vector3(spine.transform.forward.x, player.transform.position.y - spine.transform.position.y + 0.3f, spine.transform.forward.z);
+			spine.transform.forward = new Vector3(spine.transform.forward.x, player.transform.position.y - spine.transform.position.y + 0.3f, spine.transform.forward.z);
 		}
 	}
 

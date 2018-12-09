@@ -189,7 +189,7 @@ public class WeaponScript : MonoBehaviour {
 				hit.transform.gameObject.GetComponent<BetaEnemyScript> ().TakeDamage ((int)damage);
 				if (hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health <= 0 && beforeHp > 0) {
 					GetComponentInParent<PlayerScript> ().kills++;
-					GetComponentInParent<PlayerHUDScript> ().OnScreenEffect (GetComponentInParent<PlayerScript> ().kills + " Kills", true);
+					GetComponentInParent<PlayerHUDScript> ().OnScreenEffect (GetComponentInParent<PlayerScript> ().kills + " KILLS", true);
 				}
 			} else if (hit.transform.tag.Equals("EnemyHead")) {
 				GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();

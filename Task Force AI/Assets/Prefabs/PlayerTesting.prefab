@@ -2499,7 +2499,7 @@ MonoBehaviour:
   m_RunSpeed: 10
   m_RunstepLenghten: 0.7
   m_JumpSpeed: 10
-  m_StickToGroundForce: 10
+  m_StickToGroundForce: 6
   m_GravityMultiplier: 2
   m_MouseLook:
     XSensitivity: 2
@@ -2751,9 +2751,11 @@ MonoBehaviour:
   endGameText: {fileID: 0}
   endGameButton: {fileID: 0}
   hitFlare: {fileID: 0}
+  hitMarker: {fileID: 0}
   hudMap: {fileID: 0}
   hudWaypoint: {fileID: 1272327452645242, guid: afd6749c9932bfd428f00c6da8b4f41b,
     type: 2}
+  hudPlayerMarker: {fileID: 0}
   objectivesText: {fileID: 0}
   missionText: {fileID: 0}
   actionBar: {fileID: 0}
@@ -2764,6 +2766,7 @@ MonoBehaviour:
   missionTimeRemainingText: {fileID: 0}
   assaultModeIndText: {fileID: 0}
   killPopupText: {fileID: 0}
+  screenColor: {fileID: 0}
 --- !u!114 &114837624453546440
 MonoBehaviour:
   m_ObjectHideFlags: 1

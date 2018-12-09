@@ -43,7 +43,13 @@ public class MissionTextAnimScript : MonoBehaviour {
 					missionText.rectTransform.localScale = Vector3.Lerp (new Vector3 (15f, 1f, 1f), new Vector3 (1f, 1f, 1f), t);	
 					if (missionText.color.a >= 1f) {
 						peak = true;
-						StartCoroutine(TextDelay ());
+						t = 0f;
+					}
+				}
+				if (peak) {
+					t += Time.deltaTime;
+					if (t >= 2f) {
+						fadeIn = false;
 						t = 0f;
 					}
 				}
@@ -59,10 +65,5 @@ public class MissionTextAnimScript : MonoBehaviour {
 				}
 			}
 		}
-	}
-
-	IEnumerator TextDelay() {
-		yield return new WaitForSeconds (2f);
-		fadeIn = false;
 	}
 }
