@@ -9,53 +9,17 @@ using TMPro;
 
 public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
+	// HUD object reference
+	public HUDContainer container;
+
 	// Player reference
 	private PlayerScript playerScript;
 	private WeaponScript wepScript;
 	private GameControllerScript gameController;
 
-    // Health HUD
-    private const string HEALTH_TEXT = "Health: ";
-    private Text healthText;
-
-    // Weapon HUD
-    private Text weaponLabelTxt;
-    private Text ammoTxt;
-
-    // Pause/in-game menu HUD
-    public GameObject pauseMenuGUI;
-    public GameObject pauseExitBtn;
-    public GameObject pauseResumeBtn;
-    public GameObject pauseOptionsBtn;
-    public GameObject scoreboard;
-    public GameObject endGameText;
-    public GameObject endGameButton;
-
-    // Hit indication HUD
-    public GameObject hitFlare;
-    private GameObject hitDir;
-	public GameObject hitMarker;
-
-    // Map HUD
-    public GameObject hudMap;
-    public GameObject hudWaypoint;
-	public GameObject hudPlayerMarker;
 	private ArrayList missionWaypoints;
 	private Dictionary<int, GameObject> playerMarkers = new Dictionary<int, GameObject> ();
-
-    // On-screen indication HUD
-    public Text objectivesText;
-    public GameObject missionText;
-    public GameObject actionBar;
-    public Text defusingText;
-    public Text hintText;
 	private ObjectivesTextScript objectiveFormatter;
-	public Text spectatorText;
-    public Text missionTimeText;
-	public Text missionTimeRemainingText;
-	public Text assaultModeIndText;
-	public TextMeshProUGUI killPopupText;
-	public Image screenColor;
 
 	// Other vars
 	private float killPopupTimer;
@@ -70,22 +34,22 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			return;
         }
 		// Find/load HUD components
-		LoadHUDComponents ();
+		missionWaypoints = new ArrayList ();
+		objectiveFormatter = new ObjectivesTextScript();
 
-		hitFlare.GetComponent<RawImage> ().enabled = false;
-		hitDir.GetComponent<RawImage> ().enabled = false;
-		hitMarker.GetComponent<RawImage> ().enabled = false;
+		container = GameObject.Find ("HUD").GetComponent<HUDContainer> ();
+		container.hitFlare.GetComponent<RawImage> ().enabled = false;
+		container.hitDir.GetComponent<RawImage> ().enabled = false;
+		container.hitMarker.GetComponent<RawImage> ().enabled = false;
 
-		pauseMenuGUI.SetActive (false);
+		container.pauseMenuGUI.SetActive (false);
 		ToggleActionBar(false);
-		defusingText.enabled = false;
-		hintText.enabled = false;
-		scoreboard.GetComponent<Image> ().enabled = false;
-		endGameText.SetActive (false);
-		endGameButton.SetActive (false);
-		spectatorText.gameObject.SetActive (false);
-
-		//hudMap.SetActive (true);
+		container.defusingText.enabled = false;
+		container.hintText.enabled = false;
+		container.scoreboard.GetComponent<Image> ().enabled = false;
+		container.endGameText.SetActive (false);
+		container.endGameButton.SetActive (false);
+		container.spectatorText.gameObject.SetActive (false);
 
 		playerScript = GetComponent<PlayerScript> ();
 		wepScript = GetComponent<WeaponScript> ();
@@ -99,28 +63,28 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void StartMatchCameraFade() {
-		screenColor.enabled = true;
-		screenColor.color = new Color (0f, 0f, 0f, 1f);
+		container.screenColor.enabled = true;
+		container.screenColor.color = new Color (0f, 0f, 0f, 1f);
 		roundStartFadeIn = true;
 	}
 
 	void LoadBetaLevel() {
 		if (SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
-			screenColor.color = new Color (0f, 0f, 0f, 1f);
+			container.screenColor.color = new Color (0f, 0f, 0f, 1f);
 			gameController.bombsRemaining = 4;
 			gameController.currentMap = 1;
-			objectivesText.text = objectiveFormatter.LoadObjectives(gameController.currentMap, gameController.bombsRemaining);
+			container.objectivesText.text = objectiveFormatter.LoadObjectives(gameController.currentMap, gameController.bombsRemaining);
 
-			GameObject m1 = GameObject.Instantiate (hudWaypoint);
-			m1.GetComponent<RectTransform> ().SetParent (hudMap.transform.parent);
-			GameObject m2 = GameObject.Instantiate (hudWaypoint);
-			m2.GetComponent<RectTransform> ().SetParent (hudMap.transform.parent);
-			GameObject m3 = GameObject.Instantiate (hudWaypoint);
-			m3.GetComponent<RectTransform> ().SetParent (hudMap.transform.parent);
-			GameObject m4 = GameObject.Instantiate (hudWaypoint);
-			m4.GetComponent<RectTransform> ().SetParent (hudMap.transform.parent);
-			GameObject m5 = GameObject.Instantiate (hudWaypoint);
-			m5.GetComponent<RectTransform> ().SetParent (hudMap.transform.parent);
+			GameObject m1 = GameObject.Instantiate (container.hudWaypoint);
+			m1.GetComponent<RectTransform> ().SetParent (container.hudMap.transform.parent);
+			GameObject m2 = GameObject.Instantiate (container.hudWaypoint);
+			m2.GetComponent<RectTransform> ().SetParent (container.hudMap.transform.parent);
+			GameObject m3 = GameObject.Instantiate (container.hudWaypoint);
+			m3.GetComponent<RectTransform> ().SetParent (container.hudMap.transform.parent);
+			GameObject m4 = GameObject.Instantiate (container.hudWaypoint);
+			m4.GetComponent<RectTransform> ().SetParent (container.hudMap.transform.parent);
+			GameObject m5 = GameObject.Instantiate (container.hudWaypoint);
+			m5.GetComponent<RectTransform> ().SetParent (container.hudMap.transform.parent);
 			m5.GetComponent<RawImage> ().enabled = false;
 
 			missionWaypoints.Add (m1);
@@ -138,54 +102,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void OnStartScreenFade() {
 		if (roundStartFadeIn) {
-			float newAlpha = screenColor.color.a - (Time.deltaTime * 1.75f);
-			screenColor.color = new Color (0f, 0f, 0f, newAlpha);
-			if (screenColor.color.a <= 0f) {
+			float newAlpha = container.screenColor.color.a - (Time.deltaTime * 1.75f);
+			container.screenColor.color = new Color (0f, 0f, 0f, newAlpha);
+			if (container.screenColor.color.a <= 0f) {
 				roundStartFadeIn = false;
 			}
 		}
-	}
-
-	void LoadHUDComponents() {
-		// Health HUD
-		healthText = GameObject.Find ("HealthBar").GetComponent<Text>();
-
-		// Weapon HUD
-		weaponLabelTxt = GameObject.Find ("WeaponLabel").GetComponent<Text>();
-		ammoTxt = GameObject.Find ("AmmoCount").GetComponent<Text>();
-
-		// Pause/in-game menu HUD
-		pauseMenuGUI = GameObject.Find ("PausePanel");
-		pauseExitBtn = GameObject.Find ("QuitBtn");
-		pauseResumeBtn = GameObject.Find ("ResumeBtn");
-		pauseOptionsBtn = GameObject.Find ("OptionsBtn");
-		scoreboard = GameObject.Find ("Scoreboard");
-		endGameText = GameObject.Find ("EndGameTxt");
-		endGameButton = GameObject.Find ("EndGameBtn");
-
-		// Hit indication HUD
-		hitFlare = GameObject.Find ("HitFlare");
-		hitDir = GameObject.Find ("HitDir");
-		hitMarker = GameObject.Find ("Hitmarker");
-
-		// Map HUD
-		hudMap = GameObject.Find ("HUDMap");
-		missionWaypoints = new ArrayList ();
-
-		// On-screen indication HUD
-		objectivesText = GameObject.Find ("ObjectivesText").GetComponent<Text>();
-		missionText = GameObject.Find ("IntroMissionText");
-		actionBar = GameObject.Find ("ActionBar");
-		defusingText = GameObject.Find ("DefusingText").GetComponent<Text>();
-		hintText = GameObject.Find ("HintText").GetComponent<Text>();
-		spectatorText = GameObject.Find ("SpectatorTxt").GetComponent<Text> ();
-		objectiveFormatter = new ObjectivesTextScript();
-        missionTimeText = GameObject.Find ("MissionTimeTxt").GetComponent<Text> ();
-		missionTimeRemainingText = GameObject.Find ("MissionTimeRemainingTxt").GetComponent<Text>();
-		assaultModeIndText = GameObject.Find ("AssaultModeInd").GetComponent<Text>();
-		killPopupText = GameObject.Find ("KillPopup").GetComponent<TextMeshProUGUI>();
-		screenColor = GameObject.Find ("ScreenColor").GetComponent<Image>();
-
 	}
 	
 	// Update is called once per frame
@@ -195,15 +117,15 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			wepScript = GetComponent<WeaponScript> ();
 		}
 		if (gameController == null) {
-			gameController = GameObject.Find ("GameController").GetComponent<GameControllerScript> ();
+			gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameControllerScript> ();
 		}
-		healthText.text = (healthText ? HEALTH_TEXT + playerScript.health : "");
+		container.healthText.text = (container.healthText ? "Health: " + playerScript.health : "");
 
 		UpdateHitmarker ();
 
 		// Update UI
-		weaponLabelTxt.text = playerScript.currWep;
-		ammoTxt.text = "" + wepScript.currentBullets + '/' + wepScript.totalBulletsLeft;
+		container.weaponLabelTxt.text = playerScript.currWep;
+		container.ammoTxt.text = "" + wepScript.currentBullets + '/' + wepScript.totalBulletsLeft;
 		if (!gameController.gameOver) {
 			UpdatePlayerMarkers ();
 			UpdateWaypoints ();
@@ -214,7 +136,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		UpdateCursorStatus ();
 
-		if (gameController.gameOver && healthText.enabled) {
+		if (gameController.gameOver && container.healthText.enabled) {
 			DisableHUD();
 			ToggleScoreboard ();
 		}
@@ -232,10 +154,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void UpdateCursorStatus() {
-		if (Input.GetKeyDown(KeyCode.Escape) && !scoreboard.GetComponent<Image>().enabled)
+		if (Input.GetKeyDown(KeyCode.Escape) && !container.scoreboard.GetComponent<Image>().enabled)
 			Pause();
 
-		if (pauseMenuGUI.activeInHierarchy || endGameText.activeInHierarchy)
+		if (container.pauseMenuGUI.activeInHierarchy || container.endGameText.activeInHierarchy)
 		{
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
@@ -288,9 +210,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			if (!playerMarkers.ContainsKey (actorNo)) {
-				GameObject marker = GameObject.Instantiate (hudPlayerMarker);
+				GameObject marker = GameObject.Instantiate (container.hudPlayerMarker);
 				marker.GetComponent<TextMeshProUGUI> ().text = p.GetComponent<PhotonView> ().Owner.NickName;
-				marker.GetComponent<RectTransform> ().SetParent (hudMap.transform.parent);
+				marker.GetComponent<RectTransform> ().SetParent (container.hudMap.transform.parent);
 				playerMarkers.Add (actorNo, marker);
 			}
 			// Check if it can be rendered to the screen
@@ -319,41 +241,41 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void UpdateHitmarker() {
 		if (hitmarkerTimer > 0f) {
-			hitMarker.GetComponent<RawImage> ().enabled = true;
+			container.hitMarker.GetComponent<RawImage> ().enabled = true;
 			hitmarkerTimer -= Time.deltaTime;
 		} else {
-			hitMarker.GetComponent<RawImage> ().enabled = false;
+			container.hitMarker.GetComponent<RawImage> ().enabled = false;
 		}
 	}
 
 	void UpdateHitFlare() {
 		// Hit timer is set to 0 every time the player is hit, if player has been hit recently, make sure the hit flare and dir is set
 		if (playerScript.hitTimer < 1f) {
-			hitFlare.GetComponent<RawImage> ().enabled = true;
-			hitDir.GetComponent<RawImage> ().enabled = true;
+			container.hitFlare.GetComponent<RawImage> ().enabled = true;
+			container.hitDir.GetComponent<RawImage> ().enabled = true;
 			playerScript.hitTimer += Time.deltaTime;
 		} else {
-			hitFlare.GetComponent<RawImage> ().enabled = false;
-			hitDir.GetComponent<RawImage> ().enabled = false;
+			container.hitFlare.GetComponent<RawImage> ().enabled = false;
+			container.hitDir.GetComponent<RawImage> ().enabled = false;
 			float a = Vector3.Angle (transform.forward, playerScript.hitLocation);
-			Vector3 temp = hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
-			hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(temp.x,temp.y,a));
+			Vector3 temp = container.hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
+			container.hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(temp.x,temp.y,a));
 		}
 	}
 
     public void DisableHUD()
     {
-        healthText.enabled = false;
-        weaponLabelTxt.enabled = false;
-        ammoTxt.enabled = false;
-        hudMap.SetActive(false);
+        container.healthText.enabled = false;
+        container.weaponLabelTxt.enabled = false;
+        container.ammoTxt.enabled = false;
+        container.hudMap.SetActive(false);
     }
 
     public void ToggleScoreboard()
     {
-        scoreboard.GetComponent<Image>().enabled = true;
-        endGameText.SetActive(true);
-        endGameButton.SetActive(true);
+        container.scoreboard.GetComponent<Image>().enabled = true;
+        container.endGameText.SetActive(true);
+        container.endGameButton.SetActive(true);
     }
 
     public void ReturnToMenu()
@@ -364,60 +286,60 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     void Pause()
     {
-        if (!pauseMenuGUI.activeInHierarchy)
+        if (!container.pauseMenuGUI.activeInHierarchy)
         {
-            pauseMenuGUI.SetActive(true);
+            container.pauseMenuGUI.SetActive(true);
         }
         else
         {
-            pauseMenuGUI.SetActive(false);
+            container.pauseMenuGUI.SetActive(false);
         }
     }
 
     IEnumerator ShowMissionText()
     {
         yield return new WaitForSeconds(5f);
-		missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();
+		container.missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();
     }
 
     public void ToggleActionBar(bool enable)
     {
-        int c = actionBar.GetComponentsInChildren<Image>().Length;
+        int c = container.actionBar.GetComponentsInChildren<Image>().Length;
         if (!enable)
         {
             // Disable all actionbar components
             for (int i = 0; i < c; i++)
             {
-                actionBar.GetComponentsInChildren<Image>()[i].enabled = false;
+                container.actionBar.GetComponentsInChildren<Image>()[i].enabled = false;
             }
         }
         else
         {
             for (int i = 0; i < c; i++)
             {
-                actionBar.GetComponentsInChildren<Image>()[i].enabled = true;
+                container.actionBar.GetComponentsInChildren<Image>()[i].enabled = true;
             }
         }
     }
 
     public void UpdateObjectives()
     {
-        objectivesText.text = objectiveFormatter.LoadObjectives(gameController.currentMap, gameController.bombsRemaining);
+        container.objectivesText.text = objectiveFormatter.LoadObjectives(gameController.currentMap, gameController.bombsRemaining);
     }
 
 	public void MessagePopup(string message)
     {
-		missionText.GetComponent<MissionTextAnimScript> ().Reset ();
-		missionText.GetComponent<Text> ().text = message;
-		missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();
+		container.missionText.GetComponent<MissionTextAnimScript> ().Reset ();
+		container.missionText.GetComponent<Text> ().text = message;
+		container.missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();
     }
 
 	public void SetActionBarSlider(float val) {
-		actionBar.GetComponent<Slider> ().value = val;
+		container.actionBar.GetComponent<Slider> ().value = val;
 	}
 
 	public void EnableSpectatorMessage() {
-		spectatorText.gameObject.SetActive (true);
+		container.spectatorText.gameObject.SetActive (true);
 	}
 
 	//public override void OnPlayerEnteredRoom(Player newPlayer) {
@@ -430,57 +352,57 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         float totalSecs = GameControllerScript.missionTime;
         int mins = (int)(totalSecs / 60f);
         int remainingSecs = (int)(totalSecs - (mins * 60f));
-        missionTimeText.text = (remainingSecs < 10 ? (mins + ":0" + remainingSecs) : (mins + ":" + remainingSecs));
+        container.missionTimeText.text = (remainingSecs < 10 ? (mins + ":0" + remainingSecs) : (mins + ":" + remainingSecs));
 
 		// Set remaining time
 		mins = (int)((GameControllerScript.MAX_MISSION_TIME - totalSecs) / 60f);
 		remainingSecs = (int)((GameControllerScript.MAX_MISSION_TIME - totalSecs) - (mins * 60f));
-		missionTimeRemainingText.text = (remainingSecs < 10 ? (mins + ":0" + remainingSecs) : (mins + ":" + remainingSecs));
+		container.missionTimeRemainingText.text = (remainingSecs < 10 ? (mins + ":0" + remainingSecs) : (mins + ":" + remainingSecs));
     }
 
 	public void UpdateAssaultModeIndHud(bool assaultInProgress) {
 		if (assaultInProgress) {
-			assaultModeIndText.fontStyle = FontStyle.Normal;
-			assaultModeIndText.text = "ASSAULT";
-			assaultModeIndText.color = Color.red;
+			container.assaultModeIndText.fontStyle = FontStyle.Normal;
+			container.assaultModeIndText.text = "ASSAULT";
+			container.assaultModeIndText.color = Color.red;
 		} else {
-			assaultModeIndText.fontStyle = FontStyle.Italic;
-			assaultModeIndText.text = "Stealth";
-			assaultModeIndText.color = Color.blue;
+			container.assaultModeIndText.fontStyle = FontStyle.Italic;
+			container.assaultModeIndText.text = "Stealth";
+			container.assaultModeIndText.color = Color.blue;
 		}
 	}
 
 	public void OnScreenEffect(string message, bool headshot) {
 		ResetOnScreenEffect ();
-		killPopupText.text = message;
+		container.killPopupText.text = message;
 		popupIsStarting = true;
-		killPopupText.enabled = true;
+		container.killPopupText.enabled = true;
 	}
 
 	void ResetOnScreenEffect() {
-		killPopupText.alpha = 0.1f;
-		killPopupText.gameObject.transform.localScale = new Vector3 (12f, 8f, 1f);
+		container.killPopupText.alpha = 0.1f;
+		container.killPopupText.gameObject.transform.localScale = new Vector3 (12f, 8f, 1f);
 		killPopupTimer = 0f;
 	}
 
 	void OnScreenEffectUpdate() {
-		if (killPopupText.enabled) {
+		if (container.killPopupText.enabled) {
 			killPopupTimer += Time.deltaTime;
 			if (popupIsStarting) {
-				if (killPopupText.alpha < 1f) {
-					killPopupText.alpha += (Time.deltaTime * 3f);
+				if (container.killPopupText.alpha < 1f) {
+					container.killPopupText.alpha += (Time.deltaTime * 3f);
 				}
-				killPopupText.gameObject.transform.localScale = Vector3.Lerp (new Vector3 (12f, 8f, 1f), new Vector3 (1f, 1f, 1f), killPopupTimer * 3f);
+				container.killPopupText.gameObject.transform.localScale = Vector3.Lerp (new Vector3 (12f, 8f, 1f), new Vector3 (1f, 1f, 1f), killPopupTimer * 3f);
 				if (killPopupTimer >= 1.8f) {
 					popupIsStarting = false;
 				}
 			} else {
-				if (killPopupText.alpha > 0f) {
-					killPopupText.alpha -= (Time.deltaTime * 3f);
+				if (container.killPopupText.alpha > 0f) {
+					container.killPopupText.alpha -= (Time.deltaTime * 3f);
 				}
-				killPopupText.gameObject.transform.localScale = Vector3.Lerp (new Vector3 (1f, 1f, 1f), new Vector3 (12f, 8f, 1f), (killPopupTimer - 1.8f) * 3f);
+				container.killPopupText.gameObject.transform.localScale = Vector3.Lerp (new Vector3 (1f, 1f, 1f), new Vector3 (12f, 8f, 1f), (killPopupTimer - 1.8f) * 3f);
 				if (killPopupTimer >= 2.8f) {
-					killPopupText.enabled = false;
+					container.killPopupText.enabled = false;
 				}
 			}
 		}

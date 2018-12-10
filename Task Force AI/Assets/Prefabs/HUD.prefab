@@ -278,6 +278,7 @@ GameObject:
   - component: {fileID: 223442868169456924}
   - component: {fileID: 114538214961817624}
   - component: {fileID: 114226445542831722}
+  - component: {fileID: 114926951967978950}
   m_Layer: 5
   m_Name: HUD
   m_TagString: Untagged
@@ -1883,6 +1884,46 @@ MonoBehaviour:
     m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: 0:00
+--- !u!114 &114926951967978950
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1575938620027696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4144db7c26cff14393c4304271a6620, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthText: {fileID: 114381202680642382}
+  weaponLabelTxt: {fileID: 114429233446019188}
+  ammoTxt: {fileID: 114569361003768576}
+  pauseMenuGUI: {fileID: 1017496507190756}
+  pauseExitBtn: {fileID: 1725326723663780}
+  pauseResumeBtn: {fileID: 1243664296593454}
+  pauseOptionsBtn: {fileID: 1889260228518004}
+  scoreboard: {fileID: 1232872673316668}
+  endGameText: {fileID: 1776400796041672}
+  endGameButton: {fileID: 1578858258675168}
+  hitFlare: {fileID: 1748516299038336}
+  hitDir: {fileID: 1358733389800194}
+  hitMarker: {fileID: 1658881728255496}
+  hudMap: {fileID: 1602882613727916}
+  hudWaypoint: {fileID: 1272327452645242, guid: afd6749c9932bfd428f00c6da8b4f41b,
+    type: 2}
+  hudPlayerMarker: {fileID: 1931414385125120, guid: 238c389c896f5034b9b809d54b544a9e,
+    type: 2}
+  objectivesText: {fileID: 114822407909264430}
+  missionText: {fileID: 1715253450219478}
+  actionBar: {fileID: 1935463601230828}
+  defusingText: {fileID: 114042221422203622}
+  hintText: {fileID: 114527461144909100}
+  spectatorText: {fileID: 114882943726288118}
+  missionTimeText: {fileID: 114847099200949312}
+  missionTimeRemainingText: {fileID: 114921907530344836}
+  assaultModeIndText: {fileID: 114161677701123072}
+  killPopupText: {fileID: 114267337992587208}
+  screenColor: {fileID: 114434370680212450}
 --- !u!114 &114990907754220076
 MonoBehaviour:
   m_ObjectHideFlags: 1

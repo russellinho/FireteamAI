@@ -63,7 +63,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		fxSound5 = GetComponentsInChildren<AudioSource> () [5];
 		assaultMode = false;
 		gameOver = false;
-		exitPoint = GameObject.Find ("ExitPoint");
 		deadCount = 0;
 		escaperCount = 0;
 		escapeAvailable = false;
@@ -104,11 +103,10 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                 GameObject temp = GameObject.FindWithTag("MainCamera");
                 if (temp != null) c = temp.GetComponent<Camera>();
             }
-            if (bombs == null || bombs.Length == 0)
+            /**if (bombs == null || bombs.Length == 0)
             {
-                //Debug.Log("bombs found");
                 bombs = GameObject.FindGameObjectsWithTag("Bomb");
-            }
+            }*/
 
             // Check if the mission is over
             if (bombsRemaining == 0) {
@@ -176,16 +174,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	void EndGame() {
 		// Remove all enemies
-		GameObject[] es = GameObject.FindGameObjectsWithTag("Human");
-		for (int i = 0; i < es.Length; i++) {
-			Destroy (es[i]);
+		for (int i = 0; i < enemyList.Length; i++) {
+			enemyList [i].SetActive (false);
 		}
-		// Don't allow player to move or shoot
-		for (int i = 0; i < es.Length; i++) {
-			es[i].GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ().canMove = false;
-			es[i].GetComponent<PlayerScript> ().canShoot = false;
-		}
-
 	}
 
 	public void IncrementDeathCount() {

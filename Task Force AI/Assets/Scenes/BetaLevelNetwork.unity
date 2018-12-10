@@ -14125,6 +14125,11 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6234842ea92a84734ba2df161c7c5e7d, type: 2}
   m_IsPrefabAsset: 0
+--- !u!1 &908694705 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1660706771876302, guid: 6234842ea92a84734ba2df161c7c5e7d,
+    type: 2}
+  m_PrefabInternal: {fileID: 908694704}
 --- !u!1001 &914031949
 Prefab:
   m_ObjectHideFlags: 0
@@ -27276,6 +27281,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114034241660622020, guid: b74311d12f4463a47a77b2c458b2c713,
+        type: 2}
+      propertyPath: bombs.Array.size
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 4653139757909648, guid: b74311d12f4463a47a77b2c458b2c713, type: 2}
       propertyPath: m_LocalPosition.x
       value: -22.638111
@@ -27548,6 +27558,26 @@ Prefab:
       propertyPath: viewIdField
       value: 47
       objectReference: {fileID: 0}
+    - target: {fileID: 114034241660622020, guid: b74311d12f4463a47a77b2c458b2c713,
+        type: 2}
+      propertyPath: bombs.Array.data[0]
+      value: 
+      objectReference: {fileID: 908694705}
+    - target: {fileID: 114034241660622020, guid: b74311d12f4463a47a77b2c458b2c713,
+        type: 2}
+      propertyPath: bombs.Array.data[1]
+      value: 
+      objectReference: {fileID: 1599706879}
+    - target: {fileID: 114034241660622020, guid: b74311d12f4463a47a77b2c458b2c713,
+        type: 2}
+      propertyPath: bombs.Array.data[2]
+      value: 
+      objectReference: {fileID: 699673872}
+    - target: {fileID: 114034241660622020, guid: b74311d12f4463a47a77b2c458b2c713,
+        type: 2}
+      propertyPath: bombs.Array.data[3]
+      value: 
+      objectReference: {fileID: 1887577659}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b74311d12f4463a47a77b2c458b2c713, type: 2}
   m_IsPrefabAsset: 0
@@ -30400,6 +30430,11 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ead5f4dec2a7f1149ae5f470fea35fb5, type: 2}
   m_IsPrefabAsset: 0
+--- !u!1 &1887577659 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1377396492493718, guid: ead5f4dec2a7f1149ae5f470fea35fb5,
+    type: 2}
+  m_PrefabInternal: {fileID: 1887577658}
 --- !u!1001 &1892611203
 Prefab:
   m_ObjectHideFlags: 0
