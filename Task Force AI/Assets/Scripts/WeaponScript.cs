@@ -179,7 +179,15 @@ public class WeaponScript : MonoBehaviour {
 		float zSpread = Random.Range (-spread, spread);
 		//Debug.Log ("xSpread: " + xSpread + " ySpread: " + ySpread);
 		Vector3 impactDir = new Vector3 (shootPoint.transform.forward.x + xSpread, shootPoint.transform.forward.y + ySpread, shootPoint.transform.forward.z + zSpread);
-		if (Physics.Raycast (shootPoint.position, impactDir, out hit, range)) {
+		int headshotLayer = (1 << 13);
+		if (Physics.Raycast (shootPoint.position, impactDir, out hit, range, headshotLayer)) {
+			GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
+			GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHitmarkerSound ();
+			pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
+			hit.transform.gameObject.GetComponentInParent<BetaEnemyScript> ().TakeDamage (100);
+			GetComponentInParent<PlayerHUDScript> ().OnScreenEffect ("HEADSHOT", true);
+			GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHeadshotSound ();
+		} else if (Physics.Raycast (shootPoint.position, impactDir, out hit, range)) {
 			GameObject bloodSpill = null;
 			if (hit.transform.tag.Equals ("Human")) {
 				GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
@@ -191,13 +199,6 @@ public class WeaponScript : MonoBehaviour {
 					GetComponentInParent<PlayerScript> ().kills++;
 					GetComponentInParent<PlayerHUDScript> ().OnScreenEffect (GetComponentInParent<PlayerScript> ().kills + " KILLS", true);
 				}
-			} else if (hit.transform.tag.Equals("EnemyHead")) {
-				GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
-				GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHitmarkerSound ();
-				pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
-				hit.transform.gameObject.GetComponentInParent<BetaEnemyScript> ().TakeDamage (100);
-				GetComponentInParent<PlayerHUDScript> ().OnScreenEffect ("HEADSHOT", true);
-				GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript>().PlayHeadshotSound ();
 			} else {
 				pView.RPC ("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
 				pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);

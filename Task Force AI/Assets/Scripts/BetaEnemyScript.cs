@@ -14,9 +14,9 @@ public class BetaEnemyScript : MonoBehaviour {
 	public int aggression;
 
 	// Finite state machine states
-	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Null};
+	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking};
 	// FSM used for determining movement while attacking and not in cover
-	enum FiringStates {StandingStill, StrafeLeft, StrafeRight, Backpedal, Forward, Null};
+	enum FiringStates {StandingStill, StrafeLeft, StrafeRight, Backpedal, Forward};
 
 	// Enemy combat style
 	public enum EnemyType {Patrol, Scout};
@@ -88,6 +88,12 @@ public class BetaEnemyScript : MonoBehaviour {
 	private int crouchMode = 2;
 	private float coverScanRange = 50f;
 
+	// Collision
+	private CapsuleCollider myCollider;
+	private float originalColliderHeight = 0f;
+	private float originalColliderRadius = 0f;
+	private Vector3 originalColliderCenter;
+
 	public bool alerted = false;
 	private GameObject[] players;
 
@@ -120,17 +126,41 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Get nav points
 		if (enemyType != EnemyType.Scout) {
 			navMesh = GetComponent<NavMeshAgent>();
+			if (!navMesh.isOnNavMesh) {
+				enemyType = EnemyType.Scout;
+			}
 		}
 		//navPoints = GameObject.FindGameObjectsWithTag("PatrolPoint");
 		coverTimer = 0f;
 		inCover = false;
 		pView = GetComponent<PhotonView> ();
 
+		myCollider = GetComponent<CapsuleCollider> ();
+		originalColliderHeight = myCollider.height;
+		originalColliderRadius = myCollider.radius;
+		originalColliderCenter = new Vector3 (myCollider.center.x, myCollider.center.y, myCollider.center.z);
+
+		if (enemyType == EnemyType.Patrol) {
+			range = 10f;
+		} else {
+			range = 27f;
+		}
+
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
+		if (isCrouching) {
+			myCollider.height = 0.97f;
+			myCollider.radius = 0.32f;
+			myCollider.center = new Vector3 (-0.05f, 0.43f, -0.03f);
+		} else {
+			myCollider.height = originalColliderHeight;
+			myCollider.radius = originalColliderRadius;
+			myCollider.center = originalColliderCenter;
+		}
+
+		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
 			if (enemyType != EnemyType.Scout) {
 				navMesh.isStopped = true;
 			}
@@ -154,7 +184,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		//Debug.DrawRay (transform.position, transform.forward * range, Color.blue);
 
 		if (enemyType == EnemyType.Patrol) {
-			Debug.Log (navMesh.speed);
 			DecideActionPatrolInCombat();
 			DecideActionPatrol ();
 			HandleMovementPatrol ();
@@ -212,7 +241,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void LateUpdate() {
-		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot"))
+		if (!PhotonNetwork.IsMasterClient || health <= 0)
 			return;
 		// If the enemy sees the player, rotate the enemy towards the player
 		RotateTowardsPlayer();
@@ -297,7 +326,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			navMesh.isStopped = true;
 		}
 
-		if (actionState == ActionStates.Pursue && lastSeenPlayerPos != null) {
+		if (actionState == ActionStates.Pursue && !lastSeenPlayerPos.Equals(Vector3.negativeInfinity)) {
 			navMesh.speed = 6f;
 			navMesh.isStopped = false;
 			navMesh.SetDestination (lastSeenPlayerPos);
@@ -313,7 +342,11 @@ public class BetaEnemyScript : MonoBehaviour {
 				//RotateTowards (GameControllerTestScript.lastGunshotHeardPos);
 				navMesh.SetDestination (GameControllerScript.lastGunshotHeardPos);
 				navMesh.isStopped = false;
-				navMesh.speed = 4f;
+				if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint")) {
+					navMesh.speed = 6f;
+				} else {
+					navMesh.speed = 4f;
+				}
 			}
 		}
 
@@ -369,31 +402,33 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 
 			if (player != null) {
+				RotateTowardsPlayer ();
 				if (firingState == FiringStates.Forward) {
-					navMesh.SetDestination (player.transform.position);
-					navMesh.isStopped = false;
+					navMesh.Move (transform.forward * 2f);
+					//navMesh.SetDestination (player.transform.position);
+					//navMesh.isStopped = false;
 				}
 
 				if (firingState == FiringStates.Backpedal) {
-					RotateTowards (player.transform.position);
-					Vector3 oppositeDirVector = player.transform.position - transform.position;
+					//Vector3 oppositeDirVector = player.transform.position - transform.position;
+					navMesh.Move (transform.forward * -2f);
 					//navMesh.SetDestination (new Vector3(transform.position.x, transform.position.y, transform.position.z - 5f));
-					navMesh.SetDestination (new Vector3 (-oppositeDirVector.x, oppositeDirVector.y, -oppositeDirVector.z));
-					navMesh.isStopped = false;
+					//navMesh.SetDestination (new Vector3 (-oppositeDirVector.x, oppositeDirVector.y, -oppositeDirVector.z));
+					//navMesh.isStopped = false;
 				}
 
 				if (firingState == FiringStates.StrafeLeft) {
-					RotateTowards (player.transform.position);
 					Vector3 dest = new Vector3 (transform.right.x * navMesh.speed * 2f, transform.right.y * navMesh.speed * 2f, transform.right.z * navMesh.speed * 2f);
-					navMesh.SetDestination (new Vector3(transform.position.x + dest.x, transform.position.y + dest.y, transform.position.z + dest.z));
-					navMesh.isStopped = false;
+					navMesh.Move (dest);
+					//navMesh.SetDestination (new Vector3(transform.position.x + dest.x, transform.position.y + dest.y, transform.position.z + dest.z));
+					//navMesh.isStopped = false;
 				}
 
 				if (firingState == FiringStates.StrafeRight) {
-					RotateTowards (player.transform.position);
 					Vector3 dest = new Vector3 (transform.right.x * -navMesh.speed * 2f, transform.right.y * -navMesh.speed * 2f, transform.right.z * -navMesh.speed * 2f);
-					navMesh.SetDestination (new Vector3(transform.position.x + dest.x, transform.position.y + dest.y, transform.position.z + dest.z));
-					navMesh.isStopped = false;
+					navMesh.Move (dest);
+					//navMesh.SetDestination (new Vector3(transform.position.x + dest.x, transform.position.y + dest.y, transform.position.z + dest.z));
+					//navMesh.isStopped = false;
 				}
 			}
 		}
@@ -923,8 +958,6 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcDespawn() {
-		GetComponent<CapsuleCollider>().enabled = false;
-		GetComponent<BoxCollider>().enabled = false;
 		SkinnedMeshRenderer[] s = GetComponentsInChildren<SkinnedMeshRenderer> ();
 		for (int i = 0; i < s.Length; i++) {
 			s [i].enabled = false;
@@ -1135,8 +1168,8 @@ public class BetaEnemyScript : MonoBehaviour {
 		playerToHit = null;
 		lastSeenPlayerPos = Vector3.negativeInfinity;
 
-		actionState = ActionStates.Null;
-		firingState = FiringStates.Null;
+		actionState = ActionStates.Idle;
+		firingState = FiringStates.StandingStill;
 		firingModeTimer = 0f;
 
 		wanderStallDelay = -1f;
