@@ -50,6 +50,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	private bool rotationSaved;
 
 	public float hitTimer;
+	public float healTimer;
 	public Vector3 hitLocation;
 
 	// Mission references
@@ -68,7 +69,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
         photonView = GetComponent<PhotonView>();
 		escapeValueSent = false;
 		assaultModeChangedIndicator = false;
-		Physics.IgnoreLayerCollision (9, 12);
+
 		health = 100;
 		kills = 0;
 
@@ -101,6 +102,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		rotationSaved = false;
 
 		hitTimer = 1f;
+		healTimer = 1f;
 
 	}
 
@@ -317,6 +319,10 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		hitTimer = 0f;
 	}
 
+	public void ResetHealTimer() {
+		healTimer = 0f;
+	}
+
 	public void SetHitLocation(Vector3 pos) {
 		photonView.RPC ("RpcSetHitLocation", RpcTarget.AllBuffered, pos);
 	}
@@ -346,6 +352,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			wepScript.totalBulletsLeft = 120 + (wepScript.bulletsPerMag - wepScript.currentBullets);
 			other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
 		} else if (other.gameObject.tag.Equals("HealthBox")) {
+			ResetHealTimer ();
 			health = 100;
 			other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
 		}

@@ -43,6 +43,7 @@ public class WeaponScript : MonoBehaviour {
 	public ParticleSystem muzzleFlash;
 	public ParticleSystem bulletTrace;
 	private bool isReloading = false;
+	public bool isCocking = false;
 	private bool isAiming;
 
 	public GameObject hitParticles;
@@ -77,6 +78,8 @@ public class WeaponScript : MonoBehaviour {
 		//targetGunRot = mouseLook.m_CameraTargetRot * Quaternion.Euler(-MAX_RECOIL, 0f, 0f);
 		//originalGunRot = new Quaternion(mouseLook.m_CameraTargetRot.x, mouseLook.m_CameraTargetRot.y, mouseLook.m_CameraTargetRot.z, mouseLook.m_CameraTargetRot.w);
 		//originalGunRot = mouseLook.m_CameraTargetRot;
+
+		CockingAction ();
 	}
 	
 	// Update is called once per frame
@@ -181,23 +184,27 @@ public class WeaponScript : MonoBehaviour {
 		Vector3 impactDir = new Vector3 (shootPoint.transform.forward.x + xSpread, shootPoint.transform.forward.y + ySpread, shootPoint.transform.forward.z + zSpread);
 		int headshotLayer = (1 << 13);
 		if (Physics.Raycast (shootPoint.position, impactDir, out hit, range, headshotLayer)) {
-			GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
-			GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHitmarkerSound ();
 			pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
-			hit.transform.gameObject.GetComponentInParent<BetaEnemyScript> ().TakeDamage (100);
-			GetComponentInParent<PlayerHUDScript> ().OnScreenEffect ("HEADSHOT", true);
-			GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHeadshotSound ();
+			if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript> ().health > 0) {
+				GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
+				hit.transform.gameObject.GetComponentInParent<BetaEnemyScript> ().TakeDamage (100);
+				GetComponentInParent<PlayerScript> ().kills++;
+				GetComponentInParent<PlayerHUDScript> ().OnScreenEffect ("HEADSHOT", true);
+				GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHeadshotSound ();
+			}
 		} else if (Physics.Raycast (shootPoint.position, impactDir, out hit, range)) {
 			GameObject bloodSpill = null;
 			if (hit.transform.tag.Equals ("Human")) {
-				GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
-				GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHitmarkerSound ();
 				pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
 				int beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health;
-				hit.transform.gameObject.GetComponent<BetaEnemyScript> ().TakeDamage ((int)damage);
-				if (hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health <= 0 && beforeHp > 0) {
-					GetComponentInParent<PlayerScript> ().kills++;
-					GetComponentInParent<PlayerHUDScript> ().OnScreenEffect (GetComponentInParent<PlayerScript> ().kills + " KILLS", true);
+				if (beforeHp > 0) {
+					GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
+					GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHitmarkerSound ();
+					hit.transform.gameObject.GetComponent<BetaEnemyScript> ().TakeDamage ((int)damage);
+					if (hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health <= 0 && beforeHp > 0) {
+						GetComponentInParent<PlayerScript> ().kills++;
+						GetComponentInParent<PlayerHUDScript> ().OnScreenEffect (GetComponentInParent<PlayerScript> ().kills + " KILLS", true);
+					}
 				}
 			} else {
 				pView.RPC ("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
@@ -254,13 +261,15 @@ public class WeaponScript : MonoBehaviour {
 	}
 
 	public void Reload() {
-		if (totalBulletsLeft <= 0)
-			return;
+		if (!isCocking) {
+			if (totalBulletsLeft <= 0)
+				return;
 
-		int bulletsToLoad = bulletsPerMag - currentBullets;
-		int bulletsToDeduct = (totalBulletsLeft >= bulletsToLoad) ? bulletsToLoad : totalBulletsLeft;
-		totalBulletsLeft -= bulletsToDeduct;
-		currentBullets += bulletsToDeduct;
+			int bulletsToLoad = bulletsPerMag - currentBullets;
+			int bulletsToDeduct = (totalBulletsLeft >= bulletsToLoad) ? bulletsToLoad : totalBulletsLeft;
+			totalBulletsLeft -= bulletsToDeduct;
+			currentBullets += bulletsToDeduct;
+		}
 		pView.RPC ("RpcPlayReloadSound", RpcTarget.All);
 	}
 		
@@ -268,12 +277,27 @@ public class WeaponScript : MonoBehaviour {
 		//AnimatorStateInfo info = gunAnimator.GetCurrentAnimatorStateInfo (0);
 		if (isReloading)
 			return;
-		pView.RPC ("RpcReloadAnim", RpcTarget.All);
+		
+		if (isCocking) {
+			pView.RPC ("RpcCockingAnim", RpcTarget.All);
+		} else {
+			pView.RPC ("RpcReloadAnim", RpcTarget.All);
+		}
+	}
+
+	public void CockingAction() {
+		isCocking = true;
+		ReloadAction ();
 	}
 
 	[PunRPC]
 	void RpcReloadAnim() {
 		gunAnimator.CrossFadeInFixedTime ("Reloading", 0.1f);
+	}
+
+	[PunRPC]
+	void RpcCockingAnim() {
+		gunAnimator.CrossFadeInFixedTime ("Reloading", 0.1f, -1, 3.1f);
 	}
 
 	[PunRPC]

@@ -55,6 +55,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
     void Start () {
+		Physics.IgnoreLayerCollision (9, 12);
+		Physics.IgnoreLayerCollision (14, 12);
+		Physics.IgnoreLayerCollision (15, 12);
 		//playerList = GameObject.FindGameObjectsWithTag ("Player");
 		fxSound1 = GetComponentsInChildren<AudioSource>() [1];
 		fxSound2 = GetComponentsInChildren<AudioSource>() [2];

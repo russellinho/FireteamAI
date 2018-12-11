@@ -24,6 +24,7 @@ public class HUDContainer : MonoBehaviour {
 
 	// Hit indication HUD
 	public GameObject hitFlare;
+	public GameObject healFlare;
 	public GameObject hitDir;
 	public GameObject hitMarker;
 

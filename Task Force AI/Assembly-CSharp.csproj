@@ -233,6 +233,7 @@
      <Compile Include="Assets\Scripts\FirstPersonController.cs" />
      <Compile Include="Assets\Scripts\FreeFormCameraScript.cs" />
      <Compile Include="Assets\Scripts\GameControllerScript.cs" />
+     <Compile Include="Assets\Scripts\GameOverController.cs" />
      <Compile Include="Assets\Scripts\HeadBob.cs" />
      <Compile Include="Assets\Scripts\HealthScript.cs" />
      <Compile Include="Assets\Scripts\HUDContainer.cs" />
@@ -245,6 +246,7 @@
      <Compile Include="Assets\Scripts\NetworkManScript.cs" />
      <Compile Include="Assets\Scripts\ObjectivesTextScript.cs" />
      <Compile Include="Assets\Scripts\PatrolPointScript.cs" />
+     <Compile Include="Assets\Scripts\PauseMenuScript.cs" />
      <Compile Include="Assets\Scripts\PhotonNetworkManager.cs" />
      <Compile Include="Assets\Scripts\PickupScript.cs" />
      <Compile Include="Assets\Scripts\PlayerData.cs" />

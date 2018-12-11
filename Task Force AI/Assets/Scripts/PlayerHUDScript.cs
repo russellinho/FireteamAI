@@ -151,6 +151,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void FixedUpdate() {
 		UpdateHitFlare();
+		if (!container.hitFlare.GetComponent<RawImage> ().enabled) {
+			UpdateHealFlare();
+		}
 	}
 
 	void UpdateCursorStatus() {
@@ -250,6 +253,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void UpdateHitFlare() {
 		// Hit timer is set to 0 every time the player is hit, if player has been hit recently, make sure the hit flare and dir is set
+		container.healFlare.GetComponent<RawImage>().enabled = false;
 		if (playerScript.hitTimer < 1f) {
 			container.hitFlare.GetComponent<RawImage> ().enabled = true;
 			container.hitDir.GetComponent<RawImage> ().enabled = true;
@@ -260,6 +264,15 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			float a = Vector3.Angle (transform.forward, playerScript.hitLocation);
 			Vector3 temp = container.hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
 			container.hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(temp.x,temp.y,a));
+		}
+	}
+
+	void UpdateHealFlare() {
+		if (playerScript.healTimer < 1f) {
+			container.healFlare.GetComponent<RawImage> ().enabled = true;
+			playerScript.healTimer += Time.deltaTime;
+		} else {
+			container.healFlare.GetComponent<RawImage> ().enabled = false;
 		}
 	}
 

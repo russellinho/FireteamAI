@@ -60,7 +60,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	// All patrol pathfinding points for an enemy
 	public GameObject[] navPoints;
 	private Vector3 spawnPos;
-	private Quaternion spawnRot;
+	private Vector3 spawnRot;
 
 	public ActionStates actionState;
 
@@ -113,7 +113,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		player = null;
 		spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-		spawnRot = Quaternion.Euler (transform.rotation.x, transform.rotation.y, transform.rotation.z);
+		spawnRot = new Vector3 (transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
 		spine = GetComponentInChildren<SpineScript> ().gameObject.transform;
 		animator = GetComponent<Animator> ();
 		players = new GameObject[8];
@@ -157,7 +157,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		} else {
 			myCollider.height = originalColliderHeight;
 			myCollider.radius = originalColliderRadius;
-			myCollider.center = originalColliderCenter;
+			myCollider.center = new Vector3 (originalColliderCenter.x, originalColliderCenter.y, originalColliderCenter.z);
 		}
 
 		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
@@ -949,6 +949,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	IEnumerator Despawn() {
 		gameObject.layer = 12;
+		GetComponentsInChildren<CapsuleCollider> ()[1].gameObject.layer = 15;
 		RpcRemoveHitboxes ();
 		pView.RPC ("RpcRemoveHitboxes", RpcTarget.All);
 		yield return new WaitForSeconds(5f);
@@ -958,6 +959,13 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcDespawn() {
+		if (enemyType == EnemyType.Patrol) {
+			navMesh.ResetPath ();
+			navMesh.isStopped = true;
+			navMesh.enabled = false;
+		} else {
+			GetComponent<NavMeshObstacle> ().enabled = false;
+		}
 		SkinnedMeshRenderer[] s = GetComponentsInChildren<SkinnedMeshRenderer> ();
 		for (int i = 0; i < s.Length; i++) {
 			s [i].enabled = false;
@@ -968,8 +976,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcRemoveHitboxes() {
-		GetComponent<CapsuleCollider>().enabled = false;
-		GetComponentInChildren<CapsuleCollider> ().enabled = false;
+		myCollider.height = 0.3f;
+		myCollider.center = new Vector3 (0f, 0f, 0f);
 		GetComponent<BoxCollider>().enabled = false;
 	}
 
@@ -1150,7 +1158,13 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcRespawn() {
+		if (enemyType == EnemyType.Patrol) {
+			navMesh.enabled = true;
+		} else {
+			GetComponent<NavMeshObstacle> ().enabled = true;
+		}
 		gameObject.layer = 0;
+		GetComponentsInChildren<CapsuleCollider> ()[1].gameObject.layer = 13;
 		health = 100;
 		transform.position = new Vector3 (spawnPos.x, spawnPos.y, spawnPos.z);
 		transform.rotation = Quaternion.Euler (spawnRot.x, spawnRot.y, spawnRot.z);
@@ -1169,6 +1183,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		lastSeenPlayerPos = Vector3.negativeInfinity;
 
 		actionState = ActionStates.Idle;
+		animator.Play ("Idle");
 		firingState = FiringStates.StandingStill;
 		firingModeTimer = 0f;
 
@@ -1177,9 +1192,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		crouchMode = 2;
 		coverScanRange = 50f;
 
-		GetComponent<CapsuleCollider>().enabled = true;
+		myCollider.height = originalColliderHeight;
+		myCollider.center = new Vector3 (originalColliderCenter.x, originalColliderCenter.y, originalColliderCenter.z);
 		GetComponent<BoxCollider>().enabled = true;
-		GetComponentInChildren<CapsuleCollider>().enabled = true;
 		SkinnedMeshRenderer[] s = GetComponentsInChildren<SkinnedMeshRenderer> ();
 		for (int i = 0; i < s.Length; i++) {
 			s [i].enabled = true;

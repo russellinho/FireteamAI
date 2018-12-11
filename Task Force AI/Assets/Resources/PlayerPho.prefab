@@ -2631,31 +2631,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 724fbadbaf5b04e419b557ae7b0a3146, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pauseMenuGUI: {fileID: 0}
-  pauseExitBtn: {fileID: 0}
-  pauseResumeBtn: {fileID: 0}
-  pauseOptionsBtn: {fileID: 0}
-  scoreboard: {fileID: 0}
-  endGameText: {fileID: 0}
-  endGameButton: {fileID: 0}
-  hitFlare: {fileID: 0}
-  hitMarker: {fileID: 0}
-  hudMap: {fileID: 0}
-  hudWaypoint: {fileID: 1272327452645242, guid: afd6749c9932bfd428f00c6da8b4f41b,
-    type: 2}
-  hudPlayerMarker: {fileID: 1931414385125120, guid: 238c389c896f5034b9b809d54b544a9e,
-    type: 2}
-  objectivesText: {fileID: 0}
-  missionText: {fileID: 0}
-  actionBar: {fileID: 0}
-  defusingText: {fileID: 0}
-  hintText: {fileID: 0}
-  spectatorText: {fileID: 0}
-  missionTimeText: {fileID: 0}
-  missionTimeRemainingText: {fileID: 0}
-  assaultModeIndText: {fileID: 0}
-  killPopupText: {fileID: 0}
-  screenColor: {fileID: 0}
+  container: {fileID: 0}
 --- !u!114 &114929743923996308
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2671,7 +2647,7 @@ MonoBehaviour:
   m_IsCrouching: 0
   m_WalkSpeed: 5
   m_CrouchSpeed: 2
-  m_RunSpeed: 8
+  m_RunSpeed: 10
   m_RunstepLenghten: 0.7
   m_JumpSpeed: 10
   m_StickToGroundForce: 10
@@ -2806,6 +2782,7 @@ MonoBehaviour:
   shootPoint: {fileID: 4772214779834854}
   muzzleFlash: {fileID: 198464886627007744}
   bulletTrace: {fileID: 198686650311421410}
+  isCocking: 0
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
