@@ -35,13 +35,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
 	private Vector3 lastGunshotHeardPosClone = Vector3.negativeInfinity;
 	private float lastGunshotTimer = 0f;
-	public static Dictionary<int, GameObject> playerList = new Dictionary<int, GameObject> ();
+    public float endGameTimer = 0f;
+    public static Dictionary<int, GameObject> playerList = new Dictionary<int, GameObject> ();
 	public GameObject[] enemyList;
 
     // Bomb defusal mission variables
 	public GameObject[] bombs;
     public int bombsRemaining;
 	public bool gameOver;
+    private bool exitLevelLoaded;
     public bool escapeAvailable;
 
 	public Camera c;
@@ -55,6 +57,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
     void Start () {
+        PhotonNetwork.AutomaticallySyncScene = true;
 		Physics.IgnoreLayerCollision (9, 12);
 		Physics.IgnoreLayerCollision (14, 12);
 		Physics.IgnoreLayerCollision (15, 12);
@@ -73,6 +76,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
+        exitLevelLoaded = false;
 
         missionTime = 0f;
 		lastGunshotTimer = 10f;
@@ -111,11 +115,18 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                 bombs = GameObject.FindGameObjectsWithTag("Bomb");
             }*/
 
-            // Check if the mission is over
-            if (bombsRemaining == 0) {
+            // Check if the mission is over or if all players eliminated
+            if (deadCount == PhotonNetwork.CurrentRoom.Players.Count) {
+                if (!gameOver)
+                {
+                    endGameTimer = 8f;
+                    gameOver = true;
+                }
+            } else if (bombsRemaining == 0) {
 				escapeAvailable = true;
 				if (!gameOver && CheckEscape ()) {
-					// If they can escape, end the game and bring up the stat board
+                    // If they can escape, end the game and bring up the stat board
+                    endGameTimer = 3f;
 					gameOver = true;
 					EndGame();
 				}
@@ -133,6 +144,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					pView.RPC ("UpdateAssaultMode", RpcTarget.All, true);
 				}
 			}
+
+            UpdateEndGameTimer();
         }
 	}
 
@@ -300,5 +313,22 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		fxSound4.clip = playerHitSound;
 		fxSound4.Play ();
 	}
+
+    void UpdateEndGameTimer() {
+        if (gameOver) {
+            if (endGameTimer > 0f)
+            {
+                endGameTimer -= Time.deltaTime;
+            }
+            if (endGameTimer <= 0f && PhotonNetwork.IsMasterClient && !exitLevelLoaded) {
+                exitLevelLoaded = true;
+                if (deadCount == PhotonNetwork.CurrentRoom.Players.Count) {
+                    PhotonNetwork.LoadLevel("GameOverFail");
+                } else {
+                    PhotonNetwork.LoadLevel("GameOverSuccess");
+                }
+            }
+        }
+    }
 
 }

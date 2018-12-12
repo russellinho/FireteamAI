@@ -24,6 +24,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	// Player variables
 	public string currWep; // TODO: Needs to be changed soon to account for other weps
 	public int health;
+    public bool godMode;
 	public bool canShoot;
 	private float charHeightOriginal;
 	private bool escapeValueSent;
@@ -124,6 +125,10 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		Crouch ();
 		BombCheck ();
 		DeathCheck ();
+        if (!escapeValueSent && health <= 0) {
+            escapeValueSent = true;
+            gameController.GetComponent<GameControllerScript>().IncrementDeathCount();
+        }
 		DetermineEscaped ();
 		// Update assault mode
 		hud.UpdateAssaultModeIndHud (gameController.GetComponent<GameControllerScript>().assaultMode);
@@ -149,7 +154,10 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
     [PunRPC]
     void RpcTakeDamage(int d) {
-        health -= d;
+        if (!godMode)
+        {
+            health -= d;
+        }
     }
 
 	public void Crouch() {
@@ -270,15 +278,13 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 				return;
 			}
 
-			if (Input.GetKey (KeyCode.E)) {
-				// TODO: Disallow movement
+            if (Input.GetKey (KeyCode.E) && health > 0) {
 				gameObject.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().canMove = false;
 
 				GetComponent<PlayerHUDScript> ().container.hintText.enabled = false;
 				GetComponent<PlayerHUDScript> ().ToggleActionBar (true);
 				GetComponent<PlayerHUDScript> ().container.defusingText.enabled = true;
 				bombDefuseCounter += (Time.deltaTime / 8f);
-				Debug.Log (bombDefuseCounter);
 				GetComponent<PlayerHUDScript> ().SetActionBarSlider(bombDefuseCounter);
 				if (bombDefuseCounter >= 1f) {
 					bombDefuseCounter = 0f;
@@ -335,11 +341,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	void DetermineEscaped() {
 		if (gameController.GetComponent<GameControllerScript> ().escapeAvailable) {
 			if (!escapeValueSent) {
-				// If dead, 
-				if (health <= 0) {
-					gameController.GetComponent<GameControllerScript> ().IncrementDeathCount ();
-					escapeValueSent = true;
-				} else if (health > 0 && Vector3.Distance(gameController.GetComponent<GameControllerScript>().exitPoint.transform.position, transform.position) <= 10f && transform.position.y >= (gameController.GetComponent<GameControllerScript>().exitPoint.transform.position.y - 1f)) {
+				if (health > 0 && Vector3.Distance(gameController.GetComponent<GameControllerScript>().exitPoint.transform.position, transform.position) <= 10f && transform.position.y >= (gameController.GetComponent<GameControllerScript>().exitPoint.transform.position.y - 1f)) {
 					gameController.GetComponent<GameControllerScript> ().IncrementEscapeCount ();
 					escapeValueSent = true;
 				}

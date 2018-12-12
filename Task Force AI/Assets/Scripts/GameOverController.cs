@@ -7,7 +7,13 @@ using Photon.Realtime;
 
 public class GameOverController : MonoBehaviourPunCallbacks {
 
-	public void ExitButton() {
+    void Start()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    public void ExitButton() {
 		PhotonNetwork.LeaveRoom();
 	}
 

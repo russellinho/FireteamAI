@@ -136,9 +136,16 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		UpdateCursorStatus ();
 
-		if (gameController.gameOver && container.healthText.enabled) {
-			DisableHUD();
-			ToggleScoreboard ();
+		if (gameController.gameOver) {
+            if (container.healthText.enabled)
+            {
+                DisableHUD();
+                ToggleScoreboard();
+            }
+            if (PhotonNetwork.CurrentRoom.Players.Count == gameController.deadCount)
+            {
+                GameOverPopup();
+            }
 		}
 
         UpdateMissionTimeText();
@@ -420,5 +427,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			}
 		}
 	}
+
+    void GameOverPopup() {
+        if (!container.spectatorText.enabled) {
+            container.spectatorText.enabled = true;
+        }
+        container.spectatorText.text = "Your team has been eliminated. The match will end in " + (int)gameController.endGameTimer;
+    }
 
 }
