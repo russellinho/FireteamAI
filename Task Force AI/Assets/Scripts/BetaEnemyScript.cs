@@ -69,7 +69,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	private Transform spine;
 
-	private NavMeshAgent navMesh;
+	public NavMeshAgent navMesh;
+	public NavMeshObstacle navMeshObstacle;
 
 	// Timers
 	private float alertTimer;
@@ -124,12 +125,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		rigid.freezeRotation = true;
 		isCrouching = false;
 		// Get nav points
-		if (enemyType != EnemyType.Scout) {
-			navMesh = GetComponent<NavMeshAgent>();
-			if (!navMesh.isOnNavMesh) {
-				enemyType = EnemyType.Scout;
-			}
-		}
+
 		//navPoints = GameObject.FindGameObjectsWithTag("PatrolPoint");
 		coverTimer = 0f;
 		inCover = false;
@@ -161,9 +157,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
-			if (enemyType != EnemyType.Scout) {
-				navMesh.isStopped = true;
-			}
 			return;
 		}
 		if (!Vector3.Equals (GameControllerScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
@@ -248,10 +241,13 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	}
 
+	public void SetAlerted(bool b) {
+		pView.RPC ("RpcSetAlerted", RpcTarget.All, b);
+	}
+
 	// What happens when the enemy is alerted
 	[PunRPC]
 	void RpcSetAlerted(bool b) {
-		//Debug.Log ("h");
 		alerted = b;
 		if (range == 10f) {
 			range *= 2.5f;
@@ -793,8 +789,14 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		if (actionState == ActionStates.Idle) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
-				animator.Play ("Idle");
+			if (alerted) {
+				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Firing")) {
+					animator.Play ("Firing");
+				}
+			} else {
+				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
+					animator.Play ("Idle");
+			}
 		}
 
 		if (actionState == ActionStates.Firing || actionState == ActionStates.Reloading || actionState == ActionStates.InCover) {
@@ -964,7 +966,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			navMesh.isStopped = true;
 			navMesh.enabled = false;
 		} else {
-			GetComponent<NavMeshObstacle> ().enabled = false;
+			navMeshObstacle.enabled = false;
 		}
 		SkinnedMeshRenderer[] s = GetComponentsInChildren<SkinnedMeshRenderer> ();
 		for (int i = 0; i < s.Length; i++) {
@@ -1161,7 +1163,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (enemyType == EnemyType.Patrol) {
 			navMesh.enabled = true;
 		} else {
-			GetComponent<NavMeshObstacle> ().enabled = true;
+			navMeshObstacle.enabled = true;
 		}
 		gameObject.layer = 0;
 		GetComponentsInChildren<CapsuleCollider> ()[1].gameObject.layer = 13;

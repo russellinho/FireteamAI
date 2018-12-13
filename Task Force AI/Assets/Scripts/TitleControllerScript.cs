@@ -30,7 +30,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
 	void Start () {
-		PlayerData.playerdata.LoadPlayerData();
+		//PlayerData.playerdata.LoadPlayerData ();
+		PlayerData.playerdata.FindBodyRef ();
+		PlayerData.playerdata.UpdateBodyColor ();
 		PlayerNameInput.text = PlayerData.playerdata.playername;
 		mainMenu.SetActive (true);
 		loadingStatus = 0;

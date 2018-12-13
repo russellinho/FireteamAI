@@ -72,12 +72,15 @@ public class PlayerData : MonoBehaviour {
 			playername = "Player";
 			color = new Vector3 (255, 255, 255);
 		}
-		UpdateBodyColor ();
 		PhotonNetwork.NickName = playername;
 	}
 
 	public void UpdateBodyColor() {
 		bodyColorReference.material.color = new Color (color.x / 255, color.y / 255, color.z / 255, 1.0f);
+	}
+
+	public void FindBodyRef() {
+		bodyColorReference = GameObject.FindGameObjectWithTag ("Player").GetComponentsInChildren<MeshRenderer>()[1];
 	}
 
 }

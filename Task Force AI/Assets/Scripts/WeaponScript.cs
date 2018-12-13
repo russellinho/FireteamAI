@@ -201,6 +201,7 @@ public class WeaponScript : MonoBehaviour {
 					GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
 					GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHitmarkerSound ();
 					hit.transform.gameObject.GetComponent<BetaEnemyScript> ().TakeDamage ((int)damage);
+					hit.transform.gameObject.GetComponent<BetaEnemyScript> ().SetAlerted (true);
 					if (hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health <= 0 && beforeHp > 0) {
 						GetComponentInParent<PlayerScript> ().kills++;
 						GetComponentInParent<PlayerHUDScript> ().OnScreenEffect (GetComponentInParent<PlayerScript> ().kills + " KILLS", true);

@@ -3919,12 +3919,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 195838288}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 195838287}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &195838286 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 195838285}
+--- !u!208 &195838287 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 195838285}
+--- !u!195 &195838288 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 195838285}
 --- !u!1 &196400629
@@ -4470,12 +4495,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 245640534}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 245640533}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &245640532 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 245640531}
+--- !u!208 &245640533 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 245640531}
+--- !u!195 &245640534 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 245640531}
 --- !u!1001 &246060806
@@ -5343,12 +5393,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 302655308}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 302655307}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &302655306 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 302655305}
+--- !u!208 &302655307 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 302655305}
+--- !u!195 &302655308 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 302655305}
 --- !u!1001 &303610259
@@ -5957,12 +6032,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 345530622}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 345530621}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &345530620 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 345530619}
+--- !u!208 &345530621 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 345530619}
+--- !u!195 &345530622 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 345530619}
 --- !u!1001 &345917962
@@ -8882,12 +8982,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 589618316}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 589618315}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &589618314 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 589618313}
+--- !u!208 &589618315 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 589618313}
+--- !u!195 &589618316 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 589618313}
 --- !u!1001 &597562545
@@ -9199,12 +9324,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 608335403}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 608335402}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &608335401 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 608335400}
+--- !u!208 &608335402 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 608335400}
+--- !u!195 &608335403 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 608335400}
 --- !u!1001 &613222783
@@ -9576,12 +9726,37 @@ Prefab:
       propertyPath: enemyType
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 653853517}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 653853516}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &653853515 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 653853514}
+--- !u!208 &653853516 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 653853514}
+--- !u!195 &653853517 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 653853514}
 --- !u!1001 &658570094
@@ -10038,12 +10213,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 696046529}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 696046528}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &696046527 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 696046526}
+--- !u!208 &696046528 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 696046526}
+--- !u!195 &696046529 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 696046526}
 --- !u!1 &699673872
@@ -10370,12 +10570,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 702523971}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 702523970}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &702523969 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 702523968}
+--- !u!208 &702523970 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 702523968}
+--- !u!195 &702523971 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 702523968}
 --- !u!1 &702824169
@@ -10577,12 +10802,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 707037508}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 707037507}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &707037506 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 707037505}
+--- !u!208 &707037507 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 707037505}
+--- !u!195 &707037508 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 707037505}
 --- !u!1001 &708058100
@@ -11631,12 +11881,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 774868448}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 774868447}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &774868446 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 774868445}
+--- !u!208 &774868447 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 774868445}
+--- !u!195 &774868448 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 774868445}
 --- !u!1001 &776585251
@@ -12493,12 +12768,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 822447998}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 822447997}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &822447996 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 822447995}
+--- !u!208 &822447997 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 822447995}
+--- !u!195 &822447998 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 822447995}
 --- !u!1 &836019388
@@ -12698,12 +12998,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 843216505}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 843216504}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &843216503 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 843216502}
+--- !u!208 &843216504 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 843216502}
+--- !u!195 &843216505 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 843216502}
 --- !u!1001 &845620964
@@ -12828,12 +13153,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 845620967}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 845620966}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &845620965 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 845620964}
+--- !u!208 &845620966 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 845620964}
+--- !u!195 &845620967 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 845620964}
 --- !u!1001 &847308186
@@ -13234,12 +13584,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 868066751}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 868066750}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &868066749 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 868066748}
+--- !u!208 &868066750 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 868066748}
+--- !u!195 &868066751 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 868066748}
 --- !u!1001 &874415902
@@ -15115,12 +15490,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 988156643}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 988156642}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &988156641 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 988156640}
+--- !u!208 &988156642 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 988156640}
+--- !u!195 &988156643 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 988156640}
 --- !u!1001 &990029566
@@ -15726,12 +16126,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1014398855}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1014398854}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1014398853 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1014398852}
+--- !u!208 &1014398854 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1014398852}
+--- !u!195 &1014398855 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1014398852}
 --- !u!1001 &1015860615
@@ -17338,12 +17763,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1098151563}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1098151562}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1098151561 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1098151560}
+--- !u!208 &1098151562 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1098151560}
+--- !u!195 &1098151563 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1098151560}
 --- !u!1001 &1099191810
@@ -17546,12 +17996,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1099738214}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1099738213}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1099738212 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1099738211}
+--- !u!208 &1099738213 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1099738211}
+--- !u!195 &1099738214 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1099738211}
 --- !u!1 &1102334346
@@ -17753,12 +18228,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1109247678}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1109247677}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1109247676 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1109247675}
+--- !u!208 &1109247677 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1109247675}
+--- !u!195 &1109247678 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1109247675}
 --- !u!1001 &1124939593
@@ -18003,12 +18503,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1130954768}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1130954767}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1130954766 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1130954765}
+--- !u!208 &1130954767 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1130954765}
+--- !u!195 &1130954768 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1130954765}
 --- !u!1001 &1131768086
@@ -18569,12 +19094,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1179597349}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1179597348}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1179597347 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1179597346}
+--- !u!208 &1179597348 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1179597346}
+--- !u!195 &1179597349 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1179597346}
 --- !u!1001 &1196952794
@@ -18881,12 +19431,12 @@ Prefab:
     - target: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
         type: 2}
       propertyPath: m_Carve
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
         type: 2}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
         type: 2}
@@ -18903,12 +19453,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1237124774}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1237124773}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1237124772 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1237124771}
+--- !u!208 &1237124773 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1237124771}
+--- !u!195 &1237124774 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1237124771}
 --- !u!1001 &1238726480
@@ -19144,12 +19719,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1249287259}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1249287258}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1249287257 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1249287256}
+--- !u!208 &1249287258 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1249287256}
+--- !u!195 &1249287259 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1249287256}
 --- !u!1001 &1249651024
@@ -19311,12 +19911,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1250001913}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1250001912}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1250001911 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1250001910}
+--- !u!208 &1250001912 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1250001910}
+--- !u!195 &1250001913 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1250001910}
 --- !u!1001 &1251372735
@@ -19431,12 +20056,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1251372738}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1251372737}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1251372736 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1251372735}
+--- !u!208 &1251372737 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1251372735}
+--- !u!195 &1251372738 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1251372735}
 --- !u!1 &1259705672
@@ -19651,12 +20301,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1274893700}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1274893699}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1274893698 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1274893697}
+--- !u!208 &1274893699 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1274893697}
+--- !u!195 &1274893700 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1274893697}
 --- !u!1 &1275311184
@@ -20871,12 +21546,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1378825329}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1378825328}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1378825327 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1378825326}
+--- !u!208 &1378825328 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1378825326}
+--- !u!195 &1378825329 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1378825326}
 --- !u!1001 &1383043545
@@ -21589,12 +22289,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1413404216}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1413404215}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1413404214 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1413404213}
+--- !u!208 &1413404215 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1413404213}
+--- !u!195 &1413404216 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1413404213}
 --- !u!1001 &1421719477
@@ -21689,12 +22414,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1421719480}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1421719479}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1421719478 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1421719477}
+--- !u!208 &1421719479 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1421719477}
+--- !u!195 &1421719480 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1421719477}
 --- !u!1 &1426562477
@@ -22711,12 +23461,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1495046337}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1495046336}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1495046335 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1495046334}
+--- !u!208 &1495046336 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1495046334}
+--- !u!195 &1495046337 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1495046334}
 --- !u!1001 &1495446955
@@ -24010,12 +24785,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1548730410}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1548730409}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1548730408 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1548730407}
+--- !u!208 &1548730409 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1548730407}
+--- !u!195 &1548730410 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1548730407}
 --- !u!1001 &1552793308
@@ -24527,12 +25327,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1574615669}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1574615668}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1574615667 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1574615666}
+--- !u!208 &1574615668 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1574615666}
+--- !u!195 &1574615669 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1574615666}
 --- !u!1001 &1575285339
@@ -25013,12 +25838,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1591717496}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1591717495}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1591717494 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1591717493}
+--- !u!208 &1591717495 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1591717493}
+--- !u!195 &1591717496 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1591717493}
 --- !u!1 &1599706879
@@ -25296,12 +26146,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1611703277}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1611703276}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1611703275 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1611703274}
+--- !u!208 &1611703276 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1611703274}
+--- !u!195 &1611703277 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1611703274}
 --- !u!1001 &1612034297
@@ -26156,12 +27031,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1654314945}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1654314944}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1654314943 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1654314942}
+--- !u!208 &1654314944 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1654314942}
+--- !u!195 &1654314945 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1654314942}
 --- !u!1001 &1659496181
@@ -26623,12 +27523,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1669537094}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1669537093}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1669537092 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1669537091}
+--- !u!208 &1669537093 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1669537091}
+--- !u!195 &1669537094 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1669537091}
 --- !u!1001 &1671350117
@@ -26766,12 +27691,42 @@ Prefab:
       propertyPath: viewIdField
       value: 46
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1672759368}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1672759367}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1672759366 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1672759365}
+--- !u!208 &1672759367 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1672759365}
+--- !u!195 &1672759368 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1672759365}
 --- !u!1001 &1673105112
@@ -27266,12 +28221,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1693255566}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1693255565}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1693255564 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1693255563}
+--- !u!208 &1693255565 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1693255563}
+--- !u!195 &1693255566 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1693255563}
 --- !u!1001 &1697653420
@@ -28334,12 +29314,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1746836711}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1746836710}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1746836709 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1746836708}
+--- !u!208 &1746836710 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1746836708}
+--- !u!195 &1746836711 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1746836708}
 --- !u!1001 &1748008659
@@ -28797,12 +29802,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1785087151}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1785087152}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1785087150 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1785087149}
+--- !u!195 &1785087151 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1785087149}
+--- !u!208 &1785087152 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1785087149}
 --- !u!1001 &1797200768
@@ -28975,7 +30005,7 @@ Prefab:
     - target: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
         type: 2}
       propertyPath: m_Carve
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
         type: 2}
@@ -28985,7 +30015,7 @@ Prefab:
     - target: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
         type: 2}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 136336264828559212, guid: bf887135426adf542a67687c9c855fe0,
         type: 2}
@@ -28997,12 +30027,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1800518937}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1800518936}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1800518935 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1800518934}
+--- !u!208 &1800518936 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1800518934}
+--- !u!195 &1800518937 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1800518934}
 --- !u!1001 &1801648638
@@ -30562,12 +31617,37 @@ Prefab:
       propertyPath: enemyType
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1892611206}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1892611205}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1892611204 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1892611203}
+--- !u!208 &1892611205 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1892611203}
+--- !u!195 &1892611206 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1892611203}
 --- !u!1001 &1893892333
@@ -30843,12 +31923,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 1897616151}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 1897616150}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1897616149 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1897616148}
+--- !u!208 &1897616150 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 1897616148}
+--- !u!195 &1897616151 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 1897616148}
 --- !u!1001 &1898921645
@@ -33269,12 +34374,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 2075227782}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 2075227781}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &2075227780 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 2075227779}
+--- !u!208 &2075227781 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 2075227779}
+--- !u!195 &2075227782 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 2075227779}
 --- !u!1001 &2075359936
@@ -33935,12 +35065,37 @@ Prefab:
       propertyPath: m_Height
       value: 1.32
       objectReference: {fileID: 0}
+    - target: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMesh
+      value: 
+      objectReference: {fileID: 2104273737}
+    - target: {fileID: 114664547146455366, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: navMeshObstacle
+      value: 
+      objectReference: {fileID: 2104273736}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &2104273735 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1224831656385806, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 2104273734}
+--- !u!208 &2104273736 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 208658121138146138, guid: bf887135426adf542a67687c9c855fe0,
+    type: 2}
+  m_PrefabInternal: {fileID: 2104273734}
+--- !u!195 &2104273737 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 195753960068613868, guid: bf887135426adf542a67687c9c855fe0,
     type: 2}
   m_PrefabInternal: {fileID: 2104273734}
 --- !u!1001 &2106422606
