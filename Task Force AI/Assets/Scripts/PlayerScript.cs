@@ -76,7 +76,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
         gameController = GameObject.FindWithTag("GameController");
 		AddMyselfToPlayerList ();
-		photonView.RPC ("SyncPlayerColor", RpcTarget.AllBuffered, PlayerData.playerdata.color);
+		photonView.RPC ("SyncPlayerColor", RpcTarget.All, PlayerData.playerdata.color);
 
 		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
         if (!GetComponent<PhotonView>().IsMine) {
@@ -149,7 +149,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	public void TakeDamage(int d) {
 		gameController.GetComponent<GameControllerScript> ().PlayHitSound ();
 		gameController.GetComponent<GameControllerScript> ().PlayGruntSound ();
-        photonView.RPC("RpcTakeDamage", RpcTarget.AllBuffered, d);
+        photonView.RPC("RpcTakeDamage", RpcTarget.All, d);
     }
 
     [PunRPC]
@@ -191,7 +191,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		transform.position = new Vector3 (transform.position.x, transform.position.y + ((charController.height - lastHeight) / 2), transform.position.z);
 
 		if (fpc.m_IsCrouching != originalCrouch) {
-			photonView.RPC ("RpcCrouch", RpcTarget.OthersBuffered, fpc.m_IsCrouching);
+			photonView.RPC ("RpcCrouch", RpcTarget.Others, fpc.m_IsCrouching);
 		}
 	}
 
@@ -317,7 +317,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void ResetHitTimer() {
-		photonView.RPC ("RpcResetHitTimer", RpcTarget.AllBuffered);
+		photonView.RPC ("RpcResetHitTimer", RpcTarget.All);
 	}
 
 	[PunRPC]
@@ -330,7 +330,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void SetHitLocation(Vector3 pos) {
-		photonView.RPC ("RpcSetHitLocation", RpcTarget.AllBuffered, pos);
+		photonView.RPC ("RpcSetHitLocation", RpcTarget.All, pos);
 	}
 
 	[PunRPC]

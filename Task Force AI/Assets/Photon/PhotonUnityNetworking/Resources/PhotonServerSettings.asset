@@ -70,4 +70,23 @@ MonoBehaviour:
   - SyncPlayerColor
   - StopFireEffects
   - RpcCockingAnim
+  - RpcSetAlertTimer
+  - RpcSetTarget
+  - RpcSetCoverSwitchPositionsTimer
+  - RpcSetCoverWaitTimer
+  - RpcReload
+  - RpcSetCoverPos
+  - RpcSetCoverTimer
+  - RpcSetCrouchMode
+  - RpcSetFireTimer
+  - RpcSetFiringModeTimer
+  - RpcSetInCover
+  - RpcSetLastSeenPlayerPos
+  - RpcSetNavMeshDestination
+  - RpcSetPlayerToHit
+  - RpcSetWanderStallDelay
+  - RpcUpdateAlertedStatus
+  - RpcUpdateNavMesh
+  - RpcUpdateNavMeshSpeed
+  - StartDespawn
   DisableAutoOpenWizard: 1

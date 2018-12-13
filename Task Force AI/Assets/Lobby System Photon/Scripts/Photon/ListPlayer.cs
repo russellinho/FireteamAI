@@ -115,7 +115,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		void ChangeReadyStatus() {
 			isReady = !isReady;
-			photonView.RPC ("RpcChangeReadyStatus", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.ActorNumber, isReady);
+			photonView.RPC ("RpcChangeReadyStatus", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, isReady);
 		}
 
 		[PunRPC]
