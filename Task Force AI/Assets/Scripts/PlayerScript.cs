@@ -290,7 +290,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 					bombDefuseCounter = 0f;
 
 					gameController.GetComponent<GameControllerScript> ().bombs[currentBombIndex].GetComponent<BombScript>().Defuse ();
-					gameController.GetComponent<GameControllerScript> ().bombsRemaining--;
+					gameController.GetComponent<GameControllerScript> ().DecrementBombsRemaining ();
 					GetComponent<PlayerHUDScript> ().UpdateObjectives ();
 					currentBomb = null;
 
@@ -310,7 +310,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 				GetComponent<PlayerHUDScript> ().ToggleActionBar (false);
 				GetComponent<PlayerHUDScript> ().container.defusingText.enabled = false;
 				GetComponent<PlayerHUDScript> ().container.hintText.enabled = true;
-				//Debug.Log (gameController.GetComponent<GameControllerScript> ().hintText.enabled);
 				bombDefuseCounter = 0f;
 			}
 		}

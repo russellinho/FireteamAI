@@ -112,7 +112,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             }
 
             if (PhotonNetwork.IsMasterClient) {
-                UpdateMissionTime();
+				if (!gameOver) {
+					UpdateMissionTime ();
+				}
 
 				// Check if the mission is over or if all players eliminated or out of time
 				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime()) {
@@ -341,6 +343,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	[PunRPC]
 	void RpcUpdateEndGameTimer(float t) {
 		endGameTimer = t;
+	}
+
+	public void DecrementBombsRemaining() {
+		pView.RPC ("RpcDecrementBombsRemaining", RpcTarget.All);
+	}
+
+	[PunRPC]
+	void RpcDecrementBombsRemaining() {
+		bombsRemaining--;
 	}
 
     void UpdateEndGameTimer() {

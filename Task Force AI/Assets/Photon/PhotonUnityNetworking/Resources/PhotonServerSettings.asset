@@ -97,4 +97,8 @@ MonoBehaviour:
   - RpcConvertCounts
   - RpcChangePlayerDisableStatus
   - RpcDisableFPSHands
+  - RpcDecrementBombsRemaining
+  - RpcDefuse
+  - RpcMessagePopup
+  - RpcUpdateObjectives
   DisableAutoOpenWizard: 1
