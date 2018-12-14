@@ -212,8 +212,9 @@ public class WeaponScript : MonoBehaviour {
 				pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
 			}
 		}
-			
-		GameControllerScript.lastGunshotHeardPos = transform.position;
+
+		GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().SetLastGunshotHeardPos (transform.position.x, transform.position.y, transform.position.z);
+		//GameControllerScript.lastGunshotHeardPos = transform.position;
 		pView.RPC ("FireEffects", RpcTarget.All);
 	}
 

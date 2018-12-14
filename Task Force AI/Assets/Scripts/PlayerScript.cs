@@ -27,7 +27,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
     public bool godMode;
 	public bool canShoot;
 	private float charHeightOriginal;
-	private bool escapeValueSent;
+	public bool escapeValueSent;
 	private bool assaultModeChangedIndicator;
 	public int kills;
 
@@ -113,11 +113,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			gameController = GameObject.FindWithTag ("GameController");
 		}
 
-		if (gameController.GetComponent<GameControllerScript> ().gameOver) {
-			fpc.canMove = false;
-			canShoot = false;
-		}
-
         if (!GetComponent<PhotonView>().IsMine) {
 			return;
 		}
@@ -125,9 +120,11 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		Crouch ();
 		BombCheck ();
 		DeathCheck ();
-        if (!escapeValueSent && health <= 0) {
-            escapeValueSent = true;
-            gameController.GetComponent<GameControllerScript>().IncrementDeathCount();
+        if (health <= 0) {
+			if (!escapeValueSent) {
+				escapeValueSent = true;
+				gameController.GetComponent<GameControllerScript> ().IncrementDeathCount ();
+			}
         }
 		DetermineEscaped ();
 		// Update assault mode
@@ -227,7 +224,10 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			}*/
 			GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ().enabled = false;
 			if (!rotationSaved) {
-				DisableFPSHands ();
+				if (escapeValueSent) {
+					gameController.GetComponent<GameControllerScript> ().ConvertCounts (1, -1);
+				}
+				photonView.RPC ("RpcDisableFPSHands", RpcTarget.All);
 				hud.DisableHUD ();
 				hud.EnableSpectatorMessage ();
 				deathCameraLerpPos = new Vector3 (viewCam.transform.localPosition.x, viewCam.transform.localPosition.y, viewCam.transform.localPosition.z - 5.5f);
@@ -365,24 +365,26 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		viewCam.transform.localPosition = Vector3.Lerp (viewCam.transform.localPosition, deathCameraLerpPos, deathCameraLerpVar);
 	}
 
-	void DisableFPSHands() {
+	[PunRPC]
+	void RpcDisableFPSHands() {
 		viewCam.gameObject.GetComponentInChildren<SkinnedMeshRenderer> ().enabled = false;
 		viewCam.gameObject.GetComponentInChildren<MeshRenderer> ().enabled = false;
 	}
 
 	IEnumerator EnterSpectatorMode() {
 		yield return new WaitForSeconds (6f);
-		ChangePlayerDisableStatus (false);
+		photonView.RPC ("RpcChangePlayerDisableStatus", RpcTarget.All, false);
 		thisSpectatorCam = Instantiate (spectatorCam, Vector3.zero, Quaternion.Euler(Vector3.zero));
 	}
 
 	void LeaveSpectatorMode() {
 		Destroy (thisSpectatorCam);
 		thisSpectatorCam = null;
-		ChangePlayerDisableStatus (true);
+		photonView.RPC ("RpcChangePlayerDisableStatus", RpcTarget.All, true);
 	}
 
-	void ChangePlayerDisableStatus(bool status) {
+	[PunRPC]
+	void RpcChangePlayerDisableStatus(bool status) {
 		for (int i = 0; i < subComponents.Length; i++) {
 			subComponents [i].SetActive (status);
 		}

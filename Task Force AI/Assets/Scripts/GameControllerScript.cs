@@ -110,43 +110,41 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                 GameObject temp = GameObject.FindWithTag("MainCamera");
                 if (temp != null) c = temp.GetComponent<Camera>();
             }
-            /**if (bombs == null || bombs.Length == 0)
-            {
-                bombs = GameObject.FindGameObjectsWithTag("Bomb");
-            }*/
-
-            // Check if the mission is over or if all players eliminated
-            if (deadCount == PhotonNetwork.CurrentRoom.Players.Count) {
-                if (!gameOver)
-                {
-                    endGameTimer = 8f;
-                    gameOver = true;
-                }
-            } else if (bombsRemaining == 0) {
-				escapeAvailable = true;
-				if (!gameOver && CheckEscape ()) {
-                    // If they can escape, end the game and bring up the stat board
-                    endGameTimer = 3f;
-					gameOver = true;
-					EndGame();
-				}
-			}
 
             if (PhotonNetwork.IsMasterClient) {
                 UpdateMissionTime();
-            }
 
-            // Check if out of time (30 mins)
-
-			// Cbeck if mode has been changed to assault or not
-			if (!assaultMode) {
-				if (!lastGunshotHeardPos.Equals (Vector3.negativeInfinity)) {
-					pView.RPC ("UpdateAssaultMode", RpcTarget.All, true);
+				// Check if the mission is over or if all players eliminated or out of time
+				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime()) {
+					if (!gameOver)
+					{
+						pView.RPC ("RpcEndGame", RpcTarget.All, 9f);
+					}
+				} else if (bombsRemaining == 0) {
+					escapeAvailable = true;
+					if (!gameOver && CheckEscape ()) {
+						// If they can escape, end the game and bring up the stat board
+						pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
+					}
 				}
-			}
 
-            UpdateEndGameTimer();
+				// Cbeck if mode has been changed to assault or not
+				if (!assaultMode) {
+					if (!lastGunshotHeardPos.Equals (Vector3.negativeInfinity)) {
+						pView.RPC ("UpdateAssaultMode", RpcTarget.All, true);
+					}
+				}
+
+				ResetLastGunshotPos ();
+				UpdateEndGameTimer();
+            }
         }
+	}
+
+	[PunRPC]
+	void RpcEndGame(float f) {
+		endGameTimer = f;
+		gameOver = true;
 	}
 
 	IEnumerator RestartBgmTimer(float secs) {
@@ -174,29 +172,49 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		return false;
 	}
 
+	[PunRPC]
+	void RpcSetLastGunshotHeardTimer(float t) {
+		lastGunshotTimer = t;
+	}
+
+	public void SetLastGunshotHeardPos(float x, float y, float z) {
+		pView.RPC ("RpcSetLastGunshotHeardPos", RpcTarget.All, true, x, y, z);
+	}
+
+	[PunRPC]
+	void RpcSetLastGunshotHeardPos(bool b, float x, float y, float z) {
+		if (!b) {
+			lastGunshotHeardPos = Vector3.negativeInfinity;
+		} else {
+			lastGunshotHeardPos = new Vector3 (x, y, z);
+		}
+	}
+
+	[PunRPC]
+	void RpcSetLastGunshotHeardPosClone(bool b, float x, float y, float z) {
+		if (!b) {
+			lastGunshotHeardPosClone = Vector3.negativeInfinity;
+		} else {
+			lastGunshotHeardPosClone = new Vector3 (x, y, z);
+		}
+	}
+
 	void ResetLastGunshotPos() {
 		if (!Vector3.Equals (lastGunshotHeardPos, lastGunshotHeardPosClone)) {
-			lastGunshotTimer = 10f;
-			lastGunshotHeardPosClone = new Vector3 (lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z);
+			pView.RPC ("RpcSetLastGunshotHeardTimer", RpcTarget.All, 10f);
+			pView.RPC ("RpcSetLastGunshotHeardPosClone", RpcTarget.All, true, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z);
 		} else {
 			lastGunshotTimer -= Time.deltaTime;
 			if (lastGunshotTimer <= 0f) {
-				lastGunshotTimer = 10f;
-				lastGunshotHeardPos = Vector3.negativeInfinity;
-				lastGunshotHeardPosClone = Vector3.negativeInfinity;
+				pView.RPC ("RpcSetLastGunshotHeardTimer", RpcTarget.All, 10f);
+				pView.RPC ("RpcSetLastGunshotHeardPos", RpcTarget.All, false, 0f, 0f, 0f);
+				pView.RPC ("RpcSetLastGunshotHeardPosClone", RpcTarget.All, false, 0f, 0f, 0f);
 			}
 		}
 	}
 
-	void EndGame() {
-		// Remove all enemies
-		for (int i = 0; i < enemyList.Length; i++) {
-			enemyList [i].SetActive (false);
-		}
-	}
-
 	public void IncrementDeathCount() {
-		pView.RPC ("RpcIncrementDeathCount", RpcTarget.MasterClient);
+		pView.RPC ("RpcIncrementDeathCount", RpcTarget.All);
 	}
 
 	[PunRPC]
@@ -204,8 +222,18 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		deadCount++;
 	}
 
+	public void ConvertCounts(int dead, int escape) {
+		pView.RPC ("RpcConvertCounts", RpcTarget.All, dead, escape);
+	}
+
+	[PunRPC]
+	void RpcConvertCounts(int dead, int escape) {
+		deadCount += dead;
+		escaperCount += escape;
+	}
+
 	public void IncrementEscapeCount() {
-		pView.RPC ("RpcIncrementEscapeCount", RpcTarget.MasterClient);
+		pView.RPC ("RpcIncrementEscapeCount", RpcTarget.All);
 	}
 
 	[PunRPC]
@@ -228,25 +256,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		deadCount = 0;
 		escaperCount = 0;
 	}
-
-	void ChangeCursorStatus() {
-		if (Input.GetKeyDown (KeyCode.Escape)) {
-			if (Cursor.lockState == CursorLockMode.Locked) {
-				Cursor.lockState = CursorLockMode.None;
-				Cursor.visible = true;
-			} else {
-				Cursor.lockState = CursorLockMode.Locked;
-				Cursor.visible = false;
-			}
-		}
-	}
-
-    void CheckOutOfTime() {
+		
+    bool CheckOutOfTime() {
         if (missionTime >= MAX_MISSION_TIME) {
-            gameOver = true;
-            EndGame();
+			return true;
         }
+		return false;
     }
+		
+
 
 	/**public override void OnJoinedRoom()
 	{
@@ -274,6 +292,12 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
+		ResetEscapeValues ();
+		foreach (GameObject entry in playerList.Values)
+		{
+			entry.GetComponent<PlayerScript> ().escapeValueSent = false;
+		}
+
 		Destroy (playerList[otherPlayer.ActorNumber].gameObject);
 		playerList.Remove (otherPlayer.ActorNumber);
 		Debug.Log (playerList.Count);
@@ -314,13 +338,20 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		fxSound4.Play ();
 	}
 
+	[PunRPC]
+	void RpcUpdateEndGameTimer(float t) {
+		endGameTimer = t;
+	}
+
     void UpdateEndGameTimer() {
         if (gameOver) {
             if (endGameTimer > 0f)
             {
                 endGameTimer -= Time.deltaTime;
+				pView.RPC ("RpcUpdateEndGameTimer", RpcTarget.Others, endGameTimer);
             }
-            if (endGameTimer <= 0f && PhotonNetwork.IsMasterClient && !exitLevelLoaded) {
+
+            if (endGameTimer <= 0f && !exitLevelLoaded) {
                 exitLevelLoaded = true;
                 if (deadCount == PhotonNetwork.CurrentRoom.Players.Count) {
                     PhotonNetwork.LoadLevel("GameOverFail");

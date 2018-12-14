@@ -89,4 +89,12 @@ MonoBehaviour:
   - RpcUpdateNavMesh
   - RpcUpdateNavMeshSpeed
   - StartDespawn
+  - RpcUpdateEndGameTimer
+  - RpcEndGame
+  - RpcSetLastGunshotHeardPos
+  - RpcSetLastGunshotHeardPosClone
+  - RpcSetLastGunshotHeardTimer
+  - RpcConvertCounts
+  - RpcChangePlayerDisableStatus
+  - RpcDisableFPSHands
   DisableAutoOpenWizard: 1

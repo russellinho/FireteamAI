@@ -300,7 +300,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Handle movement for wandering
 		if (actionState == ActionStates.Wander) {
 			if (PhotonNetwork.IsMasterClient) {
-				pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 1.5f);
+				if (navMesh.speed != 1.5f) {
+					pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 1.5f);
+				}
 				// Only server should be updating the delays and they should sync across the network
 				// Initial spawn value
 				if (wanderStallDelay == -1f) {
@@ -329,18 +331,24 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		if (actionState == ActionStates.Idle) {
-			pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
-			pView.RPC ("RpcSetWanderStallDelay", RpcTarget.All, -1);
+			if (!navMesh.isStopped) {
+				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
+				pView.RPC ("RpcSetWanderStallDelay", RpcTarget.All, -1);
+			}
 		}
 
 		if (actionState == ActionStates.Dead || actionState == ActionStates.InCover) {
-			pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
+			if (!navMesh.isStopped) {
+				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
+			}
 		}
 
 		if (actionState == ActionStates.Pursue && !lastSeenPlayerPos.Equals(Vector3.negativeInfinity)) {
-			pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 6f);
-			pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z);
-			pView.RPC ("RpcSetLastSeenPlayerPos", RpcTarget.All, false, 0f, 0f, 0f);
+			if (navMesh.speed != 6f) {
+				pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 6f);
+				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z);
+				pView.RPC ("RpcSetLastSeenPlayerPos", RpcTarget.All, false, 0f, 0f, 0f);
+			}
 			return;
 		}
 
@@ -351,9 +359,13 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (navMesh.isStopped) {
 				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, GameControllerScript.lastGunshotHeardPos.x, GameControllerScript.lastGunshotHeardPos.y, GameControllerScript.lastGunshotHeardPos.z);
 				if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint")) {
-					pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 6f);
+					if (navMesh.speed != 6f) {
+						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 6f);
+					}
 				} else {
-					pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4f);
+					if (navMesh.speed != 4f) {
+						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4f);
+					}
 				}
 			}
 		}
@@ -378,33 +390,53 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		if (actionState == ActionStates.Firing && !inCover) {
-			pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4f);
+			if (navMesh.speed != 4f) {
+				pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4f);
+			}
 			if (firingModeTimer <= 0f) {
 				int r = Random.Range (0, 5);
 				if (r == 0) {
-					pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.StandingStill);
+					if (firingState != FiringStates.StandingStill) {
+						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.StandingStill);
+					}
 					firingModeTimer = Random.Range (2f, 3.2f);
 					pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
 				} else if (r == 1) {
-					pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.Forward);
+					if (firingState != FiringStates.Forward) {
+						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.Forward);
+					}
 					firingModeTimer = Random.Range (2f, 3.2f);
 					pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
-					pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4f);
+					if (navMesh.speed != 4f) {
+						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4f);
+					}
 				} else if (r == 2) {
-					pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.Backpedal);
+					if (firingState != FiringStates.Backpedal) {
+						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.Backpedal);
+					}
 					firingModeTimer = Random.Range (2f, 3.2f);
 					pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
-					pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 3f);
+					if (navMesh.speed != 3f) {
+						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 3f);
+					}
 				} else if (r == 3) {
-					pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.StrafeLeft);
+					if (firingState != FiringStates.StrafeLeft) {
+						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.StrafeLeft);
+					}
 					firingModeTimer = 1.7f;
 					pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
-					pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 2.5f);
+					if (navMesh.speed != 2.5f) {
+						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 2.5f);
+					}
 				} else if (r == 4) {
-					pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.StrafeRight);
+					if (firingState != FiringStates.StrafeRight) {
+						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.StrafeRight);
+					}
 					firingModeTimer = 1.7f;
 					pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
-					pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 2.5f);
+					if (navMesh.speed != 2.5f) {
+						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 2.5f);
+					}
 				}
 			}
 
@@ -527,7 +559,9 @@ public class BetaEnemyScript : MonoBehaviour {
 				PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			}
 
-			pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead);
+			if (actionState != ActionStates.Dead) {
+				pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead);
+			}
 			// Choose a death sound
 			r = Random.Range (0, 3);
 			if (r == 0) {

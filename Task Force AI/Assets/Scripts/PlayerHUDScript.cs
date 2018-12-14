@@ -126,22 +126,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		// Update UI
 		container.weaponLabelTxt.text = playerScript.currWep;
 		container.ammoTxt.text = "" + wepScript.currentBullets + '/' + wepScript.totalBulletsLeft;
-		if (!gameController.gameOver) {
-			UpdatePlayerMarkers ();
-			UpdateWaypoints ();
-		} else {
-			playerMarkers = null;
-			missionWaypoints = null;
-		}
-
+		UpdatePlayerMarkers ();
+		UpdateWaypoints ();
 		UpdateCursorStatus ();
 
 		if (gameController.gameOver) {
-            if (container.healthText.enabled)
-            {
-                DisableHUD();
-                ToggleScoreboard();
-            }
             if (PhotonNetwork.CurrentRoom.Players.Count == gameController.deadCount)
             {
                 GameOverPopup();

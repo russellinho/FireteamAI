@@ -21,7 +21,7 @@ public class PickupScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (destroying) {
-			if (!aud.isPlaying && PhotonNetwork.IsMasterClient) {
+			if (!aud.isPlaying) {
 				PhotonNetwork.Destroy (gameObject);
 			}
 			return;
@@ -45,4 +45,5 @@ public class PickupScript : MonoBehaviour {
 		GetComponent<BoxCollider> ().enabled = false;
 		GetComponent<Animator> ().enabled = false;
 	}
+
 }
