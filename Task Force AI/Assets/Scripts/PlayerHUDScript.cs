@@ -47,8 +47,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.defusingText.enabled = false;
 		container.hintText.enabled = false;
 		container.scoreboard.GetComponent<Image> ().enabled = false;
-		container.endGameText.SetActive (false);
-		container.endGameButton.SetActive (false);
 		container.spectatorText.gameObject.SetActive (false);
 
 		playerScript = GetComponent<PlayerScript> ();
@@ -94,6 +92,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			missionWaypoints.Add (m5);
 
 			StartCoroutine(ShowMissionText());
+			ComBoxPopup(7f, "The local Cicada cannibal gang has planted gas bombs to turn the townspeople into minced meat. Let's take care of 'em.");
 
 		}
 	}
@@ -156,7 +155,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		if (Input.GetKeyDown(KeyCode.Escape) && !container.scoreboard.GetComponent<Image>().enabled)
 			Pause();
 
-		if (container.pauseMenuGUI.activeInHierarchy || container.endGameText.activeInHierarchy)
+		if (container.pauseMenuGUI.activeInHierarchy)
 		{
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
@@ -283,8 +282,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     public void ToggleScoreboard()
     {
         container.scoreboard.GetComponent<Image>().enabled = true;
-        container.endGameText.SetActive(true);
-        container.endGameButton.SetActive(true);
     }
 
     public void ReturnToMenu()
@@ -310,6 +307,16 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         yield return new WaitForSeconds(5f);
 		container.missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();
     }
+
+	IEnumerator ShowComBox(float t, string s) {
+		yield return new WaitForSeconds (t);
+		container.comBox.SetActive (true);
+		container.comBoxText.GetComponent<ComboxTextEffect> ().SetText (s);
+	}
+
+	public void ComBoxPopup(float t, string s) {
+		StartCoroutine (ShowComBox(t, s));
+	}
 
     public void ToggleActionBar(bool enable)
     {

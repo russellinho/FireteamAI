@@ -19,8 +19,6 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject pauseResumeBtn;
 	public GameObject pauseOptionsBtn;
 	public GameObject scoreboard;
-	public GameObject endGameText;
-	public GameObject endGameButton;
 
 	// Hit indication HUD
 	public GameObject hitFlare;
@@ -45,5 +43,7 @@ public class HUDContainer : MonoBehaviour {
 	public Text assaultModeIndText;
 	public TextMeshProUGUI killPopupText;
 	public Image screenColor;
+	public Text comBoxText;
+	public GameObject comBox;
 
 }

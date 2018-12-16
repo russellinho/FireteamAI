@@ -135,6 +135,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		if (h != assaultModeChangedIndicator) {
 			assaultModeChangedIndicator = h;
 			hud.MessagePopup ("Your cover is blown!");
+			hud.ComBoxPopup (2f, "They know you're here! Slot the bastards!");
 		}
 
 	}
@@ -274,42 +275,43 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			// Check if the player is still near the bomb
 			if (Vector3.Distance (gameObject.transform.position, currentBomb.transform.position) > 4.5f || currentBomb.GetComponent<BombScript>().defused) {
 				currentBomb = null;
-				GetComponent<PlayerHUDScript> ().container.hintText.enabled = false;
+				hud.container.hintText.enabled = false;
 				return;
 			}
 
             if (Input.GetKey (KeyCode.E) && health > 0) {
 				gameObject.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().canMove = false;
 
-				GetComponent<PlayerHUDScript> ().container.hintText.enabled = false;
-				GetComponent<PlayerHUDScript> ().ToggleActionBar (true);
-				GetComponent<PlayerHUDScript> ().container.defusingText.enabled = true;
+				hud.container.hintText.enabled = false;
+				hud.ToggleActionBar (true);
+				hud.container.defusingText.enabled = true;
 				bombDefuseCounter += (Time.deltaTime / 8f);
-				GetComponent<PlayerHUDScript> ().SetActionBarSlider(bombDefuseCounter);
+				hud.SetActionBarSlider(bombDefuseCounter);
 				if (bombDefuseCounter >= 1f) {
 					bombDefuseCounter = 0f;
 
 					gameController.GetComponent<GameControllerScript> ().bombs[currentBombIndex].GetComponent<BombScript>().Defuse ();
 					gameController.GetComponent<GameControllerScript> ().DecrementBombsRemaining ();
-					GetComponent<PlayerHUDScript> ().UpdateObjectives ();
+					hud.UpdateObjectives ();
 					currentBomb = null;
 
-					GetComponent<PlayerHUDScript> ().ToggleActionBar (false);
-					GetComponent<PlayerHUDScript> ().container.defusingText.enabled = false;
-					GetComponent<PlayerHUDScript> ().container.hintText.enabled = false;
+					hud.ToggleActionBar (false);
+					hud.container.defusingText.enabled = false;
+					hud.container.hintText.enabled = false;
 					// Enable movement again
 					gameObject.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().canMove = true;
 					if (gameController.GetComponent<GameControllerScript> ().bombsRemaining == 0) {
-						GetComponent<PlayerHUDScript> ().MessagePopup ("Escape available! Head to the waypoint!");
+						hud.MessagePopup ("Escape available! Head to the waypoint!");
+						hud.ComBoxPopup (2f, "Well done. Now get out of there in one piece!");
 					}
 				}
 			} else {
 				// Enable movement again
 				gameObject.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().canMove = true;
 
-				GetComponent<PlayerHUDScript> ().ToggleActionBar (false);
-				GetComponent<PlayerHUDScript> ().container.defusingText.enabled = false;
-				GetComponent<PlayerHUDScript> ().container.hintText.enabled = true;
+				hud.ToggleActionBar (false);
+				hud.container.defusingText.enabled = false;
+				hud.container.hintText.enabled = true;
 				bombDefuseCounter = 0f;
 			}
 		}
