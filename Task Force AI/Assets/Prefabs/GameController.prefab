@@ -696,6 +696,9 @@ MonoBehaviour:
   playerGruntSound2: {fileID: 8300000, guid: b6e687a85b07c034dad210cc74ba7de7, type: 3}
   hitmarkerSound: {fileID: 8300000, guid: f5f9c7f44fd0db94fb7457a968a1def7, type: 3}
   sirenSound: {fileID: 8300000, guid: e4fdcd319d7fc2f459e5894d9c267ee5, type: 3}
+  missionStartSound: {fileID: 8300000, guid: c995c036e32e4f447bdaaa1124e4c370, type: 3}
+  firstKillSound: {fileID: 8300000, guid: 6d4fea7178a85b443bc722ff3836e805, type: 3}
+  endGameTimer: 0
   enemyList:
   - {fileID: 0}
   - {fileID: 0}
@@ -743,7 +746,11 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  bombs: []
+  bombs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   bombsRemaining: 0
   gameOver: 0
   escapeAvailable: 0

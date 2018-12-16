@@ -23,6 +23,8 @@ public class PickupScript : MonoBehaviour {
 		if (destroying) {
 			if (!aud.isPlaying) {
 				PhotonNetwork.Destroy (gameObject);
+			} else {
+				Debug.Log (aud.clip.name);
 			}
 			return;
 		}

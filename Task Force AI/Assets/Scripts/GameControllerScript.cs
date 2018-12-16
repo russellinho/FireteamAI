@@ -30,6 +30,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public AudioClip playerGruntSound2;
 	public AudioClip hitmarkerSound;
 	public AudioClip sirenSound;
+	public AudioClip missionStartSound;
+	public AudioClip firstKillSound;
 
     // variable for last gunshot position
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
@@ -80,6 +82,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
         missionTime = 0f;
 		lastGunshotTimer = 10f;
+		PlayMissionStartSound ();
 
 	}
 
@@ -317,6 +320,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public void PlayHeadshotSound() {
 		fxSound1.clip = headshotSound;
+		fxSound1.Play ();
+	}
+
+	void PlayMissionStartSound() {
+		fxSound1.clip = missionStartSound;
 		fxSound1.Play ();
 	}
 
