@@ -187,10 +187,11 @@ public class WeaponScript : MonoBehaviour {
 			pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
 			if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript> ().health > 0) {
 				GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
+				//GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHitmarkerSound ();
 				hit.transform.gameObject.GetComponentInParent<BetaEnemyScript> ().TakeDamage (100);
 				GetComponentInParent<PlayerScript> ().kills++;
 				GetComponentInParent<PlayerHUDScript> ().OnScreenEffect ("HEADSHOT", true);
-				GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHeadshotSound ();
+				GetComponentInParent<AudioControllerScript> ().PlayHeadshotSound ();
 			}
 		} else if (Physics.Raycast (shootPoint.position, impactDir, out hit, range)) {
 			GameObject bloodSpill = null;
@@ -199,8 +200,9 @@ public class WeaponScript : MonoBehaviour {
 				int beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health;
 				if (beforeHp > 0) {
 					GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
-					GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHitmarkerSound ();
+					GetComponentInParent<AudioControllerScript>().PlayHitmarkerSound ();
 					hit.transform.gameObject.GetComponent<BetaEnemyScript> ().TakeDamage ((int)damage);
+					hit.transform.gameObject.GetComponent<BetaEnemyScript> ().PainSound ();
 					hit.transform.gameObject.GetComponent<BetaEnemyScript> ().SetAlerted (true);
 					if (hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health <= 0 && beforeHp > 0) {
 						GetComponentInParent<PlayerScript> ().kills++;

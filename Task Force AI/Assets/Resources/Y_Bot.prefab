@@ -81,6 +81,7 @@ GameObject:
   - component: {fileID: 4795775069653398}
   - component: {fileID: 33710084783397894}
   - component: {fileID: 23394696692209368}
+  - component: {fileID: 82178093206180632}
   m_Layer: 0
   m_Name: M4_Carbine
   m_TagString: Untagged
@@ -1818,7 +1819,7 @@ Transform:
   - {fileID: 4568640399139240}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 89.811005, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -40.613003, z: 0}
 --- !u!4 &4611034265397356
 Transform:
   m_ObjectHideFlags: 1
@@ -2244,6 +2245,101 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.15, y: 1.5, z: 1.15}
   m_Center: {x: 0, y: 1.08, z: 0}
+--- !u!82 &82178093206180632
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1111324427284624}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 100
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!82 &82560499745618218
 AudioSource:
   m_ObjectHideFlags: 1
@@ -2261,9 +2357,9 @@ AudioSource:
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 200
+  Priority: 100
   DopplerLevel: 1
-  MinDistance: 1
+  MinDistance: 30
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
@@ -2393,6 +2489,20 @@ MonoBehaviour:
     type: 2}
   healthBoxPickup: {fileID: 1202159818533972, guid: 614465f80a0dba44190036c8ea6dba6b,
     type: 2}
+  voiceClips:
+  - {fileID: 8300000, guid: eaffe738562122544b06af2583e4cc2d, type: 3}
+  - {fileID: 8300000, guid: 2dbc0a21f2373db439e475de8109b253, type: 3}
+  - {fileID: 8300000, guid: e1390bbb0dfab0543b8e72fb16016b22, type: 3}
+  - {fileID: 8300000, guid: 307bc82eb37d6644a8cb1aaad74af130, type: 3}
+  - {fileID: 8300000, guid: 77b040fcb4b886a4cb42a779e6e37fa9, type: 3}
+  - {fileID: 8300000, guid: f6eba9293422b9d4abacc8e9ca8bc50a, type: 3}
+  - {fileID: 8300000, guid: e20c3d5a27ca6dc45b45361368a02f4b, type: 3}
+  - {fileID: 8300000, guid: cba7e0af6df3cfe4ab151bd1a89603d7, type: 3}
+  - {fileID: 8300000, guid: 65df8a6ba3dd5ea43bce59a4e53a6c8f, type: 3}
+  - {fileID: 8300000, guid: 37fe3ac4c226e0c4bb952686229555db, type: 3}
+  - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
+  - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
+  - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
   aggression: 5
   range: 27
   bulletsPerMag: 30
@@ -2415,6 +2525,8 @@ MonoBehaviour:
   health: 0
   navPoints: []
   actionState: 0
+  navMesh: {fileID: 195753960068613868}
+  navMeshObstacle: {fileID: 208658121138146138}
   alerted: 0
   headTransform: {fileID: 4374143155631438}
 --- !u!114 &114833952886235814
@@ -2686,7 +2798,7 @@ NavMeshAgent:
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 2
 --- !u!198 &198446196017214168
 ParticleSystem:
   m_ObjectHideFlags: 1

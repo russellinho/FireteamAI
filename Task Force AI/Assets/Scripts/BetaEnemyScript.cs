@@ -9,6 +9,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	public GameObject ammoBoxPickup;
 	public GameObject healthBoxPickup;
+	public AudioClip[] voiceClips;
 
 	// Enemy variables
 	public int aggression;
@@ -96,6 +97,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	private Vector3 originalColliderCenter;
 
 	public bool alerted = false;
+	private bool voiceClipsStarted;
 	private GameObject[] players;
 
 	// Testing mode - set in inspector
@@ -122,6 +124,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		rigid = GetComponent<Rigidbody> ();
 		rigid.freezeRotation = true;
 		isCrouching = false;
+		voiceClipsStarted = false;
 		// Get nav points
 
 		//navPoints = GameObject.FindGameObjectsWithTag("PatrolPoint");
@@ -144,6 +147,11 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		if (!voiceClipsStarted && alerted) {
+			voiceClipsStarted = true;
+			StartCoroutine (VoiceClip());
+		}
+
 		if (isCrouching) {
 			myCollider.height = 0.97f;
 			myCollider.radius = 0.32f;
@@ -198,8 +206,12 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		if (animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot"))
+		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
+			if (PhotonNetwork.IsMasterClient && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
+				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
+			}
 			return;
+		}
 		// Handle animations independent of frame rate
 		DecideAnimation ();
 		AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo (0);
@@ -519,6 +531,19 @@ public class BetaEnemyScript : MonoBehaviour {
 		audioSource.Play ();
 	}
 
+	IEnumerator VoiceClip() {
+		yield return new WaitForSeconds (Random.Range(2f, 100f));
+		PlayVoiceClip ();
+		StartCoroutine (VoiceClip());
+	}
+
+	void PlayVoiceClip() {
+		if (!audioSource.isPlaying) {
+			audioSource.clip = voiceClips [Random.Range (0, voiceClips.Length)];
+			audioSource.Play ();
+		}
+	}
+
 	[PunRPC]
 	void RpcDie() {
 		GetComponentInChildren<SpriteRenderer> ().enabled = false;
@@ -618,6 +643,14 @@ public class BetaEnemyScript : MonoBehaviour {
 			playerToHit = null;
 		} else {
 			playerToHit = GameControllerScript.playerList [id];
+		}
+	}
+
+	public void PainSound() {
+		int r = Random.Range (1, 3);
+		if (r == 1) {
+			r = Random.Range(1, 10);
+			pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/pain" + r);
 		}
 	}
 
@@ -993,7 +1026,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	private void PlayShootSound() {
-		GetComponentInChildren<AudioSource>().PlayOneShot (shootSound);
+		GetComponentsInChildren<AudioSource>()[1].PlayOneShot (shootSound);
 	}
 
 	public void Reload() {

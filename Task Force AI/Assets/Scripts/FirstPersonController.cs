@@ -11,7 +11,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
     [RequireComponent(typeof (AudioSource))]
     public class FirstPersonController : MonoBehaviour
     {
-        [SerializeField] private bool m_IsWalking;
+        [SerializeField] public bool m_IsWalking;
         [SerializeField] public bool m_IsCrouching;
         [SerializeField] private float m_WalkSpeed;
         [SerializeField] private float m_CrouchSpeed;

@@ -10,6 +10,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	// Object references
 	public GameObject gameController;
+	private AudioControllerScript audioController;
 	private CharacterController charController;
 	private PhotonView photonView;
 	public GameObject fpsHands;
@@ -105,6 +106,8 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		hitTimer = 1f;
 		healTimer = 1f;
 
+		audioController = GetComponent<AudioControllerScript> ();
+
 	}
 
 	// Update is called once per frame
@@ -116,20 +119,10 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
         if (!GetComponent<PhotonView>().IsMine) {
 			return;
 		}
-			
-		Crouch ();
-		BombCheck ();
-		DeathCheck ();
-        if (health <= 0) {
-			if (!escapeValueSent) {
-				escapeValueSent = true;
-				gameController.GetComponent<GameControllerScript> ().IncrementDeathCount ();
-			}
-        }
-		DetermineEscaped ();
+
 		// Update assault mode
 		hud.UpdateAssaultModeIndHud (gameController.GetComponent<GameControllerScript>().assaultMode);
-
+			
 		// On assault mode changed
 		bool h = gameController.GetComponent<GameControllerScript> ().assaultMode;
 		if (h != assaultModeChangedIndicator) {
@@ -138,6 +131,24 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			hud.ComBoxPopup (2f, "They know you're here! Slot the bastards!");
 		}
 
+		if (health > 0 && !fpc.m_IsWalking) {
+			audioController.PlaySprintSound (true);
+		} else {
+			audioController.PlaySprintSound (false);
+		}
+
+		if (health <= 0) {
+			if (!escapeValueSent) {
+				escapeValueSent = true;
+				gameController.GetComponent<GameControllerScript> ().IncrementDeathCount ();
+			}
+		}
+
+		Crouch ();
+		BombCheck ();
+		DeathCheck ();
+		DetermineEscaped ();
+
 	}
 
 	void AddMyselfToPlayerList() {
@@ -145,10 +156,15 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void TakeDamage(int d) {
-		gameController.GetComponent<GameControllerScript> ().PlayHitSound ();
-		gameController.GetComponent<GameControllerScript> ().PlayGruntSound ();
+		audioController.GetComponent<AudioControllerScript> ().PlayHitSound ();
+		photonView.RPC ("PlayGruntSound", RpcTarget.All);
         photonView.RPC("RpcTakeDamage", RpcTarget.All, d);
     }
+
+	[PunRPC]
+	void PlayGruntSound() {
+		audioController.GetComponent<AudioControllerScript> ().PlayGruntSound ();
+	}
 
     [PunRPC]
     void RpcTakeDamage(int d) {

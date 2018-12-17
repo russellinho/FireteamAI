@@ -10,18 +10,23 @@ public class MissionTextAnimScript : MonoBehaviour {
 	private bool peak;
 	private bool started;
 	private float t;
+	private AudioSource soundEffect;
 
 	// Use this for initialization
 	void Start () {
 		missionText = GetComponent<Text> ();
+		soundEffect = GetComponent<AudioSource> ();
 		Reset ();
     }
 
 	public void SetStarted() {
 		started = true;
+		soundEffect.Play ();
 	}
 
 	public void Reset() {
+		soundEffect.Stop ();
+		soundEffect.time = 0f;
 		t = 0f;
 		fadeIn = true;
 		peak = false;

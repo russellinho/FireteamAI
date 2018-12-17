@@ -1,4 +1,4 @@
-﻿﻿using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,6 +34,7 @@ public class ComboxTextEffect : MonoBehaviour {
 
 	void Reset() {
 		parentRef.GetComponent<AudioSource> ().Stop ();
+		parentRef.GetComponent<AudioSource> ().time = 0f;
 		m_partialText = "";
 		m_cumulativeDeltaTime = 0;
 		m_label.text = "";

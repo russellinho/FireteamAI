@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.Networking;
 using Photon.Pun;
 using Photon.Realtime;
 
@@ -14,24 +13,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public static float MAX_MISSION_TIME = 1800f;
 
 	public int currentMap;
-
-	// Audio stuff
-	public AudioSource bgm;
-	private AudioSource fxSound1;
-	private AudioSource fxSound2;
-	private AudioSource fxSound3;
-	private AudioSource fxSound4;
-	private AudioSource fxSound5;
-	public AudioClip stealthMusic;
-	public AudioClip assaultMusic;
-	public AudioClip headshotSound;
-	public AudioClip playerHitSound;
-	public AudioClip playerGruntSound1;
-	public AudioClip playerGruntSound2;
-	public AudioClip hitmarkerSound;
-	public AudioClip sirenSound;
-	public AudioClip missionStartSound;
-	public AudioClip firstKillSound;
 
     // variable for last gunshot position
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
@@ -63,12 +44,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		Physics.IgnoreLayerCollision (9, 12);
 		Physics.IgnoreLayerCollision (14, 12);
 		Physics.IgnoreLayerCollision (15, 12);
-		//playerList = GameObject.FindGameObjectsWithTag ("Player");
-		fxSound1 = GetComponentsInChildren<AudioSource>() [1];
-		fxSound2 = GetComponentsInChildren<AudioSource>() [2];
-		fxSound3 = GetComponentsInChildren<AudioSource>() [3];
-		fxSound4 = GetComponentsInChildren<AudioSource>() [4];
-		fxSound5 = GetComponentsInChildren<AudioSource> () [5];
+
 		assaultMode = false;
 		gameOver = false;
 		deadCount = 0;
@@ -82,7 +58,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
         missionTime = 0f;
 		lastGunshotTimer = 10f;
-		PlayMissionStartSound ();
 
 	}
 
@@ -90,23 +65,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void Update () {
         if (currentMap == 1)
         {
-			// Control BGM
-			if (assaultMode) {
-				if (!bgm.isPlaying || !bgm.clip.name.Equals(assaultMusic.name)) {
-					bgm.clip = assaultMusic;
-					bgm.Play ();
-					fxSound5.clip = sirenSound;
-					fxSound5.loop = true;
-					fxSound5.Play ();
-					StartCoroutine (RestartBgmTimer(assaultMusic.length - bgm.time));
-				}
-			} else {
-				if (!bgm.isPlaying || !bgm.clip.name.Equals (stealthMusic.name)) {
-					bgm.clip = stealthMusic;
-					bgm.Play ();
-				}
-			}
-
             // Update waypoints
             if (c == null)
             {
@@ -150,14 +108,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void RpcEndGame(float f) {
 		endGameTimer = f;
 		gameOver = true;
-	}
-
-	IEnumerator RestartBgmTimer(float secs) {
-		yield return new WaitForSeconds (secs);
-		bgm.Stop ();
-		bgm.time = 1.15f;
-		bgm.Play ();
-		StartCoroutine (RestartBgmTimer(assaultMusic.length - bgm.time));
 	}
 
 	[PunRPC]
@@ -317,36 +267,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			}
 		}
 	}*/
-
-	public void PlayHeadshotSound() {
-		fxSound1.clip = headshotSound;
-		fxSound1.Play ();
-	}
-
-	void PlayMissionStartSound() {
-		fxSound1.clip = missionStartSound;
-		fxSound1.Play ();
-	}
-
-	public void PlayGruntSound() {
-		int r = Random.Range (1, 3);
-		if (r == 1) {
-			fxSound2.clip = playerGruntSound1;
-		} else {
-			fxSound2.clip = playerGruntSound2;
-		}
-		fxSound2.Play ();
-	}
-
-	public void PlayHitmarkerSound() {
-		fxSound3.clip = hitmarkerSound;
-		fxSound3.Play ();
-	}
-
-	public void PlayHitSound() {
-		fxSound4.clip = playerHitSound;
-		fxSound4.Play ();
-	}
 
 	[PunRPC]
 	void RpcUpdateEndGameTimer(float t) {
