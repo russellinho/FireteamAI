@@ -133,8 +133,12 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 		if (health > 0 && !fpc.m_IsWalking) {
 			audioController.PlaySprintSound (true);
+			wepScript.isSprinting = true;
+			canShoot = false;
 		} else {
 			audioController.PlaySprintSound (false);
+			wepScript.isSprinting = false;
+			canShoot = true;
 		}
 
 		if (health <= 0) {
@@ -201,7 +205,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		charController.height = Mathf.Lerp (lastHeight, h, 10 * Time.deltaTime);
 		fpcPosition.localPosition = new Vector3 (fpcPosition.localPosition.x, viewH, fpcPosition.localPosition.z);
 		bodyTrans.localScale = new Vector3 (bodyTrans.localScale.x, bodyScale, bodyTrans.localScale.z);
-		//Debug.Log (fpcPosition.position.y);
 		transform.position = new Vector3 (transform.position.x, transform.position.y + ((charController.height - lastHeight) / 2), transform.position.z);
 
 		if (fpc.m_IsCrouching != originalCrouch) {

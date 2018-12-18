@@ -2349,18 +2349,18 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 50d04e5e47e8c6b44bfeef72a69c77f5, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.98
+  m_Volume: 1
   m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 150
+  Priority: 63
   DopplerLevel: 1
-  MinDistance: 1
+  MinDistance: 5
   MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 1
+  rolloffMode: 0
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -3014,7 +3014,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.95
+  m_Volume: 0.88
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -3025,7 +3025,7 @@ AudioSource:
   MinDistance: 1
   MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 1
+  rolloffMode: 0
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -3396,7 +3396,7 @@ MonoBehaviour:
     smoothTime: 5
     lockCursor: 1
     m_CameraTargetRot: {x: 0, y: 0, z: 0, w: 0}
-  m_UseFovKick: 1
+  m_UseFovKick: 0
   m_FovKick:
     Camera: {fileID: 0}
     originalFov: 0
@@ -3492,6 +3492,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 8bc94ec6ed537e743b481638bdcd503d, type: 3}
   m_JumpSound: {fileID: 8300000, guid: 5897aeed9b676024fbb8c694b421a861, type: 3}
   m_LandSound: {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
+  m_Input: {x: 0, y: 0}
   canMove: 0
 --- !u!114 &114935885646936092
 MonoBehaviour:
@@ -3517,6 +3518,7 @@ MonoBehaviour:
   muzzleFlash: {fileID: 198464886627007744}
   bulletTrace: {fileID: 198686650311421410}
   isCocking: 0
+  isSprinting: 0
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -3528,6 +3530,8 @@ MonoBehaviour:
   firingMode: 0
   originalTrans: {fileID: 4925083735123256}
   aimPos: {x: -0.163, y: -1.53, z: -0.14}
+  sprintPos: {x: 0.66, y: -1.27, z: -0.44}
+  sprintRot: {x: 30, y: -50, z: 0}
   aodSpeed: 8
 --- !u!114 &114993924595385136
 MonoBehaviour:

@@ -45,6 +45,7 @@ public class WeaponScript : MonoBehaviour {
 	private bool isReloading = false;
 	public bool isCocking = false;
 	private bool isAiming;
+	public bool isSprinting;
 
 	public GameObject hitParticles;
 	public GameObject bulletImpact;
@@ -63,7 +64,10 @@ public class WeaponScript : MonoBehaviour {
 	// Aiming down sights
 	public Transform originalTrans;
 	private Vector3 originalPos;
+	private Quaternion originalRot;
 	public Vector3 aimPos;
+	public Vector3 sprintPos;
+	public Vector3 sprintRot;
 	// Aiming speed
 	public float aodSpeed = 8f;
 	private PhotonView pView;
@@ -73,6 +77,7 @@ public class WeaponScript : MonoBehaviour {
 		pView = GetComponent<PhotonView> ();
 		currentBullets = bulletsPerMag;
 		originalPos = originalTrans.localPosition;
+		originalRot = originalTrans.localRotation;
 
 		mouseLook = GetComponent<FirstPersonController> ().m_MouseLook;
 		//targetGunRot = mouseLook.m_CameraTargetRot * Quaternion.Euler(-MAX_RECOIL, 0f, 0f);
@@ -102,6 +107,10 @@ public class WeaponScript : MonoBehaviour {
 			shootInput = Input.GetButtonDown ("Fire1");
 			break;
 		}
+
+		RefillFireTimer ();
+		Sprint ();
+
 		if (!GetComponent<PlayerScript> ().canShoot) {
 			return;
 		}
@@ -110,7 +119,7 @@ public class WeaponScript : MonoBehaviour {
 				ReloadAction ();
 			}
 		}
-		RefillFireTimer ();
+
 		AimDownSights ();
 	}
 		
@@ -167,6 +176,17 @@ public class WeaponScript : MonoBehaviour {
 		} else {
 			originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
 			isAiming = false;
+		}
+	}
+
+	public void Sprint() {
+		gunAnimator.SetBool ("Sprinting", isSprinting);
+		if (isSprinting) {
+			originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, sprintPos, Time.deltaTime * aodSpeed);
+			originalTrans.localRotation = Quaternion.Lerp (originalTrans.localRotation, Quaternion.Euler(sprintRot), Time.deltaTime * aodSpeed);
+		} else {
+			originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
+			originalTrans.localRotation = Quaternion.Lerp (originalTrans.localRotation, originalRot, Time.deltaTime * aodSpeed);
 		}
 	}
 
