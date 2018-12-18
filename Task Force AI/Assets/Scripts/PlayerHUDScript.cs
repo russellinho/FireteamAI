@@ -11,9 +11,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	// HUD object reference
 	public HUDContainer container;
+    private Text[] names;
+    private Text[] kills;
+    private Text[] deaths;
 
-	// Player reference
-	private PlayerScript playerScript;
+    // Player reference
+    private PlayerScript playerScript;
 	private WeaponScript wepScript;
 	private GameControllerScript gameController;
 
@@ -41,6 +44,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.hitFlare.GetComponent<RawImage> ().enabled = false;
 		container.hitDir.GetComponent<RawImage> ().enabled = false;
 		container.hitMarker.GetComponent<RawImage> ().enabled = false;
+        names = container.namesCol.GetComponentsInChildren<Text>();
+        kills = container.killsCol.GetComponentsInChildren<Text>();
+        deaths = container.deathsCol.GetComponentsInChildren<Text>();
 
 		container.pauseMenuGUI.SetActive (false);
 		ToggleActionBar(false);
