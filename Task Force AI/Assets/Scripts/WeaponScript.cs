@@ -180,7 +180,9 @@ public class WeaponScript : MonoBehaviour {
 	}
 
 	public void Sprint() {
-		gunAnimator.SetBool ("Sprinting", isSprinting);
+		if (gunAnimator.gameObject.activeSelf) {
+			gunAnimator.SetBool ("Sprinting", isSprinting);
+		}
 		if (isSprinting) {
 			originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, sprintPos, Time.deltaTime * aodSpeed);
 			originalTrans.localRotation = Quaternion.Lerp (originalTrans.localRotation, Quaternion.Euler(sprintRot), Time.deltaTime * aodSpeed);
@@ -188,6 +190,12 @@ public class WeaponScript : MonoBehaviour {
 			originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
 			originalTrans.localRotation = Quaternion.Lerp (originalTrans.localRotation, originalRot, Time.deltaTime * aodSpeed);
 		}
+	}
+
+	[PunRPC]
+	void RpcAddToTotalKills() {
+		GetComponentInParent<PlayerScript> ().kills++;
+		GameControllerScript.totalKills [pView.Owner.NickName]++;
 	}
 
 	// Comment
@@ -209,7 +217,7 @@ public class WeaponScript : MonoBehaviour {
 				GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
 				//GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHitmarkerSound ();
 				hit.transform.gameObject.GetComponentInParent<BetaEnemyScript> ().TakeDamage (100);
-				GetComponentInParent<PlayerScript> ().kills++;
+				pView.RPC ("RpcAddToTotalKills", RpcTarget.All);
 				GetComponentInParent<PlayerHUDScript> ().OnScreenEffect ("HEADSHOT", true);
 				GetComponentInParent<AudioControllerScript> ().PlayHeadshotSound ();
 			}
@@ -225,7 +233,7 @@ public class WeaponScript : MonoBehaviour {
 					hit.transform.gameObject.GetComponent<BetaEnemyScript> ().PainSound ();
 					hit.transform.gameObject.GetComponent<BetaEnemyScript> ().SetAlerted (true);
 					if (hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health <= 0 && beforeHp > 0) {
-						GetComponentInParent<PlayerScript> ().kills++;
+						pView.RPC ("RpcAddToTotalKills", RpcTarget.All);
 						GetComponentInParent<PlayerHUDScript> ().OnScreenEffect (GetComponentInParent<PlayerScript> ().kills + " KILLS", true);
 					}
 				}

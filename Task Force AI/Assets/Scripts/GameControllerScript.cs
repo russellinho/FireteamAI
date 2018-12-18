@@ -20,6 +20,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private float lastGunshotTimer = 0f;
     public float endGameTimer = 0f;
     public static Dictionary<int, GameObject> playerList = new Dictionary<int, GameObject> ();
+	public static Dictionary<string, int> totalKills;
+	public static Dictionary<string, int> totalDeaths;
 	public GameObject[] enemyList;
 
     // Bomb defusal mission variables
@@ -40,6 +42,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
     void Start () {
+		totalKills = new Dictionary<string, int> ();
+		totalDeaths = new Dictionary<string, int> ();
         PhotonNetwork.AutomaticallySyncScene = true;
 		Physics.IgnoreLayerCollision (9, 12);
 		Physics.IgnoreLayerCollision (14, 12);
@@ -241,7 +245,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		playerList.Clear();
+		totalKills.Clear ();
+		totalDeaths.Clear ();
 		playerList = null;
+		totalKills = null;
+		totalDeaths = null;
 		PhotonNetwork.JoinLobby();
 	}
 
@@ -255,6 +263,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 		Destroy (playerList[otherPlayer.ActorNumber].gameObject);
 		playerList.Remove (otherPlayer.ActorNumber);
+		totalKills.Remove (otherPlayer.NickName);
+		totalDeaths.Remove (otherPlayer.NickName);
 		Debug.Log (playerList.Count);
 	}
 

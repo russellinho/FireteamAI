@@ -31,6 +31,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	public bool escapeValueSent;
 	private bool assaultModeChangedIndicator;
 	public int kills;
+	private int deaths;
 
 	public GameObject[] subComponents;
 	public FirstPersonController fpc;
@@ -74,6 +75,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 		health = 100;
 		kills = 0;
+		deaths = 0;
 
         gameController = GameObject.FindWithTag("GameController");
 		AddMyselfToPlayerList ();
@@ -141,6 +143,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			canShoot = true;
 		}
 
+		DeathCheck ();
 		if (health <= 0) {
 			if (!escapeValueSent) {
 				escapeValueSent = true;
@@ -150,13 +153,14 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 		Crouch ();
 		BombCheck ();
-		DeathCheck ();
 		DetermineEscaped ();
 
 	}
 
 	void AddMyselfToPlayerList() {
 		GameControllerScript.playerList.Add(photonView.OwnerActorNr, gameObject);
+		GameControllerScript.totalKills.Add (photonView.Owner.NickName, kills);
+		GameControllerScript.totalDeaths.Add (photonView.Owner.NickName, deaths);
 	}
 
 	public void TakeDamage(int d) {
@@ -255,6 +259,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 				deadPosition = new Vector3 (-90f, bodyTrans.eulerAngles.y, 0f);
 				StartCoroutine ("EnterSpectatorMode");
 				rotationSaved = true;
+				photonView.RPC ("RpcAddToTotalDeaths", RpcTarget.All);
 			}
 			if (bodyTrans.rotation.x > -90f) {
 				fraction += Time.deltaTime * 8f;
@@ -262,6 +267,12 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			}
 			DeathCameraEffect ();
 		}
+	}
+
+	[PunRPC]
+	void RpcAddToTotalDeaths() {
+		deaths++;
+		GameControllerScript.totalDeaths [photonView.Owner.NickName]++;
 	}
 
 	// If map objective is defusing bombs, this method checks if the player is near any bombs

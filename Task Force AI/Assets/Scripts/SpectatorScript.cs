@@ -21,7 +21,6 @@ public class SpectatorScript : MonoBehaviour {
 
 	private bool rotationLock = false;
 	private int playerListKey = -1;
-	private int lastPlayerListSize = 0;
 
 	// Use this for initialization
 	void Start () {

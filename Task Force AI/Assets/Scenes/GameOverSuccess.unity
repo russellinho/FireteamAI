@@ -843,6 +843,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 276f36e08c8214848b26d1cc0b6a5010, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  namesCol: {fileID: 1817375319}
+  killsCol: {fileID: 1076783474}
+  deathsCol: {fileID: 1171656100}
 --- !u!1 &778525672
 GameObject:
   m_ObjectHideFlags: 0
