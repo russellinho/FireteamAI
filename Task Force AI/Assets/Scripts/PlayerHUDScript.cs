@@ -11,9 +11,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	// HUD object reference
 	public HUDContainer container;
-    private Text[] names;
-    private Text[] kills;
-    private Text[] deaths;
 
     // Player reference
     private PlayerScript playerScript;
@@ -44,15 +41,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.hitFlare.GetComponent<RawImage> ().enabled = false;
 		container.hitDir.GetComponent<RawImage> ().enabled = false;
 		container.hitMarker.GetComponent<RawImage> ().enabled = false;
-        names = container.namesCol.GetComponentsInChildren<Text>();
-        kills = container.killsCol.GetComponentsInChildren<Text>();
-        deaths = container.deathsCol.GetComponentsInChildren<Text>();
 
 		container.pauseMenuGUI.SetActive (false);
 		ToggleActionBar(false);
 		container.defusingText.enabled = false;
 		container.hintText.enabled = false;
-		container.scoreboard.GetComponent<Image> ().enabled = false;
+		container.scoreboard.GetComponent<Canvas> ().enabled = false;
 		container.spectatorText.gameObject.SetActive (false);
 
 		playerScript = GetComponent<PlayerScript> ();
@@ -126,6 +120,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 		container.healthText.text = (container.healthText ? "Health: " + playerScript.health : "");
 
+		ToggleScoreboard (Input.GetKey(KeyCode.Tab));
+
 		UpdateHitmarker ();
 
 		// Update UI
@@ -158,7 +154,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void UpdateCursorStatus() {
-		if (Input.GetKeyDown(KeyCode.Escape) && !container.scoreboard.GetComponent<Image>().enabled)
+		if (Input.GetKeyDown(KeyCode.Escape) && !container.scoreboard.GetComponent<Canvas>().enabled)
 			Pause();
 
 		if (container.pauseMenuGUI.activeInHierarchy)
@@ -285,9 +281,16 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         container.hudMap.SetActive(false);
     }
 
-    public void ToggleScoreboard()
+	public void ToggleScoreboard(bool b)
     {
-        container.scoreboard.GetComponent<Image>().enabled = true;
+		container.healthText.enabled = !b;
+		container.weaponLabelTxt.enabled = !b;
+		container.ammoTxt.enabled = !b;
+		container.missionTimeText.enabled = !b;
+		container.missionTimeRemainingText.enabled = !b;
+		container.assaultModeIndText.enabled = !b;
+		container.objectivesText.enabled = !b;
+        container.scoreboard.GetComponent<Canvas>().enabled = b;
     }
 
     public void ReturnToMenu()

@@ -1,12 +1,12 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\WeaponScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ScoreboardScript.cs">
     <Files>
-      <File FileName="Assets\Scripts\PlayerHUDScript.cs" Line="135" Column="30" />
-      <File FileName="Assets\Scripts\GameControllerScript.cs" Line="84" Column="1" />
+      <File FileName="Assets\Scripts\PlayerHUDScript.cs" Line="286" Column="37" />
+      <File FileName="Assets\Scripts\GameControllerScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\PlayerScript.cs" Line="146" Column="17" />
-      <File FileName="Assets\Scripts\WeaponScript.cs" Line="185" Column="4" />
-      <File FileName="Assets\Scripts\BetaEnemyScript.cs" Line="883" Column="130" />
+      <File FileName="Assets\Scripts\WeaponScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\BetaEnemyScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\ReloadBehaviorScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\PlayerData.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\MissionTextAnimScript.cs" Line="1" Column="1" />
@@ -16,10 +16,10 @@
       <File FileName="Assets\Photon\PhotonUnityNetworking\Code\Editor\PhotonViewInspector.cs" Line="1" Column="1" />
       <File FileName="Assets\Photon\PhotonUnityNetworking\Code\Editor\Views\PhotonAnimatorViewEditor.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\CameraShakeScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\SpectatorScript.cs" Line="31" Column="49" />
-      <File FileName="Assets\Scripts\HUDContainer.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\SpectatorScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\HUDContainer.cs" Line="35" Column="28" />
       <File FileName="Assets\Scripts\EnemySpawnerScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\GameOverController.cs" Line="36" Column="18" />
+      <File FileName="Assets\Scripts\GameOverController.cs" Line="1" Column="1" />
       <File FileName="Assets\Lobby System Photon\Scripts\Photon\Connexion.cs" Line="1" Column="1" />
       <File FileName="Assets\Lobby System Photon\Scripts\Photon\ListRoom.cs" Line="1" Column="1" />
       <File FileName="Assets\Lobby System Photon\Scripts\Photon\ListPlayer.cs" Line="1" Column="1" />
@@ -30,7 +30,8 @@
       <File FileName="Assets\Scripts\ComboxTextEffect.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\FirstPersonController.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\AudioControllerScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Photon\PhotonUnityNetworking\Demos\DemoAsteroids\Scripts\Lobby\PlayerListEntry.cs" Line="82" Column="48" />
+      <File FileName="Assets\Photon\PhotonUnityNetworking\Demos\DemoAsteroids\Scripts\Lobby\PlayerListEntry.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ScoreboardScript.cs" Line="34" Column="16" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

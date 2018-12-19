@@ -261,6 +261,8 @@ GameObject:
   - component: {fileID: 224289982073864108}
   - component: {fileID: 222129795435084812}
   - component: {fileID: 114325058183309696}
+  - component: {fileID: 114539465771374810}
+  - component: {fileID: 223318226289391306}
   m_Layer: 5
   m_Name: Scoreboard
   m_TagString: Untagged
@@ -1430,7 +1432,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114066788707165500
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1463,7 +1465,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114076302831172400
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1589,7 +1591,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114161677701123072
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1655,7 +1657,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114193057287468894
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1688,7 +1690,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114226445542831722
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1899,7 +1901,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114305693294597270
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1932,7 +1934,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114308503738134464
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2018,7 +2020,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114380462261917566
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2268,7 +2270,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114476711514594382
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2334,7 +2336,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114510943717816168
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2393,7 +2395,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114525016694015584
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2501,6 +2503,20 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
+--- !u!114 &114539465771374810
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1232872673316668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a33cb0066fbe31a49ba83edd6ed0cab3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  namesCol: {fileID: 1287744513408054}
+  killsCol: {fileID: 1041401828836206}
+  deathsCol: {fileID: 1159655694395386}
 --- !u!114 &114541843910248330
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2560,7 +2576,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114569361003768576
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2785,7 +2801,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114705048974703410
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2818,7 +2834,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114743799860153696
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2878,7 +2894,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114760857792631226
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3008,7 +3024,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114822407909264430
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3074,7 +3090,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114847099200949312
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3140,7 +3156,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114878587724523820
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3199,7 +3215,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114882943726288118
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3300,7 +3316,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114899710112677402
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3333,7 +3349,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114904017188949818
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3419,9 +3435,6 @@ MonoBehaviour:
   pauseResumeBtn: {fileID: 1243664296593454}
   pauseOptionsBtn: {fileID: 1889260228518004}
   scoreboard: {fileID: 1232872673316668}
-  namesCol: {fileID: 1287744513408054}
-  killsCol: {fileID: 1041401828836206}
-  deathsCol: {fileID: 1159655694395386}
   hitFlare: {fileID: 1121257088248598}
   healFlare: {fileID: 1748516299038336}
   hitDir: {fileID: 1358733389800194}
@@ -3476,7 +3489,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114940448818884482
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3556,7 +3569,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114987534160667450
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3589,7 +3602,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: null
+  m_Text: 
 --- !u!114 &114990907754220076
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4076,6 +4089,26 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1715253450219478}
   m_CullTransparentMesh: 0
+--- !u!223 &223318226289391306
+Canvas:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1232872673316668}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
 --- !u!223 &223442868169456924
 Canvas:
   m_ObjectHideFlags: 1
