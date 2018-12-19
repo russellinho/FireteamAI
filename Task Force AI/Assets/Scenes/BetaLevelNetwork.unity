@@ -29192,6 +29192,71 @@ Prefab:
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114153078432112978, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 224013423159585544, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114153078432112978, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_textInfo.characterCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114153078432112978, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_textInfo.wordCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114153078432112978, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_textInfo.lineCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114153078432112978, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_textInfo.pageCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114153078432112978, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_textInfo.spaceCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114623266558276470, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114153078432112978, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_firstOverflowCharacterIndex
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224013423159585544, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224013423159585544, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224013423159585544, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 110
+      objectReference: {fileID: 0}
+    - target: {fileID: 114153078432112978, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_textAlignment
+      value: 1025
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1cdbefa86996e46a089959ed114f2e2a, type: 2}
   m_IsPrefabAsset: 0
