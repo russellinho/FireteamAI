@@ -6,6 +6,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
@@ -144,6 +145,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		OnScreenEffectUpdate ();
 
 		OnStartScreenFade ();
+
+		HandleChat ();
     }
 
 	void FixedUpdate() {
@@ -449,5 +452,37 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         }
         container.spectatorText.text = "Your team has been eliminated. The match will end in " + (int)gameController.endGameTimer;
     }
+
+	void HandleChat() {
+		// Handle activating the input box
+		if (Input.GetKeyDown (KeyCode.T)) {
+			if (!container.inGameMessenger.inputText.enabled) {
+				// Enable
+				container.inGameMessenger.inputText.enabled = true;
+				// Select the input box
+				EventSystem.current.SetSelectedGameObject(container.inGameMessenger.inputText.gameObject, null);
+				container.inGameMessenger.inputText.OnPointerClick (new PointerEventData(EventSystem.current));
+			}
+		}
+
+		// Handle message completion and sending
+		if (container.inGameMessenger.inputText.enabled && Input.GetKeyDown(KeyCode.Return)) {
+			// If the message is empty, then just close the chat. Else, send the message over RPC.
+			if (container.inGameMessenger.inputText.text.Length != 0) {
+				SendChatMessage (container.inGameMessenger.inputText.text);
+				container.inGameMessenger.inputText.text = "";
+			}
+			container.inGameMessenger.inputText.enabled = false;
+		}
+	}
+		
+	void SendChatMessage(string message) {
+		photonView.RPC ("RpcSendChatMessage", RpcTarget.All, message);
+	}
+
+	[PunRPC]
+	void RpcSendChatMessage(string message) {
+		container.inGameMessenger.AddMessage (message, PhotonNetwork.LocalPlayer.NickName);
+	}
 
 }

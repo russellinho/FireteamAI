@@ -151,8 +151,10 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			}
 		}
 
-		Crouch ();
-		BombCheck ();
+		if (fpc.canMove) {
+			Crouch ();
+			BombCheck ();
+		}
 		DetermineEscaped ();
 
 	}

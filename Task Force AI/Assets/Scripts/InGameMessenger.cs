@@ -10,11 +10,13 @@ public class InGameMessenger : MonoBehaviour {
 	public Queue<GameObject> messageInfos;
 	private TextMeshProUGUI chatText;
 	public TMP_InputField inputText;
+	private static short MAX_MESSAGES = 6;
 
     void Awake()
     {
         chatText = GetComponent<TextMeshProUGUI>();
         chatText.enabled = false;
+		inputText.enabled = false;
         messageInfos = new Queue<GameObject>();
     }
 
@@ -37,7 +39,7 @@ public class InGameMessenger : MonoBehaviour {
 
 	public void AddMessage(string message, string playerName) {
         // First, check if the queue already has 5 messages in it, don't want more than 5 messages on screen at a time
-        if (messageInfos.Count > 5) {
+		if (messageInfos.Count > MAX_MESSAGES) {
             ExpireMessage();
         }
 
