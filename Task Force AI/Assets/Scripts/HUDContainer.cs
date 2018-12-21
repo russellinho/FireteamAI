@@ -19,6 +19,7 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject pauseResumeBtn;
 	public GameObject pauseOptionsBtn;
 	public GameObject scoreboard;
+    public InGameMessenger inGameMessenger;
 
 	// Hit indication HUD
 	public GameObject hitFlare;

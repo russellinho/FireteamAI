@@ -8,12 +8,18 @@ public class InGameMessenger : MonoBehaviour {
 
 	public GameObject messageInfo;
 	public Queue<GameObject> messageInfos;
-	public TextMeshProUGUI chatText;
+	private TextMeshProUGUI chatText;
 	public TMP_InputField inputText;
 
-	// Use this for initialization
-	void Start () {
-		messageInfos = new Queue<GameObject> ();
+    void Awake()
+    {
+        chatText = GetComponent<TextMeshProUGUI>();
+        chatText.enabled = false;
+        messageInfos = new Queue<GameObject>();
+    }
+
+    // Use this for initialization
+    void Start () {
 		chatText.text = "";
 		inputText.text = "";
 	}
@@ -24,13 +30,32 @@ public class InGameMessenger : MonoBehaviour {
 			GameObject o = messageInfos.Peek ();
 			// If message is out of time, dequeue it
 			if (o.GetComponent<MessageInfo> ().timeRemaining <= 0f) {
-				chatText.text = chatText.text.Substring (o.GetComponent<MessageInfo>().GetLength());
-				messageInfos.Dequeue ();
+                ExpireMessage();
 			}
 		}
 	}
 
-	public void Add	qMessage(string message, ) {
-		
+	public void AddMessage(string message, string playerName) {
+        // First, check if the queue already has 5 messages in it, don't want more than 5 messages on screen at a time
+        if (messageInfos.Count > 5) {
+            ExpireMessage();
+        }
+
+        // Second, create message info and add to queue
+        string totalMessage = playerName + ": " + message + "\n";
+        GameObject toAdd = (GameObject)Instantiate(messageInfo);
+        toAdd.GetComponent<MessageInfo>().SetLength((short)totalMessage.Length);
+        messageInfos.Enqueue(toAdd);
+
+        // Last, actually add the message to the chat box
+        if (!chatText.enabled) {
+            chatText.enabled = true;
+        }
+        chatText.text += totalMessage;
 	}
+
+    void ExpireMessage() {
+        GameObject expiredMessage = messageInfos.Dequeue();
+        chatText.text = chatText.text.Substring(expiredMessage.GetComponent<MessageInfo>().GetLength());
+    }
 }

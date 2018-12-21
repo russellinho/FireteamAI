@@ -1035,6 +1035,7 @@ GameObject:
   - component: {fileID: 114153078432112978}
   - component: {fileID: 114427708362795742}
   - component: {fileID: 114623266558276470}
+  - component: {fileID: 114742943591482188}
   m_Layer: 5
   m_Name: InGameChat
   m_TagString: Untagged
@@ -1726,7 +1727,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_textAlignment: 257
+  m_textAlignment: 1025
   m_isAlignmentEnumConverted: 1
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -1737,7 +1738,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 0
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -2620,7 +2621,7 @@ MonoBehaviour:
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
-  m_ignoreRectMaskCulling: 0
+  m_ignoreRectMaskCulling: 1
   m_ignoreCulling: 1
   m_horizontalMapping: 0
   m_verticalMapping: 0
@@ -2936,9 +2937,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a33cb0066fbe31a49ba83edd6ed0cab3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  namesCol: {fileID: 1287744513408054}
-  killsCol: {fileID: 1041401828836206}
-  deathsCol: {fileID: 1159655694395386}
+  namesCol: {fileID: 0}
+  killsCol: {fileID: 0}
+  deathsCol: {fileID: 0}
 --- !u!114 &114541843910248330
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3156,7 +3157,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1860139533226666}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
@@ -3270,6 +3271,20 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 
+--- !u!114 &114742943591482188
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1860139533226666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2573c4c3f8a99d2449015ec0e9d3ef45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  messageInfo: {fileID: 1070992896549756, guid: 9e3428953a13448438bc06448c9f5828,
+    type: 2}
+  inputText: {fileID: 114534347693992184}
 --- !u!114 &114743799860153696
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3889,36 +3904,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4144db7c26cff14393c4304271a6620, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthText: {fileID: 114381202680642382}
-  weaponLabelTxt: {fileID: 114429233446019188}
-  ammoTxt: {fileID: 114569361003768576}
-  pauseMenuGUI: {fileID: 1017496507190756}
-  pauseExitBtn: {fileID: 1725326723663780}
-  pauseResumeBtn: {fileID: 1243664296593454}
-  pauseOptionsBtn: {fileID: 1889260228518004}
-  scoreboard: {fileID: 1232872673316668}
-  hitFlare: {fileID: 1121257088248598}
-  healFlare: {fileID: 1748516299038336}
-  hitDir: {fileID: 1358733389800194}
-  hitMarker: {fileID: 1658881728255496}
-  hudMap: {fileID: 1602882613727916}
-  hudWaypoint: {fileID: 1272327452645242, guid: afd6749c9932bfd428f00c6da8b4f41b,
-    type: 2}
-  hudPlayerMarker: {fileID: 1931414385125120, guid: 238c389c896f5034b9b809d54b544a9e,
-    type: 2}
-  objectivesText: {fileID: 114822407909264430}
-  missionText: {fileID: 1715253450219478}
-  actionBar: {fileID: 1935463601230828}
-  defusingText: {fileID: 114042221422203622}
-  hintText: {fileID: 114527461144909100}
-  spectatorText: {fileID: 114882943726288118}
-  missionTimeText: {fileID: 114847099200949312}
-  missionTimeRemainingText: {fileID: 114921907530344836}
-  assaultModeIndText: {fileID: 114161677701123072}
-  killPopupText: {fileID: 114267337992587208}
-  screenColor: {fileID: 114434370680212450}
-  comBoxText: {fileID: 114804255217449794}
-  comBox: {fileID: 1056823358785976}
+  healthText: {fileID: 0}
+  weaponLabelTxt: {fileID: 0}
+  ammoTxt: {fileID: 0}
+  pauseMenuGUI: {fileID: 0}
+  pauseExitBtn: {fileID: 0}
+  pauseResumeBtn: {fileID: 0}
+  pauseOptionsBtn: {fileID: 0}
+  scoreboard: {fileID: 0}
+  hitFlare: {fileID: 0}
+  healFlare: {fileID: 0}
+  hitDir: {fileID: 0}
+  hitMarker: {fileID: 0}
+  hudMap: {fileID: 0}
+  hudWaypoint: {fileID: 0}
+  hudPlayerMarker: {fileID: 0}
+  objectivesText: {fileID: 0}
+  missionText: {fileID: 0}
+  actionBar: {fileID: 0}
+  defusingText: {fileID: 0}
+  hintText: {fileID: 0}
+  spectatorText: {fileID: 0}
+  missionTimeText: {fileID: 0}
+  missionTimeRemainingText: {fileID: 0}
+  assaultModeIndText: {fileID: 0}
+  killPopupText: {fileID: 0}
+  screenColor: {fileID: 0}
+  comBoxText: {fileID: 0}
+  comBox: {fileID: 0}
 --- !u!114 &114931403488006250
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3964,8 +3977,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_text: 
-  m_characterInterval: 0.0204
-  parentRef: {fileID: 1056823358785976}
+  m_characterInterval: 0
+  parentRef: {fileID: 0}
 --- !u!114 &114963866416059696
 MonoBehaviour:
   m_ObjectHideFlags: 1
