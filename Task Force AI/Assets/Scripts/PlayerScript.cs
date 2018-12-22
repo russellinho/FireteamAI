@@ -12,7 +12,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	public GameObject gameController;
 	private AudioControllerScript audioController;
 	private CharacterController charController;
-	private PhotonView photonView;
 	public GameObject fpsHands;
 	private WeaponScript wepScript;
 	private AudioSource aud;
@@ -32,6 +31,8 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	private bool assaultModeChangedIndicator;
 	public int kills;
 	private int deaths;
+	private bool isRespawning;
+	public float respawnTimer;
 
 	public GameObject[] subComponents;
 	public FirstPersonController fpc;
@@ -69,7 +70,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		charHeightOriginal = charController.height;
 		fpcPositionYOriginal = fpcPosition.localPosition.y;
 		bodyScaleOriginal = bodyTrans.lossyScale.y;
-        photonView = GetComponent<PhotonView>();
 		escapeValueSent = false;
 		assaultModeChangedIndicator = false;
 
@@ -107,6 +107,8 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 		hitTimer = 1f;
 		healTimer = 1f;
+		isRespawning = false;
+		respawnTimer = 0f;
 
 		audioController = GetComponent<AudioControllerScript> ();
 
@@ -122,6 +124,17 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			return;
 		}
 
+		// Instant respawn hack
+		if (Input.GetKeyDown (KeyCode.P)) {
+			BeginRespawn ();
+		}
+
+		if (gameController.GetComponent<GameControllerScript>().sectorsCleared == 0 && gameController.GetComponent<GameControllerScript> ().bombsRemaining == 2) {
+			gameController.GetComponent<GameControllerScript> ().sectorsCleared++;
+			hud.OnScreenEffect ("SECTOR CLEARED!", false);
+			BeginRespawn ();
+		}
+
 		// Update assault mode
 		hud.UpdateAssaultModeIndHud (gameController.GetComponent<GameControllerScript>().assaultMode);
 			
@@ -131,6 +144,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			assaultModeChangedIndicator = h;
 			hud.MessagePopup ("Your cover is blown!");
 			hud.ComBoxPopup (2f, "They know you're here! Slot the bastards!");
+			hud.ComBoxPopup (20f, "Cicadas on the rooftops! Watch the rooftops!");
 		}
 
 		if (health > 0 && !fpc.m_IsWalking) {
@@ -156,6 +170,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			BombCheck ();
 		}
 		DetermineEscaped ();
+		RespawnRoutine ();
 
 	}
 
@@ -248,14 +263,14 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			/**if (fpsHands.activeInHierarchy) {
 				//fpsHands.SetActive (false);
 			}*/
-			GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ().enabled = false;
+			fpc.enabled = false;
 			if (!rotationSaved) {
 				if (escapeValueSent) {
 					gameController.GetComponent<GameControllerScript> ().ConvertCounts (1, -1);
 				}
-				photonView.RPC ("RpcDisableFPSHands", RpcTarget.All);
-				hud.DisableHUD ();
-				hud.EnableSpectatorMessage ();
+				photonView.RPC ("RpcToggleFPSHands", RpcTarget.All, false);
+				hud.ToggleHUD (false);
+				hud.ToggleSpectatorMessage (true);
 				deathCameraLerpPos = new Vector3 (viewCam.transform.localPosition.x, viewCam.transform.localPosition.y, viewCam.transform.localPosition.z - 5.5f);
 				alivePosition = new Vector3 (0f, bodyTrans.eulerAngles.y, 0f);
 				deadPosition = new Vector3 (-90f, bodyTrans.eulerAngles.y, 0f);
@@ -394,9 +409,9 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	[PunRPC]
-	void RpcDisableFPSHands() {
-		viewCam.gameObject.GetComponentInChildren<SkinnedMeshRenderer> ().enabled = false;
-		viewCam.gameObject.GetComponentInChildren<MeshRenderer> ().enabled = false;
+	void RpcToggleFPSHands(bool b) {
+		viewCam.gameObject.GetComponentInChildren<SkinnedMeshRenderer> ().enabled = b;
+		viewCam.gameObject.GetComponentInChildren<MeshRenderer> ().enabled = b;
 	}
 
 	IEnumerator EnterSpectatorMode() {
@@ -419,6 +434,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		charController.enabled = status;
 		fpc.enabled = status;
 		viewCam.enabled = status;
+		wepScript.enabled = status;
 	}
 
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
@@ -428,6 +444,58 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	[PunRPC]
 	void SyncPlayerColor(Vector3 c) {
 		bodyTrans.gameObject.GetComponent<MeshRenderer> ().material.color = new Color (c.x / 255f, c.y / 255f, c.z / 255f, 1f);
+	}
+
+	void BeginRespawn() {
+		if (health <= 0) {
+			if (gameController.GetComponent<GameControllerScript> ().gameOver) {
+				gameController.GetComponent<GameControllerScript> ().gameOver = false;
+			}
+			// Flash the respawn time bar on the screen
+			hud.RespawnBar ();
+			// Then, actually start the respawn process
+			respawnTimer = 5f;
+			isRespawning = true;
+		}
+	}
+
+	void RespawnRoutine() {
+		if (isRespawning) {
+			respawnTimer -= Time.deltaTime;
+			if (respawnTimer <= 0f) {
+				isRespawning = false;
+				Respawn ();
+			}
+		}
+	}
+
+	// Reset character health, scale, rotation, position, ammo, re-enable FPS hands, disabled HUD components, disabled scripts, death variables, etc.
+	void Respawn() {
+		gameController.GetComponent<GameControllerScript> ().ConvertCounts (-1, 0);
+		health = 100;
+		photonView.RPC ("RpcToggleFPSHands", RpcTarget.All, true);
+		hud.ToggleHUD (true);
+		hud.ToggleSpectatorMessage (false);
+
+		fpc.m_IsCrouching = false;
+		fpc.m_IsWalking = true;
+		wepScript.isSprinting = false;
+		escapeValueSent = false;
+		canShoot = true;
+		fpc.canMove = true;
+		fraction = 0f;
+		deathCameraLerpVar = 0f;
+		rotationSaved = false;
+		hitTimer = 1f;
+		healTimer = 1f;
+		currentBomb = null;
+		bombDefuseCounter = 0f;
+
+		// Send player back to spawn position, reset rotation, leave spectator mode
+		transform.rotation = Quaternion.Euler(Vector3.zero);
+		transform.position = new Vector3 (gameController.GetComponent<GameControllerScript>().spawnLocation.position.x, gameController.GetComponent<GameControllerScript>().spawnLocation.position.y, gameController.GetComponent<GameControllerScript>().spawnLocation.position.z);
+		LeaveSpectatorMode ();
+		wepScript.CockingAction ();
 	}
 		
 }

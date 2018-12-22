@@ -9,8 +9,7 @@ public class MessageInfo : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		timeRemaining = 0f;
-		lengthOfString = 0;
+		timeRemaining = 7f;
 	}
 
 	void Update() {
@@ -18,7 +17,6 @@ public class MessageInfo : MonoBehaviour {
 	}
 	
 	public void SetLength(short s) {
-		timeRemaining = 7f;
 		lengthOfString = s;
 	}
 

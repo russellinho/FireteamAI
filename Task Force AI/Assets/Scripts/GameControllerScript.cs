@@ -30,9 +30,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public bool gameOver;
     private bool exitLevelLoaded;
     public bool escapeAvailable;
+	public short sectorsCleared;
 
 	public Camera c;
 	public GameObject exitPoint;
+	public Transform spawnLocation;
 
 	public int deadCount;
 	public int escaperCount;
@@ -62,6 +64,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
         missionTime = 0f;
 		lastGunshotTimer = 10f;
+		sectorsCleared = 0;
 
 	}
 

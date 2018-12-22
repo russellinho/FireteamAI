@@ -46,5 +46,6 @@ public class HUDContainer : MonoBehaviour {
 	public Image screenColor;
 	public Text comBoxText;
 	public GameObject comBox;
+	public Slider respawnBar;
 
 }

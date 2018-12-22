@@ -32,8 +32,10 @@ public class InGameMessenger : MonoBehaviour {
 			GameObject o = messageInfos.Peek ();
 			// If message is out of time, dequeue it
 			if (o.GetComponent<MessageInfo> ().timeRemaining <= 0f) {
-                ExpireMessage();
+				ExpireMessage ();
 			}
+		} else {
+			chatText.enabled = false;
 		}
 	}
 

@@ -133,10 +133,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		UpdateCursorStatus ();
 
 		if (gameController.gameOver) {
-            if (PhotonNetwork.CurrentRoom.Players.Count == gameController.deadCount)
-            {
-                GameOverPopup();
-            }
+			if (PhotonNetwork.CurrentRoom.Players.Count == gameController.deadCount) {
+				ToggleGameOverPopup (true);
+				ToggleHUD (false);
+			}
+		} else {
+			ToggleGameOverPopup (false);
 		}
 
         UpdateMissionTimeText();
@@ -147,6 +149,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		OnStartScreenFade ();
 
 		HandleChat ();
+		HandleRespawnBar ();
     }
 
 	void FixedUpdate() {
@@ -276,12 +279,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-    public void DisableHUD()
+	public void ToggleHUD(bool b)
     {
-        container.healthText.enabled = false;
-        container.weaponLabelTxt.enabled = false;
-        container.ammoTxt.enabled = false;
-        container.hudMap.SetActive(false);
+        container.healthText.enabled = b;
+        container.weaponLabelTxt.enabled = b;
+        container.ammoTxt.enabled = b;
+        container.hudMap.SetActive(b);
     }
 
 	public void ToggleScoreboard(bool b)
@@ -376,8 +379,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.actionBar.GetComponent<Slider> ().value = val;
 	}
 
-	public void EnableSpectatorMessage() {
-		container.spectatorText.gameObject.SetActive (true);
+	public void ToggleSpectatorMessage(bool b) {
+		container.spectatorText.gameObject.SetActive (b);
 	}
 
 	//public override void OnPlayerEnteredRoom(Player newPlayer) {
@@ -446,11 +449,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-    void GameOverPopup() {
-        if (!container.spectatorText.enabled) {
-            container.spectatorText.enabled = true;
-        }
-        container.spectatorText.text = "Your team has been eliminated. The match will end in " + (int)gameController.endGameTimer;
+	void ToggleGameOverPopup(bool b) {
+		if (b) {
+			container.spectatorText.text = "Your team has been eliminated. The match will end in " + (int)gameController.endGameTimer;
+			container.spectatorText.enabled = true;
+		} else {
+			container.spectatorText.enabled = false;
+		}
     }
 
 	void HandleChat() {
@@ -459,6 +464,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (!container.inGameMessenger.inputText.enabled) {
 				// Enable
 				container.inGameMessenger.inputText.enabled = true;
+				playerScript.fpc.canMove = false;
 				// Select the input box
 				EventSystem.current.SetSelectedGameObject(container.inGameMessenger.inputText.gameObject, null);
 				container.inGameMessenger.inputText.OnPointerClick (new PointerEventData(EventSystem.current));
@@ -473,6 +479,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				container.inGameMessenger.inputText.text = "";
 			}
 			container.inGameMessenger.inputText.enabled = false;
+			playerScript.fpc.canMove = true;
 		}
 	}
 		
@@ -483,6 +490,20 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	[PunRPC]
 	void RpcSendChatMessage(string message) {
 		container.inGameMessenger.AddMessage (message, PhotonNetwork.LocalPlayer.NickName);
+	}
+
+	public void RespawnBar() {
+		container.respawnBar.value = 0f;
+		container.respawnBar.gameObject.SetActive (true);
+	}
+
+	void HandleRespawnBar() {
+		if (container.respawnBar.gameObject.activeInHierarchy) {
+			container.respawnBar.value = ((5f - playerScript.respawnTimer) / 5f);
+			if (playerScript.respawnTimer <= 0f) {
+				container.respawnBar.gameObject.SetActive (false);
+			}
+		}
 	}
 
 }
