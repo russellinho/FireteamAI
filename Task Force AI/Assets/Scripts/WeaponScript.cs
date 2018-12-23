@@ -170,25 +170,30 @@ public class WeaponScript : MonoBehaviour {
 	}
 
 	public void AimDownSights() {
-		if (Input.GetButton ("Fire2") && !isReloading) {
-			originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, aimPos, Time.deltaTime * aodSpeed);
-			isAiming = true;
-		} else {
-			originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
-			isAiming = false;
+		if (!isSprinting) {
+			if (Input.GetButtonDown ("Fire2") && !isReloading) {
+				isAiming = !isAiming;
+			}
+			if (isAiming && !isReloading) {
+				originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, aimPos, Time.deltaTime * aodSpeed);
+			} else {
+				originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
+			}
 		}
 	}
 
 	public void Sprint() {
-		if (gunAnimator.gameObject.activeSelf) {
-			gunAnimator.SetBool ("Sprinting", isSprinting);
-		}
-		if (isSprinting) {
-			originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, sprintPos, Time.deltaTime * aodSpeed);
-			originalTrans.localRotation = Quaternion.Lerp (originalTrans.localRotation, Quaternion.Euler(sprintRot), Time.deltaTime * aodSpeed);
-		} else {
-			originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
-			originalTrans.localRotation = Quaternion.Lerp (originalTrans.localRotation, originalRot, Time.deltaTime * aodSpeed);
+		if (!isAiming && !isReloading) {
+			if (gunAnimator.gameObject.activeSelf) {
+				gunAnimator.SetBool ("Sprinting", isSprinting);
+			}
+			if (isSprinting) {
+				originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, sprintPos, Time.deltaTime * aodSpeed);
+				originalTrans.localRotation = Quaternion.Lerp (originalTrans.localRotation, Quaternion.Euler (sprintRot), Time.deltaTime * aodSpeed);
+			} else {
+				originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
+				originalTrans.localRotation = Quaternion.Lerp (originalTrans.localRotation, originalRot, Time.deltaTime * aodSpeed);
+			}
 		}
 	}
 

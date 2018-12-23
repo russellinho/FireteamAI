@@ -1809,8 +1809,8 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1224831656385806}
-  m_LocalRotation: {x: -0, y: -0.34691885, z: -0, w: 0.9378952}
-  m_LocalPosition: {x: 128.0347, y: 7.0984516, z: -17.603193}
+  m_LocalRotation: {x: -0, y: -0.47032335, z: -0, w: 0.88249415}
+  m_LocalPosition: {x: 51.221073, y: -0.000000059604645, z: 123.40044}
   m_LocalScale: {x: 1.120586, y: 1.120586, z: 1.120586}
   m_Children:
   - {fileID: 4094855932939608}
@@ -1819,7 +1819,7 @@ Transform:
   - {fileID: 4568640399139240}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -40.613003, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -56.111004, z: 0}
 --- !u!4 &4611034265397356
 Transform:
   m_ObjectHideFlags: 1
@@ -2359,7 +2359,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 100
   DopplerLevel: 1
-  MinDistance: 30
+  MinDistance: 3
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
@@ -2472,7 +2472,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 114883440538335910}
   viewIdField: 0
-  InstantiationId: 46
+  InstantiationId: 7
   isRuntimeInstantiated: 0
 --- !u!114 &114664547146455366
 MonoBehaviour:
@@ -2520,10 +2520,16 @@ MonoBehaviour:
     type: 2}
   fireRate: 0.4
   damage: 20
-  enemyType: 1
+  enemyType: 0
   lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
   health: 0
-  navPoints: []
+  navPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   actionState: 0
   navMesh: {fileID: 195753960068613868}
   navMeshObstacle: {fileID: 208658121138146138}
@@ -2784,7 +2790,7 @@ NavMeshAgent:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1224831656385806}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 3.5
@@ -7287,12 +7293,12 @@ NavMeshObstacle:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1224831656385806}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Shape: 0
   m_Extents: {x: 0.8, y: 0.94, z: 0.8}
   m_MoveThreshold: 0.1
-  m_Carve: 1
+  m_Carve: 0
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0.88, z: 0}
   m_TimeToStationary: 0.5
