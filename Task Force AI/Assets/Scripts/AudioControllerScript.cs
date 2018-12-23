@@ -122,13 +122,12 @@ public class AudioControllerScript : MonoBehaviour {
 		if (play) {
 			wasRunning = true;
 			if (!fxSound6.isPlaying) {
+				fxSound6.loop = true;
 				fxSound6.Play ();
 			}
 		} else {
 			wasRunning = false;
-			if (fxSound6.isPlaying) {
-				fxSound6.Stop ();
-			}
+			fxSound6.loop = false;
 		}
 	}
 

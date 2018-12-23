@@ -147,13 +147,11 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			hud.ComBoxPopup (20f, "Cicadas on the rooftops! Watch the rooftops!");
 		}
 
-		if (health > 0 && !fpc.m_IsWalking) {
+		if (health > 0 && fpc.m_IsRunning) {
 			audioController.PlaySprintSound (true);
-			wepScript.isSprinting = true;
 			canShoot = false;
 		} else {
 			audioController.PlaySprintSound (false);
-			wepScript.isSprinting = false;
 			canShoot = true;
 		}
 
@@ -448,9 +446,8 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	void BeginRespawn() {
 		if (health <= 0) {
-			if (gameController.GetComponent<GameControllerScript> ().gameOver) {
-				gameController.GetComponent<GameControllerScript> ().gameOver = false;
-			}
+			gameController.GetComponent<GameControllerScript> ().ConvertCounts (-1, 0);
+			gameController.GetComponent<GameControllerScript> ().gameOver = false;
 			// Flash the respawn time bar on the screen
 			hud.RespawnBar ();
 			// Then, actually start the respawn process
@@ -471,7 +468,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	// Reset character health, scale, rotation, position, ammo, re-enable FPS hands, disabled HUD components, disabled scripts, death variables, etc.
 	void Respawn() {
-		gameController.GetComponent<GameControllerScript> ().ConvertCounts (-1, 0);
 		health = 100;
 		photonView.RPC ("RpcToggleFPSHands", RpcTarget.All, true);
 		hud.ToggleHUD (true);
@@ -479,7 +475,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 		fpc.m_IsCrouching = false;
 		fpc.m_IsWalking = true;
-		wepScript.isSprinting = false;
 		escapeValueSent = false;
 		canShoot = true;
 		fpc.canMove = true;
@@ -490,6 +485,8 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		healTimer = 1f;
 		currentBomb = null;
 		bombDefuseCounter = 0f;
+		wepScript.totalBulletsLeft = 120;
+		wepScript.currentBullets = wepScript.bulletsPerMag;
 
 		// Send player back to spawn position, reset rotation, leave spectator mode
 		transform.rotation = Quaternion.Euler(Vector3.zero);

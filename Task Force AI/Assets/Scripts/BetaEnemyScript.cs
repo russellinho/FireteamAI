@@ -181,6 +181,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (!Vector3.Equals (GameControllerScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
 			if (!alerted) {
 				pView.RPC ("RpcSetAlerted", RpcTarget.All, true);
+				Debug.Log (1);
 				SetAlertTimer (12f);
 			}
 		}
@@ -209,6 +210,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
 			if (PhotonNetwork.IsMasterClient && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
+				Debug.Log (2);
 			}
 			return;
 		}
@@ -228,10 +230,12 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	public void SetAlerted(bool b) {
 		pView.RPC ("RpcSetAlerted", RpcTarget.All, b);
+		Debug.Log (3);
 	}
 
 	public void SetAlertTimer(float t) {
 		pView.RPC ("RpcSetAlertTimer", RpcTarget.All, t);
+		Debug.Log (4);
 	}
 
 	[PunRPC]
@@ -295,6 +299,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (actionState == ActionStates.Melee) {
 			if (!navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
+				Debug.Log (5);
 			}
 			return;
 		}
@@ -303,21 +308,25 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (PhotonNetwork.IsMasterClient) {
 				if (navMesh.speed != 1.5f) {
 					pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 1.5f);
+					Debug.Log (6);
 				}
 				// Only server should be updating the delays and they should sync across the network
 				// Initial spawn value
 				if (wanderStallDelay == -1f) {
 					wanderStallDelay = Random.Range (0f, 7f);
 					pView.RPC ("RpcSetWanderStallDelay", RpcTarget.Others, wanderStallDelay);
+					Debug.Log (7);
 				}
 				// Take away from the stall delay if the enemy is standing still
 				if (navMesh.isStopped) {
 					wanderStallDelay -= Time.deltaTime;
-					pView.RPC ("RpcSetWanderStallDelay", RpcTarget.Others, wanderStallDelay);
+					//pView.RPC ("RpcSetWanderStallDelay", RpcTarget.Others, wanderStallDelay);
+					//Debug.Log (8);
 				} else {
 					// Else, check if the enemy has reached its destination
 					if (navMeshReachedDestination (0.3f)) {
 						pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
+						Debug.Log (9);
 					}
 				}
 				// If the stall delay is done, the enemy needs to move to a wander point
@@ -326,7 +335,8 @@ public class BetaEnemyScript : MonoBehaviour {
 					RotateTowards (navPoints [r].transform.position);
 					pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, navPoints [r].transform.position.x, navPoints [r].transform.position.y, navPoints [r].transform.position.z);
 					wanderStallDelay = Random.Range (0f, 7f);
-					pView.RPC ("RpcSetWanderStallDelay", RpcTarget.Others, wanderStallDelay);
+					//pView.RPC ("RpcSetWanderStallDelay", RpcTarget.Others, wanderStallDelay);
+					//Debug.Log (10);
 				}
 			}
 		}
@@ -335,12 +345,14 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (!navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 				pView.RPC ("RpcSetWanderStallDelay", RpcTarget.All, -1);
+				Debug.Log (11);
 			}
 		}
 
 		if (actionState == ActionStates.Dead || actionState == ActionStates.InCover) {
 			if (!navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
+				Debug.Log (12);
 			}
 		}
 
@@ -349,6 +361,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 6f);
 				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z);
 				pView.RPC ("RpcSetLastSeenPlayerPos", RpcTarget.All, false, 0f, 0f, 0f);
+				Debug.Log (13);
 			}
 			return;
 		}
@@ -359,13 +372,16 @@ public class BetaEnemyScript : MonoBehaviour {
 
 			if (navMesh.isStopped) {
 				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, GameControllerScript.lastGunshotHeardPos.x, GameControllerScript.lastGunshotHeardPos.y, GameControllerScript.lastGunshotHeardPos.z);
+				Debug.Log (14);
 				if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint")) {
 					if (navMesh.speed != 6f) {
 						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 6f);
+						Debug.Log (15);
 					}
 				} else {
 					if (navMesh.speed != 4f) {
 						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4f);
+						Debug.Log (16);
 					}
 				}
 			}
@@ -377,14 +393,17 @@ public class BetaEnemyScript : MonoBehaviour {
 				pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 6f);
 				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, coverPos.x, coverPos.y, coverPos.z);
 				pView.RPC ("RpcSetCoverPos", RpcTarget.All, false, 0f, 0f, 0f);
+				Debug.Log (17);
 			} else {
 				// If the enemy has finally reached cover, then he will get into cover mode
 				if (navMeshReachedDestination(0f)) {
 					// Done
 					pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 					pView.RPC ("RpcSetInCover", RpcTarget.All, true);
+					Debug.Log (18);
 					if (actionState != ActionStates.InCover) {
 						pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.InCover);
+						Debug.Log (19);
 					}
 				}
 			}
@@ -393,56 +412,72 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (actionState == ActionStates.Firing && !inCover) {
 			if (navMesh.speed != 4f) {
 				pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4f);
+				Debug.Log (20);
 			}
 			if (firingModeTimer <= 0f) {
 				int r = Random.Range (0, 5);
 				if (r == 0) {
 					if (firingState != FiringStates.StandingStill) {
 						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.StandingStill);
+						Debug.Log (21);
 					}
 					firingModeTimer = Random.Range (2f, 3.2f);
-					pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
+					//pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
+					//Debug.Log (22);
 				} else if (r == 1) {
 					if (firingState != FiringStates.Forward) {
 						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.Forward);
+						Debug.Log (23);
 					}
 					firingModeTimer = Random.Range (2f, 3.2f);
-					pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
+					//pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
+					//Debug.Log (24);
 					if (navMesh.speed != 4f) {
 						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4f);
+						Debug.Log (25);
 					}
 				} else if (r == 2) {
 					if (firingState != FiringStates.Backpedal) {
 						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.Backpedal);
+						Debug.Log (26);
 					}
 					firingModeTimer = Random.Range (2f, 3.2f);
-					pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
+					//pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
+					//Debug.Log (27);
 					if (navMesh.speed != 3f) {
 						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 3f);
+						Debug.Log (28);
 					}
 				} else if (r == 3) {
 					if (firingState != FiringStates.StrafeLeft) {
 						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.StrafeLeft);
+						Debug.Log (29);
 					}
 					firingModeTimer = 1.7f;
-					pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
+					//pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
+					//Debug.Log (30);
 					if (navMesh.speed != 2.5f) {
 						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 2.5f);
+						Debug.Log (31);
 					}
 				} else if (r == 4) {
 					if (firingState != FiringStates.StrafeRight) {
 						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.StrafeRight);
+						Debug.Log (32);
 					}
 					firingModeTimer = 1.7f;
-					pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
+					//pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
+					//Debug.Log (33);
 					if (navMesh.speed != 2.5f) {
 						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 2.5f);
+						Debug.Log (34);
 					}
 				}
 			}
 
 			if (firingState == FiringStates.StandingStill) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
+				Debug.Log (35);
 			}
 
 			if (player != null) {
@@ -493,11 +528,13 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (actionState == ActionStates.InCover || actionState == ActionStates.Firing) {
 			if (navMesh.isStopped) {
 				coverWaitTimer -= Time.deltaTime;
-				pView.RPC ("RpcSetCoverWaitTimer", 	RpcTarget.Others, coverWaitTimer);
+				//pView.RPC ("RpcSetCoverWaitTimer", 	RpcTarget.Others, coverWaitTimer);
+				//Debug.Log (36);
 			}
 			if (inCover) {
 				coverSwitchPositionsTimer -= Time.deltaTime;
-				pView.RPC ("RpcSetCoverSwitchPositionsTimer", RpcTarget.Others, coverSwitchPositionsTimer);
+				//pView.RPC ("RpcSetCoverSwitchPositionsTimer", RpcTarget.Others, coverSwitchPositionsTimer);
+				//Debug.Log (37);
 			}
 
 			// Three modes in cover - defensive, offensive, maneuvering; only used when engaging a player
@@ -507,6 +544,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					pView.RPC ("RpcSetIsCrouching", RpcTarget.All, !isCrouching);
 					coverWaitTimer = Random.Range (2f, 7f);
 					pView.RPC ("RpcSetCoverWaitTimer", RpcTarget.Others, coverWaitTimer);
+					Debug.Log (38);
 				}
 				// Maneuvering through cover; if the maneuver timer runs out, it's time to move to another cover position
 				// TODO: Broken - coverswitch timer is never reset
@@ -572,17 +610,22 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 
 			pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead);
+			Debug.Log (39);
 			// Choose a death sound
 			r = Random.Range (0, 3);
 			if (r == 0) {
 				pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/grunt1");
+				Debug.Log (40);
 			} else if (r == 1) {
 				pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/grunt2");
+				Debug.Log (41);
 			} else {
 				pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/grunt4");
+				Debug.Log (42);
 			}
 
 			pView.RPC ("StartDespawn", RpcTarget.All);
+			Debug.Log (43);
 			return;
 		}
 
@@ -600,22 +643,29 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (Vector3.Distance (player.transform.position, transform.position) <= 2.3f) {
 				if (actionState != ActionStates.Melee) {
 					pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee);
+					Debug.Log (44);
 				}
 			} else {
 				if (currentBullets > 0) {
 					if (actionState != ActionStates.Firing) {
 						pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Firing);
+						Debug.Log (45);
 					}
-					if (crouchMode == 0)
+					if (crouchMode == 0) {
 						pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 1);
-					else if (crouchMode == 1)
+						Debug.Log (46);
+					} else if (crouchMode == 1) {
 						pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 2);
+						Debug.Log (47);
+					}
 					TakeCoverScout ();
 				} else {
 					if (actionState != ActionStates.Reloading) {
 						pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Reloading);
+						Debug.Log (48);
 					}
 					pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 0);
+					Debug.Log (49);
 					TakeCoverScout ();
 				}
 			}
@@ -623,16 +673,19 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (alertTimer > 0f) {
 				if (crouchMode != 0) {
 					pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 0);
+					Debug.Log (50);
 				}
 				TakeCoverScout ();
 			} else {
 				if (crouchMode != 1) {
 					pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 1);
+					Debug.Log (51);
 				}
 				TakeCoverScout ();
 			}
 			if (actionState != ActionStates.Idle) {
 				pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Idle);
+				Debug.Log (52);
 			}
 		}
 	}
@@ -651,6 +704,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (r == 1) {
 			r = Random.Range(1, 10);
 			pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/pain" + r);
+			Debug.Log (53);
 		}
 	}
 
@@ -673,10 +727,12 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (dist < 2.3f) {
 			if (!alerted) {
 				pView.RPC ("RpcSetAlerted", RpcTarget.All, true);
+				Debug.Log (54);
 			}
 
 			if (actionState != ActionStates.Melee) {
 				pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee);
+				Debug.Log (55);
 			}
 			playerToHit = other.gameObject;
 
@@ -716,22 +772,27 @@ public class BetaEnemyScript : MonoBehaviour {
 
 			pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 			pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead);
+			Debug.Log (56);
 			// Choose a death sound
 			r = Random.Range(0, 3);
 			if (r == 0)
 			{
 				pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt1");
+				Debug.Log (57);
 			}
 			else if (r == 1)
 			{
 				pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt2");
+				Debug.Log (58);
 			}
 			else
 			{
 				pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt4");
+				Debug.Log (59);
 			}
 
 			pView.RPC ("StartDespawn", RpcTarget.All);
+			Debug.Log (60);
 			return;
 		}
 
@@ -753,15 +814,18 @@ public class BetaEnemyScript : MonoBehaviour {
 						if (coverFound) {
 							if (actionState != ActionStates.TakingCover) {
 								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.TakingCover);
+								Debug.Log (61);
 							}
 						} else {
 							if (actionState != ActionStates.InCover) {
 								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.InCover);
+								Debug.Log (62);
 							}
 						}
 					} else {
 						if (actionState != ActionStates.Firing) {
 							pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Firing);
+							Debug.Log (63);
 						}
 					}
 				}
@@ -769,6 +833,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				// If the enemy has not seen a player
 				if (alertTimer <= 0f && alertTimer != -100f && alerted) {
 					pView.RPC ("RpcUpdateAlertedStatus", RpcTarget.All);
+					Debug.Log (64);
 				}
 				if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Firing && actionState != ActionStates.Reloading) {
 					int r = Random.Range (1, aggression - 1);
@@ -777,15 +842,18 @@ public class BetaEnemyScript : MonoBehaviour {
 						if (coverFound) {
 							if (actionState != ActionStates.TakingCover) {
 								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.TakingCover);
+								Debug.Log (65);
 							}
 						} else {
 							if (actionState != ActionStates.InCover) {
 								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.InCover);
+								Debug.Log (66);
 							}
 						}
 					} else {
 						if (actionState != ActionStates.Seeking) {
 							pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Seeking);
+							Debug.Log (67);
 						}
 					}
 				}
@@ -793,6 +861,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (actionState == ActionStates.Seeking) {
 					if (navMeshReachedDestination (0.5f) && player == null) {
 						pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander);
+						Debug.Log (68);
 					}
 				}
 
@@ -803,15 +872,18 @@ public class BetaEnemyScript : MonoBehaviour {
 						if (r <= 2) {
 							if (actionState != ActionStates.TakingCover) {
 								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.TakingCover);
+								Debug.Log (69);
 							}
 						} else {
 							if (actionState != ActionStates.Pursue) {
 								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Pursue);
+								Debug.Log (70);
 							}
 						}
 					} else {
 						if (actionState != ActionStates.Idle) {
 							pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Idle);
+							Debug.Log (71);
 						}
 					}
 				}
@@ -820,6 +892,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (actionState == ActionStates.Pursue && Vector3.Equals(lastSeenPlayerPos, Vector3.negativeInfinity)) {
 					if (navMeshReachedDestination(0.5f)) {
 						pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander);
+						Debug.Log (72);
 					}
 				}
 
@@ -829,10 +902,13 @@ public class BetaEnemyScript : MonoBehaviour {
 					if (coverSwitchPositionsTimer <= 0f) {
 						coverSwitchPositionsTimer = Random.Range (6f, 10f);
 						pView.RPC ("RpcSetCoverSwitchPositionsTimer", RpcTarget.Others, coverSwitchPositionsTimer);
+						Debug.Log (73);
 						if (GameControllerScript.lastGunshotHeardPos != Vector3.negativeInfinity) {
 							pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Seeking);
+							Debug.Log (74);
 						} else {
 							pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander);
+							Debug.Log (75);
 						}
 					}
 				}
@@ -841,9 +917,11 @@ public class BetaEnemyScript : MonoBehaviour {
 			// Else, wander around the patrol points until alerted or enemy seen
 			if (actionState != ActionStates.Wander) {
 				pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander);
+				Debug.Log (76);
 			}
 			if (player != null && !alerted) {
 				pView.RPC("RpcSetAlerted", RpcTarget.All, true);
+				Debug.Log (77);
 			}
 		}
 	}
@@ -938,6 +1016,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (enemyType != EnemyType.Scout) {
 					if (!navMesh.isStopped) {
 						pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
+						Debug.Log (78);
 					}
 				}
 				if (isCrouching) {
@@ -976,6 +1055,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (Physics.Raycast (shootPoint.position, dir, out hit)) {
 				if (hit.transform.tag.Equals ("Player") || hit.transform.tag.Equals ("Human")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal);
+					Debug.Log (79);
 
 					if (hit.transform.tag.Equals ("Player")) {
 						hit.transform.GetComponent<PlayerScript>().TakeDamage((int)damage);
@@ -987,12 +1067,14 @@ public class BetaEnemyScript : MonoBehaviour {
 				} else {
 					pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
 					pView.RPC ("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
+					Debug.Log (80);
 				}
 			}
 		}
 
 		//animator.CrossFadeInFixedTime ("Firing", 0.01f);
 		pView.RPC("RpcShootAction", RpcTarget.All);
+		Debug.Log (81);
 	}
 
 	[PunRPC]
@@ -1242,12 +1324,14 @@ public class BetaEnemyScript : MonoBehaviour {
 
 			if (keysNearBy.Count != 0) {
 				pView.RPC ("RpcSetTarget", RpcTarget.All, (int)keysNearBy [Random.Range (0, keysNearBy.Count)]);
+				Debug.Log (82);
 			}
 		} else {
 			// If we do, check if it's still in range
 			if (Vector3.Distance (transform.position, player.transform.position) >= range + 20f) {
 				pView.RPC ("RpcSetLastSeenPlayerPos", RpcTarget.All, true, player.transform.position.x, player.transform.position.y, player.transform.position.z);
 				pView.RPC ("RpcSetTarget", RpcTarget.All, -1);
+				Debug.Log (83);
 			}
 		}
 	}
@@ -1263,6 +1347,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	public void TakeDamage(int d) {
 		pView.RPC ("RpcTakeDamage", RpcTarget.All, d);
+		Debug.Log (84);
 	}
 
 	[PunRPC]
@@ -1283,6 +1368,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	void CheckTargetDead() {
 		if (player != null && player.GetComponent<PlayerScript> ().health <= 0f) {
 			pView.RPC ("RpcSetTarget", RpcTarget.All, -1);
+			Debug.Log (85);
 		}
 	}
 

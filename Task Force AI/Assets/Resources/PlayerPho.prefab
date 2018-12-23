@@ -3250,8 +3250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa14f8312ba0a8649be64e9e4fe79def, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameController: {fileID: 1274711406710350, guid: b74311d12f4463a47a77b2c458b2c713,
-    type: 2}
+  gameController: {fileID: 0}
   fpsHands: {fileID: 1647710275724540}
   viewCam: {fileID: 20445384165574884}
   bodyTrans: {fileID: 4323335807701884}
@@ -3380,8 +3379,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IsWalking: 0
   m_IsCrouching: 0
-  m_WalkSpeed: 5
+  m_IsRunning: 0
+  m_WalkSpeed: 2.5
   m_CrouchSpeed: 2
+  m_MoveSpeed: 6
   m_RunSpeed: 10
   m_RunstepLenghten: 0.7
   m_JumpSpeed: 10
@@ -3519,7 +3520,7 @@ MonoBehaviour:
   muzzleFlash: {fileID: 198464886627007744}
   bulletTrace: {fileID: 198686650311421410}
   isCocking: 0
-  isSprinting: 0
+  isAiming: 0
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,

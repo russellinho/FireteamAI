@@ -9,6 +9,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 public class WeaponScript : MonoBehaviour {
 
 	private MouseLook mouseLook;
+	private PlayerScript playerScript;
 
 	// Projectile spread constants
 	public const float MAX_SPREAD = 0.35f;
@@ -43,9 +44,9 @@ public class WeaponScript : MonoBehaviour {
 	public ParticleSystem muzzleFlash;
 	public ParticleSystem bulletTrace;
 	private bool isReloading = false;
+	private bool isSprinting = false;
 	public bool isCocking = false;
-	private bool isAiming;
-	public bool isSprinting;
+	public bool isAiming;
 
 	public GameObject hitParticles;
 	public GameObject bulletImpact;
@@ -80,6 +81,7 @@ public class WeaponScript : MonoBehaviour {
 		originalRot = originalTrans.localRotation;
 
 		mouseLook = GetComponent<FirstPersonController> ().m_MouseLook;
+		playerScript = GetComponent<PlayerScript> (); 
 		//targetGunRot = mouseLook.m_CameraTargetRot * Quaternion.Euler(-MAX_RECOIL, 0f, 0f);
 		//originalGunRot = new Quaternion(mouseLook.m_CameraTargetRot.x, mouseLook.m_CameraTargetRot.y, mouseLook.m_CameraTargetRot.z, mouseLook.m_CameraTargetRot.w);
 		//originalGunRot = mouseLook.m_CameraTargetRot;
@@ -92,7 +94,7 @@ public class WeaponScript : MonoBehaviour {
 		if (!pView.IsMine) {
 			return;
 		}
-			
+
 		if (Input.GetKeyDown (KeyCode.Q)) {
 			if (firingMode == FireMode.Semi)
 				firingMode = FireMode.Auto;
@@ -115,7 +117,7 @@ public class WeaponScript : MonoBehaviour {
 			return;
 		}
 		if (Input.GetKeyDown (KeyCode.R)) {
-			if (currentBullets < bulletsPerMag && totalBulletsLeft > 0) {
+			if (!isSprinting && currentBullets < bulletsPerMag && totalBulletsLeft > 0) {
 				ReloadAction ();
 			}
 		}
@@ -136,6 +138,7 @@ public class WeaponScript : MonoBehaviour {
 		if (gunAnimator.gameObject.activeSelf) {
 			AnimatorStateInfo info = gunAnimator.GetCurrentAnimatorStateInfo (0);
 			isReloading = info.IsName ("Reloading");
+			isSprinting = info.IsName ("Sprinting");
 			gunAnimator.SetBool ("Aim", isAiming);
 		}
 		// Shooting mechanics
@@ -170,7 +173,7 @@ public class WeaponScript : MonoBehaviour {
 	}
 
 	public void AimDownSights() {
-		if (!isSprinting) {
+		if (!isSprinting && !playerScript.fpc.m_IsRunning) {
 			if (Input.GetButtonDown ("Fire2") && !isReloading) {
 				isAiming = !isAiming;
 			}
@@ -179,15 +182,16 @@ public class WeaponScript : MonoBehaviour {
 			} else {
 				originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
 			}
+			originalTrans.localRotation = Quaternion.Lerp (originalTrans.localRotation, originalRot, Time.deltaTime * aodSpeed);
 		}
 	}
 
 	public void Sprint() {
 		if (!isAiming && !isReloading) {
 			if (gunAnimator.gameObject.activeSelf) {
-				gunAnimator.SetBool ("Sprinting", isSprinting);
+				gunAnimator.SetBool ("Sprinting", playerScript.fpc.m_IsRunning);
 			}
-			if (isSprinting) {
+			if (playerScript.fpc.m_IsRunning) {
 				originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, sprintPos, Time.deltaTime * aodSpeed);
 				originalTrans.localRotation = Quaternion.Lerp (originalTrans.localRotation, Quaternion.Euler (sprintRot), Time.deltaTime * aodSpeed);
 			} else {
@@ -213,7 +217,6 @@ public class WeaponScript : MonoBehaviour {
 		float xSpread = Random.Range (-spread, spread);
 		float ySpread = Random.Range (-spread, spread);
 		float zSpread = Random.Range (-spread, spread);
-		//Debug.Log ("xSpread: " + xSpread + " ySpread: " + ySpread);
 		Vector3 impactDir = new Vector3 (shootPoint.transform.forward.x + xSpread, shootPoint.transform.forward.y + ySpread, shootPoint.transform.forward.z + zSpread);
 		int headshotLayer = (1 << 13);
 		if (Physics.Raycast (shootPoint.position, impactDir, out hit, range, headshotLayer)) {

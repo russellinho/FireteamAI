@@ -13,8 +13,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
     {
         [SerializeField] public bool m_IsWalking;
         [SerializeField] public bool m_IsCrouching;
+		[SerializeField] public bool m_IsRunning;
         [SerializeField] private float m_WalkSpeed;
         [SerializeField] private float m_CrouchSpeed;
+		[SerializeField] private float m_MoveSpeed;
         [SerializeField] public float m_RunSpeed;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
         [SerializeField] private float m_JumpSpeed;
@@ -227,23 +229,46 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 
         private void GetInput(out float speed)
-        {
+		{
 
-            // Read input
-            float horizontal = CrossPlatformInputManager.GetAxis("Horizontal");
-            float vertical = CrossPlatformInputManager.GetAxis("Vertical");
+			// Read input
+			float horizontal = CrossPlatformInputManager.GetAxis ("Horizontal");
+			float vertical = CrossPlatformInputManager.GetAxis ("Vertical");
 
-            bool waswalking = m_IsWalking;
+			bool waswalking = m_IsWalking;
 
 #if !MOBILE_INPUT
-            // On standalone builds, walk/run speed is modified by a key press.
-            // keep track of whether or not the character is walking or running
-			m_IsWalking = (!Input.GetKey(KeyCode.LeftShift) || vertical <= 0f || m_IsCrouching);
+			// On standalone builds, walk/run speed is modified by a key press.
+			// keep track of whether or not the character is walking or running
+			if (GetComponent<WeaponScript>().isAiming) {
+				if (!m_IsCrouching) {
+					m_IsWalking = true;
+					m_IsRunning = false;
+				} else {
+					m_IsWalking = false;
+					m_IsRunning = false;
+				}
+			} else {
+				if (!m_IsCrouching) {
+					if (Input.GetKey(KeyCode.C)) {
+						m_IsWalking = true;
+						m_IsRunning = false;
+					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f) {
+						m_IsWalking = false;
+						m_IsRunning = true;
+					} else {
+						m_IsWalking = false;
+						m_IsRunning = false;
+					}
+				}
+			}
 #endif
-            // set the desired speed to be walking or running
-            //speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
-            speed = m_RunSpeed;
-            if (m_IsCrouching) {
+			// set the desired speed to be walking or running
+			//speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
+			speed = m_MoveSpeed;
+			if (m_IsRunning) {
+				speed = m_RunSpeed;
+			} else if (m_IsCrouching) {
                 speed = m_CrouchSpeed;
             } else if (m_IsWalking) {
                 speed = m_WalkSpeed;

@@ -10,7 +10,7 @@ public class ScoreboardScript : MonoBehaviour {
 	public GameObject killsCol;
 	public GameObject deathsCol;
 
-	private IEnumerator playerIterator;
+	private List<string> playerIterator;
 	private Text[] names;
 	private Text[] kills;
 	private Text[] deaths;
@@ -26,19 +26,18 @@ public class ScoreboardScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (playerIterator == null) {
-			playerIterator = GameControllerScript.totalKills.Keys.GetEnumerator ();
+			playerIterator = new List<string> (GameControllerScript.totalKills.Keys);
 			return;
 		}
-		bool valid = playerIterator.MoveNext ();
 		// This means it's reached the end
 		if (index > 8) {
 			index = 1;
-			//playerIterator = GameControllerScript.totalKills.Keys.GetEnumerator ();
-			playerIterator.Reset();
-			return;
+			if (GameControllerScript.totalKills.Keys.Count != playerIterator.Count) {
+				playerIterator = new List<string> (GameControllerScript.totalKills.Keys);
+			}
 		}
-
-		object c = (valid ? playerIterator.Current : null);
+			
+		string c = ((index - 1) >= playerIterator.Count ? null : playerIterator [index - 1]);
 		if (c == null) {
 			names [index].text = "";
 			kills [index].text = "";
