@@ -1060,7 +1060,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					if (hit.transform.tag.Equals ("Player")) {
 						hit.transform.GetComponent<PlayerScript>().TakeDamage((int)damage);
 						hit.transform.GetComponent<PlayerScript> ().ResetHitTimer ();
-						//hit.transform.GetComponent<PlayerScript> ().SetHitLocation (transform.position);
+						hit.transform.GetComponent<PlayerScript> ().SetHitLocation (transform.position);
 					} else {
 						hit.transform.GetComponent<BetaEnemyScript>().TakeDamage((int)damage);
 					}

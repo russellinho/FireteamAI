@@ -18,6 +18,7 @@ namespace UITemplate
 		public GameObject ListRoomEmpty;
 		public Text NbrPlayers;
 		public Button BtnCreatRoom;
+		public Button ExitMatchmakingBtn;
 
 		[Header("Loading Panel")]
 		public GameObject LoadingPanel;

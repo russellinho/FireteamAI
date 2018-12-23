@@ -14,6 +14,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject customizationMenu;
 	public GameObject loadingScreen;
 	public GameObject jukebox;
+	public GameObject mainMenuPopup;
 
 	public InputField PlayerNameInput;
 
@@ -53,6 +54,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void Update() {
+		if (PlayerData.playerdata.disconnectedFromServer) {
+			PlayerData.playerdata.disconnectedFromServer = false;
+			mainMenuPopup.GetComponentInChildren<Text> ().text = "Lost connection to server.\nReason: " + PlayerData.playerdata.disconnectReason;
+			PlayerData.playerdata.disconnectReason = "";
+			mainMenuPopup.SetActive (true);
+		}
 		if (loadingScreen.activeInHierarchy) {
 			progressBar.value = PhotonNetwork.LevelLoadingProgress;
 			// First stage of loading animation
@@ -180,6 +187,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		PlayerData.playerdata.color.y = 255;
 		PlayerData.playerdata.color.z = 255;
 		PlayerData.playerdata.UpdateBodyColor ();
+	}
+
+	public void ClosePopup() {
+		mainMenuPopup.SetActive (false);
 	}
 		
 }

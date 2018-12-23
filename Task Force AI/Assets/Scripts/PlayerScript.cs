@@ -370,14 +370,9 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		healTimer = 0f;
 	}
 
-	/**public void SetHitLocation(Vector3 pos) {
-		photonView.RPC ("RpcSetHitLocation", RpcTarget.All, pos);
-	}
-
-	[PunRPC]
-	void RpcSetHitLocation(Vector3 pos) {
+	public void SetHitLocation(Vector3 pos) {
 		hitLocation = pos;
-	}*/
+	}
 
 	void DetermineEscaped() {
 		if (gameController.GetComponent<GameControllerScript> ().escapeAvailable) {

@@ -38,6 +38,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public override void OnJoinedLobby()  
 		{
 			templateUIClass.BtnCreatRoom.interactable = true;
+			templateUIClass.ExitMatchmakingBtn.interactable = true;
 			StartCoroutine("AutoRefreshListRoom");
 		}
 
@@ -70,6 +71,8 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void OnCreateRoomButtonClicked()
 		{
+			templateUIClass.BtnCreatRoom.interactable = false;
+			templateUIClass.ExitMatchmakingBtn.interactable = false;
 			string roomName = "Table_"+ Random.Range(1000, 10000);
 			roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 

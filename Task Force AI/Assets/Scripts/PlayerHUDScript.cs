@@ -98,8 +98,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-
-
 	void OnStartScreenFade() {
 		if (roundStartFadeIn) {
 			float newAlpha = container.screenColor.color.a - (Time.deltaTime * 1.75f);
@@ -178,28 +176,26 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	void UpdateWaypoints() {
 		for (int i = 0; i < missionWaypoints.Count; i++)
 		{
-			if (gameController.c == null)
-				break;
 			if (i == missionWaypoints.Count - 1)
 			{
-				float renderCheck = Vector3.Dot((gameController.exitPoint.transform.position - gameController.c.transform.position).normalized, gameController.c.transform.forward);
+				float renderCheck = Vector3.Dot((gameController.exitPoint.transform.position - playerScript.viewCam.transform.position).normalized, playerScript.viewCam.transform.forward);
 				if (renderCheck <= 0)
 					continue;
 				if (gameController.bombsRemaining == 0)
 				{
 					((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled = true;
-					((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = gameController.c.WorldToScreenPoint(gameController.exitPoint.transform.position);
+					((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = playerScript.viewCam.WorldToScreenPoint(gameController.exitPoint.transform.position);
 				}
 			}
 			else
 			{
-				float renderCheck = Vector3.Dot((gameController.bombs[i].transform.position - gameController.c.transform.position).normalized, gameController.c.transform.forward);
+				float renderCheck = Vector3.Dot((gameController.bombs[i].transform.position - playerScript.viewCam.transform.position).normalized, playerScript.viewCam.transform.forward);
 				if (renderCheck <= 0)
 					continue;
-				if (!gameController.bombs[i].GetComponent<BombScript>().defused && gameController.c != null)
+				if (!gameController.bombs[i].GetComponent<BombScript>().defused)
 				{
 					Vector3 p = new Vector3(gameController.bombs[i].transform.position.x, gameController.bombs[i].transform.position.y + gameController.bombs[i].transform.lossyScale.y, gameController.bombs[i].transform.position.z);
-					((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = gameController.c.WorldToScreenPoint(p);
+					((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = playerScript.viewCam.WorldToScreenPoint(p);
 				}
 				if (((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled && gameController.bombs[i].GetComponent<BombScript>().defused)
 				{
@@ -222,16 +218,16 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				playerMarkers.Add (actorNo, marker);
 			}
 			// Check if it can be rendered to the screen
-			float renderCheck = Vector3.Dot((p.transform.position - gameController.c.transform.position).normalized, gameController.c.transform.forward);
+			float renderCheck = Vector3.Dot((p.transform.position - playerScript.viewCam.transform.position).normalized, playerScript.viewCam.transform.forward);
 			if (renderCheck <= 0)
 				continue;
 			// If the player is alive and on camera, then render the player name and health bar
-			if (p.GetComponent<PlayerScript>().health > 0 && gameController.c != null)
+			if (p.GetComponent<PlayerScript>().health > 0)
 			{
 				playerMarkers [actorNo].SetActive (true);
 				playerMarkers[actorNo].GetComponentInChildren<Slider>().value = ((float)(p.GetComponent<PlayerScript>().health / 100));
 				Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + p.transform.lossyScale.y, p.transform.position.z);
-				playerMarkers[actorNo].GetComponent<RectTransform>().position = gameController.c.WorldToScreenPoint(o);
+				playerMarkers[actorNo].GetComponent<RectTransform>().position = playerScript.viewCam.WorldToScreenPoint(o);
 			}
 			if (playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled && p.GetComponent<PlayerScript>().health <= 0)
 			{
@@ -259,14 +255,14 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.healFlare.GetComponent<RawImage>().enabled = false;
 		if (playerScript.hitTimer < 1f) {
 			container.hitFlare.GetComponent<RawImage> ().enabled = true;
+			float a = -Vector3.Angle (transform.forward, playerScript.hitLocation);
+			Vector3 temp = container.hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
+			container.hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(temp.x,temp.y,a));
 			container.hitDir.GetComponent<RawImage> ().enabled = true;
 			playerScript.hitTimer += Time.deltaTime;
 		} else {
 			container.hitFlare.GetComponent<RawImage> ().enabled = false;
 			container.hitDir.GetComponent<RawImage> ().enabled = false;
-			float a = Vector3.Angle (transform.forward, playerScript.hitLocation);
-			Vector3 temp = container.hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
-			container.hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(temp.x,temp.y,a));
 		}
 	}
 

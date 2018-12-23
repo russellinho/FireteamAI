@@ -84,7 +84,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 				if (readyCount >= 2) {
 					gameStarting = true;
-					ToggleButtons (false);
+					photonView.RPC ("RpcToggleButtons", RpcTarget.All, false);
 					StartCoroutine ("StartGameCountdown");
 				} else {
 					DisplayPopup ("There must be at least two ready players to start the game!");
@@ -160,7 +160,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		void Update() {
-			if (!templateUIClass.popup.activeInHierarchy) {
+			if (!templateUIClass.popup.activeInHierarchy && !gameStarting) {
 				if (!mapNext.interactable) {
 					ToggleButtons (true);
 				}

@@ -13,6 +13,8 @@ public class PlayerData : MonoBehaviour {
 	public static PlayerData playerdata;
 	public Vector3 color;
 	public string playername;
+	public bool disconnectedFromServer;
+	public string disconnectReason;
 	public bool testMode;
 
 	public MeshRenderer bodyColorReference;

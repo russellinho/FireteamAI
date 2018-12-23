@@ -32,7 +32,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public bool escapeAvailable;
 	public short sectorsCleared;
 
-	public Camera c;
 	public GameObject exitPoint;
 	public Transform spawnLocation;
 
@@ -72,13 +71,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void Update () {
         if (currentMap == 1)
         {
-            // Update waypoints
-            if (c == null)
-            {
-                GameObject temp = GameObject.FindWithTag("MainCamera");
-                if (temp != null) c = temp.GetComponent<Camera>();
-            }
-
             if (PhotonNetwork.IsMasterClient) {
 				if (!gameOver) {
 					UpdateMissionTime ();
@@ -314,4 +306,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         }
     }
 
+	public override void OnDisconnected(DisconnectCause cause) {
+		if (!cause.ToString ().Equals ("DisconnectByClientLogic")) {
+			PlayerData.playerdata.disconnectedFromServer = true;
+			PlayerData.playerdata.disconnectReason = cause.ToString ();
+		}
+		SceneManager.LoadScene (0);
+	}
 }

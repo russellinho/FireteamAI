@@ -19,7 +19,6 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 
 	public override void OnLeftRoom() {
 		PhotonNetwork.Disconnect ();
-		SceneManager.LoadScene (0);
 	}
 
 }
