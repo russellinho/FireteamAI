@@ -60,6 +60,10 @@ namespace Photon.Pun.LobbySystemPhoton
 		public void StartGameBtn() {
 			// If we're the host, start the game assuming there are at least two ready players
 			if (PhotonNetwork.IsMasterClient) {
+				// Set room invisible once it begins, for now
+				PhotonNetwork.CurrentRoom.IsOpen = false;
+				PhotonNetwork.CurrentRoom.IsVisible = false;
+
 				// Testing - comment in release
 				if (PlayerData.playerdata.testMode == true) {
 					gameStarting = true;
