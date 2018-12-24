@@ -106,4 +106,6 @@ MonoBehaviour:
   - RpcAddToTotalKills
   - RpcSendChatMessage
   - RpcToggleFPSHands
+  - RpcDefuseBomb
+  - RpcSetExitLevelLoaded
   DisableAutoOpenWizard: 1

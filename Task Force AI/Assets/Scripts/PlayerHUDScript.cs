@@ -131,10 +131,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		UpdateCursorStatus ();
 
 		if (gameController.gameOver) {
-			if (PhotonNetwork.CurrentRoom.Players.Count == gameController.deadCount) {
+			if (gameController.exitLevelLoaded) {
+				ToggleGameOverPopup (false);
+				ToggleGameOverBanner (true);
+			} else if (PhotonNetwork.CurrentRoom.Players.Count == gameController.deadCount) {
 				ToggleGameOverPopup (true);
-				ToggleHUD (false);
 			}
+			ToggleHUD (false);
 		} else {
 			ToggleGameOverPopup (false);
 		}
@@ -499,6 +502,15 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (playerScript.respawnTimer <= 0f) {
 				container.respawnBar.gameObject.SetActive (false);
 			}
+		}
+	}
+
+	void ToggleGameOverBanner(bool b) {
+		if (b) {
+			playerScript.HandleGameOverBanner ();
+			container.gameOverBanner.SetActive (true);
+		} else {
+			container.gameOverBanner.SetActive (false);
 		}
 	}
 

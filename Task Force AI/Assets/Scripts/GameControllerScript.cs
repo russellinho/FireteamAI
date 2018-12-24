@@ -28,7 +28,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject[] bombs;
     public int bombsRemaining;
 	public bool gameOver;
-    private bool exitLevelLoaded;
+    public bool exitLevelLoaded;
     public bool escapeAvailable;
 	public short sectorsCleared;
 
@@ -296,15 +296,20 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             }
 
             if (endGameTimer <= 0f && !exitLevelLoaded) {
-                exitLevelLoaded = true;
+				pView.RPC ("RpcSetExitLevelLoaded", RpcTarget.All);
                 if (deadCount == PhotonNetwork.CurrentRoom.Players.Count) {
-                    PhotonNetwork.LoadLevel("GameOverFail");
+					StartCoroutine (SwitchToGameOverScene(false));
                 } else {
-                    PhotonNetwork.LoadLevel("GameOverSuccess");
+					StartCoroutine (SwitchToGameOverScene(true));
                 }
             }
         }
     }
+
+	[PunRPC]
+	void RpcSetExitLevelLoaded() {
+		exitLevelLoaded = true;
+	}
 
 	public override void OnDisconnected(DisconnectCause cause) {
 		if (!cause.ToString ().Equals ("DisconnectByClientLogic")) {
@@ -313,4 +318,14 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 		SceneManager.LoadScene (0);
 	}
+
+	IEnumerator SwitchToGameOverScene(bool win) {
+		yield return new WaitForSeconds (4f);
+		if (!win) {
+			PhotonNetwork.LoadLevel("GameOverFail");
+		} else {
+			PhotonNetwork.LoadLevel("GameOverSuccess");
+		}
+	}
+
 }

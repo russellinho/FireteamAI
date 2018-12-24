@@ -6,25 +6,28 @@ using Photon.Realtime;
 
 public class SpectatorScript : MonoBehaviour {
 
-	private const float Y_ANGLE_MIN = 10F;
-	private const float Y_ANGLE_MAX = 50F;
+	private const float Y_ANGLE_MIN = 10f;
+	private const float Y_ANGLE_MAX = 50f;
+	private Vector3 gameOverCamPos = new Vector3(81f, 30f, 5f);
+	private Vector3 gameOverCamRot = new Vector3(0f, -40f, 0f);
 
 	public GameObject following;
 	private Transform camTransform;
 	private Camera cam;
 
 	private float distance = 8f;
-	private float currX = 0F;
+	private float currX = 0f;
 	private float currY = 0f;
 	private float sensitivityX = 4f;
 	private float sensitivityY = 1f;
 
 	private bool rotationLock = false;
 	private int playerListKey = -1;
+	private bool gameOverLock = false;
 
 	// Use this for initialization
 	void Start () {
-		camTransform = transform;
+		camTransform = GetComponentsInParent<Transform> () [1];
 		cam = GetComponent<Camera> ();
 
 		foreach (GameObject o in GameControllerScript.playerList.Values) {
@@ -34,16 +37,22 @@ public class SpectatorScript : MonoBehaviour {
 				break;
 			}
 		}
+
+		transform.localPosition = Vector3.zero;
+		transform.localRotation = Quaternion.Euler (Vector3.zero);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown (KeyCode.Space)) {
-			SwitchFollowing ();
-		}
-		if (!following) {
-			camTransform.position = Vector3.zero;
-			camTransform.rotation = Quaternion.Euler (Vector3.zero);
+		if (!gameOverLock) {
+			if (Input.GetKeyDown (KeyCode.Space)) {
+				SwitchFollowing ();
+			}
+			if (!following) {
+				rotationLock = true;
+				camTransform.position = new Vector3 (0f, 10f, 0f);
+				camTransform.rotation = Quaternion.Euler (new Vector3 (0f, 45f, 0f));
+			}
 		}
 		if (!rotationLock) {
 			currX += Input.GetAxis ("Mouse X");
@@ -87,6 +96,13 @@ public class SpectatorScript : MonoBehaviour {
 		} else {
 			playerListKey = -1;
 		}
+	}
+
+	public void GameOverCam() {
+		gameOverLock = true;
+		rotationLock = true;
+		camTransform.position = gameOverCamPos;
+		camTransform.rotation = Quaternion.Euler (gameOverCamRot);
 	}
 
 }

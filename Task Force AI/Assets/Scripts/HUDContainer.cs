@@ -47,5 +47,6 @@ public class HUDContainer : MonoBehaviour {
 	public Text comBoxText;
 	public GameObject comBox;
 	public Slider respawnBar;
+	public GameObject gameOverBanner;
 
 }

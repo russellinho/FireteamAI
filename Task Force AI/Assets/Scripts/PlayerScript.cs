@@ -125,9 +125,9 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		}
 
 		// Instant respawn hack
-		if (Input.GetKeyDown (KeyCode.P)) {
+		/**if (Input.GetKeyDown (KeyCode.P)) {
 			BeginRespawn ();
-		}
+		}*/
 
 		if (gameController.GetComponent<GameControllerScript>().sectorsCleared == 0 && gameController.GetComponent<GameControllerScript> ().bombsRemaining == 2) {
 			gameController.GetComponent<GameControllerScript> ().sectorsCleared++;
@@ -147,7 +147,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			hud.ComBoxPopup (20f, "Cicadas on the rooftops! Watch the rooftops!");
 		}
 
-		if (health > 0 && fpc.m_IsRunning) {
+		if (health > 0 && fpc.enabled && fpc.m_IsRunning) {
 			audioController.PlaySprintSound (true);
 			canShoot = false;
 		} else {
@@ -163,10 +163,10 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			}
 		}
 
-		if (fpc.canMove) {
+		if (fpc.enabled && fpc.canMove) {
 			Crouch ();
-			BombCheck ();
 		}
+		BombCheck ();
 		DetermineEscaped ();
 		RespawnRoutine ();
 
@@ -272,7 +272,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 				deathCameraLerpPos = new Vector3 (viewCam.transform.localPosition.x, viewCam.transform.localPosition.y, viewCam.transform.localPosition.z - 5.5f);
 				alivePosition = new Vector3 (0f, bodyTrans.eulerAngles.y, 0f);
 				deadPosition = new Vector3 (-90f, bodyTrans.eulerAngles.y, 0f);
-				StartCoroutine ("EnterSpectatorMode");
+				StartCoroutine (RoutineEnterSpectatorMode());
 				rotationSaved = true;
 				photonView.RPC ("RpcAddToTotalDeaths", RpcTarget.All);
 			}
@@ -335,7 +335,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 				if (bombDefuseCounter >= 1f) {
 					bombDefuseCounter = 0f;
 
-					gameController.GetComponent<GameControllerScript> ().bombs[currentBombIndex].GetComponent<BombScript>().Defuse ();
+					photonView.RPC ("RpcDefuseBomb", RpcTarget.All, currentBombIndex);
 					gameController.GetComponent<GameControllerScript> ().DecrementBombsRemaining ();
 					hud.UpdateObjectives ();
 					currentBomb = null;
@@ -407,10 +407,15 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		viewCam.gameObject.GetComponentInChildren<MeshRenderer> ().enabled = b;
 	}
 
-	IEnumerator EnterSpectatorMode() {
+	IEnumerator RoutineEnterSpectatorMode() {
 		yield return new WaitForSeconds (6f);
+		EnterSpectatorMode ();
+	}
+
+	void EnterSpectatorMode() {
 		photonView.RPC ("RpcChangePlayerDisableStatus", RpcTarget.All, false);
 		thisSpectatorCam = Instantiate (spectatorCam, Vector3.zero, Quaternion.Euler(Vector3.zero));
+		thisSpectatorCam.transform.SetParent (gameObject.transform);
 	}
 
 	void LeaveSpectatorMode() {
@@ -488,6 +493,18 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		transform.position = new Vector3 (gameController.GetComponent<GameControllerScript>().spawnLocation.position.x, gameController.GetComponent<GameControllerScript>().spawnLocation.position.y, gameController.GetComponent<GameControllerScript>().spawnLocation.position.z);
 		LeaveSpectatorMode ();
 		wepScript.CockingAction ();
+	}
+
+	[PunRPC]
+	void RpcDefuseBomb(int index) {
+		gameController.GetComponent<GameControllerScript> ().bombs[index].GetComponent<BombScript>().Defuse ();
+	}
+
+	public void HandleGameOverBanner() {
+		if (fpc.enabled) {
+			EnterSpectatorMode ();
+		}
+		thisSpectatorCam.GetComponent<SpectatorScript> ().GameOverCam ();
 	}
 		
 }

@@ -1122,7 +1122,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		
 	public void MeleeAttack() {
 		if (playerToHit != null) {
-			playerToHit.GetComponent<PlayerScript> ().health -= 50;
+			playerToHit.GetComponent<PlayerScript> ().TakeDamage (50);
 			playerToHit.GetComponent<PlayerScript> ().hitTimer = 0f;
 			playerToHit = null;
 		}
