@@ -2,6 +2,7 @@
 using UnityEngine;
 using UITemplate;
 using System.Collections;
+using UnityEngine.UI;
 
 namespace Photon.Pun.LobbySystemPhoton
 {
@@ -92,6 +93,10 @@ namespace Photon.Pun.LobbySystemPhoton
 			PhotonNetwork.JoinRoom(roomName);
 		}
 
+		public override void OnJoinRoomFailed(short returnCode, string message) {
+			PopupMessage ("Unable to join room.\nReason: " + message + "\nCode: " + returnCode);
+		}
+
 		IEnumerator AutoRefreshListRoom()
 		{
 			yield return new WaitForSeconds(0.5f);
@@ -109,6 +114,11 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void ClosePopup() {
 			templateUIClass.popup.SetActive (false);
+		}
+
+		public void PopupMessage(string message) {
+			templateUIClass.popup.GetComponentInChildren<Text> ().text = message;
+			templateUIClass.popup.SetActive (true);
 		}
 	}
 }
