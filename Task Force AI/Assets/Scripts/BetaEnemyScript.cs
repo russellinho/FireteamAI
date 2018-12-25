@@ -306,7 +306,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	void HandleMovementPatrol() {
 		// Melee attack trumps all
 		if (actionState == ActionStates.Melee) {
-			if (!navMesh.isStopped) {
+			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 				Debug.Log (5);
 			}
@@ -327,7 +327,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					Debug.Log (7);
 				}
 				// Take away from the stall delay if the enemy is standing still
-				if (navMesh.isStopped) {
+				if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
 					wanderStallDelay -= Time.deltaTime;
 					//pView.RPC ("RpcSetWanderStallDelay", RpcTarget.Others, wanderStallDelay);
 					//Debug.Log (8);
@@ -748,7 +748,9 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcUpdateNavMesh(bool stopped) {
-		navMesh.isStopped = stopped;
+		if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
+			navMesh.isStopped = stopped;
+		}
 	}
 
 	[PunRPC]
@@ -1169,9 +1171,11 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	void DespawnAction() {
 		if (enemyType == EnemyType.Patrol) {
-			navMesh.ResetPath ();
-			navMesh.isStopped = true;
-			navMesh.enabled = false;
+			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
+				navMesh.ResetPath ();
+				navMesh.isStopped = true;
+				navMesh.enabled = false;
+			}
 		} else {
 			navMeshObstacle.enabled = false;
 		}
@@ -1305,7 +1309,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	private bool navMeshReachedDestination(float bufferRange) {
-		if (!navMesh.pathPending && !navMesh.isStopped) {
+		if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.pathPending && !navMesh.isStopped) {
 			if (navMesh.remainingDistance <= (navMesh.stoppingDistance + bufferRange)) {
 				if (!navMesh.hasPath || navMesh.velocity.sqrMagnitude == 0f) {
 					// Done
