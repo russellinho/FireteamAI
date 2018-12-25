@@ -64,7 +64,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
 	void Start () {
-		//DontDestroyOnLoad (gameObject);
+		DontDestroyOnLoad (gameObject);
 		// Setting original positions for returning from crouching
 		charController = GetComponent<CharacterController>();
 		charHeightOriginal = charController.height;
@@ -112,10 +112,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 		audioController = GetComponent<AudioControllerScript> ();
 
-	}
-
-	void OnDisable() {
-		Debug.Log ("son of a fuck");
 	}
 
 	// Update is called once per frame
@@ -443,6 +439,10 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		escapeValueSent = false;
 	}
 
+	public override void OnDisconnected(DisconnectCause cause) {
+		Destroy (gameObject);
+	}
+		
 	[PunRPC]
 	void SyncPlayerColor(Vector3 c) {
 		bodyTrans.gameObject.GetComponent<MeshRenderer> ().material.color = new Color (c.x / 255f, c.y / 255f, c.z / 255f, 1f);

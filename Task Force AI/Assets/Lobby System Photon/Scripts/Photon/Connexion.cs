@@ -78,7 +78,6 @@ namespace Photon.Pun.LobbySystemPhoton
 			roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
 			RoomOptions options = new RoomOptions { MaxPlayers = 8 };
-			options.CleanupCacheOnLeave = false;
 
 			PhotonNetwork.CreateRoom(roomName, options, null);
 			templateUIClass.NbrPlayers.text = "00";
