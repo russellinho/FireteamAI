@@ -1,8 +1,8 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\SpineScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PlayerHUDScript.cs">
     <Files>
-      <File FileName="Assets\Scripts\GameControllerScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\GameControllerScript.cs" Line="45" Column="3" />
       <File FileName="Assets\Scripts\WeaponScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\ReloadBehaviorScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\PlayerData.cs" Line="1" Column="1" />
@@ -23,19 +23,19 @@
       <File FileName="Assets\Scripts\BombScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\ComboxTextEffect.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\FirstPersonController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\AudioControllerScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\AudioControllerScript.cs" Line="43" Column="53" />
       <File FileName="Assets\Photon\PhotonUnityNetworking\Demos\DemoAsteroids\Scripts\Lobby\PlayerListEntry.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\ScoreboardScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Lobby System Photon\Scripts\Photon\TChat.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\InGameMessenger.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\MessageInfo.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PlayerHUDScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PlayerHUDScript.cs" Line="213" Column="1" />
       <File FileName="Assets\Lobby System Photon\Scripts\Photon\Template.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PlayerScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PlayerScript.cs" Line="177" Column="1" />
       <File FileName="Assets\Scripts\BulletHoleScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\BetaEnemyScript.cs" Line="239" Column="22" />
+      <File FileName="Assets\Scripts\BetaEnemyScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\SniperTracerScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\SpineScript.cs" Line="20" Column="49" />
+      <File FileName="Assets\Scripts\SpineScript.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
