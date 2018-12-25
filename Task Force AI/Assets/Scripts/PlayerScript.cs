@@ -140,7 +140,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		if (gameController.GetComponent<GameControllerScript> ().bombsRemaining == 0 && !escapeAvailablePopup) {
 			escapeAvailablePopup = true;
 			hud.MessagePopup ("Escape available! Head to the waypoint!");
-			hud.ComBoxPopup (2f, "Well done. Now get out of there in one piece!");
+			hud.ComBoxPopup (2f, "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.");
 		}
 
 		// Update assault mode

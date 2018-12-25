@@ -285,6 +285,7 @@ public class WeaponScript : MonoBehaviour {
 
 	[PunRPC]
 	void FireEffects() {
+		Debug.Log ("hello");
 		gunAnimator.CrossFadeInFixedTime ("Firing", 0.01f);
 		muzzleFlash.Play ();
         if (!bulletTrace.isPlaying && !pView.IsMine) {

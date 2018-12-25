@@ -339,7 +339,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					}
 				}
 				// If the stall delay is done, the enemy needs to move to a wander point
-				if (wanderStallDelay < 0f && navMesh.isStopped) {
+				if (wanderStallDelay < 0f && navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
 					int r = Random.Range (0, navPoints.Length);
 					RotateTowards (navPoints [r].transform.position);
 					pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, navPoints [r].transform.position.x, navPoints [r].transform.position.y, navPoints [r].transform.position.z);
@@ -351,7 +351,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		if (actionState == ActionStates.Idle) {
-			if (!navMesh.isStopped) {
+			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 				pView.RPC ("RpcSetWanderStallDelay", RpcTarget.All, -1);
 				Debug.Log (11);
@@ -359,7 +359,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		if (actionState == ActionStates.Dead || actionState == ActionStates.InCover) {
-			if (!navMesh.isStopped) {
+			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 				Debug.Log (12);
 			}
@@ -379,7 +379,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			// Seek behavior: use navMesh to move towards the last area of gunshot. If the enemy moves towards that location
 			// and there's nobody there, go back to wandering the area
 
-			if (navMesh.isStopped) {
+			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
 				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, GameControllerScript.lastGunshotHeardPos.x, GameControllerScript.lastGunshotHeardPos.y, GameControllerScript.lastGunshotHeardPos.z);
 				Debug.Log (14);
 				if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint")) {
@@ -534,7 +534,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	// Action Decision while in combat
 	void DecideActionPatrolInCombat() {
 		if (actionState == ActionStates.InCover || actionState == ActionStates.Firing) {
-			if (navMesh.isStopped) {
+			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
 				coverWaitTimer -= Time.deltaTime;
 				//pView.RPC ("RpcSetCoverWaitTimer", 	RpcTarget.Others, coverWaitTimer);
 				//Debug.Log (36);
@@ -946,7 +946,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		if (actionState == ActionStates.Wander) {
-			if (navMesh.isStopped) {
+			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
 				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
 					animator.Play ("Idle");
 			} else {
@@ -1011,7 +1011,9 @@ public class BetaEnemyScript : MonoBehaviour {
 						animator.Play ("StrafeRight");
 				}
 			} else if (actionState == ActionStates.InCover && currentBullets > 0) {
-				navMesh.isStopped = true;
+				if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
+					navMesh.isStopped = true;
+				}
 				if (isCrouching) {
 					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Crouching"))
 						animator.Play ("Crouching");
@@ -1021,7 +1023,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 			} else if (currentBullets <= 0) {
 				if (enemyType != EnemyType.Scout) {
-					if (!navMesh.isStopped) {
+					if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
 						pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 						Debug.Log (78);
 					}
