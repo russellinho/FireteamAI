@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Photon.Realtime;
+using Photon.Pun;
 
 public class CameraShakeScript : MonoBehaviour
 {
@@ -17,6 +19,10 @@ public class CameraShakeScript : MonoBehaviour
 	
 	void Awake()
 	{
+		if (!GetComponent<PhotonView> ().IsMine) {
+			this.enabled = false;
+			return;
+		}
 		if (camTransform == null)
 		{
 			camTransform = GetComponent(typeof(Transform)) as Transform;

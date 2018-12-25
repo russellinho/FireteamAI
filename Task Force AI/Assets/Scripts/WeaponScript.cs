@@ -77,6 +77,9 @@ public class WeaponScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		pView = GetComponent<PhotonView> ();
+		if (!pView.IsMine) {
+			return;
+		}
 		currentBullets = bulletsPerMag;
 		originalPos = originalTrans.localPosition;
 		originalRot = originalTrans.localRotation;

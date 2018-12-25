@@ -64,7 +64,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
 	void Start () {
-
+		//DontDestroyOnLoad (gameObject);
 		// Setting original positions for returning from crouching
 		charController = GetComponent<CharacterController>();
 		charHeightOriginal = charController.height;
@@ -112,6 +112,10 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 		audioController = GetComponent<AudioControllerScript> ();
 
+	}
+
+	void OnDisable() {
+		Debug.Log ("son of a fuck");
 	}
 
 	// Update is called once per frame
@@ -173,7 +177,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void AddMyselfToPlayerList() {
-		Debug.Log (gameObject == null);
 		GameControllerScript.playerList.Add(photonView.OwnerActorNr, gameObject);
 		GameControllerScript.totalKills.Add (photonView.Owner.NickName, kills);
 		GameControllerScript.totalDeaths.Add (photonView.Owner.NickName, deaths);

@@ -53,6 +53,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private void Start()
         {
             if (!GetComponent<PhotonView>().IsMine) {
+				this.enabled = false;
                 return;
             }
             m_CharacterController = GetComponent<CharacterController>();

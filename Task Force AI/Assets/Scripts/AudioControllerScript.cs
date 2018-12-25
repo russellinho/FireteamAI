@@ -35,6 +35,10 @@ public class AudioControllerScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		if (!GetComponent<PhotonView> ().IsMine) {
+			this.enabled = false;
+			return;
+		}
 		wasRunning = false;
 		fxSound1 = fxRef.GetComponents<AudioSource>() [0];
 		fxSound2 = fxRef.GetComponents<AudioSource>() [1];
