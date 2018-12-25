@@ -17,7 +17,7 @@ public class SpineScript : MonoBehaviour {
 			GetComponentInParent<BetaEnemyScript> ();
 			return;
 		}
-		if (parent.player != null) {
+		if (parent.player != null && parent.health > 0) {
 			RotateTowardsPlayer ();
 		}
 	}
