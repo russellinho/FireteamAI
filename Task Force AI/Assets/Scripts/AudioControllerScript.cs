@@ -35,7 +35,6 @@ public class AudioControllerScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		gameControllerRef = GetComponent<PlayerScript> ().gameController.GetComponent<GameControllerScript>();
 		wasRunning = false;
 		fxSound1 = fxRef.GetComponents<AudioSource>() [0];
 		fxSound2 = fxRef.GetComponents<AudioSource>() [1];

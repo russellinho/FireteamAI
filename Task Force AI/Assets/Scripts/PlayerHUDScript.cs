@@ -210,6 +210,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void UpdatePlayerMarkers() {
 		foreach (GameObject p in GameControllerScript.playerList.Values) {
+			if (!p)
+				continue;
 			int actorNo = p.GetComponent<PhotonView> ().OwnerActorNr;
 			if (actorNo == PhotonNetwork.LocalPlayer.ActorNumber) {
 				continue;

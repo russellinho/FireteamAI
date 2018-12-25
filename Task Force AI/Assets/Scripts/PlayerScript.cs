@@ -85,7 +85,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
         if (!GetComponent<PhotonView>().IsMine) {
 			Destroy (GetComponentInChildren<AudioListener>());
 			GetComponentInChildren<Camera> ().enabled = false;
-			enabled = false;
+			//enabled = false;
 			return;
 		}
 
@@ -173,6 +173,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void AddMyselfToPlayerList() {
+		Debug.Log (gameObject == null);
 		GameControllerScript.playerList.Add(photonView.OwnerActorNr, gameObject);
 		GameControllerScript.totalKills.Add (photonView.Owner.NickName, kills);
 		GameControllerScript.totalDeaths.Add (photonView.Owner.NickName, deaths);

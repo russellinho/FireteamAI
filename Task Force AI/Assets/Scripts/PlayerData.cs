@@ -36,10 +36,12 @@ public class PlayerData : MonoBehaviour {
 	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
 		if(!PhotonNetwork.InRoom) return;
 		if (SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetwork")) {
-			PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
-				"PlayerPho",
-				Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
-				Quaternion.identity, 0);	
+			if (PlayerData.playerdata.inGamePlayerReference == null) {
+				PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate (
+					"PlayerPho",
+					Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints [0],
+					Quaternion.identity, 0);
+			}
 		}
 
 	}

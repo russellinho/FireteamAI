@@ -19,9 +19,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private Vector3 lastGunshotHeardPosClone = Vector3.negativeInfinity;
 	private float lastGunshotTimer = 0f;
     public float endGameTimer = 0f;
-    public static Dictionary<int, GameObject> playerList;
-	public static Dictionary<string, int> totalKills;
-	public static Dictionary<string, int> totalDeaths;
+	public static Dictionary<int, GameObject> playerList = new Dictionary<int, GameObject> ();
+	public static Dictionary<string, int> totalKills = new Dictionary<string, int> ();
+	public static Dictionary<string, int> totalDeaths = new Dictionary<string, int> ();
 	public GameObject[] enemyList;
 
     // Bomb defusal mission variables
@@ -40,12 +40,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public bool assaultMode;
 
 	private PhotonView pView;
-
-	void Awake() {
-		playerList = new Dictionary<int, GameObject> ();
-		totalKills = new Dictionary<string, int> ();
-		totalDeaths = new Dictionary<string, int> ();
-	}
 
 	// Use this for initialization
     void Start () {
