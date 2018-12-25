@@ -37,6 +37,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		PlayerNameInput.text = PlayerData.playerdata.playername;
 		mainMenu.SetActive (true);
 		loadingStatus = 0;
+		Cursor.lockState = CursorLockMode.None;
+		Cursor.visible = true;
 	}
 
 	public void InstantiateLoadingScreen(string mapName) {

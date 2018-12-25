@@ -163,9 +163,6 @@ public class WeaponScript : MonoBehaviour {
 			DecreaseRecoil ();
 			UpdateRecoil (false);
 			GetComponentInParent<CameraShakeScript> ().SetShake (false);
-			if (bulletTrace.isPlaying) {
-                pView.RPC ("StopFireEffects", RpcTarget.Others);
-			}
 			/**if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0 && !voidRecoilRecover) {
 				DecreaseRecoil ();
 				UpdateRecoil (false);
@@ -278,11 +275,6 @@ public class WeaponScript : MonoBehaviour {
 		GameObject bulletHoleEffect = Instantiate (bulletImpact, point, Quaternion.FromToRotation (Vector3.forward, normal));
 		bulletHoleEffect.transform.SetParent (GameObject.Find(parentName).transform);
 		Destroy (bulletHoleEffect, 3f);
-	}
-
-	[PunRPC]
-	void StopFireEffects() {
-		bulletTrace.Stop ();
 	}
 
 	[PunRPC]

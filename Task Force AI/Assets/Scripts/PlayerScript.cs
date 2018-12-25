@@ -80,7 +80,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
         gameController = GameObject.FindWithTag("GameController");
 		AddMyselfToPlayerList ();
-		photonView.RPC ("SyncPlayerColor", RpcTarget.All, PlayerData.playerdata.color);
 
 		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
         if (!GetComponent<PhotonView>().IsMine) {
@@ -90,6 +89,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			return;
 		}
 
+		photonView.RPC ("SyncPlayerColor", RpcTarget.All, PlayerData.playerdata.color);
 		wepScript = gameObject.GetComponent<WeaponScript> ();
 		aud = GetComponent<AudioSource> ();
 		hud = GetComponent<PlayerHUDScript> ();
