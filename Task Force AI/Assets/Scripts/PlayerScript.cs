@@ -33,6 +33,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	private int deaths;
 	private bool isRespawning;
 	public float respawnTimer;
+	private bool escapeAvailablePopup;
 
 	public GameObject[] subComponents;
 	public FirstPersonController fpc;
@@ -109,6 +110,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		healTimer = 1f;
 		isRespawning = false;
 		respawnTimer = 0f;
+		escapeAvailablePopup = false;
 
 		audioController = GetComponent<AudioControllerScript> ();
 
@@ -133,6 +135,12 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			gameController.GetComponent<GameControllerScript> ().sectorsCleared++;
 			hud.OnScreenEffect ("SECTOR CLEARED!", false);
 			BeginRespawn ();
+		}
+
+		if (gameController.GetComponent<GameControllerScript> ().bombsRemaining == 0 && !escapeAvailablePopup) {
+			escapeAvailablePopup = true;
+			hud.MessagePopup ("Escape available! Head to the waypoint!");
+			hud.ComBoxPopup (2f, "Well done. Now get out of there in one piece!");
 		}
 
 		// Update assault mode
@@ -345,10 +353,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 					hud.container.hintText.enabled = false;
 					// Enable movement again
 					gameObject.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().canMove = true;
-					if (gameController.GetComponent<GameControllerScript> ().bombsRemaining == 0) {
-						hud.MessagePopup ("Escape available! Head to the waypoint!");
-						hud.ComBoxPopup (2f, "Well done. Now get out of there in one piece!");
-					}
 				}
 			} else {
 				// Enable movement again

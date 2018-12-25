@@ -367,15 +367,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void MessagePopup(string message)
     {
-		photonView.RPC ("RpcMessagePopup", RpcTarget.All, message);
-    }
-
-	[PunRPC]
-	void RpcMessagePopup(string message) {
 		container.missionText.GetComponent<MissionTextAnimScript> ().Reset ();
 		container.missionText.GetComponent<Text> ().text = message;
 		container.missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();
-	}
+    }
 
 	public void SetActionBarSlider(float val) {
 		container.actionBar.GetComponent<Slider> ().value = val;
