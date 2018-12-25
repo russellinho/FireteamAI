@@ -284,6 +284,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         container.weaponLabelTxt.enabled = b;
         container.ammoTxt.enabled = b;
         container.hudMap.SetActive(b);
+		container.hudMap2.SetActive(b);
     }
 
 	public void ToggleScoreboard(bool b)

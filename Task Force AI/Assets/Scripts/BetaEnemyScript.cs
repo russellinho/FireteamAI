@@ -13,6 +13,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Enemy variables
 	public int aggression;
+	private float accuracyOffset;
+	public bool sniper;
 
 	// Finite state machine states
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking};
@@ -31,6 +33,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	public AudioClip shootSound;
 
 	public Transform shootPoint;
+	public LineRenderer sniperTracer;
 	public ParticleSystem muzzleFlash;
 	private bool isReloading = false;
 
@@ -49,14 +52,14 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	//-----------------------------------------------------
 
-	private GameObject player;
+	public GameObject player;
 	private GameObject playerToHit;
 	public Vector3 lastSeenPlayerPos = Vector3.negativeInfinity;
 	private Animator animator;
 	public int health;
 	private Rigidbody rigid;
 
-	private float rotationSpeed = 6f;
+	public float rotationSpeed = 6f;
 
 	// All patrol pathfinding points for an enemy
 	public GameObject[] navPoints;
@@ -67,8 +70,6 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	private FiringStates firingState;
 	private bool isCrouching;
-
-	private Transform spine;
 
 	public NavMeshAgent navMesh;
 	public NavMeshObstacle navMeshObstacle;
@@ -97,7 +98,6 @@ public class BetaEnemyScript : MonoBehaviour {
 	private Vector3 originalColliderCenter;
 
 	public bool alerted = false;
-	private bool voiceClipsStarted;
 	private GameObject[] players;
 
 	// Testing mode - set in inspector
@@ -115,7 +115,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		player = null;
 		spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 		spawnRot = new Vector3 (transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
-		spine = GetComponentInChildren<SpineScript> ().gameObject.transform;
 		animator = GetComponent<Animator> ();
 		players = new GameObject[8];
 		health = 100;
@@ -124,7 +123,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		rigid = GetComponent<Rigidbody> ();
 		rigid.freezeRotation = true;
 		isCrouching = false;
-		voiceClipsStarted = false;
 		// Get nav points
 
 		//navPoints = GameObject.FindGameObjectsWithTag("PatrolPoint");
@@ -139,19 +137,33 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		if (enemyType == EnemyType.Patrol) {
 			range = 10f;
+			accuracyOffset = 3f;
+			fireRate = 0.4f;
+			damage = 20f;
+			shootSound = (AudioClip)Resources.Load ("Gun Sounds/M16A3");
+			GetComponentsInChildren<AudioSource> () [1].minDistance = 9f;
 		} else {
-			range = 27f;
+			if (sniper) {
+				range = 35f;
+				accuracyOffset = 2f;
+				fireRate = 20f;
+				damage = 35f;
+				shootSound = (AudioClip)Resources.Load ("Gun Sounds/L96A1");
+				GetComponentsInChildren<AudioSource> () [1].minDistance = 18f;
+			} else {
+				range = 27f;
+				accuracyOffset = 3f;
+				fireRate = 0.4f;
+				damage = 20f;
+				shootSound = (AudioClip)Resources.Load ("Gun Sounds/M16A3");
+				GetComponentsInChildren<AudioSource> () [1].minDistance = 9f;
+			}
 		}
 
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if (!voiceClipsStarted && alerted) {
-			voiceClipsStarted = true;
-			StartCoroutine (VoiceClip());
-		}
-
 		if (isCrouching) {
 			myCollider.height = 0.97f;
 			myCollider.radius = 0.32f;
@@ -266,10 +278,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			Quaternion lookRot = Quaternion.LookRotation (rotDir);
 			Quaternion tempQuat = Quaternion.Slerp (transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
 			Vector3 tempRot = tempQuat.eulerAngles;
-			//tempRot = new Vector3 (0f, tempRot.y, 0f);
 			transform.rotation = Quaternion.Euler (new Vector3 (0f, tempRot.y, 0f));
-			//spine.transform.localRotation = Quaternion.Euler (new Vector3 (tempRot.x, 0f, 0f));
-			spine.transform.forward = new Vector3(spine.transform.forward.x, player.transform.position.y - spine.transform.position.y + 0.3f, spine.transform.forward.z);
 		}
 	}
 
@@ -481,7 +490,6 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 
 			if (player != null) {
-				RotateTowardsPlayer ();
 				if (firingState == FiringStates.Forward) {
 					navMesh.Move (transform.forward * 2f);
 					//navMesh.SetDestination (player.transform.position);
@@ -568,18 +576,17 @@ public class BetaEnemyScript : MonoBehaviour {
 		audioSource.clip = a;
 		audioSource.Play ();
 	}
-
-	IEnumerator VoiceClip() {
-		yield return new WaitForSeconds (Random.Range(2f, 100f));
-		PlayVoiceClip ();
-		StartCoroutine (VoiceClip());
-	}
-
-	void PlayVoiceClip() {
+		
+	void PlayVoiceClip(int n) {
 		if (!audioSource.isPlaying) {
-			audioSource.clip = voiceClips [Random.Range (0, voiceClips.Length)];
+			audioSource.clip = voiceClips [n - 1];
 			audioSource.Play ();
 		}
+	}
+
+	IEnumerator PlayVoiceClipDelayed(int n, float t) {
+		yield return new WaitForSeconds (t);
+		PlayVoiceClip (n);
 	}
 
 	[PunRPC]
@@ -1048,8 +1055,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 			// Adding artificial stupidity - ensures that the player isn't hit every time by offsetting
 			// the shooting direction in x and y by two random numbers
-			float xOffset = Random.Range (-3f, 3f);
-			float yOffset = Random.Range (-3f, 3f);
+			float xOffset = Random.Range (-accuracyOffset, accuracyOffset);
+			float yOffset = Random.Range (-accuracyOffset, accuracyOffset);
 			dir = new Vector3 (dir.x + xOffset, dir.y + yOffset, dir.z);
 			//Debug.DrawRay (shootPoint.position, dir * range, Color.red);
 			if (Physics.Raycast (shootPoint.position, dir, out hit)) {
@@ -1105,6 +1112,12 @@ public class BetaEnemyScript : MonoBehaviour {
 		currentBullets--;
 		// Reset fire timer
 		fireTimer = 0.0f;
+		if (sniper && player != null) {
+			SniperTracerScript s = sniperTracer.gameObject.GetComponent<SniperTracerScript> ();
+			s.enabled = true;
+			s.SetDistance (Vector3.Distance(shootPoint.position, player.transform.position));
+			sniperTracer.GetComponent<LineRenderer> ().enabled = true;
+		}
 	}
 
 	private void PlayShootSound() {
@@ -1122,6 +1135,12 @@ public class BetaEnemyScript : MonoBehaviour {
 		
 	public void MeleeAttack() {
 		if (playerToHit != null) {
+			int r = Random.Range (0, 2);
+			if (r == 0) {
+				PlayVoiceClip (5);
+			} else {
+				PlayVoiceClip (13);
+			}
 			playerToHit.GetComponent<PlayerScript> ().TakeDamage (50);
 			playerToHit.GetComponent<PlayerScript> ().hitTimer = 0f;
 			playerToHit = null;
@@ -1357,6 +1376,15 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	private void RpcUpdateActionState(ActionStates action) {
+		//{Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking}
+		if (action == ActionStates.Firing || action == ActionStates.Moving || action == ActionStates.Reloading || action == ActionStates.Pursue || action == ActionStates.TakingCover || action == ActionStates.InCover) {
+			int r = Random.Range (0, 3);
+			if (r == 1) {
+				StartCoroutine (PlayVoiceClipDelayed(Random.Range (1, 5), Random.Range(2f, 50f)));
+			} else if (r != 0) {
+				StartCoroutine (PlayVoiceClipDelayed(Random.Range (6, 13), Random.Range(2f, 50f)));
+			}
+		}
 		actionState = action;
 	}
 

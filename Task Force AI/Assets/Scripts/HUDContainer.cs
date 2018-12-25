@@ -29,6 +29,7 @@ public class HUDContainer : MonoBehaviour {
 
 	// Map HUD
 	public GameObject hudMap;
+	public GameObject hudMap2;
 	public GameObject hudWaypoint;
 	public GameObject hudPlayerMarker;
 

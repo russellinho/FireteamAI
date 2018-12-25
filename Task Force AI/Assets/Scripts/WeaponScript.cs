@@ -68,6 +68,7 @@ public class WeaponScript : MonoBehaviour {
 	private Quaternion originalRot;
 	public Vector3 aimPos;
 	public Vector3 sprintPos;
+	public Vector3 sprintPos2;
 	public Vector3 sprintRot;
 	// Aiming speed
 	public float aodSpeed = 8f;
