@@ -367,6 +367,12 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void ResetHitTimer() {
+		photonView.RPC ("RpcResetHitTimer", RpcTarget.All);
+		hitTimer = 0f;
+	}
+
+	[PunRPC]
+	void RpcResetHitTimer() {
 		hitTimer = 0f;
 	}
 

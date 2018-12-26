@@ -230,7 +230,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (p.GetComponent<PlayerScript>().health > 0)
 			{
 				playerMarkers [actorNo].SetActive (true);
-				playerMarkers[actorNo].GetComponentInChildren<Slider>().value = ((float)(p.GetComponent<PlayerScript>().health / 100));
+				playerMarkers[actorNo].GetComponentInChildren<Slider>().value = (((float)p.GetComponent<PlayerScript>().health) / 100.0f);
 				Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + p.transform.lossyScale.y, p.transform.position.z);
 				playerMarkers[actorNo].GetComponent<RectTransform>().position = playerScript.viewCam.WorldToScreenPoint(o);
 			}
