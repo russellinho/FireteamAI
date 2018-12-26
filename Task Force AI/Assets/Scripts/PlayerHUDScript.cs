@@ -151,6 +151,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		HandleChat ();
 		HandleRespawnBar ();
+		UpdateObjectives ();
     }
 
 	void FixedUpdate() {
@@ -357,13 +358,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     public void UpdateObjectives()
     {
-		photonView.RPC ("RpcUpdateObjectives", RpcTarget.All);
-    }
-
-	[PunRPC]
-	void RpcUpdateObjectives() {
 		container.objectivesText.text = objectiveFormatter.LoadObjectives(gameController.currentMap, gameController.bombsRemaining);
-	}
+    }
 
 	public void MessagePopup(string message)
     {

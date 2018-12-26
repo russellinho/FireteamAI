@@ -345,7 +345,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 					photonView.RPC ("RpcDefuseBomb", RpcTarget.All, currentBombIndex);
 					gameController.GetComponent<GameControllerScript> ().DecrementBombsRemaining ();
-					hud.UpdateObjectives ();
 					currentBomb = null;
 
 					hud.ToggleActionBar (false);
