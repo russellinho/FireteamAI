@@ -12,7 +12,7 @@ namespace Photon.Pun.LobbySystemPhoton
 	public class ListPlayer : MonoBehaviourPunCallbacks
 	{
 
-		private PhotonView photonView;
+		private PhotonView pView;
 
 		[Header("Inside Room Panel")]
 		public GameObject[] InsideRoomPanel;
@@ -43,12 +43,9 @@ namespace Photon.Pun.LobbySystemPhoton
 		private bool isReady = false;
 		private bool gameStarting = false;
 
-		void Awake() {
-			photonView = GetComponent<PhotonView> ();
-		}
-
 		void Start() {
 			SetMapInfo ();
+			pView = GetComponent<PhotonView> ();
 		}
 
 		public void DisplayPopup(string message) {
@@ -66,8 +63,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 				// Testing - comment in release
 				if (PlayerData.playerdata.testMode == true) {
-					gameStarting = true;
-					photonView.RPC ("RpcToggleButtons", RpcTarget.All, false);
+					pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
 					StartCoroutine ("StartGameCountdown");
 					return;
 				}
@@ -87,8 +83,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				}
 
 				if (readyCount >= 2) {
-					gameStarting = true;
-					photonView.RPC ("RpcToggleButtons", RpcTarget.All, false);
+					pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
 					StartCoroutine ("StartGameCountdown");
 				} else {
 					DisplayPopup ("There must be at least two ready players to start the game!");
@@ -108,7 +103,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		[PunRPC]
-		void RpcToggleButtons(bool status) {
+		void RpcToggleButtons(bool status, bool gameIsStarting) {
+			gameStarting = gameIsStarting;
 			mapNext.interactable = status;
 			mapPrev.interactable = status;
 			readyButton.GetComponent<Button> ().interactable = status;
@@ -119,7 +115,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		void ChangeReadyStatus() {
 			isReady = !isReady;
-			photonView.RPC ("RpcChangeReadyStatus", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, isReady);
+			pView.RPC ("RpcChangeReadyStatus", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, isReady);
 		}
 
 		[PunRPC]
@@ -157,10 +153,16 @@ namespace Photon.Pun.LobbySystemPhoton
 			titleController.GetComponent<AudioSource> ().Play ();
 			chat.sendChatOfMaster ("Game starting in 1");
 			yield return new WaitForSeconds (1f);
-			titleController.GetComponent<TitleControllerScript> ().InstantiateLoadingScreen (mapNames[mapIndex]);
+
+			pView.RPC ("RpcLoadingScreen", RpcTarget.All);
 			if (PhotonNetwork.IsMasterClient) {
 				StartGame (mapNames [mapIndex]);
 			}
+		}
+
+		[PunRPC]
+		void RpcLoadingScreen() {
+			titleController.GetComponent<TitleControllerScript> ().InstantiateLoadingScreen (mapNames[mapIndex]);
 		}
 
 		void Update() {
