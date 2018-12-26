@@ -440,10 +440,12 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		for (int i = 0; i < subComponents.Length; i++) {
 			subComponents [i].SetActive (status);
 		}
-		charController.enabled = status;
-		fpc.enabled = status;
-		viewCam.enabled = status;
-		wepScript.enabled = status;
+		if (photonView.IsMine) {
+			charController.enabled = status;
+			fpc.enabled = status;
+			viewCam.enabled = status;
+			wepScript.enabled = status;
+		}
 	}
 
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
