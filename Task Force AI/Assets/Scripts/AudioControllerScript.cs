@@ -32,13 +32,10 @@ public class AudioControllerScript : MonoBehaviour {
 	public AudioClip missionStartSound;
 
 	private bool wasRunning;
+	private PhotonView pView;
 
 	// Use this for initialization
 	void Start () {
-		if (!GetComponent<PhotonView> ().IsMine) {
-			this.enabled = false;
-			return;
-		}
 		wasRunning = false;
 		fxSound1 = fxRef.GetComponents<AudioSource>() [0];
 		fxSound2 = fxRef.GetComponents<AudioSource>() [1];
@@ -46,14 +43,17 @@ public class AudioControllerScript : MonoBehaviour {
 		fxSound4 = fxRef.GetComponents<AudioSource>() [3];
 		fxSound5 = fxRef.GetComponents<AudioSource> () [4];
 		fxSound6 = fxRef.GetComponents<AudioSource> () [5];
-		PlayMissionStartSound ();
+		pView = GetComponent<PhotonView> ();
+		if (pView.IsMine) {
+			PlayMissionStartSound ();
+		}
 
 	}
 
 	// Update is called once per frame
 	void Update () {
 		// Ensure we can access game controller before we begin
-		if (!GetComponent<PhotonView> ().IsMine) {
+		if (!pView.IsMine) {
 			return;
 		}
 		if (!gameControllerRef) {
@@ -140,8 +140,15 @@ public class AudioControllerScript : MonoBehaviour {
 	}
 
 	public void PlayHitSound() {
-		fxSound4.clip = playerHitSound;
-		fxSound4.Play ();
+		pView.RPC ("RpcPlayHitSound", RpcTarget.All);
+	}
+
+	[PunRPC]
+	void RpcPlayHitSound() {
+		if (pView.IsMine) {
+			fxSound4.clip = playerHitSound;
+			fxSound4.Play ();
+		}
 	}
 
 }

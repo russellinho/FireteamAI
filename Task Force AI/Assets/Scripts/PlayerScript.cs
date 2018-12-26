@@ -66,6 +66,17 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	// Use this for initialization
 	void Start () {
 		DontDestroyOnLoad (gameObject);
+		AddMyselfToPlayerList ();
+		audioController = GetComponent<AudioControllerScript> ();
+
+		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
+        if (!GetComponent<PhotonView>().IsMine) {
+			Destroy (GetComponentInChildren<AudioListener>());
+			GetComponentInChildren<Camera> ().enabled = false;
+			//enabled = false;
+			return;
+		}
+			
 		// Setting original positions for returning from crouching
 		charController = GetComponent<CharacterController>();
 		charHeightOriginal = charController.height;
@@ -78,16 +89,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		kills = 0;
 		deaths = 0;
 
-        gameController = GameObject.FindWithTag("GameController");
-		AddMyselfToPlayerList ();
-
-		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
-        if (!GetComponent<PhotonView>().IsMine) {
-			Destroy (GetComponentInChildren<AudioListener>());
-			GetComponentInChildren<Camera> ().enabled = false;
-			//enabled = false;
-			return;
-		}
+		gameController = GameObject.FindWithTag("GameController");
 
 		photonView.RPC ("SyncPlayerColor", RpcTarget.All, PlayerData.playerdata.color);
 		wepScript = gameObject.GetComponent<WeaponScript> ();
@@ -111,8 +113,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		isRespawning = false;
 		respawnTimer = 0f;
 		escapeAvailablePopup = false;
-
-		audioController = GetComponent<AudioControllerScript> ();
 
 	}
 
@@ -390,13 +390,15 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		if (other.gameObject.tag.Equals ("AmmoBox")) {
-			wepScript.totalBulletsLeft = 120 + (wepScript.bulletsPerMag - wepScript.currentBullets);
-			other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
-		} else if (other.gameObject.tag.Equals("HealthBox")) {
-			ResetHealTimer ();
-			health = 100;
-			other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
+		if (photonView.IsMine) {
+			if (other.gameObject.tag.Equals ("AmmoBox")) {
+				wepScript.totalBulletsLeft = 120 + (wepScript.bulletsPerMag - wepScript.currentBullets);
+				other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
+			} else if (other.gameObject.tag.Equals ("HealthBox")) {
+				ResetHealTimer ();
+				health = 100;
+				other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
+			}
 		}
 	}
 
