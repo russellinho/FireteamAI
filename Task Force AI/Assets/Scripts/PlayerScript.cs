@@ -69,14 +69,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		AddMyselfToPlayerList ();
 		audioController = GetComponent<AudioControllerScript> ();
 
-		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
-        if (!GetComponent<PhotonView>().IsMine) {
-			Destroy (GetComponentInChildren<AudioListener>());
-			GetComponentInChildren<Camera> ().enabled = false;
-			//enabled = false;
-			return;
-		}
-			
 		// Setting original positions for returning from crouching
 		charController = GetComponent<CharacterController>();
 		charHeightOriginal = charController.height;
@@ -88,6 +80,14 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		health = 100;
 		kills = 0;
 		deaths = 0;
+
+		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
+        if (!GetComponent<PhotonView>().IsMine) {
+			Destroy (GetComponentInChildren<AudioListener>());
+			GetComponentInChildren<Camera> ().enabled = false;
+			//enabled = false;
+			return;
+		}
 
 		gameController = GameObject.FindWithTag("GameController");
 
