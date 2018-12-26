@@ -63,12 +63,18 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		lastGunshotTimer = 10f;
 		sectorsCleared = 0;
 
+		lastGunshotHeardPos = Vector3.negativeInfinity;
+		lastGunshotHeardPosClone = Vector3.negativeInfinity;
+
 	}
 
 	// Update is called once per frame
 	void Update () {
         if (currentMap == 1)
         {
+			if (bombsRemaining == 0) {
+				escapeAvailable = true;
+			}
             if (PhotonNetwork.IsMasterClient) {
 				if (!gameOver) {
 					UpdateMissionTime ();
@@ -81,7 +87,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 						pView.RPC ("RpcEndGame", RpcTarget.All, 9f);
 					}
 				} else if (bombsRemaining == 0) {
-					escapeAvailable = true;
 					if (!gameOver && CheckEscape ()) {
 						// If they can escape, end the game and bring up the stat board
 						pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
@@ -228,10 +233,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	}*/
 
-	// TODO: Need to clear player list, go back to lobby upon leaving match
 	public override void OnLeftRoom()
 	{
-		// Destroy the 
 		foreach (GameObject entry in playerList.Values)
 		{
 			Destroy(entry.gameObject);
@@ -240,10 +243,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		playerList.Clear();
 		totalKills.Clear ();
 		totalDeaths.Clear ();
-		playerList = null;
+		/**playerList = null;
 		totalKills = null;
-		totalDeaths = null;
-		PhotonNetwork.JoinLobby();
+		totalDeaths = null;*/
 	}
 
 	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
