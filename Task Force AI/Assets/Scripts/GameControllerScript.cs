@@ -258,7 +258,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		playerList.Remove (otherPlayer.ActorNumber);
 		totalKills.Remove (otherPlayer.NickName);
 		totalDeaths.Remove (otherPlayer.NickName);
-		Debug.Log (playerList.Count);
 	}
 
 	/**public override void OnPlayerEnteredRoom(Player newPlayer) {

@@ -512,4 +512,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	public override void OnPlayerLeftRoom(Player otherPlayer) {
+		Destroy (playerMarkers [otherPlayer.ActorNumber]);
+		playerMarkers.Remove (otherPlayer.ActorNumber);
+	}
+
 }
