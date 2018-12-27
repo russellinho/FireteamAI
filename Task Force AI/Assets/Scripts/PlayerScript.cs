@@ -129,9 +129,9 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		}
 
 		// Instant respawn hack
-		/**if (Input.GetKeyDown (KeyCode.P)) {
+		if (Input.GetKeyDown (KeyCode.P)) {
 			BeginRespawn ();
-		}*/
+		}
 
 		if (gameController.GetComponent<GameControllerScript>().sectorsCleared == 0 && gameController.GetComponent<GameControllerScript> ().bombsRemaining == 2) {
 			gameController.GetComponent<GameControllerScript> ().sectorsCleared++;

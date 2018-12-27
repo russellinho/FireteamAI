@@ -37,14 +37,14 @@ public class AudioControllerScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		wasRunning = false;
-		fxSound6 = fxRef.GetComponents<AudioSource> () [5];
+		fxSound2 = fxRef.GetComponents<AudioSource>() [1];
 		pView = GetComponent<PhotonView> ();
 		if (pView.IsMine) {
 			fxSound1 = fxRef.GetComponents<AudioSource>() [0];
-			fxSound2 = fxRef.GetComponents<AudioSource>() [1];
 			fxSound3 = fxRef.GetComponents<AudioSource>() [2];
 			fxSound4 = fxRef.GetComponents<AudioSource>() [3];
 			fxSound5 = fxRef.GetComponents<AudioSource> () [4];
+			fxSound6 = fxRef.GetComponents<AudioSource> () [5];
 			PlayMissionStartSound ();
 		}
 
