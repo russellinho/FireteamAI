@@ -175,12 +175,21 @@ public class WeaponScript : MonoBehaviour {
 
 	public void AimDownSights() {
 		if (!isSprinting && !playerScript.fpc.m_IsRunning) {
-			if (Input.GetButtonDown ("Fire2") && !isReloading) {
+			// Logic for toggle aim rather than hold down aim
+			/**if (Input.GetButtonDown ("Fire2") && !isReloading) {
 				isAiming = !isAiming;
 			}
 			if (isAiming && !isReloading) {
 				originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, aimPos, Time.deltaTime * aodSpeed);
 			} else {
+				originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
+			}*/
+
+			if (Input.GetButton ("Fire2") && !isReloading) {
+				isAiming = true;
+				originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, aimPos, Time.deltaTime * aodSpeed);
+			} else {
+				isAiming = false;
 				originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
 			}
 			originalTrans.localRotation = Quaternion.Lerp (originalTrans.localRotation, originalRot, Time.deltaTime * aodSpeed);
