@@ -283,7 +283,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleHUD(bool b)
     {
-		Debug.Log ("Toggle HUD: " + b);
         container.healthText.enabled = b;
         container.weaponLabelTxt.enabled = b;
         container.ammoTxt.enabled = b;
@@ -293,9 +292,15 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleScoreboard(bool b)
     {
-		container.healthText.enabled = !b;
-		container.weaponLabelTxt.enabled = !b;
-		container.ammoTxt.enabled = !b;
+		if (playerScript.health <= 0) {
+			container.healthText.enabled = false;
+			container.weaponLabelTxt.enabled = false;
+			container.ammoTxt.enabled = false;
+		} else {
+			container.healthText.enabled = !b;
+			container.weaponLabelTxt.enabled = !b;
+			container.ammoTxt.enabled = !b;
+		}
 		container.missionTimeText.enabled = !b;
 		container.missionTimeRemainingText.enabled = !b;
 		container.assaultModeIndText.enabled = !b;
@@ -374,7 +379,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void ToggleSpectatorMessage(bool b) {
-		Debug.Log ("Toggle spec: " + b);
 		container.spectatorText.gameObject.SetActive (b);
 	}
 

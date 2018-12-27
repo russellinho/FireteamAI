@@ -83,6 +83,8 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
         if (!GetComponent<PhotonView>().IsMine) {
+			subComponents[2].SetActive (false);
+			subComponents[3].SetActive (false);
 			Destroy (GetComponentInChildren<AudioListener>());
 			GetComponentInChildren<Camera> ().enabled = false;
 			//enabled = false;
@@ -188,18 +190,15 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void TakeDamage(int d) {
-		audioController.GetComponent<AudioControllerScript> ().PlayHitSound ();
-		photonView.RPC ("PlayGruntSound", RpcTarget.All);
         photonView.RPC("RpcTakeDamage", RpcTarget.All, d);
     }
 
-	[PunRPC]
-	void PlayGruntSound() {
-		audioController.GetComponent<AudioControllerScript> ().PlayGruntSound ();
-	}
-
     [PunRPC]
     void RpcTakeDamage(int d) {
+		audioController.PlayGruntSound ();
+		if (photonView.IsMine) {
+			audioController.PlayHitSound ();
+		}
         if (!godMode)
         {
             health -= d;
@@ -443,10 +442,12 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	[PunRPC]
 	void RpcChangePlayerDisableStatus(bool status) {
-		for (int i = 0; i < subComponents.Length; i++) {
-			subComponents [i].SetActive (status);
-		}
+		subComponents [0].SetActive (status);
+		subComponents [1].SetActive (status);
+		subComponents [4].SetActive (status);
 		if (photonView.IsMine) {
+			subComponents [2].SetActive(status);
+			subComponents [3].SetActive(status);
 			charController.enabled = status;
 			fpc.enabled = status;
 			viewCam.enabled = status;

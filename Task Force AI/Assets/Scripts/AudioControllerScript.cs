@@ -37,14 +37,14 @@ public class AudioControllerScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		wasRunning = false;
-		fxSound1 = fxRef.GetComponents<AudioSource>() [0];
-		fxSound2 = fxRef.GetComponents<AudioSource>() [1];
-		fxSound3 = fxRef.GetComponents<AudioSource>() [2];
-		fxSound4 = fxRef.GetComponents<AudioSource>() [3];
-		fxSound5 = fxRef.GetComponents<AudioSource> () [4];
 		fxSound6 = fxRef.GetComponents<AudioSource> () [5];
 		pView = GetComponent<PhotonView> ();
 		if (pView.IsMine) {
+			fxSound1 = fxRef.GetComponents<AudioSource>() [0];
+			fxSound2 = fxRef.GetComponents<AudioSource>() [1];
+			fxSound3 = fxRef.GetComponents<AudioSource>() [2];
+			fxSound4 = fxRef.GetComponents<AudioSource>() [3];
+			fxSound5 = fxRef.GetComponents<AudioSource> () [4];
 			PlayMissionStartSound ();
 		}
 
@@ -98,30 +98,33 @@ public class AudioControllerScript : MonoBehaviour {
 	}
 
 	public void PlayHeadshotSound() {
+		if (!pView.IsMine) {
+			return;
+		}
 		fxSound1.clip = headshotSound;
 		fxSound1.Play ();
 	}
 
 	void PlayMissionStartSound() {
+		if (!pView.IsMine) {
+			return;
+		}
 		fxSound1.clip = missionStartSound;
 		fxSound1.Play ();
 	}
 
 	public void PlayGruntSound() {
-		if (fxSound6.isPlaying) {
+		if (fxSound6.enabled && fxSound6.isPlaying) {
 			fxSound6.Stop ();
 		}
 
-		int r = Random.Range (1, 3);
-		if (r == 1) {
-			fxSound2.clip = playerGruntSound1;
-		} else {
-			fxSound2.clip = playerGruntSound2;
-		}
-		fxSound2.Play ();
+		pView.RPC ("RpcPlayGruntSound", RpcTarget.All);
 	}
 
 	public void PlaySprintSound(bool play) {
+		if (!pView.IsMine) {
+			return;
+		}
 		if (play) {
 			wasRunning = true;
 			if (!fxSound6.isPlaying) {
@@ -135,20 +138,30 @@ public class AudioControllerScript : MonoBehaviour {
 	}
 
 	public void PlayHitmarkerSound() {
+		if (!pView.IsMine) {
+			return;
+		}
 		fxSound3.clip = hitmarkerSound;
 		fxSound3.Play ();
 	}
 
 	public void PlayHitSound() {
-		pView.RPC ("RpcPlayHitSound", RpcTarget.All);
+		if (!pView.IsMine) {
+			return;
+		}
+		fxSound4.clip = playerHitSound;
+		fxSound4.Play ();
 	}
 
 	[PunRPC]
-	void RpcPlayHitSound() {
-		if (pView.IsMine) {
-			fxSound4.clip = playerHitSound;
-			fxSound4.Play ();
+	void RpcPlayGruntSound() {
+		int r = Random.Range (1, 3);
+		if (r == 1) {
+			fxSound2.clip = playerGruntSound1;
+		} else {
+			fxSound2.clip = playerGruntSound2;
 		}
+		fxSound2.Play ();
 	}
 
 }

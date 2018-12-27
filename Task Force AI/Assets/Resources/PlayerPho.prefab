@@ -907,7 +907,6 @@ GameObject:
   - component: {fileID: 4323335807701884}
   - component: {fileID: 33077657199543566}
   - component: {fileID: 23869993814815514}
-  - component: {fileID: 114486531961388722}
   m_Layer: 9
   m_Name: Body
   m_TagString: Untagged
@@ -3274,17 +3273,6 @@ MonoBehaviour:
   hitTimer: 1
   healTimer: 0
   hitLocation: {x: 0, y: 0, z: 0}
---- !u!114 &114486531961388722
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1846543175668508}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72a5583723a2b204aa2add162cb79e53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114521612197257648
 MonoBehaviour:
   m_ObjectHideFlags: 1
