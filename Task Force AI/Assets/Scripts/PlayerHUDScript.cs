@@ -48,7 +48,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.defusingText.enabled = false;
 		container.hintText.enabled = false;
 		container.scoreboard.GetComponent<Canvas> ().enabled = false;
-		container.spectatorText.gameObject.SetActive (false);
+		container.spectatorText.enabled = false;
 
 		playerScript = GetComponent<PlayerScript> ();
 		wepScript = GetComponent<WeaponScript> ();
@@ -379,7 +379,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void ToggleSpectatorMessage(bool b) {
-		container.spectatorText.gameObject.SetActive (b);
+		container.spectatorText.text = "You've been eliminated.\nYou can respawn if an ally clears the sector.";
+		container.spectatorText.enabled = b;
 	}
 
 	//public override void OnPlayerEnteredRoom(Player newPlayer) {
