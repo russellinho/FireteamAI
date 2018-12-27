@@ -169,12 +169,13 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 				escapeValueSent = true;
 				gameController.GetComponent<GameControllerScript> ().IncrementDeathCount ();
 			}
+		} else {
+			BombCheck ();
 		}
 
 		if (fpc.enabled && fpc.canMove) {
 			Crouch ();
 		}
-		BombCheck ();
 		DetermineEscaped ();
 		RespawnRoutine ();
 

@@ -283,6 +283,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleHUD(bool b)
     {
+		Debug.Log ("Toggle HUD: " + b);
         container.healthText.enabled = b;
         container.weaponLabelTxt.enabled = b;
         container.ammoTxt.enabled = b;
@@ -373,6 +374,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void ToggleSpectatorMessage(bool b) {
+		Debug.Log ("Toggle spec: " + b);
 		container.spectatorText.gameObject.SetActive (b);
 	}
 

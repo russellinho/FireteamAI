@@ -17,7 +17,7 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 	private Text[] deaths;
 
 	void Awake() {
-		ClearMatchData ();
+		ClearPlayerData ();
 	}
 
     void Start()
@@ -50,11 +50,12 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 	}
 
 	public override void OnLeftRoom() {
+		ClearMatchData ();
 		PhotonNetwork.Disconnect ();
 		SceneManager.LoadScene (0);
 	}
 
-	void ClearMatchData() {
+	void ClearPlayerData() {
 		// Destroy the 
 		foreach (GameObject entry in GameControllerScript.playerList.Values)
 		{
@@ -62,11 +63,11 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 		}
 
 		GameControllerScript.playerList.Clear();
+	}
+
+	void ClearMatchData() {
 		GameControllerScript.totalKills.Clear ();
 		GameControllerScript.totalDeaths.Clear ();
-		GameControllerScript.playerList = null;
-		GameControllerScript.totalKills = null;
-		GameControllerScript.totalDeaths = null;
 	}
 
 }
