@@ -139,7 +139,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			}
 			ToggleHUD (false);
 		} else {
-			ToggleGameOverPopup (false);
+			if (playerScript.health > 0 || playerScript.isRespawning) {
+				ToggleGameOverPopup (false);
+			}
 		}
 
         UpdateMissionTimeText();

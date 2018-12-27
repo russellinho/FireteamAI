@@ -114,7 +114,7 @@ public class AudioControllerScript : MonoBehaviour {
 	}
 
 	public void PlayGruntSound() {
-		if (fxSound6.enabled && fxSound6.isPlaying) {
+		if (fxSound6 != null && fxSound6.isPlaying) {
 			fxSound6.Stop ();
 		}
 
