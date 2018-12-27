@@ -286,8 +286,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         container.healthText.enabled = b;
         container.weaponLabelTxt.enabled = b;
         container.ammoTxt.enabled = b;
-        container.hudMap.SetActive(b);
-		container.hudMap2.SetActive(b);
+		container.hudMap.enabled = b;
+		container.hudMap2.enabled = b;
     }
 
 	public void ToggleScoreboard(bool b)

@@ -379,6 +379,11 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		healTimer = 0f;
 	}
 
+	[PunRPC]
+	void RpcSetHealth(int h) {
+		health = h;
+	}
+
 	public void SetHitLocation(Vector3 pos) {
 		hitLocation = pos;
 	}
@@ -485,7 +490,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	// Reset character health, scale, rotation, position, ammo, re-enable FPS hands, disabled HUD components, disabled scripts, death variables, etc.
 	void Respawn() {
-		health = 100;
+		photonView.RPC ("RpcSetHealth", RpcTarget.All, 100);
 		photonView.RPC ("RpcToggleFPSHands", RpcTarget.All, true);
 		hud.ToggleHUD (true);
 		hud.ToggleSpectatorMessage (false);
