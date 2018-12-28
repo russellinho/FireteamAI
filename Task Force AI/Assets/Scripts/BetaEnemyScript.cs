@@ -121,6 +121,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		health = 100;
 		currentBullets = bulletsPerMag;
 		audioSource = GetComponent<AudioSource> ();
+		audioSource.maxDistance = 100f;
 		gunAudio = GetComponentsInChildren<AudioSource> () [1];
 		rigid = GetComponent<Rigidbody> ();
 		rigid.freezeRotation = true;

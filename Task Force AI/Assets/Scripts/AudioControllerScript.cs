@@ -118,7 +118,13 @@ public class AudioControllerScript : MonoBehaviour {
 			fxSound6.Stop ();
 		}
 
-		pView.RPC ("RpcPlayGruntSound", RpcTarget.All);
+		int r = Random.Range (1, 3);
+		if (r == 1) {
+			fxSound2.clip = playerGruntSound1;
+		} else {
+			fxSound2.clip = playerGruntSound2;
+		}
+		fxSound2.Play ();
 	}
 
 	public void PlaySprintSound(bool play) {
@@ -151,17 +157,6 @@ public class AudioControllerScript : MonoBehaviour {
 		}
 		fxSound4.clip = playerHitSound;
 		fxSound4.Play ();
-	}
-
-	[PunRPC]
-	void RpcPlayGruntSound() {
-		int r = Random.Range (1, 3);
-		if (r == 1) {
-			fxSound2.clip = playerGruntSound1;
-		} else {
-			fxSound2.clip = playerGruntSound2;
-		}
-		fxSound2.Play ();
 	}
 
 }
