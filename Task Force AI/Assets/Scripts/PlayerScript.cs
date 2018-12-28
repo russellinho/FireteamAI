@@ -278,15 +278,15 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 				hud.ToggleHUD (false);
 				hud.ToggleSpectatorMessage (true);
 				deathCameraLerpPos = new Vector3 (viewCam.transform.localPosition.x, viewCam.transform.localPosition.y, viewCam.transform.localPosition.z - 5.5f);
-				alivePosition = new Vector3 (0f, bodyTrans.eulerAngles.y, 0f);
-				deadPosition = new Vector3 (-90f, bodyTrans.eulerAngles.y, 0f);
+				alivePosition = new Vector3 (0f, bodyTrans.localRotation.eulerAngles.y, 0f);
+				deadPosition = new Vector3 (-90f, bodyTrans.localRotation.eulerAngles.y, 0f);
 				StartCoroutine (RoutineEnterSpectatorMode());
 				rotationSaved = true;
 				photonView.RPC ("RpcAddToTotalDeaths", RpcTarget.All);
 			}
 			if (bodyTrans.rotation.x > -90f) {
 				fraction += Time.deltaTime * 8f;
-				bodyTrans.rotation = Quaternion.Euler (Vector3.Lerp(alivePosition, deadPosition, fraction));
+				bodyTrans.localRotation = Quaternion.Euler (Vector3.Lerp(alivePosition, deadPosition, fraction));
 			}
 			DeathCameraEffect ();
 		}
@@ -512,6 +512,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		wepScript.currentBullets = wepScript.bulletsPerMag;
 
 		// Send player back to spawn position, reset rotation, leave spectator mode
+		bodyTrans.localRotation = Quaternion.Euler (alivePosition);
 		transform.rotation = Quaternion.Euler(Vector3.zero);
 		transform.position = new Vector3 (gameController.GetComponent<GameControllerScript>().spawnLocation.position.x, gameController.GetComponent<GameControllerScript>().spawnLocation.position.y, gameController.GetComponent<GameControllerScript>().spawnLocation.position.z);
 		LeaveSpectatorMode ();
