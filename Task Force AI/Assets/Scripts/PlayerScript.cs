@@ -277,7 +277,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 				photonView.RPC ("RpcToggleFPSHands", RpcTarget.All, false);
 				hud.ToggleHUD (false);
 				hud.ToggleSpectatorMessage (true);
-				deathCameraLerpPos = new Vector3 (viewCam.transform.localPosition.x, viewCam.transform.localPosition.y, viewCam.transform.localPosition.z - 5.5f);
+				deathCameraLerpPos = new Vector3 (viewCam.transform.localPosition.x, viewCam.transform.localPosition.y, viewCam.transform.localPosition.z - 4.5f);
 				alivePosition = new Vector3 (0f, bodyTrans.localRotation.eulerAngles.y, 0f);
 				deadPosition = new Vector3 (-90f, bodyTrans.localRotation.eulerAngles.y, 0f);
 				StartCoroutine (RoutineEnterSpectatorMode());
@@ -415,6 +415,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	void DeathCameraEffect() {
 		deathCameraLerpVar += (Time.deltaTime / 4f);
 		viewCam.transform.localPosition = Vector3.Lerp (viewCam.transform.localPosition, deathCameraLerpPos, deathCameraLerpVar);
+		Debug.Log (viewCam.transform.localPosition + " ok " + deathCameraLerpVar);
 	}
 
 	[PunRPC]

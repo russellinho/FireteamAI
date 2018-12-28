@@ -342,7 +342,7 @@ public class WeaponScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcCockingAnim() {
-		gunAnimator.CrossFadeInFixedTime ("Reloading", 0.1f, -1, 3.1f);
+		gunAnimator.CrossFadeInFixedTime ("Reloading", 0.1f, -1, 2.3f);
 	}
 
 	[PunRPC]

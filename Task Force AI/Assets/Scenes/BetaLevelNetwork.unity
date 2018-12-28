@@ -19981,6 +19981,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -25427,6 +25432,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -27655,7 +27665,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5a660cc55ceba52489556e3f19390f2e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -28898,6 +28908,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -40194,6 +40209,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -40927,7 +40947,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5a660cc55ceba52489556e3f19390f2e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -42028,6 +42048,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -43153,6 +43178,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -43585,6 +43615,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -44085,7 +44120,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5a660cc55ceba52489556e3f19390f2e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -50684,6 +50719,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -52925,7 +52965,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5a660cc55ceba52489556e3f19390f2e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -53616,7 +53656,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5a660cc55ceba52489556e3f19390f2e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -53887,6 +53927,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -54699,6 +54744,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -67232,6 +67282,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -68157,6 +68212,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -71501,6 +71561,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -71747,6 +71812,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -72278,7 +72348,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5a660cc55ceba52489556e3f19390f2e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -72997,6 +73067,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -74613,6 +74688,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -75899,6 +75979,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -76473,7 +76558,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5a660cc55ceba52489556e3f19390f2e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -76690,6 +76775,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -76848,6 +76938,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -77700,6 +77795,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -89725,6 +89825,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -91121,7 +91226,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5a660cc55ceba52489556e3f19390f2e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -91455,6 +91560,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -93636,6 +93746,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -100473,7 +100588,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5a660cc55ceba52489556e3f19390f2e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -101626,6 +101741,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -102330,6 +102450,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -103123,7 +103248,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5a660cc55ceba52489556e3f19390f2e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -104485,6 +104610,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -105145,6 +105275,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -105563,7 +105698,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5a660cc55ceba52489556e3f19390f2e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -106525,6 +106660,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -107927,6 +108067,16 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114153078432112978, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114153078432112978, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 114510758155980528, guid: 1cdbefa86996e46a089959ed114f2e2a,
         type: 2}
       propertyPath: m_havePropertiesChanged
@@ -107937,15 +108087,10 @@ Prefab:
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114153078432112978, guid: 1cdbefa86996e46a089959ed114f2e2a,
+    - target: {fileID: 114510943717816168, guid: 1cdbefa86996e46a089959ed114f2e2a,
         type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114153078432112978, guid: 1cdbefa86996e46a089959ed114f2e2a,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1cdbefa86996e46a089959ed114f2e2a, type: 2}
@@ -108622,6 +108767,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -109814,7 +109964,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5a660cc55ceba52489556e3f19390f2e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -110313,6 +110463,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -117851,6 +118006,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -118201,6 +118361,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
@@ -123530,6 +123695,11 @@ Prefab:
       propertyPath: MinDistance
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
   m_IsPrefabAsset: 0
@@ -124911,6 +125081,11 @@ Prefab:
         type: 2}
       propertyPath: MinDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 95949796792428570, guid: bf887135426adf542a67687c9c855fe0,
+        type: 2}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf887135426adf542a67687c9c855fe0, type: 2}
