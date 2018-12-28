@@ -352,6 +352,7 @@ public class WeaponScript : MonoBehaviour {
 
 	private void PlayShootSound() {
 		audioSource.PlayOneShot (shootSound);
+		Debug.Log (pView.Owner.NickName + " is shooting");
 		//audioSource.clip = shootSound;
 		//audioSource.Play ();
 	}

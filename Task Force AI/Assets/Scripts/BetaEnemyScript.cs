@@ -58,6 +58,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	private Animator animator;
 	public int health;
 	private Rigidbody rigid;
+	private AudioSource gunAudio;
 
 	public float rotationSpeed = 6f;
 
@@ -120,6 +121,8 @@ public class BetaEnemyScript : MonoBehaviour {
 		health = 100;
 		currentBullets = bulletsPerMag;
 		audioSource = GetComponent<AudioSource> ();
+		gunAudio = GetComponentsInChildren<AudioSource> () [1];
+		gunAudio.maxDistance = 100f;
 		rigid = GetComponent<Rigidbody> ();
 		rigid.freezeRotation = true;
 		isCrouching = false;
@@ -1127,7 +1130,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	private void PlayShootSound() {
-		GetComponentsInChildren<AudioSource>()[1].PlayOneShot (shootSound);
+		gunAudio.PlayOneShot (shootSound);
 	}
 
 	public void Reload() {
