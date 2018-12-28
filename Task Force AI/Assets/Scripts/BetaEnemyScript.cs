@@ -164,14 +164,16 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (isCrouching) {
-			myCollider.height = 0.97f;
-			myCollider.radius = 0.32f;
-			myCollider.center = new Vector3 (-0.05f, 0.43f, -0.03f);
-		} else {
-			myCollider.height = originalColliderHeight;
-			myCollider.radius = originalColliderRadius;
-			myCollider.center = new Vector3 (originalColliderCenter.x, originalColliderCenter.y, originalColliderCenter.z);
+		if (health > 0) {
+			if (isCrouching) {
+				myCollider.height = 0.97f;
+				myCollider.radius = 0.32f;
+				myCollider.center = new Vector3 (-0.05f, 0.43f, -0.03f);
+			} else {
+				myCollider.height = originalColliderHeight;
+				myCollider.radius = originalColliderRadius;
+				myCollider.center = new Vector3 (originalColliderCenter.x, originalColliderCenter.y, originalColliderCenter.z);
+			}
 		}
 
 		if (fireTimer < fireRate) {
@@ -1188,7 +1190,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void RemoveHitboxes() {
-		myCollider.height = 0.3f;
+		myCollider.height = 0f;
 		myCollider.center = new Vector3 (0f, 0f, 0f);
 		GetComponent<BoxCollider>().enabled = false;
 	}
