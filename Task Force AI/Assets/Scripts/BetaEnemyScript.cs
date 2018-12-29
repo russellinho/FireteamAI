@@ -47,6 +47,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	private Vector3 spawnPos;
 	private Vector3 spawnRot;
 	public bool alerted = false;
+	private bool wasMasterClient;
 
 	// Finite state machine states
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking};
@@ -158,10 +159,35 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 		}
 
+		if (!PhotonNetwork.IsMasterClient) {
+			navMesh.enabled = false;
+			navMeshObstacle.enabled = false;
+			wasMasterClient = false;
+		} else {
+			wasMasterClient = true;
+		}
+
 	}
 
 	// Update is called once per frame
 	void Update () {
+		if (PhotonNetwork.IsMasterClient) {
+			if (!wasMasterClient) {
+				wasMasterClient = true;
+				if (enemyType == EnemyType.Patrol) {
+					navMesh.enabled = true;
+					navMeshObstacle.enabled = false;
+				} else {
+					navMeshObstacle.enabled = true;
+					navMesh.enabled = false;
+				}
+			}
+		} else {
+			wasMasterClient = false;
+			navMesh.enabled = false;
+			navMeshObstacle.enabled = false;
+		}
+
 		HandleCrouching ();
 
 		ReplenishFireRate ();
@@ -531,7 +557,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (coverWaitTimer <= 0f && !isReloading) {
 					pView.RPC ("RpcSetIsCrouching", RpcTarget.All, !isCrouching);
 					coverWaitTimer = Random.Range (2f, 7f);
-					pView.RPC ("RpcSetCoverWaitTimer", RpcTarget.Others, coverWaitTimer);
+					//pView.RPC ("RpcSetCoverWaitTimer", RpcTarget.Others, coverWaitTimer);
 				}
 				// Maneuvering through cover; if the maneuver timer runs out, it's time to move to another cover position
 				// TODO: Broken - coverswitch timer is never reset
@@ -849,7 +875,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					coverSwitchPositionsTimer -= Time.deltaTime;
 					if (coverSwitchPositionsTimer <= 0f) {
 						coverSwitchPositionsTimer = Random.Range (6f, 10f);
-						pView.RPC ("RpcSetCoverSwitchPositionsTimer", RpcTarget.Others, coverSwitchPositionsTimer);
+						//pView.RPC ("RpcSetCoverSwitchPositionsTimer", RpcTarget.Others, coverSwitchPositionsTimer);
 						if (GameControllerScript.lastGunshotHeardPos != Vector3.negativeInfinity) {
 							pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Seeking);
 						} else {
@@ -1106,7 +1132,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		RemoveHitboxes ();
 		yield return new WaitForSeconds(5f);
 		DespawnAction ();
-		StartCoroutine ("Respawn");
+		if (!sniper) {
+			StartCoroutine ("Respawn");
+		}
 	}
 
 	void DespawnAction() {
