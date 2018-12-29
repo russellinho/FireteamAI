@@ -33,6 +33,8 @@ public class BetaEnemyScript : MonoBehaviour {
 	private SkinnedMeshRenderer[] visibleParts;
 	private MeshRenderer gunRef;
 	private BoxCollider meleeTrigger;
+	private Vector3 prevNavDestination;
+	private bool prevWasStopped;
 
 	// Enemy variables
 	public EnemyType enemyType;
@@ -159,6 +161,9 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 		}
 
+		prevWasStopped = true;
+		prevNavDestination = Vector3.negativeInfinity;
+
 		if (!PhotonNetwork.IsMasterClient) {
 			navMesh.enabled = false;
 			navMeshObstacle.enabled = false;
@@ -177,6 +182,10 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (enemyType == EnemyType.Patrol) {
 					navMesh.enabled = true;
 					navMeshObstacle.enabled = false;
+					if (navMesh.isOnNavMesh) {
+						navMesh.isStopped = prevWasStopped;
+						navMesh.SetDestination (prevNavDestination);
+					}
 				} else {
 					navMeshObstacle.enabled = true;
 					navMesh.enabled = false;
@@ -328,8 +337,13 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcSetNavMeshDestination(float x, float y, float z) {
-		navMesh.SetDestination (new Vector3(x, y, z));
-		navMesh.isStopped = false;
+		if (PhotonNetwork.IsMasterClient) {
+			navMesh.SetDestination (new Vector3 (x, y, z));
+			navMesh.isStopped = false;
+		} else {
+			prevNavDestination = new Vector3 (x,y,z);
+			prevWasStopped = false;
+		}
 	}
 
 	[PunRPC]
@@ -732,8 +746,12 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcUpdateNavMesh(bool stopped) {
-		if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
-			navMesh.isStopped = stopped;
+		if (PhotonNetwork.IsMasterClient) {
+			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
+				navMesh.isStopped = stopped;
+			}
+		} else {
+			prevWasStopped = stopped;
 		}
 	}
 

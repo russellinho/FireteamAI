@@ -125,8 +125,11 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	// Update is called once per frame
 	void Update () {
 		if (gameController == null) {
-			gameController = GameObject.FindWithTag ("GameController").GetComponent<GameControllerScript>();
-			return;
+			GameObject gc = GameObject.FindWithTag ("GameController");
+			if (gc == null) {
+				return;
+			}
+			gameController = gc.GetComponent<GameControllerScript> ();
 		}
 
         if (!photonView.IsMine) {
