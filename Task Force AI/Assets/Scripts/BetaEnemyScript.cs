@@ -980,6 +980,14 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
+	float ScaleOffset(float dist) {
+		float scaledOffset = (1f / accuracyOffset) * dist;
+		if (scaledOffset > accuracyOffset) {
+			return accuracyOffset;
+		}
+		return scaledOffset;
+	}
+
 	private void Fire() {
 		if (fireTimer < fireRate || currentBullets < 0 || isReloading)
 			return;
@@ -988,12 +996,14 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (player != null) {
 			RaycastHit hit;
 			// Locks onto the player and shoots at him
-			Vector3 dir = player.GetComponentsInChildren<Transform>()[0].position - shootPoint.position;
+			Vector3 playerPos = player.GetComponentsInChildren<Transform>()[0].position;
+			Vector3 dir = playerPos - shootPoint.position;
 
 			// Adding artificial stupidity - ensures that the player isn't hit every time by offsetting
 			// the shooting direction in x and y by two random numbers
-			float xOffset = Random.Range (-accuracyOffset, accuracyOffset);
-			float yOffset = Random.Range (-accuracyOffset, accuracyOffset);
+			float scaledOffset = ScaleOffset(Vector3.Distance(playerPos, shootPoint.position));
+			float xOffset = Random.Range (-scaledOffset, scaledOffset);
+			float yOffset = Random.Range (-scaledOffset, scaledOffset);
 			dir = new Vector3 (dir.x + xOffset, dir.y + yOffset, dir.z);
 			//Debug.DrawRay (shootPoint.position, dir * range, Color.red);
 			if (Physics.Raycast (shootPoint.position, dir, out hit)) {
