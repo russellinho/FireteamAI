@@ -182,9 +182,11 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (enemyType == EnemyType.Patrol) {
 					navMesh.enabled = true;
 					navMeshObstacle.enabled = false;
-					if (navMesh.isOnNavMesh) {
-						navMesh.isStopped = prevWasStopped;
-						navMesh.SetDestination (prevNavDestination);
+					if (!prevWasStopped) {
+						if (navMesh.isOnNavMesh) {
+							navMesh.isStopped = prevWasStopped;
+							navMesh.SetDestination (prevNavDestination);
+						} 
 					}
 				} else {
 					navMeshObstacle.enabled = true;
@@ -513,31 +515,37 @@ public class BetaEnemyScript : MonoBehaviour {
 
 			if (player != null) {
 				if (firingState == FiringStates.Forward) {
+					navMesh.isStopped = true;
+					navMesh.ResetPath ();
+					navMesh.isStopped = false;
 					navMesh.Move (transform.forward * 2f);
 					//navMesh.SetDestination (player.transform.position);
-					//navMesh.isStopped = false;
 				}
 
 				if (firingState == FiringStates.Backpedal) {
-					//Vector3 oppositeDirVector = player.transform.position - transform.position;
+					navMesh.isStopped = true;
+					navMesh.ResetPath ();
+					navMesh.isStopped = false;
 					navMesh.Move (transform.forward * -2f);
 					//navMesh.SetDestination (new Vector3(transform.position.x, transform.position.y, transform.position.z - 5f));
 					//navMesh.SetDestination (new Vector3 (-oppositeDirVector.x, oppositeDirVector.y, -oppositeDirVector.z));
-					//navMesh.isStopped = false;
 				}
 
 				if (firingState == FiringStates.StrafeLeft) {
+					navMesh.isStopped = true;
+					navMesh.ResetPath ();
+					navMesh.isStopped = false;
 					Vector3 dest = new Vector3 (transform.right.x * navMesh.speed * 2f, transform.right.y * navMesh.speed * 2f, transform.right.z * navMesh.speed * 2f);
 					navMesh.Move (dest);
 					//navMesh.SetDestination (new Vector3(transform.position.x + dest.x, transform.position.y + dest.y, transform.position.z + dest.z));
-					//navMesh.isStopped = false;
 				}
 
 				if (firingState == FiringStates.StrafeRight) {
+					navMesh.isStopped = true;
+					navMesh.ResetPath ();
+					navMesh.isStopped = false;
 					Vector3 dest = new Vector3 (transform.right.x * -navMesh.speed * 2f, transform.right.y * -navMesh.speed * 2f, transform.right.z * -navMesh.speed * 2f);
 					navMesh.Move (dest);
-					//navMesh.SetDestination (new Vector3(transform.position.x + dest.x, transform.position.y + dest.y, transform.position.z + dest.z));
-					//navMesh.isStopped = false;
 				}
 			}
 		}
