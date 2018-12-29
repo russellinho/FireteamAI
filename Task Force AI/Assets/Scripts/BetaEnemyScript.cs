@@ -7,73 +7,73 @@ using UnityEngine.AI;
 
 public class BetaEnemyScript : MonoBehaviour {
 
+	// Prefab references
 	public GameObject ammoBoxPickup;
 	public GameObject healthBoxPickup;
 	public AudioClip[] voiceClips;
+	public GameObject hitParticles;
+	public GameObject bulletImpact;
+	public GameObject bloodEffect;
+	public GameObject bloodEffectHeadshot;
+
+	// Body/Component references
+	private AudioSource audioSource;
+	private AudioSource gunAudio;
+	private PhotonView pView;
+	public Transform headTransform;
+	public Transform shootPoint;
+	public LineRenderer sniperTracer;
+	private Animator animator;
+	private Rigidbody rigid;
+	private SpriteRenderer marker;
+	public NavMeshAgent navMesh;
+	public NavMeshObstacle navMeshObstacle;
+	private CapsuleCollider myCollider;
+	private CapsuleCollider headCollider;
+	private SkinnedMeshRenderer[] visibleParts;
+	private MeshRenderer gunRef;
+	private BoxCollider meleeTrigger;
 
 	// Enemy variables
+	public EnemyType enemyType;
+	public ActionStates actionState;
+	private FiringStates firingState;
+	private bool isCrouching;
 	public int aggression;
 	private float accuracyOffset;
 	public bool sniper;
+	public float rotationSpeed = 6f;
+	public int health;
+	private Vector3 spawnPos;
+	private Vector3 spawnRot;
+	public bool alerted = false;
 
 	// Finite state machine states
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking};
 	// FSM used for determining movement while attacking and not in cover
 	enum FiringStates {StandingStill, StrafeLeft, StrafeRight, Backpedal, Forward};
 
-	// Enemy combat style
+	// Type of enemy
 	public enum EnemyType {Patrol, Scout};
 
-	// Gun stuff
-	private AudioSource audioSource;
-
+	// Gun/weapon stuff
 	public float range;
 	public int bulletsPerMag = 30;
 	public int currentBullets;
 	public AudioClip shootSound;
-
-	public Transform shootPoint;
-	public LineRenderer sniperTracer;
 	public ParticleSystem muzzleFlash;
 	private bool isReloading = false;
-
-	public GameObject hitParticles;
-	public GameObject bulletImpact;
-	public GameObject bloodEffect;
-	public GameObject bloodEffectHeadshot;
-
 	public float fireRate = 0.4f;
 	public float damage = 10f;
+	float fireTimer = 0.0f; // Once it equals fireRate, it will allow us to shoot
 
-	public EnemyType enemyType;
-
-	// Once it equals fireRate, it will allow us to shoot
-	float fireTimer = 0.0f;
-
-	//-----------------------------------------------------
-
+	// Target references
 	public GameObject player;
 	private GameObject playerToHit;
 	public Vector3 lastSeenPlayerPos = Vector3.negativeInfinity;
-	private Animator animator;
-	public int health;
-	private Rigidbody rigid;
-	private AudioSource gunAudio;
-
-	public float rotationSpeed = 6f;
 
 	// All patrol pathfinding points for an enemy
 	public GameObject[] navPoints;
-	private Vector3 spawnPos;
-	private Vector3 spawnRot;
-
-	public ActionStates actionState;
-
-	private FiringStates firingState;
-	private bool isCrouching;
-
-	public NavMeshAgent navMesh;
-	public NavMeshObstacle navMeshObstacle;
 
 	// Timers
 	private float alertTimer;
@@ -93,19 +93,12 @@ public class BetaEnemyScript : MonoBehaviour {
 	private float coverScanRange = 50f;
 
 	// Collision
-	private CapsuleCollider myCollider;
 	private float originalColliderHeight = 0f;
 	private float originalColliderRadius = 0f;
 	private Vector3 originalColliderCenter;
 
-	public bool alerted = false;
-	private GameObject[] players;
-
 	// Testing mode - set in inspector
 	//public bool testingMode;
-
-	private PhotonView pView;
-	public Transform headTransform;
 
 	// Use this for initialization
 	void Start () {
@@ -117,7 +110,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 		spawnRot = new Vector3 (transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
 		animator = GetComponent<Animator> ();
-		players = new GameObject[8];
 		health = 100;
 		currentBullets = bulletsPerMag;
 		audioSource = GetComponent<AudioSource> ();
@@ -126,17 +118,20 @@ public class BetaEnemyScript : MonoBehaviour {
 		rigid = GetComponent<Rigidbody> ();
 		rigid.freezeRotation = true;
 		isCrouching = false;
-		// Get nav points
 
-		//navPoints = GameObject.FindGameObjectsWithTag("PatrolPoint");
 		coverTimer = 0f;
 		inCover = false;
 		pView = GetComponent<PhotonView> ();
 
 		myCollider = GetComponent<CapsuleCollider> ();
+		headCollider = GetComponentsInChildren<CapsuleCollider> () [1];
 		originalColliderHeight = myCollider.height;
 		originalColliderRadius = myCollider.radius;
 		originalColliderCenter = new Vector3 (myCollider.center.x, myCollider.center.y, myCollider.center.z);
+		visibleParts = GetComponentsInChildren<SkinnedMeshRenderer> ();
+		marker = GetComponentInChildren<SpriteRenderer> ();
+		gunRef = GetComponentInChildren<MeshRenderer> ();
+		meleeTrigger = GetComponent<BoxCollider> ();
 
 		if (enemyType == EnemyType.Patrol) {
 			range = 10f;
@@ -144,7 +139,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			fireRate = 0.4f;
 			damage = 20f;
 			shootSound = (AudioClip)Resources.Load ("Gun Sounds/M16A3");
-			GetComponentsInChildren<AudioSource> () [1].minDistance = 9f;
+			gunAudio.minDistance = 9f;
 		} else {
 			if (sniper) {
 				range = 35f;
@@ -152,14 +147,14 @@ public class BetaEnemyScript : MonoBehaviour {
 				fireRate = 20f;
 				damage = 35f;
 				shootSound = (AudioClip)Resources.Load ("Gun Sounds/L96A1");
-				GetComponentsInChildren<AudioSource> () [1].minDistance = 18f;
+				gunAudio.minDistance = 18f;
 			} else {
 				range = 27f;
 				accuracyOffset = 3f;
 				fireRate = 0.4f;
 				damage = 20f;
 				shootSound = (AudioClip)Resources.Load ("Gun Sounds/M16A3");
-				GetComponentsInChildren<AudioSource> () [1].minDistance = 9f;
+				gunAudio.minDistance = 9f;
 			}
 		}
 
@@ -167,42 +162,17 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (health > 0) {
-			if (isCrouching) {
-				myCollider.height = 0.97f;
-				myCollider.radius = 0.32f;
-				myCollider.center = new Vector3 (-0.05f, 0.43f, -0.03f);
-			} else {
-				myCollider.height = originalColliderHeight;
-				myCollider.radius = originalColliderRadius;
-				myCollider.center = new Vector3 (originalColliderCenter.x, originalColliderCenter.y, originalColliderCenter.z);
-			}
-		}
+		HandleCrouching ();
 
-		if (fireTimer < fireRate) {
-			fireTimer += Time.deltaTime;
-		}
-
-		if (alertTimer > 0f) {
-			alertTimer -= Time.deltaTime;
-		}
-
-		if (firingModeTimer > 0f) {
-			firingModeTimer -= Time.deltaTime;
-		}
+		ReplenishFireRate ();
+		DecreaseAlertTime ();
+		UpdateFiringModeTimer ();
 
 		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
 			return;
 		}
 
-		if (!Vector3.Equals (GameControllerScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
-			if (!alerted) {
-				pView.RPC ("RpcSetAlerted", RpcTarget.All, true);
-				Debug.Log (1);
-				SetAlertTimer (12f);
-			}
-		}
-
+		CheckAlerted ();
 		CheckTargetDead ();
 
 		if (enemyType == EnemyType.Patrol) {
@@ -227,7 +197,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
 			if (PhotonNetwork.IsMasterClient && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
-				Debug.Log (2);
 			}
 			return;
 		}
@@ -245,14 +214,53 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	}
 
+	void ReplenishFireRate() {
+		if (fireTimer < fireRate) {
+			fireTimer += Time.deltaTime;
+		}
+	}
+
+	void DecreaseAlertTime() {
+		if (alertTimer > 0f) {
+			alertTimer -= Time.deltaTime;
+		}	
+	}
+
+	void UpdateFiringModeTimer() {
+		if (firingModeTimer > 0f) {
+			firingModeTimer -= Time.deltaTime;
+		}
+	}
+
+	void HandleCrouching() {
+		if (health > 0) {
+			if (isCrouching) {
+				myCollider.height = 0.97f;
+				myCollider.radius = 0.32f;
+				myCollider.center = new Vector3 (-0.05f, 0.43f, -0.03f);
+			} else {
+				myCollider.height = originalColliderHeight;
+				myCollider.radius = originalColliderRadius;
+				myCollider.center = new Vector3 (originalColliderCenter.x, originalColliderCenter.y, originalColliderCenter.z);
+			}
+		}
+	}
+
+	void CheckAlerted() {
+		if (!Vector3.Equals (GameControllerScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
+			if (!alerted) {
+				pView.RPC ("RpcSetAlerted", RpcTarget.All, true);
+				SetAlertTimer (12f);
+			}
+		}
+	}
+
 	public void SetAlerted(bool b) {
 		pView.RPC ("RpcSetAlerted", RpcTarget.All, b);
-		Debug.Log (3);
 	}
 
 	public void SetAlertTimer(float t) {
 		pView.RPC ("RpcSetAlertTimer", RpcTarget.All, t);
-		Debug.Log (4);
 	}
 
 	[PunRPC]
@@ -313,7 +321,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (actionState == ActionStates.Melee) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
-				Debug.Log (5);
 			}
 			return;
 		}
@@ -322,25 +329,21 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (PhotonNetwork.IsMasterClient) {
 				if (navMesh.speed != 1.5f) {
 					pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 1.5f);
-					Debug.Log (6);
 				}
 				// Only server should be updating the delays and they should sync across the network
 				// Initial spawn value
 				if (wanderStallDelay == -1f) {
 					wanderStallDelay = Random.Range (0f, 7f);
 					pView.RPC ("RpcSetWanderStallDelay", RpcTarget.Others, wanderStallDelay);
-					Debug.Log (7);
 				}
 				// Take away from the stall delay if the enemy is standing still
 				if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
 					wanderStallDelay -= Time.deltaTime;
 					//pView.RPC ("RpcSetWanderStallDelay", RpcTarget.Others, wanderStallDelay);
-					//Debug.Log (8);
 				} else {
 					// Else, check if the enemy has reached its destination
 					if (navMeshReachedDestination (0.3f)) {
 						pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
-						Debug.Log (9);
 					}
 				}
 				// If the stall delay is done, the enemy needs to move to a wander point
@@ -350,7 +353,6 @@ public class BetaEnemyScript : MonoBehaviour {
 					pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, navPoints [r].transform.position.x, navPoints [r].transform.position.y, navPoints [r].transform.position.z);
 					wanderStallDelay = Random.Range (0f, 7f);
 					//pView.RPC ("RpcSetWanderStallDelay", RpcTarget.Others, wanderStallDelay);
-					//Debug.Log (10);
 				}
 			}
 		}
@@ -359,14 +361,12 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 				pView.RPC ("RpcSetWanderStallDelay", RpcTarget.All, -1);
-				Debug.Log (11);
 			}
 		}
 
 		if (actionState == ActionStates.Dead || actionState == ActionStates.InCover) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
-				Debug.Log (12);
 			}
 		}
 
@@ -375,7 +375,6 @@ public class BetaEnemyScript : MonoBehaviour {
 				pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 6f);
 				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z);
 				pView.RPC ("RpcSetLastSeenPlayerPos", RpcTarget.All, false, 0f, 0f, 0f);
-				Debug.Log (13);
 			}
 			return;
 		}
@@ -386,16 +385,13 @@ public class BetaEnemyScript : MonoBehaviour {
 
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
 				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, GameControllerScript.lastGunshotHeardPos.x, GameControllerScript.lastGunshotHeardPos.y, GameControllerScript.lastGunshotHeardPos.z);
-				Debug.Log (14);
 				if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint")) {
 					if (navMesh.speed != 6f) {
 						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 6f);
-						Debug.Log (15);
 					}
 				} else {
 					if (navMesh.speed != 4f) {
 						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4f);
-						Debug.Log (16);
 					}
 				}
 			}
@@ -407,17 +403,14 @@ public class BetaEnemyScript : MonoBehaviour {
 				pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 6f);
 				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, coverPos.x, coverPos.y, coverPos.z);
 				pView.RPC ("RpcSetCoverPos", RpcTarget.All, false, 0f, 0f, 0f);
-				Debug.Log (17);
 			} else {
 				// If the enemy has finally reached cover, then he will get into cover mode
 				if (navMeshReachedDestination(0f)) {
 					// Done
 					pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 					pView.RPC ("RpcSetInCover", RpcTarget.All, true);
-					Debug.Log (18);
 					if (actionState != ActionStates.InCover) {
 						pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.InCover);
-						Debug.Log (19);
 					}
 				}
 			}
@@ -426,72 +419,56 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (actionState == ActionStates.Firing && !inCover) {
 			if (navMesh.speed != 4f) {
 				pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4f);
-				Debug.Log (20);
 			}
 			if (firingModeTimer <= 0f) {
 				int r = Random.Range (0, 5);
 				if (r == 0) {
 					if (firingState != FiringStates.StandingStill) {
 						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.StandingStill);
-						Debug.Log (21);
 					}
 					firingModeTimer = Random.Range (2f, 3.2f);
 					//pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
-					//Debug.Log (22);
 				} else if (r == 1) {
 					if (firingState != FiringStates.Forward) {
 						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.Forward);
-						Debug.Log (23);
 					}
 					firingModeTimer = Random.Range (2f, 3.2f);
 					//pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
-					//Debug.Log (24);
 					if (navMesh.speed != 4f) {
 						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4f);
-						Debug.Log (25);
 					}
 				} else if (r == 2) {
 					if (firingState != FiringStates.Backpedal) {
 						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.Backpedal);
-						Debug.Log (26);
 					}
 					firingModeTimer = Random.Range (2f, 3.2f);
 					//pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
-					//Debug.Log (27);
 					if (navMesh.speed != 3f) {
 						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 3f);
-						Debug.Log (28);
 					}
 				} else if (r == 3) {
 					if (firingState != FiringStates.StrafeLeft) {
 						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.StrafeLeft);
-						Debug.Log (29);
 					}
 					firingModeTimer = 1.7f;
 					//pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
-					//Debug.Log (30);
 					if (navMesh.speed != 2.5f) {
 						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 2.5f);
-						Debug.Log (31);
 					}
 				} else if (r == 4) {
 					if (firingState != FiringStates.StrafeRight) {
 						pView.RPC ("RpcUpdateFiringState", RpcTarget.All, FiringStates.StrafeRight);
-						Debug.Log (32);
 					}
 					firingModeTimer = 1.7f;
 					//pView.RPC ("RpcSetFiringModeTimer", RpcTarget.Others, firingModeTimer);
-					//Debug.Log (33);
 					if (navMesh.speed != 2.5f) {
 						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 2.5f);
-						Debug.Log (34);
 					}
 				}
 			}
 
 			if (firingState == FiringStates.StandingStill) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
-				Debug.Log (35);
 			}
 
 			if (player != null) {
@@ -542,12 +519,10 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
 				coverWaitTimer -= Time.deltaTime;
 				//pView.RPC ("RpcSetCoverWaitTimer", 	RpcTarget.Others, coverWaitTimer);
-				//Debug.Log (36);
 			}
 			if (inCover) {
 				coverSwitchPositionsTimer -= Time.deltaTime;
 				//pView.RPC ("RpcSetCoverSwitchPositionsTimer", RpcTarget.Others, coverSwitchPositionsTimer);
-				//Debug.Log (37);
 			}
 
 			// Three modes in cover - defensive, offensive, maneuvering; only used when engaging a player
@@ -557,7 +532,6 @@ public class BetaEnemyScript : MonoBehaviour {
 					pView.RPC ("RpcSetIsCrouching", RpcTarget.All, !isCrouching);
 					coverWaitTimer = Random.Range (2f, 7f);
 					pView.RPC ("RpcSetCoverWaitTimer", RpcTarget.Others, coverWaitTimer);
-					Debug.Log (38);
 				}
 				// Maneuvering through cover; if the maneuver timer runs out, it's time to move to another cover position
 				// TODO: Broken - coverswitch timer is never reset
@@ -577,8 +551,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcPlaySound(string s) {
-		AudioClip a = (AudioClip)Resources.Load(s);
-		audioSource.clip = a;
+		audioSource.clip = (AudioClip)Resources.Load(s);
 		audioSource.Play ();
 	}
 		
@@ -596,8 +569,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcDie() {
-		GetComponentInChildren<SpriteRenderer> ().enabled = false;
-		//GetComponent<CapsuleCollider> ().isTrigger = true;
+		marker.enabled = false;
 	}
 
 	[PunRPC]
@@ -613,31 +585,24 @@ public class BetaEnemyScript : MonoBehaviour {
 			int r = Random.Range (1,12);
 			if (r == 6) {
 				// 1/6 chance of getting a health box
-				Debug.Log("health pickup spawned");
 				PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			} else if (r > 1 && r < 6) {
 				// 1/3 chance of getting ammo box
-				Debug.Log("ammo pickup spawned");
 				PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			}
 
 			pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead);
-			Debug.Log (39);
 			// Choose a death sound
 			r = Random.Range (0, 3);
 			if (r == 0) {
 				pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/grunt1");
-				Debug.Log (40);
 			} else if (r == 1) {
 				pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/grunt2");
-				Debug.Log (41);
 			} else {
 				pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/grunt4");
-				Debug.Log (42);
 			}
 
 			pView.RPC ("StartDespawn", RpcTarget.All);
-			Debug.Log (43);
 			return;
 		}
 
@@ -655,29 +620,23 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (Vector3.Distance (player.transform.position, transform.position) <= 2.3f) {
 				if (actionState != ActionStates.Melee) {
 					pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee);
-					Debug.Log (44);
 				}
 			} else {
 				if (currentBullets > 0) {
 					if (actionState != ActionStates.Firing) {
 						pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Firing);
-						Debug.Log (45);
 					}
 					if (crouchMode == 0) {
 						pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 1);
-						Debug.Log (46);
 					} else if (crouchMode == 1) {
 						pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 2);
-						Debug.Log (47);
 					}
 					TakeCoverScout ();
 				} else {
 					if (actionState != ActionStates.Reloading) {
 						pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Reloading);
-						Debug.Log (48);
 					}
 					pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 0);
-					Debug.Log (49);
 					TakeCoverScout ();
 				}
 			}
@@ -685,19 +644,16 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (alertTimer > 0f) {
 				if (crouchMode != 0) {
 					pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 0);
-					Debug.Log (50);
 				}
 				TakeCoverScout ();
 			} else {
 				if (crouchMode != 1) {
 					pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 1);
-					Debug.Log (51);
 				}
 				TakeCoverScout ();
 			}
 			if (actionState != ActionStates.Idle) {
 				pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Idle);
-				Debug.Log (52);
 			}
 		}
 	}
@@ -716,7 +672,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (r == 1) {
 			r = Random.Range(1, 10);
 			pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/pain" + r);
-			Debug.Log (53);
 		}
 	}
 
@@ -739,12 +694,10 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (dist < 2.3f) {
 			if (!alerted) {
 				pView.RPC ("RpcSetAlerted", RpcTarget.All, true);
-				Debug.Log (54);
 			}
 
 			if (actionState != ActionStates.Melee) {
 				pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee);
-				Debug.Log (55);
 			}
 			playerToHit = other.gameObject;
 
@@ -776,37 +729,30 @@ public class BetaEnemyScript : MonoBehaviour {
 			int r = Random.Range (1,12);
 			if (r == 6) {
 				// 1/6 chance of getting a health box
-				Debug.Log("health pickup spawned");
 				PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			} else if (r > 1 && r < 6) {
 				// 1/3 chance of getting ammo box
-				Debug.Log("ammo pickup spawned");
 				PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			}
 
 			pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 			pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead);
-			Debug.Log (56);
 			// Choose a death sound
 			r = Random.Range(0, 3);
 			if (r == 0)
 			{
 				pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt1");
-				Debug.Log (57);
 			}
 			else if (r == 1)
 			{
 				pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt2");
-				Debug.Log (58);
 			}
 			else
 			{
 				pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt4");
-				Debug.Log (59);
 			}
 
 			pView.RPC ("StartDespawn", RpcTarget.All);
-			Debug.Log (60);
 			return;
 		}
 
@@ -828,18 +774,15 @@ public class BetaEnemyScript : MonoBehaviour {
 						if (coverFound) {
 							if (actionState != ActionStates.TakingCover) {
 								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.TakingCover);
-								Debug.Log (61);
 							}
 						} else {
 							if (actionState != ActionStates.InCover) {
 								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.InCover);
-								Debug.Log (62);
 							}
 						}
 					} else {
 						if (actionState != ActionStates.Firing) {
 							pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Firing);
-							Debug.Log (63);
 						}
 					}
 				}
@@ -847,7 +790,6 @@ public class BetaEnemyScript : MonoBehaviour {
 				// If the enemy has not seen a player
 				if (alertTimer <= 0f && alertTimer != -100f && alerted) {
 					pView.RPC ("RpcUpdateAlertedStatus", RpcTarget.All);
-					Debug.Log (64);
 				}
 				if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Firing && actionState != ActionStates.Reloading) {
 					int r = Random.Range (1, aggression - 1);
@@ -856,18 +798,15 @@ public class BetaEnemyScript : MonoBehaviour {
 						if (coverFound) {
 							if (actionState != ActionStates.TakingCover) {
 								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.TakingCover);
-								Debug.Log (65);
 							}
 						} else {
 							if (actionState != ActionStates.InCover) {
 								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.InCover);
-								Debug.Log (66);
 							}
 						}
 					} else {
 						if (actionState != ActionStates.Seeking) {
 							pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Seeking);
-							Debug.Log (67);
 						}
 					}
 				}
@@ -875,7 +814,6 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (actionState == ActionStates.Seeking) {
 					if (navMeshReachedDestination (0.5f) && player == null) {
 						pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander);
-						Debug.Log (68);
 					}
 				}
 
@@ -886,18 +824,15 @@ public class BetaEnemyScript : MonoBehaviour {
 						if (r <= 2) {
 							if (actionState != ActionStates.TakingCover) {
 								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.TakingCover);
-								Debug.Log (69);
 							}
 						} else {
 							if (actionState != ActionStates.Pursue) {
 								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Pursue);
-								Debug.Log (70);
 							}
 						}
 					} else {
 						if (actionState != ActionStates.Idle) {
 							pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Idle);
-							Debug.Log (71);
 						}
 					}
 				}
@@ -906,7 +841,6 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (actionState == ActionStates.Pursue && Vector3.Equals(lastSeenPlayerPos, Vector3.negativeInfinity)) {
 					if (navMeshReachedDestination(0.5f)) {
 						pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander);
-						Debug.Log (72);
 					}
 				}
 
@@ -916,13 +850,10 @@ public class BetaEnemyScript : MonoBehaviour {
 					if (coverSwitchPositionsTimer <= 0f) {
 						coverSwitchPositionsTimer = Random.Range (6f, 10f);
 						pView.RPC ("RpcSetCoverSwitchPositionsTimer", RpcTarget.Others, coverSwitchPositionsTimer);
-						Debug.Log (73);
 						if (GameControllerScript.lastGunshotHeardPos != Vector3.negativeInfinity) {
 							pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Seeking);
-							Debug.Log (74);
 						} else {
 							pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander);
-							Debug.Log (75);
 						}
 					}
 				}
@@ -931,11 +862,9 @@ public class BetaEnemyScript : MonoBehaviour {
 			// Else, wander around the patrol points until alerted or enemy seen
 			if (actionState != ActionStates.Wander) {
 				pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander);
-				Debug.Log (76);
 			}
 			if (player != null && !alerted) {
 				pView.RPC("RpcSetAlerted", RpcTarget.All, true);
-				Debug.Log (77);
 			}
 		}
 	}
@@ -1032,7 +961,6 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (enemyType != EnemyType.Scout) {
 					if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
 						pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
-						Debug.Log (78);
 					}
 				}
 				if (isCrouching) {
@@ -1071,26 +999,22 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (Physics.Raycast (shootPoint.position, dir, out hit)) {
 				if (hit.transform.tag.Equals ("Player") || hit.transform.tag.Equals ("Human")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal);
-					Debug.Log (79);
-
 					if (hit.transform.tag.Equals ("Player")) {
-						hit.transform.GetComponent<PlayerScript>().TakeDamage((int)damage);
-						hit.transform.GetComponent<PlayerScript> ().ResetHitTimer ();
-						hit.transform.GetComponent<PlayerScript> ().SetHitLocation (transform.position);
+						PlayerScript ps = hit.transform.GetComponent<PlayerScript> ();
+						ps.TakeDamage((int)damage);
+						ps.ResetHitTimer ();
+						ps.SetHitLocation (transform.position);
 					} else {
 						hit.transform.GetComponent<BetaEnemyScript>().TakeDamage((int)damage);
 					}
 				} else {
 					pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
 					pView.RPC ("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
-					Debug.Log (80);
 				}
 			}
 		}
 
-		//animator.CrossFadeInFixedTime ("Firing", 0.01f);
 		pView.RPC("RpcShootAction", RpcTarget.All);
-		Debug.Log (81);
 	}
 
 	[PunRPC]
@@ -1125,7 +1049,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			SniperTracerScript s = sniperTracer.gameObject.GetComponent<SniperTracerScript> ();
 			s.enabled = true;
 			s.SetDistance (Vector3.Distance(shootPoint.position, player.transform.position));
-			sniperTracer.GetComponent<LineRenderer> ().enabled = true;
+			sniperTracer.enabled = true;
 		}
 	}
 
@@ -1150,8 +1074,9 @@ public class BetaEnemyScript : MonoBehaviour {
 			} else {
 				PlayVoiceClip (13);
 			}
-			playerToHit.GetComponent<PlayerScript> ().TakeDamage (50);
-			playerToHit.GetComponent<PlayerScript> ().hitTimer = 0f;
+			PlayerScript ps = playerToHit.GetComponent<PlayerScript> ();
+			ps.TakeDamage (50);
+			ps.hitTimer = 0f;
 			playerToHit = null;
 		}
 	}
@@ -1167,7 +1092,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	IEnumerator Despawn() {
 		gameObject.layer = 12;
-		GetComponentsInChildren<CapsuleCollider> ()[1].gameObject.layer = 15;
+		headCollider.gameObject.layer = 15;
 		RemoveHitboxes ();
 		yield return new WaitForSeconds(5f);
 		DespawnAction ();
@@ -1184,18 +1109,17 @@ public class BetaEnemyScript : MonoBehaviour {
 		} else {
 			navMeshObstacle.enabled = false;
 		}
-		SkinnedMeshRenderer[] s = GetComponentsInChildren<SkinnedMeshRenderer> ();
-		for (int i = 0; i < s.Length; i++) {
-			s [i].enabled = false;
+		for (int i = 0; i < visibleParts.Length; i++) {
+			visibleParts [i].enabled = false;
 		}
-		GetComponentInChildren<SpriteRenderer> ().enabled = false;
-		GetComponentInChildren<MeshRenderer> ().enabled = false;
+		marker.enabled = false;
+		gunRef.enabled = false;
 	}
 
 	void RemoveHitboxes() {
 		myCollider.height = 0f;
 		myCollider.center = new Vector3 (0f, 0f, 0f);
-		GetComponent<BoxCollider>().enabled = false;
+		meleeTrigger.enabled = false;
 	}
 
 	// b is the mode the AI is in. 0 means override everything and take cover, 1 is override everything and leave cover
@@ -1354,14 +1278,12 @@ public class BetaEnemyScript : MonoBehaviour {
 
 			if (keysNearBy.Count != 0) {
 				pView.RPC ("RpcSetTarget", RpcTarget.All, (int)keysNearBy [Random.Range (0, keysNearBy.Count)]);
-				Debug.Log (82);
 			}
 		} else {
 			// If we do, check if it's still in range
 			if (Vector3.Distance (transform.position, player.transform.position) >= range + 20f) {
 				pView.RPC ("RpcSetLastSeenPlayerPos", RpcTarget.All, true, player.transform.position.x, player.transform.position.y, player.transform.position.z);
 				pView.RPC ("RpcSetTarget", RpcTarget.All, -1);
-				Debug.Log (83);
 			}
 		}
 	}
@@ -1377,7 +1299,6 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	public void TakeDamage(int d) {
 		pView.RPC ("RpcTakeDamage", RpcTarget.All, d);
-		Debug.Log (84);
 	}
 
 	[PunRPC]
@@ -1407,7 +1328,6 @@ public class BetaEnemyScript : MonoBehaviour {
 	void CheckTargetDead() {
 		if (player != null && player.GetComponent<PlayerScript> ().health <= 0f) {
 			pView.RPC ("RpcSetTarget", RpcTarget.All, -1);
-			Debug.Log (85);
 		}
 	}
 
@@ -1441,7 +1361,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			navMeshObstacle.enabled = true;
 		}
 		gameObject.layer = 0;
-		GetComponentsInChildren<CapsuleCollider> ()[1].gameObject.layer = 13;
+		headCollider.gameObject.layer = 13;
 		health = 100;
 		transform.position = new Vector3 (spawnPos.x, spawnPos.y, spawnPos.z);
 		transform.rotation = Quaternion.Euler (spawnRot.x, spawnRot.y, spawnRot.z);
@@ -1471,13 +1391,12 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		myCollider.height = originalColliderHeight;
 		myCollider.center = new Vector3 (originalColliderCenter.x, originalColliderCenter.y, originalColliderCenter.z);
-		GetComponent<BoxCollider>().enabled = true;
-		SkinnedMeshRenderer[] s = GetComponentsInChildren<SkinnedMeshRenderer> ();
-		for (int i = 0; i < s.Length; i++) {
-			s [i].enabled = true;
+		meleeTrigger.enabled = true;
+		for (int i = 0; i < visibleParts.Length; i++) {
+			visibleParts [i].enabled = true;
 		}
-		GetComponentInChildren<SpriteRenderer> ().enabled = true;
-		GetComponentInChildren<MeshRenderer> ().enabled = true;
+		marker.enabled = true;
+		gunRef.enabled = true;
 	}
 
 }
