@@ -27496,15 +27496,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
   - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
   - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
-  aggression: 5
-  sniper: 1
-  range: 27
-  bulletsPerMag: 30
-  currentBullets: 0
-  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
-  shootPoint: {fileID: 2095812596}
-  sniperTracer: {fileID: 1150190297}
-  muzzleFlash: {fileID: 947828983}
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -27513,19 +27504,28 @@ MonoBehaviour:
     type: 2}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 2}
-  fireRate: 0.4
-  damage: 20
-  enemyType: 1
-  player: {fileID: 0}
-  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
-  health: 0
-  rotationSpeed: 6
-  navPoints: []
-  actionState: 0
+  headTransform: {fileID: 1798756038}
+  shootPoint: {fileID: 2095812596}
+  sniperTracer: {fileID: 1150190297}
   navMesh: {fileID: 302655308}
   navMeshObstacle: {fileID: 302655307}
+  enemyType: 1
+  actionState: 0
+  aggression: 5
+  sniper: 1
+  rotationSpeed: 6
+  health: 0
   alerted: 0
-  headTransform: {fileID: 1798756038}
+  range: 27
+  bulletsPerMag: 30
+  currentBullets: 0
+  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
+  muzzleFlash: {fileID: 947828983}
+  fireRate: 0.4
+  damage: 20
+  player: {fileID: 0}
+  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  navPoints: []
 --- !u!82 &302655313
 AudioSource:
   m_ObjectHideFlags: 0
@@ -40778,15 +40778,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
   - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
   - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
-  aggression: 5
-  sniper: 1
-  range: 27
-  bulletsPerMag: 30
-  currentBullets: 0
-  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
-  shootPoint: {fileID: 760915664}
-  sniperTracer: {fileID: 579159273}
-  muzzleFlash: {fileID: 928787466}
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -40795,19 +40786,28 @@ MonoBehaviour:
     type: 2}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 2}
-  fireRate: 0.4
-  damage: 20
-  enemyType: 1
-  player: {fileID: 0}
-  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
-  health: 0
-  rotationSpeed: 6
-  navPoints: []
-  actionState: 0
+  headTransform: {fileID: 1623894932}
+  shootPoint: {fileID: 760915664}
+  sniperTracer: {fileID: 579159273}
   navMesh: {fileID: 608335406}
   navMeshObstacle: {fileID: 608335402}
+  enemyType: 1
+  actionState: 0
+  aggression: 5
+  sniper: 1
+  rotationSpeed: 6
+  health: 0
   alerted: 0
-  headTransform: {fileID: 1623894932}
+  range: 27
+  bulletsPerMag: 30
+  currentBullets: 0
+  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
+  muzzleFlash: {fileID: 928787466}
+  fireRate: 0.4
+  damage: 20
+  player: {fileID: 0}
+  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  navPoints: []
 --- !u!82 &608335408
 AudioSource:
   m_ObjectHideFlags: 0
@@ -43951,15 +43951,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
   - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
   - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
-  aggression: 5
-  sniper: 1
-  range: 27
-  bulletsPerMag: 30
-  currentBullets: 0
-  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
-  shootPoint: {fileID: 551866601}
-  sniperTracer: {fileID: 680753543}
-  muzzleFlash: {fileID: 583213576}
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -43968,19 +43959,28 @@ MonoBehaviour:
     type: 2}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 2}
-  fireRate: 0.4
-  damage: 20
-  enemyType: 1
-  player: {fileID: 0}
-  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
-  health: 0
-  rotationSpeed: 6
-  navPoints: []
-  actionState: 0
+  headTransform: {fileID: 1984894739}
+  shootPoint: {fileID: 551866601}
+  sniperTracer: {fileID: 680753543}
   navMesh: {fileID: 707037508}
   navMeshObstacle: {fileID: 707037507}
+  enemyType: 1
+  actionState: 0
+  aggression: 5
+  sniper: 1
+  rotationSpeed: 6
+  health: 0
   alerted: 0
-  headTransform: {fileID: 1984894739}
+  range: 27
+  bulletsPerMag: 30
+  currentBullets: 0
+  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
+  muzzleFlash: {fileID: 583213576}
+  fireRate: 0.4
+  damage: 20
+  player: {fileID: 0}
+  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  navPoints: []
 --- !u!82 &707037513
 AudioSource:
   m_ObjectHideFlags: 0
@@ -52796,15 +52796,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
   - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
   - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
-  aggression: 5
-  sniper: 1
-  range: 27
-  bulletsPerMag: 30
-  currentBullets: 0
-  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
-  shootPoint: {fileID: 548788968}
-  sniperTracer: {fileID: 493304498}
-  muzzleFlash: {fileID: 1534720549}
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -52813,19 +52804,28 @@ MonoBehaviour:
     type: 2}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 2}
-  fireRate: 0.4
-  damage: 20
-  enemyType: 1
-  player: {fileID: 0}
-  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
-  health: 0
-  rotationSpeed: 6
-  navPoints: []
-  actionState: 0
+  headTransform: {fileID: 381414159}
+  shootPoint: {fileID: 548788968}
+  sniperTracer: {fileID: 493304498}
   navMesh: {fileID: 822447998}
   navMeshObstacle: {fileID: 822447997}
+  enemyType: 1
+  actionState: 0
+  aggression: 5
+  sniper: 1
+  rotationSpeed: 6
+  health: 0
   alerted: 0
-  headTransform: {fileID: 381414159}
+  range: 27
+  bulletsPerMag: 30
+  currentBullets: 0
+  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
+  muzzleFlash: {fileID: 1534720549}
+  fireRate: 0.4
+  damage: 20
+  player: {fileID: 0}
+  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  navPoints: []
 --- !u!82 &822448003
 AudioSource:
   m_ObjectHideFlags: 0
@@ -53487,15 +53487,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
   - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
   - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
-  aggression: 5
-  sniper: 1
-  range: 27
-  bulletsPerMag: 30
-  currentBullets: 0
-  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
-  shootPoint: {fileID: 1691251859}
-  sniperTracer: {fileID: 918263909}
-  muzzleFlash: {fileID: 1860540912}
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -53504,19 +53495,28 @@ MonoBehaviour:
     type: 2}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 2}
-  fireRate: 0.4
-  damage: 20
-  enemyType: 1
-  player: {fileID: 0}
-  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
-  health: 0
-  rotationSpeed: 6
-  navPoints: []
-  actionState: 0
+  headTransform: {fileID: 1062438740}
+  shootPoint: {fileID: 1691251859}
+  sniperTracer: {fileID: 918263909}
   navMesh: {fileID: 843216505}
   navMeshObstacle: {fileID: 843216504}
+  enemyType: 1
+  actionState: 0
+  aggression: 5
+  sniper: 1
+  rotationSpeed: 6
+  health: 0
   alerted: 0
-  headTransform: {fileID: 1062438740}
+  range: 27
+  bulletsPerMag: 30
+  currentBullets: 0
+  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
+  muzzleFlash: {fileID: 1860540912}
+  fireRate: 0.4
+  damage: 20
+  player: {fileID: 0}
+  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  navPoints: []
 --- !u!82 &843216510
 AudioSource:
   m_ObjectHideFlags: 0
@@ -72179,15 +72179,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
   - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
   - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
-  aggression: 5
-  sniper: 1
-  range: 27
-  bulletsPerMag: 30
-  currentBullets: 0
-  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
-  shootPoint: {fileID: 105014017}
-  sniperTracer: {fileID: 300504696}
-  muzzleFlash: {fileID: 79126173}
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -72196,19 +72187,28 @@ MonoBehaviour:
     type: 2}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 2}
-  fireRate: 0.4
-  damage: 20
-  enemyType: 1
-  player: {fileID: 0}
-  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
-  health: 0
-  rotationSpeed: 6
-  navPoints: []
-  actionState: 0
+  headTransform: {fileID: 1223844429}
+  shootPoint: {fileID: 105014017}
+  sniperTracer: {fileID: 300504696}
   navMesh: {fileID: 1109247678}
   navMeshObstacle: {fileID: 1109247677}
+  enemyType: 1
+  actionState: 0
+  aggression: 5
+  sniper: 1
+  rotationSpeed: 6
+  health: 0
   alerted: 0
-  headTransform: {fileID: 1223844429}
+  range: 27
+  bulletsPerMag: 30
+  currentBullets: 0
+  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
+  muzzleFlash: {fileID: 79126173}
+  fireRate: 0.4
+  damage: 20
+  player: {fileID: 0}
+  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  navPoints: []
 --- !u!82 &1109247683
 AudioSource:
   m_ObjectHideFlags: 0
@@ -76389,15 +76389,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
   - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
   - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
-  aggression: 5
-  sniper: 1
-  range: 27
-  bulletsPerMag: 30
-  currentBullets: 0
-  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
-  shootPoint: {fileID: 257204354}
-  sniperTracer: {fileID: 2347699}
-  muzzleFlash: {fileID: 203137197}
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -76406,19 +76397,28 @@ MonoBehaviour:
     type: 2}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 2}
-  fireRate: 0.4
-  damage: 20
-  enemyType: 1
-  player: {fileID: 0}
-  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
-  health: 0
-  rotationSpeed: 6
-  navPoints: []
-  actionState: 0
+  headTransform: {fileID: 1259132515}
+  shootPoint: {fileID: 257204354}
+  sniperTracer: {fileID: 2347699}
   navMesh: {fileID: 1249287259}
   navMeshObstacle: {fileID: 1249287258}
+  enemyType: 1
+  actionState: 0
+  aggression: 5
+  sniper: 1
+  rotationSpeed: 6
+  health: 0
   alerted: 0
-  headTransform: {fileID: 1259132515}
+  range: 27
+  bulletsPerMag: 30
+  currentBullets: 0
+  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
+  muzzleFlash: {fileID: 203137197}
+  fireRate: 0.4
+  damage: 20
+  player: {fileID: 0}
+  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  navPoints: []
 --- !u!82 &1249287264
 AudioSource:
   m_ObjectHideFlags: 0
@@ -91057,15 +91057,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
   - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
   - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
-  aggression: 5
-  sniper: 1
-  range: 27
-  bulletsPerMag: 30
-  currentBullets: 0
-  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
-  shootPoint: {fileID: 549718353}
-  sniperTracer: {fileID: 1558384968}
-  muzzleFlash: {fileID: 773099311}
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -91074,19 +91065,28 @@ MonoBehaviour:
     type: 2}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 2}
-  fireRate: 0.4
-  damage: 20
-  enemyType: 1
-  player: {fileID: 0}
-  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
-  health: 0
-  rotationSpeed: 6
-  navPoints: []
-  actionState: 0
+  headTransform: {fileID: 1206465772}
+  shootPoint: {fileID: 549718353}
+  sniperTracer: {fileID: 1558384968}
   navMesh: {fileID: 1413404216}
   navMeshObstacle: {fileID: 1413404215}
+  enemyType: 1
+  actionState: 0
+  aggression: 5
+  sniper: 1
+  rotationSpeed: 6
+  health: 0
   alerted: 0
-  headTransform: {fileID: 1206465772}
+  range: 27
+  bulletsPerMag: 30
+  currentBullets: 0
+  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
+  muzzleFlash: {fileID: 773099311}
+  fireRate: 0.4
+  damage: 20
+  player: {fileID: 0}
+  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  navPoints: []
 --- !u!82 &1413404221
 AudioSource:
   m_ObjectHideFlags: 0
@@ -100419,15 +100419,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
   - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
   - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
-  aggression: 5
-  sniper: 1
-  range: 27
-  bulletsPerMag: 30
-  currentBullets: 0
-  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
-  shootPoint: {fileID: 652072239}
-  sniperTracer: {fileID: 101925930}
-  muzzleFlash: {fileID: 116158781}
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -100436,19 +100427,28 @@ MonoBehaviour:
     type: 2}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 2}
-  fireRate: 0.4
-  damage: 20
-  enemyType: 1
-  player: {fileID: 0}
-  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
-  health: 0
-  rotationSpeed: 6
-  navPoints: []
-  actionState: 0
+  headTransform: {fileID: 410114294}
+  shootPoint: {fileID: 652072239}
+  sniperTracer: {fileID: 101925930}
   navMesh: {fileID: 1548730410}
   navMeshObstacle: {fileID: 1548730409}
+  enemyType: 1
+  actionState: 0
+  aggression: 5
+  sniper: 1
+  rotationSpeed: 6
+  health: 0
   alerted: 0
-  headTransform: {fileID: 410114294}
+  range: 27
+  bulletsPerMag: 30
+  currentBullets: 0
+  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
+  muzzleFlash: {fileID: 116158781}
+  fireRate: 0.4
+  damage: 20
+  player: {fileID: 0}
+  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  navPoints: []
 --- !u!82 &1548730415
 AudioSource:
   m_ObjectHideFlags: 0
@@ -103079,15 +103079,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
   - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
   - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
-  aggression: 5
-  sniper: 1
-  range: 27
-  bulletsPerMag: 30
-  currentBullets: 0
-  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
-  shootPoint: {fileID: 1402691758}
-  sniperTracer: {fileID: 1740095737}
-  muzzleFlash: {fileID: 1279198118}
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -103096,19 +103087,28 @@ MonoBehaviour:
     type: 2}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 2}
-  fireRate: 0.4
-  damage: 20
-  enemyType: 1
-  player: {fileID: 0}
-  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
-  health: 0
-  rotationSpeed: 6
-  navPoints: []
-  actionState: 0
+  headTransform: {fileID: 1124974247}
+  shootPoint: {fileID: 1402691758}
+  sniperTracer: {fileID: 1740095737}
   navMesh: {fileID: 1611703277}
   navMeshObstacle: {fileID: 1611703276}
+  enemyType: 1
+  actionState: 0
+  aggression: 5
+  sniper: 1
+  rotationSpeed: 6
+  health: 0
   alerted: 0
-  headTransform: {fileID: 1124974247}
+  range: 27
+  bulletsPerMag: 30
+  currentBullets: 0
+  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
+  muzzleFlash: {fileID: 1279198118}
+  fireRate: 0.4
+  damage: 20
+  player: {fileID: 0}
+  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  navPoints: []
 --- !u!82 &1611703282
 AudioSource:
   m_ObjectHideFlags: 0
@@ -105529,15 +105529,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
   - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
   - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
-  aggression: 5
-  sniper: 1
-  range: 27
-  bulletsPerMag: 30
-  currentBullets: 0
-  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
-  shootPoint: {fileID: 1500492895}
-  sniperTracer: {fileID: 2071696535}
-  muzzleFlash: {fileID: 1373137960}
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -105546,19 +105537,28 @@ MonoBehaviour:
     type: 2}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 2}
-  fireRate: 0.4
-  damage: 20
-  enemyType: 1
-  player: {fileID: 0}
-  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
-  health: 0
-  rotationSpeed: 6
-  navPoints: []
-  actionState: 0
+  headTransform: {fileID: 2011294410}
+  shootPoint: {fileID: 1500492895}
+  sniperTracer: {fileID: 2071696535}
   navMesh: {fileID: 1672759371}
   navMeshObstacle: {fileID: 1672759367}
+  enemyType: 1
+  actionState: 0
+  aggression: 5
+  sniper: 1
+  rotationSpeed: 6
+  health: 0
   alerted: 0
-  headTransform: {fileID: 2011294410}
+  range: 27
+  bulletsPerMag: 30
+  currentBullets: 0
+  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
+  muzzleFlash: {fileID: 1373137960}
+  fireRate: 0.4
+  damage: 20
+  player: {fileID: 0}
+  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  navPoints: []
 --- !u!82 &1672759373
 AudioSource:
   m_ObjectHideFlags: 0
@@ -108087,11 +108087,6 @@ Prefab:
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114510943717816168, guid: 1cdbefa86996e46a089959ed114f2e2a,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1cdbefa86996e46a089959ed114f2e2a, type: 2}
   m_IsPrefabAsset: 0
@@ -109795,15 +109790,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
   - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
   - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
-  aggression: 5
-  sniper: 1
-  range: 27
-  bulletsPerMag: 30
-  currentBullets: 0
-  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
-  shootPoint: {fileID: 620521086}
-  sniperTracer: {fileID: 1540215195}
-  muzzleFlash: {fileID: 183895224}
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 2}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -109812,19 +109798,28 @@ MonoBehaviour:
     type: 2}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 2}
-  fireRate: 0.4
-  damage: 20
-  enemyType: 1
-  player: {fileID: 0}
-  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
-  health: 0
-  rotationSpeed: 6
-  navPoints: []
-  actionState: 0
+  headTransform: {fileID: 2096645569}
+  shootPoint: {fileID: 620521086}
+  sniperTracer: {fileID: 1540215195}
   navMesh: {fileID: 1785087151}
   navMeshObstacle: {fileID: 1785087152}
+  enemyType: 1
+  actionState: 0
+  aggression: 5
+  sniper: 1
+  rotationSpeed: 6
+  health: 0
   alerted: 0
-  headTransform: {fileID: 2096645569}
+  range: 27
+  bulletsPerMag: 30
+  currentBullets: 0
+  shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
+  muzzleFlash: {fileID: 183895224}
+  fireRate: 0.4
+  damage: 20
+  player: {fileID: 0}
+  lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  navPoints: []
 --- !u!82 &1785087157
 AudioSource:
   m_ObjectHideFlags: 0

@@ -10,6 +10,9 @@ public class WeaponScript : MonoBehaviour {
 
 	private MouseLook mouseLook;
 	private PlayerScript playerScript;
+	private CameraShakeScript cameraShakeScript;
+	private PlayerHUDScript hudScript;
+	private AudioControllerScript audioController;
 
 	// Projectile spread constants
 	public const float MAX_SPREAD = 0.35f;
@@ -85,7 +88,10 @@ public class WeaponScript : MonoBehaviour {
 		originalRot = originalTrans.localRotation;
 
 		mouseLook = GetComponent<FirstPersonController> ().m_MouseLook;
-		playerScript = GetComponent<PlayerScript> (); 
+		playerScript = GetComponent<PlayerScript> ();
+		cameraShakeScript = GetComponent<CameraShakeScript> ();
+		hudScript = GetComponent<PlayerHUDScript> ();
+		audioController = GetComponent<AudioControllerScript> ();
 		//targetGunRot = mouseLook.m_CameraTargetRot * Quaternion.Euler(-MAX_RECOIL, 0f, 0f);
 		//originalGunRot = new Quaternion(mouseLook.m_CameraTargetRot.x, mouseLook.m_CameraTargetRot.y, mouseLook.m_CameraTargetRot.z, mouseLook.m_CameraTargetRot.w);
 		//originalGunRot = mouseLook.m_CameraTargetRot;
@@ -117,7 +123,7 @@ public class WeaponScript : MonoBehaviour {
 		RefillFireTimer ();
 		Sprint ();
 
-		if (!GetComponent<PlayerScript> ().canShoot) {
+		if (!playerScript.canShoot) {
 			return;
 		}
 		if (Input.GetKeyDown (KeyCode.R)) {
@@ -136,7 +142,7 @@ public class WeaponScript : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		if (!pView.IsMine || GetComponent<PlayerScript>().health <= 0) {
+		if (!pView.IsMine || playerScript.health <= 0) {
 			return;
 		}
 		if (gunAnimator.gameObject.activeSelf) {
@@ -149,20 +155,20 @@ public class WeaponScript : MonoBehaviour {
 		if (shootInput && !isReloading) {
 			if (currentBullets > 0) {
 				Fire ();
-				GetComponentInParent<CameraShakeScript> ().SetShake (true);
+				cameraShakeScript.SetShake (true);
 				IncreaseSpread ();
 				voidRecoilRecover = false;
 				IncreaseRecoil ();
 				UpdateRecoil (true);
 			} else if (totalBulletsLeft > 0) {
-                GetComponentInParent<CameraShakeScript>().SetShake(false);
+				cameraShakeScript.SetShake(false);
                 ReloadAction ();
 			}
 		} else {
 			DecreaseSpread ();
 			DecreaseRecoil ();
 			UpdateRecoil (false);
-			GetComponentInParent<CameraShakeScript> ().SetShake (false);
+			cameraShakeScript.SetShake (false);
 			/**if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0 && !voidRecoilRecover) {
 				DecreaseRecoil ();
 				UpdateRecoil (false);
@@ -213,7 +219,7 @@ public class WeaponScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcAddToTotalKills() {
-		GetComponentInParent<PlayerScript> ().kills++;
+		playerScript.kills++;
 		GameControllerScript.totalKills [pView.Owner.NickName]++;
 	}
 
@@ -232,12 +238,11 @@ public class WeaponScript : MonoBehaviour {
 		if (Physics.Raycast (shootPoint.position, impactDir, out hit, range, headshotLayer)) {
 			pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
 			if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript> ().health > 0) {
-				GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
-				//GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().PlayHitmarkerSound ();
+				hudScript.InstantiateHitmarker ();
 				hit.transform.gameObject.GetComponentInParent<BetaEnemyScript> ().TakeDamage (100);
 				pView.RPC ("RpcAddToTotalKills", RpcTarget.All);
-				GetComponentInParent<PlayerHUDScript> ().OnScreenEffect ("HEADSHOT", true);
-				GetComponentInParent<AudioControllerScript> ().PlayHeadshotSound ();
+				hudScript.OnScreenEffect ("HEADSHOT", true);
+				audioController.PlayHeadshotSound ();
 			}
 		} else if (Physics.Raycast (shootPoint.position, impactDir, out hit, range)) {
 			GameObject bloodSpill = null;
@@ -245,14 +250,14 @@ public class WeaponScript : MonoBehaviour {
 				pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
 				int beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health;
 				if (beforeHp > 0) {
-					GetComponentInParent<PlayerHUDScript> ().InstantiateHitmarker ();
-					GetComponentInParent<AudioControllerScript>().PlayHitmarkerSound ();
+					hudScript.InstantiateHitmarker ();
+					audioController.PlayHitmarkerSound ();
 					hit.transform.gameObject.GetComponent<BetaEnemyScript> ().TakeDamage ((int)damage);
 					hit.transform.gameObject.GetComponent<BetaEnemyScript> ().PainSound ();
 					hit.transform.gameObject.GetComponent<BetaEnemyScript> ().SetAlerted (true);
 					if (hit.transform.gameObject.GetComponent<BetaEnemyScript> ().health <= 0 && beforeHp > 0) {
 						pView.RPC ("RpcAddToTotalKills", RpcTarget.All);
-						GetComponentInParent<PlayerHUDScript> ().OnScreenEffect (GetComponentInParent<PlayerScript> ().kills + " KILLS", true);
+						hudScript.OnScreenEffect (playerScript.kills + " KILLS", true);
 					}
 				}
 			} else {
@@ -261,8 +266,7 @@ public class WeaponScript : MonoBehaviour {
 			}
 		}
 
-		GetComponentInParent<PlayerScript> ().gameController.GetComponent<GameControllerScript> ().SetLastGunshotHeardPos (transform.position.x, transform.position.y, transform.position.z);
-		//GameControllerScript.lastGunshotHeardPos = transform.position;
+		playerScript.gameController.SetLastGunshotHeardPos (transform.position.x, transform.position.y, transform.position.z);
 		pView.RPC ("FireEffects", RpcTarget.All);
 	}
 

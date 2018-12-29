@@ -3257,7 +3257,7 @@ MonoBehaviour:
     type: 2}
   currWep: 
   health: 0
-  godMode: 0
+  godMode: 1
   canShoot: 0
   escapeValueSent: 0
   kills: 0
@@ -3293,7 +3293,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 114336108925888890}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: -1
   isRuntimeInstantiated: 0
 --- !u!114 &114720000592978930
 MonoBehaviour:
@@ -3314,7 +3314,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 114766418645260732}
   viewIdField: 0
-  InstantiationId: 4
+  InstantiationId: -1
   isRuntimeInstantiated: 0
 --- !u!114 &114745308866780578
 MonoBehaviour:

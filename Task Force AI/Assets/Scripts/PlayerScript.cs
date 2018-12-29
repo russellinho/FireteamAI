@@ -9,7 +9,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	// Object references
-	public GameObject gameController;
+	public GameControllerScript gameController;
 	private AudioControllerScript audioController;
 	private CharacterController charController;
 	public GameObject fpsHands;
@@ -61,6 +61,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	// Mission references
 	private GameObject currentBomb;
 	private int currentBombIndex;
+	private int bombIterator;
 	private float bombDefuseCounter = 0f;
 
 	// Use this for initialization
@@ -81,17 +82,20 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		kills = 0;
 		deaths = 0;
 
+		currentBombIndex = 0;
+		bombIterator = 0;
+
 		// If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
         if (!GetComponent<PhotonView>().IsMine) {
 			subComponents[2].SetActive (false);
 			subComponents[3].SetActive (false);
 			Destroy (GetComponentInChildren<AudioListener>());
-			GetComponentInChildren<Camera> ().enabled = false;
+			viewCam.enabled = false;
 			//enabled = false;
 			return;
 		}
 
-		gameController = GameObject.FindWithTag("GameController");
+		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 
 		photonView.RPC ("SyncPlayerColor", RpcTarget.All, PlayerData.playerdata.color);
 		wepScript = gameObject.GetComponent<WeaponScript> ();
@@ -121,10 +125,11 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	// Update is called once per frame
 	void Update () {
 		if (gameController == null) {
-			gameController = GameObject.FindWithTag ("GameController");
+			gameController = GameObject.FindWithTag ("GameController").GetComponent<GameControllerScript>();
+			return;
 		}
 
-        if (!GetComponent<PhotonView>().IsMine) {
+        if (!photonView.IsMine) {
 			return;
 		}
 
@@ -133,23 +138,23 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			BeginRespawn ();
 		}
 
-		if (gameController.GetComponent<GameControllerScript>().sectorsCleared == 0 && gameController.GetComponent<GameControllerScript> ().bombsRemaining == 2) {
-			gameController.GetComponent<GameControllerScript> ().sectorsCleared++;
+		if (gameController.sectorsCleared == 0 && gameController.bombsRemaining == 2) {
+			gameController.sectorsCleared++;
 			hud.OnScreenEffect ("SECTOR CLEARED!", false);
 			BeginRespawn ();
 		}
 
-		if (gameController.GetComponent<GameControllerScript> ().bombsRemaining == 0 && !escapeAvailablePopup) {
+		if (gameController.bombsRemaining == 0 && !escapeAvailablePopup) {
 			escapeAvailablePopup = true;
 			hud.MessagePopup ("Escape available! Head to the waypoint!");
 			hud.ComBoxPopup (2f, "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.");
 		}
 
 		// Update assault mode
-		hud.UpdateAssaultModeIndHud (gameController.GetComponent<GameControllerScript>().assaultMode);
+		hud.UpdateAssaultModeIndHud (gameController.assaultMode);
 			
 		// On assault mode changed
-		bool h = gameController.GetComponent<GameControllerScript> ().assaultMode;
+		bool h = gameController.assaultMode;
 		if (h != assaultModeChangedIndicator) {
 			assaultModeChangedIndicator = h;
 			hud.MessagePopup ("Your cover is blown!");
@@ -169,7 +174,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		if (health <= 0) {
 			if (!escapeValueSent) {
 				escapeValueSent = true;
-				gameController.GetComponent<GameControllerScript> ().IncrementDeathCount ();
+				gameController.IncrementDeathCount ();
 			}
 		} else {
 			BombCheck ();
@@ -272,7 +277,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			fpc.enabled = false;
 			if (!rotationSaved) {
 				if (escapeValueSent) {
-					gameController.GetComponent<GameControllerScript> ().ConvertCounts (1, -1);
+					gameController.ConvertCounts (1, -1);
 				}
 				photonView.RPC ("RpcToggleFPSHands", RpcTarget.All, false);
 				hud.ToggleHUD (false);
@@ -300,14 +305,14 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	// If map objective is defusing bombs, this method checks if the player is near any bombs
 	void BombCheck() {
-		if (gameController.GetComponent<GameControllerScript>().bombs == null) {
+		if (gameController.bombs == null) {
 			return;
 		}
 
-		if (!currentBomb) {
+		/**if (!currentBomb) {
 			bool found = false;
 			int count = 0;
-			foreach (GameObject i in gameController.GetComponent<GameControllerScript>().bombs) {
+			foreach (GameObject i in gameController.bombs) {
 				BombScript b = i.GetComponent<BombScript> ();
 				if (!b.defused) {
 					if (Vector3.Distance (gameObject.transform.position, i.transform.position) <= 4.5f) {
@@ -322,6 +327,22 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			if (!found) {
 				currentBomb = null;
 			}
+		}*/
+
+		if (!currentBomb) {
+			if (bombIterator >= gameController.bombs.Length) {
+				currentBomb = null;
+				bombIterator = 0;
+			}
+			BombScript b = gameController.bombs[bombIterator].GetComponent<BombScript> ();
+			if (!b.defused) {
+				if (Vector3.Distance (gameObject.transform.position, gameController.bombs[bombIterator].transform.position) <= 4.5f) {
+					currentBombIndex = bombIterator;
+					currentBomb = gameController.bombs[currentBombIndex];
+					bombIterator = -1;
+				}
+			}
+			bombIterator++;
 		}
 
 		if (currentBomb != null) {
@@ -333,7 +354,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 			}
 
             if (Input.GetKey (KeyCode.E) && health > 0) {
-				gameObject.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().canMove = false;
+				fpc.canMove = false;
 
 				hud.container.hintText.enabled = false;
 				hud.ToggleActionBar (true);
@@ -344,18 +365,18 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 					bombDefuseCounter = 0f;
 
 					photonView.RPC ("RpcDefuseBomb", RpcTarget.All, currentBombIndex);
-					gameController.GetComponent<GameControllerScript> ().DecrementBombsRemaining ();
+					gameController.DecrementBombsRemaining ();
 					currentBomb = null;
 
 					hud.ToggleActionBar (false);
 					hud.container.defusingText.enabled = false;
 					hud.container.hintText.enabled = false;
 					// Enable movement again
-					gameObject.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().canMove = true;
+					fpc.canMove = true;
 				}
 			} else {
 				// Enable movement again
-				gameObject.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().canMove = true;
+				fpc.canMove = true;
 
 				hud.ToggleActionBar (false);
 				hud.container.defusingText.enabled = false;
@@ -389,10 +410,10 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void DetermineEscaped() {
-		if (gameController.GetComponent<GameControllerScript> ().escapeAvailable) {
+		if (gameController.escapeAvailable) {
 			if (!escapeValueSent) {
-				if (health > 0 && Vector3.Distance(gameController.GetComponent<GameControllerScript>().exitPoint.transform.position, transform.position) <= 10f && transform.position.y >= (gameController.GetComponent<GameControllerScript>().exitPoint.transform.position.y - 1f)) {
-					gameController.GetComponent<GameControllerScript> ().IncrementEscapeCount ();
+				if (health > 0 && Vector3.Distance(gameController.exitPoint.transform.position, transform.position) <= 10f && transform.position.y >= (gameController.exitPoint.transform.position.y - 1f)) {
+					gameController.IncrementEscapeCount ();
 					escapeValueSent = true;
 				}
 			}
@@ -471,8 +492,8 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	void BeginRespawn() {
 		if (health <= 0) {
-			gameController.GetComponent<GameControllerScript> ().ConvertCounts (-1, 0);
-			gameController.GetComponent<GameControllerScript> ().gameOver = false;
+			gameController.ConvertCounts (-1, 0);
+			gameController.gameOver = false;
 			// Flash the respawn time bar on the screen
 			hud.RespawnBar ();
 			// Then, actually start the respawn process
@@ -515,14 +536,14 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		// Send player back to spawn position, reset rotation, leave spectator mode
 		bodyTrans.localRotation = Quaternion.Euler (alivePosition);
 		transform.rotation = Quaternion.Euler(Vector3.zero);
-		transform.position = new Vector3 (gameController.GetComponent<GameControllerScript>().spawnLocation.position.x, gameController.GetComponent<GameControllerScript>().spawnLocation.position.y, gameController.GetComponent<GameControllerScript>().spawnLocation.position.z);
+		transform.position = new Vector3 (gameController.spawnLocation.position.x, gameController.spawnLocation.position.y, gameController.spawnLocation.position.z);
 		LeaveSpectatorMode ();
 		wepScript.CockingAction ();
 	}
 
 	[PunRPC]
 	void RpcDefuseBomb(int index) {
-		gameController.GetComponent<GameControllerScript> ().bombs[index].GetComponent<BombScript>().Defuse ();
+		gameController.bombs[index].GetComponent<BombScript>().Defuse ();
 	}
 
 	public void HandleGameOverBanner() {

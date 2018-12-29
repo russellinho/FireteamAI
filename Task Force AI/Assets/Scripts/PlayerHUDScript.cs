@@ -116,6 +116,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 		if (gameController == null) {
 			gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameControllerScript> ();
+			return;
 		}
 		container.healthText.text = (container.healthText ? "Health: " + playerScript.health : "");
 

@@ -57,7 +57,7 @@ public class AudioControllerScript : MonoBehaviour {
 			return;
 		}
 		if (!gameControllerRef) {
-			gameControllerRef = GetComponent<PlayerScript> ().gameController.GetComponent<GameControllerScript>();
+			gameControllerRef = GetComponent<PlayerScript> ().gameController;
 			return;
 		}
 

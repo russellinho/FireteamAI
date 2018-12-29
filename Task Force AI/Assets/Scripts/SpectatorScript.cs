@@ -27,7 +27,7 @@ public class SpectatorScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		camTransform = GetComponentsInParent<Transform> () [1];
+		camTransform = GetComponentsInParent<Transform> () [0];
 		cam = GetComponent<Camera> ();
 
 		foreach (GameObject o in GameControllerScript.playerList.Values) {
