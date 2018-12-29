@@ -79,6 +79,7 @@ public class WeaponScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		playerScript = GetComponent<PlayerScript> ();
 		pView = GetComponent<PhotonView> ();
 		if (!pView.IsMine) {
 			return;
@@ -101,6 +102,9 @@ public class WeaponScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (playerScript == null) {
+			playerScript = GetComponent<PlayerScript> ();
+		}
 		if (!pView.IsMine) {
 			return;
 		}

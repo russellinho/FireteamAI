@@ -66,6 +66,9 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
 	void Start () {
+		Physics.IgnoreLayerCollision (9, 12);
+		Physics.IgnoreLayerCollision (14, 12);
+		Physics.IgnoreLayerCollision (15, 12);
 		DontDestroyOnLoad (gameObject);
 		AddMyselfToPlayerList ();
 		audioController = GetComponent<AudioControllerScript> ();
@@ -439,7 +442,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	void DeathCameraEffect() {
 		deathCameraLerpVar += (Time.deltaTime / 4f);
 		viewCam.transform.localPosition = Vector3.Lerp (viewCam.transform.localPosition, deathCameraLerpPos, deathCameraLerpVar);
-		Debug.Log (viewCam.transform.localPosition + " ok " + deathCameraLerpVar);
 	}
 
 	[PunRPC]
