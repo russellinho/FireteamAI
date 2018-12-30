@@ -1034,10 +1034,16 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	float ScaleOffset(float dist) {
-		float scaledOffset = (1f / accuracyOffset) * dist;
+		float scaledOffset = accuracyOffset;
+		if (dist <= 5f) {
+			scaledOffset *= 0.5f;
+		} else if (dist <= 10f) {
+			scaledOffset *= 0.75f;
+		}
+		/**float scaledOffset = (1f / accuracyOffset) * dist;
 		if (scaledOffset > accuracyOffset) {
 			return accuracyOffset;
-		}
+		}*/
 		return scaledOffset;
 	}
 
@@ -1265,7 +1271,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		// If there is no target player, just choose a random cover
 		Transform[] coverSpots = nearbyCover [minCoverIndex].gameObject.GetComponentsInChildren<Transform>();
 		if (player == null) {
-			Vector3 spot = coverSpots [Random.Range (0, coverSpots.Length)].position;
+			Vector3 spot = coverSpots [Random.Range (1, coverSpots.Length)].position;
 			coverPos = spot;
 			//pView.RPC ("RpcSetCoverPos", RpcTarget.All, true, spot.x, spot.y, spot.z);
 		} else {
@@ -1286,7 +1292,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 			// If a unique cover spot wasn't found, then just choose a random spot
 			if (!foundOne) {
-				Vector3 spot = coverSpots [Random.Range (0, coverSpots.Length)].position;
+				Vector3 spot = coverSpots [Random.Range (1, coverSpots.Length)].position;
 				coverPos = spot;
 				//pView.RPC ("RpcSetCoverPos", RpcTarget.All, true, spot.x, spot.y, spot.z);
 			}
