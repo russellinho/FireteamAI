@@ -143,7 +143,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			damage = 20f;
 			shootSound = (AudioClip)Resources.Load ("Gun Sounds/M16A3");
 			gunAudio.minDistance = 9f;
-			aggression = 6;
+			aggression = 7;
 		} else {
 			if (sniper) {
 				range = 35f;
@@ -1034,16 +1034,10 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	float ScaleOffset(float dist) {
-		float scaledOffset = accuracyOffset;
-		if (dist <= 5f) {
-			scaledOffset *= 0.5f;
-		} else if (dist <= 10f) {
-			scaledOffset *= 0.75f;
-		}
-		/**float scaledOffset = (1f / accuracyOffset) * dist;
+		float scaledOffset = (1f / accuracyOffset) * dist;
 		if (scaledOffset > accuracyOffset) {
 			return accuracyOffset;
-		}*/
+		}
 		return scaledOffset;
 	}
 
@@ -1422,7 +1416,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Reset values to respawn
 	IEnumerator Respawn() {
-		yield return new WaitForSeconds (25f);
+		yield return new WaitForSeconds (22f);
 		RespawnAction ();
 	}
 
