@@ -18,7 +18,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	public Camera viewCam;
 	public Transform bodyTrans;
 	public GameObject spectatorCam;
-	private GameObject thisSpectatorCam;
+	public GameObject thisSpectatorCam;
 	private PlayerHUDScript hud;
 
 	// Player variables
