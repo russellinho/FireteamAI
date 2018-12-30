@@ -119,6 +119,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			return;
 		}
 		container.healthText.text = (container.healthText ? "Health: " + playerScript.health : "");
+		container.staminaBar.value = (playerScript.sprintTime / 3f);
 
 		ToggleScoreboard (Input.GetKey(KeyCode.Tab));
 
@@ -287,6 +288,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	public void ToggleHUD(bool b)
     {
         container.healthText.enabled = b;
+		container.staminaBar.enabled = b;
+		container.staminaBar.GetComponentInChildren<Text> ().enabled = b;
         container.weaponLabelTxt.enabled = b;
         container.ammoTxt.enabled = b;
 		container.hudMap.enabled = b;
@@ -297,10 +300,14 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     {
 		if (playerScript.health <= 0) {
 			container.healthText.enabled = false;
+			container.staminaBar.enabled = false;
+			container.staminaBar.GetComponentInChildren<Text> ().enabled = false;
 			container.weaponLabelTxt.enabled = false;
 			container.ammoTxt.enabled = false;
 		} else {
 			container.healthText.enabled = !b;
+			container.staminaBar.enabled = !b;
+			container.staminaBar.GetComponentInChildren<Text> ().enabled = !b;
 			container.weaponLabelTxt.enabled = !b;
 			container.ammoTxt.enabled = !b;
 		}

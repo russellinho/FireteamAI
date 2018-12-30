@@ -24,6 +24,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	// Player variables
 	public string currWep; // TODO: Needs to be changed soon to account for other weps
 	public int health;
+	public float sprintTime;
     public bool godMode;
 	public bool canShoot;
 	private float charHeightOriginal;
@@ -34,6 +35,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	public bool isRespawning;
 	public float respawnTimer;
 	private bool escapeAvailablePopup;
+	private bool isDefusing;
 
 	public GameObject[] subComponents;
 	public FirstPersonController fpc;
@@ -77,10 +79,12 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		bodyScaleOriginal = bodyTrans.lossyScale.y;
 		escapeValueSent = false;
 		assaultModeChangedIndicator = false;
+		isDefusing = false;
 
 		health = 100;
 		kills = 0;
 		deaths = 0;
+		sprintTime = 3f;
 
 		currentBombIndex = 0;
 		bombIterator = 0;
@@ -168,9 +172,26 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		if (health > 0 && fpc.enabled && fpc.m_IsRunning) {
 			audioController.PlaySprintSound (true);
 			canShoot = false;
+			if (sprintTime > 0f) {
+				sprintTime -= Time.deltaTime;
+			}
+			if (fpc.m_IsRunning && sprintTime <= 0f) {
+				fpc.sprintLock = true;
+			}
 		} else {
 			audioController.PlaySprintSound (false);
-			canShoot = true;
+			if (sprintTime < 3f) {
+				sprintTime += Time.deltaTime;
+			}
+			if (!isDefusing) {
+				canShoot = true;
+			} else {
+				canShoot = false;
+			}
+		}
+
+		if (!Input.GetKey (KeyCode.LeftShift) && fpc.sprintLock) {
+			fpc.sprintLock = false;
 		}
 
 		DeathCheck ();
@@ -358,7 +379,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
             if (Input.GetKey (KeyCode.E) && health > 0) {
 				fpc.canMove = false;
-
+				isDefusing = true;
 				hud.container.hintText.enabled = false;
 				hud.ToggleActionBar (true);
 				hud.container.defusingText.enabled = true;
@@ -376,11 +397,12 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 					hud.container.hintText.enabled = false;
 					// Enable movement again
 					fpc.canMove = true;
+					isDefusing = false;
 				}
 			} else {
 				// Enable movement again
 				fpc.canMove = true;
-
+				isDefusing = false;
 				hud.ToggleActionBar (false);
 				hud.container.defusingText.enabled = false;
 				hud.container.hintText.enabled = true;

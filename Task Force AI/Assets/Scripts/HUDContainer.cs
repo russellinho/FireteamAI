@@ -8,6 +8,7 @@ public class HUDContainer : MonoBehaviour {
 
 	// Health HUD
 	public Text healthText;
+	public Slider staminaBar;
 
 	// Weapon HUD
 	public Text weaponLabelTxt;

@@ -156,7 +156,7 @@ public class WeaponScript : MonoBehaviour {
 			gunAnimator.SetBool ("Aim", isAiming);
 		}
 		// Shooting mechanics
-		if (shootInput && !isReloading) {
+		if (shootInput && !isReloading && playerScript.canShoot) {
 			if (currentBullets > 0) {
 				Fire ();
 				cameraShakeScript.SetShake (true);

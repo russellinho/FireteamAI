@@ -46,6 +46,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_NextStep;
         private bool m_Jumping;
         private AudioSource m_AudioSource;
+		public bool sprintLock;
 
 		public bool canMove;
 
@@ -68,6 +69,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_AudioSource = GetComponent<AudioSource>();
 			m_MouseLook.Init(transform , m_Camera.transform);
 			canMove = true;
+			sprintLock = false;
         }
 
 
@@ -254,7 +256,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 					if (Input.GetKey(KeyCode.C)) {
 						m_IsWalking = true;
 						m_IsRunning = false;
-					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f) {
+					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f && GetComponent<PlayerScript>().sprintTime > 0f && !sprintLock) {
 						m_IsWalking = false;
 						m_IsRunning = true;
 					} else {

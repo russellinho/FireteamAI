@@ -605,7 +605,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 		
 	void PlayVoiceClip(int n) {
-		if (!audioSource.isPlaying) {
+		if (!audioSource.isPlaying && health > 0) {
 			audioSource.clip = voiceClips [n - 1];
 			audioSource.Play ();
 		}
