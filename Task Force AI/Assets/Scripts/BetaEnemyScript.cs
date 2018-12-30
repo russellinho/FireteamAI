@@ -143,6 +143,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			damage = 20f;
 			shootSound = (AudioClip)Resources.Load ("Gun Sounds/M16A3");
 			gunAudio.minDistance = 9f;
+			aggression = 6;
 		} else {
 			if (sniper) {
 				range = 35f;
@@ -407,7 +408,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (actionState == ActionStates.Idle) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
-				pView.RPC ("RpcSetWanderStallDelay", RpcTarget.All, -1);
+				pView.RPC ("RpcSetWanderStallDelay", RpcTarget.All, -1f);
 			}
 		}
 
@@ -455,15 +456,14 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (navMeshReachedDestination(0f)) {
 					// Done
 					pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
-					pView.RPC ("RpcSetInCover", RpcTarget.All, true);
 					if (actionState != ActionStates.InCover) {
 						pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.InCover);
 					}
 				}
 			}
 		}
-
-		if (actionState == ActionStates.Firing && !inCover) {
+			
+		if (actionState == ActionStates.Firing) {
 			if (navMesh.speed != 4f) {
 				pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4f);
 			}
@@ -523,7 +523,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					navMesh.isStopped = true;
 					navMesh.ResetPath ();
 					navMesh.isStopped = false;
-					navMesh.Move (transform.forward * 2f);
+					navMesh.Move (transform.forward * Time.deltaTime);
 					//navMesh.SetDestination (player.transform.position);
 				}
 
@@ -531,7 +531,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					navMesh.isStopped = true;
 					navMesh.ResetPath ();
 					navMesh.isStopped = false;
-					navMesh.Move (transform.forward * -2f);
+					navMesh.Move (transform.forward * -Time.deltaTime);
 					//navMesh.SetDestination (new Vector3(transform.position.x, transform.position.y, transform.position.z - 5f));
 					//navMesh.SetDestination (new Vector3 (-oppositeDirVector.x, oppositeDirVector.y, -oppositeDirVector.z));
 				}
@@ -540,7 +540,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					navMesh.isStopped = true;
 					navMesh.ResetPath ();
 					navMesh.isStopped = false;
-					Vector3 dest = new Vector3 (transform.right.x * navMesh.speed * 2f, transform.right.y * navMesh.speed * 2f, transform.right.z * navMesh.speed * 2f);
+					Vector3 dest = new Vector3 (transform.right.x * Time.deltaTime, transform.right.y * Time.deltaTime, transform.right.z * Time.deltaTime);
 					navMesh.Move (dest);
 					//navMesh.SetDestination (new Vector3(transform.position.x + dest.x, transform.position.y + dest.y, transform.position.z + dest.z));
 				}
@@ -549,7 +549,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					navMesh.isStopped = true;
 					navMesh.ResetPath ();
 					navMesh.isStopped = false;
-					Vector3 dest = new Vector3 (transform.right.x * -navMesh.speed * 2f, transform.right.y * -navMesh.speed * 2f, transform.right.z * -navMesh.speed * 2f);
+					Vector3 dest = new Vector3 (transform.right.x * -Time.deltaTime, transform.right.y * -Time.deltaTime, transform.right.z * -Time.deltaTime);
 					navMesh.Move (dest);
 				}
 			}
@@ -572,10 +572,6 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
 				coverWaitTimer -= Time.deltaTime;
 				//pView.RPC ("RpcSetCoverWaitTimer", 	RpcTarget.Others, coverWaitTimer);
-			}
-			if (inCover) {
-				coverSwitchPositionsTimer -= Time.deltaTime;
-				//pView.RPC ("RpcSetCoverSwitchPositionsTimer", RpcTarget.Others, coverSwitchPositionsTimer);
 			}
 
 			// Three modes in cover - defensive, offensive, maneuvering; only used when engaging a player
@@ -826,7 +822,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				alertTimer = 12f;
 				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue && actionState != ActionStates.Reloading) {
 					int r = Random.Range (1, aggression - 2);
-					if (r <= 2) {
+					if (r <= 1) {
 						bool coverFound = DynamicTakeCover ();
 						if (coverFound) {
 							if (actionState != ActionStates.TakingCover) {
