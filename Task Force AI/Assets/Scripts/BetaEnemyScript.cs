@@ -231,8 +231,12 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
+		// Hot fix for death animation not working on client
+		if (!PhotonNetwork.IsMasterClient && health <= 0) {
+			actionState = ActionStates.Dead;
+		}
+
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
-			Debug.Log ("later on");
 			if (PhotonNetwork.IsMasterClient && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 			}
