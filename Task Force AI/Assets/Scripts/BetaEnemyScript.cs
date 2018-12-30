@@ -232,6 +232,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	void FixedUpdate() {
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
+			Debug.Log ("later on");
 			if (PhotonNetwork.IsMasterClient && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 			}
@@ -1178,6 +1179,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 		marker.enabled = false;
 		gunRef.enabled = false;
+		myCollider.enabled = false;
 	}
 
 	void RemoveHitboxes() {
@@ -1419,12 +1421,15 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void RespawnAction () {
+		myCollider.height = originalColliderHeight;
+		myCollider.center = new Vector3 (originalColliderCenter.x, originalColliderCenter.y, originalColliderCenter.z);
+		myCollider.enabled = true;
 		if (enemyType == EnemyType.Patrol) {
 			navMesh.enabled = true;
 		} else {
 			navMeshObstacle.enabled = true;
 		}
-		gameObject.layer = 0;
+		gameObject.layer = 14;
 		headCollider.gameObject.layer = 13;
 		health = 100;
 		transform.position = new Vector3 (spawnPos.x, spawnPos.y, spawnPos.z);
@@ -1453,8 +1458,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		crouchMode = 2;
 		coverScanRange = 50f;
 
-		myCollider.height = originalColliderHeight;
-		myCollider.center = new Vector3 (originalColliderCenter.x, originalColliderCenter.y, originalColliderCenter.z);
 		meleeTrigger.enabled = true;
 		for (int i = 0; i < visibleParts.Length; i++) {
 			visibleParts [i].enabled = true;

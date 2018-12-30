@@ -66,9 +66,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
 	void Start () {
-		Physics.IgnoreLayerCollision (9, 12);
-		Physics.IgnoreLayerCollision (14, 12);
-		Physics.IgnoreLayerCollision (15, 12);
 		DontDestroyOnLoad (gameObject);
 		AddMyselfToPlayerList ();
 		audioController = GetComponent<AudioControllerScript> ();

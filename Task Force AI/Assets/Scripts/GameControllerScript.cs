@@ -45,8 +45,10 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     void Start () {
         PhotonNetwork.AutomaticallySyncScene = true;
 		Physics.IgnoreLayerCollision (9, 12);
+		Physics.IgnoreLayerCollision (9, 15);
 		Physics.IgnoreLayerCollision (14, 12);
 		Physics.IgnoreLayerCollision (15, 12);
+		Physics.IgnoreLayerCollision (14, 15);
 
 		assaultMode = false;
 		gameOver = false;
