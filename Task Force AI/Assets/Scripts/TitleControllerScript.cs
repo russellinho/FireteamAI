@@ -9,6 +9,7 @@ using Photon.Pun;
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public GameObject mainMenu;
+	public Text titleText;
 	//public GameObject networkMan;
 	public GameObject matchmakingMenu;
 	public GameObject customizationMenu;
@@ -35,6 +36,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		PlayerData.playerdata.FindBodyRef ();
 		PlayerData.playerdata.UpdateBodyColor ();
 		PlayerNameInput.text = PlayerData.playerdata.playername;
+		titleText.enabled = true;
 		mainMenu.SetActive (true);
 		loadingStatus = 0;
 		Cursor.lockState = CursorLockMode.None;
@@ -92,6 +94,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			PhotonNetwork.ConnectUsingSettings();
 		}
 
+		titleText.enabled = false;
 		mainMenu.SetActive (false);
 		customizationMenu.SetActive (false);
 		matchmakingMenu.SetActive (true);
@@ -103,6 +106,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			savePlayerData ();
 		}
 		customizationMenu.SetActive (false);
+		titleText.enabled = true;
 		mainMenu.SetActive (true);
 		matchmakingMenu.SetActive (false);
 	}
@@ -118,10 +122,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     {
         base.OnDisconnected(cause);
         matchmakingMenu.SetActive(false);
+		titleText.enabled = true;
         mainMenu.SetActive(true);
     }
 
     public void GoToCustomization() {
+		titleText.enabled = false;
 		mainMenu.SetActive (false);
 		matchmakingMenu.SetActive (false);
 		customizationMenu.SetActive (true);
