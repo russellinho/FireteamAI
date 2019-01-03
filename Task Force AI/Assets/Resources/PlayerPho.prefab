@@ -186,6 +186,7 @@ GameObject:
   - component: {fileID: 114870458661680654}
   - component: {fileID: 114745308866780578}
   - component: {fileID: 114993924595385136}
+  - component: {fileID: 114182331687483920}
   m_Layer: 9
   m_Name: PlayerPho
   m_TagString: Player
@@ -3224,6 +3225,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114182331687483920
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1169066660904442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfeb63ae27c08bd4eb4e95ce989db7b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  container: {fileID: 0}
 --- !u!114 &114336108925888890
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3255,8 +3268,10 @@ MonoBehaviour:
   bodyTrans: {fileID: 4323335807701884}
   spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
     type: 2}
+  thisSpectatorCam: {fileID: 0}
   currWep: 
   health: 0
+  sprintTime: 0
   godMode: 0
   canShoot: 0
   escapeValueSent: 0
@@ -3484,6 +3499,7 @@ MonoBehaviour:
   m_JumpSound: {fileID: 8300000, guid: 5897aeed9b676024fbb8c694b421a861, type: 3}
   m_LandSound: {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
   m_Input: {x: 0, y: 0}
+  sprintLock: 0
   canMove: 0
 --- !u!114 &114935885646936092
 MonoBehaviour:

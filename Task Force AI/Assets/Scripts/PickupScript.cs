@@ -24,6 +24,8 @@ public class PickupScript : MonoBehaviour {
 			if (!aud.isPlaying) {
 				if (PhotonNetwork.IsMasterClient) {
 					PhotonNetwork.Destroy (gameObject);
+				} else {
+					GameControllerScript.playerList [PhotonNetwork.LocalPlayer.ActorNumber].GetComponent<PhotonView> ().RPC ("RpcDestroyBox", RpcTarget.MasterClient);
 				}
 			}
 			return;
@@ -46,6 +48,11 @@ public class PickupScript : MonoBehaviour {
 		GetComponent<MeshRenderer> ().enabled = false;
 		GetComponent<BoxCollider> ().enabled = false;
 		GetComponent<Animator> ().enabled = false;
+	}
+
+	[PunRPC]
+	void RpcDestroyBox() {
+		PhotonNetwork.Destroy (gameObject);
 	}
 
 }

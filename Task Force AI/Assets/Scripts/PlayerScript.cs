@@ -36,6 +36,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	public float respawnTimer;
 	private bool escapeAvailablePopup;
 	private bool isDefusing;
+	private float enterSpectatorModeTimer;
 
 	public GameObject[] subComponents;
 	public FirstPersonController fpc;
@@ -123,6 +124,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		isRespawning = false;
 		respawnTimer = 0f;
 		escapeAvailablePopup = false;
+		enterSpectatorModeTimer = 0f;
 
 	}
 
@@ -144,6 +146,13 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		/**if (Input.GetKeyDown (KeyCode.P)) {
 			BeginRespawn ();
 		}*/
+
+		if (enterSpectatorModeTimer > 0f) {
+			enterSpectatorModeTimer -= Time.deltaTime;
+			if (enterSpectatorModeTimer <= 0f) {
+				EnterSpectatorMode ();
+			}
+		}
 
 		if (gameController.sectorsCleared == 0 && gameController.bombsRemaining == 2) {
 			gameController.sectorsCleared++;
@@ -309,7 +318,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 				deathCameraLerpPos = new Vector3 (viewCam.transform.localPosition.x, viewCam.transform.localPosition.y, viewCam.transform.localPosition.z - 4.5f);
 				alivePosition = new Vector3 (0f, bodyTrans.localRotation.eulerAngles.y, 0f);
 				deadPosition = new Vector3 (-90f, bodyTrans.localRotation.eulerAngles.y, 0f);
-				StartCoroutine (RoutineEnterSpectatorMode());
+				enterSpectatorModeTimer = 6f;
 				rotationSaved = true;
 				photonView.RPC ("RpcAddToTotalDeaths", RpcTarget.All);
 			}
@@ -354,6 +363,16 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		}*/
 
 		if (!currentBomb) {
+			// Enable movement again
+			if (!fpc.canMove && !hud.container.inGameMessenger.inputText.enabled) {
+				fpc.canMove = true;
+				isDefusing = false;
+				hud.ToggleActionBar (false);
+				hud.container.defusingText.enabled = false;
+				hud.container.hintText.enabled = false;
+				bombDefuseCounter = 0f;
+			}
+
 			if (bombIterator >= gameController.bombs.Length) {
 				currentBomb = null;
 				bombIterator = 0;
@@ -401,12 +420,14 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 				}
 			} else {
 				// Enable movement again
-				fpc.canMove = true;
-				isDefusing = false;
-				hud.ToggleActionBar (false);
-				hud.container.defusingText.enabled = false;
-				hud.container.hintText.enabled = true;
-				bombDefuseCounter = 0f;
+				if (!fpc.canMove) {
+					fpc.canMove = true;
+					isDefusing = false;
+					hud.ToggleActionBar (false);
+					hud.container.defusingText.enabled = false;
+					hud.container.hintText.enabled = true;
+					bombDefuseCounter = 0f;
+				}
 			}
 		}
 	}
@@ -452,7 +473,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 				other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
 			} else if (other.gameObject.tag.Equals ("HealthBox")) {
 				ResetHealTimer ();
-				health = 100;
+				photonView.RPC ("RpcSetHealth", RpcTarget.All, 100);
 				other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
 			}
 		}
@@ -467,11 +488,6 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	void RpcToggleFPSHands(bool b) {
 		viewCam.gameObject.GetComponentInChildren<SkinnedMeshRenderer> ().enabled = b;
 		viewCam.gameObject.GetComponentInChildren<MeshRenderer> ().enabled = b;
-	}
-
-	IEnumerator RoutineEnterSpectatorMode() {
-		yield return new WaitForSeconds (6f);
-		EnterSpectatorMode ();
 	}
 
 	void EnterSpectatorMode() {
@@ -515,6 +531,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void BeginRespawn() {
+		enterSpectatorModeTimer = 0f;
 		if (health <= 0) {
 			gameController.ConvertCounts (-1, 0);
 			gameController.gameOver = false;

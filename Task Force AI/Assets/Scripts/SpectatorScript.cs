@@ -77,16 +77,17 @@ public class SpectatorScript : MonoBehaviour {
 		bool currentIdFound = false;
 		foreach (GameObject o in GameControllerScript.playerList.Values) {
 			if (o.GetComponent<PlayerScript> ().health > 0) {
+				// If we haven't defined first person in the collection yet, define it
 				if (!first) {
 					first = o;
-				} else {
-					if (currentIdFound) {
-						first = o;
-						break;
-					}
-					if (o.GetComponent<PhotonView>().OwnerActorNr == playerListKey) {
-						currentIdFound = true;
-					}
+				}
+				// Else, if we come across the player who we are currently spectating, then move onto the next player or the first if it's the last player
+				if (currentIdFound) {
+					first = o;
+					break;
+				}
+				if (o.GetComponent<PhotonView>().OwnerActorNr == playerListKey) {
+					currentIdFound = true;
 				}
 			}
 		}
