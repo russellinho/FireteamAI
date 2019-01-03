@@ -16,14 +16,22 @@ public class InGameMessengerHUD : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		container = GameObject.Find ("HUD").GetComponent<HUDContainer> ();
 		playerScript = GetComponent<PlayerScript> ();
 		pView = playerScript.GetComponent<PhotonView> ();
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		HandleChat ();
+		if (container == null) {
+			GameObject c = GameObject.Find ("HUD");
+			if (c != null) {
+				container = c.GetComponent<HUDContainer> ();
+			}
+			return;
+		}
+		if (pView.IsMine) {
+			HandleChat ();
+		}
 	}
 
 	void HandleChat() {
@@ -57,7 +65,10 @@ public class InGameMessengerHUD : MonoBehaviour {
 
 	[PunRPC]
 	void RpcSendChatMessage(string message) {
-		container.inGameMessenger.AddMessage (message, PhotonNetwork.LocalPlayer.NickName);
+		container.inGameMessenger.AddMessage (message, pView.Owner.NickName);
 	}
-		
+
 }
+
+
+
