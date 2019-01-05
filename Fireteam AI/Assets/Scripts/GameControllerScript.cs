@@ -19,6 +19,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private Vector3 lastGunshotHeardPosClone = Vector3.negativeInfinity;
 	private float lastGunshotTimer = 0f;
     public float endGameTimer = 0f;
+	private bool loadExitCalled;
 	public static Dictionary<int, GameObject> playerList = new Dictionary<int, GameObject> ();
 	public static Dictionary<string, int> totalKills = new Dictionary<string, int> ();
 	public static Dictionary<string, int> totalDeaths = new Dictionary<string, int> ();
@@ -66,6 +67,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         missionTime = 0f;
 		lastGunshotTimer = 10f;
 		sectorsCleared = 0;
+		loadExitCalled = false;
 
 		lastGunshotHeardPos = Vector3.negativeInfinity;
 		lastGunshotHeardPosClone = Vector3.negativeInfinity;
@@ -311,7 +313,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				if (!exitLevelLoaded) {
 					pView.RPC ("RpcSetExitLevelLoaded", RpcTarget.All);
 				} else {
-					if (exitLevelLoadedTimer <= 0f) {
+					if (exitLevelLoadedTimer <= 0f && !loadExitCalled) {
+						loadExitCalled = true;
 						if (deadCount == PhotonNetwork.CurrentRoom.Players.Count) {
 							SwitchToGameOverScene (false);
 						} else {
