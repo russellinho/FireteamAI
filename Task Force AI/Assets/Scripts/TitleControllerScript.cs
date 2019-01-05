@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Realtime;
 using Photon.Pun;
+using UnityEngine.Networking;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
@@ -29,6 +30,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private short loadingStatus;
 	private float t;
 	private string[] proTips = new string[2]{"Aim for the head for faster kills.", "Be on the lookout for ammo and health drops from enemies."};
+	private bool versionWarning;
 
 	// Use this for initialization
 	void Start () {
@@ -51,6 +53,24 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		GameControllerScript.totalKills.Clear ();
 		GameControllerScript.totalDeaths.Clear ();
 
+		StartCoroutine (VersionNumberCheck());
+
+	}
+
+	IEnumerator VersionNumberCheck() {
+		UnityWebRequest www = UnityWebRequest.Get("https://koobando-web.firebaseapp.com/versionCheck.txt");
+		yield return www.SendWebRequest();
+
+		if(www.isNetworkError || www.isHttpError) {
+			Debug.Log("Error while getting version number: " + www.error);
+		} else {
+			// Show results as text
+			if (!www.downloadHandler.text.Substring(0, www.downloadHandler.text.Length - 2).Equals(Application.version)) {
+				versionWarning = true;
+			} else {
+				versionWarning = false;
+			}
+		}
 	}
 
 	public void InstantiateLoadingScreen(string mapName) {
@@ -72,6 +92,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			PlayerData.playerdata.disconnectedFromServer = false;
 			mainMenuPopup.GetComponentInChildren<Text> ().text = "Lost connection to server.\nReason: " + PlayerData.playerdata.disconnectReason;
 			PlayerData.playerdata.disconnectReason = "";
+			mainMenuPopup.SetActive (true);
+		} else if (versionWarning) {
+			versionWarning = false;
+			mainMenuPopup.GetComponentInChildren<Text> ().text = "Your game is not updated to the latest version of Fireteam AI!\nThis may affect your matchmaking experience.";
 			mainMenuPopup.SetActive (true);
 		}
 		if (loadingScreen.activeInHierarchy) {
