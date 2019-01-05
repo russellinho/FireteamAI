@@ -470,10 +470,18 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		if (photonView.IsMine) {
 			if (other.gameObject.tag.Equals ("AmmoBox")) {
 				wepScript.totalBulletsLeft = 120 + (wepScript.bulletsPerMag - wepScript.currentBullets);
+				other.gameObject.GetComponent<PickupScript> ().PlayPickupSound ();
 				other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
 			} else if (other.gameObject.tag.Equals ("HealthBox")) {
 				ResetHealTimer ();
 				photonView.RPC ("RpcSetHealth", RpcTarget.All, 100);
+				other.gameObject.GetComponent<PickupScript> ().PlayPickupSound ();
+				other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
+			}
+		} else {
+			if (other.gameObject.tag.Equals ("AmmoBox")) {
+				other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
+			} else if (other.gameObject.tag.Equals ("HealthBox")) {
 				other.gameObject.GetComponent<PickupScript> ().DestroyPickup ();
 			}
 		}

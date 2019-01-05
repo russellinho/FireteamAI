@@ -366,7 +366,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	void HandleMovementPatrol() {
 		// Melee attack trumps all
-		if (actionState == ActionStates.Melee) {
+		if (actionState == ActionStates.Melee || actionState == ActionStates.Dead) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 			}
@@ -635,7 +635,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (r == 6) {
 				// 1/6 chance of getting a health box
 				PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
-			} else if (r > 1 && r < 6) {
+			} else if (r >= 1 && r < 5) {
 				// 1/3 chance of getting ammo box
 				PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			}
@@ -783,7 +783,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (r == 6) {
 				// 1/6 chance of getting a health box
 				PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
-			} else if (r > 1 && r < 6) {
+			} else if (r >= 1 && r < 5) {
 				// 1/3 chance of getting ammo box
 				PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			}

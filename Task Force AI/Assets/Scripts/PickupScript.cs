@@ -8,25 +8,27 @@ public class PickupScript : MonoBehaviour {
 
 	private bool done;
 	private float spawnTime;
-	private bool destroying;
+	private float destroyTimer;
+	private bool destroyed;
 	private AudioSource aud;
 
 	void Start() {
 		done = false;
 		spawnTime = 0f;
-		destroying = false;
+		destroyTimer = 0f;
+		destroyed = false;
 		aud = GetComponent<AudioSource> ();
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if (destroying) {
-			if (!aud.isPlaying) {
+		if (destroyed) {
+			if (destroyTimer <= 0f) {
 				if (PhotonNetwork.IsMasterClient) {
 					PhotonNetwork.Destroy (gameObject);
-				} else {
-					GameControllerScript.playerList [PhotonNetwork.LocalPlayer.ActorNumber].GetComponent<PhotonView> ().RPC ("RpcDestroyPickup", RpcTarget.MasterClient);
 				}
+			} else {
+				destroyTimer -= Time.deltaTime;
 			}
 			return;
 		}
@@ -42,17 +44,18 @@ public class PickupScript : MonoBehaviour {
 		}
 	}
 
-	public void DestroyPickup() {
+	public void PlayPickupSound() {
 		aud.Play ();
-		destroying = true;
+	}
+
+	public void DestroyPickup() {
+		destroyTimer = 3f;
+		destroyed = true;
 		GetComponent<MeshRenderer> ().enabled = false;
 		GetComponent<BoxCollider> ().enabled = false;
 		GetComponent<Animator> ().enabled = false;
 	}
 
-	[PunRPC]
-	void RpcDestroyPickup() {
-		PhotonNetwork.Destroy (gameObject);
-	}
+
 
 }

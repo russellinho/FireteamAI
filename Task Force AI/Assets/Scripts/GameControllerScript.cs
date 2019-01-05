@@ -29,6 +29,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public int bombsRemaining;
 	public bool gameOver;
     public bool exitLevelLoaded;
+	private float exitLevelLoadedTimer;
     public bool escapeAvailable;
 	public short sectorsCleared;
 
@@ -60,6 +61,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
         exitLevelLoaded = false;
+		exitLevelLoadedTimer = 0f;
 
         missionTime = 0f;
 		lastGunshotTimer = 10f;
@@ -291,6 +293,12 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		bombsRemaining--;
 	}
 
+	[PunRPC]
+	void RpcSetExitLevelLoaded() {
+		exitLevelLoaded = true;
+		exitLevelLoadedTimer = 4f;
+	}
+
     void UpdateEndGameTimer() {
         if (gameOver) {
             if (endGameTimer > 0f)
@@ -299,13 +307,20 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				pView.RPC ("RpcUpdateEndGameTimer", RpcTarget.Others, endGameTimer);
             }
 
-            if (endGameTimer <= 0f && !exitLevelLoaded) {
-				exitLevelLoaded = true;
-                if (deadCount == PhotonNetwork.CurrentRoom.Players.Count) {
-					StartCoroutine (SwitchToGameOverScene(false));
-                } else {
-					StartCoroutine (SwitchToGameOverScene(true));
-                }
+            if (endGameTimer <= 0f) {
+				if (!exitLevelLoaded) {
+					pView.RPC ("RpcSetExitLevelLoaded", RpcTarget.All);
+				} else {
+					if (exitLevelLoadedTimer <= 0f) {
+						if (deadCount == PhotonNetwork.CurrentRoom.Players.Count) {
+							SwitchToGameOverScene (false);
+						} else {
+							SwitchToGameOverScene (true);
+						}
+					} else {
+						exitLevelLoadedTimer -= Time.deltaTime;
+					}
+				}
             }
         }
     }
@@ -318,8 +333,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		SceneManager.LoadScene (0);
 	}
 
-	IEnumerator SwitchToGameOverScene(bool win) {
-		yield return new WaitForSeconds (4f);
+	void SwitchToGameOverScene(bool win) {
 		if (!win) {
 			PhotonNetwork.LoadLevel("GameOverFail");
 		} else {
