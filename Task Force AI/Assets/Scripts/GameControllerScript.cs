@@ -72,6 +72,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// Update is called once per frame
 	void Update () {
+		if (!PhotonNetwork.InRoom) {
+			return;
+		}
         if (currentMap == 1)
         {
 			if (bombsRemaining == 0) {
@@ -297,7 +300,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             }
 
             if (endGameTimer <= 0f && !exitLevelLoaded) {
-				pView.RPC ("RpcSetExitLevelLoaded", RpcTarget.All);
+				exitLevelLoaded = true;
                 if (deadCount == PhotonNetwork.CurrentRoom.Players.Count) {
 					StartCoroutine (SwitchToGameOverScene(false));
                 } else {
@@ -306,11 +309,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             }
         }
     }
-
-	[PunRPC]
-	void RpcSetExitLevelLoaded() {
-		exitLevelLoaded = true;
-	}
 
 	public override void OnDisconnected(DisconnectCause cause) {
 		if (!cause.ToString ().Equals ("DisconnectByClientLogic")) {

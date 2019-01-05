@@ -42,6 +42,10 @@ public class PlayerData : MonoBehaviour {
 					Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints [0],
 					Quaternion.identity, 0);
 			}
+		} else {
+			if (PlayerData.playerdata.inGamePlayerReference != null) {
+				PhotonNetwork.Destroy (PlayerData.playerdata.inGamePlayerReference);
+			}
 		}
 
 	}

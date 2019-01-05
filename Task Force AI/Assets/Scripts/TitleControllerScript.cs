@@ -41,6 +41,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		loadingStatus = 0;
 		Cursor.lockState = CursorLockMode.None;
 		Cursor.visible = true;
+
+		// Safety destroy previous match data
+		foreach (GameObject entry in GameControllerScript.playerList.Values)
+		{
+			Destroy(entry.gameObject);
+		}
+		GameControllerScript.playerList.Clear();
+		GameControllerScript.totalKills.Clear ();
+		GameControllerScript.totalDeaths.Clear ();
+
 	}
 
 	public void InstantiateLoadingScreen(string mapName) {

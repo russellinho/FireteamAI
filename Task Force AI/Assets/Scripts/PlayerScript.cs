@@ -143,9 +143,9 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 		}
 
 		// Instant respawn hack
-		/**if (Input.GetKeyDown (KeyCode.P)) {
+		if (Input.GetKeyDown (KeyCode.P)) {
 			BeginRespawn ();
-		}*/
+		}
 
 		if (enterSpectatorModeTimer > 0f) {
 			enterSpectatorModeTimer -= Time.deltaTime;
