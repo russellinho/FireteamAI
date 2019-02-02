@@ -7,10 +7,18 @@ public class MeshFixer : MonoBehaviour
 
     public GameObject target;
     public Transform rootBone;
+    
+    private Dictionary<string, Transform> rootBoneMap;
 // Use this for initialization
     void Start () {
         SkinnedMeshRenderer targetRenderer = target.GetComponent<SkinnedMeshRenderer>();
         Dictionary<string,Transform> boneMap = new Dictionary<string,Transform>();
+        rootBoneMap = new Dictionary<string, Transform>();
+
+        Transform[] r = rootBone.GetComponentsInChildren<Transform>();
+        for (int i = 0; i < r.Length; i++) {
+            rootBoneMap[r[i].gameObject.name] = r[i];
+        }
 
         foreach(Transform bone in targetRenderer.bones) {
             Debug.Log(bone.gameObject.name);
@@ -26,9 +34,11 @@ public class MeshFixer : MonoBehaviour
             Debug.Log(bone.name);
             if(!boneMap.TryGetValue(bone.name, out newBones[i])) {
                 Debug.Log("Unable to map bone \"" + bone.name + "\" to target skeleton.");
-                newBones[i] = bone.transform;
+                //newBones[i] = bone.transform;
+                newBones[i] = rootBoneMap[bone.name];
             }
         }
         myRenderer.bones = newBones;
     }
+
 }
