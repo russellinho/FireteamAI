@@ -9,6 +9,9 @@ using UnityEngine.Networking;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
+	private Vector3 customizationCameraPos = new Vector3(-4.82f, 4.08f, 21.5f);
+	private Vector3 defaultCameraPos = new Vector3(-7.3f, 4.08f, 22.91f);
+
 	public GameObject mainMenu;
 	public Text titleText;
 	//public GameObject networkMan;
@@ -234,5 +237,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void ClosePopup() {
 		mainMenuPopup.SetActive (false);
 	}
+
+	
 		
 }
