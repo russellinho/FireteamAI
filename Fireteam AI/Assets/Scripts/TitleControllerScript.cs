@@ -38,6 +38,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private string[] proTips = new string[2]{"Aim for the head for faster kills.", "Be on the lookout for ammo and health drops from enemies."};
 	private bool versionWarning;
 
+	// Customization menu
+	public GameObject contentPrefab;
+	public GameObject contentInventory;
+	public Button headgearBtn;
+	public Button faceBtn;
+	public Button armorBtn;
+	public Button topsBtn;
+	public Button bottomsBtn;
+	public Button footwearBtn;
+	public Button primaryWepBtn;
+	public Button secondaryWepBtn;
+
 	// Use this for initialization
 	void Start () {
 		//PlayerData.playerdata.LoadPlayerData ();
