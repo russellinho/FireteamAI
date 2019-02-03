@@ -17,7 +17,7 @@ public class PlayerData : MonoBehaviour {
 	public string disconnectReason;
 	public bool testMode;
 
-	public MeshRenderer bodyColorReference;
+	public GameObject bodyReference;
 	public GameObject inGamePlayerReference;
 
 	void Awake () {
@@ -83,12 +83,12 @@ public class PlayerData : MonoBehaviour {
 		PhotonNetwork.NickName = playername;
 	}
 
-	public void UpdateBodyColor() {
-		bodyColorReference.material.color = new Color (color.x / 255, color.y / 255, color.z / 255, 1.0f);
-	}
+	// public void UpdateBodyColor() {
+	// 	bodyReference.material.color = new Color (color.x / 255, color.y / 255, color.z / 255, 1.0f);
+	// }
 
 	public void FindBodyRef() {
-		bodyColorReference = GameObject.FindGameObjectWithTag ("Player").GetComponentsInChildren<MeshRenderer>()[1];
+		bodyReference = GameObject.FindGameObjectWithTag ("Player");
 	}
 
 }

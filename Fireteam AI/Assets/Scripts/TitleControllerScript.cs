@@ -11,8 +11,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	private Vector3 customizationCameraPos = new Vector3(-4.82f, 4.08f, 21.5f);
 	private Vector3 defaultCameraPos = new Vector3(-7.3f, 4.08f, 22.91f);
+	private int camPos;
+	private float camMoveTimer;
 
 	public GameObject mainMenu;
+	public Camera mainCam;
 	public Text titleText;
 	//public GameObject networkMan;
 	public GameObject matchmakingMenu;
@@ -39,11 +42,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	void Start () {
 		//PlayerData.playerdata.LoadPlayerData ();
 		PlayerData.playerdata.FindBodyRef ();
-		PlayerData.playerdata.UpdateBodyColor ();
-		PlayerNameInput.text = PlayerData.playerdata.playername;
+//		PlayerData.playerdata.UpdateBodyColor ();
+		//PlayerNameInput.text = PlayerData.playerdata.playername;
 		titleText.enabled = true;
 		mainMenu.SetActive (true);
 		loadingStatus = 0;
+		camPos = 0;
+		camMoveTimer = 1f;
 		Cursor.lockState = CursorLockMode.None;
 		Cursor.visible = true;
 
@@ -122,6 +127,27 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 					t = 0f;
 				}
 			}
+		} else {
+			if (!matchmakingMenu.activeInHierarchy) {
+				if (camPos == 0) {
+					mainCam.transform.position = Vector3.Lerp(customizationCameraPos, defaultCameraPos, camMoveTimer);
+					if (camMoveTimer < 1f) {
+						camMoveTimer += (Time.deltaTime / 1.2f);
+					}
+					if (Vector3.Equals(mainCam.transform.position, defaultCameraPos)) {
+						titleText.enabled = true;
+						mainMenu.SetActive(true);
+					}
+				} else if (camPos == 1) {
+					mainCam.transform.position = Vector3.Lerp(defaultCameraPos, customizationCameraPos, camMoveTimer);
+					if (camMoveTimer < 1f) {
+						camMoveTimer += (Time.deltaTime / 1.2f);
+					}
+					if (Vector3.Equals(mainCam.transform.position, customizationCameraPos)) {
+						customizationMenu.SetActive(true);
+					}
+				}
+			}
 		}
 	}
 
@@ -139,13 +165,21 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		
 	public void ReturnToMainMenu() {
 		// Save settings if the settings are active
-		if (customizationMenu.activeInHierarchy) {
-			savePlayerData ();
-		}
 		customizationMenu.SetActive (false);
-		titleText.enabled = true;
-		mainMenu.SetActive (true);
 		matchmakingMenu.SetActive (false);
+		titleText.enabled = true;
+		mainMenu.SetActive(true);
+	}
+
+	public void ReturnToMainMenuFromCustomization() {
+		// Save settings if the settings are active
+		// if (customizationMenu.activeInHierarchy) {
+		// 	savePlayerData ();
+		// }
+		customizationMenu.SetActive (false);
+		matchmakingMenu.SetActive (false);
+		camPos = 0;
+		camMoveTimer = 0f;
 	}
 
     public void ExitMatchmaking() {
@@ -167,7 +201,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		titleText.enabled = false;
 		mainMenu.SetActive (false);
 		matchmakingMenu.SetActive (false);
-		customizationMenu.SetActive (true);
+		camPos = 1;
+		camMoveTimer = 0f;
 	}
 
 	public void goToMainMenu (){
@@ -183,55 +218,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	{
 		PlayerData.playerdata.playername = PlayerNameInput.text;
 		PlayerData.playerdata.SavePlayerData();
-	}
-
-	public void SetRedColor() {
-		PlayerData.playerdata.color.x = 255;
-		PlayerData.playerdata.color.y = 0;
-		PlayerData.playerdata.color.z = 0;
-		PlayerData.playerdata.UpdateBodyColor ();
-	}
-
-	public void SetBlueColor() {
-		PlayerData.playerdata.color.x = 0;
-		PlayerData.playerdata.color.y = 0;
-		PlayerData.playerdata.color.z = 255;
-		PlayerData.playerdata.UpdateBodyColor ();
-	}
-
-	public void SetGreenColor() {
-		PlayerData.playerdata.color.x = 0;
-		PlayerData.playerdata.color.y = 255;
-		PlayerData.playerdata.color.z = 0;
-		PlayerData.playerdata.UpdateBodyColor ();
-	}
-
-	public void SetYellowColor() {
-		PlayerData.playerdata.color.x = 255;
-		PlayerData.playerdata.color.y = 255;
-		PlayerData.playerdata.color.z = 0;
-		PlayerData.playerdata.UpdateBodyColor ();
-	}
-
-	public void SetOrangeColor() {
-		PlayerData.playerdata.color.x = 255;
-		PlayerData.playerdata.color.y = 119;
-		PlayerData.playerdata.color.z = 1;
-		PlayerData.playerdata.UpdateBodyColor ();
-	}
-
-	public void SetPurpleColor() {
-		PlayerData.playerdata.color.x = 81;
-		PlayerData.playerdata.color.y = 2;
-		PlayerData.playerdata.color.z = 126;
-		PlayerData.playerdata.UpdateBodyColor ();
-	}
-
-	public void SetWhiteColor() {
-		PlayerData.playerdata.color.x = 255;
-		PlayerData.playerdata.color.y = 255;
-		PlayerData.playerdata.color.z = 255;
-		PlayerData.playerdata.UpdateBodyColor ();
 	}
 
 	public void ClosePopup() {
