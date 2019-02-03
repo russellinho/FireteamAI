@@ -250,6 +250,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Load the headgear items in inventory
+		//ArrayList items = InventoryScript.
 
 		// Populate into grid layout
 	}
