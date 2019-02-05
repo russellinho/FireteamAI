@@ -249,10 +249,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
-		// Load the headgear items in inventory
-		//ArrayList items = InventoryScript.
+		// Delete any currently existing items in the grid
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			Destroy(r.GetComponentInParent<Text>().gameObject);
+		}
 
 		// Populate into grid layout
+		for (int i = 0; i < InventoryScript.myHeadgear.Count; i++) {
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myHeadgear[i]]);
+			o.transform.SetParent(contentInventory.transform);
+		}
 	}
 
 	public void OnFaceBtnClicked() {
@@ -267,9 +275,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
-		// Load the headgear items in inventory
+		// Delete any currently existing items in the grid
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			Destroy(r.GetComponentInParent<Text>().gameObject);
+		}
 
 		// Populate into grid layout
+		for (int i = 0; i < InventoryScript.myFacewear.Count; i++) {
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myFacewear[i]]);
+			o.transform.SetParent(contentInventory.transform);
+		}
 	}
 
 	public void OnArmorBtnClicked() {
@@ -284,12 +301,21 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
-		// Load the headgear items in inventory
+		// Delete any currently existing items in the grid
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			Destroy(r.GetComponentInParent<Text>().gameObject);
+		}
 
 		// Populate into grid layout
+		for (int i = 0; i < InventoryScript.myArmor.Count; i++) {
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myArmor[i]]);
+			o.transform.SetParent(contentInventory.transform);
+		}
 	}
 
-		public void OnTopsBtnClicked() {
+	public void OnTopsBtnClicked() {
 		// Change all button colors
 		headgearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		faceBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
@@ -301,9 +327,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
-		// Load the headgear items in inventory
+		// Delete any currently existing items in the grid
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			Destroy(r.GetComponentInParent<Text>().gameObject);
+		}
 
 		// Populate into grid layout
+		for (int i = 0; i < InventoryScript.myTops.Count; i++) {
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myTops[i]]);
+			o.transform.SetParent(contentInventory.transform);
+		}
 	}
 
 	public void OnBottomsBtnClicked() {
@@ -318,9 +353,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
-		// Load the headgear items in inventory
+		// Delete any currently existing items in the grid
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			Destroy(r.GetComponentInParent<Text>().gameObject);
+		}
 
 		// Populate into grid layout
+		for (int i = 0; i < InventoryScript.myBottoms.Count; i++) {
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myBottoms[i]]);
+			o.transform.SetParent(contentInventory.transform);
+		}
 	}
 
 	public void OnFootwearBtnClicked() {
@@ -335,9 +379,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
-		// Load the headgear items in inventory
+		// Delete any currently existing items in the grid
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			Destroy(r.GetComponentInParent<Text>().gameObject);
+		}
 
 		// Populate into grid layout
+		for (int i = 0; i < InventoryScript.myFootwear.Count; i++) {
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myFootwear[i]]);
+			o.transform.SetParent(contentInventory.transform);
+		}
 	}
 
 	public void OnPrimaryWepBtnClicked() {
@@ -352,9 +405,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
-		// Load the headgear items in inventory
+		// Delete any currently existing items in the grid
+		// RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		// foreach (RawImage r in existingThumbnails) {
+		// 	Destroy(r.GetComponentInParent<Text>().gameObject);
+		// }
 
-		// Populate into grid layout
+		// // Populate into grid layout
+		// for (int i = 0; i < InventoryScript.myPrimaries.Count; i++) {
+		// 	GameObject o = Instantiate(contentPrefab);
+		// 	o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myPrimaries[i]]);
+		// 	o.transform.SetParent(contentInventory.transform);
+		// }
 	}
 
 	public void OnSecondaryWepBtnClicked() {
@@ -369,10 +431,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
-		// Load the headgear items in inventory
+		// Delete any currently existing items in the grid
+		// RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		// foreach (RawImage r in existingThumbnails) {
+		// 	Destroy(r.GetComponentInParent<Text>().gameObject);
+		// }
 
-
-		// Populate into grid layout
+		// // Populate into grid layout
+		// for (int i = 0; i < InventoryScript.mySecondaries.Count; i++) {
+		// 	GameObject o = Instantiate(contentPrefab);
+		// 	o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.mySecondaries[i]]);
+		// 	o.transform.SetParent(contentInventory.transform);
+		// }
 	}
 
 	public void OnCharacterBtnClicked() {
@@ -387,10 +457,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 
-		// Load the headgear items in inventory
-		
+		// Delete any currently existing items in the grid
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			Destroy(r.GetComponentInParent<Text>().gameObject);
+		}
 
 		// Populate into grid layout
+		for (int i = 0; i < InventoryScript.myCharacters.Count; i++) {
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myCharacters[i]]);
+			o.transform.SetParent(contentInventory.transform);
+		}
 	}
 		
 }
