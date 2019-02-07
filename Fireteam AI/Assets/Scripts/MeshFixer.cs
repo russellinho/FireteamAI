@@ -10,7 +10,7 @@ public class MeshFixer : MonoBehaviour
     
     private Dictionary<string, Transform> rootBoneMap;
 // Use this for initialization
-    void Start () {
+    public void AdaptMesh () {
         SkinnedMeshRenderer targetRenderer = target.GetComponent<SkinnedMeshRenderer>();
         Dictionary<string,Transform> boneMap = new Dictionary<string,Transform>();
         rootBoneMap = new Dictionary<string, Transform>();

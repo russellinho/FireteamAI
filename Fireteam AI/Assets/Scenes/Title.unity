@@ -5916,6 +5916,42 @@ Transform:
   m_Father: {fileID: 2108148534}
   m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &527653006 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5426089814008579371, guid: 74c8188b7911ebf4c8f8b048240df925,
+    type: 3}
+  m_PrefabInstance: {fileID: 5426089814035863796}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &527653007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527653006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab48cff945a653040b0ba3f7d1cda5cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  primaryWeapon: {fileID: 0}
+  weaponSocket: {fileID: 0}
+  equippedCharacter: 
+  equippedHeadgear: 
+  equippedFacewear: 
+  equippedTop: 
+  equippedBottom: 
+  equippedFootwear: 
+  equippedArmor: 
+  myCharacter: {fileID: 0}
+  myHeadgear: {fileID: 0}
+  myFacewear: {fileID: 0}
+  myTop: {fileID: 0}
+  myBottom: {fileID: 0}
+  myFootwear: {fileID: 0}
+  myArmorTop: {fileID: 0}
+  myArmorBottom: {fileID: 0}
+  mySkin: {fileID: 0}
 --- !u!1 &530237490
 GameObject:
   m_ObjectHideFlags: 0
