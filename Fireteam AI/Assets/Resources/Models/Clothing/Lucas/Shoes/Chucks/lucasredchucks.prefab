@@ -289,6 +289,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3455824620652590263}
   - component: {fileID: 3455824620666283023}
+  - component: {fileID: 9183920196607036728}
   m_Layer: 0
   m_Name: Shoes
   m_TagString: Untagged
@@ -365,6 +366,20 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.092300534, y: 0.49472356, z: 0.08552647}
     m_Extent: {x: 0.18305454, y: 0.18250944, z: 0.18540132}
   m_DirtyAABB: 0
+--- !u!114 &9183920196607036728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3455824620652619927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50bf978b290cbac40bd11df92fc9b7f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  rootBone: {fileID: 0}
 --- !u!1 &3455824620652619937
 GameObject:
   m_ObjectHideFlags: 0
@@ -929,7 +944,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3455824620652590383}
-  - component: {fileID: 3455824620662102725}
   m_Layer: 0
   m_Name: lucasredchucks
   m_TagString: Untagged
@@ -953,25 +967,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &3455824620662102725
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3455824620652620047}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: ef27750e34fda2242bb855004d43bc92, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &3455824620652620049
 GameObject:
   m_ObjectHideFlags: 0

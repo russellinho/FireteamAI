@@ -1347,6 +1347,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4201804921389377144}
   - component: {fileID: 4201804921377519448}
+  - component: {fileID: 5901816626281876515}
   m_Layer: 0
   m_Name: Bottoms
   m_TagString: Untagged
@@ -1425,6 +1426,20 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.00032570213, y: -0.40403974, z: 0.0020348728}
     m_Extent: {x: 0.22103426, y: 0.46479875, z: 0.31687814}
   m_DirtyAABB: 0
+--- !u!114 &5901816626281876515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4201804921389021784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50bf978b290cbac40bd11df92fc9b7f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  rootBone: {fileID: 0}
 --- !u!1 &4201804921389022152
 GameObject:
   m_ObjectHideFlags: 0
@@ -1434,7 +1449,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4201804921389377512}
-  - component: {fileID: 4201804921381587354}
   m_Layer: 0
   m_Name: lucasstandardfatiguebottom
   m_TagString: Untagged
@@ -1458,25 +1472,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &4201804921381587354
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4201804921389022152}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 7a682e63352ab3a4fb51baa5a55a4118, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &4201804921389022160
 GameObject:
   m_ObjectHideFlags: 0

@@ -259,6 +259,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3170432279502862065}
   - component: {fileID: 3170432279514457673}
+  - component: {fileID: 5087627120522817411}
   m_Layer: 0
   m_Name: Tops
   m_TagString: Untagged
@@ -343,6 +344,20 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.0050134063, y: 0.22274825, z: -0.031396896}
     m_Extent: {x: 0.39650452, y: 0.33581892, z: 0.2507215}
   m_DirtyAABB: 0
+--- !u!114 &5087627120522817411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3170432279502957265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50bf978b290cbac40bd11df92fc9b7f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  rootBone: {fileID: 0}
 --- !u!1 &3170432279502957281
 GameObject:
   m_ObjectHideFlags: 0
@@ -1832,7 +1847,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3170432279502862185}
-  - component: {fileID: 3170432279510374529}
   m_Layer: 0
   m_Name: lucasvnecktee (1)
   m_TagString: Untagged
@@ -1856,25 +1870,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &3170432279510374529
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3170432279502957385}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: ab7ad50aa0b75b94d92b65ad4519d3d1, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &3170432279502957387
 GameObject:
   m_ObjectHideFlags: 0

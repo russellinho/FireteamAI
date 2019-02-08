@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2909731265818854446}
   - component: {fileID: 2909731265805292694}
+  - component: {fileID: 1020531608035983256}
   m_Layer: 0
   m_Name: Tops
   m_TagString: Untagged
@@ -94,6 +95,20 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.0007979274, y: 0.23165628, z: -0.029963054}
     m_Extent: {x: 0.45459494, y: 0.3642644, z: 0.25684994}
   m_DirtyAABB: 0
+--- !u!114 &1020531608035983256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2909731265818957838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50bf978b290cbac40bd11df92fc9b7f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  rootBone: {fileID: 0}
 --- !u!1 &2909731265818957840
 GameObject:
   m_ObjectHideFlags: 0
@@ -1191,7 +1206,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2909731265818854838}
-  - component: {fileID: 2909731265809607262}
   m_Layer: 0
   m_Name: lucascasualshirt
   m_TagString: Untagged
@@ -1215,25 +1229,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &2909731265809607262
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2909731265818958230}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 3e87af742e3140c4c887fd5f0831dacc, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &2909731265818958272
 GameObject:
   m_ObjectHideFlags: 0

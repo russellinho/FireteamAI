@@ -26,7 +26,7 @@ public class EquipmentScript : MonoBehaviour
     public GameObject equippedArmorTopRef;
     public GameObject equippedArmorBottomRef;
 
-    public GameObject myCharacterRenderer;
+    //public GameObject myCharacterRenderer;
     public GameObject myHeadgearRenderer;
     public GameObject myFacewearRenderer;
     public GameObject myTopRenderer;
@@ -36,17 +36,7 @@ public class EquipmentScript : MonoBehaviour
     public GameObject myArmorBottomRenderer;
     public GameObject mySkinRenderer;
 
-    // Start is called before the first frame update
-    // void Start()
-    // {
-        
-    // }
-
-    // // Update is called once per frame
-    // void Update()
-    // {
-        
-    // }
+    public GameObject myBones;
 
     public void EquipTop(string name) {
         equippedTop = name;
@@ -58,6 +48,10 @@ public class EquipmentScript : MonoBehaviour
             }
             equippedTopRef = (GameObject)Instantiate((GameObject)Resources.Load(InventoryScript.lucasInventoryCatalog[name]));
             equippedTopRef.transform.SetParent(gameObject.transform);
+            MeshFixer m = equippedTopRef.GetComponent<MeshFixer>();
+            m.target = myTopRenderer.gameObject;
+            m.rootBone = myBones.transform;
+            m.AdaptMesh();
         }
     }
 

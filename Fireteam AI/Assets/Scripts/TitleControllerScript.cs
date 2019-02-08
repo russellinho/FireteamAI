@@ -336,6 +336,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myTops.Count; i++) {
 			GameObject o = Instantiate(contentPrefab);
+            o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myTops[i];
+            o.GetComponent<ShopItemScript>().itemType = "Top";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myTops[i]]);
 			o.transform.SetParent(contentInventory.transform);
 		}

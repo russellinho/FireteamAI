@@ -750,7 +750,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5495952826000783962}
-  - component: {fileID: 5495952826007966760}
   m_Layer: 0
   m_Name: lucasstandardfatiguestop
   m_TagString: Untagged
@@ -774,25 +773,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &5495952826007966760
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5495952826000680570}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 6ccab1c01434bb94f9ba64b172a70c20, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &5495952826000680572
 GameObject:
   m_ObjectHideFlags: 0
@@ -803,6 +783,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5495952826000783964}
   - component: {fileID: 5495952826012248804}
+  - component: {fileID: 8292758421639722380}
   m_Layer: 0
   m_Name: Tops
   m_TagString: Untagged
@@ -896,6 +877,20 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.000023901463, y: 0.2618888, z: -0.049495213}
     m_Extent: {x: 0.7937853, y: 0.37162286, z: 0.2804499}
   m_DirtyAABB: 0
+--- !u!114 &8292758421639722380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5495952826000680572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50bf978b290cbac40bd11df92fc9b7f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  rootBone: {fileID: 0}
 --- !u!1 &5495952826000680832
 GameObject:
   m_ObjectHideFlags: 0
