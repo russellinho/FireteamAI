@@ -102,7 +102,7 @@ public class PlayerScript : MonoBehaviourPunCallbacks {
 
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 
-		photonView.RPC ("SyncPlayerColor", RpcTarget.All, PlayerData.playerdata.color);
+//		photonView.RPC ("SyncPlayerColor", RpcTarget.All, PlayerData.playerdata.color);
 		wepScript = gameObject.GetComponent<WeaponScript> ();
 		aud = GetComponent<AudioSource> ();
 		hud = GetComponent<PlayerHUDScript> ();

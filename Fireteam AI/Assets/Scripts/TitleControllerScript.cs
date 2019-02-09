@@ -53,10 +53,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
 	void Start () {
-		//PlayerData.playerdata.LoadPlayerData ();
-		PlayerData.playerdata.FindBodyRef ();
-//		PlayerData.playerdata.UpdateBodyColor ();
-		//PlayerNameInput.text = PlayerData.playerdata.playername;
+		//PlayerData.playerdata.FindBodyRef ();
 		titleText.enabled = true;
 		mainMenu.SetActive (true);
 		loadingStatus = 0;
@@ -252,12 +249,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<Text>().gameObject);
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myHeadgear.Count; i++) {
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myHeadgear[i];
+            o.GetComponent<ShopItemScript>().itemType = "Headgear";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myHeadgear[i]]);
 			o.transform.SetParent(contentInventory.transform);
 		}
@@ -278,12 +277,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<Text>().gameObject);
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myFacewear.Count; i++) {
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myFacewear[i];
+            o.GetComponent<ShopItemScript>().itemType = "Facewear";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myFacewear[i]]);
 			o.transform.SetParent(contentInventory.transform);
 		}
@@ -304,12 +305,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<Text>().gameObject);
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myArmor.Count; i++) {
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myArmor[i];
+            o.GetComponent<ShopItemScript>().itemType = "Armor";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myArmor[i]]);
 			o.transform.SetParent(contentInventory.transform);
 		}
@@ -330,7 +333,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<Text>().gameObject);
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
 		// Populate into grid layout
@@ -358,12 +361,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<Text>().gameObject);
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myBottoms.Count; i++) {
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myBottoms[i];
+            o.GetComponent<ShopItemScript>().itemType = "Bottom";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myBottoms[i]]);
 			o.transform.SetParent(contentInventory.transform);
 		}
@@ -384,12 +389,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<Text>().gameObject);
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myFootwear.Count; i++) {
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myFootwear[i];
+            o.GetComponent<ShopItemScript>().itemType = "Footwear";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myFootwear[i]]);
 			o.transform.SetParent(contentInventory.transform);
 		}
@@ -410,7 +417,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		// RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		// foreach (RawImage r in existingThumbnails) {
-		// 	Destroy(r.GetComponentInParent<Text>().gameObject);
+		// 	Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		// }
 
 		// // Populate into grid layout
@@ -436,7 +443,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		// RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		// foreach (RawImage r in existingThumbnails) {
-		// 	Destroy(r.GetComponentInParent<Text>().gameObject);
+		// 	Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		// }
 
 		// // Populate into grid layout
@@ -462,12 +469,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<Text>().gameObject);
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myCharacters.Count; i++) {
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myCharacters[i];
+            o.GetComponent<ShopItemScript>().itemType = "Character";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myCharacters[i]]);
 			o.transform.SetParent(contentInventory.transform);
 		}

@@ -1770,6 +1770,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2920749612748916034}
   - component: {fileID: 2920749612737582178}
+  - component: {fileID: 4815900666278768791}
   m_Layer: 0
   m_Name: Bottoms
   m_TagString: Untagged
@@ -1799,8 +1800,8 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2920749612749150562}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -1830,7 +1831,7 @@ SkinnedMeshRenderer:
   m_SortingOrder: 0
   serializedVersion: 2
   m_Quality: 0
-  m_UpdateWhenOffscreen: 0
+  m_UpdateWhenOffscreen: 1
   m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300008, guid: 085b3e6978ce4234699a88ef4703f532, type: 3}
   m_Bones:
@@ -1850,6 +1851,20 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.0028048605, y: -0.4990466, z: 0.0038713813}
     m_Extent: {x: 0.20963426, y: 0.5549323, z: 0.41409194}
   m_DirtyAABB: 0
+--- !u!114 &4815900666278768791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2920749612749150562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50bf978b290cbac40bd11df92fc9b7f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  rootBone: {fileID: 0}
 --- !u!1 &2920749612749150570
 GameObject:
   m_ObjectHideFlags: 0
@@ -1859,7 +1874,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2920749612748916042}
-  - component: {fileID: 1989620391522975934}
   m_Layer: 0
   m_Name: lucaslightwashjeans
   m_TagString: Untagged
@@ -1883,20 +1897,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1989620391522975934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2920749612749150570}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50bf978b290cbac40bd11df92fc9b7f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  rootBone: {fileID: 0}
 --- !u!1 &2920749612749150572
 GameObject:
   m_ObjectHideFlags: 0

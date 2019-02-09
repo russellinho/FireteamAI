@@ -11,7 +11,6 @@ using Photon.Pun;
 public class PlayerData : MonoBehaviour {
 
 	public static PlayerData playerdata;
-	public Vector3 color;
 	public string playername;
 	public bool disconnectedFromServer;
 	public string disconnectReason;
@@ -57,9 +56,6 @@ public class PlayerData : MonoBehaviour {
 
 		PlayerInfo info = new PlayerInfo();
 		info.playername = playername;
-		info.r = color.x;
-		info.g = color.y;
-		info.b = color.z;
 		bf.Serialize(file, info);
 		file.Close();
 
@@ -68,27 +64,33 @@ public class PlayerData : MonoBehaviour {
 
 	public void LoadPlayerData()
 	{
-		if (File.Exists (Application.persistentDataPath + "/playerInfo.dat")) {
+		FindBodyRef();
+		if (File.Exists (Application.persistentDataPath + "/playerData.dat")) {
 			BinaryFormatter bf = new BinaryFormatter ();
-			FileStream file = File.Open (Application.persistentDataPath + "/playerInfo.dat", FileMode.Open);
+			FileStream file = File.Open (Application.persistentDataPath + "/playerData.dat", FileMode.Open);
 			PlayerInfo info = (PlayerInfo)bf.Deserialize (file);
 			file.Close ();
 			playername = info.playername;
-			color = new Vector3(info.r, info.g, info.b);
+			EquipmentScript e = bodyReference.GetComponent<EquipmentScript>();
+			//e.EquipCharacter();
+			e.EquipHeadgear(info.equippedHeadgear);
+			e.EquipFacewear(info.equippedFacewear);
+			e.EquipTop(info.equippedTop);
+			e.EquipBottom(info.equippedBottom);
+			e.EquipFootwear(info.equippedFootwear);
+			e.EquipArmor(info.equippedArmor);
 		} else {
 			// Else, load defaults
 			playername = "Player";
-			color = new Vector3 (255, 255, 255);
+			bodyReference.GetComponent<EquipmentScript>().EquipDefaults();
 		}
 		PhotonNetwork.NickName = playername;
 	}
 
-	// public void UpdateBodyColor() {
-	// 	bodyReference.material.color = new Color (color.x / 255, color.y / 255, color.z / 255, 1.0f);
-	// }
-
 	public void FindBodyRef() {
-		bodyReference = GameObject.FindGameObjectWithTag ("Player");
+		if (bodyReference == null) {
+			bodyReference = GameObject.FindGameObjectWithTag ("Player");
+		}
 	}
 
 }
@@ -97,7 +99,11 @@ public class PlayerData : MonoBehaviour {
 class PlayerInfo
 {
 	public string playername;
-	public float r;
-	public float g;
-	public float b;
+    public string equippedCharacter;
+    public string equippedHeadgear;
+    public string equippedFacewear;
+    public string equippedTop;
+    public string equippedBottom;
+    public string equippedFootwear;
+    public string equippedArmor;
 }

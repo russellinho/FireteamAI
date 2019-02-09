@@ -23,7 +23,7 @@ public class InventoryScript : MonoBehaviour
     public static ArrayList myFootwear = new ArrayList();
     public static ArrayList myArmor = new ArrayList();
 
-    void Start() {
+    void Awake() {
         // Characters
         characterInventoryCatalog.Add("Lucas", "Models/Characters/Lucas/lucasskinanklesonly");
         thumbnailGallery.Add("Lucas", "Models/Pics/character_lucas");

@@ -34,7 +34,6 @@ public class MeshFixer : MonoBehaviour
             Debug.Log(bone.name);
             if(!boneMap.TryGetValue(bone.name, out newBones[i])) {
                 Debug.Log("Unable to map bone \"" + bone.name + "\" to target skeleton.");
-                //newBones[i] = bone.transform;
                 newBones[i] = rootBoneMap[bone.name];
             }
         }
