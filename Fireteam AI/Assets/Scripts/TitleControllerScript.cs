@@ -258,6 +258,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myHeadgear[i];
             o.GetComponent<ShopItemScript>().itemType = "Headgear";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myHeadgear[i]]);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -286,6 +289,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myFacewear[i];
             o.GetComponent<ShopItemScript>().itemType = "Facewear";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myFacewear[i]]);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -314,6 +320,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myArmor[i];
             o.GetComponent<ShopItemScript>().itemType = "Armor";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myArmor[i]]);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 3f, t.sizeDelta.y / 3f);
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -341,7 +350,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			GameObject o = Instantiate(contentPrefab);
             o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myTops[i];
             o.GetComponent<ShopItemScript>().itemType = "Top";
+			o.GetComponent<ShopItemScript>().skinType = CheckSkinType((string)InventoryScript.myTops[i]);
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myTops[i]]);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 4f, t.sizeDelta.y / 4f);
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -370,6 +383,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myBottoms[i];
             o.GetComponent<ShopItemScript>().itemType = "Bottom";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myBottoms[i]]);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -398,6 +414,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myFootwear[i];
             o.GetComponent<ShopItemScript>().itemType = "Footwear";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myFootwear[i]]);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 3f, t.sizeDelta.y / 3f);
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -478,8 +497,20 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myCharacters[i];
             o.GetComponent<ShopItemScript>().itemType = "Character";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myCharacters[i]]);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			o.transform.SetParent(contentInventory.transform);
 		}
+	}
+
+	public static int CheckSkinType(string clothingName) {
+		if (clothingName.Equals("Casual T-Shirt")) {
+			return 2;
+		} else if (clothingName.Equals("Casual Shirt")) {
+			return 1;
+		}
+		return 0;
 	}
 		
 }

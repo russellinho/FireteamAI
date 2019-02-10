@@ -6,6 +6,8 @@ public class ShopItemScript : MonoBehaviour
 {
     public string itemName;
     public string itemType;
+    // 1 = long sleeves, 2 = mid sleeves, 3 = short sleeves
+    public int skinType;
 
     public void EquipItem()
     {
@@ -15,7 +17,7 @@ public class ShopItemScript : MonoBehaviour
                 //PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipCharacter(itemName);
                 break;
             case "Top":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipTop(itemName);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipTop(itemName, skinType);
                 break;
             case "Bottom":
                 PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipBottom(itemName);

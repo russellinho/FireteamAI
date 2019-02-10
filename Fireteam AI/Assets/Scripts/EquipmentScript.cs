@@ -16,8 +16,9 @@ public class EquipmentScript : MonoBehaviour
     public string equippedBottom;
     public string equippedFootwear;
     public string equippedArmor;
+    public string equippedSkin;
 
-    public GameObject equippedCharacterRef;
+    public GameObject equippedSkinRef;
     public GameObject equippedHeadgearRef;
     public GameObject equippedFacewearRef;
     public GameObject equippedTopRef;
@@ -26,7 +27,6 @@ public class EquipmentScript : MonoBehaviour
     public GameObject equippedArmorTopRef;
     public GameObject equippedArmorBottomRef;
 
-    //public GameObject myCharacterRenderer;
     public GameObject myHeadgearRenderer;
     public GameObject myFacewearRenderer;
     public GameObject myTopRenderer;
@@ -42,15 +42,17 @@ public class EquipmentScript : MonoBehaviour
         RemoveFacewear();
         RemoveArmor();
         RemoveHeadgear();
-        EquipTop("Standard Fatigues Top");
+        EquipTop("Standard Fatigues Top", 0);
         EquipBottom("Standard Fatigues Bottom");
         EquipFootwear("Standard Boots");
     }
 
-    public void EquipTop(string name) {
-        equippedTop = name;
-
+    public void EquipTop(string name, int skinType) {
         if (equippedCharacter.Equals("Lucas")) {
+            if (name.Equals(equippedTop)) {
+                return;
+            }
+            equippedTop = name;
             if (equippedTopRef != null) {
                 Destroy(equippedTopRef);
                 equippedTopRef = null;
@@ -61,13 +63,34 @@ public class EquipmentScript : MonoBehaviour
             m.target = myTopRenderer.gameObject;
             m.rootBone = myBones.transform;
             m.AdaptMesh();
+            
+            EquipSkin("Lucas" + skinType);
         }
     }
 
-    public void EquipBottom(string name) {
-        equippedBottom = name;
+    private void EquipSkin(string name) {
+        if (name.Equals(equippedSkin)) {
+            return;
+        }
+        equippedSkin = name;
+        if (equippedSkinRef != null) {
+            Destroy(equippedSkinRef);
+            equippedSkinRef = null;
+        }
+        equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(InventoryScript.characterSkinCatalog[name]));
+        equippedSkinRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
+        m.target = mySkinRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
 
+    public void EquipBottom(string name) {
         if (equippedCharacter.Equals("Lucas")) {
+            if (name.Equals(equippedBottom)) {
+                return;
+            }
+            equippedBottom = name;
             if (equippedBottomRef != null) {
                 Destroy(equippedBottomRef);
                 equippedBottomRef = null;
@@ -82,9 +105,11 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void EquipFootwear(string name) {
-        equippedFootwear = name;
-
         if (equippedCharacter.Equals("Lucas")) {
+            if (name.Equals(equippedFootwear)) {
+                return;
+            }
+            equippedFootwear = name;
             if (equippedFootwearRef != null) {
                 Destroy(equippedFootwearRef);
                 equippedFootwearRef = null;
@@ -99,9 +124,11 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void EquipFacewear(string name) {
-        equippedFacewear = name;
-
         if (equippedCharacter.Equals("Lucas")) {
+            if (name.Equals(equippedFacewear)) {
+                return;
+            }
+            equippedFacewear = name;
             if (equippedFacewearRef != null) {
                 Destroy(equippedFacewearRef);
                 equippedFacewearRef = null;
@@ -116,9 +143,11 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void EquipHeadgear(string name) {
-        equippedHeadgear = name;
-
         if (equippedCharacter.Equals("Lucas")) {
+            if (name.Equals(equippedHeadgear)) {
+                return;
+            }
+            equippedHeadgear = name;
             if (equippedHeadgearRef != null) {
                 Destroy(equippedHeadgearRef);
                 equippedHeadgearRef = null;
@@ -133,9 +162,11 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void EquipArmor(string name) {
-        equippedArmor = name;
-
         if (equippedCharacter.Equals("Lucas")) {
+            if (name.Equals(equippedArmor)) {
+                return;
+            }
+            equippedArmor = name;
             if (equippedArmorTopRef != null) {
                 Destroy(equippedArmorTopRef);
                 equippedArmorTopRef = null;

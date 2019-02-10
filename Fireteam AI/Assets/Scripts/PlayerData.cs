@@ -75,7 +75,7 @@ public class PlayerData : MonoBehaviour {
 			//e.EquipCharacter();
 			e.EquipHeadgear(info.equippedHeadgear);
 			e.EquipFacewear(info.equippedFacewear);
-			e.EquipTop(info.equippedTop);
+			e.EquipTop(info.equippedTop, TitleControllerScript.CheckSkinType(info.equippedTop));
 			e.EquipBottom(info.equippedBottom);
 			e.EquipFootwear(info.equippedFootwear);
 			e.EquipArmor(info.equippedArmor);

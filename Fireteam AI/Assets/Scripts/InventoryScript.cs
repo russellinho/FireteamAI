@@ -7,6 +7,7 @@ public class InventoryScript : MonoBehaviour
 
     // Storage for all characters in the game
     public static Dictionary<string, string> characterInventoryCatalog = new Dictionary<string, string>();
+    public static Dictionary<string, string> characterSkinCatalog = new Dictionary<string, string>();
     // Mapping for all items in the database for Lucas - key is the item name and value is the
     // database path to load from
     public static Dictionary<string, string> lucasInventoryCatalog = new Dictionary<string, string>();
@@ -25,7 +26,9 @@ public class InventoryScript : MonoBehaviour
 
     void Awake() {
         // Characters
-        characterInventoryCatalog.Add("Lucas", "Models/Characters/Lucas/lucasskinanklesonly");
+        characterSkinCatalog.Add("Lucas0", "Models/Characters/Lucas/Extra Skins/Ankles Long Sleeves/lucasskinanklesonly");
+        characterSkinCatalog.Add("Lucas1", "Models/Characters/Lucas/Extra Skins/Ankles Mid Sleeves/lucasanklesmid");
+        characterSkinCatalog.Add("Lucas2", "Models/Characters/Lucas/Extra Skins/Ankles Short Sleeves/lucasanklesshortsleeve");
         thumbnailGallery.Add("Lucas", "Models/Pics/character_lucas");
 
         // Tops
