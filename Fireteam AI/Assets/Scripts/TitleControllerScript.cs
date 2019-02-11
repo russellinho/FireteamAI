@@ -9,7 +9,7 @@ using UnityEngine.Networking;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
-	private Vector3 customizationCameraPos = new Vector3(-4.82f, 4.08f, 21.5f);
+	private Vector3 customizationCameraPos = new Vector3(-4.7f, 4.08f, 21.5f);
 	private Vector3 defaultCameraPos = new Vector3(-7.3f, 4.08f, 22.91f);
 	private int camPos;
 	private float camMoveTimer;
@@ -50,6 +50,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button primaryWepBtn;
 	public Button secondaryWepBtn;
 	public Button characterBtn;
+
+	public RawImage equippedHeadSlot;
+	public RawImage equippedFaceSlot;
+	public RawImage equippedTopSlot;
+	public RawImage equippedBottomSlot;
+	public RawImage equippedFootSlot;
+	public RawImage equippedCharacterSlot;
+	public RawImage equippedArmorSlot;
+	public GameObject currentlyEquippedItemPrefab;
 
 	// Use this for initialization
 	void Start () {
@@ -249,6 +258,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
+			currentlyEquippedItemPrefab = null;
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
@@ -261,6 +271,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedHeadSlot.texture)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedItemPrefab = o;
+			}
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -280,6 +295,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
+			currentlyEquippedItemPrefab = null;
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
@@ -292,6 +308,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedFaceSlot.texture)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedItemPrefab = o;
+			}
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -311,6 +332,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
+			currentlyEquippedItemPrefab = null;
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
@@ -323,6 +345,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 3f, t.sizeDelta.y / 3f);
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedArmorSlot.texture)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedItemPrefab = o;
+			}
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -342,6 +369,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
+			currentlyEquippedItemPrefab = null;
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
@@ -355,6 +383,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 4f, t.sizeDelta.y / 4f);
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedTopSlot.texture)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedItemPrefab = o;
+			}
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -374,6 +407,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
+			currentlyEquippedItemPrefab = null;
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
@@ -386,6 +420,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedBottomSlot.texture)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedItemPrefab = o;
+			}
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -405,6 +444,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
+			currentlyEquippedItemPrefab = null;
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
@@ -417,6 +457,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 3f, t.sizeDelta.y / 3f);
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedFootSlot.texture)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedItemPrefab = o;
+			}
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -488,6 +533,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
+			currentlyEquippedItemPrefab = null;
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
@@ -500,6 +546,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedCharacterSlot.texture)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedItemPrefab = o;
+			}
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}

@@ -73,12 +73,12 @@ public class PlayerData : MonoBehaviour {
 			playername = info.playername;
 			EquipmentScript e = bodyReference.GetComponent<EquipmentScript>();
 			//e.EquipCharacter();
-			e.EquipHeadgear(info.equippedHeadgear);
-			e.EquipFacewear(info.equippedFacewear);
-			e.EquipTop(info.equippedTop, TitleControllerScript.CheckSkinType(info.equippedTop));
-			e.EquipBottom(info.equippedBottom);
-			e.EquipFootwear(info.equippedFootwear);
-			e.EquipArmor(info.equippedArmor);
+			e.EquipHeadgear(info.equippedHeadgear, null);
+			e.EquipFacewear(info.equippedFacewear, null);
+			e.EquipTop(info.equippedTop, TitleControllerScript.CheckSkinType(info.equippedTop), null);
+			e.EquipBottom(info.equippedBottom, null);
+			e.EquipFootwear(info.equippedFootwear, null);
+			e.EquipArmor(info.equippedArmor, null);
 		} else {
 			// Else, load defaults
 			playername = "Player";

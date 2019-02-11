@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class EquipmentScript : MonoBehaviour
 {
 
+    public TitleControllerScript ts;
 	public GameObject primaryWeapon;
     public GameObject weaponSocket;
     
@@ -42,12 +43,24 @@ public class EquipmentScript : MonoBehaviour
         RemoveFacewear();
         RemoveArmor();
         RemoveHeadgear();
-        EquipTop("Standard Fatigues Top", 0);
-        EquipBottom("Standard Fatigues Bottom");
-        EquipFootwear("Standard Boots");
+        EquipTop("Standard Fatigues Top", 0, null);
+        EquipBottom("Standard Fatigues Bottom", null);
+        EquipFootwear("Standard Boots", null);
     }
 
-    public void EquipTop(string name, int skinType) {
+    public void EquipCharacter(string name) {
+        if (name.Equals("Lucas")) {
+            equippedCharacter = name;
+            EquipDefaults();
+            ts.equippedCharacterSlot.enabled = true;
+            ts.equippedCharacterSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            // ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+            // ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+            // ts.currentlyEquippedItemPrefab = o;
+        }
+    }
+
+    public void EquipTop(string name, int skinType, GameObject shopItemRef) {
         if (equippedCharacter.Equals("Lucas")) {
             if (name.Equals(equippedTop)) {
                 return;
@@ -65,6 +78,22 @@ public class EquipmentScript : MonoBehaviour
             m.AdaptMesh();
             
             EquipSkin("Lucas" + skinType);
+
+            // Sets item that you unequipped to white
+            if (ts.currentlyEquippedItemPrefab != null) {
+                ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+            }
+
+            // Sets item that you just equipped to orange in the shop
+            if (shopItemRef != null) {
+                shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+                shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+                ts.currentlyEquippedItemPrefab = shopItemRef;
+            }
+
+            ts.equippedTopSlot.enabled = true;
+            ts.equippedTopSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         }
     }
 
@@ -85,7 +114,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
     }
 
-    public void EquipBottom(string name) {
+    public void EquipBottom(string name, GameObject shopItemRef) {
         if (equippedCharacter.Equals("Lucas")) {
             if (name.Equals(equippedBottom)) {
                 return;
@@ -101,10 +130,26 @@ public class EquipmentScript : MonoBehaviour
             m.target = myBottomRenderer.gameObject;
             m.rootBone = myBones.transform;
             m.AdaptMesh();
+
+            // Sets item that you unequipped to white
+            if (ts.currentlyEquippedItemPrefab != null) {
+                ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+            }
+
+            // Sets item that you just equipped to orange in the shop
+            if (shopItemRef != null) {
+                shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+                shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+                ts.currentlyEquippedItemPrefab = shopItemRef;
+            }
+
+            ts.equippedBottomSlot.enabled = true;
+            ts.equippedBottomSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         }
     }
 
-    public void EquipFootwear(string name) {
+    public void EquipFootwear(string name, GameObject shopItemRef) {
         if (equippedCharacter.Equals("Lucas")) {
             if (name.Equals(equippedFootwear)) {
                 return;
@@ -120,10 +165,26 @@ public class EquipmentScript : MonoBehaviour
             m.target = myFootwearRenderer.gameObject;
             m.rootBone = myBones.transform;
             m.AdaptMesh();
+
+            // Sets item that you unequipped to white
+            if (ts.currentlyEquippedItemPrefab != null) {
+                ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+            }
+
+            // Sets item that you just equipped to orange in the shop
+            if (shopItemRef != null) {
+                shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+                shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+                ts.currentlyEquippedItemPrefab = shopItemRef;
+            }
+
+            ts.equippedFootSlot.enabled = true;
+            ts.equippedFootSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         }
     }
 
-    public void EquipFacewear(string name) {
+    public void EquipFacewear(string name, GameObject shopItemRef) {
         if (equippedCharacter.Equals("Lucas")) {
             if (name.Equals(equippedFacewear)) {
                 return;
@@ -139,10 +200,26 @@ public class EquipmentScript : MonoBehaviour
             m.target = myFacewearRenderer.gameObject;
             m.rootBone = myBones.transform;
             m.AdaptMesh();
+
+            // Sets item that you unequipped to white
+            if (ts.currentlyEquippedItemPrefab != null) {
+                ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+            }
+
+            // Sets item that you just equipped to orange in the shop
+            if (shopItemRef != null) {
+                shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+                shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+                ts.currentlyEquippedItemPrefab = shopItemRef;
+            }
+
+            ts.equippedFaceSlot.enabled = true;
+            ts.equippedFaceSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         }
     }
 
-    public void EquipHeadgear(string name) {
+    public void EquipHeadgear(string name, GameObject shopItemRef) {
         if (equippedCharacter.Equals("Lucas")) {
             if (name.Equals(equippedHeadgear)) {
                 return;
@@ -158,10 +235,26 @@ public class EquipmentScript : MonoBehaviour
             m.target = myHeadgearRenderer.gameObject;
             m.rootBone = myBones.transform;
             m.AdaptMesh();
+
+            // Sets item that you unequipped to white
+            if (ts.currentlyEquippedItemPrefab != null) {
+                ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+            }
+
+            // Sets item that you just equipped to orange in the shop
+            if (shopItemRef != null) {
+                shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+                shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+                ts.currentlyEquippedItemPrefab = shopItemRef;
+            }
+
+            ts.equippedHeadSlot.enabled = true;
+            ts.equippedHeadSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         }
     }
 
-    public void EquipArmor(string name) {
+    public void EquipArmor(string name, GameObject shopItemRef) {
         if (equippedCharacter.Equals("Lucas")) {
             if (name.Equals(equippedArmor)) {
                 return;
@@ -188,6 +281,22 @@ public class EquipmentScript : MonoBehaviour
             m.target = myArmorBottomRenderer.gameObject;
             m.rootBone = myBones.transform;
             m.AdaptMesh();
+
+            // Sets item that you unequipped to white
+            if (ts.currentlyEquippedItemPrefab != null) {
+                ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+            }
+
+            // Sets item that you just equipped to orange in the shop
+            if (shopItemRef != null) {
+                shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+                shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+                ts.currentlyEquippedItemPrefab = shopItemRef;
+            }
+
+            ts.equippedArmorSlot.enabled = true;
+            ts.equippedArmorSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         }
     }
 
@@ -197,6 +306,13 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedHeadgearRef);
             equippedHeadgearRef = null;
         }
+        ts.equippedHeadSlot.enabled = false;
+        // Sets item that you unequipped to white
+        if (ts.currentlyEquippedItemPrefab != null) {
+            ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+            ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+            ts.currentlyEquippedItemPrefab = null;
+        }
     }
 
     public void RemoveFacewear() {
@@ -204,6 +320,13 @@ public class EquipmentScript : MonoBehaviour
         if (equippedFacewearRef != null) {
             Destroy(equippedFacewearRef);
             equippedFacewearRef = null;
+        }
+        ts.equippedFaceSlot.enabled = false;
+        // Sets item that you unequipped to white
+        if (ts.currentlyEquippedItemPrefab != null) {
+            ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+            ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+            ts.currentlyEquippedItemPrefab = null;
         }
     }
 
@@ -216,6 +339,13 @@ public class EquipmentScript : MonoBehaviour
         if (equippedArmorBottomRef != null) {
             Destroy(equippedArmorBottomRef);
             equippedArmorBottomRef = null;
+        }
+        ts.equippedArmorSlot.enabled = false;
+        // Sets item that you unequipped to white
+        if (ts.currentlyEquippedItemPrefab != null) {
+            ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+            ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+            ts.currentlyEquippedItemPrefab = null;
         }
     }
 

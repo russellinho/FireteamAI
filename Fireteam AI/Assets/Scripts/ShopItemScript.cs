@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ShopItemScript : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class ShopItemScript : MonoBehaviour
     public string itemType;
     // 1 = long sleeves, 2 = mid sleeves, 3 = short sleeves
     public int skinType;
+    public Text equippedInd;
 
     public void EquipItem()
     {
@@ -17,22 +19,22 @@ public class ShopItemScript : MonoBehaviour
                 //PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipCharacter(itemName);
                 break;
             case "Top":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipTop(itemName, skinType);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipTop(itemName, skinType, gameObject);
                 break;
             case "Bottom":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipBottom(itemName);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipBottom(itemName, gameObject);
                 break;
             case "Footwear":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipFootwear(itemName);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipFootwear(itemName, gameObject);
                 break;
             case "Headgear":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipHeadgear(itemName);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipHeadgear(itemName, gameObject);
                 break;
             case "Facewear":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipFacewear(itemName);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipFacewear(itemName, gameObject);
                 break;
             case "Armor":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipArmor(itemName);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipArmor(itemName, gameObject);
                 break;
         }
     }
