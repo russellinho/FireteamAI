@@ -301,37 +301,44 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void RemoveHeadgear() {
-        equippedHeadgear = "";
         if (equippedHeadgearRef != null) {
             Destroy(equippedHeadgearRef);
             equippedHeadgearRef = null;
         }
+        ts.equippedHeadSlot.texture = null;
         ts.equippedHeadSlot.enabled = false;
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null) {
-            ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
-            ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
-            ts.currentlyEquippedItemPrefab = null;
+            ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();
+            if (s.itemType.Equals("Headgear")) {
+                ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+                ts.currentlyEquippedItemPrefab = null;
+            }
         }
+        equippedHeadgear = "";
     }
 
     public void RemoveFacewear() {
-        equippedFacewear = "";
         if (equippedFacewearRef != null) {
             Destroy(equippedFacewearRef);
             equippedFacewearRef = null;
         }
+        ts.equippedFaceSlot.texture = null;
         ts.equippedFaceSlot.enabled = false;
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null) {
-            ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
-            ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
-            ts.currentlyEquippedItemPrefab = null;
+            ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();
+            if (s.itemType.Equals("Facewear")) {
+                ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+                ts.currentlyEquippedItemPrefab = null;
+            }
         }
+        equippedFacewear = "";
     }
 
     public void RemoveArmor() {
-        equippedArmor = "";
         if (equippedArmorTopRef != null) {
             Destroy(equippedArmorTopRef);
             equippedArmorTopRef = null;
@@ -340,13 +347,18 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedArmorBottomRef);
             equippedArmorBottomRef = null;
         }
+        ts.equippedArmorSlot.texture = null;
         ts.equippedArmorSlot.enabled = false;
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null) {
-            ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
-            ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
-            ts.currentlyEquippedItemPrefab = null;
+            ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();
+            if (s.itemType.Equals("Armor")) {
+                ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+                ts.currentlyEquippedItemPrefab = null;
+            }
         }
+        equippedArmor = "";
     }
 
 }
