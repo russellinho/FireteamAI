@@ -30,6 +30,10 @@ public class InventoryScript : MonoBehaviour
         characterSkinCatalog.Add("Lucas1", "Models/Characters/Lucas/Extra Skins/Ankles Mid Sleeves/lucasanklesmid");
         characterSkinCatalog.Add("Lucas2", "Models/Characters/Lucas/Extra Skins/Ankles Short Sleeves/lucasanklesshortsleeve");
         thumbnailGallery.Add("Lucas", "Models/Pics/character_lucas");
+        thumbnailGallery.Add("Daryl", "Models/Pics/character_donald");
+        thumbnailGallery.Add("Codename Sayre", "Models/Pics/character_sayre");
+        thumbnailGallery.Add("Hana", "Models/Pics/character_hana");
+        thumbnailGallery.Add("Jade", "Models/Pics/character_jade");
 
         // Tops
         lucasInventoryCatalog.Add("Casual Shirt", "Models/Clothing/Lucas/Tops/Casual Shirt/lucascasualshirt");
@@ -86,6 +90,10 @@ public class InventoryScript : MonoBehaviour
     void collectCharacters() {
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         myCharacters.Add("Lucas");
+        myCharacters.Add("Daryl");
+        myCharacters.Add("Hana");
+        myCharacters.Add("Jade");
+        myCharacters.Add("Codename Sayre");
 
     }
 
