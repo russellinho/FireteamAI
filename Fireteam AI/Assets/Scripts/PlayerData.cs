@@ -82,15 +82,20 @@ public class PlayerData : MonoBehaviour {
 		} else {
 			// Else, load defaults
 			playername = "Player";
-			bodyReference.GetComponent<EquipmentScript>().EquipDefaults("Lucas");
 		}
 		PhotonNetwork.NickName = playername;
 	}
 
 	public void FindBodyRef() {
 		if (bodyReference == null) {
-			bodyReference = GameObject.FindGameObjectWithTag ("Player");
+			bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterPrefabs["Lucas"]));
 		}
+	}
+
+	public void ChangeBodyRef(string character) {
+		Destroy(bodyReference);
+		bodyReference = null;
+		bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterPrefabs[character]));
 	}
 
 }

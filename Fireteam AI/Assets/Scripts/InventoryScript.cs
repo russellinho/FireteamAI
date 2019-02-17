@@ -39,7 +39,7 @@ public class InventoryScript : MonoBehaviour
 
         characterPrefabs.Add("Lucas", "Models/Characters/Lucas/PlayerPrefabLucas");
         characterPrefabs.Add("Daryl", "Models/Characters/Daryl/PlayerPrefabDaryl");
-        characterPrefabs.Add("Codename Sayre", "Models/Characters/Sayre/PlayerPrefabSayre");
+        characterPrefabs.Add("Codename Sayre", "Models/Characters/Sayre/PlayerPrefabCodenameSayre");
         characterPrefabs.Add("Hana", "Models/Characters/Hana/PlayerPrefabHana");
         characterPrefabs.Add("Jade", "Models/Characters/Jade/PlayerPrefabJade");
 

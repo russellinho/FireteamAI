@@ -1316,7 +1316,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5131279299607821160}
-  - component: {fileID: 5131279299615560988}
   m_Layer: 0
   m_Name: hanastandardfatiguestop
   m_TagString: Untagged
@@ -1340,25 +1339,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &5131279299615560988
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5131279299608307528}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 8237922f8de75384abbc4e13c8cce634, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &5131279299608307530
 GameObject:
   m_ObjectHideFlags: 0
@@ -1369,6 +1349,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5131279299607821162}
   - component: {fileID: 5131279299611421650}
+  - component: {fileID: 7469107429221050985}
   m_Layer: 0
   m_Name: Tops
   m_TagString: Untagged
@@ -1429,7 +1410,7 @@ SkinnedMeshRenderer:
   m_SortingOrder: 0
   serializedVersion: 2
   m_Quality: 0
-  m_UpdateWhenOffscreen: 0
+  m_UpdateWhenOffscreen: 1
   m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300012, guid: 8237922f8de75384abbc4e13c8cce634, type: 3}
   m_Bones:
@@ -1465,6 +1446,20 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.000008970499, y: 0.25052172, z: -0.055229068}
     m_Extent: {x: 0.75849783, y: 0.33559918, z: 0.22563368}
   m_DirtyAABB: 0
+--- !u!114 &7469107429221050985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5131279299608307530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50bf978b290cbac40bd11df92fc9b7f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  rootBone: {fileID: 0}
 --- !u!1 &5131279299608307532
 GameObject:
   m_ObjectHideFlags: 0

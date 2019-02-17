@@ -21,7 +21,7 @@ public class MeshFixer : MonoBehaviour
         }
 
         foreach(Transform bone in targetRenderer.bones) {
-            Debug.Log(bone.gameObject.name);
+//            Debug.Log(bone.gameObject.name);
             boneMap[bone.gameObject.name] = bone;
         }
 
@@ -31,9 +31,9 @@ public class MeshFixer : MonoBehaviour
         
         for(int i = 0; i < myRenderer.bones.Length; i++) {
             GameObject bone = myRenderer.bones[i].gameObject;
-            Debug.Log(bone.name);
+            //Debug.Log(bone.name);
             if(!boneMap.TryGetValue(bone.name, out newBones[i])) {
-                Debug.Log("Unable to map bone \"" + bone.name + "\" to target skeleton.");
+                //Debug.Log("Unable to map bone \"" + bone.name + "\" to target skeleton.");
                 newBones[i] = rootBoneMap[bone.name];
             }
         }

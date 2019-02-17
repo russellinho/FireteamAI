@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1628223961199830114}
   - component: {fileID: 1628223961211827418}
+  - component: {fileID: 7222031867968398196}
   m_Layer: 0
   m_Name: Shoes
   m_TagString: Untagged
@@ -70,7 +71,7 @@ SkinnedMeshRenderer:
   m_SortingOrder: 0
   serializedVersion: 2
   m_Quality: 0
-  m_UpdateWhenOffscreen: 0
+  m_UpdateWhenOffscreen: 1
   m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300006, guid: 41c3f7476b433a44badac0bd95818584, type: 3}
   m_Bones:
@@ -86,6 +87,20 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.07373233, y: 0.4918912, z: 0.0792353}
     m_Extent: {x: 0.14685096, y: 0.15899222, z: 0.16078362}
   m_DirtyAABB: 0
+--- !u!114 &7222031867968398196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1628223961200326722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50bf978b290cbac40bd11df92fc9b7f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  rootBone: {fileID: 0}
 --- !u!1 &1628223961200326724
 GameObject:
   m_ObjectHideFlags: 0
@@ -2172,7 +2187,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1628223961199830522}
-  - component: {fileID: 1628223961207573014}
   m_Layer: 0
   m_Name: hanawhitechucks
   m_TagString: Untagged
@@ -2196,22 +2210,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &1628223961207573014
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1628223961200327130}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 41c3f7476b433a44badac0bd95818584, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0

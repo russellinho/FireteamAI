@@ -42,7 +42,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2316255295824166914}
-  - component: {fileID: 2316255295814332398}
   m_Layer: 0
   m_Name: hanatanktop
   m_TagString: Untagged
@@ -66,25 +65,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &2316255295814332398
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2316255295823682594}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 0bf1442a6bbe1e54d95f81e4f4a87e3c, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &2316255295823682608
 GameObject:
   m_ObjectHideFlags: 0
@@ -2075,6 +2055,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2316255295824167320}
   - component: {fileID: 2316255295818469664}
+  - component: {fileID: 5945993672718398344}
   m_Layer: 0
   m_Name: Tops
   m_TagString: Untagged
@@ -2135,7 +2116,7 @@ SkinnedMeshRenderer:
   m_SortingOrder: 0
   serializedVersion: 2
   m_Quality: 0
-  m_UpdateWhenOffscreen: 0
+  m_UpdateWhenOffscreen: 1
   m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300012, guid: 0bf1442a6bbe1e54d95f81e4f4a87e3c, type: 3}
   m_Bones:
@@ -2157,6 +2138,20 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.00017822534, y: 0.18898499, z: -0.018620394}
     m_Extent: {x: 0.19643617, y: 0.31411415, z: 0.19021234}
   m_DirtyAABB: 0
+--- !u!114 &5945993672718398344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2316255295823683000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50bf978b290cbac40bd11df92fc9b7f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  rootBone: {fileID: 0}
 --- !u!1 &2316255295823683004
 GameObject:
   m_ObjectHideFlags: 0
