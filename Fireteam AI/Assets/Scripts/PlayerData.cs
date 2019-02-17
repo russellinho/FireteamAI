@@ -72,7 +72,7 @@ public class PlayerData : MonoBehaviour {
 			file.Close ();
 			playername = info.playername;
 			EquipmentScript e = bodyReference.GetComponent<EquipmentScript>();
-			//e.EquipCharacter();
+			e.EquipCharacter(info.equippedCharacter, null);
 			e.EquipHeadgear(info.equippedHeadgear, null);
 			e.EquipFacewear(info.equippedFacewear, null);
 			e.EquipTop(info.equippedTop, TitleControllerScript.CheckSkinType(info.equippedTop), null);
@@ -82,7 +82,7 @@ public class PlayerData : MonoBehaviour {
 		} else {
 			// Else, load defaults
 			playername = "Player";
-			bodyReference.GetComponent<EquipmentScript>().EquipDefaults();
+			bodyReference.GetComponent<EquipmentScript>().EquipDefaults("Lucas");
 		}
 		PhotonNetwork.NickName = playername;
 	}

@@ -379,7 +379,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myTops[i];
             o.GetComponent<ShopItemScript>().itemType = "Top";
 			o.GetComponent<ShopItemScript>().skinType = CheckSkinType((string)InventoryScript.myTops[i]);
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myTops[i]]);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myTops[i] + " M"]);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 4f, t.sizeDelta.y / 4f);
@@ -416,7 +416,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myBottoms[i];
             o.GetComponent<ShopItemScript>().itemType = "Bottom";
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myBottoms[i]]);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myBottoms[i] + " M"]);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);

@@ -16,7 +16,7 @@ public class ShopItemScript : MonoBehaviour
         switch (itemType)
         {
             case "Character":
-                //PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipCharacter(itemName);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipCharacter(itemName, gameObject);
                 break;
             case "Top":
                 PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipTop(itemName, skinType, gameObject);

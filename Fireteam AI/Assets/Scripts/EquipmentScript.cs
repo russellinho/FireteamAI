@@ -43,7 +43,11 @@ public class EquipmentScript : MonoBehaviour
 
     public GameObject myBones;
 
-    public void EquipDefaults() {
+    public void EquipDefaults(string character) {
+        if (character != null) {
+            EquipCharacter(character, null);
+            return;
+        }
         RemoveFacewear();
         RemoveArmor();
         RemoveHeadgear();
@@ -53,8 +57,12 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void EquipCharacter(string name, GameObject shopItemRef) {
-        equippedCharacter = name;
-        ChangeCharacter();
+        InventoryScript.collectTops(name);
+        InventoryScript.collectBottoms(name);
+        InventoryScript.collectFacewear(name);
+        InventoryScript.collectHeadgear(name);
+        InventoryScript.collectFootwear(name);
+        InventoryScript.collectArmor(name);
 
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null) {
@@ -71,6 +79,8 @@ public class EquipmentScript : MonoBehaviour
 
         ts.equippedCharacterSlot.enabled = true;
         ts.equippedCharacterSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+
+        ChangeCharacter();
     }
 
     public void EquipTop(string name, int skinType, GameObject shopItemRef) {
@@ -376,79 +386,11 @@ public class EquipmentScript : MonoBehaviour
 
     // Changes renderers to new character renderers and sets clothes to default set
     void ChangeCharacter() {
-        GameObject o = (GameObject)Resources.Load(InventoryScript.characterRenderers[equippedCharacter]);
-        SkinnedMeshRenderer[] os = o.GetComponentsInChildren<SkinnedMeshRenderer>();
-        // Change 
-        Destroy(myHeadgearRenderer);
-        myHeadgearRenderer = null;
-        myHeadgearRenderer = Instantiate(os[0].gameObject);
-        myHeadgearRenderer.transform.SetParent(gameObject.transform);
+        // Create the new character
+        GameObject o = (GameObject)Resources.Load(InventoryScript.characterPrefabs[equippedCharacter]);
 
-        Destroy(myFacewearRenderer);
-        myFacewearRenderer = null;
-        myFacewearRenderer = Instantiate(os[1].gameObject);
-        myFacewearRenderer.transform.SetParent(gameObject.transform);
-
-        Destroy(myTopRenderer);
-        myTopRenderer = null;
-        myTopRenderer = Instantiate(os[2].gameObject);
-        myTopRenderer.transform.SetParent(gameObject.transform);
-
-        Destroy(myBottomRenderer);
-        myBottomRenderer = null;
-        myBottomRenderer = Instantiate(os[3].gameObject);
-        myBottomRenderer.transform.SetParent(gameObject.transform);
-
-        Destroy(myFootwearRenderer);
-        myFootwearRenderer = null;
-        myFootwearRenderer = Instantiate(os[4].gameObject);
-        myFootwearRenderer.transform.SetParent(gameObject.transform);
-
-        myArmorTopRenderer = null;
-        myArmorTopRenderer = myTopRenderer;
-
-        myArmorBottomRenderer = null;
-        myArmorBottomRenderer = myBottomRenderer;
-
-        Destroy(mySkinRenderer);
-        mySkinRenderer = null;
-        mySkinRenderer = Instantiate(os[5].gameObject);
-        mySkinRenderer.transform.SetParent(gameObject.transform);
-
-        Destroy(myBones);
-        myBones = null;
-        myBones = Instantiate(os[6].gameObject);
-        myBones.transform.SetParent(gameObject.transform);
-
-        Destroy(myGlovesRenderer);
-        myGlovesRenderer = null;
-        myGlovesRenderer = Instantiate(os[7].gameObject);
-        myGlovesRenderer.transform.SetParent(gameObject.transform);
+        // Destroy the old one (this)
         
-        Destroy(myEyesRenderer);
-        myEyesRenderer = null;
-        myEyesRenderer = Instantiate(os[8].gameObject);
-        myEyesRenderer.transform.SetParent(gameObject.transform);
-
-        if (myEyelashRenderer != null) {
-            Destroy(myEyelashRenderer);
-        }
-        myEyelashRenderer = null;
-        if (os.Length > 9) {
-            myEyelashRenderer = Instantiate(os[9].gameObject);
-            myEyelashRenderer.transform.SetParent(gameObject.transform);
-        }
-
-        if (myHairRenderer != null) {
-            Destroy(myHairRenderer);
-        }
-        myHairRenderer = null;
-        if (os.Length > 10) {
-            myHairRenderer = Instantiate(os[10].gameObject);
-
-        }
-
-        EquipDefaults();
     }
 
 }

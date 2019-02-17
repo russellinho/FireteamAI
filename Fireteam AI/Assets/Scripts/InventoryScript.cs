@@ -8,7 +8,7 @@ public class InventoryScript : MonoBehaviour
     // Storage for all characters in the game
     public static Dictionary<string, int> characterInventoryCatalog = new Dictionary<string, int>();
     public static Dictionary<string, string> characterSkinCatalog = new Dictionary<string, string>();
-    public static Dictionary<string, string> characterRenderers = new Dictionary<string, string>();
+    public static Dictionary<string, string> characterPrefabs = new Dictionary<string, string>();
     // Mapping for all items in the database for Lucas - key is the item name and value is the
     // database path to load from
     public static Dictionary<string, string> lucasInventoryCatalog = new Dictionary<string, string>();
@@ -37,11 +37,11 @@ public class InventoryScript : MonoBehaviour
         characterInventoryCatalog.Add("Hana", 1);
         characterInventoryCatalog.Add("Jade", 1);
 
-        characterRenderers.Add("Lucas", "Models/Characters/Lucas/lucas_preset");
-        characterRenderers.Add("Daryl", "Models/Characters/Daryl/daryl_preset");
-        characterRenderers.Add("Codename Sayre", "Models/Characters/Sayre/sayre_preset");
-        characterRenderers.Add("Hana", "Models/Characters/Hana/hana_preset");
-        characterRenderers.Add("Jade", "Models/Characters/Jade/jade_preset");
+        characterPrefabs.Add("Lucas", "Models/Characters/Lucas/PlayerPrefabLucas");
+        characterPrefabs.Add("Daryl", "Models/Characters/Daryl/PlayerPrefabDaryl");
+        characterPrefabs.Add("Codename Sayre", "Models/Characters/Sayre/PlayerPrefabSayre");
+        characterPrefabs.Add("Hana", "Models/Characters/Hana/PlayerPrefabHana");
+        characterPrefabs.Add("Jade", "Models/Characters/Jade/PlayerPrefabJade");
 
         characterSkinCatalog.Add("Lucas0", "Models/Characters/Lucas/Extra Skins/Ankles Long Sleeves/lucasskinanklesonly");
         characterSkinCatalog.Add("Lucas1", "Models/Characters/Lucas/Extra Skins/Ankles Mid Sleeves/lucasanklesmid");
@@ -60,7 +60,7 @@ public class InventoryScript : MonoBehaviour
         characterSkinCatalog.Add("Jade2", "Models/Characters/Jade/3/skinjade3");
 
         thumbnailGallery.Add("Lucas", "Models/Pics/character_lucas");
-        thumbnailGallery.Add("Daryl", "Models/Pics/character_donald");
+        thumbnailGallery.Add("Daryl", "Models/Pics/character_daryl");
         thumbnailGallery.Add("Codename Sayre", "Models/Pics/character_sayre");
         thumbnailGallery.Add("Hana", "Models/Pics/character_hana");
         thumbnailGallery.Add("Jade", "Models/Pics/character_jade");
@@ -186,15 +186,9 @@ public class InventoryScript : MonoBehaviour
         thumbnailGallery.Add("Standard Vest", "Models/Pics/standard_vest");
 
         collectCharacters();
-        collectTops();
-        collectBottoms();
-        collectHeadgear();
-        collectFacewear();
-        collectFootwear();
-        collectArmor();
     }
     
-    void collectCharacters() {
+    public static void collectCharacters() {
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         myCharacters.Add("Lucas");
         myCharacters.Add("Daryl");
@@ -204,43 +198,58 @@ public class InventoryScript : MonoBehaviour
 
     }
 
-    void collectTops() {
+    public static void collectTops(string character) {
         // TODO: Supposed to load from database, but for now, will hard code acquired items
-        myTops.Add("Standard Fatigues Top");
-        myTops.Add("Casual Shirt");
-        myTops.Add("Casual T-Shirt");
-        myTops.Add("Casual Tank Top");
+        if (character.Equals("Lucas") || character.Equals("Daryl") || character.Equals("Codename Sayre")) {
+            myTops.Add("Standard Fatigues Top");
+            myTops.Add("Casual Shirt");
+            myTops.Add("Casual T-Shirt");
+        } else {
+            myTops.Add("Standard Fatigues Top");
+            myTops.Add("Casual T-Shirt");
+            myTops.Add("Casual Tank Top");
+        }
     }
 
-    void collectBottoms() {
+    public static void collectBottoms(string character) {
         // TODO: Supposed to load from database, but for now, will hard code acquired items
-        myBottoms.Add("Standard Fatigues Bottom");
-        myBottoms.Add("Dark Wash Denim Jeans");
-        myBottoms.Add("Light Wash Denim Jeans");
+        if (character.Equals("Lucas") || character.Equals("Daryl") || character.Equals("Codename Sayre")) {
+            myBottoms.Add("Standard Fatigues Bottom");
+            myBottoms.Add("Dark Wash Denim Jeans");
+            myBottoms.Add("Light Wash Denim Jeans");
+        } else {
+            myBottoms.Add("Standard Fatigues Bottom");
+            myBottoms.Add("Dark Wash Denim Jeans");
+            myBottoms.Add("Light Wash Denim Jeans");
+        }
     }
 
-    void collectHeadgear() {
+    public static void collectHeadgear(string character) {
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         myHeadgear.Add("MICH");
         myHeadgear.Add("Combat Beanie");
         myHeadgear.Add("COM Hat");
     }
 
-    void collectFacewear() {
+    public static void collectFacewear(string character) {
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         myFacewear.Add("Standard Goggles");
         myFacewear.Add("Sport Shades");
         myFacewear.Add("Saint Laurent Mask");
     }
 
-    void collectFootwear() {
+    public static void collectFootwear(string character) {
         // TODO: Supposed to load from database, but for now, will hard code acquired items
-        myFootwear.Add("Standard Boots");
-        myFootwear.Add("Red Chucks");
-        myFootwear.Add("White Chucks");
+        if (character.Equals("Lucas") || character.Equals("Daryl") || character.Equals("Codename Sayre")) {
+            myFootwear.Add("Standard Boots");
+            myFootwear.Add("Red Chucks");
+        } else {
+            myFootwear.Add("Standard Boots");
+            myFootwear.Add("White Chucks");
+        }
     }
 
-    void collectArmor() {
+    public static void collectArmor(string character) {
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         myArmor.Add("Standard Vest");
     }
