@@ -52,9 +52,16 @@ public class EquipmentScript : MonoBehaviour
         RemoveFacewear();
         RemoveArmor();
         RemoveHeadgear();
-        EquipTop("Standard Fatigues Top", 0, null);
-        EquipBottom("Standard Fatigues Bottom", null);
-        EquipFootwear("Standard Boots", null);
+        if (equippedCharacter.Equals("Codename Sayre")) {
+            EquipTop("Scrubs Top", 2, null);
+            EquipBottom("Scrubs Bottom", null);
+            EquipFootwear("Standard Boots", null);
+            EquipFacewear("Surgical Mask", null);
+        } else {
+            EquipTop("Standard Fatigues Top", 0, null);
+            EquipBottom("Standard Fatigues Bottom", null);
+            EquipFootwear("Standard Boots", null);
+        }
     }
 
     public void HighlightItemPrefab(GameObject shopItemRef) {

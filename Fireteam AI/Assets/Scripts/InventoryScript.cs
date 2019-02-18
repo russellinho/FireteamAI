@@ -48,10 +48,13 @@ public class InventoryScript : MonoBehaviour
         itemDescriptionCatalog.Add("Saint Laurent Mask", "Eliminate your enemies in style with these expensive yet stylish glasses!");
         itemDescriptionCatalog.Add("Sport Shades", "Tinted shades with a sporty trim usually used for the shooting range.");
         itemDescriptionCatalog.Add("Standard Goggles", "Standard issue goggles given to all soldiers upon completion of basic training.");
+        itemDescriptionCatalog.Add("Surgical Mask", "A protective, lightweight mask used during medical surgeries.");
         itemDescriptionCatalog.Add("Red Chucks", "These bright and stylish canvas shoes are stylish yet lightweight, durable, and comfortable!");
         itemDescriptionCatalog.Add("White Chucks", "The white version of the red chucks; stylish yet lightweight, durable, and comfortable!");
         itemDescriptionCatalog.Add("Standard Boots", "Standard issue combat boots given to all soldiers upon completion of basic training.");
         itemDescriptionCatalog.Add("Standard Vest", "A first generation ballistic vest used to protect yourself in combat. Being first generation, it's a bit heavy, but offers great protection.");
+        itemDescriptionCatalog.Add("Scrubs Top", "A comfortable scrubs shirt commonly used in the medical field.");
+        itemDescriptionCatalog.Add("Scrubs Bottom", "A comfortable scrubs pants commonly used in the medical field.");
 
         characterPrefabs.Add("Lucas", "Models/Characters/Lucas/PlayerPrefabLucas");
         characterPrefabs.Add("Daryl", "Models/Characters/Daryl/PlayerPrefabDaryl");
@@ -91,6 +94,7 @@ public class InventoryScript : MonoBehaviour
         sayreInventoryCatalog.Add("Casual Shirt", "Models/Clothing/Lucas/Tops/Casual Shirt/lucascasualshirt");
         sayreInventoryCatalog.Add("Casual T-Shirt", "Models/Clothing/Lucas/Tops/V Neck Tee/lucasvnecktee (1)");
         sayreInventoryCatalog.Add("Standard Fatigues Top", "Models/Clothing/Lucas/Tops/Standard Fatigues/lucasstandardfatiguestop");
+        sayreInventoryCatalog.Add("Scrubs Top", "Models/Clothing/Sayre/Tops/scrubstop");
         hanaInventoryCatalog.Add("Casual Tank Top", "Models/Clothing/Hana/Tops/Casual Tank Top/hanatanktop");
         hanaInventoryCatalog.Add("Casual T-Shirt", "Models/Clothing/Hana/Tops/Casual T-Shirt/skinhanatshirt");
         hanaInventoryCatalog.Add("Standard Fatigues Top", "Models/Clothing/Hana/Tops/Standard Fatigues/hanastandardfatiguestop");
@@ -101,6 +105,7 @@ public class InventoryScript : MonoBehaviour
         thumbnailGallery.Add("Casual Shirt M", "Models/Pics/casual_shirt");
         thumbnailGallery.Add("Casual T-Shirt M", "Models/Pics/v_neck_shirt");
         thumbnailGallery.Add("Standard Fatigues Top M", "Models/Pics/standard_fatigue_shirt");
+        thumbnailGallery.Add("Scrubs Top M", "Models/Pics/scrubs_top");
         thumbnailGallery.Add("Casual Tank Top F", "Models/Pics/casual_tank_top_f");
         thumbnailGallery.Add("Casual T-Shirt F", "Models/Pics/casual_t_shirt_f");
         thumbnailGallery.Add("Standard Fatigues Top F", "Models/Pics/standard_fatigue_shirt_f");
@@ -115,6 +120,7 @@ public class InventoryScript : MonoBehaviour
         sayreInventoryCatalog.Add("Dark Wash Denim Jeans", "Models/Clothing/Lucas/Bottoms/Dark Wash Denim Jeans/lucasdarkwashjeans");
         sayreInventoryCatalog.Add("Light Wash Denim Jeans", "Models/Clothing/Lucas/Bottoms/Light Wash Denim Jeans/lucaslightwashjeans");
         sayreInventoryCatalog.Add("Standard Fatigues Bottom", "Models/Clothing/Lucas/Bottoms/Standard Fatigues/lucasstandardfatiguebottom");
+        sayreInventoryCatalog.Add("Scrubs Bottom", "Models/Clothing/Sayre/Bottoms/scrubspants");
         hanaInventoryCatalog.Add("Dark Wash Denim Jeans", "Models/Clothing/Hana/Bottoms/Dark Wash Denim Jeans/hanadarkwashjeans");
         hanaInventoryCatalog.Add("Light Wash Denim Jeans", "Models/Clothing/Hana/Bottoms/Light Wash Denim Jeans/hanalightwashjeans");
         hanaInventoryCatalog.Add("Standard Fatigues Bottom", "Models/Clothing/Hana/Bottoms/Standard Fatigues/hanastandardfatiguesbottom");
@@ -125,6 +131,7 @@ public class InventoryScript : MonoBehaviour
         thumbnailGallery.Add("Dark Wash Denim Jeans M", "Models/Pics/dark_wash_jeans");
         thumbnailGallery.Add("Light Wash Denim Jeans M", "Models/Pics/light_wash_jeans");
         thumbnailGallery.Add("Standard Fatigues Bottom M", "Models/Pics/standard_fatigue_pants");
+        thumbnailGallery.Add("Scrubs Bottom M", "Models/Pics/scrubs_bottom");
         thumbnailGallery.Add("Dark Wash Denim Jeans F", "Models/Pics/dark_wash_jeans_f");
         thumbnailGallery.Add("Light Wash Denim Jeans F", "Models/Pics/light_wash_jeans_f");
         thumbnailGallery.Add("Standard Fatigues Bottom F", "Models/Pics/standard_fatigue_pants");
@@ -154,22 +161,28 @@ public class InventoryScript : MonoBehaviour
         lucasInventoryCatalog.Add("Saint Laurent Mask", "Models/Equipment/Lucas/Face/Saint Laurent Mask/lucassaintlaurentmask");
         lucasInventoryCatalog.Add("Sport Shades", "Models/Equipment/Lucas/Face/Sport Shades/lucassportshades");
         lucasInventoryCatalog.Add("Standard Goggles", "Models/Equipment/Lucas/Face/Standard Goggles/lucasgoggles");
+        lucasInventoryCatalog.Add("Surgical Mask", "Models/Equipment/Lucas/Face/Surgical Mask/surgicalmask");
         darylInventoryCatalog.Add("Saint Laurent Mask", "Models/Equipment/Lucas/Face/Saint Laurent Mask/lucassaintlaurentmask");
         darylInventoryCatalog.Add("Sport Shades", "Models/Equipment/Lucas/Face/Sport Shades/lucassportshades");
         darylInventoryCatalog.Add("Standard Goggles", "Models/Equipment/Lucas/Face/Standard Goggles/lucasgoggles");
+        darylInventoryCatalog.Add("Surgical Mask", "Models/Equipment/Lucas/Face/Surgical Mask/surgicalmask");
         sayreInventoryCatalog.Add("Saint Laurent Mask", "Models/Equipment/Lucas/Face/Saint Laurent Mask/lucassaintlaurentmask");
         sayreInventoryCatalog.Add("Sport Shades", "Models/Equipment/Lucas/Face/Sport Shades/lucassportshades");
         sayreInventoryCatalog.Add("Standard Goggles", "Models/Equipment/Lucas/Face/Standard Goggles/lucasgoggles");
+        sayreInventoryCatalog.Add("Surgical Mask", "Models/Equipment/Lucas/Face/Surgical Mask/surgicalmask");
         hanaInventoryCatalog.Add("Saint Laurent Mask", "Models/Equipment/Lucas/Face/Saint Laurent Mask/lucassaintlaurentmask");
         hanaInventoryCatalog.Add("Sport Shades", "Models/Equipment/Lucas/Face/Sport Shades/lucassportshades");
         hanaInventoryCatalog.Add("Standard Goggles", "Models/Equipment/Lucas/Face/Standard Goggles/lucasgoggles");
+        hanaInventoryCatalog.Add("Surgical Mask", "Models/Equipment/Lucas/Face/Surgical Mask/surgicalmask");
         jadeInventoryCatalog.Add("Saint Laurent Mask", "Models/Equipment/Lucas/Face/Saint Laurent Mask/lucassaintlaurentmask");
         jadeInventoryCatalog.Add("Sport Shades", "Models/Equipment/Lucas/Face/Sport Shades/lucassportshades");
         jadeInventoryCatalog.Add("Standard Goggles", "Models/Equipment/Lucas/Face/Standard Goggles/lucasgoggles");
+        jadeInventoryCatalog.Add("Surgical Mask", "Models/Equipment/Lucas/Face/Surgical Mask/surgicalmask");
 
         thumbnailGallery.Add("Saint Laurent Mask", "Models/Pics/saint_laurent_mask");
         thumbnailGallery.Add("Sport Shades", "Models/Pics/sport_shades");
         thumbnailGallery.Add("Standard Goggles", "Models/Pics/standard_goggles");
+        thumbnailGallery.Add("Surgical Mask", "Models/Pics/surgical_mask");
 
         // Footwear
         lucasInventoryCatalog.Add("Red Chucks", "Models/Clothing/Lucas/Shoes/Chucks/lucasredchucks");
@@ -218,6 +231,9 @@ public class InventoryScript : MonoBehaviour
         myTops.Clear();
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         if (character.Equals("Lucas") || character.Equals("Daryl") || character.Equals("Codename Sayre")) {
+            if (character.Equals("Codename Slayre")) {
+                myTops.Add("Scrubs Top");
+            }
             myTops.Add("Standard Fatigues Top");
             myTops.Add("Casual Shirt");
             myTops.Add("Casual T-Shirt");
@@ -232,6 +248,9 @@ public class InventoryScript : MonoBehaviour
         myBottoms.Clear();
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         if (character.Equals("Lucas") || character.Equals("Daryl") || character.Equals("Codename Sayre")) {
+            if (character.Equals("Codename Slayre")) {
+                myTops.Add("Scrubs Bottom");
+            }
             myBottoms.Add("Standard Fatigues Bottom");
             myBottoms.Add("Dark Wash Denim Jeans");
             myBottoms.Add("Light Wash Denim Jeans");
@@ -256,6 +275,7 @@ public class InventoryScript : MonoBehaviour
         myFacewear.Add("Standard Goggles");
         myFacewear.Add("Sport Shades");
         myFacewear.Add("Saint Laurent Mask");
+        myFacewear.Add("Surgical Mask");
     }
 
     public static void collectFootwear(string character) {
