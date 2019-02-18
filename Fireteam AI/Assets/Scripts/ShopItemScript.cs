@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class ShopItemScript : MonoBehaviour
+public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    public GameObject itemDescriptionPopupRef;
+    public RawImage thumbnailRef;
     public string itemName;
     public string itemType;
     // 1 = long sleeves, 2 = mid sleeves, 3 = short sleeves
@@ -16,7 +19,7 @@ public class ShopItemScript : MonoBehaviour
         switch (itemType)
         {
             case "Character":
-                PlayerData.playerdata.ChangeBodyRef(itemName);
+                PlayerData.playerdata.ChangeBodyRef(itemName, gameObject);
                 break;
             case "Top":
                 PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipTop(itemName, skinType, gameObject);
@@ -37,5 +40,17 @@ public class ShopItemScript : MonoBehaviour
                 PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipArmor(itemName, gameObject);
                 break;
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData) {
+        itemDescriptionPopupRef.SetActive(true);
+        ItemPopupScript ips = itemDescriptionPopupRef.GetComponent<ItemPopupScript>();
+        ips.SetTitle(itemName);
+        ips.SetThumbnail(thumbnailRef);
+        ips.SetDescription(InventoryScript.itemDescriptionCatalog[itemName]);
+    }
+
+    public void OnPointerExit(PointerEventData eventData) {
+        itemDescriptionPopupRef.SetActive(false);
     }
 }

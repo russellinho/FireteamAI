@@ -13,6 +13,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private Vector3 defaultCameraPos = new Vector3(-7.3f, 4.08f, 22.91f);
 	private int camPos;
 	private float camMoveTimer;
+	public GameObject itemDescriptionPopupRef;
 
 	public GameObject mainMenu;
 	public Camera mainCam;
@@ -23,6 +24,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject loadingScreen;
 	public GameObject jukebox;
 	public GameObject mainMenuPopup;
+	public char currentCharGender;
 
 	public InputField PlayerNameInput;
 
@@ -265,6 +267,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myHeadgear.Count; i++) {
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myHeadgear[i];
             o.GetComponent<ShopItemScript>().itemType = "Headgear";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myHeadgear[i]]);
@@ -302,6 +305,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myFacewear.Count; i++) {
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myFacewear[i];
             o.GetComponent<ShopItemScript>().itemType = "Facewear";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myFacewear[i]]);
@@ -339,6 +343,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myArmor.Count; i++) {
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myArmor[i];
             o.GetComponent<ShopItemScript>().itemType = "Armor";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myArmor[i]]);
@@ -376,10 +381,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myTops.Count; i++) {
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
             o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myTops[i];
             o.GetComponent<ShopItemScript>().itemType = "Top";
-			o.GetComponent<ShopItemScript>().skinType = CheckSkinType((string)InventoryScript.myTops[i]);
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myTops[i] + " M"]);
+			o.GetComponent<ShopItemScript>().skinType = CheckSkinType((string)InventoryScript.myTops[i], currentCharGender);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myTops[i] + " " + currentCharGender]);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 4f, t.sizeDelta.y / 4f);
@@ -414,9 +420,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myBottoms.Count; i++) {
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myBottoms[i];
             o.GetComponent<ShopItemScript>().itemType = "Bottom";
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myBottoms[i] + " M"]);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myBottoms[i] + " " + currentCharGender]);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
@@ -451,6 +458,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myFootwear.Count; i++) {
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myFootwear[i];
             o.GetComponent<ShopItemScript>().itemType = "Footwear";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myFootwear[i]]);
@@ -540,6 +548,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myCharacters.Count; i++) {
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myCharacters[i];
             o.GetComponent<ShopItemScript>().itemType = "Character";
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myCharacters[i]]);
@@ -555,13 +564,22 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	public static int CheckSkinType(string clothingName) {
-		if (clothingName.Equals("Casual T-Shirt")) {
-			return 2;
-		} else if (clothingName.Equals("Casual Shirt")) {
-			return 1;
+	public static int CheckSkinType(string clothingName, char gender) {
+		if (gender == 'F') {
+			if (clothingName.Equals("Casual T-Shirt")) {
+				return 2;
+			} else if (clothingName.Equals("Casual Tank Top")) {
+				return 1;
+			}
+			return 0;
+		} else {
+			if (clothingName.Equals("Casual T-Shirt")) {
+				return 2;
+			} else if (clothingName.Equals("Casual Shirt")) {
+				return 1;
+			}
+			return 0;
 		}
-		return 0;
 	}
 		
 }

@@ -130,6 +130,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c39b0241d37db42a99a504778ba6b392, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemDescriptionPopupRef: {fileID: 0}
+  thumbnailRef: {fileID: 5722862971687186158}
   itemName: 
   itemType: 
   skinType: 0

@@ -75,7 +75,8 @@ public class PlayerData : MonoBehaviour {
 			e.EquipCharacter(info.equippedCharacter, null);
 			e.EquipHeadgear(info.equippedHeadgear, null);
 			e.EquipFacewear(info.equippedFacewear, null);
-			e.EquipTop(info.equippedTop, TitleControllerScript.CheckSkinType(info.equippedTop), null);
+			char gender = ((info.equippedCharacter.Equals("Jade") || info.equippedCharacter.Equals("Hana")) ? 'F' : 'M');
+			e.EquipTop(info.equippedTop, TitleControllerScript.CheckSkinType(info.equippedTop, gender), null);
 			e.EquipBottom(info.equippedBottom, null);
 			e.EquipFootwear(info.equippedFootwear, null);
 			e.EquipArmor(info.equippedArmor, null);
@@ -92,10 +93,11 @@ public class PlayerData : MonoBehaviour {
 		}
 	}
 
-	public void ChangeBodyRef(string character) {
+	public void ChangeBodyRef(string character, GameObject shopItem) {
 		Destroy(bodyReference);
 		bodyReference = null;
 		bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterPrefabs[character]));
+		bodyReference.GetComponent<EquipmentScript>().HighlightItemPrefab(shopItem);
 	}
 
 }

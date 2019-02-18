@@ -57,6 +57,15 @@ public class EquipmentScript : MonoBehaviour
         EquipFootwear("Standard Boots", null);
     }
 
+    public void HighlightItemPrefab(GameObject shopItemRef) {
+        // Sets item that you just equipped to orange in the shop
+        if (shopItemRef != null) {
+            shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+            shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+            ts.currentlyEquippedItemPrefab = shopItemRef;
+        }
+    }
+
     public void EquipCharacter(string name, GameObject shopItemRef) {
         InventoryScript.collectTops(name);
         InventoryScript.collectBottoms(name);
@@ -80,6 +89,12 @@ public class EquipmentScript : MonoBehaviour
 
         ts.equippedCharacterSlot.enabled = true;
         ts.equippedCharacterSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+
+        if (name.Equals("Lucas") || name.Equals("Daryl") || name.Equals("Codename Sayre")) {
+            ts.currentCharGender = 'M';
+        } else {
+            ts.currentCharGender = 'F';
+        }
 
         EquipDefaults();
     }

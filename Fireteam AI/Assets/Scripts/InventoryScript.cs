@@ -6,7 +6,7 @@ public class InventoryScript : MonoBehaviour
 {
 
     // Storage for all characters in the game
-    public static Dictionary<string, int> characterInventoryCatalog = new Dictionary<string, int>();
+    public static Dictionary<string, string> itemDescriptionCatalog = new Dictionary<string, string>();
     public static Dictionary<string, string> characterSkinCatalog = new Dictionary<string, string>();
     public static Dictionary<string, string> characterPrefabs = new Dictionary<string, string>();
     // Mapping for all items in the database for Lucas - key is the item name and value is the
@@ -31,11 +31,27 @@ public class InventoryScript : MonoBehaviour
 
     void Awake() {
         // Characters
-        characterInventoryCatalog.Add("Lucas", 1);
-        characterInventoryCatalog.Add("Daryl", 1);
-        characterInventoryCatalog.Add("Codename Sayre", 1);
-        characterInventoryCatalog.Add("Hana", 1);
-        characterInventoryCatalog.Add("Jade", 1);
+        itemDescriptionCatalog.Add("Lucas", "Nationality: British\nAs a reformed professional criminal, Lucas works swiftly and gets the job done.");
+        itemDescriptionCatalog.Add("Daryl", "Nationality: American\nDaryl was an ex professional college football player whose career ended abruptly after an unsustainable knee injury. His tenacity, size, and strength all serve him in combat.");
+        itemDescriptionCatalog.Add("Codename Sayre", "Nationality: Mexican\nBeing fresh out of medical school at the top of his class, Codename Sayre is skilled in his healing abilities. His witty style of humor allows him to maneuver through sticky situations easily.");
+        itemDescriptionCatalog.Add("Hana", "Nationality: Japanese\nWhen her entire family was murdered as a kid, Hana swore to fight for justice to avenge her family. She is an ex police officer who many underestimate, but don't be fooled by her size.");
+        itemDescriptionCatalog.Add("Jade", "Nationality: American\nNot much is known about Jade's past besides the fact that she likes to work alone and was previously a firefighter.");
+        itemDescriptionCatalog.Add("Casual T-Shirt", "A casual t-shirt to wear on the street.");
+        itemDescriptionCatalog.Add("Casual Tank Top", "A casual tank top to wear on the street.");
+        itemDescriptionCatalog.Add("Standard Fatigues Top", "A standard issue shirt given to all solders upon completion of basic training.");
+        itemDescriptionCatalog.Add("Standard Fatigues Bottom", "A standard issue pants given to all soldiers upon completion of basic training.");
+        itemDescriptionCatalog.Add("Light Wash Denim Jeans", "Light wash jeans for casual wear.");
+        itemDescriptionCatalog.Add("Dark Wash Denim Jeans", "Dark wash jeans for casual wear.");
+        itemDescriptionCatalog.Add("MICH", "An overarching helmet that can be used for protecting one's head from shrapnel and even bullets.");
+        itemDescriptionCatalog.Add("COM Hat", "A lightweight hat with a mic for optimal communication.");
+        itemDescriptionCatalog.Add("Combat Beanie", "A stylish hat straight out of your local designer clothing store.");
+        itemDescriptionCatalog.Add("Saint Laurent Mask", "Eliminate your enemies in style with these expensive yet stylish glasses!");
+        itemDescriptionCatalog.Add("Sport Shades", "Tinted shades with a sporty trim usually used for the shooting range.");
+        itemDescriptionCatalog.Add("Standard Goggles", "Standard issue goggles given to all soldiers upon completion of basic training.");
+        itemDescriptionCatalog.Add("Red Chucks", "These bright and stylish canvas shoes are stylish yet lightweight, durable, and comfortable!");
+        itemDescriptionCatalog.Add("White Chucks", "The white version of the red chucks; stylish yet lightweight, durable, and comfortable!");
+        itemDescriptionCatalog.Add("Standard Boots", "Standard issue combat boots given to all soldiers upon completion of basic training.");
+        itemDescriptionCatalog.Add("Standard Vest", "A first generation ballistic vest used to protect yourself in combat. Being first generation, it's a bit heavy, but offers great protection.");
 
         characterPrefabs.Add("Lucas", "Models/Characters/Lucas/PlayerPrefabLucas");
         characterPrefabs.Add("Daryl", "Models/Characters/Daryl/PlayerPrefabDaryl");
@@ -53,8 +69,8 @@ public class InventoryScript : MonoBehaviour
         characterSkinCatalog.Add("Sayre1", "Models/Characters/Sayre/2/skinslayre2");
         characterSkinCatalog.Add("Sayre2", "Models/Characters/Sayre/3/skinslayre3");
         characterSkinCatalog.Add("Hana0", "Models/Characters/Hana/1/skinhana1");
-        characterSkinCatalog.Add("Hana1", "Models/Characters/Hana/2/skinhana2");
-        characterSkinCatalog.Add("Hana2", "Models/Characters/Hana/3/skinhana3");
+        characterSkinCatalog.Add("Hana2", "Models/Characters/Hana/2/skinhana2");
+        characterSkinCatalog.Add("Hana1", "Models/Characters/Hana/3/skinhana3");
         characterSkinCatalog.Add("Jade0", "Models/Characters/Jade/1/skinjade1");
         characterSkinCatalog.Add("Jade1", "Models/Characters/Jade/2/skinjade2");
         characterSkinCatalog.Add("Jade2", "Models/Characters/Jade/3/skinjade3");
@@ -75,19 +91,19 @@ public class InventoryScript : MonoBehaviour
         sayreInventoryCatalog.Add("Casual Shirt", "Models/Clothing/Lucas/Tops/Casual Shirt/lucascasualshirt");
         sayreInventoryCatalog.Add("Casual T-Shirt", "Models/Clothing/Lucas/Tops/V Neck Tee/lucasvnecktee (1)");
         sayreInventoryCatalog.Add("Standard Fatigues Top", "Models/Clothing/Lucas/Tops/Standard Fatigues/lucasstandardfatiguestop");
-        hanaInventoryCatalog.Add("Casual Tank Top", "Models/Clothing/Hana/Tops/Casual T-Shirt/skinhanatshirt");
-        hanaInventoryCatalog.Add("Casual T-Shirt", "Models/Clothing/Hana/Tops/Casual Tank Top/hanatanktop");
+        hanaInventoryCatalog.Add("Casual Tank Top", "Models/Clothing/Hana/Tops/Casual Tank Top/hanatanktop");
+        hanaInventoryCatalog.Add("Casual T-Shirt", "Models/Clothing/Hana/Tops/Casual T-Shirt/skinhanatshirt");
         hanaInventoryCatalog.Add("Standard Fatigues Top", "Models/Clothing/Hana/Tops/Standard Fatigues/hanastandardfatiguestop");
-        jadeInventoryCatalog.Add("Casual Tank Top", "Models/Clothing/Hana/Tops/Casual T-Shirt/skinhanatshirt");
-        jadeInventoryCatalog.Add("Casual T-Shirt", "Models/Clothing/Hana/Tops/Casual Tank Top/hanatanktop");
+        jadeInventoryCatalog.Add("Casual Tank Top", "Models/Clothing/Hana/Tops/Casual Tank Top/hanatanktop");
+        jadeInventoryCatalog.Add("Casual T-Shirt", "Models/Clothing/Hana/Tops/Casual T-Shirt/skinhanatshirt");
         jadeInventoryCatalog.Add("Standard Fatigues Top", "Models/Clothing/Hana/Tops/Standard Fatigues/hanastandardfatiguestop");
 
         thumbnailGallery.Add("Casual Shirt M", "Models/Pics/casual_shirt");
         thumbnailGallery.Add("Casual T-Shirt M", "Models/Pics/v_neck_shirt");
         thumbnailGallery.Add("Standard Fatigues Top M", "Models/Pics/standard_fatigue_shirt");
         thumbnailGallery.Add("Casual Tank Top F", "Models/Pics/casual_tank_top_f");
-        thumbnailGallery.Add("Casual T-Shirt F", "Models/Pics/casual_tank_top_f");
-        thumbnailGallery.Add("Standard Fatigues Top F", "Models/Pics/casual_tank_top_f");
+        thumbnailGallery.Add("Casual T-Shirt F", "Models/Pics/casual_t_shirt_f");
+        thumbnailGallery.Add("Standard Fatigues Top F", "Models/Pics/standard_fatigue_shirt_f");
         
         // Bottoms
         lucasInventoryCatalog.Add("Dark Wash Denim Jeans", "Models/Clothing/Lucas/Bottoms/Dark Wash Denim Jeans/lucasdarkwashjeans");
@@ -199,6 +215,7 @@ public class InventoryScript : MonoBehaviour
     }
 
     public static void collectTops(string character) {
+        myTops.Clear();
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         if (character.Equals("Lucas") || character.Equals("Daryl") || character.Equals("Codename Sayre")) {
             myTops.Add("Standard Fatigues Top");
@@ -212,6 +229,7 @@ public class InventoryScript : MonoBehaviour
     }
 
     public static void collectBottoms(string character) {
+        myBottoms.Clear();
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         if (character.Equals("Lucas") || character.Equals("Daryl") || character.Equals("Codename Sayre")) {
             myBottoms.Add("Standard Fatigues Bottom");
@@ -225,6 +243,7 @@ public class InventoryScript : MonoBehaviour
     }
 
     public static void collectHeadgear(string character) {
+        myHeadgear.Clear();
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         myHeadgear.Add("MICH");
         myHeadgear.Add("Combat Beanie");
@@ -232,6 +251,7 @@ public class InventoryScript : MonoBehaviour
     }
 
     public static void collectFacewear(string character) {
+        myFacewear.Clear();
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         myFacewear.Add("Standard Goggles");
         myFacewear.Add("Sport Shades");
@@ -239,6 +259,7 @@ public class InventoryScript : MonoBehaviour
     }
 
     public static void collectFootwear(string character) {
+        myFootwear.Clear();
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         if (character.Equals("Lucas") || character.Equals("Daryl") || character.Equals("Codename Sayre")) {
             myFootwear.Add("Standard Boots");
@@ -250,6 +271,7 @@ public class InventoryScript : MonoBehaviour
     }
 
     public static void collectArmor(string character) {
+        myArmor.Clear();
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         myArmor.Add("Standard Vest");
     }
