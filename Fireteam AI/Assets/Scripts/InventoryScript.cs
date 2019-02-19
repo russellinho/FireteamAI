@@ -221,8 +221,8 @@ public class InventoryScript : MonoBehaviour
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         myCharacters.Add("Lucas");
         myCharacters.Add("Daryl");
-        myCharacters.Add("Hana");
         myCharacters.Add("Jade");
+        myCharacters.Add("Hana");
         myCharacters.Add("Codename Sayre");
 
     }
@@ -273,8 +273,8 @@ public class InventoryScript : MonoBehaviour
         myFacewear.Clear();
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         myFacewear.Add("Standard Goggles");
-        myFacewear.Add("Sport Shades");
         myFacewear.Add("Saint Laurent Mask");
+        myFacewear.Add("Sport Shades");
         myFacewear.Add("Surgical Mask");
     }
 
