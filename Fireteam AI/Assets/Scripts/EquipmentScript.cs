@@ -7,8 +7,6 @@ public class EquipmentScript : MonoBehaviour
 {
 
     public TitleControllerScript ts;
-	public GameObject primaryWeapon;
-    public GameObject weaponSocket;
     
     public string equippedCharacter;
     public string equippedHeadgear;

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class InventoryScript : MonoBehaviour
 {
+    // Storage for weapons in the game
+    public static Dictionary<string, string> weaponCatalog = new Dictionary<string, string>();
 
     // Storage for all characters in the game
     public static Dictionary<string, string> itemDescriptionCatalog = new Dictionary<string, string>();
@@ -213,6 +215,10 @@ public class InventoryScript : MonoBehaviour
         jadeInventoryCatalog.Add("Standard Vest Bottom", "Models/Equipment/Lucas/Armor/Standard Vest/Bottoms/lucasstandardvestbottom");
         
         thumbnailGallery.Add("Standard Vest", "Models/Pics/standard_vest");
+
+        // Weapons
+        weaponCatalog.Add("AK-47", "Models/Weapons/Primary/Assault Rifles/AK-47");
+        weaponCatalog.Add("Glock23", "Models/Weapons/Secondary/Pistols/Glock23");
 
         collectCharacters();
     }
