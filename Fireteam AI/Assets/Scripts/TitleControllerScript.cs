@@ -49,8 +49,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button topsBtn;
 	public Button bottomsBtn;
 	public Button footwearBtn;
-	public Button primaryWepBtn;
-	public Button secondaryWepBtn;
 	public Button characterBtn;
 
 	public RawImage equippedHeadSlot;
@@ -61,6 +59,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public RawImage equippedCharacterSlot;
 	public RawImage equippedArmorSlot;
 	public GameObject currentlyEquippedItemPrefab;
+
+	// Weapon loadout stuff
+	public Button loadoutBtn;
+	public Button primaryWepBtn;
+	public Button secondaryWepBtn;
+	private float secondaryWepBtnYPos1 = -95f;
+	private float secondaryWepBtnYPos2 = -185f;
+	public Button assaultRifleSubBtn;
+	public Button shotgunSubBtn;
+	public Button sniperRifleSubBtn;
+	public RawImage equippedPrimarySlot;
+	public RawImage equippedSecondarySlot;
 
 	// Use this for initialization
 	void Start () {
