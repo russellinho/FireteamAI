@@ -1536,7 +1536,7 @@ MonoBehaviour:
   equipmentScript: {fileID: 0}
   weaponHolder: {fileID: 212688002}
   animator: {fileID: 1306485900839015915}
-  equippedPrimaryWeapon: AK-47
+  equippedPrimaryWeapon: M4A1
   equippedPrimaryType: Assault Rifle
   equippedSecondaryWeapon: Glock23
   equippedSecondaryType: Pistol
@@ -2716,7 +2716,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: b564bf52e4360674d9b7f0877ccff42c, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1

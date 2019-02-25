@@ -219,6 +219,9 @@ public class InventoryScript : MonoBehaviour
         // Weapons
         weaponCatalog.Add("AK-47", "Models/Weapons/Primary/Assault Rifles/AK-47");
         weaponCatalog.Add("Glock23", "Models/Weapons/Secondary/Pistols/Glock23");
+        weaponCatalog.Add("R870", "Models/Weapons/Primary/Shotguns/R870");
+        weaponCatalog.Add("L96A1", "Models/Weapons/Primary/Sniper Rifles/L96A1");
+        weaponCatalog.Add("M4A1", "Models/Weapons/Primary/Assault Rifles/M4A1");
 
         collectCharacters();
     }
