@@ -486,21 +486,23 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void OnPrimaryWepBtnClicked() {
 		// Change all button colors
-		headgearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		faceBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		armorBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		topsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		bottomsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		footwearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		primaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		primaryWepBtn.gameObject.transform.position = new Vector3(primaryWepBtn.gameObject.transform.position.x, secondaryWepBtnYPos2, primaryWepBtn.gameObject.transform.position.z);
+
+		// Add sub buttons
+		assaultRifleSubBtn.gameObject.SetActive(true);
+		assaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shotgunSubBtn.gameObject.SetActive(true);
+		shotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		sniperRifleSubBtn.gameObject.SetActive(true);
+		sniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		// RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		// foreach (RawImage r in existingThumbnails) {
-		// 	Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		// }
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+		}
 
 		// // Populate into grid layout
 		// for (int i = 0; i < InventoryScript.myPrimaries.Count; i++) {
@@ -572,6 +574,84 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			o.transform.SetParent(contentInventory.transform);
 		}
+	}
+
+	public void OnLoadoutBtnClicked() {
+		Text t = loadoutBtn.GetComponentInChildren<Text>();
+		// Change all button colors
+		headgearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		faceBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		armorBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		topsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		bottomsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		footwearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Delete any currently existing items in the grid
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			currentlyEquippedItemPrefab = null;
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+		}
+
+		// If you're on equipment screen, go to loadout screen. Else, go back to loadout.
+		if (t.text.Equals("Loadout")) {
+			t.text = "Equipment";
+			SwitchToEquipmentScreen();
+		} else {
+			t.text = "Loadout";
+			SwitchToLoadoutScreen();
+		}
+	}
+
+	void SwitchToLoadoutScreen() {
+		headgearBtn.gameObject.SetActive(false);
+		faceBtn.gameObject.SetActive(false);
+		topsBtn.gameObject.SetActive(false);
+		bottomsBtn.gameObject.SetActive(false);
+		footwearBtn.gameObject.SetActive(false);
+		characterBtn.gameObject.SetActive(false);
+		armorBtn.gameObject.SetActive(false);
+
+		equippedHeadSlot.GetComponentInParent<Image>().gameObject.SetActive(false);
+		equippedFaceSlot.GetComponentInParent<Image>().gameObject.SetActive(false);
+		equippedTopSlot.GetComponentInParent<Image>().gameObject.SetActive(false);
+		equippedBottomSlot.GetComponentInParent<Image>().gameObject.SetActive(false);
+		equippedFootSlot.GetComponentInParent<Image>().gameObject.SetActive(false);
+		equippedCharacterSlot.GetComponentInParent<Image>().gameObject.SetActive(false);
+		equippedArmorSlot.GetComponentInParent<Image>().gameObject.SetActive(false);
+
+		primaryWepBtn.gameObject.SetActive(true);
+		secondaryWepBtn.gameObject.SetActive(true);
+		secondaryWepBtn.gameObject.transform.position = new Vector3(secondaryWepBtn.gameObject.transform.position.x, secondaryWepBtnYPos1, secondaryWepBtn.gameObject.transform.position.z);
+		equippedPrimarySlot.GetComponentInParent<Image>().gameObject.SetActive(true);
+		equippedSecondarySlot.GetComponentInParent<Image>().gameObject.SetActive(true);
+
+	}
+
+	void SwitchToEquipmentScreen() {
+		headgearBtn.gameObject.SetActive(true);
+		faceBtn.gameObject.SetActive(true);
+		topsBtn.gameObject.SetActive(true);
+		bottomsBtn.gameObject.SetActive(true);
+		footwearBtn.gameObject.SetActive(true);
+		characterBtn.gameObject.SetActive(true);
+		armorBtn.gameObject.SetActive(true);
+
+		equippedHeadSlot.GetComponentInParent<Image>().gameObject.SetActive(true);
+		equippedFaceSlot.GetComponentInParent<Image>().gameObject.SetActive(true);
+		equippedTopSlot.GetComponentInParent<Image>().gameObject.SetActive(true);
+		equippedBottomSlot.GetComponentInParent<Image>().gameObject.SetActive(true);
+		equippedFootSlot.GetComponentInParent<Image>().gameObject.SetActive(true);
+		equippedCharacterSlot.GetComponentInParent<Image>().gameObject.SetActive(true);
+		equippedArmorSlot.GetComponentInParent<Image>().gameObject.SetActive(true);
+
+		primaryWepBtn.gameObject.SetActive(false);
+		secondaryWepBtn.gameObject.SetActive(false);
+		equippedPrimarySlot.GetComponentInParent<Image>().gameObject.SetActive(false);
+		equippedSecondarySlot.GetComponentInParent<Image>().gameObject.SetActive(false);
 	}
 
 	public static int CheckSkinType(string clothingName, char gender) {
