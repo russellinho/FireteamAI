@@ -69,6 +69,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button assaultRifleSubBtn;
 	public Button shotgunSubBtn;
 	public Button sniperRifleSubBtn;
+	public Button pistolSubBtn;
 	public RawImage equippedPrimarySlot;
 	public RawImage equippedSecondarySlot;
 
@@ -488,7 +489,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Change all button colors
 		primaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		primaryWepBtn.gameObject.transform.position = new Vector3(primaryWepBtn.gameObject.transform.position.x, secondaryWepBtnYPos2, primaryWepBtn.gameObject.transform.position.z);
+		secondaryWepBtn.gameObject.transform.position = new Vector3(secondaryWepBtn.gameObject.transform.position.x, secondaryWepBtnYPos2, secondaryWepBtn.gameObject.transform.position.z);
+
+		// Remove sub buttons
+		pistolSubBtn.gameObject.SetActive(false);
+		pistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		assaultRifleSubBtn.gameObject.SetActive(true);
@@ -504,38 +509,150 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
-		// // Populate into grid layout
-		// for (int i = 0; i < InventoryScript.myPrimaries.Count; i++) {
-		// 	GameObject o = Instantiate(contentPrefab);
-		// 	o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myPrimaries[i]]);
-		// 	o.transform.SetParent(contentInventory.transform);
-		// }
+		// Populate into grid layout
+		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
+			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+			if (!w.type.Equals("Primary")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+			o.transform.SetParent(contentInventory.transform);
+		}
 	}
 
 	public void OnSecondaryWepBtnClicked() {
 		// Change all button colors
-		headgearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		faceBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		armorBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		topsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		bottomsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		footwearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
-		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		secondaryWepBtn.gameObject.transform.position = new Vector3(secondaryWepBtn.gameObject.transform.position.x, secondaryWepBtnYPos1, secondaryWepBtn.gameObject.transform.position.z);
+
+		// Remove sub buttons
+		assaultRifleSubBtn.gameObject.SetActive(false);
+		assaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shotgunSubBtn.gameObject.SetActive(false);
+		shotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		sniperRifleSubBtn.gameObject.SetActive(false);
+		sniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Add sub buttons
+		pistolSubBtn.gameObject.SetActive(true);
+		pistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		// RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		// foreach (RawImage r in existingThumbnails) {
-		// 	Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		// }
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+		}
 
-		// // Populate into grid layout
-		// for (int i = 0; i < InventoryScript.mySecondaries.Count; i++) {
-		// 	GameObject o = Instantiate(contentPrefab);
-		// 	o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.mySecondaries[i]]);
-		// 	o.transform.SetParent(contentInventory.transform);
-		// }
+		// Populate into grid layout
+		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
+			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+			if (!w.type.Equals("Secondary")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+			o.transform.SetParent(contentInventory.transform);
+		}
+	}
+
+	public void OnAssaultRifleSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		assaultRifleSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		shotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		sniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+		}
+
+		// Populate with assault rifles
+		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
+			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+			if (!w.category.Equals("Assault Rifle")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+			o.transform.SetParent(contentInventory.transform);
+		}
+	}
+
+	public void OnShotgunSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		shotgunSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		assaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		sniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+		}
+
+		// Populate with assault rifles
+		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
+			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+			if (!w.category.Equals("Shotgun")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+			o.transform.SetParent(contentInventory.transform);
+		}
+	}
+
+	public void OnSniperRifleSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		sniperRifleSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		assaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+		}
+
+		// Populate with assault rifles
+		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
+			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+			if (!w.category.Equals("Sniper Rifle")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+			o.transform.SetParent(contentInventory.transform);
+		}
+	}
+
+	public void OnPistolSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		pistolSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+		}
+
+		// Populate with assault rifles
+		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
+			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+			if (!w.category.Equals("Pistol")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+			o.transform.SetParent(contentInventory.transform);
+		}
 	}
 
 	public void OnCharacterBtnClicked() {

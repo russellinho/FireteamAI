@@ -87,22 +87,22 @@ public class TestWeaponScript : MonoBehaviour
         switch (weaponType) {
             case "Assault Rifle":
                 currentlyEquippedType = 1;
-                weaponHolder.LoadWeapon(InventoryScript.weaponCatalog[weaponName]);
+                weaponHolder.LoadWeapon(InventoryScript.weaponCatalog[weaponName].name);
                 EquipAssaultRifle(weaponName);
                 break;
             case "Pistol":
                 currentlyEquippedType = 2;
-                weaponHolder.LoadWeapon(InventoryScript.weaponCatalog[weaponName]);
+                weaponHolder.LoadWeapon(InventoryScript.weaponCatalog[weaponName].name);
                 EquipPistol(weaponName);
                 break;
             case "Shotgun":
                 currentlyEquippedType = 1;
-                weaponHolder.LoadWeapon(InventoryScript.weaponCatalog[weaponName]);
+                weaponHolder.LoadWeapon(InventoryScript.weaponCatalog[weaponName].name);
                 EquipShotgun(weaponName);
                 break;
             case "Sniper Rifle":
                 currentlyEquippedType = 1;
-                weaponHolder.LoadWeapon(InventoryScript.weaponCatalog[weaponName]);
+                weaponHolder.LoadWeapon(InventoryScript.weaponCatalog[weaponName].name);
                 EquipSniperRifle(weaponName);
                 break;
         }
