@@ -1751,7 +1751,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &75578802
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3179,7 +3179,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &176158413
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3536,7 +3536,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 290, y: -7.5}
+  m_AnchoredPosition: {x: 290, y: -7.4999847}
   m_SizeDelta: {x: -620, y: -85}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &220010960
@@ -4342,7 +4342,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1615888902}
-        m_MethodName: OnHeadBtnClicked
+        m_MethodName: OnPistolSubBtnClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5587,7 +5587,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1293148177}
   m_HandleRect: {fileID: 1293148176}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -13472,7 +13472,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &942626101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13755,7 +13755,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &966080955
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13857,7 +13857,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1615888902}
-        m_MethodName: OnCharacterBtnClicked
+        m_MethodName: OnPrimaryWepBtnClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -13986,7 +13986,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1615888902}
-        m_MethodName: OnCharacterBtnClicked
+        m_MethodName: OnLoadoutBtnClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -15088,7 +15088,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1044728083
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16119,7 +16119,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1099247484
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16347,7 +16347,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1615888902}
-        m_MethodName: OnHeadBtnClicked
+        m_MethodName: OnAssaultRifleSubBtnClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -18953,8 +18953,8 @@ RectTransform:
   m_Father: {fileID: 341533383}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0.000000059604645}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -23984,13 +23984,13 @@ MonoBehaviour:
   bottomsBtn: {fileID: 75578803}
   footwearBtn: {fileID: 1756953602}
   characterBtn: {fileID: 176158414}
-  equippedHeadSlot: {fileID: 725818984}
-  equippedFaceSlot: {fileID: 1118736454}
-  equippedTopSlot: {fileID: 2122995142}
-  equippedBottomSlot: {fileID: 1412765749}
-  equippedFootSlot: {fileID: 94839240}
-  equippedCharacterSlot: {fileID: 99243061}
-  equippedArmorSlot: {fileID: 2078926856}
+  equippedHeadSlot: {fileID: 1849947398}
+  equippedFaceSlot: {fileID: 1765968898}
+  equippedTopSlot: {fileID: 126712224}
+  equippedBottomSlot: {fileID: 491952036}
+  equippedFootSlot: {fileID: 367438638}
+  equippedCharacterSlot: {fileID: 868566699}
+  equippedArmorSlot: {fileID: 2131661453}
   currentlyEquippedItemPrefab: {fileID: 0}
   loadoutBtn: {fileID: 968806896}
   primaryWepBtn: {fileID: 966080958}
@@ -23999,8 +23999,8 @@ MonoBehaviour:
   shotgunSubBtn: {fileID: 1764420986}
   sniperRifleSubBtn: {fileID: 1760486767}
   pistolSubBtn: {fileID: 304580122}
-  equippedPrimarySlot: {fileID: 856281760}
-  equippedSecondarySlot: {fileID: 1210208366}
+  equippedPrimarySlot: {fileID: 938912593}
+  equippedSecondarySlot: {fileID: 1008349817}
 --- !u!4 &1615888903
 Transform:
   m_ObjectHideFlags: 0
@@ -24628,7 +24628,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1657950192
 RectTransform:
   m_ObjectHideFlags: 0
@@ -25808,7 +25808,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1721801699
 RectTransform:
   m_ObjectHideFlags: 0
@@ -26066,7 +26066,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1723884535
 RectTransform:
   m_ObjectHideFlags: 0
@@ -26166,7 +26166,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1615888902}
-        m_MethodName: OnHeadBtnClicked
+        m_MethodName: OnSecondaryWepBtnClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -26404,7 +26404,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1756953601
 RectTransform:
   m_ObjectHideFlags: 0
@@ -26750,7 +26750,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1615888902}
-        m_MethodName: OnHeadBtnClicked
+        m_MethodName: OnSniperRifleSubBtnClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -27133,7 +27133,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1615888902}
-        m_MethodName: OnHeadBtnClicked
+        m_MethodName: OnShotgunSubBtnClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -27776,8 +27776,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 41.200073, y: -0.000021320127}
-  m_SizeDelta: {x: -619.9872, y: 0}
+  m_AnchoredPosition: {x: 41.200073, y: -0.00000024162273}
+  m_SizeDelta: {x: -619.9872, y: -365.765}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1801953601
 MonoBehaviour:

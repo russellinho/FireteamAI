@@ -92,8 +92,8 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        ts.equippedCharacterSlot.enabled = true;
-        ts.equippedCharacterSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+        ts.equippedCharacterSlot.GetComponentInChildren<RawImage>().enabled = true;
+        ts.equippedCharacterSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
 
         if (name.Equals("Lucas") || name.Equals("Daryl") || name.Equals("Codename Sayre")) {
             ts.currentCharGender = 'M';
@@ -136,8 +136,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedTopSlot.enabled = true;
-            ts.equippedTopSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " M"]);
+            ts.equippedTopSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedTopSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " M"]);
         } else if (equippedCharacter.Equals("Daryl")) {
             if (name.Equals(equippedTop)) {
                 return;
@@ -169,8 +169,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedTopSlot.enabled = true;
-            ts.equippedTopSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " M"]);
+            ts.equippedTopSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedTopSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " M"]);
         } else if (equippedCharacter.Equals("Codename Sayre")) {
             if (name.Equals(equippedTop)) {
                 return;
@@ -202,8 +202,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedTopSlot.enabled = true;
-            ts.equippedTopSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " M"]);
+            ts.equippedTopSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedTopSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " M"]);
         } else if (equippedCharacter.Equals("Hana")) {
             if (name.Equals(equippedTop)) {
                 return;
@@ -235,8 +235,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedTopSlot.enabled = true;
-            ts.equippedTopSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " F"]);
+            ts.equippedTopSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedTopSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " F"]);
         } else if (equippedCharacter.Equals("Jade")) {
             if (name.Equals(equippedTop)) {
                 return;
@@ -268,8 +268,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedTopSlot.enabled = true;
-            ts.equippedTopSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " F"]);
+            ts.equippedTopSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedTopSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " F"]);
         }
     }
 
@@ -320,8 +320,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedBottomSlot.enabled = true;
-            ts.equippedBottomSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " M"]);
+            ts.equippedBottomSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedBottomSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " M"]);
         } else if (equippedCharacter.Equals("Daryl")) {
             if (name.Equals(equippedBottom)) {
                 return;
@@ -351,8 +351,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedBottomSlot.enabled = true;
-            ts.equippedBottomSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " M"]);
+            ts.equippedBottomSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedBottomSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " M"]);
         } else if (equippedCharacter.Equals("Codename Sayre")) {
             if (name.Equals(equippedBottom)) {
                 return;
@@ -382,8 +382,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedBottomSlot.enabled = true;
-            ts.equippedBottomSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " M"]);
+            ts.equippedBottomSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedBottomSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " M"]);
         } else if (equippedCharacter.Equals("Hana")) {
             if (name.Equals(equippedBottom)) {
                 return;
@@ -413,8 +413,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedBottomSlot.enabled = true;
-            ts.equippedBottomSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " F"]);
+            ts.equippedBottomSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedBottomSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " F"]);
         } else if (equippedCharacter.Equals("Jade")) {
             if (name.Equals(equippedBottom)) {
                 return;
@@ -444,8 +444,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedBottomSlot.enabled = true;
-            ts.equippedBottomSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " F"]);
+            ts.equippedBottomSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedBottomSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name + " F"]);
         }
     }
 
@@ -479,8 +479,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedFootSlot.enabled = true;
-            ts.equippedFootSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedFootSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedFootSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Daryl")) {
             if (name.Equals(equippedFootwear)) {
                 return;
@@ -510,8 +510,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedFootSlot.enabled = true;
-            ts.equippedFootSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedFootSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedFootSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Codename Sayre")) {
             if (name.Equals(equippedFootwear)) {
                 return;
@@ -541,8 +541,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedFootSlot.enabled = true;
-            ts.equippedFootSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedFootSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedFootSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Hana")) {
             if (name.Equals(equippedFootwear)) {
                 return;
@@ -572,8 +572,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedFootSlot.enabled = true;
-            ts.equippedFootSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedFootSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedFootSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Jade")) {
             if (name.Equals(equippedFootwear)) {
                 return;
@@ -603,8 +603,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedFootSlot.enabled = true;
-            ts.equippedFootSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedFootSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedFootSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         }
     }
 
@@ -638,8 +638,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedFaceSlot.enabled = true;
-            ts.equippedFaceSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Daryl")) {
             if (name.Equals(equippedFacewear)) {
                 return;
@@ -669,8 +669,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedFaceSlot.enabled = true;
-            ts.equippedFaceSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Codename Sayre")) {
             if (name.Equals(equippedFacewear)) {
                 return;
@@ -700,8 +700,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedFaceSlot.enabled = true;
-            ts.equippedFaceSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Hana")) {
             if (name.Equals(equippedFacewear)) {
                 return;
@@ -731,8 +731,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedFaceSlot.enabled = true;
-            ts.equippedFaceSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Jade")) {
             if (name.Equals(equippedFacewear)) {
                 return;
@@ -762,8 +762,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedFaceSlot.enabled = true;
-            ts.equippedFaceSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         }
     }
 
@@ -797,8 +797,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedHeadSlot.enabled = true;
-            ts.equippedHeadSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Daryl")) {
             if (name.Equals(equippedHeadgear)) {
                 return;
@@ -828,8 +828,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedHeadSlot.enabled = true;
-            ts.equippedHeadSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Codename Sayre")) {
             if (name.Equals(equippedHeadgear)) {
                 return;
@@ -859,8 +859,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedHeadSlot.enabled = true;
-            ts.equippedHeadSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Codename Sayre")) {
             if (name.Equals(equippedHeadgear)) {
                 return;
@@ -890,8 +890,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedHeadSlot.enabled = true;
-            ts.equippedHeadSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Hana")) {
             if (name.Equals(equippedHeadgear)) {
                 return;
@@ -921,8 +921,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedHeadSlot.enabled = true;
-            ts.equippedHeadSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Jade")) {
             if (name.Equals(equippedHeadgear)) {
                 return;
@@ -952,8 +952,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedHeadSlot.enabled = true;
-            ts.equippedHeadSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         }
     }
 
@@ -998,8 +998,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedArmorSlot.enabled = true;
-            ts.equippedArmorSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedArmorSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedArmorSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Daryl")) {
             if (name.Equals(equippedArmor)) {
                 return;
@@ -1040,8 +1040,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedArmorSlot.enabled = true;
-            ts.equippedArmorSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedArmorSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedArmorSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Codename Sayre")) {
             if (name.Equals(equippedArmor)) {
                 return;
@@ -1082,8 +1082,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedArmorSlot.enabled = true;
-            ts.equippedArmorSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedArmorSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedArmorSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Hana")) {
             if (name.Equals(equippedArmor)) {
                 return;
@@ -1124,8 +1124,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedArmorSlot.enabled = true;
-            ts.equippedArmorSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedArmorSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedArmorSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         } else if (equippedCharacter.Equals("Jade")) {
             if (name.Equals(equippedArmor)) {
                 return;
@@ -1166,8 +1166,8 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = shopItemRef;
             }
 
-            ts.equippedArmorSlot.enabled = true;
-            ts.equippedArmorSlot.texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
+            ts.equippedArmorSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedArmorSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[name]);
         }
     }
 
@@ -1176,8 +1176,8 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedHeadgearRef);
             equippedHeadgearRef = null;
         }
-        ts.equippedHeadSlot.texture = null;
-        ts.equippedHeadSlot.enabled = false;
+        ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = null;
+        ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = false;
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null) {
             ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();
@@ -1195,8 +1195,8 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedFacewearRef);
             equippedFacewearRef = null;
         }
-        ts.equippedFaceSlot.texture = null;
-        ts.equippedFaceSlot.enabled = false;
+        ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = null;
+        ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = false;
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null) {
             ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();
@@ -1218,8 +1218,8 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedArmorBottomRef);
             equippedArmorBottomRef = null;
         }
-        ts.equippedArmorSlot.texture = null;
-        ts.equippedArmorSlot.enabled = false;
+        ts.equippedArmorSlot.GetComponentInChildren<RawImage>().texture = null;
+        ts.equippedArmorSlot.GetComponentInChildren<RawImage>().enabled = false;
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null) {
             ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();

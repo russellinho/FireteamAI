@@ -51,13 +51,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button footwearBtn;
 	public Button characterBtn;
 
-	public RawImage equippedHeadSlot;
-	public RawImage equippedFaceSlot;
-	public RawImage equippedTopSlot;
-	public RawImage equippedBottomSlot;
-	public RawImage equippedFootSlot;
-	public RawImage equippedCharacterSlot;
-	public RawImage equippedArmorSlot;
+	public GameObject equippedHeadSlot;
+	public GameObject equippedFaceSlot;
+	public GameObject equippedTopSlot;
+	public GameObject equippedBottomSlot;
+	public GameObject equippedFootSlot;
+	public GameObject equippedCharacterSlot;
+	public GameObject equippedArmorSlot;
 	public GameObject currentlyEquippedItemPrefab;
 
 	// Weapon loadout stuff
@@ -70,8 +70,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button shotgunSubBtn;
 	public Button sniperRifleSubBtn;
 	public Button pistolSubBtn;
-	public RawImage equippedPrimarySlot;
-	public RawImage equippedSecondarySlot;
+	public GameObject equippedPrimarySlot;
+	public GameObject equippedSecondarySlot;
 
 	// Use this for initialization
 	void Start () {
@@ -285,7 +285,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
-			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedHeadSlot.texture)) {
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedHeadSlot.GetComponentInChildren<RawImage>().texture)) {
 				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
 				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
@@ -323,7 +323,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
-			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedFaceSlot.texture)) {
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedFaceSlot.GetComponentInChildren<RawImage>().texture)) {
 				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
 				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
@@ -361,7 +361,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 3f, t.sizeDelta.y / 3f);
-			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedArmorSlot.texture)) {
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedArmorSlot.GetComponentInChildren<RawImage>().texture)) {
 				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
 				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
@@ -400,7 +400,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 4f, t.sizeDelta.y / 4f);
-			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedTopSlot.texture)) {
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedTopSlot.GetComponentInChildren<RawImage>().texture)) {
 				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
 				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
@@ -438,7 +438,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
-			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedBottomSlot.texture)) {
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedBottomSlot.GetComponentInChildren<RawImage>().texture)) {
 				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
 				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
@@ -476,7 +476,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 3f, t.sizeDelta.y / 3f);
-			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedFootSlot.texture)) {
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedFootSlot.GetComponentInChildren<RawImage>().texture)) {
 				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
 				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
@@ -684,7 +684,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
-			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedCharacterSlot.texture)) {
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedCharacterSlot.GetComponentInChildren<RawImage>().texture)) {
 				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
 				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
@@ -716,10 +716,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// If you're on equipment screen, go to loadout screen. Else, go back to loadout.
 		if (t.text.Equals("Loadout")) {
 			t.text = "Equipment";
-			SwitchToEquipmentScreen();
+			SwitchToLoadoutScreen();
 		} else {
 			t.text = "Loadout";
-			SwitchToLoadoutScreen();
+			SwitchToEquipmentScreen();
 		}
 	}
 
@@ -732,19 +732,21 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.gameObject.SetActive(false);
 		armorBtn.gameObject.SetActive(false);
 
-		equippedHeadSlot.GetComponentInParent<Image>().gameObject.SetActive(false);
-		equippedFaceSlot.GetComponentInParent<Image>().gameObject.SetActive(false);
-		equippedTopSlot.GetComponentInParent<Image>().gameObject.SetActive(false);
-		equippedBottomSlot.GetComponentInParent<Image>().gameObject.SetActive(false);
-		equippedFootSlot.GetComponentInParent<Image>().gameObject.SetActive(false);
-		equippedCharacterSlot.GetComponentInParent<Image>().gameObject.SetActive(false);
-		equippedArmorSlot.GetComponentInParent<Image>().gameObject.SetActive(false);
+		equippedHeadSlot.SetActive(false);
+		equippedFaceSlot.SetActive(false);
+		equippedTopSlot.SetActive(false);
+		equippedBottomSlot.SetActive(false);
+		equippedFootSlot.SetActive(false);
+		equippedCharacterSlot.SetActive(false);
+		equippedArmorSlot.SetActive(false);
 
 		primaryWepBtn.gameObject.SetActive(true);
 		secondaryWepBtn.gameObject.SetActive(true);
+		Debug.Log(secondaryWepBtn.gameObject.transform.position.y);
 		secondaryWepBtn.gameObject.transform.position = new Vector3(secondaryWepBtn.gameObject.transform.position.x, secondaryWepBtnYPos1, secondaryWepBtn.gameObject.transform.position.z);
-		equippedPrimarySlot.GetComponentInParent<Image>().gameObject.SetActive(true);
-		equippedSecondarySlot.GetComponentInParent<Image>().gameObject.SetActive(true);
+		Debug.Log(secondaryWepBtn.gameObject.transform.position.y);
+		equippedPrimarySlot.SetActive(true);
+		equippedSecondarySlot.SetActive(true);
 
 	}
 
@@ -757,18 +759,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.gameObject.SetActive(true);
 		armorBtn.gameObject.SetActive(true);
 
-		equippedHeadSlot.GetComponentInParent<Image>().gameObject.SetActive(true);
-		equippedFaceSlot.GetComponentInParent<Image>().gameObject.SetActive(true);
-		equippedTopSlot.GetComponentInParent<Image>().gameObject.SetActive(true);
-		equippedBottomSlot.GetComponentInParent<Image>().gameObject.SetActive(true);
-		equippedFootSlot.GetComponentInParent<Image>().gameObject.SetActive(true);
-		equippedCharacterSlot.GetComponentInParent<Image>().gameObject.SetActive(true);
-		equippedArmorSlot.GetComponentInParent<Image>().gameObject.SetActive(true);
+		equippedHeadSlot.SetActive(true);
+		equippedFaceSlot.SetActive(true);
+		equippedTopSlot.SetActive(true);
+		equippedBottomSlot.SetActive(true);
+		equippedFootSlot.SetActive(true);
+		equippedCharacterSlot.SetActive(true);
+		equippedArmorSlot.SetActive(true);
 
 		primaryWepBtn.gameObject.SetActive(false);
 		secondaryWepBtn.gameObject.SetActive(false);
-		equippedPrimarySlot.GetComponentInParent<Image>().gameObject.SetActive(false);
-		equippedSecondarySlot.GetComponentInParent<Image>().gameObject.SetActive(false);
+		equippedPrimarySlot.SetActive(false);
+		equippedSecondarySlot.SetActive(false);
 	}
 
 	public static int CheckSkinType(string clothingName, char gender) {
