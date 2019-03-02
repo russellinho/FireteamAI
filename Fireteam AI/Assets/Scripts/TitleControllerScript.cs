@@ -486,10 +486,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void OnPrimaryWepBtnClicked() {
+		// Moving secondary button down for submenu
+		RectTransform rt = secondaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos2);
+
 		// Change all button colors
 		primaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		secondaryWepBtn.gameObject.transform.position = new Vector3(secondaryWepBtn.gameObject.transform.position.x, secondaryWepBtnYPos2, secondaryWepBtn.gameObject.transform.position.z);
 
 		// Remove sub buttons
 		pistolSubBtn.gameObject.SetActive(false);
@@ -525,7 +528,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Change all button colors
 		secondaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		secondaryWepBtn.gameObject.transform.position = new Vector3(secondaryWepBtn.gameObject.transform.position.x, secondaryWepBtnYPos1, secondaryWepBtn.gameObject.transform.position.z);
+		RectTransform rt = secondaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1);
 
 		// Remove sub buttons
 		assaultRifleSubBtn.gameObject.SetActive(false);
@@ -742,9 +746,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		primaryWepBtn.gameObject.SetActive(true);
 		secondaryWepBtn.gameObject.SetActive(true);
-		Debug.Log(secondaryWepBtn.gameObject.transform.position.y);
-		secondaryWepBtn.gameObject.transform.position = new Vector3(secondaryWepBtn.gameObject.transform.position.x, secondaryWepBtnYPos1, secondaryWepBtn.gameObject.transform.position.z);
-		Debug.Log(secondaryWepBtn.gameObject.transform.position.y);
+		RectTransform rt = secondaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1);
 		equippedPrimarySlot.SetActive(true);
 		equippedSecondarySlot.SetActive(true);
 
@@ -769,6 +772,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		primaryWepBtn.gameObject.SetActive(false);
 		secondaryWepBtn.gameObject.SetActive(false);
+		assaultRifleSubBtn.gameObject.SetActive(false);
+		shotgunSubBtn.gameObject.SetActive(false);
+		sniperRifleSubBtn.gameObject.SetActive(false);
+		pistolSubBtn.gameObject.SetActive(false);
 		equippedPrimarySlot.SetActive(false);
 		equippedSecondarySlot.SetActive(false);
 	}

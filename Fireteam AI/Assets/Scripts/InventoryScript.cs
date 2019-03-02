@@ -218,11 +218,11 @@ public class InventoryScript : MonoBehaviour
         thumbnailGallery.Add("Standard Vest", "Models/Pics/standard_vest");
 
         // Weapons
-        weaponCatalog.Add("AK-47", new Weapon("AK-47", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/AK-47", ""));
-        weaponCatalog.Add("Glock23", new Weapon("Glock23", "Secondary", "Pistol", "Models/Weapons/Secondary/Pistols/Glock23", ""));
-        weaponCatalog.Add("R870", new Weapon("R870", "Primary", "Shotgun","Models/Weapons/Primary/Shotguns/R870", ""));
-        weaponCatalog.Add("L96A1", new Weapon("L96A1", "Primary", "Sniper Rifle", "Models/Weapons/Primary/Sniper Rifles/L96A1", ""));
-        weaponCatalog.Add("M4A1", new Weapon("M4A1", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/M4A1", ""));
+        weaponCatalog.Add("AK-47", new Weapon("AK-47", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/AK-47", "Models/Pics/ak47-thumb"));
+        weaponCatalog.Add("Glock23", new Weapon("Glock23", "Secondary", "Pistol", "Models/Weapons/Secondary/Pistols/Glock23", "Models/Pics/glock23-thumb"));
+        weaponCatalog.Add("R870", new Weapon("R870", "Primary", "Shotgun","Models/Weapons/Primary/Shotguns/R870", "Models/Pics/r870-thumb"));
+        weaponCatalog.Add("L96A1", new Weapon("L96A1", "Primary", "Sniper Rifle", "Models/Weapons/Primary/Sniper Rifles/L96A1", "Models/Pics/l96a1-thumb"));
+        weaponCatalog.Add("M4A1", new Weapon("M4A1", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/M4A1", "Models/Pics/m4a1-thumb"));
 
         collectCharacters();
         collectWeapons();
