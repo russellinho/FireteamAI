@@ -89,14 +89,14 @@ public class PlayerData : MonoBehaviour {
 
 	public void FindBodyRef() {
 		if (bodyReference == null) {
-			bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterPrefabs["Lucas"]));
+			bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog["Lucas"].prefabPath));
 		}
 	}
 
 	public void ChangeBodyRef(string character, GameObject shopItem) {
 		Destroy(bodyReference);
 		bodyReference = null;
-		bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterPrefabs[character]));
+		bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[character].prefabPath));
 		bodyReference.GetComponent<EquipmentScript>().HighlightItemPrefab(shopItem);
 	}
 

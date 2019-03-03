@@ -176,7 +176,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 						camMoveTimer += (Time.deltaTime / 1.2f);
 					}
 					if (Vector3.Equals(mainCam.transform.position, customizationCameraPos)) {
-						customizationMenu.SetActive(true);
+						if (!customizationMenu.activeInHierarchy) {
+							customizationMenu.SetActive(true);
+						}
 					}
 				}
 			}
@@ -232,6 +234,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     public void GoToCustomization() {
 		titleText.enabled = false;
 		mainMenu.SetActive (false);
+		equippedPrimarySlot.SetActive(false);
+		equippedSecondarySlot.SetActive(false);
 		matchmakingMenu.SetActive (false);
 		camPos = 1;
 		camMoveTimer = 0f;
@@ -275,13 +279,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
+		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myHeadgear.Count; i++) {
+			string thisItemName = (string)InventoryScript.myHeadgear[i];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myHeadgear[i];
+			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Headgear";
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myHeadgear[i]]);
+			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
@@ -313,13 +320,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
+		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myFacewear.Count; i++) {
+			string thisItemName = (string)InventoryScript.myFacewear[i];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myFacewear[i];
+			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Facewear";
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myFacewear[i]]);
+			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
@@ -351,13 +361,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
+		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myArmor.Count; i++) {
+			string thisItemName = (string)InventoryScript.myArmor[i];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myArmor[i];
+			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Armor";
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myArmor[i]]);
+			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].armorCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 3f, t.sizeDelta.y / 3f);
@@ -389,14 +402,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
+		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myTops.Count; i++) {
+			string thisItemName = (string)InventoryScript.myTops[i];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-            o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myTops[i];
+            o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Top";
+			o.GetComponent<ShopItemScript>().itemDescription = "";
 			o.GetComponent<ShopItemScript>().skinType = CheckSkinType((string)InventoryScript.myTops[i], currentCharGender);
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myTops[i] + " " + currentCharGender]);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 4f, t.sizeDelta.y / 4f);
@@ -428,13 +444,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
+		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myBottoms.Count; i++) {
+			string thisItemName = (string)InventoryScript.myBottoms[i];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myBottoms[i];
+			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Bottom";
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myBottoms[i] + " " + currentCharGender]);
+			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
@@ -466,13 +485,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
+		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myFootwear.Count; i++) {
+			string thisItemName = (string)InventoryScript.myFootwear[i];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myFootwear[i];
+			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Footwear";
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myFootwear[i]]);
+			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 3f, t.sizeDelta.y / 3f);
@@ -519,7 +541,20 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().itemName = w.name;
+            o.GetComponent<ShopItemScript>().itemType = "Weapon";
+			o.GetComponent<ShopItemScript>().itemDescription = w.description;
+			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedPrimarySlot.GetComponentInChildren<RawImage>().texture)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedItemPrefab = o;
+			}
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -556,7 +591,20 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().itemName = w.name;
+            o.GetComponent<ShopItemScript>().itemType = "Weapon";
+			o.GetComponent<ShopItemScript>().itemDescription = w.description;
+			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedSecondarySlot.GetComponentInChildren<RawImage>().texture)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedItemPrefab = o;
+			}
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -581,7 +629,20 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().itemName = w.name;
+            o.GetComponent<ShopItemScript>().itemType = "Weapon";
+			o.GetComponent<ShopItemScript>().itemDescription = w.description;
+			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedPrimarySlot.GetComponentInChildren<RawImage>().texture)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedItemPrefab = o;
+			}
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -599,14 +660,27 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
-		// Populate with assault rifles
+		// Populate with shotguns
 		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
 			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
 			if (!w.category.Equals("Shotgun")) {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().itemName = w.name;
+            o.GetComponent<ShopItemScript>().itemType = "Weapon";
+			o.GetComponent<ShopItemScript>().itemDescription = w.description;
+			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedPrimarySlot.GetComponentInChildren<RawImage>().texture)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedItemPrefab = o;
+			}
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -624,14 +698,27 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
-		// Populate with assault rifles
+		// Populate with sniper rifles
 		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
 			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
 			if (!w.category.Equals("Sniper Rifle")) {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().itemName = w.name;
+            o.GetComponent<ShopItemScript>().itemType = "Weapon";
+			o.GetComponent<ShopItemScript>().itemDescription = w.description;
+			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedPrimarySlot.GetComponentInChildren<RawImage>().texture)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedItemPrefab = o;
+			}
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -647,14 +734,27 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
-		// Populate with assault rifles
+		// Populate with pistols
 		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
 			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
 			if (!w.category.Equals("Pistol")) {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().itemName = w.name;
+            o.GetComponent<ShopItemScript>().itemType = "Weapon";
+			o.GetComponent<ShopItemScript>().itemDescription = w.description;
+			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedSecondarySlot.GetComponentInChildren<RawImage>().texture)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedItemPrefab = o;
+			}
 			o.transform.SetParent(contentInventory.transform);
 		}
 	}
@@ -680,11 +780,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myCharacters.Count; i++) {
+			string thisCharacterName = (string)InventoryScript.myCharacters[i];
+			Character c = InventoryScript.characterCatalog[thisCharacterName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().itemName = (string)InventoryScript.myCharacters[i];
+			o.GetComponent<ShopItemScript>().itemName = thisCharacterName;
             o.GetComponent<ShopItemScript>().itemType = "Character";
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.thumbnailGallery[(string)InventoryScript.myCharacters[i]]);
+			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(c.thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
@@ -796,6 +899,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			return 0;
 		}
+	}
+
+	public void OnRemoveArmorClicked() {
+		PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().RemoveArmor();
+	}
+
+	public void OnRemoveHeadgearClicked() {
+		PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().RemoveHeadgear();
+	}
+
+	public void OnRemoveFacewearClicked() {
+		PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().RemoveFacewear();
 	}
 		
 }

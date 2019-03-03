@@ -10,6 +10,8 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public RawImage thumbnailRef;
     public string itemName;
     public string itemType;
+    public string itemDescription;
+    public string weaponCategory;
     // 1 = long sleeves, 2 = mid sleeves, 3 = short sleeves
     public int skinType;
     public Text equippedInd;
@@ -39,6 +41,9 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             case "Armor":
                 PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipArmor(itemName, gameObject);
                 break;
+            case "Weapon":
+                PlayerData.playerdata.bodyReference.GetComponent<TestWeaponScript>().EquipWeapon(weaponCategory, itemName, gameObject);
+                break;
         }
     }
 
@@ -47,7 +52,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         ItemPopupScript ips = itemDescriptionPopupRef.GetComponent<ItemPopupScript>();
         ips.SetTitle(itemName);
         ips.SetThumbnail(thumbnailRef);
-        ips.SetDescription(InventoryScript.itemDescriptionCatalog[itemName]);
+        ips.SetDescription(itemDescription);
     }
 
     public void OnPointerExit(PointerEventData eventData) {

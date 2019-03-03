@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class TestWeaponScript : MonoBehaviour
 {
     public EquipmentScript equipmentScript;
     public WeaponHandlerScript weaponHolder;
     public Animator animator;
+    public TitleControllerScript ts;
     public string equippedPrimaryWeapon;
     public string equippedPrimaryType;
     public string equippedSecondaryWeapon;
@@ -17,9 +20,23 @@ public class TestWeaponScript : MonoBehaviour
     private Dictionary<string, Vector3> sniperRifleHandPositions;
     public bool weaponReady;
 
+    void Awake() {
+        if (SceneManager.GetActiveScene().name.Equals("Title")) {
+            equippedPrimaryWeapon = "AK-47";
+            equippedPrimaryType = "Assault Rifle";
+            equippedSecondaryWeapon = "Glock23";
+            equippedSecondaryType = "Pistol";
+            animator.SetBool("onTitle", true);
+        } else {
+            animator.SetBool("onTitle", false);
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+
         weaponReady = false;
         // Populate hand positions
         rifleHandPositions = new Dictionary<string, Vector3>();
@@ -32,14 +49,21 @@ public class TestWeaponScript : MonoBehaviour
         sniperRifleHandPositions = new Dictionary<string, Vector3>();
         sniperRifleHandPositions.Add("L96A1", new Vector3(-0.054f, 0.115f, 0.029f));
 
-        DrawWeapon(1);
+        if (animator.GetBool("onTitle")) {
+            EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null);
+            EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null);
+        } else {
+            DrawWeapon(1);
+        }
     }
 
     void Update() {
-        if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            DrawWeapon(1);
-        } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-            DrawWeapon(2);
+        if (!animator.GetBool("onTitle")) {
+            if (Input.GetKeyDown(KeyCode.Alpha1)) {
+                DrawWeapon(1);
+            } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+                DrawWeapon(2);
+            }
         }
     }
 
@@ -49,14 +73,14 @@ public class TestWeaponScript : MonoBehaviour
             weaponReady = false;
             currentlyEquippedType = 1;
             animator.SetInteger("WeaponType", 1);
-            EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon);
+            EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null);
             animator.CrossFadeInFixedTime("DrawWeapon", 0.1f, 0, 1f);
         } else if (weaponCat == 2) {
             if (currentlyEquippedType == 2) return;
             weaponReady = false;
             animator.SetInteger("WeaponType", 2);
             currentlyEquippedType = 2;
-            EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon);
+            EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null);
             animator.CrossFadeInFixedTime("DrawWeapon", 0.1f, 0, 1f);
         }
     }
@@ -83,28 +107,57 @@ public class TestWeaponScript : MonoBehaviour
         weaponHolder.SetSteadyHand(sniperRifleHandPositions[weaponName]);
     }
 
-    public void EquipWeapon(string weaponType, string weaponName) {
+    public void EquipWeapon(string weaponType, string weaponName, GameObject shopItemRef) {
+        // Get the weapon from the weapon catalog for its properties
+        Weapon w = InventoryScript.weaponCatalog[weaponName];
         switch (weaponType) {
             case "Assault Rifle":
                 currentlyEquippedType = 1;
-                weaponHolder.LoadWeapon(InventoryScript.weaponCatalog[weaponName].name);
+                weaponHolder.LoadWeapon(w.prefabPath);
                 EquipAssaultRifle(weaponName);
                 break;
             case "Pistol":
-                currentlyEquippedType = 2;
-                weaponHolder.LoadWeapon(InventoryScript.weaponCatalog[weaponName].name);
-                EquipPistol(weaponName);
+                if (!animator.GetBool("onTitle")) {
+                    currentlyEquippedType = 2;
+                    weaponHolder.LoadWeapon(w.prefabPath);
+                    EquipPistol(weaponName);
+                }
                 break;
             case "Shotgun":
                 currentlyEquippedType = 1;
-                weaponHolder.LoadWeapon(InventoryScript.weaponCatalog[weaponName].name);
+                weaponHolder.LoadWeapon(w.prefabPath);
                 EquipShotgun(weaponName);
                 break;
             case "Sniper Rifle":
                 currentlyEquippedType = 1;
-                weaponHolder.LoadWeapon(InventoryScript.weaponCatalog[weaponName].name);
+                weaponHolder.LoadWeapon(w.prefabPath);
                 EquipSniperRifle(weaponName);
                 break;
+        }
+
+        // Shop GUI stuff
+        if (shopItemRef != null) {
+            // Sets item that you unequipped to white
+            if (ts.currentlyEquippedItemPrefab != null) {
+                ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+            }
+
+            // Sets item that you just equipped to orange in the shop
+            if (shopItemRef != null) {
+                shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+                shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+                ts.currentlyEquippedItemPrefab = shopItemRef;
+            }
+        }
+
+        // Puts the item that you just equipped in its proper slot
+        if (w.type.Equals("Primary")) {
+            ts.equippedPrimarySlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedPrimarySlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+        } else {
+            ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
         }
     }
 

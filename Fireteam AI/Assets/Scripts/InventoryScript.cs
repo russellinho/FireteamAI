@@ -4,23 +4,9 @@ using UnityEngine;
 
 public class InventoryScript : MonoBehaviour
 {
-    // Storage for weapons in the game
+    // Storage for weapons, equipment, and characters in the game
     public static Dictionary<string, Weapon> weaponCatalog = new Dictionary<string, Weapon>();
-
-    // Storage for all characters in the game
-    public static Dictionary<string, string> itemDescriptionCatalog = new Dictionary<string, string>();
-    public static Dictionary<string, string> characterSkinCatalog = new Dictionary<string, string>();
-    public static Dictionary<string, string> characterPrefabs = new Dictionary<string, string>();
-    // Mapping for all items in the database for Lucas - key is the item name and value is the
-    // database path to load from
-    public static Dictionary<string, string> lucasInventoryCatalog = new Dictionary<string, string>();
-    public static Dictionary<string, string> darylInventoryCatalog = new Dictionary<string, string>();
-    public static Dictionary<string, string> sayreInventoryCatalog = new Dictionary<string, string>();
-    public static Dictionary<string, string> hanaInventoryCatalog = new Dictionary<string, string>();
-    public static Dictionary<string, string> jadeInventoryCatalog = new Dictionary<string, string>();
-
-    // Inventory thumbnails
-    public static Dictionary<string, string> thumbnailGallery = new Dictionary<string, string>();
+    public static Dictionary<string, Character> characterCatalog = new Dictionary<string, Character>();
 
     // Items that are in the player inventory/items they own
     public static ArrayList myCharacters = new ArrayList();
@@ -33,196 +19,138 @@ public class InventoryScript : MonoBehaviour
     public static ArrayList myWeapons = new ArrayList();
 
     void Awake() {
-        // Characters
-        itemDescriptionCatalog.Add("Lucas", "Nationality: British\nAs a reformed professional criminal, Lucas works swiftly and gets the job done.");
-        itemDescriptionCatalog.Add("Daryl", "Nationality: American\nDaryl was an ex professional college football player whose career ended abruptly after an unsustainable knee injury. His tenacity, size, and strength all serve him in combat.");
-        itemDescriptionCatalog.Add("Codename Sayre", "Nationality: Mexican\nBeing fresh out of medical school at the top of his class, Codename Sayre is skilled in his healing abilities. His witty style of humor allows him to maneuver through sticky situations easily.");
-        itemDescriptionCatalog.Add("Hana", "Nationality: Japanese\nWhen her entire family was murdered as a kid, Hana swore to fight for justice to avenge her family. She is an ex police officer who many underestimate, but don't be fooled by her size.");
-        itemDescriptionCatalog.Add("Jade", "Nationality: American\nNot much is known about Jade's past besides the fact that she likes to work alone and was previously a firefighter.");
-        itemDescriptionCatalog.Add("Casual T-Shirt", "A casual t-shirt to wear on the street.");
-        itemDescriptionCatalog.Add("Casual Tank Top", "A casual tank top to wear on the street.");
-        itemDescriptionCatalog.Add("Standard Fatigues Top", "A standard issue shirt given to all solders upon completion of basic training.");
-        itemDescriptionCatalog.Add("Standard Fatigues Bottom", "A standard issue pants given to all soldiers upon completion of basic training.");
-        itemDescriptionCatalog.Add("Light Wash Denim Jeans", "Light wash jeans for casual wear.");
-        itemDescriptionCatalog.Add("Dark Wash Denim Jeans", "Dark wash jeans for casual wear.");
-        itemDescriptionCatalog.Add("MICH", "An overarching helmet that can be used for protecting one's head from shrapnel and even bullets.");
-        itemDescriptionCatalog.Add("COM Hat", "A lightweight hat with a mic for optimal communication.");
-        itemDescriptionCatalog.Add("Combat Beanie", "A stylish hat straight out of your local designer clothing store.");
-        itemDescriptionCatalog.Add("Saint Laurent Mask", "Eliminate your enemies in style with these expensive yet stylish glasses!");
-        itemDescriptionCatalog.Add("Sport Shades", "Tinted shades with a sporty trim usually used for the shooting range.");
-        itemDescriptionCatalog.Add("Standard Goggles", "Standard issue goggles given to all soldiers upon completion of basic training.");
-        itemDescriptionCatalog.Add("Surgical Mask", "A protective, lightweight mask used during medical surgeries.");
-        itemDescriptionCatalog.Add("Red Chucks", "These bright and stylish canvas shoes are stylish yet lightweight, durable, and comfortable!");
-        itemDescriptionCatalog.Add("White Chucks", "The white version of the red chucks; stylish yet lightweight, durable, and comfortable!");
-        itemDescriptionCatalog.Add("Standard Boots", "Standard issue combat boots given to all soldiers upon completion of basic training.");
-        itemDescriptionCatalog.Add("Standard Vest", "A first generation ballistic vest used to protect yourself in combat. Being first generation, it's a bit heavy, but offers great protection.");
-        itemDescriptionCatalog.Add("Scrubs Top", "A comfortable scrubs shirt commonly used in the medical field.");
-        itemDescriptionCatalog.Add("Scrubs Bottom", "A comfortable scrubs pants commonly used in the medical field.");
-
-        characterPrefabs.Add("Lucas", "Models/Characters/Lucas/PlayerPrefabLucas");
-        characterPrefabs.Add("Daryl", "Models/Characters/Daryl/PlayerPrefabDaryl");
-        characterPrefabs.Add("Codename Sayre", "Models/Characters/Sayre/PlayerPrefabCodenameSayre");
-        characterPrefabs.Add("Hana", "Models/Characters/Hana/PlayerPrefabHana");
-        characterPrefabs.Add("Jade", "Models/Characters/Jade/PlayerPrefabJade");
-
-        characterSkinCatalog.Add("Lucas0", "Models/Characters/Lucas/Extra Skins/Ankles Long Sleeves/lucasskinanklesonly");
-        characterSkinCatalog.Add("Lucas1", "Models/Characters/Lucas/Extra Skins/Ankles Mid Sleeves/lucasanklesmid");
-        characterSkinCatalog.Add("Lucas2", "Models/Characters/Lucas/Extra Skins/Ankles Short Sleeves/lucasanklesshortsleeve");
-        characterSkinCatalog.Add("Daryl0", "Models/Characters/Daryl/1/skindonald1");
-        characterSkinCatalog.Add("Daryl1", "Models/Characters/Daryl/2/skindonald2");
-        characterSkinCatalog.Add("Daryl2", "Models/Characters/Daryl/3/skindonald3");
-        characterSkinCatalog.Add("Sayre0", "Models/Characters/Sayre/1/skinslayre1");
-        characterSkinCatalog.Add("Sayre1", "Models/Characters/Sayre/2/skinslayre2");
-        characterSkinCatalog.Add("Sayre2", "Models/Characters/Sayre/3/skinslayre3");
-        characterSkinCatalog.Add("Hana0", "Models/Characters/Hana/1/skinhana1");
-        characterSkinCatalog.Add("Hana2", "Models/Characters/Hana/2/skinhana2");
-        characterSkinCatalog.Add("Hana1", "Models/Characters/Hana/3/skinhana3");
-        characterSkinCatalog.Add("Jade0", "Models/Characters/Jade/1/skinjade1");
-        characterSkinCatalog.Add("Jade1", "Models/Characters/Jade/2/skinjade2");
-        characterSkinCatalog.Add("Jade2", "Models/Characters/Jade/3/skinjade3");
-
-        thumbnailGallery.Add("Lucas", "Models/Pics/character_lucas");
-        thumbnailGallery.Add("Daryl", "Models/Pics/character_daryl");
-        thumbnailGallery.Add("Codename Sayre", "Models/Pics/character_sayre");
-        thumbnailGallery.Add("Hana", "Models/Pics/character_hana");
-        thumbnailGallery.Add("Jade", "Models/Pics/character_jade");
-
-        // Tops
-        lucasInventoryCatalog.Add("Casual Shirt", "Models/Clothing/Lucas/Tops/Casual Shirt/lucascasualshirt");
-        lucasInventoryCatalog.Add("Casual T-Shirt", "Models/Clothing/Lucas/Tops/V Neck Tee/lucasvnecktee (1)");
-        lucasInventoryCatalog.Add("Standard Fatigues Top", "Models/Clothing/Lucas/Tops/Standard Fatigues/lucasstandardfatiguestop");
-        darylInventoryCatalog.Add("Casual Shirt", "Models/Clothing/Lucas/Tops/Casual Shirt/lucascasualshirt");
-        darylInventoryCatalog.Add("Casual T-Shirt", "Models/Clothing/Lucas/Tops/V Neck Tee/lucasvnecktee (1)");
-        darylInventoryCatalog.Add("Standard Fatigues Top", "Models/Clothing/Lucas/Tops/Standard Fatigues/lucasstandardfatiguestop");
-        sayreInventoryCatalog.Add("Casual Shirt", "Models/Clothing/Lucas/Tops/Casual Shirt/lucascasualshirt");
-        sayreInventoryCatalog.Add("Casual T-Shirt", "Models/Clothing/Lucas/Tops/V Neck Tee/lucasvnecktee (1)");
-        sayreInventoryCatalog.Add("Standard Fatigues Top", "Models/Clothing/Lucas/Tops/Standard Fatigues/lucasstandardfatiguestop");
-        sayreInventoryCatalog.Add("Scrubs Top", "Models/Clothing/Sayre/Tops/scrubstop");
-        hanaInventoryCatalog.Add("Casual Tank Top", "Models/Clothing/Hana/Tops/Casual Tank Top/hanatanktop");
-        hanaInventoryCatalog.Add("Casual T-Shirt", "Models/Clothing/Hana/Tops/Casual T-Shirt/skinhanatshirt");
-        hanaInventoryCatalog.Add("Standard Fatigues Top", "Models/Clothing/Hana/Tops/Standard Fatigues/hanastandardfatiguestop");
-        jadeInventoryCatalog.Add("Casual Tank Top", "Models/Clothing/Hana/Tops/Casual Tank Top/hanatanktop");
-        jadeInventoryCatalog.Add("Casual T-Shirt", "Models/Clothing/Hana/Tops/Casual T-Shirt/skinhanatshirt");
-        jadeInventoryCatalog.Add("Standard Fatigues Top", "Models/Clothing/Hana/Tops/Standard Fatigues/hanastandardfatiguestop");
-
-        thumbnailGallery.Add("Casual Shirt M", "Models/Pics/casual_shirt");
-        thumbnailGallery.Add("Casual T-Shirt M", "Models/Pics/v_neck_shirt");
-        thumbnailGallery.Add("Standard Fatigues Top M", "Models/Pics/standard_fatigue_shirt");
-        thumbnailGallery.Add("Scrubs Top M", "Models/Pics/scrubs_top");
-        thumbnailGallery.Add("Casual Tank Top F", "Models/Pics/casual_tank_top_f");
-        thumbnailGallery.Add("Casual T-Shirt F", "Models/Pics/casual_t_shirt_f");
-        thumbnailGallery.Add("Standard Fatigues Top F", "Models/Pics/standard_fatigue_shirt_f");
+        // Create all equipment data here
+        Equipment casualShirtMale = new Equipment("Casual Shirt", "Top", "Models/Clothing/Lucas/Tops/Casual Shirt/lucascasualshirt", "Models/Pics/casual_shirt", "A classy yet casual button up.");
+        Equipment casualTShirtMale = new Equipment("Casual T-Shirt", "Top", "Models/Clothing/Lucas/Tops/V Neck Tee/lucasvnecktee (1)", "Models/Pics/v_neck_shirt", "A casual v neck t-shirt.");
+        Equipment standardFatiguesTopMale = new Equipment("Standard Fatigues Top", "Top", "Models/Clothing/Lucas/Tops/Standard Fatigues/lucasstandardfatiguestop", "Models/Pics/standard_fatigue_shirt", "A standard issue shirt given to all solders upon completion of basic training.");
+        Equipment standardFatiguesTopFemale = new Equipment("Standard Fatigues Top", "Top", "Models/Clothing/Hana/Tops/Standard Fatigues/hanastandardfatiguestop", "Models/Pics/standard_fatigue_shirt_f", "A standard issue shirt given to all solders upon completion of basic training.");
+        Equipment casualTankTopFemale = new Equipment("Casual Tank Top", "Top", "Models/Clothing/Hana/Tops/Casual Tank Top/hanatanktop", "Models/Pics/casual_tank_top_f", "A casual tank top.");
+        Equipment casualTShirtFemale = new Equipment("Casual T-Shirt", "Top", "Models/Clothing/Lucas/Tops/V Neck Tee/lucasvnecktee (1)", "Models/Pics/casual_t_shirt_f", "A casual t-shirt.");
+        Equipment darkWashDenimJeansMale = new Equipment("Dark Wash Denim Jeans", "Bottom", "Models/Clothing/Lucas/Bottoms/Dark Wash Denim Jeans/lucasdarkwashjeans", "Models/Pics/dark_wash_jeans", "Slim fit dark wash jeans.");
+        Equipment lightWashDenimJeansMale = new Equipment("Light Wash Denim Jeans", "Bottom", "Models/Clothing/Lucas/Bottoms/Light Wash Denim Jeans/lucaslightwashjeans", "Models/Pics/light_wash_jeans", "Slim fit light wash jeans.");
+        Equipment standardFatiguesBottomMale = new Equipment("Standard Fatigues Bottom", "Bottom", "Models/Clothing/Lucas/Bottoms/Standard Fatigues/lucasstandardfatiguebottom", "Models/Pics/standard_fatigue_pants", "A standard issue pants given to all soldiers upon completion of basic training.");
+        Equipment darkWashDenimJeansFemale = new Equipment("Dark Wash Denim Jeans", "Bottom", "Models/Clothing/Hana/Bottoms/Dark Wash Denim Jeans/hanadarkwashjeans", "Models/Pics/dark_wash_jeans_f", "Slim fit dark wash jeans.");
+        Equipment lightWashDenimJeansFemale = new Equipment("Light Wash Denim Jeans", "Bottom", "Models/Clothing/Hana/Bottoms/Dark Wash Denim Jeans/hanalightwashjeans", "Models/Pics/light_wash_jeans_f", "Slim fit light wash jeans.");
+        Equipment standardFatiguesBottomFemale = new Equipment("Standard Fatigues Bottom", "Bottom", "Models/Clothing/Hana/Bottoms/Standard Fatigues/hanastandardfatiguesbottom", "Models/Pics/standard_fatigue_pants", "A standard issue pants given to all soldiers upon completion of basic training.");
+        Equipment mich = new Equipment("MICH", "Headgear", "Models/Equipment/Lucas/Head/Standard Combat Helmet/lucasmich", "Models/Pics/mich", "A helmet that can be used for protecting one's head from shrapnel and even bullets.");
+        Equipment combatBeanie = new Equipment("Combat Beanie", "Headgear", "Models/Equipment/Lucas/Head/Combat Beanie/lucascombatbeanie", "Models/Pics/combat_beanie", "A stylish beanie straight out of your local designer clothing store.");
+        Equipment comHat = new Equipment("COM Hat", "Headgear", "Models/Equipment/Lucas/Head/COM Hat/lucascomhat", "Models/Pics/com_hat", "A lightweight hat with a mic for optimal communication.");
+        Equipment saintLaurentMask = new Equipment("Saint Laurent Mask", "Facewear", "Models/Equipment/Lucas/Face/Saint Laurent Mask/lucassaintlaurentmask", "Models/Pics/saint_laurent_mask", "Eliminate your enemies in style with these expensive yet stylish glasses!");
+        Equipment sportShades = new Equipment("Sport Shades", "Facewear", "Models/Equipment/Lucas/Face/Sport Shades/lucassportshades", "Models/Pics/sport_shades", "Tinted shades with a sporty trim usually used for the shooting range.");
+        Equipment standardGoggles = new Equipment("Standard Goggles", "Facewear", "Models/Equipment/Lucas/Face/Standard Goggles/lucasgoggles", "Models/Pics/standard_goggles", "Standard issue goggles given to all soldiers upon completion of basic training.");
+        Equipment surgicalMask = new Equipment("Surgical Mask", "Facewear", "Models/Equipment/Lucas/Face/Surgical Mask/surgicalmask", "Models/Pics/surgical_mask", "A protective, lightweight mask used during medical surgeries.");
+        Equipment redChucks = new Equipment("Red Chucks", "Footwear", "Models/Clothing/Lucas/Shoes/Chucks/lucasredchucks", "Models/Pics/red_chucks", "These bright canvas shoes are stylish yet lightweight, durable, and comfortable!");
+        Equipment whiteChucks = new Equipment("White Chucks", "Footwear", "Models/Clothing/Hana/Shoes/White Chucks/hanawhitechucks", "Models/Pics/white_chucks", "The white version of the red chucks; stylish yet lightweight, durable, and comfortable!");
+        Equipment standardBoots = new Equipment("Standard Boots", "Footwear", "Models/Clothing/Lucas/Shoes/Standard Boots/lucasstandardboots", "Models/Pics/standard_boots", "Standard issue combat boots given to all soldiers upon completion of basic training.");
+        Equipment scrubsTopMale = new Equipment("Scrubs Top", "Top", "Models/Clothing/Sayre/Tops/scrubstop", "Models/Pics/scrubs_top", "A comfortable scrubs shirt commonly used in the medical field.");
+        Equipment scrubsBottomMale = new Equipment("Scrubs Bottom", "Bottom", "Models/Clothing/Sayre/Bottoms/scrubspants", "Models/Pics/scrubs_bottom", "A comfortable scrubs pants commonly used in the medical field.");
+        Armor standardVest = new Armor("Standard Vest", "Models/Equipment/Lucas/Armor/Standard Vest/Tops/lucasstandardvesttop", "Models/Equipment/Lucas/Armor/Standard Vest/Bottoms/lucasstandardvestbottom", "Models/Pics/standard_vest", "A first generation ballistic vest used to protect yourself in combat. Being first generation, it's a bit heavy, but offers great protection.");
         
-        // Bottoms
-        lucasInventoryCatalog.Add("Dark Wash Denim Jeans", "Models/Clothing/Lucas/Bottoms/Dark Wash Denim Jeans/lucasdarkwashjeans");
-        lucasInventoryCatalog.Add("Light Wash Denim Jeans", "Models/Clothing/Lucas/Bottoms/Light Wash Denim Jeans/lucaslightwashjeans");
-        lucasInventoryCatalog.Add("Standard Fatigues Bottom", "Models/Clothing/Lucas/Bottoms/Standard Fatigues/lucasstandardfatiguebottom");
-        darylInventoryCatalog.Add("Dark Wash Denim Jeans", "Models/Clothing/Lucas/Bottoms/Dark Wash Denim Jeans/lucasdarkwashjeans");
-        darylInventoryCatalog.Add("Light Wash Denim Jeans", "Models/Clothing/Lucas/Bottoms/Light Wash Denim Jeans/lucaslightwashjeans");
-        darylInventoryCatalog.Add("Standard Fatigues Bottom", "Models/Clothing/Lucas/Bottoms/Standard Fatigues/lucasstandardfatiguebottom");
-        sayreInventoryCatalog.Add("Dark Wash Denim Jeans", "Models/Clothing/Lucas/Bottoms/Dark Wash Denim Jeans/lucasdarkwashjeans");
-        sayreInventoryCatalog.Add("Light Wash Denim Jeans", "Models/Clothing/Lucas/Bottoms/Light Wash Denim Jeans/lucaslightwashjeans");
-        sayreInventoryCatalog.Add("Standard Fatigues Bottom", "Models/Clothing/Lucas/Bottoms/Standard Fatigues/lucasstandardfatiguebottom");
-        sayreInventoryCatalog.Add("Scrubs Bottom", "Models/Clothing/Sayre/Bottoms/scrubspants");
-        hanaInventoryCatalog.Add("Dark Wash Denim Jeans", "Models/Clothing/Hana/Bottoms/Dark Wash Denim Jeans/hanadarkwashjeans");
-        hanaInventoryCatalog.Add("Light Wash Denim Jeans", "Models/Clothing/Hana/Bottoms/Light Wash Denim Jeans/hanalightwashjeans");
-        hanaInventoryCatalog.Add("Standard Fatigues Bottom", "Models/Clothing/Hana/Bottoms/Standard Fatigues/hanastandardfatiguesbottom");
-        jadeInventoryCatalog.Add("Dark Wash Denim Jeans", "Models/Clothing/Hana/Bottoms/Dark Wash Denim Jeans/hanadarkwashjeans");
-        jadeInventoryCatalog.Add("Light Wash Denim Jeans", "Models/Clothing/Hana/Bottoms/Light Wash Denim Jeans/hanalightwashjeans");
-        jadeInventoryCatalog.Add("Standard Fatigues Bottom", "Models/Clothing/Hana/Bottoms/Standard Fatigues/hanastandardfatiguesbottom");
+        Dictionary<string, Equipment> lucasEquipment = new Dictionary<string, Equipment>();
+        lucasEquipment.Add("Casual Shirt", casualShirtMale);
+        lucasEquipment.Add("Casual T-Shirt", casualTShirtMale);
+        lucasEquipment.Add("Standard Fatigues Top", standardFatiguesTopMale);
+        lucasEquipment.Add("Dark Wash Denim Jeans", darkWashDenimJeansMale);
+        lucasEquipment.Add("Light Wash Denim Jeans", lightWashDenimJeansMale);
+        lucasEquipment.Add("Standard Fatigues Bottom", standardFatiguesBottomMale);
+        lucasEquipment.Add("MICH", mich);
+        lucasEquipment.Add("Combat Beanie", combatBeanie);
+        lucasEquipment.Add("COM Hat", comHat);
+        lucasEquipment.Add("Saint Laurent Mask", saintLaurentMask);
+        lucasEquipment.Add("Sport Shades", sportShades);
+        lucasEquipment.Add("Standard Goggles", standardGoggles);
+        lucasEquipment.Add("Surgical Mask", surgicalMask);
+        lucasEquipment.Add("Red Chucks", redChucks);
+        lucasEquipment.Add("Standard Boots", standardBoots);
 
-        thumbnailGallery.Add("Dark Wash Denim Jeans M", "Models/Pics/dark_wash_jeans");
-        thumbnailGallery.Add("Light Wash Denim Jeans M", "Models/Pics/light_wash_jeans");
-        thumbnailGallery.Add("Standard Fatigues Bottom M", "Models/Pics/standard_fatigue_pants");
-        thumbnailGallery.Add("Scrubs Bottom M", "Models/Pics/scrubs_bottom");
-        thumbnailGallery.Add("Dark Wash Denim Jeans F", "Models/Pics/dark_wash_jeans_f");
-        thumbnailGallery.Add("Light Wash Denim Jeans F", "Models/Pics/light_wash_jeans_f");
-        thumbnailGallery.Add("Standard Fatigues Bottom F", "Models/Pics/standard_fatigue_pants");
+        Dictionary<string, Equipment> darylEquipment = new Dictionary<string, Equipment>();
+        darylEquipment.Add("Casual Shirt", casualShirtMale);
+        darylEquipment.Add("Casual T-Shirt", casualTShirtMale);
+        darylEquipment.Add("Standard Fatigues Top", standardFatiguesTopMale);
+        darylEquipment.Add("Dark Wash Denim Jeans", darkWashDenimJeansMale);
+        darylEquipment.Add("Light Wash Denim Jeans", lightWashDenimJeansMale);
+        darylEquipment.Add("Standard Fatigues Bottom", standardFatiguesBottomMale);
+        darylEquipment.Add("MICH", mich);
+        darylEquipment.Add("Combat Beanie", combatBeanie);
+        darylEquipment.Add("COM Hat", comHat);
+        darylEquipment.Add("Saint Laurent Mask", saintLaurentMask);
+        darylEquipment.Add("Sport Shades", sportShades);
+        darylEquipment.Add("Standard Goggles", standardGoggles);
+        darylEquipment.Add("Surgical Mask", surgicalMask);
+        darylEquipment.Add("Red Chucks", redChucks);
+        darylEquipment.Add("Standard Boots", standardBoots);
 
-        // Headgear
-        lucasInventoryCatalog.Add("MICH", "Models/Equipment/Lucas/Head/Standard Combat Helmet/lucasmich");
-        lucasInventoryCatalog.Add("Combat Beanie", "Models/Equipment/Lucas/Head/Combat Beanie/lucascombatbeanie");
-        lucasInventoryCatalog.Add("COM Hat", "Models/Equipment/Lucas/Head/COM Hat/lucascomhat");
-        darylInventoryCatalog.Add("MICH", "Models/Equipment/Lucas/Head/Standard Combat Helmet/lucasmich");
-        darylInventoryCatalog.Add("Combat Beanie", "Models/Equipment/Lucas/Head/Combat Beanie/lucascombatbeanie");
-        darylInventoryCatalog.Add("COM Hat", "Models/Equipment/Lucas/Head/COM Hat/lucascomhat");
-        sayreInventoryCatalog.Add("MICH", "Models/Equipment/Lucas/Head/Standard Combat Helmet/lucasmich");
-        sayreInventoryCatalog.Add("Combat Beanie", "Models/Equipment/Lucas/Head/Combat Beanie/lucascombatbeanie");
-        sayreInventoryCatalog.Add("COM Hat", "Models/Equipment/Lucas/Head/COM Hat/lucascomhat");
-        hanaInventoryCatalog.Add("MICH", "Models/Equipment/Lucas/Head/Standard Combat Helmet/lucasmich");
-        hanaInventoryCatalog.Add("Combat Beanie", "Models/Equipment/Lucas/Head/Combat Beanie/lucascombatbeanie");
-        hanaInventoryCatalog.Add("COM Hat", "Models/Equipment/Lucas/Head/COM Hat/lucascomhat");
-        jadeInventoryCatalog.Add("MICH", "Models/Equipment/Lucas/Head/Standard Combat Helmet/lucasmich");
-        jadeInventoryCatalog.Add("Combat Beanie", "Models/Equipment/Lucas/Head/Combat Beanie/lucascombatbeanie");
-        jadeInventoryCatalog.Add("COM Hat", "Models/Equipment/Lucas/Head/COM Hat/lucascomhat");
+        Dictionary<string, Equipment> sayreEquipment = new Dictionary<string, Equipment>();
+        sayreEquipment.Add("Casual Shirt", casualShirtMale);
+        sayreEquipment.Add("Casual T-Shirt", casualTShirtMale);
+        sayreEquipment.Add("Standard Fatigues Top", standardFatiguesTopMale);
+        sayreEquipment.Add("Dark Wash Denim Jeans", darkWashDenimJeansMale);
+        sayreEquipment.Add("Light Wash Denim Jeans", lightWashDenimJeansMale);
+        sayreEquipment.Add("Standard Fatigues Bottom", standardFatiguesBottomMale);
+        sayreEquipment.Add("MICH", mich);
+        sayreEquipment.Add("Combat Beanie", combatBeanie);
+        sayreEquipment.Add("COM Hat", comHat);
+        sayreEquipment.Add("Saint Laurent Mask", saintLaurentMask);
+        sayreEquipment.Add("Sport Shades", sportShades);
+        sayreEquipment.Add("Standard Goggles", standardGoggles);
+        sayreEquipment.Add("Surgical Mask", surgicalMask);
+        sayreEquipment.Add("Red Chucks", redChucks);
+        sayreEquipment.Add("Standard Boots", standardBoots);
+
+        Dictionary<string, Equipment> hanaEquipment = new Dictionary<string, Equipment>();
+        hanaEquipment.Add("Casual Tank Top", casualTankTopFemale);
+        hanaEquipment.Add("Casual T-Shirt", casualTShirtFemale);
+        hanaEquipment.Add("Standard Fatigues Top", standardFatiguesTopFemale);
+        hanaEquipment.Add("Dark Wash Denim Jeans", darkWashDenimJeansFemale);
+        hanaEquipment.Add("Light Wash Denim Jeans", lightWashDenimJeansFemale);
+        hanaEquipment.Add("Standard Fatigues Bottom", standardFatiguesBottomFemale);
+        hanaEquipment.Add("MICH", mich);
+        hanaEquipment.Add("Combat Beanie", combatBeanie);
+        hanaEquipment.Add("COM Hat", comHat);
+        hanaEquipment.Add("Saint Laurent Mask", saintLaurentMask);
+        hanaEquipment.Add("Sport Shades", sportShades);
+        hanaEquipment.Add("Standard Goggles", standardGoggles);
+        hanaEquipment.Add("Surgical Mask", surgicalMask);
+        hanaEquipment.Add("White Chucks", whiteChucks);
+        hanaEquipment.Add("Standard Boots", standardBoots);
         
-        thumbnailGallery.Add("MICH", "Models/Pics/mich");
-        thumbnailGallery.Add("Combat Beanie", "Models/Pics/combat_beanie");
-        thumbnailGallery.Add("COM Hat", "Models/Pics/com_hat");
-
-        // Facewear
-        lucasInventoryCatalog.Add("Saint Laurent Mask", "Models/Equipment/Lucas/Face/Saint Laurent Mask/lucassaintlaurentmask");
-        lucasInventoryCatalog.Add("Sport Shades", "Models/Equipment/Lucas/Face/Sport Shades/lucassportshades");
-        lucasInventoryCatalog.Add("Standard Goggles", "Models/Equipment/Lucas/Face/Standard Goggles/lucasgoggles");
-        lucasInventoryCatalog.Add("Surgical Mask", "Models/Equipment/Lucas/Face/Surgical Mask/surgicalmask");
-        darylInventoryCatalog.Add("Saint Laurent Mask", "Models/Equipment/Lucas/Face/Saint Laurent Mask/lucassaintlaurentmask");
-        darylInventoryCatalog.Add("Sport Shades", "Models/Equipment/Lucas/Face/Sport Shades/lucassportshades");
-        darylInventoryCatalog.Add("Standard Goggles", "Models/Equipment/Lucas/Face/Standard Goggles/lucasgoggles");
-        darylInventoryCatalog.Add("Surgical Mask", "Models/Equipment/Lucas/Face/Surgical Mask/surgicalmask");
-        sayreInventoryCatalog.Add("Saint Laurent Mask", "Models/Equipment/Lucas/Face/Saint Laurent Mask/lucassaintlaurentmask");
-        sayreInventoryCatalog.Add("Sport Shades", "Models/Equipment/Lucas/Face/Sport Shades/lucassportshades");
-        sayreInventoryCatalog.Add("Standard Goggles", "Models/Equipment/Lucas/Face/Standard Goggles/lucasgoggles");
-        sayreInventoryCatalog.Add("Surgical Mask", "Models/Equipment/Lucas/Face/Surgical Mask/surgicalmask");
-        hanaInventoryCatalog.Add("Saint Laurent Mask", "Models/Equipment/Lucas/Face/Saint Laurent Mask/lucassaintlaurentmask");
-        hanaInventoryCatalog.Add("Sport Shades", "Models/Equipment/Lucas/Face/Sport Shades/lucassportshades");
-        hanaInventoryCatalog.Add("Standard Goggles", "Models/Equipment/Lucas/Face/Standard Goggles/lucasgoggles");
-        hanaInventoryCatalog.Add("Surgical Mask", "Models/Equipment/Lucas/Face/Surgical Mask/surgicalmask");
-        jadeInventoryCatalog.Add("Saint Laurent Mask", "Models/Equipment/Lucas/Face/Saint Laurent Mask/lucassaintlaurentmask");
-        jadeInventoryCatalog.Add("Sport Shades", "Models/Equipment/Lucas/Face/Sport Shades/lucassportshades");
-        jadeInventoryCatalog.Add("Standard Goggles", "Models/Equipment/Lucas/Face/Standard Goggles/lucasgoggles");
-        jadeInventoryCatalog.Add("Surgical Mask", "Models/Equipment/Lucas/Face/Surgical Mask/surgicalmask");
-
-        thumbnailGallery.Add("Saint Laurent Mask", "Models/Pics/saint_laurent_mask");
-        thumbnailGallery.Add("Sport Shades", "Models/Pics/sport_shades");
-        thumbnailGallery.Add("Standard Goggles", "Models/Pics/standard_goggles");
-        thumbnailGallery.Add("Surgical Mask", "Models/Pics/surgical_mask");
-
-        // Footwear
-        lucasInventoryCatalog.Add("Red Chucks", "Models/Clothing/Lucas/Shoes/Chucks/lucasredchucks");
-        lucasInventoryCatalog.Add("Standard Boots", "Models/Clothing/Lucas/Shoes/Standard Boots/lucasstandardboots");
-        darylInventoryCatalog.Add("Red Chucks", "Models/Clothing/Lucas/Shoes/Chucks/lucasredchucks");
-        darylInventoryCatalog.Add("Standard Boots", "Models/Clothing/Lucas/Shoes/Standard Boots/lucasstandardboots");
-        sayreInventoryCatalog.Add("Red Chucks", "Models/Clothing/Lucas/Shoes/Chucks/lucasredchucks");
-        sayreInventoryCatalog.Add("Standard Boots", "Models/Clothing/Lucas/Shoes/Standard Boots/lucasstandardboots");
-        hanaInventoryCatalog.Add("White Chucks", "Models/Clothing/Hana/Shoes/White Chucks/hanawhitechucks");
-        hanaInventoryCatalog.Add("Standard Boots", "Models/Clothing/Hana/Shoes/Standard Boots/hanastandardboots");
-        jadeInventoryCatalog.Add("White Chucks", "Models/Clothing/Hana/Shoes/White Chucks/hanawhitechucks");
-        jadeInventoryCatalog.Add("Standard Boots", "Models/Clothing/Hana/Shoes/Standard Boots/hanastandardboots");
-
-        thumbnailGallery.Add("Red Chucks", "Models/Pics/red_chucks");
-        thumbnailGallery.Add("Standard Boots", "Models/Pics/standard_boots");
-        thumbnailGallery.Add("White Chucks", "Models/Pics/white_chucks");
+        Dictionary<string, Equipment> jadeEquipment = new Dictionary<string, Equipment>();
+        jadeEquipment.Add("Casual Tank Top", casualTankTopFemale);
+        jadeEquipment.Add("Casual T-Shirt", casualTShirtFemale);
+        jadeEquipment.Add("Standard Fatigues Top", standardFatiguesTopFemale);
+        jadeEquipment.Add("Dark Wash Denim Jeans", darkWashDenimJeansFemale);
+        jadeEquipment.Add("Light Wash Denim Jeans", lightWashDenimJeansFemale);
+        jadeEquipment.Add("Standard Fatigues Bottom", standardFatiguesBottomFemale);
+        jadeEquipment.Add("MICH", mich);
+        jadeEquipment.Add("Combat Beanie", combatBeanie);
+        jadeEquipment.Add("COM Hat", comHat);
+        jadeEquipment.Add("Saint Laurent Mask", saintLaurentMask);
+        jadeEquipment.Add("Sport Shades", sportShades);
+        jadeEquipment.Add("Standard Goggles", standardGoggles);
+        jadeEquipment.Add("Surgical Mask", surgicalMask);
+        jadeEquipment.Add("White Chucks", whiteChucks);
+        jadeEquipment.Add("Standard Boots", standardBoots);
 
         // Armor
-        lucasInventoryCatalog.Add("Standard Vest Top", "Models/Equipment/Lucas/Armor/Standard Vest/Tops/lucasstandardvesttop");
-        lucasInventoryCatalog.Add("Standard Vest Bottom", "Models/Equipment/Lucas/Armor/Standard Vest/Bottoms/lucasstandardvestbottom");
-        darylInventoryCatalog.Add("Standard Vest Top", "Models/Equipment/Lucas/Armor/Standard Vest/Tops/lucasstandardvesttop");
-        darylInventoryCatalog.Add("Standard Vest Bottom", "Models/Equipment/Lucas/Armor/Standard Vest/Bottoms/lucasstandardvestbottom");
-        sayreInventoryCatalog.Add("Standard Vest Top", "Models/Equipment/Lucas/Armor/Standard Vest/Tops/lucasstandardvesttop");
-        sayreInventoryCatalog.Add("Standard Vest Bottom", "Models/Equipment/Lucas/Armor/Standard Vest/Bottoms/lucasstandardvestbottom");
-        hanaInventoryCatalog.Add("Standard Vest Top", "Models/Equipment/Lucas/Armor/Standard Vest/Tops/lucasstandardvesttop");
-        hanaInventoryCatalog.Add("Standard Vest Bottom", "Models/Equipment/Lucas/Armor/Standard Vest/Bottoms/lucasstandardvestbottom");
-        jadeInventoryCatalog.Add("Standard Vest Top", "Models/Equipment/Lucas/Armor/Standard Vest/Tops/lucasstandardvesttop");
-        jadeInventoryCatalog.Add("Standard Vest Bottom", "Models/Equipment/Lucas/Armor/Standard Vest/Bottoms/lucasstandardvestbottom");
-        
-        thumbnailGallery.Add("Standard Vest", "Models/Pics/standard_vest");
+        Dictionary<string, Armor> lucasArmor = new Dictionary<string, Armor>();
+        lucasArmor.Add("Standard Vest", standardVest);
+
+        Dictionary<string, Armor> hanaArmor = new Dictionary<string, Armor>();
+        hanaArmor.Add("Standard Vest", standardVest);
 
         // Weapons
-        weaponCatalog.Add("AK-47", new Weapon("AK-47", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/AK-47", "Models/Pics/ak47-thumb"));
-        weaponCatalog.Add("Glock23", new Weapon("Glock23", "Secondary", "Pistol", "Models/Weapons/Secondary/Pistols/Glock23", "Models/Pics/glock23-thumb"));
-        weaponCatalog.Add("R870", new Weapon("R870", "Primary", "Shotgun","Models/Weapons/Primary/Shotguns/R870", "Models/Pics/r870-thumb"));
-        weaponCatalog.Add("L96A1", new Weapon("L96A1", "Primary", "Sniper Rifle", "Models/Weapons/Primary/Sniper Rifles/L96A1", "Models/Pics/l96a1-thumb"));
-        weaponCatalog.Add("M4A1", new Weapon("M4A1", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/M4A1", "Models/Pics/m4a1-thumb"));
+        weaponCatalog.Add("AK-47", new Weapon("AK-47", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/AK-47", "Models/Pics/ak47-thumb", "A classic assault rifle developed in the Soviet Union during the World War II era. Known for its unmatched stopping power and relatively light weight."));
+        weaponCatalog.Add("Glock23", new Weapon("Glock23", "Secondary", "Pistol", "Models/Weapons/Secondary/Pistols/Glock23", "Models/Pics/glock23-thumb", "The standard pistol used by United States police officers because of its reliability."));
+        weaponCatalog.Add("R870", new Weapon("R870", "Primary", "Shotgun","Models/Weapons/Primary/Shotguns/R870", "Models/Pics/r870-thumb", "Short for Remington 870, this shotgun is widely used for home defence due to its quick reload speeds and reliability."));
+        weaponCatalog.Add("L96A1", new Weapon("L96A1", "Primary", "Sniper Rifle", "Models/Weapons/Primary/Sniper Rifles/L96A1", "Models/Pics/l96a1-thumb", "Developed in the 1980s by the British, this bolt-action sniper rifle is known for its deadly stopping power and quick operation speed."));
+        weaponCatalog.Add("M4A1", new Weapon("M4A1", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/M4A1", "Models/Pics/m4a1-thumb", "As a successor of the M16A3 assault rifle, this weapon is one of the standard issue rifles in the United States military. It's known for being an all around ass kicker."));
+
+        // Characters
+        characterCatalog.Add("Lucas", new Character("Lucas", 'M', "Models/Characters/Lucas/PlayerPrefabLucas", "Models/Pics/character_lucas", "Nationality: British\nAs a reformed professional criminal, Lucas works swiftly and gets the job done.", new string[]{"Models/Characters/Lucas/Extra Skins/Ankles Long Sleeves/lucasskinanklesonly", "Models/Characters/Lucas/Extra Skins/Ankles Mid Sleeves/lucasanklesmid", "Models/Clothing/Lucas/Tops/Standard Fatigues/lucasstandardfatiguestop"}, lucasEquipment, lucasArmor));
+        characterCatalog.Add("Daryl", new Character("Daryl", 'M', "Models/Characters/Lucas/PlayerPrefabDaryl", "Models/Pics/character_daryl", "Nationality: American\nDaryl was an ex professional college football player whose career ended abruptly after an unsustainable knee injury. His tenacity, size, and strength all serve him in combat.", new string[]{"Models/Characters/Daryl/1/skindonald1", "Models/Characters/Daryl/2/skindonald2", "Models/Characters/Daryl/3/skindonald3"}, darylEquipment, lucasArmor));
+        characterCatalog.Add("Codename Sayre", new Character("Codename Sayre", 'M', "Models/Characters/Lucas/PlayerPrefabCodenameSayre", "Models/Pics/character_sayre", "Nationality: Mexican\nBeing fresh out of medical school at the top of his class, Codename Sayre is skilled in his healing abilities. His witty style of humor allows him to maneuver through sticky situations easily.", new string[]{"Models/Characters/Sayre/1/skinslayre1", "Models/Characters/Sayre/2/skinslayre2", "Models/Characters/Sayre/3/skinslayre3"}, sayreEquipment, lucasArmor));
+        characterCatalog.Add("Hana", new Character("Hana", 'F', "Models/Characters/Hana/PlayerPrefabHana", "Models/Pics/character_hana", "Nationality: Japanese\nWhen her entire family was murdered as a kid, Hana swore to fight for justice to avenge her family. She is an ex police officer who many underestimate, but don't be fooled by her size.", new string[]{"Models/Characters/Hana/1/skinhana1", "Models/Characters/Hana/2/skinhana2", "Models/Characters/Hana/3/skinhana3"}, hanaEquipment, lucasArmor));
+        characterCatalog.Add("Jade", new Character("Jade", 'F', "Models/Characters/Hana/PlayerPrefabJade", "Models/Pics/character_jade", "Nationality: American\nNot much is known about Jade's past besides the fact that she likes to work alone and was previously a firefighter.", new string[]{"Models/Characters/Jade/1/skinjade1", "Models/Characters/Jade/2/skinjade2", "Models/Characters/Jade/3/skinjade3"}, jadeEquipment, lucasArmor));
 
         collectCharacters();
         collectWeapons();

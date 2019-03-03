@@ -135,6 +135,7 @@ Transform:
   - {fileID: 893012705072456351}
   - {fileID: 893012705072456327}
   - {fileID: 893012705072456335}
+  - {fileID: 1419058365085512282}
   m_Father: {fileID: 893012705072456355}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -167,7 +168,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 893012705072456353}
-  - {fileID: 6876354503541321098}
   m_Father: {fileID: 893012705072456377}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1239,7 +1239,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 893012705072824009}
-  m_LocalRotation: {x: 0.00000016010358, y: -0.000049616494, z: -0.0015337056, w: 0.9999988}
+  m_LocalRotation: {x: 0.0000001601036, y: -0.000049616494, z: -0.0015337057, w: 0.9999988}
   m_LocalPosition: {x: -0.000021293255, y: 0.034031346, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1943,6 +1943,7 @@ GameObject:
   - component: {fileID: 893012705072456549}
   - component: {fileID: 893012705065553175}
   - component: {fileID: 1261681129732064504}
+  - component: {fileID: 5830661598182806837}
   m_Layer: 0
   m_Name: PlayerPrefabCodenameSayre
   m_TagString: Untagged
@@ -1985,7 +1986,7 @@ Animator:
   m_GameObject: {fileID: 893012705072824133}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 2c2cbaad8c7f0b0449dbe8d644d81fcb, type: 3}
-  m_Controller: {fileID: 9100000, guid: 6111627cc73d1234d838ca9ac0ac65c6, type: 2}
+  m_Controller: {fileID: 9100000, guid: b564bf52e4360674d9b7f0877ccff42c, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -2007,8 +2008,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ts: {fileID: 0}
-  primaryWeapon: {fileID: 0}
-  weaponSocket: {fileID: 0}
   equippedCharacter: Codename Sayre
   equippedHeadgear: 
   equippedFacewear: 
@@ -2038,6 +2037,27 @@ MonoBehaviour:
   myEyelashRenderer: {fileID: 2804137313172701077}
   myHairRenderer: {fileID: 2647651382941546755}
   myBones: {fileID: 893012705072824025}
+--- !u!114 &5830661598182806837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 893012705072824133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ba6003d04aa4d047928d192e1dce54f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  equipmentScript: {fileID: 1261681129732064504}
+  weaponHolder: {fileID: 3050637896598786025}
+  animator: {fileID: 893012705065553175}
+  equippedPrimaryWeapon: 
+  equippedPrimaryType: 
+  equippedSecondaryWeapon: 
+  equippedSecondaryType: 
+  currentlyEquippedType: 0
+  weaponReady: 0
 --- !u!1 &893012705072824135
 GameObject:
   m_ObjectHideFlags: 0
@@ -2365,7 +2385,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 893012705072824159}
-  m_LocalRotation: {x: 0.00013700685, y: -0.0043550185, z: 0.99998677, w: -0.0027304976}
+  m_LocalRotation: {x: 0.00013700685, y: -0.004355019, z: 0.99998677, w: -0.0027304979}
   m_LocalPosition: {x: 0.0925293, y: -0.06686728, z: -0.0015734228}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3174,93 +3194,49 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.000023335218, y: 0.26196766, z: -0.04938978}
     m_Extent: {x: 0.7937859, y: 0.37167132, z: 0.2804416}
   m_DirtyAABB: 0
---- !u!1001 &3469089259191128229
-PrefabInstance:
+--- !u!1 &7860719244431118160
+GameObject:
   m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 893012705072456355}
-    m_Modifications:
-    - target: {fileID: 8018968855500988687, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_Name
-      value: AK-47
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.06686994
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.4801902
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.013962419
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.6760198
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.73600984
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.0338724
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.011813513
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 2.9970002
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 187.28299
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.1275505
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.1275519
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.1275518
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 470b20aad4c154740b539598f8601440, type: 3}
---- !u!4 &6876354503541321098 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8018968855500635439, guid: 470b20aad4c154740b539598f8601440,
-    type: 3}
-  m_PrefabInstance: {fileID: 3469089259191128229}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1419058365085512282}
+  - component: {fileID: 3050637896598786025}
+  m_Layer: 0
+  m_Name: WeaponHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1419058365085512282
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7860719244431118160}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 893012705072456353}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3050637896598786025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7860719244431118160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef467fedef6ed24d8dbd8d62cb74c13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handle: {fileID: 0}
+  weapon: {fileID: 0}
+  leftShoulder: {fileID: 893012705072456371}
