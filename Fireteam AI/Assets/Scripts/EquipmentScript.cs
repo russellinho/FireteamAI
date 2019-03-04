@@ -43,7 +43,9 @@ public class EquipmentScript : MonoBehaviour
 
     void Start() {
         equippedSkin = -1;
-        ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+        if (ts == null) {
+            ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+        }
         EquipCharacter(equippedCharacter, null);
     }
 
@@ -68,6 +70,13 @@ public class EquipmentScript : MonoBehaviour
         if (shopItemRef != null) {
             shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
             shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+            if (ts == null) {
+                ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+            }
+            if (ts.currentlyEquippedItemPrefab != null) {
+                ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+            }
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
     }
@@ -80,9 +89,9 @@ public class EquipmentScript : MonoBehaviour
         InventoryScript.collectHeadgear(name);
         InventoryScript.collectFootwear(name);
         InventoryScript.collectArmor(name);
-
+        
         // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null) {
+        if (ts.currentlyEquippedItemPrefab != null && !ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemName.Equals(name)) {
             ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
             ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
         }
@@ -126,7 +135,7 @@ public class EquipmentScript : MonoBehaviour
         EquipSkin(skinType);
 
         // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null) {
+        if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Top")) {
             ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
             ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
         }
@@ -178,7 +187,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
 
         // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null) {
+        if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Bottom")) {
             ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
             ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
         }
@@ -212,7 +221,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
 
         // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null) {
+        if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Footwear")) {
             ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
             ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
         }
@@ -246,7 +255,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
 
         // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null) {
+        if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Facewear")) {
             ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
             ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
         }
@@ -267,6 +276,16 @@ public class EquipmentScript : MonoBehaviour
             return;
         }
         Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[name];
+        // Hide hair if has hair
+        if (e.hideHairFlag) {
+            if (myHairRenderer != null) {
+                myHairRenderer.SetActive(false);
+            }
+        } else {
+            if (myHairRenderer != null) {
+                myHairRenderer.SetActive(true);
+            }
+        }
         equippedHeadgear = name;
         if (equippedHeadgearRef != null) {
             Destroy(equippedHeadgearRef);
@@ -280,7 +299,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
 
         // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null) {
+        if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Headgear")) {
             ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
             ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
         }
@@ -325,7 +344,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
 
         // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null) {
+        if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Armor")) {
             ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
             ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
         }
@@ -345,6 +364,9 @@ public class EquipmentScript : MonoBehaviour
         if (equippedHeadgearRef != null) {
             Destroy(equippedHeadgearRef);
             equippedHeadgearRef = null;
+        }
+        if (myHairRenderer != null) {
+            myHairRenderer.SetActive(true);
         }
         ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = null;
         ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = false;

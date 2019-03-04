@@ -210,6 +210,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// if (customizationMenu.activeInHierarchy) {
 		// 	savePlayerData ();
 		// }
+		SwitchToEquipmentScreen();
 		customizationMenu.SetActive (false);
 		matchmakingMenu.SetActive (false);
 		camPos = 0;
@@ -831,6 +832,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void SwitchToLoadoutScreen() {
+		loadoutBtn.GetComponentInChildren<Text>().text = "Equipment";
 		headgearBtn.gameObject.SetActive(false);
 		faceBtn.gameObject.SetActive(false);
 		topsBtn.gameObject.SetActive(false);
@@ -857,6 +859,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void SwitchToEquipmentScreen() {
+		loadoutBtn.GetComponentInChildren<Text>().text = "Loadout";
 		headgearBtn.gameObject.SetActive(true);
 		faceBtn.gameObject.SetActive(true);
 		topsBtn.gameObject.SetActive(true);

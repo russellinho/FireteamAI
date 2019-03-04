@@ -16,8 +16,11 @@ public class TestWeaponScript : MonoBehaviour
     public string equippedSecondaryType;
     public int currentlyEquippedType;
     private Dictionary<string, Vector3> rifleHandPositions;
+    private Dictionary<string, Vector3> rifleIdleHandPositions;
     private Dictionary<string, Vector3> shotgunHandPositions;
+    private Dictionary<string, Vector3> shotgunIdleHandPositions;
     private Dictionary<string, Vector3> sniperRifleHandPositions;
+    private Dictionary<string, Vector3> sniperRifleIdleHandPositions;
     public bool weaponReady;
 
     void Awake() {
@@ -36,18 +39,30 @@ public class TestWeaponScript : MonoBehaviour
     void Start()
     {
         ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
-
+        equipmentScript = GetComponent<EquipmentScript>();
         weaponReady = false;
         // Populate hand positions
-        rifleHandPositions = new Dictionary<string, Vector3>();
-        rifleHandPositions.Add("AK-47", new Vector3(-0.098f, 0.135f, 0.075f));
-        rifleHandPositions.Add("M4A1", new Vector3(-0.065f, 0.126f, 0.04f));
+        if (ts.currentCharGender == 'M') {
+            rifleHandPositions = new Dictionary<string, Vector3>();
+            rifleHandPositions.Add("AK-47", new Vector3(-0.098f, 0.135f, 0.075f));
+            rifleHandPositions.Add("M4A1", new Vector3(-0.065f, 0.126f, 0.04f));
         
-        shotgunHandPositions = new Dictionary<string, Vector3>();
-        shotgunHandPositions.Add("R870", new Vector3(-0.129f, 0.145f, 0.084f));
+            shotgunHandPositions = new Dictionary<string, Vector3>();
+            shotgunHandPositions.Add("R870", new Vector3(-0.129f, 0.145f, 0.084f));
 
-        sniperRifleHandPositions = new Dictionary<string, Vector3>();
-        sniperRifleHandPositions.Add("L96A1", new Vector3(-0.054f, 0.115f, 0.029f));
+            sniperRifleHandPositions = new Dictionary<string, Vector3>();
+            sniperRifleHandPositions.Add("L96A1", new Vector3(-0.054f, 0.115f, 0.029f));
+        } else {
+            rifleHandPositions = new Dictionary<string, Vector3>();
+            rifleHandPositions.Add("AK-47", new Vector3(-0.098f, 0.135f, 0.075f));
+            rifleHandPositions.Add("M4A1", new Vector3(-0.065f, 0.126f, 0.04f));
+        
+            shotgunHandPositions = new Dictionary<string, Vector3>();
+            shotgunHandPositions.Add("R870", new Vector3(-0.129f, 0.145f, 0.084f));
+
+            sniperRifleHandPositions = new Dictionary<string, Vector3>();
+            sniperRifleHandPositions.Add("L96A1", new Vector3(-0.054f, 0.115f, 0.029f));
+        }
 
         if (animator.GetBool("onTitle")) {
             EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null);
@@ -87,13 +102,21 @@ public class TestWeaponScript : MonoBehaviour
 
     void EquipAssaultRifle(string weaponName) {
         // Set animation and hand positions
-        weaponHolder.SetWeaponPosition();
-        weaponHolder.SetSteadyHand(rifleHandPositions[weaponName]);
+        if (animator.GetBool("onTitle")) {
+            weaponHolder.SetWeaponPosition(new Vector3(-0.02f, 0.05f, 0.03f));
+        } else {
+            weaponHolder.SetWeaponPosition();
+            weaponHolder.SetSteadyHand(rifleHandPositions[weaponName]);
+        }
     }
 
     void EquipShotgun(string weaponName) {
-        weaponHolder.SetWeaponPosition();
-        weaponHolder.SetSteadyHand(shotgunHandPositions[weaponName]);
+        if (animator.GetBool("onTitle")) {
+            weaponHolder.SetWeaponPosition(new Vector3(-0.02f, 0.05f, 0.03f));
+        } else {
+            weaponHolder.SetWeaponPosition();
+            weaponHolder.SetSteadyHand(shotgunHandPositions[weaponName]);
+        }
     }
 
     public void EquipPistol(string weaponName) {
@@ -103,8 +126,12 @@ public class TestWeaponScript : MonoBehaviour
     }
 
     public void EquipSniperRifle(string weaponName) {
-        weaponHolder.SetWeaponPosition();
-        weaponHolder.SetSteadyHand(sniperRifleHandPositions[weaponName]);
+        if (animator.GetBool("onTitle")) {
+            weaponHolder.SetWeaponPosition(new Vector3(-0.02f, 0.05f, 0.03f));
+        } else {
+            weaponHolder.SetWeaponPosition();
+            weaponHolder.SetSteadyHand(sniperRifleHandPositions[weaponName]);
+        }
     }
 
     public void EquipWeapon(string weaponType, string weaponName, GameObject shopItemRef) {
