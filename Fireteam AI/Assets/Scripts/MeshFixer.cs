@@ -21,7 +21,6 @@ public class MeshFixer : MonoBehaviour
         }
 
         foreach(Transform bone in targetRenderer.bones) {
-//            Debug.Log(bone.gameObject.name);
             boneMap[bone.gameObject.name] = bone;
         }
 
