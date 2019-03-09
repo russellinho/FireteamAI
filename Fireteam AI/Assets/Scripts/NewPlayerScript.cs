@@ -6,16 +6,47 @@ public class NewPlayerScript : MonoBehaviour
 {
 
     // Movement speed of player
-    public int speed;
+    public float speed;
     // Stamina allows you to run longer
-    public int stamina;
+    public float stamina;
     // Armor allows you to take less damage all around
-    public int armor;
+    public float armor;
+    // Stat multipliers
+    public Stats stats;
+
+    public const float baseSpeed = 5f;
+    public const float baseStamina = 5f;
+    public const float baseArmor = 100f;
 
     void Start() {
+        stats = new Stats();
         speed = 0;
         stamina = 0;
         armor = 0;
     }
 
+    public void setSpeed()
+    {
+        this.speed = baseSpeed * stats.speed;
+    }
+
+    public void setStamina()
+    {
+        this.stamina = baseStamina * stats.stamina;
+    }
+
+    public void setArmor()
+    {
+        this.armor = baseArmor * stats.armor;
+    }
+
+    public void updateStats()
+    {
+        setSpeed();
+        setStamina();
+        setArmor();
+        Debug.Log("Speed: " + this.speed);
+        Debug.Log("Stamina: " + this.stamina);
+        Debug.Log("Armor: " + this.armor);
+    }
 }
