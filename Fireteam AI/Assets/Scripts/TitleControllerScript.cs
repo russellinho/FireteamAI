@@ -889,9 +889,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public static int CheckSkinType(string clothingName, char gender) {
 		if (gender == 'F') {
 			if (clothingName.Equals("Casual T-Shirt")) {
-				return 2;
-			} else if (clothingName.Equals("Casual Tank Top")) {
 				return 1;
+			} else if (clothingName.Equals("Casual Tank Top")) {
+				return 2;
 			}
 			return 0;
 		} else {

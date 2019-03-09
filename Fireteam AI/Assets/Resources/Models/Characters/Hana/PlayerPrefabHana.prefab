@@ -729,6 +729,7 @@ GameObject:
   - component: {fileID: 2052873151873026297}
   - component: {fileID: 5377080248621935676}
   - component: {fileID: 2282748257884432631}
+  - component: {fileID: 2377182879810501776}
   m_Layer: 9
   m_Name: PlayerPrefabHana
   m_TagString: Player
@@ -793,6 +794,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ts: {fileID: 0}
+  playerScript: {fileID: 2377182879810501776}
   equippedCharacter: Hana
   equippedHeadgear: 
   equippedFacewear: 
@@ -800,7 +802,7 @@ MonoBehaviour:
   equippedBottom: 
   equippedFootwear: 
   equippedArmor: 
-  equippedSkin: 
+  equippedSkin: 0
   equippedSkinRef: {fileID: 0}
   equippedHeadgearRef: {fileID: 0}
   equippedFacewearRef: {fileID: 0}
@@ -837,12 +839,28 @@ MonoBehaviour:
   equipmentScript: {fileID: 5377080248621935676}
   weaponHolder: {fileID: 6533164353316158212}
   animator: {fileID: 2052873151873026297}
+  ts: {fileID: 0}
   equippedPrimaryWeapon: 
   equippedPrimaryType: 
   equippedSecondaryWeapon: 
   equippedSecondaryType: 
   currentlyEquippedType: 0
   weaponReady: 0
+--- !u!114 &2377182879810501776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052873151880460973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3674be1c45c09a4890f1a33d2ca7daf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0
+  stamina: 0
+  armor: 0
 --- !u!1 &2052873151880460975
 GameObject:
   m_ObjectHideFlags: 0

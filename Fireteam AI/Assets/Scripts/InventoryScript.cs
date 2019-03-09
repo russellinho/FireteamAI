@@ -25,27 +25,35 @@ public class InventoryScript : MonoBehaviour
         Equipment standardFatiguesTopMale = new Equipment("Standard Fatigues Top", "Top", "Models/Clothing/Lucas/Tops/Standard Fatigues/lucasstandardfatiguestop", "Models/Pics/standard_fatigue_shirt", "A standard issue shirt given to all solders upon completion of basic training.", false, 0f, 0f, 0f);
         Equipment standardFatiguesTopFemale = new Equipment("Standard Fatigues Top", "Top", "Models/Clothing/Hana/Tops/Standard Fatigues/hanastandardfatiguestop", "Models/Pics/standard_fatigue_shirt_f", "A standard issue shirt given to all solders upon completion of basic training.", false, 0f, 0f, 0f);
         Equipment casualTankTopFemale = new Equipment("Casual Tank Top", "Top", "Models/Clothing/Hana/Tops/Casual Tank Top/hanatanktop", "Models/Pics/casual_tank_top_f", "A casual tank top.", false, 0f, 0f, 0f);
-        Equipment casualTShirtFemale = new Equipment("Casual T-Shirt", "Top", "Models/Clothing/Lucas/Tops/V Neck Tee/lucasvnecktee (1)", "Models/Pics/casual_t_shirt_f", "A casual t-shirt.", false, 0f, 0f, 0f);
+        Equipment casualTShirtFemale = new Equipment("Casual T-Shirt", "Top", "Models/Clothing/Hana/Tops/Casual T-Shirt/skinhanatshirt", "Models/Pics/casual_t_shirt_f", "A casual t-shirt.", false, 0f, 0f, 0f);
         Equipment darkWashDenimJeansMale = new Equipment("Dark Wash Denim Jeans", "Bottom", "Models/Clothing/Lucas/Bottoms/Dark Wash Denim Jeans/lucasdarkwashjeans", "Models/Pics/dark_wash_jeans", "Slim fit dark wash jeans.", false, 0f, 0f, 0f);
         Equipment lightWashDenimJeansMale = new Equipment("Light Wash Denim Jeans", "Bottom", "Models/Clothing/Lucas/Bottoms/Light Wash Denim Jeans/lucaslightwashjeans", "Models/Pics/light_wash_jeans", "Slim fit light wash jeans.", false, 0f, 0f, 0f);
         Equipment standardFatiguesBottomMale = new Equipment("Standard Fatigues Bottom", "Bottom", "Models/Clothing/Lucas/Bottoms/Standard Fatigues/lucasstandardfatiguebottom", "Models/Pics/standard_fatigue_pants", "A standard issue pants given to all soldiers upon completion of basic training.", false, 0f, 0f, 0f);
         Equipment darkWashDenimJeansFemale = new Equipment("Dark Wash Denim Jeans", "Bottom", "Models/Clothing/Hana/Bottoms/Dark Wash Denim Jeans/hanadarkwashjeans", "Models/Pics/dark_wash_jeans_f", "Slim fit dark wash jeans.", false, 0f, 0f, 0f);
-        Equipment lightWashDenimJeansFemale = new Equipment("Light Wash Denim Jeans", "Bottom", "Models/Clothing/Hana/Bottoms/Dark Wash Denim Jeans/hanalightwashjeans", "Models/Pics/light_wash_jeans_f", "Slim fit light wash jeans.", false, 0f, 0f, 0f);
+        Equipment lightWashDenimJeansFemale = new Equipment("Light Wash Denim Jeans", "Bottom", "Models/Clothing/Hana/Bottoms/Light Wash Denim Jeans/hanalightwashjeans", "Models/Pics/light_wash_jeans_f", "Slim fit light wash jeans.", false, 0f, 0f, 0f);
         Equipment standardFatiguesBottomFemale = new Equipment("Standard Fatigues Bottom", "Bottom", "Models/Clothing/Hana/Bottoms/Standard Fatigues/hanastandardfatiguesbottom", "Models/Pics/standard_fatigue_pants", "A standard issue pants given to all soldiers upon completion of basic training.", false, 0f, 0f, 0f);
-        Equipment mich = new Equipment("MICH", "Headgear", "Models/Equipment/Lucas/Head/Standard Combat Helmet/lucasmich", "Models/Pics/mich", "A helmet that can be used for protecting one's head from shrapnel and even bullets.", true, 0f, 0f, 0.1f);
-        Equipment combatBeanie = new Equipment("Combat Beanie", "Headgear", "Models/Equipment/Lucas/Head/Combat Beanie/lucascombatbeanie", "Models/Pics/combat_beanie", "A stylish beanie straight out of your local designer clothing store.", true, 0.1f, 0f, 0f);
-        Equipment comHat = new Equipment("COM Hat", "Headgear", "Models/Equipment/Lucas/Head/COM Hat/lucascomhat", "Models/Pics/com_hat", "A lightweight hat with a mic for optimal communication.", false, 0f, 0.1f, 0f);
-        Equipment saintLaurentMask = new Equipment("Saint Laurent Mask", "Facewear", "Models/Equipment/Lucas/Face/Saint Laurent Mask/lucassaintlaurentmask", "Models/Pics/saint_laurent_mask", "Eliminate your enemies in style with these expensive yet stylish glasses!", false, 0f, 0.05f, 0f);
-        Equipment sportShades = new Equipment("Sport Shades", "Facewear", "Models/Equipment/Lucas/Face/Sport Shades/lucassportshades", "Models/Pics/sport_shades", "Tinted shades with a sporty trim usually used for the shooting range.", false, 0.05f, 0f, 0f);
-        Equipment standardGoggles = new Equipment("Standard Goggles", "Facewear", "Models/Equipment/Lucas/Face/Standard Goggles/lucasgoggles", "Models/Pics/standard_goggles", "Standard issue goggles given to all soldiers upon completion of basic training.", false, 0f, 0f, 0.05f);
-        Equipment surgicalMask = new Equipment("Surgical Mask", "Facewear", "Models/Equipment/Lucas/Face/Surgical Mask/surgicalmask", "Models/Pics/surgical_mask", "A protective, lightweight mask used during medical surgeries.", false, 0.02f, 0.02f, 0.02f);
+        Equipment michMale = new Equipment("MICH", "Headgear", "Models/Equipment/Lucas/Head/Standard Combat Helmet/lucasmich", "Models/Pics/mich", "A helmet that can be used for protecting one's head from shrapnel and even bullets.", true, 0f, 0f, 0.1f);
+        Equipment michFemale = new Equipment("MICH", "Headgear", "Models/Equipment/Hana/Head/Standard Combat Helmet/hanamich", "Models/Pics/mich", "A helmet that can be used for protecting one's head from shrapnel and even bullets.", true, 0f, 0f, 0.1f);
+        Equipment combatBeanieMale = new Equipment("Combat Beanie", "Headgear", "Models/Equipment/Lucas/Head/Combat Beanie/lucascombatbeanie", "Models/Pics/combat_beanie", "A stylish beanie straight out of your local designer clothing store.", true, 0.1f, 0f, 0f);
+        Equipment combatBeanieFemale = new Equipment("Combat Beanie", "Headgear", "Models/Equipment/Hana/Head/Combat Beanie/hanabeanie", "Models/Pics/combat_beanie", "A stylish beanie straight out of your local designer clothing store.", true, 0.1f, 0f, 0f);
+        Equipment comHatMale = new Equipment("COM Hat", "Headgear", "Models/Equipment/Lucas/Head/COM Hat/lucascomhat", "Models/Pics/com_hat", "A lightweight hat with a mic for optimal communication.", true, 0f, 0.1f, 0f);
+        Equipment comHatFemale = new Equipment("COM Hat", "Headgear", "Models/Equipment/Hana/Head/COM Hat/hanacomhat", "Models/Pics/com_hat", "A lightweight hat with a mic for optimal communication.", true, 0f, 0.1f, 0f);
+        Equipment saintLaurentMaskMale = new Equipment("Saint Laurent Mask", "Facewear", "Models/Equipment/Lucas/Face/Saint Laurent Mask/lucassaintlaurentmask", "Models/Pics/saint_laurent_mask", "Eliminate your enemies in style with these expensive yet stylish glasses!", false, 0f, 0.05f, 0f);
+        Equipment saintLaurentMaskFemale = new Equipment("Saint Laurent Mask", "Facewear", "Models/Equipment/Hana/Face/Saint Laurent Mask/hanasaintlaurent", "Models/Pics/saint_laurent_mask", "Eliminate your enemies in style with these expensive yet stylish glasses!", false, 0f, 0.05f, 0f);
+        Equipment sportShadesMale = new Equipment("Sport Shades", "Facewear", "Models/Equipment/Lucas/Face/Sport Shades/lucassportshades", "Models/Pics/sport_shades", "Tinted shades with a sporty trim usually used for the shooting range.", false, 0.05f, 0f, 0f);
+        Equipment sportShadesFemale = new Equipment("Sport Shades", "Facewear", "Models/Equipment/Hana/Face/Sport Shades/hanasportglasses", "Models/Pics/sport_shades", "Tinted shades with a sporty trim usually used for the shooting range.", false, 0.05f, 0f, 0f);
+        Equipment standardGogglesMale = new Equipment("Standard Goggles", "Facewear", "Models/Equipment/Lucas/Face/Standard Goggles/lucasgoggles", "Models/Pics/standard_goggles", "Standard issue goggles given to all soldiers upon completion of basic training.", false, 0f, 0f, 0.05f);
+        Equipment standardGogglesFemale = new Equipment("Standard Goggles", "Facewear", "Models/Equipment/Hana/Face/Standard Goggles/hanagoggles", "Models/Pics/standard_goggles", "Standard issue goggles given to all soldiers upon completion of basic training.", false, 0f, 0f, 0.05f);
+        Equipment surgicalMaskMale = new Equipment("Surgical Mask", "Facewear", "Models/Equipment/Lucas/Face/Surgical Mask/surgicalmask", "Models/Pics/surgical_mask", "A protective, lightweight mask used during medical surgeries.", false, 0.02f, 0.02f, 0.02f);
+        Equipment surgicalMaskFemale = new Equipment("Surgical Mask", "Facewear", "Models/Equipment/Hana/Face/Surgical Mask/hanasurgicalmask", "Models/Pics/surgical_mask", "A protective, lightweight mask used during medical surgeries.", false, 0.02f, 0.02f, 0.02f);
         Equipment redChucks = new Equipment("Red Chucks", "Footwear", "Models/Clothing/Lucas/Shoes/Chucks/lucasredchucks", "Models/Pics/red_chucks", "These bright canvas shoes are stylish yet lightweight, durable, and comfortable!", false, 0f, 0f, 0f);
         Equipment whiteChucks = new Equipment("White Chucks", "Footwear", "Models/Clothing/Hana/Shoes/White Chucks/hanawhitechucks", "Models/Pics/white_chucks", "The white version of the red chucks; stylish yet lightweight, durable, and comfortable!", false, 0f, 0f, 0f);
         Equipment standardBootsMale = new Equipment("Standard Boots", "Footwear", "Models/Clothing/Lucas/Shoes/Standard Boots/lucasstandardboots", "Models/Pics/standard_boots", "Standard issue combat boots given to all soldiers upon completion of basic training.", false, 0f, 0f, 0f);
         Equipment standardBootsFemale = new Equipment("Standard Boots", "Footwear", "Models/Clothing/Hana/Shoes/Standard Boots/hanastandardboots", "Models/Pics/standard_boots", "Standard issue combat boots given to all soldiers upon completion of basic training.", false, 0f, 0f, 0f);
         Equipment scrubsTopMale = new Equipment("Scrubs Top", "Top", "Models/Clothing/Sayre/Tops/scrubstop", "Models/Pics/scrubs_top", "A comfortable scrubs shirt commonly used in the medical field.", false, 0f, 0f, 0f);
         Equipment scrubsBottomMale = new Equipment("Scrubs Bottom", "Bottom", "Models/Clothing/Sayre/Bottoms/scrubspants", "Models/Pics/scrubs_bottom", "A comfortable scrubs pants commonly used in the medical field.", false, 0f, 0f, 0f);
-        Armor standardVest = new Armor("Standard Vest", "Models/Equipment/Lucas/Armor/Standard Vest/Tops/lucasstandardvesttop", "Models/Equipment/Lucas/Armor/Standard Vest/Bottoms/lucasstandardvestbottom", "Models/Pics/standard_vest", "A first generation ballistic vest used to protect yourself in combat. Being first generation, it's a bit heavy, but offers great protection.", -0.08f, 0f, 0.2f);
+        Armor standardVestMale = new Armor("Standard Vest", "Models/Equipment/Lucas/Armor/Standard Vest/Tops/lucasstandardvesttop", "Models/Equipment/Lucas/Armor/Standard Vest/Bottoms/lucasstandardvestbottom", "Models/Pics/standard_vest", "A first generation ballistic vest used to protect yourself in combat. Being first generation, it's a bit heavy, but offers great protection.", -0.08f, 0f, 0.2f);
+        Armor standardVestFemale = new Armor("Standard Vest", "Models/Equipment/Hana/Armor/Standard Vest/Tops/hanastandardvesttop", "Models/Equipment/Hana/Armor/Standard Vest/Bottoms/hanastandardvestbottom", "Models/Pics/standard_vest", "A first generation ballistic vest used to protect yourself in combat. Being first generation, it's a bit heavy, but offers great protection.", -0.08f, 0f, 0.2f);
         
         Dictionary<string, Equipment> lucasEquipment = new Dictionary<string, Equipment>();
         lucasEquipment.Add("Casual Shirt", casualShirtMale);
@@ -54,13 +62,13 @@ public class InventoryScript : MonoBehaviour
         lucasEquipment.Add("Dark Wash Denim Jeans", darkWashDenimJeansMale);
         lucasEquipment.Add("Light Wash Denim Jeans", lightWashDenimJeansMale);
         lucasEquipment.Add("Standard Fatigues Bottom", standardFatiguesBottomMale);
-        lucasEquipment.Add("MICH", mich);
-        lucasEquipment.Add("Combat Beanie", combatBeanie);
-        lucasEquipment.Add("COM Hat", comHat);
-        lucasEquipment.Add("Saint Laurent Mask", saintLaurentMask);
-        lucasEquipment.Add("Sport Shades", sportShades);
-        lucasEquipment.Add("Standard Goggles", standardGoggles);
-        lucasEquipment.Add("Surgical Mask", surgicalMask);
+        lucasEquipment.Add("MICH", michMale);
+        lucasEquipment.Add("Combat Beanie", combatBeanieMale);
+        lucasEquipment.Add("COM Hat", comHatMale);
+        lucasEquipment.Add("Saint Laurent Mask", saintLaurentMaskMale);
+        lucasEquipment.Add("Sport Shades", sportShadesMale);
+        lucasEquipment.Add("Standard Goggles", standardGogglesMale);
+        lucasEquipment.Add("Surgical Mask", surgicalMaskMale);
         lucasEquipment.Add("Red Chucks", redChucks);
         lucasEquipment.Add("Standard Boots", standardBootsMale);
 
@@ -71,13 +79,13 @@ public class InventoryScript : MonoBehaviour
         darylEquipment.Add("Dark Wash Denim Jeans", darkWashDenimJeansMale);
         darylEquipment.Add("Light Wash Denim Jeans", lightWashDenimJeansMale);
         darylEquipment.Add("Standard Fatigues Bottom", standardFatiguesBottomMale);
-        darylEquipment.Add("MICH", mich);
-        darylEquipment.Add("Combat Beanie", combatBeanie);
-        darylEquipment.Add("COM Hat", comHat);
-        darylEquipment.Add("Saint Laurent Mask", saintLaurentMask);
-        darylEquipment.Add("Sport Shades", sportShades);
-        darylEquipment.Add("Standard Goggles", standardGoggles);
-        darylEquipment.Add("Surgical Mask", surgicalMask);
+        darylEquipment.Add("MICH", michMale);
+        darylEquipment.Add("Combat Beanie", combatBeanieMale);
+        darylEquipment.Add("COM Hat", comHatMale);
+        darylEquipment.Add("Saint Laurent Mask", saintLaurentMaskMale);
+        darylEquipment.Add("Sport Shades", sportShadesMale);
+        darylEquipment.Add("Standard Goggles", standardGogglesMale);
+        darylEquipment.Add("Surgical Mask", surgicalMaskMale);
         darylEquipment.Add("Red Chucks", redChucks);
         darylEquipment.Add("Standard Boots", standardBootsMale);
 
@@ -90,13 +98,13 @@ public class InventoryScript : MonoBehaviour
         sayreEquipment.Add("Light Wash Denim Jeans", lightWashDenimJeansMale);
         sayreEquipment.Add("Standard Fatigues Bottom", standardFatiguesBottomMale);
         sayreEquipment.Add("Scrubs Bottom", scrubsBottomMale);
-        sayreEquipment.Add("MICH", mich);
-        sayreEquipment.Add("Combat Beanie", combatBeanie);
-        sayreEquipment.Add("COM Hat", comHat);
-        sayreEquipment.Add("Saint Laurent Mask", saintLaurentMask);
-        sayreEquipment.Add("Sport Shades", sportShades);
-        sayreEquipment.Add("Standard Goggles", standardGoggles);
-        sayreEquipment.Add("Surgical Mask", surgicalMask);
+        sayreEquipment.Add("MICH", michMale);
+        sayreEquipment.Add("Combat Beanie", combatBeanieMale);
+        sayreEquipment.Add("COM Hat", comHatMale);
+        sayreEquipment.Add("Saint Laurent Mask", saintLaurentMaskMale);
+        sayreEquipment.Add("Sport Shades", sportShadesMale);
+        sayreEquipment.Add("Standard Goggles", standardGogglesMale);
+        sayreEquipment.Add("Surgical Mask", surgicalMaskMale);
         sayreEquipment.Add("Red Chucks", redChucks);
         sayreEquipment.Add("Standard Boots", standardBootsMale);
 
@@ -107,13 +115,13 @@ public class InventoryScript : MonoBehaviour
         hanaEquipment.Add("Dark Wash Denim Jeans", darkWashDenimJeansFemale);
         hanaEquipment.Add("Light Wash Denim Jeans", lightWashDenimJeansFemale);
         hanaEquipment.Add("Standard Fatigues Bottom", standardFatiguesBottomFemale);
-        hanaEquipment.Add("MICH", mich);
-        hanaEquipment.Add("Combat Beanie", combatBeanie);
-        hanaEquipment.Add("COM Hat", comHat);
-        hanaEquipment.Add("Saint Laurent Mask", saintLaurentMask);
-        hanaEquipment.Add("Sport Shades", sportShades);
-        hanaEquipment.Add("Standard Goggles", standardGoggles);
-        hanaEquipment.Add("Surgical Mask", surgicalMask);
+        hanaEquipment.Add("MICH", michFemale);
+        hanaEquipment.Add("Combat Beanie", combatBeanieFemale);
+        hanaEquipment.Add("COM Hat", comHatFemale);
+        hanaEquipment.Add("Saint Laurent Mask", saintLaurentMaskFemale);
+        hanaEquipment.Add("Sport Shades", sportShadesFemale);
+        hanaEquipment.Add("Standard Goggles", standardGogglesFemale);
+        hanaEquipment.Add("Surgical Mask", surgicalMaskFemale);
         hanaEquipment.Add("White Chucks", whiteChucks);
         hanaEquipment.Add("Standard Boots", standardBootsFemale);
         
@@ -124,22 +132,22 @@ public class InventoryScript : MonoBehaviour
         jadeEquipment.Add("Dark Wash Denim Jeans", darkWashDenimJeansFemale);
         jadeEquipment.Add("Light Wash Denim Jeans", lightWashDenimJeansFemale);
         jadeEquipment.Add("Standard Fatigues Bottom", standardFatiguesBottomFemale);
-        jadeEquipment.Add("MICH", mich);
-        jadeEquipment.Add("Combat Beanie", combatBeanie);
-        jadeEquipment.Add("COM Hat", comHat);
-        jadeEquipment.Add("Saint Laurent Mask", saintLaurentMask);
-        jadeEquipment.Add("Sport Shades", sportShades);
-        jadeEquipment.Add("Standard Goggles", standardGoggles);
-        jadeEquipment.Add("Surgical Mask", surgicalMask);
+        jadeEquipment.Add("MICH", michFemale);
+        jadeEquipment.Add("Combat Beanie", combatBeanieFemale);
+        jadeEquipment.Add("COM Hat", comHatFemale);
+        jadeEquipment.Add("Saint Laurent Mask", saintLaurentMaskFemale);
+        jadeEquipment.Add("Sport Shades", sportShadesFemale);
+        jadeEquipment.Add("Standard Goggles", standardGogglesFemale);
+        jadeEquipment.Add("Surgical Mask", surgicalMaskFemale);
         jadeEquipment.Add("White Chucks", whiteChucks);
         jadeEquipment.Add("Standard Boots", standardBootsFemale);
 
         // Armor
         Dictionary<string, Armor> lucasArmor = new Dictionary<string, Armor>();
-        lucasArmor.Add("Standard Vest", standardVest);
+        lucasArmor.Add("Standard Vest", standardVestMale);
 
         Dictionary<string, Armor> hanaArmor = new Dictionary<string, Armor>();
-        hanaArmor.Add("Standard Vest", standardVest);
+        hanaArmor.Add("Standard Vest", standardVestFemale);
 
         // Weapons
         weaponCatalog.Add("AK-47", new Weapon("AK-47", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/AK-47", "Models/Pics/ak47-thumb", "A classic assault rifle developed in the Soviet Union during the World War II era. Known for its unmatched stopping power and relatively light weight.", 48f, 55f, 68f, 90f, 70f, 3000f, 30));
@@ -152,8 +160,8 @@ public class InventoryScript : MonoBehaviour
         characterCatalog.Add("Lucas", new Character("Lucas", 'M', "Models/Characters/Lucas/PlayerPrefabLucas", "Models/Pics/character_lucas", "Nationality: British\nAs a reformed professional criminal, Lucas works swiftly and gets the job done.", new string[]{"Models/Characters/Lucas/Extra Skins/Ankles Long Sleeves/lucasskinanklesonly", "Models/Characters/Lucas/Extra Skins/Ankles Mid Sleeves/lucasanklesmid", "Models/Clothing/Lucas/Tops/Standard Fatigues/lucasstandardfatiguestop"}, lucasEquipment, lucasArmor));
         characterCatalog.Add("Daryl", new Character("Daryl", 'M', "Models/Characters/Daryl/PlayerPrefabDaryl", "Models/Pics/character_daryl", "Nationality: American\nDaryl was an ex professional college football player whose career ended abruptly after an unsustainable knee injury. His tenacity, size, and strength all serve him in combat.", new string[]{"Models/Characters/Daryl/1/skindonald1", "Models/Characters/Daryl/2/skindonald2", "Models/Characters/Daryl/3/skindonald3"}, darylEquipment, lucasArmor));
         characterCatalog.Add("Codename Sayre", new Character("Codename Sayre", 'M', "Models/Characters/Sayre/PlayerPrefabCodenameSayre", "Models/Pics/character_sayre", "Nationality: Mexican\nBeing fresh out of medical school at the top of his class, Codename Sayre is skilled in his healing abilities. His witty style of humor allows him to maneuver through sticky situations easily.", new string[]{"Models/Characters/Sayre/1/skinslayre1", "Models/Characters/Sayre/2/skinslayre2", "Models/Characters/Sayre/3/skinslayre3"}, sayreEquipment, lucasArmor));
-        characterCatalog.Add("Hana", new Character("Hana", 'F', "Models/Characters/Hana/PlayerPrefabHana", "Models/Pics/character_hana", "Nationality: Japanese\nWhen her entire family was murdered as a kid, Hana swore to fight for justice to avenge her family. She is an ex police officer who many underestimate, but don't be fooled by her size.", new string[]{"Models/Characters/Hana/1/skinhana1", "Models/Characters/Hana/2/skinhana2", "Models/Characters/Hana/3/skinhana3"}, hanaEquipment, lucasArmor));
-        characterCatalog.Add("Jade", new Character("Jade", 'F', "Models/Characters/Jade/PlayerPrefabJade", "Models/Pics/character_jade", "Nationality: American\nNot much is known about Jade's past besides the fact that she likes to work alone and was previously a firefighter.", new string[]{"Models/Characters/Jade/1/skinjade1", "Models/Characters/Jade/2/skinjade2", "Models/Characters/Jade/3/skinjade3"}, jadeEquipment, lucasArmor));
+        characterCatalog.Add("Hana", new Character("Hana", 'F', "Models/Characters/Hana/PlayerPrefabHana", "Models/Pics/character_hana", "Nationality: Japanese\nWhen her entire family was murdered as a kid, Hana swore to fight for justice to avenge her family. She is an ex police officer who many underestimate, but don't be fooled by her size.", new string[]{"Models/Characters/Hana/1/skinhana1", "Models/Characters/Hana/2/skinhana2", "Models/Characters/Hana/3/skinhana3"}, hanaEquipment, hanaArmor));
+        characterCatalog.Add("Jade", new Character("Jade", 'F', "Models/Characters/Jade/PlayerPrefabJade", "Models/Pics/character_jade", "Nationality: American\nNot much is known about Jade's past besides the fact that she likes to work alone and was previously a firefighter.", new string[]{"Models/Characters/Jade/1/skinjade1", "Models/Characters/Jade/3/skinjade3", "Models/Characters/Jade/2/skinjade2"}, jadeEquipment, hanaArmor));
 
         collectCharacters();
         collectWeapons();

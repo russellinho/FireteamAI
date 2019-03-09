@@ -12,7 +12,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public string itemType;
     public string itemDescription;
     public string weaponCategory;
-    // 1 = long sleeves, 2 = mid sleeves, 3 = short sleeves
+    // 0 = long sleeves, 1 = mid sleeves, 2 = short sleeves
     public int skinType;
     public Text equippedInd;
 
