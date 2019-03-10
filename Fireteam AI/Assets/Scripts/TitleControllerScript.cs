@@ -281,14 +281,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
+		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myHeadgear.Count; i++) {
 			string thisItemName = (string)InventoryScript.myHeadgear[i];
+			Equipment thisHeadgear = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Headgear";
-			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponent<ShopItemScript>().itemDescription = thisHeadgear.description;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
@@ -322,14 +324,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
+		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myFacewear.Count; i++) {
 			string thisItemName = (string)InventoryScript.myFacewear[i];
+			Equipment thisFacewear = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Facewear";
-			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponent<ShopItemScript>().itemDescription = thisFacewear.description;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
@@ -363,14 +367,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
+		Dictionary<string, Armor> characterArmor = InventoryScript.characterCatalog[characterName].armorCatalog;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myArmor.Count; i++) {
 			string thisItemName = (string)InventoryScript.myArmor[i];
+			Armor thisArmor = characterArmor[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Armor";
-			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponent<ShopItemScript>().itemDescription = thisArmor.description;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].armorCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
@@ -404,14 +410,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
+		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myTops.Count; i++) {
 			string thisItemName = (string)InventoryScript.myTops[i];
+			Equipment thisTop = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
             o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Top";
-			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponent<ShopItemScript>().itemDescription = thisTop.description;
 			o.GetComponent<ShopItemScript>().skinType = CheckSkinType((string)InventoryScript.myTops[i], currentCharGender);
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
@@ -446,14 +454,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
+		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myBottoms.Count; i++) {
 			string thisItemName = (string)InventoryScript.myBottoms[i];
+			Equipment thisBottom = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Bottom";
-			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponent<ShopItemScript>().itemDescription = thisBottom.description;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
@@ -487,14 +497,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
+		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myFootwear.Count; i++) {
 			string thisItemName = (string)InventoryScript.myFootwear[i];
+			Equipment thisFootwear = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Footwear";
-			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponent<ShopItemScript>().itemDescription = thisFootwear.description;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
@@ -787,7 +799,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().itemName = thisCharacterName;
             o.GetComponent<ShopItemScript>().itemType = "Character";
-			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponent<ShopItemScript>().itemDescription = c.description;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(c.thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
