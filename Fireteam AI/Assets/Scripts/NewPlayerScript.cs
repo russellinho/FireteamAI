@@ -45,8 +45,5 @@ public class NewPlayerScript : MonoBehaviour
         setSpeed();
         setStamina();
         setArmor();
-        Debug.Log("Speed: " + this.speed);
-        Debug.Log("Stamina: " + this.stamina);
-        Debug.Log("Armor: " + this.armor);
     }
 }

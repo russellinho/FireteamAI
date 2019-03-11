@@ -273,6 +273,7 @@ public class EquipmentScript : MonoBehaviour
         ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
         playerScript.stats.updateStats(e.speed, e.stamina, e.armor);
         playerScript.updateStats();
+        ts.SetStatBoosts((int)((playerScript.stats.armor - 1f) * 100f), (int)((playerScript.stats.speed - 1f) * 100f), (int)((playerScript.stats.stamina - 1f) * 100f));
     }
 
     public void EquipHeadgear(string name, GameObject shopItemRef) {
@@ -321,6 +322,7 @@ public class EquipmentScript : MonoBehaviour
         // Adds headgear stat to player
         playerScript.stats.updateStats(e.speed, e.stamina, e.armor);
         playerScript.updateStats();
+        ts.SetStatBoosts((int)((playerScript.stats.armor - 1f) * 100f), (int)((playerScript.stats.speed - 1f) * 100f), (int)((playerScript.stats.stamina - 1f) * 100f));
     }
 
     public void EquipArmor(string name, GameObject shopItemRef) {
@@ -369,6 +371,7 @@ public class EquipmentScript : MonoBehaviour
         ts.equippedArmorSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(a.thumbnailPath);
         playerScript.stats.updateStats(a.speed, a.stamina, a.armor);
         playerScript.updateStats();
+        ts.SetStatBoosts((int)((playerScript.stats.armor - 1f) * 100f), (int)((playerScript.stats.speed - 1f) * 100f), (int)((playerScript.stats.stamina - 1f) * 100f));
     }
 
     public void RemoveHeadgear() {
@@ -396,6 +399,8 @@ public class EquipmentScript : MonoBehaviour
         Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[equippedHeadgear];
         playerScript.stats.updateStats(-e.speed, -e.stamina, -e.armor);
         playerScript.updateStats();
+        ts.SetStatBoosts((int)((playerScript.stats.armor - 1f) * 100f), (int)((playerScript.stats.speed - 1f) * 100f), (int)((playerScript.stats.stamina - 1f) * 100f));
+
         equippedHeadgear = "";
     }
 
@@ -425,6 +430,8 @@ public class EquipmentScript : MonoBehaviour
         Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[equippedFacewear];
         playerScript.stats.updateStats(-e.speed, -e.stamina, -e.armor);
         playerScript.updateStats();
+        ts.SetStatBoosts((int)((playerScript.stats.armor - 1f) * 100f), (int)((playerScript.stats.speed - 1f) * 100f), (int)((playerScript.stats.stamina - 1f) * 100f));
+
         equippedFacewear = "";
     }
 
@@ -455,6 +462,8 @@ public class EquipmentScript : MonoBehaviour
         Armor e = InventoryScript.characterCatalog[equippedCharacter].armorCatalog[equippedArmor];
         playerScript.stats.updateStats(-e.speed, -e.stamina, -e.armor);
         playerScript.updateStats();
+        ts.SetStatBoosts((int)((playerScript.stats.armor - 1f) * 100f), (int)((playerScript.stats.speed - 1f) * 100f), (int)((playerScript.stats.stamina - 1f) * 100f));
+
         equippedArmor = "";
     }
 

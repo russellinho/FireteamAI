@@ -59,9 +59,13 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         ips.SetTitle(itemName);
         ips.SetThumbnail(thumbnailRef);
         ips.SetDescription(itemDescription);
-        if (itemType.Equals("Headgear") || itemType.Equals("Facewear") || itemType.Equals("Armor")) {
+        if (itemType.Equals("Headgear") || itemType.Equals("Facewear")) {
             ips.ToggleWeaponStatDescriptor(false);
             ips.SetEquipmentStats(equipmentDetails.armor, equipmentDetails.speed, equipmentDetails.stamina);
+            ips.ToggleEquipmentStatDescriptor(true);
+        } else if (itemType.Equals("Armor")) {
+            ips.ToggleWeaponStatDescriptor(false);
+            ips.SetEquipmentStats(armorDetails.armor, armorDetails.speed, armorDetails.stamina);
             ips.ToggleEquipmentStatDescriptor(true);
         } else if (itemType.Equals("Weapon")) {
             ips.ToggleEquipmentStatDescriptor(false);

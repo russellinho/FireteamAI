@@ -59,6 +59,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject equippedCharacterSlot;
 	public GameObject equippedArmorSlot;
 	public GameObject currentlyEquippedItemPrefab;
+	public GameObject equippedStatsSlot;
+	public Text armorBoostPercent;
+	public Text speedBoostPercent;
+	public Text staminaBoostPercent;
 
 	// Weapon loadout stuff
 	public Button loadoutBtn;
@@ -864,7 +868,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		footwearBtn.gameObject.SetActive(false);
 		characterBtn.gameObject.SetActive(false);
 		armorBtn.gameObject.SetActive(false);
-
+		
 		equippedHeadSlot.SetActive(false);
 		equippedFaceSlot.SetActive(false);
 		equippedTopSlot.SetActive(false);
@@ -872,6 +876,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		equippedFootSlot.SetActive(false);
 		equippedCharacterSlot.SetActive(false);
 		equippedArmorSlot.SetActive(false);
+		equippedStatsSlot.SetActive(false);
 
 		primaryWepBtn.gameObject.SetActive(true);
 		secondaryWepBtn.gameObject.SetActive(true);
@@ -899,6 +904,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		equippedFootSlot.SetActive(true);
 		equippedCharacterSlot.SetActive(true);
 		equippedArmorSlot.SetActive(true);
+		equippedStatsSlot.SetActive(true);
 
 		primaryWepBtn.gameObject.SetActive(false);
 		secondaryWepBtn.gameObject.SetActive(false);
@@ -920,6 +926,51 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void OnRemoveFacewearClicked() {
 		PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().RemoveFacewear();
+	}
+
+	public void SetArmorBoostPercent(int armor) {
+		if (armor == 0) {
+			armorBoostPercent.color = Color.white;
+			armorBoostPercent.text = armor + "%";
+		} else if (armor > 0) {
+			armorBoostPercent.color = Color.green;
+			armorBoostPercent.text = "+" + armor + "%";
+		} else {
+			armorBoostPercent.color = Color.red;
+			armorBoostPercent.text = armor + "%";
+		}
+	}
+
+	public void SetSpeedBoostPercent(int speed) {
+		if (speed == 0) {
+			speedBoostPercent.color = Color.white;
+			speedBoostPercent.text = speed + "%";
+		} else if (speed > 0) {
+			speedBoostPercent.color = Color.green;
+			speedBoostPercent.text = "+" + speed + "%";
+		} else {
+			speedBoostPercent.color = Color.red;
+			speedBoostPercent.text = speed + "%";
+		}
+	}
+
+	public void SetStaminaBoostPercent(int stamina) {
+		if (stamina == 0) {
+			staminaBoostPercent.color = Color.white;
+			staminaBoostPercent.text = stamina + "%";
+		} else if (stamina > 0) {
+			staminaBoostPercent.color = Color.green;
+			staminaBoostPercent.text = "+" + stamina + "%";
+		} else {
+			staminaBoostPercent.color = Color.red;
+			staminaBoostPercent.text = stamina + "%";
+		}
+	}
+
+	public void SetStatBoosts(int armor, int speed, int stamina) {
+		SetArmorBoostPercent(armor);
+		SetSpeedBoostPercent(speed);
+		SetStaminaBoostPercent(stamina);
 	}
 		
 }
