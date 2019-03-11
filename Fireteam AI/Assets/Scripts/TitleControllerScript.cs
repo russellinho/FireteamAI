@@ -288,6 +288,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisHeadgear = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().equipmentDetails = thisHeadgear;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Headgear";
 			o.GetComponent<ShopItemScript>().itemDescription = thisHeadgear.description;
@@ -331,6 +332,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisFacewear = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().equipmentDetails = thisFacewear;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Facewear";
 			o.GetComponent<ShopItemScript>().itemDescription = thisFacewear.description;
@@ -374,6 +376,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Armor thisArmor = characterArmor[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().armorDetails = thisArmor;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Armor";
 			o.GetComponent<ShopItemScript>().itemDescription = thisArmor.description;
@@ -417,10 +420,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisTop = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().equipmentDetails = thisTop;
             o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Top";
 			o.GetComponent<ShopItemScript>().itemDescription = thisTop.description;
-			o.GetComponent<ShopItemScript>().skinType = CheckSkinType((string)InventoryScript.myTops[i], currentCharGender);
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
@@ -461,6 +464,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisBottom = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().equipmentDetails = thisBottom;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Bottom";
 			o.GetComponent<ShopItemScript>().itemDescription = thisBottom.description;
@@ -504,6 +508,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisFootwear = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().equipmentDetails = thisFootwear;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Footwear";
 			o.GetComponent<ShopItemScript>().itemDescription = thisFootwear.description;
@@ -555,6 +560,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().weaponDetails = w;
 			o.GetComponent<ShopItemScript>().itemName = w.name;
             o.GetComponent<ShopItemScript>().itemType = "Weapon";
 			o.GetComponent<ShopItemScript>().itemDescription = w.description;
@@ -605,6 +611,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().weaponDetails = w;
 			o.GetComponent<ShopItemScript>().itemName = w.name;
             o.GetComponent<ShopItemScript>().itemType = "Weapon";
 			o.GetComponent<ShopItemScript>().itemDescription = w.description;
@@ -643,6 +650,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().weaponDetails = w;
 			o.GetComponent<ShopItemScript>().itemName = w.name;
             o.GetComponent<ShopItemScript>().itemType = "Weapon";
 			o.GetComponent<ShopItemScript>().itemDescription = w.description;
@@ -681,6 +689,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().weaponDetails = w;
 			o.GetComponent<ShopItemScript>().itemName = w.name;
             o.GetComponent<ShopItemScript>().itemType = "Weapon";
 			o.GetComponent<ShopItemScript>().itemDescription = w.description;
@@ -719,6 +728,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().weaponDetails = w;
 			o.GetComponent<ShopItemScript>().itemName = w.name;
             o.GetComponent<ShopItemScript>().itemType = "Weapon";
 			o.GetComponent<ShopItemScript>().itemDescription = w.description;
@@ -755,6 +765,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().weaponDetails = w;
 			o.GetComponent<ShopItemScript>().itemName = w.name;
             o.GetComponent<ShopItemScript>().itemType = "Weapon";
 			o.GetComponent<ShopItemScript>().itemDescription = w.description;
@@ -797,6 +808,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Character c = InventoryScript.characterCatalog[thisCharacterName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().characterDetails = c;
 			o.GetComponent<ShopItemScript>().itemName = thisCharacterName;
             o.GetComponent<ShopItemScript>().itemType = "Character";
 			o.GetComponent<ShopItemScript>().itemDescription = c.description;
@@ -896,24 +908,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		pistolSubBtn.gameObject.SetActive(false);
 		equippedPrimarySlot.SetActive(false);
 		equippedSecondarySlot.SetActive(false);
-	}
-
-	public static int CheckSkinType(string clothingName, char gender) {
-		if (gender == 'F') {
-			if (clothingName.Equals("Casual T-Shirt")) {
-				return 1;
-			} else if (clothingName.Equals("Casual Tank Top")) {
-				return 2;
-			}
-			return 0;
-		} else {
-			if (clothingName.Equals("Casual T-Shirt")) {
-				return 2;
-			} else if (clothingName.Equals("Casual Shirt")) {
-				return 1;
-			}
-			return 0;
-		}
 	}
 
 	public void OnRemoveArmorClicked() {

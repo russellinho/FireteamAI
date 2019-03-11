@@ -55,12 +55,12 @@ public class EquipmentScript : MonoBehaviour
         RemoveArmor();
         RemoveHeadgear();
         if (equippedCharacter.Equals("Codename Sayre")) {
-            EquipTop("Scrubs Top", 2, null);
+            EquipTop("Scrubs Top", null);
             EquipBottom("Scrubs Bottom", null);
             EquipFootwear("Standard Boots", null);
             EquipFacewear("Surgical Mask", null);
         } else {
-            EquipTop("Standard Fatigues Top", 0, null);
+            EquipTop("Standard Fatigues Top", null);
             EquipBottom("Standard Fatigues Bottom", null);
             EquipFootwear("Standard Boots", null);
         }
@@ -116,7 +116,7 @@ public class EquipmentScript : MonoBehaviour
         EquipDefaults();
     }
 
-    public void EquipTop(string name, int skinType, GameObject shopItemRef) {
+    public void EquipTop(string name, GameObject shopItemRef) {
         if (name.Equals(equippedTop)) {
             return;
         }
@@ -133,7 +133,7 @@ public class EquipmentScript : MonoBehaviour
         m.rootBone = myBones.transform;
         m.AdaptMesh();
         
-        EquipSkin(skinType);
+        EquipSkin(e.skinType);
 
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Top")) {

@@ -76,7 +76,7 @@ public class PlayerData : MonoBehaviour {
 			e.EquipHeadgear(info.equippedHeadgear, null);
 			e.EquipFacewear(info.equippedFacewear, null);
 			char gender = ((info.equippedCharacter.Equals("Jade") || info.equippedCharacter.Equals("Hana")) ? 'F' : 'M');
-			e.EquipTop(info.equippedTop, TitleControllerScript.CheckSkinType(info.equippedTop, gender), null);
+			e.EquipTop(info.equippedTop, null);
 			e.EquipBottom(info.equippedBottom, null);
 			e.EquipFootwear(info.equippedFootwear, null);
 			e.EquipArmor(info.equippedArmor, null);
