@@ -8,6 +8,7 @@ public class EquipmentScript : MonoBehaviour
 
     public TitleControllerScript ts;
     public NewPlayerScript playerScript;
+    public TestWeaponScript tws;
     
     public string equippedCharacter;
     public string equippedHeadgear;
@@ -114,6 +115,7 @@ public class EquipmentScript : MonoBehaviour
         }
 
         EquipDefaults();
+        tws.SetTitleHandPositions();
     }
 
     public void EquipTop(string name, GameObject shopItemRef) {
@@ -268,7 +270,7 @@ public class EquipmentScript : MonoBehaviour
             shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
-
+        
         ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = true;
         ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
         playerScript.stats.updateStats(e.speed, e.stamina, e.armor);

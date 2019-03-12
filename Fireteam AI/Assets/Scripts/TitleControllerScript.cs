@@ -931,7 +931,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void SetArmorBoostPercent(int armor) {
 		if (armor == 0) {
 			armorBoostPercent.color = Color.white;
-			armorBoostPercent.text = armor + "%";
+			armorBoostPercent.text = "+" + armor + "%";
 		} else if (armor > 0) {
 			armorBoostPercent.color = Color.green;
 			armorBoostPercent.text = "+" + armor + "%";
@@ -944,7 +944,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void SetSpeedBoostPercent(int speed) {
 		if (speed == 0) {
 			speedBoostPercent.color = Color.white;
-			speedBoostPercent.text = speed + "%";
+			speedBoostPercent.text = "+" + speed + "%";
 		} else if (speed > 0) {
 			speedBoostPercent.color = Color.green;
 			speedBoostPercent.text = "+" + speed + "%";
@@ -957,7 +957,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void SetStaminaBoostPercent(int stamina) {
 		if (stamina == 0) {
 			staminaBoostPercent.color = Color.white;
-			staminaBoostPercent.text = stamina + "%";
+			staminaBoostPercent.text = "+" + stamina + "%";
 		} else if (stamina > 0) {
 			staminaBoostPercent.color = Color.green;
 			staminaBoostPercent.text = "+" + stamina + "%";

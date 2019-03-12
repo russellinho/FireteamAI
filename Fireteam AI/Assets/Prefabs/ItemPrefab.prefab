@@ -134,7 +134,8 @@ MonoBehaviour:
   thumbnailRef: {fileID: 5722862971687186158}
   itemName: 
   itemType: 
-  skinType: 0
+  itemDescription: 
+  weaponCategory: 
   equippedInd: {fileID: 4753007453993827064}
 --- !u!1 &1375148356151475967
 GameObject:
@@ -255,7 +256,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4324697429329254581}
-        m_MethodName: EquipItem
+        m_MethodName: OnItemClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

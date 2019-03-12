@@ -18,8 +18,35 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public string weaponCategory;
     // 0 = long sleeves, 1 = mid sleeves, 2 = short sleeves
     public Text equippedInd;
+    private int clickCount;
+    private float clickTimer;
 
-    public void EquipItem()
+    void Start() {
+        clickCount = 0;
+        clickTimer = 0f;
+    }
+
+    void FixedUpdate() {
+        if (clickCount == 1) {
+            clickTimer += Time.deltaTime;
+            if (clickTimer > 0.5f) {
+                clickTimer = 0f;
+                clickCount = 0;
+            }
+        }
+    }
+
+    // Makes sure that the user double clicks on the item to equip it
+    public void OnItemClick() {
+        clickCount++;
+        if (clickCount == 2) {
+            EquipItem();
+            clickTimer = 0f;
+            clickCount = 0;
+        }
+    }
+
+    private void EquipItem()
     {
         switch (itemType)
         {

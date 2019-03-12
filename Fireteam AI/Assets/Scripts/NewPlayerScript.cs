@@ -18,7 +18,7 @@ public class NewPlayerScript : MonoBehaviour
     public const float baseStamina = 5f;
     public const float baseArmor = 100f;
 
-    void Start() {
+    void Awake() {
         stats = new Stats();
         speed = 0;
         stamina = 0;
