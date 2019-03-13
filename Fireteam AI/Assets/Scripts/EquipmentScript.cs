@@ -44,14 +44,13 @@ public class EquipmentScript : MonoBehaviour
     public GameObject myBones;
 
     void Start() {
-        equippedSkin = -1;
         if (ts == null) {
             ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
         }
-        EquipCharacter(equippedCharacter, null);
     }
 
     public void EquipDefaults() {
+        equippedSkin = -1;
         RemoveFacewear();
         RemoveArmor();
         RemoveHeadgear();
@@ -72,9 +71,6 @@ public class EquipmentScript : MonoBehaviour
         if (shopItemRef != null) {
             shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
             shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
-            if (ts == null) {
-                ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
-            }
             if (ts.currentlyEquippedItemPrefab != null) {
                 ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
                 ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
@@ -84,6 +80,7 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void EquipCharacter(string name, GameObject shopItemRef) {
+        equippedCharacter = name;
         Character c = InventoryScript.characterCatalog[name];
         InventoryScript.collectTops(name);
         InventoryScript.collectBottoms(name);
@@ -115,7 +112,10 @@ public class EquipmentScript : MonoBehaviour
         }
 
         EquipDefaults();
-        tws.SetTitleHandPositions();
+        if (tws.weaponHolder.weapon != null)
+        {
+            tws.SetTitleHandPositions();
+        }
     }
 
     public void EquipTop(string name, GameObject shopItemRef) {
@@ -134,7 +134,7 @@ public class EquipmentScript : MonoBehaviour
         m.target = myTopRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh();
-        
+
         EquipSkin(e.skinType);
 
         // Sets item that you unequipped to white
@@ -427,8 +427,7 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = null;
             }
         }
-        Debug.Log(equippedCharacter);
-        Debug.Log(equippedFacewear);
+
         Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[equippedFacewear];
         playerScript.stats.updateStats(-e.speed, -e.stamina, -e.armor);
         playerScript.updateStats();

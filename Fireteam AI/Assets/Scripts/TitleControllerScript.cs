@@ -211,7 +211,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void ReturnToMainMenuFromCustomization() {
-		// Save settings if the settings are active
+        // Save settings if the settings are active
 		 if (customizationMenu.activeInHierarchy) {
 		 	savePlayerData ();
 		 }

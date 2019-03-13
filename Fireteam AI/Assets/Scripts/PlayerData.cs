@@ -77,15 +77,17 @@ public class PlayerData : MonoBehaviour {
 
 	public void LoadPlayerData()
 	{
-		FindBodyRef();
 		if (File.Exists (Application.persistentDataPath + "/playerData.dat")) {
 			BinaryFormatter bf = new BinaryFormatter ();
 			FileStream file = File.Open (Application.persistentDataPath + "/playerData.dat", FileMode.Open);
 			PlayerInfo info = (PlayerInfo)bf.Deserialize (file);
 			file.Close ();
-			playername = info.playername;
+            FindBodyRef(info.equippedCharacter);
+            playername = info.playername;
             EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
             TestWeaponScript characterWeps = bodyReference.GetComponent<TestWeaponScript>();
+            characterEquips.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+            characterWeps.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
             characterEquips.EquipCharacter(info.equippedCharacter, null);
             characterEquips.EquipHeadgear(info.equippedHeadgear, null);
             characterEquips.EquipFacewear(info.equippedFacewear, null);
@@ -97,24 +99,37 @@ public class PlayerData : MonoBehaviour {
             characterWeps.EquipWeapon(info.equippedPrimaryType, info.equippedPrimary, null);
             characterWeps.EquipWeapon(info.equippedSecondaryType, info.equippedSecondary, null);
 		} else {
-			// Else, load defaults
-			playername = "Player";
+            // Else, load defaults
+            FindBodyRef("Lucas");
+            EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
+            TestWeaponScript characterWeps = bodyReference.GetComponent<TestWeaponScript>();
+            characterEquips.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+            characterWeps.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+            playername = "Player";
+            characterEquips.EquipCharacter("Lucas", null);
 		}
 		PhotonNetwork.NickName = playername;
 	}
 
-	public void FindBodyRef() {
+	public void FindBodyRef(string character) {
 		if (bodyReference == null) {
-			bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog["Lucas"].prefabPath));
-		}
-	}
+			bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[character].prefabPath));
+		} else {
+            bodyReference = GameObject.FindGameObjectWithTag("Player");
+        }
+    }
 
 	public void ChangeBodyRef(string character, GameObject shopItem) {
 		Destroy(bodyReference);
 		bodyReference = null;
 		bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[character].prefabPath));
-		bodyReference.GetComponent<EquipmentScript>().HighlightItemPrefab(shopItem);
-	}
+        EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
+        TestWeaponScript characterWeps = bodyReference.GetComponent<TestWeaponScript>();
+        characterEquips.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+        characterWeps.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+        bodyReference.GetComponent<EquipmentScript>().HighlightItemPrefab(shopItem);
+        characterEquips.EquipCharacter(character, null);
+    }
 
 }
 

@@ -102,6 +102,8 @@ public class TestWeaponScript : MonoBehaviour
 
     void EquipAssaultRifle(string weaponName) {
         // Set animation and hand positions
+        equippedPrimaryType = "Assault Rifle";
+        equippedPrimaryWeapon = weaponName;
         if (animator.GetBool("onTitle")) {
             SetTitleHandPositions();
         } else {
@@ -111,6 +113,8 @@ public class TestWeaponScript : MonoBehaviour
     }
 
     void EquipShotgun(string weaponName) {
+        equippedPrimaryType = "Shotgun";
+        equippedPrimaryWeapon = weaponName;
         if (animator.GetBool("onTitle")) {
             SetTitleHandPositions();
         } else {
@@ -121,11 +125,15 @@ public class TestWeaponScript : MonoBehaviour
 
     public void EquipPistol(string weaponName) {
         // Set animation and hand positions
+        equippedSecondaryType = "Pistol";
+        equippedSecondaryWeapon = weaponName;
         weaponHolder.SetWeaponPosition();
         weaponHolder.ResetSteadyHand();
     }
 
     public void EquipSniperRifle(string weaponName) {
+        equippedPrimaryType = "Sniper Rifle";
+        equippedPrimaryWeapon = weaponName;
         if (animator.GetBool("onTitle")) {
             SetTitleHandPositions();
         } else {
