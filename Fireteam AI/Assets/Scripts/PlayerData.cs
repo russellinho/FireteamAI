@@ -52,11 +52,24 @@ public class PlayerData : MonoBehaviour {
 	public void SavePlayerData()
 	{
 		BinaryFormatter bf = new BinaryFormatter();
-		FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.dat");
+		FileStream file = File.Create(Application.persistentDataPath + "/playerData.dat");
 
 		PlayerInfo info = new PlayerInfo();
+        EquipmentScript myEquips = bodyReference.GetComponent<EquipmentScript>();
+        TestWeaponScript myWeps = bodyReference.GetComponent<TestWeaponScript>();
 		info.playername = playername;
-		bf.Serialize(file, info);
+        info.equippedCharacter = myEquips.equippedCharacter;
+        info.equippedHeadgear = myEquips.equippedHeadgear;
+        info.equippedFacewear = myEquips.equippedFacewear;
+        info.equippedTop = myEquips.equippedTop;
+        info.equippedBottom = myEquips.equippedBottom;
+        info.equippedFootwear = myEquips.equippedFootwear;
+        info.equippedArmor = myEquips.equippedArmor;
+        info.equippedPrimary = myWeps.equippedPrimaryWeapon;
+        info.equippedPrimaryType = myWeps.equippedPrimaryType;
+        info.equippedSecondary = myWeps.equippedSecondaryWeapon;
+        info.equippedSecondaryType = myWeps.equippedSecondaryType;
+        bf.Serialize(file, info);
 		file.Close();
 
 		PhotonNetwork.NickName = playername;
@@ -71,15 +84,18 @@ public class PlayerData : MonoBehaviour {
 			PlayerInfo info = (PlayerInfo)bf.Deserialize (file);
 			file.Close ();
 			playername = info.playername;
-			EquipmentScript e = bodyReference.GetComponent<EquipmentScript>();
-			e.EquipCharacter(info.equippedCharacter, null);
-			e.EquipHeadgear(info.equippedHeadgear, null);
-			e.EquipFacewear(info.equippedFacewear, null);
+            EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
+            TestWeaponScript characterWeps = bodyReference.GetComponent<TestWeaponScript>();
+            characterEquips.EquipCharacter(info.equippedCharacter, null);
+            characterEquips.EquipHeadgear(info.equippedHeadgear, null);
+            characterEquips.EquipFacewear(info.equippedFacewear, null);
 			char gender = ((info.equippedCharacter.Equals("Jade") || info.equippedCharacter.Equals("Hana")) ? 'F' : 'M');
-			e.EquipTop(info.equippedTop, null);
-			e.EquipBottom(info.equippedBottom, null);
-			e.EquipFootwear(info.equippedFootwear, null);
-			e.EquipArmor(info.equippedArmor, null);
+            characterEquips.EquipTop(info.equippedTop, null);
+            characterEquips.EquipBottom(info.equippedBottom, null);
+            characterEquips.EquipFootwear(info.equippedFootwear, null);
+            characterEquips.EquipArmor(info.equippedArmor, null);
+            characterWeps.EquipWeapon(info.equippedPrimaryType, info.equippedPrimary, null);
+            characterWeps.EquipWeapon(info.equippedSecondaryType, info.equippedSecondary, null);
 		} else {
 			// Else, load defaults
 			playername = "Player";
@@ -113,4 +129,8 @@ class PlayerInfo
     public string equippedBottom;
     public string equippedFootwear;
     public string equippedArmor;
+    public string equippedPrimary;
+    public string equippedPrimaryType;
+    public string equippedSecondary;
+    public string equippedSecondaryType;
 }

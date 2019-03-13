@@ -211,9 +211,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void ReturnToMainMenuFromCustomization() {
 		// Save settings if the settings are active
-		// if (customizationMenu.activeInHierarchy) {
-		// 	savePlayerData ();
-		// }
+		 if (customizationMenu.activeInHierarchy) {
+		 	savePlayerData ();
+		 }
 		SwitchToEquipmentScreen();
 		customizationMenu.SetActive (false);
 		matchmakingMenu.SetActive (false);
