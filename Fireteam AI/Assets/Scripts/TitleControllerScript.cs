@@ -96,6 +96,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		GameControllerScript.playerList.Clear();
 		GameControllerScript.totalKills.Clear ();
 		GameControllerScript.totalDeaths.Clear ();
+		PlayerNameInput.text = PhotonNetwork.NickName;
 
 		StartCoroutine (VersionNumberCheck());
 
