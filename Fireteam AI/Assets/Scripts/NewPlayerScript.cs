@@ -6,7 +6,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityStandardAssets.Characters.FirstPerson;
 
-public class NewPlayerScript : MonoBehaviour
+public class NewPlayerScript : MonoBehaviourPunCallbacks
 {
 
     // Object references
@@ -14,13 +14,16 @@ public class NewPlayerScript : MonoBehaviour
     private AudioControllerScript audioController;
     private CharacterController charController;
     public GameObject fpsHands;
-    private WeaponScript wepScript;
+    private WeaponActionScript wepActionScript;
     private AudioSource aud;
     public Camera viewCam;
     public Transform bodyTrans;
     public GameObject spectatorCam;
     public GameObject thisSpectatorCam;
     private PlayerHUDScript hud;
+    public EquipmentScript equipmentScript;
+    public CameraShakeScript camShakeScript;
+    public InGameMessengerHUD inGameMessengerHud;
 
     // Player variables
     public int health;
@@ -37,6 +40,7 @@ public class NewPlayerScript : MonoBehaviour
     private bool escapeAvailablePopup;
     private bool isDefusing;
     private float enterSpectatorModeTimer;
+    private bool onTitle;
 
     // Stats
     // Movement speed of player
@@ -76,7 +80,21 @@ public class NewPlayerScript : MonoBehaviour
     public float healTimer;
     public Vector3 hitLocation;
 
+    // Mission references
+    private GameObject currentBomb;
+    private int currentBombIndex;
+    private int bombIterator;
+    private float bombDefuseCounter = 0f;
+
     void Awake() {
+        if (SceneManager.GetActiveScene().name.Equals("Title"))
+        {
+            onTitle = true;
+        }
+        else
+        {
+            onTitle = false;
+        }
         stats = new Stats();
         speed = 0;
         stamina = 0;
@@ -85,6 +103,13 @@ public class NewPlayerScript : MonoBehaviour
 
     void Start()
     {
+        // Skip loading the in-game necessities if not in game
+        if (onTitle)
+        {
+            return;
+        }
+
+        // Else, load the in-game necessities
         DontDestroyOnLoad(gameObject);
         AddMyselfToPlayerList();
         audioController = GetComponent<AudioControllerScript>();
@@ -120,12 +145,11 @@ public class NewPlayerScript : MonoBehaviour
         gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 
         //      photonView.RPC ("SyncPlayerColor", RpcTarget.All, PlayerData.playerdata.color);
-        wepScript = gameObject.GetComponent<WeaponScript>();
+        wepActionScript = gameObject.GetComponent<WeaponActionScript>();
         aud = GetComponent<AudioSource>();
         hud = GetComponent<PlayerHUDScript>();
 
         // Initialize variables
-        currWep = "AK-47";
         canShoot = true;
 
         crouchPosY = 0.3f;
@@ -146,6 +170,11 @@ public class NewPlayerScript : MonoBehaviour
 
     void Update()
     {
+        if (onTitle)
+        {
+            return;
+        }
+
         if (gameController == null)
         {
             GameObject gc = GameObject.FindWithTag("GameController");
@@ -553,7 +582,7 @@ public class NewPlayerScript : MonoBehaviour
         {
             if (other.gameObject.tag.Equals("AmmoBox"))
             {
-                wepScript.totalBulletsLeft = 120 + (wepScript.bulletsPerMag - wepScript.currentBullets);
+                wepActionScript.totalBulletsLeft = 120 + (wepActionScript.bulletsPerMag - wepActionScript.currentBullets);
                 other.gameObject.GetComponent<PickupScript>().PlayPickupSound();
                 other.gameObject.GetComponent<PickupScript>().DestroyPickup();
             }
@@ -618,7 +647,7 @@ public class NewPlayerScript : MonoBehaviour
             charController.enabled = status;
             fpc.enabled = status;
             viewCam.enabled = status;
-            wepScript.enabled = status;
+            wepActionScript.enabled = status;
         }
     }
 
@@ -685,15 +714,15 @@ public class NewPlayerScript : MonoBehaviour
         healTimer = 1f;
         currentBomb = null;
         bombDefuseCounter = 0f;
-        wepScript.totalBulletsLeft = 120;
-        wepScript.currentBullets = wepScript.bulletsPerMag;
+        wepActionScript.totalBulletsLeft = 120;
+        wepActionScript.currentBullets = wepActionScript.bulletsPerMag;
 
         // Send player back to spawn position, reset rotation, leave spectator mode
         bodyTrans.localRotation = Quaternion.Euler(alivePosition);
         transform.rotation = Quaternion.Euler(Vector3.zero);
         transform.position = new Vector3(gameController.spawnLocation.position.x, gameController.spawnLocation.position.y, gameController.spawnLocation.position.z);
         LeaveSpectatorMode();
-        wepScript.CockingAction();
+        wepActionScript.CockingAction();
     }
 
     [PunRPC]
@@ -731,5 +760,21 @@ public class NewPlayerScript : MonoBehaviour
         setSpeed();
         setStamina();
         setArmor();
+    }
+
+    public void ToggleInGameObjects(bool b)
+    {
+        viewCam.gameObject.SetActive(b);
+        charController.enabled = b;
+        fpc.enabled = b;
+        GetComponent<Rigidbody>().useGravity = b;
+        GetComponent<Rigidbody>().freezeRotation = b;
+        wepActionScript.enabled = b;
+        photonView.enabled = b;
+        GetComponent<PhotonTransformView>().enabled = b;
+        hud.enabled = b;
+        camShakeScript.enabled = b;
+        audioController.enabled = b;
+        inGameMessengerHud.enabled = b;
     }
 }

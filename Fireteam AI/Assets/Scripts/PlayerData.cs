@@ -32,16 +32,21 @@ public class PlayerData : MonoBehaviour {
 
 	}
 
-	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
-		if(!PhotonNetwork.InRoom) return;
-		if (SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetwork")) {
-			if (PlayerData.playerdata.inGamePlayerReference == null) {
-				PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate (
-					"PlayerPho",
-					Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints [0],
-					Quaternion.identity, 0);
-			}
-		} else {
+    public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
+        if (!PhotonNetwork.InRoom) return;
+        if (SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
+            if (PlayerData.playerdata.inGamePlayerReference == null) {
+                PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
+                    "PlayerPho",
+                    Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
+                    Quaternion.identity, 0);
+            }
+        } else if (SceneManager.GetActiveScene().name.Equals("Title")) {
+            // If land back on title screen, deactivate all in-game components
+            bodyReference.GetComponent<PlayerHUDScript>().ToggleInGameObjects(false);
+            bodyReference.GetComponent<AudioControllerScript>().ToggleInGameObjects(false);
+            bodyReference.GetComponent<NewPlayerScript>().ToggleInGameObjects(false);
+        } else {
 			if (PlayerData.playerdata.inGamePlayerReference != null) {
 				PhotonNetwork.Destroy (PlayerData.playerdata.inGamePlayerReference);
 			}

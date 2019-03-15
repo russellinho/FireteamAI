@@ -159,4 +159,10 @@ public class AudioControllerScript : MonoBehaviour {
 		fxSound4.Play ();
 	}
 
+    public void ToggleInGameObjects(bool b)
+    {
+        fxRef.SetActive(b);
+        bgm.gameObject.SetActive(b);
+    }
+
 }

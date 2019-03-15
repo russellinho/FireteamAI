@@ -303,7 +303,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 114336108925888890}
   viewIdField: 0
-  InstantiationId: 5
+  InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &114336108925888890
 MonoBehaviour:
@@ -914,7 +914,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 114766418645260732}
   viewIdField: 0
-  InstantiationId: 6
+  InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &114766418645260732
 MonoBehaviour:
@@ -944,6 +944,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
+  myHudMarkerCam1: {fileID: 0}
+  myHudMarkerCam2: {fileID: 0}
+  myHudMarker: {fileID: 0}
 --- !u!114 &114745308866780578
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Photon.Realtime;
 using Photon.Pun;
+using UnityEngine.SceneManagement;
 
 public class InGameMessengerHUD : MonoBehaviour {
 
@@ -14,15 +15,39 @@ public class InGameMessengerHUD : MonoBehaviour {
 	private PlayerScript playerScript;
 	private PhotonView pView;
 
-	// Use this for initialization
-	void Start () {
-		playerScript = GetComponent<PlayerScript> ();
+    private bool onTitle;
+
+    void Awake()
+    {
+        if (SceneManager.GetActiveScene().name.Equals("Title"))
+        {
+            onTitle = true;
+        }
+        else
+        {
+            onTitle = false;
+        }
+    }
+
+    // Use this for initialization
+    void Start () {
+        if (onTitle)
+        {
+            return;
+        }
+
+        playerScript = GetComponent<PlayerScript> ();
 		pView = playerScript.GetComponent<PhotonView> ();
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if (container == null) {
+        if (onTitle)
+        {
+            return;
+        }
+
+        if (container == null) {
 			GameObject c = GameObject.Find ("HUD");
 			if (c != null) {
 				container = c.GetComponent<HUDContainer> ();

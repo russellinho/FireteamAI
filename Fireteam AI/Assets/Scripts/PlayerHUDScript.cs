@@ -16,6 +16,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     private PlayerScript playerScript;
 	private WeaponScript wepScript;
 	private GameControllerScript gameController;
+    public GameObject myHudMarkerCam1;
+    public GameObject myHudMarkerCam2;
+    public GameObject myHudMarker;
 
 	private ArrayList missionWaypoints;
 	private Dictionary<int, GameObject> playerMarkers = new Dictionary<int, GameObject> ();
@@ -533,5 +536,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		Destroy (playerMarkers [otherPlayer.ActorNumber]);
 		playerMarkers.Remove (otherPlayer.ActorNumber);
 	}
+
+    public void ToggleInGameObjects(bool b)
+    {
+        myHudMarkerCam1.SetActive(b);
+        myHudMarkerCam2.SetActive(b);
+        myHudMarker.SetActive(b);
+    }
 
 }
