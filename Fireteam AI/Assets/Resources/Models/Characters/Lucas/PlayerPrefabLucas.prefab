@@ -3970,11 +3970,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameController: {fileID: 0}
+  audioController: {fileID: 5296896660262247156}
+  charController: {fileID: 4196843220320186373}
   fpsHands: {fileID: 0}
+  wepActionScript: {fileID: 3452317892274833149}
+  aud: {fileID: 7761096413297295613}
   viewCam: {fileID: 6871703159772914339}
   bodyTrans: {fileID: 0}
   spectatorCam: {fileID: 0}
   thisSpectatorCam: {fileID: 0}
+  hud: {fileID: 3567428737045997161}
   equipmentScript: {fileID: 4944978373736020597}
   camShakeScript: {fileID: 470156640311064410}
   inGameMessengerHud: {fileID: 5300928483737822742}

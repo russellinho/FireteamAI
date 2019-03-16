@@ -11,16 +11,16 @@ public class NewPlayerScript : MonoBehaviourPunCallbacks
 
     // Object references
     public GameControllerScript gameController;
-    private AudioControllerScript audioController;
-    private CharacterController charController;
+    public AudioControllerScript audioController;
+    public CharacterController charController;
     public GameObject fpsHands;
-    private WeaponActionScript wepActionScript;
-    private AudioSource aud;
+    public WeaponActionScript wepActionScript;
+    public AudioSource aud;
     public Camera viewCam;
     public Transform bodyTrans;
     public GameObject spectatorCam;
     public GameObject thisSpectatorCam;
-    private PlayerHUDScript hud;
+    public PlayerHUDScript hud;
     public EquipmentScript equipmentScript;
     public CameraShakeScript camShakeScript;
     public InGameMessengerHUD inGameMessengerHud;
@@ -87,6 +87,7 @@ public class NewPlayerScript : MonoBehaviourPunCallbacks
     private float bombDefuseCounter = 0f;
 
     void Awake() {
+        DontDestroyOnLoad(gameObject);
         if (SceneManager.GetActiveScene().name.Equals("Title"))
         {
             onTitle = true;
@@ -112,10 +113,8 @@ public class NewPlayerScript : MonoBehaviourPunCallbacks
         // Else, load the in-game necessities
         DontDestroyOnLoad(gameObject);
         AddMyselfToPlayerList();
-        audioController = GetComponent<AudioControllerScript>();
 
         // Setting original positions for returning from crouching
-        charController = GetComponent<CharacterController>();
         charHeightOriginal = charController.height;
         fpcPositionYOriginal = fpcPosition.localPosition.y;
         bodyScaleOriginal = bodyTrans.lossyScale.y;
@@ -143,12 +142,7 @@ public class NewPlayerScript : MonoBehaviourPunCallbacks
         }
 
         gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
-
-        //      photonView.RPC ("SyncPlayerColor", RpcTarget.All, PlayerData.playerdata.color);
-        wepActionScript = gameObject.GetComponent<WeaponActionScript>();
-        aud = GetComponent<AudioSource>();
-        hud = GetComponent<PlayerHUDScript>();
-
+        
         // Initialize variables
         canShoot = true;
 
@@ -770,11 +764,22 @@ public class NewPlayerScript : MonoBehaviourPunCallbacks
         GetComponent<Rigidbody>().useGravity = b;
         GetComponent<Rigidbody>().freezeRotation = b;
         wepActionScript.enabled = b;
-        photonView.enabled = b;
+        //photonView.enabled = b;
         GetComponent<PhotonTransformView>().enabled = b;
         hud.enabled = b;
         camShakeScript.enabled = b;
         audioController.enabled = b;
         inGameMessengerHud.enabled = b;
+    }
+
+    [PunRPC]
+    void SpawnOnNetwork(Vector3 pos, Quaternion rot, int id1)
+    {
+        transform.position = pos;
+        transform.rotation = rot;
+
+        // Set player's PhotonView
+        PhotonView[] nViews = transform.GetComponentsInChildren<PhotonView>();
+        nViews[0].ViewID = id1;
     }
 }
