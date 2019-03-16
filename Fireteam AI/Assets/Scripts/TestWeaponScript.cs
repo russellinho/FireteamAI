@@ -28,10 +28,6 @@ public class TestWeaponScript : MonoBehaviour
     void Awake() {
         if (SceneManager.GetActiveScene().name.Equals("Title")) {
             onTitle = true;
-            equippedPrimaryWeapon = "AK-47";
-            equippedPrimaryType = "Assault Rifle";
-            equippedSecondaryWeapon = "Glock23";
-            equippedSecondaryType = "Pistol";
             animator.SetBool("onTitle", true);
         } else {
             onTitle = false;
@@ -179,29 +175,31 @@ public class TestWeaponScript : MonoBehaviour
                 break;
         }
 
-        // Shop GUI stuff
-        if (shopItemRef != null) {
-            // Sets item that you unequipped to white
-            if (ts.currentlyEquippedItemPrefab != null) {
-                ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
-                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
-            }
-
-            // Sets item that you just equipped to orange in the shop
+        if (onTitle) {
+            // Shop GUI stuff
             if (shopItemRef != null) {
-                shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-                shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
-                ts.currentlyEquippedItemPrefab = shopItemRef;
-            }
-        }
+                // Sets item that you unequipped to white
+                if (ts.currentlyEquippedItemPrefab != null) {
+                    ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+                    ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+                }
 
-        // Puts the item that you just equipped in its proper slot
-        if (w.type.Equals("Primary")) {
-            ts.equippedPrimarySlot.GetComponentInChildren<RawImage>().enabled = true;
-            ts.equippedPrimarySlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-        } else {
-            ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().enabled = true;
-            ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+                // Sets item that you just equipped to orange in the shop
+                if (shopItemRef != null) {
+                    shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+                    shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+                    ts.currentlyEquippedItemPrefab = shopItemRef;
+                }
+            }
+
+            // Puts the item that you just equipped in its proper slot
+            if (w.type.Equals("Primary")) {
+                ts.equippedPrimarySlot.GetComponentInChildren<RawImage>().enabled = true;
+                ts.equippedPrimarySlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+            } else {
+                ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().enabled = true;
+                ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+            }
         }
     }
 
@@ -213,6 +211,13 @@ public class TestWeaponScript : MonoBehaviour
                 weaponHolder.SetWeaponPositionForTitle(new Vector3(-0.01f, 0.02f, 0.02f));
             }
         }
+    }
+
+    public void EquipDefaultWeapons() {
+        equippedPrimaryWeapon = "AK-47";
+        equippedPrimaryType = "Assault Rifle";
+        equippedSecondaryWeapon = "Glock23";
+        equippedSecondaryType = "Pistol";
     }
 
 }

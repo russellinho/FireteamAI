@@ -68,13 +68,13 @@ public class EquipmentScript : MonoBehaviour
         }
         else
         {
-            EquipCharacter(info.equippedCharacter, null);
-            EquipHeadgear(info.equippedHeadgear, null);
-            EquipFacewear(info.equippedFacewear, null);
-            EquipTop(info.equippedTop, null);
-            EquipBottom(info.equippedBottom, null);
-            EquipFootwear(info.equippedFootwear, null);
-            EquipArmor(info.equippedArmor, null);
+            EquipCharacterInGame(PlayerData.playerdata.info.equippedCharacter);
+            EquipHeadgearInGame(PlayerData.playerdata.info.equippedHeadgear);
+            EquipFacewearInGame(PlayerData.playerdata.info.equippedFacewear);
+            EquipTopInGame(PlayerData.playerdata.info.equippedTop);
+            EquipBottomInGame(PlayerData.playerdata.info.equippedBottom);
+            EquipFootwearInGame(PlayerData.playerdata.info.equippedFootwear);
+            EquipArmorInGame(PlayerData.playerdata.info.equippedArmor);
         }
     }
 
@@ -495,6 +495,113 @@ public class EquipmentScript : MonoBehaviour
         ts.SetStatBoosts((int)((playerScript.stats.armor - 1f) * 100f), (int)((playerScript.stats.speed - 1f) * 100f), (int)((playerScript.stats.stamina - 1f) * 100f));
 
         equippedArmor = "";
+    }
+
+    private void EquipCharacterInGame(string character) {
+        equippedCharacter = character;
+    }
+
+    private void EquipTopInGame(string top) {
+        equippedTop = top;
+        Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[top];
+        equippedTopRef = (GameObject)Instantiate((GameObject)Resources.Load(e.prefabPath));
+        equippedTopRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedTopRef.GetComponentInChildren<MeshFixer>();
+        m.target = myTopRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+
+        EquipSkinInGame(e.skinType);
+    }
+
+    private void EquipSkinInGame(int skin) {
+        equippedSkin = skin;
+        equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[equippedCharacter].skins[skin]));
+        equippedSkinRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
+        m.target = mySkinRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
+
+    private void EquipBottomInGame(string bottom) {
+        equippedBottom = bottom;
+        Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[bottom];
+        equippedBottomRef = (GameObject)Instantiate((GameObject)Resources.Load(e.prefabPath));
+        equippedBottomRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedBottomRef.GetComponentInChildren<MeshFixer>();
+        m.target = myBottomRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
+
+    private void EquipHeadgearInGame(string headgear) {
+        equippedHeadgear = headgear;
+        Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[headgear];
+        // Hide hair if has hair
+        if (e.hideHairFlag) {
+            if (myHairRenderer != null) {
+                myHairRenderer.SetActive(false);
+            }
+        } else {
+            if (myHairRenderer != null) {
+                myHairRenderer.SetActive(true);
+            }
+        }
+        equippedHeadgearRef = (GameObject)Instantiate((GameObject)Resources.Load(e.prefabPath));
+        equippedHeadgearRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedHeadgearRef.GetComponentInChildren<MeshFixer>();
+        m.target = myHeadgearRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+
+        playerScript.stats.updateStats(e.speed, e.stamina, e.armor);
+        playerScript.updateStats();
+    }
+    private void EquipFacewearInGame(string facewear) {
+        equippedFacewear = facewear;
+        Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[facewear];
+        equippedFacewearRef = (GameObject)Instantiate((GameObject)Resources.Load(e.prefabPath));
+        equippedFacewearRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedFacewearRef.GetComponentInChildren<MeshFixer>();
+        m.target = myFacewearRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+
+        playerScript.stats.updateStats(e.speed, e.stamina, e.armor);
+        playerScript.updateStats();
+    }
+
+    private void EquipArmorInGame(string armor) {
+        equippedArmor = armor;
+        Armor a = InventoryScript.characterCatalog[equippedCharacter].armorCatalog[armor];
+        equippedArmorTopRef = (GameObject)Instantiate((GameObject)Resources.Load(a.prefabPathTop));
+        equippedArmorTopRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedArmorTopRef.GetComponentInChildren<MeshFixer>();
+        m.target = myArmorTopRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+
+        equippedArmorBottomRef = (GameObject)Instantiate((GameObject)Resources.Load(a.prefabPathBottom));
+        equippedArmorBottomRef.transform.SetParent(gameObject.transform);
+        m = equippedArmorBottomRef.GetComponentInChildren<MeshFixer>();
+        m.target = myArmorBottomRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+
+        playerScript.stats.updateStats(a.speed, a.stamina, a.armor);
+        playerScript.updateStats();
+    }
+
+    private void EquipFootwearInGame(string footwear) {
+        equippedFootwear = footwear;
+        Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[footwear];
+        equippedFootwearRef = (GameObject)Instantiate((GameObject)Resources.Load(e.prefabPath));
+        equippedFootwearRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedFootwearRef.GetComponentInChildren<MeshFixer>();
+        m.target = myFootwearRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
     }
 
 }

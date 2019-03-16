@@ -16,6 +16,7 @@ public class PlayerData : MonoBehaviour
     public bool disconnectedFromServer;
     public string disconnectReason;
     public bool testMode;
+    public PlayerInfo info;
 
     public GameObject bodyReference;
     public GameObject inGamePlayerReference;
@@ -26,6 +27,7 @@ public class PlayerData : MonoBehaviour
         {
             DontDestroyOnLoad(gameObject);
             LoadPlayerData();
+            info = new PlayerInfo();
             playerdata = this;
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
         }
@@ -61,7 +63,6 @@ public class PlayerData : MonoBehaviour
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/playerData.dat");
 
-        PlayerInfo info = new PlayerInfo();
         EquipmentScript myEquips = bodyReference.GetComponent<EquipmentScript>();
         TestWeaponScript myWeps = bodyReference.GetComponent<TestWeaponScript>();
         info.playername = playername;
@@ -88,7 +89,7 @@ public class PlayerData : MonoBehaviour
         {
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + "/playerData.dat", FileMode.Open);
-            PlayerInfo info = (PlayerInfo)bf.Deserialize(file);
+            info = (PlayerInfo)bf.Deserialize(file);
             file.Close();
             FindBodyRef(info.equippedCharacter);
             playername = info.playername;
@@ -116,6 +117,7 @@ public class PlayerData : MonoBehaviour
             characterWeps.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
             playername = "Player";
             characterEquips.EquipCharacter("Lucas", null);
+            characterWeps.EquipDefaultWeapons();
         }
         PhotonNetwork.NickName = playername;
     }
@@ -148,7 +150,7 @@ public class PlayerData : MonoBehaviour
 }
 
 [Serializable]
-class PlayerInfo
+public class PlayerInfo
 {
 	public string playername;
     public string equippedCharacter;
