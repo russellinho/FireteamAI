@@ -126,8 +126,10 @@ public class TestWeaponScript : MonoBehaviour
         // Set animation and hand positions
         equippedSecondaryType = "Pistol";
         equippedSecondaryWeapon = weaponName;
-        weaponHolder.SetWeaponPosition();
-        weaponHolder.ResetSteadyHand();
+        if (!onTitle) {
+            weaponHolder.SetWeaponPosition();
+            weaponHolder.ResetSteadyHand();
+        }
     }
 
     public void EquipSniperRifle(string weaponName) {
@@ -151,11 +153,11 @@ public class TestWeaponScript : MonoBehaviour
                 EquipAssaultRifle(weaponName);
                 break;
             case "Pistol":
-                if (!animator.GetBool("onTitle")) {
+                if (!onTitle) {
                     currentlyEquippedType = 2;
                     weaponHolder.LoadWeapon(w.prefabPath);
-                    EquipPistol(weaponName);
                 }
+                EquipPistol(weaponName);
                 break;
             case "Shotgun":
                 currentlyEquippedType = 1;
@@ -212,6 +214,8 @@ public class TestWeaponScript : MonoBehaviour
         equippedPrimaryType = "Assault Rifle";
         equippedSecondaryWeapon = "Glock23";
         equippedSecondaryType = "Pistol";
+        EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null);
+        EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null);
     }
 
 }

@@ -118,6 +118,7 @@ public class PlayerData : MonoBehaviour
             playername = "Player";
             characterEquips.EquipCharacter("Lucas", null);
             characterWeps.EquipDefaultWeapons();
+            SavePlayerData();
         }
         PhotonNetwork.NickName = playername;
     }
