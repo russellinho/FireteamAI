@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class EquipmentScript : MonoBehaviour
 {
@@ -43,9 +44,37 @@ public class EquipmentScript : MonoBehaviour
 
     public GameObject myBones;
 
+    private bool onTitle;
+
+    void Awake()
+    {
+        if (SceneManager.GetActiveScene().name.Equals("Title"))
+        {
+            onTitle = true;
+        }
+        else
+        {
+            onTitle = false;
+        }
+    }
+
     void Start() {
-        if (ts == null) {
-            ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+        if (onTitle)
+        {
+            if (ts == null)
+            {
+                ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+            }
+        }
+        else
+        {
+            EquipCharacter(info.equippedCharacter, null);
+            EquipHeadgear(info.equippedHeadgear, null);
+            EquipFacewear(info.equippedFacewear, null);
+            EquipTop(info.equippedTop, null);
+            EquipBottom(info.equippedBottom, null);
+            EquipFootwear(info.equippedFootwear, null);
+            EquipArmor(info.equippedArmor, null);
         }
     }
 

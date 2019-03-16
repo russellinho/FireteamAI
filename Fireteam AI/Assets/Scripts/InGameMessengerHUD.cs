@@ -15,38 +15,14 @@ public class InGameMessengerHUD : MonoBehaviour {
 	private PlayerScript playerScript;
 	private PhotonView pView;
 
-    private bool onTitle;
-
-    void Awake()
-    {
-        if (SceneManager.GetActiveScene().name.Equals("Title"))
-        {
-            onTitle = true;
-        }
-        else
-        {
-            onTitle = false;
-        }
-    }
-
     // Use this for initialization
     void Start () {
-        if (onTitle)
-        {
-            return;
-        }
-
         playerScript = GetComponent<PlayerScript> ();
 		pView = playerScript.GetComponent<PhotonView> ();
 	}
 
 	// Update is called once per frame
 	void Update () {
-        if (onTitle)
-        {
-            return;
-        }
-
         if (container == null) {
 			GameObject c = GameObject.Find ("HUD");
 			if (c != null) {

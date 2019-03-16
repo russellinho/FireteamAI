@@ -537,11 +537,4 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		playerMarkers.Remove (otherPlayer.ActorNumber);
 	}
 
-    public void ToggleInGameObjects(bool b)
-    {
-        myHudMarkerCam1.SetActive(b);
-        myHudMarkerCam2.SetActive(b);
-        myHudMarker.SetActive(b);
-    }
-
 }

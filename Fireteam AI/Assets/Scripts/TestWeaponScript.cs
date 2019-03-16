@@ -23,14 +23,18 @@ public class TestWeaponScript : MonoBehaviour
     private Dictionary<string, Vector3> sniperRifleIdleHandPositions;
     public bool weaponReady;
 
+    private bool onTitle;
+
     void Awake() {
         if (SceneManager.GetActiveScene().name.Equals("Title")) {
+            onTitle = true;
             equippedPrimaryWeapon = "AK-47";
             equippedPrimaryType = "Assault Rifle";
             equippedSecondaryWeapon = "Glock23";
             equippedSecondaryType = "Pistol";
             animator.SetBool("onTitle", true);
         } else {
+            onTitle = false;
             animator.SetBool("onTitle", false);
         }
     }
@@ -38,7 +42,10 @@ public class TestWeaponScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+        if (onTitle)
+        {
+            ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+        }
         equipmentScript = GetComponent<EquipmentScript>();
         weaponReady = false;
         // Populate hand positions
@@ -68,6 +75,8 @@ public class TestWeaponScript : MonoBehaviour
             EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null);
             EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null);
         } else {
+            EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null);
+            EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null);
             DrawWeapon(1);
         }
     }

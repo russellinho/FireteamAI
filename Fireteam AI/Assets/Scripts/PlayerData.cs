@@ -41,13 +41,10 @@ public class PlayerData : MonoBehaviour
         string levelName = SceneManager.GetActiveScene().name;
         if (levelName.Equals("BetaLevelNetwork"))
         {
-            //ChangePlayerInGameStatus(true);
-            SpawnPlayerEverywhere();
-        }
-        else if (levelName.Equals("Title"))
-        {
-            // If land back on title screen, deactivate all in-game components
-            ChangePlayerInGameStatus(false);
+            PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
+                "PlayerPrefabLucasAction", 
+                Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0], 
+                Quaternion.Euler(Vector3.zero));
         }
         else
         {
@@ -102,7 +99,6 @@ public class PlayerData : MonoBehaviour
             characterEquips.EquipCharacter(info.equippedCharacter, null);
             characterEquips.EquipHeadgear(info.equippedHeadgear, null);
             characterEquips.EquipFacewear(info.equippedFacewear, null);
-            char gender = ((info.equippedCharacter.Equals("Jade") || info.equippedCharacter.Equals("Hana")) ? 'F' : 'M');
             characterEquips.EquipTop(info.equippedTop, null);
             characterEquips.EquipBottom(info.equippedBottom, null);
             characterEquips.EquipFootwear(info.equippedFootwear, null);
@@ -147,24 +143,6 @@ public class PlayerData : MonoBehaviour
         characterWeps.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
         bodyReference.GetComponent<EquipmentScript>().HighlightItemPrefab(shopItem);
         characterEquips.EquipCharacter(character, null);
-    }
-
-    void SpawnPlayerEverywhere()
-    {
-        // You must be in a Room already
-
-        // Manually allocate PhotonViewID
-        int id1 = PhotonNetwork.AllocateViewID();
-
-        PhotonView photonView = bodyReference.GetComponent<PhotonView>();
-        photonView.RPC("SpawnOnNetwork", RpcTarget.AllBuffered, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0], Quaternion.Euler(Vector3.zero), id1);
-    }
-
-    void ChangePlayerInGameStatus(bool inGame)
-    {
-        bodyReference.GetComponent<PlayerHUDScript>().ToggleInGameObjects(inGame);
-        bodyReference.GetComponent<AudioControllerScript>().ToggleInGameObjects(inGame);
-        bodyReference.GetComponent<NewPlayerScript>().ToggleInGameObjects(inGame);
     }
 
 }
