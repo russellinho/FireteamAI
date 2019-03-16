@@ -77,8 +77,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         // Setting original positions for returning from crouching
         charHeightOriginal = charController.height;
-        fpcPositionYOriginal = fpcPosition.localPosition.y;
-        bodyScaleOriginal = bodyTrans.lossyScale.y;
+        fpcPositionYOriginal = transform.localPosition.y;
+        bodyScaleOriginal = transform.lossyScale.y;
         escapeValueSent = false;
         assaultModeChangedIndicator = false;
         isDefusing = false;

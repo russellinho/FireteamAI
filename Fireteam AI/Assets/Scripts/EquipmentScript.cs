@@ -19,6 +19,7 @@ public class EquipmentScript : MonoBehaviour
     public string equippedFootwear;
     public string equippedArmor;
     public int equippedSkin;
+    public char gender;
 
     public GameObject equippedSkinRef;
     public GameObject equippedHeadgearRef;
@@ -499,6 +500,11 @@ public class EquipmentScript : MonoBehaviour
 
     private void EquipCharacterInGame(string character) {
         equippedCharacter = character;
+        if (character.Equals("Lucas") || character.Equals("Daryl") || character.Equals("Codename Sayre")) {
+            gender = 'M';
+        } else {
+            gender = 'F';
+        }
     }
 
     private void EquipTopInGame(string top) {
@@ -536,6 +542,9 @@ public class EquipmentScript : MonoBehaviour
     }
 
     private void EquipHeadgearInGame(string headgear) {
+        if (headgear == null || headgear.Equals("")) {
+            return;
+        }
         equippedHeadgear = headgear;
         Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[headgear];
         // Hide hair if has hair
@@ -559,6 +568,9 @@ public class EquipmentScript : MonoBehaviour
         playerScript.updateStats();
     }
     private void EquipFacewearInGame(string facewear) {
+        if (facewear == null || facewear.Equals("")) {
+            return;
+        }
         equippedFacewear = facewear;
         Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[facewear];
         equippedFacewearRef = (GameObject)Instantiate((GameObject)Resources.Load(e.prefabPath));
@@ -573,6 +585,9 @@ public class EquipmentScript : MonoBehaviour
     }
 
     private void EquipArmorInGame(string armor) {
+        if (armor == null || armor.Equals("")) {
+            return;
+        }
         equippedArmor = armor;
         Armor a = InventoryScript.characterCatalog[equippedCharacter].armorCatalog[armor];
         equippedArmorTopRef = (GameObject)Instantiate((GameObject)Resources.Load(a.prefabPathTop));

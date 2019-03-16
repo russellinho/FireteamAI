@@ -41,38 +41,32 @@ public class TestWeaponScript : MonoBehaviour
         if (onTitle)
         {
             ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
-        }
-        equipmentScript = GetComponent<EquipmentScript>();
-        weaponReady = false;
-        // Populate hand positions
-        if (ts.currentCharGender == 'M') {
-            rifleHandPositions = new Dictionary<string, Vector3>();
-            rifleHandPositions.Add("AK-47", new Vector3(-0.098f, 0.135f, 0.075f));
-            rifleHandPositions.Add("M4A1", new Vector3(-0.065f, 0.126f, 0.04f));
-        
-            shotgunHandPositions = new Dictionary<string, Vector3>();
-            shotgunHandPositions.Add("R870", new Vector3(-0.129f, 0.145f, 0.084f));
-
-            sniperRifleHandPositions = new Dictionary<string, Vector3>();
-            sniperRifleHandPositions.Add("L96A1", new Vector3(-0.054f, 0.115f, 0.029f));
+            equipmentScript = GetComponent<EquipmentScript>();
+            weaponReady = false;
         } else {
-            rifleHandPositions = new Dictionary<string, Vector3>();
-            rifleHandPositions.Add("AK-47", new Vector3(-0.098f, 0.135f, 0.075f));
-            rifleHandPositions.Add("M4A1", new Vector3(-0.065f, 0.126f, 0.04f));
-        
-            shotgunHandPositions = new Dictionary<string, Vector3>();
-            shotgunHandPositions.Add("R870", new Vector3(-0.129f, 0.145f, 0.084f));
+            if (equipmentScript.gender == 'M') {
+                rifleHandPositions = new Dictionary<string, Vector3>();
+                rifleHandPositions.Add("AK-47", new Vector3(-0.098f, 0.135f, 0.075f));
+                rifleHandPositions.Add("M4A1", new Vector3(-0.065f, 0.126f, 0.04f));
+            
+                shotgunHandPositions = new Dictionary<string, Vector3>();
+                shotgunHandPositions.Add("R870", new Vector3(-0.129f, 0.145f, 0.084f));
 
-            sniperRifleHandPositions = new Dictionary<string, Vector3>();
-            sniperRifleHandPositions.Add("L96A1", new Vector3(-0.054f, 0.115f, 0.029f));
-        }
+                sniperRifleHandPositions = new Dictionary<string, Vector3>();
+                sniperRifleHandPositions.Add("L96A1", new Vector3(-0.054f, 0.115f, 0.029f));
+            } else {
+                rifleHandPositions = new Dictionary<string, Vector3>();
+                rifleHandPositions.Add("AK-47", new Vector3(-0.098f, 0.135f, 0.075f));
+                rifleHandPositions.Add("M4A1", new Vector3(-0.065f, 0.126f, 0.04f));
+            
+                shotgunHandPositions = new Dictionary<string, Vector3>();
+                shotgunHandPositions.Add("R870", new Vector3(-0.129f, 0.145f, 0.084f));
 
-        if (animator.GetBool("onTitle")) {
-            EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null);
-            EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null);
-        } else {
-            EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null);
-            EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null);
+                sniperRifleHandPositions = new Dictionary<string, Vector3>();
+                sniperRifleHandPositions.Add("L96A1", new Vector3(-0.054f, 0.115f, 0.029f));
+            }
+            EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
+            EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);
             DrawWeapon(1);
         }
     }

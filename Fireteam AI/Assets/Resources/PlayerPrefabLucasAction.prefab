@@ -3877,6 +3877,7 @@ MonoBehaviour:
   equippedFootwear: 
   equippedArmor: 
   equippedSkin: 0
+  gender: 0
   equippedSkinRef: {fileID: 0}
   equippedHeadgearRef: {fileID: 0}
   equippedFacewearRef: {fileID: 0}
@@ -3917,7 +3918,7 @@ MonoBehaviour:
   wepActionScript: {fileID: 3452317892274833149}
   aud: {fileID: 7761096413297295613}
   viewCam: {fileID: 6871703159772914339}
-  bodyTrans: {fileID: 0}
+  bodyTrans: {fileID: 6772054392541729070}
   spectatorCam: {fileID: 0}
   thisSpectatorCam: {fileID: 0}
   hud: {fileID: 3567428737045997161}
@@ -3934,7 +3935,7 @@ MonoBehaviour:
   respawnTimer: 0
   subComponents: []
   fpc: {fileID: 2723467805852524879}
-  fpcPosition: {fileID: 0}
+  fpcPosition: {fileID: 6772054392541729070}
   hitTimer: 0
   healTimer: 0
   hitLocation: {x: 0, y: 0, z: 0}
@@ -3950,10 +3951,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 184afdda019ac429580ac41376ada0ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mouseLook:
+    XSensitivity: 2
+    YSensitivity: 2
+    clampVerticalRotation: 1
+    MinimumX: -90
+    MaximumX: 90
+    smooth: 0
+    smoothTime: 5
+    lockCursor: 1
+    m_CameraTargetRot: {x: 0, y: 0, z: 0, w: 0}
+  playerActionScript: {fileID: 6551515373333788844}
+  cameraShakeScript: {fileID: 470156640311064410}
+  hudScript: {fileID: 3567428737045997161}
+  audioController: {fileID: 5296896660262247156}
+  fpc: {fileID: 2723467805852524879}
   range: 100
   spread: 0
-  gunAnimator: {fileID: 0}
-  audioSource: {fileID: 0}
+  gunAnimator: {fileID: 6772054392549162816}
+  audioSource: {fileID: 7761096413297295613}
   bulletsPerMag: 30
   totalBulletsLeft: 120
   currentBullets: 0
@@ -3964,18 +3980,22 @@ MonoBehaviour:
   bulletTrace: {fileID: 0}
   isCocking: 0
   isAiming: 0
-  hitParticles: {fileID: 0}
-  bulletImpact: {fileID: 0}
-  bloodEffect: {fileID: 0}
+  hitParticles: {fileID: 1617700753897852, guid: 2b61531c3d65e3f4e949e45eb6021b7b,
+    type: 3}
+  bulletImpact: {fileID: 1235035097298946, guid: 1abe832de1d01be48b12062549dcc9fb,
+    type: 3}
+  bloodEffect: {fileID: 1175462165935484, guid: a5aeebbc9242b4a4cb24c32e945135f5,
+    type: 3}
   fireRate: 0.1
   damage: 20
   firingMode: 0
-  originalTrans: {fileID: 0}
+  originalTrans: {fileID: 6772054392541729070}
   aimPos: {x: 0, y: 0, z: 0}
   sprintPos: {x: 0, y: 0, z: 0}
   sprintPos2: {x: 0, y: 0, z: 0}
   sprintRot: {x: 0, y: 0, z: 0}
   aodSpeed: 8
+  pView: {fileID: 8063240097203469863}
 --- !u!114 &2029322235069116708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4159,6 +4179,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
+  playerActionScript: {fileID: 6551515373333788844}
+  wepActionScript: {fileID: 3452317892274833149}
   myHudMarkerCam1: {fileID: 4572880822112884012}
   myHudMarkerCam2: {fileID: 702341720697595213}
   myHudMarker: {fileID: 781427226301682313}
@@ -4175,6 +4197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camTransform: {fileID: 7804118318025759623}
+  playerActionScript: {fileID: 6551515373333788844}
   shake: 0
 --- !u!114 &5296896660262247156
 MonoBehaviour:
@@ -4212,6 +4235,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
+  playerScript: {fileID: 6551515373333788844}
+  pView: {fileID: 8063240097203469863}
 --- !u!1 &6772054392541891872
 GameObject:
   m_ObjectHideFlags: 0

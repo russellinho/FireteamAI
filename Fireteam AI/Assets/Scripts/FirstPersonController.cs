@@ -49,11 +49,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		public bool sprintLock;
 
 		public bool canMove;
+        private WeaponActionScript weaponActionScript;
+        private PhotonView photonView;
 
         // Use this for initialization
         private void Start()
         {
-            if (!GetComponent<PhotonView>().IsMine) {
+            photonView = GetComponent<PhotonView>();
+            if (!photonView.IsMine) {
 				this.enabled = false;
                 return;
             }
@@ -76,7 +79,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Update is called once per frame
         private void Update()
         {
-            if (!GetComponent<PhotonView>().IsMine)
+            if (!photonView.IsMine)
             {
                 return;
             }
@@ -113,7 +116,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void FixedUpdate()
         {
-            if (!GetComponent<PhotonView>().IsMine)
+            if (!photonView.IsMine)
             {
                 return;
             }
@@ -243,7 +246,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 #if !MOBILE_INPUT
 			// On standalone builds, walk/run speed is modified by a key press.
 			// keep track of whether or not the character is walking or running
-			if (GetComponent<WeaponScript>().isAiming) {
+            if (weaponActionScript == null) {
+                weaponActionScript = GetComponent<WeaponActionScript>();
+            }
+			if (weaponActionScript.isAiming) {
 				if (!m_IsCrouching) {
 					m_IsWalking = true;
 					m_IsRunning = false;

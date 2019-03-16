@@ -13,8 +13,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	public HUDContainer container;
 
     // Player reference
-    private PlayerScript playerScript;
-	private WeaponScript wepScript;
+    public PlayerActionScript playerActionScript;
+	public WeaponActionScript wepActionScript;
 	private GameControllerScript gameController;
     public GameObject myHudMarkerCam1;
     public GameObject myHudMarkerCam2;
@@ -52,8 +52,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.scoreboard.GetComponent<Canvas> ().enabled = false;
 		container.spectatorText.enabled = false;
 
-		playerScript = GetComponent<PlayerScript> ();
-		wepScript = GetComponent<WeaponScript> ();
 		gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameControllerScript> ();
 		killPopupTimer = 0f;
 		hitmarkerTimer = 0f;
@@ -112,17 +110,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	
 	// Update is called once per frame
 	void Update () {
-		if (playerScript == null || wepScript == null) {
-			playerScript = GetComponent<PlayerScript> ();
-			wepScript = GetComponent<WeaponScript> ();
-		}
 		if (gameController == null) {
 			gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameControllerScript> ();
 			return;
 		}
-		container.healthText.text = (container.healthText ? "Health: " + playerScript.health : "");
+		container.healthText.text = (container.healthText ? "Health: " + playerActionScript.health : "");
 		if (container.staminaBar.isActiveAndEnabled) {
-			container.staminaBar.value = (playerScript.sprintTime / 3f);
+			container.staminaBar.value = (playerActionScript.sprintTime / 3f);
 		}
 
 		ToggleScoreboard (Input.GetKey(KeyCode.Tab));
@@ -130,8 +124,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		UpdateHitmarker ();
 
 		// Update UI
-		container.weaponLabelTxt.text = playerScript.currWep;
-		container.ammoTxt.text = "" + wepScript.currentBullets + '/' + wepScript.totalBulletsLeft;
+		//container.weaponLabelTxt.text = playerActionScript.currWep;
+		container.weaponLabelTxt.text = "ooo";
+		container.ammoTxt.text = "" + wepActionScript.currentBullets + '/' + wepActionScript.totalBulletsLeft;
 		UpdatePlayerMarkers ();
 		UpdateWaypoints ();
 		UpdateCursorStatus ();
@@ -145,7 +140,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			}
 			ToggleHUD (false);
 		} else {
-			if (playerScript.health > 0 || playerScript.isRespawning) {
+			if (playerActionScript.health > 0 || playerActionScript.isRespawning) {
 				ToggleGameOverPopup (false);
 			}
 		}
@@ -189,46 +184,46 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		{
 			if (i == missionWaypoints.Count - 1)
 			{
-				if (playerScript.viewCam.enabled) {
-					float renderCheck = Vector3.Dot((gameController.exitPoint.transform.position - playerScript.viewCam.transform.position).normalized, playerScript.viewCam.transform.forward);
+				if (playerActionScript.viewCam.enabled) {
+					float renderCheck = Vector3.Dot((gameController.exitPoint.transform.position - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
 					if (renderCheck <= 0)
 						continue;
 					if (gameController.bombsRemaining == 0)
 					{
 						((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled = true;
-						((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = playerScript.viewCam.WorldToScreenPoint(gameController.exitPoint.transform.position);
+						((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = playerActionScript.viewCam.WorldToScreenPoint(gameController.exitPoint.transform.position);
 					}
-				} else if (playerScript.thisSpectatorCam != null) {
-					float renderCheck = Vector3.Dot((gameController.exitPoint.transform.position - playerScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
+				} else if (playerActionScript.thisSpectatorCam != null) {
+					float renderCheck = Vector3.Dot((gameController.exitPoint.transform.position - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
 					if (renderCheck <= 0)
 						continue;
 					if (gameController.bombsRemaining == 0)
 					{
 						((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled = true;
-						((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = playerScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(gameController.exitPoint.transform.position);
+						((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(gameController.exitPoint.transform.position);
 					}
 				}
 			}
 			else
 			{
-				if (playerScript.viewCam.enabled) {
-					float renderCheck = Vector3.Dot ((gameController.bombs [i].transform.position - playerScript.viewCam.transform.position).normalized, playerScript.viewCam.transform.forward);
+				if (playerActionScript.viewCam.enabled) {
+					float renderCheck = Vector3.Dot ((gameController.bombs [i].transform.position - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
 					if (renderCheck <= 0)
 						continue;
 					if (!gameController.bombs [i].GetComponent<BombScript> ().defused) {
 						Vector3 p = new Vector3 (gameController.bombs [i].transform.position.x, gameController.bombs [i].transform.position.y + gameController.bombs [i].transform.lossyScale.y, gameController.bombs [i].transform.position.z);
-						((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ().position = playerScript.viewCam.WorldToScreenPoint (p);
+						((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ().position = playerActionScript.viewCam.WorldToScreenPoint (p);
 					}
 					if (((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled && gameController.bombs [i].GetComponent<BombScript> ().defused) {
 						((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled = false;
 					}
-				} else if (playerScript.thisSpectatorCam != null) {
-					float renderCheck = Vector3.Dot ((gameController.bombs [i].transform.position - playerScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
+				} else if (playerActionScript.thisSpectatorCam != null) {
+					float renderCheck = Vector3.Dot ((gameController.bombs [i].transform.position - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
 					if (renderCheck <= 0)
 						continue;
 					if (!gameController.bombs [i].GetComponent<BombScript> ().defused) {
 						Vector3 p = new Vector3 (gameController.bombs [i].transform.position.x, gameController.bombs [i].transform.position.y + gameController.bombs [i].transform.lossyScale.y, gameController.bombs [i].transform.position.z);
-						((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ().position = playerScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint (p);
+						((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ().position = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint (p);
 					}
 					if (((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled && gameController.bombs [i].GetComponent<BombScript> ().defused) {
 						((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled = false;
@@ -253,36 +248,36 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				playerMarkers.Add (actorNo, marker);
 			}
 			// Check if it can be rendered to the screen
-			if (playerScript.viewCam.enabled) {
-				float renderCheck = Vector3.Dot((p.transform.position - playerScript.viewCam.transform.position).normalized, playerScript.viewCam.transform.forward);
+			if (playerActionScript.viewCam.enabled) {
+				float renderCheck = Vector3.Dot((p.transform.position - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
 				if (renderCheck <= 0)
 					continue;
 				// If the player is alive and on camera, then render the player name and health bar
-				if (p.GetComponent<PlayerScript>().health > 0)
+				if (p.GetComponent<PlayerActionScript>().health > 0)
 				{
 					playerMarkers [actorNo].SetActive (true);
-					playerMarkers[actorNo].GetComponentInChildren<Slider>().value = (((float)p.GetComponent<PlayerScript>().health) / 100.0f);
+					playerMarkers[actorNo].GetComponentInChildren<Slider>().value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
 					Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + p.transform.lossyScale.y, p.transform.position.z);
-					playerMarkers[actorNo].GetComponent<RectTransform>().position = playerScript.viewCam.WorldToScreenPoint(o);
+					playerMarkers[actorNo].GetComponent<RectTransform>().position = playerActionScript.viewCam.WorldToScreenPoint(o);
 				}
-				if (playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled && p.GetComponent<PlayerScript>().health <= 0)
+				if (playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled && p.GetComponent<PlayerActionScript>().health <= 0)
 				{
 					playerMarkers [actorNo].SetActive (false);
 					//playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled = false;
 				}
-			} else if (playerScript.thisSpectatorCam != null) {
-				float renderCheck = Vector3.Dot((p.transform.position - playerScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
+			} else if (playerActionScript.thisSpectatorCam != null) {
+				float renderCheck = Vector3.Dot((p.transform.position - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
 				if (renderCheck <= 0)
 					continue;
 				// If the player is alive and on camera, then render the player name and health bar
-				if (p.GetComponent<PlayerScript>().health > 0)
+				if (p.GetComponent<PlayerActionScript>().health > 0)
 				{
 					playerMarkers [actorNo].SetActive (true);
-					playerMarkers[actorNo].GetComponentInChildren<Slider>().value = (((float)p.GetComponent<PlayerScript>().health) / 100.0f);
+					playerMarkers[actorNo].GetComponentInChildren<Slider>().value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
 					Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + p.transform.lossyScale.y, p.transform.position.z);
-					playerMarkers[actorNo].GetComponent<RectTransform>().position = playerScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
+					playerMarkers[actorNo].GetComponent<RectTransform>().position = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
 				}
-				if (playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled && p.GetComponent<PlayerScript>().health <= 0)
+				if (playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled && p.GetComponent<PlayerActionScript>().health <= 0)
 				{
 					playerMarkers [actorNo].SetActive (false);
 					//playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled = false;
@@ -307,13 +302,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	void UpdateHitFlare() {
 		// Hit timer is set to 0 every time the player is hit, if player has been hit recently, make sure the hit flare and dir is set
 		container.healFlare.GetComponent<RawImage>().enabled = false;
-		if (playerScript.hitTimer < 1f) {
+		if (playerActionScript.hitTimer < 1f) {
 			container.hitFlare.GetComponent<RawImage> ().enabled = true;
-			float a = -Vector3.Angle (transform.forward, playerScript.hitLocation);
+			float a = -Vector3.Angle (transform.forward, playerActionScript.hitLocation);
 			Vector3 temp = container.hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
 			container.hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(temp.x,temp.y,a));
 			container.hitDir.GetComponent<RawImage> ().enabled = true;
-			playerScript.hitTimer += Time.deltaTime;
+			playerActionScript.hitTimer += Time.deltaTime;
 		} else {
 			container.hitFlare.GetComponent<RawImage> ().enabled = false;
 			container.hitDir.GetComponent<RawImage> ().enabled = false;
@@ -321,9 +316,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void UpdateHealFlare() {
-		if (playerScript.healTimer < 1f) {
+		if (playerActionScript.healTimer < 1f) {
 			container.healFlare.GetComponent<RawImage> ().enabled = true;
-			playerScript.healTimer += Time.deltaTime;
+			playerActionScript.healTimer += Time.deltaTime;
 		} else {
 			container.healFlare.GetComponent<RawImage> ().enabled = false;
 		}
@@ -341,7 +336,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleScoreboard(bool b)
     {
-		if (playerScript.health <= 0) {
+		if (playerActionScript.health <= 0) {
 			container.healthText.enabled = false;
 			container.staminaBar.gameObject.SetActive (false);
 			container.weaponLabelTxt.enabled = false;
@@ -516,8 +511,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void HandleRespawnBar() {
 		if (container.respawnBar.gameObject.activeInHierarchy) {
-			container.respawnBar.value = ((5f - playerScript.respawnTimer) / 5f);
-			if (playerScript.respawnTimer <= 0f) {
+			container.respawnBar.value = ((5f - playerActionScript.respawnTimer) / 5f);
+			if (playerActionScript.respawnTimer <= 0f) {
 				container.respawnBar.gameObject.SetActive (false);
 			}
 		}
@@ -525,7 +520,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void ToggleGameOverBanner(bool b) {
 		if (b) {
-			playerScript.HandleGameOverBanner ();
+			playerActionScript.HandleGameOverBanner ();
 			container.gameOverBanner.SetActive (true);
 		} else {
 			container.gameOverBanner.SetActive (false);

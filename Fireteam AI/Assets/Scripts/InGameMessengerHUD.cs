@@ -12,14 +12,8 @@ public class InGameMessengerHUD : MonoBehaviour {
 	public HUDContainer container;
 
 	// Player reference
-	private PlayerScript playerScript;
-	private PhotonView pView;
-
-    // Use this for initialization
-    void Start () {
-        playerScript = GetComponent<PlayerScript> ();
-		pView = playerScript.GetComponent<PhotonView> ();
-	}
+	public PlayerActionScript playerScript;
+	public PhotonView pView;
 
 	// Update is called once per frame
 	void Update () {

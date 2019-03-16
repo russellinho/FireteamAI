@@ -9,11 +9,12 @@ using UnityStandardAssets.Characters.FirstPerson;
 public class WeaponActionScript : MonoBehaviour
 {
 
-    private MouseLook mouseLook;
-    private PlayerScript playerScript;
-    private CameraShakeScript cameraShakeScript;
-    private PlayerHUDScript hudScript;
-    private AudioControllerScript audioController;
+    public MouseLook mouseLook;
+    public PlayerActionScript playerActionScript;
+    public CameraShakeScript cameraShakeScript;
+    public PlayerHUDScript hudScript;
+    public AudioControllerScript audioController;
+    public FirstPersonController fpc;
 
     // Projectile spread constants
     public const float MAX_SPREAD = 0.35f;
@@ -76,40 +77,30 @@ public class WeaponActionScript : MonoBehaviour
     public Vector3 sprintRot;
     // Aiming speed
     public float aodSpeed = 8f;
-    private PhotonView pView;
+    public PhotonView pView;
 
     // Use this for initialization
     void Start()
     {
-        playerScript = GetComponent<PlayerScript>();
-        pView = GetComponent<PhotonView>();
         if (!pView.IsMine)
         {
             return;
         }
         currentBullets = bulletsPerMag;
-        originalPos = originalTrans.localPosition;
-        originalRot = originalTrans.localRotation;
+        originalPos = transform.localPosition;
+        originalRot = transform.localRotation;
 
-        mouseLook = GetComponent<FirstPersonController>().m_MouseLook;
-        playerScript = GetComponent<PlayerScript>();
-        cameraShakeScript = GetComponent<CameraShakeScript>();
-        hudScript = GetComponent<PlayerHUDScript>();
-        audioController = GetComponent<AudioControllerScript>();
+        mouseLook = fpc.m_MouseLook;
         //targetGunRot = mouseLook.m_CameraTargetRot * Quaternion.Euler(-MAX_RECOIL, 0f, 0f);
         //originalGunRot = new Quaternion(mouseLook.m_CameraTargetRot.x, mouseLook.m_CameraTargetRot.y, mouseLook.m_CameraTargetRot.z, mouseLook.m_CameraTargetRot.w);
         //originalGunRot = mouseLook.m_CameraTargetRot;
 
-        CockingAction();
+        //CockingAction();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (playerScript == null)
-        {
-            playerScript = GetComponent<PlayerScript>();
-        }
         if (!pView.IsMine)
         {
             return;
@@ -133,9 +124,10 @@ public class WeaponActionScript : MonoBehaviour
         }
 
         RefillFireTimer();
-        Sprint();
+        // TODO: Re-enable
+        //Sprint();
 
-        if (!playerScript.canShoot)
+        if (!playerActionScript.canShoot)
         {
             return;
         }
@@ -160,19 +152,20 @@ public class WeaponActionScript : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!pView.IsMine || playerScript.health <= 0)
+        if (!pView.IsMine || playerActionScript.health <= 0)
         {
             return;
         }
-        if (gunAnimator.gameObject.activeSelf)
-        {
-            AnimatorStateInfo info = gunAnimator.GetCurrentAnimatorStateInfo(0);
-            isReloading = info.IsName("Reloading");
-            isSprinting = info.IsName("Sprinting");
-            gunAnimator.SetBool("Aim", isAiming);
-        }
+        // TODO: Fix this
+        // if (gunAnimator.gameObject.activeSelf)
+        // {
+        //     AnimatorStateInfo info = gunAnimator.GetCurrentAnimatorStateInfo(0);
+        //     isReloading = info.IsName("Reloading");
+        //     isSprinting = info.IsName("Sprinting");
+        //     gunAnimator.SetBool("Aim", isAiming);
+        // }
         // Shooting mechanics
-        if (shootInput && !isReloading && playerScript.canShoot)
+        if (shootInput && !isReloading && playerActionScript.canShoot)
         {
             if (currentBullets > 0)
             {
@@ -207,7 +200,7 @@ public class WeaponActionScript : MonoBehaviour
 
     public void AimDownSights()
     {
-        if (!isSprinting && !playerScript.fpc.m_IsRunning)
+        if (!isSprinting && !playerActionScript.fpc.m_IsRunning)
         {
             // Logic for toggle aim rather than hold down aim
             /**if (Input.GetButtonDown ("Fire2") && !isReloading) {
@@ -239,9 +232,9 @@ public class WeaponActionScript : MonoBehaviour
         {
             if (gunAnimator.gameObject.activeSelf)
             {
-                gunAnimator.SetBool("Sprinting", playerScript.fpc.m_IsRunning);
+                gunAnimator.SetBool("Sprinting", playerActionScript.fpc.m_IsRunning);
             }
-            if (playerScript.fpc.m_IsRunning)
+            if (playerActionScript.fpc.m_IsRunning)
             {
                 originalTrans.localPosition = Vector3.Lerp(originalTrans.localPosition, sprintPos, Time.deltaTime * aodSpeed);
                 originalTrans.localRotation = Quaternion.Lerp(originalTrans.localRotation, Quaternion.Euler(sprintRot), Time.deltaTime * aodSpeed);
@@ -257,7 +250,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcAddToTotalKills()
     {
-        playerScript.kills++;
+        playerActionScript.kills++;
         GameControllerScript.totalKills[pView.Owner.NickName]++;
     }
 
@@ -304,7 +297,7 @@ public class WeaponActionScript : MonoBehaviour
                     if (hit.transform.gameObject.GetComponent<BetaEnemyScript>().health <= 0 && beforeHp > 0)
                     {
                         pView.RPC("RpcAddToTotalKills", RpcTarget.All);
-                        hudScript.OnScreenEffect(playerScript.kills + " KILLS", true);
+                        hudScript.OnScreenEffect(playerActionScript.kills + " KILLS", true);
                     }
                 }
             }
@@ -315,7 +308,7 @@ public class WeaponActionScript : MonoBehaviour
             }
         }
 
-        playerScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+        playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
         pView.RPC("FireEffects", RpcTarget.All);
     }
 

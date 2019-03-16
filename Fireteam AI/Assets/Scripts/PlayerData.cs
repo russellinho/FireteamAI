@@ -26,9 +26,9 @@ public class PlayerData : MonoBehaviour
         if (playerdata == null)
         {
             DontDestroyOnLoad(gameObject);
-            LoadPlayerData();
-            info = new PlayerInfo();
+            this.info = new PlayerInfo();
             playerdata = this;
+            LoadPlayerData();
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
         }
         else if (playerdata != this)
@@ -65,18 +65,18 @@ public class PlayerData : MonoBehaviour
 
         EquipmentScript myEquips = bodyReference.GetComponent<EquipmentScript>();
         TestWeaponScript myWeps = bodyReference.GetComponent<TestWeaponScript>();
-        info.playername = playername;
-        info.equippedCharacter = myEquips.equippedCharacter;
-        info.equippedHeadgear = myEquips.equippedHeadgear;
-        info.equippedFacewear = myEquips.equippedFacewear;
-        info.equippedTop = myEquips.equippedTop;
-        info.equippedBottom = myEquips.equippedBottom;
-        info.equippedFootwear = myEquips.equippedFootwear;
-        info.equippedArmor = myEquips.equippedArmor;
-        info.equippedPrimary = myWeps.equippedPrimaryWeapon;
-        info.equippedPrimaryType = myWeps.equippedPrimaryType;
-        info.equippedSecondary = myWeps.equippedSecondaryWeapon;
-        info.equippedSecondaryType = myWeps.equippedSecondaryType;
+        PlayerData.playerdata.info.playername = playername;
+        PlayerData.playerdata.info.equippedCharacter = myEquips.equippedCharacter;
+        PlayerData.playerdata.info.equippedHeadgear = myEquips.equippedHeadgear;
+        PlayerData.playerdata.info.equippedFacewear = myEquips.equippedFacewear;
+        PlayerData.playerdata.info.equippedTop = myEquips.equippedTop;
+        PlayerData.playerdata.info.equippedBottom = myEquips.equippedBottom;
+        PlayerData.playerdata.info.equippedFootwear = myEquips.equippedFootwear;
+        PlayerData.playerdata.info.equippedArmor = myEquips.equippedArmor;
+        PlayerData.playerdata.info.equippedPrimary = myWeps.equippedPrimaryWeapon;
+        PlayerData.playerdata.info.equippedPrimaryType = myWeps.equippedPrimaryType;
+        PlayerData.playerdata.info.equippedSecondary = myWeps.equippedSecondaryWeapon;
+        PlayerData.playerdata.info.equippedSecondaryType = myWeps.equippedSecondaryType;
         bf.Serialize(file, info);
         file.Close();
 
