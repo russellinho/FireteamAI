@@ -212,16 +212,16 @@ public class WeaponActionScript : MonoBehaviour
                 originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
             }*/
 
-            if (Input.GetButton("Fire2") && !isReloading)
-            {
-                isAiming = true;
-                originalTrans.localPosition = Vector3.Lerp(originalTrans.localPosition, aimPos, Time.deltaTime * aodSpeed);
-            }
-            else
-            {
-                isAiming = false;
-                originalTrans.localPosition = Vector3.Lerp(originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
-            }
+            // if (Input.GetButton("Fire2") && !isReloading)
+            // {
+            //     isAiming = true;
+            //     originalTrans.localPosition = Vector3.Lerp(originalTrans.localPosition, aimPos, Time.deltaTime * aodSpeed);
+            // }
+            // else
+            // {
+            //     isAiming = false;
+            //     originalTrans.localPosition = Vector3.Lerp(originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
+            // }
             originalTrans.localRotation = Quaternion.Lerp(originalTrans.localRotation, originalRot, Time.deltaTime * aodSpeed);
         }
     }
@@ -234,16 +234,16 @@ public class WeaponActionScript : MonoBehaviour
             {
                 gunAnimator.SetBool("Sprinting", playerActionScript.fpc.m_IsRunning);
             }
-            if (playerActionScript.fpc.m_IsRunning)
-            {
-                originalTrans.localPosition = Vector3.Lerp(originalTrans.localPosition, sprintPos, Time.deltaTime * aodSpeed);
-                originalTrans.localRotation = Quaternion.Lerp(originalTrans.localRotation, Quaternion.Euler(sprintRot), Time.deltaTime * aodSpeed);
-            }
-            else
-            {
-                originalTrans.localPosition = Vector3.Lerp(originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
-                originalTrans.localRotation = Quaternion.Lerp(originalTrans.localRotation, originalRot, Time.deltaTime * aodSpeed);
-            }
+            // if (playerActionScript.fpc.m_IsRunning)
+            // {
+            //     originalTrans.localPosition = Vector3.Lerp(originalTrans.localPosition, sprintPos, Time.deltaTime * aodSpeed);
+            //     originalTrans.localRotation = Quaternion.Lerp(originalTrans.localRotation, Quaternion.Euler(sprintRot), Time.deltaTime * aodSpeed);
+            // }
+            // else
+            // {
+            //     originalTrans.localPosition = Vector3.Lerp(originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
+            //     originalTrans.localRotation = Quaternion.Lerp(originalTrans.localRotation, originalRot, Time.deltaTime * aodSpeed);
+            // }
         }
     }
 

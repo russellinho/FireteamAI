@@ -44,11 +44,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public GameObject[] subComponents;
     public FirstPersonController fpc;
 
-    public Transform fpcPosition;
-    private float fpcPositionYOriginal;
-
-    private float bodyScaleOriginal;
-
     private float crouchPosY;
     private float crouchBodyPosY;
     private float crouchBodyScaleY;
@@ -77,8 +72,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         // Setting original positions for returning from crouching
         charHeightOriginal = charController.height;
-        fpcPositionYOriginal = transform.localPosition.y;
-        bodyScaleOriginal = transform.lossyScale.y;
         escapeValueSent = false;
         assaultModeChangedIndicator = false;
         isDefusing = false;
@@ -275,26 +268,26 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // Collecting the original character height
         float h = charHeightOriginal;
         // Collect the original y position of the FPS controller since we're going to move it downwards to crouch
-        float viewH = fpcPositionYOriginal;
+        //float viewH = fpcPositionYOriginal;
         //float speed = charController.velocity;
         float bodyScale = bodyTrans.lossyScale.y;
 
-        if (fpc.m_IsCrouching)
-        {
-            h = charHeightOriginal * .65f;
-            viewH = .55f;
-            bodyScale = .7f;
-        }
-        else
-        {
-            viewH = .8f;
-            bodyScale = bodyScaleOriginal;
-        }
+        // if (fpc.m_IsCrouching)
+        // {
+        //     h = charHeightOriginal * .65f;
+        //     viewH = .55f;
+        //     bodyScale = .7f;
+        // }
+        // else
+        // {
+        //     viewH = .8f;
+        //     bodyScale = bodyScaleOriginal;
+        // }
 
         float lastHeight = charController.height;
-        float lastCameraHeight = fpcPosition.position.y;
-        charController.height = Mathf.Lerp(lastHeight, h, 10 * Time.deltaTime);
-        fpcPosition.localPosition = new Vector3(fpcPosition.localPosition.x, viewH, fpcPosition.localPosition.z);
+        // float lastCameraHeight = fpcPosition.position.y;
+        // charController.height = Mathf.Lerp(lastHeight, h, 10 * Time.deltaTime);
+        // fpcPosition.localPosition = new Vector3(fpcPosition.localPosition.x, viewH, fpcPosition.localPosition.z);
         bodyTrans.localScale = new Vector3(bodyTrans.localScale.x, bodyScale, bodyTrans.localScale.z);
         transform.position = new Vector3(transform.position.x, transform.position.y + ((charController.height - lastHeight) / 2), transform.position.z);
 
@@ -309,26 +302,26 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         fpc.m_IsCrouching = crouch;
         float h = charHeightOriginal;
-        float viewH = fpcPositionYOriginal;
+        //float viewH = fpcPositionYOriginal;
         //float speed = charController.velocity;
         float bodyScale = bodyTrans.lossyScale.y;
 
-        if (fpc.m_IsCrouching)
-        {
-            h = charHeightOriginal * .65f;
-            viewH = .55f;
-            bodyScale = .7f;
-        }
-        else
-        {
-            viewH = .8f;
-            bodyScale = bodyScaleOriginal;
-        }
+        // if (fpc.m_IsCrouching)
+        // {
+        //     h = charHeightOriginal * .65f;
+        //     viewH = .55f;
+        //     bodyScale = .7f;
+        // }
+        // else
+        // {
+        //     viewH = .8f;
+        //     bodyScale = bodyScaleOriginal;
+        // }
 
         float lastHeight = charController.height;
-        float lastCameraHeight = fpcPosition.position.y;
-        charController.height = Mathf.Lerp(charController.height, h, 10 * Time.deltaTime);
-        fpcPosition.localPosition = new Vector3(fpcPosition.localPosition.x, viewH, fpcPosition.localPosition.z);
+        // float lastCameraHeight = fpcPosition.position.y;
+        // charController.height = Mathf.Lerp(charController.height, h, 10 * Time.deltaTime);
+        // fpcPosition.localPosition = new Vector3(fpcPosition.localPosition.x, viewH, fpcPosition.localPosition.z);
         bodyTrans.localScale = new Vector3(bodyTrans.localScale.x, bodyScale, bodyTrans.localScale.z);
         transform.position = new Vector3(transform.position.x, transform.position.y + ((charController.height - lastHeight) / 2), transform.position.z);
     }

@@ -302,7 +302,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114336108925888890}
-  viewIdField: 0
+  viewIdField: 3
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &114336108925888890
@@ -702,6 +702,7 @@ MonoBehaviour:
   m_Input: {x: 0, y: 0}
   sprintLock: 0
   canMove: 0
+  spineTransform: {fileID: 0}
 --- !u!54 &54607371837240256
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -913,7 +914,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114766418645260732}
-  viewIdField: 0
+  viewIdField: 4
   InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &114766418645260732
@@ -944,6 +945,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
+  playerActionScript: {fileID: 0}
+  wepActionScript: {fileID: 0}
   myHudMarkerCam1: {fileID: 0}
   myHudMarkerCam2: {fileID: 0}
   myHudMarker: {fileID: 0}
@@ -960,6 +963,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camTransform: {fileID: 4229175316152352}
+  playerActionScript: {fileID: 0}
   shake: 0
 --- !u!114 &114993924595385136
 MonoBehaviour:
@@ -997,6 +1001,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
+  playerScript: {fileID: 0}
+  pView: {fileID: 0}
 --- !u!1 &1182186128882958
 GameObject:
   m_ObjectHideFlags: 0
