@@ -18,12 +18,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 
         private Quaternion m_CharacterTargetRot;
+        private Quaternion m_SpineTargetRot;
         public Quaternion m_CameraTargetRot;
         private bool m_cursorIsLocked = true;
 
-        public void Init(Transform character, Transform camera)
+        public void Init(Transform character, Transform spineTransform, Transform camera)
         {
             m_CharacterTargetRot = character.localRotation;
+            m_SpineTargetRot = spineTransform.localRotation;
             m_CameraTargetRot = camera.localRotation;
         }
 
@@ -33,7 +35,26 @@ namespace UnityStandardAssets.Characters.FirstPerson
             float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
 
-            m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
+            // If turning left
+            bool rotateSpineFlag = false;
+            if (yRot < 0f) {
+                // If max spine rotation has been reached to the left, rotate character instead
+                if (m_SpineTargetRot.y > -0.45f) {
+                    m_SpineTargetRot *= Quaternion.Euler (0f, yRot, 0f);
+                    rotateSpineFlag = true;
+                } else {
+                    m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
+                }
+            } else {
+                // If turning right
+                // If max spine rotation has been reached to the right, rotate character instead
+                if (m_SpineTargetRot.y < 0.3f) {
+                    m_SpineTargetRot *= Quaternion.Euler (0f, yRot, 0f);
+                    rotateSpineFlag = true;
+                } else {
+                    m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
+                }
+            }
             m_CameraTargetRot *= Quaternion.Euler (-xRot, 0f, 0f);
 
 			if(clampVerticalRotation)
@@ -52,10 +73,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             else
             {
-                if (spineTransform.localRotation.eulerAngles.y >= 45f || spineTransform.localRotation.eulerAngles.y <= -45f) {
-                    character.localRotation = m_CharacterTargetRot;
+                // If the player has turned his hips maximum to the right/left and is still rotating right/left, rotate the body instead
+                // Else, rotate the hips to the right/left
+                // If turning left
+                if (rotateSpineFlag) {
+                    spineTransform.localRotation = m_SpineTargetRot;
                 } else {
-                    spineTransform.localRotation = m_CharacterTargetRot;
+                    character.localRotation = m_CharacterTargetRot;
                 }
                 camera.localRotation = m_CameraTargetRot;
             }

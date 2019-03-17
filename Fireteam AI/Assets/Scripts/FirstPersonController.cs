@@ -72,7 +72,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_Jumping = false;
             m_IsCrouching = false;
             m_AudioSource = GetComponent<AudioSource>();
-			m_MouseLook.Init(transform , m_Camera.transform);
+			m_MouseLook.Init(transform, spineTransform, m_Camera.transform);
 			canMove = true;
 			sprintLock = false;
         }
