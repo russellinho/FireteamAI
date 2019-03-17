@@ -52,6 +52,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private WeaponActionScript weaponActionScript;
         private PhotonView photonView;
 
+        public Transform spineTransform;
+
         // Use this for initialization
         private void Start()
         {
@@ -83,7 +85,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 return;
             }
-            RotateView();
+            //RotateView();
             // the jump state needs to read here to make sure it is not missed
 			if (!m_Jump && canMove)
             {
@@ -103,6 +105,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
 
             m_PreviouslyGrounded = m_CharacterController.isGrounded;
+        }
+
+        void LateUpdate() {
+            RotateView();
         }
 
 
@@ -305,7 +311,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void RotateView()
         {
-            m_MouseLook.LookRotation (transform, m_Camera.transform);
+            m_MouseLook.LookRotation (transform, spineTransform, m_Camera.transform);
         }
 
 

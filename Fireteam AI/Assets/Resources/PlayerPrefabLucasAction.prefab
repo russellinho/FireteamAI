@@ -3838,6 +3838,7 @@ MonoBehaviour:
   m_Input: {x: 0, y: 0}
   sprintLock: 0
   canMove: 0
+  spineTransform: {fileID: 6772054392541729066}
 --- !u!54 &1378665854571184067
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4149,7 +4150,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 0}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: -1
   isRuntimeInstantiated: 0
 --- !u!114 &4205924597986216834
 MonoBehaviour:

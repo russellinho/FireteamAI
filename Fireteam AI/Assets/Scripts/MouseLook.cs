@@ -28,7 +28,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
 
-        public void LookRotation(Transform character, Transform camera)
+        public void LookRotation(Transform character, Transform spineTransform, Transform camera)
         {
             float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
@@ -41,14 +41,22 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             if(smooth)
             {
-                character.localRotation = Quaternion.Slerp (character.localRotation, m_CharacterTargetRot,
-                    smoothTime * Time.deltaTime);
-                camera.localRotation = Quaternion.Slerp (camera.localRotation, m_CameraTargetRot,
-                    smoothTime * Time.deltaTime);
+                if (spineTransform.localRotation.eulerAngles.y >= 45f || spineTransform.localRotation.eulerAngles.y <= -45f) {
+                    character.localRotation = Quaternion.Slerp (character.localRotation, m_CharacterTargetRot,
+                        smoothTime * Time.deltaTime);
+                } else {
+                    spineTransform.localRotation = Quaternion.Slerp(spineTransform.localRotation, m_CharacterTargetRot,
+                        smoothTime * Time.deltaTime);
+                }
+                camera.localRotation = Quaternion.Slerp (camera.localRotation, m_CameraTargetRot, smoothTime * Time.deltaTime);
             }
             else
             {
-                character.localRotation = m_CharacterTargetRot;
+                if (spineTransform.localRotation.eulerAngles.y >= 45f || spineTransform.localRotation.eulerAngles.y <= -45f) {
+                    character.localRotation = m_CharacterTargetRot;
+                } else {
+                    spineTransform.localRotation = m_CharacterTargetRot;
+                }
                 camera.localRotation = m_CameraTargetRot;
             }
 			//Debug.Log (m_CameraTargetRot.x + "," + m_CameraTargetRot.y);
