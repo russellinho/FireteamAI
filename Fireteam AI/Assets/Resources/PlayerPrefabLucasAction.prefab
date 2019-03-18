@@ -454,12 +454,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2435247002374466510}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.4, z: 0}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5455603806092927198}
-  m_Father: {fileID: 6772054392541729066}
-  m_RootOrder: 1
+  m_Father: {fileID: 6772054392541729070}
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &6871703159772914339
 Camera:
@@ -3570,7 +3570,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6772054392541729068}
-  - {fileID: 7804118318025759623}
   m_Father: {fileID: 6772054392541729064}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3666,6 +3665,7 @@ Transform:
   - {fileID: 8373689720308951567}
   - {fileID: 4621050755034076025}
   - {fileID: 961231036232028110}
+  - {fileID: 7804118318025759623}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 200.55, z: 0}
@@ -4149,7 +4149,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 0}
   viewIdField: 0
-  InstantiationId: -1
+  InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &4205924597986216834
 MonoBehaviour:

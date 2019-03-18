@@ -51,16 +51,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
                 }
             }
-            m_CameraTargetRot *= Quaternion.Euler (-xRot, 0f, 0f);
+            m_SpineTargetRot *= Quaternion.Euler(-xRot, 0f, 0f);
+            //m_CameraTargetRot *= Quaternion.Euler (-xRot, 0f, 0f);
 
-			if(clampVerticalRotation)
-                m_CameraTargetRot = ClampRotationAroundXAxis (m_CameraTargetRot);
+            if (clampVerticalRotation)
+                //m_CameraTargetRot = ClampRotationAroundXAxis (m_CameraTargetRot);
+                m_SpineTargetRot = ClampRotationAroundXAxis(m_SpineTargetRot);
 
             if(smooth)
             {
                 spineTransform.localRotation = Quaternion.Slerp(spineTransform.localRotation, m_SpineTargetRot, smoothTime * Time.deltaTime);
                 character.localRotation = Quaternion.Slerp(character.localRotation, m_CharacterTargetRot, smoothTime * Time.deltaTime);
-                camera.localRotation = Quaternion.Slerp (camera.localRotation, m_CameraTargetRot, smoothTime * Time.deltaTime);
+                //camera.localRotation = Quaternion.Slerp (camera.localRotation, m_CameraTargetRot, smoothTime * Time.deltaTime);
             }
             else
             {
@@ -68,7 +70,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 // Else, rotate the hips to the right/left
                 spineTransform.localRotation = m_SpineTargetRot;
                 character.localRotation = m_CharacterTargetRot;
-                camera.localRotation = m_CameraTargetRot;
+                //camera.localRotation = m_CameraTargetRot;
+                camera.localRotation = Quaternion.Euler(spineTransform.localRotation.eulerAngles.x, spineTransform.localRotation.eulerAngles.y, 0f);
             }
 
             //UpdateCursorLock();
