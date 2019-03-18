@@ -29,28 +29,24 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_CameraTargetRot = camera.localRotation;
         }
 
-
         public void LookRotation(Transform character, Transform spineTransform, Transform camera)
         {
             float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
 
             // If turning left
-            bool rotateSpineFlag = false;
             if (yRot < 0f) {
                 // If max spine rotation has been reached to the left, rotate character instead
                 if (m_SpineTargetRot.y > -0.45f) {
                     m_SpineTargetRot *= Quaternion.Euler (0f, yRot, 0f);
-                    rotateSpineFlag = true;
                 } else {
                     m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
                 }
             } else {
                 // If turning right
                 // If max spine rotation has been reached to the right, rotate character instead
-                if (m_SpineTargetRot.y < 0.3f) {
+                if (m_SpineTargetRot.y < 0.45f) {
                     m_SpineTargetRot *= Quaternion.Euler (0f, yRot, 0f);
-                    rotateSpineFlag = true;
                 } else {
                     m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
                 }
@@ -62,28 +58,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             if(smooth)
             {
-                if (spineTransform.localRotation.eulerAngles.y >= 45f || spineTransform.localRotation.eulerAngles.y <= -45f) {
-                    character.localRotation = Quaternion.Slerp (character.localRotation, m_CharacterTargetRot,
-                        smoothTime * Time.deltaTime);
-                } else {
-                    spineTransform.localRotation = Quaternion.Slerp(spineTransform.localRotation, m_CharacterTargetRot,
-                        smoothTime * Time.deltaTime);
-                }
+                spineTransform.localRotation = Quaternion.Slerp(spineTransform.localRotation, m_SpineTargetRot, smoothTime * Time.deltaTime);
+                character.localRotation = Quaternion.Slerp(character.localRotation, m_CharacterTargetRot, smoothTime * Time.deltaTime);
                 camera.localRotation = Quaternion.Slerp (camera.localRotation, m_CameraTargetRot, smoothTime * Time.deltaTime);
             }
             else
             {
                 // If the player has turned his hips maximum to the right/left and is still rotating right/left, rotate the body instead
                 // Else, rotate the hips to the right/left
-                // If turning left
-                if (rotateSpineFlag) {
-                    spineTransform.localRotation = m_SpineTargetRot;
-                } else {
-                    character.localRotation = m_CharacterTargetRot;
-                }
+                spineTransform.localRotation = m_SpineTargetRot;
+                character.localRotation = m_CharacterTargetRot;
                 camera.localRotation = m_CameraTargetRot;
             }
-			//Debug.Log (m_CameraTargetRot.x + "," + m_CameraTargetRot.y);
 
             //UpdateCursorLock();
         }
