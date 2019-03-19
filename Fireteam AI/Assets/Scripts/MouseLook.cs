@@ -21,12 +21,19 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private Quaternion m_SpineTargetRot;
         public Quaternion m_CameraTargetRot;
         private bool m_cursorIsLocked = true;
+        private float spineRotationRange;
 
         public void Init(Transform character, Transform spineTransform, Transform camera)
         {
+            spineRotationRange = 0f;
             m_CharacterTargetRot = character.localRotation;
             m_SpineTargetRot = spineTransform.localRotation;
             m_CameraTargetRot = camera.localRotation;
+        }
+
+        public void ResetSpineRotationRange()
+        {
+            spineRotationRange = 0f;
         }
 
         public void LookRotation(Transform character, Transform spineTransform, Transform camera)
@@ -34,19 +41,22 @@ namespace UnityStandardAssets.Characters.FirstPerson
             float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
 
+            Debug.Log(spineRotationRange);
             // If turning left
             if (yRot < 0f) {
                 // If max spine rotation has been reached to the left, rotate character instead
-                if (m_SpineTargetRot.y > -0.25f) {
-                    m_SpineTargetRot *= Quaternion.Euler (0f, yRot, 0f);
+                if (spineRotationRange > -70f) {
+                    spineRotationRange += yRot;
+                    m_SpineTargetRot *= Quaternion.Euler(0f, yRot, 0f);
                 } else {
                     m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
                 }
             } else {
                 // If turning right
                 // If max spine rotation has been reached to the right, rotate character instead
-                if (m_SpineTargetRot.y < 0.25f) {
-                    m_SpineTargetRot *= Quaternion.Euler (0f, yRot, 0f);
+                if (spineRotationRange < 20f) {
+                    spineRotationRange += yRot;
+                    m_SpineTargetRot *= Quaternion.Euler(0f, yRot, 0f);
                 } else {
                     m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
                 }
