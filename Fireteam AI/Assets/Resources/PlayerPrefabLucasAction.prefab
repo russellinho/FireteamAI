@@ -2106,7 +2106,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6772054392541891724}
-  m_LocalRotation: {x: -1.479074e-10, y: -0.000000055644655, z: 0.0000017802256, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.0000012493382, y: 0.992562, z: 0.0009930294}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3534,7 +3534,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6772054392541891848}
-  m_LocalRotation: {x: -0.0472434, y: 0.0000013661959, z: -0.000027708125, w: 0.9988834}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.00000039649032, y: 0.09964529, z: -0.009972137}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3565,14 +3565,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6772054392541891850}
-  m_LocalRotation: {x: -0.008397228, y: -0.000000051748955, z: 0.000006162453, w: 0.9999648}
+  m_LocalRotation: {x: 0, y: 0.38268343, z: 0, w: 0.92387956}
   m_LocalPosition: {x: -4.3368086e-21, y: 0.117596775, z: 1.7763568e-17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6772054392541729068}
   m_Father: {fileID: 6772054392541729064}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
 --- !u!1 &6772054392541891852
 GameObject:
   m_ObjectHideFlags: 0
@@ -3645,7 +3645,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6772054392541891854}
-  m_LocalRotation: {x: 0, y: 0.983963, z: -0, w: -0.17837282}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.93, y: 2.78, z: 24.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3668,7 +3668,7 @@ Transform:
   - {fileID: 7804118318025759623}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 200.55, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &6772054392549162816
 Animator:
   serializedVersion: 3
@@ -3838,7 +3838,7 @@ MonoBehaviour:
   m_Input: {x: 0, y: 0}
   sprintLock: 0
   canMove: 0
-  spineTransform: {fileID: 6772054392541729066}
+  spineTransform: {fileID: 6772054392541729064}
 --- !u!54 &1378665854571184067
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4149,7 +4149,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 0}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: -1
   isRuntimeInstantiated: 0
 --- !u!114 &4205924597986216834
 MonoBehaviour:

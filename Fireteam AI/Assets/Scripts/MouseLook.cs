@@ -37,7 +37,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // If turning left
             if (yRot < 0f) {
                 // If max spine rotation has been reached to the left, rotate character instead
-                if (m_SpineTargetRot.y > -0.45f) {
+                if (m_SpineTargetRot.y > -0.25f) {
                     m_SpineTargetRot *= Quaternion.Euler (0f, yRot, 0f);
                 } else {
                     m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
@@ -45,7 +45,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             } else {
                 // If turning right
                 // If max spine rotation has been reached to the right, rotate character instead
-                if (m_SpineTargetRot.y < 0.45f) {
+                if (m_SpineTargetRot.y < 0.25f) {
                     m_SpineTargetRot *= Quaternion.Euler (0f, yRot, 0f);
                 } else {
                     m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
@@ -68,7 +68,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 // If the player has turned his hips maximum to the right/left and is still rotating right/left, rotate the body instead
                 // Else, rotate the hips to the right/left
+                m_SpineTargetRot = Quaternion.Euler(m_SpineTargetRot.eulerAngles.x, m_SpineTargetRot.eulerAngles.y, 0f);
                 spineTransform.localRotation = m_SpineTargetRot;
+                m_CharacterTargetRot = Quaternion.Euler(0f, m_CharacterTargetRot.eulerAngles.y, 0f);
                 character.localRotation = m_CharacterTargetRot;
                 //camera.localRotation = m_CameraTargetRot;
                 camera.localRotation = Quaternion.Euler(spineTransform.localRotation.eulerAngles.x, spineTransform.localRotation.eulerAngles.y, 0f);
