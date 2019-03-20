@@ -41,7 +41,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
 
-            Debug.Log(spineRotationRange);
             // If turning left
             if (yRot < 0f) {
                 // If max spine rotation has been reached to the left, rotate character instead

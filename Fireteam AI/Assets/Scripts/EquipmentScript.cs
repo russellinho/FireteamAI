@@ -76,7 +76,27 @@ public class EquipmentScript : MonoBehaviour
             EquipBottomInGame(PlayerData.playerdata.info.equippedBottom);
             EquipFootwearInGame(PlayerData.playerdata.info.equippedFootwear);
             EquipArmorInGame(PlayerData.playerdata.info.equippedArmor);
+            ToggleEquipVisibility(false);
         }
+    }
+
+    // Don't let the player see anything but his shirt and gloves while in first person mode for
+    // performance purposes. When they enter death animation, re-enable all of it.
+    public void ToggleEquipVisibility(bool visibility)
+    {
+        Debug.Log(equippedArmorTopRef.name);
+        equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
+        if (equippedHeadgearRef != null) equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
+        if (equippedFacewearRef != null) equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
+        //equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
+        equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
+        equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
+        if (equippedArmorTopRef != null) equippedArmorTopRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
+        if (equippedArmorBottomRef != null) equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
+        //myGlovesRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
+        myEyesRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
+        myEyelashRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
+        myHairRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
     }
 
     public void EquipDefaults() {
