@@ -76,7 +76,7 @@ public class EquipmentScript : MonoBehaviour
             EquipBottomInGame(PlayerData.playerdata.info.equippedBottom);
             EquipFootwearInGame(PlayerData.playerdata.info.equippedFootwear);
             EquipArmorInGame(PlayerData.playerdata.info.equippedArmor);
-            ToggleEquipVisibility(false);
+            //ToggleEquipVisibility(false);
         }
     }
 
