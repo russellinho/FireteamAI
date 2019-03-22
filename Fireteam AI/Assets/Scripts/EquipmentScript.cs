@@ -84,7 +84,6 @@ public class EquipmentScript : MonoBehaviour
     // performance purposes. When they enter death animation, re-enable all of it.
     public void ToggleEquipVisibility(bool visibility)
     {
-        Debug.Log(equippedArmorTopRef.name);
         equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
         if (equippedHeadgearRef != null) equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
         if (equippedFacewearRef != null) equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
