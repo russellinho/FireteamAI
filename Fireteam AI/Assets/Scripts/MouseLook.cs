@@ -82,7 +82,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 m_CharacterTargetRot = Quaternion.Euler(0f, m_CharacterTargetRot.eulerAngles.y, 0f);
                 character.localRotation = m_CharacterTargetRot;
                 //camera.localRotation = m_CameraTargetRot;
-                camera.localRotation = Quaternion.Euler(spineTransform.localRotation.eulerAngles.x, spineTransform.localRotation.eulerAngles.y, 0f);
+                //camera.localRotation = Quaternion.Euler(spineTransform.localRotation.eulerAngles.x, spineTransform.localRotation.eulerAngles.y, 0f);
             }
 
             //UpdateCursorLock();
