@@ -7,6 +7,8 @@ public class EquipmentScript : MonoBehaviour
 {
 
     public TitleControllerScript ts;
+    public NewPlayerScript playerScript;
+    public TestWeaponScript tws;
     
     public string equippedCharacter;
     public string equippedHeadgear;
@@ -42,24 +44,23 @@ public class EquipmentScript : MonoBehaviour
     public GameObject myBones;
 
     void Start() {
-        equippedSkin = -1;
         if (ts == null) {
             ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
         }
-        EquipCharacter(equippedCharacter, null);
     }
 
     public void EquipDefaults() {
+        equippedSkin = -1;
         RemoveFacewear();
         RemoveArmor();
         RemoveHeadgear();
         if (equippedCharacter.Equals("Codename Sayre")) {
-            EquipTop("Scrubs Top", 2, null);
+            EquipTop("Scrubs Top", null);
             EquipBottom("Scrubs Bottom", null);
             EquipFootwear("Standard Boots", null);
             EquipFacewear("Surgical Mask", null);
         } else {
-            EquipTop("Standard Fatigues Top", 0, null);
+            EquipTop("Standard Fatigues Top", null);
             EquipBottom("Standard Fatigues Bottom", null);
             EquipFootwear("Standard Boots", null);
         }
@@ -70,9 +71,6 @@ public class EquipmentScript : MonoBehaviour
         if (shopItemRef != null) {
             shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
             shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
-            if (ts == null) {
-                ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
-            }
             if (ts.currentlyEquippedItemPrefab != null) {
                 ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
                 ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
@@ -82,6 +80,7 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void EquipCharacter(string name, GameObject shopItemRef) {
+        equippedCharacter = name;
         Character c = InventoryScript.characterCatalog[name];
         InventoryScript.collectTops(name);
         InventoryScript.collectBottoms(name);
@@ -113,9 +112,13 @@ public class EquipmentScript : MonoBehaviour
         }
 
         EquipDefaults();
+        if (tws.weaponHolder.weapon != null)
+        {
+            tws.SetTitleHandPositions();
+        }
     }
 
-    public void EquipTop(string name, int skinType, GameObject shopItemRef) {
+    public void EquipTop(string name, GameObject shopItemRef) {
         if (name.Equals(equippedTop)) {
             return;
         }
@@ -131,8 +134,8 @@ public class EquipmentScript : MonoBehaviour
         m.target = myTopRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh();
-        
-        EquipSkin(skinType);
+
+        EquipSkin(e.skinType);
 
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Top")) {
@@ -238,6 +241,7 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void EquipFacewear(string name, GameObject shopItemRef) {
+        RemoveFacewear();
         if (name.Equals(equippedFacewear)) {
             return;
         }
@@ -266,12 +270,16 @@ public class EquipmentScript : MonoBehaviour
             shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
-
+        
         ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = true;
         ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        playerScript.stats.updateStats(e.speed, e.stamina, e.armor);
+        playerScript.updateStats();
+        ts.SetStatBoosts((int)((playerScript.stats.armor - 1f) * 100f), (int)((playerScript.stats.speed - 1f) * 100f), (int)((playerScript.stats.stamina - 1f) * 100f));
     }
 
     public void EquipHeadgear(string name, GameObject shopItemRef) {
+        RemoveHeadgear();
         if (name.Equals(equippedHeadgear)) {
             return;
         }
@@ -313,9 +321,14 @@ public class EquipmentScript : MonoBehaviour
 
         ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = true;
         ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        // Adds headgear stat to player
+        playerScript.stats.updateStats(e.speed, e.stamina, e.armor);
+        playerScript.updateStats();
+        ts.SetStatBoosts((int)((playerScript.stats.armor - 1f) * 100f), (int)((playerScript.stats.speed - 1f) * 100f), (int)((playerScript.stats.stamina - 1f) * 100f));
     }
 
     public void EquipArmor(string name, GameObject shopItemRef) {
+        RemoveArmor();
         if (name.Equals(equippedArmor)) {
             return;
         }
@@ -358,6 +371,9 @@ public class EquipmentScript : MonoBehaviour
 
         ts.equippedArmorSlot.GetComponentInChildren<RawImage>().enabled = true;
         ts.equippedArmorSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(a.thumbnailPath);
+        playerScript.stats.updateStats(a.speed, a.stamina, a.armor);
+        playerScript.updateStats();
+        ts.SetStatBoosts((int)((playerScript.stats.armor - 1f) * 100f), (int)((playerScript.stats.speed - 1f) * 100f), (int)((playerScript.stats.stamina - 1f) * 100f));
     }
 
     public void RemoveHeadgear() {
@@ -370,6 +386,9 @@ public class EquipmentScript : MonoBehaviour
         }
         ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = null;
         ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = false;
+        if (string.IsNullOrEmpty(equippedHeadgear)) {
+            return;
+        }
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null) {
             ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();
@@ -379,16 +398,26 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = null;
             }
         }
+        Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[equippedHeadgear];
+        playerScript.stats.updateStats(-e.speed, -e.stamina, -e.armor);
+        playerScript.updateStats();
+        ts.SetStatBoosts((int)((playerScript.stats.armor - 1f) * 100f), (int)((playerScript.stats.speed - 1f) * 100f), (int)((playerScript.stats.stamina - 1f) * 100f));
+
         equippedHeadgear = "";
     }
 
     public void RemoveFacewear() {
-        if (equippedFacewearRef != null) {
+        if (equippedFacewearRef != null)
+        {
             Destroy(equippedFacewearRef);
             equippedFacewearRef = null;
         }
         ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = null;
         ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = false;
+        if (string.IsNullOrEmpty(equippedFacewear))
+        {
+            return;
+        }
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null) {
             ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();
@@ -398,6 +427,12 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = null;
             }
         }
+
+        Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[equippedFacewear];
+        playerScript.stats.updateStats(-e.speed, -e.stamina, -e.armor);
+        playerScript.updateStats();
+        ts.SetStatBoosts((int)((playerScript.stats.armor - 1f) * 100f), (int)((playerScript.stats.speed - 1f) * 100f), (int)((playerScript.stats.stamina - 1f) * 100f));
+
         equippedFacewear = "";
     }
 
@@ -412,6 +447,10 @@ public class EquipmentScript : MonoBehaviour
         }
         ts.equippedArmorSlot.GetComponentInChildren<RawImage>().texture = null;
         ts.equippedArmorSlot.GetComponentInChildren<RawImage>().enabled = false;
+        if (string.IsNullOrEmpty(equippedArmor))
+        {
+            return;
+        }
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null) {
             ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();
@@ -421,6 +460,11 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = null;
             }
         }
+        Armor e = InventoryScript.characterCatalog[equippedCharacter].armorCatalog[equippedArmor];
+        playerScript.stats.updateStats(-e.speed, -e.stamina, -e.armor);
+        playerScript.updateStats();
+        ts.SetStatBoosts((int)((playerScript.stats.armor - 1f) * 100f), (int)((playerScript.stats.speed - 1f) * 100f), (int)((playerScript.stats.stamina - 1f) * 100f));
+
         equippedArmor = "";
     }
 

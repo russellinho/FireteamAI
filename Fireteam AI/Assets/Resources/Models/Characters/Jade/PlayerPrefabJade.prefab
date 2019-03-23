@@ -364,6 +364,7 @@ GameObject:
   - component: {fileID: 3166084420125916365}
   - component: {fileID: 6829827821865557300}
   - component: {fileID: 8954661856752537216}
+  - component: {fileID: 7319902134035168659}
   m_Layer: 0
   m_Name: PlayerPrefabJade
   m_TagString: Untagged
@@ -428,6 +429,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ts: {fileID: 0}
+  playerScript: {fileID: 7319902134035168659}
+  tws: {fileID: 8954661856752537216}
   equippedCharacter: Jade
   equippedHeadgear: 
   equippedFacewear: 
@@ -435,7 +438,7 @@ MonoBehaviour:
   equippedBottom: 
   equippedFootwear: 
   equippedArmor: 
-  equippedSkin: 
+  equippedSkin: 0
   equippedSkinRef: {fileID: 0}
   equippedHeadgearRef: {fileID: 0}
   equippedFacewearRef: {fileID: 0}
@@ -472,12 +475,28 @@ MonoBehaviour:
   equipmentScript: {fileID: 6829827821865557300}
   weaponHolder: {fileID: 8973412891731751287}
   animator: {fileID: 3166084420125916365}
+  ts: {fileID: 0}
   equippedPrimaryWeapon: 
   equippedPrimaryType: 
   equippedSecondaryWeapon: 
   equippedSecondaryType: 
   currentlyEquippedType: 0
   weaponReady: 0
+--- !u!114 &7319902134035168659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166084420118613657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3674be1c45c09a4890f1a33d2ca7daf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0
+  stamina: 0
+  armor: 0
 --- !u!1 &3166084420118613659
 GameObject:
   m_ObjectHideFlags: 0

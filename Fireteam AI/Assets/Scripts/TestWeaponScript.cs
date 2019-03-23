@@ -102,8 +102,10 @@ public class TestWeaponScript : MonoBehaviour
 
     void EquipAssaultRifle(string weaponName) {
         // Set animation and hand positions
+        equippedPrimaryType = "Assault Rifle";
+        equippedPrimaryWeapon = weaponName;
         if (animator.GetBool("onTitle")) {
-            weaponHolder.SetWeaponPosition(new Vector3(-0.02f, 0.05f, 0.03f));
+            SetTitleHandPositions();
         } else {
             weaponHolder.SetWeaponPosition();
             weaponHolder.SetSteadyHand(rifleHandPositions[weaponName]);
@@ -111,8 +113,10 @@ public class TestWeaponScript : MonoBehaviour
     }
 
     void EquipShotgun(string weaponName) {
+        equippedPrimaryType = "Shotgun";
+        equippedPrimaryWeapon = weaponName;
         if (animator.GetBool("onTitle")) {
-            weaponHolder.SetWeaponPosition(new Vector3(-0.02f, 0.05f, 0.03f));
+            SetTitleHandPositions();
         } else {
             weaponHolder.SetWeaponPosition();
             weaponHolder.SetSteadyHand(shotgunHandPositions[weaponName]);
@@ -121,13 +125,17 @@ public class TestWeaponScript : MonoBehaviour
 
     public void EquipPistol(string weaponName) {
         // Set animation and hand positions
+        equippedSecondaryType = "Pistol";
+        equippedSecondaryWeapon = weaponName;
         weaponHolder.SetWeaponPosition();
         weaponHolder.ResetSteadyHand();
     }
 
     public void EquipSniperRifle(string weaponName) {
+        equippedPrimaryType = "Sniper Rifle";
+        equippedPrimaryWeapon = weaponName;
         if (animator.GetBool("onTitle")) {
-            weaponHolder.SetWeaponPosition(new Vector3(-0.02f, 0.05f, 0.03f));
+            SetTitleHandPositions();
         } else {
             weaponHolder.SetWeaponPosition();
             weaponHolder.SetSteadyHand(sniperRifleHandPositions[weaponName]);
@@ -185,6 +193,16 @@ public class TestWeaponScript : MonoBehaviour
         } else {
             ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().enabled = true;
             ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+        }
+    }
+
+    public void SetTitleHandPositions() {
+        if (ts != null) {
+            if (ts.currentCharGender == 'M') {
+                weaponHolder.SetWeaponPositionForTitle(new Vector3(-0.02f, 0.05f, 0.03f));
+            } else {
+                weaponHolder.SetWeaponPositionForTitle(new Vector3(-0.01f, 0.02f, 0.02f));
+            }
         }
     }
 

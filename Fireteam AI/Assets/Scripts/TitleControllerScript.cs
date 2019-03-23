@@ -59,6 +59,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject equippedCharacterSlot;
 	public GameObject equippedArmorSlot;
 	public GameObject currentlyEquippedItemPrefab;
+	public GameObject equippedStatsSlot;
+	public Text armorBoostPercent;
+	public Text speedBoostPercent;
+	public Text staminaBoostPercent;
 
 	// Weapon loadout stuff
 	public Button loadoutBtn;
@@ -92,6 +96,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		GameControllerScript.playerList.Clear();
 		GameControllerScript.totalKills.Clear ();
 		GameControllerScript.totalDeaths.Clear ();
+		PlayerNameInput.text = PhotonNetwork.NickName;
 
 		StartCoroutine (VersionNumberCheck());
 
@@ -206,10 +211,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void ReturnToMainMenuFromCustomization() {
-		// Save settings if the settings are active
-		// if (customizationMenu.activeInHierarchy) {
-		// 	savePlayerData ();
-		// }
+        // Save settings if the settings are active
+		 if (customizationMenu.activeInHierarchy) {
+		 	savePlayerData ();
+		 }
 		SwitchToEquipmentScreen();
 		customizationMenu.SetActive (false);
 		matchmakingMenu.SetActive (false);
@@ -281,14 +286,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
+		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myHeadgear.Count; i++) {
 			string thisItemName = (string)InventoryScript.myHeadgear[i];
+			Equipment thisHeadgear = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().equipmentDetails = thisHeadgear;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Headgear";
-			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponent<ShopItemScript>().itemDescription = thisHeadgear.description;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
@@ -322,14 +330,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
+		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myFacewear.Count; i++) {
 			string thisItemName = (string)InventoryScript.myFacewear[i];
+			Equipment thisFacewear = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().equipmentDetails = thisFacewear;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Facewear";
-			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponent<ShopItemScript>().itemDescription = thisFacewear.description;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
@@ -363,14 +374,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
+		Dictionary<string, Armor> characterArmor = InventoryScript.characterCatalog[characterName].armorCatalog;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myArmor.Count; i++) {
 			string thisItemName = (string)InventoryScript.myArmor[i];
+			Armor thisArmor = characterArmor[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().armorDetails = thisArmor;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Armor";
-			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponent<ShopItemScript>().itemDescription = thisArmor.description;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].armorCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
@@ -404,15 +418,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
+		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myTops.Count; i++) {
 			string thisItemName = (string)InventoryScript.myTops[i];
+			Equipment thisTop = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().equipmentDetails = thisTop;
             o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Top";
-			o.GetComponent<ShopItemScript>().itemDescription = "";
-			o.GetComponent<ShopItemScript>().skinType = CheckSkinType((string)InventoryScript.myTops[i], currentCharGender);
+			o.GetComponent<ShopItemScript>().itemDescription = thisTop.description;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
@@ -446,14 +462,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
+		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myBottoms.Count; i++) {
 			string thisItemName = (string)InventoryScript.myBottoms[i];
+			Equipment thisBottom = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().equipmentDetails = thisBottom;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Bottom";
-			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponent<ShopItemScript>().itemDescription = thisBottom.description;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
@@ -487,14 +506,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
+		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myFootwear.Count; i++) {
 			string thisItemName = (string)InventoryScript.myFootwear[i];
+			Equipment thisFootwear = characterEquipment[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().equipmentDetails = thisFootwear;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Footwear";
-			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponent<ShopItemScript>().itemDescription = thisFootwear.description;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
@@ -543,6 +565,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().weaponDetails = w;
 			o.GetComponent<ShopItemScript>().itemName = w.name;
             o.GetComponent<ShopItemScript>().itemType = "Weapon";
 			o.GetComponent<ShopItemScript>().itemDescription = w.description;
@@ -593,6 +616,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().weaponDetails = w;
 			o.GetComponent<ShopItemScript>().itemName = w.name;
             o.GetComponent<ShopItemScript>().itemType = "Weapon";
 			o.GetComponent<ShopItemScript>().itemDescription = w.description;
@@ -631,6 +655,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().weaponDetails = w;
 			o.GetComponent<ShopItemScript>().itemName = w.name;
             o.GetComponent<ShopItemScript>().itemType = "Weapon";
 			o.GetComponent<ShopItemScript>().itemDescription = w.description;
@@ -669,6 +694,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().weaponDetails = w;
 			o.GetComponent<ShopItemScript>().itemName = w.name;
             o.GetComponent<ShopItemScript>().itemType = "Weapon";
 			o.GetComponent<ShopItemScript>().itemDescription = w.description;
@@ -707,6 +733,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().weaponDetails = w;
 			o.GetComponent<ShopItemScript>().itemName = w.name;
             o.GetComponent<ShopItemScript>().itemType = "Weapon";
 			o.GetComponent<ShopItemScript>().itemDescription = w.description;
@@ -743,6 +770,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().weaponDetails = w;
 			o.GetComponent<ShopItemScript>().itemName = w.name;
             o.GetComponent<ShopItemScript>().itemType = "Weapon";
 			o.GetComponent<ShopItemScript>().itemDescription = w.description;
@@ -785,9 +813,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Character c = InventoryScript.characterCatalog[thisCharacterName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().characterDetails = c;
 			o.GetComponent<ShopItemScript>().itemName = thisCharacterName;
             o.GetComponent<ShopItemScript>().itemType = "Character";
-			o.GetComponent<ShopItemScript>().itemDescription = "";
+			o.GetComponent<ShopItemScript>().itemDescription = c.description;
 			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(c.thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
@@ -840,7 +869,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		footwearBtn.gameObject.SetActive(false);
 		characterBtn.gameObject.SetActive(false);
 		armorBtn.gameObject.SetActive(false);
-
+		
 		equippedHeadSlot.SetActive(false);
 		equippedFaceSlot.SetActive(false);
 		equippedTopSlot.SetActive(false);
@@ -848,6 +877,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		equippedFootSlot.SetActive(false);
 		equippedCharacterSlot.SetActive(false);
 		equippedArmorSlot.SetActive(false);
+		equippedStatsSlot.SetActive(false);
 
 		primaryWepBtn.gameObject.SetActive(true);
 		secondaryWepBtn.gameObject.SetActive(true);
@@ -875,6 +905,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		equippedFootSlot.SetActive(true);
 		equippedCharacterSlot.SetActive(true);
 		equippedArmorSlot.SetActive(true);
+		equippedStatsSlot.SetActive(true);
 
 		primaryWepBtn.gameObject.SetActive(false);
 		secondaryWepBtn.gameObject.SetActive(false);
@@ -884,24 +915,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		pistolSubBtn.gameObject.SetActive(false);
 		equippedPrimarySlot.SetActive(false);
 		equippedSecondarySlot.SetActive(false);
-	}
-
-	public static int CheckSkinType(string clothingName, char gender) {
-		if (gender == 'F') {
-			if (clothingName.Equals("Casual T-Shirt")) {
-				return 2;
-			} else if (clothingName.Equals("Casual Tank Top")) {
-				return 1;
-			}
-			return 0;
-		} else {
-			if (clothingName.Equals("Casual T-Shirt")) {
-				return 2;
-			} else if (clothingName.Equals("Casual Shirt")) {
-				return 1;
-			}
-			return 0;
-		}
 	}
 
 	public void OnRemoveArmorClicked() {
@@ -914,6 +927,51 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void OnRemoveFacewearClicked() {
 		PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().RemoveFacewear();
+	}
+
+	public void SetArmorBoostPercent(int armor) {
+		if (armor == 0) {
+			armorBoostPercent.color = Color.white;
+			armorBoostPercent.text = "+" + armor + "%";
+		} else if (armor > 0) {
+			armorBoostPercent.color = Color.green;
+			armorBoostPercent.text = "+" + armor + "%";
+		} else {
+			armorBoostPercent.color = Color.red;
+			armorBoostPercent.text = armor + "%";
+		}
+	}
+
+	public void SetSpeedBoostPercent(int speed) {
+		if (speed == 0) {
+			speedBoostPercent.color = Color.white;
+			speedBoostPercent.text = "+" + speed + "%";
+		} else if (speed > 0) {
+			speedBoostPercent.color = Color.green;
+			speedBoostPercent.text = "+" + speed + "%";
+		} else {
+			speedBoostPercent.color = Color.red;
+			speedBoostPercent.text = speed + "%";
+		}
+	}
+
+	public void SetStaminaBoostPercent(int stamina) {
+		if (stamina == 0) {
+			staminaBoostPercent.color = Color.white;
+			staminaBoostPercent.text = "+" + stamina + "%";
+		} else if (stamina > 0) {
+			staminaBoostPercent.color = Color.green;
+			staminaBoostPercent.text = "+" + stamina + "%";
+		} else {
+			staminaBoostPercent.color = Color.red;
+			staminaBoostPercent.text = stamina + "%";
+		}
+	}
+
+	public void SetStatBoosts(int armor, int speed, int stamina) {
+		SetArmorBoostPercent(armor);
+		SetSpeedBoostPercent(speed);
+		SetStaminaBoostPercent(stamina);
 	}
 		
 }
