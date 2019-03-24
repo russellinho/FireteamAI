@@ -302,7 +302,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114336108925888890}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &114336108925888890
@@ -589,6 +589,7 @@ MonoBehaviour:
   m_CrouchSpeed: 2
   m_MoveSpeed: 6
   m_RunSpeed: 13
+  m_IsMoving: 0
   m_RunstepLenghten: 0.7
   m_JumpSpeed: 10
   m_StickToGroundForce: 10
@@ -702,6 +703,7 @@ MonoBehaviour:
   m_Input: {x: 0, y: 0}
   sprintLock: 0
   canMove: 0
+  animator: {fileID: 0}
   spineTransform: {fileID: 0}
 --- !u!54 &54607371837240256
 Rigidbody:
@@ -914,7 +916,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114766418645260732}
-  viewIdField: 4
+  viewIdField: 0
   InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &114766418645260732
