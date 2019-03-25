@@ -29,12 +29,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_CharacterTargetRot = character.localRotation;
             m_SpineTargetRot = spineTransform.localRotation;
             m_CameraTargetRot = camera.localRotation;
-            m_SpineTargetRot = Quaternion.Euler(0f, 0f, 0f);
         }
 
         public void ResetSpineRotationRange()
         {
             spineRotationRange = 0f;
+        }
+
+        public void RealignHipsToSpine(Transform spineRotation) {
+            Quaternion nextRotation = spineRotation.rotation;
+            m_CharacterTargetRot = Quaternion.identity;
+            m_SpineTargetRot = Quaternion.identity;
+            m_CharacterTargetRot = nextRotation;
         }
 
         public void LookRotation(Transform character, Transform spineTransform, Transform camera)
