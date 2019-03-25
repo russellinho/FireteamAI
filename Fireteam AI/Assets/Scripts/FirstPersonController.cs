@@ -14,6 +14,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] public bool m_IsWalking;
         [SerializeField] public bool m_IsCrouching;
 		[SerializeField] public bool m_IsRunning;
+        [SerializeField] public bool m_IsMoving;
         [SerializeField] private float m_WalkSpeed;
         [SerializeField] private float m_CrouchSpeed;
 		[SerializeField] private float m_MoveSpeed;
@@ -53,6 +54,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private PhotonView photonView;
 
         public Transform spineTransform;
+        public Animator animator;
 
         // Use this for initialization
         private void Start()
@@ -131,9 +133,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // always move along the camera forward as it is the direction that it being aimed at
             // reorient the body to the camera forward
             transform.forward = m_Camera.transform.forward;
-            if (m_Input.y > 0f || m_Input.x > 0f) {
-                m_MouseLook.ResetSpineRotationRange();
+            if (m_Input.y > 0f || m_Input.x > 0f)
+            {
+                m_IsMoving = true;
             }
+            else
+            {
+                m_IsMoving = false;
+            }
+            animator.SetBool("Moving", m_IsMoving);
             
             Vector3 desiredMove = transform.forward*m_Input.y + transform.right*m_Input.x;
 
