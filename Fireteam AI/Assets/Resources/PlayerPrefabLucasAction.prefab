@@ -3899,13 +3899,13 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 2
-  m_Radius: 0.5
+  m_Height: 1.8
+  m_Radius: 0.23
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.01, z: 0}
 --- !u!82 &9183225153859524232
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4017,6 +4017,7 @@ MonoBehaviour:
   m_IsWalking: 0
   m_IsCrouching: 0
   m_IsRunning: 0
+  m_IsMoving: 0
   m_WalkSpeed: 2.5
   m_CrouchSpeed: 2
   m_MoveSpeed: 6
@@ -4117,6 +4118,7 @@ MonoBehaviour:
   sprintLock: 0
   canMove: 0
   spineTransform: {fileID: 6772054392541729064}
+  animator: {fileID: 6772054392549162816}
 --- !u!54 &1344682169257083629
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4322,7 +4324,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 0}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &8601606050091102400
