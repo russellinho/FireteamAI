@@ -133,15 +133,22 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // always move along the camera forward as it is the direction that it being aimed at
             // reorient the body to the camera forward
             transform.forward = m_Camera.transform.forward;
-            if (m_Input.y > 0f || m_Input.x > 0f)
+            if (m_Input.x > 0f)
             {
-                m_IsMoving = true;
+                animator.SetInteger("Moving", 3);
+            }
+            else if (m_Input.x < 0f)
+            {
+                animator.SetInteger("Moving", 2);
+            }
+            else if (m_Input.y > 0f)
+            {
+                animator.SetInteger("Moving", 1);
             }
             else
             {
-                m_IsMoving = false;
+                animator.SetInteger("Moving", 0);
             }
-            animator.SetBool("Moving", m_IsMoving);
             
             Vector3 desiredMove = transform.forward*m_Input.y + transform.right*m_Input.x;
 
@@ -181,7 +188,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_CollisionFlags = m_CharacterController.Move(m_MoveDir*Time.fixedDeltaTime);
 
             ProgressStepCycle(speed);
-            UpdateCameraPosition(speed);
+           // UpdateCameraPosition(speed);
 
             //m_MouseLook.UpdateaLock();
         }
