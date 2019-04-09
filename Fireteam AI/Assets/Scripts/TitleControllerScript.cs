@@ -133,6 +133,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void Update() {
+		if (Input.GetKeyDown(KeyCode.Q)) {
+			SceneManager.LoadScene("Test");
+		}
 		if (PlayerData.playerdata.disconnectedFromServer) {
 			PlayerData.playerdata.disconnectedFromServer = false;
 			mainMenuPopup.GetComponentInChildren<Text> ().text = "Lost connection to server.\nReason: " + PlayerData.playerdata.disconnectReason;

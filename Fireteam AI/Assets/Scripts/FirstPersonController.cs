@@ -60,7 +60,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private void Start()
         {
             photonView = GetComponent<PhotonView>();
-            if (!photonView.IsMine) {
+            if (photonView != null && !photonView.IsMine) {
 				this.enabled = false;
                 return;
             }
@@ -83,7 +83,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Update is called once per frame
         private void Update()
         {
-            if (!photonView.IsMine)
+            if (photonView != null && !photonView.IsMine)
             {
                 return;
             }
@@ -124,7 +124,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void FixedUpdate()
         {
-            if (!photonView.IsMine)
+            if (photonView != null && !photonView.IsMine)
             {
                 return;
             }
@@ -132,7 +132,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
             GetInput(out speed);
             // always move along the camera forward as it is the direction that it being aimed at
             // reorient the body to the camera forward
-            transform.forward = m_Camera.transform.forward;
+            m_Camera.transform.forward = new Vector3(transform.forward.x, m_Camera.transform.forward.y, transform.forward.z);
+            //transform.forward = m_Camera.transform.forward;
             if (m_Input.x > 0f)
             {
                 animator.SetInteger("Moving", 3);
@@ -273,10 +274,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 #if !MOBILE_INPUT
 			// On standalone builds, walk/run speed is modified by a key press.
 			// keep track of whether or not the character is walking or running
-            if (weaponActionScript == null) {
-                weaponActionScript = GetComponent<WeaponActionScript>();
-            }
-			if (weaponActionScript.isAiming) {
+            // if (weaponActionScript == null) {
+            //     weaponActionScript = GetComponent<WeaponActionScript>();
+            // }
+			if (weaponActionScript != null && weaponActionScript.isAiming) {
 				if (!m_IsCrouching) {
 					m_IsWalking = true;
 					m_IsRunning = false;
@@ -289,7 +290,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 					if (Input.GetKey(KeyCode.C)) {
 						m_IsWalking = true;
 						m_IsRunning = false;
-					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f && GetComponent<PlayerScript>().sprintTime > 0f && !sprintLock) {
+					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f && GetComponent<PlayerActionScript>().sprintTime > 0f && !sprintLock) {
 						m_IsWalking = false;
 						m_IsRunning = true;
 					} else {

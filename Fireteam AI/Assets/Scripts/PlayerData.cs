@@ -47,6 +47,8 @@ public class PlayerData : MonoBehaviour
                 "PlayerPrefabLucasAction", 
                 Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0], 
                 Quaternion.Euler(Vector3.zero));
+        } else if (levelName.Equals("Test")) {
+            PlayerData.playerdata.inGamePlayerReference = Instantiate((GameObject)Resources.Load("PlayerPrefabLucasAction 1"), new Vector3(0f, 0.5f, 0f), Quaternion.identity);
         }
         else
         {
