@@ -84,7 +84,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 // If the player has turned his hips maximum to the right/left and is still rotating right/left, rotate the body instead
                 // Else, rotate the hips to the right/left
-                m_SpineTargetRot = Quaternion.Euler(m_SpineTargetRot.eulerAngles.x, m_SpineTargetRot.eulerAngles.y, 0f);
+                m_SpineTargetRot = Quaternion.Euler(m_SpineTargetRot.eulerAngles.x, m_SpineTargetRot.eulerAngles.y, m_SpineTargetRot.eulerAngles.x);
                 spineTransform.localRotation = m_SpineTargetRot;
                 m_CharacterTargetRot = Quaternion.Euler(0f, m_CharacterTargetRot.eulerAngles.y, 0f);
                 character.localRotation = m_CharacterTargetRot;
