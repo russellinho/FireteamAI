@@ -46,24 +46,24 @@ public class TestWeaponScript : MonoBehaviour
         } else {
             if (equipmentScript.gender == 'M') {
                 rifleHandPositions = new Dictionary<string, Vector3>();
-                rifleHandPositions.Add("AK-47", new Vector3(-0.098f, 0.135f, 0.075f));
-                rifleHandPositions.Add("M4A1", new Vector3(-0.065f, 0.126f, 0.04f));
+                rifleHandPositions.Add("AK-47", new Vector3(-0.04f, 0.12f, 0.075f));
+                rifleHandPositions.Add("M4A1", new Vector3(-0.007f, 0.111f, 0.04f));
             
                 shotgunHandPositions = new Dictionary<string, Vector3>();
-                shotgunHandPositions.Add("R870", new Vector3(-0.129f, 0.145f, 0.084f));
+                shotgunHandPositions.Add("R870", new Vector3(-0.071f, 0.13f, 0.084f));
 
                 sniperRifleHandPositions = new Dictionary<string, Vector3>();
-                sniperRifleHandPositions.Add("L96A1", new Vector3(-0.054f, 0.115f, 0.029f));
+                sniperRifleHandPositions.Add("L96A1", new Vector3(0.004f, 0.1f, 0.029f));
             } else {
                 rifleHandPositions = new Dictionary<string, Vector3>();
-                rifleHandPositions.Add("AK-47", new Vector3(-0.098f, 0.135f, 0.075f));
-                rifleHandPositions.Add("M4A1", new Vector3(-0.065f, 0.126f, 0.04f));
+                rifleHandPositions.Add("AK-47", new Vector3(-0.04f, 0.12f, 0.075f));
+                rifleHandPositions.Add("M4A1", new Vector3(-0.007f, 0.111f, 0.04f));
             
                 shotgunHandPositions = new Dictionary<string, Vector3>();
-                shotgunHandPositions.Add("R870", new Vector3(-0.129f, 0.145f, 0.084f));
+                shotgunHandPositions.Add("R870", new Vector3(-0.071f, 0.13f, 0.084f));
 
                 sniperRifleHandPositions = new Dictionary<string, Vector3>();
-                sniperRifleHandPositions.Add("L96A1", new Vector3(-0.054f, 0.115f, 0.029f));
+                sniperRifleHandPositions.Add("L96A1", new Vector3(0.004f, 0.1f, 0.029f));
             }
             EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
             EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);

@@ -7,6 +7,7 @@ public class WeaponHandlerScript : MonoBehaviour
     public Transform handle;
     public Transform weapon;
     public Transform leftShoulder;
+    private Vector3 steadyHandPos;
     private Vector3 originalShoulderPos;
 
     void Awake() {
@@ -43,11 +44,18 @@ public class WeaponHandlerScript : MonoBehaviour
     }
 
     public void SetSteadyHand(Vector3 shoulderPos) {
-        leftShoulder.localPosition = new Vector3(shoulderPos.x, shoulderPos.y, shoulderPos.z);
+        steadyHandPos = shoulderPos;
+        //leftShoulder.localPosition = new Vector3(shoulderPos.x, shoulderPos.y, shoulderPos.z);
     }
 
     public void ResetSteadyHand() {
         leftShoulder.localPosition = originalShoulderPos;
+    }
+
+    void LateUpdate() {
+        if (!Vector3.Equals(Vector3.zero, steadyHandPos)) {
+            leftShoulder.localPosition = new Vector3(steadyHandPos.x, steadyHandPos.y, steadyHandPos.z);
+        }
     }
 
 }

@@ -10,8 +10,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public float XSensitivity = 2f;
         public float YSensitivity = 2f;
         public bool clampVerticalRotation = true;
-        public float MinimumX = -90F;
-        public float MaximumX = 90F;
+        public float MinimumX;
+        public float MaximumX;
         public bool smooth;
         public float smoothTime = 5f;
         public bool lockCursor = true;
@@ -40,7 +40,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             Quaternion nextRotation = spineRotation.rotation;
             m_CharacterTargetRot = Quaternion.identity;
             m_SpineTargetRot = Quaternion.identity;
-            m_CharacterTargetRot = nextRotation;
+            //m_CharacterTargetRot = nextRotation;
         }
 
         public void LookRotation(Transform character, Transform spineTransform, Transform camera)
@@ -68,7 +68,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 }
             }
             m_SpineTargetRot *= Quaternion.Euler(-xRot, 0f, 0f);
-            //m_CameraTargetRot *= Quaternion.Euler (-xRot, 0f, 0f);
+            //m_CameraTargetRot *= Quaternion.Euler (-xRot, yRot, 0f);
 
             if (clampVerticalRotation)
                 //m_CameraTargetRot = ClampRotationAroundXAxis (m_CameraTargetRot);
@@ -91,6 +91,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 //camera.localRotation = m_CameraTargetRot;
                 //camera.localRotation = Quaternion.Euler(spineTransform.localRotation.eulerAngles.x, spineTransform.localRotation.eulerAngles.y, 0f);
             }
+            Debug.Log(spineRotationRange);
 
             //UpdateCursorLock();
         }
@@ -146,6 +147,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
             float angleX = 2.0f * Mathf.Rad2Deg * Mathf.Atan (q.x);
 
             angleX = Mathf.Clamp (angleX, MinimumX, MaximumX);
+            //Debug.Log("min = " + MinimumX + " max = " + MaximumX);
+            Debug.Log(angleX);
 
             q.x = Mathf.Tan (0.5f * Mathf.Deg2Rad * angleX);
 

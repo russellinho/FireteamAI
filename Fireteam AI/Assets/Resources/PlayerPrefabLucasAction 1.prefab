@@ -27,7 +27,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 8596336155875985275}
   m_Father: {fileID: 6772054392541729012}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1401,6 +1402,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8596336155875985275}
   - component: {fileID: 9008041633628791546}
+  - component: {fileID: 4607471675036561885}
   m_Layer: 0
   m_Name: PlayerCam
   m_TagString: MainCamera
@@ -1416,12 +1418,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5204514870774409909}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.47, z: 0.19}
+  m_LocalPosition: {x: -0.19, y: -0.07, z: 0.19}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7403946386076052789}
-  m_Father: {fileID: 6772054392541729064}
-  m_RootOrder: 1
+  m_Father: {fileID: 1143336577021899996}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &9008041633628791546
 Camera:
@@ -1465,6 +1467,19 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &4607471675036561885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5204514870774409909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31aec6efb1df6344091734678c951904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponHolderTrans: {fileID: 1143336577021899996}
 --- !u!1 &5533361316164161734
 GameObject:
   m_ObjectHideFlags: 0
@@ -3657,7 +3672,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6772054392541729066}
-  - {fileID: 8596336155875985275}
   m_Father: {fileID: 6772054392541728940}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4021,8 +4035,8 @@ MonoBehaviour:
     XSensitivity: 2
     YSensitivity: 2
     clampVerticalRotation: 1
-    MinimumX: -90
-    MaximumX: 90
+    MinimumX: -45
+    MaximumX: 55
     smooth: 0
     smoothTime: 5
     lockCursor: 1
