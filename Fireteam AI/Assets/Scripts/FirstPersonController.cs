@@ -132,26 +132,54 @@ namespace UnityStandardAssets.Characters.FirstPerson
             GetInput(out speed);
             // always move along the camera forward as it is the direction that it being aimed at
             // reorient the body to the camera forward
-            m_Camera.transform.forward = new Vector3(transform.forward.x, m_Camera.transform.forward.y, transform.forward.z);
+            //m_Camera.transform.forward = new Vector3(transform.forward.x, m_Camera.transform.forward.y, transform.forward.z);
             //transform.forward = m_Camera.transform.forward;
-            if (m_Input.x > 0f)
+            if (m_Input.x < 0f && m_Input.y > 0f)
             {
+                // Move forward-left
+                animator.SetInteger("Moving", 5);
+            }
+            else if (m_Input.x > 0f && m_Input.y > 0f)
+            {
+                // Move forward-right
+                animator.SetInteger("Moving", 6);
+            }
+            else if (m_Input.x < 0f && m_Input.y < 0f)
+            {
+                // Move backwards-left
+                animator.SetInteger("Moving", 7);
+            }
+            else if (m_Input.x > 0f && m_Input.y < 0f)
+            {
+                // Move backwards-right
+                animator.SetInteger("Moving", 8);
+            }
+            else if (m_Input.x > 0f)
+            {
+                // Move right
                 animator.SetInteger("Moving", 3);
             }
             else if (m_Input.x < 0f)
             {
+                // Move left
                 animator.SetInteger("Moving", 2);
             }
             else if (m_Input.y > 0f)
             {
+                // Move forward
                 animator.SetInteger("Moving", 1);
+            }
+            else if (m_Input.y < 0f)
+            {
+                // Move backwards
+                animator.SetInteger("Moving", 4);
             }
             else
             {
                 animator.SetInteger("Moving", 0);
             }
             
-            Vector3 desiredMove = transform.forward*m_Input.y + transform.right*m_Input.x;
+            Vector3 desiredMove = m_Camera.transform.forward*m_Input.y + m_Camera.transform.right*m_Input.x;
 
             // get a normal for the surface that is being touched to move along it
             RaycastHit hitInfo;
