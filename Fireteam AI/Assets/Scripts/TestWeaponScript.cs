@@ -88,14 +88,14 @@ public class TestWeaponScript : MonoBehaviour
             currentlyEquippedType = 1;
             animator.SetInteger("WeaponType", 1);
             EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null);
-            animator.CrossFadeInFixedTime("DrawWeapon", 0.1f, 0, 1f);
+//            animator.CrossFadeInFixedTime("DrawWeapon", 0.1f, 0, 1f);
         } else if (weaponCat == 2) {
             if (currentlyEquippedType == 2) return;
             weaponReady = false;
             animator.SetInteger("WeaponType", 2);
             currentlyEquippedType = 2;
             EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null);
-            animator.CrossFadeInFixedTime("DrawWeapon", 0.1f, 0, 1f);
+//            animator.CrossFadeInFixedTime("DrawWeapon", 0.1f, 0, 1f);
         }
     }
 

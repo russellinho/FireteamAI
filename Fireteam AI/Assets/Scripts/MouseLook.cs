@@ -91,7 +91,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 //camera.localRotation = m_CameraTargetRot;
                 //camera.localRotation = Quaternion.Euler(spineTransform.localRotation.eulerAngles.x, spineTransform.localRotation.eulerAngles.y, 0f);
             }
-            Debug.Log(spineRotationRange);
 
             //UpdateCursorLock();
         }
@@ -147,8 +146,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             float angleX = 2.0f * Mathf.Rad2Deg * Mathf.Atan (q.x);
 
             angleX = Mathf.Clamp (angleX, MinimumX, MaximumX);
-            //Debug.Log("min = " + MinimumX + " max = " + MaximumX);
-            Debug.Log(angleX);
 
             q.x = Mathf.Tan (0.5f * Mathf.Deg2Rad * angleX);
 

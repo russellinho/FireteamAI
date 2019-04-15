@@ -23,6 +23,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public EquipmentScript equipmentScript;
     public CameraShakeScript camShakeScript;
     public InGameMessengerHUD inGameMessengerHud;
+    public Animator animator;
 
     // Player variables
     public int health;
@@ -68,34 +69,34 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void Start()
     {
         // Else, load the in-game necessities
-        AddMyselfToPlayerList();
+        //AddMyselfToPlayerList();
 
         // Setting original positions for returning from crouching
         charHeightOriginal = charController.height;
-        escapeValueSent = false;
-        assaultModeChangedIndicator = false;
-        isDefusing = false;
+        // escapeValueSent = false;
+        // assaultModeChangedIndicator = false;
+        // isDefusing = false;
 
-        health = 100;
-        kills = 0;
-        deaths = 0;
-        sprintTime = 3f;
+        // health = 100;
+        // kills = 0;
+        // deaths = 0;
+        // sprintTime = 3f;
 
-        currentBombIndex = 0;
-        bombIterator = 0;
+        // currentBombIndex = 0;
+        // bombIterator = 0;
 
-        // If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
-        if (!GetComponent<PhotonView>().IsMine)
-        {
-            subComponents[2].SetActive(false);
-            subComponents[3].SetActive(false);
-            Destroy(GetComponentInChildren<AudioListener>());
-            viewCam.enabled = false;
-            //enabled = false;
-            return;
-        }
+        // // If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
+        // if (!GetComponent<PhotonView>().IsMine)
+        // {
+        //     subComponents[2].SetActive(false);
+        //     subComponents[3].SetActive(false);
+        //     Destroy(GetComponentInChildren<AudioListener>());
+        //     viewCam.enabled = false;
+        //     //enabled = false;
+        //     return;
+        // }
 
-        gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
+        // gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 
         // Initialize variables
         canShoot = true;
@@ -118,7 +119,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        if (gameController == null)
+        /** if (gameController == null)
         {
             GameObject gc = GameObject.FindWithTag("GameController");
             if (gc == null)
@@ -131,14 +132,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (!photonView.IsMine)
         {
             return;
-        }
+        }*/
 
         // Instant respawn hack
         /**if (Input.GetKeyDown (KeyCode.P)) {
             BeginRespawn ();
         }*/
 
-        if (enterSpectatorModeTimer > 0f)
+        /**if (enterSpectatorModeTimer > 0f)
         {
             enterSpectatorModeTimer -= Time.deltaTime;
             if (enterSpectatorModeTimer <= 0f)
@@ -221,14 +222,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         else
         {
             BombCheck();
-        }
+        }*/
 
         if (fpc.enabled && fpc.canMove)
         {
             Crouch();
         }
-        DetermineEscaped();
-        RespawnRoutine();
+        //DetermineEscaped();
+        //RespawnRoutine();
     }
 
     void AddMyselfToPlayerList()
@@ -265,36 +266,21 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             fpc.m_IsCrouching = !fpc.m_IsCrouching;
         }
 
-        // Collecting the original character height
-        float h = charHeightOriginal;
         // Collect the original y position of the FPS controller since we're going to move it downwards to crouch
-        //float viewH = fpcPositionYOriginal;
-        //float speed = charController.velocity;
-        float bodyScale = bodyTrans.lossyScale.y;
-
-        // if (fpc.m_IsCrouching)
-        // {
-        //     h = charHeightOriginal * .65f;
-        //     viewH = .55f;
-        //     bodyScale = .7f;
-        // }
-        // else
-        // {
-        //     viewH = .8f;
-        //     bodyScale = bodyScaleOriginal;
-        // }
-
-        float lastHeight = charController.height;
-        // float lastCameraHeight = fpcPosition.position.y;
-        // charController.height = Mathf.Lerp(lastHeight, h, 10 * Time.deltaTime);
-        // fpcPosition.localPosition = new Vector3(fpcPosition.localPosition.x, viewH, fpcPosition.localPosition.z);
-        bodyTrans.localScale = new Vector3(bodyTrans.localScale.x, bodyScale, bodyTrans.localScale.z);
-        transform.position = new Vector3(transform.position.x, transform.position.y + ((charController.height - lastHeight) / 2), transform.position.z);
-
-        if (fpc.m_IsCrouching != originalCrouch)
-        {
-            photonView.RPC("RpcCrouch", RpcTarget.Others, fpc.m_IsCrouching);
+        if (fpc.m_IsCrouching) {
+            charController.height = charHeightOriginal * 0.65f;
+        } else {
+            charController.height = charHeightOriginal;
         }
+        
+        // Set the animation to crouching
+        animator.SetBool("Crouching", (charController.height == charHeightOriginal ? false : true));
+
+        // Network it
+        // if (fpc.m_IsCrouching != originalCrouch)
+        // {
+        //     photonView.RPC("RpcCrouch", RpcTarget.Others, fpc.m_IsCrouching);
+        // }
     }
 
     [PunRPC]

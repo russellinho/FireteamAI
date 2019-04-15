@@ -3755,6 +3755,8 @@ GameObject:
   - component: {fileID: 3560548475664464136}
   - component: {fileID: 9183225153859524232}
   - component: {fileID: 3572228914654154590}
+  - component: {fileID: 1319902226699020379}
+  - component: {fileID: 7649428840762148136}
   m_Layer: 0
   m_Name: PlayerPrefabLucasAction 1
   m_TagString: Untagged
@@ -4123,8 +4125,101 @@ MonoBehaviour:
   sprintLock: 0
   canMove: 0
   spineTransform: {fileID: 6772054392541729064}
-  weaponHolderTrans: {fileID: 1143336577021899996}
   animator: {fileID: 6772054392549162816}
+--- !u!114 &1319902226699020379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6772054392541891854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 184afdda019ac429580ac41376ada0ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouseLook:
+    XSensitivity: 2
+    YSensitivity: 2
+    clampVerticalRotation: 1
+    MinimumX: 0
+    MaximumX: 0
+    smooth: 0
+    smoothTime: 5
+    lockCursor: 1
+    m_CameraTargetRot: {x: 0, y: 0, z: 0, w: 0}
+  playerActionScript: {fileID: 0}
+  cameraShakeScript: {fileID: 0}
+  hudScript: {fileID: 0}
+  audioController: {fileID: 0}
+  fpc: {fileID: 3572228914654154590}
+  range: 100
+  spread: 0
+  gunAnimator: {fileID: 6772054392549162816}
+  audioSource: {fileID: 0}
+  bulletsPerMag: 30
+  totalBulletsLeft: 120
+  currentBullets: 0
+  shootSound: {fileID: 0}
+  reloadSound: {fileID: 0}
+  shootPoint: {fileID: 0}
+  muzzleFlash: {fileID: 0}
+  bulletTrace: {fileID: 0}
+  isCocking: 0
+  isAiming: 0
+  hitParticles: {fileID: 0}
+  bulletImpact: {fileID: 0}
+  bloodEffect: {fileID: 0}
+  fireRate: 0.1
+  damage: 20
+  firingMode: 0
+  camTransform: {fileID: 8596336155875985275}
+  aimPosOffset: {x: -0.026, y: 0, z: 0.169}
+  sprintPos: {x: 0, y: 0, z: 0}
+  sprintPos2: {x: 0, y: 0, z: 0}
+  sprintRot: {x: 0, y: 0, z: 0}
+  aodSpeed: 8
+  pView: {fileID: 0}
+--- !u!114 &7649428840762148136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6772054392541891854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06fcf7b901f8b4fc3aa6c823bb20d96d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameController: {fileID: 0}
+  audioController: {fileID: 0}
+  charController: {fileID: 3560548475664464136}
+  fpsHands: {fileID: 0}
+  wepActionScript: {fileID: 1319902226699020379}
+  aud: {fileID: 0}
+  viewCam: {fileID: 0}
+  bodyTrans: {fileID: 0}
+  spectatorCam: {fileID: 0}
+  thisSpectatorCam: {fileID: 0}
+  hud: {fileID: 0}
+  equipmentScript: {fileID: 0}
+  camShakeScript: {fileID: 0}
+  inGameMessengerHud: {fileID: 0}
+  animator: {fileID: 6772054392549162816}
+  health: 0
+  sprintTime: 0
+  godMode: 0
+  canShoot: 0
+  escapeValueSent: 0
+  kills: 0
+  isRespawning: 0
+  respawnTimer: 0
+  subComponents: []
+  fpc: {fileID: 3572228914654154590}
+  hitTimer: 0
+  healTimer: 0
+  hitLocation: {x: 0, y: 0, z: 0}
 --- !u!1 &6772054392541891872
 GameObject:
   m_ObjectHideFlags: 0

@@ -68,10 +68,10 @@ public class WeaponActionScript : MonoBehaviour
     float fireTimer = 0.0f;
 
     // Aiming down sights
-    public Transform originalTrans;
-    private Vector3 originalPos;
-    private Quaternion originalRot;
-    public Vector3 aimPos;
+    public Transform camTransform;
+    private Vector3 originalPosCam;
+    private Vector3 aimPosCam;
+    public Vector3 aimPosOffset;
     public Vector3 sprintPos;
     public Vector3 sprintPos2;
     public Vector3 sprintRot;
@@ -82,13 +82,15 @@ public class WeaponActionScript : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        if (!pView.IsMine)
+        if (pView != null && !pView.IsMine)
         {
             return;
         }
         currentBullets = bulletsPerMag;
-        originalPos = transform.localPosition;
-        originalRot = transform.localRotation;
+
+        originalPosCam = camTransform.localPosition;
+
+        aimPosCam = new Vector3(originalPosCam.x - aimPosOffset.x, originalPosCam.y - aimPosOffset.y, originalPosCam.z - aimPosOffset.z);
 
         mouseLook = fpc.m_MouseLook;
         //targetGunRot = mouseLook.m_CameraTargetRot * Quaternion.Euler(-MAX_RECOIL, 0f, 0f);
@@ -101,7 +103,7 @@ public class WeaponActionScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!pView.IsMine)
+        if (pView != null && !pView.IsMine)
         {
             return;
         }
@@ -123,14 +125,14 @@ public class WeaponActionScript : MonoBehaviour
                 break;
         }
 
-        RefillFireTimer();
-        // TODO: Re-enable
+        //RefillFireTimer();
+        // TODO: Re-enable both
         //Sprint();
 
-        if (!playerActionScript.canShoot)
-        {
-            return;
-        }
+        // if (!playerActionScript.canShoot)
+        // {
+        //     return;
+        // }
         if (Input.GetKeyDown(KeyCode.R))
         {
             if (!isSprinting && currentBullets < bulletsPerMag && totalBulletsLeft > 0)
@@ -152,10 +154,11 @@ public class WeaponActionScript : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!pView.IsMine || playerActionScript.health <= 0)
-        {
-            return;
-        }
+        // TODO: Re-enable
+        // if (!pView.IsMine || playerActionScript.health <= 0)
+        // {
+        //     return;
+        // }
         // TODO: Fix this
         // if (gunAnimator.gameObject.activeSelf)
         // {
@@ -165,12 +168,13 @@ public class WeaponActionScript : MonoBehaviour
         //     gunAnimator.SetBool("Aim", isAiming);
         // }
         // Shooting mechanics
-        if (shootInput && !isReloading && playerActionScript.canShoot)
+        // if (shootInput && !isReloading && playerActionScript.canShoot)
+        if (shootInput && !isReloading)
         {
             if (currentBullets > 0)
             {
                 Fire();
-                cameraShakeScript.SetShake(true);
+//                cameraShakeScript.SetShake(true);
                 IncreaseSpread();
                 voidRecoilRecover = false;
                 IncreaseRecoil();
@@ -187,7 +191,8 @@ public class WeaponActionScript : MonoBehaviour
             DecreaseSpread();
             DecreaseRecoil();
             UpdateRecoil(false);
-            cameraShakeScript.SetShake(false);
+            // TODO: Re-enable
+            //cameraShakeScript.SetShake(false);
             /**if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0 && !voidRecoilRecover) {
                 DecreaseRecoil ();
                 UpdateRecoil (false);
@@ -200,7 +205,8 @@ public class WeaponActionScript : MonoBehaviour
 
     public void AimDownSights()
     {
-        if (!isSprinting && !playerActionScript.fpc.m_IsRunning)
+        if (!isSprinting)
+        // if (!isSprinting && !playerActionScript.fpc.m_IsRunning)
         {
             // Logic for toggle aim rather than hold down aim
             /**if (Input.GetButtonDown ("Fire2") && !isReloading) {
@@ -212,17 +218,19 @@ public class WeaponActionScript : MonoBehaviour
                 originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
             }*/
 
-            // if (Input.GetButton("Fire2") && !isReloading)
-            // {
-            //     isAiming = true;
-            //     originalTrans.localPosition = Vector3.Lerp(originalTrans.localPosition, aimPos, Time.deltaTime * aodSpeed);
-            // }
-            // else
-            // {
-            //     isAiming = false;
-            //     originalTrans.localPosition = Vector3.Lerp(originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
-            // }
-            originalTrans.localRotation = Quaternion.Lerp(originalTrans.localRotation, originalRot, Time.deltaTime * aodSpeed);
+            if (Input.GetButton("Fire2") && !isReloading)
+            {
+                isAiming = true;
+                gunAnimator.enabled = false;
+                camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, aimPosCam, Time.deltaTime * aodSpeed);
+            }
+            else
+            {
+                isAiming = false;
+                gunAnimator.enabled = true;
+                camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, originalPosCam, Time.deltaTime * aodSpeed);
+            }
+            //weaponTrans.localRotation = Quaternion.Lerp(weaponTrans.localRotation, originalRotWeapon, Time.deltaTime * aodSpeed);
         }
     }
 
