@@ -31,6 +31,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public bool godMode;
     public bool canShoot;
     private float charHeightOriginal;
+    private float charCenterYOriginal;
     public bool escapeValueSent;
     private bool assaultModeChangedIndicator;
     public int kills;
@@ -73,6 +74,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         // Setting original positions for returning from crouching
         charHeightOriginal = charController.height;
+        charCenterYOriginal = charController.center.y;
         // escapeValueSent = false;
         // assaultModeChangedIndicator = false;
         // isDefusing = false;
@@ -268,13 +270,15 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         // Collect the original y position of the FPS controller since we're going to move it downwards to crouch
         if (fpc.m_IsCrouching) {
-            charController.height = charHeightOriginal * 0.65f;
+            charController.height = 1f;
+            charController.center = new Vector3(0f, 0.54f, 0f);
         } else {
             charController.height = charHeightOriginal;
+            charController.center = new Vector3(0f, charCenterYOriginal, 0f);
         }
         
         // Set the animation to crouching
-        animator.SetBool("Crouching", (charController.height == charHeightOriginal ? false : true));
+        animator.SetBool("Crouching", fpc.m_IsCrouching);
 
         // Network it
         // if (fpc.m_IsCrouching != originalCrouch)
