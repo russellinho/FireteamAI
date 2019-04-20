@@ -79,7 +79,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // assaultModeChangedIndicator = false;
         // isDefusing = false;
 
-        // health = 100;
+        health = 100;
         // kills = 0;
         // deaths = 0;
         // sprintTime = 3f;
@@ -182,6 +182,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             //audioController.PlaySprintSound(true);
             canShoot = false;
             animator.SetBool("isSprinting", true);
+            Debug.Log(animator.GetBool("isSprinting"));
             if (sprintTime > 0f)
             {
                 sprintTime -= Time.deltaTime;
