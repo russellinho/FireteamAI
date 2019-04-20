@@ -141,46 +141,47 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             BeginRespawn ();
         }*/
 
-        /**if (enterSpectatorModeTimer > 0f)
-        {
-            enterSpectatorModeTimer -= Time.deltaTime;
-            if (enterSpectatorModeTimer <= 0f)
-            {
-                EnterSpectatorMode();
-            }
-        }
+        // if (enterSpectatorModeTimer > 0f)
+        // {
+        //     enterSpectatorModeTimer -= Time.deltaTime;
+        //     if (enterSpectatorModeTimer <= 0f)
+        //     {
+        //         EnterSpectatorMode();
+        //     }
+        // }
 
-        if (gameController.sectorsCleared == 0 && gameController.bombsRemaining == 2)
-        {
-            gameController.sectorsCleared++;
-            hud.OnScreenEffect("SECTOR CLEARED!", false);
-            BeginRespawn();
-        }
+        // if (gameController.sectorsCleared == 0 && gameController.bombsRemaining == 2)
+        // {
+        //     gameController.sectorsCleared++;
+        //     hud.OnScreenEffect("SECTOR CLEARED!", false);
+        //     BeginRespawn();
+        // }
 
-        if (gameController.bombsRemaining == 0 && !escapeAvailablePopup)
-        {
-            escapeAvailablePopup = true;
-            hud.MessagePopup("Escape available! Head to the waypoint!");
-            hud.ComBoxPopup(2f, "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.");
-        }
+        // if (gameController.bombsRemaining == 0 && !escapeAvailablePopup)
+        // {
+        //     escapeAvailablePopup = true;
+        //     hud.MessagePopup("Escape available! Head to the waypoint!");
+        //     hud.ComBoxPopup(2f, "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.");
+        // }
 
-        // Update assault mode
-        hud.UpdateAssaultModeIndHud(gameController.assaultMode);
+        // // Update assault mode
+        // hud.UpdateAssaultModeIndHud(gameController.assaultMode);
 
-        // On assault mode changed
-        bool h = gameController.assaultMode;
-        if (h != assaultModeChangedIndicator)
-        {
-            assaultModeChangedIndicator = h;
-            hud.MessagePopup("Your cover is blown!");
-            hud.ComBoxPopup(2f, "They know you're here! Slot the bastards!");
-            hud.ComBoxPopup(20f, "Cicadas on the rooftops! Watch the rooftops!");
-        }
+        // // On assault mode changed
+        // bool h = gameController.assaultMode;
+        // if (h != assaultModeChangedIndicator)
+        // {
+        //     assaultModeChangedIndicator = h;
+        //     hud.MessagePopup("Your cover is blown!");
+        //     hud.ComBoxPopup(2f, "They know you're here! Slot the bastards!");
+        //     hud.ComBoxPopup(20f, "Cicadas on the rooftops! Watch the rooftops!");
+        // }
 
         if (health > 0 && fpc.enabled && fpc.m_IsRunning)
         {
-            audioController.PlaySprintSound(true);
+            //audioController.PlaySprintSound(true);
             canShoot = false;
+            animator.SetBool("isSprinting", true);
             if (sprintTime > 0f)
             {
                 sprintTime -= Time.deltaTime;
@@ -192,7 +193,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         else
         {
-            audioController.PlaySprintSound(false);
+            //audioController.PlaySprintSound(false);
+            animator.SetBool("isSprinting", false);
             if (sprintTime < 3f)
             {
                 sprintTime += Time.deltaTime;
@@ -212,19 +214,19 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             fpc.sprintLock = false;
         }
 
-        DeathCheck();
-        if (health <= 0)
-        {
-            if (!escapeValueSent)
-            {
-                escapeValueSent = true;
-                gameController.IncrementDeathCount();
-            }
-        }
-        else
-        {
-            BombCheck();
-        }*/
+        // DeathCheck();
+        // if (health <= 0)
+        // {
+        //     if (!escapeValueSent)
+        //     {
+        //         escapeValueSent = true;
+        //         gameController.IncrementDeathCount();
+        //     }
+        // }
+        // else
+        // {
+        //     BombCheck();
+        // }
 
         if (fpc.enabled && fpc.canMove)
         {
@@ -265,7 +267,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         bool originalCrouch = fpc.m_IsCrouching;
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            fpc.m_IsCrouching = !fpc.m_IsCrouching;
+            if (charController.isGrounded) {
+                fpc.m_IsCrouching = !fpc.m_IsCrouching;
+                animator.SetBool("Crouching", fpc.m_IsCrouching);
+            }
         }
 
         // Collect the original y position of the FPS controller since we're going to move it downwards to crouch

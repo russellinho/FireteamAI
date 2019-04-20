@@ -199,6 +199,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 {
                     if (m_IsCrouching)
                     {
+                        animator.SetBool("Crouching", false);
                         m_IsCrouching = false;
                     }
                     else
@@ -206,6 +207,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                         m_MoveDir.y = m_JumpSpeed;
                         PlayJumpSound();
                         m_Jumping = true;
+                        animator.SetTrigger("Jump");
                     }
                     m_Jump = false;
                 }
@@ -314,14 +316,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
 					m_IsRunning = false;
 				}
 			} else {
-				if (!m_IsCrouching) {
+				if (!m_IsCrouching && m_CharacterController.isGrounded) {
 					if (Input.GetKey(KeyCode.C)) {
+                        animator.SetBool("isWalking", true);
 						m_IsWalking = true;
 						m_IsRunning = false;
 					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f && GetComponent<PlayerActionScript>().sprintTime > 0f && !sprintLock) {
 						m_IsWalking = false;
 						m_IsRunning = true;
 					} else {
+                        animator.SetBool("isWalking", false);
 						m_IsWalking = false;
 						m_IsRunning = false;
 					}
