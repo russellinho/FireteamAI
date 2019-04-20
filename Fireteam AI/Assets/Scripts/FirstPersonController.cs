@@ -143,40 +143,62 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 // Move forward-right
                 animator.SetInteger("Moving", 6);
+                if (m_IsWalking) {
+                    animator.SetBool("isWalking", true);
+                }
             }
             else if (m_Input.x < 0f && m_Input.y < 0f)
             {
                 // Move backwards-left
                 animator.SetInteger("Moving", 7);
+                if (m_IsWalking) {
+                    animator.SetBool("isWalking", true);
+                }
             }
             else if (m_Input.x > 0f && m_Input.y < 0f)
             {
                 // Move backwards-right
                 animator.SetInteger("Moving", 8);
+                if (m_IsWalking) {
+                    animator.SetBool("isWalking", true);
+                }
             }
             else if (m_Input.x > 0f)
             {
                 // Move right
                 animator.SetInteger("Moving", 3);
+                if (m_IsWalking) {
+                    animator.SetBool("isWalking", true);
+                }
             }
             else if (m_Input.x < 0f)
             {
                 // Move left
                 animator.SetInteger("Moving", 2);
+                if (m_IsWalking) {
+                    animator.SetBool("isWalking", true);
+                }
             }
             else if (m_Input.y > 0f)
             {
                 // Move forward
                 animator.SetInteger("Moving", 1);
+                if (m_IsWalking) {
+                    animator.SetBool("isWalking", true);
+                }
             }
             else if (m_Input.y < 0f)
             {
                 // Move backwards
                 animator.SetInteger("Moving", 4);
+                if (m_IsWalking) {
+                    animator.SetBool("isWalking", true);
+                }
             }
             else
             {
                 animator.SetInteger("Moving", 0);
+                animator.SetBool("isWalking", false);
             }
             
             Vector3 desiredMove = m_Camera.transform.forward*m_Input.y + m_Camera.transform.right*m_Input.x;
@@ -318,14 +340,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			} else {
 				if (!m_IsCrouching && m_CharacterController.isGrounded) {
 					if (Input.GetKey(KeyCode.C)) {
-                        animator.SetBool("isWalking", true);
 						m_IsWalking = true;
 						m_IsRunning = false;
 					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f && GetComponent<PlayerActionScript>().sprintTime > 0f && !sprintLock) {
 						m_IsWalking = false;
 						m_IsRunning = true;
 					} else {
-                        animator.SetBool("isWalking", false);
 						m_IsWalking = false;
 						m_IsRunning = false;
 					}
