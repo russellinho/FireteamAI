@@ -182,7 +182,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             //audioController.PlaySprintSound(true);
             canShoot = false;
             animator.SetBool("isSprinting", true);
-            Debug.Log(animator.GetBool("isSprinting"));
             if (sprintTime > 0f)
             {
                 sprintTime -= Time.deltaTime;

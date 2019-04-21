@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class WeaponHandlerScript : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class WeaponHandlerScript : MonoBehaviour
     public Transform leftShoulder;
     private Vector3 steadyHandPos;
     private Vector3 originalShoulderPos;
+    public FirstPersonController fpc;
 
     void Awake() {
         originalShoulderPos = new Vector3(leftShoulder.localPosition.x, leftShoulder.localPosition.y, leftShoulder.localPosition.z);
@@ -53,7 +55,7 @@ public class WeaponHandlerScript : MonoBehaviour
     }
 
     void LateUpdate() {
-        if (!Vector3.Equals(Vector3.zero, steadyHandPos)) {
+        if (!Vector3.Equals(Vector3.zero, steadyHandPos) && !fpc.m_IsRunning) {
             leftShoulder.localPosition = new Vector3(steadyHandPos.x, steadyHandPos.y, steadyHandPos.z);
         }
     }
