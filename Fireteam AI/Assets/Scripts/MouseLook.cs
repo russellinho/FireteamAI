@@ -48,10 +48,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
             float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
 
+            float angleX = 2.0f * Mathf.Rad2Deg * Mathf.Atan (m_SpineTargetRot.x);
+            Debug.Log(angleX);
+
             // If turning left
             if (yRot < 0f) {
                 // If max spine rotation has been reached to the left, rotate character instead
-                if (spineRotationRange > -50f) {
+                if (spineRotationRange > -50f && angleX < 10f && angleX > -20f) {
                     spineRotationRange += yRot;
                     m_SpineTargetRot *= Quaternion.Euler(0f, yRot, 0f);
                 } else {
@@ -60,7 +63,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             } else {
                 // If turning right
                 // If max spine rotation has been reached to the right, rotate character instead
-                if (spineRotationRange < 20f) {
+                if (spineRotationRange < 20f && angleX < 10f && angleX > -20f) {
                     spineRotationRange += yRot;
                     m_SpineTargetRot *= Quaternion.Euler(0f, yRot, 0f);
                 } else {
