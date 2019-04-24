@@ -18,7 +18,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 
         private Quaternion m_CharacterTargetRot;
-        private Quaternion m_SpineTargetRot;
+        public Quaternion m_SpineTargetRot;
         public Quaternion m_CameraTargetRot;
         private bool m_cursorIsLocked = true;
         private float spineRotationRange;

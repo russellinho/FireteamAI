@@ -78,9 +78,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // isDefusing = false;
 
         health = 100;
-        // kills = 0;
-        // deaths = 0;
-        // sprintTime = 3f;
+        kills = 0;
+        deaths = 0;
+        sprintTime = 3f;
 
         // currentBombIndex = 0;
         // bombIterator = 0;
@@ -459,7 +459,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void ResetHitTimer()
     {
-        photonView.RPC("RpcResetHitTimer", RpcTarget.All);
+        // TODO: Re-enable
+        //photonView.RPC("RpcResetHitTimer", RpcTarget.All);
         hitTimer = 0f;
     }
 

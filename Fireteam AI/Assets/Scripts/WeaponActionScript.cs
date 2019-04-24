@@ -49,7 +49,6 @@ public class WeaponActionScript : MonoBehaviour
     public ParticleSystem muzzleFlash;
     public ParticleSystem bulletTrace;
     private bool isReloading = false;
-    private bool isSprinting = false;
     public bool isCocking = false;
     public bool isAiming;
 
@@ -128,21 +127,20 @@ public class WeaponActionScript : MonoBehaviour
                 break;
         }
 
-        //RefillFireTimer();
-        // TODO: Re-enable both
-        //Sprint();
+        RefillFireTimer();
+        Sprint();
 
-        // if (!playerActionScript.canShoot)
-        // {
-        //     return;
-        // }
-        if (Input.GetKeyDown(KeyCode.R))
+        if (!playerActionScript.canShoot)
         {
-            if (!isSprinting && currentBullets < bulletsPerMag && totalBulletsLeft > 0)
+            return;
+        }
+        /** if (Input.GetKeyDown(KeyCode.R))
+        {
+            if (!playerActionScript.fpc.m_IsRunning && currentBullets < bulletsPerMag && totalBulletsLeft > 0)
             {
                 ReloadAction();
             }
-        }
+        }*/
 
         AimDownSights();
     }
@@ -171,13 +169,12 @@ public class WeaponActionScript : MonoBehaviour
         //     gunAnimator.SetBool("Aim", isAiming);
         // }
         // Shooting mechanics
-        // if (shootInput && !isReloading && playerActionScript.canShoot)
-        if (shootInput && !isReloading)
+        if (shootInput && !isReloading && playerActionScript.canShoot)
         {
             if (currentBullets > 0)
             {
                 Fire();
-//                cameraShakeScript.SetShake(true);
+                cameraShakeScript.SetShake(true);
                 IncreaseSpread();
                 voidRecoilRecover = false;
                 IncreaseRecoil();
@@ -194,22 +191,20 @@ public class WeaponActionScript : MonoBehaviour
             DecreaseSpread();
             DecreaseRecoil();
             UpdateRecoil(false);
-            // TODO: Re-enable
-            //cameraShakeScript.SetShake(false);
-            /**if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0 && !voidRecoilRecover) {
+            cameraShakeScript.SetShake(false);
+            if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0 && !voidRecoilRecover) {
                 DecreaseRecoil ();
                 UpdateRecoil (false);
             } else {
                 voidRecoilRecover = true;
                 recoilTime = 0f;
-            }*/
+            }
         }
     }
 
     public void AimDownSights()
     {
-        if (!isSprinting)
-        // if (!isSprinting && !playerActionScript.fpc.m_IsRunning)
+        if (!playerActionScript.fpc.m_IsRunning)
         {
             // Logic for toggle aim rather than hold down aim
             /**if (Input.GetButtonDown ("Fire2") && !isReloading) {
@@ -232,7 +227,6 @@ public class WeaponActionScript : MonoBehaviour
                 {
                     animator.speed = 1f;
                 }
-                animator.enabled = false;
                 camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, aimPosCam, Time.deltaTime * aodSpeed);
             }
             else
@@ -366,14 +360,14 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void FireEffects()
     {
-        weaponAnimator.CrossFadeInFixedTime("Firing", 0.01f);
+        //weaponAnimator.CrossFadeInFixedTime("Firing", 0.01f);
         muzzleFlash.Play();
         if (!bulletTrace.isPlaying && !pView.IsMine)
         {
             bulletTrace.Play();
         }
         PlayShootSound();
-        currentBullets--;
+        //currentBullets--;
         // Reset fire timer
         fireTimer = 0.0f;
     }
@@ -487,14 +481,14 @@ public class WeaponActionScript : MonoBehaviour
         {
             if (recoilTime < MAX_RECOIL_TIME)
             {
-                mouseLook.m_CameraTargetRot *= Quaternion.Euler(-recoil, 0f, 0f);
+                mouseLook.m_SpineTargetRot *= Quaternion.Euler(-recoil, 0f, 0f);
             }
         }
         else
         {
             if (recoilTime > 0f)
             {
-                mouseLook.m_CameraTargetRot *= Quaternion.Euler(recoil, 0f, 0f);
+                mouseLook.m_SpineTargetRot *= Quaternion.Euler(recoil, 0f, 0f);
             }
         }
     }
