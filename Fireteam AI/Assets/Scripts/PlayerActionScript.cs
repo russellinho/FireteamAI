@@ -12,11 +12,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public GameControllerScript gameController;
     public AudioControllerScript audioController;
     public CharacterController charController;
-    public GameObject fpsHands;
     public WeaponActionScript wepActionScript;
     public AudioSource aud;
     public Camera viewCam;
-    public Transform bodyTrans;
     public GameObject spectatorCam;
     public GameObject thisSpectatorCam;
     public PlayerHUDScript hud;
@@ -299,7 +297,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         float h = charHeightOriginal;
         //float viewH = fpcPositionYOriginal;
         //float speed = charController.velocity;
-        float bodyScale = bodyTrans.lossyScale.y;
 
         // if (fpc.m_IsCrouching)
         // {
@@ -317,7 +314,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // float lastCameraHeight = fpcPosition.position.y;
         // charController.height = Mathf.Lerp(charController.height, h, 10 * Time.deltaTime);
         // fpcPosition.localPosition = new Vector3(fpcPosition.localPosition.x, viewH, fpcPosition.localPosition.z);
-        bodyTrans.localScale = new Vector3(bodyTrans.localScale.x, bodyScale, bodyTrans.localScale.z);
         transform.position = new Vector3(transform.position.x, transform.position.y + ((charController.height - lastHeight) / 2), transform.position.z);
     }
 
@@ -325,9 +321,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (health <= 0)
         {
-            /**if (fpsHands.activeInHierarchy) {
-                //fpsHands.SetActive (false);
-            }*/
             fpc.enabled = false;
             if (!rotationSaved)
             {
@@ -335,21 +328,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 {
                     gameController.ConvertCounts(1, -1);
                 }
-                photonView.RPC("RpcToggleFPSHands", RpcTarget.All, false);
                 hud.ToggleHUD(false);
                 hud.ToggleSpectatorMessage(true);
                 deathCameraLerpPos = new Vector3(viewCam.transform.localPosition.x, viewCam.transform.localPosition.y, viewCam.transform.localPosition.z - 4.5f);
-                alivePosition = new Vector3(0f, bodyTrans.localRotation.eulerAngles.y, 0f);
-                deadPosition = new Vector3(-90f, bodyTrans.localRotation.eulerAngles.y, 0f);
                 enterSpectatorModeTimer = 6f;
                 rotationSaved = true;
                 photonView.RPC("RpcAddToTotalDeaths", RpcTarget.All);
             }
-            if (bodyTrans.rotation.x > -90f)
-            {
-                fraction += Time.deltaTime * 8f;
-                bodyTrans.localRotation = Quaternion.Euler(Vector3.Lerp(alivePosition, deadPosition, fraction));
-            }
+
             DeathCameraEffect();
         }
     }
@@ -551,13 +537,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         viewCam.transform.localPosition = Vector3.Lerp(viewCam.transform.localPosition, deathCameraLerpPos, deathCameraLerpVar);
     }
 
-    [PunRPC]
-    void RpcToggleFPSHands(bool b)
-    {
-        viewCam.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = b;
-        viewCam.gameObject.GetComponentInChildren<MeshRenderer>().enabled = b;
-    }
-
     void EnterSpectatorMode()
     {
         photonView.RPC("RpcChangePlayerDisableStatus", RpcTarget.All, false);
@@ -599,12 +578,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         Destroy(gameObject);
     }
 
-    [PunRPC]
-    void SyncPlayerColor(Vector3 c)
-    {
-        bodyTrans.gameObject.GetComponent<MeshRenderer>().material.color = new Color(c.x / 255f, c.y / 255f, c.z / 255f, 1f);
-    }
-
     void BeginRespawn()
     {
         enterSpectatorModeTimer = 0f;
@@ -633,11 +606,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    // Reset character health, scale, rotation, position, ammo, re-enable FPS hands, disabled HUD components, disabled scripts, death variables, etc.
+    // Reset character health, scale, rotation, position, ammo, disabled HUD components, disabled scripts, death variables, etc.
     void Respawn()
     {
         photonView.RPC("RpcSetHealth", RpcTarget.All, 100);
-        photonView.RPC("RpcToggleFPSHands", RpcTarget.All, true);
         hud.ToggleHUD(true);
         hud.ToggleSpectatorMessage(false);
         fpc.m_IsCrouching = false;
@@ -656,7 +628,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         wepActionScript.currentBullets = wepActionScript.bulletsPerMag;
 
         // Send player back to spawn position, reset rotation, leave spectator mode
-        bodyTrans.localRotation = Quaternion.Euler(alivePosition);
         transform.rotation = Quaternion.Euler(Vector3.zero);
         transform.position = new Vector3(gameController.spawnLocation.position.x, gameController.spawnLocation.position.y, gameController.spawnLocation.position.z);
         LeaveSpectatorMode();

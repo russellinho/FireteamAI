@@ -3759,6 +3759,7 @@ GameObject:
   - component: {fileID: 3572228914654154590}
   - component: {fileID: 1319902226699020379}
   - component: {fileID: 7649428840762148136}
+  - component: {fileID: 1365304766117516845}
   m_Layer: 0
   m_Name: PlayerPrefabLucasAction 1
   m_TagString: Player
@@ -4150,11 +4151,12 @@ MonoBehaviour:
     smoothTime: 5
     lockCursor: 1
     m_CameraTargetRot: {x: 0, y: 0, z: 0, w: 0}
-  playerActionScript: {fileID: 0}
-  cameraShakeScript: {fileID: 0}
+  playerActionScript: {fileID: 7649428840762148136}
+  cameraShakeScript: {fileID: 1365304766117516845}
   hudScript: {fileID: 0}
   audioController: {fileID: 0}
   fpc: {fileID: 3572228914654154590}
+  weaponHolder: {fileID: 768876185633481037}
   range: 100
   spread: 0
   gunAnimator: {fileID: 6772054392549162816}
@@ -4162,11 +4164,11 @@ MonoBehaviour:
   bulletsPerMag: 30
   totalBulletsLeft: 120
   currentBullets: 0
-  shootSound: {fileID: 0}
-  reloadSound: {fileID: 0}
   shootPoint: {fileID: 0}
-  muzzleFlash: {fileID: 0}
-  bulletTrace: {fileID: 0}
+  muzzleFlash: {fileID: 198181199395725860, guid: 0bcfe9d4fd038ce49b6649a9505d7259,
+    type: 3}
+  bulletTrace: {fileID: 198223865259119552, guid: c4f5b88ec37f1f04db5f170233b15cb3,
+    type: 3}
   isCocking: 0
   isAiming: 0
   hitParticles: {fileID: 0}
@@ -4197,16 +4199,14 @@ MonoBehaviour:
   gameController: {fileID: 0}
   audioController: {fileID: 0}
   charController: {fileID: 3560548475664464136}
-  fpsHands: {fileID: 0}
   wepActionScript: {fileID: 1319902226699020379}
-  aud: {fileID: 0}
-  viewCam: {fileID: 0}
-  bodyTrans: {fileID: 0}
+  aud: {fileID: 9183225153859524232}
+  viewCam: {fileID: 9008041633628791546}
   spectatorCam: {fileID: 0}
   thisSpectatorCam: {fileID: 0}
   hud: {fileID: 0}
-  equipmentScript: {fileID: 0}
-  camShakeScript: {fileID: 0}
+  equipmentScript: {fileID: 6910827063722677838}
+  camShakeScript: {fileID: 1365304766117516845}
   inGameMessengerHud: {fileID: 0}
   animator: {fileID: 6772054392549162816}
   health: 0
@@ -4222,6 +4222,21 @@ MonoBehaviour:
   hitTimer: 0
   healTimer: 0
   hitLocation: {x: 0, y: 0, z: 0}
+--- !u!114 &1365304766117516845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6772054392541891854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13f73eefe07da574480f34bb3bcb4298, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camTransform: {fileID: 8596336155875985275}
+  playerActionScript: {fileID: 7649428840762148136}
+  shake: 0
 --- !u!1 &6772054392541891872
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,6 +15,11 @@ public class WeaponActionScript : MonoBehaviour
     public PlayerHUDScript hudScript;
     public AudioControllerScript audioController;
     public FirstPersonController fpc;
+    public GameObject weaponHolder;
+    private AudioSource weaponSound;
+    private AudioSource reloadSound;
+    public Animator animator;
+    private Animator weaponAnimator;
 
     // Projectile spread constants
     public const float MAX_SPREAD = 0.35f;
@@ -35,15 +40,10 @@ public class WeaponActionScript : MonoBehaviour
     private float recoilTime = 0f;
     private bool voidRecoilRecover = true;
     //private float recoilSlerp = 0f;
-
-    public Animator gunAnimator;
-    public AudioSource audioSource;
-
+    
     public int bulletsPerMag = 30;
     public int totalBulletsLeft = 120;
     public int currentBullets;
-    public AudioClip shootSound;
-    public AudioClip reloadSound;
 
     public Transform shootPoint;
     public ParticleSystem muzzleFlash;
@@ -93,6 +93,9 @@ public class WeaponActionScript : MonoBehaviour
         aimPosCam = new Vector3(originalPosCam.x - aimPosOffset.x, originalPosCam.y - aimPosOffset.y, originalPosCam.z - aimPosOffset.z);
 
         mouseLook = fpc.m_MouseLook;
+        weaponSound = weaponHolder.GetComponentsInChildren<AudioSource>()[0];
+        reloadSound = weaponHolder.GetComponentsInChildren<AudioSource>()[1];
+        
         //targetGunRot = mouseLook.m_CameraTargetRot * Quaternion.Euler(-MAX_RECOIL, 0f, 0f);
         //originalGunRot = new Quaternion(mouseLook.m_CameraTargetRot.x, mouseLook.m_CameraTargetRot.y, mouseLook.m_CameraTargetRot.z, mouseLook.m_CameraTargetRot.w);
         //originalGunRot = mouseLook.m_CameraTargetRot;
@@ -221,13 +224,21 @@ public class WeaponActionScript : MonoBehaviour
             if (Input.GetButton("Fire2") && !isReloading)
             {
                 isAiming = true;
-                gunAnimator.enabled = false;
+                if (animator.GetInteger("Moving") == 0)
+                {
+                    animator.speed = 0f;
+                }
+                else
+                {
+                    animator.speed = 1f;
+                }
+                animator.enabled = false;
                 camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, aimPosCam, Time.deltaTime * aodSpeed);
             }
             else
             {
                 isAiming = false;
-                gunAnimator.enabled = true;
+                animator.speed = 1f;
                 camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, originalPosCam, Time.deltaTime * aodSpeed);
             }
             //weaponTrans.localRotation = Quaternion.Lerp(weaponTrans.localRotation, originalRotWeapon, Time.deltaTime * aodSpeed);
@@ -238,9 +249,9 @@ public class WeaponActionScript : MonoBehaviour
     {
         if (!isAiming && !isReloading)
         {
-            if (gunAnimator.gameObject.activeSelf)
+            if (animator.gameObject.activeSelf)
             {
-                gunAnimator.SetBool("Sprinting", playerActionScript.fpc.m_IsRunning);
+                animator.SetBool("Sprinting", playerActionScript.fpc.m_IsRunning);
             }
             // if (playerActionScript.fpc.m_IsRunning)
             // {
@@ -355,7 +366,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void FireEffects()
     {
-        gunAnimator.CrossFadeInFixedTime("Firing", 0.01f);
+        weaponAnimator.CrossFadeInFixedTime("Firing", 0.01f);
         muzzleFlash.Play();
         if (!bulletTrace.isPlaying && !pView.IsMine)
         {
@@ -384,7 +395,7 @@ public class WeaponActionScript : MonoBehaviour
 
     private void ReloadAction()
     {
-        //AnimatorStateInfo info = gunAnimator.GetCurrentAnimatorStateInfo (0);
+        //AnimatorStateInfo info = weaponAnimator.GetCurrentAnimatorStateInfo (0);
         if (isReloading)
             return;
 
@@ -407,26 +418,24 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcReloadAnim()
     {
-        gunAnimator.CrossFadeInFixedTime("Reloading", 0.1f);
+        weaponAnimator.CrossFadeInFixedTime("Reloading", 0.1f);
     }
 
     [PunRPC]
     void RpcCockingAnim()
     {
-        gunAnimator.CrossFadeInFixedTime("Reloading", 0.1f, -1, 2.3f);
+        weaponAnimator.CrossFadeInFixedTime("Reloading", 0.1f, -1, 2.3f);
     }
 
     [PunRPC]
     void RpcPlayReloadSound()
     {
-        audioSource.PlayOneShot(reloadSound);
+        reloadSound.Play();
     }
 
     private void PlayShootSound()
     {
-        //audioSource.PlayOneShot (shootSound);
-        audioSource.clip = shootSound;
-        audioSource.Play();
+        weaponSound.Play();
     }
 
     private void IncreaseSpread()
