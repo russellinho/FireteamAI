@@ -225,12 +225,14 @@ public class WeaponActionScript : MonoBehaviour
                     animator.speed = 1f;
                 }
                 camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, aimPosCam, Time.deltaTime * aodSpeed);
+                camTransform.GetComponent<Camera>().nearClipPlane = 0.089f;
             }
             else
             {
                 isAiming = false;
                 animator.speed = 1f;
                 camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, originalPosCam, Time.deltaTime * aodSpeed);
+                camTransform.GetComponent<Camera>().nearClipPlane = 0.12f;
             }
             //weaponTrans.localRotation = Quaternion.Lerp(weaponTrans.localRotation, originalRotWeapon, Time.deltaTime * aodSpeed);
         }
