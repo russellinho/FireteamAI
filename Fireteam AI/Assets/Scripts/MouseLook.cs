@@ -49,7 +49,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
 
             float angleX = 2.0f * Mathf.Rad2Deg * Mathf.Atan (m_SpineTargetRot.x);
-            Debug.Log(angleX);
 
             // If turning left
             if (yRot < 0f) {

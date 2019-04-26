@@ -14,20 +14,21 @@ public class CameraShakeScript : MonoBehaviour
 	public bool shake;
 
     // Amplitude of the shake. A larger value shakes the camera harder.
-    private float shakeAmount = 0.1f;
+    private float shakeAmount = 0.001f;
 
 	Vector3 originalPos;
 	
 	void Awake()
 	{
-		if (!GetComponent<PhotonView> ().IsMine) {
-			this.enabled = false;
-			return;
-		}
-		if (camTransform == null)
-		{
-			camTransform = GetComponent(typeof(Transform)) as Transform;
-		}
+		// TODO: Re-enable
+		// if (!GetComponent<PhotonView> ().IsMine) {
+		// 	this.enabled = false;
+		// 	return;
+		// }
+		// if (camTransform == null)
+		// {
+		// 	camTransform = GetComponent(typeof(Transform)) as Transform;
+		// }
 	}
 
 	public void SetShake(bool b) {
@@ -43,10 +44,12 @@ public class CameraShakeScript : MonoBehaviour
 	{
 		if (playerActionScript.health > 0) { 
 			if (shake) {
-				Vector2 offset = Random.insideUnitCircle;
-				camTransform.localPosition = originalPos + new Vector3 (offset.x, offset.y, 0f) * shakeAmount;
-			} else {
-				camTransform.localPosition = originalPos;
+				int r1 = Random.Range(1, 3);
+				int r2 = Random.Range(1, 3);
+				float f1 = (r1 == 1 ? 1f : -1f);
+				float f2 = (r2 == 1 ? 1f : -1f);
+				camTransform.Translate(transform.up * shakeAmount * r1);
+				camTransform.Translate(transform.right * shakeAmount * r2);
 			}
 		}
 	}

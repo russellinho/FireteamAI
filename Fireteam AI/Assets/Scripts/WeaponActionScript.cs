@@ -22,9 +22,9 @@ public class WeaponActionScript : MonoBehaviour
     private Animator weaponAnimator;
 
     // Projectile spread constants
-    public const float MAX_SPREAD = 0.35f;
-    public const float SPREAD_ACCELERATION = 0.15f;
-    public const float SPREAD_DECELERATION = 0.1f;
+    public const float MAX_SPREAD = 0.15f;
+    public const float SPREAD_ACCELERATION = 0.05f;
+    public const float SPREAD_DECELERATION = 0.03f;
 
     // Projectile recoil constants
     public const float MAX_RECOIL_TIME = 1.4f;
@@ -46,7 +46,7 @@ public class WeaponActionScript : MonoBehaviour
     public int currentBullets;
 
     public Transform shootPoint;
-    public ParticleSystem muzzleFlash;
+    private ParticleSystem muzzleFlash;
     public ParticleSystem bulletTrace;
     private bool isReloading = false;
     public bool isCocking = false;
@@ -71,9 +71,6 @@ public class WeaponActionScript : MonoBehaviour
     private Vector3 originalPosCam;
     private Vector3 aimPosCam;
     public Vector3 aimPosOffset;
-    public Vector3 sprintPos;
-    public Vector3 sprintPos2;
-    public Vector3 sprintRot;
     // Aiming speed
     public float aodSpeed = 8f;
     public PhotonView pView;
@@ -92,8 +89,8 @@ public class WeaponActionScript : MonoBehaviour
         aimPosCam = new Vector3(originalPosCam.x - aimPosOffset.x, originalPosCam.y - aimPosOffset.y, originalPosCam.z - aimPosOffset.z);
 
         mouseLook = fpc.m_MouseLook;
-        weaponSound = weaponHolder.GetComponentsInChildren<AudioSource>()[0];
-        reloadSound = weaponHolder.GetComponentsInChildren<AudioSource>()[1];
+        // weaponSound = weaponHolder.GetComponentsInChildren<AudioSource>()[0];
+        // reloadSound = weaponHolder.GetComponentsInChildren<AudioSource>()[1];
         
         //targetGunRot = mouseLook.m_CameraTargetRot * Quaternion.Euler(-MAX_RECOIL, 0f, 0f);
         //originalGunRot = new Quaternion(mouseLook.m_CameraTargetRot.x, mouseLook.m_CameraTargetRot.y, mouseLook.m_CameraTargetRot.z, mouseLook.m_CameraTargetRot.w);
@@ -128,7 +125,7 @@ public class WeaponActionScript : MonoBehaviour
         }
 
         RefillFireTimer();
-        Sprint();
+        //Sprint();
 
         if (!playerActionScript.canShoot)
         {
@@ -247,16 +244,6 @@ public class WeaponActionScript : MonoBehaviour
             {
                 animator.SetBool("Sprinting", playerActionScript.fpc.m_IsRunning);
             }
-            // if (playerActionScript.fpc.m_IsRunning)
-            // {
-            //     originalTrans.localPosition = Vector3.Lerp(originalTrans.localPosition, sprintPos, Time.deltaTime * aodSpeed);
-            //     originalTrans.localRotation = Quaternion.Lerp(originalTrans.localRotation, Quaternion.Euler(sprintRot), Time.deltaTime * aodSpeed);
-            // }
-            // else
-            // {
-            //     originalTrans.localPosition = Vector3.Lerp(originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
-            //     originalTrans.localRotation = Quaternion.Lerp(originalTrans.localRotation, originalRot, Time.deltaTime * aodSpeed);
-            // }
         }
     }
 
@@ -283,12 +270,12 @@ public class WeaponActionScript : MonoBehaviour
         int headshotLayer = (1 << 13);
         if (Physics.Raycast(shootPoint.position, impactDir, out hit, range, headshotLayer))
         {
-            pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
+            //pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
             if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().health > 0)
             {
                 hudScript.InstantiateHitmarker();
                 hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().TakeDamage(100);
-                pView.RPC("RpcAddToTotalKills", RpcTarget.All);
+                //pView.RPC("RpcAddToTotalKills", RpcTarget.All);
                 hudScript.OnScreenEffect("HEADSHOT", true);
                 audioController.PlayHeadshotSound();
             }
@@ -316,13 +303,16 @@ public class WeaponActionScript : MonoBehaviour
             }
             else
             {
-                pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
-                pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
+                //pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
+                //pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
+                InstantiateHitParticleEffect(hit.point, hit.normal);
+                InstantiateBulletHole(hit.point, hit.normal, hit.transform.gameObject.name);
             }
         }
 
-        playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
-        pView.RPC("FireEffects", RpcTarget.All);
+       // playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+        //pView.RPC("FireEffects", RpcTarget.All);
+        FireEffects2();
     }
 
     [PunRPC]
@@ -350,8 +340,21 @@ public class WeaponActionScript : MonoBehaviour
         Destroy(bulletHoleEffect, 3f);
     }
 
+    void InstantiateBulletHole(Vector3 point, Vector3 normal, string parentName)
+    {
+        GameObject bulletHoleEffect = Instantiate(bulletImpact, point, Quaternion.FromToRotation(Vector3.forward, normal));
+        bulletHoleEffect.transform.SetParent(GameObject.Find(parentName).transform);
+        Destroy(bulletHoleEffect, 3f);
+    }
+
     [PunRPC]
     void RpcInstantiateHitParticleEffect(Vector3 point, Vector3 normal)
+    {
+        GameObject hitParticleEffect = Instantiate(hitParticles, point, Quaternion.FromToRotation(Vector3.up, normal));
+        Destroy(hitParticleEffect, 1f);
+    }
+
+    void InstantiateHitParticleEffect(Vector3 point, Vector3 normal)
     {
         GameObject hitParticleEffect = Instantiate(hitParticles, point, Quaternion.FromToRotation(Vector3.up, normal));
         Destroy(hitParticleEffect, 1f);
@@ -361,8 +364,28 @@ public class WeaponActionScript : MonoBehaviour
     void FireEffects()
     {
         //weaponAnimator.CrossFadeInFixedTime("Firing", 0.01f);
+        if (muzzleFlash == null) {
+            muzzleFlash = weaponHolder.GetComponentInChildren<ParticleSystem>();
+        }
         muzzleFlash.Play();
         if (!bulletTrace.isPlaying && !pView.IsMine)
+        {
+            bulletTrace.Play();
+        }
+        PlayShootSound();
+        //currentBullets--;
+        // Reset fire timer
+        fireTimer = 0.0f;
+    }
+
+    void FireEffects2()
+    {
+        //weaponAnimator.CrossFadeInFixedTime("Firing", 0.01f);
+        if (muzzleFlash == null) {
+            muzzleFlash = weaponHolder.GetComponentInChildren<ParticleSystem>();
+        }
+        muzzleFlash.Play();
+        if (!bulletTrace.isPlaying)
         {
             bulletTrace.Play();
         }
@@ -424,11 +447,17 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcPlayReloadSound()
     {
+        if (reloadSound == null) {
+            reloadSound = weaponHolder.GetComponentsInChildren<AudioSource>()[1];
+        }
         reloadSound.Play();
     }
 
     private void PlayShootSound()
     {
+        if (weaponSound == null) {
+            weaponSound = weaponHolder.GetComponentsInChildren<AudioSource>()[0];
+        }
         weaponSound.Play();
     }
 
