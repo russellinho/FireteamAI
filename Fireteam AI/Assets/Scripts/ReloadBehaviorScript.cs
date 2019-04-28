@@ -17,14 +17,14 @@ public class ReloadBehaviorScript : StateMachineBehaviour {
 		if (hasReloaded)
 			return;
 		if (stateInfo.normalizedTime >= reloadTime) {
-			animator.GetComponentInParent<WeaponScript> ().Reload ();
+			animator.GetComponentInParent<WeaponActionScript> ().Reload ();
 			hasReloaded = true;
 		}
 	}
 
 	// OnStateExit is called when a transition ends and the state machine finishes evaluating this state
 	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-		animator.GetComponentInParent<WeaponScript> ().isCocking = false;
+		animator.GetComponentInParent<WeaponActionScript> ().isCocking = false;
 		hasReloaded = false;
 	}
 

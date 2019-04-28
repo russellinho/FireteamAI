@@ -3760,6 +3760,9 @@ GameObject:
   - component: {fileID: 1319902226699020379}
   - component: {fileID: 7649428840762148136}
   - component: {fileID: 1365304766117516845}
+  - component: {fileID: 15850713981352990}
+  - component: {fileID: 6989970583869892677}
+  - component: {fileID: 3491014420181445126}
   m_Layer: 0
   m_Name: PlayerPrefabLucasAction 1
   m_TagString: Player
@@ -4156,7 +4159,7 @@ MonoBehaviour:
   playerActionScript: {fileID: 7649428840762148136}
   cameraShakeScript: {fileID: 1365304766117516845}
   hudScript: {fileID: 0}
-  audioController: {fileID: 0}
+  audioController: {fileID: 15850713981352990}
   fpc: {fileID: 3572228914654154590}
   weaponHolder: {fileID: 768876185633481037}
   animator: {fileID: 6772054392549162816}
@@ -4182,7 +4185,7 @@ MonoBehaviour:
   camTransform: {fileID: 8596336155875985275}
   aimPosOffset: {x: -0.147, y: -0.04, z: -0.08}
   aodSpeed: 8
-  pView: {fileID: 0}
+  pView: {fileID: 6989970583869892677}
 --- !u!114 &7649428840762148136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4196,7 +4199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameController: {fileID: 0}
-  audioController: {fileID: 0}
+  audioController: {fileID: 15850713981352990}
   charController: {fileID: 3560548475664464136}
   wepActionScript: {fileID: 1319902226699020379}
   aud: {fileID: 9183225153859524232}
@@ -4236,6 +4239,66 @@ MonoBehaviour:
   camTransform: {fileID: 8596336155875985275}
   playerActionScript: {fileID: 7649428840762148136}
   shake: 0
+--- !u!114 &15850713981352990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6772054392541891854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8193b1dfb65b0124f9dbbdebaa8c1e19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bgm: {fileID: 8391753607563797814}
+  fxRef: {fileID: 5025359204782677851}
+  stealthMusic: {fileID: 8300000, guid: 845c1df058bb4244391e15b273edc166, type: 3}
+  assaultMusic: {fileID: 8300000, guid: d0211a83da423754ba0d4c5435e2c149, type: 3}
+  headshotSound: {fileID: 8300000, guid: 0188a5524c43c454f9f5f3e780b173ea, type: 3}
+  playerHitSound: {fileID: 8300000, guid: 474f497ce2954d044b8570aceec22284, type: 3}
+  playerGruntSound1: {fileID: 8300000, guid: b0373ecb26c24f648b2a4d609e3aee10, type: 3}
+  playerGruntSound2: {fileID: 8300000, guid: b6e687a85b07c034dad210cc74ba7de7, type: 3}
+  hitmarkerSound: {fileID: 8300000, guid: f5f9c7f44fd0db94fb7457a968a1def7, type: 3}
+  sirenSound: {fileID: 8300000, guid: e4fdcd319d7fc2f459e5894d9c267ee5, type: 3}
+  missionStartSound: {fileID: 8300000, guid: c995c036e32e4f447bdaaa1124e4c370, type: 3}
+--- !u!114 &6989970583869892677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6772054392541891854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 0
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 0}
+  viewIdField: 0
+  InstantiationId: 3
+  isRuntimeInstantiated: 0
+--- !u!114 &3491014420181445126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6772054392541891854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
 --- !u!1 &6772054392541891872
 GameObject:
   m_ObjectHideFlags: 0

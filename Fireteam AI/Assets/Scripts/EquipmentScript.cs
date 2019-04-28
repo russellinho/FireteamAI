@@ -9,7 +9,7 @@ public class EquipmentScript : MonoBehaviour
 
     public TitleControllerScript ts;
     public NewPlayerScript playerScript;
-    public TestWeaponScript tws;
+    public WeaponScript tws;
     
     public string equippedCharacter;
     public string equippedHeadgear;

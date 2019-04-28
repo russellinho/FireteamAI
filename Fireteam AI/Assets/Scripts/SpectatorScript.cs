@@ -31,7 +31,7 @@ public class SpectatorScript : MonoBehaviour {
 		cam = GetComponent<Camera> ();
 
 		foreach (GameObject o in GameControllerScript.playerList.Values) {
-            if (o.GetComponent<PlayerScript> ().health > 0 && !o.GetComponent<PhotonView>().IsMine) {
+            if (o.GetComponent<PlayerActionScript> ().health > 0 && !o.GetComponent<PhotonView>().IsMine) {
 				following = o;
 				playerListKey = o.GetComponent<PhotonView> ().OwnerActorNr;
 				break;
@@ -76,7 +76,7 @@ public class SpectatorScript : MonoBehaviour {
 		GameObject first = null;
 		bool currentIdFound = false;
 		foreach (GameObject o in GameControllerScript.playerList.Values) {
-			if (o.GetComponent<PlayerScript> ().health > 0) {
+			if (o.GetComponent<PlayerActionScript> ().health > 0) {
 				// If we haven't defined first person in the collection yet, define it
 				if (!first) {
 					first = o;

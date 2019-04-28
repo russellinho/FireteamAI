@@ -262,7 +262,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		ResetEscapeValues ();
 		foreach (GameObject entry in playerList.Values)
 		{
-			entry.GetComponent<PlayerScript> ().escapeValueSent = false;
+			entry.GetComponent<PlayerActionScript> ().escapeValueSent = false;
 		}
 
 		Destroy (playerList[otherPlayer.ActorNumber].gameObject);

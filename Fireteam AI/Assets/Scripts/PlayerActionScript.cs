@@ -73,28 +73,29 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // Setting original positions for returning from crouching
         charHeightOriginal = charController.height;
         charCenterYOriginal = charController.center.y;
-        // escapeValueSent = false;
-        // assaultModeChangedIndicator = false;
-        // isDefusing = false;
+
+         escapeValueSent = false;
+         assaultModeChangedIndicator = false;
+         isDefusing = false;
 
         health = 100;
         kills = 0;
         deaths = 0;
         sprintTime = 3f;
 
-        // currentBombIndex = 0;
-        // bombIterator = 0;
+         currentBombIndex = 0;
+         bombIterator = 0;
 
         // // If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
-        // if (!GetComponent<PhotonView>().IsMine)
-        // {
-        //     subComponents[2].SetActive(false);
-        //     subComponents[3].SetActive(false);
-        //     Destroy(GetComponentInChildren<AudioListener>());
-        //     viewCam.enabled = false;
-        //     //enabled = false;
-        //     return;
-        // }
+         if (!GetComponent<PhotonView>().IsMine)
+         {
+             subComponents[2].SetActive(false);
+             subComponents[3].SetActive(false);
+             Destroy(GetComponentInChildren<AudioListener>());
+             viewCam.enabled = false;
+             //enabled = false;
+             return;
+         }
 
         // gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 
@@ -127,26 +128,26 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 return;
             }
             gameController = gc.GetComponent<GameControllerScript>();
-        }
+        }*/
 
         if (!photonView.IsMine)
         {
             return;
-        }*/
+        }
 
         // Instant respawn hack
         /**if (Input.GetKeyDown (KeyCode.P)) {
             BeginRespawn ();
         }*/
 
-        // if (enterSpectatorModeTimer > 0f)
-        // {
-        //     enterSpectatorModeTimer -= Time.deltaTime;
-        //     if (enterSpectatorModeTimer <= 0f)
-        //     {
-        //         EnterSpectatorMode();
-        //     }
-        // }
+         if (enterSpectatorModeTimer > 0f)
+         {
+             enterSpectatorModeTimer -= Time.deltaTime;
+             if (enterSpectatorModeTimer <= 0f)
+             {
+                 EnterSpectatorMode();
+             }
+         }
 
         // if (gameController.sectorsCleared == 0 && gameController.bombsRemaining == 2)
         // {
@@ -162,10 +163,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         //     hud.ComBoxPopup(2f, "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.");
         // }
 
-        // // Update assault mode
+        // Update assault mode
         // hud.UpdateAssaultModeIndHud(gameController.assaultMode);
 
-        // // On assault mode changed
+        // On assault mode changed
         // bool h = gameController.assaultMode;
         // if (h != assaultModeChangedIndicator)
         // {
@@ -177,7 +178,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         if (health > 0 && fpc.enabled && fpc.m_IsRunning)
         {
-            //audioController.PlaySprintSound(true);
+            audioController.PlaySprintSound(true);
             canShoot = false;
             animator.SetBool("isSprinting", true);
             if (sprintTime > 0f)
@@ -191,7 +192,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         else
         {
-            //audioController.PlaySprintSound(false);
+            audioController.PlaySprintSound(false);
             animator.SetBool("isSprinting", false);
             if (sprintTime < 3f)
             {
@@ -350,12 +351,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     // If map objective is defusing bombs, this method checks if the player is near any bombs
     void BombCheck()
     {
-        if (gameController.bombs == null)
+        if (gameController == null || gameController.bombs == null)
         {
             return;
         }
 
-        /**if (!currentBomb) {
+        if (!currentBomb) {
             bool found = false;
             int count = 0;
             foreach (GameObject i in gameController.bombs) {
@@ -373,7 +374,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (!found) {
                 currentBomb = null;
             }
-        }*/
+        }
 
         if (!currentBomb)
         {

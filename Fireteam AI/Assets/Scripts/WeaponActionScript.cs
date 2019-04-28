@@ -34,8 +34,6 @@ public class WeaponActionScript : MonoBehaviour
     // Projectile variables
     public float range = 100f;
     public float spread = 0f;
-    //private Quaternion targetGunRot;
-    //private Quaternion originalGunRot;
     private float recoil = 0.5f;
     private float recoilTime = 0f;
     private bool voidRecoilRecover = true;
@@ -89,14 +87,9 @@ public class WeaponActionScript : MonoBehaviour
         aimPosCam = new Vector3(originalPosCam.x - aimPosOffset.x, originalPosCam.y - aimPosOffset.y, originalPosCam.z - aimPosOffset.z);
 
         mouseLook = fpc.m_MouseLook;
-        // weaponSound = weaponHolder.GetComponentsInChildren<AudioSource>()[0];
-        // reloadSound = weaponHolder.GetComponentsInChildren<AudioSource>()[1];
-        
-        //targetGunRot = mouseLook.m_CameraTargetRot * Quaternion.Euler(-MAX_RECOIL, 0f, 0f);
-        //originalGunRot = new Quaternion(mouseLook.m_CameraTargetRot.x, mouseLook.m_CameraTargetRot.y, mouseLook.m_CameraTargetRot.z, mouseLook.m_CameraTargetRot.w);
-        //originalGunRot = mouseLook.m_CameraTargetRot;
 
-        //CockingAction();
+
+        CockingAction();
     }
 
     // Update is called once per frame
@@ -125,19 +118,18 @@ public class WeaponActionScript : MonoBehaviour
         }
 
         RefillFireTimer();
-        //Sprint();
 
         if (!playerActionScript.canShoot)
         {
             return;
         }
-        /** if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             if (!playerActionScript.fpc.m_IsRunning && currentBullets < bulletsPerMag && totalBulletsLeft > 0)
             {
                 ReloadAction();
             }
-        }*/
+        }
 
         AimDownSights();
     }
@@ -152,19 +144,15 @@ public class WeaponActionScript : MonoBehaviour
 
     void FixedUpdate()
     {
-        // TODO: Re-enable
-        // if (!pView.IsMine || playerActionScript.health <= 0)
-        // {
-        //     return;
-        // }
-        // TODO: Fix this
-        // if (gunAnimator.gameObject.activeSelf)
-        // {
-        //     AnimatorStateInfo info = gunAnimator.GetCurrentAnimatorStateInfo(0);
-        //     isReloading = info.IsName("Reloading");
-        //     isSprinting = info.IsName("Sprinting");
-        //     gunAnimator.SetBool("Aim", isAiming);
-        // }
+         if (!pView.IsMine || playerActionScript.health <= 0)
+         {
+             return;
+         }
+         if (animator.gameObject.activeSelf)
+         {
+             AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo(0);
+             isReloading = info.IsName("Reload") || info.IsName("ReloadCrouch");
+         }
         // Shooting mechanics
         if (shootInput && !isReloading && playerActionScript.canShoot)
         {
@@ -234,18 +222,6 @@ public class WeaponActionScript : MonoBehaviour
                 camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, originalPosCam, Time.deltaTime * aodSpeed);
                 camTransform.GetComponent<Camera>().nearClipPlane = 0.12f;
             }
-            //weaponTrans.localRotation = Quaternion.Lerp(weaponTrans.localRotation, originalRotWeapon, Time.deltaTime * aodSpeed);
-        }
-    }
-
-    public void Sprint()
-    {
-        if (!isAiming && !isReloading)
-        {
-            if (animator.gameObject.activeSelf)
-            {
-                animator.SetBool("Sprinting", playerActionScript.fpc.m_IsRunning);
-            }
         }
     }
 
@@ -272,12 +248,12 @@ public class WeaponActionScript : MonoBehaviour
         int headshotLayer = (1 << 13);
         if (Physics.Raycast(shootPoint.position, impactDir, out hit, range, headshotLayer))
         {
-            //pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
+            pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
             if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().health > 0)
             {
                 hudScript.InstantiateHitmarker();
                 hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().TakeDamage(100);
-                //pView.RPC("RpcAddToTotalKills", RpcTarget.All);
+                pView.RPC("RpcAddToTotalKills", RpcTarget.All);
                 hudScript.OnScreenEffect("HEADSHOT", true);
                 audioController.PlayHeadshotSound();
             }
@@ -305,16 +281,13 @@ public class WeaponActionScript : MonoBehaviour
             }
             else
             {
-                //pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
-                //pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
-                InstantiateHitParticleEffect(hit.point, hit.normal);
-                InstantiateBulletHole(hit.point, hit.normal, hit.transform.gameObject.name);
+                pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
+                pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
             }
         }
 
        // playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
-        //pView.RPC("FireEffects", RpcTarget.All);
-        FireEffects2();
+        pView.RPC("FireEffects", RpcTarget.All);
     }
 
     [PunRPC]
@@ -365,7 +338,6 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void FireEffects()
     {
-        //weaponAnimator.CrossFadeInFixedTime("Firing", 0.01f);
         if (muzzleFlash == null) {
             muzzleFlash = weaponHolder.GetComponentInChildren<ParticleSystem>();
         }
@@ -375,14 +347,13 @@ public class WeaponActionScript : MonoBehaviour
             bulletTrace.Play();
         }
         PlayShootSound();
-        //currentBullets--;
+        currentBullets--;
         // Reset fire timer
         fireTimer = 0.0f;
     }
 
     void FireEffects2()
     {
-        //weaponAnimator.CrossFadeInFixedTime("Firing", 0.01f);
         if (muzzleFlash == null) {
             muzzleFlash = weaponHolder.GetComponentInChildren<ParticleSystem>();
         }
@@ -392,7 +363,7 @@ public class WeaponActionScript : MonoBehaviour
             bulletTrace.Play();
         }
         PlayShootSound();
-        //currentBullets--;
+        currentBullets--;
         // Reset fire timer
         fireTimer = 0.0f;
     }
@@ -437,19 +408,39 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcReloadAnim()
     {
-        weaponAnimator.CrossFadeInFixedTime("Reloading", 0.1f);
+        if (fpc.m_IsCrouching) {
+            animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f);
+        } else {
+            animator.CrossFadeInFixedTime("Reload", 0.1f);
+        }
     }
 
     [PunRPC]
     void RpcCockingAnim()
     {
-        weaponAnimator.CrossFadeInFixedTime("Reloading", 0.1f, -1, 2.3f);
+        if (fpc.m_IsCrouching)
+        {
+            animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f, -1, 2.3f);
+        }
+        else
+        {
+            animator.CrossFadeInFixedTime("Reload", 0.1f, -1, 2.3f);
+        }
     }
 
     [PunRPC]
     void RpcPlayReloadSound()
     {
         if (reloadSound == null) {
+            reloadSound = weaponHolder.GetComponentsInChildren<AudioSource>()[1];
+        }
+        reloadSound.Play();
+    }
+
+    void PlayReloadSound()
+    {
+        if (reloadSound == null)
+        {
             reloadSound = weaponHolder.GetComponentsInChildren<AudioSource>()[1];
         }
         reloadSound.Play();

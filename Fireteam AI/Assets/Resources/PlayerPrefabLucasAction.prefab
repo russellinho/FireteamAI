@@ -46,6 +46,7 @@ MonoBehaviour:
   handle: {fileID: 0}
   weapon: {fileID: 0}
   leftShoulder: {fileID: 6772054392541728994}
+  fpc: {fileID: 0}
 --- !u!1 &844581640658930516
 GameObject:
   m_ObjectHideFlags: 0
@@ -4034,6 +4035,7 @@ MonoBehaviour:
     smooth: 0
     smoothTime: 5
     lockCursor: 1
+    m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_CameraTargetRot: {x: 0, y: 0, z: 0, w: 0}
   m_UseFovKick: 0
   m_FovKick:
@@ -4133,11 +4135,9 @@ MonoBehaviour:
   gameController: {fileID: 0}
   audioController: {fileID: 3141825122673855714}
   charController: {fileID: 3560548475664464136}
-  fpsHands: {fileID: 0}
   wepActionScript: {fileID: 4511650230030142672}
   aud: {fileID: 9183225153859524232}
   viewCam: {fileID: 9008041633628791546}
-  bodyTrans: {fileID: 6772054392541729070}
   spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
     type: 3}
   thisSpectatorCam: {fileID: 0}
@@ -4145,6 +4145,7 @@ MonoBehaviour:
   equipmentScript: {fileID: 6910827063722677838}
   camShakeScript: {fileID: 4026210080536355410}
   inGameMessengerHud: {fileID: 1606963357063778062}
+  animator: {fileID: 0}
   health: 0
   sprintTime: 0
   godMode: 0
@@ -4179,24 +4180,21 @@ MonoBehaviour:
     smooth: 0
     smoothTime: 5
     lockCursor: 1
+    m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_CameraTargetRot: {x: 0, y: 0, z: 0, w: 0}
   playerActionScript: {fileID: 4517751246956599252}
   cameraShakeScript: {fileID: 4026210080536355410}
   hudScript: {fileID: 2263955814929662995}
   audioController: {fileID: 3141825122673855714}
   fpc: {fileID: 3572228914654154590}
+  weaponHolder: {fileID: 0}
+  animator: {fileID: 0}
   range: 100
   spread: 0
-  gunAnimator: {fileID: 0}
-  audioSource: {fileID: 0}
   bulletsPerMag: 30
   totalBulletsLeft: 120
   currentBullets: 0
-  shootSound: {fileID: 8300000, guid: 976a511e9450f604c8e24900f503d4b2, type: 3}
-  reloadSound: {fileID: 8300000, guid: 37cf2883192b5e04fb3fa28eefa20477, type: 3}
   shootPoint: {fileID: 7403946386076052789}
-  muzzleFlash: {fileID: 198181199395725860, guid: 0bcfe9d4fd038ce49b6649a9505d7259,
-    type: 3}
   bulletTrace: {fileID: 198223865259119552, guid: c4f5b88ec37f1f04db5f170233b15cb3,
     type: 3}
   isCocking: 0
@@ -4210,11 +4208,8 @@ MonoBehaviour:
   fireRate: 0.1
   damage: 20
   firingMode: 0
-  originalTrans: {fileID: 6772054392541729070}
-  aimPos: {x: 0, y: 0, z: 0}
-  sprintPos: {x: 0, y: 0, z: 0}
-  sprintPos2: {x: 0, y: 0, z: 0}
-  sprintRot: {x: 0, y: 0, z: 0}
+  camTransform: {fileID: 0}
+  aimPosOffset: {x: 0, y: 0, z: 0}
   aodSpeed: 8
   pView: {fileID: 7174904198849392880}
 --- !u!114 &2263955814929662995
@@ -4307,7 +4302,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 0}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &8601606050091102400

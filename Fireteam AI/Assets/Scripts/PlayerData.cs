@@ -48,7 +48,10 @@ public class PlayerData : MonoBehaviour
                 Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0], 
                 Quaternion.Euler(Vector3.zero));
         } else if (levelName.Equals("Test")) {
-            PlayerData.playerdata.inGamePlayerReference = Instantiate((GameObject)Resources.Load("PlayerPrefabLucasAction 1"), new Vector3(0f, 0.5f, 0f), Quaternion.identity);
+            PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
+                "PlayerPrefabLucasAction 1",
+                Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
+                Quaternion.Euler(Vector3.zero));
         }
         else
         {
@@ -66,7 +69,7 @@ public class PlayerData : MonoBehaviour
         FileStream file = File.Create(Application.persistentDataPath + "/playerData.dat");
 
         EquipmentScript myEquips = bodyReference.GetComponent<EquipmentScript>();
-        TestWeaponScript myWeps = bodyReference.GetComponent<TestWeaponScript>();
+        WeaponScript myWeps = bodyReference.GetComponent<WeaponScript>();
         PlayerData.playerdata.info.playername = playername;
         PlayerData.playerdata.info.equippedCharacter = myEquips.equippedCharacter;
         PlayerData.playerdata.info.equippedHeadgear = myEquips.equippedHeadgear;
@@ -96,7 +99,7 @@ public class PlayerData : MonoBehaviour
             FindBodyRef(info.equippedCharacter);
             playername = info.playername;
             EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
-            TestWeaponScript characterWeps = bodyReference.GetComponent<TestWeaponScript>();
+            WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
             characterEquips.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
             characterWeps.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
             characterEquips.EquipCharacter(info.equippedCharacter, null);
@@ -114,7 +117,7 @@ public class PlayerData : MonoBehaviour
             // Else, load defaults
             FindBodyRef("Lucas");
             EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
-            TestWeaponScript characterWeps = bodyReference.GetComponent<TestWeaponScript>();
+            WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
             characterEquips.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
             characterWeps.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
             playername = "Player";
@@ -143,7 +146,7 @@ public class PlayerData : MonoBehaviour
         bodyReference = null;
         bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[character].prefabPath));
         EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
-        TestWeaponScript characterWeps = bodyReference.GetComponent<TestWeaponScript>();
+        WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
         characterEquips.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
         characterWeps.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
         bodyReference.GetComponent<EquipmentScript>().HighlightItemPrefab(shopItem);

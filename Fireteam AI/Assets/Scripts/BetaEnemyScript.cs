@@ -733,7 +733,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			return;
 		}
 		// Don't consider dead players
-		if (other.gameObject.GetComponent<PlayerScript> ().health <= 0f) {
+		if (other.gameObject.GetComponent<PlayerActionScript> ().health <= 0f) {
 			return;
 		}
 
@@ -1063,7 +1063,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (hit.transform.tag.Equals ("Player") || hit.transform.tag.Equals ("Human")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal);
 					if (hit.transform.tag.Equals ("Player")) {
-						PlayerScript ps = hit.transform.GetComponent<PlayerScript> ();
+						PlayerActionScript ps = hit.transform.GetComponent<PlayerActionScript> ();
 						ps.TakeDamage((int)damage);
 						ps.ResetHitTimer ();
 						ps.SetHitLocation (transform.position);
@@ -1137,7 +1137,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			} else {
 				PlayVoiceClip (13);
 			}
-			PlayerScript ps = playerToHit.GetComponent<PlayerScript> ();
+			PlayerActionScript ps = playerToHit.GetComponent<PlayerActionScript> ();
 			ps.TakeDamage (50);
 			ps.hitTimer = 0f;
 			playerToHit = null;
@@ -1317,10 +1317,10 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	void PlayerScan() {
 		// If we do not have a target player, try to find one
-		if (player == null || player.GetComponent<PlayerScript>().health <= 0) {
+		if (player == null || player.GetComponent<PlayerActionScript>().health <= 0) {
 			ArrayList keysNearBy = new ArrayList ();
 			foreach (GameObject p in GameControllerScript.playerList.Values) {
-				if (!p || p.GetComponent<PlayerScript>().health <= 0)
+				if (!p || p.GetComponent<PlayerActionScript>().health <= 0)
 					continue;
 				if (Vector3.Distance (transform.position, p.transform.position) < range + 20f) {
 					Vector3 toPlayer = p.transform.position - transform.position;
@@ -1392,7 +1392,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void CheckTargetDead() {
-		if (player != null && player.GetComponent<PlayerScript> ().health <= 0f) {
+		if (player != null && player.GetComponent<PlayerActionScript> ().health <= 0f) {
 			pView.RPC ("RpcSetTarget", RpcTarget.All, -1);
 		}
 	}

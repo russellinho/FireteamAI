@@ -123,7 +123,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (mapName.Equals ("Citadel")) {
 			screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/citadel_load");
 		}
-		proTipText.text = proTips[Random.Range(0, 2)];
+        else
+        {
+            screenArt.texture = (Texture)Resources.Load("MapImages/Loading/test_load");
+        }
+        proTipText.text = proTips[Random.Range(0, 2)];
 		mapTitleText.text = mapName;
 		mapTitleText.rectTransform.localPosition = new Vector3 (1200f, mapTitleText.rectTransform.localPosition.y, mapTitleText.rectTransform.localPosition.z);
 		topShade.rectTransform.localPosition = new Vector3 (-1200f, topShade.rectTransform.localPosition.y, topShade.rectTransform.localPosition.z);
@@ -133,9 +137,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void Update() {
-		if (Input.GetKeyDown(KeyCode.Q)) {
-			SceneManager.LoadScene("Test");
-		}
 		if (PlayerData.playerdata.disconnectedFromServer) {
 			PlayerData.playerdata.disconnectedFromServer = false;
 			mainMenuPopup.GetComponentInChildren<Text> ().text = "Lost connection to server.\nReason: " + PlayerData.playerdata.disconnectReason;

@@ -72,7 +72,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipArmor(itemName, gameObject);
                 break;
             case "Weapon":
-                PlayerData.playerdata.bodyReference.GetComponent<TestWeaponScript>().EquipWeapon(weaponCategory, itemName, gameObject);
+                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(weaponCategory, itemName, gameObject);
                 break;
         }
     }
