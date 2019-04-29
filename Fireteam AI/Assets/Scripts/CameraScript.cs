@@ -11,10 +11,11 @@ public class CameraScript : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        if (!fpc.m_IsRunning) {
-            transform.forward = weaponHolderTrans.up;
+        bool isReloading = fpc.weaponActionScript.isReloading;
+        if (!fpc.m_IsRunning && !isReloading) {
+            transform.forward = Vector3.Slerp(transform.forward, weaponHolderTrans.up, 5f * Time.deltaTime);
         } else {
-            transform.forward = new Vector3(transform.forward.x, transform.forward.y, transform.forward.z);
+            transform.forward = Vector3.Slerp(transform.forward, new Vector3(transform.forward.x, transform.forward.y, transform.forward.z), 5f * Time.deltaTime);
         }
     }
 }

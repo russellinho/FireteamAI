@@ -50,7 +50,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		public bool sprintLock;
 
 		public bool canMove;
-        private WeaponActionScript weaponActionScript;
+        public WeaponActionScript weaponActionScript;
         private PhotonView photonView;
 
         public Transform spineTransform;

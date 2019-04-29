@@ -46,7 +46,7 @@ public class WeaponActionScript : MonoBehaviour
     public Transform shootPoint;
     private ParticleSystem muzzleFlash;
     public ParticleSystem bulletTrace;
-    private bool isReloading = false;
+    public bool isReloading = false;
     public bool isCocking = false;
     public bool isAiming;
 
@@ -100,6 +100,8 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
 
+        //Debug.Log("Current bullets: " + currentBullets + " Bullets per clip: " + bulletsPerMag + " Total bullets remaining: " + totalBulletsLeft);
+
         if (Input.GetKeyDown(KeyCode.Q))
         {
             if (firingMode == FireMode.Semi)
@@ -148,11 +150,11 @@ public class WeaponActionScript : MonoBehaviour
          {
              return;
          }
-         if (animator.gameObject.activeSelf)
-         {
-             AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo(0);
-             isReloading = info.IsName("Reload") || info.IsName("ReloadCrouch");
-         }
+        //  if (animator.gameObject.activeSelf)
+        //  {
+        //      AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo(1);
+        //      isReloading = info.IsName("Reload") || info.IsName("ReloadCrouch");
+        //  }
         // Shooting mechanics
         if (shootInput && !isReloading && playerActionScript.canShoot)
         {
@@ -370,8 +372,10 @@ public class WeaponActionScript : MonoBehaviour
 
     public void Reload()
     {
+        Debug.Log("yo");
         if (!isCocking)
         {
+            Debug.Log("ho");
             if (totalBulletsLeft <= 0)
                 return;
 
@@ -389,6 +393,7 @@ public class WeaponActionScript : MonoBehaviour
         if (isReloading)
             return;
 
+        isReloading = true;
         if (isCocking)
         {
             pView.RPC("RpcCockingAnim", RpcTarget.All);
@@ -409,9 +414,11 @@ public class WeaponActionScript : MonoBehaviour
     void RpcReloadAnim()
     {
         if (fpc.m_IsCrouching) {
-            animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f);
+            //animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f);
+            animator.SetTrigger("Reloading");
         } else {
-            animator.CrossFadeInFixedTime("Reload", 0.1f);
+            //animator.CrossFadeInFixedTime("Reload", 0.1f);
+            animator.SetTrigger("Reloading");
         }
     }
 

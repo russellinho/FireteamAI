@@ -13,18 +13,21 @@ public class ReloadBehaviorScript : StateMachineBehaviour {
 	}
 
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-		if (hasReloaded)
-			return;
-		if (stateInfo.normalizedTime >= reloadTime) {
-			animator.GetComponentInParent<WeaponActionScript> ().Reload ();
-			hasReloaded = true;
-		}
-	}
+	// override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+	// 	if (hasReloaded)
+	// 		return;
+	// 	if (stateInfo.normalizedTime >= reloadTime) {
+	// 		animator.GetComponentInParent<WeaponActionScript> ().Reload ();
+	// 		hasReloaded = true;
+	// 	}
+	// }
 
 	// OnStateExit is called when a transition ends and the state machine finishes evaluating this state
 	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-		animator.GetComponentInParent<WeaponActionScript> ().isCocking = false;
+		WeaponActionScript was = animator.GetComponentInParent<WeaponActionScript> ();
+		was.Reload ();
+		was.isCocking = false;
+		was.isReloading = false;
 		hasReloaded = false;
 	}
 
