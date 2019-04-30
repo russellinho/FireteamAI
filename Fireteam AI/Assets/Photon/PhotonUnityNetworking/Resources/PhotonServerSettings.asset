@@ -116,4 +116,16 @@ MonoBehaviour:
   - RpcDestroyBox
   - RpcDestroyPickup
   - SpawnOnNetwork
+  - RpcEquipArmorInGame
+  - RpcEquipBottomInGame
+  - RpcEquipCharacterInGame
+  - RpcEquipFacewearInGame
+  - RpcEquipFootwearInGame
+  - RpcEquipHeadgearInGame
+  - RpcEquipSkinInGame
+  - RpcEquipTopInGame
+  - RpcLoadWeapon
+  - RpcSetSteadyHand
+  - RpcSetWeaponPosition
+  - RpcDrawWeapon
   DisableAutoOpenWizard: 1

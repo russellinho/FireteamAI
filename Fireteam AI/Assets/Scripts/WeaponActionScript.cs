@@ -372,10 +372,8 @@ public class WeaponActionScript : MonoBehaviour
 
     public void Reload()
     {
-        Debug.Log("yo");
         if (!isCocking)
         {
-            Debug.Log("ho");
             if (totalBulletsLeft <= 0)
                 return;
 

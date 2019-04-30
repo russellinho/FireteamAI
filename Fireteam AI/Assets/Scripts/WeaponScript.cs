@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Photon.Pun;
+using Photon.Realtime;
 
 public class WeaponScript : MonoBehaviour
 {
@@ -22,6 +24,7 @@ public class WeaponScript : MonoBehaviour
     private Dictionary<string, Vector3> sniperRifleHandPositions;
     private Dictionary<string, Vector3> sniperRifleIdleHandPositions;
     public bool weaponReady;
+    public PhotonView pView;
 
     private bool onTitle;
 
@@ -38,6 +41,9 @@ public class WeaponScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (pView != null && !pView.IsMine) {
+            return;
+        }
         if (onTitle)
         {
             ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
@@ -82,6 +88,11 @@ public class WeaponScript : MonoBehaviour
     }
 
     void DrawWeapon(int weaponCat) {
+        pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat);
+    }
+
+    [PunRPC]
+    private void RpcDrawWeapon(int weaponCat) {
         if (weaponCat == 1) {
             if (currentlyEquippedType == 1) return;
             weaponReady = false;

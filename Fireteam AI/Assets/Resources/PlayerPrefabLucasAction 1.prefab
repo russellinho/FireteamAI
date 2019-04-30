@@ -1455,7 +1455,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 63287
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -3761,6 +3761,7 @@ GameObject:
   - component: {fileID: 7649428840762148136}
   - component: {fileID: 1365304766117516845}
   - component: {fileID: 15850713981352990}
+  - component: {fileID: 2199137809442129683}
   - component: {fileID: 6989970583869892677}
   - component: {fileID: 3491014420181445126}
   m_Layer: 0
@@ -3864,6 +3865,7 @@ MonoBehaviour:
   myEyelashRenderer: {fileID: 6772054392541891714}
   myHairRenderer: {fileID: 2721911088941794502}
   myBones: {fileID: 6772054392541891724}
+  pView: {fileID: 6989970583869892677}
 --- !u!114 &6571647462379323641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3886,6 +3888,7 @@ MonoBehaviour:
   equippedSecondaryType: 
   currentlyEquippedType: 0
   weaponReady: 0
+  pView: {fileID: 6989970583869892677}
 --- !u!114 &1241241058576032324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4172,6 +4175,7 @@ MonoBehaviour:
   shootPoint: {fileID: 7403946386076052789}
   bulletTrace: {fileID: 198223865259119552, guid: c4f5b88ec37f1f04db5f170233b15cb3,
     type: 3}
+  isReloading: 0
   isCocking: 0
   isAiming: 0
   hitParticles: {fileID: 1617700753897852, guid: 2b61531c3d65e3f4e949e45eb6021b7b,
@@ -4263,6 +4267,22 @@ MonoBehaviour:
   hitmarkerSound: {fileID: 8300000, guid: f5f9c7f44fd0db94fb7457a968a1def7, type: 3}
   sirenSound: {fileID: 8300000, guid: e4fdcd319d7fc2f459e5894d9c267ee5, type: 3}
   missionStartSound: {fileID: 8300000, guid: c995c036e32e4f447bdaaa1124e4c370, type: 3}
+--- !u!54 &2199137809442129683
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6772054392541891854}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!114 &6989970583869892677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4282,7 +4302,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 0}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &3491014420181445126

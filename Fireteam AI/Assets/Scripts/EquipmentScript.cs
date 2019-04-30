@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
+using Photon.Realtime;
 
 public class EquipmentScript : MonoBehaviour
 {
 
     public TitleControllerScript ts;
-    public NewPlayerScript playerScript;
+    public PlayerScript playerScript;
     public WeaponScript tws;
     
     public string equippedCharacter;
@@ -44,6 +46,7 @@ public class EquipmentScript : MonoBehaviour
     public GameObject myHairRenderer;
 
     public GameObject myBones;
+    public PhotonView pView;
 
     private bool onTitle;
 
@@ -60,6 +63,9 @@ public class EquipmentScript : MonoBehaviour
     }
 
     void Start() {
+        if (pView != null && !pView.IsMine) {
+            return;
+        }
         if (onTitle)
         {
             if (ts == null)
@@ -69,13 +75,13 @@ public class EquipmentScript : MonoBehaviour
         }
         else
         {
-            EquipCharacterInGame(PlayerData.playerdata.info.equippedCharacter);
-            EquipHeadgearInGame(PlayerData.playerdata.info.equippedHeadgear);
-            EquipFacewearInGame(PlayerData.playerdata.info.equippedFacewear);
-            EquipTopInGame(PlayerData.playerdata.info.equippedTop);
-            EquipBottomInGame(PlayerData.playerdata.info.equippedBottom);
-            EquipFootwearInGame(PlayerData.playerdata.info.equippedFootwear);
-            EquipArmorInGame(PlayerData.playerdata.info.equippedArmor);
+            pView.RPC("RpcEquipCharacterInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedCharacter);
+            pView.RPC("RpcEquipHeadgearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedHeadgear);
+            pView.RPC("RpcEquipFacewearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedFacewear);
+            pView.RPC("RpcEquipTopInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedTop);
+            pView.RPC("RpcEquipBottomInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedBottom);
+            pView.RPC("RpcEquipFootwearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedFootwear);
+            pView.RPC("RpcEquipArmorInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedArmor);
             //ToggleEquipVisibility(false);
         }
     }
@@ -517,7 +523,8 @@ public class EquipmentScript : MonoBehaviour
         equippedArmor = "";
     }
 
-    private void EquipCharacterInGame(string character) {
+    [PunRPC]
+    private void RpcEquipCharacterInGame(string character) {
         equippedCharacter = character;
         if (character.Equals("Lucas") || character.Equals("Daryl") || character.Equals("Codename Sayre")) {
             gender = 'M';
@@ -526,7 +533,8 @@ public class EquipmentScript : MonoBehaviour
         }
     }
 
-    private void EquipTopInGame(string top) {
+    [PunRPC]
+    private void RpcEquipTopInGame(string top) {
         equippedTop = top;
         Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[top];
         equippedTopRef = (GameObject)Instantiate((GameObject)Resources.Load(e.prefabPath));
@@ -536,10 +544,11 @@ public class EquipmentScript : MonoBehaviour
         m.rootBone = myBones.transform;
         m.AdaptMesh();
 
-        EquipSkinInGame(e.skinType);
+        pView.RPC("RpcEquipSkinInGame", RpcTarget.AllBuffered, e.skinType);
     }
 
-    private void EquipSkinInGame(int skin) {
+    [PunRPC]
+    private void RpcEquipSkinInGame(int skin) {
         equippedSkin = skin;
         equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[equippedCharacter].skins[skin]));
         equippedSkinRef.transform.SetParent(gameObject.transform);
@@ -549,7 +558,8 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
     }
 
-    private void EquipBottomInGame(string bottom) {
+    [PunRPC]
+    private void RpcEquipBottomInGame(string bottom) {
         equippedBottom = bottom;
         Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[bottom];
         equippedBottomRef = (GameObject)Instantiate((GameObject)Resources.Load(e.prefabPath));
@@ -560,7 +570,8 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
     }
 
-    private void EquipHeadgearInGame(string headgear) {
+    [PunRPC]
+    private void RpcEquipHeadgearInGame(string headgear) {
         if (headgear == null || headgear.Equals("")) {
             return;
         }
@@ -586,7 +597,9 @@ public class EquipmentScript : MonoBehaviour
         playerScript.stats.updateStats(e.speed, e.stamina, e.armor);
         playerScript.updateStats();
     }
-    private void EquipFacewearInGame(string facewear) {
+
+    [PunRPC]
+    private void RpcEquipFacewearInGame(string facewear) {
         if (facewear == null || facewear.Equals("")) {
             return;
         }
@@ -603,7 +616,8 @@ public class EquipmentScript : MonoBehaviour
         playerScript.updateStats();
     }
 
-    private void EquipArmorInGame(string armor) {
+    [PunRPC]
+    private void RpcEquipArmorInGame(string armor) {
         if (armor == null || armor.Equals("")) {
             return;
         }
@@ -627,7 +641,8 @@ public class EquipmentScript : MonoBehaviour
         playerScript.updateStats();
     }
 
-    private void EquipFootwearInGame(string footwear) {
+    [PunRPC]
+    private void RpcEquipFootwearInGame(string footwear) {
         equippedFootwear = footwear;
         Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[footwear];
         equippedFootwearRef = (GameObject)Instantiate((GameObject)Resources.Load(e.prefabPath));

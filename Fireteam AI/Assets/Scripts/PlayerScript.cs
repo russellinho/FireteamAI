@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewPlayerScript : MonoBehaviour
+public class PlayerScript : MonoBehaviour
 {
 
     // Stats
