@@ -41,7 +41,8 @@ public class WeaponScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (pView != null && !pView.IsMine) {
+        if (pView != null && !pView.IsMine)
+        {
             return;
         }
         if (onTitle)
@@ -71,8 +72,12 @@ public class WeaponScript : MonoBehaviour
                 sniperRifleHandPositions = new Dictionary<string, Vector3>();
                 sniperRifleHandPositions.Add("L96A1", new Vector3(0.004f, 0.1f, 0.029f));
             }
-            EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
-            EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);
+            //EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
+            //EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);
+            equippedPrimaryWeapon = PlayerData.playerdata.info.equippedPrimary;
+            equippedPrimaryType = PlayerData.playerdata.info.equippedPrimaryType;
+            equippedSecondaryWeapon = PlayerData.playerdata.info.equippedSecondary;
+            equippedSecondaryType = PlayerData.playerdata.info.equippedSecondaryType;
             DrawWeapon(1);
         }
     }
@@ -88,26 +93,30 @@ public class WeaponScript : MonoBehaviour
     }
 
     void DrawWeapon(int weaponCat) {
-        pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat);
+        string equippedWep = "";
+        string equippedType = "";
+        if (weaponCat == 1)
+        {
+            if (currentlyEquippedType == 1) return;
+            equippedWep = equippedPrimaryWeapon;
+            equippedType = equippedPrimaryType;
+        }
+        else
+        {
+            if (currentlyEquippedType == 2) return;
+            equippedWep = equippedSecondaryWeapon;
+            equippedType = equippedSecondaryType;
+        }
+        pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, equippedType);
     }
 
     [PunRPC]
-    private void RpcDrawWeapon(int weaponCat) {
-        if (weaponCat == 1) {
-            if (currentlyEquippedType == 1) return;
-            weaponReady = false;
-            currentlyEquippedType = 1;
-            animator.SetInteger("WeaponType", 1);
-            EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null);
+    private void RpcDrawWeapon(int weaponCat, string equippedWep, string equippedType) {
+        weaponReady = false;
+        animator.SetInteger("WeaponType", weaponCat);
+        currentlyEquippedType = weaponCat;
+        EquipWeapon(equippedType, equippedWep, null);
 //            animator.CrossFadeInFixedTime("DrawWeapon", 0.1f, 0, 1f);
-        } else if (weaponCat == 2) {
-            if (currentlyEquippedType == 2) return;
-            weaponReady = false;
-            animator.SetInteger("WeaponType", 2);
-            currentlyEquippedType = 2;
-            EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null);
-//            animator.CrossFadeInFixedTime("DrawWeapon", 0.1f, 0, 1f);
-        }
     }
 
     void EquipAssaultRifle(string weaponName) {
@@ -118,7 +127,10 @@ public class WeaponScript : MonoBehaviour
             SetTitleHandPositions();
         } else {
             weaponHolder.SetWeaponPosition();
-            weaponHolder.SetSteadyHand(rifleHandPositions[weaponName]);
+            if (rifleHandPositions != null)
+            {
+                weaponHolder.SetSteadyHand(rifleHandPositions[weaponName]);
+            }
         }
     }
 
