@@ -56,12 +56,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public Transform spineTransform;
         public Animator animator;
 
+        private int networkDelay = 5;
+        private int networkDelayCount = 0;
+
         // Use this for initialization
         private void Start()
         {
             photonView = GetComponent<PhotonView>();
+            m_MouseLook.Init(transform, spineTransform);
             if (photonView != null && !photonView.IsMine) {
-				this.enabled = false;
+				//this.enabled = false;
                 return;
             }
             m_CharacterController = GetComponent<CharacterController>();
@@ -74,7 +78,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_Jumping = false;
             m_IsCrouching = false;
             m_AudioSource = GetComponent<AudioSource>();
-			m_MouseLook.Init(transform, spineTransform, m_Camera.transform);
 			canMove = true;
 			sprintLock = false;
         }
@@ -110,7 +113,20 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         void LateUpdate() {
-            RotateView();
+            if (photonView != null && !photonView.IsMine)
+            {
+                return;
+            }
+            Vector3 spineRotAngles = RotateView();
+            if (networkDelayCount < 5)
+            {
+                networkDelayCount++;
+            }
+            if (!Vector3.Equals(spineRotAngles, Vector3.negativeInfinity) && networkDelayCount == 5)
+            {
+                networkDelayCount = 0;
+                photonView.RPC("RpcUpdateSpineRotation", RpcTarget.Others, spineRotAngles.x, spineRotAngles.y, spineRotAngles.z);
+            }
         }
 
 
@@ -383,11 +399,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
 
-        private void RotateView()
+        private Vector3 RotateView()
         {
-            m_MouseLook.LookRotation (transform, spineTransform, m_Camera.transform);
+            return m_MouseLook.LookRotation (transform, spineTransform, m_Camera.transform);
         }
 
+        [PunRPC]
+        private void RpcUpdateSpineRotation(float xSpineRot, float ySpineRot, float zSpineRot)
+        {
+            m_MouseLook.NetworkedLookRotation(spineTransform, xSpineRot, ySpineRot, zSpineRot);
+        }
 
         // private void OnControllerColliderHit(ControllerColliderHit hit)
         // {

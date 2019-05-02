@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
+using Photon.Pun;
+using Photon.Realtime;
 
 namespace UnityStandardAssets.Characters.FirstPerson
 {
@@ -23,12 +25,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private bool m_cursorIsLocked = true;
         private float spineRotationRange;
 
-        public void Init(Transform character, Transform spineTransform, Transform camera)
+        public PhotonView pView;
+
+        public void Init(Transform character, Transform spineTransform)
         {
             spineRotationRange = 0f;
             m_CharacterTargetRot = character.localRotation;
             m_SpineTargetRot = spineTransform.localRotation;
-            m_CameraTargetRot = camera.localRotation;
+            //m_CameraTargetRot = camera.localRotation;
         }
 
         public void ResetSpineRotationRange()
@@ -43,7 +47,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             //m_CharacterTargetRot = nextRotation;
         }
 
-        public void LookRotation(Transform character, Transform spineTransform, Transform camera)
+        public Vector3 LookRotation(Transform character, Transform spineTransform, Transform camera)
         {
             float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
@@ -94,7 +98,19 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 //camera.localRotation = Quaternion.Euler(spineTransform.localRotation.eulerAngles.x, spineTransform.localRotation.eulerAngles.y, 0f);
             }
 
+            if (xRot != 0f || yRot != 0f)
+            {
+                return new Vector3(m_SpineTargetRot.eulerAngles.x, m_SpineTargetRot.eulerAngles.y, m_SpineTargetRot.eulerAngles.x);
+            }
+            return Vector3.negativeInfinity;
+
             //UpdateCursorLock();
+        }
+
+        public void NetworkedLookRotation(Transform spineTransform, float spineXRot, float spineYRot, float spineZRot)
+        {
+            m_SpineTargetRot = Quaternion.Euler(spineXRot, spineYRot, spineZRot);
+            spineTransform.localRotation = m_SpineTargetRot;
         }
 
         /**public void SetCursorLock(bool value)
