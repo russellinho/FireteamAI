@@ -67,7 +67,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        // Else, load the in-game necessities
+        // Load the in-game necessities
+        DontDestroyOnLoad(gameObject);
         //AddMyselfToPlayerList();
 
         // Setting original positions for returning from crouching
