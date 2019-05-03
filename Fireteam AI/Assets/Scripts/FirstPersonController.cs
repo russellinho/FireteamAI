@@ -125,7 +125,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             if (!Vector3.Equals(spineRotAngles, Vector3.negativeInfinity) && networkDelayCount == 5)
             {
-                Debug.Log("alright");
                 networkDelayCount = 0;
                 photonView.RPC("RpcUpdateSpineRotation", RpcTarget.Others, spineRotAngles.x, spineRotAngles.y, spineRotAngles.z);
             }
@@ -412,7 +411,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [PunRPC]
         private void RpcUpdateSpineRotation(float xSpineRot, float ySpineRot, float zSpineRot)
         {
-            Debug.Log(xSpineRot + " " + ySpineRot + " " + zSpineRot);
             m_MouseLook.NetworkedLookRotation(spineTransform, xSpineRot, ySpineRot, zSpineRot);
         }
 
