@@ -4,6 +4,7 @@ using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 using Photon.Pun;
+using Photon.Realtime;
 
 namespace UnityStandardAssets.Characters.FirstPerson
 {
@@ -51,7 +52,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 		public bool canMove;
         public WeaponActionScript weaponActionScript;
-        private PhotonView photonView;
+        public PhotonView photonView;
 
         public Transform spineTransform;
         public Animator animator;
@@ -62,7 +63,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Use this for initialization
         private void Start()
         {
-            photonView = GetComponent<PhotonView>();
             m_MouseLook.Init(transform, spineTransform);
             if (photonView != null && !photonView.IsMine) {
 				//this.enabled = false;
@@ -115,6 +115,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         void LateUpdate() {
             if (photonView != null && !photonView.IsMine)
             {
+                ClientRotateView();
                 return;
             }
             Vector3 spineRotAngles = RotateView();
@@ -124,6 +125,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             if (!Vector3.Equals(spineRotAngles, Vector3.negativeInfinity) && networkDelayCount == 5)
             {
+                Debug.Log("alright");
                 networkDelayCount = 0;
                 photonView.RPC("RpcUpdateSpineRotation", RpcTarget.Others, spineRotAngles.x, spineRotAngles.y, spineRotAngles.z);
             }
@@ -398,6 +400,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				speed = 0f;
         }
 
+        private void ClientRotateView() {
+            m_MouseLook.LookRotationClient (spineTransform);
+        }
 
         private Vector3 RotateView()
         {
@@ -407,6 +412,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [PunRPC]
         private void RpcUpdateSpineRotation(float xSpineRot, float ySpineRot, float zSpineRot)
         {
+            Debug.Log(xSpineRot + " " + ySpineRot + " " + zSpineRot);
             m_MouseLook.NetworkedLookRotation(spineTransform, xSpineRot, ySpineRot, zSpineRot);
         }
 

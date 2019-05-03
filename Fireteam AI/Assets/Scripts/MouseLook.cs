@@ -113,6 +113,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
             spineTransform.localRotation = m_SpineTargetRot;
         }
 
+        public void LookRotationClient(Transform spineTransform) {
+            //m_SpineTargetRot = Quaternion.Euler(m_SpineTargetRot.eulerAngles.x, m_SpineTargetRot.eulerAngles.y, m_SpineTargetRot.eulerAngles.x);
+            spineTransform.localRotation = m_SpineTargetRot;
+        }
+
         /**public void SetCursorLock(bool value)
         {
             lockCursor = value;
