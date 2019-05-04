@@ -126,10 +126,12 @@ public class WeaponScript : MonoBehaviour
         if (animator.GetBool("onTitle")) {
             SetTitleHandPositions();
         } else {
-            weaponHolder.SetWeaponPosition();
+            pView.RPC("RpcSetWeaponPos", RpcTarget.All);
+            //weaponHolder.SetWeaponPosition();
             if (rifleHandPositions != null)
             {
-                weaponHolder.SetSteadyHand(rifleHandPositions[weaponName]);
+                pView.RPC("RpcSetLeftShoulderPos", RpcTarget.All, rifleHandPositions[weaponName]);
+                // weaponHolder.SetSteadyHand(rifleHandPositions[weaponName]);
             }
         }
     }
@@ -140,8 +142,12 @@ public class WeaponScript : MonoBehaviour
         if (animator.GetBool("onTitle")) {
             SetTitleHandPositions();
         } else {
-            weaponHolder.SetWeaponPosition();
-            weaponHolder.SetSteadyHand(shotgunHandPositions[weaponName]);
+            // weaponHolder.SetWeaponPosition();
+            pView.RPC("RpcSetWeaponPos", RpcTarget.All);
+            if (shotgunHandPositions != null) {
+                pView.RPC("RpcSetLeftShoulderPos", RpcTarget.All, shotgunHandPositions[weaponName]);
+                // weaponHolder.SetSteadyHand(shotgunHandPositions[weaponName]);
+            }
         }
     }
 
@@ -161,8 +167,12 @@ public class WeaponScript : MonoBehaviour
         if (animator.GetBool("onTitle")) {
             SetTitleHandPositions();
         } else {
-            weaponHolder.SetWeaponPosition();
-            weaponHolder.SetSteadyHand(sniperRifleHandPositions[weaponName]);
+            // weaponHolder.SetWeaponPosition();
+            pView.RPC("RpcSetWeaponPos", RpcTarget.All);
+            if (sniperRifleHandPositions != null) {
+                pView.RPC("RpcSetLeftShoulderPos", RpcTarget.All, sniperRifleHandPositions[weaponName]);
+                // weaponHolder.SetSteadyHand(sniperRifleHandPositions[weaponName]);
+            }
         }
     }
 
@@ -239,6 +249,16 @@ public class WeaponScript : MonoBehaviour
         equippedSecondaryType = "Pistol";
         EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null);
         EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null);
+    }
+
+    [PunRPC]
+    private void RpcSetLeftShoulderPos(Vector3 handPos) {
+        weaponHolder.SetSteadyHand(handPos);
+    }
+
+    [PunRPC]
+    private void RpcSetWeaponPos() {
+        weaponHolder.SetWeaponPosition();
     }
 
 }

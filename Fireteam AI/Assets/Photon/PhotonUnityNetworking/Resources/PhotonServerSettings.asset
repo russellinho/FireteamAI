@@ -141,4 +141,6 @@ MonoBehaviour:
   - RpcTriggerReloadingInAnimator
   - RpcSyncAnimatorValues
   - RpcResetSteadyHand
+  - RpcSetLeftShoulderPos
+  - RpcSetWeaponPos
   DisableAutoOpenWizard: 1

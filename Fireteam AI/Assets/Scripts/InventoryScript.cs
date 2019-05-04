@@ -19,6 +19,9 @@ public class InventoryScript : MonoBehaviour
     public static ArrayList myWeapons = new ArrayList();
 
     void Awake() {
+        if (weaponCatalog.Count != 0) {
+            return;
+        }
         // Create all equipment data here
         Equipment casualShirtMale = new Equipment("Casual Shirt", "Top", "Models/Clothing/Lucas/Tops/Casual Shirt/lucascasualshirt", "Models/Pics/casual_shirt", "A classy yet casual button up.", false, 1, 0f, 0f, 0f);
         Equipment casualTShirtMale = new Equipment("Casual T-Shirt", "Top", "Models/Clothing/Lucas/Tops/V Neck Tee/lucasvnecktee (1)", "Models/Pics/v_neck_shirt", "A casual v neck t-shirt.", false, 2, 0f, 0f, 0f);

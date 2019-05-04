@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
-using Photon.Pun;
-using Photon.Realtime;
 
 public class WeaponHandlerScript : MonoBehaviour
 {
@@ -13,13 +11,8 @@ public class WeaponHandlerScript : MonoBehaviour
     private Vector3 steadyHandPos;
     private Vector3 originalShoulderPos;
     public FirstPersonController fpc;
-    public PhotonView pView;
 
     void Awake() {
-        if (pView != null && !pView.IsMine)
-        {
-            return;
-        }
         originalShoulderPos = new Vector3(leftShoulder.localPosition.x, leftShoulder.localPosition.y, leftShoulder.localPosition.z);
     }
 
@@ -53,21 +46,11 @@ public class WeaponHandlerScript : MonoBehaviour
     }
 
     public void SetSteadyHand(Vector3 shoulderPos) {
-        pView.RPC("RpcSetSteadyHand", RpcTarget.All, shoulderPos);
-    }
-
-    [PunRPC]
-    private void RpcSetSteadyHand(Vector3 p) {
-        steadyHandPos = p;
+        steadyHandPos = shoulderPos;
     }
 
     public void ResetSteadyHand() {
-        pView.RPC("RpcResetSteadyHand", RpcTarget.All, originalShoulderPos);
-    }
-
-    [PunRPC]
-    private void RpcResetSteadyHand(Vector3 p) {
-        leftShoulder.localPosition = p;
+        leftShoulder.localPosition = originalShoulderPos;
     }
 
     void LateUpdate() {
