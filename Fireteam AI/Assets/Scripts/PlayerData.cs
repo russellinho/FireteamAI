@@ -41,15 +41,27 @@ public class PlayerData : MonoBehaviour
     public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
     {
         string levelName = SceneManager.GetActiveScene().name;
+        string characterPrefabName = "";
+        if (PlayerData.playerdata.info.equippedCharacter.Equals("Lucas")) {
+            characterPrefabName = "PlayerPrefabLucasAction";
+        } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Daryl")) {
+            characterPrefabName = "PlayerPrefabDarylAction";
+        } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Codename Sayre")) {
+            characterPrefabName = "PlayerPrefabSayreAction";
+        } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Hana")) {
+            characterPrefabName = "PlayerPrefabHanaAction";
+        } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Jade")) {
+            characterPrefabName = "PlayerPrefabJadeAction";
+        }
         if (levelName.Equals("BetaLevelNetwork"))
         {
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
-                "PlayerPrefabLucasAction", 
+                characterPrefabName, 
                 Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0], 
                 Quaternion.Euler(Vector3.zero));
         } else if (levelName.Equals("Test")) {
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
-                "PlayerPrefabLucasAction 1",
+                characterPrefabName,
                 Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
                 Quaternion.Euler(Vector3.zero));
         }
