@@ -179,7 +179,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         {
             audioController.PlaySprintSound(true);
             canShoot = false;
-            animator.SetBool("isSprinting", true);
+            //animator.SetBool("isSprinting", true);
+            fpc.SetSprintingInAnimator(true);
             if (sprintTime > 0f)
             {
                 sprintTime -= Time.deltaTime;
@@ -192,7 +193,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         else
         {
             audioController.PlaySprintSound(false);
-            animator.SetBool("isSprinting", false);
+            // animator.SetBool("isSprinting", false);
+            fpc.SetSprintingInAnimator(false);
             if (sprintTime < 3f)
             {
                 sprintTime += Time.deltaTime;
@@ -267,7 +269,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         {
             if (charController.isGrounded) {
                 fpc.m_IsCrouching = !fpc.m_IsCrouching;
-                animator.SetBool("Crouching", fpc.m_IsCrouching);
             }
         }
 
@@ -281,7 +282,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         
         // Set the animation to crouching
-        animator.SetBool("Crouching", fpc.m_IsCrouching);
+        // animator.SetBool("Crouching", fpc.m_IsCrouching);
+        fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
 
         // Network it
         // if (fpc.m_IsCrouching != originalCrouch)

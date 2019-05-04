@@ -423,7 +423,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcCockingAnim()
     {
-        if (fpc.m_IsCrouching)
+        if (animator.GetBool("Crouching") == true)
         {
             animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f, -1, 2.3f);
         }

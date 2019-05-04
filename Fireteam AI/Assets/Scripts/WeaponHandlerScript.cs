@@ -53,19 +53,24 @@ public class WeaponHandlerScript : MonoBehaviour
     }
 
     public void SetSteadyHand(Vector3 shoulderPos) {
-        steadyHandPos = shoulderPos;
-        //leftShoulder.localPosition = new Vector3(shoulderPos.x, shoulderPos.y, shoulderPos.z);
+        pView.RPC("RpcSetSteadyHand", RpcTarget.All, shoulderPos);
+    }
+
+    [PunRPC]
+    private void RpcSetSteadyHand(Vector3 p) {
+        steadyHandPos = p;
     }
 
     public void ResetSteadyHand() {
-        leftShoulder.localPosition = originalShoulderPos;
+        pView.RPC("RpcResetSteadyHand", RpcTarget.All, originalShoulderPos);
+    }
+
+    [PunRPC]
+    private void RpcResetSteadyHand(Vector3 p) {
+        leftShoulder.localPosition = p;
     }
 
     void LateUpdate() {
-        if (pView != null && !pView.IsMine)
-        {
-            return;
-        }
         if (!Vector3.Equals(Vector3.zero, steadyHandPos) && !fpc.m_IsRunning) {
             leftShoulder.localPosition = new Vector3(steadyHandPos.x, steadyHandPos.y, steadyHandPos.z);
         }

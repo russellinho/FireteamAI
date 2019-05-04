@@ -129,4 +129,16 @@ MonoBehaviour:
   - RpcSetWeaponPosition
   - RpcDrawWeapon
   - RpcUpdateSpineRotation
+  - RpcSetMovingVal
+  - RpcSetCrouchingInAnimator
+  - RpcSetIsDeadInAnimator
+  - RpcSetMovingInAnimator
+  - RpcSetSprintingInAnimator
+  - RpcSetWalkingInAnimator
+  - RpcSetWeaponReadyInAnimator
+  - RpcSetWeaponTypeInAnimator
+  - RpcTriggerJumpInAnimator
+  - RpcTriggerReloadingInAnimator
+  - RpcSyncAnimatorValues
+  - RpcResetSteadyHand
   DisableAutoOpenWizard: 1

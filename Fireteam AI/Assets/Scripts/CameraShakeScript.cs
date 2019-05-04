@@ -15,20 +15,16 @@ public class CameraShakeScript : MonoBehaviour
 
     // Amplitude of the shake. A larger value shakes the camera harder.
     private float shakeAmount = 0.001f;
+	public PhotonView pView;
 
 	Vector3 originalPos;
 	
 	void Awake()
 	{
-		// TODO: Re-enable
-		// if (!GetComponent<PhotonView> ().IsMine) {
-		// 	this.enabled = false;
-		// 	return;
-		// }
-		// if (camTransform == null)
-		// {
-		// 	camTransform = GetComponent(typeof(Transform)) as Transform;
-		// }
+		if (!pView.IsMine) {
+			this.enabled = false;
+			return;
+		}
 	}
 
 	public void SetShake(bool b) {

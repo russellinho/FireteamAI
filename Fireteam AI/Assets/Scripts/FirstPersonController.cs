@@ -63,6 +63,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Use this for initialization
         private void Start()
         {
+            animator.SetBool("onTitle", false);
             m_MouseLook.Init(transform, spineTransform);
             if (photonView != null && !photonView.IsMine) {
 				//this.enabled = false;
@@ -154,68 +155,89 @@ namespace UnityStandardAssets.Characters.FirstPerson
             if (m_Input.x < 0f && m_Input.y > 0f)
             {
                 // Move forward-left
-                animator.SetInteger("Moving", 5);
+                //animator.SetInteger("Moving", 5);
+                SetMovingInAnimator(5);
+                if (m_IsWalking) {
+                    //animator.SetBool("isWalking", true);
+                    SetWalkingInAnimator(true);
+                }
             }
             else if (m_Input.x > 0f && m_Input.y > 0f)
             {
                 // Move forward-right
-                animator.SetInteger("Moving", 6);
+                //animator.SetInteger("Moving", 6);
+                SetMovingInAnimator(6);
                 if (m_IsWalking) {
-                    animator.SetBool("isWalking", true);
+                    // animator.SetBool("isWalking", true);
+                    SetWalkingInAnimator(true);
                 }
             }
             else if (m_Input.x < 0f && m_Input.y < 0f)
             {
                 // Move backwards-left
-                animator.SetInteger("Moving", 7);
+                // animator.SetInteger("Moving", 7);
+                SetMovingInAnimator(7);
                 if (m_IsWalking) {
-                    animator.SetBool("isWalking", true);
+                    // animator.SetBool("isWalking", true);
+                    SetWalkingInAnimator(true);
                 }
             }
             else if (m_Input.x > 0f && m_Input.y < 0f)
             {
                 // Move backwards-right
-                animator.SetInteger("Moving", 8);
+                // animator.SetInteger("Moving", 8);
+                SetMovingInAnimator(8);
                 if (m_IsWalking) {
-                    animator.SetBool("isWalking", true);
+                    // animator.SetBool("isWalking", true);
+                    SetWalkingInAnimator(true);
                 }
             }
             else if (m_Input.x > 0f)
             {
                 // Move right
-                animator.SetInteger("Moving", 3);
+                // animator.SetInteger("Moving", 3);
+                SetMovingInAnimator(3);
                 if (m_IsWalking) {
-                    animator.SetBool("isWalking", true);
+                    // animator.SetBool("isWalking", true);
+                    SetWalkingInAnimator(true);
                 }
             }
             else if (m_Input.x < 0f)
             {
                 // Move left
-                animator.SetInteger("Moving", 2);
+                // animator.SetInteger("Moving", 2);
+                SetMovingInAnimator(2);
                 if (m_IsWalking) {
-                    animator.SetBool("isWalking", true);
+                    // animator.SetBool("isWalking", true);
+                    SetWalkingInAnimator(true);
                 }
             }
             else if (m_Input.y > 0f)
             {
                 // Move forward
-                animator.SetInteger("Moving", 1);
+                // animator.SetInteger("Moving", 1);
+                SetMovingInAnimator(1);
                 if (m_IsWalking) {
-                    animator.SetBool("isWalking", true);
+                    // animator.SetBool("isWalking", true);
+                    SetWalkingInAnimator(true);
                 }
             }
             else if (m_Input.y < 0f)
             {
                 // Move backwards
-                animator.SetInteger("Moving", 4);
+                // animator.SetInteger("Moving", 4);
+                SetMovingInAnimator(4);
                 if (m_IsWalking) {
-                    animator.SetBool("isWalking", true);
+                    // animator.SetBool("isWalking", true);
+                    SetWalkingInAnimator(true);
                 }
             }
             else
             {
-                animator.SetInteger("Moving", 0);
-                animator.SetBool("isWalking", false);
+                // animator.SetInteger("Moving", 0);
+                SetMovingInAnimator(0);
+                // animator.SetBool("isWalking", false);
+                SetWalkingInAnimator(false);
             }
             
             Vector3 desiredMove = m_Camera.transform.forward*m_Input.y + m_Camera.transform.right*m_Input.x;
@@ -238,7 +260,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 {
                     if (m_IsCrouching)
                     {
-                        animator.SetBool("Crouching", false);
+                        // animator.SetBool("Crouching", false);
+                        SetCrouchingInAnimator(false);
                         m_IsCrouching = false;
                     }
                     else
@@ -246,7 +269,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
                         m_MoveDir.y = m_JumpSpeed;
                         PlayJumpSound();
                         m_Jumping = true;
-                        animator.SetTrigger("Jump");
+                        // animator.SetTrigger("Jump");
+                        TriggerJumpInAnimator();
                     }
                     m_Jump = false;
                 }
@@ -412,6 +436,109 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private void RpcUpdateSpineRotation(float xSpineRot, float ySpineRot, float zSpineRot)
         {
             m_MouseLook.NetworkedLookRotation(spineTransform, xSpineRot, ySpineRot, zSpineRot);
+        }
+
+        public void SetMovingInAnimator(int x) {
+            if (animator.GetInteger("Moving") == x) return;
+            photonView.RPC("RpcSetMovingInAnimator", RpcTarget.All, x);
+        }
+
+        [PunRPC]
+        private void RpcSetMovingInAnimator(int x) {
+            animator.SetInteger("Moving", x);
+        }
+
+        public void SetWeaponTypeInAnimator(int x) {
+            if (animator.GetInteger("WeaponType") == x) return;
+            photonView.RPC("RpcSetWeaponTypeInAnimator", RpcTarget.All, x);
+        }
+
+        [PunRPC]
+        private void RpcSetWeaponTypeInAnimator(int x) {
+            animator.SetInteger("WeaponType", x);
+        }
+
+        public void SetWeaponReadyInAnimator(bool x) {
+            if (animator.GetBool("weaponReady") == x) return;
+            photonView.RPC("RpcSetWeaponReadyInAnimator", RpcTarget.All, x);
+        }
+
+        [PunRPC]
+        private void RpcSetWeaponReadyInAnimator(bool x) {
+            animator.SetBool("weaponReady", x);
+        }
+
+        public void SetCrouchingInAnimator(bool x) {
+            if (animator.GetBool("Crouching") == x) return;
+            photonView.RPC("RpcSetCrouchingInAnimator", RpcTarget.All, x);
+        }
+
+        [PunRPC]
+        private void RpcSetCrouchingInAnimator(bool x) {
+            animator.SetBool("Crouching", x);
+        }
+
+        public void SetSprintingInAnimator(bool x) {
+            if (animator.GetBool("isSprinting") == x) return;
+            photonView.RPC("RpcSetSprintingInAnimator", RpcTarget.All, x);
+        }
+
+        [PunRPC]
+        private void RpcSetSprintingInAnimator(bool x) {
+            animator.SetBool("isSprinting", x);
+        }
+
+        public void SetIsDeadInAnimator(bool x) {
+            if (animator.GetBool("isDead") == x) return;
+            photonView.RPC("RpcSetIsDeadInAnimator", RpcTarget.All, x);
+        }
+
+        [PunRPC]
+        private void RpcSetIsDeadInAnimator(bool x) {
+            animator.SetBool("isDead", x);
+        }
+
+        public void SetWalkingInAnimator(bool x) {
+            if (animator.GetBool("isWalking") == x) return;
+            photonView.RPC("RpcSetWalkingInAnimator", RpcTarget.All, x);
+        }
+
+        [PunRPC]
+        private void RpcSetWalkingInAnimator(bool x) {
+            animator.SetBool("isWalking", x);
+        }
+
+        public void TriggerJumpInAnimator() {
+            photonView.RPC("RpcTriggerJumpInAnimator", RpcTarget.All);
+        }
+
+        [PunRPC]
+        private void RpcTriggerJumpInAnimator() {
+            animator.SetTrigger("Jump");
+        }
+
+        public void TriggerReloadingInAnimator() {
+            photonView.RPC("RpcTriggerReloadingInAnimator", RpcTarget.All);
+        }
+
+        [PunRPC]
+        private void RpcTriggerReloadingInAnimator() {
+            animator.SetTrigger("Reloading");
+        }
+
+        public void SyncAnimatorValues(int weaponType, int moving, bool weaponReady, bool crouching, bool sprinting, bool dead, bool walking) {
+            photonView.RPC("RpcSyncAnimatorValues", RpcTarget.Others, weaponType, moving, weaponReady, crouching, sprinting, dead, walking);
+        }
+
+        [PunRPC]
+        private void RpcSyncAnimatorValues(int weaponType, int moving, bool weaponReady, bool crouching, bool sprinting, bool dead, bool walking) {
+            animator.SetInteger("WeaponType", weaponType);
+            animator.SetInteger("Moving", moving);
+            animator.SetBool("weaponReady", weaponReady);
+            animator.SetBool("Crouching", crouching);
+            animator.SetBool("isSprinting", sprinting);
+            animator.SetBool("isDead", dead);
+            animator.SetBool("isWalking", walking);
         }
 
         // private void OnControllerColliderHit(ControllerColliderHit hit)
