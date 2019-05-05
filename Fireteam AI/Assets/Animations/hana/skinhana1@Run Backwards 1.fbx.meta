@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ae2a9ecae6b538e4b9b0343b4d1bdad0
+guid: 949ad4c8ef67cf94b967ff1b58c13d9e
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -139,7 +139,7 @@ ModelImporter:
     400130: mixamorig:Spine1
     400132: mixamorig:Spine2
     400134: //RootNode
-    7400000: Put Back Rifle
+    7400000: Run Backwards 1
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -170,18 +170,18 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Put Back Rifle
+      name: Run Backwards 1
       takeName: mixamo.com
       firstFrame: 0
-      lastFrame: 153
+      lastFrame: 32
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 1
       loopBlendPositionY: 1
       loopBlendPositionXZ: 1
