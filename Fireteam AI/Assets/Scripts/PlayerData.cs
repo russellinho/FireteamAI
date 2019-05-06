@@ -40,11 +40,13 @@ public class PlayerData : MonoBehaviour
 
     public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
     {
+        Debug.Log("helo");
         string levelName = SceneManager.GetActiveScene().name;
         string characterPrefabName = "";
         if (PlayerData.playerdata.info.equippedCharacter.Equals("Lucas")) {
             characterPrefabName = "PlayerPrefabLucasAction";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Daryl")) {
+            Debug.Log("here");
             characterPrefabName = "PlayerPrefabDarylAction";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Codename Sayre")) {
             characterPrefabName = "PlayerPrefabSayreAction";
@@ -60,6 +62,7 @@ public class PlayerData : MonoBehaviour
                 Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0], 
                 Quaternion.Euler(Vector3.zero));
         } else if (levelName.Equals("Test")) {
+            Debug.Log(characterPrefabName);
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
                 characterPrefabName,
                 Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
@@ -108,6 +111,26 @@ public class PlayerData : MonoBehaviour
             FileStream file = File.Open(Application.persistentDataPath + "/playerData.dat", FileMode.Open);
             info = (PlayerInfo)bf.Deserialize(file);
             file.Close();
+            if (info.equippedCharacter == null || info.equippedCharacter == "") {
+                info.equippedCharacter = "Lucas";
+            }
+            if (info.equippedPrimary == null || info.equippedPrimary == "") {
+                info.equippedPrimary = "AK-47";
+                info.equippedPrimaryType = "Assault Rifle";
+            }
+            if (info.equippedSecondary == null || info.equippedSecondary == "") {
+                info.equippedSecondary = "Glock23";
+                info.equippedSecondaryType = "Pistol";
+            }
+            if (info.equippedTop == null || info.equippedTop == "") {
+                info.equippedTop = "Standard Fatigues Top";
+            }
+            if (info.equippedBottom == null || info.equippedBottom == "") {
+                info.equippedBottom = "Standard Fatigues Bottom";
+            }
+            if (info.equippedFootwear == null || info.equippedFootwear == "") {
+                info.equippedTop = "Standard Boots";
+            }
             FindBodyRef(info.equippedCharacter);
             playername = info.playername;
             EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();

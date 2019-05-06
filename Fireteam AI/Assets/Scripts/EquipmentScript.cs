@@ -166,7 +166,10 @@ public class EquipmentScript : MonoBehaviour
             ts.currentCharGender = 'F';
         }
 
+        // Change equipment back to default and re-equip weapons that were equipped beforehand
         EquipDefaults();
+        tws.EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
+        tws.EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);
         if (tws.weaponHolder.weapon != null)
         {
             tws.SetTitleHandPositions();
