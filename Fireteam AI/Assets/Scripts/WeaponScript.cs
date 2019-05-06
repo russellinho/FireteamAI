@@ -104,12 +104,10 @@ public class WeaponScript : MonoBehaviour
         if (animator.GetBool("onTitle")) {
             SetTitleHandPositions();
         } else {
-            pView.RPC("RpcSetWeaponPos", RpcTarget.All);
-            //weaponHolder.SetWeaponPosition();
+            weaponHolder.SetWeaponPosition();
             if (InventoryScript.rifleHandPositionsPerCharacter != null)
             {
-                pView.RPC("RpcSetLeftShoulderPos", RpcTarget.All, InventoryScript.rifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
-                // weaponHolder.SetSteadyHand(rifleHandPositions[weaponName]);
+                weaponHolder.SetSteadyHand(InventoryScript.rifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
             }
         }
     }
@@ -120,11 +118,9 @@ public class WeaponScript : MonoBehaviour
         if (animator.GetBool("onTitle")) {
             SetTitleHandPositions();
         } else {
-            // weaponHolder.SetWeaponPosition();
-            pView.RPC("RpcSetWeaponPos", RpcTarget.All);
+            weaponHolder.SetWeaponPosition();
             if (InventoryScript.shotgunHandPositionsPerCharacter != null) {
-                pView.RPC("RpcSetLeftShoulderPos", RpcTarget.All, InventoryScript.shotgunHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
-                // weaponHolder.SetSteadyHand(shotgunHandPositions[weaponName]);
+                weaponHolder.SetSteadyHand(InventoryScript.shotgunHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
             }
         }
     }
@@ -145,11 +141,9 @@ public class WeaponScript : MonoBehaviour
         if (animator.GetBool("onTitle")) {
             SetTitleHandPositions();
         } else {
-            // weaponHolder.SetWeaponPosition();
-            pView.RPC("RpcSetWeaponPos", RpcTarget.All);
+            weaponHolder.SetWeaponPosition();
             if (InventoryScript.sniperRifleHandPositionsPerCharacter != null) {
-                pView.RPC("RpcSetLeftShoulderPos", RpcTarget.All, InventoryScript.sniperRifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
-                // weaponHolder.SetSteadyHand(sniperRifleHandPositions[weaponName]);
+                weaponHolder.SetSteadyHand(InventoryScript.sniperRifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
             }
         }
     }

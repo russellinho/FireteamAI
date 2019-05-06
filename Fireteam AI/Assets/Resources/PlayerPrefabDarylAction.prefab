@@ -1718,6 +1718,7 @@ MonoBehaviour:
   sprintLock: 0
   canMove: 0
   weaponActionScript: {fileID: 2054981473306387991}
+  equipmentScript: {fileID: 517835709440268875}
   photonView: {fileID: 822433111236790916}
   spineTransform: {fileID: 3999816085970153152}
   animator: {fileID: 3999816085979398314}

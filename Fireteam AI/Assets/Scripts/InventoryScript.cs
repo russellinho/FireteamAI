@@ -183,26 +183,36 @@ public class InventoryScript : MonoBehaviour
         Dictionary<string, Vector3> sniperRifleHandPositions = new Dictionary<string, Vector3>();
         sniperRifleHandPositions.Add("L96A1", new Vector3(0.004f, 0.1f, 0.029f));
 
+        Dictionary<string, Vector3> rifleHandPositionsF = new Dictionary<string, Vector3>();
+        rifleHandPositionsF.Add("AK-47", new Vector3(-0.1f, 0.14f, 0.04f));
+        rifleHandPositionsF.Add("M4A1", new Vector3(-0.007f, 0.111f, 0.04f));
+    
+        Dictionary<string, Vector3> shotgunHandPositionsF = new Dictionary<string, Vector3>();
+        shotgunHandPositionsF.Add("R870", new Vector3(-0.071f, 0.13f, 0.084f));
+
+        Dictionary<string, Vector3> sniperRifleHandPositionsF = new Dictionary<string, Vector3>();
+        sniperRifleHandPositionsF.Add("L96A1", new Vector3(0.004f, 0.1f, 0.029f));
+
         rifleHandPositionsPerCharacter = new Dictionary<string, Dictionary<string, Vector3>>();
         rifleHandPositionsPerCharacter.Add("Lucas", rifleHandPositions);
         rifleHandPositionsPerCharacter.Add("Daryl", rifleHandPositions);
         rifleHandPositionsPerCharacter.Add("Codename Sayre", rifleHandPositions);
-        rifleHandPositionsPerCharacter.Add("Hana", rifleHandPositions);
-        rifleHandPositionsPerCharacter.Add("Jade", rifleHandPositions);
+        rifleHandPositionsPerCharacter.Add("Hana", rifleHandPositionsF);
+        rifleHandPositionsPerCharacter.Add("Jade", rifleHandPositionsF);
 
         shotgunHandPositionsPerCharacter = new Dictionary<string, Dictionary<string, Vector3>>();
         shotgunHandPositionsPerCharacter.Add("Lucas", shotgunHandPositions);
         shotgunHandPositionsPerCharacter.Add("Daryl", shotgunHandPositions);
         shotgunHandPositionsPerCharacter.Add("Codename Sayre", shotgunHandPositions);
-        shotgunHandPositionsPerCharacter.Add("Hana", shotgunHandPositions);
-        shotgunHandPositionsPerCharacter.Add("Jade", shotgunHandPositions);
+        shotgunHandPositionsPerCharacter.Add("Hana", shotgunHandPositionsF);
+        shotgunHandPositionsPerCharacter.Add("Jade", shotgunHandPositionsF);
 
         sniperRifleHandPositionsPerCharacter = new Dictionary<string, Dictionary<string, Vector3>>();
         sniperRifleHandPositionsPerCharacter.Add("Lucas", sniperRifleHandPositions);
         sniperRifleHandPositionsPerCharacter.Add("Daryl", sniperRifleHandPositions);
         sniperRifleHandPositionsPerCharacter.Add("Codename Sayre", sniperRifleHandPositions);
-        sniperRifleHandPositionsPerCharacter.Add("Hana", sniperRifleHandPositions);
-        sniperRifleHandPositionsPerCharacter.Add("Jade", sniperRifleHandPositions);
+        sniperRifleHandPositionsPerCharacter.Add("Hana", sniperRifleHandPositionsF);
+        sniperRifleHandPositionsPerCharacter.Add("Jade", sniperRifleHandPositionsF);
 
         collectCharacters();
         collectWeapons();

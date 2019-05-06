@@ -52,6 +52,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 		public bool canMove;
         public WeaponActionScript weaponActionScript;
+        public EquipmentScript equipmentScript;
         public PhotonView photonView;
 
         public Transform spineTransform;

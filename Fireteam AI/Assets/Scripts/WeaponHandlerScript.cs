@@ -37,7 +37,11 @@ public class WeaponHandlerScript : MonoBehaviour
         Vector3 oldHandlePos = handle.localPosition;
         handle.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z);
         oldHandlePos = new Vector3(oldHandlePos.x - handle.localPosition.x, oldHandlePos.y - handle.localPosition.y, oldHandlePos.z - handle.localPosition.z);
-        weapon.localPosition = new Vector3(weapon.localPosition.x - oldHandlePos.x - 0.01f, weapon.localPosition.y - oldHandlePos.y + 0.06f, weapon.localPosition.z - oldHandlePos.z + 0.02f);
+        if (fpc.equipmentScript.gender == 'M') {
+            weapon.localPosition = new Vector3(weapon.localPosition.x - oldHandlePos.x - 0.01f, weapon.localPosition.y - oldHandlePos.y + 0.06f, weapon.localPosition.z - oldHandlePos.z + 0.02f);
+        } else {
+            weapon.localPosition = new Vector3(weapon.localPosition.x - oldHandlePos.x - 0.01f, weapon.localPosition.y - oldHandlePos.y + 0.04f, weapon.localPosition.z - oldHandlePos.z + 0.02f);
+        }
     }
 
     public void SetWeaponPositionForTitle(Vector3 offset) {
@@ -46,7 +50,6 @@ public class WeaponHandlerScript : MonoBehaviour
     }
 
     public void SetSteadyHand(Vector3 shoulderPos) {
-        Debug.Log("lean low: " + shoulderPos);
         steadyHandPos = shoulderPos;
     }
 
