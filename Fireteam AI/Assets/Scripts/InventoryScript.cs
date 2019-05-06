@@ -185,7 +185,7 @@ public class InventoryScript : MonoBehaviour
 
         Dictionary<string, Vector3> rifleHandPositionsF = new Dictionary<string, Vector3>();
         rifleHandPositionsF.Add("AK-47", new Vector3(-0.1f, 0.14f, 0.04f));
-        rifleHandPositionsF.Add("M4A1", new Vector3(-0.007f, 0.111f, 0.04f));
+        rifleHandPositionsF.Add("M4A1", new Vector3(-0.06f, 0.12f, -0.01f));
     
         Dictionary<string, Vector3> shotgunHandPositionsF = new Dictionary<string, Vector3>();
         shotgunHandPositionsF.Add("R870", new Vector3(-0.071f, 0.13f, 0.084f));
