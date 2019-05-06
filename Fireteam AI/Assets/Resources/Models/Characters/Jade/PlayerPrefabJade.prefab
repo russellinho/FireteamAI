@@ -406,8 +406,8 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3166084420118613657}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 8237922f8de75384abbc4e13c8cce634, type: 3}
-  m_Controller: {fileID: 9100000, guid: 2bf8793fb3b179a4f8a5b2dcac180646, type: 2}
+  m_Avatar: {fileID: 9000000, guid: 913bf74750507d340a0afb2f667d20e1, type: 3}
+  m_Controller: {fileID: 9100000, guid: 184e2a1fc2ab9a64e9f1271bd7f8eed1, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -439,6 +439,7 @@ MonoBehaviour:
   equippedFootwear: 
   equippedArmor: 
   equippedSkin: 0
+  gender: 0
   equippedSkinRef: {fileID: 0}
   equippedHeadgearRef: {fileID: 0}
   equippedFacewearRef: {fileID: 0}
@@ -460,6 +461,7 @@ MonoBehaviour:
   myEyelashRenderer: {fileID: 3166084420118613771}
   myHairRenderer: {fileID: 3166084420118613767}
   myBones: {fileID: 3166084420118613789}
+  pView: {fileID: 0}
 --- !u!114 &8954661856752537216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -482,6 +484,7 @@ MonoBehaviour:
   equippedSecondaryType: 
   currentlyEquippedType: 0
   weaponReady: 0
+  pView: {fileID: 0}
 --- !u!114 &7319902134035168659
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3231,3 +3234,4 @@ MonoBehaviour:
   handle: {fileID: 0}
   weapon: {fileID: 0}
   leftShoulder: {fileID: 3166084420118909803}
+  fpc: {fileID: 0}

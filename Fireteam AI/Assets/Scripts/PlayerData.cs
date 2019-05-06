@@ -40,13 +40,11 @@ public class PlayerData : MonoBehaviour
 
     public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("helo");
         string levelName = SceneManager.GetActiveScene().name;
         string characterPrefabName = "";
         if (PlayerData.playerdata.info.equippedCharacter.Equals("Lucas")) {
             characterPrefabName = "PlayerPrefabLucasAction";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Daryl")) {
-            Debug.Log("here");
             characterPrefabName = "PlayerPrefabDarylAction";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Codename Sayre")) {
             characterPrefabName = "PlayerPrefabSayreAction";
