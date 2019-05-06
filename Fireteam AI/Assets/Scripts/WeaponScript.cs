@@ -17,12 +17,7 @@ public class WeaponScript : MonoBehaviour
     public string equippedSecondaryWeapon;
     public string equippedSecondaryType;
     public int currentlyEquippedType;
-    private Dictionary<string, Vector3> rifleHandPositions;
-    private Dictionary<string, Vector3> rifleIdleHandPositions;
-    private Dictionary<string, Vector3> shotgunHandPositions;
-    private Dictionary<string, Vector3> shotgunIdleHandPositions;
-    private Dictionary<string, Vector3> sniperRifleHandPositions;
-    private Dictionary<string, Vector3> sniperRifleIdleHandPositions;
+
     public bool weaponReady;
     public PhotonView pView;
 
@@ -51,27 +46,6 @@ public class WeaponScript : MonoBehaviour
             equipmentScript = GetComponent<EquipmentScript>();
             weaponReady = false;
         } else {
-            if (equipmentScript.gender == 'M') {
-                rifleHandPositions = new Dictionary<string, Vector3>();
-                rifleHandPositions.Add("AK-47", new Vector3(-0.04f, 0.12f, 0.075f));
-                rifleHandPositions.Add("M4A1", new Vector3(-0.007f, 0.111f, 0.04f));
-            
-                shotgunHandPositions = new Dictionary<string, Vector3>();
-                shotgunHandPositions.Add("R870", new Vector3(-0.071f, 0.13f, 0.084f));
-
-                sniperRifleHandPositions = new Dictionary<string, Vector3>();
-                sniperRifleHandPositions.Add("L96A1", new Vector3(0.004f, 0.1f, 0.029f));
-            } else {
-                rifleHandPositions = new Dictionary<string, Vector3>();
-                rifleHandPositions.Add("AK-47", new Vector3(-0.04f, 0.12f, 0.075f));
-                rifleHandPositions.Add("M4A1", new Vector3(-0.007f, 0.111f, 0.04f));
-            
-                shotgunHandPositions = new Dictionary<string, Vector3>();
-                shotgunHandPositions.Add("R870", new Vector3(-0.071f, 0.13f, 0.084f));
-
-                sniperRifleHandPositions = new Dictionary<string, Vector3>();
-                sniperRifleHandPositions.Add("L96A1", new Vector3(0.004f, 0.1f, 0.029f));
-            }
             //EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
             //EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);
             equippedPrimaryWeapon = PlayerData.playerdata.info.equippedPrimary;
@@ -83,6 +57,10 @@ public class WeaponScript : MonoBehaviour
     }
 
     void Update() {
+        if (pView != null && !pView.IsMine)
+        {
+            return;
+        }
         if (!animator.GetBool("onTitle")) {
             if (Input.GetKeyDown(KeyCode.Alpha1)) {
                 DrawWeapon(1);
@@ -128,9 +106,9 @@ public class WeaponScript : MonoBehaviour
         } else {
             pView.RPC("RpcSetWeaponPos", RpcTarget.All);
             //weaponHolder.SetWeaponPosition();
-            if (rifleHandPositions != null)
+            if (InventoryScript.rifleHandPositionsPerCharacter != null)
             {
-                pView.RPC("RpcSetLeftShoulderPos", RpcTarget.All, rifleHandPositions[weaponName]);
+                pView.RPC("RpcSetLeftShoulderPos", RpcTarget.All, InventoryScript.rifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
                 // weaponHolder.SetSteadyHand(rifleHandPositions[weaponName]);
             }
         }
@@ -144,8 +122,8 @@ public class WeaponScript : MonoBehaviour
         } else {
             // weaponHolder.SetWeaponPosition();
             pView.RPC("RpcSetWeaponPos", RpcTarget.All);
-            if (shotgunHandPositions != null) {
-                pView.RPC("RpcSetLeftShoulderPos", RpcTarget.All, shotgunHandPositions[weaponName]);
+            if (InventoryScript.shotgunHandPositionsPerCharacter != null) {
+                pView.RPC("RpcSetLeftShoulderPos", RpcTarget.All, InventoryScript.shotgunHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
                 // weaponHolder.SetSteadyHand(shotgunHandPositions[weaponName]);
             }
         }
@@ -169,8 +147,8 @@ public class WeaponScript : MonoBehaviour
         } else {
             // weaponHolder.SetWeaponPosition();
             pView.RPC("RpcSetWeaponPos", RpcTarget.All);
-            if (sniperRifleHandPositions != null) {
-                pView.RPC("RpcSetLeftShoulderPos", RpcTarget.All, sniperRifleHandPositions[weaponName]);
+            if (InventoryScript.sniperRifleHandPositionsPerCharacter != null) {
+                pView.RPC("RpcSetLeftShoulderPos", RpcTarget.All, InventoryScript.sniperRifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
                 // weaponHolder.SetSteadyHand(sniperRifleHandPositions[weaponName]);
             }
         }

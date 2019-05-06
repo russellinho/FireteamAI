@@ -17,6 +17,12 @@ public class InventoryScript : MonoBehaviour
     public static ArrayList myFootwear = new ArrayList();
     public static ArrayList myArmor = new ArrayList();
     public static ArrayList myWeapons = new ArrayList();
+    public static Dictionary<string, Dictionary<string, Vector3>> rifleHandPositionsPerCharacter;
+    public static Dictionary<string, Dictionary<string, Vector3>> rifleIdleHandPositionsPerCharacter;
+    public static Dictionary<string, Dictionary<string, Vector3>> shotgunHandPositionsPerCharacter;
+    public static Dictionary<string, Dictionary<string, Vector3>> shotgunIdleHandPositionsPerCharacter;
+    public static Dictionary<string, Dictionary<string, Vector3>> sniperRifleHandPositionsPerCharacter;
+    public static Dictionary<string, Dictionary<string, Vector3>> sniperRifleIdleHandPositionsPerCharacter;
 
     void Awake() {
         if (weaponCatalog.Count != 0) {
@@ -156,7 +162,7 @@ public class InventoryScript : MonoBehaviour
         weaponCatalog.Add("AK-47", new Weapon("AK-47", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/AK-47", "Models/Pics/ak47-thumb", "A classic assault rifle developed in the Soviet Union during the World War II era. It's known for its unmatched stopping power and relatively light weight.", 48f, 55f, 68f, 90f, 70f, 3000f, 30));
         weaponCatalog.Add("Glock23", new Weapon("Glock23", "Secondary", "Pistol", "Models/Weapons/Secondary/Pistols/Glock23", "Models/Pics/glock23-thumb", "The standard pistol used by United States police officers because of its reliability.", 33f, 90f, 45f, 60f, 56f, 3000f, 15));
         weaponCatalog.Add("R870", new Weapon("R870", "Primary", "Shotgun","Models/Weapons/Primary/Shotguns/R870", "Models/Pics/r870-thumb", "Short for Remington 870, this shotgun is widely used for home defence due to its quick reload speed and reliability.", 75f, 65f, 17f, -1f, 60f, 1000f, 7));
-        weaponCatalog.Add("L96A1", new Weapon("L96A1", "Primary", "Sniper Rifle", "Models/Weapons/Primary/Sniper Rifles/L96A1", "Models/Pics/l96a1-thumb", "Developed in the 1980s by the British, this bolt-action sniper rifle is known for its deadly stopping power and quick operation speed.", 100f, 40f, 10f, 90f, 65f, 3000f, 5));
+        //weaponCatalog.Add("L96A1", new Weapon("L96A1", "Primary", "Sniper Rifle", "Models/Weapons/Primary/Sniper Rifles/L96A1", "Models/Pics/l96a1-thumb", "Developed in the 1980s by the British, this bolt-action sniper rifle is known for its deadly stopping power and quick operation speed.", 100f, 40f, 10f, 90f, 65f, 3000f, 5));
         weaponCatalog.Add("M4A1", new Weapon("M4A1", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/M4A1", "Models/Pics/m4a1-thumb", "As a successor of the M16A3 assault rifle, this weapon is one of the standard issue rifles in the United States military. It's known for being an all around ass kicker.", 38f, 60f, 74f, 80f, 64f, 3000f, 30));
 
         // Characters
@@ -165,6 +171,38 @@ public class InventoryScript : MonoBehaviour
         characterCatalog.Add("Codename Sayre", new Character("Codename Sayre", 'M', "Models/Characters/Sayre/PlayerPrefabCodenameSayre", "Models/Pics/character_sayre", "Nationality: Mexican\nBeing fresh out of medical school at the top of his class, Codename Sayre is skilled in his healing abilities. His witty style of humor allows him to maneuver through sticky situations easily.", new string[]{"Models/Characters/Sayre/1/skinslayre1", "Models/Characters/Sayre/2/skinslayre2", "Models/Characters/Sayre/3/skinslayre3"}, sayreEquipment, lucasArmor));
         characterCatalog.Add("Hana", new Character("Hana", 'F', "Models/Characters/Hana/PlayerPrefabHana", "Models/Pics/character_hana", "Nationality: Japanese\nWhen her entire family was murdered as a kid, Hana swore to fight for justice to avenge her family. She is an ex police officer who many underestimate, but don't be fooled by her size.", new string[]{"Models/Characters/Hana/1/skinhana1", "Models/Characters/Hana/2/skinhana2", "Models/Characters/Hana/3/skinhana3"}, hanaEquipment, hanaArmor));
         characterCatalog.Add("Jade", new Character("Jade", 'F', "Models/Characters/Jade/PlayerPrefabJade", "Models/Pics/character_jade", "Nationality: American\nNot much is known about Jade's past besides the fact that she likes to work alone and was previously a firefighter.", new string[]{"Models/Characters/Jade/1/skinjade1", "Models/Characters/Jade/3/skinjade3", "Models/Characters/Jade/2/skinjade2"}, jadeEquipment, hanaArmor));
+
+        // Add weapon hand positions
+        Dictionary<string, Vector3> rifleHandPositions = new Dictionary<string, Vector3>();
+        rifleHandPositions.Add("AK-47", new Vector3(-0.04f, 0.12f, 0.075f));
+        rifleHandPositions.Add("M4A1", new Vector3(-0.007f, 0.111f, 0.04f));
+    
+        Dictionary<string, Vector3> shotgunHandPositions = new Dictionary<string, Vector3>();
+        shotgunHandPositions.Add("R870", new Vector3(-0.071f, 0.13f, 0.084f));
+
+        Dictionary<string, Vector3> sniperRifleHandPositions = new Dictionary<string, Vector3>();
+        sniperRifleHandPositions.Add("L96A1", new Vector3(0.004f, 0.1f, 0.029f));
+
+        rifleHandPositionsPerCharacter = new Dictionary<string, Dictionary<string, Vector3>>();
+        rifleHandPositionsPerCharacter.Add("Lucas", rifleHandPositions);
+        rifleHandPositionsPerCharacter.Add("Daryl", rifleHandPositions);
+        rifleHandPositionsPerCharacter.Add("Codename Sayre", rifleHandPositions);
+        rifleHandPositionsPerCharacter.Add("Hana", rifleHandPositions);
+        rifleHandPositionsPerCharacter.Add("Jade", rifleHandPositions);
+
+        shotgunHandPositionsPerCharacter = new Dictionary<string, Dictionary<string, Vector3>>();
+        shotgunHandPositionsPerCharacter.Add("Lucas", shotgunHandPositions);
+        shotgunHandPositionsPerCharacter.Add("Daryl", shotgunHandPositions);
+        shotgunHandPositionsPerCharacter.Add("Codename Sayre", shotgunHandPositions);
+        shotgunHandPositionsPerCharacter.Add("Hana", shotgunHandPositions);
+        shotgunHandPositionsPerCharacter.Add("Jade", shotgunHandPositions);
+
+        sniperRifleHandPositionsPerCharacter = new Dictionary<string, Dictionary<string, Vector3>>();
+        sniperRifleHandPositionsPerCharacter.Add("Lucas", sniperRifleHandPositions);
+        sniperRifleHandPositionsPerCharacter.Add("Daryl", sniperRifleHandPositions);
+        sniperRifleHandPositionsPerCharacter.Add("Codename Sayre", sniperRifleHandPositions);
+        sniperRifleHandPositionsPerCharacter.Add("Hana", sniperRifleHandPositions);
+        sniperRifleHandPositionsPerCharacter.Add("Jade", sniperRifleHandPositions);
 
         collectCharacters();
         collectWeapons();
@@ -185,7 +223,7 @@ public class InventoryScript : MonoBehaviour
         myWeapons.Add("Glock23");
         myWeapons.Add("R870");
         myWeapons.Add("M4A1");
-        myWeapons.Add("L96A1");
+        //myWeapons.Add("L96A1");
     }
 
     public static void collectTops(string character) {

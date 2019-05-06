@@ -46,6 +46,7 @@ public class WeaponHandlerScript : MonoBehaviour
     }
 
     public void SetSteadyHand(Vector3 shoulderPos) {
+        Debug.Log("lean low: " + shoulderPos);
         steadyHandPos = shoulderPos;
     }
 
