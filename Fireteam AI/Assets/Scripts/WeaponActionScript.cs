@@ -19,7 +19,6 @@ public class WeaponActionScript : MonoBehaviour
     private AudioSource weaponSound;
     private AudioSource reloadSound;
     public Animator animator;
-    private Animator weaponAnimator;
     private WeaponStats weaponStats;
 
     // Projectile spread constants
@@ -63,6 +62,7 @@ public class WeaponActionScript : MonoBehaviour
     public Transform camTransform;
     private Vector3 originalPosCam;
     private Vector3 aimPosCam;
+    private Vector3 originalPosCamSecondary;
     public Vector3 aimPosOffset;
     // Aiming speed
     public float aodSpeed = 8f;
@@ -81,8 +81,9 @@ public class WeaponActionScript : MonoBehaviour
 
         aimPosCam = new Vector3(originalPosCam.x - aimPosOffset.x, originalPosCam.y - aimPosOffset.y, originalPosCam.z - aimPosOffset.z);
 
-        mouseLook = fpc.m_MouseLook;
+        originalPosCamSecondary = new Vector3(-0.21f, 0.11f, 0.03f);
 
+        mouseLook = fpc.m_MouseLook;
 
         CockingAction();
     }
@@ -212,7 +213,11 @@ public class WeaponActionScript : MonoBehaviour
             {
                 isAiming = false;
                 animator.speed = 1f;
-                camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, originalPosCam, Time.deltaTime * aodSpeed);
+                if (animator.GetInteger("WeaponType") == 1) {
+                    camTransform.localPosition = Vector3.Slerp(camTransform.localPosition, originalPosCam, Time.deltaTime * aodSpeed);
+                } else if (animator.GetInteger("WeaponType") == 2) {
+                    camTransform.localPosition = Vector3.Slerp(camTransform.localPosition, originalPosCamSecondary, Time.deltaTime * aodSpeed);
+                }
                 camTransform.GetComponent<Camera>().nearClipPlane = 0.12f;
             }
         }
