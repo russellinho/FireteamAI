@@ -105,6 +105,7 @@ GameObject:
   - component: {fileID: 5886389548468220438}
   - component: {fileID: 8579066565743638484}
   - component: {fileID: 4951140537099602964}
+  - component: {fileID: 5766757426539402061}
   m_Layer: 0
   m_Name: AK-47
   m_TagString: Untagged
@@ -366,6 +367,29 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5766757426539402061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5886389548470480086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be4f3b19e65670e489fc3c06bce0e96f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponName: AK-47
+  type: Primary
+  category: Assault Rifle
+  damage: 25
+  mobility: 0
+  fireRate: 0.1
+  accuracy: 0
+  recoil: 0.5
+  range: 100
+  clipCapacity: 30
+  maxAmmo: 120
 --- !u!1 &7305644627155634511
 GameObject:
   m_ObjectHideFlags: 0

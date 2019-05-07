@@ -9,6 +9,7 @@ using Photon.Realtime;
 public class WeaponScript : MonoBehaviour
 {
     public EquipmentScript equipmentScript;
+    public WeaponActionScript weaponActionScript;
     public WeaponHandlerScript weaponHolder;
     public Animator animator;
     public TitleControllerScript ts;
@@ -201,6 +202,8 @@ public class WeaponScript : MonoBehaviour
                 ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().enabled = true;
                 ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
             }
+        } else {
+            weaponActionScript.SetWeaponStats(weaponHolder.GetComponentInChildren<WeaponStats>());
         }
     }
 

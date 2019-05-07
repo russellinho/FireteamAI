@@ -86,7 +86,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2893945977474458967}
   m_LocalRotation: {x: -0.0073977113, y: -0.7160699, z: 0.015737563, w: 0.6978121}
-  m_LocalPosition: {x: -0.0000487566, y: -0.011184011, z: 0.0013459467}
+  m_LocalPosition: {x: -0.0101, y: -0.0021, z: 0.0008}
   m_LocalScale: {x: 0.011621644, y: 0.011621635, z: 0.0116216345}
   m_Children: []
   m_Father: {fileID: 7471770791330042470}
@@ -344,8 +344,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.2
-      minScalar: 0.08
+      scalar: 0.3
+      minScalar: 0.22
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -4663,6 +4663,7 @@ GameObject:
   - component: {fileID: 4808036643664073543}
   - component: {fileID: 6158920366506060821}
   - component: {fileID: 8376306439309703160}
+  - component: {fileID: 1417587145976429966}
   m_Layer: 0
   m_Name: R870
   m_TagString: Untagged
@@ -4924,6 +4925,29 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1417587145976429966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4808036643662073223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be4f3b19e65670e489fc3c06bce0e96f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponName: R870
+  type: Primary
+  category: Shotgun
+  damage: 80
+  mobility: 0
+  fireRate: 1.4
+  accuracy: 0
+  recoil: 0.75
+  range: 40
+  clipCapacity: 8
+  maxAmmo: 48
 --- !u!1 &7012023387819761900
 GameObject:
   m_ObjectHideFlags: 0

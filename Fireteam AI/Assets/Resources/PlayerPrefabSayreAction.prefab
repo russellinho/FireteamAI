@@ -2863,6 +2863,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equipmentScript: {fileID: 384782906892189734}
+  weaponActionScript: {fileID: 9067648845777745277}
   weaponHolder: {fileID: 8153228017515657656}
   animator: {fileID: 2464462323623336759}
   ts: {fileID: 0}
@@ -3155,9 +3156,7 @@ MonoBehaviour:
   fpc: {fileID: 8161771613342906849}
   weaponHolder: {fileID: 3284298852302897634}
   animator: {fileID: 2464462323623336759}
-  range: 100
   spread: 0
-  bulletsPerMag: 30
   totalBulletsLeft: 120
   currentBullets: 0
   shootPoint: {fileID: 644006651792555671}
@@ -3172,8 +3171,6 @@ MonoBehaviour:
     type: 3}
   bloodEffect: {fileID: 1175462165935484, guid: a5aeebbc9242b4a4cb24c32e945135f5,
     type: 3}
-  fireRate: 0.1
-  damage: 20
   firingMode: 0
   camTransform: {fileID: 4427920815530877115}
   aimPosOffset: {x: -0.147, y: -0.04, z: -0.08}
@@ -3291,7 +3288,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 839698624353317809}
-  viewIdField: 0
+  viewIdField: 3
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &839698624353317809

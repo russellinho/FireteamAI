@@ -284,8 +284,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.2
-      minScalar: 0.08
+      scalar: 0.14
+      minScalar: 0.02
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -4603,6 +4603,7 @@ GameObject:
   - component: {fileID: 4333094588004458054}
   - component: {fileID: 8421229331625174368}
   - component: {fileID: 2330434601514841693}
+  - component: {fileID: 5497810325050500696}
   m_Layer: 0
   m_Name: Glock23
   m_TagString: Untagged
@@ -4863,6 +4864,29 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5497810325050500696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4333094588002517126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be4f3b19e65670e489fc3c06bce0e96f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponName: Glock23
+  type: Secondary
+  category: Pistol
+  damage: 12
+  mobility: 0
+  fireRate: 0.2
+  accuracy: 0
+  recoil: 0.35
+  range: 100
+  clipCapacity: 12
+  maxAmmo: 60
 --- !u!1 &4565802178859816208
 GameObject:
   m_ObjectHideFlags: 0

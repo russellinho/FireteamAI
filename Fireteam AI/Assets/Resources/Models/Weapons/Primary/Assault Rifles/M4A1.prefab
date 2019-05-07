@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 3907483231110904390}
   - component: {fileID: 7427832325285710263}
   - component: {fileID: 4519382707896141973}
+  - component: {fileID: 5220599455358925524}
   m_Layer: 0
   m_Name: M4A1
   m_TagString: Untagged
@@ -365,6 +366,29 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5220599455358925524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3907483231108965510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be4f3b19e65670e489fc3c06bce0e96f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponName: M4A1
+  type: Primary
+  category: Assault Rifle
+  damage: 18
+  mobility: 0
+  fireRate: 0.15
+  accuracy: 0
+  recoil: 0.4
+  range: 100
+  clipCapacity: 30
+  maxAmmo: 120
 --- !u!1 &6346310861830978820
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,6 +20,7 @@ public class WeaponActionScript : MonoBehaviour
     private AudioSource reloadSound;
     public Animator animator;
     private Animator weaponAnimator;
+    private WeaponStats weaponStats;
 
     // Projectile spread constants
     public const float MAX_SPREAD = 0.15f;
@@ -32,15 +33,12 @@ public class WeaponActionScript : MonoBehaviour
     public const float RECOIL_DECELERATION = 4.2f;
 
     // Projectile variables
-    public float range = 100f;
     public float spread = 0f;
-    private float recoil = 0.5f;
     private float recoilTime = 0f;
     private bool voidRecoilRecover = true;
     //private float recoilSlerp = 0f;
     
-    public int bulletsPerMag = 30;
-    public int totalBulletsLeft = 120;
+    public int totalBulletsLeft;
     public int currentBullets;
 
     public Transform shootPoint;
@@ -53,9 +51,6 @@ public class WeaponActionScript : MonoBehaviour
     public GameObject hitParticles;
     public GameObject bulletImpact;
     public GameObject bloodEffect;
-
-    public float fireRate = 0.1f;
-    public float damage = 20f;
 
     public enum FireMode { Auto, Semi }
     public FireMode firingMode;
@@ -80,7 +75,7 @@ public class WeaponActionScript : MonoBehaviour
         {
             return;
         }
-        currentBullets = bulletsPerMag;
+        currentBullets = weaponStats.clipCapacity;
 
         originalPosCam = camTransform.localPosition;
 
@@ -127,7 +122,7 @@ public class WeaponActionScript : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
-            if (!playerActionScript.fpc.m_IsRunning && currentBullets < bulletsPerMag && totalBulletsLeft > 0)
+            if (!playerActionScript.fpc.m_IsRunning && currentBullets < weaponStats.clipCapacity && totalBulletsLeft > 0)
             {
                 ReloadAction();
             }
@@ -138,7 +133,7 @@ public class WeaponActionScript : MonoBehaviour
 
     public void RefillFireTimer()
     {
-        if (fireTimer < fireRate)
+        if (fireTimer < weaponStats.fireRate)
         {
             fireTimer += Time.deltaTime;
         }
@@ -161,11 +156,7 @@ public class WeaponActionScript : MonoBehaviour
             if (currentBullets > 0)
             {
                 Fire();
-                cameraShakeScript.SetShake(true);
-                IncreaseSpread();
                 voidRecoilRecover = false;
-                IncreaseRecoil();
-                UpdateRecoil(true);
             }
             else if (totalBulletsLeft > 0)
             {
@@ -237,18 +228,22 @@ public class WeaponActionScript : MonoBehaviour
     // Comment
     public void Fire()
     {
-        if (fireTimer < fireRate || currentBullets < 0 || isReloading)
+        if (fireTimer < weaponStats.fireRate || currentBullets < 0 || isReloading)
         {
             return;
         }
 
+        cameraShakeScript.SetShake(true);
+        IncreaseSpread();
+        IncreaseRecoil();
+        UpdateRecoil(true);
         RaycastHit hit;
         float xSpread = Random.Range(-spread, spread);
         float ySpread = Random.Range(-spread, spread);
         float zSpread = Random.Range(-spread, spread);
         Vector3 impactDir = new Vector3(shootPoint.transform.forward.x + xSpread, shootPoint.transform.forward.y + ySpread, shootPoint.transform.forward.z + zSpread);
         int headshotLayer = (1 << 13);
-        if (Physics.Raycast(shootPoint.position, impactDir, out hit, range, headshotLayer))
+        if (Physics.Raycast(shootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer))
         {
             pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
             if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().health > 0)
@@ -260,7 +255,7 @@ public class WeaponActionScript : MonoBehaviour
                 audioController.PlayHeadshotSound();
             }
         }
-        else if (Physics.Raycast(shootPoint.position, impactDir, out hit, range))
+        else if (Physics.Raycast(shootPoint.position, impactDir, out hit, weaponStats.range))
         {
             GameObject bloodSpill = null;
             if (hit.transform.tag.Equals("Human"))
@@ -271,7 +266,7 @@ public class WeaponActionScript : MonoBehaviour
                 {
                     hudScript.InstantiateHitmarker();
                     audioController.PlayHitmarkerSound();
-                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)damage);
+                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
                     hit.transform.gameObject.GetComponent<BetaEnemyScript>().PainSound();
                     hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted(true);
                     if (hit.transform.gameObject.GetComponent<BetaEnemyScript>().health <= 0 && beforeHp > 0)
@@ -377,7 +372,7 @@ public class WeaponActionScript : MonoBehaviour
             if (totalBulletsLeft <= 0)
                 return;
 
-            int bulletsToLoad = bulletsPerMag - currentBullets;
+            int bulletsToLoad = weaponStats.clipCapacity - currentBullets;
             int bulletsToDeduct = (totalBulletsLeft >= bulletsToLoad) ? bulletsToLoad : totalBulletsLeft;
             totalBulletsLeft -= bulletsToDeduct;
             currentBullets += bulletsToDeduct;
@@ -508,16 +503,24 @@ public class WeaponActionScript : MonoBehaviour
         {
             if (recoilTime < MAX_RECOIL_TIME)
             {
-                mouseLook.m_SpineTargetRot *= Quaternion.Euler(-recoil, 0f, 0f);
+                mouseLook.m_SpineTargetRot *= Quaternion.Euler(-weaponStats.recoil, 0f, 0f);
             }
         }
         else
         {
             if (recoilTime > 0f)
             {
-                mouseLook.m_SpineTargetRot *= Quaternion.Euler(recoil, 0f, 0f);
+                mouseLook.m_SpineTargetRot *= Quaternion.Euler(weaponStats.recoil, 0f, 0f);
             }
         }
+    }
+
+    public void SetWeaponStats(WeaponStats ws) {
+        weaponStats = ws;
+    }
+
+    public WeaponStats GetWeaponStats() {
+        return weaponStats;
     }
 
 }
