@@ -15,4 +15,7 @@ public class WeaponStats : MonoBehaviour
     public float range;
     public int clipCapacity;
     public int maxAmmo;
+    public Vector3 aimDownSightPosMale;
+    public Vector3 aimDownSightPosFemale;
+    public float aimDownSightClipping;
 }

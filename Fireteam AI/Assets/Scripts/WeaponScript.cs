@@ -152,27 +152,28 @@ public class WeaponScript : MonoBehaviour
     public void EquipWeapon(string weaponType, string weaponName, GameObject shopItemRef) {
         // Get the weapon from the weapon catalog for its properties
         Weapon w = InventoryScript.weaponCatalog[weaponName];
+        GameObject wepEquipped = null;
         switch (weaponType) {
             case "Assault Rifle":
                 currentlyEquippedType = 1;
-                weaponHolder.LoadWeapon(w.prefabPath);
+                wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 EquipAssaultRifle(weaponName);
                 break;
             case "Pistol":
                 if (!onTitle) {
                     currentlyEquippedType = 2;
-                    weaponHolder.LoadWeapon(w.prefabPath);
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
                 EquipPistol(weaponName);
                 break;
             case "Shotgun":
                 currentlyEquippedType = 1;
-                weaponHolder.LoadWeapon(w.prefabPath);
+                wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 EquipShotgun(weaponName);
                 break;
             case "Sniper Rifle":
                 currentlyEquippedType = 1;
-                weaponHolder.LoadWeapon(w.prefabPath);
+                wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 EquipSniperRifle(weaponName);
                 break;
         }
@@ -203,7 +204,8 @@ public class WeaponScript : MonoBehaviour
                 ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
             }
         } else {
-            weaponActionScript.SetWeaponStats(weaponHolder.GetComponentInChildren<WeaponStats>());
+            Debug.Log(wepEquipped.GetComponent<WeaponStats>().weaponName);
+            weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
         }
     }
 

@@ -7573,7 +7573,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: IdlePistol
-  m_Speed: 0.35
+  m_Speed: 0.1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 1101171073613062036}
@@ -7588,7 +7588,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: c832fd1778866fd44af8af9c940964f5, type: 3}
+  m_Motion: {fileID: 7400000, guid: b375549ea1986473884dc9d2362d844b, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

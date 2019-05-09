@@ -17,7 +17,7 @@ public class WeaponHandlerScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void LoadWeapon(string weaponPath) {
+    public GameObject LoadWeapon(string weaponPath) {
         if (weapon != null) {
             Destroy(weapon.gameObject);
             weapon = null;
@@ -27,6 +27,7 @@ public class WeaponHandlerScript : MonoBehaviour
         weapon = o.transform;
         weapon.SetParent(gameObject.transform);
         handle = weapon.gameObject.GetComponentsInChildren<Transform>()[1];
+        return o;
     }
     public void SetWeaponPosition()
     {

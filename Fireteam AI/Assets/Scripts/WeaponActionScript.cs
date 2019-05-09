@@ -61,9 +61,7 @@ public class WeaponActionScript : MonoBehaviour
     // Aiming down sights
     public Transform camTransform;
     private Vector3 originalPosCam;
-    private Vector3 aimPosCam;
     private Vector3 originalPosCamSecondary;
-    public Vector3 aimPosOffset;
     // Aiming speed
     public float aodSpeed = 8f;
     public PhotonView pView;
@@ -79,9 +77,7 @@ public class WeaponActionScript : MonoBehaviour
 
         originalPosCam = camTransform.localPosition;
 
-        aimPosCam = new Vector3(originalPosCam.x - aimPosOffset.x, originalPosCam.y - aimPosOffset.y, originalPosCam.z - aimPosOffset.z);
-
-        originalPosCamSecondary = new Vector3(-0.21f, 0.11f, 0.03f);
+        originalPosCamSecondary = new Vector3(-0.13f, 0.11f, 0.04f);
 
         mouseLook = fpc.m_MouseLook;
 
@@ -206,19 +202,23 @@ public class WeaponActionScript : MonoBehaviour
                 {
                     animator.speed = 1f;
                 }
-                camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, aimPosCam, Time.deltaTime * aodSpeed);
-                camTransform.GetComponent<Camera>().nearClipPlane = 0.089f;
+                if (fpc.equipmentScript.gender == 'M') {
+                    camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, weaponStats.aimDownSightPosMale, Time.deltaTime * aodSpeed);
+                } else {
+                    camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, weaponStats.aimDownSightPosFemale, Time.deltaTime * aodSpeed);
+                }
+                camTransform.GetComponent<Camera>().nearClipPlane = weaponStats.aimDownSightClipping;
             }
             else
             {
                 isAiming = false;
                 animator.speed = 1f;
-                if (animator.GetInteger("WeaponType") == 1) {
-                    camTransform.localPosition = Vector3.Slerp(camTransform.localPosition, originalPosCam, Time.deltaTime * aodSpeed);
-                } else if (animator.GetInteger("WeaponType") == 2) {
-                    camTransform.localPosition = Vector3.Slerp(camTransform.localPosition, originalPosCamSecondary, Time.deltaTime * aodSpeed);
-                }
-                camTransform.GetComponent<Camera>().nearClipPlane = 0.12f;
+                //if (animator.GetInteger("WeaponType") == 1) {
+                camTransform.localPosition = Vector3.Slerp(camTransform.localPosition, originalPosCam, Time.deltaTime * aodSpeed);
+                //} else if (animator.GetInteger("WeaponType") == 2) {
+                  //  camTransform.localPosition = Vector3.Slerp(camTransform.localPosition, originalPosCamSecondary, Time.deltaTime * aodSpeed);
+                //}
+                camTransform.GetComponent<Camera>().nearClipPlane = 0.05f;
             }
         }
     }

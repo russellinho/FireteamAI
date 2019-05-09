@@ -178,7 +178,7 @@ public class InventoryScript : MonoBehaviour
         rifleHandPositions.Add("M4A1", new Vector3(-0.007f, 0.111f, 0.04f));
     
         Dictionary<string, Vector3> shotgunHandPositions = new Dictionary<string, Vector3>();
-        shotgunHandPositions.Add("R870", new Vector3(-0.071f, 0.13f, 0.084f));
+        shotgunHandPositions.Add("R870", new Vector3(-0.071f, 0.15f, 0.11f));
 
         Dictionary<string, Vector3> sniperRifleHandPositions = new Dictionary<string, Vector3>();
         sniperRifleHandPositions.Add("L96A1", new Vector3(0.004f, 0.1f, 0.029f));
@@ -188,7 +188,7 @@ public class InventoryScript : MonoBehaviour
         rifleHandPositionsF.Add("M4A1", new Vector3(-0.06f, 0.12f, -0.01f));
     
         Dictionary<string, Vector3> shotgunHandPositionsF = new Dictionary<string, Vector3>();
-        shotgunHandPositionsF.Add("R870", new Vector3(-0.071f, 0.13f, 0.084f));
+        shotgunHandPositionsF.Add("R870", new Vector3(-0.13f, 0.15f, 0.084f));
 
         Dictionary<string, Vector3> sniperRifleHandPositionsF = new Dictionary<string, Vector3>();
         sniperRifleHandPositionsF.Add("L96A1", new Vector3(0.004f, 0.1f, 0.029f));

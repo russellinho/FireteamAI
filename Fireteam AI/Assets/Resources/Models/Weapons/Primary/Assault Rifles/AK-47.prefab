@@ -390,6 +390,9 @@ MonoBehaviour:
   range: 100
   clipCapacity: 30
   maxAmmo: 120
+  aimDownSightPosMale: {x: 0.057, y: 0.05, z: 0.1}
+  aimDownSightPosFemale: {x: 0.045, y: 0.035, z: 0.1}
+  aimDownSightClipping: 0.06
 --- !u!1 &7305644627155634511
 GameObject:
   m_ObjectHideFlags: 0
