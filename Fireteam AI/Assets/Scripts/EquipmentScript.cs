@@ -160,10 +160,7 @@ public class EquipmentScript : MonoBehaviour
         EquipDefaults();
         tws.EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
         tws.EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);
-        if (tws.weaponHolder.weapon != null)
-        {
-            tws.SetTitleHandPositions();
-        }
+
     }
 
     public void EquipTop(string name, GameObject shopItemRef) {

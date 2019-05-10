@@ -18,6 +18,10 @@ public class WeaponScript : MonoBehaviour
     public string equippedSecondaryWeapon;
     public string equippedSecondaryType;
     public int currentlyEquippedType;
+    public int totalPrimaryBulletsLeft;
+    public int totalSecondaryBulletsLeft;
+    public int currentBulletsPrimary;
+    public int currentBulletsSecondary;
 
     public bool weaponReady;
     public PhotonView pView;
@@ -53,6 +57,10 @@ public class WeaponScript : MonoBehaviour
             equippedPrimaryType = PlayerData.playerdata.info.equippedPrimaryType;
             equippedSecondaryWeapon = PlayerData.playerdata.info.equippedSecondary;
             equippedSecondaryType = PlayerData.playerdata.info.equippedSecondaryType;
+            currentBulletsPrimary = InventoryScript.weaponCatalog[equippedPrimaryWeapon].clipCapacity;
+            currentBulletsSecondary = InventoryScript.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
+            totalPrimaryBulletsLeft = InventoryScript.weaponCatalog[equippedPrimaryWeapon].maxAmmo;
+            totalSecondaryBulletsLeft = InventoryScript.weaponCatalog[equippedSecondaryWeapon].maxAmmo;
             DrawWeapon(1);
         }
     }
@@ -64,8 +72,15 @@ public class WeaponScript : MonoBehaviour
         }
         if (!animator.GetBool("onTitle")) {
             if (Input.GetKeyDown(KeyCode.Alpha1)) {
+                if (currentlyEquippedType == 1) return;
+                totalSecondaryBulletsLeft = weaponActionScript.totalBulletsLeft;
+                currentBulletsSecondary = weaponActionScript.currentBullets;
                 DrawWeapon(1);
+                weaponActionScript.firingMode = WeaponActionScript.FireMode.Auto;
             } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+                if (currentlyEquippedType == 2) return;
+                totalPrimaryBulletsLeft = weaponActionScript.totalBulletsLeft;
+                currentBulletsPrimary = weaponActionScript.currentBullets;
                 DrawWeapon(2);
             }
         }
@@ -76,15 +91,18 @@ public class WeaponScript : MonoBehaviour
         string equippedType = "";
         if (weaponCat == 1)
         {
-            if (currentlyEquippedType == 1) return;
             equippedWep = equippedPrimaryWeapon;
             equippedType = equippedPrimaryType;
+            weaponActionScript.currentBullets = currentBulletsPrimary;
+            weaponActionScript.totalBulletsLeft = totalPrimaryBulletsLeft;
         }
         else
         {
-            if (currentlyEquippedType == 2) return;
             equippedWep = equippedSecondaryWeapon;
             equippedType = equippedSecondaryType;
+            Debug.Log(currentBulletsSecondary);
+            weaponActionScript.currentBullets = currentBulletsSecondary;
+            weaponActionScript.totalBulletsLeft = totalSecondaryBulletsLeft;
         }
         pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, equippedType);
     }
@@ -102,9 +120,7 @@ public class WeaponScript : MonoBehaviour
         // Set animation and hand positions
         equippedPrimaryType = "Assault Rifle";
         equippedPrimaryWeapon = weaponName;
-        if (animator.GetBool("onTitle")) {
-            SetTitleHandPositions();
-        } else {
+        if (!animator.GetBool("onTitle")) {
             weaponHolder.SetWeaponPosition();
             if (InventoryScript.rifleHandPositionsPerCharacter != null)
             {
@@ -116,9 +132,7 @@ public class WeaponScript : MonoBehaviour
     void EquipShotgun(string weaponName) {
         equippedPrimaryType = "Shotgun";
         equippedPrimaryWeapon = weaponName;
-        if (animator.GetBool("onTitle")) {
-            SetTitleHandPositions();
-        } else {
+        if (!animator.GetBool("onTitle")) {
             weaponHolder.SetWeaponPosition();
             if (InventoryScript.shotgunHandPositionsPerCharacter != null) {
                 weaponHolder.SetSteadyHand(InventoryScript.shotgunHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
@@ -139,9 +153,7 @@ public class WeaponScript : MonoBehaviour
     public void EquipSniperRifle(string weaponName) {
         equippedPrimaryType = "Sniper Rifle";
         equippedPrimaryWeapon = weaponName;
-        if (animator.GetBool("onTitle")) {
-            SetTitleHandPositions();
-        } else {
+        if (!animator.GetBool("onTitle")) {
             weaponHolder.SetWeaponPosition();
             if (InventoryScript.sniperRifleHandPositionsPerCharacter != null) {
                 weaponHolder.SetSteadyHand(InventoryScript.sniperRifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
@@ -195,6 +207,14 @@ public class WeaponScript : MonoBehaviour
                 }
             }
 
+            if (wepEquipped != null) {
+                if (ts.currentCharGender == 'M') {
+                    SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsMale);
+                } else {
+                    SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsFemale);
+                }
+            }
+
             // Puts the item that you just equipped in its proper slot
             if (w.type.Equals("Primary")) {
                 ts.equippedPrimarySlot.GetComponentInChildren<RawImage>().enabled = true;
@@ -209,14 +229,15 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
-    public void SetTitleHandPositions() {
-        if (ts != null) {
-            if (ts.currentCharGender == 'M') {
-                weaponHolder.SetWeaponPositionForTitle(new Vector3(-0.02f, 0.05f, 0.03f));
-            } else {
-                weaponHolder.SetWeaponPositionForTitle(new Vector3(-0.01f, 0.02f, 0.02f));
-            }
-        }
+    public void SetTitleWeaponPositions(Vector3 p) {
+        weaponHolder.SetWeaponPositionForTitle(p);
+        // if (ts != null) {
+        //     if (ts.currentCharGender == 'M') {
+        //         weaponHolder.SetWeaponPositionForTitle(new Vector3(-0.02f, 0.05f, 0.03f));
+        //     } else {
+        //         weaponHolder.SetWeaponPositionForTitle(new Vector3(-0.01f, 0.02f, 0.02f));
+        //     }
+        // }
     }
 
     public void EquipDefaultWeapons() {

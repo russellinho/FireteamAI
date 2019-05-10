@@ -16,8 +16,9 @@ public class Weapon
     public float recoil;
     public float range;
     public int clipCapacity;
+    public int maxAmmo;
 
-    public Weapon(string name, string type, string category, string prefabPath, string thumbnailPath, string description, float damage, float mobility, float fireRate, float accuracy, float recoil, float range, int clipCapacity) {
+    public Weapon(string name, string type, string category, string prefabPath, string thumbnailPath, string description, float damage, float mobility, float fireRate, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {
         this.name = name;
         this.type = type;
         this.category = category;
@@ -31,6 +32,7 @@ public class Weapon
         this.recoil = recoil;
         this.range = range;
         this.clipCapacity = clipCapacity;
+        this.maxAmmo = maxAmmo;
     }
 
 }

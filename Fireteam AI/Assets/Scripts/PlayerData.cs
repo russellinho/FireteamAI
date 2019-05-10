@@ -175,6 +175,11 @@ public class PlayerData : MonoBehaviour
 
     public void ChangeBodyRef(string character, GameObject shopItem)
     {
+        WeaponScript weaponScrpt = bodyReference.GetComponent<WeaponScript>();
+        PlayerData.playerdata.info.equippedPrimary = weaponScrpt.equippedPrimaryWeapon;
+        PlayerData.playerdata.info.equippedSecondary = weaponScrpt.equippedSecondaryWeapon;
+        PlayerData.playerdata.info.equippedPrimaryType = weaponScrpt.equippedPrimaryType;
+        PlayerData.playerdata.info.equippedSecondaryType = weaponScrpt.equippedSecondaryType;
         Destroy(bodyReference);
         bodyReference = null;
         bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[character].prefabPath));

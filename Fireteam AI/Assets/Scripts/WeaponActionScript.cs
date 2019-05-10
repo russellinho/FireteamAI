@@ -52,7 +52,9 @@ public class WeaponActionScript : MonoBehaviour
     public GameObject bloodEffect;
 
     public enum FireMode { Auto, Semi }
+    public enum ShotMode { Single, Burst }
     public FireMode firingMode;
+    public ShotMode shotMode;
     private bool shootInput;
 
     // Once it equals fireRate, it will allow us to shoot
@@ -92,7 +94,11 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
 
-        //Debug.Log("Current bullets: " + currentBullets + " Bullets per clip: " + bulletsPerMag + " Total bullets remaining: " + totalBulletsLeft);
+        if (weaponStats.category.Equals("Shotgun")) {
+            shotMode = ShotMode.Burst;
+        } else {
+            shotMode = ShotMode.Single;
+        }
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
@@ -100,6 +106,9 @@ public class WeaponActionScript : MonoBehaviour
                 firingMode = FireMode.Auto;
             else
                 firingMode = FireMode.Semi;
+        }
+        if (weaponStats.category.Equals("Pistol") || weaponStats.category.Equals("Shotgun")) {
+            firingMode = FireMode.Semi;
         }
         switch (firingMode)
         {
@@ -152,7 +161,11 @@ public class WeaponActionScript : MonoBehaviour
         {
             if (currentBullets > 0)
             {
-                Fire();
+                if (shotMode == ShotMode.Single) {
+                    Fire();
+                } else {
+                    FireBurst();
+                }
                 voidRecoilRecover = false;
             }
             else if (totalBulletsLeft > 0)
@@ -164,12 +177,12 @@ public class WeaponActionScript : MonoBehaviour
         else
         {
             DecreaseSpread();
-            DecreaseRecoil();
-            UpdateRecoil(false);
+            // DecreaseRecoil();
+            // UpdateRecoil(false);
             cameraShakeScript.SetShake(false);
             if (CrossPlatformInputManager.GetAxis ("Mouse X") == 0 && CrossPlatformInputManager.GetAxis ("Mouse Y") == 0 && !voidRecoilRecover) {
-                DecreaseRecoil ();
                 UpdateRecoil (false);
+                DecreaseRecoil ();
             } else {
                 voidRecoilRecover = true;
                 recoilTime = 0f;
@@ -285,6 +298,78 @@ public class WeaponActionScript : MonoBehaviour
             {
                 pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
                 pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
+            }
+        }
+
+       // playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+        pView.RPC("FireEffects", RpcTarget.All);
+    }
+
+    public void FireBurst ()
+    {
+        if (fireTimer < weaponStats.fireRate || currentBullets < 0 || isReloading)
+        {
+            return;
+        }
+
+        cameraShakeScript.SetShake(true);
+        IncreaseRecoil();
+        UpdateRecoil(true);
+        RaycastHit hit;
+        // 8 shots for shotgun
+        bool headshotDetected = false;
+        int regularHitsLanded = 0;
+        float totalDamageDealt = 0f;
+        for (int i = 0; i < 8; i++) {
+            float xSpread = Random.Range(-0.1f, 0.1f);
+            float ySpread = Random.Range(-0.1f, 0.1f);
+            float zSpread = Random.Range(-0.1f, 0.1f);
+            Vector3 impactDir = new Vector3(shootPoint.transform.forward.x + xSpread, shootPoint.transform.forward.y + ySpread, shootPoint.transform.forward.z + zSpread);
+            int headshotLayer = (1 << 13);
+            if (Physics.Raycast(shootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer) && !headshotDetected)
+            {
+                pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
+                if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().health > 0)
+                {
+                    hudScript.InstantiateHitmarker();
+                    hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().TakeDamage(100);
+                    pView.RPC("RpcAddToTotalKills", RpcTarget.All);
+                    hudScript.OnScreenEffect("HEADSHOT", true);
+                    audioController.PlayHeadshotSound();
+                }
+                headshotDetected = true;
+            }
+            else if (Physics.Raycast(shootPoint.position, impactDir, out hit, weaponStats.range))
+            {
+                int beforeHp = 0;
+                GameObject bloodSpill = null;
+                if (hit.transform.tag.Equals("Human"))
+                {
+                    pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+                    beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript>().health;
+                    if (totalDamageDealt == 0f) {
+                        if (beforeHp > 0)
+                        {
+                            hudScript.InstantiateHitmarker();
+                            audioController.PlayHitmarkerSound();
+                            //hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
+                            hit.transform.gameObject.GetComponent<BetaEnemyScript>().PainSound();
+                            hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted(true);
+                        }
+                    }
+                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)(weaponStats.damage / 8f));
+                    if (hit.transform.gameObject.GetComponent<BetaEnemyScript>().health <= 0 && beforeHp > 0)
+                    {
+                        pView.RPC("RpcAddToTotalKills", RpcTarget.All);
+                        hudScript.OnScreenEffect(playerActionScript.kills + " KILLS", true);
+                    }
+                    totalDamageDealt += (weaponStats.damage / 8f);
+                }
+                else
+                {
+                    pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
+                    pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
+                }
             }
         }
 

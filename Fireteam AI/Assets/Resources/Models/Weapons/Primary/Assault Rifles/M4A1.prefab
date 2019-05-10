@@ -383,7 +383,7 @@ MonoBehaviour:
   category: Assault Rifle
   damage: 18
   mobility: 0
-  fireRate: 0.15
+  fireRate: 0.1
   accuracy: 0
   recoil: 0.4
   range: 100
@@ -392,6 +392,8 @@ MonoBehaviour:
   aimDownSightPosMale: {x: 0.05, y: 0.07, z: 0.1}
   aimDownSightPosFemale: {x: 0.036, y: 0.056, z: 0.1}
   aimDownSightClipping: 0.06
+  titleHandPositionsMale: {x: -0.02, y: 0.05, z: 0.03}
+  titleHandPositionsFemale: {x: -0.01, y: 0.02, z: 0.02}
 --- !u!1 &6346310861830978820
 GameObject:
   m_ObjectHideFlags: 0
