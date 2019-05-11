@@ -20,4 +20,5 @@ public class WeaponStats : MonoBehaviour
     public float aimDownSightClipping;
     public Vector3 titleHandPositionsMale;
     public Vector3 titleHandPositionsFemale;
+    public float recoveryConstant;
 }

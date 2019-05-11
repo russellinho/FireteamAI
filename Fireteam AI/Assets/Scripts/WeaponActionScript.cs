@@ -583,7 +583,7 @@ public class WeaponActionScript : MonoBehaviour
         // If the current camera rotation is not at its original pos before recoil, then decrease its recoil
         if (recoilTime > 0f)
         {
-            recoilTime -= RECOIL_DECELERATION * Time.deltaTime;
+            recoilTime -= (RECOIL_ACCELERATION / weaponStats.recoveryConstant) * Time.deltaTime;
         }
     }
 
@@ -600,7 +600,7 @@ public class WeaponActionScript : MonoBehaviour
         {
             if (recoilTime > 0f)
             {
-                mouseLook.m_SpineTargetRot *= Quaternion.Euler(weaponStats.recoil, 0f, 0f);
+                mouseLook.m_SpineTargetRot *= Quaternion.Euler(weaponStats.recoil / weaponStats.recoveryConstant, 0f, 0f);
             }
         }
     }

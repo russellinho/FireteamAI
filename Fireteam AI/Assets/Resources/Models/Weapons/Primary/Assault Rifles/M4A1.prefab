@@ -394,6 +394,7 @@ MonoBehaviour:
   aimDownSightClipping: 0.06
   titleHandPositionsMale: {x: -0.02, y: 0.05, z: 0.03}
   titleHandPositionsFemale: {x: -0.01, y: 0.02, z: 0.02}
+  recoveryConstant: 3
 --- !u!1 &6346310861830978820
 GameObject:
   m_ObjectHideFlags: 0
