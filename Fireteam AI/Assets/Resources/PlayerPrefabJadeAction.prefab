@@ -1112,6 +1112,7 @@ MonoBehaviour:
   equippedPrimaryType: 
   equippedSecondaryWeapon: 
   equippedSecondaryType: 
+  equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryBulletsLeft: 0
   totalSecondaryBulletsLeft: 0
@@ -1533,7 +1534,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 182637342987397470}
-  viewIdField: 0
+  viewIdField: 3
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &182637342987397470
@@ -1581,6 +1582,7 @@ MonoBehaviour:
   container: {fileID: 0}
   playerActionScript: {fileID: 4793932236631329482}
   wepActionScript: {fileID: 311082724292437623}
+  wepScript: {fileID: 8954661856752537216}
   myHudMarkerCam1: {fileID: 5817087869488330325}
   myHudMarkerCam2: {fileID: 8858563995784665305}
   myHudMarker: {fileID: 5247730981460007984}

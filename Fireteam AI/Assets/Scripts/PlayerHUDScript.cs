@@ -15,7 +15,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     // Player reference
     public PlayerActionScript playerActionScript;
 	public WeaponActionScript wepActionScript;
-	private GameControllerScript gameController;
+    public WeaponScript wepScript;
+
+    private GameControllerScript gameController;
     public GameObject myHudMarkerCam1;
     public GameObject myHudMarkerCam2;
     public GameObject myHudMarker;
@@ -125,7 +127,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		// Update UI
 		//container.weaponLabelTxt.text = playerActionScript.currWep;
-		container.weaponLabelTxt.text = "ooo";
+		container.weaponLabelTxt.text = wepScript.equippedWep;
 		container.ammoTxt.text = "" + wepActionScript.currentBullets + '/' + wepActionScript.totalBulletsLeft;
 		UpdatePlayerMarkers ();
 		UpdateWaypoints ();

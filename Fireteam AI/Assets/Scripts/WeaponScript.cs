@@ -17,6 +17,7 @@ public class WeaponScript : MonoBehaviour
     public string equippedPrimaryType;
     public string equippedSecondaryWeapon;
     public string equippedSecondaryType;
+    public string equippedWep;
     public int currentlyEquippedType;
     public int totalPrimaryBulletsLeft;
     public int totalSecondaryBulletsLeft;
@@ -61,6 +62,7 @@ public class WeaponScript : MonoBehaviour
             currentBulletsSecondary = InventoryScript.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
             totalPrimaryBulletsLeft = InventoryScript.weaponCatalog[equippedPrimaryWeapon].maxAmmo;
             totalSecondaryBulletsLeft = InventoryScript.weaponCatalog[equippedSecondaryWeapon].maxAmmo;
+            equippedWep = equippedPrimaryWeapon;
             DrawWeapon(1);
         }
     }
@@ -169,6 +171,7 @@ public class WeaponScript : MonoBehaviour
             case "Assault Rifle":
                 currentlyEquippedType = 1;
                 wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                equippedWep = weaponName;
                 EquipAssaultRifle(weaponName);
                 break;
             case "Pistol":
@@ -176,16 +179,19 @@ public class WeaponScript : MonoBehaviour
                     currentlyEquippedType = 2;
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
+                equippedWep = weaponName;
                 EquipPistol(weaponName);
                 break;
             case "Shotgun":
                 currentlyEquippedType = 1;
                 wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                equippedWep = weaponName;
                 EquipShotgun(weaponName);
                 break;
             case "Sniper Rifle":
                 currentlyEquippedType = 1;
                 wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                equippedWep = weaponName;
                 EquipSniperRifle(weaponName);
                 break;
         }
