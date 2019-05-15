@@ -849,6 +849,8 @@ GameObject:
   - component: {fileID: 6924327216587162974}
   - component: {fileID: 871597028457223500}
   - component: {fileID: 1328554002768852457}
+  - component: {fileID: 6602945921615682500}
+  - component: {fileID: 2133448889287935268}
   m_Layer: 9
   m_Name: PlayerPrefabHanaAction
   m_TagString: Player
@@ -1411,6 +1413,39 @@ MonoBehaviour:
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
+--- !u!114 &6602945921615682500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052873151880460973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfeb63ae27c08bd4eb4e95ce989db7b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  container: {fileID: 0}
+  playerScript: {fileID: 8866197252573974751}
+  pView: {fileID: 871597028457223500}
+--- !u!114 &2133448889287935268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052873151880460973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 724fbadbaf5b04e419b557ae7b0a3146, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  container: {fileID: 0}
+  playerActionScript: {fileID: 8866197252573974751}
+  wepActionScript: {fileID: 368919224871855488}
+  myHudMarkerCam1: {fileID: 3039522112576727726}
+  myHudMarkerCam2: {fileID: 6605923799348627941}
+  myHudMarker: {fileID: 797333587283563599}
 --- !u!1 &2052873151880460975
 GameObject:
   m_ObjectHideFlags: 0

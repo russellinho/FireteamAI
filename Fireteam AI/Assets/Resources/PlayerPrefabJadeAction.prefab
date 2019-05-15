@@ -987,6 +987,8 @@ GameObject:
   - component: {fileID: 2900531548046078645}
   - component: {fileID: 609584615193261893}
   - component: {fileID: 182637342987397470}
+  - component: {fileID: 7820167910675698169}
+  - component: {fileID: 229362520446784565}
   m_Layer: 9
   m_Name: PlayerPrefabJadeAction
   m_TagString: Player
@@ -1549,6 +1551,39 @@ MonoBehaviour:
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
+--- !u!114 &7820167910675698169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166084420118613657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfeb63ae27c08bd4eb4e95ce989db7b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  container: {fileID: 0}
+  playerScript: {fileID: 4793932236631329482}
+  pView: {fileID: 609584615193261893}
+--- !u!114 &229362520446784565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166084420118613657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 724fbadbaf5b04e419b557ae7b0a3146, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  container: {fileID: 0}
+  playerActionScript: {fileID: 4793932236631329482}
+  wepActionScript: {fileID: 311082724292437623}
+  myHudMarkerCam1: {fileID: 5817087869488330325}
+  myHudMarkerCam2: {fileID: 8858563995784665305}
+  myHudMarker: {fileID: 5247730981460007984}
 --- !u!1 &3166084420118613659
 GameObject:
   m_ObjectHideFlags: 0

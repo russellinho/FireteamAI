@@ -302,7 +302,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114336108925888890}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &114336108925888890
@@ -516,8 +516,6 @@ GameObject:
   - component: {fileID: 114929743923996308}
   - component: {fileID: 54607371837240256}
   - component: {fileID: 82474390343394992}
-  - component: {fileID: 114442837122359170}
-  - component: {fileID: 114935885646936092}
   - component: {fileID: 114720000592978930}
   - component: {fileID: 114766418645260732}
   - component: {fileID: 114870458661680654}
@@ -603,7 +601,9 @@ MonoBehaviour:
     smooth: 0
     smoothTime: 5
     lockCursor: 1
+    m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_CameraTargetRot: {x: 0, y: 0, z: 0, w: 0}
+    pView: {fileID: 0}
   m_UseFovKick: 0
   m_FovKick:
     Camera: {fileID: 0}
@@ -703,6 +703,9 @@ MonoBehaviour:
   m_Input: {x: 0, y: 0}
   sprintLock: 0
   canMove: 0
+  weaponActionScript: {fileID: 0}
+  equipmentScript: {fileID: 0}
+  photonView: {fileID: 0}
   spineTransform: {fileID: 0}
   animator: {fileID: 0}
 --- !u!54 &54607371837240256
@@ -817,86 +820,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!114 &114442837122359170
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1169066660904442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa14f8312ba0a8649be64e9e4fe79def, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameController: {fileID: 0}
-  fpsHands: {fileID: 1647710275724540}
-  viewCam: {fileID: 20445384165574884}
-  bodyTrans: {fileID: 4323335807701884}
-  spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
-    type: 3}
-  thisSpectatorCam: {fileID: 0}
-  currWep: 
-  health: 0
-  sprintTime: 0
-  godMode: 0
-  canShoot: 0
-  escapeValueSent: 0
-  kills: 0
-  isRespawning: 0
-  respawnTimer: 0
-  subComponents:
-  - {fileID: 1846543175668508}
-  - {fileID: 1122696565283694}
-  - {fileID: 1632063243006468}
-  - {fileID: 1366690501967364}
-  - {fileID: 1400693483926518}
-  fpc: {fileID: 114929743923996308}
-  fpcPosition: {fileID: 4229175316152352}
-  hitTimer: 1
-  healTimer: 0
-  hitLocation: {x: 0, y: 0, z: 0}
---- !u!114 &114935885646936092
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1169066660904442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dec3f56f7fedb5749b6e681a9f81372d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  range: 100
-  spread: 0
-  gunAnimator: {fileID: 95269044598019638}
-  audioSource: {fileID: 82710114837204360}
-  bulletsPerMag: 30
-  totalBulletsLeft: 120
-  currentBullets: 0
-  shootSound: {fileID: 8300000, guid: 976a511e9450f604c8e24900f503d4b2, type: 3}
-  reloadSound: {fileID: 8300000, guid: 37cf2883192b5e04fb3fa28eefa20477, type: 3}
-  shootPoint: {fileID: 4772214779834854}
-  muzzleFlash: {fileID: 198464886627007744}
-  bulletTrace: {fileID: 198686650311421410}
-  isCocking: 0
-  isAiming: 0
-  hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
-    type: 3}
-  bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
-    type: 3}
-  bloodEffect: {fileID: 1175462165935484, guid: 9fb7c413b0964e94f84e1f1ea2519ec7,
-    type: 3}
-  fireRate: 0.1
-  damage: 20
-  firingMode: 0
-  originalTrans: {fileID: 4925083735123256}
-  aimPos: {x: -0.163, y: -1.53, z: -0.14}
-  sprintPos: {x: 0.66, y: -1.27, z: -0.44}
-  sprintPos2: {x: 0.7, y: -1.25, z: -0.44}
-  sprintRot: {x: 30, y: -50, z: 0}
-  aodSpeed: 8
 --- !u!114 &114720000592978930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -916,7 +839,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114766418645260732}
-  viewIdField: 4
+  viewIdField: 0
   InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &114766418645260732
@@ -967,6 +890,7 @@ MonoBehaviour:
   camTransform: {fileID: 4229175316152352}
   playerActionScript: {fileID: 0}
   shake: 0
+  pView: {fileID: 0}
 --- !u!114 &114993924595385136
 MonoBehaviour:
   m_ObjectHideFlags: 0
