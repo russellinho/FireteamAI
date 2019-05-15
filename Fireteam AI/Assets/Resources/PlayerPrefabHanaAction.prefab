@@ -973,6 +973,10 @@ MonoBehaviour:
   equippedSecondaryWeapon: 
   equippedSecondaryType: 
   currentlyEquippedType: 0
+  totalPrimaryBulletsLeft: 0
+  totalSecondaryBulletsLeft: 0
+  currentBulletsPrimary: 0
+  currentBulletsSecondary: 0
   weaponReady: 0
   pView: {fileID: 871597028457223500}
 --- !u!114 &2377182879810501776
@@ -1273,8 +1277,8 @@ MonoBehaviour:
   bloodEffect: {fileID: 1175462165935484, guid: a5aeebbc9242b4a4cb24c32e945135f5,
     type: 3}
   firingMode: 0
+  shotMode: 0
   camTransform: {fileID: 8898256539036001391}
-  aimPosOffset: {x: -0.147, y: -0.04, z: -0.08}
   aodSpeed: 8
   pView: {fileID: 871597028457223500}
 --- !u!114 &8866197252573974751
@@ -1389,7 +1393,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 1328554002768852457}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &1328554002768852457

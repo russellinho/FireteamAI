@@ -1346,9 +1346,9 @@ GameObject:
   - component: {fileID: 6005198866034985182}
   - component: {fileID: 822433111236790916}
   - component: {fileID: 8839277969582996541}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PlayerPrefabDarylAction
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1470,6 +1470,10 @@ MonoBehaviour:
   equippedSecondaryWeapon: 
   equippedSecondaryType: 
   currentlyEquippedType: 0
+  totalPrimaryBulletsLeft: 0
+  totalSecondaryBulletsLeft: 0
+  currentBulletsPrimary: 0
+  currentBulletsSecondary: 0
   weaponReady: 0
   pView: {fileID: 822433111236790916}
 --- !u!114 &3007310823573728124
@@ -1770,8 +1774,8 @@ MonoBehaviour:
   bloodEffect: {fileID: 1175462165935484, guid: a5aeebbc9242b4a4cb24c32e945135f5,
     type: 3}
   firingMode: 0
+  shotMode: 0
   camTransform: {fileID: 3582253291028053267}
-  aimPosOffset: {x: -0.147, y: -0.04, z: -0.08}
   aodSpeed: 8
   pView: {fileID: 822433111236790916}
 --- !u!114 &972479738510542894
@@ -1886,7 +1890,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 8839277969582996541}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &8839277969582996541
