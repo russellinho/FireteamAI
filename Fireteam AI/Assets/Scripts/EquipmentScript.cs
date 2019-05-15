@@ -158,6 +158,14 @@ public class EquipmentScript : MonoBehaviour
 
         // Change equipment back to default and re-equip weapons that were equipped beforehand
         EquipDefaults();
+        if (PlayerData.playerdata.info.equippedPrimary == null)
+        {
+            PlayerData.playerdata.info.equippedPrimary = "AK-47";
+        }
+        if (PlayerData.playerdata.info.equippedSecondary == null)
+        {
+            PlayerData.playerdata.info.equippedSecondary = "Glock23";
+        }
         tws.EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
         tws.EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);
 
