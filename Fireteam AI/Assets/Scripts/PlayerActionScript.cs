@@ -69,7 +69,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         // Load the in-game necessities
         DontDestroyOnLoad(gameObject);
-        //AddMyselfToPlayerList();
+        AddMyselfToPlayerList();
 
         // Setting original positions for returning from crouching
         charHeightOriginal = charController.height;
@@ -96,7 +96,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
              return;
          }
 
-        // gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
+        gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 
         // Initialize variables
         canShoot = true;
@@ -119,7 +119,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        /** if (gameController == null)
+        if (gameController == null)
         {
             GameObject gc = GameObject.FindWithTag("GameController");
             if (gc == null)
@@ -127,7 +127,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 return;
             }
             gameController = gc.GetComponent<GameControllerScript>();
-        }*/
+        }
 
         if (!photonView.IsMine)
         {
@@ -148,32 +148,32 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
              }
          }
 
-        // if (gameController.sectorsCleared == 0 && gameController.bombsRemaining == 2)
-        // {
-        //     gameController.sectorsCleared++;
-        //     hud.OnScreenEffect("SECTOR CLEARED!", false);
-        //     BeginRespawn();
-        // }
+        if (gameController.sectorsCleared == 0 && gameController.bombsRemaining == 2)
+        {
+            gameController.sectorsCleared++;
+            hud.OnScreenEffect("SECTOR CLEARED!", false);
+            BeginRespawn();
+        }
 
-        // if (gameController.bombsRemaining == 0 && !escapeAvailablePopup)
-        // {
-        //     escapeAvailablePopup = true;
-        //     hud.MessagePopup("Escape available! Head to the waypoint!");
-        //     hud.ComBoxPopup(2f, "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.");
-        // }
+        if (gameController.bombsRemaining == 0 && !escapeAvailablePopup)
+        {
+            escapeAvailablePopup = true;
+            hud.MessagePopup("Escape available! Head to the waypoint!");
+            hud.ComBoxPopup(2f, "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.");
+        }
 
         // Update assault mode
-        // hud.UpdateAssaultModeIndHud(gameController.assaultMode);
+        hud.UpdateAssaultModeIndHud(gameController.assaultMode);
 
         // On assault mode changed
-        // bool h = gameController.assaultMode;
-        // if (h != assaultModeChangedIndicator)
-        // {
-        //     assaultModeChangedIndicator = h;
-        //     hud.MessagePopup("Your cover is blown!");
-        //     hud.ComBoxPopup(2f, "They know you're here! Slot the bastards!");
-        //     hud.ComBoxPopup(20f, "Cicadas on the rooftops! Watch the rooftops!");
-        // }
+        bool h = gameController.assaultMode;
+        if (h != assaultModeChangedIndicator)
+        {
+            assaultModeChangedIndicator = h;
+            hud.MessagePopup("Your cover is blown!");
+            hud.ComBoxPopup(2f, "They know you're here! Slot the bastards!");
+            hud.ComBoxPopup(20f, "Cicadas on the rooftops! Watch the rooftops!");
+        }
 
         if (health > 0 && fpc.enabled && fpc.m_IsRunning)
         {
@@ -214,27 +214,27 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             fpc.sprintLock = false;
         }
 
-        // DeathCheck();
-        // if (health <= 0)
-        // {
-        //     if (!escapeValueSent)
-        //     {
-        //         escapeValueSent = true;
-        //         gameController.IncrementDeathCount();
-        //         equipmentScript.ToggleEquipVisibility(true);
-        //     }
-        // }
-        // else
-        // {
-        //     BombCheck();
-        // }
+        DeathCheck();
+        if (health <= 0)
+        {
+            if (!escapeValueSent)
+            {
+                escapeValueSent = true;
+                gameController.IncrementDeathCount();
+                equipmentScript.ToggleEquipVisibility(true);
+            }
+        }
+        else
+        {
+            BombCheck();
+        }
 
         if (fpc.enabled && fpc.canMove)
         {
             Crouch();
         }
-        //DetermineEscaped();
-        //RespawnRoutine();
+        DetermineEscaped();
+        RespawnRoutine();
     }
 
     void AddMyselfToPlayerList()

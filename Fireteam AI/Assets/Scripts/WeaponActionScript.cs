@@ -301,7 +301,7 @@ public class WeaponActionScript : MonoBehaviour
             }
         }
 
-       // playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+        playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
         pView.RPC("FireEffects", RpcTarget.All);
     }
 
@@ -373,7 +373,7 @@ public class WeaponActionScript : MonoBehaviour
             }
         }
 
-       // playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+        playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
         pView.RPC("FireEffects", RpcTarget.All);
     }
 
