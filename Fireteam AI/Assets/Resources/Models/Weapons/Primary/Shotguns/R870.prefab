@@ -4944,7 +4944,7 @@ MonoBehaviour:
   mobility: 0
   fireRate: 1.4
   accuracy: 0
-  recoil: 3
+  recoil: 8
   range: 40
   clipCapacity: 8
   maxAmmo: 48
@@ -4953,7 +4953,7 @@ MonoBehaviour:
   aimDownSightClipping: 0.03
   titleHandPositionsMale: {x: -0.02, y: 0.05, z: 0.03}
   titleHandPositionsFemale: {x: -0.01, y: 0.02, z: 0.02}
-  recoveryConstant: 1.5
+  recoveryConstant: 18
 --- !u!1 &7012023387819761900
 GameObject:
   m_ObjectHideFlags: 0
