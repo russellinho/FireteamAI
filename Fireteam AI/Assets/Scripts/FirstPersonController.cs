@@ -16,10 +16,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] public bool m_IsCrouching;
 		[SerializeField] public bool m_IsRunning;
         [SerializeField] public bool m_IsMoving;
-        [SerializeField] private float m_WalkSpeed;
-        [SerializeField] private float m_CrouchSpeed;
-		[SerializeField] private float m_MoveSpeed;
-        [SerializeField] public float m_RunSpeed;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
         [SerializeField] private float m_JumpSpeed;
         [SerializeField] private float m_StickToGroundForce;
@@ -53,6 +49,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		public bool canMove;
         public WeaponActionScript weaponActionScript;
         public EquipmentScript equipmentScript;
+        public PlayerScript playerScript;
         public PhotonView photonView;
 
         public Transform spineTransform;
@@ -396,13 +393,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
 #endif
 			// set the desired speed to be walking or running
 			//speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
-			speed = m_MoveSpeed;
+			speed = playerScript.speed;
 			if (m_IsRunning) {
-				speed = m_RunSpeed;
-			} else if (m_IsCrouching) {
-                speed = m_CrouchSpeed;
-            } else if (m_IsWalking) {
-                speed = m_WalkSpeed;
+				speed = playerScript.speed * 2f;
+			} else if (m_IsCrouching || m_IsWalking) {
+                speed = playerScript.speed / 3f;
             }
 
             m_Input = new Vector2(horizontal, vertical);

@@ -15,9 +15,9 @@ public class PlayerScript : MonoBehaviour
     // Stat multipliers
     public Stats stats;
 
-    public const float baseSpeed = 5f;
-    public const float baseStamina = 5f;
-    public const float baseArmor = 100f;
+    public const float baseSpeed = 6f;
+    public const float baseStamina = 4f;
+    public const float baseArmor = 1f;
 
     void Awake() {
         stats = new Stats();
@@ -28,11 +28,13 @@ public class PlayerScript : MonoBehaviour
 
     public void setSpeed()
     {
+        //Debug.Log(stats.speed);
         this.speed = baseSpeed * stats.speed;
     }
 
     public void setStamina()
     {
+        //Debug.Log(stats.stamina);
         this.stamina = baseStamina * stats.stamina;
     }
 

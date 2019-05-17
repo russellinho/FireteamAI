@@ -1127,10 +1127,6 @@ MonoBehaviour:
   m_IsCrouching: 0
   m_IsRunning: 0
   m_IsMoving: 0
-  m_WalkSpeed: 2.5
-  m_CrouchSpeed: 2
-  m_MoveSpeed: 6
-  m_RunSpeed: 13
   m_RunstepLenghten: 0.7
   m_JumpSpeed: 10
   m_StickToGroundForce: 10
@@ -1230,6 +1226,7 @@ MonoBehaviour:
   canMove: 0
   weaponActionScript: {fileID: 368919224871855488}
   equipmentScript: {fileID: 5377080248621935676}
+  playerScript: {fileID: 2377182879810501776}
   photonView: {fileID: 871597028457223500}
   spineTransform: {fileID: 2052873151880291989}
   animator: {fileID: 2052873151873026297}
@@ -1309,6 +1306,7 @@ MonoBehaviour:
   camShakeScript: {fileID: 4125558041208651792}
   inGameMessengerHud: {fileID: 0}
   animator: {fileID: 2052873151873026297}
+  playerScript: {fileID: 2377182879810501776}
   health: 0
   sprintTime: 0
   godMode: 0

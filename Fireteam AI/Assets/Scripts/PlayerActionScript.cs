@@ -22,6 +22,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public CameraShakeScript camShakeScript;
     public InGameMessengerHUD inGameMessengerHud;
     public Animator animator;
+    public PlayerScript playerScript;
 
     // Player variables
     public int health;
@@ -82,7 +83,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         health = 100;
         kills = 0;
         deaths = 0;
-        sprintTime = 3f;
+        sprintTime = playerScript.stats.stamina;
 
          currentBombIndex = 0;
          bombIterator = 0;
@@ -246,6 +247,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void TakeDamage(int d)
     {
+        // Calculate damage done including armor
+        float damageReduction = playerScript.armor - 1f;
+        d = Mathf.RoundToInt((float)d * (1f - damageReduction));
+
+        // Send over network
         photonView.RPC("RpcTakeDamage", RpcTarget.All, d);
     }
 

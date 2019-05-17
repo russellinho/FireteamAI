@@ -3026,10 +3026,6 @@ MonoBehaviour:
   m_IsCrouching: 0
   m_IsRunning: 0
   m_IsMoving: 0
-  m_WalkSpeed: 2.5
-  m_CrouchSpeed: 2
-  m_MoveSpeed: 6
-  m_RunSpeed: 13
   m_RunstepLenghten: 0.7
   m_JumpSpeed: 10
   m_StickToGroundForce: 10
@@ -3129,6 +3125,7 @@ MonoBehaviour:
   canMove: 0
   weaponActionScript: {fileID: 9067648845777745277}
   equipmentScript: {fileID: 384782906892189734}
+  playerScript: {fileID: 218755859189559228}
   photonView: {fileID: 2147986590652865928}
   spineTransform: {fileID: 2464462323615659357}
   animator: {fileID: 2464462323623336759}
@@ -3208,6 +3205,7 @@ MonoBehaviour:
   camShakeScript: {fileID: 4095976291033229494}
   inGameMessengerHud: {fileID: 0}
   animator: {fileID: 2464462323623336759}
+  playerScript: {fileID: 218755859189559228}
   health: 0
   sprintTime: 0
   godMode: 0
@@ -3295,7 +3293,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 839698624353317809}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &839698624353317809
