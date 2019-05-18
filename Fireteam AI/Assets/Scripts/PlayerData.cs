@@ -95,6 +95,8 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.equippedPrimaryType = myWeps.equippedPrimaryType;
         PlayerData.playerdata.info.equippedSecondary = myWeps.equippedSecondaryWeapon;
         PlayerData.playerdata.info.equippedSecondaryType = myWeps.equippedSecondaryType;
+        PlayerData.playerdata.info.equippedSupport = myWeps.equippedSupportWeapon;
+        PlayerData.playerdata.info.equippedSupportType = myWeps.equippedSupportType;
         bf.Serialize(file, info);
         file.Close();
 
@@ -120,6 +122,10 @@ public class PlayerData : MonoBehaviour
                 info.equippedSecondary = "Glock23";
                 info.equippedSecondaryType = "Pistol";
             }
+            if (info.equippedSupport == null || info.equippedSupport == "") {
+                info.equippedSupport = "M67 Frag";
+                info.equippedSupportType = "Explosive";
+            }
             if (info.equippedTop == null || info.equippedTop == "") {
                 info.equippedTop = "Standard Fatigues Top";
             }
@@ -127,7 +133,7 @@ public class PlayerData : MonoBehaviour
                 info.equippedBottom = "Standard Fatigues Bottom";
             }
             if (info.equippedFootwear == null || info.equippedFootwear == "") {
-                info.equippedTop = "Standard Boots";
+                info.equippedFootwear = "Standard Boots";
             }
             FindBodyRef(info.equippedCharacter);
             playername = info.playername;
@@ -144,6 +150,7 @@ public class PlayerData : MonoBehaviour
             characterEquips.EquipArmor(info.equippedArmor, null);
             characterWeps.EquipWeapon(info.equippedPrimaryType, info.equippedPrimary, null);
             characterWeps.EquipWeapon(info.equippedSecondaryType, info.equippedSecondary, null);
+            characterWeps.EquipWeapon(info.equippedSupportType, info.equippedSupport, null);
         }
         else
         {
@@ -178,8 +185,10 @@ public class PlayerData : MonoBehaviour
         WeaponScript weaponScrpt = bodyReference.GetComponent<WeaponScript>();
         PlayerData.playerdata.info.equippedPrimary = weaponScrpt.equippedPrimaryWeapon;
         PlayerData.playerdata.info.equippedSecondary = weaponScrpt.equippedSecondaryWeapon;
+        PlayerData.playerdata.info.equippedSupport = weaponScrpt.equippedSupportWeapon;
         PlayerData.playerdata.info.equippedPrimaryType = weaponScrpt.equippedPrimaryType;
         PlayerData.playerdata.info.equippedSecondaryType = weaponScrpt.equippedSecondaryType;
+        PlayerData.playerdata.info.equippedSupportType = weaponScrpt.equippedSupportType;
         Destroy(bodyReference);
         bodyReference = null;
         bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[character].prefabPath));
@@ -208,4 +217,6 @@ public class PlayerInfo
     public string equippedPrimaryType;
     public string equippedSecondary;
     public string equippedSecondaryType;
+    public string equippedSupport;
+    public string equippedSupportType;
 }

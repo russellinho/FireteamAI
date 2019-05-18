@@ -128,7 +128,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		// Update UI
 		//container.weaponLabelTxt.text = playerActionScript.currWep;
 		container.weaponLabelTxt.text = wepScript.equippedWep;
-		container.ammoTxt.text = "" + wepActionScript.currentBullets + '/' + wepActionScript.totalBulletsLeft;
+		container.ammoTxt.text = "" + wepActionScript.currentAmmo + '/' + wepActionScript.totalAmmoLeft;
 		UpdatePlayerMarkers ();
 		UpdateWaypoints ();
 		UpdateCursorStatus ();

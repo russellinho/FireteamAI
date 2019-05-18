@@ -516,7 +516,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         {
             if (other.gameObject.tag.Equals("AmmoBox"))
             {
-                wepActionScript.totalBulletsLeft = 120 + (wepActionScript.GetWeaponStats().clipCapacity - wepActionScript.currentBullets);
+                wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo + (wepActionScript.GetWeaponStats().clipCapacity - wepActionScript.currentAmmo);
                 other.gameObject.GetComponent<PickupScript>().PlayPickupSound();
                 other.gameObject.GetComponent<PickupScript>().DestroyPickup();
             }
@@ -634,8 +634,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         healTimer = 1f;
         currentBomb = null;
         bombDefuseCounter = 0f;
-        wepActionScript.totalBulletsLeft = 120;
-        wepActionScript.currentBullets = wepActionScript.GetWeaponStats().clipCapacity;
+        wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo;
+        wepActionScript.currentAmmo = wepActionScript.GetWeaponStats().clipCapacity;
 
         // Send player back to spawn position, reset rotation, leave spectator mode
         transform.rotation = Quaternion.Euler(Vector3.zero);

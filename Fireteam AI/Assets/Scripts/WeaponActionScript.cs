@@ -37,8 +37,8 @@ public class WeaponActionScript : MonoBehaviour
     private bool voidRecoilRecover = true;
     //private float recoilSlerp = 0f;
     
-    public int totalBulletsLeft;
-    public int currentBullets;
+    public int totalAmmoLeft;
+    public int currentAmmo;
 
     public Transform shootPoint;
     private ParticleSystem muzzleFlash;
@@ -75,7 +75,7 @@ public class WeaponActionScript : MonoBehaviour
         {
             return;
         }
-        currentBullets = weaponStats.clipCapacity;
+        currentAmmo = weaponStats.clipCapacity;
 
         originalPosCam = camTransform.localPosition;
 
@@ -128,7 +128,7 @@ public class WeaponActionScript : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
-            if (!playerActionScript.fpc.m_IsRunning && currentBullets < weaponStats.clipCapacity && totalBulletsLeft > 0)
+            if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0)
             {
                 ReloadAction();
             }
@@ -159,7 +159,7 @@ public class WeaponActionScript : MonoBehaviour
         // Shooting mechanics
         if (shootInput && !isReloading && playerActionScript.canShoot)
         {
-            if (currentBullets > 0)
+            if (currentAmmo > 0)
             {
                 if (shotMode == ShotMode.Single) {
                     Fire();
@@ -168,7 +168,7 @@ public class WeaponActionScript : MonoBehaviour
                 }
                 voidRecoilRecover = false;
             }
-            else if (totalBulletsLeft > 0)
+            else if (totalAmmoLeft > 0)
             {
                 cameraShakeScript.SetShake(false);
                 ReloadAction();
@@ -246,7 +246,7 @@ public class WeaponActionScript : MonoBehaviour
     // Comment
     public void Fire()
     {
-        if (fireTimer < weaponStats.fireRate || currentBullets < 0 || isReloading)
+        if (fireTimer < weaponStats.fireRate || currentAmmo < 0 || isReloading)
         {
             return;
         }
@@ -307,7 +307,7 @@ public class WeaponActionScript : MonoBehaviour
 
     public void FireBurst ()
     {
-        if (fireTimer < weaponStats.fireRate || currentBullets < 0 || isReloading)
+        if (fireTimer < weaponStats.fireRate || currentAmmo < 0 || isReloading)
         {
             return;
         }
@@ -434,7 +434,7 @@ public class WeaponActionScript : MonoBehaviour
             bulletTrace.Play();
         }
         PlayShootSound();
-        currentBullets--;
+        currentAmmo--;
         // Reset fire timer
         fireTimer = 0.0f;
     }
@@ -450,7 +450,7 @@ public class WeaponActionScript : MonoBehaviour
             bulletTrace.Play();
         }
         PlayShootSound();
-        currentBullets--;
+        currentAmmo--;
         // Reset fire timer
         fireTimer = 0.0f;
     }
@@ -459,13 +459,13 @@ public class WeaponActionScript : MonoBehaviour
     {
         if (!isCocking)
         {
-            if (totalBulletsLeft <= 0)
+            if (totalAmmoLeft <= 0)
                 return;
 
-            int bulletsToLoad = weaponStats.clipCapacity - currentBullets;
-            int bulletsToDeduct = (totalBulletsLeft >= bulletsToLoad) ? bulletsToLoad : totalBulletsLeft;
-            totalBulletsLeft -= bulletsToDeduct;
-            currentBullets += bulletsToDeduct;
+            int bulletsToLoad = weaponStats.clipCapacity - currentAmmo;
+            int bulletsToDeduct = (totalAmmoLeft >= bulletsToLoad) ? bulletsToLoad : totalAmmoLeft;
+            totalAmmoLeft -= bulletsToDeduct;
+            currentAmmo += bulletsToDeduct;
         }
         pView.RPC("RpcPlayReloadSound", RpcTarget.All);
     }
