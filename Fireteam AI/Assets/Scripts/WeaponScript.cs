@@ -17,6 +17,8 @@ public class WeaponScript : MonoBehaviour
     public string equippedPrimaryType;
     public string equippedSecondaryWeapon;
     public string equippedSecondaryType;
+    public string equippedSupportWeapon;
+    public string equippedSupportType;
     public string equippedWep;
     public int currentlyEquippedType;
     public int totalPrimaryBulletsLeft;
@@ -163,6 +165,24 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
+    public void EquipExplosive(string weaponName) {
+        equippedSupportType = "Explosive";
+        equippedSupportWeapon = weaponName;
+        if (!onTitle) {
+            weaponHolder.SetWeaponPosition();
+            weaponHolder.ResetSteadyHand();
+        }
+    }
+
+    public void EquipBooster(string weaponName) {
+        equippedSupportType = "Booster";
+        equippedSupportWeapon = weaponName;
+        if (!onTitle) {
+            weaponHolder.SetWeaponPosition();
+            weaponHolder.ResetSteadyHand();
+        }
+    }
+
     public void EquipWeapon(string weaponType, string weaponName, GameObject shopItemRef) {
         // Get the weapon from the weapon catalog for its properties
         Weapon w = InventoryScript.weaponCatalog[weaponName];
@@ -193,6 +213,18 @@ public class WeaponScript : MonoBehaviour
                 wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 equippedWep = weaponName;
                 EquipSniperRifle(weaponName);
+                break;
+            case "Explosive":
+                currentlyEquippedType = 4;
+                wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                equippedWep = weaponName;
+                EquipExplosive(weaponName);
+                break;
+            case "Booster":
+                currentlyEquippedType = 4;
+                wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                equippedWep = weaponName;
+                EquipBooster(weaponName);
                 break;
         }
 
