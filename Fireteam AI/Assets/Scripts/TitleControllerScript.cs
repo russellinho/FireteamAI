@@ -714,7 +714,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedSecondarySlot.GetComponentInChildren<RawImage>().texture)) {
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedSupportSlot.GetComponentInChildren<RawImage>().texture)) {
 				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
 				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
@@ -906,7 +906,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedSecondarySlot.GetComponentInChildren<RawImage>().texture)) {
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedSupportSlot.GetComponentInChildren<RawImage>().texture)) {
 				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
 				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
@@ -944,7 +944,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedSecondarySlot.GetComponentInChildren<RawImage>().texture)) {
+			if (o.GetComponentInChildren<RawImage>().texture.Equals(equippedSupportSlot.GetComponentInChildren<RawImage>().texture)) {
 				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
 				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;

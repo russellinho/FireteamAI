@@ -21,10 +21,12 @@ public class WeaponScript : MonoBehaviour
     public string equippedSupportType;
     public string equippedWep;
     public int currentlyEquippedType;
-    public int totalPrimaryBulletsLeft;
-    public int totalSecondaryBulletsLeft;
-    public int currentBulletsPrimary;
-    public int currentBulletsSecondary;
+    public int totalPrimaryAmmoLeft;
+    public int totalSecondaryAmmoLeft;
+    public int totalSupportAmmoLeft;
+    public int currentAmmoPrimary;
+    public int currentAmmoSecondary;
+    public int currentAmmoSupport;
 
     public bool weaponReady;
     public PhotonView pView;
@@ -60,10 +62,14 @@ public class WeaponScript : MonoBehaviour
             equippedPrimaryType = PlayerData.playerdata.info.equippedPrimaryType;
             equippedSecondaryWeapon = PlayerData.playerdata.info.equippedSecondary;
             equippedSecondaryType = PlayerData.playerdata.info.equippedSecondaryType;
-            currentBulletsPrimary = InventoryScript.weaponCatalog[equippedPrimaryWeapon].clipCapacity;
-            currentBulletsSecondary = InventoryScript.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
-            totalPrimaryBulletsLeft = InventoryScript.weaponCatalog[equippedPrimaryWeapon].maxAmmo;
-            totalSecondaryBulletsLeft = InventoryScript.weaponCatalog[equippedSecondaryWeapon].maxAmmo;
+            equippedSupportWeapon = PlayerData.playerdata.info.equippedSupport;
+            equippedSupportType = PlayerData.playerdata.info.equippedSupportType;
+            currentAmmoPrimary = InventoryScript.weaponCatalog[equippedPrimaryWeapon].clipCapacity;
+            currentAmmoSecondary = InventoryScript.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
+            currentAmmoSupport = InventoryScript.weaponCatalog[equippedSupportWeapon].clipCapacity;
+            totalPrimaryAmmoLeft = InventoryScript.weaponCatalog[equippedPrimaryWeapon].maxAmmo;
+            totalSecondaryAmmoLeft = InventoryScript.weaponCatalog[equippedSecondaryWeapon].maxAmmo;
+            totalSupportAmmoLeft = InventoryScript.weaponCatalog[equippedSupportWeapon].maxAmmo;
             equippedWep = equippedPrimaryWeapon;
             DrawWeapon(1);
         }
@@ -77,15 +83,20 @@ public class WeaponScript : MonoBehaviour
         if (!animator.GetBool("onTitle")) {
             if (Input.GetKeyDown(KeyCode.Alpha1)) {
                 if (currentlyEquippedType == 1) return;
-                totalSecondaryBulletsLeft = weaponActionScript.totalBulletsLeft;
-                currentBulletsSecondary = weaponActionScript.currentBullets;
+                totalSecondaryAmmoLeft = weaponActionScript.totalAmmoLeft;
+                currentAmmoSecondary = weaponActionScript.currentAmmo;
                 DrawWeapon(1);
                 weaponActionScript.firingMode = WeaponActionScript.FireMode.Auto;
             } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
                 if (currentlyEquippedType == 2) return;
-                totalPrimaryBulletsLeft = weaponActionScript.totalBulletsLeft;
-                currentBulletsPrimary = weaponActionScript.currentBullets;
+                totalPrimaryAmmoLeft = weaponActionScript.totalAmmoLeft;
+                currentAmmoPrimary = weaponActionScript.currentAmmo;
                 DrawWeapon(2);
+            } else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+                if (currentlyEquippedType == 4) return;
+                totalSupportAmmoLeft = weaponActionScript.totalAmmoLeft;
+                currentAmmoSupport = weaponActionScript.currentAmmo;
+                DrawWeapon(4);
             }
         }
     }
@@ -97,16 +108,15 @@ public class WeaponScript : MonoBehaviour
         {
             equippedWep = equippedPrimaryWeapon;
             equippedType = equippedPrimaryType;
-            weaponActionScript.currentBullets = currentBulletsPrimary;
-            weaponActionScript.totalBulletsLeft = totalPrimaryBulletsLeft;
+            weaponActionScript.currentAmmo = currentAmmoPrimary;
+            weaponActionScript.totalAmmoLeft = totalPrimaryAmmoLeft;
         }
         else
         {
             equippedWep = equippedSecondaryWeapon;
             equippedType = equippedSecondaryType;
-            Debug.Log(currentBulletsSecondary);
-            weaponActionScript.currentBullets = currentBulletsSecondary;
-            weaponActionScript.totalBulletsLeft = totalSecondaryBulletsLeft;
+            weaponActionScript.currentAmmo = currentAmmoSecondary;
+            weaponActionScript.totalAmmoLeft = totalSecondaryAmmoLeft;
         }
         pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, equippedType);
     }
@@ -215,14 +225,18 @@ public class WeaponScript : MonoBehaviour
                 EquipSniperRifle(weaponName);
                 break;
             case "Explosive":
-                currentlyEquippedType = 4;
-                wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                if (!onTitle) {
+                    currentlyEquippedType = 4;
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                }
                 equippedWep = weaponName;
                 EquipExplosive(weaponName);
                 break;
             case "Booster":
-                currentlyEquippedType = 4;
-                wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                if (!onTitle) {
+                    currentlyEquippedType = 4;
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                }
                 equippedWep = weaponName;
                 EquipBooster(weaponName);
                 break;
@@ -257,9 +271,12 @@ public class WeaponScript : MonoBehaviour
             if (w.type.Equals("Primary")) {
                 ts.equippedPrimarySlot.GetComponentInChildren<RawImage>().enabled = true;
                 ts.equippedPrimarySlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-            } else {
+            } else if (w.type.Equals("Secondary")) {
                 ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().enabled = true;
                 ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+            } else if (w.type.Equals("Support")) {
+                ts.equippedSupportSlot.GetComponentInChildren<RawImage>().enabled = true;
+                ts.equippedSupportSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
             }
         } else {
             Debug.Log(wepEquipped.GetComponent<WeaponStats>().weaponName);
@@ -283,6 +300,8 @@ public class WeaponScript : MonoBehaviour
         equippedPrimaryType = "Assault Rifle";
         equippedSecondaryWeapon = "Glock23";
         equippedSecondaryType = "Pistol";
+        equippedSupportWeapon = "M67 Frag";
+        equippedSupportType = "Explosive";
         EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null);
         EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null);
     }
