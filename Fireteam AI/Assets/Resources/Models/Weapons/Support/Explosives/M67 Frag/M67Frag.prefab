@@ -54,7 +54,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5428791045141787089}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.0092, y: -0.0281, z: -0.0411}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1260533127444034841}
@@ -74,6 +74,7 @@ GameObject:
   - component: {fileID: 5897989170987041375}
   - component: {fileID: 6002776193723435588}
   - component: {fileID: 8838118481821491871}
+  - component: {fileID: 6685071746944560141}
   m_Layer: 0
   m_Name: M67Frag
   m_TagString: Untagged
@@ -200,3 +201,17 @@ MonoBehaviour:
   titleHandPositionsMale: {x: 0, y: 0, z: 0}
   titleHandPositionsFemale: {x: 0, y: 0, z: 0}
   recoveryConstant: 0
+--- !u!114 &6685071746944560141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5778181466859214762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6afd04f3b73b0542a6bd42f2bdc5e47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rBody: {fileID: 6002776193723435588}
+  col: {fileID: 5897989170987041375}
