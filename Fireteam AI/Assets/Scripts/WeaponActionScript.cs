@@ -67,10 +67,14 @@ public class WeaponActionScript : MonoBehaviour
     // Aiming speed
     public float aodSpeed = 8f;
     public PhotonView pView;
+    private bool isWieldingSupportItem;
+    private bool isCockingGrenade;
 
     // Use this for initialization
     void Start()
     {
+        isCockingGrenade = false;
+        isWieldingSupportItem = false;
         if (pView != null && !pView.IsMine)
         {
             return;
@@ -107,7 +111,12 @@ public class WeaponActionScript : MonoBehaviour
             else
                 firingMode = FireMode.Semi;
         }
-        if (weaponStats.category.Equals("Pistol") || weaponStats.category.Equals("Shotgun")) {
+        if (weaponStats.type.Equals("Support")) {
+            isWieldingSupportItem = true;
+        } else {
+            isWieldingSupportItem = false;
+        }
+        if (weaponStats.category.Equals("Pistol") || weaponStats.category.Equals("Shotgun") || isWieldingSupportItem) {
             firingMode = FireMode.Semi;
         }
         switch (firingMode)
@@ -122,8 +131,9 @@ public class WeaponActionScript : MonoBehaviour
 
         RefillFireTimer();
 
-        if (!playerActionScript.canShoot)
+        if (!playerActionScript.canShoot || isWieldingSupportItem)
         {
+            HandleGrenades();
             return;
         }
         if (Input.GetKeyDown(KeyCode.R))
@@ -611,6 +621,33 @@ public class WeaponActionScript : MonoBehaviour
 
     public WeaponStats GetWeaponStats() {
         return weaponStats;
+    }
+
+    void HandleGrenades() {
+        if (weaponStats.category.Equals("Explosive")) {
+            if (isWieldingSupportItem && Input.GetButtonDown("Fire1")) {
+                isCockingGrenade = true;
+                pView.RPC("RpcCockGrenade", RpcTarget.All, isCockingGrenade);
+            }
+            if (isCockingGrenade && Input.GetButtonUp("Fire1")) {
+                isCockingGrenade = false;
+                pView.RPC("RpcCockGrenade", RpcTarget.All, isCockingGrenade);
+            }
+        }
+    }
+
+    public void UseSupportItem() {
+        // If the item is a grenade, instantiate and launch the grenade
+        if (weaponStats.category.Equals("Explosive")) {
+            GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.weaponCatalog[weaponStats.weaponName].prefabPath, weaponHolder.transform.position, Quaternion.identity);
+            projectile.GetComponent<ThrowableScript>().Launch(weaponHolder.transform.forward.x, weaponHolder.transform.forward.y, weaponHolder.transform.forward.z);
+            //currentAmmo--;
+        }
+    }
+
+    [PunRPC]
+    void RpcCockGrenade(bool cocking) {
+        animator.SetBool("isCockingGrenade", cocking);
     }
 
 }
