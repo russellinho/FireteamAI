@@ -6,7 +6,7 @@ using Photon.Realtime;
 
 public class ThrowableScript : MonoBehaviour
 {
-    private const float THROW_FORCE_MULTIPLIER = 3f;
+    private const float THROW_FORCE_MULTIPLIER = 15f;
     public Rigidbody rBody;
     public SphereCollider col;
     public float fuseTimer;
@@ -31,7 +31,8 @@ public class ThrowableScript : MonoBehaviour
         // Turn physics on
         TogglePhysics(true);
         // Apply a force to the throwable that's equal to the forward position of the weapon holder
-        rBody.AddForce(xForce * THROW_FORCE_MULTIPLIER, yForce * THROW_FORCE_MULTIPLIER, zForce * THROW_FORCE_MULTIPLIER);
+        rBody.velocity = new Vector3(xForce * THROW_FORCE_MULTIPLIER, yForce * THROW_FORCE_MULTIPLIER, zForce * THROW_FORCE_MULTIPLIER);
+        //rBody.AddForce(xForce * THROW_FORCE_MULTIPLIER, yForce * THROW_FORCE_MULTIPLIER, zForce * THROW_FORCE_MULTIPLIER);
         isLive = true;
     }
 

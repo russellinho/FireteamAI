@@ -640,7 +640,8 @@ public class WeaponActionScript : MonoBehaviour
         // If the item is a grenade, instantiate and launch the grenade
         if (weaponStats.category.Equals("Explosive")) {
             GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.weaponCatalog[weaponStats.weaponName].prefabPath, weaponHolder.transform.position, Quaternion.identity);
-            projectile.GetComponent<ThrowableScript>().Launch(weaponHolder.transform.forward.x, weaponHolder.transform.forward.y, weaponHolder.transform.forward.z);
+            projectile.transform.forward = weaponHolder.transform.forward;
+            projectile.GetComponent<ThrowableScript>().Launch(0f, 0f, weaponHolder.transform.forward.z);
             //currentAmmo--;
         }
     }
