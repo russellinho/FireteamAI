@@ -36,13 +36,10 @@ public class WeaponHandlerScript : MonoBehaviour
         //weapon.localPosition = new Vector3(weapon.localPosition.x + (-handle.localPosition.x) + offset.x, weapon.localPosition.y + (-handle.localPosition.y) + offset.y, weapon.localPosition.z + (-handle.localPosition.z) + offset.z);
         //weapon.position = new Vector3(transform.localPosition.x + handle.localPosition.x, transform.localPosition.y + handle.localPosition.y, transform.localPosition.z + handle.localPosition.z);
         Vector3 oldHandlePos = handle.localPosition;
-        Debug.Log("Old handle pos: " + oldHandlePos);
         handle.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z);
         oldHandlePos = new Vector3(oldHandlePos.x - handle.localPosition.x, oldHandlePos.y - handle.localPosition.y, oldHandlePos.z - handle.localPosition.z);
         if (fpc.equipmentScript.gender == 'M') {
-            Debug.Log("Before Weapon pos: " + weapon.localPosition);
             weapon.localPosition = new Vector3(weapon.localPosition.x - oldHandlePos.x - 0.01f, weapon.localPosition.y - oldHandlePos.y + 0.06f, weapon.localPosition.z - oldHandlePos.z + 0.02f);
-            Debug.Log("After weapon pos: " + weapon.localPosition);
         } else {
             weapon.localPosition = new Vector3(weapon.localPosition.x - oldHandlePos.x - 0.01f, weapon.localPosition.y - oldHandlePos.y + 0.04f, weapon.localPosition.z - oldHandlePos.z + 0.02f);
         }
