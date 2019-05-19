@@ -83,19 +83,34 @@ public class WeaponScript : MonoBehaviour
         if (!animator.GetBool("onTitle")) {
             if (Input.GetKeyDown(KeyCode.Alpha1)) {
                 if (currentlyEquippedType == 1) return;
-                totalSecondaryAmmoLeft = weaponActionScript.totalAmmoLeft;
-                currentAmmoSecondary = weaponActionScript.currentAmmo;
+                if (currentlyEquippedType == 2) {
+                    totalSecondaryAmmoLeft = weaponActionScript.totalAmmoLeft;
+                    currentAmmoSecondary = weaponActionScript.currentAmmo;
+                } else if (currentlyEquippedType == 4) {
+                    totalSupportAmmoLeft = weaponActionScript.totalAmmoLeft;
+                    currentAmmoSupport = weaponActionScript.currentAmmo;
+                }
                 DrawWeapon(1);
                 weaponActionScript.firingMode = WeaponActionScript.FireMode.Auto;
             } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
                 if (currentlyEquippedType == 2) return;
-                totalPrimaryAmmoLeft = weaponActionScript.totalAmmoLeft;
-                currentAmmoPrimary = weaponActionScript.currentAmmo;
+                if (currentlyEquippedType == 1) {
+                    totalPrimaryAmmoLeft = weaponActionScript.totalAmmoLeft;
+                    currentAmmoPrimary = weaponActionScript.currentAmmo;
+                } else if (currentlyEquippedType == 4) {
+                    totalSupportAmmoLeft = weaponActionScript.totalAmmoLeft;
+                    currentAmmoSupport = weaponActionScript.currentAmmo;
+                }
                 DrawWeapon(2);
             } else if (Input.GetKeyDown(KeyCode.Alpha4)) {
                 if (currentlyEquippedType == 4) return;
-                totalSupportAmmoLeft = weaponActionScript.totalAmmoLeft;
-                currentAmmoSupport = weaponActionScript.currentAmmo;
+                if (currentlyEquippedType == 1) {
+                    totalPrimaryAmmoLeft = weaponActionScript.totalAmmoLeft;
+                    currentAmmoPrimary = weaponActionScript.currentAmmo;
+                } else if (currentlyEquippedType == 2) {
+                    totalSecondaryAmmoLeft = weaponActionScript.totalAmmoLeft;
+                    currentAmmoSecondary = weaponActionScript.currentAmmo;
+                }
                 DrawWeapon(4);
             }
         }
@@ -111,12 +126,19 @@ public class WeaponScript : MonoBehaviour
             weaponActionScript.currentAmmo = currentAmmoPrimary;
             weaponActionScript.totalAmmoLeft = totalPrimaryAmmoLeft;
         }
-        else
+        else if (weaponCat == 2)
         {
             equippedWep = equippedSecondaryWeapon;
             equippedType = equippedSecondaryType;
             weaponActionScript.currentAmmo = currentAmmoSecondary;
             weaponActionScript.totalAmmoLeft = totalSecondaryAmmoLeft;
+        }
+        else if (weaponCat == 4)
+        {
+            equippedWep = equippedSupportWeapon;
+            equippedType = equippedSupportType;
+            weaponActionScript.currentAmmo = currentAmmoSupport;
+            weaponActionScript.totalAmmoLeft = totalSupportAmmoLeft;
         }
         pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, equippedType);
     }
