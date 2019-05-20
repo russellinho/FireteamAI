@@ -80,7 +80,7 @@ public class WeaponScript : MonoBehaviour
         {
             return;
         }
-        if (!animator.GetBool("onTitle")) {
+        if (!animator.GetBool("onTitle") && !animator.GetBool("isCockingGrenade")) {
             if (Input.GetKeyDown(KeyCode.Alpha1)) {
                 if (currentlyEquippedType == 1) return;
                 if (currentlyEquippedType == 2) {

@@ -67,10 +67,14 @@ public class WeaponActionScript : MonoBehaviour
     // Aiming speed
     public float aodSpeed = 8f;
     public PhotonView pView;
+    private bool isWieldingSupportItem;
+    private bool isCockingGrenade;
 
     // Use this for initialization
     void Start()
     {
+        isCockingGrenade = false;
+        isWieldingSupportItem = false;
         if (pView != null && !pView.IsMine)
         {
             return;
@@ -107,7 +111,12 @@ public class WeaponActionScript : MonoBehaviour
             else
                 firingMode = FireMode.Semi;
         }
-        if (weaponStats.category.Equals("Pistol") || weaponStats.category.Equals("Shotgun")) {
+        if (weaponStats.type.Equals("Support")) {
+            isWieldingSupportItem = true;
+        } else {
+            isWieldingSupportItem = false;
+        }
+        if (weaponStats.category.Equals("Pistol") || weaponStats.category.Equals("Shotgun") || isWieldingSupportItem) {
             firingMode = FireMode.Semi;
         }
         switch (firingMode)
@@ -122,7 +131,7 @@ public class WeaponActionScript : MonoBehaviour
 
         RefillFireTimer();
 
-        if (!playerActionScript.canShoot)
+        if (!playerActionScript.canShoot || isWieldingSupportItem)
         {
             return;
         }
@@ -157,6 +166,10 @@ public class WeaponActionScript : MonoBehaviour
         //      isReloading = info.IsName("Reload") || info.IsName("ReloadCrouch");
         //  }
         // Shooting mechanics
+        if (weaponStats.category.Equals("Explosive")) {
+            FireGrenades();
+            return;
+        }
         if (shootInput && !isReloading && playerActionScript.canShoot)
         {
             if (currentAmmo > 0)
@@ -246,7 +259,7 @@ public class WeaponActionScript : MonoBehaviour
     // Comment
     public void Fire()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo < 0 || isReloading)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading)
         {
             return;
         }
@@ -307,7 +320,7 @@ public class WeaponActionScript : MonoBehaviour
 
     public void FireBurst ()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo < 0 || isReloading)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading)
         {
             return;
         }
@@ -470,6 +483,13 @@ public class WeaponActionScript : MonoBehaviour
         pView.RPC("RpcPlayReloadSound", RpcTarget.All);
     }
 
+    private void ReloadSupportItem() {
+        if (totalAmmoLeft > 0) {
+            totalAmmoLeft -= weaponStats.clipCapacity;
+            currentAmmo = weaponStats.clipCapacity;
+        }
+    }
+
     private void ReloadAction()
     {
         //AnimatorStateInfo info = weaponAnimator.GetCurrentAnimatorStateInfo (0);
@@ -611,6 +631,45 @@ public class WeaponActionScript : MonoBehaviour
 
     public WeaponStats GetWeaponStats() {
         return weaponStats;
+    }
+
+    void FireGrenades() {
+        if (fireTimer < weaponStats.fireRate)
+        {
+            return;
+        }
+        if (currentAmmo == 0) {
+            ReloadSupportItem();
+        }
+        if (currentAmmo <= 0) return;
+        if (weaponStats.category.Equals("Explosive")) {
+            if (!isCockingGrenade && isWieldingSupportItem && (Input.GetButtonDown("Fire1") || Input.GetButton("Fire1"))) {
+                isCockingGrenade = true;
+                pView.RPC("RpcCockGrenade", RpcTarget.All, isCockingGrenade);
+                return;
+            }
+            if (isCockingGrenade && Input.GetButtonUp("Fire1")) {
+                isCockingGrenade = false;
+                pView.RPC("RpcCockGrenade", RpcTarget.All, isCockingGrenade);
+            }
+        }
+    }
+
+    public void UseSupportItem() {
+        // If the item is a grenade, instantiate and launch the grenade
+        if (weaponStats.category.Equals("Explosive")) {
+            GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.weaponCatalog[weaponStats.weaponName].prefabPath, weaponHolder.transform.position, Quaternion.identity);
+            projectile.transform.forward = weaponHolder.transform.forward;
+            projectile.GetComponent<ThrowableScript>().Launch(camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
+            // Reset fire timer and subtract ammo used
+            currentAmmo--;
+            fireTimer = 0.0f;
+        }
+    }
+
+    [PunRPC]
+    void RpcCockGrenade(bool cocking) {
+        animator.SetBool("isCockingGrenade", cocking);
     }
 
 }
