@@ -133,7 +133,6 @@ public class WeaponActionScript : MonoBehaviour
 
         if (!playerActionScript.canShoot || isWieldingSupportItem)
         {
-            HandleGrenades();
             return;
         }
         if (Input.GetKeyDown(KeyCode.R))
@@ -167,6 +166,10 @@ public class WeaponActionScript : MonoBehaviour
         //      isReloading = info.IsName("Reload") || info.IsName("ReloadCrouch");
         //  }
         // Shooting mechanics
+        if (weaponStats.category.Equals("Explosive")) {
+            FireGrenades();
+            return;
+        }
         if (shootInput && !isReloading && playerActionScript.canShoot)
         {
             if (currentAmmo > 0)
@@ -256,7 +259,7 @@ public class WeaponActionScript : MonoBehaviour
     // Comment
     public void Fire()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo < 0 || isReloading)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading)
         {
             return;
         }
@@ -317,7 +320,7 @@ public class WeaponActionScript : MonoBehaviour
 
     public void FireBurst ()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo < 0 || isReloading)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading)
         {
             return;
         }
@@ -480,6 +483,13 @@ public class WeaponActionScript : MonoBehaviour
         pView.RPC("RpcPlayReloadSound", RpcTarget.All);
     }
 
+    private void ReloadSupportItem() {
+        if (totalAmmoLeft > 0) {
+            totalAmmoLeft -= weaponStats.clipCapacity;
+            currentAmmo = weaponStats.clipCapacity;
+        }
+    }
+
     private void ReloadAction()
     {
         //AnimatorStateInfo info = weaponAnimator.GetCurrentAnimatorStateInfo (0);
@@ -623,11 +633,20 @@ public class WeaponActionScript : MonoBehaviour
         return weaponStats;
     }
 
-    void HandleGrenades() {
+    void FireGrenades() {
+        if (fireTimer < weaponStats.fireRate)
+        {
+            return;
+        }
+        if (currentAmmo == 0) {
+            ReloadSupportItem();
+        }
+        if (currentAmmo <= 0) return;
         if (weaponStats.category.Equals("Explosive")) {
-            if (isWieldingSupportItem && Input.GetButtonDown("Fire1")) {
+            if (!isCockingGrenade && isWieldingSupportItem && (Input.GetButtonDown("Fire1") || Input.GetButton("Fire1"))) {
                 isCockingGrenade = true;
                 pView.RPC("RpcCockGrenade", RpcTarget.All, isCockingGrenade);
+                return;
             }
             if (isCockingGrenade && Input.GetButtonUp("Fire1")) {
                 isCockingGrenade = false;
@@ -641,8 +660,10 @@ public class WeaponActionScript : MonoBehaviour
         if (weaponStats.category.Equals("Explosive")) {
             GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.weaponCatalog[weaponStats.weaponName].prefabPath, weaponHolder.transform.position, Quaternion.identity);
             projectile.transform.forward = weaponHolder.transform.forward;
-            projectile.GetComponent<ThrowableScript>().Launch(0f, 0f, weaponHolder.transform.forward.z);
-            //currentAmmo--;
+            projectile.GetComponent<ThrowableScript>().Launch(camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
+            // Reset fire timer and subtract ammo used
+            currentAmmo--;
+            fireTimer = 0.0f;
         }
     }
 

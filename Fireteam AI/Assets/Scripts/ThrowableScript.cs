@@ -6,7 +6,7 @@ using Photon.Realtime;
 
 public class ThrowableScript : MonoBehaviour
 {
-    private const float THROW_FORCE_MULTIPLIER = 15f;
+    private const float THROW_FORCE_MULTIPLIER = 25f;
     public Rigidbody rBody;
     public SphereCollider col;
     public float fuseTimer;

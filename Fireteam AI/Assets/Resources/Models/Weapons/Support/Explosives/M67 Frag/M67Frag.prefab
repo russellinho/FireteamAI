@@ -166,8 +166,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5778181466859214762}
   serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
+  m_Mass: 9
+  m_Drag: 0.6
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -191,7 +191,7 @@ MonoBehaviour:
   category: Explosive
   damage: 110
   mobility: 0
-  fireRate: 8
+  fireRate: 1
   accuracy: 0
   recoil: 0
   range: 0
@@ -238,7 +238,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 5718572801429695009}
-  viewIdField: 0
+  viewIdField: 3
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &5718572801429695009
