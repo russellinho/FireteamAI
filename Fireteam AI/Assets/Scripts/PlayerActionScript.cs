@@ -510,10 +510,36 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
+	bool EnvObstructionExists(Vector3 a, Vector3 b) {
+		// Ignore other enemy/player colliders
+		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
+		int ignoreLayers = (1 << 9) & (1 << 11) & (1 << 12) & (1 << 13) & (1 << 14) & (1 << 15);
+		return Physics.Linecast(a, b, ignoreLayers);
+	}
+
     void OnTriggerEnter(Collider other)
     {
         if (photonView.IsMine)
         {
+            // Handle explosive damage
+            if (other.gameObject.tag.Equals("Explosive")) {
+                // If a ray casted from the enemy head to the grenade position is obscured, then the explosion is blocked
+                if (!EnvObstructionExists(transform.position, other.gameObject.transform.position)) {
+                    // Determine how far from the explosion the enemy was
+                    float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
+                    float blastRadius = other.gameObject.GetComponent<ThrowableScript>().blastRadius;
+                    distanceFromGrenade = Mathf.Min(distanceFromGrenade, blastRadius);
+                    float scale = 1f - (distanceFromGrenade / blastRadius);
+
+                    // Scale damage done to enemy by the distance from the explosion
+                    WeaponStats grenadeStats = other.gameObject.GetComponent<WeaponStats>();
+                    int damageReceived = (int)(grenadeStats.damage * scale);
+
+                    // Deal damage to the player
+                    TakeDamage(damageReceived);
+                }
+            }
+
             if (other.gameObject.tag.Equals("AmmoBox"))
             {
                 wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo + (wepActionScript.GetWeaponStats().clipCapacity - wepActionScript.currentAmmo);

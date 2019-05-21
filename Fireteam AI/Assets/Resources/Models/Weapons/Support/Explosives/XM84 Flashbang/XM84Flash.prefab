@@ -49,7 +49,7 @@ GameObject:
   - component: {fileID: 844780863489365642}
   m_Layer: 0
   m_Name: XM84Flash
-  m_TagString: Untagged
+  m_TagString: Explosive
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -187,8 +187,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rBody: {fileID: 6002776193723435588}
   col: {fileID: 5897989170987041375}
+  renderer: {fileID: 6165117138029286346}
+  explosionEffect: {fileID: 0}
   fuseTimer: 2.5
-  blastRadius: 0
+  blastRadius: 70
 --- !u!114 &8534068311299885334
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,7 +210,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 844780863489365642}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &844780863489365642
