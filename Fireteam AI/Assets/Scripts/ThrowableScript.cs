@@ -9,13 +9,17 @@ public class ThrowableScript : MonoBehaviour
     private const float THROW_FORCE_MULTIPLIER = 25f;
     public Rigidbody rBody;
     public SphereCollider col;
+    public MeshRenderer renderer;
+    public ParticleSystem explosionEffect;
     public float fuseTimer;
     public float blastRadius;
     private bool isLive;
+    private float explosionDuration;
 
     // Start is called before the first frame update
     void Awake()
     {
+        explosionEffect.Stop();
         isLive = false;
         TogglePhysics(false);
     }
@@ -42,12 +46,35 @@ public class ThrowableScript : MonoBehaviour
             if (fuseTimer <= 0f) {
                 Explode();
             }
+        } else {
+            if (fuseTimer <= 0f) {
+                // Disable explosion collider 
+                col.enabled = false;
+                if (!explosionEffect.IsAlive()) {
+                    DestroySelf();
+                }
+            }
         }
     }
 
     void Explode() {
-        // TODO: Fill out - if frag, hurt enemies within blast radius scaled by distance from grenade
-        // if flashbang, disorient the enemies within blast radius (go into disorientation animation)
+        // Freeze the physics
+        rBody.useGravity = false;
+        rBody.isKinematic = true;
+        // Create blast radius trigger collider - enemy will be affected if within this collider sphere during explosion
+        col.isTrigger = true;
+        col.radius = blastRadius;
+        // Make grenade disappear
+        renderer.enabled = false;
+        // Play the explosion particle effect
+        explosionEffect.Play();
+        isLive = false;
+        // Set nearby enemies on alert from explosion sound
+        GameControllerScript gameController = GameObject.FindGameObjectWithTag("GameObject").GetComponent<GameControllerScript>();
+        gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+    }
+
+    void DestroySelf() {
         PhotonNetwork.Destroy(gameObject);
     }
 

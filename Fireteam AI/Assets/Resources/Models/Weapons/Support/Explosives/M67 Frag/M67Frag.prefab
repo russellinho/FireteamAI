@@ -79,7 +79,7 @@ GameObject:
   - component: {fileID: 5718572801429695009}
   m_Layer: 0
   m_Name: M67Frag
-  m_TagString: Untagged
+  m_TagString: Explosive
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -217,8 +217,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rBody: {fileID: 6002776193723435588}
   col: {fileID: 5897989170987041375}
+  renderer: {fileID: 6165117138029286346}
+  explosionEffect: {fileID: 0}
   fuseTimer: 4.5
-  blastRadius: 0
+  blastRadius: 36
 --- !u!114 &2499851227998400674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,7 +240,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 5718572801429695009}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &5718572801429695009
