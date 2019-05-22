@@ -14,7 +14,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     // Player reference
     public PlayerActionScript playerActionScript;
-	public WeaponActionScript wepActionScript;
+		public WeaponActionScript wepActionScript;
     public WeaponScript wepScript;
 
     private GameControllerScript gameController;
@@ -54,7 +54,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.scoreboard.GetComponent<Canvas> ().enabled = false;
 		container.spectatorText.enabled = false;
 
-		gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameControllerScript> ();
+		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 		killPopupTimer = 0f;
 		hitmarkerTimer = 0f;
 		popupIsStarting = false;
@@ -109,7 +109,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			}
 		}
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		if (gameController == null) {

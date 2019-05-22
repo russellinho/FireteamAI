@@ -36,7 +36,7 @@ public class WeaponActionScript : MonoBehaviour
     private float recoilTime = 0f;
     private bool voidRecoilRecover = true;
     //private float recoilSlerp = 0f;
-    
+
     public int totalAmmoLeft;
     public int currentAmmo;
 
@@ -168,6 +168,10 @@ public class WeaponActionScript : MonoBehaviour
         // Shooting mechanics
         if (weaponStats.category.Equals("Explosive")) {
             FireGrenades();
+            return;
+        }
+        if (weaponStats.category.Equals("Booster")) {
+            FireBooster();
             return;
         }
         if (shootInput && !isReloading && playerActionScript.canShoot)
@@ -655,6 +659,25 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
+    void FireBooster() {
+        if (fireTimer < weaponStats.fireRate)
+        {
+            return;
+        }
+        if (currentAmmo == 0) {
+            ReloadSupportItem();
+        }
+        if (currentAmmo <= 0) return;
+        if (weaponStats.category.Equals("Booster")) {
+            if (isWieldingSupportItem && Input.GetButtonDown("Fire1")) {
+                pView.RPC("RpcUseBooster", RpcTarget.All);
+
+            }
+        }
+
+
+        }
+
     public void UseSupportItem() {
         // If the item is a grenade, instantiate and launch the grenade
         if (weaponStats.category.Equals("Explosive")) {
@@ -665,11 +688,23 @@ public class WeaponActionScript : MonoBehaviour
             currentAmmo--;
             fireTimer = 0.0f;
         }
+        else if (weaponStats.category.Equals("Booster")) {
+            // Reset fire timer and subtract ammo used
+            BoosterScript boosterScript = GetComponentInChildren<BoosterScript>();
+            boosterScript.UseBoosterItem(weaponStats.weaponName);
+            currentAmmo--;
+            fireTimer = 0.0f;
+        }
     }
 
     [PunRPC]
     void RpcCockGrenade(bool cocking) {
         animator.SetBool("isCockingGrenade", cocking);
+    }
+
+    [PunRPC]
+    void RpcUseBooster() {
+        animator.SetTrigger("useBooster");
     }
 
 }

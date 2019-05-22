@@ -2873,12 +2873,16 @@ MonoBehaviour:
   equippedPrimaryType: 
   equippedSecondaryWeapon: 
   equippedSecondaryType: 
+  equippedSupportWeapon: 
+  equippedSupportType: 
   equippedWep: 
   currentlyEquippedType: 0
-  totalPrimaryBulletsLeft: 0
-  totalSecondaryBulletsLeft: 0
-  currentBulletsPrimary: 0
-  currentBulletsSecondary: 0
+  totalPrimaryAmmoLeft: 0
+  totalSecondaryAmmoLeft: 0
+  totalSupportAmmoLeft: 0
+  currentAmmoPrimary: 0
+  currentAmmoSecondary: 0
+  currentAmmoSupport: 0
   weaponReady: 0
   pView: {fileID: 2147986590652865928}
 --- !u!114 &218755859189559228
@@ -3155,14 +3159,14 @@ MonoBehaviour:
     pView: {fileID: 0}
   playerActionScript: {fileID: 3253031339457809183}
   cameraShakeScript: {fileID: 4095976291033229494}
-  hudScript: {fileID: 0}
+  hudScript: {fileID: 2508778706829454615}
   audioController: {fileID: 287251196678012730}
   fpc: {fileID: 8161771613342906849}
   weaponHolder: {fileID: 3284298852302897634}
   animator: {fileID: 2464462323623336759}
   spread: 0
-  totalBulletsLeft: 120
-  currentBullets: 0
+  totalAmmoLeft: 0
+  currentAmmo: 0
   shootPoint: {fileID: 644006651792555671}
   bulletTrace: {fileID: 198223865259119552, guid: c4f5b88ec37f1f04db5f170233b15cb3,
     type: 3}
@@ -3200,7 +3204,7 @@ MonoBehaviour:
   viewCam: {fileID: 7414277011786800713}
   spectatorCam: {fileID: 0}
   thisSpectatorCam: {fileID: 0}
-  hud: {fileID: 0}
+  hud: {fileID: 2508778706829454615}
   equipmentScript: {fileID: 384782906892189734}
   camShakeScript: {fileID: 4095976291033229494}
   inGameMessengerHud: {fileID: 0}
@@ -3294,7 +3298,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 839698624353317809}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: -1
   isRuntimeInstantiated: 0
 --- !u!114 &839698624353317809
 MonoBehaviour:
