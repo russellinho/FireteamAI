@@ -9,12 +9,14 @@ public class ThrowableScript : MonoBehaviour
     private const float THROW_FORCE_MULTIPLIER = 25f;
     public Rigidbody rBody;
     public SphereCollider col;
-    public MeshRenderer renderer;
+    public MeshRenderer[] renderers;
     public ParticleSystem explosionEffect;
     public float fuseTimer;
     public float blastRadius;
     private bool isLive;
     private float explosionDuration;
+    public AudioSource explosionSound;
+    public AudioSource pinSound;
 
     // Start is called before the first frame update
     void Awake()
@@ -65,17 +67,25 @@ public class ThrowableScript : MonoBehaviour
         col.isTrigger = true;
         col.radius = blastRadius;
         // Make grenade disappear
-        renderer.enabled = false;
+        for (int i = 0; i < renderers.Length; i++) {
+            renderers[i].enabled = false;
+        }
+        // Play the explosion sound
+        explosionSound.Play();
         // Play the explosion particle effect
         explosionEffect.Play();
         isLive = false;
         // Set nearby enemies on alert from explosion sound
-        GameControllerScript gameController = GameObject.FindGameObjectWithTag("GameObject").GetComponent<GameControllerScript>();
+        GameControllerScript gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameControllerScript>();
         gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
     }
 
     void DestroySelf() {
         PhotonNetwork.Destroy(gameObject);
+    }
+
+    public void PlayPinSound() {
+        pinSound.Play();
     }
 
 }
