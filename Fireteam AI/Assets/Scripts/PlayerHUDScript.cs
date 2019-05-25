@@ -31,6 +31,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private bool popupIsStarting;
 	private bool roundStartFadeIn;
 	private float hitmarkerTimer;
+	private float disorientationTimer;
+	private float totalDisorientationTime;
 
     // Use this for initialization
     void Start () {
@@ -156,6 +158,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		HandleRespawnBar ();
 		UpdateObjectives ();
+		FlashbangUpdate();
     }
 
 	void FixedUpdate() {
@@ -533,5 +536,53 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		Destroy (playerMarkers [otherPlayer.ActorNumber]);
 		playerMarkers.Remove (otherPlayer.ActorNumber);
 	}
+
+	public void FlashbangEffect(float disorientationTime) {
+		disorientationTimer = disorientationTime;
+		totalDisorientationTime = disorientationTime;
+	}
+
+	private void FlashbangUpdate() {
+		// Subtract from flashbang effect time
+		if (disorientationTimer > 0f) {
+			// If beginning of the effect, set white screen and capture the last camera frame to put over
+			if (disorientationTimer == totalDisorientationTime) {
+				SetFlashbangEffect(true);
+			}
+			// If 1/3 of the time left, start fading both the white screen and the last camera frame
+			float fadeOutPortion = totalDisorientationTime / 3f;
+			if (disorientationTimer <= fadeOutPortion) {
+				float fadeAmount = disorientationTimer / fadeOutPortion;
+				container.flashbangOverlay.color = new Color(1f, 1f, 1f, fadeAmount);
+				container.flashbangScreenCap.color = new Color(container.flashbangScreenCap.color.r, container.flashbangScreenCap.color.g, container.flashbangScreenCap.color.b, fadeAmount);
+			}
+			disorientationTimer -= Time.deltaTime;
+		} else {
+			SetFlashbangEffect(false);
+		}
+	}
+
+	private void SetFlashbangEffect(bool b) {
+		if (b) {
+			// Enable the flashbang effect
+			// White overlay
+			container.flashbangScreenCap.enabled = true;
+			container.flashbangOverlay.enabled = true;
+			container.flashbangOverlay.color = new Color(1f, 1f, 1f, 1f);
+
+			// Incorrect screen graphics
+			container.flashbangScreenCap.enabled = true;
+			Texture2D result;
+			result = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
+			result.ReadPixels(container.flashbangScreenCap.rectTransform.rect, 0, 0, false);
+			result.Apply();
+			container.flashbangScreenCap.texture = result;
+		} else {
+			// Disable the flashbang effect
+			container.flashbangScreenCap.texture = null;
+			container.flashbangScreenCap.enabled = false;
+			container.flashbangOverlay.enabled = false;
+		}
+    }
 
 }
