@@ -9,7 +9,7 @@ public class ThrowableScript : MonoBehaviour
     private const float THROW_FORCE_MULTIPLIER = 25f;
     public Rigidbody rBody;
     public SphereCollider col;
-    public MeshRenderer renderer;
+    public MeshRenderer[] renderers;
     public ParticleSystem explosionEffect;
     public float fuseTimer;
     public float blastRadius;
@@ -65,7 +65,9 @@ public class ThrowableScript : MonoBehaviour
         col.isTrigger = true;
         col.radius = blastRadius;
         // Make grenade disappear
-        renderer.enabled = false;
+        for (int i = 0; i < renderers.Length; i++) {
+            renderers[i].enabled = false;
+        }
         // Play the explosion particle effect
         explosionEffect.Play();
         isLive = false;
