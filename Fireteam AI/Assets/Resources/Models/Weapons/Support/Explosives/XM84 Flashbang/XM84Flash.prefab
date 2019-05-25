@@ -87,7 +87,7 @@ Transform:
   m_GameObject: {fileID: 3222727907464018820}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0.5, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_Children:
   - {fileID: 3220686797226580242}
   m_Father: {fileID: 6406873327239293050}
@@ -107,9 +107,9 @@ ParticleSystem:
   cullingMode: 3
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
-  looping: 1
+  looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
@@ -4890,9 +4890,9 @@ ParticleSystem:
   cullingMode: 1
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
-  looping: 1
+  looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
@@ -10025,8 +10025,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6afd04f3b73b0542a6bd42f2bdc5e47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rBody: {fileID: 0}
-  col: {fileID: 0}
+  rBody: {fileID: 8363587286653212221}
+  col: {fileID: 8964761838703612023}
   renderers:
   - {fileID: 6406873327241063062}
   - {fileID: 6406873327241063060}
@@ -10034,9 +10034,11 @@ MonoBehaviour:
   - {fileID: 6406873327241063056}
   - {fileID: 6406873327241063070}
   - {fileID: 6406873327241063068}
-  explosionEffect: {fileID: 0}
+  explosionEffect: {fileID: 3350588218773017290}
   fuseTimer: 2.5
   blastRadius: 70
+  explosionSound: {fileID: 4354498385483937620}
+  pinSound: {fileID: 6689340121689838720}
 --- !u!114 &3272891355027485827
 MonoBehaviour:
   m_ObjectHideFlags: 0

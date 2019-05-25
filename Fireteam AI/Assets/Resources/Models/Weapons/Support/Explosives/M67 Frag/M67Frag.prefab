@@ -495,6 +495,8 @@ MonoBehaviour:
   explosionEffect: {fileID: 7142040739807068215}
   fuseTimer: 4.5
   blastRadius: 36
+  explosionSound: {fileID: 8243386482449264105}
+  pinSound: {fileID: 5561465029240044045}
 --- !u!114 &4237617246100750234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -828,7 +830,7 @@ Transform:
   m_GameObject: {fileID: 7050977123937979687}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 2, z: 0}
-  m_LocalScale: {x: 1.3, y: 1.3, z: 1.3}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 7047288913168227191}
   m_Father: {fileID: 3860504239686838637}
@@ -848,9 +850,9 @@ ParticleSystem:
   cullingMode: 3
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
-  looping: 1
-  prewarm: 1
-  playOnAwake: 1
+  looping: 0
+  prewarm: 0
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
@@ -5631,9 +5633,9 @@ ParticleSystem:
   cullingMode: 1
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
-  looping: 1
-  prewarm: 1
-  playOnAwake: 1
+  looping: 0
+  prewarm: 0
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1

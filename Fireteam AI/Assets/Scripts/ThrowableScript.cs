@@ -15,6 +15,8 @@ public class ThrowableScript : MonoBehaviour
     public float blastRadius;
     private bool isLive;
     private float explosionDuration;
+    public AudioSource explosionSound;
+    public AudioSource pinSound;
 
     // Start is called before the first frame update
     void Awake()
@@ -68,16 +70,22 @@ public class ThrowableScript : MonoBehaviour
         for (int i = 0; i < renderers.Length; i++) {
             renderers[i].enabled = false;
         }
+        // Play the explosion sound
+        explosionSound.Play();
         // Play the explosion particle effect
         explosionEffect.Play();
         isLive = false;
         // Set nearby enemies on alert from explosion sound
-        GameControllerScript gameController = GameObject.FindGameObjectWithTag("GameObject").GetComponent<GameControllerScript>();
+        GameControllerScript gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameControllerScript>();
         gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
     }
 
     void DestroySelf() {
         PhotonNetwork.Destroy(gameObject);
+    }
+
+    public void PlayPinSound() {
+        pinSound.Play();
     }
 
 }
