@@ -23,6 +23,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public InGameMessengerHUD inGameMessengerHud;
     public Animator animator;
     public PlayerScript playerScript;
+    public ParticleSystem healParticleEffect;
+    public ParticleSystem boostParticleEffect;
 
     // Player variables
     public int health;
@@ -58,6 +60,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public float hitTimer;
     public float healTimer;
+    public float boostTimer;
     public Vector3 hitLocation;
 
     // Mission references
@@ -112,6 +115,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         hitTimer = 1f;
         healTimer = 1f;
+        boostTimer = 1f;
         isRespawning = false;
         respawnTimer = 0f;
         escapeAvailablePopup = false;
@@ -484,6 +488,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         healTimer = 0f;
     }
 
+    public void ResetBoostTimer() {
+        boostTimer = 0f;
+    }
+
     [PunRPC]
     void RpcSetHealth(int h)
     {
@@ -514,6 +522,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
 		int ignoreLayers = (1 << 9) & (1 << 11) & (1 << 12) & (1 << 13) & (1 << 14) & (1 << 15);
+        Debug.Log("Env obstruction: " + Physics.Linecast(a, b, ignoreLayers));
 		return Physics.Linecast(a, b, ignoreLayers);
 	}
 
@@ -521,8 +530,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (photonView.IsMine)
         {
+            if (health <= 0) {
+                return;
+            }
             // Handle explosive damage
-            if (other.gameObject.tag.Equals("Explosive")) {
+            if (other.gameObject.name.Contains("M67")) {
                 // If a ray casted from the enemy head to the grenade position is obscured, then the explosion is blocked
                 if (!EnvObstructionExists(transform.position, other.gameObject.transform.position)) {
                     // Determine how far from the explosion the enemy was
@@ -537,6 +549,27 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
                     // Deal damage to the player
                     TakeDamage(damageReceived);
+                }
+            } else if (other.gameObject.name.Contains("XM84")) {
+                if (!EnvObstructionExists(transform.position, other.gameObject.transform.position)) {
+                    ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
+                    float totalDisorientationTime = ThrowableScript.FLASHBANG_TIME;
+                    
+                    // Determine how far from the explosion the enemy was
+                    float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
+                    float blastRadius = t.blastRadius;
+
+                    // Determine rotation away from the flashbang - if more pointed away, less the duration
+                    Vector3 toPosition = Vector3.Normalize(other.gameObject.transform.position - transform.position);
+                    float angleToPosition = Vector3.Angle(transform.forward, toPosition);
+
+                    // Modify total disorientation time dependent on distance from grenade and rotation away from grenade
+                    float distanceMultiplier = Mathf.Clamp(1f - (distanceFromGrenade / blastRadius) + 0.6f, 0f, 1f);
+                    float rotationMultiplier = Mathf.Clamp(1f - (angleToPosition / 180f) + 0.1f, 0f, 1f);
+
+                    totalDisorientationTime *= distanceMultiplier * rotationMultiplier;
+                    hud.FlashbangEffect(totalDisorientationTime);
+                    audioController.PlayFlashbangEarRingSound(totalDisorientationTime);
                 }
             }
 
@@ -658,6 +691,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         rotationSaved = false;
         hitTimer = 1f;
         healTimer = 1f;
+        boostTimer = 1f;
         currentBomb = null;
         bombDefuseCounter = 0f;
         wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo;
@@ -684,4 +718,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         thisSpectatorCam.GetComponent<SpectatorScript>().GameOverCam();
     }
+
+    public void PlayHealParticleEffect() {
+        healParticleEffect.Play();
+    }
+
+    public void PlayBoostParticleEffect() {
+        boostParticleEffect.Play();
+    }
+
 }

@@ -9,6 +9,8 @@ public class HUDContainer : MonoBehaviour {
 	// Health HUD
 	public Text healthText;
 	public Slider staminaBar;
+	public Image flashbangOverlay;
+	public RawImage flashbangScreenCap;
 
 	// Weapon HUD
 	public Text weaponLabelTxt;
@@ -25,6 +27,7 @@ public class HUDContainer : MonoBehaviour {
 	// Hit indication HUD
 	public RawImage hitFlare;
 	public RawImage healFlare;
+	public RawImage boostFlare;
 	public GameObject hitDir;
 	public GameObject hitMarker;
 
