@@ -92,7 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be4f3b19e65670e489fc3c06bce0e96f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName: Adrenaline Shot
+  weaponName: Adrenaphine
   type: Support
   category: Booster
   damage: 10
@@ -121,8 +121,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c0ca6c3c82d949849d62ae1af427cef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerActionScript: {fileID: 0}
-  health: 0
 --- !u!1 &7240324672291063272
 GameObject:
   m_ObjectHideFlags: 0

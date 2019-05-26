@@ -14,7 +14,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
     {
         [SerializeField] public bool m_IsWalking;
         [SerializeField] public bool m_IsCrouching;
-		[SerializeField] public bool m_IsRunning;
+    		[SerializeField] public bool m_IsRunning;
         [SerializeField] public bool m_IsMoving;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
         [SerializeField] private float m_JumpSpeed;
@@ -44,12 +44,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_NextStep;
         private bool m_Jumping;
         private AudioSource m_AudioSource;
-		public bool sprintLock;
+    		public bool sprintLock;
 
-		public bool canMove;
+    		public bool canMove;
         public WeaponActionScript weaponActionScript;
         public EquipmentScript equipmentScript;
         public PlayerScript playerScript;
+        public PlayerActionScript playerActionScript;
         public PhotonView photonView;
 
         public Transform spineTransform;
@@ -237,7 +238,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 // animator.SetBool("isWalking", false);
                 SetWalkingInAnimator(false);
             }
-            
+
             Vector3 desiredMove = m_Camera.transform.forward*m_Input.y + m_Camera.transform.right*m_Input.x;
 
             // get a normal for the surface that is being touched to move along it
@@ -381,7 +382,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 					if (Input.GetKey(KeyCode.C)) {
 						m_IsWalking = true;
 						m_IsRunning = false;
-					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f && GetComponent<PlayerActionScript>().sprintTime > 0f && !sprintLock) {
+					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f && playerActionScript.sprintTime > 0f && !sprintLock) {
 						m_IsWalking = false;
 						m_IsRunning = true;
 					} else {
@@ -393,11 +394,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
 #endif
 			// set the desired speed to be walking or running
 			//speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
-			speed = playerScript.speed;
+			speed = playerActionScript.totalSpeedBoost;
 			if (m_IsRunning) {
-				speed = playerScript.speed * 2f;
+				speed = playerActionScript.totalSpeedBoost * 2f;
 			} else if (m_IsCrouching || m_IsWalking) {
-                speed = playerScript.speed / 3f;
+                speed = playerActionScript.totalSpeedBoost / 3f;
             }
 
             m_Input = new Vector2(horizontal, vertical);

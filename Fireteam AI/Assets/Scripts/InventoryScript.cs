@@ -63,7 +63,7 @@ public class InventoryScript : MonoBehaviour
         Equipment scrubsBottomMale = new Equipment("Scrubs Bottom", "Bottom", "Models/Clothing/Sayre/Bottoms/scrubspants", "Models/Pics/scrubs_bottom", "A comfortable scrubs pants commonly used in the medical field.", false, 0, 0f, 0f, 0f);
         Armor standardVestMale = new Armor("Standard Vest", "Models/Equipment/Lucas/Armor/Standard Vest/Tops/lucasstandardvesttop", "Models/Equipment/Lucas/Armor/Standard Vest/Bottoms/lucasstandardvestbottom", "Models/Pics/standard_vest", "A first generation ballistic vest used to protect yourself in combat. Being first generation, it's a bit heavy, but offers great protection.", -0.08f, 0f, 0.2f);
         Armor standardVestFemale = new Armor("Standard Vest", "Models/Equipment/Hana/Armor/Standard Vest/Tops/hanastandardvesttop", "Models/Equipment/Hana/Armor/Standard Vest/Bottoms/hanastandardvestbottom", "Models/Pics/standard_vest", "A first generation ballistic vest used to protect yourself in combat. Being first generation, it's a bit heavy, but offers great protection.", -0.08f, 0f, 0.2f);
-        
+
         Dictionary<string, Equipment> lucasEquipment = new Dictionary<string, Equipment>();
         lucasEquipment.Add("Casual Shirt", casualShirtMale);
         lucasEquipment.Add("Casual T-Shirt", casualTShirtMale);
@@ -133,7 +133,7 @@ public class InventoryScript : MonoBehaviour
         hanaEquipment.Add("Surgical Mask", surgicalMaskFemale);
         hanaEquipment.Add("White Chucks", whiteChucks);
         hanaEquipment.Add("Standard Boots", standardBootsFemale);
-        
+
         Dictionary<string, Equipment> jadeEquipment = new Dictionary<string, Equipment>();
         jadeEquipment.Add("Casual Tank Top", casualTankTopFemale);
         jadeEquipment.Add("Casual T-Shirt", casualTShirtFemale);
@@ -167,8 +167,8 @@ public class InventoryScript : MonoBehaviour
         weaponCatalog.Add("M67 Frag", new Weapon("M67 Frag", "Support", "Explosive", "Models/Weapons/Support/Explosives/M67 Frag/M67Frag", "Models/Pics/m67frag-thumb", "The standard issue high explosive anti-personnel grenade given to all mercenaries upon completion of basic training.", 110f, 95f, -1f, -1f, -1f, -1f, 1, 3));
         weaponCatalog.Add("XM84 Flashbang", new Weapon("XM84 Flashbang", "Support", "Explosive", "Models/Weapons/Support/Explosives/XM84 Flashbang/XM84Flash", "Models/Pics/xm84flash-thumb", "An explosive non-lethal device used to temporarily blind and disorient your enemies. The closer the enemy is and the more eye exposure given to the device, the longer the effect.", 0f, 95f, -1f, -1f, -1f, -1f, 1, 3));
         weaponCatalog.Add("Medkit", new Weapon("Medkit", "Support", "Booster", "Models/Weapons/Support/Boosters/Medkit/Medkit", "Models/Pics/medkit-thumb", "Emits a chemical into your body that expedites the coagulation and production of red blood cells. Replenishes 60 HP.", -1f, 100f, -1f, -1f, -1f, -1f, 1, 2));
-        weaponCatalog.Add("Adrenaphine", new Weapon("Adrenaphine", "Support", "Booster", "Models/Weapons/Support/Boosters/Adrenaline Shot/Adrenaline Shot", "Models/Pics/adrenalineshot-thumb", "Injects pure adrenaline straight into your blood stream, allowing you to experience unlimited stamina and faster movement speed for 10 seconds.", -1f, 100f, -1f, -1f, -1f, -1f, 1, 2));
-        
+        weaponCatalog.Add("Adrenaphine", new Weapon("Adrenaphine", "Support", "Booster", "Models/Weapons/Support/Boosters/Adrenaline Shot/AdrenalineShot", "Models/Pics/adrenalineshot-thumb", "Injects pure adrenaline straight into your blood stream, allowing you to experience unlimited stamina and faster movement speed for 10 seconds.", -1f, 100f, -1f, -1f, -1f, -1f, 1, 2));
+
         // Characters
         characterCatalog.Add("Lucas", new Character("Lucas", 'M', "Models/Characters/Lucas/PlayerPrefabLucas", "Models/Pics/character_lucas", "Nationality: British\nAs a reformed professional criminal, Lucas works swiftly and gets the job done.", new string[]{"Models/Characters/Lucas/Extra Skins/Ankles Long Sleeves/lucasskinanklesonly", "Models/Characters/Lucas/Extra Skins/Ankles Mid Sleeves/lucasanklesmid", "Models/Characters/Lucas/Extra Skins/Ankles Short Sleeves/lucasanklesshortsleeve"}, lucasEquipment, lucasArmor));
         characterCatalog.Add("Daryl", new Character("Daryl", 'M', "Models/Characters/Daryl/PlayerPrefabDaryl", "Models/Pics/character_daryl", "Nationality: American\nDaryl was an ex professional college football player whose career ended abruptly after an unsustainable knee injury. His tenacity, size, and strength all serve him in combat.", new string[]{"Models/Characters/Daryl/1/skindonald1", "Models/Characters/Daryl/2/skindonald2", "Models/Characters/Daryl/3/skindonald3"}, darylEquipment, lucasArmor));
@@ -180,7 +180,7 @@ public class InventoryScript : MonoBehaviour
         Dictionary<string, Vector3> rifleHandPositions = new Dictionary<string, Vector3>();
         rifleHandPositions.Add("AK-47", new Vector3(-0.04f, 0.12f, 0.075f));
         rifleHandPositions.Add("M4A1", new Vector3(-0.007f, 0.111f, 0.04f));
-    
+
         Dictionary<string, Vector3> shotgunHandPositions = new Dictionary<string, Vector3>();
         shotgunHandPositions.Add("R870", new Vector3(-0.071f, 0.15f, 0.11f));
 
@@ -190,7 +190,7 @@ public class InventoryScript : MonoBehaviour
         Dictionary<string, Vector3> rifleHandPositionsF = new Dictionary<string, Vector3>();
         rifleHandPositionsF.Add("AK-47", new Vector3(-0.1f, 0.14f, 0.04f));
         rifleHandPositionsF.Add("M4A1", new Vector3(-0.06f, 0.12f, -0.01f));
-    
+
         Dictionary<string, Vector3> shotgunHandPositionsF = new Dictionary<string, Vector3>();
         shotgunHandPositionsF.Add("R870", new Vector3(-0.13f, 0.15f, 0.084f));
 
@@ -221,7 +221,7 @@ public class InventoryScript : MonoBehaviour
         collectCharacters();
         collectWeapons();
     }
-    
+
     public static void collectCharacters() {
         // TODO: Supposed to load from database, but for now, will hard code acquired items
         myCharacters.Add("Lucas");

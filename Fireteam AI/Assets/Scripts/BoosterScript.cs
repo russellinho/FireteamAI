@@ -5,6 +5,8 @@ using UnityEngine;
 public class BoosterScript : MonoBehaviour
 {
     private PlayerActionScript playerActionScript;
+    private WeaponStats weaponStats;
+
 
 
 
@@ -26,7 +28,7 @@ public class BoosterScript : MonoBehaviour
               UseMedKit();
           }
       else if (boosterName.Equals("Adrenaphine")) {
-
+              UseAdrenaphine();
           }
       else {
         Debug.Log("Hello" + boosterName);
@@ -35,26 +37,19 @@ public class BoosterScript : MonoBehaviour
 
 
     public void UseMedKit() {
-      StartCoroutine(addHealth());
+      playerActionScript.ResetHealTimer();
+      playerActionScript.PlayHealParticleEffect();
+      playerActionScript.audioController.PlayGruntSound();
+      StartCoroutine(playerActionScript.addHealth());
     }
 
-    IEnumerator addHealth(){
-        Debug.Log("medkit used");
-        // use below to test on self
-        // playerActionScript.health = 60;
-        if (playerActionScript.health < 100 && playerActionScript.health > 0){ 
-          for (int i = 0; i < 5; i++) {
-            if (playerActionScript.health+12 > 100){
-              playerActionScript.health = 100;
-            } else {
-              playerActionScript.health += 12;
-            }
-            yield return new WaitForSeconds(2);
-
-          }
-
-         } else {
-           yield return null;
-         }
+    public void UseAdrenaphine() {
+      playerActionScript.ResetBoostTimer();
+      playerActionScript.PlayBoostParticleEffect();
+      playerActionScript.audioController.PlayGruntSound();
+      StartCoroutine(playerActionScript.useStaminaBoost(10f, 2f));
     }
+
+
+
 }

@@ -42,6 +42,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private bool escapeAvailablePopup;
     private bool isDefusing;
     private float enterSpectatorModeTimer;
+    private bool unlimitedStamina;
+    private float originalSpeed;
+    public float totalSpeedBoost;
 
     // Game logic helper variables
     public GameObject[] subComponents;
@@ -86,7 +89,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         health = 100;
         kills = 0;
         deaths = 0;
-        sprintTime = playerScript.stats.stamina;
+        sprintTime = playerScript.stamina;
 
          currentBombIndex = 0;
          bombIterator = 0;
@@ -120,6 +123,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         respawnTimer = 0f;
         escapeAvailablePopup = false;
         enterSpectatorModeTimer = 0f;
+        unlimitedStamina = false;
+        originalSpeed = playerScript.speed;
+        totalSpeedBoost = originalSpeed;
     }
 
     void Update()
@@ -186,7 +192,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             canShoot = false;
             //animator.SetBool("isSprinting", true);
             fpc.SetSprintingInAnimator(true);
-            if (sprintTime > 0f)
+            if (sprintTime > 0f && !unlimitedStamina)
             {
                 sprintTime -= Time.deltaTime;
             }
@@ -200,7 +206,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             audioController.PlaySprintSound(false);
             // animator.SetBool("isSprinting", false);
             fpc.SetSprintingInAnimator(false);
-            if (sprintTime < 3f)
+            if (sprintTime < playerScript.stamina && !unlimitedStamina)
             {
                 sprintTime += Time.deltaTime;
             }
@@ -240,6 +246,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         DetermineEscaped();
         RespawnRoutine();
+
+
     }
 
     void AddMyselfToPlayerList()
@@ -291,7 +299,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             charController.height = charHeightOriginal;
             charController.center = new Vector3(0f, charCenterYOriginal, 0f);
         }
-        
+
         // Set the animation to crouching
         // animator.SetBool("Crouching", fpc.m_IsCrouching);
         fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
@@ -554,7 +562,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 if (!EnvObstructionExists(transform.position, other.gameObject.transform.position)) {
                     ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
                     float totalDisorientationTime = ThrowableScript.FLASHBANG_TIME;
-                    
+
                     // Determine how far from the explosion the enemy was
                     float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
                     float blastRadius = t.blastRadius;
@@ -725,6 +733,39 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void PlayBoostParticleEffect() {
         boostParticleEffect.Play();
+    }
+
+    public IEnumerator addHealth(){
+        Debug.Log("medkit used");
+        // use below to test on self
+        this.health = 60;
+        int healthIncrement = (int)(playerScript.health*.6f/5f);
+        if (this.health < playerScript.health && this.health > 0){
+          for (int i = 0; i < 5; i++) {
+            if (this.health + healthIncrement > playerScript.health){
+              this.health = playerScript.health;
+            } else {
+              this.health += healthIncrement;
+            }
+            yield return new WaitForSeconds(2);
+
+          }
+
+         } else {
+           yield return null;
+         }
+    }
+
+
+    public IEnumerator useStaminaBoost(float staminaBoost, float speedBoost){
+        Debug.Log("Adrenaphine used");
+
+        unlimitedStamina = true;
+        totalSpeedBoost = originalSpeed * speedBoost;
+        yield return new WaitForSeconds(staminaBoost);
+        unlimitedStamina = false;
+        totalSpeedBoost = originalSpeed;
+
     }
 
 }

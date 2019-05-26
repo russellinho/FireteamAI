@@ -7,11 +7,13 @@ public class Stats
     public float speed;
     public float stamina;
     public float armor;
+    public int health;
 
     public Stats() {
         this.speed = 1f;
         this.stamina = 1f;
         this.armor = 1f;
+        this.health = 0;
     }
 
     public void updateSpeed(float value)
@@ -29,10 +31,17 @@ public class Stats
         this.armor += value;
     }
 
-    public void updateStats(float speed, float stamina, float armor)
+    public void updateHealth(int value)
+    {
+        this.health += value;
+    }
+
+    public void updateStats(float speed, float stamina, float armor, int health)
     {
         updateSpeed(speed);
         updateStamina(stamina);
         updateArmor(armor);
+        updateHealth(health);
+
     }
 }

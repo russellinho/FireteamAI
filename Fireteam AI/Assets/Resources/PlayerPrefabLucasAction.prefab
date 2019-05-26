@@ -37366,6 +37366,7 @@ MonoBehaviour:
   speed: 0
   stamina: 0
   armor: 0
+  health: 0
 --- !u!143 &3560548475664464136
 CharacterController:
   m_ObjectHideFlags: 0
@@ -37596,6 +37597,7 @@ MonoBehaviour:
   weaponActionScript: {fileID: 1319902226699020379}
   equipmentScript: {fileID: 6910827063722677838}
   playerScript: {fileID: 1241241058576032324}
+  playerActionScript: {fileID: 7649428840762148136}
   photonView: {fileID: 6989970583869892677}
   spineTransform: {fileID: 6772054392541729064}
   animator: {fileID: 6772054392549162816}
@@ -37686,6 +37688,7 @@ MonoBehaviour:
   kills: 0
   isRespawning: 0
   respawnTimer: 0
+  totalSpeedBoost: 0
   subComponents: []
   fpc: {fileID: 3572228914654154590}
   hitTimer: 0
@@ -37768,7 +37771,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 3491014420181445126}
-  viewIdField: 0
+  viewIdField: 3
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &3491014420181445126
