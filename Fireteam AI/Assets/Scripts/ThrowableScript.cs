@@ -13,6 +13,8 @@ public class ThrowableScript : MonoBehaviour
     public MeshRenderer[] renderers;
     public ParticleSystem explosionEffect;
     public float fuseTimer;
+    public bool explosionDelay;
+    private float explosionDelayTimer;
     public float blastRadius;
     private bool isLive;
     private float explosionDuration;
@@ -47,14 +49,35 @@ public class ThrowableScript : MonoBehaviour
         if (isLive) {
             fuseTimer -= Time.deltaTime;
             if (fuseTimer <= 0f) {
-                Explode();
+                if (explosionDelay) {
+                    ExplodeDelay();
+                } else {
+                    Explode();
+                }
             }
         } else {
-            if (fuseTimer <= 0f) {
-                // Disable explosion collider 
-                col.enabled = false;
-                if (!explosionEffect.IsAlive()) {
-                    DestroySelf();
+            if (explosionDelay) {
+                if (explosionDelayTimer > 0f) {
+                    explosionDelayTimer -= Time.deltaTime;
+                    if (explosionDelayTimer <= 0f) {
+                        EnableBlastCollider();
+                        return;
+                    }
+                }
+                if (fuseTimer <= 0f && explosionDelayTimer <= 0f) {
+                    // Disable explosion collider 
+                    col.enabled = false;
+                    if (!explosionEffect.IsAlive()) {
+                        DestroySelf();
+                    }
+                }
+            } else {
+                if (fuseTimer <= 0f) {
+                    // Disable explosion collider 
+                    col.enabled = false;
+                    if (!explosionEffect.IsAlive()) {
+                        DestroySelf();
+                    }
                 }
             }
         }
@@ -65,8 +88,7 @@ public class ThrowableScript : MonoBehaviour
         rBody.useGravity = false;
         rBody.isKinematic = true;
         // Create blast radius trigger collider - enemy will be affected if within this collider sphere during explosion
-        col.isTrigger = true;
-        col.radius = blastRadius;
+        EnableBlastCollider();
         // Make grenade disappear
         for (int i = 0; i < renderers.Length; i++) {
             renderers[i].enabled = false;
@@ -79,6 +101,32 @@ public class ThrowableScript : MonoBehaviour
         // Set nearby enemies on alert from explosion sound
         GameControllerScript gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameControllerScript>();
         gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+    }
+
+    // Same method as above except this one has a delay on it for the collision to register
+    void ExplodeDelay() {
+        // Freeze the physics
+        rBody.useGravity = false;
+        rBody.isKinematic = true;
+        // Set the time to enable collision after 1.5 seconds
+        explosionDelayTimer = 1.5f;
+        // Make grenade disappear
+        for (int i = 0; i < renderers.Length; i++) {
+            renderers[i].enabled = false;
+        }
+        // Play the explosion sound
+        explosionSound.Play();
+        // Play the explosion particle effect
+        explosionEffect.Play();
+        isLive = false;
+        // Set nearby enemies on alert from explosion sound
+        GameControllerScript gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameControllerScript>();
+        gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+    }
+
+    void EnableBlastCollider() {
+        col.isTrigger = true;
+        col.radius = blastRadius;
     }
 
     void DestroySelf() {
