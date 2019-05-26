@@ -23,6 +23,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public InGameMessengerHUD inGameMessengerHud;
     public Animator animator;
     public PlayerScript playerScript;
+    public ParticleSystem healParticleEffect;
+    public ParticleSystem boostParticleEffect;
 
     // Player variables
     public int health;
@@ -58,6 +60,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public float hitTimer;
     public float healTimer;
+    public float boostTimer;
     public Vector3 hitLocation;
 
     // Mission references
@@ -112,6 +115,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         hitTimer = 1f;
         healTimer = 1f;
+        boostTimer = 1f;
         isRespawning = false;
         respawnTimer = 0f;
         escapeAvailablePopup = false;
@@ -484,6 +488,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         healTimer = 0f;
     }
 
+    public void ResetBoostTimer() {
+        boostTimer = 0f;
+    }
+
     [PunRPC]
     void RpcSetHealth(int h)
     {
@@ -683,6 +691,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         rotationSaved = false;
         hitTimer = 1f;
         healTimer = 1f;
+        boostTimer = 1f;
         currentBomb = null;
         bombDefuseCounter = 0f;
         wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo;
@@ -709,4 +718,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         thisSpectatorCam.GetComponent<SpectatorScript>().GameOverCam();
     }
+
+    public void PlayHealParticleEffect() {
+        healParticleEffect.Play();
+    }
+
+    public void PlayBoostParticleEffect() {
+        boostParticleEffect.Play();
+    }
+
 }

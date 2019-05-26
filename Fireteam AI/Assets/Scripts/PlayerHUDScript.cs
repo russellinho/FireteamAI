@@ -162,9 +162,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     }
 
 	void FixedUpdate() {
+		// Hierarchy: hit (red) flare takes 1st priority, heal (green) second, boost (yellow) third
 		UpdateHitFlare();
 		if (!container.hitFlare.GetComponent<RawImage> ().enabled) {
 			UpdateHealFlare();
+			if (!container.healFlare.GetComponent<RawImage>().enabled) {
+				UpdateBoostFlare();
+			}
 		}
 	}
 
@@ -307,6 +311,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	void UpdateHitFlare() {
 		// Hit timer is set to 0 every time the player is hit, if player has been hit recently, make sure the hit flare and dir is set
 		container.healFlare.GetComponent<RawImage>().enabled = false;
+		playerActionScript.healTimer = 1f;
+		container.boostFlare.GetComponent<RawImage>().enabled = false;
+		playerActionScript.boostTimer = 1f;
 		if (playerActionScript.hitTimer < 1f) {
 			container.hitFlare.GetComponent<RawImage> ().enabled = true;
 			float a = -Vector3.Angle (transform.forward, playerActionScript.hitLocation);
@@ -321,11 +328,22 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void UpdateHealFlare() {
+		container.boostFlare.GetComponent<RawImage>().enabled = false;
+		playerActionScript.boostTimer = 1f;
 		if (playerActionScript.healTimer < 1f) {
 			container.healFlare.GetComponent<RawImage> ().enabled = true;
 			playerActionScript.healTimer += Time.deltaTime;
 		} else {
 			container.healFlare.GetComponent<RawImage> ().enabled = false;
+		}
+	}
+
+	void UpdateBoostFlare() {
+		if (playerActionScript.boostTimer < 1f) {
+			container.boostFlare.GetComponent<RawImage> ().enabled = true;
+			playerActionScript.boostTimer += Time.deltaTime;
+		} else {
+			container.boostFlare.GetComponent<RawImage> ().enabled = false;
 		}
 	}
 
