@@ -11,6 +11,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	private Vector3 customizationCameraPos = new Vector3(-4.7f, 4.08f, 21.5f);
 	private Vector3 defaultCameraPos = new Vector3(-7.3f, 4.08f, 22.91f);
+	private Vector3 defaultCameraRot = new Vector3(10f, 36.2f, 0f);
+	private Vector3 modCameraRot = new Vector3(3.5f, 43.5f, 0f);
+	private Vector3 modCameraPos = new Vector3(2f, 4.5f, 26.7f);
 	private int camPos;
 	private float camMoveTimer;
 	public GameObject itemDescriptionPopupRef;
@@ -21,6 +24,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	//public GameObject networkMan;
 	public GameObject matchmakingMenu;
 	public GameObject customizationMenu;
+	public GameObject modMenu;
 	public GameObject loadingScreen;
 	public GameObject jukebox;
 	public GameObject mainMenuPopup;
@@ -185,12 +189,24 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 					}
 				} else if (camPos == 1) {
 					mainCam.transform.position = Vector3.Lerp(defaultCameraPos, customizationCameraPos, camMoveTimer);
+					mainCam.transform.rotation = Quaternion.Lerp(Quaternion.Euler(modCameraRot), Quaternion.Euler(defaultCameraRot), camMoveTimer);
 					if (camMoveTimer < 1f) {
 						camMoveTimer += (Time.deltaTime / 1.2f);
 					}
 					if (Vector3.Equals(mainCam.transform.position, customizationCameraPos)) {
 						if (!customizationMenu.activeInHierarchy) {
 							customizationMenu.SetActive(true);
+						}
+					}
+				} else if (camPos == 2) {
+					mainCam.transform.position = Vector3.Lerp(customizationCameraPos, modCameraPos, camMoveTimer);
+					mainCam.transform.rotation = Quaternion.Lerp(Quaternion.Euler(defaultCameraRot), Quaternion.Euler(modCameraRot), camMoveTimer);
+					if (camMoveTimer < 1f) {
+						camMoveTimer += (Time.deltaTime / 1.2f);
+					}
+					if (Vector3.Equals(mainCam.transform.position, modCameraPos)) {
+						if (!modMenu.activeInHierarchy) {
+							modMenu.SetActive(true);
 						}
 					}
 				}
@@ -254,6 +270,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		matchmakingMenu.SetActive (false);
 		camPos = 1;
 		camMoveTimer = 0f;
+	}
+
+	public void GoToMod() {
+		
 	}
 
 	public void goToMainMenu (){
