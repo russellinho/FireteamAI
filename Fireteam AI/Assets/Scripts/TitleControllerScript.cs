@@ -85,6 +85,21 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject equippedSecondarySlot;
 	public GameObject equippedSupportSlot;
 
+	// Mod menu
+	public GameObject currentlyEquippedModPrefab;
+	private Vector3 weaponPreviewPos;
+	public GameObject weaponPreviewRef;
+	public GameObject modInventoryContent;
+	public Button suppressorsBtn;
+	public Dropdown modWeaponSelect;
+	public Text modWeaponLbl;
+	public Text equippedSuppressorTxt;
+	public Text modDamageTxt;
+	public Text modAccuracyTxt;
+	public Text modRecoilTxt;
+	public Text modClipCapacityTxt;
+	public Text modMaxAmmoTxt;
+
 	// Use this for initialization
 	void Start () {
 		//PlayerData.playerdata.FindBodyRef ();
@@ -264,6 +279,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     public void GoToCustomization() {
 		titleText.enabled = false;
 		mainMenu.SetActive (false);
+		modMenu.SetActive(false);
 		equippedPrimarySlot.SetActive(false);
 		equippedSecondarySlot.SetActive(false);
 		equippedSupportSlot.SetActive(false);
@@ -273,7 +289,24 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void GoToMod() {
-		
+		mainMenu.SetActive(false);
+		customizationMenu.SetActive(false);
+		camPos = 2;
+		camMoveTimer = 0f;
+	}
+
+	public void ReturnToCustomizationFromModMenu() {
+		// Disable modification menu
+		ResetModMenu();
+		GoToCustomization();
+		SwitchToLoadoutScreen();
+	}
+
+	private void ResetModMenu() {
+		// Return all buttons to regular color
+		suppressorsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+
 	}
 
 	public void goToMainMenu (){
@@ -1047,6 +1080,43 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	public void OnSuppressorsBtnClicked() {
+		// Change all button colors
+		suppressorsBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+
+		// Delete any currently existing items in the grid
+		RawImage[] existingThumbnails = modInventoryContent.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			currentlyEquippedItemPrefab = null;
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+		}
+
+		// Populate into grid layout
+		for (int i = 0; i < InventoryScript.myMods.Count; i++) {
+			Mod m = InventoryScript.modCatalog[(string)InventoryScript.myMods[i]];
+			if (!m.category.Equals("Suppressor")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().modDetails = m;
+			o.GetComponent<ShopItemScript>().itemName = m.name;
+            o.GetComponent<ShopItemScript>().itemType = "Mod";
+			o.GetComponent<ShopItemScript>().itemDescription = m.description;
+			o.GetComponent<ShopItemScript>().modCategory = m.category;
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(m.thumbnailPath);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
+			if (equippedSuppressorTxt.text.Equals(m.name)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedModPrefab = o;
+			}
+			o.transform.SetParent(modInventoryContent.transform);
+		}
+	}
+
 	void SwitchToLoadoutScreen() {
 		loadoutBtn.GetComponentInChildren<Text>().text = "Equipment";
 		headgearBtn.gameObject.SetActive(false);
@@ -1167,6 +1237,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		SetArmorBoostPercent(armor);
 		SetSpeedBoostPercent(speed);
 		SetStaminaBoostPercent(stamina);
+	}
+
+	private void PopulateWeaponDropdownForModScreen() {
+		List<string> currentMods = new List<string>();
+		for (int i = 0; i < InventoryScript.myMods.Count; i++) {
+			currentMods.Add(((Mod)InventoryScript.myMods[i]).name);
+		}
+		modWeaponSelect.AddOptions(currentMods);
 	}
 		
 }

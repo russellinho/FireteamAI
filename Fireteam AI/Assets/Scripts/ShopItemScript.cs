@@ -12,10 +12,12 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public Equipment equipmentDetails;
     public Armor armorDetails;
     public Weapon weaponDetails;
+    public Mod modDetails;
     public string itemName;
     public string itemType;
     public string itemDescription;
     public string weaponCategory;
+    public string modCategory;
     // 0 = long sleeves, 1 = mid sleeves, 2 = short sleeves
     public Text equippedInd;
     private int clickCount;
