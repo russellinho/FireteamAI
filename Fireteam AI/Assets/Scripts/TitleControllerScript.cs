@@ -87,12 +87,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	// Mod menu
 	public GameObject currentlyEquippedModPrefab;
-	private Vector3 weaponPreviewPos;
+	public GameObject weaponPreviewSlot;
 	public GameObject weaponPreviewRef;
 	public GameObject modInventoryContent;
 	public Button suppressorsBtn;
 	public Dropdown modWeaponSelect;
 	public Text modWeaponLbl;
+	private string previousWeaponName;
 	public Text equippedSuppressorTxt;
 	public Text modDamageTxt;
 	public Text modAccuracyTxt;
@@ -1249,19 +1250,24 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Initialize the dropdown with the first option
 		modWeaponSelect.value = 0;
-		
+		LoadWeaponForModding(modWeaponSelect.itemText.text);
 
 	}
 
 	public void LoadWeaponForModding(string weaponName) {
 		// Load the proper weapon modding template
+		previousWeaponName = weaponName;
+		GameObject t = (GameObject)Resources.Load("WeaponTemplates/" + weaponName);
 
 		// Place the saved mods for that weapon back on the weapon template
+		ModInfo savedModInfo = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
 
 		// Update weapon stats with mods
+		SetWeaponModValues(weaponName, savedModInfo.equippedSuppressor);
 
 		// Place the weapon template in the proper position
-
+		t.transform.SetParent(weaponPreviewSlot.transform);
+		t.transform.localPosition = Vector3.zero;
 	}
 
 	public void SetWeaponModValues(string weaponName, string suppressorName) {
@@ -1276,14 +1282,39 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		float totalRecoil = w.recoil + suppressor.recoilBoost;
 		float totalClipCapacity = w.clipCapacity + suppressor.clipCapacityBoost;
 		float totalMaxAmmo = w.maxAmmo + suppressor.maxAmmoBoost;
+
+		SetWeaponModdedStats(totalDamage, totalAccuracy, totalRecoil, totalClipCapacity, totalMaxAmmo);
 	}
 
-	public void SetWeaponModdedStats(float damage, float accuracy, float recoil, float clipCapacity, float maxAmmo) {
+	private void SetWeaponModdedStats(float damage, float accuracy, float recoil, float clipCapacity, float maxAmmo) {
 		modDamageTxt.text = damage != -1 ? ""+damage : "-";
 		modAccuracyTxt.text = accuracy != -1 ? ""+accuracy : "-";
 		modRecoilTxt.text = recoil != -1 ? ""+recoil : "-";
 		modClipCapacityTxt.text = clipCapacity != -1 ? ""+clipCapacity : "-";
 		modMaxAmmoTxt.text = maxAmmo != -1 ? ""+maxAmmo : "-";
+	}
+
+	private void DestroyOldWeaponTemplate() {
+		// Destroy a weapon that is currently in the modding slot to make way for a new one
+		Transform[] children = weaponPreviewSlot.GetComponentsInChildren<Transform>();
+		if (children.Length > 1) {
+			Destroy(children[1].gameObject);
+		}
+	}
+
+	private void SaveModsForCurrentWeapon() {
+		if (!previousWeaponName.Equals("")) {
+			PlayerData.playerdata.SaveModDataForWeapon(previousWeaponName, equippedSuppressorTxt.text);
+		}
+	}
+
+	public void OnWeaponModDropdownSelect() {
+		// First, destroy the old weapon that was being modded and save its data
+		SaveModsForCurrentWeapon();
+		DestroyOldWeaponTemplate();
+
+		// Then create the new one
+		LoadWeaponForModding(modWeaponSelect.itemText.text);
 	}
 		
 }
