@@ -65,7 +65,7 @@ public class InventoryScript : MonoBehaviour
         Equipment scrubsBottomMale = new Equipment("Scrubs Bottom", "Bottom", "Models/Clothing/Sayre/Bottoms/scrubspants", "Models/Pics/scrubs_bottom", "A comfortable scrubs pants commonly used in the medical field.", false, 0, 0f, 0f, 0f);
         Armor standardVestMale = new Armor("Standard Vest", "Models/Equipment/Lucas/Armor/Standard Vest/Tops/lucasstandardvesttop", "Models/Equipment/Lucas/Armor/Standard Vest/Bottoms/lucasstandardvestbottom", "Models/Pics/standard_vest", "A first generation ballistic vest used to protect yourself in combat. Being first generation, it's a bit heavy, but offers great protection.", -0.08f, 0f, 0.2f);
         Armor standardVestFemale = new Armor("Standard Vest", "Models/Equipment/Hana/Armor/Standard Vest/Tops/hanastandardvesttop", "Models/Equipment/Hana/Armor/Standard Vest/Bottoms/hanastandardvestbottom", "Models/Pics/standard_vest", "A first generation ballistic vest used to protect yourself in combat. Being first generation, it's a bit heavy, but offers great protection.", -0.08f, 0f, 0.2f);
-        Mod standardSuppressor = new Mod("Standard Suppressor", "Suppressor", "Models/Mods/Suppressors/Standard Suppressor/standardsuppressor", "Models/Pics/standardsuppressor", "A standard suppressor used to silence your gun.", -3f, 2f, -4f, 0f, 0, 0);
+        Mod standardSuppressor = new Mod("Standard Suppressor", "Suppressor", "Models/Mods/Suppressors/Standard Suppressor/standardsuppressor", "Models/Pics/standardsuppressor-thumb", "A standard issue suppressor used to silence your weapon.", -3f, 2f, -4f, 0f, 0, 0);
 
         Dictionary<string, Equipment> lucasEquipment = new Dictionary<string, Equipment>();
         lucasEquipment.Add("Casual Shirt", casualShirtMale);

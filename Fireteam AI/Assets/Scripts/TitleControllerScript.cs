@@ -1240,11 +1240,50 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	private void PopulateWeaponDropdownForModScreen() {
-		List<string> currentMods = new List<string>();
-		for (int i = 0; i < InventoryScript.myMods.Count; i++) {
-			currentMods.Add(((Mod)InventoryScript.myMods[i]).name);
+		// Populate the dropdown with all weapons the player owns
+		List<string> myWepsList = new List<string>();
+		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
+			myWepsList.Add((string)InventoryScript.myWeapons[i]);
 		}
-		modWeaponSelect.AddOptions(currentMods);
+		modWeaponSelect.AddOptions(myWepsList);
+
+		// Initialize the dropdown with the first option
+		modWeaponSelect.value = 0;
+		
+
+	}
+
+	public void LoadWeaponForModding(string weaponName) {
+		// Load the proper weapon modding template
+
+		// Place the saved mods for that weapon back on the weapon template
+
+		// Update weapon stats with mods
+
+		// Place the weapon template in the proper position
+
+	}
+
+	public void SetWeaponModValues(string weaponName, string suppressorName) {
+		modWeaponLbl.text = weaponName;
+		equippedSuppressorTxt.text = suppressorName.Equals("") ? "None" : suppressorName;
+		
+		// Set stats
+		Weapon w = InventoryScript.weaponCatalog[weaponName];
+		Mod suppressor = InventoryScript.modCatalog[suppressorName];
+		float totalDamage = w.damage + suppressor.damageBoost;
+		float totalAccuracy = w.accuracy + suppressor.accuracyBoost;
+		float totalRecoil = w.recoil + suppressor.recoilBoost;
+		float totalClipCapacity = w.clipCapacity + suppressor.clipCapacityBoost;
+		float totalMaxAmmo = w.maxAmmo + suppressor.maxAmmoBoost;
+	}
+
+	public void SetWeaponModdedStats(float damage, float accuracy, float recoil, float clipCapacity, float maxAmmo) {
+		modDamageTxt.text = damage != -1 ? ""+damage : "-";
+		modAccuracyTxt.text = accuracy != -1 ? ""+accuracy : "-";
+		modRecoilTxt.text = recoil != -1 ? ""+recoil : "-";
+		modClipCapacityTxt.text = clipCapacity != -1 ? ""+clipCapacity : "-";
+		modMaxAmmoTxt.text = maxAmmo != -1 ? ""+maxAmmo : "-";
 	}
 		
 }
