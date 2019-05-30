@@ -1268,6 +1268,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Place the weapon template in the proper position
 		t.transform.SetParent(weaponPreviewSlot.transform);
 		t.transform.localPosition = Vector3.zero;
+		weaponPreviewRef = t;
 	}
 
 	public void SetWeaponModValues(string weaponName, string suppressorName) {
@@ -1296,10 +1297,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	private void DestroyOldWeaponTemplate() {
 		// Destroy a weapon that is currently in the modding slot to make way for a new one
-		Transform[] children = weaponPreviewSlot.GetComponentsInChildren<Transform>();
-		if (children.Length > 1) {
-			Destroy(children[1].gameObject);
+		if (weaponPreviewRef != null) {
+			Destroy(weaponPreviewRef);
+			weaponPreviewRef = null;
 		}
+		// Transform[] children = weaponPreviewSlot.GetComponentsInChildren<Transform>();
+		// if (children.Length > 1) {
+		// 	Destroy(children[1].gameObject);
+		// }
 	}
 
 	private void SaveModsForCurrentWeapon() {
@@ -1315,6 +1320,21 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Then create the new one
 		LoadWeaponForModding(modWeaponSelect.itemText.text);
+	}
+
+	public string EquipModOnWeaponTemplate(string modName, string modType) {
+		Weapon w = InventoryScript.weaponCatalog[previousWeaponName];
+		switch(modType) {
+			case "Suppressor":
+				if (w.suppressorCompatible) {
+					weaponPreviewRef.GetComponent<WeaponMods>().EquipSuppressor(modName);
+					return previousWeaponName;
+				} else {
+					// TODO: Display error box stating that this mod is not allowed on this weapon
+				}
+				break;
+		}
+		return null;
 	}
 		
 }

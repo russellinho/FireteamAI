@@ -232,6 +232,10 @@ public class PlayerData : MonoBehaviour
         return modInfo;
     }
 
+    public void SaveModInventoryData() {
+
+    }
+
 }
 
 [Serializable]
@@ -258,4 +262,12 @@ public class ModInfo
 {
     public string weaponName;
     public string equippedSuppressor;
+}
+
+[Serializable]
+public class ModInventoryInfo
+{
+    public string modName;
+    public int modCount;
+    public string[] weaponsAttachedTo;
 }

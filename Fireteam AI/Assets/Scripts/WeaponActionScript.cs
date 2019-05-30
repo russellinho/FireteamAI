@@ -633,6 +633,15 @@ public class WeaponActionScript : MonoBehaviour
         weaponStats = ws;
     }
 
+    public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {
+        weaponStats.damage += damage;
+        weaponStats.accuracy += accuracy;
+        weaponStats.recoil += recoil;
+        weaponStats.range += range;
+        weaponStats.clipCapacity += clipCapacity;
+        weaponStats.maxAmmo += maxAmmo;
+    }
+
     public WeaponStats GetWeaponStats() {
         return weaponStats;
     }

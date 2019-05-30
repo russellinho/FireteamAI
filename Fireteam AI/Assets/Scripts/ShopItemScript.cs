@@ -42,7 +42,11 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void OnItemClick() {
         clickCount++;
         if (clickCount == 2) {
-            EquipItem();
+            if (modDetails == null) {
+                EquipItem();
+            } else {
+                EquipMod();
+            }
             clickTimer = 0f;
             clickCount = 0;
         }
@@ -75,6 +79,18 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 break;
             case "Weapon":
                 PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(weaponCategory, itemName, gameObject);
+                break;
+        }
+    }
+
+    private void EquipMod() {
+        switch (modCategory)
+        {
+            case "Suppressor":
+                // Attach to player weapon and attach to weapon mod template as well
+                TitleControllerScript ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+                string weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory);
+                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipMod(modCategory, itemName, weaponNameAttachedTo, gameObject);
                 break;
         }
     }
