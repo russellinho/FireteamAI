@@ -59,7 +59,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -131,11 +131,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemDescriptionPopupRef: {fileID: 0}
+  modDescriptionPopupRef: {fileID: 0}
   thumbnailRef: {fileID: 5722862971687186158}
   itemName: 
   itemType: 
   itemDescription: 
   weaponCategory: 
+  modCategory: 
   equippedInd: {fileID: 4753007453993827064}
 --- !u!1 &1375148356151475967
 GameObject:
@@ -327,7 +329,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.07058824}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []

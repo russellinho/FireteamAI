@@ -19,6 +19,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private int previousCamPos;
 	private float camMoveTimer;
 	public GameObject itemDescriptionPopupRef;
+	public GameObject modDescriptionPopupRef;
 
 	public GameObject mainMenu;
 	public Camera mainCam;
@@ -1112,7 +1113,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().modDescriptionPopupRef = modDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().modDetails = m;
 			o.GetComponent<ShopItemScript>().itemName = m.name;
             o.GetComponent<ShopItemScript>().itemType = "Mod";

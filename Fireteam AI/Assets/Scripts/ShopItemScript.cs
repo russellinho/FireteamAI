@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public GameObject itemDescriptionPopupRef;
+    public GameObject modDescriptionPopupRef;
     public RawImage thumbnailRef;
     public Character characterDetails;
     public Equipment equipmentDetails;
@@ -96,33 +97,50 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        if (itemDescriptionPopupRef.activeInHierarchy) {
-            return;
-        }
-        itemDescriptionPopupRef.SetActive(true);
-        ItemPopupScript ips = itemDescriptionPopupRef.GetComponent<ItemPopupScript>();
-        ips.SetTitle(itemName);
-        ips.SetThumbnail(thumbnailRef);
-        ips.SetDescription(itemDescription);
-        if (itemType.Equals("Headgear") || itemType.Equals("Facewear")) {
-            ips.ToggleWeaponStatDescriptor(false);
-            ips.SetEquipmentStats(equipmentDetails.armor, equipmentDetails.speed, equipmentDetails.stamina);
-            ips.ToggleEquipmentStatDescriptor(true);
-        } else if (itemType.Equals("Armor")) {
-            ips.ToggleWeaponStatDescriptor(false);
-            ips.SetEquipmentStats(armorDetails.armor, armorDetails.speed, armorDetails.stamina);
-            ips.ToggleEquipmentStatDescriptor(true);
-        } else if (itemType.Equals("Weapon")) {
-            ips.ToggleEquipmentStatDescriptor(false);
-            ips.SetWeaponStats(weaponDetails.damage, weaponDetails.accuracy, weaponDetails.recoil, weaponDetails.fireRate, weaponDetails.mobility, weaponDetails.range, weaponDetails.clipCapacity);
-            ips.ToggleWeaponStatDescriptor(true);
+        if (itemType.Equals("Mod")) {
+            if (modDescriptionPopupRef.activeInHierarchy) {
+                return;
+            }
+            modDescriptionPopupRef.SetActive(true);
+            ItemPopupScript ips = modDescriptionPopupRef.GetComponent<ItemPopupScript>();
+            ips.SetTitle(itemName);
+            ips.SetThumbnail(thumbnailRef);
+            ips.SetDescription(itemDescription);
+            ips.SetModStats(modDetails.damageBoost, modDetails.accuracyBoost, modDetails.recoilBoost, modDetails.rangeBoost, modDetails.clipCapacityBoost, modDetails.maxAmmoBoost);
+            ips.ToggleModStatDescriptor(true);
         } else {
-            ips.ToggleEquipmentStatDescriptor(false);
-            ips.ToggleWeaponStatDescriptor(false);
+            if (itemDescriptionPopupRef.activeInHierarchy) {
+                return;
+            }
+            itemDescriptionPopupRef.SetActive(true);
+            ItemPopupScript ips = itemDescriptionPopupRef.GetComponent<ItemPopupScript>();
+            ips.SetTitle(itemName);
+            ips.SetThumbnail(thumbnailRef);
+            ips.SetDescription(itemDescription);
+            if (itemType.Equals("Headgear") || itemType.Equals("Facewear")) {
+                ips.ToggleWeaponStatDescriptor(false);
+                ips.SetEquipmentStats(equipmentDetails.armor, equipmentDetails.speed, equipmentDetails.stamina);
+                ips.ToggleEquipmentStatDescriptor(true);
+            } else if (itemType.Equals("Armor")) {
+                ips.ToggleWeaponStatDescriptor(false);
+                ips.SetEquipmentStats(armorDetails.armor, armorDetails.speed, armorDetails.stamina);
+                ips.ToggleEquipmentStatDescriptor(true);
+            } else if (itemType.Equals("Weapon")) {
+                ips.ToggleEquipmentStatDescriptor(false);
+                ips.SetWeaponStats(weaponDetails.damage, weaponDetails.accuracy, weaponDetails.recoil, weaponDetails.fireRate, weaponDetails.mobility, weaponDetails.range, weaponDetails.clipCapacity);
+                ips.ToggleWeaponStatDescriptor(true);
+            } else {
+                ips.ToggleEquipmentStatDescriptor(false);
+                ips.ToggleWeaponStatDescriptor(false);
+            }
         }
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        itemDescriptionPopupRef.SetActive(false);
+        if (itemType.Equals("Mod")) {
+            modDescriptionPopupRef.SetActive(false);
+        } else {
+            itemDescriptionPopupRef.SetActive(false);
+        }
     }
 }

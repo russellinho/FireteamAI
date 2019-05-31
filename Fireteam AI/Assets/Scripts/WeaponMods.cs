@@ -26,6 +26,8 @@ public class WeaponMods : MonoBehaviour
         // Equip it and place it in the correct position
         suppressorRef.transform.SetParent(suppressorPos);
         suppressorRef.transform.localPosition = Vector3.zero;
+        suppressorRef.transform.localRotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+        suppressorRef.transform.localScale = new Vector3(1f, 1f, 1f);
     }
 
     public void UnequipSuppressor() {
