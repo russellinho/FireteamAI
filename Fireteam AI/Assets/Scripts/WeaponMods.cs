@@ -9,7 +9,7 @@ public class WeaponMods : MonoBehaviour
     private GameObject suppressorRef;
     private Mod suppressorStats;
     private string suppressorName;
-    
+    // Size to scale the suppressor by for this weapon    
 
     public void EquipSuppressor(string suppressorName) {
         // Unequip the previous suppressor just in case
@@ -22,7 +22,7 @@ public class WeaponMods : MonoBehaviour
         if (suppressorStats == null) {
             return;
         }
-        suppressorRef = (GameObject)Resources.Load(suppressorStats.prefabPath);
+        suppressorRef = (GameObject)Instantiate(Resources.Load(suppressorStats.prefabPath));
         // Equip it and place it in the correct position
         suppressorRef.transform.SetParent(suppressorPos);
         suppressorRef.transform.localPosition = Vector3.zero;

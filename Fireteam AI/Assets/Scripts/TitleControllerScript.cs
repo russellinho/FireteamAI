@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using Photon.Realtime;
 using Photon.Pun;
 using UnityEngine.Networking;
+using TMPro;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
@@ -15,6 +16,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private Vector3 modCameraRot = new Vector3(3.5f, 43.5f, 0f);
 	private Vector3 modCameraPos = new Vector3(2f, 4.5f, 26.7f);
 	private int camPos;
+	private int previousCamPos;
 	private float camMoveTimer;
 	public GameObject itemDescriptionPopupRef;
 
@@ -91,7 +93,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject weaponPreviewRef;
 	public GameObject modInventoryContent;
 	public Button suppressorsBtn;
-	public Dropdown modWeaponSelect;
+	public TMP_Dropdown modWeaponSelect;
 	public Text modWeaponLbl;
 	private string previousWeaponName;
 	public Text equippedSuppressorTxt;
@@ -107,6 +109,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		titleText.enabled = true;
 		mainMenu.SetActive (true);
 		loadingStatus = 0;
+		previousCamPos = 0;
 		camPos = 0;
 		camMoveTimer = 1f;
 		Cursor.lockState = CursorLockMode.None;
@@ -204,8 +207,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 						mainMenu.SetActive(true);
 					}
 				} else if (camPos == 1) {
-					mainCam.transform.position = Vector3.Lerp(defaultCameraPos, customizationCameraPos, camMoveTimer);
-					mainCam.transform.rotation = Quaternion.Lerp(Quaternion.Euler(modCameraRot), Quaternion.Euler(defaultCameraRot), camMoveTimer);
+					if (previousCamPos == 0) {
+						mainCam.transform.position = Vector3.Lerp(defaultCameraPos, customizationCameraPos, camMoveTimer);
+					} else if (previousCamPos == 2) {
+						mainCam.transform.position = Vector3.Lerp(modCameraPos, customizationCameraPos, camMoveTimer);
+						mainCam.transform.rotation = Quaternion.Lerp(Quaternion.Euler(modCameraRot), Quaternion.Euler(defaultCameraRot), camMoveTimer);						
+					}
 					if (camMoveTimer < 1f) {
 						camMoveTimer += (Time.deltaTime / 1.2f);
 					}
@@ -222,7 +229,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 					}
 					if (Vector3.Equals(mainCam.transform.position, modCameraPos)) {
 						if (!modMenu.activeInHierarchy) {
+							// Bring up the mod menu
 							modMenu.SetActive(true);
+							// Set up the weapon dropdown, stats, and template weapon
+							PopulateWeaponDropdownForModScreen();						
 						}
 					}
 				}
@@ -258,6 +268,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		SwitchToEquipmentScreen();
 		customizationMenu.SetActive (false);
 		matchmakingMenu.SetActive (false);
+		previousCamPos = camPos;
 		camPos = 0;
 		camMoveTimer = 0f;
 	}
@@ -285,6 +296,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		equippedSecondarySlot.SetActive(false);
 		equippedSupportSlot.SetActive(false);
 		matchmakingMenu.SetActive (false);
+		previousCamPos = camPos;
 		camPos = 1;
 		camMoveTimer = 0f;
 	}
@@ -292,6 +304,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void GoToMod() {
 		mainMenu.SetActive(false);
 		customizationMenu.SetActive(false);
+		previousCamPos = camPos;
 		camPos = 2;
 		camMoveTimer = 0f;
 	}
@@ -1244,20 +1257,24 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Populate the dropdown with all weapons the player owns
 		List<string> myWepsList = new List<string>();
 		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
-			myWepsList.Add((string)InventoryScript.myWeapons[i]);
+			string weaponName = (string)InventoryScript.myWeapons[i];
+			Weapon w = InventoryScript.weaponCatalog[weaponName];
+			if (w.canBeModded) {
+				myWepsList.Add(weaponName);
+			}
 		}
 		modWeaponSelect.AddOptions(myWepsList);
 
 		// Initialize the dropdown with the first option
 		modWeaponSelect.value = 0;
-		LoadWeaponForModding(modWeaponSelect.itemText.text);
+		LoadWeaponForModding(modWeaponSelect.options[modWeaponSelect.value].text);
 
 	}
 
 	public void LoadWeaponForModding(string weaponName) {
 		// Load the proper weapon modding template
 		previousWeaponName = weaponName;
-		GameObject t = (GameObject)Resources.Load("WeaponTemplates/" + weaponName);
+		GameObject t = (GameObject)Instantiate(Resources.Load("WeaponTemplates/" + weaponName));
 
 		// Place the saved mods for that weapon back on the weapon template
 		ModInfo savedModInfo = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
@@ -1272,17 +1289,27 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void SetWeaponModValues(string weaponName, string suppressorName) {
+		Debug.Log("Setting " + suppressorName + " on " + weaponName);
 		modWeaponLbl.text = weaponName;
 		equippedSuppressorTxt.text = suppressorName.Equals("") ? "None" : suppressorName;
 		
-		// Set stats
+		// Set base stats
 		Weapon w = InventoryScript.weaponCatalog[weaponName];
-		Mod suppressor = InventoryScript.modCatalog[suppressorName];
-		float totalDamage = w.damage + suppressor.damageBoost;
-		float totalAccuracy = w.accuracy + suppressor.accuracyBoost;
-		float totalRecoil = w.recoil + suppressor.recoilBoost;
-		float totalClipCapacity = w.clipCapacity + suppressor.clipCapacityBoost;
-		float totalMaxAmmo = w.maxAmmo + suppressor.maxAmmoBoost;
+		float totalDamage = w.damage;
+		float totalAccuracy = w.accuracy;
+		float totalRecoil = w.recoil;
+		float totalClipCapacity = w.clipCapacity;
+		float totalMaxAmmo = w.maxAmmo;
+
+		// Add suppressor stats
+		if (suppressorName != null && !suppressorName.Equals("") && !suppressorName.Equals("None")) {
+			Mod suppressor = InventoryScript.modCatalog[suppressorName];
+			totalDamage += suppressor.damageBoost;
+			totalAccuracy += suppressor.accuracyBoost;
+			totalRecoil += suppressor.recoilBoost;
+			totalClipCapacity += suppressor.clipCapacityBoost;
+			totalMaxAmmo += suppressor.maxAmmoBoost;
+		}
 
 		SetWeaponModdedStats(totalDamage, totalAccuracy, totalRecoil, totalClipCapacity, totalMaxAmmo);
 	}
@@ -1319,7 +1346,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		DestroyOldWeaponTemplate();
 
 		// Then create the new one
-		LoadWeaponForModding(modWeaponSelect.itemText.text);
+		LoadWeaponForModding(modWeaponSelect.options[modWeaponSelect.value].text);
 	}
 
 	public string EquipModOnWeaponTemplate(string modName, string modType) {

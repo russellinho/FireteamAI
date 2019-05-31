@@ -4664,6 +4664,7 @@ GameObject:
   - component: {fileID: 6158920366506060821}
   - component: {fileID: 8376306439309703160}
   - component: {fileID: 1417587145976429966}
+  - component: {fileID: 8737896151766220692}
   m_Layer: 0
   m_Name: R870
   m_TagString: Untagged
@@ -4954,6 +4955,19 @@ MonoBehaviour:
   titleHandPositionsMale: {x: -0.02, y: 0.05, z: 0.03}
   titleHandPositionsFemale: {x: -0.01, y: 0.02, z: 0.02}
   recoveryConstant: 18
+--- !u!114 &8737896151766220692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4808036643662073223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32e91c2df4ddb4340aea227b3730de5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  suppressorPos: {fileID: 0}
 --- !u!1 &7012023387819761900
 GameObject:
   m_ObjectHideFlags: 0

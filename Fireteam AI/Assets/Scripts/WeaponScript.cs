@@ -323,8 +323,9 @@ public class WeaponScript : MonoBehaviour
     }
 
     public void EquipMod(string modType, string modName, string equipOnWeapon, GameObject shopItemRef) {
+        Debug.Log("Mod being attached: " + modName);
         // If no mod equipped, don't equip anything
-        if (modName == null || modName.Equals("")) return;
+        if (modName == null || modName.Equals("") || modName.Equals("None")) return;
         // Load mod from catalog
         Mod m = InventoryScript.modCatalog[modName];
         switch (modType) {
