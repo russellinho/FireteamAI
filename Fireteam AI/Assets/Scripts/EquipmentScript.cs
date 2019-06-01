@@ -172,6 +172,7 @@ public class EquipmentScript : MonoBehaviour
         }
         tws.EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
         tws.EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);
+        tws.EquipWeapon(PlayerData.playerdata.info.equippedSupportType, PlayerData.playerdata.info.equippedSupport, null);
 
     }
 
