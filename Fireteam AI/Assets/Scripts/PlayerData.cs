@@ -56,8 +56,8 @@ public class PlayerData : MonoBehaviour
         if (levelName.Equals("BetaLevelNetwork"))
         {
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
-                characterPrefabName, 
-                Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0], 
+                characterPrefabName,
+                Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
                 Quaternion.Euler(Vector3.zero));
         } else if (levelName.Equals("Test")) {
             Debug.Log(characterPrefabName);
@@ -71,6 +71,11 @@ public class PlayerData : MonoBehaviour
             if (PlayerData.playerdata.inGamePlayerReference != null)
             {
                 PhotonNetwork.Destroy(PlayerData.playerdata.inGamePlayerReference);
+            }
+            if (PlayerData.playerdata.bodyReference == null)
+            {
+              LoadPlayerData();
+              Debug.Log(info.equippedCharacter);
             }
         }
 
