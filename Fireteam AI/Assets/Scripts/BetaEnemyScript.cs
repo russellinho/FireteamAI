@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.AI;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class BetaEnemyScript : MonoBehaviour {
 
@@ -187,7 +188,7 @@ public class BetaEnemyScript : MonoBehaviour {
 						if (navMesh.isOnNavMesh) {
 							navMesh.isStopped = prevWasStopped;
 							navMesh.SetDestination (prevNavDestination);
-						} 
+						}
 					}
 				} else {
 					navMeshObstacle.enabled = true;
@@ -228,7 +229,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				Fire ();
 			}
 		}
-	
+
 	}
 
 	void FixedUpdate() {
@@ -266,7 +267,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	void DecreaseAlertTime() {
 		if (alertTimer > 0f) {
 			alertTimer -= Time.deltaTime;
-		}	
+		}
 	}
 
 	void UpdateFiringModeTimer() {
@@ -462,7 +463,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 			}
 		}
-			
+
 		if (actionState == ActionStates.Firing) {
 			if (navMesh.speed != 4f) {
 				pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4f);
@@ -603,7 +604,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		audioSource.clip = (AudioClip)Resources.Load(s);
 		audioSource.Play ();
 	}
-		
+
 	void PlayVoiceClip(int n) {
 		if (!audioSource.isPlaying && health > 0) {
 			audioSource.clip = voiceClips [n - 1];
@@ -1160,7 +1161,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	void RpcReload(int bullets) {
 		currentBullets = bullets;
 	}
-		
+
 	public void MeleeAttack() {
 		if (playerToHit != null) {
 			int r = Random.Range (0, 2);
@@ -1360,13 +1361,27 @@ public class BetaEnemyScript : MonoBehaviour {
 					if (angleBetween <= 60f) {
 						// Cast a ray to make sure there's nothing in between the player and the enemy
 						Debug.DrawRay (headTransform.position, toPlayer, Color.blue);
+						Transform playerHead = p.GetComponent<FirstPersonController>().headTransform;
 						RaycastHit hit1;
 						RaycastHit hit2;
 						Vector3 middleHalfCheck = new Vector3 (p.transform.position.x, p.transform.position.y, p.transform.position.z);
-						Vector3 topHalfCheck = new Vector3 (p.transform.position.x, p.transform.position.y + 0.4f, p.transform.position.z);
-						Physics.Linecast (headTransform.position, middleHalfCheck, out hit2);
-						Physics.Linecast (headTransform.position, topHalfCheck, out hit1);
-						if (!hit1.transform.gameObject.tag.Equals ("Player") && !hit2.transform.gameObject.tag.Equals ("Player")) {
+						Vector3 topHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y, playerHead.position.z);
+						if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2))
+						{
+								continue;
+						}
+						if (!Physics.Linecast (headTransform.position, topHalfCheck, out hit1))
+						{
+								continue;
+						}
+						// Debug.Log(hit2.transform.gameObject);
+						// Debug.Log(hit1.transform.gameObject);
+						// // Debug.Log(hit1.transform.gameObject.tag + " and " + hit2.transform.gameObject.tag);
+						// if (hit1.transform.gameObject == null || hit2.transform.gameObject == null)
+						// {
+						// 	continue;
+						// }
+						if (!hit1.transform.gameObject.tag.Equals("Player") && !hit2.transform.gameObject.tag.Equals("Player")) {
 							continue;
 						}
 						keysNearBy.Add (p.GetComponent<PhotonView>().OwnerActorNr);

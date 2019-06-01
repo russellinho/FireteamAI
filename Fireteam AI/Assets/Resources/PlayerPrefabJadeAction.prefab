@@ -1472,6 +1472,7 @@ MonoBehaviour:
   playerActionScript: {fileID: 4793932236631329482}
   photonView: {fileID: 609584615193261893}
   spineTransform: {fileID: 3166084420118909601}
+  headTransform: {fileID: 3166084420118909729}
   animator: {fileID: 3166084420125916365}
 --- !u!114 &311082724292437623
 MonoBehaviour:
@@ -1499,7 +1500,7 @@ MonoBehaviour:
     pView: {fileID: 0}
   playerActionScript: {fileID: 4793932236631329482}
   cameraShakeScript: {fileID: 1208887021316467737}
-  hudScript: {fileID: 0}
+  hudScript: {fileID: 229362520446784565}
   audioController: {fileID: 2908401307991606888}
   fpc: {fileID: 2502097636295644242}
   weaponHolder: {fileID: 7543148667100259186}
@@ -1643,8 +1644,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 182637342987397470}
-  viewIdField: 0
-  InstantiationId: -1
+  viewIdField: 3
+  InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &182637342987397470
 MonoBehaviour:
