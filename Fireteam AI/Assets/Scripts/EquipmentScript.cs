@@ -166,6 +166,10 @@ public class EquipmentScript : MonoBehaviour
         {
             PlayerData.playerdata.info.equippedSecondary = "Glock23";
         }
+        if (PlayerData.playerdata.info.equippedSupport == null)
+        {
+            PlayerData.playerdata.info.equippedSupport = "M67 Frag";
+        }
         tws.EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
         tws.EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);
 
