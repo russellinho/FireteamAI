@@ -31,6 +31,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject loadingScreen;
 	public GameObject jukebox;
 	public GameObject mainMenuPopup;
+	public GameObject customizationMenuPopup;
+	public GameObject modMenuPopup;
 	public char currentCharGender;
 
 	public InputField PlayerNameInput;
@@ -96,11 +98,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button suppressorsBtn;
 	public TMP_Dropdown modWeaponSelect;
 	public Text modWeaponLbl;
-	private string previousWeaponName;
 	public Text equippedSuppressorTxt;
 	public Text modDamageTxt;
 	public Text modAccuracyTxt;
 	public Text modRecoilTxt;
+	public Text modRangeTxt;
 	public Text modClipCapacityTxt;
 	public Text modMaxAmmoTxt;
 
@@ -311,6 +313,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void ReturnToCustomizationFromModMenu() {
+		// Save whatever was being customized
+		SaveModsForCurrentWeapon();
 		// Disable modification menu
 		ResetModMenu();
 		GoToCustomization();
@@ -320,8 +324,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private void ResetModMenu() {
 		// Return all buttons to regular color
 		suppressorsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-
-
+		// Destroy weapon template
+		Destroy(weaponPreviewRef);
+		weaponPreviewRef = null;
 	}
 
 	public void goToMainMenu (){
@@ -341,6 +346,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void ClosePopup() {
 		mainMenuPopup.SetActive (false);
+		modMenuPopup.SetActive(false);
+		customizationMenuPopup.SetActive(false);
 	}
 
 	public void OnHeadBtnClicked() {
@@ -1102,7 +1109,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Delete any currently existing items in the grid
 		RawImage[] existingThumbnails = modInventoryContent.GetComponentsInChildren<RawImage>();
 		foreach (RawImage r in existingThumbnails) {
-			currentlyEquippedItemPrefab = null;
+			currentlyEquippedModPrefab = null;
 			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 		}
 
@@ -1255,6 +1262,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	private void PopulateWeaponDropdownForModScreen() {
+		// Clear dropdown from previous query
+		modWeaponSelect.ClearOptions();
 		// Populate the dropdown with all weapons the player owns
 		List<string> myWepsList = new List<string>();
 		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
@@ -1274,53 +1283,142 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void LoadWeaponForModding(string weaponName) {
 		// Load the proper weapon modding template
-		previousWeaponName = weaponName;
+		modWeaponLbl.text = weaponName;
 		GameObject t = (GameObject)Instantiate(Resources.Load("WeaponTemplates/" + weaponName));
-
-		// Place the saved mods for that weapon back on the weapon template
-		ModInfo savedModInfo = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
-
-		// Update weapon stats with mods
-		SetWeaponModValues(weaponName, savedModInfo.equippedSuppressor);
 
 		// Place the weapon template in the proper position
 		t.transform.SetParent(weaponPreviewSlot.transform);
 		t.transform.localPosition = Vector3.zero;
 		weaponPreviewRef = t;
+
+		// Set base stats
+		SetWeaponModValues(modWeaponLbl.text, null);
+
+		// Place the saved mods for that weapon back on the weapon template
+		ModInfo savedModInfo = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
+		EquipModOnWeaponTemplate(savedModInfo.equippedSuppressor, "Suppressor");
+
+		// Update shop items with the mods that are equipped
+		// If the suppressors menu was selected, update the shop items with what's equipped on the current weapon
+		if (suppressorsBtn.GetComponent<Image>().color.r == (188f / 255f)) {
+			OnSuppressorsBtnClicked();
+		}
 	}
 
 	public void SetWeaponModValues(string weaponName, string suppressorName) {
-		Debug.Log("Setting " + suppressorName + " on " + weaponName);
 		modWeaponLbl.text = weaponName;
-		equippedSuppressorTxt.text = suppressorName.Equals("") ? "None" : suppressorName;
+		equippedSuppressorTxt.text = (suppressorName == null || suppressorName.Equals("") || suppressorName.Equals("None")) ? "None" : suppressorName;
 		
 		// Set base stats
 		Weapon w = InventoryScript.weaponCatalog[weaponName];
 		float totalDamage = w.damage;
 		float totalAccuracy = w.accuracy;
 		float totalRecoil = w.recoil;
-		float totalClipCapacity = w.clipCapacity;
-		float totalMaxAmmo = w.maxAmmo;
+		float totalRange = w.range;
+		int totalClipCapacity = w.clipCapacity;
+		int totalMaxAmmo = w.maxAmmo;
+		float damageBoost = 0f;
+		float accuracyBoost = 0f;
+		float recoilBoost = 0f;
+		float rangeBoost = 0f;
+		int clipCapacityBoost = 0;
+		int maxAmmoBoost = 0;
 
 		// Add suppressor stats
 		if (suppressorName != null && !suppressorName.Equals("") && !suppressorName.Equals("None")) {
 			Mod suppressor = InventoryScript.modCatalog[suppressorName];
-			totalDamage += suppressor.damageBoost;
-			totalAccuracy += suppressor.accuracyBoost;
-			totalRecoil += suppressor.recoilBoost;
-			totalClipCapacity += suppressor.clipCapacityBoost;
-			totalMaxAmmo += suppressor.maxAmmoBoost;
+			damageBoost += suppressor.damageBoost;
+			accuracyBoost += suppressor.accuracyBoost;
+			recoilBoost += suppressor.recoilBoost;
+			rangeBoost += suppressor.rangeBoost;
+			clipCapacityBoost += suppressor.clipCapacityBoost;
+			maxAmmoBoost += suppressor.maxAmmoBoost;
 		}
 
-		SetWeaponModdedStats(totalDamage, totalAccuracy, totalRecoil, totalClipCapacity, totalMaxAmmo);
+		totalDamage += damageBoost;
+		totalAccuracy += accuracyBoost;
+		totalRecoil += recoilBoost;
+		totalRange += rangeBoost;
+		totalClipCapacity += clipCapacityBoost;
+		totalMaxAmmo += maxAmmoBoost;
+
+		SetWeaponModdedStats(totalDamage, totalAccuracy, totalRecoil, totalRange, totalClipCapacity, totalMaxAmmo);
+		SetWeaponModdedStatsTextColor(damageBoost, accuracyBoost, recoilBoost, rangeBoost, clipCapacityBoost, maxAmmoBoost);
 	}
 
-	private void SetWeaponModdedStats(float damage, float accuracy, float recoil, float clipCapacity, float maxAmmo) {
+	private void UnequipModFromWeaponTemplate(string modType) {
+		switch(modType) {
+			case "Suppressor":
+				if (equippedSuppressorTxt.Equals("None")) return;
+				SetWeaponModValues(modWeaponLbl.text, null);
+				weaponPreviewRef.GetComponent<WeaponMods>().UnequipSuppressor();
+				break;
+		}
+	}
+
+	private void SetWeaponModdedStats(float damage, float accuracy, float recoil, float range, float clipCapacity, float maxAmmo) {
 		modDamageTxt.text = damage != -1 ? ""+damage : "-";
 		modAccuracyTxt.text = accuracy != -1 ? ""+accuracy : "-";
 		modRecoilTxt.text = recoil != -1 ? ""+recoil : "-";
+		modRangeTxt.text = range != -1 ? ""+range : "-";
 		modClipCapacityTxt.text = clipCapacity != -1 ? ""+clipCapacity : "-";
 		modMaxAmmoTxt.text = maxAmmo != -1 ? ""+maxAmmo : "-";
+	}
+
+	public void OnRemoveSuppressorClicked() {
+		// Remove suppressor model from the player's weapon and the template weapon
+		PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().UnequipMod("Suppressor", modWeaponLbl.text);
+		UnequipModFromWeaponTemplate("Suppressor");
+	}
+
+	private void SetWeaponModdedStatsTextColor(float damage, float accuracy, float recoil, float range, float clipCapacity, float maxAmmo) {
+		if (damage > 0) {
+			modDamageTxt.color = Color.green;
+		} else if (damage < 0) {
+			modDamageTxt.color = Color.red;
+		} else {
+			modDamageTxt.color = Color.white;
+		}
+
+		if (accuracy > 0) {
+			modAccuracyTxt.color = Color.green;
+		} else if (accuracy < 0) {
+			modAccuracyTxt.color = Color.red;
+		} else {
+			modAccuracyTxt.color = Color.white;
+		}
+
+		if (recoil < 0) {
+			modRecoilTxt.color = Color.green;
+		} else if (recoil > 0) {
+			modRecoilTxt.color = Color.red;
+		} else {
+			modRecoilTxt.color = Color.white;
+		}
+
+		if (range > 0) {
+			modRangeTxt.color = Color.green;
+		} else if (range < 0) {
+			modRangeTxt.color = Color.red;
+		} else {
+			modRangeTxt.color = Color.white;
+		}
+
+		if (clipCapacity > 0) {
+			modClipCapacityTxt.color = Color.green;
+		} else if (clipCapacity < 0) {
+			modClipCapacityTxt.color = Color.red;
+		} else {
+			modClipCapacityTxt.color = Color.white;
+		}
+
+		if (maxAmmo > 0) {
+			modMaxAmmoTxt.color = Color.green;
+		} else if (maxAmmo < 0) {
+			modMaxAmmoTxt.color = Color.red;
+		} else {
+			modMaxAmmoTxt.color = Color.white;
+		}
 	}
 
 	private void DestroyOldWeaponTemplate() {
@@ -1336,8 +1434,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	private void SaveModsForCurrentWeapon() {
-		if (!previousWeaponName.Equals("")) {
-			PlayerData.playerdata.SaveModDataForWeapon(previousWeaponName, equippedSuppressorTxt.text);
+		if (!modWeaponLbl.text.Equals("")) {
+			PlayerData.playerdata.SaveModDataForWeapon(modWeaponLbl.text, equippedSuppressorTxt.text);
 		}
 	}
 
@@ -1351,18 +1449,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public string EquipModOnWeaponTemplate(string modName, string modType) {
-		Weapon w = InventoryScript.weaponCatalog[previousWeaponName];
+		if (modName == null || modName.Equals("") || modName.Equals("None")) return modWeaponLbl.text;
+		Weapon w = InventoryScript.weaponCatalog[modWeaponLbl.text];
 		switch(modType) {
 			case "Suppressor":
 				if (w.suppressorCompatible) {
+					SetWeaponModValues(modWeaponLbl.text, modName);
 					weaponPreviewRef.GetComponent<WeaponMods>().EquipSuppressor(modName);
-					return previousWeaponName;
+					return modWeaponLbl.text;
 				} else {
-					// TODO: Display error box stating that this mod is not allowed on this weapon
+					ToggleModMenuPopup(true, "Suppressors cannot be equipped on this weapon!");
 				}
 				break;
 		}
 		return null;
+	}
+
+	private void ToggleModMenuPopup(bool b, string message) {
+		if (b) {
+			modMenuPopup.GetComponentInChildren<Text>().text = message;
+			modMenuPopup.SetActive(true);
+		} else {
+			modMenuPopup.SetActive(false);
+		}
 	}
 		
 }

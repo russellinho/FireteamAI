@@ -121,4 +121,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32e91c2df4ddb4340aea227b3730de5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  suppressorScaler: {x: 2, y: 2, z: 2}
   suppressorPos: {fileID: 1893964982560472718}

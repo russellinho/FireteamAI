@@ -398,6 +398,7 @@ MonoBehaviour:
   titleHandPositionsMale: {x: -0.02, y: 0.05, z: 0.03}
   titleHandPositionsFemale: {x: -0.01, y: 0.02, z: 0.02}
   recoveryConstant: 4
+  suppressorSize: {x: 2, y: 2, z: 2}
 --- !u!114 &8606366248968920692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,6 +411,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32e91c2df4ddb4340aea227b3730de5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  suppressorScaler: {x: 2, y: 2, z: 2}
   suppressorPos: {fileID: 3853096313419586723}
 --- !u!1 &7305644627155634511
 GameObject:
