@@ -1282,6 +1282,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void LoadWeaponForModding(string weaponName) {
+		// Destroy old weapon preview
+		DestroyOldWeaponTemplate();
 		// Load the proper weapon modding template
 		modWeaponLbl.text = weaponName;
 		GameObject t = (GameObject)Instantiate(Resources.Load("WeaponTemplates/" + weaponName));
@@ -1440,12 +1442,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void OnWeaponModDropdownSelect() {
+		// If the weapon that was selected is the same as the current one, then don't do anything
+		string selectedWeapon = modWeaponSelect.options[modWeaponSelect.value].text;
+		if (selectedWeapon.Equals(modWeaponLbl.text)) {
+			return;
+		}
 		// First, destroy the old weapon that was being modded and save its data
 		SaveModsForCurrentWeapon();
 		DestroyOldWeaponTemplate();
 
 		// Then create the new one
-		LoadWeaponForModding(modWeaponSelect.options[modWeaponSelect.value].text);
+		LoadWeaponForModding(selectedWeapon);
 	}
 
 	public string EquipModOnWeaponTemplate(string modName, string modType) {
