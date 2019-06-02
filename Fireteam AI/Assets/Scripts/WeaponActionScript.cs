@@ -20,6 +20,7 @@ public class WeaponActionScript : MonoBehaviour
     private AudioSource reloadSound;
     public Animator animator;
     private WeaponStats weaponStats;
+    private WeaponMods weaponMods;
 
     // Projectile spread constants
     public const float MAX_SPREAD = 0.15f;
@@ -69,7 +70,6 @@ public class WeaponActionScript : MonoBehaviour
     public PhotonView pView;
     private bool isWieldingSupportItem;
     private bool isCockingGrenade;
-    private bool silencerEquipped;
 
     // Use this for initialization
     void Start()
@@ -111,11 +111,6 @@ public class WeaponActionScript : MonoBehaviour
                 firingMode = FireMode.Auto;
             else
                 firingMode = FireMode.Semi;
-        }
-        // Dummy for silencer
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-        silencerEquipped = !silencerEquipped;
         }
         if (weaponStats.type.Equals("Support")) {
             isWieldingSupportItem = true;
@@ -323,7 +318,7 @@ public class WeaponActionScript : MonoBehaviour
                 pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
             }
         }
-        if (!silencerEquipped)
+        if (weaponMods.suppressorRef == null)
         {
           playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
           pView.RPC("FireEffects", RpcTarget.All);
@@ -642,6 +637,7 @@ public class WeaponActionScript : MonoBehaviour
 
     public void SetWeaponStats(WeaponStats ws) {
         weaponStats = ws;
+        weaponMods = ws.GetComponent<WeaponMods>();
     }
 
     public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {

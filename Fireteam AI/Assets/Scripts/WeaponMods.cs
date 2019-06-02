@@ -7,10 +7,10 @@ public class WeaponMods : MonoBehaviour
     // Suppressor attachment
     public Vector3 suppressorScaler;
     public Transform suppressorPos;
-    private GameObject suppressorRef;
+    public GameObject suppressorRef;
     private Mod suppressorStats;
     private string suppressorName;
-    // Size to scale the suppressor by for this weapon    
+    // Size to scale the suppressor by for this weapon
 
     public void EquipSuppressor(string suppressorName) {
         if (suppressorName.Equals(this.suppressorName)) return;
