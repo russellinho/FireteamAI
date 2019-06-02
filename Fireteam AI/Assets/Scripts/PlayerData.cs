@@ -205,6 +205,42 @@ public class PlayerData : MonoBehaviour
         characterEquips.EquipCharacter(character, null);
     }
 
+    public void SaveModDataForWeapon(string weaponName, string equippedSuppressor) {
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Create(Application.persistentDataPath + "/" + weaponName + "_mods.dat");
+        ModInfo newModInfo = new ModInfo();
+        newModInfo.weaponName = weaponName;
+        newModInfo.equippedSuppressor = equippedSuppressor;
+        bf.Serialize(file, newModInfo);
+        file.Close();
+    }
+
+    public ModInfo LoadModDataForWeapon(string weaponName) {
+        ModInfo modInfo = null;
+        if (File.Exists(Application.persistentDataPath + "/" + weaponName + "_mods.dat"))
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Open(Application.persistentDataPath + "/" + weaponName + "_mods.dat", FileMode.Open);
+            modInfo = (ModInfo)bf.Deserialize(file);
+            file.Close();
+            if (modInfo.equippedSuppressor == null) {
+                modInfo.equippedSuppressor = "";
+            }
+            return modInfo;
+        }
+        // Else, load defaults
+        modInfo = new ModInfo();
+        modInfo.weaponName = weaponName;
+        modInfo.equippedSuppressor = "";
+        SaveModDataForWeapon(weaponName, "");
+
+        return modInfo;
+    }
+
+    public void SaveModInventoryData() {
+
+    }
+
 }
 
 [Serializable]
@@ -224,4 +260,19 @@ public class PlayerInfo
     public string equippedSecondaryType;
     public string equippedSupport;
     public string equippedSupportType;
+}
+
+[Serializable]
+public class ModInfo
+{
+    public string weaponName;
+    public string equippedSuppressor;
+}
+
+[Serializable]
+public class ModInventoryInfo
+{
+    public string modName;
+    public int modCount;
+    public string[] weaponsAttachedTo;
 }

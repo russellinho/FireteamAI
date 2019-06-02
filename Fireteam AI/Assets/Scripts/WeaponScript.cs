@@ -216,6 +216,7 @@ public class WeaponScript : MonoBehaviour
     }
 
     public void EquipWeapon(string weaponType, string weaponName, GameObject shopItemRef) {
+        if (onTitle && (weaponName.Equals(equippedPrimaryWeapon) || weaponName.Equals(equippedSecondaryWeapon) || weaponName.Equals(equippedSupportWeapon))) return;
         // Get the weapon from the weapon catalog for its properties
         Weapon w = InventoryScript.weaponCatalog[weaponName];
         GameObject wepEquipped = null;
@@ -225,6 +226,13 @@ public class WeaponScript : MonoBehaviour
                 wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 equippedWep = weaponName;
                 EquipAssaultRifle(weaponName);
+                if (!onTitle) {
+                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                }
+                ModInfo savedEquippedMods = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
+                if (w.suppressorCompatible) {
+                    EquipMod("Suppressor", savedEquippedMods.equippedSuppressor, weaponName, null);
+                }
                 break;
             case "Pistol":
                 if (!onTitle) {
@@ -232,19 +240,41 @@ public class WeaponScript : MonoBehaviour
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
                 equippedWep = weaponName;
+                Debug.Log(equippedWep);
                 EquipPistol(weaponName);
+                if (!onTitle) {
+                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                }
+                savedEquippedMods = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
+                if (w.suppressorCompatible) {
+                    EquipMod("Suppressor", savedEquippedMods.equippedSuppressor, weaponName, null);
+                }
                 break;
             case "Shotgun":
                 currentlyEquippedType = 1;
                 wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 equippedWep = weaponName;
                 EquipShotgun(weaponName);
+                if (!onTitle) {
+                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                }
+                savedEquippedMods = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
+                if (w.suppressorCompatible) {
+                    EquipMod("Suppressor", savedEquippedMods.equippedSuppressor, weaponName, null);
+                }
                 break;
             case "Sniper Rifle":
                 currentlyEquippedType = 1;
                 wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 equippedWep = weaponName;
                 EquipSniperRifle(weaponName);
+                if (!onTitle) {
+                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                }
+                savedEquippedMods = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
+                if (w.suppressorCompatible) {
+                    EquipMod("Suppressor", savedEquippedMods.equippedSuppressor, weaponName, null);
+                }
                 break;
             case "Explosive":
                 if (!onTitle) {
@@ -253,6 +283,9 @@ public class WeaponScript : MonoBehaviour
                 }
                 equippedWep = weaponName;
                 EquipExplosive(weaponName);
+                if (!onTitle) {
+                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                }
                 break;
             case "Booster":
                 if (!onTitle) {
@@ -261,6 +294,9 @@ public class WeaponScript : MonoBehaviour
                 }
                 equippedWep = weaponName;
                 EquipBooster(weaponName);
+                if (!onTitle) {
+                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                }
                 break;
         }
 
@@ -300,9 +336,93 @@ public class WeaponScript : MonoBehaviour
                 ts.equippedSupportSlot.GetComponentInChildren<RawImage>().enabled = true;
                 ts.equippedSupportSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
             }
-        } else {
-            Debug.Log(wepEquipped.GetComponent<WeaponStats>().weaponName);
-            weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+        }
+    }
+
+    public void EquipMod(string modType, string modName, string equipOnWeapon, GameObject shopItemRef) {
+        // If no mod equipped, don't equip anything
+        if (modName == null || modName.Equals("") || modName.Equals("None") || equipOnWeapon == null) return;
+        // Load mod from catalog
+        Mod m = InventoryScript.modCatalog[modName];
+        switch (modType) {
+            case "Suppressor":
+                EquipSuppressor(modName, equipOnWeapon);
+                break;
+        }
+        // Change shop item highlight if in the mod area
+        if (onTitle) {
+            if (shopItemRef != null) {
+                // Sets item that you unequipped to white
+                if (ts.currentlyEquippedModPrefab != null) {
+                    ts.currentlyEquippedModPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+                    ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+                }
+
+                // Sets item that you just equipped to orange in the shop
+                if (shopItemRef != null) {
+                    shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+                    shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+                    ts.currentlyEquippedModPrefab = shopItemRef;
+                }
+            }
+        }
+    }
+
+    public void UnequipMod(string modType, string unequipFromWeapon) {
+        // Remove the mod from the active gun
+        switch(modType) {
+            case "Suppressor":
+                string equippedSuppressor = weaponHolder.GetComponentInChildren<WeaponMods>().GetEquippedSuppressor();
+                if (equippedSuppressor == null || equippedSuppressor.Equals("") || equippedSuppressor.Equals("None")) return;
+                UnequipSuppressor(unequipFromWeapon);
+                break;
+        }
+        // Change shop item highlight if in the mod area
+        if (onTitle) {
+            // Sets item that you unequipped to white
+            if (ts.currentlyEquippedModPrefab != null) {
+                ts.currentlyEquippedModPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+                ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+            }
+        }
+    }
+
+    // If in-game, attach to weapon and affect weapon stats
+    private void EquipSuppressor(string modName, string equipOnWeapon) {
+        // If primary, attach to weapon on title screen and in-game
+        if (equipOnWeapon.Equals(equippedPrimaryWeapon)) {
+            WeaponMods wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
+            wm.EquipSuppressor(modName);
+            if (!onTitle) {
+                Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
+                weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
+            }
+        } else if (equipOnWeapon.Equals(equippedSecondaryWeapon)) {
+            // If secondary, only attach to weapon if in-game
+            if (!onTitle) {
+                WeaponMods wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
+                wm.EquipSuppressor(modName);
+                Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
+                weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
+            }
+        }
+    }
+
+    private void UnequipSuppressor(string unequipFromWeapon) {
+        if (unequipFromWeapon.Equals(equippedPrimaryWeapon)) {
+            WeaponMods wm = weaponHolder.GetComponentInChildren<WeaponMods>();
+            if (!onTitle) {
+                Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
+                weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost, -suppressorBoosts.maxAmmoBoost);
+            }
+            wm.UnequipSuppressor();
+        } else if (unequipFromWeapon.Equals(equippedSecondaryWeapon)) {
+            if (!onTitle) {
+                WeaponMods wm = weaponHolder.GetComponentInChildren<WeaponMods>();
+                Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
+                weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost, -suppressorBoosts.maxAmmoBoost);
+                wm.UnequipSuppressor();
+            }
         }
     }
 
