@@ -25,10 +25,10 @@ public class PlayerScript : MonoBehaviour
 
     void Awake() {
         stats = new Stats();
-        speed = 0;
-        stamina = 0;
-        armor = 0;
-        health = 0;
+        speed = baseSpeed;
+        stamina = baseStamina;
+        armor = baseArmor;
+        health = baseHealth;
     }
 
     public void setSpeed()
