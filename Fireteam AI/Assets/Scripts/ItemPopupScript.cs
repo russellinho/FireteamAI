@@ -8,6 +8,7 @@ public class ItemPopupScript : MonoBehaviour
 
     public GameObject equipmentStatDescriptor;
     public GameObject weaponStatDescriptor;
+    public GameObject modStatDescriptor;
 
     // Equipment stat labels
     public Text armorStatTxt;
@@ -22,6 +23,14 @@ public class ItemPopupScript : MonoBehaviour
     public Text mobilityTxt;
     public Text rangeTxt;
     public Text clipCapacityTxt;
+
+    // Mod stat labels
+    public Text modDamageStatTxt;
+    public Text modAccuracyStatTxt;
+    public Text modRecoilStatTxt;
+    public Text modRangeStatTxt;
+    public Text modClipCapacityStatTxt;
+    public Text modMaxAmmoStatTxt;
 
     public Text title;
     public RawImage thumbnail;
@@ -60,6 +69,10 @@ public class ItemPopupScript : MonoBehaviour
         weaponStatDescriptor.SetActive(b);
     }
 
+    public void ToggleModStatDescriptor(bool b) {
+        modStatDescriptor.SetActive(b);
+    }
+
     public void SetEquipmentStats(float armor, float speed, float stamina) {
         armorStatTxt.text = ConvertToPercent(armor) + "%";
         speedStatTxt.text = ConvertToPercent(speed) + "%";
@@ -74,6 +87,15 @@ public class ItemPopupScript : MonoBehaviour
         mobilityTxt.text = "" + (int)mobility;
         rangeTxt.text = "" + (int)range;
         clipCapacityTxt.text = "" + (int)clipCapacity;
+    }
+
+    public void SetModStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {
+        modDamageStatTxt.text = "" + (int)damage;
+        modAccuracyStatTxt.text = "" + (int)accuracy;
+        modRecoilStatTxt.text = "" + (int)recoil;
+        modRangeStatTxt.text = "" + (int)range;
+        modClipCapacityStatTxt.text = "" + clipCapacity;
+        modMaxAmmoStatTxt.text = "" + maxAmmo;
     }
 
     private int ConvertToPercent(float f) {

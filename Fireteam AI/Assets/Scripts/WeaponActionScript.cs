@@ -69,6 +69,7 @@ public class WeaponActionScript : MonoBehaviour
     public PhotonView pView;
     private bool isWieldingSupportItem;
     private bool isCockingGrenade;
+    private bool silencerEquipped;
 
     // Use this for initialization
     void Start()
@@ -110,6 +111,11 @@ public class WeaponActionScript : MonoBehaviour
                 firingMode = FireMode.Auto;
             else
                 firingMode = FireMode.Semi;
+        }
+        // Dummy for silencer
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+        silencerEquipped = !silencerEquipped;
         }
         if (weaponStats.type.Equals("Support")) {
             isWieldingSupportItem = true;
@@ -317,9 +323,16 @@ public class WeaponActionScript : MonoBehaviour
                 pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
             }
         }
+        if (!silencerEquipped)
+        {
+          playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+          pView.RPC("FireEffects", RpcTarget.All);
 
-        playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
-        pView.RPC("FireEffects", RpcTarget.All);
+        }
+        else
+        {
+          pView.RPC("FireEffectsSuppressed", RpcTarget.All);
+        }
     }
 
     public void FireBurst ()
@@ -456,16 +469,14 @@ public class WeaponActionScript : MonoBehaviour
         fireTimer = 0.0f;
     }
 
-    void FireEffects2()
+    [PunRPC]
+    void FireEffectsSuppressed()
     {
-        if (muzzleFlash == null) {
-            muzzleFlash = weaponHolder.GetComponentInChildren<ParticleSystem>();
-        }
-        muzzleFlash.Play();
         if (!bulletTrace.isPlaying)
         {
             bulletTrace.Play();
         }
+        // change to silenced
         PlayShootSound();
         currentAmmo--;
         // Reset fire timer
@@ -631,6 +642,15 @@ public class WeaponActionScript : MonoBehaviour
 
     public void SetWeaponStats(WeaponStats ws) {
         weaponStats = ws;
+    }
+
+    public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {
+        weaponStats.damage += damage;
+        weaponStats.accuracy += accuracy;
+        weaponStats.recoil += recoil;
+        weaponStats.range += range;
+        weaponStats.clipCapacity += clipCapacity;
+        weaponStats.maxAmmo += maxAmmo;
     }
 
     public WeaponStats GetWeaponStats() {

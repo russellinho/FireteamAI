@@ -7,6 +7,8 @@ public class InventoryScript : MonoBehaviour
     // Storage for weapons, equipment, and characters in the game
     public static Dictionary<string, Weapon> weaponCatalog = new Dictionary<string, Weapon>();
     public static Dictionary<string, Character> characterCatalog = new Dictionary<string, Character>();
+    public static Dictionary<string, Mod> modCatalog = new Dictionary<string, Mod>();
+    public static Dictionary<string, Vector3> suppressorSizesByWeapon = new Dictionary<string, Vector3>();
 
     // Items that are in the player inventory/items they own
     public static ArrayList myCharacters = new ArrayList();
@@ -17,6 +19,7 @@ public class InventoryScript : MonoBehaviour
     public static ArrayList myFootwear = new ArrayList();
     public static ArrayList myArmor = new ArrayList();
     public static ArrayList myWeapons = new ArrayList();
+    public static ArrayList myMods = new ArrayList();
     public static Dictionary<string, Dictionary<string, Vector3>> rifleHandPositionsPerCharacter;
     public static Dictionary<string, Dictionary<string, Vector3>> rifleIdleHandPositionsPerCharacter;
     public static Dictionary<string, Dictionary<string, Vector3>> shotgunHandPositionsPerCharacter;
@@ -63,6 +66,7 @@ public class InventoryScript : MonoBehaviour
         Equipment scrubsBottomMale = new Equipment("Scrubs Bottom", "Bottom", "Models/Clothing/Sayre/Bottoms/scrubspants", "Models/Pics/scrubs_bottom", "A comfortable scrubs pants commonly used in the medical field.", false, 0, 0f, 0f, 0f);
         Armor standardVestMale = new Armor("Standard Vest", "Models/Equipment/Lucas/Armor/Standard Vest/Tops/lucasstandardvesttop", "Models/Equipment/Lucas/Armor/Standard Vest/Bottoms/lucasstandardvestbottom", "Models/Pics/standard_vest", "A first generation ballistic vest used to protect yourself in combat. Being first generation, it's a bit heavy, but offers great protection.", -0.08f, 0f, 0.2f);
         Armor standardVestFemale = new Armor("Standard Vest", "Models/Equipment/Hana/Armor/Standard Vest/Tops/hanastandardvesttop", "Models/Equipment/Hana/Armor/Standard Vest/Bottoms/hanastandardvestbottom", "Models/Pics/standard_vest", "A first generation ballistic vest used to protect yourself in combat. Being first generation, it's a bit heavy, but offers great protection.", -0.08f, 0f, 0.2f);
+        Mod standardSuppressor = new Mod("Standard Suppressor", "Suppressor", "Models/Mods/Suppressors/Standard Suppressor/standardsuppressor", "Models/Pics/standardsuppressor-thumb", "A standard issue suppressor used to silence your weapon.", -3f, 2f, -4f, 0f, 0, 0);
 
         Dictionary<string, Equipment> lucasEquipment = new Dictionary<string, Equipment>();
         lucasEquipment.Add("Casual Shirt", casualShirtMale);
@@ -159,15 +163,15 @@ public class InventoryScript : MonoBehaviour
         hanaArmor.Add("Standard Vest", standardVestFemale);
 
         // Weapons
-        weaponCatalog.Add("AK-47", new Weapon("AK-47", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/AK-47", "Models/Pics/ak47-thumb", "A classic assault rifle developed in the Soviet Union during the World War II era. It's known for its unmatched stopping power and relatively light weight.", 48f, 55f, 68f, 90f, 70f, 3000f, 30, 120));
-        weaponCatalog.Add("Glock23", new Weapon("Glock23", "Secondary", "Pistol", "Models/Weapons/Secondary/Pistols/Glock23", "Models/Pics/glock23-thumb", "The standard pistol used by United States police officers because of its reliability.", 33f, 90f, 45f, 60f, 56f, 3000f, 12, 60));
-        weaponCatalog.Add("R870", new Weapon("R870", "Primary", "Shotgun","Models/Weapons/Primary/Shotguns/R870", "Models/Pics/r870-thumb", "Short for Remington 870, this shotgun is widely used for home defence due to its quick reload speed and reliability.", 75f, 65f, 17f, -1f, 60f, 1000f, 8, 56));
-        //weaponCatalog.Add("L96A1", new Weapon("L96A1", "Primary", "Sniper Rifle", "Models/Weapons/Primary/Sniper Rifles/L96A1", "Models/Pics/l96a1-thumb", "Developed in the 1980s by the British, this bolt-action sniper rifle is known for its deadly stopping power and quick operation speed.", 100f, 40f, 10f, 90f, 65f, 3000f, 5));
-        weaponCatalog.Add("M4A1", new Weapon("M4A1", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/M4A1", "Models/Pics/m4a1-thumb", "As a successor of the M16A3 assault rifle, this weapon is one of the standard issue rifles in the United States military. It's known for being an all around ass kicker.", 38f, 60f, 74f, 80f, 64f, 3000f, 30, 120));
-        weaponCatalog.Add("M67 Frag", new Weapon("M67 Frag", "Support", "Explosive", "Models/Weapons/Support/Explosives/M67 Frag/M67Frag", "Models/Pics/m67frag-thumb", "The standard issue high explosive anti-personnel grenade given to all mercenaries upon completion of basic training.", 110f, 95f, -1f, -1f, -1f, -1f, 1, 3));
-        weaponCatalog.Add("XM84 Flashbang", new Weapon("XM84 Flashbang", "Support", "Explosive", "Models/Weapons/Support/Explosives/XM84 Flashbang/XM84Flash", "Models/Pics/xm84flash-thumb", "An explosive non-lethal device used to temporarily blind and disorient your enemies. The closer the enemy is and the more eye exposure given to the device, the longer the effect.", 0f, 95f, -1f, -1f, -1f, -1f, 1, 3));
-        weaponCatalog.Add("Medkit", new Weapon("Medkit", "Support", "Booster", "Models/Weapons/Support/Boosters/Medkit/Medkit", "Models/Pics/medkit-thumb", "Emits a chemical into your body that expedites the coagulation and production of red blood cells. Replenishes 60 HP.", -1f, 100f, -1f, -1f, -1f, -1f, 1, 2));
-        weaponCatalog.Add("Adrenaphine", new Weapon("Adrenaphine", "Support", "Booster", "Models/Weapons/Support/Boosters/Adrenaline Shot/AdrenalineShot", "Models/Pics/adrenalineshot-thumb", "Injects pure adrenaline straight into your blood stream, allowing you to experience unlimited stamina and faster movement speed for 10 seconds.", -1f, 100f, -1f, -1f, -1f, -1f, 1, 2));
+        weaponCatalog.Add("AK-47", new Weapon("AK-47", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/AK-47", "Models/Pics/ak47-thumb", "A classic assault rifle developed in the Soviet Union during the World War II era. It's known for its unmatched stopping power and relatively light weight.", 48f, 55f, 68f, 90f, 70f, 3000f, 30, 120, true, true));
+        weaponCatalog.Add("Glock23", new Weapon("Glock23", "Secondary", "Pistol", "Models/Weapons/Secondary/Pistols/Glock23", "Models/Pics/glock23-thumb", "The standard pistol used by United States police officers because of its reliability.", 33f, 90f, 45f, 60f, 56f, 3000f, 12, 60, true, true));
+        weaponCatalog.Add("R870", new Weapon("R870", "Primary", "Shotgun","Models/Weapons/Primary/Shotguns/R870", "Models/Pics/r870-thumb", "Short for Remington 870, this shotgun is widely used for home defence due to its quick reload speed and reliability.", 75f, 65f, 17f, -1f, 60f, 1000f, 8, 56, true, false));
+        //weaponCatalog.Add("L96A1", new Weapon("L96A1", "Primary", "Sniper Rifle", "Models/Weapons/Primary/Sniper Rifles/L96A1", "Models/Pics/l96a1-thumb", "Developed in the 1980s by the British, this bolt-action sniper rifle is known for its deadly stopping power and quick operation speed.", 100f, 40f, 10f, 90f, 65f, 3000f, 5, true, true));
+        weaponCatalog.Add("M4A1", new Weapon("M4A1", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/M4A1", "Models/Pics/m4a1-thumb", "As a successor of the M16A3 assault rifle, this weapon is one of the standard issue rifles in the United States military. It's known for being an all around ass kicker.", 38f, 60f, 74f, 80f, 64f, 3000f, 30, 120, true, true));
+        weaponCatalog.Add("M67 Frag", new Weapon("M67 Frag", "Support", "Explosive", "Models/Weapons/Support/Explosives/M67 Frag/M67Frag", "Models/Pics/m67frag-thumb", "The standard issue high explosive anti-personnel grenade given to all mercenaries upon completion of basic training.", 110f, 95f, -1f, -1f, -1f, -1f, 1, 3, false, false));
+        weaponCatalog.Add("XM84 Flashbang", new Weapon("XM84 Flashbang", "Support", "Explosive", "Models/Weapons/Support/Explosives/XM84 Flashbang/XM84Flash", "Models/Pics/xm84flash-thumb", "An explosive non-lethal device used to temporarily blind and disorient your enemies. The closer the enemy is and the more eye exposure given to the device, the longer the effect.", 0f, 95f, -1f, -1f, -1f, -1f, 1, 3, false, false));
+        weaponCatalog.Add("Medkit", new Weapon("Medkit", "Support", "Booster", "Models/Weapons/Support/Boosters/Medkit/Medkit", "Models/Pics/medkit-thumb", "Emits a chemical into your body that expedites the coagulation and production of red blood cells. Replenishes 60 HP.", -1f, 100f, -1f, -1f, -1f, -1f, 1, 2, false, false));
+        weaponCatalog.Add("Adrenaphine", new Weapon("Adrenaphine", "Support", "Booster", "Models/Weapons/Support/Boosters/Adrenaline Shot/AdrenalineShot", "Models/Pics/adrenalineshot-thumb", "Injects pure adrenaline straight into your blood stream, allowing you to experience unlimited stamina and faster movement speed for 10 seconds.", -1f, 100f, -1f, -1f, -1f, -1f, 1, 2, false, false));
 
         // Characters
         characterCatalog.Add("Lucas", new Character("Lucas", 'M', "Models/Characters/Lucas/PlayerPrefabLucas", "Models/Pics/character_lucas", "Nationality: British\nAs a reformed professional criminal, Lucas works swiftly and gets the job done.", new string[]{"Models/Characters/Lucas/Extra Skins/Ankles Long Sleeves/lucasskinanklesonly", "Models/Characters/Lucas/Extra Skins/Ankles Mid Sleeves/lucasanklesmid", "Models/Characters/Lucas/Extra Skins/Ankles Short Sleeves/lucasanklesshortsleeve"}, lucasEquipment, lucasArmor));
@@ -176,6 +180,9 @@ public class InventoryScript : MonoBehaviour
         characterCatalog.Add("Hana", new Character("Hana", 'F', "Models/Characters/Hana/PlayerPrefabHana", "Models/Pics/character_hana", "Nationality: Japanese\nWhen her entire family was murdered as a kid, Hana swore to fight for justice to avenge her family. She is an ex police officer who many underestimate, but don't be fooled by her size.", new string[]{"Models/Characters/Hana/1/skinhana1", "Models/Characters/Hana/2/skinhana2", "Models/Characters/Hana/3/skinhana3"}, hanaEquipment, hanaArmor));
         characterCatalog.Add("Jade", new Character("Jade", 'F', "Models/Characters/Jade/PlayerPrefabJade", "Models/Pics/character_jade", "Nationality: American\nNot much is known about Jade's past besides the fact that she likes to work alone and was previously a firefighter.", new string[]{"Models/Characters/Jade/1/skinjade1", "Models/Characters/Jade/3/skinjade3", "Models/Characters/Jade/2/skinjade2"}, jadeEquipment, hanaArmor));
 
+        // Mods
+        modCatalog.Add("Standard Suppressor", standardSuppressor);
+        
         // Add weapon hand positions
         Dictionary<string, Vector3> rifleHandPositions = new Dictionary<string, Vector3>();
         rifleHandPositions.Add("AK-47", new Vector3(-0.04f, 0.12f, 0.075f));
@@ -220,6 +227,7 @@ public class InventoryScript : MonoBehaviour
 
         collectCharacters();
         collectWeapons();
+        collectMods();
     }
 
     public static void collectCharacters() {
@@ -242,6 +250,10 @@ public class InventoryScript : MonoBehaviour
         myWeapons.Add("Medkit");
         myWeapons.Add("Adrenaphine");
         //myWeapons.Add("L96A1");
+    }
+
+    public static void collectMods() {
+        myMods.Add("Standard Suppressor");
     }
 
     public static void collectTops(string character) {

@@ -54,6 +54,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public PhotonView photonView;
 
         public Transform spineTransform;
+        public Transform headTransform;
         public Animator animator;
 
         private int networkDelay = 5;

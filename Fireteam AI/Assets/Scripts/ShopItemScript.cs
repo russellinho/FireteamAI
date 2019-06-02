@@ -7,15 +7,18 @@ using UnityEngine.EventSystems;
 public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public GameObject itemDescriptionPopupRef;
+    public GameObject modDescriptionPopupRef;
     public RawImage thumbnailRef;
     public Character characterDetails;
     public Equipment equipmentDetails;
     public Armor armorDetails;
     public Weapon weaponDetails;
+    public Mod modDetails;
     public string itemName;
     public string itemType;
     public string itemDescription;
     public string weaponCategory;
+    public string modCategory;
     // 0 = long sleeves, 1 = mid sleeves, 2 = short sleeves
     public Text equippedInd;
     private int clickCount;
@@ -40,7 +43,11 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void OnItemClick() {
         clickCount++;
         if (clickCount == 2) {
-            EquipItem();
+            if (modDetails == null) {
+                EquipItem();
+            } else {
+                EquipMod();
+            }
             clickTimer = 0f;
             clickCount = 0;
         }
@@ -77,34 +84,63 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData) {
-        if (itemDescriptionPopupRef.activeInHierarchy) {
-            return;
+    private void EquipMod() {
+        switch (modCategory)
+        {
+            case "Suppressor":
+                // Attach to player weapon and attach to weapon mod template as well
+                TitleControllerScript ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+                string weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory);
+                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipMod(modCategory, itemName, weaponNameAttachedTo, gameObject);
+                break;
         }
-        itemDescriptionPopupRef.SetActive(true);
-        ItemPopupScript ips = itemDescriptionPopupRef.GetComponent<ItemPopupScript>();
-        ips.SetTitle(itemName);
-        ips.SetThumbnail(thumbnailRef);
-        ips.SetDescription(itemDescription);
-        if (itemType.Equals("Headgear") || itemType.Equals("Facewear")) {
-            ips.ToggleWeaponStatDescriptor(false);
-            ips.SetEquipmentStats(equipmentDetails.armor, equipmentDetails.speed, equipmentDetails.stamina);
-            ips.ToggleEquipmentStatDescriptor(true);
-        } else if (itemType.Equals("Armor")) {
-            ips.ToggleWeaponStatDescriptor(false);
-            ips.SetEquipmentStats(armorDetails.armor, armorDetails.speed, armorDetails.stamina);
-            ips.ToggleEquipmentStatDescriptor(true);
-        } else if (itemType.Equals("Weapon")) {
-            ips.ToggleEquipmentStatDescriptor(false);
-            ips.SetWeaponStats(weaponDetails.damage, weaponDetails.accuracy, weaponDetails.recoil, weaponDetails.fireRate, weaponDetails.mobility, weaponDetails.range, weaponDetails.clipCapacity);
-            ips.ToggleWeaponStatDescriptor(true);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData) {
+        if (itemType.Equals("Mod")) {
+            if (modDescriptionPopupRef.activeInHierarchy) {
+                return;
+            }
+            modDescriptionPopupRef.SetActive(true);
+            ItemPopupScript ips = modDescriptionPopupRef.GetComponent<ItemPopupScript>();
+            ips.SetTitle(itemName);
+            ips.SetThumbnail(thumbnailRef);
+            ips.SetDescription(itemDescription);
+            ips.SetModStats(modDetails.damageBoost, modDetails.accuracyBoost, modDetails.recoilBoost, modDetails.rangeBoost, modDetails.clipCapacityBoost, modDetails.maxAmmoBoost);
+            ips.ToggleModStatDescriptor(true);
         } else {
-            ips.ToggleEquipmentStatDescriptor(false);
-            ips.ToggleWeaponStatDescriptor(false);
+            if (itemDescriptionPopupRef.activeInHierarchy) {
+                return;
+            }
+            itemDescriptionPopupRef.SetActive(true);
+            ItemPopupScript ips = itemDescriptionPopupRef.GetComponent<ItemPopupScript>();
+            ips.SetTitle(itemName);
+            ips.SetThumbnail(thumbnailRef);
+            ips.SetDescription(itemDescription);
+            if (itemType.Equals("Headgear") || itemType.Equals("Facewear")) {
+                ips.ToggleWeaponStatDescriptor(false);
+                ips.SetEquipmentStats(equipmentDetails.armor, equipmentDetails.speed, equipmentDetails.stamina);
+                ips.ToggleEquipmentStatDescriptor(true);
+            } else if (itemType.Equals("Armor")) {
+                ips.ToggleWeaponStatDescriptor(false);
+                ips.SetEquipmentStats(armorDetails.armor, armorDetails.speed, armorDetails.stamina);
+                ips.ToggleEquipmentStatDescriptor(true);
+            } else if (itemType.Equals("Weapon")) {
+                ips.ToggleEquipmentStatDescriptor(false);
+                ips.SetWeaponStats(weaponDetails.damage, weaponDetails.accuracy, weaponDetails.recoil, weaponDetails.fireRate, weaponDetails.mobility, weaponDetails.range, weaponDetails.clipCapacity);
+                ips.ToggleWeaponStatDescriptor(true);
+            } else {
+                ips.ToggleEquipmentStatDescriptor(false);
+                ips.ToggleWeaponStatDescriptor(false);
+            }
         }
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        itemDescriptionPopupRef.SetActive(false);
+        if (itemType.Equals("Mod")) {
+            modDescriptionPopupRef.SetActive(false);
+        } else {
+            itemDescriptionPopupRef.SetActive(false);
+        }
     }
 }

@@ -6,14 +6,20 @@ using UnityEngine.SceneManagement;
 using Photon.Realtime;
 using Photon.Pun;
 using UnityEngine.Networking;
+using TMPro;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	private Vector3 customizationCameraPos = new Vector3(-4.7f, 4.08f, 21.5f);
 	private Vector3 defaultCameraPos = new Vector3(-7.3f, 4.08f, 22.91f);
+	private Vector3 defaultCameraRot = new Vector3(10f, 36.2f, 0f);
+	private Vector3 modCameraRot = new Vector3(3.5f, 43.5f, 0f);
+	private Vector3 modCameraPos = new Vector3(2f, 4.5f, 26.7f);
 	private int camPos;
+	private int previousCamPos;
 	private float camMoveTimer;
 	public GameObject itemDescriptionPopupRef;
+	public GameObject modDescriptionPopupRef;
 
 	public GameObject mainMenu;
 	public Camera mainCam;
@@ -21,9 +27,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	//public GameObject networkMan;
 	public GameObject matchmakingMenu;
 	public GameObject customizationMenu;
+	public GameObject modMenu;
 	public GameObject loadingScreen;
 	public GameObject jukebox;
 	public GameObject mainMenuPopup;
+	public GameObject customizationMenuPopup;
+	public GameObject modMenuPopup;
 	public char currentCharGender;
 
 	public InputField PlayerNameInput;
@@ -81,12 +90,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject equippedSecondarySlot;
 	public GameObject equippedSupportSlot;
 
+	// Mod menu
+	public GameObject currentlyEquippedModPrefab;
+	public GameObject weaponPreviewSlot;
+	public GameObject weaponPreviewRef;
+	public GameObject modInventoryContent;
+	public Button suppressorsBtn;
+	public TMP_Dropdown modWeaponSelect;
+	public Text modWeaponLbl;
+	public Text equippedSuppressorTxt;
+	public Text modDamageTxt;
+	public Text modAccuracyTxt;
+	public Text modRecoilTxt;
+	public Text modRangeTxt;
+	public Text modClipCapacityTxt;
+	public Text modMaxAmmoTxt;
+
 	// Use this for initialization
 	void Start () {
 		//PlayerData.playerdata.FindBodyRef ();
 		titleText.enabled = true;
 		mainMenu.SetActive (true);
 		loadingStatus = 0;
+		previousCamPos = 0;
 		camPos = 0;
 		camMoveTimer = 1f;
 		Cursor.lockState = CursorLockMode.None;
@@ -184,13 +210,32 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 						mainMenu.SetActive(true);
 					}
 				} else if (camPos == 1) {
-					mainCam.transform.position = Vector3.Lerp(defaultCameraPos, customizationCameraPos, camMoveTimer);
+					if (previousCamPos == 0) {
+						mainCam.transform.position = Vector3.Lerp(defaultCameraPos, customizationCameraPos, camMoveTimer);
+					} else if (previousCamPos == 2) {
+						mainCam.transform.position = Vector3.Lerp(modCameraPos, customizationCameraPos, camMoveTimer);
+						mainCam.transform.rotation = Quaternion.Lerp(Quaternion.Euler(modCameraRot), Quaternion.Euler(defaultCameraRot), camMoveTimer);						
+					}
 					if (camMoveTimer < 1f) {
 						camMoveTimer += (Time.deltaTime / 1.2f);
 					}
 					if (Vector3.Equals(mainCam.transform.position, customizationCameraPos)) {
 						if (!customizationMenu.activeInHierarchy) {
 							customizationMenu.SetActive(true);
+						}
+					}
+				} else if (camPos == 2) {
+					mainCam.transform.position = Vector3.Lerp(customizationCameraPos, modCameraPos, camMoveTimer);
+					mainCam.transform.rotation = Quaternion.Lerp(Quaternion.Euler(defaultCameraRot), Quaternion.Euler(modCameraRot), camMoveTimer);
+					if (camMoveTimer < 1f) {
+						camMoveTimer += (Time.deltaTime / 1.2f);
+					}
+					if (Vector3.Equals(mainCam.transform.position, modCameraPos)) {
+						if (!modMenu.activeInHierarchy) {
+							// Bring up the mod menu
+							modMenu.SetActive(true);
+							// Set up the weapon dropdown, stats, and template weapon
+							PopulateWeaponDropdownForModScreen();						
 						}
 					}
 				}
@@ -226,6 +271,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		SwitchToEquipmentScreen();
 		customizationMenu.SetActive (false);
 		matchmakingMenu.SetActive (false);
+		previousCamPos = camPos;
 		camPos = 0;
 		camMoveTimer = 0f;
 	}
@@ -248,12 +294,39 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     public void GoToCustomization() {
 		titleText.enabled = false;
 		mainMenu.SetActive (false);
+		modMenu.SetActive(false);
 		equippedPrimarySlot.SetActive(false);
 		equippedSecondarySlot.SetActive(false);
 		equippedSupportSlot.SetActive(false);
 		matchmakingMenu.SetActive (false);
+		previousCamPos = camPos;
 		camPos = 1;
 		camMoveTimer = 0f;
+	}
+
+	public void GoToMod() {
+		mainMenu.SetActive(false);
+		customizationMenu.SetActive(false);
+		previousCamPos = camPos;
+		camPos = 2;
+		camMoveTimer = 0f;
+	}
+
+	public void ReturnToCustomizationFromModMenu() {
+		// Save whatever was being customized
+		SaveModsForCurrentWeapon();
+		// Disable modification menu
+		ResetModMenu();
+		GoToCustomization();
+		SwitchToLoadoutScreen();
+	}
+
+	private void ResetModMenu() {
+		// Return all buttons to regular color
+		suppressorsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		// Destroy weapon template
+		Destroy(weaponPreviewRef);
+		weaponPreviewRef = null;
 	}
 
 	public void goToMainMenu (){
@@ -273,6 +346,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void ClosePopup() {
 		mainMenuPopup.SetActive (false);
+		modMenuPopup.SetActive(false);
+		customizationMenuPopup.SetActive(false);
 	}
 
 	public void OnHeadBtnClicked() {
@@ -1027,6 +1102,43 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	public void OnSuppressorsBtnClicked() {
+		// Change all button colors
+		suppressorsBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+
+		// Delete any currently existing items in the grid
+		RawImage[] existingThumbnails = modInventoryContent.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			currentlyEquippedModPrefab = null;
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+		}
+
+		// Populate into grid layout
+		for (int i = 0; i < InventoryScript.myMods.Count; i++) {
+			Mod m = InventoryScript.modCatalog[(string)InventoryScript.myMods[i]];
+			if (!m.category.Equals("Suppressor")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			o.GetComponent<ShopItemScript>().modDescriptionPopupRef = modDescriptionPopupRef;
+			o.GetComponent<ShopItemScript>().modDetails = m;
+			o.GetComponent<ShopItemScript>().itemName = m.name;
+            o.GetComponent<ShopItemScript>().itemType = "Mod";
+			o.GetComponent<ShopItemScript>().itemDescription = m.description;
+			o.GetComponent<ShopItemScript>().modCategory = m.category;
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(m.thumbnailPath);
+			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
+			if (equippedSuppressorTxt.text.Equals(m.name)) {
+				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				currentlyEquippedModPrefab = o;
+			}
+			o.transform.SetParent(modInventoryContent.transform);
+		}
+	}
+
 	void SwitchToLoadoutScreen() {
 		loadoutBtn.GetComponentInChildren<Text>().text = "Equipment";
 		headgearBtn.gameObject.SetActive(false);
@@ -1147,6 +1259,226 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		SetArmorBoostPercent(armor);
 		SetSpeedBoostPercent(speed);
 		SetStaminaBoostPercent(stamina);
+	}
+
+	private void PopulateWeaponDropdownForModScreen() {
+		// Clear dropdown from previous query
+		modWeaponSelect.ClearOptions();
+		// Populate the dropdown with all weapons the player owns
+		List<string> myWepsList = new List<string>();
+		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
+			string weaponName = (string)InventoryScript.myWeapons[i];
+			Weapon w = InventoryScript.weaponCatalog[weaponName];
+			if (w.canBeModded) {
+				myWepsList.Add(weaponName);
+			}
+		}
+		modWeaponSelect.AddOptions(myWepsList);
+
+		// Initialize the dropdown with the first option
+		modWeaponSelect.value = 0;
+		LoadWeaponForModding(modWeaponSelect.options[modWeaponSelect.value].text);
+
+	}
+
+	public void LoadWeaponForModding(string weaponName) {
+		// Destroy old weapon preview
+		DestroyOldWeaponTemplate();
+		// Load the proper weapon modding template
+		modWeaponLbl.text = weaponName;
+		GameObject t = (GameObject)Instantiate(Resources.Load("WeaponTemplates/" + weaponName));
+
+		// Place the weapon template in the proper position
+		t.transform.SetParent(weaponPreviewSlot.transform);
+		t.transform.localPosition = Vector3.zero;
+		weaponPreviewRef = t;
+
+		// Set base stats
+		SetWeaponModValues(modWeaponLbl.text, null);
+
+		// Place the saved mods for that weapon back on the weapon template
+		ModInfo savedModInfo = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
+		EquipModOnWeaponTemplate(savedModInfo.equippedSuppressor, "Suppressor");
+
+		// Update shop items with the mods that are equipped
+		// If the suppressors menu was selected, update the shop items with what's equipped on the current weapon
+		if (suppressorsBtn.GetComponent<Image>().color.r == (188f / 255f)) {
+			OnSuppressorsBtnClicked();
+		}
+	}
+
+	public void SetWeaponModValues(string weaponName, string suppressorName) {
+		modWeaponLbl.text = weaponName;
+		equippedSuppressorTxt.text = (suppressorName == null || suppressorName.Equals("") || suppressorName.Equals("None")) ? "None" : suppressorName;
+		
+		// Set base stats
+		Weapon w = InventoryScript.weaponCatalog[weaponName];
+		float totalDamage = w.damage;
+		float totalAccuracy = w.accuracy;
+		float totalRecoil = w.recoil;
+		float totalRange = w.range;
+		int totalClipCapacity = w.clipCapacity;
+		int totalMaxAmmo = w.maxAmmo;
+		float damageBoost = 0f;
+		float accuracyBoost = 0f;
+		float recoilBoost = 0f;
+		float rangeBoost = 0f;
+		int clipCapacityBoost = 0;
+		int maxAmmoBoost = 0;
+
+		// Add suppressor stats
+		if (suppressorName != null && !suppressorName.Equals("") && !suppressorName.Equals("None")) {
+			Mod suppressor = InventoryScript.modCatalog[suppressorName];
+			damageBoost += suppressor.damageBoost;
+			accuracyBoost += suppressor.accuracyBoost;
+			recoilBoost += suppressor.recoilBoost;
+			rangeBoost += suppressor.rangeBoost;
+			clipCapacityBoost += suppressor.clipCapacityBoost;
+			maxAmmoBoost += suppressor.maxAmmoBoost;
+		}
+
+		totalDamage += damageBoost;
+		totalAccuracy += accuracyBoost;
+		totalRecoil += recoilBoost;
+		totalRange += rangeBoost;
+		totalClipCapacity += clipCapacityBoost;
+		totalMaxAmmo += maxAmmoBoost;
+
+		SetWeaponModdedStats(totalDamage, totalAccuracy, totalRecoil, totalRange, totalClipCapacity, totalMaxAmmo);
+		SetWeaponModdedStatsTextColor(damageBoost, accuracyBoost, recoilBoost, rangeBoost, clipCapacityBoost, maxAmmoBoost);
+	}
+
+	private void UnequipModFromWeaponTemplate(string modType) {
+		switch(modType) {
+			case "Suppressor":
+				if (equippedSuppressorTxt.Equals("None")) return;
+				SetWeaponModValues(modWeaponLbl.text, null);
+				weaponPreviewRef.GetComponent<WeaponMods>().UnequipSuppressor();
+				break;
+		}
+	}
+
+	private void SetWeaponModdedStats(float damage, float accuracy, float recoil, float range, float clipCapacity, float maxAmmo) {
+		modDamageTxt.text = damage != -1 ? ""+damage : "-";
+		modAccuracyTxt.text = accuracy != -1 ? ""+accuracy : "-";
+		modRecoilTxt.text = recoil != -1 ? ""+recoil : "-";
+		modRangeTxt.text = range != -1 ? ""+range : "-";
+		modClipCapacityTxt.text = clipCapacity != -1 ? ""+clipCapacity : "-";
+		modMaxAmmoTxt.text = maxAmmo != -1 ? ""+maxAmmo : "-";
+	}
+
+	public void OnRemoveSuppressorClicked() {
+		// Remove suppressor model from the player's weapon and the template weapon
+		PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().UnequipMod("Suppressor", modWeaponLbl.text);
+		UnequipModFromWeaponTemplate("Suppressor");
+	}
+
+	private void SetWeaponModdedStatsTextColor(float damage, float accuracy, float recoil, float range, float clipCapacity, float maxAmmo) {
+		if (damage > 0) {
+			modDamageTxt.color = Color.green;
+		} else if (damage < 0) {
+			modDamageTxt.color = Color.red;
+		} else {
+			modDamageTxt.color = Color.white;
+		}
+
+		if (accuracy > 0) {
+			modAccuracyTxt.color = Color.green;
+		} else if (accuracy < 0) {
+			modAccuracyTxt.color = Color.red;
+		} else {
+			modAccuracyTxt.color = Color.white;
+		}
+
+		if (recoil < 0) {
+			modRecoilTxt.color = Color.green;
+		} else if (recoil > 0) {
+			modRecoilTxt.color = Color.red;
+		} else {
+			modRecoilTxt.color = Color.white;
+		}
+
+		if (range > 0) {
+			modRangeTxt.color = Color.green;
+		} else if (range < 0) {
+			modRangeTxt.color = Color.red;
+		} else {
+			modRangeTxt.color = Color.white;
+		}
+
+		if (clipCapacity > 0) {
+			modClipCapacityTxt.color = Color.green;
+		} else if (clipCapacity < 0) {
+			modClipCapacityTxt.color = Color.red;
+		} else {
+			modClipCapacityTxt.color = Color.white;
+		}
+
+		if (maxAmmo > 0) {
+			modMaxAmmoTxt.color = Color.green;
+		} else if (maxAmmo < 0) {
+			modMaxAmmoTxt.color = Color.red;
+		} else {
+			modMaxAmmoTxt.color = Color.white;
+		}
+	}
+
+	private void DestroyOldWeaponTemplate() {
+		// Destroy a weapon that is currently in the modding slot to make way for a new one
+		if (weaponPreviewRef != null) {
+			Destroy(weaponPreviewRef);
+			weaponPreviewRef = null;
+		}
+		// Transform[] children = weaponPreviewSlot.GetComponentsInChildren<Transform>();
+		// if (children.Length > 1) {
+		// 	Destroy(children[1].gameObject);
+		// }
+	}
+
+	private void SaveModsForCurrentWeapon() {
+		if (!modWeaponLbl.text.Equals("")) {
+			PlayerData.playerdata.SaveModDataForWeapon(modWeaponLbl.text, equippedSuppressorTxt.text);
+		}
+	}
+
+	public void OnWeaponModDropdownSelect() {
+		// If the weapon that was selected is the same as the current one, then don't do anything
+		string selectedWeapon = modWeaponSelect.options[modWeaponSelect.value].text;
+		if (selectedWeapon.Equals(modWeaponLbl.text)) {
+			return;
+		}
+		// First, destroy the old weapon that was being modded and save its data
+		SaveModsForCurrentWeapon();
+		DestroyOldWeaponTemplate();
+
+		// Then create the new one
+		LoadWeaponForModding(selectedWeapon);
+	}
+
+	public string EquipModOnWeaponTemplate(string modName, string modType) {
+		if (modName == null || modName.Equals("") || modName.Equals("None")) return modWeaponLbl.text;
+		Weapon w = InventoryScript.weaponCatalog[modWeaponLbl.text];
+		switch(modType) {
+			case "Suppressor":
+				if (w.suppressorCompatible) {
+					SetWeaponModValues(modWeaponLbl.text, modName);
+					weaponPreviewRef.GetComponent<WeaponMods>().EquipSuppressor(modName);
+					return modWeaponLbl.text;
+				} else {
+					ToggleModMenuPopup(true, "Suppressors cannot be equipped on this weapon!");
+				}
+				break;
+		}
+		return null;
+	}
+
+	private void ToggleModMenuPopup(bool b, string message) {
+		if (b) {
+			modMenuPopup.GetComponentInChildren<Text>().text = message;
+			modMenuPopup.SetActive(true);
+		} else {
+			modMenuPopup.SetActive(false);
+		}
 	}
 		
 }
