@@ -4955,7 +4955,12 @@ MonoBehaviour:
   titleHandPositionsMale: {x: -0.02, y: 0.05, z: 0.03}
   titleHandPositionsFemale: {x: -0.01, y: 0.02, z: 0.02}
   recoveryConstant: 18
-  suppressorSize: {x: 0, y: 0, z: 0}
+  fireSound: {fileID: 6158920366506060821}
+  suppressedFireSound: {fileID: 0}
+  reloadSound: {fileID: 8376306439309703160}
+  gunSmoke: {fileID: 3013963004515157933, guid: 22f01094768fa2c4e8513fa10c2a4c94,
+    type: 3}
+  muzzleFlash: {fileID: 6123346063365659288}
 --- !u!114 &8737896151766220692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4968,8 +4973,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32e91c2df4ddb4340aea227b3730de5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponStats: {fileID: 1417587145976429966}
+  suppressorScaler: {x: 0, y: 0, z: 0}
   suppressorPos: {fileID: 0}
+  suppressorRef: {fileID: 0}
 --- !u!1 &7012023387819761900
 GameObject:
   m_ObjectHideFlags: 0

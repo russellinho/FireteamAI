@@ -42,7 +42,6 @@ public class WeaponActionScript : MonoBehaviour
     public int currentAmmo;
 
     public Transform shootPoint;
-    private ParticleSystem muzzleFlash;
     public ParticleSystem bulletTrace;
     public bool isReloading = false;
     public bool isCocking = false;
@@ -320,13 +319,12 @@ public class WeaponActionScript : MonoBehaviour
         }
         if (weaponMods.suppressorRef == null)
         {
-          playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
-          pView.RPC("FireEffects", RpcTarget.All);
-
+            playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+            pView.RPC("FireEffects", RpcTarget.All);
         }
         else
         {
-          pView.RPC("FireEffectsSuppressed", RpcTarget.All);
+            pView.RPC("FireEffectsSuppressed", RpcTarget.All);
         }
     }
 
@@ -447,13 +445,20 @@ public class WeaponActionScript : MonoBehaviour
         Destroy(hitParticleEffect, 1f);
     }
 
+    void InstantiateGunSmokeEffect() {
+        GameObject gunSmokeEffect = Instantiate(weaponStats.gunSmoke, shootPoint.position, Quaternion.identity);
+        Destroy(gunSmokeEffect, 1.5f);
+    }
+
+    void PlayMuzzleFlash() {
+        weaponStats.muzzleFlash.Play();
+    }
+
     [PunRPC]
     void FireEffects()
     {
-        if (muzzleFlash == null) {
-            muzzleFlash = weaponHolder.GetComponentInChildren<ParticleSystem>();
-        }
-        muzzleFlash.Play();
+        PlayMuzzleFlash();
+        InstantiateGunSmokeEffect();
         if (!bulletTrace.isPlaying && !pView.IsMine)
         {
             bulletTrace.Play();
@@ -467,12 +472,12 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void FireEffectsSuppressed()
     {
+        InstantiateGunSmokeEffect();
         if (!bulletTrace.isPlaying)
         {
             bulletTrace.Play();
         }
-        // change to silenced
-        PlayShootSound();
+        PlaySuppressedShootSound();
         currentAmmo--;
         // Reset fire timer
         fireTimer = 0.0f;
@@ -551,27 +556,21 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcPlayReloadSound()
     {
-        if (reloadSound == null) {
-            reloadSound = weaponHolder.GetComponentsInChildren<AudioSource>()[1];
-        }
-        reloadSound.Play();
+        weaponStats.reloadSound.Play();
     }
 
     void PlayReloadSound()
     {
-        if (reloadSound == null)
-        {
-            reloadSound = weaponHolder.GetComponentsInChildren<AudioSource>()[1];
-        }
-        reloadSound.Play();
+        weaponStats.reloadSound.Play();
     }
 
     private void PlayShootSound()
     {
-        if (weaponSound == null) {
-            weaponSound = weaponHolder.GetComponentsInChildren<AudioSource>()[0];
-        }
-        weaponSound.Play();
+        weaponStats.fireSound.Play();
+    }
+
+    private void PlaySuppressedShootSound() {
+        weaponStats.suppressedFireSound.Play();
     }
 
     private void IncreaseSpread()

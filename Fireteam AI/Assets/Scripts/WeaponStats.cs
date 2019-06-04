@@ -21,4 +21,9 @@ public class WeaponStats : MonoBehaviour
     public Vector3 titleHandPositionsMale;
     public Vector3 titleHandPositionsFemale;
     public float recoveryConstant;
+    public AudioSource fireSound;
+    public AudioSource suppressedFireSound;
+    public AudioSource reloadSound;
+    public GameObject gunSmoke;
+    public ParticleSystem muzzleFlash;
 }
