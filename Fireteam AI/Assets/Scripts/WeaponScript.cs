@@ -386,7 +386,7 @@ public class WeaponScript : MonoBehaviour
             }
         }
     }
-
+    // Assuming recoil = 3 is 100, and 0 is min, multiply by .03 to get recoil modifier
     // If in-game, attach to weapon and affect weapon stats
     private void EquipSuppressor(string modName, string equipOnWeapon) {
         // If primary, attach to weapon on title screen and in-game
@@ -395,7 +395,7 @@ public class WeaponScript : MonoBehaviour
             wm.EquipSuppressor(modName);
             if (!onTitle) {
                 Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-                weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
+                weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
             }
         } else if (equipOnWeapon.Equals(equippedSecondaryWeapon)) {
             // If secondary, only attach to weapon if in-game
@@ -403,7 +403,7 @@ public class WeaponScript : MonoBehaviour
                 WeaponMods wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
                 wm.EquipSuppressor(modName);
                 Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-                weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
+                weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
             }
         }
     }
@@ -413,14 +413,14 @@ public class WeaponScript : MonoBehaviour
             WeaponMods wm = weaponHolder.GetComponentInChildren<WeaponMods>();
             if (!onTitle) {
                 Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-                weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost, -suppressorBoosts.maxAmmoBoost);
+                weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost*.03f, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost, -suppressorBoosts.maxAmmoBoost);
             }
             wm.UnequipSuppressor();
         } else if (unequipFromWeapon.Equals(equippedSecondaryWeapon)) {
             if (!onTitle) {
                 WeaponMods wm = weaponHolder.GetComponentInChildren<WeaponMods>();
                 Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-                weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost, -suppressorBoosts.maxAmmoBoost);
+                weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost*.03f, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost, -suppressorBoosts.maxAmmoBoost);
                 wm.UnequipSuppressor();
             }
         }
