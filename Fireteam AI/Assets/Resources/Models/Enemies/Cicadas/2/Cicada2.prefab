@@ -1773,6 +1773,7 @@ GameObject:
   - component: {fileID: 1563783651166704757}
   - component: {fileID: 2795322411328023688}
   - component: {fileID: 2219568387016488609}
+  - component: {fileID: 7601635865629732844}
   m_Layer: 14
   m_Name: Cicada2
   m_TagString: Human
@@ -2060,7 +2061,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 1563783651166704757}
   viewIdField: 0
-  InstantiationId: 4
+  InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &1563783651166704757
 MonoBehaviour:
@@ -2106,6 +2107,38 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0.88, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &7601635865629732844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1942978092247955579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8c8abd405e0bd4bb634ad2c5a3e60b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyName: Cicadas
+  modelNumber: 2
+  equippedSkinRef: {fileID: 0}
+  equippedHeadgearRef: {fileID: 0}
+  equippedFacewearRef: {fileID: 0}
+  equippedEyewearRef: {fileID: 0}
+  equippedTopRef: {fileID: 0}
+  equippedBottomRef: {fileID: 0}
+  equippedFootwearRef: {fileID: 0}
+  myHeadgearRenderer: {fileID: 955735327429254199}
+  myFacewearRenderer: {fileID: 3967571050417784410}
+  myTopRenderer: {fileID: 1942978092247955949}
+  myBottomRenderer: {fileID: 1942978092247955581}
+  myFootwearRenderer: {fileID: 1942978092247955951}
+  mySkinRenderer: {fileID: 1942978092247955583}
+  myEyewearRenderer: {fileID: 1210932839290375426}
+  myHairRenderer: {fileID: 0}
+  myBeardRenderer: {fileID: 0}
+  myBones: {fileID: 1942978092247955569}
+  pView: {fileID: 1015343565317755479}
 --- !u!1 &1942978092247955581
 GameObject:
   m_ObjectHideFlags: 0

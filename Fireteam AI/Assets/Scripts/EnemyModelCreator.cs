@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class EnemyModelCreator : MonoBehaviour
+public class EnemyModelCreator : MonoBehaviourPunCallbacks
 {
     public string enemyName;
     public int modelNumber;
@@ -15,7 +15,7 @@ public class EnemyModelCreator : MonoBehaviour
     private string equippedTop;
     private string equippedBottom;
     private string equippedFootwear;
-    public int equippedSkin;
+    private int equippedSkin;
     
     public GameObject equippedSkinRef;
     public GameObject equippedHeadgearRef;
@@ -38,10 +38,25 @@ public class EnemyModelCreator : MonoBehaviour
     public GameObject myBones;
     public PhotonView pView;
 
+    void OnEnable() {
+        if (PhotonNetwork.IsMasterClient) {
+            EquipRandomOutfitForEnemy();
+        }
+    }
+
+    // Only used for testing purposes - do not uncomment
+    // void Update() {
+    //     if (Input.GetKeyDown(KeyCode.K)) {
+    //         EquipRandomOutfitForEnemy();
+    //     }
+    // }
+
     void EquipRandomOutfitForEnemy() {
         if (enemyName.Equals("Cicadas")) {
             GenerateRandomOutfitForCicadas();
-            
+            // If in a multiplayer game, set equipped outfit for the whole network
+            SendEquippedItemsToClients();
+            EquipGeneratedOutfitForCicadas();
         }
     }
 
@@ -51,11 +66,11 @@ public class EnemyModelCreator : MonoBehaviour
         if (r == 0) {
             // Camo tank
             equippedTop = "Camo Tank";
-            equippedSkin = 1;
+            equippedSkin = 2;
         } else if (r == 1) {
             // Camo shirt/short sleeve shirt
             equippedTop = "Camo Shirt";
-            equippedSkin = 2;
+            equippedSkin = 1;
         } else {
             // Camo top/long sleeve shirt
             equippedTop = "Camo Top";
@@ -78,16 +93,20 @@ public class EnemyModelCreator : MonoBehaviour
             equippedFootwear = "Combat Shoes";
         }
 
-        // 20% chance of wearing a ski mask
-        r = Random.Range(0, 5);
+        // 17% chance of wearing a ski mask
+        r = Random.Range(0, 7);
         if (r == 0) {
             equippedFacewear = "Ski Mask";
+            equippedHeadgear = null;
+            equippedEyewear = null;
+        } else {
+            equippedFacewear = null;
         }
         
         // If the ski mask wasn't equipped, maybe wear glasses and/or a hat
         if (r != 0) {
             // Maybe wear a hat - 20% chance
-            r = Random.Range(0, 5);
+            r = Random.Range(0, 6);
             if (r == 0) {
                 // Baseball cap
                 equippedHeadgear = "Baseball Hat";
@@ -106,76 +125,218 @@ public class EnemyModelCreator : MonoBehaviour
     }
 
     void EquipGeneratedOutfitForCicadas() {
-        MeshFixer m = null;
-        // Rules for guy with beard
-        if (modelNumber == 1) {
-            // First equip the correct skin
-            if (equippedSkinRef != null) {
-                Destroy(equippedSkinRef);
-                equippedSkinRef = null;
-            }
-            equippedSkinRef = (GameObject)Resources.Load("Models/Enemies/Cicadas/" + modelNumber + "/Skin" + equippedSkin + "/cicada" + modelNumber + "skin" + equippedSkin);
-            equippedSkinRef.transform.SetParent(gameObject.transform);
-            m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
-            m.target = mySkinRenderer.gameObject;
-            m.rootBone = myBones.transform;
-            m.AdaptMesh();
+        // Render beard by default
+        if (myBeardRenderer != null) {
+            myBeardRenderer.GetComponent<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (myHairRenderer != null) {
+            myHairRenderer.GetComponent<SkinnedMeshRenderer>().enabled = true;
+        }
+        // First equip the correct skin
+        UnequipSkin();
+        EquipSkin("Models/Enemies/Cicadas/" + modelNumber + "/Skin" + equippedSkin + "/cicada" + modelNumber + "skin" + equippedSkin);
 
-            // Second, equip the correct top
-            if (equippedTopRef != null) {
-                Destroy(equippedTopRef);
-                equippedTopRef = null;
-            }
+        // Second, equip the correct top
+        UnequipTop();
+        if (equippedTop != null) {
             if (equippedTop.Equals("Camo Tank")) {
-                equippedTopRef = (GameObject)Resources.Load("Models/Enemies/Cicadas/Clothing/Tops/1/camotank");
+                EquipTop("Models/Enemies/Cicadas/Clothing/Tops/1/camotank");
             } else if (equippedTop.Equals("Camo Shirt")) {
-                equippedTopRef = (GameObject)Resources.Load("Models/Enemies/Cicadas/Clothing/Tops/2/camotop");
+                EquipTop("Models/Enemies/Cicadas/Clothing/Tops/2/camotop");
             } else if (equippedTop.Equals("Camo Top")) {
-                equippedTopRef = (GameObject)Resources.Load("Models/Enemies/Cicadas/Clothing/Tops/3/camoshirt");
+                EquipTop("Models/Enemies/Cicadas/Clothing/Tops/3/camoshirt");
             }
-            equippedTopRef.transform.SetParent(gameObject.transform);
-            m = equippedTopRef.GetComponentInChildren<MeshFixer>();
-            m.target = myTopRenderer.gameObject;
-            m.rootBone = myBones.transform;
-            m.AdaptMesh();
+        }
 
-            // Third, equip the correct bottoms
-            if (equippedBottomRef != null) {
-                Destroy(equippedBottomRef);
-                equippedBottomRef = null;
-            }
+        // Third, equip the correct bottoms
+        UnequipBottom();
+        if (equippedBottom != null) {
             if (equippedBottom.Equals("Cargo Pants")) {
-                equippedBottomRef = (GameObject)Resources.Load("Models/Enemies/Cicadas/Clothing/Bottoms/1/cargos");
+                EquipBottom("Models/Enemies/Cicadas/Clothing/Bottoms/1/cargos");
             } else if (equippedBottom.Equals("Cargo Shorts")) {
-                equippedBottomRef = (GameObject)Resources.Load("Models/Enemies/Cicadas/Clothing/Bottoms/3/cargoshorts");
+                EquipBottom("Models/Enemies/Cicadas/Clothing/Bottoms/3/cargoshorts");
             } else if (equippedBottom.Equals("Cargo Jeans")) {
-                equippedBottomRef = (GameObject)Resources.Load("Models/Enemies/Cicadas/Clothing/Bottoms/2/cargojeans");
+                EquipBottom("Models/Enemies/Cicadas/Clothing/Bottoms/2/cargojeans");
             }
-            equippedBottomRef.transform.SetParent(gameObject.transform);
-            m = equippedBottomRef.GetComponentInChildren<MeshFixer>();
-            m.target = myBottomRenderer.gameObject;
-            m.rootBone = myBones.transform;
-            m.AdaptMesh();
+        }
 
-            // Fourth, equip the correct shoes
+        // Fourth, equip the correct shoes
+        UnequipFootwear();
+        if (equippedFootwear != null) {
+            if (equippedFootwear.Equals("Combat Boots")) {
+                EquipFootwear("Models/Enemies/Cicadas/Clothing/Shoes/1/combatboots");
+            } else if (equippedFootwear.Equals("Combat Shoes")) {
+                EquipFootwear("Models/Enemies/Cicadas/Clothing/Shoes/2/combatshoes");
+            }
+        }
 
-            // Equip facewear
+        // Equip facewear
+        UnequipFacewear();
+        if (equippedFacewear != null) {
+            if (equippedFacewear.Equals("Ski Mask")) {
+                if (myBeardRenderer != null) {
+                    myBeardRenderer.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                }
+                if (myHairRenderer != null) {
+                    myHairRenderer.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                }
+                EquipFacewear("Models/Enemies/Cicadas/Clothing/Face/1/shroud");
+            }
+        }
+        
+        // Equip eyewear
+        UnequipEyewear();
+        if (equippedEyewear != null) {
+            if (equippedEyewear.Equals("Sport Glasses")) {
+                EquipEyewear("Models/Enemies/Cicadas/Clothing/Eyes/1/sportsglasses");
+            }
+        }
 
-            // Equip eyewear
+        // Equip hats
+        UnequipHeadgear();
+        if (equippedHeadgear != null) {
+            if (equippedHeadgear.Equals("Baseball Hat")) {
+                if (myHairRenderer != null) {
+                    myHairRenderer.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                }
+                EquipHeadgear("Models/Enemies/Cicadas/Clothing/Hats/1/baseballhat");
+            }
+        }
+    }
 
-            // Equip hats
-        } else if (modelNumber == 2) {
-            // Rules for orange hair guy
+    void EquipTop(string prefabPath) {
+        equippedTopRef = (GameObject)Instantiate((GameObject)Resources.Load(prefabPath));
+        equippedTopRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedTopRef.GetComponentInChildren<MeshFixer>();
+        m.target = myTopRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
 
-        } else if (modelNumber == 3) {
-            // Rules for blonde long hair guy
+    void EquipBottom(string prefabPath) {
+        equippedBottomRef = (GameObject)Instantiate((GameObject)Resources.Load(prefabPath));
+        equippedBottomRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedBottomRef.GetComponentInChildren<MeshFixer>();
+        m.target = myBottomRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
 
-        } else if (modelNumber == 4) {
-            // Rules for black dude
+    void EquipEyewear(string prefabPath) {
+        equippedEyewearRef = (GameObject)Instantiate((GameObject)Resources.Load(prefabPath));
+        equippedEyewearRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedEyewearRef.GetComponentInChildren<MeshFixer>();
+        m.target = myEyewearRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
 
-        } else {
-            // Rules for long moustache guy
+    void EquipFacewear(string prefabPath) {
+        equippedFacewearRef = (GameObject)Instantiate((GameObject)Resources.Load(prefabPath));
+        equippedFacewearRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedFacewearRef.GetComponentInChildren<MeshFixer>();
+        m.target = myFacewearRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
 
+    void EquipFootwear(string prefabPath) {
+        equippedFootwearRef = (GameObject)Instantiate((GameObject)Resources.Load(prefabPath));
+        equippedFootwearRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedFootwearRef.GetComponentInChildren<MeshFixer>();
+        m.target = myFootwearRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
+
+    void EquipSkin(string prefabPath) {
+        equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(prefabPath));
+        equippedSkinRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
+        m.target = mySkinRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
+
+    void EquipHeadgear(string prefabPath) {
+        equippedHeadgearRef = (GameObject)Instantiate((GameObject)Resources.Load(prefabPath));
+        equippedHeadgearRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedHeadgearRef.GetComponentInChildren<MeshFixer>();
+        m.target = myHeadgearRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
+
+    void UnequipTop() {
+        if (equippedTopRef != null) {
+            Destroy(equippedTopRef);
+            equippedTopRef = null;
+        }
+    }
+
+    void UnequipBottom() {
+        if (equippedBottomRef != null) {
+            Destroy(equippedBottomRef);
+            equippedBottomRef = null;
+        }
+    }
+
+    void UnequipEyewear() {
+        if (equippedEyewearRef != null) {
+            Destroy(equippedEyewearRef);
+            equippedEyewearRef = null;
+        }
+    }
+
+    void UnequipFacewear() {
+        if (equippedFacewearRef != null) {
+            Destroy(equippedFacewearRef);
+            equippedFacewearRef = null;
+        }
+    }
+
+    void UnequipFootwear() {
+        if (equippedFootwearRef != null) {
+            Destroy(equippedFootwearRef);
+            equippedFootwearRef = null;
+        }
+    }
+
+    void UnequipSkin() {
+        if (equippedSkinRef != null) {
+            Destroy(equippedSkinRef);
+            equippedSkinRef = null;
+        }
+    }
+
+    void UnequipHeadgear() {
+        if (equippedHeadgearRef != null) {
+            Destroy(equippedHeadgearRef);
+            equippedHeadgearRef = null;
+        }
+    }
+
+    [PunRPC]
+    void RpcSetEquippedItems(string equippedHeadgear, string equippedFacewear, string equippedEyewear, string equippedTop, string equippedBottom, string equippedFootwear, int equippedSkin) {
+        this.equippedFacewear = equippedFacewear;
+        this.equippedEyewear = equippedEyewear;
+        this.equippedTop = equippedTop;
+        this.equippedHeadgear = equippedHeadgear;
+        this.equippedBottom = equippedBottom;
+        this.equippedFootwear = equippedFootwear;
+        this.equippedSkin = equippedSkin;
+        EquipGeneratedOutfitForCicadas();
+    }
+
+    void SendEquippedItemsToClients() {
+        if (pView != null) {
+            pView.RPC("RpcSetEquippedItems", RpcTarget.Others, this.equippedHeadgear, this.equippedFacewear, this.equippedEyewear, this.equippedTop, this.equippedBottom, this.equippedFootwear, this.equippedSkin);
+        }
+    }
+
+    public override void OnPlayerEnteredRoom(Player newPlayer) {
+        if (PhotonNetwork.IsMasterClient) {
+            SendEquippedItemsToClients();
         }
     }
 
