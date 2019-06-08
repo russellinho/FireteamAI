@@ -12,6 +12,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	public GameObject ammoBoxPickup;
 	public GameObject healthBoxPickup;
 	public AudioClip[] voiceClips;
+	public AudioClip[] gruntSounds;
 	public GameObject hitParticles;
 	public GameObject bulletImpact;
 	public GameObject bloodEffect;
@@ -47,13 +48,15 @@ public class BetaEnemyScript : MonoBehaviour {
 	public bool sniper;
 	public float rotationSpeed = 6f;
 	public int health;
+	public int deathBy;
+	public float disorientationTime;
 	private Vector3 spawnPos;
 	private Vector3 spawnRot;
 	public bool alerted = false;
 	private bool wasMasterClient;
 
 	// Finite state machine states
-	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking};
+	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Disoriented};
 	// FSM used for determining movement while attacking and not in cover
 	enum FiringStates {StandingStill, StrafeLeft, StrafeRight, Backpedal, Forward};
 
@@ -115,6 +118,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		spawnRot = new Vector3 (transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
 		animator = GetComponent<Animator> ();
 		health = 100;
+		disorientationTime = 0f;
 		currentBullets = bulletsPerMag;
 		audioSource = GetComponent<AudioSource> ();
 		audioSource.maxDistance = 100f;
@@ -201,7 +205,10 @@ public class BetaEnemyScript : MonoBehaviour {
 			navMeshObstacle.enabled = false;
 		}
 
-		HandleCrouching ();
+		UpdateDisorientationTime();
+		if (actionState == ActionStates.Disoriented && disorientationTime <= 0f) {
+			actionState = ActionStates.Idle;
+		}
 
 		ReplenishFireRate ();
 		DecreaseAlertTime ();
@@ -213,6 +220,13 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		CheckAlerted ();
 		CheckTargetDead ();
+
+		// If disoriented, don't have the ability to do anything else except die
+		if (actionState == ActionStates.Disoriented) {
+			return;
+		}
+
+		HandleCrouching ();
 
 		if (enemyType == EnemyType.Patrol) {
 			DecideActionPatrolInCombat();
@@ -246,6 +260,12 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 		// Handle animations independent of frame rate
 		DecideAnimation ();
+		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Disoriented")) {
+			if (PhotonNetwork.IsMasterClient && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
+				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
+			}
+			return;
+		}
 		AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo (0);
 		isReloading = (info.IsName ("Reloading") || info.IsName("CrouchReload"));
 	}
@@ -253,10 +273,21 @@ public class BetaEnemyScript : MonoBehaviour {
 	void LateUpdate() {
 		if (!PhotonNetwork.IsMasterClient || health <= 0)
 			return;
-		// If the enemy sees the player, rotate the enemy towards the player
-		RotateTowardsPlayer();
+		// If the enemy sees the player, rotate the enemy towards the player only if the enemy is aiming at the player
+		if (player != null && ShouldRotateTowardsPlayerTarget()) {
+			RotateTowardsPlayer();
+		}
 
 	}
+
+	bool ShouldRotateTowardsPlayerTarget() {
+		if (actionState == ActionStates.Firing || actionState == ActionStates.Melee || actionState == ActionStates.Reloading) {
+			return true;
+		}
+		return false;
+	}
+
+
 
 	void ReplenishFireRate() {
 		if (fireTimer < fireRate) {
@@ -273,6 +304,12 @@ public class BetaEnemyScript : MonoBehaviour {
 	void UpdateFiringModeTimer() {
 		if (firingModeTimer > 0f) {
 			firingModeTimer -= Time.deltaTime;
+		}
+	}
+
+	void UpdateDisorientationTime() {
+		if (disorientationTime > 0f) {
+			disorientationTime -= Time.deltaTime;
 		}
 	}
 
@@ -293,7 +330,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	void CheckAlerted() {
 		if (!Vector3.Equals (GameControllerScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
 			if (!alerted) {
-				pView.RPC ("RpcSetAlerted", RpcTarget.All, true);
+				SetAlerted(true);
 				SetAlertTimer (12f);
 			}
 		}
@@ -330,13 +367,11 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void RotateTowardsPlayer() {
-		if (player != null) {
-			Vector3 rotDir = (player.transform.position - transform.position).normalized;
-			Quaternion lookRot = Quaternion.LookRotation (rotDir);
-			Quaternion tempQuat = Quaternion.Slerp (transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
-			Vector3 tempRot = tempQuat.eulerAngles;
-			transform.rotation = Quaternion.Euler (new Vector3 (0f, tempRot.y, 0f));
-		}
+		Vector3 rotDir = (player.transform.position - transform.position).normalized;
+		Quaternion lookRot = Quaternion.LookRotation (rotDir);
+		Quaternion tempQuat = Quaternion.Slerp (transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
+		Vector3 tempRot = tempQuat.eulerAngles;
+		transform.rotation = Quaternion.Euler (new Vector3 (0f, tempRot.y, 0f));
 	}
 
 	[PunRPC]
@@ -367,7 +402,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	void HandleMovementPatrol() {
 		// Melee attack trumps all
-		if (actionState == ActionStates.Melee || actionState == ActionStates.Dead) {
+		if (actionState == ActionStates.Melee || actionState == ActionStates.Dead || actionState == ActionStates.Disoriented) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 			}
@@ -599,17 +634,18 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
-	[PunRPC]
-	void RpcPlaySound(string s) {
-		audioSource.clip = (AudioClip)Resources.Load(s);
-		audioSource.Play ();
-	}
-
 	void PlayVoiceClip(int n) {
-		if (!audioSource.isPlaying && health > 0) {
+		if (!audioSource.isPlaying && health > 0 && disorientationTime <= 0f) {
 			audioSource.clip = voiceClips [n - 1];
 			audioSource.Play ();
 		}
+	}
+
+	public void PlayGruntSound() {
+		if (gruntSounds.Length == 0) return;
+		int r = Random.Range(0, gruntSounds.Length);
+		audioSource.clip = voiceClips [r];
+		audioSource.Play ();
 	}
 
 	IEnumerator PlayVoiceClipDelayed(int n, float t) {
@@ -642,22 +678,13 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 
 			pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead);
-			// Choose a death sound
-			r = Random.Range (0, 3);
-			if (r == 0) {
-				pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/grunt1");
-			} else if (r == 1) {
-				pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/grunt2");
-			} else {
-				pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/grunt4");
-			}
 
 			pView.RPC ("StartDespawn", RpcTarget.All);
 			return;
 		}
 
 		// Melee attack trumps all
-		if (actionState == ActionStates.Melee) {
+		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented) {
 			return;
 		}
 
@@ -717,14 +744,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
-	public void PainSound() {
-		int r = Random.Range (1, 3);
-		if (r == 1) {
-			r = Random.Range(1, 10);
-			pView.RPC ("RpcPlaySound", RpcTarget.All, "Grunts/pain" + r);
-		}
-	}
-
 	bool EnvObstructionExists(Vector3 a, Vector3 b) {
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
@@ -733,6 +752,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
+		// TODO: This logic is incorrect
 		if (!PhotonNetwork.LocalPlayer.IsLocal) {
 			return;
 		}
@@ -761,28 +781,62 @@ public class BetaEnemyScript : MonoBehaviour {
 
 				// Deal damage to the enemy
 				TakeDamage(damageReceived);
+				if (health <= 0) {
+					deathBy = 1;
+				}
 			}
 
 			// Make enemy alerted by the explosion if he's not dead
 			if (!alerted && health > 0) {
-				pView.RPC ("RpcSetAlerted", RpcTarget.All, true);
+				SetAlerted(true);
 			}
 			return;
 		}
 
+		if (other.gameObject.tag.Equals("Flashbang")) {
+			if (!EnvObstructionExists(transform.position, other.gameObject.transform.position)) {
+				ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
+				float totalDisorientationTime = ThrowableScript.FLASHBANG_TIME;
+
+				// Determine how far from the explosion the enemy was
+				float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
+				float blastRadius = t.blastRadius;
+
+				// Determine rotation away from the flashbang - if more pointed away, less the duration
+				Vector3 toPosition = Vector3.Normalize(other.gameObject.transform.position - transform.position);
+				float angleToPosition = Vector3.Angle(transform.forward, toPosition);
+
+				// Modify total disorientation time dependent on distance from grenade and rotation away from grenade
+				float distanceMultiplier = Mathf.Clamp(1f - (distanceFromGrenade / blastRadius) + 0.6f, 0f, 1f);
+				float rotationMultiplier = Mathf.Clamp(1f - (angleToPosition / 180f) + 0.1f, 0f, 1f);
+
+				// Set enemy disorientation time
+				totalDisorientationTime *= distanceMultiplier * rotationMultiplier;
+				disorientationTime += totalDisorientationTime;
+				pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Disoriented);
+
+				// Make enemy alerted by the disorientation if he's not dead
+				if (!alerted && health > 0) {
+					SetAlerted(true);
+				}
+				return;
+			}
+		}
+
 		// If the player enters the enemy's sight range, determine if the player is in the right angle. If he is and there is no current player to target, then
 		// assign the player and stop searching
-		float dist = Vector3.Distance(transform.position, other.transform.position);
-		if (dist < 2.3f) {
-			if (!alerted) {
-				pView.RPC ("RpcSetAlerted", RpcTarget.All, true);
-			}
+		if (actionState == ActionStates.Disoriented) {
+			float dist = Vector3.Distance(transform.position, other.transform.position);
+			if (dist < 2.3f) {
+				if (!alerted) {
+					pView.RPC ("RpcSetAlerted", RpcTarget.All, true);
+				}
 
-			if (actionState != ActionStates.Melee) {
-				pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee);
+				if (actionState != ActionStates.Melee) {
+					pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee);
+				}
+				playerToHit = other.gameObject;
 			}
-			playerToHit = other.gameObject;
-
 		}
 	}
 
@@ -823,27 +877,13 @@ public class BetaEnemyScript : MonoBehaviour {
 
 			pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 			pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead);
-			// Choose a death sound
-			r = Random.Range(0, 3);
-			if (r == 0)
-			{
-				pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt1");
-			}
-			else if (r == 1)
-			{
-				pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt2");
-			}
-			else
-			{
-				pView.RPC("RpcPlaySound", RpcTarget.All, "Grunts/grunt4");
-			}
 
 			pView.RPC ("StartDespawn", RpcTarget.All);
 			return;
 		}
 
 		// Melee attack trumps all
-		if (actionState == ActionStates.Melee) {
+		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented) {
 			return;
 		}
 
@@ -987,12 +1027,20 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		if (actionState == ActionStates.Dead) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") && !animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
-				int r = Random.Range (1, 3);
-				if (r == 1) {
-					animator.Play ("Die");
+			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") && !animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")
+			&& !animator.GetCurrentAnimatorStateInfo (0).IsName ("Die2") && !animator.GetCurrentAnimatorStateInfo (0).IsName ("DieExplosion")) {
+				// If killed by an explosion, play the explosion death animation. Else, play a random regular death animation
+				if (deathBy == 1) {
+					animator.Play("DieExplosion");
 				} else {
-					animator.Play ("DieHeadshot");
+					int r = Random.Range (1, 4);
+					if (r == 1) {
+						animator.Play ("Die");
+					} else if (r == 2) {
+						animator.Play ("DieHeadshot");
+					} else {
+						animator.Play("Die2");
+					}
 				}
 			}
 		}
@@ -1062,6 +1110,12 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (actionState == ActionStates.Melee) {
 			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Melee")) {
 				animator.Play ("Melee");
+			}
+		}
+
+		if (actionState == ActionStates.Disoriented) {
+			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Disoriented")) {
+				animator.Play ("Disoriented");
 			}
 		}
 	}
@@ -1429,6 +1483,10 @@ public class BetaEnemyScript : MonoBehaviour {
 			} else if (r != 0) {
 				StartCoroutine (PlayVoiceClipDelayed(Random.Range (6, 13), Random.Range(2f, 50f)));
 			}
+		}
+		// Play grunt when enemy dies or hit by flashbang
+		if (action == ActionStates.Dead || action == ActionStates.Disoriented) {
+			PlayGruntSound();
 		}
 		actionState = action;
 	}

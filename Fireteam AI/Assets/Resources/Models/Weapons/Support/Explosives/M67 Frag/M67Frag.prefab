@@ -472,6 +472,11 @@ MonoBehaviour:
   titleHandPositionsMale: {x: 0, y: 0, z: 0}
   titleHandPositionsFemale: {x: 0, y: 0, z: 0}
   recoveryConstant: 0
+  fireSound: {fileID: 0}
+  suppressedFireSound: {fileID: 0}
+  reloadSound: {fileID: 0}
+  gunSmoke: {fileID: 0}
+  muzzleFlash: {fileID: 0}
 --- !u!114 &533506344782479917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -494,6 +499,7 @@ MonoBehaviour:
   - {fileID: 3860504239684545421}
   explosionEffect: {fileID: 7142040739807068215}
   fuseTimer: 4.5
+  explosionDelay: 0
   blastRadius: 36
   explosionSound: {fileID: 8243386482449264105}
   pinSound: {fileID: 5561465029240044045}

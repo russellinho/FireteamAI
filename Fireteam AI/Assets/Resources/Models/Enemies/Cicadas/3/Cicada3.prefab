@@ -1028,7 +1028,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8502661351813044397}
-  m_LocalRotation: {x: 0.00000039740817, y: -0.000049631133, z: -0.0015336163, w: 0.9999988}
+  m_LocalRotation: {x: 0.0000003974082, y: -0.000049631133, z: -0.0015336165, w: 0.9999988}
   m_LocalPosition: {x: -0.000021153366, y: 0.034031328, z: -2.842171e-16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1619,7 +1619,7 @@ Animator:
   m_GameObject: {fileID: 8502661351813044425}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: f51b27f5e62d74ed48d58a17b9c89e0e, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 484e64a35dc38bc4f916067d8b8d67aa, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -1784,6 +1784,16 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
   - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
   - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
+  gruntSounds:
+  - {fileID: 8300000, guid: d47fdb6afb14a48449898374e2585952, type: 3}
+  - {fileID: 8300000, guid: 468934c3d7434b7409c0f1af5a6e27bd, type: 3}
+  - {fileID: 8300000, guid: 83dbf44bd7c3395418a23b49eddbcc0d, type: 3}
+  - {fileID: 8300000, guid: 00b89719222b9cd4ba20bb2fade8ed4c, type: 3}
+  - {fileID: 8300000, guid: 8df2e795e4f6c0f48a46ea38dc63824b, type: 3}
+  - {fileID: 8300000, guid: 87037e86ec8ebb440a4d6f7efadb4942, type: 3}
+  - {fileID: 8300000, guid: 1d2d7a950238c5e4ebb6905dc1f275b0, type: 3}
+  - {fileID: 8300000, guid: 588d7659a4990c542b4496a6ad931f08, type: 3}
+  - {fileID: 8300000, guid: 65540b35d139c8f498bdbfc796a9eaae, type: 3}
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 3}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -1804,6 +1814,8 @@ MonoBehaviour:
   sniper: 0
   rotationSpeed: 6
   health: 0
+  deathBy: 0
+  disorientationTime: 0
   alerted: 0
   range: 27
   bulletsPerMag: 30
@@ -1864,7 +1876,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 7658744305337577552}
   viewIdField: 0
-  InstantiationId: 1
+  InstantiationId: 48
   isRuntimeInstantiated: 0
 --- !u!114 &7658744305337577552
 MonoBehaviour:
@@ -3071,7 +3083,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8502661351813044583}
-  m_LocalRotation: {x: -0.0037576999, y: 0.0004372878, z: 0.042026583, w: 0.9991093}
+  m_LocalRotation: {x: -0.0037577, y: 0.0004372878, z: 0.042026587, w: 0.9991093}
   m_LocalPosition: {x: 0.0376423, y: 0.11234145, z: 0.0014467051}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

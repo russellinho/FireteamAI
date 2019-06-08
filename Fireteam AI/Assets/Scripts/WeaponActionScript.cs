@@ -302,7 +302,7 @@ public class WeaponActionScript : MonoBehaviour
                     hudScript.InstantiateHitmarker();
                     audioController.PlayHitmarkerSound();
                     hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
-                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().PainSound();
+                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().PlayGruntSound();
                     hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted(true);
                     if (hit.transform.gameObject.GetComponent<BetaEnemyScript>().health <= 0 && beforeHp > 0)
                     {
@@ -376,7 +376,7 @@ public class WeaponActionScript : MonoBehaviour
                             hudScript.InstantiateHitmarker();
                             audioController.PlayHitmarkerSound();
                             //hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
-                            hit.transform.gameObject.GetComponent<BetaEnemyScript>().PainSound();
+                            hit.transform.gameObject.GetComponent<BetaEnemyScript>().PlayGruntSound();
                             hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted(true);
                         }
                     }
