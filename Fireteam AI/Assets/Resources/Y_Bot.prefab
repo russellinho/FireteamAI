@@ -940,6 +940,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2bc0f789dc95e094792f3dd663407503, type: 3}
   - {fileID: 8300000, guid: a5e2e1cfac5d05a48b6cfd62f37d3a4e, type: 3}
   - {fileID: 8300000, guid: 8627c859259fa824d8669f5e859419d8, type: 3}
+  gruntSounds: []
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 3}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -959,6 +960,8 @@ MonoBehaviour:
   sniper: 0
   rotationSpeed: 6
   health: 0
+  deathBy: 0
+  disorientationTime: 0
   alerted: 0
   range: 27
   bulletsPerMag: 30
@@ -1018,7 +1021,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 114883440538335910}
   viewIdField: 0
-  InstantiationId: 4
+  InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &114883440538335910
 MonoBehaviour:
