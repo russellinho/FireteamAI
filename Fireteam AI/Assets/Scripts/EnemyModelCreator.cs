@@ -38,7 +38,7 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     public GameObject myBones;
     public PhotonView pView;
 
-    void OnEnable() {
+    public override void OnEnable() {
         if (PhotonNetwork.IsMasterClient) {
             EquipRandomOutfitForEnemy();
         }
