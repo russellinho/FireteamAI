@@ -267,6 +267,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         // Save settings if the settings are active
 		 if (customizationMenu.activeInHierarchy) {
 		 	savePlayerData ();
+			 ClearCustomizationContent();
 		 }
 		SwitchToEquipmentScreen();
 		customizationMenu.SetActive (false);
@@ -350,6 +351,24 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		customizationMenuPopup.SetActive(false);
 	}
 
+	// Clears existing items from the shop panel
+	void ClearCustomizationContent() {
+		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			currentlyEquippedItemPrefab = null;
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+		}
+	}
+
+	// Clears existing items from the mod shop panel
+	void ClearModCustomizationContent() {
+		RawImage[] existingThumbnails = modInventoryContent.GetComponentsInChildren<RawImage>();
+		foreach (RawImage r in existingThumbnails) {
+			currentlyEquippedModPrefab = null;
+			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+		}
+	}
+
 	public void OnHeadBtnClicked() {
 		// Change all button colors
 		headgearBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
@@ -364,11 +383,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			currentlyEquippedItemPrefab = null;
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
@@ -409,11 +424,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			currentlyEquippedItemPrefab = null;
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
@@ -454,11 +465,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			currentlyEquippedItemPrefab = null;
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		Dictionary<string, Armor> characterArmor = InventoryScript.characterCatalog[characterName].armorCatalog;
@@ -499,11 +506,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			currentlyEquippedItemPrefab = null;
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
@@ -544,11 +547,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			currentlyEquippedItemPrefab = null;
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
@@ -589,11 +588,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			currentlyEquippedItemPrefab = null;
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
@@ -649,10 +644,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		sniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
@@ -709,10 +701,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		pistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
@@ -767,10 +756,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		boostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
@@ -806,10 +792,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		// Populate with assault rifles
 		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
@@ -845,10 +828,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		// Populate with shotguns
 		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
@@ -884,10 +864,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		// Populate with sniper rifles
 		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
@@ -921,10 +898,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		// Populate with pistols
 		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
@@ -959,10 +933,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		// Populate with pistols
 		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
@@ -997,10 +968,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		// Populate with pistols
 		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
@@ -1042,11 +1010,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			currentlyEquippedItemPrefab = null;
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myCharacters.Count; i++) {
@@ -1086,11 +1050,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			currentlyEquippedItemPrefab = null;
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearCustomizationContent();
 
 		// If you're on equipment screen, go to loadout screen. Else, go back to loadout.
 		if (t.text.Equals("Loadout")) {
@@ -1107,11 +1067,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		suppressorsBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		RawImage[] existingThumbnails = modInventoryContent.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			currentlyEquippedModPrefab = null;
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
-		}
+		ClearModCustomizationContent();
 
 		// Populate into grid layout
 		for (int i = 0; i < InventoryScript.myMods.Count; i++) {

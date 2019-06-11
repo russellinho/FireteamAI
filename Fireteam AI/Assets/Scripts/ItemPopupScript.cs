@@ -80,22 +80,22 @@ public class ItemPopupScript : MonoBehaviour
     }
 
     public void SetWeaponStats(float damage, float accuracy, float recoil, float fireRate, float mobility, float range, float clipCapacity) {
-        damageStatTxt.text = "" + (int)damage;
-        accuracyStatTxt.text = "" + (int)accuracy;
-        recoilStatTxt.text = "" + (int)recoil;
-        fireRateTxt.text = "" + (int)fireRate;
-        mobilityTxt.text = "" + (int)mobility;
-        rangeTxt.text = "" + (int)range;
-        clipCapacityTxt.text = "" + (int)clipCapacity;
+        damageStatTxt.text = damage == -1f ? "-" : "" + (int)damage;
+        accuracyStatTxt.text = accuracy == -1f ? "-" : "" + (int)accuracy;
+        recoilStatTxt.text = recoil == -1f ? "-" : "" + (int)recoil;
+        fireRateTxt.text = fireRate == -1f ? "-" : "" + (int)fireRate;
+        mobilityTxt.text = mobility == -1f ? "-" : "" + (int)mobility;
+        rangeTxt.text = range == -1f ? "-" : "" + (int)range;
+        clipCapacityTxt.text = clipCapacity == -1f ? "-" : "" + (int)clipCapacity;
     }
 
     public void SetModStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {
-        modDamageStatTxt.text = "" + (int)damage;
-        modAccuracyStatTxt.text = "" + (int)accuracy;
-        modRecoilStatTxt.text = "" + (int)recoil;
-        modRangeStatTxt.text = "" + (int)range;
-        modClipCapacityStatTxt.text = "" + clipCapacity;
-        modMaxAmmoStatTxt.text = "" + maxAmmo;
+        modDamageStatTxt.text = damage == -1f ? "-" : "" + (int)damage;
+        modAccuracyStatTxt.text = accuracy == -1f ? "-" : "" + (int)accuracy;
+        modRecoilStatTxt.text = recoil == -1f ? "-" : "" + (int)recoil;
+        modRangeStatTxt.text = range == -1f ? "-" : "" + (int)range;
+        modClipCapacityStatTxt.text = clipCapacity == -1f ? "-" : "" + clipCapacity;
+        modMaxAmmoStatTxt.text = maxAmmo == -1f ? "-" : "" + maxAmmo;
     }
 
     private int ConvertToPercent(float f) {
