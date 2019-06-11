@@ -33,6 +33,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private float hitmarkerTimer;
 	private float disorientationTimer;
 	private float totalDisorientationTime;
+	public bool screenGrab;
 
     // Use this for initialization
     void Start () {
@@ -60,6 +61,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		killPopupTimer = 0f;
 		hitmarkerTimer = 0f;
 		popupIsStarting = false;
+		screenGrab = false;
 
 		LoadBetaLevel ();
 		StartMatchCameraFade ();
@@ -583,18 +585,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private void SetFlashbangEffect(bool b) {
 		if (b) {
 			// Enable the flashbang effect
-			// White overlay
-			container.flashbangScreenCap.enabled = true;
-			container.flashbangOverlay.enabled = true;
-			container.flashbangOverlay.color = new Color(1f, 1f, 1f, 1f);
-
-			// Incorrect screen graphics
-			container.flashbangScreenCap.enabled = true;
-			Texture2D result;
-			result = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
-			result.ReadPixels(container.flashbangScreenCap.rectTransform.rect, 0, 0, false);
-			result.Apply();
-			container.flashbangScreenCap.texture = result;
+			screenGrab = true;
 		} else {
 			// Disable the flashbang effect
 			container.flashbangScreenCap.texture = null;
@@ -602,5 +593,21 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			container.flashbangOverlay.enabled = false;
 		}
     }
+
+	// This is called after the camera renders a frame. Put flashbang effect in here to avoid the readpixels error
+	public void TriggerFlashbangEffect() {
+		// White overlay
+		container.flashbangScreenCap.enabled = true;
+		container.flashbangOverlay.enabled = true;
+		container.flashbangOverlay.color = new Color(1f, 1f, 1f, 1f);
+
+		// Incorrect screen graphics
+		container.flashbangScreenCap.enabled = true;
+		Texture2D result;
+		result = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
+		result.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0, false);
+		result.Apply();
+		container.flashbangScreenCap.texture = result;
+	}
 
 }

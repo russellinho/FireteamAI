@@ -240,7 +240,6 @@ public class WeaponScript : MonoBehaviour
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
                 equippedWep = weaponName;
-                Debug.Log(equippedWep);
                 EquipPistol(weaponName);
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());

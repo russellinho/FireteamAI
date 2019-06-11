@@ -18,4 +18,11 @@ public class CameraScript : MonoBehaviour
             transform.forward = Vector3.Slerp(transform.forward, new Vector3(transform.forward.x, transform.forward.y, transform.forward.z), 5f * Time.deltaTime);
         }
     }
+
+    void OnPostRender() {
+        if (fpc.playerActionScript.hud.screenGrab) {
+            fpc.playerActionScript.hud.TriggerFlashbangEffect();
+            fpc.playerActionScript.hud.screenGrab = false;
+        }
+    }
 }
