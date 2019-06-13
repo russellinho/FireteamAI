@@ -8,6 +8,8 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 public class BetaEnemyScript : MonoBehaviour {
 
+	private const float MELEE_DISTANCE = 2.3f;
+
 	// Prefab references
 	public GameObject ammoBoxPickup;
 	public GameObject healthBoxPickup;
@@ -204,7 +206,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			navMesh.enabled = false;
 			navMeshObstacle.enabled = false;
 		}
-		Debug.Log(actionState);
+		
 		UpdateDisorientationTime();
 		if (actionState == ActionStates.Disoriented && disorientationTime <= 0f) {
 			actionState = ActionStates.Idle;
@@ -694,7 +696,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (player != null) {
 			alertTimer = 10f;
 
-			if (Vector3.Distance (player.transform.position, transform.position) <= 2.3f) {
+			if (Vector3.Distance (player.transform.position, transform.position) <= MELEE_DISTANCE) {
 				if (actionState != ActionStates.Melee) {
 					pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee);
 				}
@@ -813,7 +815,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	void HandleMeleeEffectTriggers(Collider other) {
 		float dist = Vector3.Distance(transform.position, other.transform.position);
-		if (dist < 2.3f) {
+		if (dist <= MELEE_DISTANCE) {
 			if (!alerted) {
 				pView.RPC ("RpcSetAlerted", RpcTarget.All, true);
 			}
@@ -1238,7 +1240,9 @@ public class BetaEnemyScript : MonoBehaviour {
 			PlayerActionScript ps = playerToHit.GetComponent<PlayerActionScript> ();
 			ps.TakeDamage (50);
 			ps.hitTimer = 0f;
-			playerToHit = null;
+			if (Vector3.Distance(transform.position, playerToHit.transform.position) > MELEE_DISTANCE) {
+				playerToHit = null;
+			}
 		}
 	}
 
