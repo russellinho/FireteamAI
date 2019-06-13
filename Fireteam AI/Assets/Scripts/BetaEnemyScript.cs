@@ -204,7 +204,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			navMesh.enabled = false;
 			navMeshObstacle.enabled = false;
 		}
-
+		Debug.Log(actionState);
 		UpdateDisorientationTime();
 		if (actionState == ActionStates.Disoriented && disorientationTime <= 0f) {
 			actionState = ActionStates.Idle;
@@ -222,7 +222,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		CheckTargetDead ();
 
 		// If disoriented, don't have the ability to do anything else except die
-		if (actionState == ActionStates.Disoriented) {
+		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
 			return;
 		}
 
@@ -751,20 +751,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		return Physics.Linecast(a, b, ignoreLayers);
 	}
 
-	void OnTriggerEnter(Collider other) {
-		// TODO: This logic is incorrect
-		if (!PhotonNetwork.LocalPlayer.IsLocal) {
-			return;
-		}
-
-		if (!other.gameObject.tag.Equals ("Player")) {
-			return;
-		}
-		// Don't consider dead players
-		if (other.gameObject.GetComponent<PlayerActionScript> ().health <= 0f) {
-			return;
-		}
-
+	void HandleExplosiveEffectTriggers(Collider other) {
 		// First priority is to handle possible explosion damage
 		if (other.gameObject.tag.Equals("Explosive")) {
 			// If a ray casted from the enemy head to the grenade position is obscured, then the explosion is blocked
@@ -822,21 +809,45 @@ public class BetaEnemyScript : MonoBehaviour {
 				return;
 			}
 		}
+	}
+
+	void HandleMeleeEffectTriggers(Collider other) {
+		float dist = Vector3.Distance(transform.position, other.transform.position);
+		if (dist < 2.3f) {
+			if (!alerted) {
+				pView.RPC ("RpcSetAlerted", RpcTarget.All, true);
+			}
+
+			if (actionState != ActionStates.Melee) {
+				pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee);
+			}
+			playerToHit = other.gameObject;
+		}
+	}
+
+	void OnTriggerEnter(Collider other) {
+		/** Explosive trigger functionality below - only operate on master client/server to avoid duplicate effects */
+		if (PhotonNetwork.IsMasterClient) {
+			HandleExplosiveEffectTriggers(other);
+		}
+
+		/** Melee trigger functionality below */
+		if (!PhotonNetwork.LocalPlayer.IsLocal) {
+			return;
+		}
+
+		if (!other.gameObject.tag.Equals ("Player")) {
+			return;
+		}
+		// Don't consider dead players
+		if (other.gameObject.GetComponent<PlayerActionScript> ().health <= 0f) {
+			return;
+		}
 
 		// If the player enters the enemy's sight range, determine if the player is in the right angle. If he is and there is no current player to target, then
 		// assign the player and stop searching
-		if (actionState == ActionStates.Disoriented) {
-			float dist = Vector3.Distance(transform.position, other.transform.position);
-			if (dist < 2.3f) {
-				if (!alerted) {
-					pView.RPC ("RpcSetAlerted", RpcTarget.All, true);
-				}
-
-				if (actionState != ActionStates.Melee) {
-					pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee);
-				}
-				playerToHit = other.gameObject;
-			}
+		if (actionState != ActionStates.Disoriented && health > 0f) {
+			HandleMeleeEffectTriggers(other);
 		}
 	}
 
