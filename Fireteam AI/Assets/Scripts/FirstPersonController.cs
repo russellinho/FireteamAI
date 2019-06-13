@@ -14,7 +14,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
     {
         [SerializeField] public bool m_IsWalking;
         [SerializeField] public bool m_IsCrouching;
-    		[SerializeField] public bool m_IsRunning;
+    	[SerializeField] public bool m_IsRunning;
         [SerializeField] public bool m_IsMoving;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
         [SerializeField] private float m_JumpSpeed;
@@ -494,6 +494,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [PunRPC]
         private void RpcSetIsDeadInAnimator(bool x) {
             animator.SetBool("isDead", x);
+            animator.Play("Death", 0);
+            animator.Play("Death", 1);
         }
 
         public void SetWalkingInAnimator(bool x) {

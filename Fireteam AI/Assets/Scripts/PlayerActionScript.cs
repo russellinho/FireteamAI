@@ -342,6 +342,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (health <= 0)
         {
+            if (fpc.enabled) {
+                fpc.SetIsDeadInAnimator(true);
+            }
             fpc.enabled = false;
             if (!rotationSaved)
             {
