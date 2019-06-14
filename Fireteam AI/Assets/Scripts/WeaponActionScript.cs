@@ -446,12 +446,16 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     void InstantiateGunSmokeEffect() {
-        GameObject gunSmokeEffect = Instantiate(weaponStats.gunSmoke, shootPoint.position - new Vector3(0f, 0.05f, 0f), Quaternion.Euler(315f, 0f, 0f));
-        Destroy(gunSmokeEffect, 1.5f);
+        if (weaponStats.gunSmoke != null) {
+            GameObject gunSmokeEffect = Instantiate(weaponStats.gunSmoke, shootPoint.position - new Vector3(0f, 0.05f, 0f), Quaternion.Euler(315f, 0f, 0f));
+            Destroy(gunSmokeEffect, 1.5f);
+        }
     }
 
     void PlayMuzzleFlash() {
-        weaponStats.muzzleFlash.Play();
+        if (weaponStats.muzzleFlash != null) {
+            weaponStats.muzzleFlash.Play();
+        }
     }
 
     [PunRPC]
