@@ -733,7 +733,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     public IEnumerator addHealth(){
-        Debug.Log("medkit used");
         // use below to test on self
         this.health = 60;
         int healthIncrement = (int)(playerScript.health*.6f/5f);
@@ -755,8 +754,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
 
     public IEnumerator useStaminaBoost(float staminaBoost, float speedBoost){
-        Debug.Log("Adrenaphine used");
-
         unlimitedStamina = true;
         totalSpeedBoost = originalSpeed * speedBoost;
         yield return new WaitForSeconds(staminaBoost);

@@ -312,11 +312,14 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void UpdateHitFlare() {
 		// Hit timer is set to 0 every time the player is hit, if player has been hit recently, make sure the hit flare and dir is set
-		container.healFlare.GetComponent<RawImage>().enabled = false;
-		playerActionScript.healTimer = 1f;
-		container.boostFlare.GetComponent<RawImage>().enabled = false;
-		playerActionScript.boostTimer = 1f;
 		if (playerActionScript.hitTimer < 1f) {
+			// Disable heal and boost flare if active
+			container.healFlare.GetComponent<RawImage>().enabled = false;
+			playerActionScript.healTimer = 1f;
+			container.boostFlare.GetComponent<RawImage>().enabled = false;
+			playerActionScript.boostTimer = 1f;
+
+			// Enable hit flare
 			container.hitFlare.GetComponent<RawImage> ().enabled = true;
 			float a = -Vector3.Angle (transform.forward, playerActionScript.hitLocation);
 			Vector3 temp = container.hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
@@ -330,10 +333,14 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void UpdateHealFlare() {
-		container.boostFlare.GetComponent<RawImage>().enabled = false;
-		playerActionScript.boostTimer = 1f;
 		if (playerActionScript.healTimer < 1f) {
+			// Disable boost flare if active
+			container.boostFlare.GetComponent<RawImage>().enabled = false;
+			playerActionScript.boostTimer = 1f;
+
+			// Enable the heal flare
 			container.healFlare.GetComponent<RawImage> ().enabled = true;
+			Debug.Log("Updating heal flare: " + container.healFlare.GetComponent<RawImage> ().enabled);
 			playerActionScript.healTimer += Time.deltaTime;
 		} else {
 			container.healFlare.GetComponent<RawImage> ().enabled = false;
