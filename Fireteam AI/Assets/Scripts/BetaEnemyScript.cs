@@ -1239,7 +1239,8 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 			PlayerActionScript ps = playerToHit.GetComponent<PlayerActionScript> ();
 			ps.TakeDamage (50);
-			ps.hitTimer = 0f;
+			ps.ResetHitTimer();
+			ps.SetHitLocation (transform.position);
 			if (Vector3.Distance(transform.position, playerToHit.transform.position) > MELEE_DISTANCE) {
 				playerToHit = null;
 			}

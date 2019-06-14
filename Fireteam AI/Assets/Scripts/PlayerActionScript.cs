@@ -483,14 +483,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void ResetHitTimer()
     {
-        // TODO: Re-enable
-        //photonView.RPC("RpcResetHitTimer", RpcTarget.All);
-        hitTimer = 0f;
-    }
-
-    [PunRPC]
-    void RpcResetHitTimer()
-    {
         hitTimer = 0f;
     }
 
@@ -560,6 +552,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
                     // Deal damage to the player
                     TakeDamage(damageReceived);
+                    ResetHitTimer();
+                    SetHitLocation(other.transform.position);
                 }
             } else if (other.gameObject.name.Contains("XM84")) {
                 if (!EnvObstructionExists(transform.position, other.gameObject.transform.position)) {
