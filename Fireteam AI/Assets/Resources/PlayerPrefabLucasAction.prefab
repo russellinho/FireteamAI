@@ -37772,7 +37772,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 3491014420181445126}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &3491014420181445126
@@ -37824,6 +37824,7 @@ MonoBehaviour:
   myHudMarkerCam1: {fileID: 844581640658930516}
   myHudMarkerCam2: {fileID: 1425963832483938067}
   myHudMarker: {fileID: 6205614584933743215}
+  screenGrab: 0
 --- !u!1 &6772054392541891872
 GameObject:
   m_ObjectHideFlags: 0
