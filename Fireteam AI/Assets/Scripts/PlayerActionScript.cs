@@ -558,7 +558,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             } else if (other.gameObject.name.Contains("XM84")) {
                 if (!EnvObstructionExists(transform.position, other.gameObject.transform.position)) {
                     ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
-                    float totalDisorientationTime = ThrowableScript.FLASHBANG_TIME;
+                    float totalDisorientationTime = ThrowableScript.MAX_FLASHBANG_TIME;
 
                     // Determine how far from the explosion the enemy was
                     float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);

@@ -201,6 +201,9 @@ public class BetaEnemyScript : MonoBehaviour {
 					navMesh.enabled = false;
 				}
 			}
+			if (actionState == ActionStates.Disoriented && disorientationTime <= 0f) {
+				pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Idle);
+			}
 		} else {
 			wasMasterClient = false;
 			navMesh.enabled = false;
@@ -208,10 +211,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 		
 		UpdateDisorientationTime();
-		if (actionState == ActionStates.Disoriented && disorientationTime <= 0f) {
-			actionState = ActionStates.Idle;
-		}
-
 		ReplenishFireRate ();
 		DecreaseAlertTime ();
 		UpdateFiringModeTimer ();
@@ -785,7 +784,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (other.gameObject.tag.Equals("Flashbang")) {
 			if (!EnvObstructionExists(transform.position, other.gameObject.transform.position)) {
 				ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
-				float totalDisorientationTime = ThrowableScript.FLASHBANG_TIME;
+				float totalDisorientationTime = ThrowableScript.MAX_FLASHBANG_TIME;
 
 				// Determine how far from the explosion the enemy was
 				float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
@@ -802,7 +801,10 @@ public class BetaEnemyScript : MonoBehaviour {
 				// Set enemy disorientation time
 				totalDisorientationTime *= distanceMultiplier * rotationMultiplier;
 				disorientationTime += totalDisorientationTime;
-				pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Disoriented);
+				disorientationTime = Mathf.Min(disorientationTime, ThrowableScript.MAX_FLASHBANG_TIME);
+				if (disorientationTime > 0f) {
+					pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Disoriented);
+				}
 
 				// Make enemy alerted by the disorientation if he's not dead
 				if (!alerted && health > 0) {
