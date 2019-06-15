@@ -30,11 +30,11 @@ public class BetaEnemyScript : MonoBehaviour {
 	private Animator animator;
 	private Rigidbody rigid;
 	private SpriteRenderer marker;
+	public EnemyModelCreator modeler;
 	public NavMeshAgent navMesh;
 	public NavMeshObstacle navMeshObstacle;
 	private CapsuleCollider myCollider;
 	private CapsuleCollider headCollider;
-	private SkinnedMeshRenderer[] visibleParts;
 	private MeshRenderer gunRef;
 	private BoxCollider meleeTrigger;
 	private Vector3 prevNavDestination;
@@ -138,7 +138,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		originalColliderHeight = myCollider.height;
 		originalColliderRadius = myCollider.radius;
 		originalColliderCenter = new Vector3 (myCollider.center.x, myCollider.center.y, myCollider.center.z);
-		visibleParts = GetComponentsInChildren<SkinnedMeshRenderer> ();
 		marker = GetComponentInChildren<SpriteRenderer> ();
 		gunRef = GetComponentInChildren<MeshRenderer> ();
 		meleeTrigger = GetComponent<BoxCollider> ();
@@ -1279,9 +1278,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		} else {
 			navMeshObstacle.enabled = false;
 		}
-		for (int i = 0; i < visibleParts.Length; i++) {
-			visibleParts [i].enabled = false;
-		}
+		modeler.DespawnPlayer();
 		marker.enabled = false;
 		gunRef.enabled = false;
 		myCollider.enabled = false;
@@ -1582,9 +1579,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		coverScanRange = 50f;
 
 		meleeTrigger.enabled = true;
-		for (int i = 0; i < visibleParts.Length; i++) {
-			visibleParts [i].enabled = true;
-		}
+		modeler.RespawnPlayer();
 		marker.enabled = true;
 		gunRef.enabled = true;
 	}

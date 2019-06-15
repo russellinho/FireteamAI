@@ -16,6 +16,8 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     private string equippedBottom;
     private string equippedFootwear;
     private int equippedSkin;
+    private bool renderBeard;
+    private bool renderHair;
     
     public GameObject equippedSkinRef;
     public GameObject equippedHeadgearRef;
@@ -34,6 +36,8 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     public GameObject myEyewearRenderer;
     public GameObject myHairRenderer;
     public GameObject myBeardRenderer;
+    public GameObject myEyesRenderer;
+    public GameObject myEyelashRenderer;
 
     public GameObject myBones;
     public PhotonView pView;
@@ -128,9 +132,11 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         // Render beard by default
         if (myBeardRenderer != null) {
             myBeardRenderer.GetComponent<SkinnedMeshRenderer>().enabled = true;
+            renderBeard = true;
         }
         if (myHairRenderer != null) {
             myHairRenderer.GetComponent<SkinnedMeshRenderer>().enabled = true;
+            renderHair = true;
         }
         // First equip the correct skin
         UnequipSkin();
@@ -176,9 +182,11 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
             if (equippedFacewear.Equals("Ski Mask")) {
                 if (myBeardRenderer != null) {
                     myBeardRenderer.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                    renderBeard = false;
                 }
                 if (myHairRenderer != null) {
                     myHairRenderer.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                    renderHair = false;
                 }
                 EquipFacewear("Models/Enemies/Cicadas/Clothing/Face/1/shroud");
             }
@@ -198,6 +206,7 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
             if (equippedHeadgear.Equals("Baseball Hat")) {
                 if (myHairRenderer != null) {
                     myHairRenderer.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                    renderHair = false;
                 }
                 EquipHeadgear("Models/Enemies/Cicadas/Clothing/Hats/1/baseballhat");
             }
@@ -337,6 +346,80 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     public override void OnPlayerEnteredRoom(Player newPlayer) {
         if (PhotonNetwork.IsMasterClient) {
             SendEquippedItemsToClients();
+        }
+    }
+
+    public void DespawnPlayer() {
+        if (equippedSkinRef != null) {
+            equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (equippedHeadgearRef != null) {
+            equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (equippedFacewearRef != null) {
+            equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (equippedEyewearRef != null) {
+            equippedEyewearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (equippedTopRef != null) {
+            equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (equippedBottomRef != null) {
+            equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (equippedFootwearRef != null) {
+            equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+
+        if (myHairRenderer != null) {
+            myHairRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (myBeardRenderer != null) {
+            myBeardRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (myEyesRenderer != null) {
+            myEyesRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (myEyelashRenderer != null) {
+            myEyelashRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+    }
+
+    public void RespawnPlayer() {
+        if (equippedSkinRef != null) {
+            equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (equippedHeadgearRef != null) {
+            equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (equippedFacewearRef != null) {
+            equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (equippedEyewearRef != null) {
+            equippedEyewearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (equippedTopRef != null) {
+            equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (equippedBottomRef != null) {
+            equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (equippedFootwearRef != null) {
+            equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (myEyesRenderer != null) {
+            myEyesRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (myEyelashRenderer != null) {
+            myEyelashRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+
+        if (myHairRenderer != null && renderHair) {
+            myHairRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (myBeardRenderer != null && renderBeard) {
+            myBeardRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
         }
     }
 

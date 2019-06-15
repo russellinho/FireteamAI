@@ -1040,6 +1040,7 @@ MonoBehaviour:
   shootPoint: {fileID: 6866238546549355085}
   sniperTracer: {fileID: 120618447016034370, guid: d2f76ff8a9655024c83a8ede7a1b4bcf,
     type: 3}
+  modeler: {fileID: 8197734878590509653}
   navMesh: {fileID: 2965390375756972196}
   navMeshObstacle: {fileID: 3824582766227978001}
   enemyType: 0
@@ -1109,7 +1110,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 7293948857185702030}
-  viewIdField: 0
+  viewIdField: 3
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &7293948857185702030
@@ -1186,6 +1187,8 @@ MonoBehaviour:
   myEyewearRenderer: {fileID: 2416132032404537010}
   myHairRenderer: {fileID: 0}
   myBeardRenderer: {fileID: 6527639969203574292}
+  myEyesRenderer: {fileID: 6527639969203574302}
+  myEyelashRenderer: {fileID: 6527639969203574300}
   myBones: {fileID: 6527639969203574276}
   pView: {fileID: 5569050124725493036}
 --- !u!1 &6527639969203574292
