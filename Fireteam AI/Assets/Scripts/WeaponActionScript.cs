@@ -368,7 +368,7 @@ public class WeaponActionScript : MonoBehaviour
                 GameObject bloodSpill = null;
                 if (hit.transform.tag.Equals("Human"))
                 {
-                    pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+                    pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
                     beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript>().health;
                     if (totalDamageDealt == 0f) {
                         if (beforeHp > 0)
