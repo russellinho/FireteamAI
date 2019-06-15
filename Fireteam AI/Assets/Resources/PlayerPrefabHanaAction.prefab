@@ -1137,7 +1137,7 @@ MonoBehaviour:
   m_RunstepLenghten: 0.7
   m_JumpSpeed: 10
   m_StickToGroundForce: 10
-  m_GravityMultiplier: 3
+  m_GravityMultiplier: 2.25
   m_MouseLook:
     XSensitivity: 2
     YSensitivity: 2
@@ -1410,7 +1410,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 1328554002768852457}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &1328554002768852457
