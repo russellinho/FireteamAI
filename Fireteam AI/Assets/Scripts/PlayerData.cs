@@ -112,32 +112,46 @@ public class PlayerData : MonoBehaviour
     {
         if (File.Exists(Application.persistentDataPath + "/playerData.dat"))
         {
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + "/playerData.dat", FileMode.Open);
-            info = (PlayerInfo)bf.Deserialize(file);
-            file.Close();
-            if (info.equippedCharacter == null || info.equippedCharacter == "") {
+            try {
+                BinaryFormatter bf = new BinaryFormatter();
+                FileStream file = File.Open(Application.persistentDataPath + "/playerData.dat", FileMode.Open);
+                info = (PlayerInfo)bf.Deserialize(file);
+                file.Close();
+                if (info.equippedCharacter == null || info.equippedCharacter == "") {
+                    info.equippedCharacter = "Lucas";
+                }
+                if (info.equippedPrimary == null || info.equippedPrimary == "") {
+                    info.equippedPrimary = "AK-47";
+                    info.equippedPrimaryType = "Assault Rifle";
+                }
+                if (info.equippedSecondary == null || info.equippedSecondary == "") {
+                    info.equippedSecondary = "Glock23";
+                    info.equippedSecondaryType = "Pistol";
+                }
+                if (info.equippedSupport == null || info.equippedSupport == "") {
+                    info.equippedSupport = "M67 Frag";
+                    info.equippedSupportType = "Explosive";
+                }
+                if (info.equippedTop == null || info.equippedTop == "") {
+                    info.equippedTop = "Standard Fatigues Top";
+                }
+                if (info.equippedBottom == null || info.equippedBottom == "") {
+                    info.equippedBottom = "Standard Fatigues Bottom";
+                }
+                if (info.equippedFootwear == null || info.equippedFootwear == "") {
+                    info.equippedFootwear = "Standard Boots";
+                }
+            } catch (Exception e) {
+                Debug.Log("Exception occurred/corrupted file while loading player data. Message: " + e.Message);
                 info.equippedCharacter = "Lucas";
-            }
-            if (info.equippedPrimary == null || info.equippedPrimary == "") {
                 info.equippedPrimary = "AK-47";
                 info.equippedPrimaryType = "Assault Rifle";
-            }
-            if (info.equippedSecondary == null || info.equippedSecondary == "") {
                 info.equippedSecondary = "Glock23";
                 info.equippedSecondaryType = "Pistol";
-            }
-            if (info.equippedSupport == null || info.equippedSupport == "") {
                 info.equippedSupport = "M67 Frag";
                 info.equippedSupportType = "Explosive";
-            }
-            if (info.equippedTop == null || info.equippedTop == "") {
                 info.equippedTop = "Standard Fatigues Top";
-            }
-            if (info.equippedBottom == null || info.equippedBottom == "") {
                 info.equippedBottom = "Standard Fatigues Bottom";
-            }
-            if (info.equippedFootwear == null || info.equippedFootwear == "") {
                 info.equippedFootwear = "Standard Boots";
             }
             FindBodyRef(info.equippedCharacter);
@@ -219,11 +233,16 @@ public class PlayerData : MonoBehaviour
         ModInfo modInfo = null;
         if (File.Exists(Application.persistentDataPath + "/" + weaponName + "_mods.dat"))
         {
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + "/" + weaponName + "_mods.dat", FileMode.Open);
-            modInfo = (ModInfo)bf.Deserialize(file);
-            file.Close();
-            if (modInfo.equippedSuppressor == null) {
+            try {
+                BinaryFormatter bf = new BinaryFormatter();
+                FileStream file = File.Open(Application.persistentDataPath + "/" + weaponName + "_mods.dat", FileMode.Open);
+                modInfo = (ModInfo)bf.Deserialize(file);
+                file.Close();
+                if (modInfo.equippedSuppressor == null) {
+                    modInfo.equippedSuppressor = "";
+                }
+            } catch (Exception e) {
+                Debug.Log("Exception occurred/corrupted file while loading mod data for " + weaponName + ". Message: " + e.Message);
                 modInfo.equippedSuppressor = "";
             }
             return modInfo;
