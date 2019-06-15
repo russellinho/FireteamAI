@@ -1568,6 +1568,7 @@ MonoBehaviour:
   healTimer: 0
   boostTimer: 0
   hitLocation: {x: 0, y: 0, z: 0}
+  headTransform: {fileID: 3166084420118909729}
 --- !u!114 &1208887021316467737
 MonoBehaviour:
   m_ObjectHideFlags: 0

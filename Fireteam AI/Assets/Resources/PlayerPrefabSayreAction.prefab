@@ -7901,6 +7901,7 @@ MonoBehaviour:
   healTimer: 0
   boostTimer: 0
   hitLocation: {x: 0, y: 0, z: 0}
+  headTransform: {fileID: 2464462323615659229}
 --- !u!114 &4095976291033229494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7977,7 +7978,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 839698624353317809}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &839698624353317809
@@ -8029,6 +8030,7 @@ MonoBehaviour:
   myHudMarkerCam1: {fileID: 6822657604641956926}
   myHudMarkerCam2: {fileID: 1204855860939183619}
   myHudMarker: {fileID: 9041980592074451449}
+  screenGrab: 0
 --- !u!1 &2464462323615951207
 GameObject:
   m_ObjectHideFlags: 0

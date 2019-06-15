@@ -65,6 +65,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public float healTimer;
     public float boostTimer;
     public Vector3 hitLocation;
+    public Transform headTransform;
 
     // Mission references
     private GameObject currentBomb;
@@ -539,7 +540,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             // Handle explosive damage
             if (other.gameObject.name.Contains("M67")) {
                 // If a ray casted from the enemy head to the grenade position is obscured, then the explosion is blocked
-                if (!EnvObstructionExists(transform.position, other.gameObject.transform.position)) {
+                if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position)) {
                     // Determine how far from the explosion the enemy was
                     float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
                     float blastRadius = other.gameObject.GetComponent<ThrowableScript>().blastRadius;
@@ -556,7 +557,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     SetHitLocation(other.transform.position);
                 }
             } else if (other.gameObject.name.Contains("XM84")) {
-                if (!EnvObstructionExists(transform.position, other.gameObject.transform.position)) {
+                if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position)) {
                     ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
                     float totalDisorientationTime = ThrowableScript.MAX_FLASHBANG_TIME;
 

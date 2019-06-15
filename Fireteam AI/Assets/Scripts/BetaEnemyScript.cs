@@ -755,7 +755,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		// First priority is to handle possible explosion damage
 		if (other.gameObject.tag.Equals("Explosive")) {
 			// If a ray casted from the enemy head to the grenade position is obscured, then the explosion is blocked
-			if (!EnvObstructionExists(transform.position, other.gameObject.transform.position)) {
+			if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position)) {
 				// Determine how far from the explosion the enemy was
 				float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
 				float blastRadius = other.gameObject.GetComponent<ThrowableScript>().blastRadius;
@@ -781,7 +781,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		if (other.gameObject.tag.Equals("Flashbang")) {
-			if (!EnvObstructionExists(transform.position, other.gameObject.transform.position)) {
+			if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position)) {
 				ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
 				float totalDisorientationTime = ThrowableScript.MAX_FLASHBANG_TIME;
 
