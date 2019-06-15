@@ -45,6 +45,8 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     public override void OnEnable() {
         if (PhotonNetwork.IsMasterClient) {
             EquipRandomOutfitForEnemy();
+        } else {
+            PingServerForEquipment();
         }
     }
 
@@ -343,9 +345,22 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         }
     }
 
-    public override void OnPlayerEnteredRoom(Player newPlayer) {
+    // public override void OnPlayerEnteredRoom(Player newPlayer) {
+    //     if (PhotonNetwork.IsMasterClient) {
+    //         SendEquippedItemsToClients();
+    //     }
+    // }
+
+    [PunRPC]
+    void RpcPingServerForEquipment() {
         if (PhotonNetwork.IsMasterClient) {
             SendEquippedItemsToClients();
+        }
+    }
+
+    void PingServerForEquipment() {
+        if (pView != null) {
+            pView.RPC("RpcPingServerForEquipment", RpcTarget.MasterClient);
         }
     }
 
