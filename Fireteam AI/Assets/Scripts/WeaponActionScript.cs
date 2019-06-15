@@ -641,6 +641,7 @@ public class WeaponActionScript : MonoBehaviour
     public void SetWeaponStats(WeaponStats ws) {
         weaponStats = ws;
         weaponMods = ws.GetComponent<WeaponMods>();
+        fireTimer = ws.fireRate;
     }
 
     public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {
@@ -688,9 +689,12 @@ public class WeaponActionScript : MonoBehaviour
         }
         if (currentAmmo <= 0) return;
         if (weaponStats.category.Equals("Booster")) {
+            // If using a medkit on max health, ignore the request
+            if (weaponStats.weaponName.Equals("Medkit") && playerActionScript.health == playerActionScript.playerScript.health) {
+                return;
+            }
             if (isWieldingSupportItem && Input.GetButtonDown("Fire1")) {
                 pView.RPC("RpcUseBooster", RpcTarget.All);
-
             }
         }
 

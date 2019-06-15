@@ -734,8 +734,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     public IEnumerator addHealth(){
-        // use below to test on self
-        this.health = 60;
         int healthIncrement = (int)(playerScript.health*.6f/5f);
         if (this.health < playerScript.health && this.health > 0){
           for (int i = 0; i < 5; i++) {

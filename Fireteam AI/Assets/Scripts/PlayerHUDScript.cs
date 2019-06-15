@@ -340,7 +340,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 			// Enable the heal flare
 			container.healFlare.GetComponent<RawImage> ().enabled = true;
-			Debug.Log("Updating heal flare: " + container.healFlare.GetComponent<RawImage> ().enabled);
 			playerActionScript.healTimer += Time.deltaTime;
 		} else {
 			container.healFlare.GetComponent<RawImage> ().enabled = false;
