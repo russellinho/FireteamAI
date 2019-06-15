@@ -469,12 +469,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     private void UpdateMissionTimeText() {
         float totalSecs = GameControllerScript.missionTime;
         int mins = (int)(totalSecs / 60f);
-        int remainingSecs = (int)(totalSecs - (mins * 60f));
+        int remainingSecs = Mathf.RoundToInt((totalSecs - (mins * 60f)));
         container.missionTimeText.text = (remainingSecs < 10 ? (mins + ":0" + remainingSecs) : (mins + ":" + remainingSecs));
 
 		// Set remaining time
 		mins = (int)((GameControllerScript.MAX_MISSION_TIME - totalSecs) / 60f);
-		remainingSecs = (int)((GameControllerScript.MAX_MISSION_TIME - totalSecs) - (mins * 60f));
+		remainingSecs = Mathf.RoundToInt(((GameControllerScript.MAX_MISSION_TIME - totalSecs) - (mins * 60f)));
 		container.missionTimeRemainingText.text = (remainingSecs < 10 ? (mins + ":0" + remainingSecs) : (mins + ":" + remainingSecs));
     }
 
