@@ -122,7 +122,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 		container.healthText.text = (container.healthText ? "Health: " + playerActionScript.health : "");
 		if (container.staminaBar.isActiveAndEnabled) {
-			container.staminaBar.value = (playerActionScript.sprintTime / 3f);
+			container.staminaBar.value = (playerActionScript.sprintTime / playerActionScript.playerScript.stamina);
 		}
 
 		ToggleScoreboard (Input.GetKey(KeyCode.Tab));
