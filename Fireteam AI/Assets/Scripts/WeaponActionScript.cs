@@ -642,6 +642,7 @@ public class WeaponActionScript : MonoBehaviour
         weaponStats = ws;
         weaponMods = ws.GetComponent<WeaponMods>();
         fireTimer = ws.fireRate;
+        playerActionScript.weaponSpeedModifier = ws.mobility/100f;
     }
 
     public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {

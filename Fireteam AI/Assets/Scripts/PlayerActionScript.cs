@@ -45,6 +45,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private bool unlimitedStamina;
     private float originalSpeed;
     public float totalSpeedBoost;
+    private float itemSpeedModifier;
+    public float weaponSpeedModifier;
 
     // Game logic helper variables
     public GameObject[] subComponents;
@@ -125,6 +127,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         escapeAvailablePopup = false;
         enterSpectatorModeTimer = 0f;
         unlimitedStamina = false;
+        itemSpeedModifier = 1f;
         originalSpeed = playerScript.speed;
         totalSpeedBoost = originalSpeed;
     }
@@ -146,6 +149,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
 
+        updatePlayerSpeed();
         // Instant respawn hack
         /**if (Input.GetKeyDown (KeyCode.P)) {
             BeginRespawn ();
@@ -753,12 +757,17 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
 
     public IEnumerator useStaminaBoost(float staminaBoost, float speedBoost){
+        itemSpeedModifier = speedBoost;
         unlimitedStamina = true;
-        totalSpeedBoost = originalSpeed * speedBoost;
+
         yield return new WaitForSeconds(staminaBoost);
         unlimitedStamina = false;
-        totalSpeedBoost = originalSpeed;
+        itemSpeedModifier = 1f;
+    }
 
+    public void updatePlayerSpeed(){
+        originalSpeed = playerScript.speed;
+        totalSpeedBoost = originalSpeed * itemSpeedModifier * weaponSpeedModifier;
     }
 
 }
