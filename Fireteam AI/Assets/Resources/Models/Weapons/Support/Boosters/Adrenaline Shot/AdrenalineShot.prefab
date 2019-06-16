@@ -96,7 +96,7 @@ MonoBehaviour:
   type: Support
   category: Booster
   damage: 10
-  mobility: 0
+  mobility: 100
   fireRate: 1.5
   accuracy: 0
   recoil: 0
@@ -109,6 +109,11 @@ MonoBehaviour:
   titleHandPositionsMale: {x: 0, y: 0, z: 0}
   titleHandPositionsFemale: {x: 0, y: 0, z: 0}
   recoveryConstant: 0
+  fireSound: {fileID: 0}
+  suppressedFireSound: {fileID: 0}
+  reloadSound: {fileID: 0}
+  gunSmoke: {fileID: 0}
+  muzzleFlash: {fileID: 0}
 --- !u!114 &1252457883983147528
 MonoBehaviour:
   m_ObjectHideFlags: 0

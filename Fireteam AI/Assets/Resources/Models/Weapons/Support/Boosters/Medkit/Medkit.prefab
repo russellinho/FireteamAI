@@ -96,7 +96,7 @@ MonoBehaviour:
   type: Support
   category: Booster
   damage: 60
-  mobility: 0
+  mobility: 100
   fireRate: 1.5
   accuracy: 0
   recoil: 0
@@ -109,6 +109,11 @@ MonoBehaviour:
   titleHandPositionsMale: {x: 0, y: 0, z: 0}
   titleHandPositionsFemale: {x: 0, y: 0, z: 0}
   recoveryConstant: 0
+  fireSound: {fileID: 0}
+  suppressedFireSound: {fileID: 0}
+  reloadSound: {fileID: 0}
+  gunSmoke: {fileID: 0}
+  muzzleFlash: {fileID: 0}
 --- !u!114 &658219887492012436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121,8 +126,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c0ca6c3c82d949849d62ae1af427cef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerActionScript: {fileID: 0}
-  health: 0
 --- !u!1 &8728140140322832076
 GameObject:
   m_ObjectHideFlags: 0
