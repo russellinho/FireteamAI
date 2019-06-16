@@ -97,6 +97,7 @@ public class WeaponActionScript : MonoBehaviour
         {
             return;
         }
+        if (playerActionScript.health <= 0) return;
 
         if (weaponStats.category.Equals("Shotgun")) {
             shotMode = ShotMode.Burst;

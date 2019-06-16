@@ -119,15 +119,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 ClientRotateView();
                 return;
             }
-            Vector3 spineRotAngles = RotateView();
-            if (networkDelayCount < 5)
-            {
-                networkDelayCount++;
-            }
-            if (!Vector3.Equals(spineRotAngles, Vector3.negativeInfinity) && networkDelayCount == 5)
-            {
-                networkDelayCount = 0;
-                photonView.RPC("RpcUpdateSpineRotation", RpcTarget.Others, spineRotAngles.x, spineRotAngles.y, spineRotAngles.z);
+            if (playerActionScript.health > 0) {
+                Vector3 spineRotAngles = RotateView();
+                if (networkDelayCount < 5)
+                {
+                    networkDelayCount++;
+                }
+                if (!Vector3.Equals(spineRotAngles, Vector3.negativeInfinity) && networkDelayCount == 5)
+                {
+                    networkDelayCount = 0;
+                    photonView.RPC("RpcUpdateSpineRotation", RpcTarget.Others, spineRotAngles.x, spineRotAngles.y, spineRotAngles.z);
+                }
             }
         }
 

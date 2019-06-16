@@ -11,6 +11,10 @@ public class CameraScript : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
+        // If dead, don't update the camera here
+        if (fpc.playerActionScript.health <= 0) {
+            return;
+        }
         bool isReloading = fpc.weaponActionScript.isReloading;
         if (!fpc.m_IsRunning && !isReloading) {
             transform.forward = Vector3.Slerp(transform.forward, weaponHolderTrans.up, 5f * Time.deltaTime);

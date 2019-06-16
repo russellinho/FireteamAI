@@ -359,12 +359,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
                 hud.ToggleHUD(false);
                 hud.ToggleSpectatorMessage(true);
-                deathCameraLerpPos = new Vector3(viewCam.transform.localPosition.x, viewCam.transform.localPosition.y, viewCam.transform.localPosition.z - 4.5f);
+                // deathCameraLerpPos = new Vector3(headTransform.localPosition.x, headTransform.localPosition.y + 2.5f, headTransform.localPosition.z - 4.5f);
                 enterSpectatorModeTimer = 6f;
+                viewCam.transform.SetParent(transform);
                 rotationSaved = true;
                 photonView.RPC("RpcAddToTotalDeaths", RpcTarget.All);
             }
 
+            deathCameraLerpPos = new Vector3(headTransform.localPosition.x, headTransform.localPosition.y + 2.5f, headTransform.localPosition.z - 4.5f);
             DeathCameraEffect();
         }
     }
@@ -613,6 +615,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void DeathCameraEffect()
     {
         deathCameraLerpVar += (Time.deltaTime / 4f);
+        viewCam.transform.LookAt(headTransform);
         viewCam.transform.localPosition = Vector3.Lerp(viewCam.transform.localPosition, deathCameraLerpPos, deathCameraLerpVar);
     }
 
@@ -620,7 +623,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         photonView.RPC("RpcChangePlayerDisableStatus", RpcTarget.All, false);
         thisSpectatorCam = Instantiate(spectatorCam, Vector3.zero, Quaternion.Euler(Vector3.zero));
-        thisSpectatorCam.transform.SetParent(gameObject.transform);
+        thisSpectatorCam.transform.SetParent(null);
     }
 
     void LeaveSpectatorMode()
@@ -689,6 +692,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void Respawn()
     {
         photonView.RPC("RpcSetHealth", RpcTarget.All, 100);
+        viewCam.transform.SetParent(headTransform);
         hud.ToggleHUD(true);
         hud.ToggleSpectatorMessage(false);
         fpc.m_IsCrouching = false;
