@@ -73,13 +73,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 844581640658930516}
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: -1.479074e-10, y: -0.000000055644655, z: 0.0000017802256, w: 1}
   m_LocalPosition: {x: 0, y: 24.88, z: 0}
-  m_LocalScale: {x: 1, y: 1.0000005, z: 1.0000005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6772054392541729070}
   m_RootOrder: 12
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &1110994424070824280
 Camera:
   m_ObjectHideFlags: 0
@@ -5092,13 +5092,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1425963832483938067}
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: -1.479074e-10, y: -0.000000055644655, z: 0.0000017802256, w: 1}
   m_LocalPosition: {x: 0, y: 24.88, z: 0}
-  m_LocalScale: {x: 1, y: 1.0000005, z: 1.0000005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6772054392541729070}
   m_RootOrder: 11
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &6352880782862786968
 Camera:
   m_ObjectHideFlags: 0
@@ -37690,6 +37690,7 @@ MonoBehaviour:
   isRespawning: 0
   respawnTimer: 0
   totalSpeedBoost: 0
+  weaponSpeedModifier: 0
   subComponents: []
   fpc: {fileID: 3572228914654154590}
   hitTimer: 0
