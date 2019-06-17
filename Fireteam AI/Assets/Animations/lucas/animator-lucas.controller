@@ -130,6 +130,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 258da12187758e845a8b701a0bbfd14d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114178648867353270
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 258da12187758e845a8b701a0bbfd14d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114329703011230202
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -190,6 +202,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0ad93b13ec3ac6489b6cd43e8bd80af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114741132033732840
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c9a72a9672d341a89b277eb2327412d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114790193312139166
@@ -982,10 +1006,10 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.25
+  m_TransitionDuration: 0
   m_TransitionOffset: 0
-  m_ExitTime: 0.659091
-  m_HasExitTime: 1
+  m_ExitTime: 0.65909106
+  m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
@@ -2622,7 +2646,7 @@ AnimatorStateTransition:
   m_TransitionDuration: 0
   m_TransitionOffset: 0
   m_ExitTime: 0.65909106
-  m_HasExitTime: 1
+  m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
@@ -7788,10 +7812,10 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.25
+  m_TransitionDuration: 0
   m_TransitionOffset: 0
-  m_ExitTime: 0.659091
-  m_HasExitTime: 1
+  m_ExitTime: 0.65909106
+  m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
@@ -9359,7 +9383,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: 1101271768089946824}
   - {fileID: 1101949719646730318}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 114178648867353270}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 1
   m_WriteDefaultValues: 1
@@ -9480,7 +9505,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: 1101409645054634220}
   - {fileID: 1101365679331572734}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 114741132033732840}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 1
   m_WriteDefaultValues: 1
