@@ -400,8 +400,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3860504239686808909}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.00006218, y: -0.0011061, z: -0.00036257}
-  m_LocalScale: {x: 0.11, y: 0.11, z: 0.11}
+  m_LocalPosition: {x: 0.00006218, y: -0.0051585, z: -0.00036257}
+  m_LocalScale: {x: 0.19, y: 0.19, z: 0.19}
   m_Children:
   - {fileID: 2327254253524749755}
   - {fileID: 134042929991172864}
@@ -425,7 +425,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.44
+  m_Radius: 0.4
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &6780425388085883816
 Rigidbody:
@@ -435,9 +435,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3860504239686808909}
   serializedVersion: 2
-  m_Mass: 3
-  m_Drag: 0.3
-  m_AngularDrag: 0.05
+  m_Mass: 6
+  m_Drag: 0
+  m_AngularDrag: 0
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -458,7 +458,7 @@ MonoBehaviour:
   weaponName: M67 Frag
   type: Support
   category: Explosive
-  damage: 110
+  damage: 160
   mobility: 100
   fireRate: 1
   accuracy: 0
@@ -500,7 +500,7 @@ MonoBehaviour:
   explosionEffect: {fileID: 7142040739807068215}
   fuseTimer: 3.5
   explosionDelay: 0
-  blastRadius: 36
+  blastRadius: 45
   explosionSound: {fileID: 8243386482449264105}
   pinSound: {fileID: 5561465029240044045}
 --- !u!114 &4237617246100750234
@@ -836,7 +836,7 @@ Transform:
   m_GameObject: {fileID: 7050977123937979687}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 2, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 2.3, y: 2.3, z: 2.3}
   m_Children:
   - {fileID: 7047288913168227191}
   m_Father: {fileID: 3860504239686838637}
@@ -1614,7 +1614,7 @@ ParticleSystem:
           m_RotationOrder: 4
     arc:
       value: 360
-      mode: 0
+      mode: 2
       spread: 0
       speed:
         serializedVersion: 2

@@ -7,7 +7,7 @@ using Photon.Realtime;
 public class ThrowableScript : MonoBehaviour
 {
     private const float THROW_FORCE_MULTIPLIER = 25f;
-    public static float MAX_FLASHBANG_TIME = 8f; // 8 seconds max flashbang time
+    public static float MAX_FLASHBANG_TIME = 9f; // 8 seconds max flashbang time
     public Rigidbody rBody;
     public SphereCollider col;
     public MeshRenderer[] renderers;
