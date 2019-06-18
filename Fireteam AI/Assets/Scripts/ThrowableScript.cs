@@ -16,7 +16,7 @@ public class ThrowableScript : MonoBehaviour
     public bool explosionDelay;
     private float explosionDelayTimer;
     public float blastRadius;
-    private bool isLive;
+    public bool isLive;
     private float explosionDuration;
     public AudioSource explosionSound;
     public AudioSource pinSound;
@@ -85,6 +85,7 @@ public class ThrowableScript : MonoBehaviour
 
     void Explode() {
         // Freeze the physics
+        isLive = false;
         rBody.useGravity = false;
         rBody.isKinematic = true;
         // Create blast radius trigger collider - enemy will be affected if within this collider sphere during explosion
@@ -97,7 +98,6 @@ public class ThrowableScript : MonoBehaviour
         explosionSound.Play();
         // Play the explosion particle effect
         explosionEffect.Play();
-        isLive = false;
         // Set nearby enemies on alert from explosion sound
         GameControllerScript gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameControllerScript>();
         gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
