@@ -40,6 +40,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public int deadCount;
 	public int escaperCount;
 	public bool assaultMode;
+    // Sync mission time to clients every 10 seconds
+    private float syncMissionTimeTimer;
 
 	private PhotonView pView;
 
@@ -68,6 +70,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		lastGunshotTimer = 10f;
 		sectorsCleared = 0;
 		loadExitCalled = false;
+        syncMissionTimeTimer = 0f;
 
 		lastGunshotHeardPos = Vector3.negativeInfinity;
 		lastGunshotHeardPosClone = Vector3.negativeInfinity;
@@ -84,11 +87,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			if (bombsRemaining == 0) {
 				escapeAvailable = true;
 			}
+            if (!gameOver)
+            {
+                UpdateMissionTime();
+            }
             if (PhotonNetwork.IsMasterClient) {
-				if (!gameOver) {
-					UpdateMissionTime ();
-				}
-
 				// Check if the mission is over or if all players eliminated or out of time
 				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime()) {
 					if (!gameOver)
@@ -209,7 +212,17 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     void UpdateMissionTime() {
         missionTime += Time.deltaTime;
-        pView.RPC ("RpcUpdateMissionTime", RpcTarget.Others, missionTime);
+
+        // Query server for sync time if not master client every 30 seconds
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            syncMissionTimeTimer -= Time.deltaTime;
+            if (syncMissionTimeTimer <= 0f)
+            {
+                syncMissionTimeTimer = 30f;
+                pView.RPC("RpcSendMissionTimeToClients", RpcTarget.MasterClient);
+            }
+        }
     }
 
     [PunRPC]
@@ -217,8 +230,14 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         missionTime = t;
     }
 
-	// When someone leaves the game in the middle of an escape, reset the values to recount
-	void ResetEscapeValues() {
+    [PunRPC]
+    void RpcSendMissionTimeToClients()
+    {
+        pView.RPC("RpcUpdateMissionTime", RpcTarget.Others, missionTime);
+    }
+
+    // When someone leaves the game in the middle of an escape, reset the values to recount
+    void ResetEscapeValues() {
 		deadCount = 0;
 		escaperCount = 0;
 	}
