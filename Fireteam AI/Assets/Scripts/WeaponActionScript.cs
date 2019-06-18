@@ -311,9 +311,9 @@ public class WeaponActionScript : MonoBehaviour
                         hudScript.OnScreenEffect(playerActionScript.kills + " KILLS", true);
                     }
                 }
-            }
-            else
-            {
+            } else if (hit.transform.tag.Equals("Player")) {
+                pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+            } else {
                 pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
                 pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
             }
@@ -388,9 +388,9 @@ public class WeaponActionScript : MonoBehaviour
                         hudScript.OnScreenEffect(playerActionScript.kills + " KILLS", true);
                     }
                     totalDamageDealt += (weaponStats.damage / 8f);
-                }
-                else
-                {
+                } else if (hit.transform.tag.Equals("Player")) {
+                    pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+                } else {
                     pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
                     pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
                 }
