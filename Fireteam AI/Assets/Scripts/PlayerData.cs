@@ -72,10 +72,12 @@ public class PlayerData : MonoBehaviour
             {
                 PhotonNetwork.Destroy(PlayerData.playerdata.inGamePlayerReference);
             }
-            if (PlayerData.playerdata.bodyReference == null)
+            if (levelName.Equals("Title"))
             {
-              LoadPlayerData();
-              Debug.Log(info.equippedCharacter);
+                if (PlayerData.playerdata.bodyReference == null)
+                {
+                    LoadPlayerData();
+                }
             }
         }
 

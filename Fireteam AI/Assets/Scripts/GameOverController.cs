@@ -15,9 +15,11 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 	private Text[] names;
 	private Text[] kills;
 	private Text[] deaths;
+    private bool exitButtonPressed;
 
 	void Awake() {
 		ClearPlayerData ();
+        exitButtonPressed = false;
 	}
 
     void Start()
@@ -46,7 +48,11 @@ public class GameOverController : MonoBehaviourPunCallbacks {
     }
 
     public void ExitButton() {
-		PhotonNetwork.LeaveRoom();
+        if (!exitButtonPressed)
+        {
+            exitButtonPressed = true;
+            PhotonNetwork.LeaveRoom();
+        }
 	}
 
 	public override void OnLeftRoom() {
