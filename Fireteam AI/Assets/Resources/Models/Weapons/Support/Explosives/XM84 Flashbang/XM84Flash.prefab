@@ -10041,10 +10041,12 @@ MonoBehaviour:
   - {fileID: 6406873327241063068}
   explosionEffect: {fileID: 3350588218773017290}
   fuseTimer: 2.5
-  explosionDelay: 0
+  explosionDelay: 1
   blastRadius: 170
+  isLive: 0
   explosionSound: {fileID: 4354498385483937620}
   pinSound: {fileID: 6689340121689838720}
+  playerThrownByReference: {fileID: 0}
 --- !u!114 &3272891355027485827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10064,7 +10066,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 3898767583115738824}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &3898767583115738824

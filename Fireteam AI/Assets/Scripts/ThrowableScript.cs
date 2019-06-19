@@ -20,6 +20,7 @@ public class ThrowableScript : MonoBehaviour
     private float explosionDuration;
     public AudioSource explosionSound;
     public AudioSource pinSound;
+    public GameObject playerThrownByReference;
 
     // Start is called before the first frame update
     void Awake()
@@ -36,7 +37,9 @@ public class ThrowableScript : MonoBehaviour
         rBody.isKinematic = !b;
     }
 
-    public void Launch(float xForce, float yForce, float zForce) {
+    public void Launch(GameObject thrownByPlayer, float xForce, float yForce, float zForce) {
+        // Assign a reference to the player who threw this projectile
+        playerThrownByReference = thrownByPlayer;
         // Turn physics on
         TogglePhysics(true);
         // Apply a force to the throwable that's equal to the forward position of the weapon holder

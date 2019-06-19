@@ -148,4 +148,6 @@ MonoBehaviour:
   - FireEffectsSuppressed
   - RpcSetEquippedItems
   - RpcPingServerForEquipment
+  - RpcSendMissionTimeToClients
+  - RpcRegisterGrenadeKill
   DisableAutoOpenWizard: 1

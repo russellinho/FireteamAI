@@ -407,7 +407,7 @@ Animator:
   m_GameObject: {fileID: 3166084420118613657}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 913bf74750507d340a0afb2f667d20e1, type: 3}
-  m_Controller: {fileID: 9100000, guid: 184e2a1fc2ab9a64e9f1271bd7f8eed1, type: 2}
+  m_Controller: {fileID: 9100000, guid: 2f82745f8f594744ba3016475a2f4fef, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -475,6 +475,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equipmentScript: {fileID: 6829827821865557300}
+  weaponActionScript: {fileID: 0}
   weaponHolder: {fileID: 8973412891731751287}
   animator: {fileID: 3166084420125916365}
   ts: {fileID: 0}
@@ -482,7 +483,16 @@ MonoBehaviour:
   equippedPrimaryType: 
   equippedSecondaryWeapon: 
   equippedSecondaryType: 
+  equippedSupportWeapon: 
+  equippedSupportType: 
+  equippedWep: 
   currentlyEquippedType: 0
+  totalPrimaryAmmoLeft: 0
+  totalSecondaryAmmoLeft: 0
+  totalSupportAmmoLeft: 0
+  currentAmmoPrimary: 0
+  currentAmmoSecondary: 0
+  currentAmmoSupport: 0
   weaponReady: 0
   pView: {fileID: 0}
 --- !u!114 &7319902134035168659
@@ -500,6 +510,7 @@ MonoBehaviour:
   speed: 0
   stamina: 0
   armor: 0
+  health: 0
 --- !u!1 &3166084420118613659
 GameObject:
   m_ObjectHideFlags: 0
@@ -871,7 +882,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3166084420118613673}
-  m_LocalRotation: {x: 0.00000032791792, y: 0.00010405928, z: 0.0107236365, w: 0.9999425}
+  m_LocalRotation: {x: 0.00000032791795, y: 0.00010405928, z: 0.010723637, w: 0.9999425}
   m_LocalPosition: {x: -0.0003148782, y: 0.039847948, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1955,7 +1966,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3166084420118613783}
-  m_LocalRotation: {x: 0.0078215655, y: -0.07773649, z: 0.047849357, w: 0.9957943}
+  m_LocalRotation: {x: 0.007821566, y: -0.07773649, z: 0.04784936, w: 0.9957943}
   m_LocalPosition: {x: -3.5527136e-17, y: 0.28199413, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

@@ -751,6 +751,10 @@ public class BetaEnemyScript : MonoBehaviour {
 		return Physics.Linecast(a, b, ignoreLayers);
 	}
 
+	void KilledByGrenade(int killedByViewId) {
+		pView.RPC("RpcRegisterGrenadeKill", RpcTarget.All, killedByViewId);
+	}
+
 	void HandleExplosiveEffectTriggers(Collider other) {
 		// First priority is to handle possible explosion damage
 		if (other.gameObject.tag.Equals("Explosive")) {
@@ -772,6 +776,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				TakeDamage(damageReceived);
 				if (health <= 0) {
 					deathBy = 1;
+					KilledByGrenade(t.playerThrownByReference.GetComponent<PhotonView>().ViewID);
 				}
 			}
 
@@ -827,6 +832,15 @@ public class BetaEnemyScript : MonoBehaviour {
 				pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee);
 			}
 			playerToHit = other.gameObject;
+		}
+	}
+
+	[PunRPC]
+	void RpcRegisterGrenadeKill(int playerNetworkId) {
+		// If the player id of the person who killed the enemy matches my player id
+		if (playerNetworkId == PlayerData.playerdata.inGamePlayerReference.GetComponent<PhotonView>().ViewID) {
+			// Increment my kill score and show the kill popup for myself
+			PlayerData.playerdata.inGamePlayerReference.GetComponent<WeaponActionScript>().RewardKill(false);
 		}
 	}
 

@@ -772,7 +772,7 @@ Animator:
   m_GameObject: {fileID: 2052873151880460973}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 913bf74750507d340a0afb2f667d20e1, type: 3}
-  m_Controller: {fileID: 9100000, guid: 184e2a1fc2ab9a64e9f1271bd7f8eed1, type: 2}
+  m_Controller: {fileID: 9100000, guid: 2f82745f8f594744ba3016475a2f4fef, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -840,6 +840,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equipmentScript: {fileID: 5377080248621935676}
+  weaponActionScript: {fileID: 0}
   weaponHolder: {fileID: 6533164353316158212}
   animator: {fileID: 2052873151873026297}
   ts: {fileID: 0}
@@ -847,7 +848,16 @@ MonoBehaviour:
   equippedPrimaryType: 
   equippedSecondaryWeapon: 
   equippedSecondaryType: 
+  equippedSupportWeapon: 
+  equippedSupportType: 
+  equippedWep: 
   currentlyEquippedType: 0
+  totalPrimaryAmmoLeft: 0
+  totalSecondaryAmmoLeft: 0
+  totalSupportAmmoLeft: 0
+  currentAmmoPrimary: 0
+  currentAmmoSecondary: 0
+  currentAmmoSupport: 0
   weaponReady: 0
   pView: {fileID: 0}
 --- !u!114 &2377182879810501776
@@ -865,6 +875,7 @@ MonoBehaviour:
   speed: 0
   stamina: 0
   armor: 0
+  health: 0
 --- !u!1 &2052873151880460975
 GameObject:
   m_ObjectHideFlags: 0
@@ -2425,7 +2436,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2052873151880461141}
-  m_LocalRotation: {x: -0.0117455525, y: -0.005183529, z: -0.050566874, w: 0.99863815}
+  m_LocalRotation: {x: -0.011745553, y: -0.005183529, z: -0.05056688, w: 0.99863815}
   m_LocalPosition: {x: -0.030051898, y: 0.08404937, z: 0.0029954447}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

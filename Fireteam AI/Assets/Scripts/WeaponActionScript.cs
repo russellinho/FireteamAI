@@ -261,6 +261,16 @@ public class WeaponActionScript : MonoBehaviour
         GameControllerScript.totalKills[pView.Owner.NickName]++;
     }
 
+    // Increment kill count and display HUD popup for kill
+    public void RewardKill(bool isHeadshot) {
+        pView.RPC("RpcAddToTotalKills", RpcTarget.All);
+        if (isHeadshot) {
+            hudScript.OnScreenEffect("HEADSHOT", true);
+        } else {
+            hudScript.OnScreenEffect(playerActionScript.kills + " KILLS", true);
+        }
+    }
+
     // Comment
     public void Fire()
     {
@@ -286,8 +296,7 @@ public class WeaponActionScript : MonoBehaviour
             {
                 hudScript.InstantiateHitmarker();
                 hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().TakeDamage(100);
-                pView.RPC("RpcAddToTotalKills", RpcTarget.All);
-                hudScript.OnScreenEffect("HEADSHOT", true);
+                RewardKill(true);
                 audioController.PlayHeadshotSound();
             }
         }
@@ -307,8 +316,7 @@ public class WeaponActionScript : MonoBehaviour
                     hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted(true);
                     if (hit.transform.gameObject.GetComponent<BetaEnemyScript>().health <= 0 && beforeHp > 0)
                     {
-                        pView.RPC("RpcAddToTotalKills", RpcTarget.All);
-                        hudScript.OnScreenEffect(playerActionScript.kills + " KILLS", true);
+                        RewardKill(false);
                     }
                 }
             } else if (hit.transform.tag.Equals("Player")) {
@@ -357,8 +365,7 @@ public class WeaponActionScript : MonoBehaviour
                 {
                     hudScript.InstantiateHitmarker();
                     hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().TakeDamage(100);
-                    pView.RPC("RpcAddToTotalKills", RpcTarget.All);
-                    hudScript.OnScreenEffect("HEADSHOT", true);
+                    RewardKill(true);
                     audioController.PlayHeadshotSound();
                 }
                 headshotDetected = true;
@@ -384,8 +391,7 @@ public class WeaponActionScript : MonoBehaviour
                     hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)(weaponStats.damage / 8f));
                     if (hit.transform.gameObject.GetComponent<BetaEnemyScript>().health <= 0 && beforeHp > 0)
                     {
-                        pView.RPC("RpcAddToTotalKills", RpcTarget.All);
-                        hudScript.OnScreenEffect(playerActionScript.kills + " KILLS", true);
+                        RewardKill(false);
                     }
                     totalDamageDealt += (weaponStats.damage / 8f);
                 } else if (hit.transform.tag.Equals("Player")) {
@@ -708,7 +714,7 @@ public class WeaponActionScript : MonoBehaviour
         if (weaponStats.category.Equals("Explosive")) {
             GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.weaponCatalog[weaponStats.weaponName].prefabPath, weaponHolder.transform.position, Quaternion.identity);
             projectile.transform.forward = weaponHolder.transform.forward;
-            projectile.GetComponent<ThrowableScript>().Launch(camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
+            projectile.GetComponent<ThrowableScript>().Launch(gameObject, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
             // Reset fire timer and subtract ammo used
             currentAmmo--;
             fireTimer = 0.0f;
