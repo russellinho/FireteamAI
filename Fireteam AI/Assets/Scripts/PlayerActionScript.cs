@@ -536,6 +536,79 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 		return Physics.Linecast(a, b, ignoreLayers);
 	}
 
+    void HandleExplosiveEffects(Collider other)
+    {
+        // Handle explosive damage
+        if (other.gameObject.name.Contains("M67"))
+        {
+            ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
+            // If a ray casted from the enemy head to the grenade position is obscured, then the explosion is blocked
+            if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !t.isLive && !t.PlayerHasBeenAffected(photonView.ViewID))
+            {
+                // Determine how far from the explosion the enemy was
+                float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
+                float blastRadius = other.gameObject.GetComponent<ThrowableScript>().blastRadius;
+                distanceFromGrenade = Mathf.Min(distanceFromGrenade, blastRadius);
+                float scale = 1f - (distanceFromGrenade / blastRadius);
+
+                // Scale damage done to enemy by the distance from the explosion
+                WeaponStats grenadeStats = other.gameObject.GetComponent<WeaponStats>();
+                int damageReceived = (int)(grenadeStats.damage * scale);
+
+                // Validate that this enemy has already been affected
+                t.AddHitPlayer(photonView.ViewID);
+                // Deal damage to the player
+                TakeDamage(damageReceived);
+                ResetHitTimer();
+                SetHitLocation(other.transform.position);
+            }
+        }
+        else if (other.gameObject.name.Contains("XM84"))
+        {
+            ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
+            if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !t.isLive && !t.PlayerHasBeenAffected(photonView.ViewID))
+            {
+                float totalDisorientationTime = ThrowableScript.MAX_FLASHBANG_TIME;
+
+                // Determine how far from the explosion the enemy was
+                float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
+                float blastRadius = t.blastRadius;
+
+                // Determine rotation away from the flashbang - if more pointed away, less the duration
+                Vector3 toPosition = Vector3.Normalize(other.gameObject.transform.position - transform.position);
+                float angleToPosition = Vector3.Angle(transform.forward, toPosition);
+
+                // Modify total disorientation time dependent on distance from grenade and rotation away from grenade
+                float distanceMultiplier = Mathf.Clamp(1f - (distanceFromGrenade / blastRadius) + 0.6f, 0f, 1f);
+                float rotationMultiplier = Mathf.Clamp(1f - (angleToPosition / 180f) + 0.1f, 0f, 1f);
+
+                // Validate that this enemy has already been affected
+                t.AddHitPlayer(photonView.ViewID);
+
+                totalDisorientationTime *= distanceMultiplier * rotationMultiplier;
+                hud.FlashbangEffect(totalDisorientationTime);
+                audioController.PlayFlashbangEarRingSound(totalDisorientationTime);
+            }
+        }
+    }
+
+    void HandlePickups(Collider other)
+    {
+        if (other.gameObject.tag.Equals("AmmoBox"))
+        {
+            wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo + (wepActionScript.GetWeaponStats().clipCapacity - wepActionScript.currentAmmo);
+            other.gameObject.GetComponent<PickupScript>().PlayPickupSound();
+            other.gameObject.GetComponent<PickupScript>().DestroyPickup();
+        }
+        else if (other.gameObject.tag.Equals("HealthBox"))
+        {
+            ResetHealTimer();
+            photonView.RPC("RpcSetHealth", RpcTarget.All, 100);
+            other.gameObject.GetComponent<PickupScript>().PlayPickupSound();
+            other.gameObject.GetComponent<PickupScript>().DestroyPickup();
+        }
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (photonView.IsMine)
@@ -543,61 +616,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (health <= 0) {
                 return;
             }
-            // Handle explosive damage
-            if (other.gameObject.name.Contains("M67")) {
-                // If a ray casted from the enemy head to the grenade position is obscured, then the explosion is blocked
-                if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position)) {
-                    // Determine how far from the explosion the enemy was
-                    float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
-                    float blastRadius = other.gameObject.GetComponent<ThrowableScript>().blastRadius;
-                    distanceFromGrenade = Mathf.Min(distanceFromGrenade, blastRadius);
-                    float scale = 1f - (distanceFromGrenade / blastRadius);
-
-                    // Scale damage done to enemy by the distance from the explosion
-                    WeaponStats grenadeStats = other.gameObject.GetComponent<WeaponStats>();
-                    int damageReceived = (int)(grenadeStats.damage * scale);
-
-                    // Deal damage to the player
-                    TakeDamage(damageReceived);
-                    ResetHitTimer();
-                    SetHitLocation(other.transform.position);
-                }
-            } else if (other.gameObject.name.Contains("XM84")) {
-                if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position)) {
-                    ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
-                    float totalDisorientationTime = ThrowableScript.MAX_FLASHBANG_TIME;
-
-                    // Determine how far from the explosion the enemy was
-                    float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
-                    float blastRadius = t.blastRadius;
-
-                    // Determine rotation away from the flashbang - if more pointed away, less the duration
-                    Vector3 toPosition = Vector3.Normalize(other.gameObject.transform.position - transform.position);
-                    float angleToPosition = Vector3.Angle(transform.forward, toPosition);
-
-                    // Modify total disorientation time dependent on distance from grenade and rotation away from grenade
-                    float distanceMultiplier = Mathf.Clamp(1f - (distanceFromGrenade / blastRadius) + 0.6f, 0f, 1f);
-                    float rotationMultiplier = Mathf.Clamp(1f - (angleToPosition / 180f) + 0.1f, 0f, 1f);
-
-                    totalDisorientationTime *= distanceMultiplier * rotationMultiplier;
-                    hud.FlashbangEffect(totalDisorientationTime);
-                    audioController.PlayFlashbangEarRingSound(totalDisorientationTime);
-                }
-            }
-
-            if (other.gameObject.tag.Equals("AmmoBox"))
-            {
-                wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo + (wepActionScript.GetWeaponStats().clipCapacity - wepActionScript.currentAmmo);
-                other.gameObject.GetComponent<PickupScript>().PlayPickupSound();
-                other.gameObject.GetComponent<PickupScript>().DestroyPickup();
-            }
-            else if (other.gameObject.tag.Equals("HealthBox"))
-            {
-                ResetHealTimer();
-                photonView.RPC("RpcSetHealth", RpcTarget.All, 100);
-                other.gameObject.GetComponent<PickupScript>().PlayPickupSound();
-                other.gameObject.GetComponent<PickupScript>().DestroyPickup();
-            }
+            HandleExplosiveEffects(other);
+            HandlePickups(other);
         }
         else
         {

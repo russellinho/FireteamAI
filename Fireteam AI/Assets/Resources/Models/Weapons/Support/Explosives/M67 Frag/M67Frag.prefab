@@ -458,7 +458,7 @@ MonoBehaviour:
   weaponName: M67 Frag
   type: Support
   category: Explosive
-  damage: 160
+  damage: 120
   mobility: 100
   fireRate: 1
   accuracy: 0
@@ -501,8 +501,10 @@ MonoBehaviour:
   fuseTimer: 3.5
   explosionDelay: 0
   blastRadius: 45
+  isLive: 0
   explosionSound: {fileID: 8243386482449264105}
   pinSound: {fileID: 5561465029240044045}
+  playerThrownByReference: {fileID: 0}
 --- !u!114 &4237617246100750234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -522,7 +524,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 4083596899743687192}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &4083596899743687192

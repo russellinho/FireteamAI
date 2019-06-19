@@ -758,10 +758,10 @@ public class BetaEnemyScript : MonoBehaviour {
 	void HandleExplosiveEffectTriggers(Collider other) {
 		// First priority is to handle possible explosion damage
 		if (other.gameObject.tag.Equals("Explosive")) {
-            // If the grenade is still active, ignore it
+            // If the grenade is still active or if the grenade has already affected the enemy, ignore it
             ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
             // If a ray casted from the enemy head to the grenade position is obscured, then the explosion is blocked
-            if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !t.isLive) {
+            if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !t.isLive && !t.PlayerHasBeenAffected(pView.ViewID)) {
 				// Determine how far from the explosion the enemy was
 				float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
 				float blastRadius = other.gameObject.GetComponent<ThrowableScript>().blastRadius;
@@ -774,6 +774,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 				// Deal damage to the enemy
 				TakeDamage(damageReceived);
+                // Validate that this enemy has already been affected
+                t.AddHitPlayer(pView.ViewID);
 				if (health <= 0) {
 					deathBy = 1;
 					KilledByGrenade(t.playerThrownByReference.GetComponent<PhotonView>().ViewID);
@@ -789,7 +791,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		if (other.gameObject.tag.Equals("Flashbang")) {
             ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
-            if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !t.isLive) {
+            if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !t.isLive && !t.PlayerHasBeenAffected(pView.ViewID)) {
 				float totalDisorientationTime = ThrowableScript.MAX_FLASHBANG_TIME;
 
 				// Determine how far from the explosion the enemy was
@@ -811,9 +813,10 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (disorientationTime > 0f) {
 					pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Disoriented);
 				}
-
-				// Make enemy alerted by the disorientation if he's not dead
-				if (!alerted && health > 0) {
+                // Validate that this enemy has already been affected
+                t.AddHitPlayer(pView.ViewID);
+                // Make enemy alerted by the disorientation if he's not dead
+                if (!alerted && health > 0) {
 					SetAlerted(true);
 				}
 				return;

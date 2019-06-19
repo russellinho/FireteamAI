@@ -21,13 +21,25 @@ public class ThrowableScript : MonoBehaviour
     public AudioSource explosionSound;
     public AudioSource pinSound;
     public GameObject playerThrownByReference;
+    private ArrayList playersHit;
 
     // Start is called before the first frame update
     void Awake()
     {
+        playersHit = new ArrayList();
         explosionEffect.Stop();
         isLive = false;
         TogglePhysics(false);
+    }
+
+    public void AddHitPlayer(int vId)
+    {
+        playersHit.Add(vId);
+    }
+
+    public bool PlayerHasBeenAffected(int vId)
+    {
+        return playersHit.Contains(vId);
     }
 
     // Turns physics on/off so that when the user is holding the item, physics does not apply
