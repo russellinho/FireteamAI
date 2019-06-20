@@ -28,6 +28,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject matchmakingMenu;
 	public GameObject customizationMenu;
 	public GameObject modMenu;
+	public GameObject keyBindingsPopup;
 	public GameObject loadingScreen;
 	public GameObject jukebox;
 	public GameObject mainMenuPopup;
@@ -205,7 +206,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 					if (camMoveTimer < 1f) {
 						camMoveTimer += (Time.deltaTime / 1.2f);
 					}
-					if (Vector3.Equals(mainCam.transform.position, defaultCameraPos)) {
+					if (Vector3.Equals(mainCam.transform.position, defaultCameraPos) && !keyBindingsPopup.activeInHierarchy) {
 						titleText.enabled = true;
 						mainMenu.SetActive(true);
 					}
@@ -259,8 +260,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Save settings if the settings are active
 		customizationMenu.SetActive (false);
 		matchmakingMenu.SetActive (false);
+		keyBindingsPopup.SetActive(false);
 		titleText.enabled = true;
 		mainMenu.SetActive(true);
+	}
+
+	public void GoToKeyBindings() {
+		keyBindingsPopup.SetActive(true);
+		titleText.enabled = false;
+		mainMenu.SetActive (false);
 	}
 
 	public void ReturnToMainMenuFromCustomization() {
