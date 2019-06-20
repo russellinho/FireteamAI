@@ -45,6 +45,8 @@ public class EquipmentScript : MonoBehaviour
     public GameObject myEyelashRenderer;
     public GameObject myHairRenderer;
 
+    public bool renderHair;
+
     public GameObject myBones;
     public PhotonView pView;
 
@@ -655,6 +657,111 @@ public class EquipmentScript : MonoBehaviour
         m.target = myFootwearRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh();
+    }
+
+    public void DespawnPlayer()
+    {
+        if (equippedSkinRef != null)
+        {
+            equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (equippedHeadgearRef != null)
+        {
+            equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (equippedFacewearRef != null)
+        {
+            equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (equippedArmorTopRef != null)
+        {
+            equippedArmorTopRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (equippedArmorBottomRef != null)
+        {
+            equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (equippedTopRef != null)
+        {
+            equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (equippedBottomRef != null)
+        {
+            equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (equippedFootwearRef != null)
+        {
+            equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+
+        if (myHairRenderer != null)
+        {
+            myHairRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (myGlovesRenderer != null)
+        {
+            myGlovesRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (myEyesRenderer != null)
+        {
+            myEyesRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+        if (myEyelashRenderer != null)
+        {
+            myEyelashRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
+    }
+
+    public void RespawnPlayer()
+    {
+        if (equippedSkinRef != null)
+        {
+            equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (equippedHeadgearRef != null)
+        {
+            equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (equippedFacewearRef != null)
+        {
+            equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (equippedArmorTopRef != null)
+        {
+            equippedArmorTopRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (equippedArmorBottomRef != null)
+        {
+            equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (equippedTopRef != null)
+        {
+            equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (equippedBottomRef != null)
+        {
+            equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (equippedFootwearRef != null)
+        {
+            equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (myEyesRenderer != null)
+        {
+            myEyesRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (myEyelashRenderer != null)
+        {
+            myEyelashRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (myGlovesRenderer != null)
+        {
+            myGlovesRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+        if (myHairRenderer != null && renderHair)
+        {
+            myHairRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
     }
 
 }

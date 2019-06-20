@@ -49,7 +49,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public float weaponSpeedModifier;
 
     // Game logic helper variables
-    public GameObject[] subComponents;
     public FirstPersonController fpc;
 
     private float crouchPosY;
@@ -656,15 +655,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcChangePlayerDisableStatus(bool status)
     {
-        subComponents[0].SetActive(status);
-        subComponents[1].SetActive(status);
-        subComponents[4].SetActive(status);
+        equipmentScript.DespawnPlayer();
         if (photonView.IsMine)
         {
-            subComponents[2].SetActive(status);
-            subComponents[3].SetActive(status);
             charController.enabled = status;
             fpc.enabled = status;
+            viewCam.GetComponent<AudioListener>().enabled = status;
             viewCam.enabled = status;
             wepActionScript.enabled = status;
         }
@@ -730,6 +726,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         bombDefuseCounter = 0f;
         wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo;
         wepActionScript.currentAmmo = wepActionScript.GetWeaponStats().clipCapacity;
+        equipmentScript.RespawnPlayer();
+        fpc.ResetAnimationState();
 
         // Send player back to spawn position, reset rotation, leave spectator mode
         transform.rotation = Quaternion.Euler(Vector3.zero);

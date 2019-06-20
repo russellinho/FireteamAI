@@ -1188,6 +1188,7 @@ MonoBehaviour:
   myEyesRenderer: {fileID: 3166084420118613769}
   myEyelashRenderer: {fileID: 3166084420118613771}
   myHairRenderer: {fileID: 3166084420118613767}
+  renderHair: 1
   myBones: {fileID: 3166084420118613789}
   pView: {fileID: 609584615193261893}
 --- !u!114 &8954661856752537216
@@ -1543,7 +1544,8 @@ MonoBehaviour:
   wepActionScript: {fileID: 311082724292437623}
   aud: {fileID: 2078885343275249678}
   viewCam: {fileID: 3276522526934378289}
-  spectatorCam: {fileID: 0}
+  spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
+    type: 3}
   thisSpectatorCam: {fileID: 0}
   hud: {fileID: 229362520446784565}
   equipmentScript: {fileID: 6829827821865557300}

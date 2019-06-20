@@ -7876,7 +7876,8 @@ MonoBehaviour:
   wepActionScript: {fileID: 9067648845777745277}
   aud: {fileID: 1199510586969991429}
   viewCam: {fileID: 7414277011786800713}
-  spectatorCam: {fileID: 0}
+  spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
+    type: 3}
   thisSpectatorCam: {fileID: 0}
   hud: {fileID: 2508778706829454615}
   equipmentScript: {fileID: 384782906892189734}
@@ -7895,6 +7896,7 @@ MonoBehaviour:
   isRespawning: 0
   respawnTimer: 0
   totalSpeedBoost: 0
+  weaponSpeedModifier: 0
   subComponents: []
   fpc: {fileID: 8161771613342906849}
   hitTimer: 0

@@ -20834,7 +20834,8 @@ MonoBehaviour:
   wepActionScript: {fileID: 2054981473306387991}
   aud: {fileID: 5637984695655323977}
   viewCam: {fileID: 4791595856353234864}
-  spectatorCam: {fileID: 0}
+  spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
+    type: 3}
   thisSpectatorCam: {fileID: 0}
   hud: {fileID: 876578834207807561}
   equipmentScript: {fileID: 517835709440268875}
