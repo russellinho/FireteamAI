@@ -19,12 +19,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public GameObject thisSpectatorCam;
     public PlayerHUDScript hud;
     public EquipmentScript equipmentScript;
+    public WeaponScript weaponScript;
     public CameraShakeScript camShakeScript;
     public InGameMessengerHUD inGameMessengerHud;
     public Animator animator;
     public PlayerScript playerScript;
     public ParticleSystem healParticleEffect;
     public ParticleSystem boostParticleEffect;
+    public SpriteRenderer hudMarker;
 
     // Player variables
     public int health;
@@ -656,6 +658,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcChangePlayerDisableStatus(bool status)
     {
         equipmentScript.DespawnPlayer();
+        weaponScript.DespawnPlayer();
+        hudMarker.enabled = status;
         if (photonView.IsMine)
         {
             charController.enabled = status;
@@ -727,6 +731,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo;
         wepActionScript.currentAmmo = wepActionScript.GetWeaponStats().clipCapacity;
         equipmentScript.RespawnPlayer();
+        weaponScript.RespawnPlayer();
         fpc.ResetAnimationState();
 
         // Send player back to spawn position, reset rotation, leave spectator mode

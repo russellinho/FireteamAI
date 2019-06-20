@@ -1314,12 +1314,14 @@ MonoBehaviour:
   thisSpectatorCam: {fileID: 0}
   hud: {fileID: 2133448889287935268}
   equipmentScript: {fileID: 5377080248621935676}
+  weaponScript: {fileID: 2282748257884432631}
   camShakeScript: {fileID: 4125558041208651792}
   inGameMessengerHud: {fileID: 0}
   animator: {fileID: 2052873151873026297}
   playerScript: {fileID: 2377182879810501776}
   healParticleEffect: {fileID: 1265210848725600089}
   boostParticleEffect: {fileID: 7009170038289723752}
+  hudMarker: {fileID: 5905005407095609724}
   health: 0
   sprintTime: 0
   godMode: 0
@@ -1330,7 +1332,6 @@ MonoBehaviour:
   respawnTimer: 0
   totalSpeedBoost: 0
   weaponSpeedModifier: 0
-  subComponents: []
   fpc: {fileID: 3170908378776135264}
   hitTimer: 0
   healTimer: 0

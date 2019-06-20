@@ -37316,6 +37316,7 @@ MonoBehaviour:
   myEyesRenderer: {fileID: 6772054392541891716}
   myEyelashRenderer: {fileID: 6772054392541891714}
   myHairRenderer: {fileID: 2721911088941794502}
+  renderHair: 0
   myBones: {fileID: 6772054392541891724}
   pView: {fileID: 6989970583869892677}
 --- !u!114 &6571647462379323641
@@ -37676,12 +37677,14 @@ MonoBehaviour:
   thisSpectatorCam: {fileID: 0}
   hud: {fileID: 3880314568018718733}
   equipmentScript: {fileID: 6910827063722677838}
+  weaponScript: {fileID: 6571647462379323641}
   camShakeScript: {fileID: 1365304766117516845}
   inGameMessengerHud: {fileID: 9014044807742023663}
   animator: {fileID: 6772054392549162816}
   playerScript: {fileID: 1241241058576032324}
   healParticleEffect: {fileID: 2639072901249960764}
   boostParticleEffect: {fileID: 8221113803162147095}
+  hudMarker: {fileID: 8505753079697947632}
   health: 0
   sprintTime: 0
   godMode: 0
@@ -37692,7 +37695,6 @@ MonoBehaviour:
   respawnTimer: 0
   totalSpeedBoost: 0
   weaponSpeedModifier: 0
-  subComponents: []
   fpc: {fileID: 3572228914654154590}
   hitTimer: 0
   healTimer: 0
