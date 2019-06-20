@@ -37,7 +37,8 @@ public class WeaponScript : MonoBehaviour
     private bool onTitle;
 
     void Awake() {
-        if (SceneManager.GetActiveScene().name.Equals("Title")) {
+        // If the photon view is null, then the player is not in-game
+        if (pView == null) {
             onTitle = true;
             animator.SetBool("onTitle", true);
         } else {

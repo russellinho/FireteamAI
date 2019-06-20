@@ -29,7 +29,6 @@ public class ThrowableScript : MonoBehaviour
         playersHit = new ArrayList();
         explosionEffect.Stop();
         isLive = false;
-        TogglePhysics(false);
     }
 
     public void AddHitPlayer(int vId)
@@ -42,18 +41,9 @@ public class ThrowableScript : MonoBehaviour
         return playersHit.Contains(vId);
     }
 
-    // Turns physics on/off so that when the user is holding the item, physics does not apply
-    void TogglePhysics(bool b) {
-        col.enabled = b;
-        rBody.useGravity = b;
-        rBody.isKinematic = !b;
-    }
-
     public void Launch(GameObject thrownByPlayer, float xForce, float yForce, float zForce) {
         // Assign a reference to the player who threw this projectile
         playerThrownByReference = thrownByPlayer;
-        // Turn physics on
-        TogglePhysics(true);
         // Apply a force to the throwable that's equal to the forward position of the weapon holder
         rBody.velocity = new Vector3(xForce * THROW_FORCE_MULTIPLIER, yForce * THROW_FORCE_MULTIPLIER, zForce * THROW_FORCE_MULTIPLIER);
         //rBody.AddForce(xForce * THROW_FORCE_MULTIPLIER, yForce * THROW_FORCE_MULTIPLIER, zForce * THROW_FORCE_MULTIPLIER);
