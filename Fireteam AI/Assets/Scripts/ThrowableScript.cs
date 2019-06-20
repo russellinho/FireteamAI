@@ -114,7 +114,7 @@ public class ThrowableScript : MonoBehaviour
         rBody.useGravity = false;
         rBody.isKinematic = true;
         // Set the time to enable collision after 1.5 seconds
-        explosionDelayTimer = 1.5f;
+        explosionDelayTimer = 0.15f;
         // Make grenade disappear
         for (int i = 0; i < renderers.Length; i++) {
             renderers[i].enabled = false;

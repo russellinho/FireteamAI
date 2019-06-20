@@ -9917,11 +9917,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6406873327239293050}
+  - component: {fileID: 8964761838703612023}
+  - component: {fileID: 8363587286653212221}
   - component: {fileID: 105748646167278116}
   - component: {fileID: 2728034347623794609}
-  - component: {fileID: 6689340121689838720}
+  - component: {fileID: 3272891355027485827}
+  - component: {fileID: 3898767583115738824}
+  - component: {fileID: 4354498385483937620}
   m_Layer: 0
-  m_Name: XM84Flash
+  m_Name: XM84FlashProjectile
   m_TagString: Flashbang
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9950,6 +9954,35 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &8964761838703612023
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6406873327239066714}
+  m_Material: {fileID: 13400000, guid: 98ec77d3e6e780145b09c88cfdd073e1, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.38
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &8363587286653212221
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6406873327239066714}
+  serializedVersion: 2
+  m_Mass: 6
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!114 &105748646167278116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9996,8 +10029,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6afd04f3b73b0542a6bd42f2bdc5e47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rBody: {fileID: 0}
-  col: {fileID: 0}
+  rBody: {fileID: 8363587286653212221}
+  col: {fileID: 8964761838703612023}
   renderers:
   - {fileID: 6406873327241063062}
   - {fileID: 6406873327241063060}
@@ -10010,10 +10043,47 @@ MonoBehaviour:
   explosionDelay: 1
   blastRadius: 170
   isLive: 0
-  explosionSound: {fileID: 0}
-  pinSound: {fileID: 6689340121689838720}
+  explosionSound: {fileID: 4354498385483937620}
+  pinSound: {fileID: 0}
   playerThrownByReference: {fileID: 0}
---- !u!82 &6689340121689838720
+--- !u!114 &3272891355027485827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6406873327239066714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 3898767583115738824}
+  viewIdField: 3
+  InstantiationId: 3
+  isRuntimeInstantiated: 0
+--- !u!114 &3898767583115738824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6406873327239066714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+--- !u!82 &4354498385483937620
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10023,7 +10093,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: a2b5216d555eb6a4e994e450138af7c3, type: 3}
+  m_audioClip: {fileID: 8300000, guid: b141d00ccd62c0a428ae975d2bdaa3f1, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -10033,8 +10103,8 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 5
+  MinDistance: 10
+  MaxDistance: 100
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
