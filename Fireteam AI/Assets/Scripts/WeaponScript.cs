@@ -37,7 +37,7 @@ public class WeaponScript : MonoBehaviour
     private bool onTitle;
 
     void Awake() {
-        if (SceneManager.GetActiveScene().name.Equals("Title")) {
+        if (pView == null) {
             onTitle = true;
             animator.SetBool("onTitle", true);
         } else {
