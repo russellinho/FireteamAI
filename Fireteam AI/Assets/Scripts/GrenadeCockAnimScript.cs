@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
 public class GrenadeCockAnimScript : StateMachineBehaviour {
 
@@ -13,11 +15,15 @@ public class GrenadeCockAnimScript : StateMachineBehaviour {
 	// }
 
 	// OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-		// Throw grenade/use item when animation is done
-		WeaponActionScript was = animator.GetComponentInParent<WeaponActionScript> ();
-		was.UseSupportItem();
-	}
+
+override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+		if (animator.GetComponent<PhotonView>().IsMine) {
+				// Throw grenade/use item when animation is done
+				WeaponActionScript was = animator.GetComponentInParent<WeaponActionScript> ();
+				was.UseSupportItem();
+		}
+
+}
 
 	// OnStateMove is called right after Animator.OnAnimatorMove(). Code that processes and affects root motion should be implemented here
 	//override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
