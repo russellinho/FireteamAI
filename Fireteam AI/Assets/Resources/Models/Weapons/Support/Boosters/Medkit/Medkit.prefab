@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 629716425480412099}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.008, y: -0.053, z: -0.03}
+  m_LocalPosition: {x: -0.0169, y: 0.172, z: 0.0471}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8147905294425426300}
@@ -196,7 +196,7 @@ GameObject:
   - component: {fileID: 8177407039304789051}
   - component: {fileID: 8499974487384527501}
   m_Layer: 0
-  m_Name: MedKit
+  m_Name: Medkit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -210,7 +210,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8147905294425855324}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -0.0169, y: 0.094, z: 0.0271}
+  m_LocalPosition: {x: 0, y: 0.06, z: 0.03}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children:
   - {fileID: 8147905294425426298}

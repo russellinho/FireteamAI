@@ -10013,6 +10013,7 @@ MonoBehaviour:
   explosionSound: {fileID: 0}
   pinSound: {fileID: 6689340121689838720}
   playerThrownByReference: {fileID: 0}
+  pView: {fileID: 0}
 --- !u!82 &6689340121689838720
 AudioSource:
   m_ObjectHideFlags: 0
