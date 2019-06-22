@@ -659,7 +659,8 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
     }
 
-    public void DespawnPlayer()
+    [PunRPC]
+    void RpcDespawnPlayer()
     {
         if (equippedSkinRef != null)
         {
@@ -710,9 +711,14 @@ public class EquipmentScript : MonoBehaviour
         {
             myEyelashRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
         }
+        if (mySkinRenderer != null)
+        {
+            mySkinRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+        }
     }
 
-    public void RespawnPlayer()
+    [PunRPC]
+    void RpcRespawnPlayer()
     {
         if (equippedSkinRef != null)
         {
@@ -762,6 +768,18 @@ public class EquipmentScript : MonoBehaviour
         {
             myHairRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
         }
+        if (mySkinRenderer != null)
+        {
+            mySkinRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        }
+    }
+
+    public void RespawnPlayer() {
+        pView.RPC("RpcRespawnPlayer", RpcTarget.All);
+    }
+
+    public void DespawnPlayer() {
+        pView.RPC("RpcDespawnPlayer", RpcTarget.All);
     }
 
 }

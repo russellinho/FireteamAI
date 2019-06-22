@@ -559,9 +559,20 @@ namespace UnityStandardAssets.Characters.FirstPerson
         //     body.AddForceAtPosition(m_CharacterController.velocity*0.1f, hit.point, ForceMode.Impulse);
         // }
 
-        public void ResetAnimationState()
-        {
+        public void ResetAnimationState() {
+            photonView.RPC("RpcResetAnimationState", RpcTarget.All);
+        }
 
+        [PunRPC]
+        void RpcResetAnimationState()
+        {
+            animator.SetInteger("WeaponType", 1);
+            animator.SetInteger("Moving", 0);
+            animator.SetBool("weaponReady", false);
+            animator.SetBool("Crouching", false);
+            animator.SetBool("isSprinting", false);
+            animator.SetBool("isDead", false);
+            animator.SetBool("isWalking", false);
         }
     }
 }

@@ -150,4 +150,9 @@ MonoBehaviour:
   - RpcPingServerForEquipment
   - RpcSendMissionTimeToClients
   - RpcRegisterGrenadeKill
+  - RpcExplode
+  - RpcExplodeDelay
+  - RpcDespawnPlayer
+  - RpcRespawnPlayer
+  - RpcToggleWeaponVisible
   DisableAutoOpenWizard: 1

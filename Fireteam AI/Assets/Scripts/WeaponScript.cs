@@ -492,14 +492,19 @@ public class WeaponScript : MonoBehaviour
 
     public void DespawnPlayer()
     {
-        drawnWeaponReference.gameObject.SetActive(false);
+        pView.RPC("RpcToggleWeaponVisible", RpcTarget.All, false);
     }
 
     public void RespawnPlayer()
     {
-        drawnWeaponReference.SetActive(true);
+        pView.RPC("RpcToggleWeaponVisible", RpcTarget.All, true);
         //drawnSuppressorRenderer.enabled = true;
         DrawPrimary();
+    }
+
+    [PunRPC]
+    void RpcToggleWeaponVisible(bool b) {
+        drawnWeaponReference.SetActive(b);
     }
 
 }
