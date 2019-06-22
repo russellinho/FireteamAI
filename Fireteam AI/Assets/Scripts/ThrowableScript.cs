@@ -22,6 +22,8 @@ public class ThrowableScript : MonoBehaviour
     public AudioSource pinSound;
     public GameObject playerThrownByReference;
     private ArrayList playersHit;
+    public PhotonView pView;
+
 
     // Start is called before the first frame update
     void Awake()
@@ -70,7 +72,7 @@ public class ThrowableScript : MonoBehaviour
                     }
                 }
                 if (fuseTimer <= 0f && explosionDelayTimer <= 0f) {
-                    // Disable explosion collider 
+                    // Disable explosion collider
                     col.enabled = false;
                     if (!explosionEffect.IsAlive()) {
                         DestroySelf();
@@ -78,7 +80,7 @@ public class ThrowableScript : MonoBehaviour
                 }
             } else {
                 if (fuseTimer <= 0f) {
-                    // Disable explosion collider 
+                    // Disable explosion collider
                     col.enabled = false;
                     if (!explosionEffect.IsAlive()) {
                         DestroySelf();
@@ -87,8 +89,8 @@ public class ThrowableScript : MonoBehaviour
             }
         }
     }
-
-    void Explode() {
+    [PunRPC]
+    void RpcExplode() {
         // Freeze the physics
         isLive = false;
         rBody.useGravity = false;
@@ -109,7 +111,8 @@ public class ThrowableScript : MonoBehaviour
     }
 
     // Same method as above except this one has a delay on it for the collision to register
-    void ExplodeDelay() {
+    [PunRPC]
+    void RpcExplodeDelay() {
         // Freeze the physics
         rBody.useGravity = false;
         rBody.isKinematic = true;
@@ -127,6 +130,14 @@ public class ThrowableScript : MonoBehaviour
         // Set nearby enemies on alert from explosion sound
         GameControllerScript gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameControllerScript>();
         gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+    }
+
+    public void ExplodeDelay() {
+      pView.RPC("RpcExplodeDelay", RpcTarget.All);
+    }
+
+    public void Explode() {
+      pView.RPC("RpcExplode", RpcTarget.All);
     }
 
     void EnableBlastCollider() {
