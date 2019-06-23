@@ -152,9 +152,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         updatePlayerSpeed();
         // Instant respawn hack
-        /**if (Input.GetKeyDown (KeyCode.P)) {
+        if (Input.GetKeyDown (KeyCode.P)) {
             BeginRespawn ();
-        }*/
+        }
 
          if (enterSpectatorModeTimer > 0f)
          {
@@ -657,8 +657,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcChangePlayerDisableStatus(bool status)
     {
-        equipmentScript.DespawnPlayer();
-        weaponScript.DespawnPlayer();
+        if (!status) {
+            equipmentScript.DespawnPlayer();
+            weaponScript.DespawnPlayer();
+        }
         hudMarker.enabled = status;
         charController.enabled = status;
         if (photonView.IsMine)
@@ -711,8 +713,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     // Reset character health, scale, rotation, position, ammo, disabled HUD components, disabled scripts, death variables, etc.
     void Respawn()
     {
-        photonView.RPC("RpcSetHealth", RpcTarget.All, 100);
+        health = 100;
+        photonView.RPC("RpcSetHealth", RpcTarget.Others, 100);
         viewCam.transform.SetParent(headTransform);
+        viewCam.transform.localRotation = Quaternion.identity;
         hud.ToggleHUD(true);
         hud.ToggleSpectatorMessage(false);
         fpc.m_IsCrouching = false;

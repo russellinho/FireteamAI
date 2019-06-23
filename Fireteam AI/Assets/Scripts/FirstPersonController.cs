@@ -573,6 +573,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
             animator.SetBool("isSprinting", false);
             animator.SetBool("isDead", false);
             animator.SetBool("isWalking", false);
+            animator.Play("IdleAssaultRifle", 0);
+            animator.Play("IdleAssaultRifle", 1);
         }
     }
 }

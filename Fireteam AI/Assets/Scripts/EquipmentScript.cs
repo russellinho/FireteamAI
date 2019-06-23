@@ -721,10 +721,6 @@ public class EquipmentScript : MonoBehaviour
         {
             myEyelashRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
         }
-        if (mySkinRenderer != null)
-        {
-            mySkinRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
-        }
     }
 
     [PunRPC]
@@ -777,10 +773,6 @@ public class EquipmentScript : MonoBehaviour
         if (myHairRenderer != null && renderHair)
         {
             myHairRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
-        }
-        if (mySkinRenderer != null)
-        {
-            mySkinRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
         }
     }
 
