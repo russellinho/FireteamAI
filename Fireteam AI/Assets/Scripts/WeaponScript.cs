@@ -492,7 +492,7 @@ public class WeaponScript : MonoBehaviour
 
     public void DespawnPlayer()
     {
-        pView.RPC("RpcToggleWeaponVisible", RpcTarget.All, false);
+        ToggleWeaponVisible(false);
     }
 
     public void RespawnPlayer()
@@ -504,6 +504,10 @@ public class WeaponScript : MonoBehaviour
 
     [PunRPC]
     void RpcToggleWeaponVisible(bool b) {
+        drawnWeaponReference.SetActive(b);
+    }
+
+    void ToggleWeaponVisible(bool b) {
         drawnWeaponReference.SetActive(b);
     }
 

@@ -670,8 +670,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
     }
 
-    [PunRPC]
-    void RpcDespawnPlayer()
+    public void DespawnPlayer()
     {
         if (equippedSkinRef != null)
         {
@@ -722,10 +721,8 @@ public class EquipmentScript : MonoBehaviour
         {
             myEyelashRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
         }
-        Debug.Log("oh");
         if (mySkinRenderer != null)
         {
-            Debug.Log("boy");
             mySkinRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
         }
     }
@@ -791,8 +788,8 @@ public class EquipmentScript : MonoBehaviour
         pView.RPC("RpcRespawnPlayer", RpcTarget.All);
     }
 
-    public void DespawnPlayer() {
-        pView.RPC("RpcDespawnPlayer", RpcTarget.All);
-    }
+    // public void DespawnPlayer() {
+    //     pView.RPC("RpcDespawnPlayer", RpcTarget.All);
+    // }
 
 }
