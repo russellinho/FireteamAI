@@ -34,7 +34,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private float disorientationTimer;
 	private float totalDisorientationTime;
 	public bool screenGrab;
-	private const float HEIGHT_OFFSET = 2.1f;
+	private const float HEIGHT_OFFSET = 1.9f;
 
     // Use this for initialization
     void Start () {
