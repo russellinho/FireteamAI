@@ -660,9 +660,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         equipmentScript.DespawnPlayer();
         weaponScript.DespawnPlayer();
         hudMarker.enabled = status;
+        charController.enabled = status;
         if (photonView.IsMine)
         {
-            charController.enabled = status;
             fpc.enabled = status;
             viewCam.GetComponent<AudioListener>().enabled = status;
             viewCam.enabled = status;

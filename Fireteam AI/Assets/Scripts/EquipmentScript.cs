@@ -550,11 +550,22 @@ public class EquipmentScript : MonoBehaviour
         m.rootBone = myBones.transform;
         m.AdaptMesh();
 
-        pView.RPC("RpcEquipSkinInGame", RpcTarget.AllBuffered, e.skinType);
+        //pView.RPC("RpcEquipSkinInGame", RpcTarget.AllBuffered, e.skinType);
+        EquipSkinInGame(e.skinType);
     }
 
-    [PunRPC]
-    private void RpcEquipSkinInGame(int skin) {
+    // [PunRPC]
+    // private void RpcEquipSkinInGame(int skin) {
+    //     equippedSkin = skin;
+    //     equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[equippedCharacter].skins[skin]));
+    //     equippedSkinRef.transform.SetParent(gameObject.transform);
+    //     MeshFixer m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
+    //     m.target = mySkinRenderer.gameObject;
+    //     m.rootBone = myBones.transform;
+    //     m.AdaptMesh();
+    // }
+
+    private void EquipSkinInGame(int skin) {
         equippedSkin = skin;
         equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[equippedCharacter].skins[skin]));
         equippedSkinRef.transform.SetParent(gameObject.transform);
@@ -711,8 +722,10 @@ public class EquipmentScript : MonoBehaviour
         {
             myEyelashRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
         }
+        Debug.Log("oh");
         if (mySkinRenderer != null)
         {
+            Debug.Log("boy");
             mySkinRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
         }
     }
