@@ -18,8 +18,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     public WeaponScript wepScript;
 
     private GameControllerScript gameController;
-    public GameObject myHudMarkerCam1;
-    public GameObject myHudMarkerCam2;
+    public Camera myHudMarkerCam1;
+    public Camera myHudMarkerCam2;
     public GameObject myHudMarker;
 
 	private ArrayList missionWaypoints;
@@ -39,6 +39,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     // Use this for initialization
     void Start () {
         if (!GetComponent<PhotonView>().IsMine) {
+			myHudMarkerCam1.enabled = false;
+			myHudMarkerCam2.enabled = false;
+			myHudMarkerCam1.gameObject.SetActive(false);
+			myHudMarkerCam2.gameObject.SetActive(false);
             this.enabled = false;
 			return;
         }
