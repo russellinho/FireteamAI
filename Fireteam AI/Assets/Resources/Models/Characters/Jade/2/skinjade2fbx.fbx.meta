@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c30666422ba5cd5439468136c57f9e15
+guid: 71ad8d6d9a5360344aad8552b8977a56
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -8,167 +8,163 @@ ModelImporter:
     100004: default
     100006: Eyelashes
     100008: Gloves
-    100010: Hair
-    100012: mixamorig:Head
-    100014: mixamorig:HeadTop_End
-    100016: mixamorig:Hips
-    100018: mixamorig:LeftArm
-    100020: mixamorig:LeftEye
-    100022: mixamorig:LeftFoot
-    100024: mixamorig:LeftForeArm
-    100026: mixamorig:LeftHand
-    100028: mixamorig:LeftHandIndex1
-    100030: mixamorig:LeftHandIndex2
-    100032: mixamorig:LeftHandIndex3
-    100034: mixamorig:LeftHandIndex4
-    100036: mixamorig:LeftHandMiddle1
-    100038: mixamorig:LeftHandMiddle2
-    100040: mixamorig:LeftHandMiddle3
-    100042: mixamorig:LeftHandMiddle4
-    100044: mixamorig:LeftHandPinky1
-    100046: mixamorig:LeftHandPinky2
-    100048: mixamorig:LeftHandPinky3
-    100050: mixamorig:LeftHandPinky4
-    100052: mixamorig:LeftHandRing1
-    100054: mixamorig:LeftHandRing2
-    100056: mixamorig:LeftHandRing3
-    100058: mixamorig:LeftHandRing4
-    100060: mixamorig:LeftHandThumb1
-    100062: mixamorig:LeftHandThumb2
-    100064: mixamorig:LeftHandThumb3
-    100066: mixamorig:LeftHandThumb4
-    100068: mixamorig:LeftLeg
-    100070: mixamorig:LeftShoulder
-    100072: mixamorig:LeftToe_End
-    100074: mixamorig:LeftToeBase
-    100076: mixamorig:LeftUpLeg
-    100078: mixamorig:Neck
-    100080: mixamorig:RightArm
-    100082: mixamorig:RightEye
-    100084: mixamorig:RightFoot
-    100086: mixamorig:RightForeArm
-    100088: mixamorig:RightHand
-    100090: mixamorig:RightHandIndex1
-    100092: mixamorig:RightHandIndex2
-    100094: mixamorig:RightHandIndex3
-    100096: mixamorig:RightHandIndex4
-    100098: mixamorig:RightHandMiddle1
-    100100: mixamorig:RightHandMiddle2
-    100102: mixamorig:RightHandMiddle3
-    100104: mixamorig:RightHandMiddle4
-    100106: mixamorig:RightHandPinky1
-    100108: mixamorig:RightHandPinky2
-    100110: mixamorig:RightHandPinky3
-    100112: mixamorig:RightHandPinky4
-    100114: mixamorig:RightHandRing1
-    100116: mixamorig:RightHandRing2
-    100118: mixamorig:RightHandRing3
-    100120: mixamorig:RightHandRing4
-    100122: mixamorig:RightHandThumb1
-    100124: mixamorig:RightHandThumb2
-    100126: mixamorig:RightHandThumb3
-    100128: mixamorig:RightHandThumb4
-    100130: mixamorig:RightLeg
-    100132: mixamorig:RightShoulder
-    100134: mixamorig:RightToe_End
-    100136: mixamorig:RightToeBase
-    100138: mixamorig:RightUpLeg
-    100140: mixamorig:Spine
-    100142: mixamorig:Spine1
-    100144: mixamorig:Spine2
-    100146: Shoes
-    100148: //RootNode
-    100150: Tops
+    100010: mixamorig:Head
+    100012: mixamorig:HeadTop_End
+    100014: mixamorig:Hips
+    100016: mixamorig:LeftArm
+    100018: mixamorig:LeftEye
+    100020: mixamorig:LeftFoot
+    100022: mixamorig:LeftForeArm
+    100024: mixamorig:LeftHand
+    100026: mixamorig:LeftHandIndex1
+    100028: mixamorig:LeftHandIndex2
+    100030: mixamorig:LeftHandIndex3
+    100032: mixamorig:LeftHandIndex4
+    100034: mixamorig:LeftHandMiddle1
+    100036: mixamorig:LeftHandMiddle2
+    100038: mixamorig:LeftHandMiddle3
+    100040: mixamorig:LeftHandMiddle4
+    100042: mixamorig:LeftHandPinky1
+    100044: mixamorig:LeftHandPinky2
+    100046: mixamorig:LeftHandPinky3
+    100048: mixamorig:LeftHandPinky4
+    100050: mixamorig:LeftHandRing1
+    100052: mixamorig:LeftHandRing2
+    100054: mixamorig:LeftHandRing3
+    100056: mixamorig:LeftHandRing4
+    100058: mixamorig:LeftHandThumb1
+    100060: mixamorig:LeftHandThumb2
+    100062: mixamorig:LeftHandThumb3
+    100064: mixamorig:LeftHandThumb4
+    100066: mixamorig:LeftLeg
+    100068: mixamorig:LeftShoulder
+    100070: mixamorig:LeftToe_End
+    100072: mixamorig:LeftToeBase
+    100074: mixamorig:LeftUpLeg
+    100076: mixamorig:Neck
+    100078: mixamorig:RightArm
+    100080: mixamorig:RightEye
+    100082: mixamorig:RightFoot
+    100084: mixamorig:RightForeArm
+    100086: mixamorig:RightHand
+    100088: mixamorig:RightHandIndex1
+    100090: mixamorig:RightHandIndex2
+    100092: mixamorig:RightHandIndex3
+    100094: mixamorig:RightHandIndex4
+    100096: mixamorig:RightHandMiddle1
+    100098: mixamorig:RightHandMiddle2
+    100100: mixamorig:RightHandMiddle3
+    100102: mixamorig:RightHandMiddle4
+    100104: mixamorig:RightHandPinky1
+    100106: mixamorig:RightHandPinky2
+    100108: mixamorig:RightHandPinky3
+    100110: mixamorig:RightHandPinky4
+    100112: mixamorig:RightHandRing1
+    100114: mixamorig:RightHandRing2
+    100116: mixamorig:RightHandRing3
+    100118: mixamorig:RightHandRing4
+    100120: mixamorig:RightHandThumb1
+    100122: mixamorig:RightHandThumb2
+    100124: mixamorig:RightHandThumb3
+    100126: mixamorig:RightHandThumb4
+    100128: mixamorig:RightLeg
+    100130: mixamorig:RightShoulder
+    100132: mixamorig:RightToe_End
+    100134: mixamorig:RightToeBase
+    100136: mixamorig:RightUpLeg
+    100138: mixamorig:Spine
+    100140: mixamorig:Spine1
+    100142: mixamorig:Spine2
+    100144: Shoes
+    100146: //RootNode
+    100148: Tops
     400000: Body
     400002: Bottoms
     400004: default
     400006: Eyelashes
     400008: Gloves
-    400010: Hair
-    400012: mixamorig:Head
-    400014: mixamorig:HeadTop_End
-    400016: mixamorig:Hips
-    400018: mixamorig:LeftArm
-    400020: mixamorig:LeftEye
-    400022: mixamorig:LeftFoot
-    400024: mixamorig:LeftForeArm
-    400026: mixamorig:LeftHand
-    400028: mixamorig:LeftHandIndex1
-    400030: mixamorig:LeftHandIndex2
-    400032: mixamorig:LeftHandIndex3
-    400034: mixamorig:LeftHandIndex4
-    400036: mixamorig:LeftHandMiddle1
-    400038: mixamorig:LeftHandMiddle2
-    400040: mixamorig:LeftHandMiddle3
-    400042: mixamorig:LeftHandMiddle4
-    400044: mixamorig:LeftHandPinky1
-    400046: mixamorig:LeftHandPinky2
-    400048: mixamorig:LeftHandPinky3
-    400050: mixamorig:LeftHandPinky4
-    400052: mixamorig:LeftHandRing1
-    400054: mixamorig:LeftHandRing2
-    400056: mixamorig:LeftHandRing3
-    400058: mixamorig:LeftHandRing4
-    400060: mixamorig:LeftHandThumb1
-    400062: mixamorig:LeftHandThumb2
-    400064: mixamorig:LeftHandThumb3
-    400066: mixamorig:LeftHandThumb4
-    400068: mixamorig:LeftLeg
-    400070: mixamorig:LeftShoulder
-    400072: mixamorig:LeftToe_End
-    400074: mixamorig:LeftToeBase
-    400076: mixamorig:LeftUpLeg
-    400078: mixamorig:Neck
-    400080: mixamorig:RightArm
-    400082: mixamorig:RightEye
-    400084: mixamorig:RightFoot
-    400086: mixamorig:RightForeArm
-    400088: mixamorig:RightHand
-    400090: mixamorig:RightHandIndex1
-    400092: mixamorig:RightHandIndex2
-    400094: mixamorig:RightHandIndex3
-    400096: mixamorig:RightHandIndex4
-    400098: mixamorig:RightHandMiddle1
-    400100: mixamorig:RightHandMiddle2
-    400102: mixamorig:RightHandMiddle3
-    400104: mixamorig:RightHandMiddle4
-    400106: mixamorig:RightHandPinky1
-    400108: mixamorig:RightHandPinky2
-    400110: mixamorig:RightHandPinky3
-    400112: mixamorig:RightHandPinky4
-    400114: mixamorig:RightHandRing1
-    400116: mixamorig:RightHandRing2
-    400118: mixamorig:RightHandRing3
-    400120: mixamorig:RightHandRing4
-    400122: mixamorig:RightHandThumb1
-    400124: mixamorig:RightHandThumb2
-    400126: mixamorig:RightHandThumb3
-    400128: mixamorig:RightHandThumb4
-    400130: mixamorig:RightLeg
-    400132: mixamorig:RightShoulder
-    400134: mixamorig:RightToe_End
-    400136: mixamorig:RightToeBase
-    400138: mixamorig:RightUpLeg
-    400140: mixamorig:Spine
-    400142: mixamorig:Spine1
-    400144: mixamorig:Spine2
-    400146: Shoes
-    400148: //RootNode
-    400150: Tops
+    400010: mixamorig:Head
+    400012: mixamorig:HeadTop_End
+    400014: mixamorig:Hips
+    400016: mixamorig:LeftArm
+    400018: mixamorig:LeftEye
+    400020: mixamorig:LeftFoot
+    400022: mixamorig:LeftForeArm
+    400024: mixamorig:LeftHand
+    400026: mixamorig:LeftHandIndex1
+    400028: mixamorig:LeftHandIndex2
+    400030: mixamorig:LeftHandIndex3
+    400032: mixamorig:LeftHandIndex4
+    400034: mixamorig:LeftHandMiddle1
+    400036: mixamorig:LeftHandMiddle2
+    400038: mixamorig:LeftHandMiddle3
+    400040: mixamorig:LeftHandMiddle4
+    400042: mixamorig:LeftHandPinky1
+    400044: mixamorig:LeftHandPinky2
+    400046: mixamorig:LeftHandPinky3
+    400048: mixamorig:LeftHandPinky4
+    400050: mixamorig:LeftHandRing1
+    400052: mixamorig:LeftHandRing2
+    400054: mixamorig:LeftHandRing3
+    400056: mixamorig:LeftHandRing4
+    400058: mixamorig:LeftHandThumb1
+    400060: mixamorig:LeftHandThumb2
+    400062: mixamorig:LeftHandThumb3
+    400064: mixamorig:LeftHandThumb4
+    400066: mixamorig:LeftLeg
+    400068: mixamorig:LeftShoulder
+    400070: mixamorig:LeftToe_End
+    400072: mixamorig:LeftToeBase
+    400074: mixamorig:LeftUpLeg
+    400076: mixamorig:Neck
+    400078: mixamorig:RightArm
+    400080: mixamorig:RightEye
+    400082: mixamorig:RightFoot
+    400084: mixamorig:RightForeArm
+    400086: mixamorig:RightHand
+    400088: mixamorig:RightHandIndex1
+    400090: mixamorig:RightHandIndex2
+    400092: mixamorig:RightHandIndex3
+    400094: mixamorig:RightHandIndex4
+    400096: mixamorig:RightHandMiddle1
+    400098: mixamorig:RightHandMiddle2
+    400100: mixamorig:RightHandMiddle3
+    400102: mixamorig:RightHandMiddle4
+    400104: mixamorig:RightHandPinky1
+    400106: mixamorig:RightHandPinky2
+    400108: mixamorig:RightHandPinky3
+    400110: mixamorig:RightHandPinky4
+    400112: mixamorig:RightHandRing1
+    400114: mixamorig:RightHandRing2
+    400116: mixamorig:RightHandRing3
+    400118: mixamorig:RightHandRing4
+    400120: mixamorig:RightHandThumb1
+    400122: mixamorig:RightHandThumb2
+    400124: mixamorig:RightHandThumb3
+    400126: mixamorig:RightHandThumb4
+    400128: mixamorig:RightLeg
+    400130: mixamorig:RightShoulder
+    400132: mixamorig:RightToe_End
+    400134: mixamorig:RightToeBase
+    400136: mixamorig:RightUpLeg
+    400138: mixamorig:Spine
+    400140: mixamorig:Spine1
+    400142: mixamorig:Spine2
+    400144: Shoes
+    400146: //RootNode
+    400148: Tops
     2100000: Bodymat
     2100002: Topmat
     2100004: Shoesmat
     2100006: Glovemat
-    2100008: Hairmat
-    2100010: Bottommat
+    2100008: Bottommat
     4300000: Eyelashes
     4300002: default
     4300004: Body
     4300006: Tops
     4300008: Shoes
     4300010: Gloves
-    4300012: Hair
-    4300014: Bottoms
+    4300012: Bottoms
     7400000: mixamo.com
     9500000: //RootNode
     13700000: Body
@@ -176,190 +172,9 @@ ModelImporter:
     13700004: default
     13700006: Eyelashes
     13700008: Gloves
-    13700010: Hair
-    13700012: Shoes
-    13700014: Tops
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Bodymat
-    second: {fileID: 2100000, guid: ae596e922dae87e4b9deb9022e70bfca, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Bottommat
-    second: {fileID: 2100000, guid: a90160cb437bcf54591678c4cf533901, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Glovemat
-    second: {fileID: 2100000, guid: 569228b49eb3c7d47945b333b5d12b3a, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Hairmat
-    second: {fileID: 2100000, guid: 4afbfb6bfed34834d9e8be4a6acf4c2a, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Shoesmat
-    second: {fileID: 2100000, guid: 9ca1ec87a928d7c40bc5d04d12b8c99a, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Topmat
-    second: {fileID: 2100000, guid: ca02bbf47df090847bd1ba48d600a534, type: 2}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Body_Diffuse
-    second: {fileID: 2800000, guid: 79c20b66b5bb4bc4b877dfbf13719b77, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Body_Gloss
-    second: {fileID: 2800000, guid: 65d8a7d88181d6b4e843bc929ed3a142, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Body_Normal
-    second: {fileID: 2800000, guid: 70259ef9c11516843bf734d448ed5340, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Body_Opacity
-    second: {fileID: 2800000, guid: 16cf20bd2ca95d342912cab0a05b6349, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Body_Specular
-    second: {fileID: 2800000, guid: e1238ccd8c3dc024b8a35a180d04f433, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Bottom_Diffuse
-    second: {fileID: 2800000, guid: f5af014f5d4dfb64d8f9f8dd2d789144, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Bottom_Gloss
-    second: {fileID: 2800000, guid: f32e435e7d4aa8e438e15a8674160e03, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Bottom_Normal
-    second: {fileID: 2800000, guid: ca2a544a2b7f1544694fc0c2f489f679, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Bottom_Opacity
-    second: {fileID: 2800000, guid: 6d1344d56edcf504bb36fd58d26ffbe7, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Bottom_Specular
-    second: {fileID: 2800000, guid: 9ce1d67b4f2c7364596a93372d394f4c, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Glove_Diffuse
-    second: {fileID: 2800000, guid: 8b7b60f5ac000874bb680192e40342f3, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Glove_Gloss
-    second: {fileID: 2800000, guid: 8420e5b9b08dbd945b55972d48ee8fb2, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Glove_Normal
-    second: {fileID: 2800000, guid: c7bd4caf96d1fc94086795af80b863b6, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Glove_Opacity
-    second: {fileID: 2800000, guid: dac477d49d0497244919f8fdfe16d4f6, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Glove_Specular
-    second: {fileID: 2800000, guid: 41b8ca1777bd89b4fa7e795d27a15e1d, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Hair_Diffuse
-    second: {fileID: 2800000, guid: 65d9aa7b6e64358419e990e6a1a8b4f3, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Hair_Gloss
-    second: {fileID: 2800000, guid: 14c3afb7524de4443a0bf620fcf1292f, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Hair_Normal
-    second: {fileID: 2800000, guid: 399a09d897dae204197bc59e505b24f9, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Hair_Opacity
-    second: {fileID: 2800000, guid: 45b7cb57cf8badc41807e2f30b089316, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Hair_Specular
-    second: {fileID: 2800000, guid: acf6b91ee06cb4d44a142be338b281c4, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Shoes_Diffuse
-    second: {fileID: 2800000, guid: 59108c2a7167ee14795ae7e4eca9f45f, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Shoes_Gloss
-    second: {fileID: 2800000, guid: c4a80257325bffd409c35849e62ebac1, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Shoes_Normal
-    second: {fileID: 2800000, guid: cd1c0d5c8d6294f42aa7c9da748a9d8f, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Shoes_Opacity
-    second: {fileID: 2800000, guid: bb16eae30ca2e9441a83aae8c7bd5169, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Shoes_Specular
-    second: {fileID: 2800000, guid: 1a40374688a48604b83599786222936a, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Top_Diffuse
-    second: {fileID: 2800000, guid: 6e6c6709c717c6247abe243fa50f4470, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Top_Gloss
-    second: {fileID: 2800000, guid: ebdf10679c0136c4ab6eef5f6c636fa0, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Top_Normal
-    second: {fileID: 2800000, guid: f8f5eb5b12401f6438abbe98c8aa7132, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Top_Opacity
-    second: {fileID: 2800000, guid: 1a5e1b82c95ccfc4082452728e5f9167, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: skinjade2_Top_Specular
-    second: {fileID: 2800000, guid: b4c80c55b39aebf4881c862739a56ab5, type: 3}
+    13700010: Shoes
+    13700012: Tops
+  externalObjects: {}
   materials:
     importMaterials: 1
     materialName: 0
