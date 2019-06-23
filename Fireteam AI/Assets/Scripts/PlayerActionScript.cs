@@ -666,7 +666,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (photonView.IsMine)
         {
             fpc.enabled = status;
+            fpc.m_MouseLook.ResetRot();
             viewCam.GetComponent<AudioListener>().enabled = status;
+            viewCam.transform.localPosition = Vector3.zero;
+            viewCam.transform.localRotation = Quaternion.identity;
             viewCam.enabled = status;
             wepActionScript.enabled = status;
         }
@@ -716,7 +719,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         health = 100;
         photonView.RPC("RpcSetHealth", RpcTarget.Others, 100);
         viewCam.transform.SetParent(headTransform);
-        viewCam.transform.localRotation = Quaternion.identity;
         hud.ToggleHUD(true);
         hud.ToggleSpectatorMessage(false);
         fpc.m_IsCrouching = false;
@@ -739,8 +741,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         fpc.ResetAnimationState();
 
         // Send player back to spawn position, reset rotation, leave spectator mode
-        transform.rotation = Quaternion.Euler(Vector3.zero);
+        //transform.rotation = Quaternion.Euler(Vector3.zero);
         transform.position = new Vector3(gameController.spawnLocation.position.x, gameController.spawnLocation.position.y, gameController.spawnLocation.position.z);
+        fpc.m_MouseLook.Init(transform, fpc.spineTransform);
         LeaveSpectatorMode();
         wepActionScript.CockingAction();
     }

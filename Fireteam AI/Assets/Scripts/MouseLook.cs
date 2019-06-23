@@ -35,6 +35,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
             //m_CameraTargetRot = camera.localRotation;
         }
 
+        public void ResetRot() {
+            spineRotationRange = 0f;
+            m_CharacterTargetRot = Quaternion.identity;
+            m_SpineTargetRot = Quaternion.identity;
+        }
+
         public void ResetSpineRotationRange()
         {
             spineRotationRange = 0f;
