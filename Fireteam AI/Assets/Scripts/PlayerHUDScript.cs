@@ -34,6 +34,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private float disorientationTimer;
 	private float totalDisorientationTime;
 	public bool screenGrab;
+	private const float HEIGHT_OFFSET = 2.1f;
 
     // Use this for initialization
     void Start () {
@@ -268,7 +269,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				{
 					playerMarkers [actorNo].SetActive (true);
 					playerMarkers[actorNo].GetComponentInChildren<Slider>().value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
-					Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + p.transform.lossyScale.y, p.transform.position.z);
+					Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + HEIGHT_OFFSET, p.transform.position.z);
 					playerMarkers[actorNo].GetComponent<RectTransform>().position = playerActionScript.viewCam.WorldToScreenPoint(o);
 				}
 				if (playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled && p.GetComponent<PlayerActionScript>().health <= 0)
@@ -285,7 +286,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				{
 					playerMarkers [actorNo].SetActive (true);
 					playerMarkers[actorNo].GetComponentInChildren<Slider>().value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
-					Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + p.transform.lossyScale.y, p.transform.position.z);
+					Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + HEIGHT_OFFSET, p.transform.position.z);
 					playerMarkers[actorNo].GetComponent<RectTransform>().position = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
 				}
 				if (playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled && p.GetComponent<PlayerActionScript>().health <= 0)
