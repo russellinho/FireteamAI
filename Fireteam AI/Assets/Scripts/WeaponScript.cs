@@ -149,6 +149,7 @@ public class WeaponScript : MonoBehaviour
         string equippedType = "";
         if (weaponCat == 1)
         {
+            weaponActionScript.hudScript.ToggleCrosshair(false);
             equippedWep = equippedPrimaryWeapon;
             equippedType = equippedPrimaryType;
             weaponActionScript.currentAmmo = currentAmmoPrimary;
@@ -156,6 +157,7 @@ public class WeaponScript : MonoBehaviour
         }
         else if (weaponCat == 2)
         {
+            weaponActionScript.hudScript.ToggleCrosshair(false);
             equippedWep = equippedSecondaryWeapon;
             equippedType = equippedSecondaryType;
             weaponActionScript.currentAmmo = currentAmmoSecondary;
@@ -163,6 +165,9 @@ public class WeaponScript : MonoBehaviour
         }
         else if (weaponCat == 4)
         {
+            if (equippedSupportType.Equals("Explosive")) {
+                weaponActionScript.hudScript.ToggleCrosshair(true);
+            }
             equippedWep = equippedSupportWeapon;
             equippedType = equippedSupportType;
             weaponActionScript.currentAmmo = currentAmmoSupport;

@@ -533,7 +533,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
 		int ignoreLayers = (1 << 9) & (1 << 11) & (1 << 12) & (1 << 13) & (1 << 14) & (1 << 15);
-        Debug.Log("Env obstruction: " + Physics.Linecast(a, b, ignoreLayers));
+        ignoreLayers = ~ignoreLayers;
 		return Physics.Linecast(a, b, ignoreLayers);
 	}
 

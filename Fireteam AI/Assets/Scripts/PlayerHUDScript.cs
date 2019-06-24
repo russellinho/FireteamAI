@@ -62,6 +62,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.scoreboard.GetComponent<Canvas> ().enabled = false;
 		container.spectatorText.enabled = false;
 
+		if (wepScript.currentlyEquippedType == 4 && wepScript.equippedSupportType.Equals("Explosive")) {
+			ToggleCrosshair(true);
+		}
+
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 		killPopupTimer = 0f;
 		hitmarkerTimer = 0f;
@@ -116,6 +120,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (container.screenColor.color.a <= 0f) {
 				roundStartFadeIn = false;
 			}
+		}
+	}
+
+	public void ToggleCrosshair(bool b) {
+		if (container != null) {
+			container.crosshair.SetActive(b);
 		}
 	}
 

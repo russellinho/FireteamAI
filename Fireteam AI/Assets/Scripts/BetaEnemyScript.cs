@@ -748,6 +748,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
 		int ignoreLayers = (1 << 9) & (1 << 11) & (1 << 12) & (1 << 13) & (1 << 14) & (1 << 15);
+		ignoreLayers = ~ignoreLayers;
 		return Physics.Linecast(a, b, ignoreLayers);
 	}
 
