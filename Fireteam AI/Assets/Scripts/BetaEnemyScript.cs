@@ -9,6 +9,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 public class BetaEnemyScript : MonoBehaviour {
 
 	private const float MELEE_DISTANCE = 2.3f;
+	private const float PLAYER_HEIGHT_OFFSET = 1f;
 
 	// Prefab references
 	public GameObject ammoBoxPickup;
@@ -1453,7 +1454,7 @@ public class BetaEnemyScript : MonoBehaviour {
 						Transform playerHead = p.GetComponent<FirstPersonController>().headTransform;
 						RaycastHit hit1;
 						RaycastHit hit2;
-						Vector3 middleHalfCheck = new Vector3 (p.transform.position.x, p.transform.position.y, p.transform.position.z);
+						Vector3 middleHalfCheck = new Vector3 (p.transform.position.x, p.transform.position.y + PLAYER_HEIGHT_OFFSET, p.transform.position.z);
 						Vector3 topHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y, playerHead.position.z);
 						if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2))
 						{
