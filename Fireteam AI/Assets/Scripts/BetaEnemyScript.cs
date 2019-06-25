@@ -652,7 +652,9 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	IEnumerator PlayVoiceClipDelayed(int n, float t) {
 		yield return new WaitForSeconds (t);
-		PlayVoiceClip (n);
+		if (actionState != ActionStates.Dead) {
+			PlayVoiceClip (n);
+		}
 	}
 
 	[PunRPC]

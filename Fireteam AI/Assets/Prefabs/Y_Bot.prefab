@@ -828,6 +828,7 @@ MonoBehaviour:
   ammoBoxPickup: {fileID: 0}
   healthBoxPickup: {fileID: 0}
   voiceClips: []
+  gruntSounds: []
   hitParticles: {fileID: 1617700753897852, guid: de171a7c0bf138540b50c88688537dcc,
     type: 3}
   bulletImpact: {fileID: 1235035097298946, guid: d2c059bd025bec4499536f6f1a95ad89,
@@ -838,6 +839,7 @@ MonoBehaviour:
   headTransform: {fileID: 0}
   shootPoint: {fileID: 4114654523327796}
   sniperTracer: {fileID: 0}
+  modeler: {fileID: 0}
   navMesh: {fileID: 0}
   navMeshObstacle: {fileID: 0}
   enemyType: 0
@@ -846,6 +848,8 @@ MonoBehaviour:
   sniper: 0
   rotationSpeed: 6
   health: 0
+  deathBy: 0
+  disorientationTime: 0
   alerted: 0
   range: 10
   bulletsPerMag: 30
@@ -898,7 +902,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114883440538335910}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &114883440538335910

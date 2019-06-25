@@ -6589,8 +6589,7 @@ MonoBehaviour:
   bulletsPerMag: 30
   currentBullets: 0
   shootSound: {fileID: 8300000, guid: af830530de670dc46a29db59d487bce3, type: 3}
-  muzzleFlash: {fileID: 198181199395725860, guid: 0bcfe9d4fd038ce49b6649a9505d7259,
-    type: 3}
+  muzzleFlash: {fileID: 1759772426502610481}
   fireRate: 0.4
   damage: 20
   player: {fileID: 0}
@@ -6644,7 +6643,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 7658744305337577552}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &7658744305337577552
 MonoBehaviour:

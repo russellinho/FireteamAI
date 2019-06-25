@@ -952,6 +952,7 @@ MonoBehaviour:
   headTransform: {fileID: 4374143155631438}
   shootPoint: {fileID: 4114654523327796}
   sniperTracer: {fileID: 0}
+  modeler: {fileID: 0}
   navMesh: {fileID: 195753960068613868}
   navMeshObstacle: {fileID: 208658121138146138}
   enemyType: 0
@@ -1020,7 +1021,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114883440538335910}
-  viewIdField: 0
+  viewIdField: 3
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &114883440538335910
