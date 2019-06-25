@@ -130,8 +130,6 @@ public class WeaponActionScript : MonoBehaviour
                 break;
         }
 
-        RefillFireTimer();
-
         if (!playerActionScript.canShoot || isWieldingSupportItem)
         {
             return;
@@ -161,6 +159,7 @@ public class WeaponActionScript : MonoBehaviour
          {
              return;
          }
+         RefillFireTimer();
         //  if (animator.gameObject.activeSelf)
         //  {
         //      AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo(1);

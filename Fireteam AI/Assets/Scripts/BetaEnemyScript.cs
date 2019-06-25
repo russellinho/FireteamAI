@@ -224,6 +224,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		// If disoriented, don't have the ability to do anything else except die
 		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
+			audioSource.Stop();
 			return;
 		}
 
