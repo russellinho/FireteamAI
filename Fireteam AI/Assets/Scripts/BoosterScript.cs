@@ -47,7 +47,7 @@ public class BoosterScript : MonoBehaviour
       playerActionScript.ResetBoostTimer();
       playerActionScript.PlayBoostParticleEffect();
       playerActionScript.audioController.PlayGruntSound();
-      StartCoroutine(playerActionScript.useStaminaBoost(10f, 2f));
+      StartCoroutine(playerActionScript.useStaminaBoost(10f, 1.15f));
     }
 
 
