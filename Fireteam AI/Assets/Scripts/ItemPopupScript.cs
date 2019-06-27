@@ -99,7 +99,7 @@ public class ItemPopupScript : MonoBehaviour
     }
 
     private int ConvertToPercent(float f) {
-        return (int)(f * 100f);
+        return Mathf.RoundToInt(f * 100.0f);
     }
 
     public void ClearAllStats() {
