@@ -158,6 +158,11 @@ public class EquipmentScript : MonoBehaviour
             ts.currentCharGender = 'F';
         }
 
+        // Clear all equipment stats
+        playerScript.stats.SetDefaults();
+        playerScript.updateStats();
+        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
+
         // Change equipment back to default and re-equip weapons that were equipped beforehand
         EquipDefaults();
         if (PlayerData.playerdata.info.equippedPrimary == null)

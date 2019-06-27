@@ -10,6 +10,10 @@ public class Stats
     public int health;
 
     public Stats() {
+        SetDefaults();
+    }
+
+    public void SetDefaults() {
         this.speed = 1f;
         this.stamina = 1f;
         this.armor = 1f;
