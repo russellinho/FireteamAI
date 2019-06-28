@@ -762,7 +762,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         {
             EnterSpectatorMode();
         }
-        thisSpectatorCam.GetComponent<SpectatorScript>().GameOverCam();
+        if (thisSpectatorCam != null) {
+            thisSpectatorCam.GetComponent<SpectatorScript>().GameOverCam();
+        }
     }
 
     public void PlayHealParticleEffect() {
