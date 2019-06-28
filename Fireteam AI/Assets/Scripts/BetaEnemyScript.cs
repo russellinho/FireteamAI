@@ -845,6 +845,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcRegisterGrenadeKill(int playerNetworkId) {
+		Debug.Log("Hello: " + playerNetworkId);
 		// If the player id of the person who killed the enemy matches my player id
 		if (playerNetworkId == PlayerData.playerdata.inGamePlayerReference.GetComponent<PhotonView>().ViewID) {
 			// Increment my kill score and show the kill popup for myself
