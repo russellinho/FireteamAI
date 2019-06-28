@@ -505,7 +505,9 @@ public class WeaponActionScript : MonoBehaviour
             totalAmmoLeft -= bulletsToDeduct;
             currentAmmo += bulletsToDeduct;
         }
-        pView.RPC("RpcPlayReloadSound", RpcTarget.All);
+        if (weaponStats.reloadSound != null) {
+            pView.RPC("RpcPlayReloadSound", RpcTarget.All);
+        }
     }
 
     private void ReloadSupportItem() {
