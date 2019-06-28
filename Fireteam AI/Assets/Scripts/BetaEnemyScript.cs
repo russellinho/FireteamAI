@@ -209,7 +209,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			navMesh.enabled = false;
 			navMeshObstacle.enabled = false;
 		}
-		
+
 		UpdateDisorientationTime();
 		ReplenishFireRate ();
 		DecreaseAlertTime ();
@@ -764,6 +764,9 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	void HandleExplosiveEffectTriggers(Collider other) {
 		// First priority is to handle possible explosion damage
+		if (health <= 0) {
+			return;
+		}
 		if (other.gameObject.tag.Equals("Explosive")) {
             // If the grenade is still active or if the grenade has already affected the enemy, ignore it
             ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
