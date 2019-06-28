@@ -60,8 +60,6 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     void EquipRandomOutfitForEnemy() {
         if (enemyName.Equals("Cicadas")) {
             GenerateRandomOutfitForCicadas();
-            // If in a multiplayer game, set equipped outfit for the whole network
-            SendEquippedItemsToClients();
             EquipGeneratedOutfitForCicadas();
         }
     }
