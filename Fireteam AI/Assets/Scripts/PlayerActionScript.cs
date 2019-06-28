@@ -154,9 +154,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         updatePlayerSpeed();
         // Instant respawn hack
-        if (Input.GetKeyDown (KeyCode.P)) {
-            BeginRespawn ();
-        }
+        // if (Input.GetKeyDown (KeyCode.P)) {
+        //     BeginRespawn ();
+        // }
 
          if (enterSpectatorModeTimer > 0f)
          {

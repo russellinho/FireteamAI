@@ -384,8 +384,10 @@ public class BetaEnemyScript : MonoBehaviour {
 	[PunRPC]
 	void RpcSetNavMeshDestination(float x, float y, float z) {
 		if (PhotonNetwork.IsMasterClient) {
-			navMesh.SetDestination (new Vector3 (x, y, z));
-			navMesh.isStopped = false;
+			if (navMesh.isOnNavMesh) {
+				navMesh.SetDestination (new Vector3 (x, y, z));
+				navMesh.isStopped = false;
+			}
 		} else {
 			prevNavDestination = new Vector3 (x,y,z);
 			prevWasStopped = false;
@@ -1568,11 +1570,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		myCollider.height = originalColliderHeight;
 		myCollider.center = new Vector3 (originalColliderCenter.x, originalColliderCenter.y, originalColliderCenter.z);
 		myCollider.enabled = true;
-		if (enemyType == EnemyType.Patrol) {
-			navMesh.enabled = true;
-		} else {
-			navMeshObstacle.enabled = true;
-		}
 		gameObject.layer = 14;
 		headCollider.gameObject.layer = 13;
 		health = 100;
@@ -1606,6 +1603,12 @@ public class BetaEnemyScript : MonoBehaviour {
 		modeler.RespawnPlayer();
 		marker.enabled = true;
 		gunRef.enabled = true;
+
+		if (enemyType == EnemyType.Patrol) {
+			navMesh.enabled = true;
+		} else {
+			navMeshObstacle.enabled = true;
+		}
 	}
 
 }
