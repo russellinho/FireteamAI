@@ -783,7 +783,7 @@ public class BetaEnemyScript : MonoBehaviour {
                 t.AddHitPlayer(pView.ViewID);
 				if (health <= 0) {
 					deathBy = 1;
-					KilledByGrenade(t.playerThrownByReference.GetComponent<PhotonView>().ViewID);
+					KilledByGrenade(t.playerThrownByReference);
 				}
 			}
 

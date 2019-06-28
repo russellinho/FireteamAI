@@ -20,7 +20,7 @@ public class ThrowableScript : MonoBehaviour
     private float explosionDuration;
     public AudioSource explosionSound;
     public AudioSource pinSound;
-    public GameObject playerThrownByReference;
+    public int playerThrownByReference;
     private ArrayList playersHit;
     public PhotonView pView;
 
@@ -45,7 +45,7 @@ public class ThrowableScript : MonoBehaviour
 
     public void Launch(GameObject thrownByPlayer, float xForce, float yForce, float zForce) {
         // Assign a reference to the player who threw this projectile
-        playerThrownByReference = thrownByPlayer;
+        playerThrownByReference = thrownByPlayer.GetComponent<PhotonView>().ViewID;
         // Apply a force to the throwable that's equal to the forward position of the weapon holder
         rBody.velocity = new Vector3(xForce * THROW_FORCE_MULTIPLIER, yForce * THROW_FORCE_MULTIPLIER, zForce * THROW_FORCE_MULTIPLIER);
         //rBody.AddForce(xForce * THROW_FORCE_MULTIPLIER, yForce * THROW_FORCE_MULTIPLIER, zForce * THROW_FORCE_MULTIPLIER);
