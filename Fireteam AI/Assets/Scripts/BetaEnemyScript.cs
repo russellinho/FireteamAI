@@ -1190,7 +1190,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					if (hit.transform.tag.Equals ("Player")) {
 						PlayerActionScript ps = hit.transform.GetComponent<PlayerActionScript> ();
 						ps.TakeDamage((int)damage);
-						ps.ResetHitTimer ();
+						//ps.ResetHitTimer ();
 						ps.SetHitLocation (transform.position);
 					} else {
 						hit.transform.GetComponent<BetaEnemyScript>().TakeDamage((int)damage);
@@ -1264,7 +1264,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 			PlayerActionScript ps = playerToHit.GetComponent<PlayerActionScript> ();
 			ps.TakeDamage (50);
-			ps.ResetHitTimer();
+			//ps.ResetHitTimer();
 			ps.SetHitLocation (transform.position);
 			if (Vector3.Distance(transform.position, playerToHit.transform.position) > MELEE_DISTANCE) {
 				playerToHit = null;

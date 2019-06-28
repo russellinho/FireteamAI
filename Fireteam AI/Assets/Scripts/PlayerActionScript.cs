@@ -278,6 +278,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcTakeDamage(int d)
     {
+        ResetHitTimer();
         audioController.PlayGruntSound();
         if (photonView.IsMine)
         {
@@ -442,7 +443,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         if (currentBomb != null)
         {
-            // Check if the player is still near the bomb
+            // Check if the player is still near the bomb or if it's already defused
             if (Vector3.Distance(gameObject.transform.position, currentBomb.transform.position) > 4.5f || currentBomb.GetComponent<BombScript>().defused)
             {
                 currentBomb = null;
@@ -450,43 +451,49 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 return;
             }
 
-            if (Input.GetKey(KeyCode.E) && health > 0)
-            {
-                fpc.canMove = false;
-                isDefusing = true;
-                hud.container.hintText.enabled = false;
-                hud.ToggleActionBar(true);
-                hud.container.defusingText.enabled = true;
-                bombDefuseCounter += (Time.deltaTime / 8f);
-                hud.SetActionBarSlider(bombDefuseCounter);
-                if (bombDefuseCounter >= 1f)
-                {
-                    bombDefuseCounter = 0f;
-
-                    photonView.RPC("RpcDefuseBomb", RpcTarget.All, currentBombIndex);
-                    gameController.DecrementBombsRemaining();
-                    currentBomb = null;
-
-                    hud.ToggleActionBar(false);
-                    hud.container.defusingText.enabled = false;
+            if (health > 0) {
+                if (Input.GetKey(KeyCode.E)) {
+                    fpc.canMove = false;
+                    isDefusing = true;
                     hud.container.hintText.enabled = false;
+                    hud.ToggleActionBar(true);
+                    hud.container.defusingText.enabled = true;
+                    bombDefuseCounter += (Time.deltaTime / 8f);
+                    hud.SetActionBarSlider(bombDefuseCounter);
+                    if (bombDefuseCounter >= 1f)
+                    {
+                        bombDefuseCounter = 0f;
+
+                        photonView.RPC("RpcDefuseBomb", RpcTarget.All, currentBombIndex);
+                        gameController.DecrementBombsRemaining();
+                        currentBomb = null;
+
+                        hud.ToggleActionBar(false);
+                        hud.container.defusingText.enabled = false;
+                        hud.container.hintText.enabled = false;
+                        // Enable movement again
+                        fpc.canMove = true;
+                        isDefusing = false;
+                    }
+                } else {
                     // Enable movement again
-                    fpc.canMove = true;
-                    isDefusing = false;
-                }
-            }
-            else
-            {
-                // Enable movement again
-                if (!fpc.canMove)
-                {
-                    fpc.canMove = true;
-                    isDefusing = false;
-                    hud.ToggleActionBar(false);
-                    hud.container.defusingText.enabled = false;
+                    if (!fpc.canMove)
+                    {
+                        fpc.canMove = true;
+                        isDefusing = false;
+                        hud.ToggleActionBar(false);
+                        hud.container.defusingText.enabled = false;
+                        bombDefuseCounter = 0f;
+                    }
                     hud.container.hintText.enabled = true;
-                    bombDefuseCounter = 0f;
                 }
+            } else {
+                fpc.canMove = false;
+                isDefusing = false;
+                hud.ToggleActionBar(false);
+                hud.container.defusingText.enabled = false;
+                hud.container.hintText.enabled = true;
+                bombDefuseCounter = 0f;
             }
         }
     }
@@ -562,7 +569,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 t.AddHitPlayer(photonView.ViewID);
                 // Deal damage to the player
                 TakeDamage(damageReceived);
-                ResetHitTimer();
+                //ResetHitTimer();
                 SetHitLocation(other.transform.position);
             }
         }
