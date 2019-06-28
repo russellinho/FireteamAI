@@ -439,7 +439,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetMovingInAnimator(int x) {
-            if (animator.GetInteger("Moving") == x) return;
+            if (animator.GetInteger("Moving") == x || !canMove) return;
             photonView.RPC("RpcSetMovingInAnimator", RpcTarget.All, x);
         }
 
