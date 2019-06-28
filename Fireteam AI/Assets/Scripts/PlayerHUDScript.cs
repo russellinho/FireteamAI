@@ -378,6 +378,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         container.ammoTxt.enabled = b;
 		container.hudMap.enabled = b;
 		container.hudMap2.enabled = b;
+		ToggleCrosshair(false);
     }
 
 	public void ToggleScoreboard(bool b)

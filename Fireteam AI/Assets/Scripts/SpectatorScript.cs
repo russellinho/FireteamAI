@@ -12,8 +12,7 @@ public class SpectatorScript : MonoBehaviour {
 	private Vector3 gameOverCamRot = new Vector3(0f, -40f, 0f);
 
 	public GameObject following;
-	private Transform camTransform;
-	private Camera cam;
+	public Camera cam;
 
 	private float distance = 8f;
 	private float currX = 0f;
@@ -27,9 +26,6 @@ public class SpectatorScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		camTransform = GetComponentsInParent<Transform> () [0];
-		cam = GetComponent<Camera> ();
-
 		foreach (GameObject o in GameControllerScript.playerList.Values) {
             if (o.GetComponent<PlayerActionScript> ().health > 0 && !o.GetComponent<PhotonView>().IsMine) {
 				following = o;
@@ -50,8 +46,8 @@ public class SpectatorScript : MonoBehaviour {
 			}
 			if (!following) {
 				rotationLock = true;
-				camTransform.position = new Vector3 (0f, 10f, 0f);
-				camTransform.rotation = Quaternion.Euler (new Vector3 (0f, 45f, 0f));
+				transform.position = new Vector3 (0f, 10f, 0f);
+				transform.rotation = Quaternion.Euler (new Vector3 (0f, 45f, 0f));
 			}
 		}
 		if (!rotationLock) {
@@ -66,8 +62,8 @@ public class SpectatorScript : MonoBehaviour {
 		if (following) {
 			Vector3 dir = new Vector3 (0f, 0f, -distance);
 			Quaternion rot = Quaternion.Euler (currY, currX, 0f);
-			camTransform.position = following.transform.position + rot * dir;
-			camTransform.LookAt (following.transform.position);
+			transform.position = following.transform.position + rot * dir;
+			transform.LookAt (following.transform.position);
 		}
 	}
 
@@ -102,8 +98,8 @@ public class SpectatorScript : MonoBehaviour {
 	public void GameOverCam() {
 		gameOverLock = true;
 		rotationLock = true;
-		camTransform.position = gameOverCamPos;
-		camTransform.rotation = Quaternion.Euler (gameOverCamRot);
+		transform.position = gameOverCamPos;
+		transform.rotation = Quaternion.Euler (gameOverCamRot);
 	}
 
 }
