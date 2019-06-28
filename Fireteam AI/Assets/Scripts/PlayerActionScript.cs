@@ -101,7 +101,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // // If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
          if (!GetComponent<PhotonView>().IsMine)
          {
-             Destroy(GetComponentInChildren<AudioListener>());
+             Destroy(viewCam.GetComponent<AudioReverbFilter>());
+             Destroy(viewCam.GetComponent<AudioLowPassFilter>());
+             Destroy(viewCam.GetComponent<AudioListener>());
              viewCam.enabled = false;
              //enabled = false;
              return;
