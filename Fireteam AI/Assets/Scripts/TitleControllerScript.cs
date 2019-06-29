@@ -141,7 +141,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Debug.Log("Error while getting version number: " + www.error);
 		} else {
 			// Show results as text
-			if (!www.downloadHandler.text.Substring(0, www.downloadHandler.text.Length - 2).Equals(Application.version)) {
+			string gameAppVersion = Application.version;
+			string currentAppVersion = www.downloadHandler.text.Substring(0, 4);
+			if (!currentAppVersion.Equals(gameAppVersion)) {
 				versionWarning = true;
 			} else {
 				versionWarning = false;

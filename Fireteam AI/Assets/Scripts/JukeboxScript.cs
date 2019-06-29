@@ -11,7 +11,7 @@ public class JukeboxScript : MonoBehaviour
     private float audio1FadeTime;
     private float audio2FadeTime;
     public AudioClip[] trackList;
-    private const float SONG_FADE_DELAY = 2.5f;
+    private const float SONG_FADE_DELAY = 4f;
     // Start is called before the first frame update
     void Start()
     {
