@@ -154,10 +154,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (mapName.Equals ("Citadel")) {
 			screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/citadel_load");
 		}
-        else
-        {
-            screenArt.texture = (Texture)Resources.Load("MapImages/Loading/test_load");
-        }
         proTipText.text = proTips[Random.Range(0, 2)];
 		mapTitleText.text = mapName;
 		mapTitleText.rectTransform.localPosition = new Vector3 (1200f, mapTitleText.rectTransform.localPosition.y, mapTitleText.rectTransform.localPosition.z);

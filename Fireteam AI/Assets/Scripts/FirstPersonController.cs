@@ -113,9 +113,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             m_PreviouslyGrounded = m_CharacterController.isGrounded;
 
-            if (Input.GetKeyDown(KeyCode.U)) {
-                Debug.Log(m_Camera.transform.localRotation.eulerAngles);
-            }
         }
 
         void LateUpdate() {

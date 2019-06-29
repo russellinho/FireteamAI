@@ -34,9 +34,9 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		// Map options
 		private int mapIndex = 0;
-		private string[] mapNames = new string[]{"Citadel","Test"};
-		private string[] mapStrings = new string[]{"MapImages/citadel","MapImages/test"};
-		public static Vector3[] mapSpawnPoints = new Vector3[]{ new Vector3(-27f,1f,-27f) , new Vector3(0f, 0.5f, 0f)};
+		private string[] mapNames = new string[]{"Citadel"};
+		private string[] mapStrings = new string[]{"MapImages/citadel"};
+		public static Vector3[] mapSpawnPoints = new Vector3[]{ new Vector3(-27f,1f,-27f)};
 
 		// Ready status
 		private GameObject myPlayerListEntry;
