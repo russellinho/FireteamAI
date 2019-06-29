@@ -26,4 +26,5 @@ public class WeaponStats : MonoBehaviour
     public AudioSource reloadSound;
     public GameObject gunSmoke;
     public ParticleSystem muzzleFlash;
+    public ParticleSystem bulletTracer;
 }

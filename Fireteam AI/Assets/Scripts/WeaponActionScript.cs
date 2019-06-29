@@ -42,7 +42,6 @@ public class WeaponActionScript : MonoBehaviour
     public int currentAmmo;
 
     public Transform shootPoint;
-    public ParticleSystem bulletTrace;
     public bool isReloading = false;
     public bool isCocking = false;
     public bool isAiming;
@@ -469,9 +468,9 @@ public class WeaponActionScript : MonoBehaviour
     {
         PlayMuzzleFlash();
         InstantiateGunSmokeEffect();
-        if (!bulletTrace.isPlaying && !pView.IsMine)
+        if (weaponStats.bulletTracer != null && !weaponStats.bulletTracer.isPlaying && !pView.IsMine)
         {
-            bulletTrace.Play();
+            weaponStats.bulletTracer.Play();
         }
         PlayShootSound();
         currentAmmo--;
@@ -483,9 +482,9 @@ public class WeaponActionScript : MonoBehaviour
     void FireEffectsSuppressed()
     {
         InstantiateGunSmokeEffect();
-        if (!bulletTrace.isPlaying)
+        if (weaponStats.bulletTracer != null && !weaponStats.bulletTracer.isPlaying && !pView.IsMine)
         {
-            bulletTrace.Play();
+            weaponStats.bulletTracer.Play();
         }
         PlaySuppressedShootSound();
         currentAmmo--;

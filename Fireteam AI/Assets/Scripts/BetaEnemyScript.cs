@@ -216,6 +216,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		UpdateFiringModeTimer ();
 
 		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
+			if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
+				StopVoices();
+			}
 			return;
 		}
 
@@ -224,7 +227,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		// If disoriented, don't have the ability to do anything else except die
 		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
-			audioSource.Stop();
+			StopVoices();
 			return;
 		}
 
@@ -1612,6 +1615,10 @@ public class BetaEnemyScript : MonoBehaviour {
 		} else {
 			navMeshObstacle.enabled = true;
 		}
+	}
+
+	void StopVoices() {
+		audioSource.Stop();
 	}
 
 }
