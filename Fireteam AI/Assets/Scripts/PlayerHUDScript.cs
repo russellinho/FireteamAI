@@ -633,4 +633,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.flashbangScreenCap.texture = result;
 	}
 
+	public void toggleSniperOverlay(bool b) {
+		container.SniperOverlay.SetActive(b);
+	}
+
 }

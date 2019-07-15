@@ -166,7 +166,7 @@ public class InventoryScript : MonoBehaviour
         weaponCatalog.Add("AK-47", new Weapon("AK-47", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/AK-47", "Models/Pics/ak47-thumb", "A classic assault rifle developed in the Soviet Union during the World War II era. It's known for its unmatched stopping power and relatively light weight.", 48f, 90f, 68f, 90f, 70f, 3000f, 30, 120, true, true));
         weaponCatalog.Add("Glock23", new Weapon("Glock23", "Secondary", "Pistol", "Models/Weapons/Secondary/Pistols/Glock23", "Models/Pics/glock23-thumb", "The standard pistol used by United States police officers because of its reliability.", 33f, 100f, 45f, 60f, 56f, 3000f, 12, 60, true, true));
         weaponCatalog.Add("R870", new Weapon("R870", "Primary", "Shotgun","Models/Weapons/Primary/Shotguns/R870", "Models/Pics/r870-thumb", "Short for Remington 870, this shotgun is widely used for home defence due to its quick reload speed and reliability.", 75f, 95f, 17f, -1f, 60f, 1000f, 8, 56, true, false));
-        //weaponCatalog.Add("L96A1", new Weapon("L96A1", "Primary", "Sniper Rifle", "Models/Weapons/Primary/Sniper Rifles/L96A1", "Models/Pics/l96a1-thumb", "Developed in the 1980s by the British, this bolt-action sniper rifle is known for its deadly stopping power and quick operation speed.", 100f, 40f, 10f, 90f, 65f, 3000f, 5, true, true));
+        weaponCatalog.Add("L96A1", new Weapon("L96A1", "Primary", "Sniper Rifle", "Models/Weapons/Primary/Sniper Rifles/L96A1", "Models/Pics/l96a1-thumb", "Developed in the 1980s by the British, this bolt-action sniper rifle is known for its deadly stopping power and quick operation speed.", 100f, 40f, 10f, 90f, 65f, 3000f, 5, 20, true, true));
         weaponCatalog.Add("M4A1", new Weapon("M4A1", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/M4A1", "Models/Pics/m4a1-thumb", "As a successor of the M16A3 assault rifle, this weapon is one of the standard issue rifles in the United States military. It's known for being an all around ass kicker.", 38f, 92f, 74f, 80f, 64f, 3000f, 30, 120, true, true));
         weaponCatalog.Add("M67 Frag", new Weapon("M67 Frag", "Support", "Explosive", "Models/Weapons/Support/Explosives/M67 Frag/M67Frag", "Models/Pics/m67frag-thumb", "The standard issue high explosive anti-personnel grenade given to all mercenaries upon completion of basic training.", 135f, 100f, -1f, -1f, -1f, -1f, 1, 3, false, false));
         weaponCatalog.Add("XM84 Flashbang", new Weapon("XM84 Flashbang", "Support", "Explosive", "Models/Weapons/Support/Explosives/XM84 Flashbang/XM84Flash", "Models/Pics/xm84flash-thumb", "An explosive non-lethal device used to temporarily blind and disorient your enemies. The closer the enemy is and the more eye exposure given to the device, the longer the effect.", -1f, 100f, -1f, -1f, -1f, -1f, 1, 3, false, false));
@@ -249,7 +249,7 @@ public class InventoryScript : MonoBehaviour
         myWeapons.Add("XM84 Flashbang");
         myWeapons.Add("Medkit");
         myWeapons.Add("Adrenaphine");
-        //myWeapons.Add("L96A1");
+        myWeapons.Add("L96A1");
     }
 
     public static void collectMods() {

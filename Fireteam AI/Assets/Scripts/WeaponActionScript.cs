@@ -233,8 +233,17 @@ public class WeaponActionScript : MonoBehaviour
                 }
                 if (fpc.equipmentScript.gender == 'M') {
                     camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, weaponStats.aimDownSightPosMale, Time.deltaTime * aodSpeed);
+                    // Conditional to display sniper reticle
+                    if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosFemale) < 0.005f) {
+                      hudScript.toggleSniperOverlay(true);
+                    }
                 } else {
                     camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, weaponStats.aimDownSightPosFemale, Time.deltaTime * aodSpeed);
+                    // Conditional to display sniper reticle 
+                    if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosFemale) < 0.005f) {
+                      hudScript.toggleSniperOverlay(true);
+                    }
+
                 }
                 camTransform.GetComponent<Camera>().nearClipPlane = weaponStats.aimDownSightClipping;
             }
@@ -248,6 +257,8 @@ public class WeaponActionScript : MonoBehaviour
                   //  camTransform.localPosition = Vector3.Slerp(camTransform.localPosition, originalPosCamSecondary, Time.deltaTime * aodSpeed);
                 //}
                 camTransform.GetComponent<Camera>().nearClipPlane = 0.05f;
+                hudScript.toggleSniperOverlay(false);
+
             }
         }
     }
