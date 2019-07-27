@@ -11,6 +11,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
     {
         public float XSensitivity = 2f;
         public float YSensitivity = 2f;
+        public float originalXSensitivity;
+        public float originalYSensitivity;
         public bool clampVerticalRotation = true;
         public float MinimumX;
         public float MaximumX;
@@ -29,6 +31,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void Init(Transform character, Transform spineTransform)
         {
+            originalXSensitivity = XSensitivity;
+            originalYSensitivity = YSensitivity;
             spineRotationRange = 0f;
             m_CharacterTargetRot = character.localRotation;
             m_SpineTargetRot = spineTransform.localRotation;
