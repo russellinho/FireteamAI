@@ -1,0 +1,196 @@
+fileFormatVersion: 2
+guid: f00d9612aab0e13499c5933a40767dbc
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Armature
+    100002: Body
+    100004: DEFORM_Collar_L.001
+    100006: DEFORM_Collar_R.002
+    100008: DEFORM_Elbow_L.001
+    100010: DEFORM_Elbow_R.002
+    100012: DEFORM_Index1_L.001
+    100014: DEFORM_Index1_R.002
+    100016: DEFORM_Index2_L.001
+    100018: DEFORM_Index2_R.002
+    100020: DEFORM_Index3_L.001
+    100022: DEFORM_Index3_R.002
+    100024: DEFORM_Middle1_L.001
+    100026: DEFORM_Middle1_R.002
+    100028: DEFORM_Middle2_L.001
+    100030: DEFORM_Middle2_R.002
+    100032: DEFORM_Middle3_L.001
+    100034: DEFORM_Middle3_R.002
+    100036: DEFORM_Pinky1_L.001
+    100038: DEFORM_Pinky1_R.002
+    100040: DEFORM_Pinky2_L.001
+    100042: DEFORM_Pinky2_R.002
+    100044: DEFORM_Pinky3_L.001
+    100046: DEFORM_Pinky3_R.002
+    100048: DEFORM_RIng1_L.001
+    100050: DEFORM_RIng1_R.002
+    100052: DEFORM_RIng2_L.001
+    100054: DEFORM_RIng2_R.002
+    100056: DEFORM_RIng3_L.001
+    100058: DEFORM_RIng3_R.002
+    100060: DEFORM_Shoulder_L.001
+    100062: DEFORM_Shoulder_R.002
+    100064: DEFORM_spine1.001
+    100066: DEFORM_spine2.001
+    100068: DEFORM_spine3.001
+    100070: DEFORM_spine4.001
+    100072: DEFORM_Thumb1_L.001
+    100074: DEFORM_Thumb1_R.002
+    100076: DEFORM_Thumb2_L.001
+    100078: DEFORM_Thumb2_R.002
+    100080: DEFORM_Thumb3_L.001
+    100082: DEFORM_Thumb3_R.002
+    100084: DEFORM_Wrist_L.001
+    100086: DEFORM_Wrist_R.002
+    100088: //RootNode
+    100090: Gloves
+    100092: Tops
+    400000: Armature
+    400002: Body
+    400004: DEFORM_Collar_L.001
+    400006: DEFORM_Collar_R.002
+    400008: DEFORM_Elbow_L.001
+    400010: DEFORM_Elbow_R.002
+    400012: DEFORM_Index1_L.001
+    400014: DEFORM_Index1_R.002
+    400016: DEFORM_Index2_L.001
+    400018: DEFORM_Index2_R.002
+    400020: DEFORM_Index3_L.001
+    400022: DEFORM_Index3_R.002
+    400024: DEFORM_Middle1_L.001
+    400026: DEFORM_Middle1_R.002
+    400028: DEFORM_Middle2_L.001
+    400030: DEFORM_Middle2_R.002
+    400032: DEFORM_Middle3_L.001
+    400034: DEFORM_Middle3_R.002
+    400036: DEFORM_Pinky1_L.001
+    400038: DEFORM_Pinky1_R.002
+    400040: DEFORM_Pinky2_L.001
+    400042: DEFORM_Pinky2_R.002
+    400044: DEFORM_Pinky3_L.001
+    400046: DEFORM_Pinky3_R.002
+    400048: DEFORM_RIng1_L.001
+    400050: DEFORM_RIng1_R.002
+    400052: DEFORM_RIng2_L.001
+    400054: DEFORM_RIng2_R.002
+    400056: DEFORM_RIng3_L.001
+    400058: DEFORM_RIng3_R.002
+    400060: DEFORM_Shoulder_L.001
+    400062: DEFORM_Shoulder_R.002
+    400064: DEFORM_spine1.001
+    400066: DEFORM_spine2.001
+    400068: DEFORM_spine3.001
+    400070: DEFORM_spine4.001
+    400072: DEFORM_Thumb1_L.001
+    400074: DEFORM_Thumb1_R.002
+    400076: DEFORM_Thumb2_L.001
+    400078: DEFORM_Thumb2_R.002
+    400080: DEFORM_Thumb3_L.001
+    400082: DEFORM_Thumb3_R.002
+    400084: DEFORM_Wrist_L.001
+    400086: DEFORM_Wrist_R.002
+    400088: //RootNode
+    400090: Gloves
+    400092: Tops
+    2100000: Glovemat
+    2100002: Bodymat.001
+    2100004: Topmat
+    4300000: Gloves
+    4300002: Body
+    4300004: Tops
+    7400000: Armature|ArmatureAction
+    9500000: //RootNode
+    13700000: Body
+    13700002: Gloves
+    13700004: Tops
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
