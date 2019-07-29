@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0077f003c182bd6468e6c6826b639f97
+guid: f5c97c67feafabd4aa4934d5d3ced16b
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -100,15 +100,14 @@ ModelImporter:
     2100000: Glovemat
     2100002: Bodymat.001
     2100004: Topmat
-    2300000: Body
-    2300002: Gloves
-    2300004: Tops
-    3300000: Body
-    3300002: Gloves
-    3300004: Tops
     4300000: Gloves
     4300002: Body
     4300004: Tops
+    7400000: Armature|ArmatureAction
+    9500000: //RootNode
+    13700000: Body
+    13700002: Gloves
+    13700004: Tops
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -161,8 +160,8 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 1
-    hasPreviousCalculatedGlobalScale: 0
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -189,7 +188,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
