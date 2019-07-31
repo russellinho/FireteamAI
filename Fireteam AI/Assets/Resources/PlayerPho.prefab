@@ -302,7 +302,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114336108925888890}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &114336108925888890
@@ -591,6 +591,8 @@ MonoBehaviour:
   m_MouseLook:
     XSensitivity: 2
     YSensitivity: 2
+    originalXSensitivity: 0
+    originalYSensitivity: 0
     clampVerticalRotation: 1
     MinimumX: -90
     MaximumX: 90
@@ -838,7 +840,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114766418645260732}
-  viewIdField: 4
+  viewIdField: 0
   InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &114766418645260732
