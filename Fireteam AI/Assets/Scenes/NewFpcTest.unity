@@ -134,6 +134,8 @@ GameObject:
   - component: {fileID: 8116942}
   - component: {fileID: 8116941}
   - component: {fileID: 8116940}
+  - component: {fileID: 8116955}
+  - component: {fileID: 8116954}
   m_Layer: 0
   m_Name: HanaGamePrefab
   m_TagString: Untagged
@@ -154,9 +156,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
-  playerActionScript: {fileID: 0}
-  wepActionScript: {fileID: 0}
-  wepScript: {fileID: 0}
+  playerActionScript: {fileID: 8116945}
+  wepActionScript: {fileID: 8116946}
+  wepScript: {fileID: 8116951}
   myHudMarkerCam1: {fileID: 7798033910724184459}
   myHudMarkerCam2: {fileID: 6455230413288847508}
   myHudMarker: {fileID: 8168315013126465390}
@@ -174,8 +176,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
-  playerScript: {fileID: 0}
-  pView: {fileID: 8526322859538671213}
+  playerScript: {fileID: 8116945}
+  pView: {fileID: 8116955}
 --- !u!54 &8116942
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -230,9 +232,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camTransform: {fileID: 87794608266499918}
-  playerActionScript: {fileID: 0}
+  playerActionScript: {fileID: 8116945}
   shake: 0
-  pView: {fileID: 8526322859538671213}
+  pView: {fileID: 8116955}
 --- !u!114 &8116945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -246,21 +248,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameController: {fileID: 0}
-  audioController: {fileID: 0}
-  charController: {fileID: 0}
-  wepActionScript: {fileID: 0}
-  aud: {fileID: 0}
+  audioController: {fileID: 8116943}
+  charController: {fileID: 8116949}
+  wepActionScript: {fileID: 8116946}
+  aud: {fileID: 8116948}
   viewCam: {fileID: 7152328128291500769}
   spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
     type: 3}
   thisSpectatorCam: {fileID: 0}
-  hud: {fileID: 0}
-  equipmentScript: {fileID: 0}
-  weaponScript: {fileID: 0}
-  camShakeScript: {fileID: 0}
-  inGameMessengerHud: {fileID: 0}
+  hud: {fileID: 8116940}
+  equipmentScript: {fileID: 8116952}
+  weaponScript: {fileID: 8116951}
+  camShakeScript: {fileID: 8116944}
+  inGameMessengerHud: {fileID: 8116941}
   animator: {fileID: 7365171921273945048}
-  playerScript: {fileID: 0}
+  playerScript: {fileID: 8116950}
   healParticleEffect: {fileID: 7765880339618100344}
   boostParticleEffect: {fileID: 1949652460271501897}
   hudMarker: {fileID: 3150785499846879837}
@@ -274,7 +276,7 @@ MonoBehaviour:
   respawnTimer: 0
   totalSpeedBoost: 0
   weaponSpeedModifier: 0
-  fpc: {fileID: 0}
+  fpc: {fileID: 8116947}
   hitTimer: 0
   healTimer: 0
   boostTimer: 0
@@ -306,11 +308,11 @@ MonoBehaviour:
     m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_CameraTargetRot: {x: 0, y: 0, z: 0, w: 0}
     pView: {fileID: 0}
-  playerActionScript: {fileID: 0}
-  cameraShakeScript: {fileID: 0}
-  hudScript: {fileID: 0}
-  audioController: {fileID: 0}
-  fpc: {fileID: 0}
+  playerActionScript: {fileID: 8116945}
+  cameraShakeScript: {fileID: 8116944}
+  hudScript: {fileID: 8116940}
+  audioController: {fileID: 8116943}
+  fpc: {fileID: 8116947}
   weaponHolder: {fileID: 911020652553115440}
   animator: {fileID: 7365171921273945048}
   spread: 0
@@ -330,7 +332,7 @@ MonoBehaviour:
   shotMode: 0
   camTransform: {fileID: 87794608266499918}
   aodSpeed: 8
-  pView: {fileID: 8526322859538671213}
+  pView: {fileID: 8116955}
 --- !u!114 &8116947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -364,7 +366,7 @@ MonoBehaviour:
     lockCursor: 1
     m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_CameraTargetRot: {x: 0, y: 0, z: 0, w: 0}
-    pView: {fileID: 0}
+    pView: {fileID: 8116955}
   m_UseFovKick: 0
   m_FovKick:
     Camera: {fileID: 0}
@@ -446,11 +448,11 @@ MonoBehaviour:
   m_Input: {x: 0, y: 0}
   sprintLock: 0
   canMove: 0
-  weaponActionScript: {fileID: 0}
-  equipmentScript: {fileID: 0}
-  playerScript: {fileID: 0}
-  playerActionScript: {fileID: 0}
-  photonView: {fileID: 8526322859538671213}
+  weaponActionScript: {fileID: 8116946}
+  equipmentScript: {fileID: 8116952}
+  playerScript: {fileID: 8116950}
+  playerActionScript: {fileID: 8116945}
+  photonView: {fileID: 8116955}
   spineTransform: {fileID: 7365171921280832948}
   headTransform: {fileID: 7365171921280832564}
   animator: {fileID: 7365171921273945048}
@@ -596,8 +598,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ba6003d04aa4d047928d192e1dce54f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  equipmentScript: {fileID: 0}
-  weaponActionScript: {fileID: 0}
+  equipmentScript: {fileID: 8116952}
+  weaponActionScript: {fileID: 8116946}
   weaponHolder: {fileID: 2369293399632480293}
   animator: {fileID: 7365171921273945048}
   ts: {fileID: 0}
@@ -616,7 +618,7 @@ MonoBehaviour:
   currentAmmoSecondary: 0
   currentAmmoSupport: 0
   weaponReady: 0
-  pView: {fileID: 8526322859538671213}
+  pView: {fileID: 8116955}
 --- !u!114 &8116952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -630,8 +632,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ts: {fileID: 0}
-  playerScript: {fileID: 0}
-  tws: {fileID: 0}
+  playerScript: {fileID: 8116950}
+  tws: {fileID: 8116951}
   equippedCharacter: Hana
   equippedHeadgear: 
   equippedFacewear: 
@@ -663,7 +665,7 @@ MonoBehaviour:
   myHairRenderer: {fileID: 7365171921281320978}
   renderHair: 1
   myBones: {fileID: 7365171921281320968}
-  pView: {fileID: 8526322859538671213}
+  pView: {fileID: 8116955}
 --- !u!4 &8116953
 Transform:
   m_ObjectHideFlags: 0
@@ -680,6 +682,43 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8116954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8116939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+--- !u!114 &8116955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8116939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 8116954}
+  viewIdField: 3
+  InstantiationId: 3
+  isRuntimeInstantiated: 0
 --- !u!1 &678901154
 GameObject:
   m_ObjectHideFlags: 0
@@ -689,7 +728,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 678901155}
-  - component: {fileID: 678901156}
   m_Layer: 0
   m_Name: HanaFPC
   m_TagString: Untagged
@@ -712,53 +750,6 @@ Transform:
   m_Father: {fileID: 8116953}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &678901156
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 678901154}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab48cff945a653040b0ba3f7d1cda5cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ts: {fileID: 0}
-  playerScript: {fileID: 0}
-  tws: {fileID: 0}
-  equippedCharacter: Hana
-  equippedHeadgear: 
-  equippedFacewear: 
-  equippedTop: 
-  equippedBottom: 
-  equippedFootwear: 
-  equippedArmor: 
-  equippedSkin: 0
-  gender: 70
-  equippedSkinRef: {fileID: 0}
-  equippedHeadgearRef: {fileID: 0}
-  equippedFacewearRef: {fileID: 0}
-  equippedTopRef: {fileID: 0}
-  equippedBottomRef: {fileID: 0}
-  equippedFootwearRef: {fileID: 0}
-  equippedArmorTopRef: {fileID: 0}
-  equippedArmorBottomRef: {fileID: 0}
-  myHeadgearRenderer: {fileID: 1387838502991800052}
-  myFacewearRenderer: {fileID: 7857738485488522439}
-  myTopRenderer: {fileID: 7365171921281321358}
-  myBottomRenderer: {fileID: 7365171921281320986}
-  myFootwearRenderer: {fileID: 7365171921281321354}
-  myArmorTopRenderer: {fileID: 7365171921281321358}
-  myArmorBottomRenderer: {fileID: 7365171921281320986}
-  mySkinRenderer: {fileID: 7365171921281320984}
-  myGlovesRenderer: {fileID: 7365171921281320976}
-  myEyesRenderer: {fileID: 7365171921281320988}
-  myEyelashRenderer: {fileID: 7365171921281320990}
-  myHairRenderer: {fileID: 7365171921281320978}
-  renderHair: 1
-  myBones: {fileID: 7365171921281320968}
-  pView: {fileID: 8526322859538671213}
 --- !u!1001 &976256304
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30243,8 +30234,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7365171921280832940}
   - component: {fileID: 7365171921273945048}
-  - component: {fileID: 8526322859538671213}
-  - component: {fileID: 7504374967121151688}
   m_Layer: 9
   m_Name: PlayerPrefabHanaAction
   m_TagString: Player
@@ -30765,21 +30754,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &7504374967121151688
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7365171921281321356}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
 --- !u!198 &7586600442826167235
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -45060,28 +45034,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &8526322859538671213
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7365171921281321356}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  ObservedComponents:
-  - {fileID: 7504374967121151688}
-  viewIdField: 3
-  InstantiationId: 3
-  isRuntimeInstantiated: 0
 --- !u!92 &8567420096908383707
 Behaviour:
   m_ObjectHideFlags: 0
