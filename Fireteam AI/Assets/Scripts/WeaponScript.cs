@@ -190,8 +190,8 @@ public class WeaponScript : MonoBehaviour
         equippedPrimaryType = "Assault Rifle";
         equippedPrimaryWeapon = weaponName;
         if (!animator.GetBool("onTitle")) {
-            weaponHolder.SetWeaponPosition();
-            if (InventoryScript.rifleHandPositionsPerCharacter != null)
+            weaponHolder.SetWeaponPosition(equipmentScript.isFirstPerson());
+            if (InventoryScript.rifleHandPositionsPerCharacter != null && equipmentScript.isFirstPerson())
             {
                 weaponHolder.SetSteadyHand(InventoryScript.rifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
             }
@@ -202,8 +202,8 @@ public class WeaponScript : MonoBehaviour
         equippedPrimaryType = "Shotgun";
         equippedPrimaryWeapon = weaponName;
         if (!animator.GetBool("onTitle")) {
-            weaponHolder.SetWeaponPosition();
-            if (InventoryScript.shotgunHandPositionsPerCharacter != null) {
+            weaponHolder.SetWeaponPosition(equipmentScript.isFirstPerson());
+            if (InventoryScript.shotgunHandPositionsPerCharacter != null && equipmentScript.isFirstPerson()) {
                 weaponHolder.SetSteadyHand(InventoryScript.shotgunHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
             }
         }
@@ -214,8 +214,10 @@ public class WeaponScript : MonoBehaviour
         equippedSecondaryType = "Pistol";
         equippedSecondaryWeapon = weaponName;
         if (!onTitle) {
-            weaponHolder.SetWeaponPosition();
-            weaponHolder.ResetSteadyHand();
+            weaponHolder.SetWeaponPosition(equipmentScript.isFirstPerson());
+            if (!equipmentScript.isFirstPerson()) {
+                weaponHolder.ResetSteadyHand();
+            }
         }
     }
 
@@ -223,8 +225,8 @@ public class WeaponScript : MonoBehaviour
         equippedPrimaryType = "Sniper Rifle";
         equippedPrimaryWeapon = weaponName;
         if (!animator.GetBool("onTitle")) {
-            weaponHolder.SetWeaponPosition();
-            if (InventoryScript.sniperRifleHandPositionsPerCharacter != null) {
+            weaponHolder.SetWeaponPosition(equipmentScript.isFirstPerson());
+            if (InventoryScript.sniperRifleHandPositionsPerCharacter != null && equipmentScript.isFirstPerson()) {
                 weaponHolder.SetSteadyHand(InventoryScript.sniperRifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
             }
         }
@@ -234,8 +236,10 @@ public class WeaponScript : MonoBehaviour
         equippedSupportType = "Explosive";
         equippedSupportWeapon = weaponName;
         if (!onTitle) {
-            weaponHolder.SetWeaponPosition();
-            weaponHolder.ResetSteadyHand();
+            weaponHolder.SetWeaponPosition(equipmentScript.isFirstPerson());
+            if (!equipmentScript.isFirstPerson()) {
+                weaponHolder.ResetSteadyHand();
+            }
         }
     }
 
@@ -243,8 +247,10 @@ public class WeaponScript : MonoBehaviour
         equippedSupportType = "Booster";
         equippedSupportWeapon = weaponName;
         if (!onTitle) {
-            weaponHolder.SetWeaponPosition();
-            weaponHolder.ResetSteadyHand();
+            weaponHolder.SetWeaponPosition(equipmentScript.isFirstPerson());
+            if (!equipmentScript.isFirstPerson()) {
+                weaponHolder.ResetSteadyHand();
+            }
         }
     }
 
@@ -483,16 +489,6 @@ public class WeaponScript : MonoBehaviour
         equippedSupportType = "Explosive";
         EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null);
         EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null);
-    }
-
-    [PunRPC]
-    private void RpcSetLeftShoulderPos(Vector3 handPos) {
-        weaponHolder.SetSteadyHand(handPos);
-    }
-
-    [PunRPC]
-    private void RpcSetWeaponPos() {
-        weaponHolder.SetWeaponPosition();
     }
 
     public void DespawnPlayer()

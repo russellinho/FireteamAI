@@ -1159,6 +1159,8 @@ MonoBehaviour:
   ts: {fileID: 0}
   playerScript: {fileID: 7319902134035168659}
   tws: {fileID: 8954661856752537216}
+  fullBodyRef: {fileID: 0}
+  firstPersonRef: {fileID: 0}
   equippedCharacter: Jade
   equippedHeadgear: 
   equippedFacewear: 
@@ -1377,6 +1379,8 @@ MonoBehaviour:
   m_MouseLook:
     XSensitivity: 2
     YSensitivity: 2
+    originalXSensitivity: 0
+    originalYSensitivity: 0
     clampVerticalRotation: 1
     MinimumX: -45
     MaximumX: 55
@@ -1490,6 +1494,8 @@ MonoBehaviour:
   mouseLook:
     XSensitivity: 2
     YSensitivity: 2
+    originalXSensitivity: 0
+    originalYSensitivity: 0
     clampVerticalRotation: 1
     MinimumX: 0
     MaximumX: 0
@@ -1647,8 +1653,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 182637342987397470}
-  viewIdField: 3
-  InstantiationId: 3
+  viewIdField: 0
+  InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &182637342987397470
 MonoBehaviour:

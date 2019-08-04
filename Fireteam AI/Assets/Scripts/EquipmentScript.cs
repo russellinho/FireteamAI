@@ -12,6 +12,8 @@ public class EquipmentScript : MonoBehaviour
     public TitleControllerScript ts;
     public PlayerScript playerScript;
     public WeaponScript tws;
+    public GameObject fullBodyRef;
+    public GameObject firstPersonRef;
 
     public string equippedCharacter;
     public string equippedHeadgear;
@@ -61,6 +63,15 @@ public class EquipmentScript : MonoBehaviour
         else
         {
             onTitle = false;
+            if (pView != null) {
+                if (pView.IsMine) {
+                    fullBodyRef.SetActive(false);
+                    firstPersonRef.SetActive(true);
+                } else {
+                    fullBodyRef.SetActive(true);
+                    firstPersonRef.SetActive(false);
+                }
+            }
         }
     }
 
@@ -84,16 +95,19 @@ public class EquipmentScript : MonoBehaviour
             pView.RPC("RpcEquipBottomInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedBottom);
             pView.RPC("RpcEquipFootwearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedFootwear);
             pView.RPC("RpcEquipArmorInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedArmor);
-            ToggleEquipVisibility(false);
+            EquipFPC();
         }
     }
 
-    // Don't let the player see helmet or facegear in first person mode for
-    // performance purposes. When they enter death animation, re-enable all of it.
-    public void ToggleEquipVisibility(bool visibility)
-    {
-        if (equippedHeadgearRef != null) equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
-        if (equippedFacewearRef != null) equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = visibility;
+    private void EquipFPC() {
+        // Equip the proper skin
+
+        // Equip the proper top
+
+    }
+
+    public bool isFirstPerson() {
+        return firstPersonRef.activeInHierarchy;
     }
 
     public void EquipDefaults() {

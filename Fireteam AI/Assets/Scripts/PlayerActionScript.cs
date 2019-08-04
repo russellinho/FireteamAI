@@ -240,7 +240,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             {
                 escapeValueSent = true;
                 gameController.IncrementDeathCount();
-                equipmentScript.ToggleEquipVisibility(true);
             }
         }
         else

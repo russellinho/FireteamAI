@@ -56,6 +56,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public Transform spineTransform;
         public Transform headTransform;
         public Animator animator;
+        public Animator fpcAnimator;
 
         private int networkDelay = 5;
         private int networkDelayCount = 0;
@@ -442,7 +443,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void SetMovingInAnimator(int x) {
             if (animator.GetInteger("Moving") == x || !canMove) return;
-            photonView.RPC("RpcSetMovingInAnimator", RpcTarget.All, x);
+            fpcAnimator.SetBool("Moving", (x == 0 ? false : true));
+            photonView.RPC("RpcSetMovingInAnimator", RpcTarget.Others, x);
         }
 
         [PunRPC]
@@ -452,7 +454,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void SetWeaponTypeInAnimator(int x) {
             if (animator.GetInteger("WeaponType") == x) return;
-            photonView.RPC("RpcSetWeaponTypeInAnimator", RpcTarget.All, x);
+            photonView.RPC("RpcSetWeaponTypeInAnimator", RpcTarget.Others, x);
         }
 
         [PunRPC]
@@ -462,7 +464,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void SetWeaponReadyInAnimator(bool x) {
             if (animator.GetBool("weaponReady") == x) return;
-            photonView.RPC("RpcSetWeaponReadyInAnimator", RpcTarget.All, x);
+            fpcAnimator.SetBool("weaponReady", x);
+            photonView.RPC("RpcSetWeaponReadyInAnimator", RpcTarget.Others, x);
         }
 
         [PunRPC]
@@ -472,7 +475,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void SetCrouchingInAnimator(bool x) {
             if (animator.GetBool("Crouching") == x) return;
-            photonView.RPC("RpcSetCrouchingInAnimator", RpcTarget.All, x);
+            photonView.RPC("RpcSetCrouchingInAnimator", RpcTarget.Others, x);
+        }
+
+        public void PlayFiringInFPCAnimator() {
+            fpcAnimator.Play("Firing");
         }
 
         [PunRPC]
@@ -482,7 +489,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void SetSprintingInAnimator(bool x) {
             if (animator.GetBool("isSprinting") == x) return;
-            photonView.RPC("RpcSetSprintingInAnimator", RpcTarget.All, x);
+            fpcAnimator.SetBool("Sprinting", x);
+            photonView.RPC("RpcSetSprintingInAnimator", RpcTarget.Others, x);
         }
 
         [PunRPC]
@@ -492,7 +500,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void SetIsDeadInAnimator(bool x) {
             if (animator.GetBool("isDead") == x) return;
-            photonView.RPC("RpcSetIsDeadInAnimator", RpcTarget.All, x);
+            photonView.RPC("RpcSetIsDeadInAnimator", RpcTarget.Others, x);
         }
 
         [PunRPC]
@@ -504,7 +512,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void SetWalkingInAnimator(bool x) {
             if (animator.GetBool("isWalking") == x) return;
-            photonView.RPC("RpcSetWalkingInAnimator", RpcTarget.All, x);
+            photonView.RPC("RpcSetWalkingInAnimator", RpcTarget.Others, x);
         }
 
         [PunRPC]
@@ -513,7 +521,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void TriggerJumpInAnimator() {
-            photonView.RPC("RpcTriggerJumpInAnimator", RpcTarget.All);
+            photonView.RPC("RpcTriggerJumpInAnimator", RpcTarget.Others);
         }
 
         [PunRPC]
@@ -522,7 +530,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void TriggerReloadingInAnimator() {
-            photonView.RPC("RpcTriggerReloadingInAnimator", RpcTarget.All);
+            photonView.RPC("RpcTriggerReloadingInAnimator", RpcTarget.Others);
         }
 
         [PunRPC]
@@ -562,7 +570,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // }
 
         public void ResetAnimationState() {
-            photonView.RPC("RpcResetAnimationState", RpcTarget.All);
+            photonView.RPC("RpcResetAnimationState", RpcTarget.Others);
         }
 
         [PunRPC]
@@ -578,5 +586,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
             animator.Play("IdleAssaultRifle", 0);
             animator.Play("IdleAssaultRifle", 1);
         }
+
+        public void SetAiminginFPCAnimator(bool x) {
+            fpcAnimator.SetBool("Aiming", x);
+        }
+
+        public void ResetFPCAnimator() {
+            fpcAnimator.SetBool("Aiming", false);
+            fpcAnimator.SetBool("weaponReady", false);
+            fpcAnimator.SetBool("Moving", false);
+            fpcAnimator.SetBool("Sprinting", false);
+        }
+
     }
 }

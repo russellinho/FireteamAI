@@ -503,6 +503,18 @@ MonoBehaviour:
     type: 3}
   muzzleFlash: {fileID: 7468767453657981141}
   bulletTracer: {fileID: 3230405190450787839}
+  fpcPosMale: {x: 0, y: 0, z: 0}
+  fpcRotMale: {x: 0, y: 0, z: 0}
+  fpcScaleMale: {x: 0, y: 0, z: 0}
+  fpcPosFemale: {x: -0.000148, y: 0.001877, z: -0.00057}
+  fpcRotFemale: {x: 8.299, y: 73.521, z: -76.409}
+  fpcScaleFemale: {x: 0.012, y: 0.012, z: 0.012}
+  fpcIdleAnim: {fileID: 0}
+  fpcFiringAnim: {fileID: 0}
+  fpcReloadAnim: {fileID: 0}
+  fpcAimingAnim: {fileID: 0}
+  fpcSprintingAnim: {fileID: 0}
+  fpcMovingAnim: {fileID: 0}
 --- !u!114 &8606366248968920692
 MonoBehaviour:
   m_ObjectHideFlags: 0

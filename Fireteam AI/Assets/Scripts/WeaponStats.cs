@@ -27,4 +27,17 @@ public class WeaponStats : MonoBehaviour
     public GameObject gunSmoke;
     public ParticleSystem muzzleFlash;
     public ParticleSystem bulletTracer;
+    public Vector3 fpcPosMale;
+    public Vector3 fpcRotMale;
+    public Vector3 fpcScaleMale;
+    public Vector3 fpcPosFemale;
+    public Vector3 fpcRotFemale;
+    public Vector3 fpcScaleFemale;
+    public AnimationClip fpcIdleAnim;
+    public AnimationClip fpcFiringAnim;
+    public AnimationClip fpcReloadAnim;
+    public AnimationClip fpcAimingAnim;
+    public AnimationClip fpcSprintingAnim;
+    public AnimationClip fpcMovingAnim;
+
 }
