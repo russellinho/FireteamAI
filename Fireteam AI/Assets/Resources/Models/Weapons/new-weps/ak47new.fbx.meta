@@ -1,90 +1,26 @@
 fileFormatVersion: 2
-guid: 9493a37c7400c89458d6138f0c2749a5
+guid: 28deeb935720d434cb3f89ffa020d484
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
-    100000: AK-47
-    100002: AK-47.001
-    100004: AK-47.002
-    100006: AK-47.003
-    100008: AK-47.004
-    100010: AK-47.006
-    100012: AK-47.007
-    100014: AK-47.008
-    100016: AK-47.009
-    100018: AK-47.010
-    100020: AK-47.011
-    100022: AK-47.012
-    100024: AK-47.015
-    100026: //RootNode
-    400000: AK-47
-    400002: AK-47.001
-    400004: AK-47.002
-    400006: AK-47.003
-    400008: AK-47.004
-    400010: AK-47.006
-    400012: AK-47.007
-    400014: AK-47.008
-    400016: AK-47.009
-    400018: AK-47.010
-    400020: AK-47.011
-    400022: AK-47.012
-    400024: AK-47.015
-    400026: //RootNode
+    100000: AK-47.001
+    100002: AK-47.011
+    100004: AK-47.012
+    100006: //RootNode
+    400000: AK-47.001
+    400002: AK-47.011
+    400004: AK-47.012
+    400006: //RootNode
     2100000: AK-47
-    2300000: AK-47
-    2300002: AK-47.001
-    2300004: AK-47.002
-    2300006: AK-47.003
-    2300008: AK-47.004
-    2300010: AK-47.006
-    2300012: AK-47.007
-    2300014: AK-47.008
-    2300016: AK-47.009
-    2300018: AK-47.010
-    2300020: AK-47.011
-    2300022: AK-47.012
-    2300024: AK-47.015
-    3300000: AK-47
-    3300002: AK-47.001
-    3300004: AK-47.002
-    3300006: AK-47.003
-    3300008: AK-47.004
-    3300010: AK-47.006
-    3300012: AK-47.007
-    3300014: AK-47.008
-    3300016: AK-47.009
-    3300018: AK-47.010
-    3300020: AK-47.011
-    3300022: AK-47.012
-    3300024: AK-47.015
-    4300000: AK-47
-    4300002: AK-47.001
-    4300004: AK-47.002
-    4300006: AK-47.003
-    4300008: AK-47.004
-    4300010: AK-47.006
-    4300012: AK-47.007
-    4300014: AK-47.008
-    4300016: AK-47.009
-    4300018: AK-47.010
-    4300020: AK-47.011
-    4300022: AK-47.012
-    4300024: AK-47.015
-    7400000: AK-47|L96_SR_MagAction
-    7400002: AK-47.001|L96_SR_MagAction
-    7400004: AK-47.002|L96_SR_MagAction
-    7400006: AK-47.003|L96_SR_MagAction
-    7400008: AK-47.004|L96_SR_MagAction
-    7400010: AK-47.006|L96_SR_MagAction
-    7400012: AK-47.007|L96_SR_MagAction
-    7400014: AK-47.008|L96_SR_MagAction
-    7400016: AK-47.009|L96_SR_MagAction
-    7400018: AK-47.010|L96_SR_MagAction
-    7400020: AK-47.011|L96_SR_MagAction
-    7400022: AK-47.012|L96_SR_MagAction
-    7400024: AK-47.015|L96_SR_MagAction
-    9500000: //RootNode
+    2300000: AK-47.001
+    2300002: AK-47.011
+    2300004: AK-47.012
+    3300000: AK-47.001
+    3300002: AK-47.011
+    3300004: AK-47.012
+    4300000: AK-47.001
+    4300002: AK-47.011
+    4300004: AK-47.012
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -137,8 +73,8 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 0.01
-    hasPreviousCalculatedGlobalScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -165,7 +101,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
