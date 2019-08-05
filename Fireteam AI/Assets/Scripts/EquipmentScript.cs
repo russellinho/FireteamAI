@@ -33,6 +33,8 @@ public class EquipmentScript : MonoBehaviour
     public GameObject equippedFootwearRef;
     public GameObject equippedArmorTopRef;
     public GameObject equippedArmorBottomRef;
+    public GameObject equippedFpcSkinRef;
+    public GameObject equippedFpcTopRef;
 
     public GameObject myHeadgearRenderer;
     public GameObject myFacewearRenderer;
@@ -46,10 +48,13 @@ public class EquipmentScript : MonoBehaviour
     public GameObject myEyesRenderer;
     public GameObject myEyelashRenderer;
     public GameObject myHairRenderer;
+    public GameObject myFpcSkinRenderer;
+    public GameObject myFpcTopRenderer;
 
     public bool renderHair;
 
     public GameObject myBones;
+    public GameObject myFpcBones;
     public PhotonView pView;
 
     private bool onTitle;
@@ -95,15 +100,7 @@ public class EquipmentScript : MonoBehaviour
             pView.RPC("RpcEquipBottomInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedBottom);
             pView.RPC("RpcEquipFootwearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedFootwear);
             pView.RPC("RpcEquipArmorInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedArmor);
-            EquipFPC();
         }
-    }
-
-    private void EquipFPC() {
-        // Equip the proper skin
-
-        // Equip the proper top
-
     }
 
     public bool isFirstPerson() {
@@ -563,11 +560,21 @@ public class EquipmentScript : MonoBehaviour
         equippedTop = top;
         Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[top];
         equippedTopRef = (GameObject)Instantiate((GameObject)Resources.Load(e.prefabPath));
-        equippedTopRef.transform.SetParent(gameObject.transform);
+        equippedTopRef.transform.SetParent(fullBodyRef.transform);
         MeshFixer m = equippedTopRef.GetComponentInChildren<MeshFixer>();
         m.target = myTopRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh();
+
+        // Equip shirt on FPC model as well if it's the local player
+        if (isFirstPerson()) {
+            equippedFpcTopRef = (GameObject)Instantiate((GameObject)Resources.Load(e.fpcPrefabPath));
+            equippedFpcTopRef.transform.SetParent(firstPersonRef.transform);
+            m = equippedFpcTopRef.GetComponentInChildren<MeshFixer>();
+            m.target = myFpcTopRenderer.gameObject;
+            m.rootBone = myFpcBones.transform;
+            m.AdaptMesh();
+        }
 
         //pView.RPC("RpcEquipSkinInGame", RpcTarget.AllBuffered, e.skinType);
         EquipSkinInGame(e.skinType);
@@ -577,7 +584,7 @@ public class EquipmentScript : MonoBehaviour
     // private void RpcEquipSkinInGame(int skin) {
     //     equippedSkin = skin;
     //     equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[equippedCharacter].skins[skin]));
-    //     equippedSkinRef.transform.SetParent(gameObject.transform);
+    //     equippedSkinRef.transform.SetParent(fullBodyRef.transform);
     //     MeshFixer m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
     //     m.target = mySkinRenderer.gameObject;
     //     m.rootBone = myBones.transform;
@@ -587,11 +594,22 @@ public class EquipmentScript : MonoBehaviour
     private void EquipSkinInGame(int skin) {
         equippedSkin = skin;
         equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[equippedCharacter].skins[skin]));
-        equippedSkinRef.transform.SetParent(gameObject.transform);
+        equippedSkinRef.transform.SetParent(fullBodyRef.transform);
         MeshFixer m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
         m.target = mySkinRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh();
+
+        // Equips skin on FPC if is local player
+        if (isFirstPerson()) {
+            string skinPath = skin == 1 ? InventoryScript.characterCatalog[equippedCharacter].fpcNoSkinPath : InventoryScript.characterCatalog[equippedCharacter].fpcFullSkinPath;
+            equippedFpcSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(skinPath));
+            equippedFpcSkinRef.transform.SetParent(firstPersonRef.transform);
+            m = equippedFpcSkinRef.GetComponentInChildren<MeshFixer>();
+            m.target = myFpcSkinRenderer.gameObject;
+            m.rootBone = myFpcBones.transform;
+            m.AdaptMesh();
+        }
     }
 
     [PunRPC]
@@ -599,7 +617,7 @@ public class EquipmentScript : MonoBehaviour
         equippedBottom = bottom;
         Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[bottom];
         equippedBottomRef = (GameObject)Instantiate((GameObject)Resources.Load(e.prefabPath));
-        equippedBottomRef.transform.SetParent(gameObject.transform);
+        equippedBottomRef.transform.SetParent(fullBodyRef.transform);
         MeshFixer m = equippedBottomRef.GetComponentInChildren<MeshFixer>();
         m.target = myBottomRenderer.gameObject;
         m.rootBone = myBones.transform;
@@ -624,7 +642,7 @@ public class EquipmentScript : MonoBehaviour
             }
         }
         equippedHeadgearRef = (GameObject)Instantiate((GameObject)Resources.Load(e.prefabPath));
-        equippedHeadgearRef.transform.SetParent(gameObject.transform);
+        equippedHeadgearRef.transform.SetParent(fullBodyRef.transform);
         MeshFixer m = equippedHeadgearRef.GetComponentInChildren<MeshFixer>();
         m.target = myHeadgearRenderer.gameObject;
         m.rootBone = myBones.transform;
@@ -642,7 +660,7 @@ public class EquipmentScript : MonoBehaviour
         equippedFacewear = facewear;
         Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[facewear];
         equippedFacewearRef = (GameObject)Instantiate((GameObject)Resources.Load(e.prefabPath));
-        equippedFacewearRef.transform.SetParent(gameObject.transform);
+        equippedFacewearRef.transform.SetParent(fullBodyRef.transform);
         MeshFixer m = equippedFacewearRef.GetComponentInChildren<MeshFixer>();
         m.target = myFacewearRenderer.gameObject;
         m.rootBone = myBones.transform;
@@ -660,14 +678,14 @@ public class EquipmentScript : MonoBehaviour
         equippedArmor = armor;
         Armor a = InventoryScript.characterCatalog[equippedCharacter].armorCatalog[armor];
         equippedArmorTopRef = (GameObject)Instantiate((GameObject)Resources.Load(a.prefabPathTop));
-        equippedArmorTopRef.transform.SetParent(gameObject.transform);
+        equippedArmorTopRef.transform.SetParent(fullBodyRef.transform);
         MeshFixer m = equippedArmorTopRef.GetComponentInChildren<MeshFixer>();
         m.target = myArmorTopRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh();
 
         equippedArmorBottomRef = (GameObject)Instantiate((GameObject)Resources.Load(a.prefabPathBottom));
-        equippedArmorBottomRef.transform.SetParent(gameObject.transform);
+        equippedArmorBottomRef.transform.SetParent(fullBodyRef.transform);
         m = equippedArmorBottomRef.GetComponentInChildren<MeshFixer>();
         m.target = myArmorBottomRenderer.gameObject;
         m.rootBone = myBones.transform;
@@ -682,7 +700,7 @@ public class EquipmentScript : MonoBehaviour
         equippedFootwear = footwear;
         Equipment e = InventoryScript.characterCatalog[equippedCharacter].equipmentCatalog[footwear];
         equippedFootwearRef = (GameObject)Instantiate((GameObject)Resources.Load(e.prefabPath));
-        equippedFootwearRef.transform.SetParent(gameObject.transform);
+        equippedFootwearRef.transform.SetParent(fullBodyRef.transform);
         MeshFixer m = equippedFootwearRef.GetComponentInChildren<MeshFixer>();
         m.target = myFootwearRenderer.gameObject;
         m.rootBone = myBones.transform;

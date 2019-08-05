@@ -200,8 +200,8 @@ MonoBehaviour:
   ts: {fileID: 0}
   playerScript: {fileID: 580623507002314519}
   tws: {fileID: 580623507002314518}
-  fullBodyRef: {fileID: 0}
-  firstPersonRef: {fileID: 0}
+  fullBodyRef: {fileID: 7942259398586473549}
+  firstPersonRef: {fileID: 580623507404202083}
   equippedCharacter: Hana
   equippedHeadgear: 
   equippedFacewear: 
@@ -219,6 +219,8 @@ MonoBehaviour:
   equippedFootwearRef: {fileID: 0}
   equippedArmorTopRef: {fileID: 0}
   equippedArmorBottomRef: {fileID: 0}
+  equippedFpcSkinRef: {fileID: 0}
+  equippedFpcTopRef: {fileID: 0}
   myHeadgearRenderer: {fileID: 1967050230076093237}
   myFacewearRenderer: {fileID: 7278522359874781446}
   myTopRenderer: {fileID: 7942259398586473551}
@@ -231,8 +233,11 @@ MonoBehaviour:
   myEyesRenderer: {fileID: 7942259398586473949}
   myEyelashRenderer: {fileID: 7942259398586473951}
   myHairRenderer: {fileID: 7942259398586473939}
+  myFpcSkinRenderer: {fileID: 4166761373134866953}
+  myFpcTopRenderer: {fileID: 4166761373134867031}
   renderHair: 1
   myBones: {fileID: 7942259398586473929}
+  myFpcBones: {fileID: 4166761373134866955}
   pView: {fileID: 580623507002314522}
 --- !u!114 &580623507002314518
 MonoBehaviour:
@@ -731,7 +736,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 580623507002314523}
   viewIdField: 0
-  InstantiationId: 1
+  InstantiationId: -1
   isRuntimeInstantiated: 0
 --- !u!114 &580623507002314523
 MonoBehaviour:

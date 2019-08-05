@@ -49,7 +49,7 @@ public class PlayerData : MonoBehaviour
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Codename Sayre")) {
             characterPrefabName = "PlayerPrefabSayreAction";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Hana")) {
-            characterPrefabName = "PlayerPrefabHanaAction";
+            characterPrefabName = "HanaGamePrefab";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Jade")) {
             characterPrefabName = "PlayerPrefabJadeAction";
         }
@@ -60,7 +60,7 @@ public class PlayerData : MonoBehaviour
                 Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
                 Quaternion.Euler(Vector3.zero));
         } else if (levelName.Equals("Test")) {
-            Debug.Log(characterPrefabName);
+            //Debug.Log(characterPrefabName);
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
                 characterPrefabName,
                 Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
