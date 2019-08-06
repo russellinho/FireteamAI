@@ -99,8 +99,10 @@ public class WeaponActionScript : MonoBehaviour
         {
             return;
         }
-        if (playerActionScript.health <= 0) return;
-
+        if (playerActionScript.health <= 0) {
+          hudScript.toggleSniperOverlay(false);
+          return;
+        }
         if (weaponStats.category.Equals("Shotgun")) {
             shotMode = ShotMode.Burst;
         } else {
