@@ -1413,9 +1413,18 @@ public class BetaEnemyScript : MonoBehaviour {
 				// If there's something blocking the player and the enemy, then the enemy wants to hide behind it
 				if (Physics.Linecast (coverSpots[i].position, player.transform.position)) {
 					coverPos = coverSpots [i].position;
+					// Find objects near cover spot, and search the array for AI teammates
+					Collider[] objectsNearCover = Physics.OverlapSphere(coverPos, 3f);
+					foreach(Collider go in objectsNearCover) {
+						if (go.name.Contains("Cicada")) {
+							foundOne = false;
+							break;
+						}
+						else {
+							foundOne = true;
+						}
+					}
 					//pView.RPC ("RpcSetCoverPos", RpcTarget.All, true, coverSpots[i].position.x, coverSpots[i].position.y, coverSpots[i].position.z);
-					foundOne = true;
-					break;
 				}
 			}
 			// If a unique cover spot wasn't found, then just choose a random spot
