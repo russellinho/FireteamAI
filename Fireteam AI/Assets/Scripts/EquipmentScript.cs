@@ -104,7 +104,7 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public bool isFirstPerson() {
-        return firstPersonRef.activeInHierarchy;
+        return (firstPersonRef != null && firstPersonRef.activeInHierarchy);
     }
 
     public void EquipDefaults() {
@@ -602,7 +602,7 @@ public class EquipmentScript : MonoBehaviour
 
         // Equips skin on FPC if is local player
         if (isFirstPerson()) {
-            string skinPath = skin == 1 ? InventoryScript.characterCatalog[equippedCharacter].fpcNoSkinPath : InventoryScript.characterCatalog[equippedCharacter].fpcFullSkinPath;
+            string skinPath = skin == 1 ? InventoryScript.characterCatalog[equippedCharacter].fpcFullSkinPath : InventoryScript.characterCatalog[equippedCharacter].fpcNoSkinPath;
             equippedFpcSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(skinPath));
             equippedFpcSkinRef.transform.SetParent(firstPersonRef.transform);
             m = equippedFpcSkinRef.GetComponentInChildren<MeshFixer>();

@@ -46,7 +46,7 @@ MonoBehaviour:
   handle: {fileID: 0}
   weapon: {fileID: 0}
   leftShoulder: {fileID: 7942259398586827199}
-  fpc: {fileID: 0}
+  fpc: {fileID: 580623507002314514}
 --- !u!1 &580623506623331168
 GameObject:
   m_ObjectHideFlags: 0
@@ -61,7 +61,7 @@ GameObject:
   - component: {fileID: 580623506623331170}
   m_Layer: 0
   m_Name: PlayerCam
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -182,6 +182,13 @@ Transform:
   m_Children:
   - {fileID: 7942259398586826861}
   - {fileID: 580623507404202082}
+  - {fileID: 743270526162538625}
+  - {fileID: 6148221775557528889}
+  - {fileID: 6101767969501475136}
+  - {fileID: 8525562638469632189}
+  - {fileID: 3873403190330071789}
+  - {fileID: 4603040279790409039}
+  - {fileID: 4730798684578402255}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -254,6 +261,7 @@ MonoBehaviour:
   equipmentScript: {fileID: 580623507002314521}
   weaponActionScript: {fileID: 580623507002314515}
   weaponHolder: {fileID: 2949754178070846948}
+  weaponHolderFpc: {fileID: 6593641803807668195}
   animator: {fileID: 7942259398579088921}
   ts: {fileID: 0}
   equippedPrimaryWeapon: 
@@ -735,8 +743,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 580623507002314523}
-  viewIdField: 0
-  InstantiationId: -1
+  viewIdField: 3
+  InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &580623507002314523
 MonoBehaviour:
@@ -10571,8 +10579,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 7942259398586826861}
-  m_RootOrder: 14
+  m_Father: {fileID: 580623507002314520}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &7672265972041958235
 AudioSource:
@@ -10846,10 +10854,10 @@ Transform:
   m_GameObject: {fileID: 3019983665833520901}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 24.88, z: 0}
-  m_LocalScale: {x: 1, y: 1.0000005, z: 1.0000005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 7942259398586826861}
-  m_RootOrder: 11
+  m_Father: {fileID: 580623507002314520}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!20 &5880399140517031253
 Camera:
@@ -10936,13 +10944,13 @@ Transform:
   m_GameObject: {fileID: 3417306565219832954}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071067}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.99999976, z: 0.99999976}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1587025370870559347}
   - {fileID: 5305840235303506220}
   - {fileID: 6631619866927635065}
-  m_Father: {fileID: 7942259398586826861}
-  m_RootOrder: 16
+  m_Father: {fileID: 580623507002314520}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &7190903931588239801
 ParticleSystem:
@@ -22208,13 +22216,13 @@ Transform:
   m_GameObject: {fileID: 5375672228478509974}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071067}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.99999976, z: 0.99999976}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8139628882675960873}
   - {fileID: 7611530407588070716}
   - {fileID: 4000845680437002564}
-  m_Father: {fileID: 7942259398586826861}
-  m_RootOrder: 17
+  m_Father: {fileID: 580623507002314520}
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &1369169697262901128
 ParticleSystem:
@@ -31532,8 +31540,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 7942259398586826861}
-  m_RootOrder: 15
+  m_Father: {fileID: 580623507002314520}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &4190794305128470870
 AudioSource:
@@ -32235,10 +32243,10 @@ Transform:
   m_GameObject: {fileID: 6371285978435341390}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 24.88, z: 0}
-  m_LocalScale: {x: 1, y: 1.0000005, z: 1.0000005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 7942259398586826861}
-  m_RootOrder: 12
+  m_Father: {fileID: 580623507002314520}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!20 &7221210318596004938
 Camera:
@@ -42032,13 +42040,6 @@ Transform:
   - {fileID: 7942259398586827261}
   - {fileID: 7942259398586827263}
   - {fileID: 7942259398586827251}
-  - {fileID: 743270526162538625}
-  - {fileID: 6148221775557528889}
-  - {fileID: 6101767969501475136}
-  - {fileID: 8525562638469632189}
-  - {fileID: 3873403190330071789}
-  - {fileID: 4603040279790409039}
-  - {fileID: 4730798684578402255}
   m_Father: {fileID: 580623507002314520}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -44828,11 +44829,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8743005554772947631}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.2, z: 0}
-  m_LocalScale: {x: 9.5, y: 9.500013, z: 1.0000005}
+  m_LocalPosition: {x: 0, y: 0.20000005, z: 0}
+  m_LocalScale: {x: 9.5, y: 9.500017, z: 1}
   m_Children: []
-  m_Father: {fileID: 7942259398586826861}
-  m_RootOrder: 13
+  m_Father: {fileID: 580623507002314520}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!212 &2573557285086674844
 SpriteRenderer:

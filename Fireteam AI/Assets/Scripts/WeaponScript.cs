@@ -11,6 +11,7 @@ public class WeaponScript : MonoBehaviour
     public EquipmentScript equipmentScript;
     public WeaponActionScript weaponActionScript;
     public WeaponHandlerScript weaponHolder;
+    public WeaponHandlerScript weaponHolderFpc;
     public Animator animator;
     public TitleControllerScript ts;
     public string equippedPrimaryWeapon;
@@ -43,7 +44,9 @@ public class WeaponScript : MonoBehaviour
             animator.SetBool("onTitle", true);
         } else {
             onTitle = false;
-            animator.SetBool("onTitle", false);
+            if (animator != null) {
+                animator.SetBool("onTitle", false);
+            }
         }
     }
 
@@ -190,10 +193,13 @@ public class WeaponScript : MonoBehaviour
         equippedPrimaryType = "Assault Rifle";
         equippedPrimaryWeapon = weaponName;
         if (!animator.GetBool("onTitle")) {
-            weaponHolder.SetWeaponPosition(equipmentScript.isFirstPerson());
-            if (InventoryScript.rifleHandPositionsPerCharacter != null && equipmentScript.isFirstPerson())
-            {
-                weaponHolder.SetSteadyHand(InventoryScript.rifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
+            if (equipmentScript.isFirstPerson()) {
+                weaponHolderFpc.SetWeaponPosition(true);
+            } else {
+                weaponHolder.SetWeaponPosition(false);
+                if (InventoryScript.rifleHandPositionsPerCharacter != null) {
+                    weaponHolder.SetSteadyHand(InventoryScript.rifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
+                }
             }
         }
     }
@@ -202,9 +208,13 @@ public class WeaponScript : MonoBehaviour
         equippedPrimaryType = "Shotgun";
         equippedPrimaryWeapon = weaponName;
         if (!animator.GetBool("onTitle")) {
-            weaponHolder.SetWeaponPosition(equipmentScript.isFirstPerson());
-            if (InventoryScript.shotgunHandPositionsPerCharacter != null && equipmentScript.isFirstPerson()) {
-                weaponHolder.SetSteadyHand(InventoryScript.shotgunHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
+            if (equipmentScript.isFirstPerson()) {
+                weaponHolderFpc.SetWeaponPosition(true);
+            } else {
+                weaponHolder.SetWeaponPosition(false);
+                if (InventoryScript.shotgunHandPositionsPerCharacter != null) {
+                    weaponHolder.SetSteadyHand(InventoryScript.shotgunHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
+                }
             }
         }
     }
@@ -214,8 +224,10 @@ public class WeaponScript : MonoBehaviour
         equippedSecondaryType = "Pistol";
         equippedSecondaryWeapon = weaponName;
         if (!onTitle) {
-            weaponHolder.SetWeaponPosition(equipmentScript.isFirstPerson());
-            if (!equipmentScript.isFirstPerson()) {
+            if (equipmentScript.isFirstPerson()) {
+                weaponHolderFpc.SetWeaponPosition(true);
+            } else {
+                weaponHolder.SetWeaponPosition(false);
                 weaponHolder.ResetSteadyHand();
             }
         }
@@ -225,9 +237,13 @@ public class WeaponScript : MonoBehaviour
         equippedPrimaryType = "Sniper Rifle";
         equippedPrimaryWeapon = weaponName;
         if (!animator.GetBool("onTitle")) {
-            weaponHolder.SetWeaponPosition(equipmentScript.isFirstPerson());
-            if (InventoryScript.sniperRifleHandPositionsPerCharacter != null && equipmentScript.isFirstPerson()) {
-                weaponHolder.SetSteadyHand(InventoryScript.sniperRifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
+            if (equipmentScript.isFirstPerson()) {
+                weaponHolderFpc.SetWeaponPosition(true);
+            } else {
+                weaponHolder.SetWeaponPosition(false);
+                if (InventoryScript.sniperRifleHandPositionsPerCharacter != null) {
+                    weaponHolder.SetSteadyHand(InventoryScript.sniperRifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
+                }
             }
         }
     }
@@ -236,8 +252,10 @@ public class WeaponScript : MonoBehaviour
         equippedSupportType = "Explosive";
         equippedSupportWeapon = weaponName;
         if (!onTitle) {
-            weaponHolder.SetWeaponPosition(equipmentScript.isFirstPerson());
-            if (!equipmentScript.isFirstPerson()) {
+            if (equipmentScript.isFirstPerson()) {
+                weaponHolderFpc.SetWeaponPosition(true);
+            } else {
+                weaponHolder.SetWeaponPosition(false);
                 weaponHolder.ResetSteadyHand();
             }
         }
@@ -247,8 +265,10 @@ public class WeaponScript : MonoBehaviour
         equippedSupportType = "Booster";
         equippedSupportWeapon = weaponName;
         if (!onTitle) {
-            weaponHolder.SetWeaponPosition(equipmentScript.isFirstPerson());
-            if (!equipmentScript.isFirstPerson()) {
+            if (equipmentScript.isFirstPerson()) {
+                weaponHolderFpc.SetWeaponPosition(true);
+            } else {
+                weaponHolder.SetWeaponPosition(false);
                 weaponHolder.ResetSteadyHand();
             }
         }
@@ -263,6 +283,9 @@ public class WeaponScript : MonoBehaviour
             case "Assault Rifle":
                 currentlyEquippedType = 1;
                 wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                if (equipmentScript.isFirstPerson()) {
+                    weaponHolderFpc.LoadWeapon(w.prefabPath);
+                }
                 equippedWep = weaponName;
                 EquipAssaultRifle(weaponName);
                 if (!onTitle) {
@@ -277,6 +300,9 @@ public class WeaponScript : MonoBehaviour
                 if (!onTitle) {
                     currentlyEquippedType = 2;
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                    if (equipmentScript.isFirstPerson()) {
+                        weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    }
                 }
                 equippedWep = weaponName;
                 EquipPistol(weaponName);
@@ -291,6 +317,9 @@ public class WeaponScript : MonoBehaviour
             case "Shotgun":
                 currentlyEquippedType = 1;
                 wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                if (equipmentScript.isFirstPerson()) {
+                    weaponHolderFpc.LoadWeapon(w.prefabPath);
+                }
                 equippedWep = weaponName;
                 EquipShotgun(weaponName);
                 if (!onTitle) {
@@ -304,6 +333,9 @@ public class WeaponScript : MonoBehaviour
             case "Sniper Rifle":
                 currentlyEquippedType = 1;
                 wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                if (equipmentScript.isFirstPerson()) {
+                    weaponHolderFpc.LoadWeapon(w.prefabPath);
+                }
                 equippedWep = weaponName;
                 EquipSniperRifle(weaponName);
                 if (!onTitle) {
@@ -318,6 +350,9 @@ public class WeaponScript : MonoBehaviour
                 if (!onTitle) {
                     currentlyEquippedType = 4;
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                    if (equipmentScript.isFirstPerson()) {
+                        weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    }
                 }
                 equippedWep = weaponName;
                 EquipExplosive(weaponName);
@@ -329,6 +364,9 @@ public class WeaponScript : MonoBehaviour
                 if (!onTitle) {
                     currentlyEquippedType = 4;
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                    if (equipmentScript.isFirstPerson()) {
+                        weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    }
                 }
                 equippedWep = weaponName;
                 EquipBooster(weaponName);
