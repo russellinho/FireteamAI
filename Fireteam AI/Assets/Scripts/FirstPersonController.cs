@@ -64,7 +64,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Use this for initialization
         private void Start()
         {
-            if (!equipmentScript.isFirstPerson()) {
+            if (animator.gameObject.activeInHierarchy) {
                 animator.SetBool("onTitle", false);
             }
             m_MouseLook.Init(transform, spineTransform);
