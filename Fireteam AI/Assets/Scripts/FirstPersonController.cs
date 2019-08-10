@@ -64,7 +64,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Use this for initialization
         private void Start()
         {
-            animator.SetBool("onTitle", false);
+            if (!equipmentScript.isFirstPerson()) {
+                animator.SetBool("onTitle", false);
+            }
             m_MouseLook.Init(transform, spineTransform);
             if (photonView != null && !photonView.IsMine) {
 				//this.enabled = false;
@@ -442,8 +444,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetMovingInAnimator(int x) {
-            if (animator.GetInteger("Moving") == x || !canMove) return;
+            if (fpcAnimator.GetInteger("MovingDir") == x || !canMove) return;
             fpcAnimator.SetBool("Moving", (x == 0 ? false : true));
+            fpcAnimator.SetInteger("MovingDir", x);
             photonView.RPC("RpcSetMovingInAnimator", RpcTarget.Others, x);
         }
 
@@ -453,7 +456,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetWeaponTypeInAnimator(int x) {
-            if (animator.GetInteger("WeaponType") == x) return;
+            if (fpcAnimator.GetInteger("WeaponType") == x) return;
             photonView.RPC("RpcSetWeaponTypeInAnimator", RpcTarget.Others, x);
         }
 
@@ -463,7 +466,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetWeaponReadyInAnimator(bool x) {
-            if (animator.GetBool("weaponReady") == x) return;
+            if (fpcAnimator.GetBool("weaponReady") == x) return;
             fpcAnimator.SetBool("weaponReady", x);
             photonView.RPC("RpcSetWeaponReadyInAnimator", RpcTarget.Others, x);
         }
@@ -474,7 +477,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetCrouchingInAnimator(bool x) {
-            if (animator.GetBool("Crouching") == x) return;
+            if (fpcAnimator.GetBool("Crouching") == x) return;
             photonView.RPC("RpcSetCrouchingInAnimator", RpcTarget.Others, x);
         }
 
@@ -488,7 +491,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetSprintingInAnimator(bool x) {
-            if (animator.GetBool("isSprinting") == x) return;
+            if (fpcAnimator.GetBool("Sprinting") == x) return;
             fpcAnimator.SetBool("Sprinting", x);
             photonView.RPC("RpcSetSprintingInAnimator", RpcTarget.Others, x);
         }
@@ -499,7 +502,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetIsDeadInAnimator(bool x) {
-            if (animator.GetBool("isDead") == x) return;
+            if (fpcAnimator.GetBool("isDead") == x) return;
             photonView.RPC("RpcSetIsDeadInAnimator", RpcTarget.Others, x);
         }
 
@@ -511,7 +514,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetWalkingInAnimator(bool x) {
-            if (animator.GetBool("isWalking") == x) return;
+            if (fpcAnimator.GetBool("isWalking") == x) return;
             photonView.RPC("RpcSetWalkingInAnimator", RpcTarget.Others, x);
         }
 
@@ -596,6 +599,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
             fpcAnimator.SetBool("weaponReady", false);
             fpcAnimator.SetBool("Moving", false);
             fpcAnimator.SetBool("Sprinting", false);
+            fpcAnimator.SetBool("Crouching", false);
+            fpcAnimator.SetBool("isSprinting", false);
+            fpcAnimator.SetBool("isDead", false);
+            fpcAnimator.SetBool("isWalking", false);
+            fpcAnimator.SetInteger("WeaponType", 1);
+            fpcAnimator.SetInteger("MovingDir", 0);
         }
 
     }

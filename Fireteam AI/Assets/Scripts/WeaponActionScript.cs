@@ -67,7 +67,7 @@ public class WeaponActionScript : MonoBehaviour
     public float aodSpeed = 8f;
     public PhotonView pView;
     private bool isWieldingSupportItem;
-    private bool isCockingGrenade;
+    public bool isCockingGrenade;
 
     // Zoom variables
     private int zoom = 6;
@@ -581,13 +581,15 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcCockingAnim()
     {
-        if (animator.GetBool("Crouching") == true)
-        {
-            animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f, -1, 2.3f);
-        }
-        else
-        {
-            animator.CrossFadeInFixedTime("Reload", 0.1f, -1, 2.3f);
+        if (!fpc.equipmentScript.isFirstPerson()) {
+            if (animator.GetBool("Crouching") == true)
+            {
+                animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f, -1, 2.3f);
+            }
+            else
+            {
+                animator.CrossFadeInFixedTime("Reload", 0.1f, -1, 2.3f);
+            }
         }
     }
 

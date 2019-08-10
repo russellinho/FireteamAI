@@ -39,13 +39,15 @@ public class WeaponScript : MonoBehaviour
 
     void Awake() {
         // If the photon view is null, then the player is not in-game
-        if (pView == null) {
-            onTitle = true;
-            animator.SetBool("onTitle", true);
-        } else {
-            onTitle = false;
-            if (animator != null) {
-                animator.SetBool("onTitle", false);
+        if (!equipmentScript.isFirstPerson()) {
+            if (pView == null) {
+                onTitle = true;
+                animator.SetBool("onTitle", true);
+            } else {
+                onTitle = false;
+                if (animator != null) {
+                    animator.SetBool("onTitle", false);
+                }
             }
         }
     }
@@ -136,7 +138,7 @@ public class WeaponScript : MonoBehaviour
         {
             return;
         }
-        if (!animator.GetBool("onTitle") && !animator.GetBool("isCockingGrenade")) {
+        if (equipmentScript.isFirstPerson() && !weaponActionScript.isCockingGrenade) {
             if (Input.GetKeyDown(KeyCode.Alpha1)) {
                 DrawPrimary();
             } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
@@ -182,7 +184,9 @@ public class WeaponScript : MonoBehaviour
     [PunRPC]
     private void RpcDrawWeapon(int weaponCat, string equippedWep, string equippedType) {
         weaponReady = false;
-        animator.SetInteger("WeaponType", weaponCat);
+        if (!equipmentScript.isFirstPerson()) {
+            animator.SetInteger("WeaponType", weaponCat);
+        }
         currentlyEquippedType = weaponCat;
         EquipWeapon(equippedType, equippedWep, null);
 //            animator.CrossFadeInFixedTime("DrawWeapon", 0.1f, 0, 1f);
@@ -192,13 +196,15 @@ public class WeaponScript : MonoBehaviour
         // Set animation and hand positions
         equippedPrimaryType = "Assault Rifle";
         equippedPrimaryWeapon = weaponName;
-        if (!animator.GetBool("onTitle")) {
-            if (equipmentScript.isFirstPerson()) {
-                weaponHolderFpc.SetWeaponPosition(true);
-            } else {
-                weaponHolder.SetWeaponPosition(false);
-                if (InventoryScript.rifleHandPositionsPerCharacter != null) {
-                    weaponHolder.SetSteadyHand(InventoryScript.rifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
+        if (!equipmentScript.isFirstPerson()) {
+            if (!animator.GetBool("onTitle")) {
+                if (equipmentScript.isFirstPerson()) {
+                    weaponHolderFpc.SetWeaponPosition(true);
+                } else {
+                    weaponHolder.SetWeaponPosition(false);
+                    if (InventoryScript.rifleHandPositionsPerCharacter != null) {
+                        weaponHolder.SetSteadyHand(InventoryScript.rifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
+                    }
                 }
             }
         }

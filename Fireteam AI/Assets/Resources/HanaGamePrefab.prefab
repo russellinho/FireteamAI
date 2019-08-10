@@ -533,7 +533,7 @@ MonoBehaviour:
   spineTransform: {fileID: 7942259398586826869}
   headTransform: {fileID: 7942259398586827253}
   animator: {fileID: 7942259398579088921}
-  fpcAnimator: {fileID: 0}
+  fpcAnimator: {fileID: 4166761373127457227}
 --- !u!114 &580623507002314515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -743,7 +743,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 580623507002314523}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &580623507002314523
