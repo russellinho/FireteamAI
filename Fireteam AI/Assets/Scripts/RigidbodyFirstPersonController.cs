@@ -89,6 +89,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private Vector3 m_GroundContactNormal;
         private bool m_Jump, m_PreviouslyGrounded, m_Jumping, m_IsGrounded;
         public Transform spineTransform;
+        public Transform fpcTransform;
 
 
         public Vector3 Velocity
@@ -123,7 +124,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             m_RigidBody = GetComponent<Rigidbody>();
             m_Capsule = GetComponent<CapsuleCollider>();
-            mouseLook.Init (transform, spineTransform);
+            mouseLook.Init (transform, spineTransform, fpcTransform);
         }
 
 

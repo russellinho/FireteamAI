@@ -53,7 +53,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public PlayerActionScript playerActionScript;
         public PhotonView photonView;
 
+        public Transform charTransform;
         public Transform spineTransform;
+        public Transform fpcTransform;
         public Transform headTransform;
         public Animator animator;
         public Animator fpcAnimator;
@@ -67,7 +69,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             if (animator.gameObject.activeInHierarchy) {
                 animator.SetBool("onTitle", false);
             }
-            m_MouseLook.Init(transform, spineTransform);
+            m_MouseLook.Init(charTransform, spineTransform, fpcTransform);
             if (photonView != null && !photonView.IsMine) {
 				//this.enabled = false;
                 return;
@@ -434,7 +436,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private Vector3 RotateView()
         {
-            return m_MouseLook.LookRotation (transform, spineTransform, m_Camera.transform);
+            return m_MouseLook.LookRotation (charTransform, spineTransform, fpcTransform);
         }
 
         [PunRPC]

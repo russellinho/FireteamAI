@@ -23,41 +23,30 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private Quaternion m_CharacterTargetRot;
         public Quaternion m_SpineTargetRot;
-        public Quaternion m_CameraTargetRot;
+        public Quaternion m_FpcCharacterTargetRot;
         private bool m_cursorIsLocked = true;
         private float spineRotationRange;
 
         public PhotonView pView;
 
-        public void Init(Transform character, Transform spineTransform)
+        public void Init(Transform character, Transform spineTransform, Transform fpcCharacter)
         {
             originalXSensitivity = XSensitivity;
             originalYSensitivity = YSensitivity;
             spineRotationRange = 0f;
             m_CharacterTargetRot = character.localRotation;
             m_SpineTargetRot = spineTransform.localRotation;
-            //m_CameraTargetRot = camera.localRotation;
+            m_FpcCharacterTargetRot = fpcCharacter.localRotation;
         }
 
         public void ResetRot() {
             spineRotationRange = 0f;
             m_CharacterTargetRot = Quaternion.identity;
             m_SpineTargetRot = Quaternion.identity;
+            m_FpcCharacterTargetRot = Quaternion.identity;
         }
 
-        public void ResetSpineRotationRange()
-        {
-            spineRotationRange = 0f;
-        }
-
-        public void RealignHipsToSpine(Transform spineRotation) {
-            Quaternion nextRotation = spineRotation.rotation;
-            m_CharacterTargetRot = Quaternion.identity;
-            m_SpineTargetRot = Quaternion.identity;
-            //m_CharacterTargetRot = nextRotation;
-        }
-
-        public Vector3 LookRotation(Transform character, Transform spineTransform, Transform camera)
+        public Vector3 LookRotation(Transform character, Transform spineTransform, Transform fpcCharacter)
         {
             float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
@@ -84,17 +73,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 }
             }
             m_SpineTargetRot *= Quaternion.Euler(-xRot, 0f, 0f);
-            //m_CameraTargetRot *= Quaternion.Euler (-xRot, yRot, 0f);
+            m_FpcCharacterTargetRot *= Quaternion.Euler(-xRot, yRot, 0f);
 
-            if (clampVerticalRotation)
-                //m_CameraTargetRot = ClampRotationAroundXAxis (m_CameraTargetRot);
+            if (clampVerticalRotation) {
                 m_SpineTargetRot = ClampRotationAroundXAxis(m_SpineTargetRot);
+                m_FpcCharacterTargetRot = ClampRotationAroundXAxis(m_FpcCharacterTargetRot);
+            }
 
             if(smooth)
             {
                 spineTransform.localRotation = Quaternion.Slerp(spineTransform.localRotation, m_SpineTargetRot, smoothTime * Time.deltaTime);
                 character.localRotation = Quaternion.Slerp(character.localRotation, m_CharacterTargetRot, smoothTime * Time.deltaTime);
-                //camera.localRotation = Quaternion.Slerp (camera.localRotation, m_CameraTargetRot, smoothTime * Time.deltaTime);
             }
             else
             {
@@ -104,8 +93,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 spineTransform.localRotation = m_SpineTargetRot;
                 m_CharacterTargetRot = Quaternion.Euler(0f, m_CharacterTargetRot.eulerAngles.y, 0f);
                 character.localRotation = m_CharacterTargetRot;
-                //camera.localRotation = m_CameraTargetRot;
-                //camera.localRotation = Quaternion.Euler(spineTransform.localRotation.eulerAngles.x, spineTransform.localRotation.eulerAngles.y, 0f);
+                fpcCharacter.localRotation = m_FpcCharacterTargetRot;
             }
 
             if (xRot != 0f || yRot != 0f)

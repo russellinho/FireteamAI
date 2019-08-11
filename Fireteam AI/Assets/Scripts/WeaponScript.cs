@@ -196,15 +196,13 @@ public class WeaponScript : MonoBehaviour
         // Set animation and hand positions
         equippedPrimaryType = "Assault Rifle";
         equippedPrimaryWeapon = weaponName;
-        if (!equipmentScript.isFirstPerson()) {
-            if (!animator.GetBool("onTitle")) {
-                if (equipmentScript.isFirstPerson()) {
-                    weaponHolderFpc.SetWeaponPosition(true);
-                } else {
-                    weaponHolder.SetWeaponPosition(false);
-                    if (InventoryScript.rifleHandPositionsPerCharacter != null) {
-                        weaponHolder.SetSteadyHand(InventoryScript.rifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
-                    }
+        if (!animator.GetBool("onTitle")) {
+            if (equipmentScript.isFirstPerson()) {
+                weaponHolderFpc.SetWeaponPosition(true);
+            } else {
+                weaponHolder.SetWeaponPosition(false);
+                if (InventoryScript.rifleHandPositionsPerCharacter != null) {
+                    weaponHolder.SetSteadyHand(InventoryScript.rifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
                 }
             }
         }
@@ -287,6 +285,7 @@ public class WeaponScript : MonoBehaviour
         GameObject wepEquipped = null;
         switch (weaponType) {
             case "Assault Rifle":
+                Debug.Log(weaponName);
                 currentlyEquippedType = 1;
                 wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 if (equipmentScript.isFirstPerson()) {

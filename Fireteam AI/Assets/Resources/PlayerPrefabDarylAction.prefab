@@ -20450,6 +20450,8 @@ MonoBehaviour:
   ts: {fileID: 0}
   playerScript: {fileID: 3007310823573728124}
   tws: {fileID: 4803882290888310498}
+  fullBodyRef: {fileID: 0}
+  firstPersonRef: {fileID: 0}
   equippedCharacter: Daryl
   equippedHeadgear: 
   equippedFacewear: 
@@ -20467,6 +20469,8 @@ MonoBehaviour:
   equippedFootwearRef: {fileID: 0}
   equippedArmorTopRef: {fileID: 0}
   equippedArmorBottomRef: {fileID: 0}
+  equippedFpcSkinRef: {fileID: 0}
+  equippedFpcTopRef: {fileID: 0}
   myHeadgearRenderer: {fileID: 3204773140212058034}
   myFacewearRenderer: {fileID: 5086548052702941819}
   myTopRenderer: {fileID: 3999816085970055934}
@@ -20479,8 +20483,11 @@ MonoBehaviour:
   myEyesRenderer: {fileID: 3999816085970056044}
   myEyelashRenderer: {fileID: 3999816085970056046}
   myHairRenderer: {fileID: 3907844673449295170}
+  myFpcSkinRenderer: {fileID: 0}
+  myFpcTopRenderer: {fileID: 0}
   renderHair: 0
   myBones: {fileID: 3999816085970056036}
+  myFpcBones: {fileID: 0}
   pView: {fileID: 822433111236790916}
 --- !u!114 &4803882290888310498
 MonoBehaviour:
@@ -20497,6 +20504,7 @@ MonoBehaviour:
   equipmentScript: {fileID: 517835709440268875}
   weaponActionScript: {fileID: 2054981473306387991}
   weaponHolder: {fileID: 5110459532735141376}
+  weaponHolderFpc: {fileID: 0}
   animator: {fileID: 3999816085979398314}
   ts: {fileID: 0}
   equippedPrimaryWeapon: 
@@ -20768,6 +20776,7 @@ MonoBehaviour:
   spineTransform: {fileID: 3999816085970153152}
   headTransform: {fileID: 3999816085970153280}
   animator: {fileID: 3999816085979398314}
+  fpcAnimator: {fileID: 0}
 --- !u!114 &2054981473306387991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20819,6 +20828,7 @@ MonoBehaviour:
   camTransform: {fileID: 3582253291028053267}
   aodSpeed: 8
   pView: {fileID: 822433111236790916}
+  isCockingGrenade: 0
 --- !u!114 &972479738510542894
 MonoBehaviour:
   m_ObjectHideFlags: 0

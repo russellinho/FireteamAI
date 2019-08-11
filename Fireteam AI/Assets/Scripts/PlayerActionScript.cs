@@ -751,7 +751,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // Send player back to spawn position, reset rotation, leave spectator mode
         //transform.rotation = Quaternion.Euler(Vector3.zero);
         transform.position = new Vector3(gameController.spawnLocation.position.x, gameController.spawnLocation.position.y, gameController.spawnLocation.position.z);
-        fpc.m_MouseLook.Init(transform, fpc.spineTransform);
+        fpc.m_MouseLook.Init(fpc.charTransform, fpc.spineTransform, fpc.fpcTransform);
         LeaveSpectatorMode();
         wepActionScript.CockingAction();
     }

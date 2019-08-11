@@ -59,6 +59,8 @@ GameObject:
   - component: {fileID: 580623506623331172}
   - component: {fileID: 580623506623331173}
   - component: {fileID: 580623506623331170}
+  - component: {fileID: 6650431761056984750}
+  - component: {fileID: 4691907859488934408}
   m_Layer: 0
   m_Name: PlayerCam
   m_TagString: MainCamera
@@ -74,7 +76,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 580623506623331168}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.84, z: 0}
+  m_LocalPosition: {x: 0, y: 4.2, z: 0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4166761373134640755}
@@ -138,6 +140,54 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 580623506623331168}
   m_Enabled: 1
+--- !u!169 &6650431761056984750
+AudioLowPassFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580623506623331168}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_LowpassResonanceQ: 1
+  lowpassLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.22727273
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!164 &4691907859488934408
+AudioReverbFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580623506623331168}
+  m_Enabled: 1
+  m_DryLevel: -500
+  m_Room: -1000
+  m_RoomHF: -203
+  m_DecayTime: 7.56
+  m_DecayHFRatio: 0.91
+  m_ReflectionsLevel: -626
+  m_ReverbLevel: 836
+  m_ReverbDelay: 0.03
+  m_Diffusion: 100
+  m_Density: 100
+  m_HFReference: 5000
+  m_RoomLF: -4410
+  m_LFReference: 250
+  m_ReflectionsDelay: 0
+  m_ReverbPreset: 27
 --- !u!1 &580623507002314506
 GameObject:
   m_ObjectHideFlags: 0
@@ -442,7 +492,7 @@ MonoBehaviour:
     smoothTime: 5
     lockCursor: 1
     m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
-    m_CameraTargetRot: {x: 0, y: 0, z: 0, w: 0}
+    m_FpcCharacterTargetRot: {x: 0, y: 0, z: 0, w: 0}
     pView: {fileID: 580623507002314522}
   m_UseFovKick: 0
   m_FovKick:
@@ -530,7 +580,9 @@ MonoBehaviour:
   playerScript: {fileID: 580623507002314519}
   playerActionScript: {fileID: 580623507002314512}
   photonView: {fileID: 580623507002314522}
+  charTransform: {fileID: 7942259398586826861}
   spineTransform: {fileID: 7942259398586826869}
+  fpcTransform: {fileID: 580623507404202082}
   headTransform: {fileID: 7942259398586827253}
   animator: {fileID: 7942259398579088921}
   fpcAnimator: {fileID: 4166761373127457227}
@@ -558,7 +610,7 @@ MonoBehaviour:
     smoothTime: 5
     lockCursor: 1
     m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
-    m_CameraTargetRot: {x: 0, y: 0, z: 0, w: 0}
+    m_FpcCharacterTargetRot: {x: 0, y: 0, z: 0, w: 0}
     pView: {fileID: 0}
   playerActionScript: {fileID: 580623507002314512}
   cameraShakeScript: {fileID: 580623507002314513}
@@ -582,7 +634,7 @@ MonoBehaviour:
     type: 3}
   firingMode: 0
   shotMode: 0
-  camTransform: {fileID: 0}
+  camTransform: {fileID: 580623506623331171}
   aodSpeed: 8
   pView: {fileID: 580623507002314522}
   isCockingGrenade: 0
@@ -603,7 +655,7 @@ MonoBehaviour:
   charController: {fileID: 580623507002314516}
   wepActionScript: {fileID: 580623507002314515}
   aud: {fileID: 580623507002314517}
-  viewCam: {fileID: 0}
+  viewCam: {fileID: 580623506623331172}
   spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
     type: 3}
   thisSpectatorCam: {fileID: 0}
@@ -645,7 +697,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13f73eefe07da574480f34bb3bcb4298, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camTransform: {fileID: 0}
+  camTransform: {fileID: 580623506623331171}
   playerActionScript: {fileID: 580623507002314512}
   shake: 0
   pView: {fileID: 580623507002314522}
@@ -661,8 +713,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8193b1dfb65b0124f9dbbdebaa8c1e19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioMuffle: {fileID: 0}
-  audioEcho: {fileID: 0}
+  audioMuffle: {fileID: 6650431761056984750}
+  audioEcho: {fileID: 4691907859488934408}
   bgm: {fileID: 7672265972041958235}
   fxRef: {fileID: 5671488159512719685}
   stealthMusic: {fileID: 8300000, guid: 845c1df058bb4244391e15b273edc166, type: 3}
@@ -786,7 +838,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 580623507404202083}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.0777514, y: -2.9242203, z: 0.15396303}
+  m_LocalPosition: {x: 0.0777514, y: -1.9, z: 0.15396303}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4166761373134640755}
@@ -16344,7 +16396,7 @@ SkinnedMeshRenderer:
   m_SortingOrder: 0
   serializedVersion: 2
   m_Quality: 0
-  m_UpdateWhenOffscreen: 0
+  m_UpdateWhenOffscreen: 1
   m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300000, guid: f5c97c67feafabd4aa4934d5d3ced16b, type: 3}
   m_Bones:
