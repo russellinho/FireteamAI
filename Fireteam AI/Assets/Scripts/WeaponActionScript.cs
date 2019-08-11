@@ -90,6 +90,9 @@ public class WeaponActionScript : MonoBehaviour
         mouseLook = fpc.m_MouseLook;
 
         CockingAction();
+
+        // Spawn in zoom
+        camTransform.localPosition = new Vector3(0f, 4.2f, -0.9f);
     }
 
     // Update is called once per frame
@@ -256,7 +259,7 @@ public class WeaponActionScript : MonoBehaviour
                     }
 
                 }
-                camTransform.GetComponent<Camera>().nearClipPlane = weaponStats.aimDownSightClipping;
+                //camTransform.GetComponent<Camera>().nearClipPlane = weaponStats.aimDownSightClipping;
             }
             else
             {
@@ -272,7 +275,7 @@ public class WeaponActionScript : MonoBehaviour
                 //} else if (animator.GetInteger("WeaponType") == 2) {
                   //  camTransform.localPosition = Vector3.Slerp(camTransform.localPosition, originalPosCamSecondary, Time.deltaTime * aodSpeed);
                 //}
-                camTransform.GetComponent<Camera>().nearClipPlane = 0.05f;
+                //camTransform.GetComponent<Camera>().nearClipPlane = 0.05f;
                 hudScript.toggleSniperOverlay(false);
 
             }

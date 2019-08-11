@@ -1043,6 +1043,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1107,7 +1108,7 @@ SkinnedMeshRenderer:
   m_RootBone: {fileID: 558888239628014299}
   m_AABB:
     m_Center: {x: 0.0010135579, y: 0.002410661, z: -0.00009147148}
-    m_Extent: {x: 0.0028307105, y: 0.0034390162, z: 0.0028098128}
+    m_Extent: {x: 0.0015, y: 0.0034390162, z: 0.0028098128}
   m_DirtyAABB: 0
 --- !u!114 &2269847188961030465
 MonoBehaviour:

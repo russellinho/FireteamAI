@@ -93,6 +93,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 spineTransform.localRotation = m_SpineTargetRot;
                 m_CharacterTargetRot = Quaternion.Euler(0f, m_CharacterTargetRot.eulerAngles.y, 0f);
                 character.localRotation = m_CharacterTargetRot;
+                m_FpcCharacterTargetRot = Quaternion.Euler(m_FpcCharacterTargetRot.eulerAngles.x, m_FpcCharacterTargetRot.eulerAngles.y, 0f);
                 fpcCharacter.localRotation = m_FpcCharacterTargetRot;
             }
 
