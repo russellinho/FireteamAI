@@ -90,9 +90,6 @@ public class WeaponActionScript : MonoBehaviour
         mouseLook = fpc.m_MouseLook;
 
         CockingAction();
-
-        // Spawn in zoom
-        camTransform.localPosition = new Vector3(0f, 4.2f, -0.9f);
     }
 
     // Update is called once per frame
