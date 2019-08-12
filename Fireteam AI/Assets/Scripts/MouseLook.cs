@@ -23,30 +23,35 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private Quaternion m_CharacterTargetRot;
         public Quaternion m_SpineTargetRot;
-        public Quaternion m_FpcCharacterTargetRot;
+        public Quaternion m_FpcCharacterVerticalTargetRot;
+        public Quaternion m_FpcCharacterHorizontalTargetRot;
         private bool m_cursorIsLocked = true;
         private float spineRotationRange;
 
         public PhotonView pView;
 
-        public void Init(Transform character, Transform spineTransform, Transform fpcCharacter)
+        public void Init(Transform character, Transform spineTransform, Transform fpcCharacterVertical, Transform fpcCharacterHorizontal)
         {
             originalXSensitivity = XSensitivity;
             originalYSensitivity = YSensitivity;
             spineRotationRange = 0f;
             m_CharacterTargetRot = character.localRotation;
             m_SpineTargetRot = spineTransform.localRotation;
-            m_FpcCharacterTargetRot = fpcCharacter.localRotation;
+            m_FpcCharacterVerticalTargetRot = fpcCharacterVertical.localRotation;
+            m_FpcCharacterHorizontalTargetRot = fpcCharacterHorizontal.localRotation;
+            m_FpcCharacterVerticalTargetRot = Quaternion.Euler(-34.764f, 0f, 0f);
+            fpcCharacterVertical.localRotation = Quaternion.Euler(0f, 0f, m_FpcCharacterVerticalTargetRot.eulerAngles.x);
         }
 
         public void ResetRot() {
             spineRotationRange = 0f;
             m_CharacterTargetRot = Quaternion.identity;
             m_SpineTargetRot = Quaternion.identity;
-            m_FpcCharacterTargetRot = Quaternion.identity;
+            m_FpcCharacterVerticalTargetRot = Quaternion.Euler(-34.764f, 0f, 0f);
+            m_FpcCharacterHorizontalTargetRot = Quaternion.identity;
         }
 
-        public Vector3 LookRotation(Transform character, Transform spineTransform, Transform fpcCharacter)
+        public Vector3 LookRotation(Transform character, Transform spineTransform, Transform fpcCharacterV, Transform fpcCharacterH)
         {
             float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
@@ -73,11 +78,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 }
             }
             m_SpineTargetRot *= Quaternion.Euler(-xRot, 0f, 0f);
-            m_FpcCharacterTargetRot *= Quaternion.Euler(-xRot, yRot, 0f);
+            m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(xRot, 0f, 0f);
+            m_FpcCharacterHorizontalTargetRot *= Quaternion.Euler(0f, yRot, 0f);
 
             if (clampVerticalRotation) {
                 m_SpineTargetRot = ClampRotationAroundXAxis(m_SpineTargetRot);
-                m_FpcCharacterTargetRot = ClampRotationAroundXAxis(m_FpcCharacterTargetRot);
+                m_FpcCharacterVerticalTargetRot = ClampRotationAroundXAxis(m_FpcCharacterVerticalTargetRot);
             }
 
             if(smooth)
@@ -93,8 +99,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 spineTransform.localRotation = m_SpineTargetRot;
                 m_CharacterTargetRot = Quaternion.Euler(0f, m_CharacterTargetRot.eulerAngles.y, 0f);
                 character.localRotation = m_CharacterTargetRot;
-                m_FpcCharacterTargetRot = Quaternion.Euler(m_FpcCharacterTargetRot.eulerAngles.x, m_FpcCharacterTargetRot.eulerAngles.y, 0f);
-                fpcCharacter.localRotation = m_FpcCharacterTargetRot;
+                fpcCharacterV.localRotation = Quaternion.Euler(0f, 0f, m_FpcCharacterVerticalTargetRot.eulerAngles.x);
+                fpcCharacterH.localRotation = Quaternion.Euler(0f, m_FpcCharacterHorizontalTargetRot.eulerAngles.y, 0f);
             }
 
             if (xRot != 0f || yRot != 0f)
@@ -166,6 +172,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
             q.w = 1.0f;
 
             float angleX = 2.0f * Mathf.Rad2Deg * Mathf.Atan (q.x);
+
+            Debug.Log(angleX);
 
             angleX = Mathf.Clamp (angleX, MinimumX, MaximumX);
 

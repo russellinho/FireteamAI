@@ -89,7 +89,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private Vector3 m_GroundContactNormal;
         private bool m_Jump, m_PreviouslyGrounded, m_Jumping, m_IsGrounded;
         public Transform spineTransform;
-        public Transform fpcTransform;
+        public Transform fpcTransformSpine;
+        public Transform fpcTransformBody;
 
 
         public Vector3 Velocity
@@ -124,7 +125,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             m_RigidBody = GetComponent<Rigidbody>();
             m_Capsule = GetComponent<CapsuleCollider>();
-            mouseLook.Init (transform, spineTransform, fpcTransform);
+            mouseLook.Init (transform, spineTransform, fpcTransformSpine, fpcTransformBody);
         }
 
 
@@ -235,7 +236,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // get the rotation before it's changed
             float oldYRotation = transform.eulerAngles.y;
 
-            mouseLook.LookRotation (transform, spineTransform, cam.transform);
+            mouseLook.LookRotation (transform, spineTransform, fpcTransformSpine, fpcTransformBody);
 
             if (m_IsGrounded || advancedSettings.airControl)
             {
