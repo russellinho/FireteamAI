@@ -14,7 +14,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
     {
         [SerializeField] public bool m_IsWalking;
         [SerializeField] public bool m_IsCrouching;
-    	  [SerializeField] public bool m_IsRunning;
+    	[SerializeField] public bool m_IsRunning;
         [SerializeField] public bool m_IsMoving;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
         [SerializeField] private float m_JumpSpeed;
@@ -250,7 +250,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 SetWalkingInAnimator(false);
             }
 
-            Vector3 desiredMove = m_Camera.transform.forward*m_Input.y + m_Camera.transform.right*m_Input.x;
+            Vector3 desiredMove = fpcTransformBody.forward*m_Input.y + fpcTransformBody.right*m_Input.x;
 
             // get a normal for the surface that is being touched to move along it
             RaycastHit hitInfo;
