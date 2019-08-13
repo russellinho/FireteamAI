@@ -16,6 +16,7 @@ public class WeaponActionScript : MonoBehaviour
     public AudioControllerScript audioController;
     public FirstPersonController fpc;
     public GameObject weaponHolder;
+    public GameObject weaponHolderFpc;
     private AudioSource weaponSound;
     private AudioSource reloadSound;
     public Animator animator;
@@ -239,7 +240,7 @@ public class WeaponActionScript : MonoBehaviour
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
                     if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosMale) < 0.005f) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
-                      weaponHolder.GetComponentInChildren<MeshRenderer>().enabled = false;
+                      weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = false;
                       mouseLook.XSensitivity = 0.25f;
                       mouseLook.YSensitivity = 0.25f;
                       hudScript.toggleSniperOverlay(true);
@@ -249,7 +250,7 @@ public class WeaponActionScript : MonoBehaviour
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
                     if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosFemale) < 0.005f) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
-                      weaponHolder.GetComponentInChildren<MeshRenderer>().enabled = false;
+                      weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = false;
                       mouseLook.XSensitivity = 0.25f;
                       mouseLook.YSensitivity = 0.25f;
                       hudScript.toggleSniperOverlay(true);
@@ -266,7 +267,7 @@ public class WeaponActionScript : MonoBehaviour
                 camTransform.localPosition = Vector3.Slerp(camTransform.localPosition, originalPosCam, Time.deltaTime * aodSpeed);
                 // Sets everything back to default after zooming in with sniper rifle
                 camTransform.GetComponent<Camera>().fieldOfView = defaultFov;
-                weaponHolder.GetComponentInChildren<MeshRenderer>().enabled = true;
+                weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = true;
                 mouseLook.XSensitivity = mouseLook.originalXSensitivity;
                 mouseLook.YSensitivity = mouseLook.originalYSensitivity;
                 //} else if (animator.GetInteger("WeaponType") == 2) {
@@ -741,8 +742,8 @@ public class WeaponActionScript : MonoBehaviour
     public void UseSupportItem() {
         // If the item is a grenade, instantiate and launch the grenade
         if (weaponStats.category.Equals("Explosive")) {
-            GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.weaponCatalog[weaponStats.weaponName].prefabPath + "Projectile", weaponHolder.transform.position, Quaternion.identity);
-            projectile.transform.forward = weaponHolder.transform.forward;
+            GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.weaponCatalog[weaponStats.weaponName].prefabPath + "Projectile", weaponHolderFpc.transform.position, Quaternion.identity);
+            projectile.transform.forward = weaponHolderFpc.transform.forward;
             projectile.GetComponent<ThrowableScript>().Launch(gameObject, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
             // Reset fire timer and subtract ammo used
             currentAmmo--;
