@@ -20,6 +20,7 @@ public class WeaponActionScript : MonoBehaviour
     private AudioSource weaponSound;
     private AudioSource reloadSound;
     public Animator animator;
+    public Animator animatorFpc;
     private WeaponStats weaponStats;
     private WeaponMods weaponMods;
 
@@ -177,10 +178,13 @@ public class WeaponActionScript : MonoBehaviour
             FireBooster();
             return;
         }
+        Debug.Log(shootInput + " " + isReloading + " " + playerActionScript.canShoot);
         if (shootInput && !isReloading && playerActionScript.canShoot)
         {
+            Debug.Log("o hoo");
             if (currentAmmo > 0)
             {
+                Debug.Log("i mean");
                 if (shotMode == ShotMode.Single) {
                     Fire();
                 } else {
@@ -300,6 +304,7 @@ public class WeaponActionScript : MonoBehaviour
     // Comment
     public void Fire()
     {
+        Debug.Log("hello");
         if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading)
         {
             return;
@@ -553,11 +558,13 @@ public class WeaponActionScript : MonoBehaviour
         isReloading = true;
         if (isCocking)
         {
-            pView.RPC("RpcCockingAnim", RpcTarget.All);
+            FpcCockingAnim();
+            pView.RPC("RpcCockingAnim", RpcTarget.Others);
         }
         else
         {
-            pView.RPC("RpcReloadAnim", RpcTarget.All);
+            FpcReloadAnim();
+            pView.RPC("RpcReloadAnim", RpcTarget.Others);
         }
     }
 
@@ -570,28 +577,40 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcReloadAnim()
     {
-        if (fpc.m_IsCrouching) {
-            //animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f);
-            animator.SetTrigger("Reloading");
-        } else {
+        // if (isCrouching) {
+        //     //animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f);
+        //     animator.SetTrigger("Reloading");
+        // } else {
             //animator.CrossFadeInFixedTime("Reload", 0.1f);
             animator.SetTrigger("Reloading");
-        }
+        // }
+    }
+
+    void FpcReloadAnim() {
+        // if (fpc.m_IsCrouching) {
+        //     //animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f);
+        //     animatorFpc.SetTrigger("Reloading");
+        // } else {
+            //animator.CrossFadeInFixedTime("Reload", 0.1f);
+            animatorFpc.SetTrigger("Reload");
+        // }
     }
 
     [PunRPC]
     void RpcCockingAnim()
     {
-        if (!fpc.equipmentScript.isFirstPerson()) {
-            if (animator.GetBool("Crouching") == true)
-            {
-                animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f, -1, 2.3f);
-            }
-            else
-            {
-                animator.CrossFadeInFixedTime("Reload", 0.1f, -1, 2.3f);
-            }
+        if (animator.GetBool("Crouching") == true)
+        {
+            animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f, -1, 2.3f);
         }
+        else
+        {
+            animator.CrossFadeInFixedTime("Reload", 0.1f, -1, 2.3f);
+        }
+    }
+
+    void FpcCockingAnim() {
+        animatorFpc.CrossFadeInFixedTime("Reload", 0.1f, -1, 1f);
     }
 
     [PunRPC]

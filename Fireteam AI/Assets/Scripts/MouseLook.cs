@@ -173,8 +173,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             float angleX = 2.0f * Mathf.Rad2Deg * Mathf.Atan (q.x);
 
-            Debug.Log(angleX);
-
             angleX = Mathf.Clamp (angleX, MinimumX, MaximumX);
 
             q.x = Mathf.Tan (0.5f * Mathf.Deg2Rad * angleX);

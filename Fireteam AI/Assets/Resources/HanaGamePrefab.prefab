@@ -313,7 +313,7 @@ MonoBehaviour:
   equipmentScript: {fileID: 580623507002314521}
   weaponActionScript: {fileID: 580623507002314515}
   weaponHolder: {fileID: 2949754178070846948}
-  weaponHolderFpc: {fileID: 6593641803807668195}
+  weaponHolderFpc: {fileID: 2065312140489247075}
   animator: {fileID: 7942259398579088921}
   ts: {fileID: 0}
   equippedPrimaryWeapon: 
@@ -623,8 +623,9 @@ MonoBehaviour:
   audioController: {fileID: 580623507002314510}
   fpc: {fileID: 580623507002314514}
   weaponHolder: {fileID: 336171781186355953}
-  weaponHolderFpc: {fileID: 0}
+  weaponHolderFpc: {fileID: 759282469816766716}
   animator: {fileID: 7942259398579088921}
+  animatorFpc: {fileID: 4166761373127457227}
   spread: 0
   totalAmmoLeft: 0
   currentAmmo: 0
@@ -851,6 +852,53 @@ Transform:
   m_Father: {fileID: 580623507002314520}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &759282469816766716
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4634956005691890334}
+  - component: {fileID: 2065312140489247075}
+  m_Layer: 0
+  m_Name: WeaponHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4634956005691890334
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759282469816766716}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4166761373134640765}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2065312140489247075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759282469816766716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef467fedef6ed24d8dbd8d62cb74c13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handle: {fileID: 0}
+  weapon: {fileID: 0}
+  leftShoulder: {fileID: 4166761373134640663}
+  fpc: {fileID: 580623507002314514}
 --- !u!1 &1315565876079285674
 GameObject:
   m_ObjectHideFlags: 0
@@ -16900,7 +16948,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4166761373134640765}
-  - component: {fileID: 6593641803807668195}
   m_Layer: 0
   m_Name: DEFORM_Wrist_R.002
   m_TagString: Untagged
@@ -16924,25 +16971,10 @@ Transform:
   - {fileID: 4166761373134640653}
   - {fileID: 4166761373134640665}
   - {fileID: 4166761373134640737}
+  - {fileID: 4634956005691890334}
   m_Father: {fileID: 4166761373134640673}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6593641803807668195
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4166761373134867037}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eef467fedef6ed24d8dbd8d62cb74c13, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  handle: {fileID: 0}
-  weapon: {fileID: 0}
-  leftShoulder: {fileID: 4166761373134640663}
-  fpc: {fileID: 580623507002314514}
 --- !u!1 &4166761373134867039
 GameObject:
   m_ObjectHideFlags: 0
