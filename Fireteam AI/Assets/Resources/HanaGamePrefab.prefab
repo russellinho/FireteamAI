@@ -630,6 +630,7 @@ MonoBehaviour:
   totalAmmoLeft: 0
   currentAmmo: 0
   shootPoint: {fileID: 507353808205619743}
+  fpcShootPoint: {fileID: 507353808205619743}
   isReloading: 0
   isCocking: 0
   isAiming: 0

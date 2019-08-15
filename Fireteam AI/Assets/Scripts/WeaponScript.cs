@@ -285,11 +285,11 @@ public class WeaponScript : MonoBehaviour
         GameObject wepEquipped = null;
         switch (weaponType) {
             case "Assault Rifle":
-                Debug.Log(weaponName);
                 currentlyEquippedType = 1;
-                wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 if (equipmentScript.isFirstPerson()) {
-                    weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                } else {
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
                 equippedWep = weaponName;
                 EquipAssaultRifle(weaponName);

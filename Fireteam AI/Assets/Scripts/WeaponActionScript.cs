@@ -44,6 +44,7 @@ public class WeaponActionScript : MonoBehaviour
     public int currentAmmo;
 
     public Transform shootPoint;
+    public Transform fpcShootPoint;
     public bool isReloading = false;
     public bool isCocking = false;
     public bool isAiming;
@@ -178,13 +179,11 @@ public class WeaponActionScript : MonoBehaviour
             FireBooster();
             return;
         }
-        Debug.Log(shootInput + " " + isReloading + " " + playerActionScript.canShoot);
+//        Debug.Log(shootInput + " " + isReloading + " " + playerActionScript.canShoot);
         if (shootInput && !isReloading && playerActionScript.canShoot)
         {
-            Debug.Log("o hoo");
             if (currentAmmo > 0)
             {
-                Debug.Log("i mean");
                 if (shotMode == ShotMode.Single) {
                     Fire();
                 } else {
@@ -304,13 +303,13 @@ public class WeaponActionScript : MonoBehaviour
     // Comment
     public void Fire()
     {
-        Debug.Log("hello");
         if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading)
         {
             return;
         }
 
         cameraShakeScript.SetShake(true);
+        animatorFpc.Play("Firing");
         IncreaseSpread();
         IncreaseRecoil();
         UpdateRecoil(true);
@@ -318,9 +317,9 @@ public class WeaponActionScript : MonoBehaviour
         float xSpread = Random.Range(-spread, spread);
         float ySpread = Random.Range(-spread, spread);
         float zSpread = Random.Range(-spread, spread);
-        Vector3 impactDir = new Vector3(shootPoint.transform.forward.x + xSpread, shootPoint.transform.forward.y + ySpread, shootPoint.transform.forward.z + zSpread);
+        Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
         int headshotLayer = (1 << 13);
-        if (Physics.Raycast(shootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer))
+        if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer))
         {
             pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
             if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().health > 0)
@@ -331,7 +330,7 @@ public class WeaponActionScript : MonoBehaviour
                 audioController.PlayHeadshotSound();
             }
         }
-        else if (Physics.Raycast(shootPoint.position, impactDir, out hit, weaponStats.range))
+        else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range))
         {
             GameObject bloodSpill = null;
             if (hit.transform.tag.Equals("Human"))
@@ -387,9 +386,9 @@ public class WeaponActionScript : MonoBehaviour
             float xSpread = Random.Range(-0.1f, 0.1f);
             float ySpread = Random.Range(-0.1f, 0.1f);
             float zSpread = Random.Range(-0.1f, 0.1f);
-            Vector3 impactDir = new Vector3(shootPoint.transform.forward.x + xSpread, shootPoint.transform.forward.y + ySpread, shootPoint.transform.forward.z + zSpread);
+            Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
             int headshotLayer = (1 << 13);
-            if (Physics.Raycast(shootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer) && !headshotDetected)
+            if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer) && !headshotDetected)
             {
                 pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
                 if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().health > 0)
@@ -401,7 +400,7 @@ public class WeaponActionScript : MonoBehaviour
                 }
                 headshotDetected = true;
             }
-            else if (Physics.Raycast(shootPoint.position, impactDir, out hit, weaponStats.range))
+            else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range))
             {
                 int beforeHp = 0;
                 GameObject bloodSpill = null;
@@ -485,7 +484,12 @@ public class WeaponActionScript : MonoBehaviour
 
     void InstantiateGunSmokeEffect() {
         if (weaponStats.gunSmoke != null) {
-            GameObject gunSmokeEffect = Instantiate(weaponStats.gunSmoke, shootPoint.position - new Vector3(0f, 0.05f, 0f), Quaternion.Euler(315f, 0f, 0f));
+            GameObject gunSmokeEffect = null;
+            if (fpc.equipmentScript.isFirstPerson()) {
+                gunSmokeEffect = Instantiate(weaponStats.gunSmoke, fpcShootPoint.position - new Vector3(0f, 0.05f, 0f), Quaternion.Euler(315f, 0f, 0f));
+            } else {
+                gunSmokeEffect = Instantiate(weaponStats.gunSmoke, shootPoint.position - new Vector3(0f, 0.05f, 0f), Quaternion.Euler(315f, 0f, 0f));
+            }
             Destroy(gunSmokeEffect, 1.5f);
         }
     }
