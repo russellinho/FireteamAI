@@ -71,6 +71,11 @@ public class WeaponActionScript : MonoBehaviour
     public PhotonView pView;
     private bool isWieldingSupportItem;
     public bool isCockingGrenade;
+    public Transform rightCollar;
+    public Transform leftCollar;
+    private Vector3 leftCollarAimingPos;
+    public Vector3 leftCollarOriginalPos;
+    public Vector3 rightCollarOriginalPos;
 
     // Zoom variables
     private int zoom = 6;
@@ -78,6 +83,7 @@ public class WeaponActionScript : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        leftCollarAimingPos = Vector3.negativeInfinity;
         isCockingGrenade = false;
         isWieldingSupportItem = false;
         if (pView != null && !pView.IsMine)
@@ -229,17 +235,17 @@ public class WeaponActionScript : MonoBehaviour
 
             if (Input.GetButton("Fire2") && !isReloading)
             {
+                fpc.SetAiminginFPCAnimator(true);
                 isAiming = true;
-                if (animator.GetInteger("Moving") == 0)
-                {
-                    animator.speed = 0f;
-                }
-                else
-                {
-                    animator.speed = 1f;
-                }
                 if (fpc.equipmentScript.gender == 'M') {
-                    camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, weaponStats.aimDownSightPosMale, Time.deltaTime * aodSpeed);
+                    if (leftCollarAimingPos.Equals(Vector3.negativeInfinity)) {
+                        leftCollarOriginalPos = leftCollar.localPosition;
+                        rightCollarOriginalPos = rightCollar.localPosition;
+                        Vector3 offset = weaponStats.aimDownSightPosMale - rightCollar.localPosition;
+                        leftCollarAimingPos = leftCollar.localPosition + offset;
+                    }
+                    leftCollar.localPosition = Vector3.Lerp(leftCollar.localPosition, leftCollarAimingPos, Time.deltaTime * aodSpeed);
+                    rightCollar.localPosition = Vector3.Lerp(rightCollar.localPosition, weaponStats.aimDownSightPosMale, Time.deltaTime * aodSpeed);
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
                     if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosMale) < 0.005f) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
@@ -249,7 +255,14 @@ public class WeaponActionScript : MonoBehaviour
                       hudScript.toggleSniperOverlay(true);
                     }
                 } else {
-                    camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, weaponStats.aimDownSightPosFemale, Time.deltaTime * aodSpeed);
+                    if (leftCollarAimingPos.Equals(Vector3.negativeInfinity)) {
+                        leftCollarOriginalPos = leftCollar.localPosition;
+                        rightCollarOriginalPos = rightCollar.localPosition;
+                        Vector3 offset = weaponStats.aimDownSightPosFemale - rightCollar.localPosition;
+                        leftCollarAimingPos = leftCollar.localPosition + offset;
+                    }
+                    leftCollar.localPosition = Vector3.Lerp(leftCollar.localPosition, leftCollarAimingPos, Time.deltaTime * aodSpeed);
+                    rightCollar.localPosition = Vector3.Lerp(rightCollar.localPosition, weaponStats.aimDownSightPosFemale, Time.deltaTime * aodSpeed);
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
                     if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosFemale) < 0.005f) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
@@ -264,18 +277,17 @@ public class WeaponActionScript : MonoBehaviour
             }
             else
             {
+                fpc.SetAiminginFPCAnimator(false);
                 isAiming = false;
-                animator.speed = 1f;
-                //if (animator.GetInteger("WeaponType") == 1) {
-                camTransform.localPosition = Vector3.Slerp(camTransform.localPosition, originalPosCam, Time.deltaTime * aodSpeed);
+                leftCollarAimingPos = Vector3.negativeInfinity;
+                leftCollar.localPosition = Vector3.Lerp(leftCollar.localPosition, leftCollarOriginalPos, Time.deltaTime * aodSpeed);
+                rightCollar.localPosition = Vector3.Lerp(rightCollar.localPosition, rightCollarOriginalPos, Time.deltaTime * aodSpeed);
+
                 // Sets everything back to default after zooming in with sniper rifle
                 camTransform.GetComponent<Camera>().fieldOfView = defaultFov;
                 weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = true;
                 mouseLook.XSensitivity = mouseLook.originalXSensitivity;
                 mouseLook.YSensitivity = mouseLook.originalYSensitivity;
-                //} else if (animator.GetInteger("WeaponType") == 2) {
-                  //  camTransform.localPosition = Vector3.Slerp(camTransform.localPosition, originalPosCamSecondary, Time.deltaTime * aodSpeed);
-                //}
                 //camTransform.GetComponent<Camera>().nearClipPlane = 0.05f;
                 hudScript.toggleSniperOverlay(false);
 

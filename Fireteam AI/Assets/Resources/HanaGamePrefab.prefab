@@ -646,6 +646,10 @@ MonoBehaviour:
   aodSpeed: 8
   pView: {fileID: 580623507002314522}
   isCockingGrenade: 0
+  rightCollar: {fileID: 4166761373134640685}
+  leftCollar: {fileID: 4166761373134640687}
+  leftCollarOriginalPos: {x: 0, y: 0, z: 0}
+  rightCollarOriginalPos: {x: 0, y: 0, z: 0}
 --- !u!114 &580623507002314512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -805,7 +809,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 580623507002314523}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: -1
   isRuntimeInstantiated: 0
 --- !u!114 &580623507002314523
 MonoBehaviour:
