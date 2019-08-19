@@ -68,14 +68,15 @@ public class EquipmentScript : MonoBehaviour
         else
         {
             onTitle = false;
-            if (pView != null) {
-                if (pView.IsMine) {
-                    fullBodyRef.SetActive(false);
-                    firstPersonRef.SetActive(true);
-                } else {
-                    fullBodyRef.SetActive(true);
-                    firstPersonRef.SetActive(false);
-                }
+        }
+
+        if (pView != null) {
+            if (pView.IsMine) {
+                fullBodyRef.SetActive(false);
+                firstPersonRef.SetActive(true);
+            } else {
+                fullBodyRef.SetActive(true);
+                firstPersonRef.SetActive(false);
             }
         }
     }
