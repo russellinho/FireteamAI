@@ -236,6 +236,7 @@ public class WeaponActionScript : MonoBehaviour
             if (Input.GetButton("Fire2") && !isReloading)
             {
                 fpc.SetAiminginFPCAnimator(true);
+                fpc.fpcAnimator.enabled=false;
                 isAiming = true;
                 if (fpc.equipmentScript.gender == 'M') {
                     if (leftCollarAimingPos.Equals(Vector3.negativeInfinity)) {
@@ -278,6 +279,7 @@ public class WeaponActionScript : MonoBehaviour
             else
             {
                 fpc.SetAiminginFPCAnimator(false);
+                fpc.fpcAnimator.enabled=true;
                 isAiming = false;
                 leftCollarAimingPos = Vector3.negativeInfinity;
                 leftCollar.localPosition = Vector3.Lerp(leftCollar.localPosition, leftCollarOriginalPos, Time.deltaTime * aodSpeed);
