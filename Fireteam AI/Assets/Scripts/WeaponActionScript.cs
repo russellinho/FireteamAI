@@ -279,7 +279,9 @@ public class WeaponActionScript : MonoBehaviour
             else
             {
                 fpc.SetAiminginFPCAnimator(false);
-                fpc.fpcAnimator.enabled=true;
+                if (!fpc.fpcAnimator.enabled && Vector3.Distance(rightCollar.localPosition, rightCollarOriginalPos) < 0.00001f) {
+                    fpc.fpcAnimator.enabled=true;
+                }
                 isAiming = false;
                 leftCollarAimingPos = Vector3.negativeInfinity;
                 leftCollar.localPosition = Vector3.Lerp(leftCollar.localPosition, leftCollarOriginalPos, Time.deltaTime * aodSpeed);
@@ -700,14 +702,14 @@ public class WeaponActionScript : MonoBehaviour
         {
             if (recoilTime < MAX_RECOIL_TIME)
             {
-                mouseLook.m_SpineTargetRot *= Quaternion.Euler(-weaponStats.recoil, 0f, 0f);
+                mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(weaponStats.recoil, 0f, 0f);
             }
         }
         else
         {
             if (recoilTime > 0f)
             {
-                mouseLook.m_SpineTargetRot *= Quaternion.Euler(weaponStats.recoil / weaponStats.recoveryConstant, 0f, 0f);
+                mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(-weaponStats.recoil / weaponStats.recoveryConstant, 0f, 0f);
             }
         }
     }
