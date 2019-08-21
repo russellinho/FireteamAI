@@ -303,7 +303,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114336108925888890}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &114336108925888890
@@ -602,7 +602,8 @@ MonoBehaviour:
     smoothTime: 5
     lockCursor: 1
     m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
-    m_FpcCharacterTargetRot: {x: 0, y: 0, z: 0, w: 0}
+    m_FpcCharacterVerticalTargetRot: {x: 0, y: 0, z: 0, w: 0}
+    m_FpcCharacterHorizontalTargetRot: {x: 0, y: 0, z: 0, w: 0}
     pView: {fileID: 0}
   m_UseFovKick: 0
   m_FovKick:
@@ -710,7 +711,8 @@ MonoBehaviour:
   photonView: {fileID: 0}
   charTransform: {fileID: 0}
   spineTransform: {fileID: 0}
-  fpcTransform: {fileID: 0}
+  fpcTransformSpine: {fileID: 0}
+  fpcTransformBody: {fileID: 0}
   headTransform: {fileID: 0}
   animator: {fileID: 0}
   fpcAnimator: {fileID: 0}
@@ -845,7 +847,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114766418645260732}
-  viewIdField: 4
+  viewIdField: 0
   InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &114766418645260732

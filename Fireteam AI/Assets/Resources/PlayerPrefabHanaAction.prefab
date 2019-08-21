@@ -1291,11 +1291,14 @@ MonoBehaviour:
   audioController: {fileID: 3263644273660445564}
   fpc: {fileID: 3170908378776135264}
   weaponHolder: {fileID: 8570215824522732561}
+  weaponHolderFpc: {fileID: 0}
   animator: {fileID: 2052873151873026297}
+  animatorFpc: {fileID: 0}
   spread: 0
   totalAmmoLeft: 0
   currentAmmo: 0
   shootPoint: {fileID: 5333236438097761726}
+  fpcShootPoint: {fileID: 0}
   isReloading: 0
   isCocking: 0
   isAiming: 0
@@ -1311,6 +1314,10 @@ MonoBehaviour:
   aodSpeed: 8
   pView: {fileID: 871597028457223500}
   isCockingGrenade: 0
+  rightCollar: {fileID: 0}
+  leftCollar: {fileID: 0}
+  leftCollarOriginalPos: {x: 0, y: 0, z: 0}
+  rightCollarOriginalPos: {x: 0, y: 0, z: 0}
 --- !u!114 &8866197252573974751
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1434,7 +1441,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 1328554002768852457}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &1328554002768852457

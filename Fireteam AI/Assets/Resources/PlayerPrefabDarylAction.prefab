@@ -20905,11 +20905,14 @@ MonoBehaviour:
     clampVerticalRotation: 1
     MinimumX: -45
     MaximumX: 55
+    SpineMaxX: 0
+    SpineMinX: 0
     smooth: 0
     smoothTime: 5
     lockCursor: 1
     m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
-    m_FpcCharacterTargetRot: {x: 0, y: 0, z: 0, w: 0}
+    m_FpcCharacterVerticalTargetRot: {x: 0, y: 0, z: 0, w: 0}
+    m_FpcCharacterHorizontalTargetRot: {x: 0, y: 0, z: 0, w: 0}
     pView: {fileID: 0}
   m_UseFovKick: 0
   m_FovKick:
@@ -20999,7 +21002,8 @@ MonoBehaviour:
   photonView: {fileID: 822433111236790916}
   charTransform: {fileID: 0}
   spineTransform: {fileID: 3999816085970153152}
-  fpcTransform: {fileID: 0}
+  fpcTransformSpine: {fileID: 0}
+  fpcTransformBody: {fileID: 0}
   headTransform: {fileID: 3999816085970153280}
   animator: {fileID: 3999816085979398314}
   fpcAnimator: {fileID: 0}
@@ -21023,11 +21027,14 @@ MonoBehaviour:
     clampVerticalRotation: 1
     MinimumX: 0
     MaximumX: 0
+    SpineMaxX: 0
+    SpineMinX: 0
     smooth: 0
     smoothTime: 5
     lockCursor: 1
     m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
-    m_FpcCharacterTargetRot: {x: 0, y: 0, z: 0, w: 0}
+    m_FpcCharacterVerticalTargetRot: {x: 0, y: 0, z: 0, w: 0}
+    m_FpcCharacterHorizontalTargetRot: {x: 0, y: 0, z: 0, w: 0}
     pView: {fileID: 0}
   playerActionScript: {fileID: 972479738510542894}
   cameraShakeScript: {fileID: 7656954764832435010}
@@ -21035,11 +21042,14 @@ MonoBehaviour:
   audioController: {fileID: 876301515968571840}
   fpc: {fileID: 7781146434226053001}
   weaponHolder: {fileID: 2280888580508914927}
+  weaponHolderFpc: {fileID: 0}
   animator: {fileID: 3999816085979398314}
+  animatorFpc: {fileID: 0}
   spread: 0
   totalAmmoLeft: 0
   currentAmmo: 0
   shootPoint: {fileID: 645505122889246548}
+  fpcShootPoint: {fileID: 0}
   isReloading: 0
   isCocking: 0
   isAiming: 0
@@ -21055,6 +21065,10 @@ MonoBehaviour:
   aodSpeed: 8
   pView: {fileID: 822433111236790916}
   isCockingGrenade: 0
+  rightCollar: {fileID: 0}
+  leftCollar: {fileID: 0}
+  leftCollarOriginalPos: {x: 0, y: 0, z: 0}
+  rightCollarOriginalPos: {x: 0, y: 0, z: 0}
 --- !u!114 &972479738510542894
 MonoBehaviour:
   m_ObjectHideFlags: 0
