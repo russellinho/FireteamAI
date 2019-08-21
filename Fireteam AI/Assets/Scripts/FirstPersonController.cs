@@ -128,15 +128,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 return;
             }
             if (playerActionScript.health > 0) {
-                Vector3 spineRotAngles = RotateView();
+                Rotations rotAngles = RotateView();
                 if (networkDelayCount < 5)
                 {
                     networkDelayCount++;
                 }
-                if (!Vector3.Equals(spineRotAngles, Vector3.negativeInfinity) && networkDelayCount == 5)
+                if (!Vector3.Equals(rotAngles.spineRot, Vector3.negativeInfinity) && networkDelayCount == 5)
                 {
                     networkDelayCount = 0;
-                    photonView.RPC("RpcUpdateSpineRotation", RpcTarget.Others, spineRotAngles.x, spineRotAngles.y, spineRotAngles.z);
+                    photonView.RPC("RpcUpdateSpineRotation", RpcTarget.Others, rotAngles.spineRot.x, rotAngles.spineRot.y, rotAngles.spineRot.z,
+                    rotAngles.charRot.x, rotAngles.charRot.y, rotAngles.charRot.z);
                 }
             }
         }
@@ -432,18 +433,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         private void ClientRotateView() {
-            m_MouseLook.LookRotationClient (spineTransform);
+            m_MouseLook.LookRotationClient (spineTransform, charTransform);
         }
 
-        private Vector3 RotateView()
+        private Rotations RotateView()
         {
             return m_MouseLook.LookRotation (charTransform, spineTransform, fpcTransformSpine, fpcTransformBody);
         }
 
         [PunRPC]
-        private void RpcUpdateSpineRotation(float xSpineRot, float ySpineRot, float zSpineRot)
+        private void RpcUpdateSpineRotation(float xSpineRot, float ySpineRot, float zSpineRot, float xCharRot, float yCharRot, float zCharRot)
         {
-            m_MouseLook.NetworkedLookRotation(spineTransform, xSpineRot, ySpineRot, zSpineRot);
+            m_MouseLook.NetworkedLookRotation(spineTransform, xSpineRot, ySpineRot, zSpineRot, charTransform, xCharRot, yCharRot, zCharRot);
         }
 
         public void SetMovingInAnimator(int x) {

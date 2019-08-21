@@ -51,7 +51,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_FpcCharacterHorizontalTargetRot = Quaternion.identity;
         }
 
-        public Vector3 LookRotation(Transform character, Transform spineTransform, Transform fpcCharacterV, Transform fpcCharacterH)
+        public Rotations LookRotation(Transform character, Transform spineTransform, Transform fpcCharacterV, Transform fpcCharacterH)
         {
             float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
@@ -105,22 +105,29 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             if (xRot != 0f || yRot != 0f)
             {
-                return new Vector3(m_SpineTargetRot.eulerAngles.x, m_SpineTargetRot.eulerAngles.y, m_SpineTargetRot.eulerAngles.x);
+                Vector3 spineRotRet = new Vector3(m_SpineTargetRot.eulerAngles.x, m_SpineTargetRot.eulerAngles.y, m_SpineTargetRot.eulerAngles.x);
+                Vector3 charRotRet = new Vector3(m_CharacterTargetRot.eulerAngles.x, m_CharacterTargetRot.eulerAngles.y, m_CharacterTargetRot.eulerAngles.z);
+                return new Rotations(spineRotRet, charRotRet);
             }
-            return Vector3.negativeInfinity;
+            return new Rotations(Vector3.negativeInfinity, Vector3.negativeInfinity);
 
             //UpdateCursorLock();
         }
 
-        public void NetworkedLookRotation(Transform spineTransform, float spineXRot, float spineYRot, float spineZRot)
+        public void NetworkedLookRotation(Transform spineTransform, float spineXRot, float spineYRot, float spineZRot,
+        Transform charTransform, float charXRot, float charYRot, float charZRot)
         {
             m_SpineTargetRot = Quaternion.Euler(spineXRot, spineYRot, spineZRot);
             spineTransform.localRotation = m_SpineTargetRot;
+
+            m_CharacterTargetRot = Quaternion.Euler(charXRot, charYRot, charZRot);
+            charTransform.localRotation = m_CharacterTargetRot;
         }
 
-        public void LookRotationClient(Transform spineTransform) {
+        public void LookRotationClient(Transform spineTransform, Transform charTransform) {
             //m_SpineTargetRot = Quaternion.Euler(m_SpineTargetRot.eulerAngles.x, m_SpineTargetRot.eulerAngles.y, m_SpineTargetRot.eulerAngles.x);
             spineTransform.localRotation = m_SpineTargetRot;
+            charTransform.localRotation = m_CharacterTargetRot;
         }
 
         /**public void SetCursorLock(bool value)
@@ -180,5 +187,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
             return q;
         }
 
+    }
+
+    public class Rotations {
+        public Rotations(Vector3 spineRot, Vector3 charRot) {
+            this.spineRot = spineRot;
+            this.charRot = charRot;
+        }
+        public Vector3 spineRot;
+        public Vector3 charRot;
     }
 }
