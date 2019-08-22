@@ -79,7 +79,8 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipArmor(itemName, gameObject);
                 break;
             case "Weapon":
-                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(weaponCategory, itemName, gameObject);
+                ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemName);
+                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(weaponCategory, itemName, modInfo.equippedSuppressor, gameObject);
                 break;
         }
     }

@@ -152,6 +152,7 @@ public class WeaponScript : MonoBehaviour
     void DrawWeapon(int weaponCat) {
         string equippedWep = "";
         string equippedType = "";
+        
         if (weaponCat == 1)
         {
             weaponActionScript.hudScript.ToggleCrosshair(false);
@@ -178,17 +179,19 @@ public class WeaponScript : MonoBehaviour
             weaponActionScript.currentAmmo = currentAmmoSupport;
             weaponActionScript.totalAmmoLeft = totalSupportAmmoLeft;
         }
-        pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, equippedType);
+        ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(equippedWep);
+        pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, equippedType, modInfo.equippedSuppressor);
+
     }
 
     [PunRPC]
-    private void RpcDrawWeapon(int weaponCat, string equippedWep, string equippedType) {
+    private void RpcDrawWeapon(int weaponCat, string equippedWep, string equippedType, string equippedSuppressor) {
         weaponReady = false;
         if (!equipmentScript.isFirstPerson()) {
             animator.SetInteger("WeaponType", weaponCat);
         }
         currentlyEquippedType = weaponCat;
-        EquipWeapon(equippedType, equippedWep, null);
+        EquipWeapon(equippedType, equippedWep, equippedSuppressor, null);
 //            animator.CrossFadeInFixedTime("DrawWeapon", 0.1f, 0, 1f);
     }
 
@@ -278,7 +281,7 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
-    public void EquipWeapon(string weaponType, string weaponName, GameObject shopItemRef) {
+    public void EquipWeapon(string weaponType, string weaponName, string suppressorName, GameObject shopItemRef) {
         if (onTitle && (weaponName.Equals(equippedPrimaryWeapon) || weaponName.Equals(equippedSecondaryWeapon) || weaponName.Equals(equippedSupportWeapon))) return;
         // Get the weapon from the weapon catalog for its properties
         Weapon w = InventoryScript.weaponCatalog[weaponName];
@@ -296,9 +299,8 @@ public class WeaponScript : MonoBehaviour
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
                 }
-                ModInfo savedEquippedMods = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", savedEquippedMods.equippedSuppressor, weaponName, null);
+                    EquipMod("Suppressor", suppressorName, weaponName, null);
                 }
                 break;
             case "Pistol":
@@ -314,9 +316,8 @@ public class WeaponScript : MonoBehaviour
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
                 }
-                savedEquippedMods = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", savedEquippedMods.equippedSuppressor, weaponName, null);
+                    EquipMod("Suppressor", suppressorName, weaponName, null);
                 }
                 break;
             case "Shotgun":
@@ -330,9 +331,8 @@ public class WeaponScript : MonoBehaviour
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
                 }
-                savedEquippedMods = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", savedEquippedMods.equippedSuppressor, weaponName, null);
+                    EquipMod("Suppressor", suppressorName, weaponName, null);
                 }
                 break;
             case "Sniper Rifle":
@@ -346,9 +346,8 @@ public class WeaponScript : MonoBehaviour
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
                 }
-                savedEquippedMods = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", savedEquippedMods.equippedSuppressor, weaponName, null);
+                    EquipMod("Suppressor", suppressorName, weaponName, null);
                 }
                 break;
             case "Explosive":
@@ -550,8 +549,8 @@ public class WeaponScript : MonoBehaviour
         equippedSecondaryType = "Pistol";
         equippedSupportWeapon = "M67 Frag";
         equippedSupportType = "Explosive";
-        EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null);
-        EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null);
+        EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null, null);
+        EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null, null);
     }
 
     public void DespawnPlayer()

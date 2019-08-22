@@ -169,9 +169,11 @@ public class PlayerData : MonoBehaviour
             characterEquips.EquipBottom(info.equippedBottom, null);
             characterEquips.EquipFootwear(info.equippedFootwear, null);
             characterEquips.EquipArmor(info.equippedArmor, null);
-            characterWeps.EquipWeapon(info.equippedPrimaryType, info.equippedPrimary, null);
-            characterWeps.EquipWeapon(info.equippedSecondaryType, info.equippedSecondary, null);
-            characterWeps.EquipWeapon(info.equippedSupportType, info.equippedSupport, null);
+            ModInfo primaryModInfo = LoadModDataForWeapon(info.equippedPrimary);
+            ModInfo secondaryModInfo = LoadModDataForWeapon(info.equippedSecondary);
+            characterWeps.EquipWeapon(info.equippedPrimaryType, info.equippedPrimary, primaryModInfo.equippedSuppressor, null);
+            characterWeps.EquipWeapon(info.equippedSecondaryType, info.equippedSecondary, secondaryModInfo.equippedSuppressor, null);
+            characterWeps.EquipWeapon(info.equippedSupportType, info.equippedSupport, null, null);
         }
         else
         {

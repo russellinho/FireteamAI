@@ -189,9 +189,11 @@ public class EquipmentScript : MonoBehaviour
         {
             PlayerData.playerdata.info.equippedSupport = "M67 Frag";
         }
-        tws.EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
-        tws.EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);
-        tws.EquipWeapon(PlayerData.playerdata.info.equippedSupportType, PlayerData.playerdata.info.equippedSupport, null);
+        ModInfo primaryModInfo = PlayerData.playerdata.LoadModDataForWeapon(PlayerData.playerdata.info.equippedPrimary);
+        ModInfo secondaryModInfo = PlayerData.playerdata.LoadModDataForWeapon(PlayerData.playerdata.info.equippedSecondary);
+        tws.EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, primaryModInfo.equippedSuppressor, null);
+        tws.EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, secondaryModInfo.equippedSuppressor, null);
+        tws.EquipWeapon(PlayerData.playerdata.info.equippedSupportType, PlayerData.playerdata.info.equippedSupport, null, null);
 
     }
 
