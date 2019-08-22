@@ -88,6 +88,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 m_FpcCharacterVerticalTargetRot = ClampRotationAroundXAxis(m_FpcCharacterVerticalTargetRot);
             }
 
+            Debug.Log("Spine rot x = " + m_SpineTargetRot.eulerAngles.x);
+            Debug.Log("Character fpc rot x = " + m_FpcCharacterVerticalTargetRot.eulerAngles.x);
+
             if(smooth)
             {
                 spineTransform.localRotation = Quaternion.Slerp(spineTransform.localRotation, m_SpineTargetRot, smoothTime * Time.deltaTime);
