@@ -129,11 +129,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             if (playerActionScript.health > 0) {
                 Rotations rotAngles = RotateView();
-                if (networkDelayCount < 5)
+                if (networkDelayCount < 3)
                 {
                     networkDelayCount++;
                 }
-                if (!Vector3.Equals(rotAngles.spineRot, Vector3.negativeInfinity) && networkDelayCount == 5)
+                if (!Vector3.Equals(rotAngles.spineRot, Vector3.negativeInfinity) && networkDelayCount == 3)
                 {
                     networkDelayCount = 0;
                     photonView.RPC("RpcUpdateSpineRotation", RpcTarget.Others, rotAngles.spineRot.x, rotAngles.spineRot.y, rotAngles.spineRot.z,

@@ -79,14 +79,34 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
                 }
             }
-            m_SpineTargetRot *= Quaternion.Euler(-xRot, 0f, 0f);
+            // if ((m_FpcCharacterVerticalTargetRot.eulerAngles.x <= 3f && m_FpcCharacterVerticalTargetRot.eulerAngles.x >= 0f) ||
+            // (m_FpcCharacterVerticalTargetRot.eulerAngles.x <= 360f && m_FpcCharacterVerticalTargetRot.eulerAngles.x >= 285f)) {
+            //     m_SpineTargetRot *= Quaternion.Euler(-xRot, 0f, 0f);
+            // }
             m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(xRot, 0f, 0f);
             m_FpcCharacterHorizontalTargetRot *= Quaternion.Euler(0f, yRot, 0f);
 
             if (clampVerticalRotation) {
-                m_SpineTargetRot = ClampSpineAroundXAxis(m_SpineTargetRot);
                 m_FpcCharacterVerticalTargetRot = ClampRotationAroundXAxis(m_FpcCharacterVerticalTargetRot);
             }
+
+            float spineRotBendVal = 0f + (325.236f - m_FpcCharacterVerticalTargetRot.eulerAngles.x);
+            // First two if statements are for looking above or on the horizon, last is for looking below the horizon
+            if (m_FpcCharacterVerticalTargetRot.eulerAngles.x <= 35f && m_FpcCharacterVerticalTargetRot.eulerAngles.x >= 0f) {
+                spineRotBendVal = -20f;
+            } else if (m_FpcCharacterVerticalTargetRot.eulerAngles.x <= 360f && m_FpcCharacterVerticalTargetRot.eulerAngles.x >= 325.236f) {
+                if (spineRotBendVal < -20f) {
+                    spineRotBendVal = -20f;
+                }
+            } else if (m_FpcCharacterVerticalTargetRot.eulerAngles.x <= 325.236f && m_FpcCharacterVerticalTargetRot.eulerAngles.x >= 270.0198f) {
+                if (spineRotBendVal > 40f) {
+                    spineRotBendVal = 40f;
+                }
+            }
+
+            m_SpineTargetRot.eulerAngles = new Vector3(spineRotBendVal, m_SpineTargetRot.eulerAngles.y, spineRotBendVal);
+
+            //m_SpineTargetRot = ClampSpineAroundXAxis(m_SpineTargetRot);
 
             Debug.Log("Spine rot x = " + m_SpineTargetRot.eulerAngles.x);
             Debug.Log("Character fpc rot x = " + m_FpcCharacterVerticalTargetRot.eulerAngles.x);
@@ -100,7 +120,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 // If the player has turned his hips maximum to the right/left and is still rotating right/left, rotate the body instead
                 // Else, rotate the hips to the right/left
-                m_SpineTargetRot = Quaternion.Euler(m_SpineTargetRot.eulerAngles.x, m_SpineTargetRot.eulerAngles.y, m_SpineTargetRot.eulerAngles.x);
+                //m_SpineTargetRot = Quaternion.Euler(m_SpineTargetRot.eulerAngles.x, m_SpineTargetRot.eulerAngles.y, m_SpineTargetRot.eulerAngles.x);
                 spineTransform.localRotation = m_SpineTargetRot;
                 m_CharacterTargetRot = Quaternion.Euler(0f, m_CharacterTargetRot.eulerAngles.y, 0f);
                 character.localRotation = m_CharacterTargetRot;
