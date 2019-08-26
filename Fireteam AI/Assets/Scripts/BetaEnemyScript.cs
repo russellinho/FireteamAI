@@ -1468,13 +1468,14 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (Vector3.Distance (transform.position, p.transform.position) < range + 20f) {
 					Vector3 toPlayer = p.transform.position - transform.position;
 					float angleBetween = Vector3.Angle (transform.forward, toPlayer);
-					if (angleBetween <= 60f) {
+					if (angleBetween <= 90f) {
 						// Cast a ray to make sure there's nothing in between the player and the enemy
 						Debug.DrawRay (headTransform.position, toPlayer, Color.blue);
 						Transform playerHead = p.GetComponent<FirstPersonController>().headTransform;
 						RaycastHit hit1;
 						RaycastHit hit2;
-						Vector3 middleHalfCheck = new Vector3 (p.transform.position.x, p.transform.position.y + PLAYER_HEIGHT_OFFSET, p.transform.position.z);
+						// Vector3 middleHalfCheck = new Vector3 (p.transform.position.x, p.transform.position.y + PLAYER_HEIGHT_OFFSET, p.transform.position.z);
+						Vector3 middleHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y - 0.1f, playerHead.position.z);
 						Vector3 topHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y, playerHead.position.z);
 						if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2))
 						{
