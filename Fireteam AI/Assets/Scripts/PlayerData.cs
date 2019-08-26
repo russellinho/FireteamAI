@@ -43,15 +43,15 @@ public class PlayerData : MonoBehaviour
         string levelName = SceneManager.GetActiveScene().name;
         string characterPrefabName = "";
         if (PlayerData.playerdata.info.equippedCharacter.Equals("Lucas")) {
-            characterPrefabName = "PlayerPrefabLucasAction";
+            characterPrefabName = "LucasGamePrefab";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Daryl")) {
-            characterPrefabName = "PlayerPrefabDarylAction";
+            characterPrefabName = "DarylGamePrefab";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Codename Sayre")) {
-            characterPrefabName = "PlayerPrefabSayreAction";
+            characterPrefabName = "SayreGamePrefab";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Hana")) {
             characterPrefabName = "HanaGamePrefab";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Jade")) {
-            characterPrefabName = "PlayerPrefabJadeAction";
+            characterPrefabName = "JadeGamePrefab";
         }
         if (levelName.Equals("BetaLevelNetwork"))
         {
