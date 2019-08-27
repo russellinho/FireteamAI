@@ -605,7 +605,7 @@ public class EquipmentScript : MonoBehaviour
 
         // Equips skin on FPC if is local player
         if (isFirstPerson()) {
-            string skinPath = skin == 1 ? InventoryScript.characterCatalog[equippedCharacter].fpcFullSkinPath : InventoryScript.characterCatalog[equippedCharacter].fpcNoSkinPath;
+            string skinPath = ((skin == 1 && gender == 'F') || (skin != 1 && gender == 'M')) ? InventoryScript.characterCatalog[equippedCharacter].fpcFullSkinPath : InventoryScript.characterCatalog[equippedCharacter].fpcNoSkinPath;
             equippedFpcSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(skinPath));
             equippedFpcSkinRef.transform.SetParent(firstPersonRef.transform);
             m = equippedFpcSkinRef.GetComponentInChildren<MeshFixer>();

@@ -108,8 +108,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             //m_SpineTargetRot = ClampSpineAroundXAxis(m_SpineTargetRot);
 
-            Debug.Log("Spine rot x = " + m_SpineTargetRot.eulerAngles.x);
-            Debug.Log("Character fpc rot x = " + m_FpcCharacterVerticalTargetRot.eulerAngles.x);
+            // Debug.Log("Spine rot x = " + m_SpineTargetRot.eulerAngles.x);
+            // Debug.Log("Character fpc rot x = " + m_FpcCharacterVerticalTargetRot.eulerAngles.x);
 
             if(smooth)
             {
