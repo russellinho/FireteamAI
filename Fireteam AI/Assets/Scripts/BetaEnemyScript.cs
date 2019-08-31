@@ -965,7 +965,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 				if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Firing && actionState != ActionStates.Reloading) {
 					int r = Random.Range (1, aggression - 1);
-					if (r <= 2) {
+					if (r <= 4) {
 						bool coverFound = DynamicTakeCover ();
 						if (coverFound) {
 							if (actionState != ActionStates.TakingCover) {
@@ -984,7 +984,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 
 				if (actionState == ActionStates.Seeking) {
-					if (navMeshReachedDestination (0.5f) && player == null) {
+					if (navMeshReachedDestination (20f) && player == null) {
 						pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander);
 					}
 				}
@@ -1414,27 +1414,24 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (Physics.Linecast (coverSpots[i].position, player.transform.position)) {
 					coverPos = coverSpots [i].position;
 					// Find objects near cover spot, and search the array for AI teammates
-					Collider[] objectsNearCover = Physics.OverlapSphere(coverPos, 3f);
+					Collider[] objectsNearCover = Physics.OverlapSphere(coverPos, 5f);
+					bool coverIsGood = true;
 					foreach(Collider go in objectsNearCover) {
 						if (go.name.Contains("Cicada")) {
-							foundOne = false;
+							coverIsGood = false;
 							break;
 						}
-						else {
-							foundOne = true;
-						}
 					}
+					if (coverIsGood) {
+						return true;
+					}
+
 					//pView.RPC ("RpcSetCoverPos", RpcTarget.All, true, coverSpots[i].position.x, coverSpots[i].position.y, coverSpots[i].position.z);
 				}
 			}
-			// If a unique cover spot wasn't found, then just choose a random spot
-			if (!foundOne) {
-				Vector3 spot = coverSpots [Random.Range (1, coverSpots.Length)].position;
-				coverPos = spot;
-				//pView.RPC ("RpcSetCoverPos", RpcTarget.All, true, spot.x, spot.y, spot.z);
-			}
+
 		}
-		return true;
+		return false;
 	}
 
 	[PunRPC]
