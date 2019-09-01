@@ -32,7 +32,7 @@ public class InventoryScript : MonoBehaviour
             return;
         }
         // Create all equipment data here
-        Equipment casualShirtMale = new Equipment("Casual Shirt", "Top", "Models/Clothing/Lucas/Tops/Casual Shirt/lucascasualshirt", "", "Models/Pics/casual_shirt", "A classy yet casual button up.", false, 1, 0f, 0f, 0f);
+        Equipment casualShirtMale = new Equipment("Casual Shirt", "Top", "Models/Clothing/Lucas/Tops/Casual Shirt/lucascasualshirt", "Models/FirstPersonPrefabs/Tops/Lucas/Casual Shirt/male_cas_shirt", "Models/Pics/casual_shirt", "A classy yet casual button up.", false, 1, 0f, 0f, 0f);
         Equipment casualTShirtMale = new Equipment("Casual T-Shirt", "Top", "Models/Clothing/Lucas/Tops/V Neck Tee/lucasvnecktee (1)", "Models/FirstPersonPrefabs/Tops/Lucas/Casual T-Shirt/male_vneck", "Models/Pics/v_neck_shirt", "A casual v neck t-shirt.", false, 2, 0f, 0f, 0f);
         Equipment standardFatiguesTopMale = new Equipment("Standard Fatigues Top", "Top", "Models/Clothing/Lucas/Tops/Standard Fatigues/lucasstandardfatiguestop", "", "Models/Pics/standard_fatigue_shirt", "A standard issue shirt given to all solders upon completion of basic training.", false, 0, 0f, 0f, 0f);
         Equipment standardFatiguesTopFemale = new Equipment("Standard Fatigues Top", "Top", "Models/Clothing/Hana/Tops/Standard Fatigues/hanastandardfatiguestop", "", "Models/Pics/standard_fatigue_shirt_f", "A standard issue shirt given to all solders upon completion of basic training.", false, 0, 0f, 0f, 0f);
