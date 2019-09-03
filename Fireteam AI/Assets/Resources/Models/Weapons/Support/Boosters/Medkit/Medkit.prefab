@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3310023717748962938}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 8147905294425426296}
   - component: {fileID: 8147905294428850520}
   - component: {fileID: 8147905294427851672}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Cylinder.014_Cylinder.021
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,6 +95,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -118,7 +119,7 @@ GameObject:
   - component: {fileID: 8147905294425426298}
   - component: {fileID: 8147905294428850522}
   - component: {fileID: 8147905294427851674}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Cylinder.013_Cylinder.020
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -172,6 +173,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -195,7 +197,7 @@ GameObject:
   - component: {fileID: 8147905294425426300}
   - component: {fileID: 8177407039304789051}
   - component: {fileID: 8499974487384527501}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Medkit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -254,6 +256,19 @@ MonoBehaviour:
   reloadSound: {fileID: 0}
   gunSmoke: {fileID: 0}
   muzzleFlash: {fileID: 0}
+  bulletTracer: {fileID: 0}
+  fpcPosMale: {x: 0, y: 0, z: 0}
+  fpcRotMale: {x: 0, y: 0, z: 0}
+  fpcScaleMale: {x: 0, y: 0, z: 0}
+  fpcPosFemale: {x: 0, y: 0, z: 0}
+  fpcRotFemale: {x: 0, y: 0, z: 0}
+  fpcScaleFemale: {x: 0, y: 0, z: 0}
+  fpcIdleAnim: {fileID: 0}
+  fpcFiringAnim: {fileID: 0}
+  fpcReloadAnim: {fileID: 0}
+  fpcAimingAnim: {fileID: 0}
+  fpcSprintingAnim: {fileID: 0}
+  fpcMovingAnim: {fileID: 0}
 --- !u!114 &8499974487384527501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -277,7 +292,7 @@ GameObject:
   - component: {fileID: 8147905294425426302}
   - component: {fileID: 8147905294428850526}
   - component: {fileID: 8147905294427851678}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Cylinder.015_Cylinder.022
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -331,6 +346,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0

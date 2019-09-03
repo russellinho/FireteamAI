@@ -104,6 +104,31 @@ public class EquipmentScript : MonoBehaviour
         }
     }
 
+    public void ToggleMesh(bool b) {
+        myEyesRenderer.GetComponent<SkinnedMeshRenderer>().enabled = b;
+        myEyelashRenderer.GetComponent<SkinnedMeshRenderer>().enabled = b;
+        myGlovesRenderer.GetComponent<SkinnedMeshRenderer>().enabled = b;
+        equippedTopRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
+        equippedBottomRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
+        equippedFootwearRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
+        equippedSkinRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
+        if (renderHair) {
+            myHairRenderer.GetComponent<SkinnedMeshRenderer>().enabled = b;
+        }
+        if (equippedFacewearRef != null) {
+            equippedFacewearRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
+        }
+        if (equippedHeadgearRef != null) {
+            equippedHeadgearRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
+        }
+        if (equippedArmorTopRef != null) {
+            equippedArmorTopRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
+        }
+        if (equippedArmorBottomRef != null) {
+            equippedArmorBottomRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
+        }
+    }
+
     public bool isFirstPerson() {
         return (firstPersonRef != null && firstPersonRef.activeInHierarchy);
     }
