@@ -4920,9 +4920,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7246815484539969077}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0.7071068, y: 0.7071068, z: -0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.27, y: 0.27, z: 0.27}
   m_Children:
   - {fileID: 7246815484539666961}
   - {fileID: 7246815484539666963}
@@ -4931,7 +4931,7 @@ Transform:
   - {fileID: 4281423869746318329}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: -90}
 --- !u!82 &4605048646455382328
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5158,8 +5158,8 @@ MonoBehaviour:
   reloadSound: {fileID: 7519509711271469613}
   gunSmoke: {fileID: 3013963004515157933, guid: 22f01094768fa2c4e8513fa10c2a4c94,
     type: 3}
-  muzzleFlash: {fileID: 0}
-  bulletTracer: {fileID: 0}
+  muzzleFlash: {fileID: 1168240727771607796}
+  bulletTracer: {fileID: 8804656219794093505}
   fpcPosMale: {x: 0, y: 0, z: 0}
   fpcRotMale: {x: 0, y: 0, z: 0}
   fpcScaleMale: {x: 0, y: 0, z: 0}
@@ -5251,6 +5251,12 @@ PrefabInstance:
 --- !u!4 &8718844229851585407 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3,
+    type: 3}
+  m_PrefabInstance: {fileID: 8714561627636426241}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &8804656219794093505 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 198223865259119552, guid: c4f5b88ec37f1f04db5f170233b15cb3,
     type: 3}
   m_PrefabInstance: {fileID: 8714561627636426241}
   m_PrefabAsset: {fileID: 0}
