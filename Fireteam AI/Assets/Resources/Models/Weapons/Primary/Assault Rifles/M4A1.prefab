@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2093210721455555047}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.791, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5725033452433798519}
@@ -54,7 +54,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4821811409148582062}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.57120013, y: 0.04559991, z: -0.00030000022}
+  m_LocalPosition: {x: -2.279, y: 0.173, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 346713332142480091}
@@ -308,6 +308,8 @@ GameObject:
   - component: {fileID: 7955390860234549378}
   - component: {fileID: 2701629956644595190}
   - component: {fileID: 4756034625404087878}
+  - component: {fileID: 4193973598696506364}
+  - component: {fileID: 6958528854486181673}
   m_Layer: 0
   m_Name: M4A1
   m_TagString: Untagged
@@ -624,6 +626,69 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &4193973598696506364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5725033452433893719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be4f3b19e65670e489fc3c06bce0e96f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponName: M4A1
+  type: Primary
+  category: Assault Rifle
+  damage: 20
+  mobility: 92
+  fireRate: 0.09
+  accuracy: 0
+  recoil: 1.7
+  range: 100
+  clipCapacity: 30
+  maxAmmo: 120
+  aimDownSightPosMale: {x: 0.05, y: 0.07, z: 0.1}
+  aimDownSightPosFemale: {x: 0.036, y: 0.056, z: 0.1}
+  aimDownSightClipping: 0.06
+  titleHandPositionsMale: {x: -0.02, y: 0.05, z: 0.03}
+  titleHandPositionsFemale: {x: -0.01, y: 0.02, z: 0.02}
+  recoveryConstant: 3
+  fireSound: {fileID: 7955390860234549378}
+  suppressedFireSound: {fileID: 2701629956644595190}
+  reloadSound: {fileID: 4756034625404087878}
+  gunSmoke: {fileID: 3013963004515157933, guid: 22f01094768fa2c4e8513fa10c2a4c94,
+    type: 3}
+  muzzleFlash: {fileID: 769095558280985029}
+  bulletTracer: {fileID: 5982825342497029221}
+  fpcPosMale: {x: 0, y: 0, z: 0}
+  fpcRotMale: {x: 0, y: 0, z: 0}
+  fpcScaleMale: {x: 0, y: 0, z: 0}
+  fpcPosFemale: {x: 0, y: 0, z: 0}
+  fpcRotFemale: {x: 0, y: 0, z: 0}
+  fpcScaleFemale: {x: 0, y: 0, z: 0}
+  fpcIdleAnim: {fileID: 0}
+  fpcFiringAnim: {fileID: 0}
+  fpcReloadAnim: {fileID: 0}
+  fpcAimingAnim: {fileID: 0}
+  fpcSprintingAnim: {fileID: 0}
+  fpcMovingAnim: {fileID: 0}
+--- !u!114 &6958528854486181673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5725033452433893719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32e91c2df4ddb4340aea227b3730de5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  suppressorScaler: {x: 2, y: 2, z: 2}
+  suppressorPos: {fileID: 6658176542305469334}
+  suppressorRef: {fileID: 0}
 --- !u!1 &7495531893334663245
 GameObject:
   m_ObjectHideFlags: 0
@@ -5293,7 +5358,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7503404705605177087}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.040999997, y: -0.09700002, z: 0}
+  m_LocalPosition: {x: 0.227, y: -0.41, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5725033452433798519}
@@ -5323,7 +5388,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8332605354345113291}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.53000015, y: 0.0461999, z: 0}
+  m_LocalPosition: {x: -2.247, y: 0.173, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5725033452433798519}
@@ -5393,6 +5458,12 @@ PrefabInstance:
 --- !u!4 &5893137668085863131 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3,
+    type: 3}
+  m_PrefabInstance: {fileID: 5892811117825830821}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &5982825342497029221 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 198223865259119552, guid: c4f5b88ec37f1f04db5f170233b15cb3,
     type: 3}
   m_PrefabInstance: {fileID: 5892811117825830821}
   m_PrefabAsset: {fileID: 0}
