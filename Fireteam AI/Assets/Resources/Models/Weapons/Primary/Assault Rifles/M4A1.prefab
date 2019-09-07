@@ -73,7 +73,7 @@ GameObject:
   - component: {fileID: 5725033452433798513}
   - component: {fileID: 5725033452437189969}
   - component: {fileID: 5725033452436092817}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: M4_Carbine.042
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -151,7 +151,7 @@ GameObject:
   - component: {fileID: 5725033452433798515}
   - component: {fileID: 5725033452437189971}
   - component: {fileID: 5725033452436092819}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: M4_Carbine.065
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -229,7 +229,7 @@ GameObject:
   - component: {fileID: 5725033452433798517}
   - component: {fileID: 5725033452437189973}
   - component: {fileID: 5725033452436092821}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: M4_Carbine.066
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -310,7 +310,7 @@ GameObject:
   - component: {fileID: 4756034625404087878}
   - component: {fileID: 4193973598696506364}
   - component: {fileID: 6958528854486181673}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: M4A1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -652,8 +652,8 @@ MonoBehaviour:
   aimDownSightPosMale: {x: 0.05, y: 0.07, z: 0.1}
   aimDownSightPosFemale: {x: 0.036, y: 0.056, z: 0.1}
   aimDownSightClipping: 0.06
-  titleHandPositionsMale: {x: -0.02, y: 0.05, z: 0.03}
-  titleHandPositionsFemale: {x: -0.01, y: 0.02, z: 0.02}
+  titleHandPositionsMale: {x: -0.06, y: 0.13, z: 0.011}
+  titleHandPositionsFemale: {x: -0.06, y: 0.13, z: 0.011}
   recoveryConstant: 3
   fireSound: {fileID: 7955390860234549378}
   suppressedFireSound: {fileID: 2701629956644595190}
@@ -664,10 +664,10 @@ MonoBehaviour:
   bulletTracer: {fileID: 5982825342497029221}
   fpcPosMale: {x: 0, y: 0, z: 0}
   fpcRotMale: {x: 0, y: 0, z: 0}
-  fpcScaleMale: {x: 0, y: 0, z: 0}
-  fpcPosFemale: {x: 0, y: 0, z: 0}
-  fpcRotFemale: {x: 0, y: 0, z: 0}
-  fpcScaleFemale: {x: 0, y: 0, z: 0}
+  fpcScaleMale: {x: 0.003, y: 0.003, z: 0.003}
+  fpcPosFemale: {x: -0.000148, y: 0.001877, z: -0.00057}
+  fpcRotFemale: {x: 8.299, y: 73.521, z: -76.409}
+  fpcScaleFemale: {x: 0.003, y: 0.003, z: 0.003}
   fpcIdleAnim: {fileID: 0}
   fpcFiringAnim: {fileID: 0}
   fpcReloadAnim: {fileID: 0}
