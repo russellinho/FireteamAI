@@ -33,11 +33,17 @@ public class WeaponStats : MonoBehaviour
     public Vector3 fpcPosFemale;
     public Vector3 fpcRotFemale;
     public Vector3 fpcScaleFemale;
-    public AnimationClip fpcIdleAnim;
-    public AnimationClip fpcFiringAnim;
-    public AnimationClip fpcReloadAnim;
-    public AnimationClip fpcAimingAnim;
-    public AnimationClip fpcSprintingAnim;
-    public AnimationClip fpcMovingAnim;
+    public AnimationClip fpcIdleAnimFemale;
+    public AnimationClip fpcFiringAnimFemale;
+    public AnimationClip fpcReloadAnimFemale;
+    public AnimationClip fpcAimingAnimFemale;
+    public AnimationClip fpcSprintingAnimFemale;
+    public AnimationClip fpcMovingAnimFemale;
+    public AnimationClip fpcIdleAnimMale;
+    public AnimationClip fpcFiringAnimMale;
+    public AnimationClip fpcReloadAnimMale;
+    public AnimationClip fpcAimingAnimMale;
+    public AnimationClip fpcSprintingAnimMale;
+    public AnimationClip fpcMovingAnimMale;
 
 }

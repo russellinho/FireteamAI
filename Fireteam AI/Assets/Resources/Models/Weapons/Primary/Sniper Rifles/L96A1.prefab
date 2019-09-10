@@ -5430,12 +5430,20 @@ MonoBehaviour:
   fpcPosFemale: {x: 0, y: 0, z: 0}
   fpcRotFemale: {x: 0, y: 0, z: 0}
   fpcScaleFemale: {x: 0, y: 0, z: 0}
-  fpcIdleAnim: {fileID: 0}
-  fpcFiringAnim: {fileID: 0}
-  fpcReloadAnim: {fileID: 0}
-  fpcAimingAnim: {fileID: 0}
-  fpcSprintingAnim: {fileID: 0}
-  fpcMovingAnim: {fileID: 0}
+  fpcIdleAnimFemale: {fileID: 7400000, guid: ec474c64ce49a424ebd2850c11902977, type: 2}
+  fpcFiringAnimFemale: {fileID: 7400000, guid: 18a96b72c4c06544faf830b59fef6cc8, type: 2}
+  fpcReloadAnimFemale: {fileID: 7400000, guid: 125678d4a92ad413a8e75311a38efd6f, type: 2}
+  fpcAimingAnimFemale: {fileID: 7400000, guid: 748fa411474ee44ed9d8ea188a7ef97a, type: 2}
+  fpcSprintingAnimFemale: {fileID: 7400000, guid: ec474c64ce49a424ebd2850c11902977,
+    type: 2}
+  fpcMovingAnimFemale: {fileID: 7400000, guid: ec474c64ce49a424ebd2850c11902977, type: 2}
+  fpcIdleAnimMale: {fileID: 7400000, guid: 29439e412742f4350b870bb26d4a7539, type: 2}
+  fpcFiringAnimMale: {fileID: 7400000, guid: cae0728c3ebf54a2eb51d47e78554081, type: 2}
+  fpcReloadAnimMale: {fileID: 7400000, guid: 0490ee0533ecb40b4b228962619e12b8, type: 2}
+  fpcAimingAnimMale: {fileID: 7400000, guid: 885bae612fcaa4019babefee7ec4418f, type: 2}
+  fpcSprintingAnimMale: {fileID: 7400000, guid: 29439e412742f4350b870bb26d4a7539,
+    type: 2}
+  fpcMovingAnimMale: {fileID: 7400000, guid: 29439e412742f4350b870bb26d4a7539, type: 2}
 --- !u!114 &3794155945995310361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6112,14 +6120,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 761048699302058063}
     m_Modifications:
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Name
-      value: BulletTracer
-      objectReference: {fileID: 0}
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Layer
-      value: 16
-      objectReference: {fileID: 0}
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -6175,6 +6175,14 @@ PrefabInstance:
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Name
+      value: BulletTracer
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Layer
+      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
