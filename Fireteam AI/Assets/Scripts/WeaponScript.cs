@@ -16,18 +16,18 @@ public class WeaponScript : MonoBehaviour
     public TitleControllerScript ts;
     public Animation titleAnimFemale;
     public Animation titleAnimMale;
-    public Animation idleAnimFemale;
-    public Animation idleAnimMale;
-    public Animation firingAnimFemale;
-    public Animation firingAnimMale;
-    public Animation aimingAnimFemale;
-    public Animation aimingAnimMale;
-    public Animation sprintingAnimFemale;
-    public Animation sprintingAnimMale;
-    public Animation reloadAnimFemale;
-    public Animation reloadAnimMale;
-    public Animation movingAnimFemale;
-    public Animation movingAnimMale;
+    // public Animation idleAnimFemale;
+    // public Animation idleAnimMale;
+    // public Animation firingAnimFemale;
+    // public Animation firingAnimMale;
+    // public Animation aimingAnimFemale;
+    // public Animation aimingAnimMale;
+    // public Animation sprintingAnimFemale;
+    // public Animation sprintingAnimMale;
+    // public Animation reloadAnimFemale;
+    // public Animation reloadAnimMale;
+    // public Animation movingAnimFemale;
+    // public Animation movingAnimMale;
     public string equippedPrimaryWeapon;
     public string equippedPrimaryType;
     public string equippedSecondaryWeapon;
@@ -197,6 +197,14 @@ public class WeaponScript : MonoBehaviour
         pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, equippedType, modInfo.equippedSuppressor);
 
     }
+
+    // void SetAnimationsForWeapon() {
+    //     if (equipmentScript.gender == 'M') {
+    //         weaponActionScript.fpc.animator
+    //     } else if (equipmentScript.gender == 'F') {
+
+    //     }
+    // }
 
     [PunRPC]
     private void RpcDrawWeapon(int weaponCat, string equippedWep, string equippedType, string equippedSuppressor) {

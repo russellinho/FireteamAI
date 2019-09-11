@@ -4748,7 +4748,7 @@ GameObject:
   - component: {fileID: 7401028900597694688}
   - component: {fileID: 7401028900600594624}
   - component: {fileID: 7401028900599595520}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: L96_SR_Shoulderpad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4826,7 +4826,7 @@ GameObject:
   - component: {fileID: 7401028900597694690}
   - component: {fileID: 7401028900600594626}
   - component: {fileID: 7401028900599595522}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: L96_SR_Scope
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4904,7 +4904,7 @@ GameObject:
   - component: {fileID: 7401028900597694692}
   - component: {fileID: 7401028900600594628}
   - component: {fileID: 7401028900599595524}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: L96_SR_TriggerBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4982,7 +4982,7 @@ GameObject:
   - component: {fileID: 7401028900597694694}
   - component: {fileID: 7401028900600594630}
   - component: {fileID: 7401028900599595526}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: L96_SR_trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5063,7 +5063,7 @@ GameObject:
   - component: {fileID: 6932990759497229397}
   - component: {fileID: 8266256587093726959}
   - component: {fileID: 3794155945995310361}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: L96A1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5430,20 +5430,10 @@ MonoBehaviour:
   fpcPosFemale: {x: 0, y: 0, z: 0}
   fpcRotFemale: {x: 0, y: 0, z: 0}
   fpcScaleFemale: {x: 0, y: 0, z: 0}
-  fpcIdleAnimFemale: {fileID: 7400000, guid: ec474c64ce49a424ebd2850c11902977, type: 2}
-  fpcFiringAnimFemale: {fileID: 7400000, guid: 18a96b72c4c06544faf830b59fef6cc8, type: 2}
-  fpcReloadAnimFemale: {fileID: 7400000, guid: 125678d4a92ad413a8e75311a38efd6f, type: 2}
-  fpcAimingAnimFemale: {fileID: 7400000, guid: 748fa411474ee44ed9d8ea188a7ef97a, type: 2}
-  fpcSprintingAnimFemale: {fileID: 7400000, guid: ec474c64ce49a424ebd2850c11902977,
+  maleOverrideController: {fileID: 22100000, guid: 749ab73531898d84eb1cc4760dc8b355,
     type: 2}
-  fpcMovingAnimFemale: {fileID: 7400000, guid: ec474c64ce49a424ebd2850c11902977, type: 2}
-  fpcIdleAnimMale: {fileID: 7400000, guid: 29439e412742f4350b870bb26d4a7539, type: 2}
-  fpcFiringAnimMale: {fileID: 7400000, guid: cae0728c3ebf54a2eb51d47e78554081, type: 2}
-  fpcReloadAnimMale: {fileID: 7400000, guid: 0490ee0533ecb40b4b228962619e12b8, type: 2}
-  fpcAimingAnimMale: {fileID: 7400000, guid: 885bae612fcaa4019babefee7ec4418f, type: 2}
-  fpcSprintingAnimMale: {fileID: 7400000, guid: 29439e412742f4350b870bb26d4a7539,
+  femaleOverrideController: {fileID: 22100000, guid: b36e9ac72a075c4448233fbf7eb59f4d,
     type: 2}
-  fpcMovingAnimMale: {fileID: 7400000, guid: 29439e412742f4350b870bb26d4a7539, type: 2}
 --- !u!114 &3794155945995310361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5470,7 +5460,7 @@ GameObject:
   - component: {fileID: 7401028900597694704}
   - component: {fileID: 7401028900600594640}
   - component: {fileID: 7401028900599595536}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: L96_SR_Barrel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5548,7 +5538,7 @@ GameObject:
   - component: {fileID: 7401028900597694706}
   - component: {fileID: 7401028900600594642}
   - component: {fileID: 7401028900599595538}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: L96_SR_ActionStick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5626,7 +5616,7 @@ GameObject:
   - component: {fileID: 7401028900597694708}
   - component: {fileID: 7401028900600594644}
   - component: {fileID: 7401028900599595540}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: L96_SR_Mag.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5704,7 +5694,7 @@ GameObject:
   - component: {fileID: 7401028900597694710}
   - component: {fileID: 7401028900600594646}
   - component: {fileID: 7401028900599595542}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: L96_SR_cheekPad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5782,7 +5772,7 @@ GameObject:
   - component: {fileID: 7401028900597694712}
   - component: {fileID: 7401028900600594648}
   - component: {fileID: 7401028900599595544}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: L96_SR_mount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5860,7 +5850,7 @@ GameObject:
   - component: {fileID: 7401028900597694714}
   - component: {fileID: 7401028900600594650}
   - component: {fileID: 7401028900599595546}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: L96_SR_MagCover.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5938,7 +5928,7 @@ GameObject:
   - component: {fileID: 7401028900597694716}
   - component: {fileID: 7401028900600594652}
   - component: {fileID: 7401028900599595548}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: L96_SR_mount3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6016,7 +6006,7 @@ GameObject:
   - component: {fileID: 7401028900597694718}
   - component: {fileID: 7401028900600594654}
   - component: {fileID: 7401028900599595550}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: L96_SR_Mount2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -4719,7 +4719,7 @@ GameObject:
   - component: {fileID: 5492290062715557013}
   - component: {fileID: 3663402228959500237}
   - component: {fileID: 3747978999549937094}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Glock23
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5057,8 +5057,8 @@ MonoBehaviour:
   range: 100
   clipCapacity: 12
   maxAmmo: 60
-  aimDownSightPosMale: {x: -0.038, y: 0.054, z: 0.1}
-  aimDownSightPosFemale: {x: -0.069, y: 0.054, z: 0.1}
+  aimDownSightPosMale: {x: -0.00125, y: 0.00177, z: 0.00036}
+  aimDownSightPosFemale: {x: -0.00125, y: 0.00177, z: 0.00036}
   aimDownSightClipping: 0.05
   titleHandPositionsMale: {x: 0, y: 0, z: 0}
   titleHandPositionsFemale: {x: 0, y: 0, z: 0}
@@ -5070,26 +5070,16 @@ MonoBehaviour:
     type: 3}
   muzzleFlash: {fileID: 6429990121772297589}
   bulletTracer: {fileID: 6810274940899095293}
-  fpcPosMale: {x: 0, y: 0, z: 0}
-  fpcRotMale: {x: 0, y: 0, z: 0}
-  fpcScaleMale: {x: 0, y: 0, z: 0}
-  fpcPosFemale: {x: 0, y: 0, z: 0}
-  fpcRotFemale: {x: 0, y: 0, z: 0}
-  fpcScaleFemale: {x: 0, y: 0, z: 0}
-  fpcIdleAnimFemale: {fileID: 7400000, guid: c0a7f988ea626c14cbf9b3bd825b9e44, type: 2}
-  fpcFiringAnimFemale: {fileID: 7400000, guid: 4b9fa7dfaab47884fbf584451bd4a2bd, type: 2}
-  fpcReloadAnimFemale: {fileID: 7400000, guid: bbd3f7a30bc64f6488508d49fd0c3281, type: 2}
-  fpcAimingAnimFemale: {fileID: 7400000, guid: 56008dd5f86d2bd449a11fe8270c8098, type: 2}
-  fpcSprintingAnimFemale: {fileID: 7400000, guid: c0a7f988ea626c14cbf9b3bd825b9e44,
+  fpcPosMale: {x: -0.000388, y: 0.001686, z: -0.000453}
+  fpcRotMale: {x: -0.241, y: 79.6, z: -82.8}
+  fpcScaleMale: {x: 0.0033, y: 0.0033, z: 0.0033}
+  fpcPosFemale: {x: -0.000388, y: 0.001686, z: -0.000453}
+  fpcRotFemale: {x: -0.241, y: 79.6, z: -82.8}
+  fpcScaleFemale: {x: 0.0033, y: 0.0033, z: 0.0033}
+  maleOverrideController: {fileID: 22100000, guid: 65faa7f2461b45c498a9a3d74702ecb4,
     type: 2}
-  fpcMovingAnimFemale: {fileID: 7400000, guid: c0a7f988ea626c14cbf9b3bd825b9e44, type: 2}
-  fpcIdleAnimMale: {fileID: 7400000, guid: 1aa6e82ac0ca2412189928fc1a5d4a50, type: 2}
-  fpcFiringAnimMale: {fileID: 7400000, guid: 8a7d9e8e674d64f26bae4e8ec3030734, type: 2}
-  fpcReloadAnimMale: {fileID: 7400000, guid: de379745331af4ff2b12e1b570a0e324, type: 2}
-  fpcAimingAnimMale: {fileID: 7400000, guid: 538d27c42af44427eb79f5beecaabbf8, type: 2}
-  fpcSprintingAnimMale: {fileID: 7400000, guid: 1aa6e82ac0ca2412189928fc1a5d4a50,
+  femaleOverrideController: {fileID: 22100000, guid: 176a06a46179094459627c57b56fdfb7,
     type: 2}
-  fpcMovingAnimMale: {fileID: 7400000, guid: 1aa6e82ac0ca2412189928fc1a5d4a50, type: 2}
 --- !u!114 &3747978999549937094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5116,7 +5106,7 @@ GameObject:
   - component: {fileID: 5383536960208924906}
   - component: {fileID: 5383536960206024904}
   - component: {fileID: 5383536960207155720}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Pistol.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5194,7 +5184,7 @@ GameObject:
   - component: {fileID: 5383536960208924908}
   - component: {fileID: 5383536960206024906}
   - component: {fileID: 5383536960207155722}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Pistol.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5272,7 +5262,7 @@ GameObject:
   - component: {fileID: 5383536960208924910}
   - component: {fileID: 5383536960206024908}
   - component: {fileID: 5383536960207155724}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Pistol.005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5378,6 +5368,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2311903087163953047}
     m_Modifications:
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Name
+      value: BulletTracer
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5421,14 +5419,6 @@ PrefabInstance:
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Name
-      value: BulletTracer
-      objectReference: {fileID: 0}
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Layer
-      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}

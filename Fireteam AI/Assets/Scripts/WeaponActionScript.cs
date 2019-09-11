@@ -719,6 +719,11 @@ public class WeaponActionScript : MonoBehaviour
         weaponMods = ws.GetComponent<WeaponMods>();
         fireTimer = ws.fireRate;
         playerActionScript.weaponSpeedModifier = ws.mobility/100f;
+        if (playerActionScript.equipmentScript.gender == 'M') {
+            fpc.fpcAnimator.runtimeAnimatorController = ws.maleOverrideController as RuntimeAnimatorController;
+        } else {
+            fpc.fpcAnimator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;
+        }
     }
 
     public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {

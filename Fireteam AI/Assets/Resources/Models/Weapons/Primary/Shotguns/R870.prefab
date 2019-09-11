@@ -4748,7 +4748,7 @@ GameObject:
   - component: {fileID: 7246815484539666961}
   - component: {fileID: 7246815484543091249}
   - component: {fileID: 7246815484541960433}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: 870_Rifle.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4826,7 +4826,7 @@ GameObject:
   - component: {fileID: 7246815484539666963}
   - component: {fileID: 7246815484543091251}
   - component: {fileID: 7246815484541960435}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: 870_Rifle.010
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4906,7 +4906,7 @@ GameObject:
   - component: {fileID: 7519509711271469613}
   - component: {fileID: 7474396441920835930}
   - component: {fileID: 1332715869736488834}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: R870
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5166,20 +5166,10 @@ MonoBehaviour:
   fpcPosFemale: {x: 0, y: 0, z: 0}
   fpcRotFemale: {x: 0, y: 0, z: 0}
   fpcScaleFemale: {x: 0, y: 0, z: 0}
-  fpcIdleAnimFemale: {fileID: 7400000, guid: 6c4327c69af496d4095e32c2119f47de, type: 2}
-  fpcFiringAnimFemale: {fileID: 7400000, guid: 798823e26bf70564584dddbe51c357e9, type: 2}
-  fpcReloadAnimFemale: {fileID: 7400000, guid: 7219085ca5ec547db9f8fb38e060f18f, type: 2}
-  fpcAimingAnimFemale: {fileID: 7400000, guid: d6bc861f25e224f5a880977ece974dc8, type: 2}
-  fpcSprintingAnimFemale: {fileID: 7400000, guid: 6c4327c69af496d4095e32c2119f47de,
+  maleOverrideController: {fileID: 22100000, guid: 424fe20f131562948a358cf09ba6c0ee,
     type: 2}
-  fpcMovingAnimFemale: {fileID: 7400000, guid: 6c4327c69af496d4095e32c2119f47de, type: 2}
-  fpcIdleAnimMale: {fileID: 7400000, guid: c432d5984fa4544fdb35a33aa106c374, type: 2}
-  fpcFiringAnimMale: {fileID: 7400000, guid: 12be685fe15644df6bd0c7064cc09c4c, type: 2}
-  fpcReloadAnimMale: {fileID: 7400000, guid: 05d8b27b0efc542d784803306f9d7744, type: 2}
-  fpcAimingAnimMale: {fileID: 7400000, guid: 7b4bb0f109b9c4fa9a893030f71105ab, type: 2}
-  fpcSprintingAnimMale: {fileID: 7400000, guid: c432d5984fa4544fdb35a33aa106c374,
+  femaleOverrideController: {fileID: 22100000, guid: e62a29bc8cfa7f647ba292410ece9d37,
     type: 2}
-  fpcMovingAnimMale: {fileID: 7400000, guid: c432d5984fa4544fdb35a33aa106c374, type: 2}
 --- !u!114 &1332715869736488834
 MonoBehaviour:
   m_ObjectHideFlags: 0

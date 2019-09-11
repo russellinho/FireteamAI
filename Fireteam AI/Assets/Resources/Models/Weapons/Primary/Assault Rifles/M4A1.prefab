@@ -649,8 +649,8 @@ MonoBehaviour:
   range: 100
   clipCapacity: 30
   maxAmmo: 120
-  aimDownSightPosMale: {x: 0.05, y: 0.07, z: 0.1}
-  aimDownSightPosFemale: {x: 0.036, y: 0.056, z: 0.1}
+  aimDownSightPosMale: {x: -0.0005, y: 0.00115, z: 0.00131}
+  aimDownSightPosFemale: {x: -0.0005, y: 0.00115, z: 0.00131}
   aimDownSightClipping: 0.06
   titleHandPositionsMale: {x: -0.06, y: 0.13, z: 0.011}
   titleHandPositionsFemale: {x: -0.06, y: 0.13, z: 0.011}
@@ -662,26 +662,16 @@ MonoBehaviour:
     type: 3}
   muzzleFlash: {fileID: 769095558280985029}
   bulletTracer: {fileID: 5982825342497029221}
-  fpcPosMale: {x: -0.000148, y: 0.001877, z: -0.00057}
+  fpcPosMale: {x: -0.000135, y: 0.001877, z: -0.00058}
   fpcRotMale: {x: 8.299, y: 73.521, z: -76.409}
   fpcScaleMale: {x: 0.003, y: 0.003, z: 0.003}
-  fpcPosFemale: {x: -0.000148, y: 0.001877, z: -0.00057}
+  fpcPosFemale: {x: -0.000135, y: 0.001877, z: -0.00058}
   fpcRotFemale: {x: 8.299, y: 73.521, z: -76.409}
   fpcScaleFemale: {x: 0.003, y: 0.003, z: 0.003}
-  fpcIdleAnimFemale: {fileID: 7400000, guid: 871f7c8053d470947adbf24e0e62543a, type: 2}
-  fpcFiringAnimFemale: {fileID: 7400000, guid: a78815dcb8908ed43b9baeb7c80cb01b, type: 2}
-  fpcReloadAnimFemale: {fileID: 7400000, guid: ee52b09f35560ae4a8b04a8c6d7d0041, type: 2}
-  fpcAimingAnimFemale: {fileID: 7400000, guid: 4f22280a7872c494eb6688f09708e359, type: 2}
-  fpcSprintingAnimFemale: {fileID: 7400000, guid: 871f7c8053d470947adbf24e0e62543a,
+  maleOverrideController: {fileID: 22100000, guid: 8e0cb44d1f46cc549b698e63992683e0,
     type: 2}
-  fpcMovingAnimFemale: {fileID: 7400000, guid: 871f7c8053d470947adbf24e0e62543a, type: 2}
-  fpcIdleAnimMale: {fileID: 7400000, guid: 520c7e23a33654545b8aefc3d4025f87, type: 2}
-  fpcFiringAnimMale: {fileID: 7400000, guid: 755d9c35b6dd1fb4096b3041dd0107f3, type: 2}
-  fpcReloadAnimMale: {fileID: 7400000, guid: 33646e57fde4ca748bac537de956c8da, type: 2}
-  fpcAimingAnimMale: {fileID: 7400000, guid: e40388d9e5524724aa76eb80d6a49a56, type: 2}
-  fpcSprintingAnimMale: {fileID: 7400000, guid: 520c7e23a33654545b8aefc3d4025f87,
+  femaleOverrideController: {fileID: 22100000, guid: e3183ca19050b924f9663368a8a939f3,
     type: 2}
-  fpcMovingAnimMale: {fileID: 7400000, guid: 520c7e23a33654545b8aefc3d4025f87, type: 2}
 --- !u!114 &6958528854486181673
 MonoBehaviour:
   m_ObjectHideFlags: 0
