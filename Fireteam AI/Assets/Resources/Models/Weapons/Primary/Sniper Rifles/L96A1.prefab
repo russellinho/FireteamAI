@@ -5411,8 +5411,8 @@ MonoBehaviour:
   range: 3000
   clipCapacity: 5
   maxAmmo: 20
-  aimDownSightPosMale: {x: 0.05, y: 0.07, z: 0.1}
-  aimDownSightPosFemale: {x: 0.036, y: 0.056, z: 0.1}
+  aimDownSightPosMale: {x: -0.000491, y: 0.0014, z: 0.001282}
+  aimDownSightPosFemale: {x: -0.000491, y: 0.0014, z: 0.001282}
   aimDownSightClipping: 0.06
   titleHandPositionsMale: {x: -0.019, y: -0.038, z: -0.203}
   titleHandPositionsFemale: {x: -0.019, y: -0.038, z: -0.203}
@@ -5424,12 +5424,12 @@ MonoBehaviour:
     type: 3}
   muzzleFlash: {fileID: 7617571436126736617}
   bulletTracer: {fileID: 2145057784661394981}
-  fpcPosMale: {x: 0, y: 0, z: 0}
-  fpcRotMale: {x: 0, y: 0, z: 0}
-  fpcScaleMale: {x: 0, y: 0, z: 0}
-  fpcPosFemale: {x: 0, y: 0, z: 0}
-  fpcRotFemale: {x: 0, y: 0, z: 0}
-  fpcScaleFemale: {x: 0, y: 0, z: 0}
+  fpcPosMale: {x: 0.00202, y: 0.00159, z: 0.0001}
+  fpcRotMale: {x: 8.299, y: 73.521, z: -76.409}
+  fpcScaleMale: {x: 0.0109, y: 0.0109, z: 0.0109}
+  fpcPosFemale: {x: 0.00202, y: 0.00159, z: 0.0001}
+  fpcRotFemale: {x: 8.299, y: 73.521, z: -76.409}
+  fpcScaleFemale: {x: 0.0109, y: 0.0109, z: 0.0109}
   maleOverrideController: {fileID: 22100000, guid: 749ab73531898d84eb1cc4760dc8b355,
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: b36e9ac72a075c4448233fbf7eb59f4d,
@@ -6110,6 +6110,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 761048699302058063}
     m_Modifications:
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Name
+      value: BulletTracer
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -6165,14 +6173,6 @@ PrefabInstance:
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Name
-      value: BulletTracer
-      objectReference: {fileID: 0}
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Layer
-      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}

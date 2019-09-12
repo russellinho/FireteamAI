@@ -5370,7 +5370,7 @@ MonoBehaviour:
   bulletTracer: {fileID: 6984781023177789129}
   fpcPosMale: {x: -0.000148, y: 0.001877, z: -0.00057}
   fpcRotMale: {x: 8.299, y: 73.521, z: -76.409}
-  fpcScaleMale: {x: 0.013, y: 0.013, z: 0.013}
+  fpcScaleMale: {x: 0.003124, y: 0.003124, z: 0.003124}
   fpcPosFemale: {x: -0.000148, y: 0.001877, z: -0.00057}
   fpcRotFemale: {x: 8.299, y: 73.521, z: -76.409}
   fpcScaleFemale: {x: 0.003124, y: 0.003124, z: 0.003124}
@@ -5400,6 +5400,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4804414172645788110}
     m_Modifications:
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Name
+      value: BulletTracer
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5455,14 +5463,6 @@ PrefabInstance:
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Name
-      value: BulletTracer
-      objectReference: {fileID: 0}
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Layer
-      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
