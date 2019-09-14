@@ -992,56 +992,6 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: -0.47503677, y: -0.012562578, z: -0.023260621, w: 0.8795687}
-        inSlope: {x: 0, y: 0, z: 0, w: 0}
-        outSlope: {x: -0.008583069, y: 0.0049020164, z: 0.00264775, w: -0.0044703484}
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
-        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
-      - serializedVersion: 3
-        time: 2
-        value: {x: -0.31407094, y: 0.68030375, z: 0.35715604, w: 0.55766094}
-        inSlope: {x: -0.0001937151, y: 0.00047683716, z: -0.0005364418, w: -0.00035762787}
-        outSlope: {x: 0, y: 0, z: 0, w: 0}
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
-        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001/DEFORM_Shoulder_L.001
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: {x: -0.5662004, y: 0.45437142, z: 0.24490711, w: 0.6426385}
-        inSlope: {x: 0, y: 0, z: 0, w: 0}
-        outSlope: {x: 0.000923872, y: -0.0012814999, z: -0.0037178397, w: 0.0031292439}
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
-        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
-      - serializedVersion: 3
-        time: 2
-        value: {x: -0.60261005, y: -0.006647676, z: -0.13199794, w: 0.7870155}
-        inSlope: {x: -0.0006854534, y: 0.0014081597, z: 0.001065433, w: -0.0003874302}
-        outSlope: {x: 0, y: 0, z: 0, w: 0}
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
-        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_R.002/DEFORM_Shoulder_R.002
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
         value: {x: -0.34368014, y: 0.20516908, z: 0.36283243, w: 0.84151185}
         inSlope: {x: 0, y: 0, z: 0, w: 0}
         outSlope: {x: 0, y: 0, z: 0, w: 0}
@@ -1087,6 +1037,56 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: {x: -0.47503677, y: -0.012562578, z: -0.023260621, w: 0.8795687}
+        inSlope: {x: 0, y: 0, z: 0, w: 0}
+        outSlope: {x: -0.0085532665, y: 0.003717374, z: 0.0020079315, w: -0.0045001507}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
+      - serializedVersion: 3
+        time: 2
+        value: {x: -0.47503677, y: -0.012562578, z: -0.023260621, w: 0.8795687}
+        inSlope: {x: 0.00032782555, y: -0.00076461583, z: -0.001183711, w: 0.00011920929}
+        outSlope: {x: 0, y: 0, z: 0, w: 0}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001/DEFORM_Shoulder_L.001
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: {x: -0.5662004, y: 0.45437142, z: 0.24490711, w: 0.6426385}
+        inSlope: {x: 0, y: 0, z: 0, w: 0}
+        outSlope: {x: 0.0011622906, y: -0.0006109476, z: -0.003144145, w: 0.002682209}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
+      - serializedVersion: 3
+        time: 2
+        value: {x: -0.5662004, y: 0.45437142, z: 0.24490711, w: 0.6426385}
+        inSlope: {x: 0.00023841858, y: 0.0014603138, z: 0.0017285347, w: -0.0014901161}
+        outSlope: {x: 0, y: 0, z: 0, w: 0}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334, w: 0.33333334}
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_R.002/DEFORM_Shoulder_R.002
   m_CompressedRotationCurves: []
   m_EulerCurves: []
   m_PositionCurves:
@@ -15772,17 +15772,241 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -0.47503677
+        value: -0.34368014
         inSlope: 0
-        outSlope: -0.008583069
+        outSlope: 0
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 2
-        value: -0.31407094
-        inSlope: -0.0001937151
+        value: -0.34368014
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalRotation.x
+    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001/DEFORM_Shoulder_L.001/DEFORM_Elbow_L.001/DEFORM_Wrist_L.001/DEFORM_Thumb1_L.001
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.20516908
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 2
+        value: 0.20516908
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalRotation.y
+    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001/DEFORM_Shoulder_L.001/DEFORM_Elbow_L.001/DEFORM_Wrist_L.001/DEFORM_Thumb1_L.001
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.36283243
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 2
+        value: 0.36283243
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalRotation.z
+    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001/DEFORM_Shoulder_L.001/DEFORM_Elbow_L.001/DEFORM_Wrist_L.001/DEFORM_Thumb1_L.001
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.84151185
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 2
+        value: 0.84151185
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalRotation.w
+    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001/DEFORM_Shoulder_L.001/DEFORM_Elbow_L.001/DEFORM_Wrist_L.001/DEFORM_Thumb1_L.001
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: -0.34590733
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 2
+        value: -0.34590733
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalRotation.x
+    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: -0.5032303
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 2
+        value: -0.5032303
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalRotation.y
+    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: -0.7220156
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 2
+        value: -0.7220156
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalRotation.z
+    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.3252703
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 2
+        value: 0.3252703
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalRotation.w
+    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: -0.47503677
+        inSlope: 0
+        outSlope: -0.0085532665
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 2
+        value: -0.47503677
+        inSlope: 0.00032782555
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
@@ -15802,15 +16026,15 @@ AnimationClip:
         time: 0
         value: -0.012562578
         inSlope: 0
-        outSlope: 0.0049020164
+        outSlope: 0.003717374
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 2
-        value: 0.68030375
-        inSlope: 0.00047683716
+        value: -0.012562578
+        inSlope: -0.00076461583
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
@@ -15830,15 +16054,15 @@ AnimationClip:
         time: 0
         value: -0.023260621
         inSlope: 0
-        outSlope: 0.00264775
+        outSlope: 0.0020079315
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 2
-        value: 0.35715604
-        inSlope: -0.0005364418
+        value: -0.023260621
+        inSlope: -0.001183711
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
@@ -15858,15 +16082,15 @@ AnimationClip:
         time: 0
         value: 0.8795687
         inSlope: 0
-        outSlope: -0.0044703484
+        outSlope: -0.0045001507
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 2
-        value: 0.55766094
-        inSlope: -0.00035762787
+        value: 0.8795687
+        inSlope: 0.00011920929
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
@@ -15886,15 +16110,15 @@ AnimationClip:
         time: 0
         value: -0.5662004
         inSlope: 0
-        outSlope: 0.000923872
+        outSlope: 0.0011622906
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 2
-        value: -0.60261005
-        inSlope: -0.0006854534
+        value: -0.5662004
+        inSlope: 0.00023841858
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
@@ -15914,15 +16138,15 @@ AnimationClip:
         time: 0
         value: 0.45437142
         inSlope: 0
-        outSlope: -0.0012814999
+        outSlope: -0.0006109476
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 2
-        value: -0.006647676
-        inSlope: 0.0014081597
+        value: 0.45437142
+        inSlope: 0.0014603138
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
@@ -15942,15 +16166,15 @@ AnimationClip:
         time: 0
         value: 0.24490711
         inSlope: 0
-        outSlope: -0.0037178397
+        outSlope: -0.003144145
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 2
-        value: -0.13199794
-        inSlope: 0.001065433
+        value: 0.24490711
+        inSlope: 0.0017285347
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
@@ -15970,15 +16194,15 @@ AnimationClip:
         time: 0
         value: 0.6426385
         inSlope: 0
-        outSlope: 0.0031292439
+        outSlope: 0.002682209
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 2
-        value: 0.7870155
-        inSlope: -0.0003874302
+        value: 0.6426385
+        inSlope: -0.0014901161
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
@@ -15989,230 +16213,6 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalRotation.w
     path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_R.002/DEFORM_Shoulder_R.002
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: -0.34368014
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 2
-        value: -0.34368014
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalRotation.x
-    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001/DEFORM_Shoulder_L.001/DEFORM_Elbow_L.001/DEFORM_Wrist_L.001/DEFORM_Thumb1_L.001
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0.20516908
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 2
-        value: 0.20516908
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalRotation.y
-    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001/DEFORM_Shoulder_L.001/DEFORM_Elbow_L.001/DEFORM_Wrist_L.001/DEFORM_Thumb1_L.001
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0.36283243
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 2
-        value: 0.36283243
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalRotation.z
-    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001/DEFORM_Shoulder_L.001/DEFORM_Elbow_L.001/DEFORM_Wrist_L.001/DEFORM_Thumb1_L.001
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0.84151185
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 2
-        value: 0.84151185
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalRotation.w
-    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001/DEFORM_Shoulder_L.001/DEFORM_Elbow_L.001/DEFORM_Wrist_L.001/DEFORM_Thumb1_L.001
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: -0.34590733
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 2
-        value: -0.34590733
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalRotation.x
-    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: -0.5032303
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 2
-        value: -0.5032303
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalRotation.y
-    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: -0.7220156
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 2
-        value: -0.7220156
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalRotation.z
-    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0.3252703
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 2
-        value: 0.3252703
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalRotation.w
-    path: Armature/DEFORM_spine1.001/DEFORM_spine2.001/DEFORM_spine3.001/DEFORM_spine4.001/DEFORM_Collar_L.001
     classID: 4
     script: {fileID: 0}
   m_EulerEditorCurves:
@@ -16762,7 +16762,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 2
-        value: 102.95199
+        value: 0
         inSlope: -0.024656823
         outSlope: -0.024656823
         tangentMode: 0
@@ -18358,7 +18358,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 2
-        value: 28.508398
+        value: 100
         inSlope: 0.4316369
         outSlope: 0.4316369
         tangentMode: 0
