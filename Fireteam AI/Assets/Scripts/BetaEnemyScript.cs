@@ -224,6 +224,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		CheckAlerted ();
 		CheckTargetDead ();
+		displayAlerted();
 
 		// If disoriented, don't have the ability to do anything else except die
 		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
@@ -1490,6 +1491,14 @@ public class BetaEnemyScript : MonoBehaviour {
 						// 	continue;
 						// }
 						if (!hit1.transform.gameObject.tag.Equals("Player") && !hit2.transform.gameObject.tag.Equals("Player")) {
+							// If we don't see a player, check if player is in close range.
+							// Check objects within a certain distance for a player
+							if (Vector3.Distance(p.transform.position, headTransform.position) < 8f) {
+								Debug.Log("I hear sum body");
+							}
+							else {
+								// Debug.Log("Guess it was my imagination");
+							}
 							continue;
 						}
 						keysNearBy.Add (p.GetComponent<PhotonView>().OwnerActorNr);
@@ -1627,5 +1636,21 @@ public class BetaEnemyScript : MonoBehaviour {
 	void StopVoices() {
 		audioSource.Stop();
 	}
+
+	void displayAlerted() {
+		if (player != null) {
+			// Activate exclamation sign, and disable question mark
+			Debug.Log("I see you");
+		}
+		else {
+			// Disable exclamation mark
+		}
+	}
+
+	// Draw a sphere to see effective range for stealth
+	// void OnDrawGizmos() {
+	// 		Gizmos.color = Color.yellow;
+	// 		Gizmos.DrawSphere(headTransform.position, 8f);
+	// }
 
 }
