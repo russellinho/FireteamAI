@@ -48,6 +48,9 @@ public class WeaponActionScript : MonoBehaviour
     public bool isReloading = false;
     public bool isCocking = false;
     public bool isAiming;
+    // Used for allowing arms to move during aim down sight movement
+    private bool aimDownSightsLock;
+    private float aimDownSightsTimer;
 
     public GameObject hitParticles;
     public GameObject bulletImpact;
@@ -67,13 +70,14 @@ public class WeaponActionScript : MonoBehaviour
     private Vector3 originalPosCam;
     private Vector3 originalPosCamSecondary;
     // Aiming speed
-    public float aodSpeed = 8f;
     public PhotonView pView;
     private bool isWieldingSupportItem;
     public bool isCockingGrenade;
     public Transform rightCollar;
     public Transform leftCollar;
     private Vector3 leftCollarAimingPos;
+    private Vector3 defaultLeftCollarPos;
+    private Vector3 defaultRightCollarPos;
     public Vector3 leftCollarOriginalPos;
     public Vector3 rightCollarOriginalPos;
 
@@ -86,6 +90,10 @@ public class WeaponActionScript : MonoBehaviour
         leftCollarAimingPos = Vector3.negativeInfinity;
         isCockingGrenade = false;
         isWieldingSupportItem = false;
+        aimDownSightsLock = false;
+        defaultLeftCollarPos = Vector3.negativeInfinity;
+        defaultRightCollarPos = Vector3.negativeInfinity;
+        aimDownSightsTimer = 0f;
         if (pView != null && !pView.IsMine)
         {
             return;
@@ -218,6 +226,43 @@ public class WeaponActionScript : MonoBehaviour
             }
         }
     }
+    
+    // If aim down sights lock is enabled, arms have free range movement apart from their animations
+    void UpdateAimDownSightsArms() {
+        if (aimDownSightsLock) {
+            aimDownSightsTimer += (Time.deltaTime * weaponStats.aimDownSightSpeed);
+            // If going to center
+            if (isAiming) {
+                if (fpc.equipmentScript.gender == 'M') {
+                    leftCollar.localPosition = Vector3.Lerp(leftCollarOriginalPos, leftCollarAimingPos, aimDownSightsTimer);
+                    rightCollar.localPosition = Vector3.Lerp(rightCollarOriginalPos, weaponStats.aimDownSightPosMale, aimDownSightsTimer);
+                } else if (fpc.equipmentScript.gender == 'F') {
+                    leftCollar.localPosition = Vector3.Lerp(leftCollarOriginalPos, leftCollarAimingPos, aimDownSightsTimer);
+                    rightCollar.localPosition = Vector3.Lerp(rightCollarOriginalPos, weaponStats.aimDownSightPosFemale, aimDownSightsTimer);
+                }
+            // If coming back to normal
+            } else {
+                leftCollar.localPosition = Vector3.Lerp(leftCollarOriginalPos, defaultLeftCollarPos, aimDownSightsTimer);
+                rightCollar.localPosition = Vector3.Lerp(rightCollarOriginalPos, defaultRightCollarPos, aimDownSightsTimer);
+                // If the player is back in the normal position, then disable the lock
+                if (Mathf.Approximately(Vector3.Magnitude(leftCollar.localPosition), Vector3.Magnitude(defaultLeftCollarPos))) {
+                    aimDownSightsLock = false;
+                }
+            }
+        }
+    }
+
+    void LateUpdate() {
+        UpdateAimDownSightsArms();
+    }
+
+    void SetDefaultArmPositions() {
+        // Set the default arm positions if they aren't set yet
+        if (Vector3.Equals(defaultLeftCollarPos, Vector3.negativeInfinity)) {
+            defaultLeftCollarPos = leftCollar.localPosition;
+            defaultRightCollarPos = rightCollar.localPosition;
+        }
+    }
 
     public void AimDownSights()
     {
@@ -235,20 +280,23 @@ public class WeaponActionScript : MonoBehaviour
 
             if (Input.GetButton("Fire2") && !isReloading)
             {
+                SetDefaultArmPositions();
                 fpc.SetAiminginFPCAnimator(true);
-                fpc.fpcAnimator.enabled=false;
                 isAiming = true;
+                aimDownSightsLock = true;
                 if (fpc.equipmentScript.gender == 'M') {
+                    // Setting original arm positions
                     if (leftCollarAimingPos.Equals(Vector3.negativeInfinity)) {
                         leftCollarOriginalPos = leftCollar.localPosition;
                         rightCollarOriginalPos = rightCollar.localPosition;
                         Vector3 offset = weaponStats.aimDownSightPosMale - rightCollar.localPosition;
                         leftCollarAimingPos = leftCollar.localPosition + offset;
+                        aimDownSightsTimer = 0f;
                     }
-                    leftCollar.localPosition = Vector3.Lerp(leftCollar.localPosition, leftCollarAimingPos, Time.deltaTime * aodSpeed);
-                    rightCollar.localPosition = Vector3.Lerp(rightCollar.localPosition, weaponStats.aimDownSightPosMale, Time.deltaTime * aodSpeed);
+
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
-                    if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosMale) < 0.005f) {
+                    //if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosMale) < 0.005f) {
+                    if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(camTransform.localPosition), Vector3.Magnitude(weaponStats.aimDownSightPosMale))) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
                       weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = false;
                       mouseLook.XSensitivity = 0.25f;
@@ -261,11 +309,12 @@ public class WeaponActionScript : MonoBehaviour
                         rightCollarOriginalPos = rightCollar.localPosition;
                         Vector3 offset = weaponStats.aimDownSightPosFemale - rightCollar.localPosition;
                         leftCollarAimingPos = leftCollar.localPosition + offset;
+                        aimDownSightsTimer = 0f;
                     }
-                    leftCollar.localPosition = Vector3.Lerp(leftCollar.localPosition, leftCollarAimingPos, Time.deltaTime * aodSpeed);
-                    rightCollar.localPosition = Vector3.Lerp(rightCollar.localPosition, weaponStats.aimDownSightPosFemale, Time.deltaTime * aodSpeed);
+
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
-                    if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosFemale) < 0.005f) {
+                    //if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosFemale) < 0.005f) {
+                    if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(camTransform.localPosition), Vector3.Magnitude(weaponStats.aimDownSightPosFemale))) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
                       weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = false;
                       mouseLook.XSensitivity = 0.25f;
@@ -279,13 +328,13 @@ public class WeaponActionScript : MonoBehaviour
             else
             {
                 fpc.SetAiminginFPCAnimator(false);
-                if (!fpc.fpcAnimator.enabled && Vector3.Distance(rightCollar.localPosition, rightCollarOriginalPos) < 0.00001f) {
-                    fpc.fpcAnimator.enabled=true;
-                }
                 isAiming = false;
-                leftCollarAimingPos = Vector3.negativeInfinity;
-                leftCollar.localPosition = Vector3.Lerp(leftCollar.localPosition, leftCollarOriginalPos, Time.deltaTime * aodSpeed);
-                rightCollar.localPosition = Vector3.Lerp(rightCollar.localPosition, rightCollarOriginalPos, Time.deltaTime * aodSpeed);
+                if (!Vector3.Equals(leftCollarAimingPos, Vector3.negativeInfinity)) {
+                    leftCollarOriginalPos = leftCollar.localPosition;
+                    rightCollarOriginalPos = rightCollar.localPosition;
+                    leftCollarAimingPos = Vector3.negativeInfinity;
+                    aimDownSightsTimer = 0f;
+                }
 
                 // Sets everything back to default after zooming in with sniper rifle
                 camTransform.GetComponent<Camera>().fieldOfView = defaultFov;
@@ -391,6 +440,7 @@ public class WeaponActionScript : MonoBehaviour
         }
 
         cameraShakeScript.SetShake(true);
+        animatorFpc.Play("Firing");
         IncreaseRecoil();
         UpdateRecoil(true);
         RaycastHit hit;

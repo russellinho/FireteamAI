@@ -5357,6 +5357,7 @@ MonoBehaviour:
   maxAmmo: 120
   aimDownSightPosMale: {x: -0.000525, y: 0.00159, z: 0.001303}
   aimDownSightPosFemale: {x: -0.0005, y: 0.00145, z: 0.00131}
+  aimDownSightSpeed: 5
   aimDownSightClipping: 0.06
   titleHandPositionsMale: {x: -0.072, y: 0.145, z: 0.022}
   titleHandPositionsFemale: {x: -0.072, y: 0.145, z: 0.022}

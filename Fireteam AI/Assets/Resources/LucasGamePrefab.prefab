@@ -126,6 +126,8 @@ MonoBehaviour:
   weaponHolderFpc: {fileID: 4528069227279452866}
   animator: {fileID: 4260894050290283357}
   ts: {fileID: 0}
+  titleAnimFemale: {fileID: 0}
+  titleAnimMale: {fileID: 0}
   equippedPrimaryWeapon: 
   equippedPrimaryType: 
   equippedSecondaryWeapon: 
@@ -457,7 +459,6 @@ MonoBehaviour:
   firingMode: 0
   shotMode: 0
   camTransform: {fileID: 7779637992460143791}
-  aodSpeed: 8
   pView: {fileID: 720653860272823642}
   isCockingGrenade: 0
   rightCollar: {fileID: 9030208476792900232}
@@ -623,7 +624,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 720653860272823643}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: -1
   isRuntimeInstantiated: 0
 --- !u!114 &720653860272823643
 MonoBehaviour:
