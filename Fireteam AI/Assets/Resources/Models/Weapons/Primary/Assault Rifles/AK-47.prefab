@@ -4779,6 +4779,7 @@ GameObject:
   - component: {fileID: 7202007608291271961}
   - component: {fileID: 7202007608292074809}
   - component: {fileID: 7202007608293173241}
+  - component: {fileID: 8413113808624989952}
   m_Layer: 16
   m_Name: AK-47.001
   m_TagString: Untagged
@@ -4846,6 +4847,21 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &8413113808624989952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7202007608291178809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2be01684a1d13f342977eacbe8626cc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  logPosition: 0
+  logRotation: 0
+  logScale: 0
 --- !u!1 &7202007608291178811
 GameObject:
   m_ObjectHideFlags: 0
@@ -4857,6 +4873,7 @@ GameObject:
   - component: {fileID: 7202007608291271963}
   - component: {fileID: 7202007608292074811}
   - component: {fileID: 7202007608293173243}
+  - component: {fileID: 3855543695840564574}
   m_Layer: 16
   m_Name: AK-47.011
   m_TagString: Untagged
@@ -4924,6 +4941,21 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &3855543695840564574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7202007608291178811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2be01684a1d13f342977eacbe8626cc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  logPosition: 0
+  logRotation: 0
+  logScale: 0
 --- !u!1 &7202007608291178813
 GameObject:
   m_ObjectHideFlags: 0
@@ -5401,14 +5433,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4804414172645788110}
     m_Modifications:
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Name
-      value: BulletTracer
-      objectReference: {fileID: 0}
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Layer
-      value: 16
-      objectReference: {fileID: 0}
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5464,6 +5488,14 @@ PrefabInstance:
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Name
+      value: BulletTracer
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Layer
+      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}

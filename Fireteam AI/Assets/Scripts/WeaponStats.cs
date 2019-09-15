@@ -36,5 +36,6 @@ public class WeaponStats : MonoBehaviour
     public Vector3 fpcScaleFemale;
     public AnimatorOverrideController maleOverrideController;
     public AnimatorOverrideController femaleOverrideController;
+    public Animation reloadAnim;
 
 }
