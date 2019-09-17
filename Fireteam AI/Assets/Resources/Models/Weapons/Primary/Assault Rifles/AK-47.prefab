@@ -5048,6 +5048,7 @@ GameObject:
   - component: {fileID: 3959337845877743138}
   - component: {fileID: 4813427939787135185}
   - component: {fileID: 5650192701117635986}
+  - component: {fileID: 8598153698109452233}
   m_Layer: 16
   m_Name: AK-47
   m_TagString: Untagged
@@ -5411,6 +5412,7 @@ MonoBehaviour:
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: 683d52a6c039ec749bd14b689ad5146c,
     type: 2}
+  weaponAnimator: {fileID: 8598153698109452233}
 --- !u!114 &5650192701117635986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5426,6 +5428,25 @@ MonoBehaviour:
   suppressorScaler: {x: 2, y: 2, z: 2}
   suppressorPos: {fileID: 8886720800898675031}
   suppressorRef: {fileID: 0}
+--- !u!95 &8598153698109452233
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7202007608291178815}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 585a0b7fccec1db419798a0d5af6a6cf, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &7074828301983849737
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5433,6 +5454,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4804414172645788110}
     m_Modifications:
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Name
+      value: BulletTracer
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5488,14 +5517,6 @@ PrefabInstance:
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Name
-      value: BulletTracer
-      objectReference: {fileID: 0}
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Layer
-      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}

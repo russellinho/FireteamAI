@@ -662,7 +662,8 @@ public class WeaponActionScript : MonoBehaviour
         //     animatorFpc.SetTrigger("Reloading");
         // } else {
             //animator.CrossFadeInFixedTime("Reload", 0.1f);
-            animatorFpc.SetTrigger("Reload");
+            animatorFpc.Play("Reload");
+            weaponStats.weaponAnimator.Play("Reload");
         // }
     }
 
@@ -681,6 +682,7 @@ public class WeaponActionScript : MonoBehaviour
 
     void FpcCockingAnim() {
         animatorFpc.CrossFadeInFixedTime("Reload", 0.1f, -1, 1f);
+        weaponStats.weaponAnimator.CrossFadeInFixedTime("Reload", 0.1f, -1, 1f);
     }
 
     [PunRPC]

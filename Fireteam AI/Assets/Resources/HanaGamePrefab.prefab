@@ -649,7 +649,6 @@ MonoBehaviour:
   firingMode: 0
   shotMode: 0
   camTransform: {fileID: 580623506623331171}
-  aodSpeed: 8
   pView: {fileID: 580623507002314522}
   isCockingGrenade: 0
   rightCollar: {fileID: 4166761373134640685}
@@ -814,7 +813,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 580623507002314523}
-  viewIdField: 0
+  viewIdField: 3
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &580623507002314523
