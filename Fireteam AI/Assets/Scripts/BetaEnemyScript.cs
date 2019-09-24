@@ -57,6 +57,9 @@ public class BetaEnemyScript : MonoBehaviour {
 	private Vector3 spawnRot;
 	public bool alerted = false;
 	private bool wasMasterClient;
+	private GameObject gameController;
+	private ArrayList enemyAlertMarkers;
+	public int alertStatus;
 
 	// Finite state machine states
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Disoriented};
@@ -142,6 +145,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		marker = GetComponentInChildren<SpriteRenderer> ();
 		gunRef = GetComponentInChildren<MeshRenderer> ();
 		meleeTrigger = GetComponent<BoxCollider> ();
+		gameController = GameObject.Find("GameController");
+		gameController.GetComponent<GameControllerScript>().enemyList.Add(pView.ViewID, gameObject);
+		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
 
 		if (enemyType == EnemyType.Patrol) {
 			range = 10f;
@@ -255,6 +261,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	void FixedUpdate() {
 		// Hot fix for death animation not working on client
 		if (!PhotonNetwork.IsMasterClient && health <= 0) {
+			removeFromMarkerList();
 			actionState = ActionStates.Dead;
 		}
 
@@ -1494,9 +1501,12 @@ public class BetaEnemyScript : MonoBehaviour {
 							// If we don't see a player, check if player is in close range.
 							// Check objects within a certain distance for a player
 							if (Vector3.Distance(p.transform.position, headTransform.position) < 8f) {
-								Debug.Log("I hear sum body");
+								gameController.GetComponent<GameControllerScript>().enemyAlertMarkers.Add(pView.ViewID);
+								alertStatus = 1;
+								// Debug.Log("I hear sum body");
 							}
 							else {
+								removeFromMarkerList();
 								// Debug.Log("Guess it was my imagination");
 							}
 							continue;
@@ -1640,11 +1650,26 @@ public class BetaEnemyScript : MonoBehaviour {
 	void displayAlerted() {
 		if (player != null) {
 			// Activate exclamation sign, and disable question mark
+			gameController.GetComponent<GameControllerScript>().enemyAlertMarkers.Add(pView.ViewID);
+			alertStatus = 2;
 			Debug.Log("I see you");
 		}
 		else {
-			// Disable exclamation mark
+			removeFromMarkerList();
 		}
+	}
+
+	void removeFromMarkerList() {
+		Debug.Log(enemyAlertMarkers);
+		if (enemyAlertMarkers == null) {
+			return;
+		}
+		foreach (int item in enemyAlertMarkers) {
+			if ((int)item == pView.ViewID) {
+				enemyAlertMarkers.Remove(item);
+			}
+		}
+		alertStatus = 0;
 	}
 
 	// Draw a sphere to see effective range for stealth

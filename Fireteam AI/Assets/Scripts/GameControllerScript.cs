@@ -23,7 +23,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public static Dictionary<int, GameObject> playerList = new Dictionary<int, GameObject> ();
 	public static Dictionary<string, int> totalKills = new Dictionary<string, int> ();
 	public static Dictionary<string, int> totalDeaths = new Dictionary<string, int> ();
-	public GameObject[] enemyList;
+  public Dictionary<int, GameObject> enemyList = new Dictionary<int, GameObject> ();
+  public ArrayList enemyAlertMarkers;
 
     // Bomb defusal mission variables
 	public GameObject[] bombs;
@@ -75,6 +76,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		lastGunshotHeardPos = Vector3.negativeInfinity;
 		lastGunshotHeardPosClone = Vector3.negativeInfinity;
 
+    enemyAlertMarkers = new ArrayList ();
 	}
 
 	// Update is called once per frame
@@ -241,14 +243,14 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		deadCount = 0;
 		escaperCount = 0;
 	}
-		
+
     bool CheckOutOfTime() {
         if (missionTime >= MAX_MISSION_TIME) {
 			return true;
         }
 		return false;
     }
-		
+
 
 
 	/**public override void OnJoinedRoom()
