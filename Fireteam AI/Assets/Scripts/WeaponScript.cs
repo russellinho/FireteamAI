@@ -211,6 +211,8 @@ public class WeaponScript : MonoBehaviour
         weaponReady = false;
         if (!equipmentScript.isFirstPerson()) {
             animator.SetInteger("WeaponType", weaponCat);
+        } else {
+            weaponActionScript.animatorFpc.SetInteger("WeaponType", weaponCat);
         }
         currentlyEquippedType = weaponCat;
         EquipWeapon(equippedType, equippedWep, equippedSuppressor, null);
@@ -313,6 +315,8 @@ public class WeaponScript : MonoBehaviour
                 currentlyEquippedType = 1;
                 if (equipmentScript.isFirstPerson()) {
                     wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
+                    weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
@@ -328,9 +332,13 @@ public class WeaponScript : MonoBehaviour
             case "Pistol":
                 if (!onTitle) {
                     currentlyEquippedType = 2;
-                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     if (equipmentScript.isFirstPerson()) {
+                        wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                        weaponActionScript.animatorFpc.SetInteger("WeaponType", 2);
+                        weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                         weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    } else {
+                        wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     }
                 }
                 equippedWep = weaponName;
@@ -344,9 +352,13 @@ public class WeaponScript : MonoBehaviour
                 break;
             case "Shotgun":
                 currentlyEquippedType = 1;
-                wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 if (equipmentScript.isFirstPerson()) {
+                    wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
+                    weaponActionScript.animatorFpc.SetBool("isShotgun", true);
                     weaponHolderFpc.LoadWeapon(w.prefabPath);
+                } else {
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
                 equippedWep = weaponName;
                 EquipShotgun(weaponName);
@@ -359,9 +371,13 @@ public class WeaponScript : MonoBehaviour
                 break;
             case "Sniper Rifle":
                 currentlyEquippedType = 1;
-                wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 if (equipmentScript.isFirstPerson()) {
+                    wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
+                    weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                     weaponHolderFpc.LoadWeapon(w.prefabPath);
+                } else {
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
                 equippedWep = weaponName;
                 EquipSniperRifle(weaponName);
@@ -375,9 +391,13 @@ public class WeaponScript : MonoBehaviour
             case "Explosive":
                 if (!onTitle) {
                     currentlyEquippedType = 4;
-                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     if (equipmentScript.isFirstPerson()) {
+                        wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                        weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
+                        weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                         weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    } else {
+                        wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     }
                 }
                 equippedWep = weaponName;
@@ -389,9 +409,13 @@ public class WeaponScript : MonoBehaviour
             case "Booster":
                 if (!onTitle) {
                     currentlyEquippedType = 4;
-                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     if (equipmentScript.isFirstPerson()) {
+                        wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                        weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
+                        weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                         weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    } else {
+                        wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     }
                 }
                 equippedWep = weaponName;
@@ -401,11 +425,12 @@ public class WeaponScript : MonoBehaviour
                 }
                 break;
         }
+        
         if (wepEquipped != null)
         {
             drawnWeaponReference = wepEquipped;
         }
-
+        
         if (onTitle) {
             // Shop GUI stuff
             if (shopItemRef != null) {

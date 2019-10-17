@@ -21,7 +21,7 @@ public class WeaponActionScript : MonoBehaviour
     private AudioSource reloadSound;
     public Animator animator;
     public Animator animatorFpc;
-    private WeaponStats weaponStats;
+    public WeaponStats weaponStats;
     private WeaponMods weaponMods;
 
     // Projectile spread constants
@@ -196,6 +196,7 @@ public class WeaponActionScript : MonoBehaviour
 //        Debug.Log(shootInput + " " + isReloading + " " + playerActionScript.canShoot);
         if (shootInput && !isReloading && playerActionScript.canShoot)
         {
+            Debug.Log("ey m8");
             if (currentAmmo > 0)
             {
                 if (shotMode == ShotMode.Single) {
@@ -612,6 +613,20 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
+    public void ReloadShotgun() {
+        if (!isCocking)
+        {
+            if (totalAmmoLeft <= 0)
+                return;
+
+            totalAmmoLeft--;
+            currentAmmo++;
+        }
+        if (weaponStats.reloadSound != null) {
+            pView.RPC("RpcPlayReloadSound", RpcTarget.All);
+        }
+    }
+
     private void ReloadSupportItem() {
         if (totalAmmoLeft > 0) {
             totalAmmoLeft -= weaponStats.clipCapacity;
@@ -662,7 +677,12 @@ public class WeaponActionScript : MonoBehaviour
         //     animatorFpc.SetTrigger("Reloading");
         // } else {
             //animator.CrossFadeInFixedTime("Reload", 0.1f);
-            animatorFpc.Play("Reload");
+            if (weaponStats.category.Equals("Shotgun")) {
+                animatorFpc.Play("ShotgunLoad");
+            } else {
+                animatorFpc.Play("Reload");
+            }
+            // animatorFpc.SetTrigger("Reload");
             weaponStats.weaponAnimator.Play("Reload");
         // }
     }
@@ -681,8 +701,17 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     void FpcCockingAnim() {
-        animatorFpc.CrossFadeInFixedTime("Reload", 0.1f, -1, 1f);
-        weaponStats.weaponAnimator.CrossFadeInFixedTime("Reload", 0.1f, -1, 1f);
+        if (weaponStats.category.Equals("Shotgun")) {
+            animatorFpc.Play("ShotgunCock");
+            FpcCockShotgun();
+        } else {
+            weaponStats.weaponAnimator.CrossFadeInFixedTime("Reload", 0.1f, -1, 1f);
+            animatorFpc.CrossFadeInFixedTime("Reload", 0.1f, -1, 1f);
+        }
+    }
+
+    public void FpcCockShotgun() {
+        weaponStats.weaponAnimator.Play("Reload");
     }
 
     [PunRPC]

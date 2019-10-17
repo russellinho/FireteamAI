@@ -4906,6 +4906,7 @@ GameObject:
   - component: {fileID: 7519509711271469613}
   - component: {fileID: 7474396441920835930}
   - component: {fileID: 1332715869736488834}
+  - component: {fileID: 5744465215577492251}
   m_Layer: 16
   m_Name: R870
   m_TagString: Untagged
@@ -5171,6 +5172,7 @@ MonoBehaviour:
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: e62a29bc8cfa7f647ba292410ece9d37,
     type: 2}
+  weaponAnimator: {fileID: 5744465215577492251}
 --- !u!114 &1332715869736488834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5186,6 +5188,25 @@ MonoBehaviour:
   suppressorScaler: {x: 0, y: 0, z: 0}
   suppressorPos: {fileID: 0}
   suppressorRef: {fileID: 0}
+--- !u!95 &5744465215577492251
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7246815484539969077}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: fd44e436b5665b048b8a5b8c73d20552, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &8714561627636426241
 PrefabInstance:
   m_ObjectHideFlags: 0
