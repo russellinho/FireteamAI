@@ -336,7 +336,6 @@ public class WeaponScript : MonoBehaviour
                         wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
                         weaponActionScript.animatorFpc.SetInteger("WeaponType", 2);
                         weaponActionScript.animatorFpc.SetBool("isShotgun", false);
-                        weaponHolderFpc.LoadWeapon(w.prefabPath);
                     } else {
                         wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     }
@@ -356,7 +355,6 @@ public class WeaponScript : MonoBehaviour
                     wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
                     weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
                     weaponActionScript.animatorFpc.SetBool("isShotgun", true);
-                    weaponHolderFpc.LoadWeapon(w.prefabPath);
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
@@ -375,7 +373,6 @@ public class WeaponScript : MonoBehaviour
                     wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
                     weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
                     weaponActionScript.animatorFpc.SetBool("isShotgun", false);
-                    weaponHolderFpc.LoadWeapon(w.prefabPath);
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
@@ -395,7 +392,6 @@ public class WeaponScript : MonoBehaviour
                         wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
                         weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
                         weaponActionScript.animatorFpc.SetBool("isShotgun", false);
-                        weaponHolderFpc.LoadWeapon(w.prefabPath);
                     } else {
                         wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     }
@@ -413,7 +409,6 @@ public class WeaponScript : MonoBehaviour
                         wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
                         weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
                         weaponActionScript.animatorFpc.SetBool("isShotgun", false);
-                        weaponHolderFpc.LoadWeapon(w.prefabPath);
                     } else {
                         wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     }

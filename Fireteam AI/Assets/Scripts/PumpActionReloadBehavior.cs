@@ -21,7 +21,7 @@ public class PumpActionReloadBehavior : StateMachineBehaviour
         if (hasReloaded) return;
         if (stateInfo.normalizedTime >= reloadTime) {
             if (weaponActionScript.currentAmmo >= weaponActionScript.weaponStats.clipCapacity) {
-                animator.SetTrigger("Cock");
+                animator.SetTrigger("CockShotgun");
             } else {
                 weaponActionScript.ReloadShotgun();
             }

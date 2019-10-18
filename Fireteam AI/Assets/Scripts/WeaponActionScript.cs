@@ -196,7 +196,6 @@ public class WeaponActionScript : MonoBehaviour
 //        Debug.Log(shootInput + " " + isReloading + " " + playerActionScript.canShoot);
         if (shootInput && !isReloading && playerActionScript.canShoot)
         {
-            Debug.Log("ey m8");
             if (currentAmmo > 0)
             {
                 if (shotMode == ShotMode.Single) {

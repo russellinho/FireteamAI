@@ -632,6 +632,7 @@ MonoBehaviour:
   weaponHolderFpc: {fileID: 759282469816766716}
   animator: {fileID: 7942259398579088921}
   animatorFpc: {fileID: 4166761373127457227}
+  weaponStats: {fileID: 0}
   spread: 0
   totalAmmoLeft: 0
   currentAmmo: 0
@@ -814,7 +815,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 580623507002314523}
   viewIdField: 0
-  InstantiationId: 4
+  InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &580623507002314523
 MonoBehaviour:
