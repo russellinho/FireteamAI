@@ -310,6 +310,7 @@ GameObject:
   - component: {fileID: 4756034625404087878}
   - component: {fileID: 4193973598696506364}
   - component: {fileID: 6958528854486181673}
+  - component: {fileID: 2555637585113248637}
   m_Layer: 16
   m_Name: M4A1
   m_TagString: Untagged
@@ -673,6 +674,7 @@ MonoBehaviour:
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: e3183ca19050b924f9663368a8a939f3,
     type: 2}
+  weaponAnimator: {fileID: 0}
 --- !u!114 &6958528854486181673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -688,6 +690,25 @@ MonoBehaviour:
   suppressorScaler: {x: 2, y: 2, z: 2}
   suppressorPos: {fileID: 6658176542305469334}
   suppressorRef: {fileID: 0}
+--- !u!95 &2555637585113248637
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5725033452433893719}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 795e2a45ff59df54899e201f0c5c1f35, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &7495531893334663245
 GameObject:
   m_ObjectHideFlags: 0
