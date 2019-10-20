@@ -4645,6 +4645,36 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!1 &1526304813192994424
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2753802585551084857}
+  m_Layer: 16
+  m_Name: ShellPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2753802585551084857
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1526304813192994424}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.059, y: 0.161, z: 0.061}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5383536960208924904}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1769380044830635559
 GameObject:
   m_ObjectHideFlags: 0
@@ -4744,6 +4774,7 @@ Transform:
   - {fileID: 1840596632885301671}
   - {fileID: 2311903087163953047}
   - {fileID: 1441665165501073217}
+  - {fileID: 2753802585551084857}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: -90}
@@ -5070,6 +5101,9 @@ MonoBehaviour:
   reloadSound: {fileID: 5492290062715557013}
   gunSmoke: {fileID: 3013963004515157933, guid: 22f01094768fa2c4e8513fa10c2a4c94,
     type: 3}
+  weaponShell: {fileID: 495810041075087592, guid: 01f2dbe1746c1dc46923a4d9bf972eb9,
+    type: 3}
+  weaponShellPoint: {fileID: 2753802585551084857}
   muzzleFlash: {fileID: 6429990121772297589}
   bulletTracer: {fileID: 6810274940899095293}
   fpcPosMale: {x: -0.000388, y: 0.001686, z: -0.000453}
@@ -5082,7 +5116,7 @@ MonoBehaviour:
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: 176a06a46179094459627c57b56fdfb7,
     type: 2}
-  weaponAnimator: {fileID: 0}
+  weaponAnimator: {fileID: 1349628395274398008}
 --- !u!114 &3747978999549937094
 MonoBehaviour:
   m_ObjectHideFlags: 0

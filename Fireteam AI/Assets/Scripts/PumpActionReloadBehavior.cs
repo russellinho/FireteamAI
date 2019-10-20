@@ -15,7 +15,7 @@ public class PumpActionReloadBehavior : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (weaponActionScript.currentAmmo >= weaponActionScript.weaponStats.clipCapacity) {
+        if (weaponActionScript.currentAmmo >= weaponActionScript.weaponStats.clipCapacity || Input.GetButtonDown("Fire1")) {
             animator.SetTrigger("CockShotgun");
         }
     }

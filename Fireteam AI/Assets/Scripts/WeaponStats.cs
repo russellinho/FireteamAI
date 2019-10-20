@@ -26,6 +26,8 @@ public class WeaponStats : MonoBehaviour
     public AudioSource suppressedFireSound;
     public AudioSource reloadSound;
     public GameObject gunSmoke;
+    public GameObject weaponShell;
+    public Transform weaponShellPoint;
     public ParticleSystem muzzleFlash;
     public ParticleSystem bulletTracer;
     public Vector3 fpcPosMale;
