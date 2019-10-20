@@ -106,7 +106,22 @@ public class WeaponActionScript : MonoBehaviour
 
         mouseLook = fpc.m_MouseLook;
 
+        // Create animation event for shotgun reload
+
+        CreateAnimEvents();
+
         CockingAction();
+    }
+
+    void CreateAnimEvents() {
+        foreach (AnimationClip a in animatorFpc.runtimeAnimatorController.animationClips) {
+            AnimationEvent ae = new AnimationEvent();
+            ae.time = 0.7f;
+            ae.functionName = "ReloadShotgun";
+            if (a.name.Equals("Loading_R870")) {
+                a.AddEvent(ae);
+            }
+        }
     }
 
     // Update is called once per frame

@@ -747,6 +747,7 @@ GameObject:
   m_Component:
   - component: {fileID: 597822533608994311}
   - component: {fileID: 597822533616146877}
+  - component: {fileID: 4257285366985529038}
   m_Layer: 0
   m_Name: male_tpose
   m_TagString: Untagged
@@ -791,6 +792,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &4257285366985529038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 597822533608892967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aa0cb88862b5b846898a986c2207a70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &597822533608892969
 GameObject:
   m_ObjectHideFlags: 0
@@ -84353,6 +84366,8 @@ MonoBehaviour:
   weaponHolderFpc: {fileID: 5461938729601218067}
   animator: {fileID: 7370182251479305743}
   ts: {fileID: 0}
+  titleAnimFemale: {fileID: 0}
+  titleAnimMale: {fileID: 0}
   equippedPrimaryWeapon: 
   equippedPrimaryType: 
   equippedSecondaryWeapon: 
@@ -84667,6 +84682,7 @@ MonoBehaviour:
   weaponHolderFpc: {fileID: 1387229697518531526}
   animator: {fileID: 7370182251479305743}
   animatorFpc: {fileID: 597822533616146877}
+  weaponStats: {fileID: 0}
   spread: 0
   totalAmmoLeft: 0
   currentAmmo: 0
@@ -84684,7 +84700,6 @@ MonoBehaviour:
   firingMode: 0
   shotMode: 0
   camTransform: {fileID: 2228306718875644030}
-  aodSpeed: 8
   pView: {fileID: 9158664062041186699}
   isCockingGrenade: 0
   rightCollar: {fileID: 597822533608994393}

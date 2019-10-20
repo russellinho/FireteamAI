@@ -442,6 +442,7 @@ MonoBehaviour:
   weaponHolderFpc: {fileID: 7375265209876500247}
   animator: {fileID: 4260894050290283357}
   animatorFpc: {fileID: 9030208476783093100}
+  weaponStats: {fileID: 0}
   spread: 0
   totalAmmoLeft: 0
   currentAmmo: 0
@@ -624,7 +625,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 720653860272823643}
   viewIdField: 0
-  InstantiationId: -1
+  InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &720653860272823643
 MonoBehaviour:
@@ -45159,6 +45160,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9030208476792900310}
   - component: {fileID: 9030208476783093100}
+  - component: {fileID: 1642172559254904132}
   m_Layer: 0
   m_Name: male_tpose
   m_TagString: Untagged
@@ -45203,6 +45205,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1642172559254904132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9030208476792608502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aa0cb88862b5b846898a986c2207a70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9030208476792608504
 GameObject:
   m_ObjectHideFlags: 0

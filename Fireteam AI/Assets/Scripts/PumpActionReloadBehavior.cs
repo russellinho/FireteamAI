@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class PumpActionReloadBehavior : StateMachineBehaviour
 {
-
-	public float reloadTime;
-	bool hasReloaded = false;
     private WeaponActionScript weaponActionScript;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
@@ -18,13 +15,8 @@ public class PumpActionReloadBehavior : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (hasReloaded) return;
-        if (stateInfo.normalizedTime >= reloadTime) {
-            if (weaponActionScript.currentAmmo >= weaponActionScript.weaponStats.clipCapacity) {
-                animator.SetTrigger("CockShotgun");
-            } else {
-                weaponActionScript.ReloadShotgun();
-            }
+        if (weaponActionScript.currentAmmo >= weaponActionScript.weaponStats.clipCapacity) {
+            animator.SetTrigger("CockShotgun");
         }
     }
 
