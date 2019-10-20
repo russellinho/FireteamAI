@@ -9,6 +9,9 @@ using UnityStandardAssets.Characters.FirstPerson;
 public class WeaponActionScript : MonoBehaviour
 {
 
+    private const float SHELL_SPEED = 3f;
+    private const float SHELL_TUMBLE = 4f;
+
     public MouseLook mouseLook;
     public PlayerActionScript playerActionScript;
     public CameraShakeScript cameraShakeScript;
@@ -216,7 +219,7 @@ public class WeaponActionScript : MonoBehaviour
                 if (shotMode == ShotMode.Single) {
                     Fire();
                 } else {
-                    FireBurst();
+                    FireBoltAction();
                 }
                 voidRecoilRecover = false;
             }
@@ -390,6 +393,8 @@ public class WeaponActionScript : MonoBehaviour
 
         cameraShakeScript.SetShake(true);
         animatorFpc.Play("Firing");
+        weaponStats.weaponAnimator.Play("Fire");
+        SpawnShellCasing();
         IncreaseSpread();
         IncreaseRecoil();
         UpdateRecoil(true);
@@ -447,7 +452,25 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
-    public void FireBurst ()
+    public void SpawnShellCasing() {
+        GameObject o = Instantiate(weaponStats.weaponShell, weaponStats.weaponShellPoint.position, Quaternion.Euler(0f, 0f, 0f));
+        o.transform.forward = -weaponStats.transform.right;
+        o.GetComponent<Rigidbody>().velocity = weaponStats.transform.forward * SHELL_SPEED;
+        o.GetComponent<Rigidbody>().angularVelocity = Random.insideUnitSphere * SHELL_TUMBLE;
+        Destroy(o, 3f);
+        pView.RPC("RpcSpawnShellCasing", RpcTarget.Others);
+    }
+
+    [PunRPC]
+    void RpcSpawnShellCasing() {
+        GameObject o = Instantiate(weaponStats.weaponShell, weaponStats.weaponShellPoint.position, Quaternion.Euler(-90f, -90f, 90f));
+        o.transform.forward = -weaponStats.transform.right;
+        o.GetComponent<Rigidbody>().velocity = weaponStats.transform.forward * SHELL_SPEED;
+        o.GetComponent<Rigidbody>().angularVelocity = Random.insideUnitSphere * SHELL_TUMBLE;
+        Destroy(o, 3f);
+    }
+
+    public void FireBoltAction ()
     {
         if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading)
         {

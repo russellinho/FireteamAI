@@ -5,9 +5,14 @@ using UnityEngine;
 public class PumpActionCockBehavior : StateMachineBehaviour
 {
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
+
+    private WeaponActionScript was;
+
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animator.gameObject.GetComponentInParent<WeaponActionScript>().FpcCockShotgun();
+        was = animator.GetComponentInParent<WeaponActionScript>();
+        was.FpcCockShotgun();
+        was.SpawnShellCasing();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -19,7 +24,6 @@ public class PumpActionCockBehavior : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        WeaponActionScript was = animator.GetComponentInParent<WeaponActionScript>();
         was.isCocking = false;
 		was.isReloading = false;
     }
