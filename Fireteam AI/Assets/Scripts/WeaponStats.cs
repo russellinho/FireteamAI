@@ -39,5 +39,9 @@ public class WeaponStats : MonoBehaviour
     public AnimatorOverrideController maleOverrideController;
     public AnimatorOverrideController femaleOverrideController;
     public Animator weaponAnimator;
+    public float defaultFpcReloadSpeed;
+    public float defaultWeaponReloadSpeed;
+    public float reloadTransitionSpeed;
+    public float cockStartTime;
 
 }

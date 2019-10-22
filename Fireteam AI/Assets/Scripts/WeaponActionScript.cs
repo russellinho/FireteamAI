@@ -714,13 +714,15 @@ public class WeaponActionScript : MonoBehaviour
         //     animatorFpc.SetTrigger("Reloading");
         // } else {
             //animator.CrossFadeInFixedTime("Reload", 0.1f);
-            if (weaponStats.category.Equals("Shotgun")) {
-                animatorFpc.Play("ShotgunLoad");
-            } else {
-                animatorFpc.Play("Reload");
-            }
+            // if (weaponStats.category.Equals("Shotgun")) {
+            //     animatorFpc.Play("ShotgunLoad");
+            // } else {
+            //     animatorFpc.Play("Reload");
+            // }
             // animatorFpc.SetTrigger("Reload");
-            weaponStats.weaponAnimator.Play("Reload");
+            animatorFpc.CrossFade("Reload", weaponStats.reloadTransitionSpeed);
+            FpcChangeMagazine(weaponStats.reloadTransitionSpeed);
+            // FpcChangeMagazine();
         // }
     }
 
@@ -742,13 +744,18 @@ public class WeaponActionScript : MonoBehaviour
             animatorFpc.Play("ShotgunCock");
             FpcCockShotgun();
         } else {
-            weaponStats.weaponAnimator.CrossFadeInFixedTime("Reload", 0.1f, -1, 1f);
-            animatorFpc.CrossFadeInFixedTime("Reload", 0.1f, -1, 1f);
+            weaponStats.weaponAnimator.Play("Reload", 0, weaponStats.cockStartTime);
+            animatorFpc.Play("Reload", 0, weaponStats.cockStartTime);
         }
     }
 
     public void FpcCockShotgun() {
         weaponStats.weaponAnimator.Play("Reload");
+    }
+
+    public void FpcChangeMagazine(float startFrame) {
+        // weaponStats.weaponAnimator.Play("Reload", 0, startFrame);
+        weaponStats.weaponAnimator.CrossFade("Reload", startFrame);
     }
 
     [PunRPC]
@@ -842,6 +849,12 @@ public class WeaponActionScript : MonoBehaviour
         } else {
             fpc.fpcAnimator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;
         }
+        SetReloadSpeed();
+    }
+
+    public void SetReloadSpeed(float multipler = 1f) {
+        animatorFpc.SetFloat("ReloadSpeed", weaponStats.defaultFpcReloadSpeed * multipler);
+        weaponStats.weaponAnimator.SetFloat("ReloadSpeed", weaponStats.defaultWeaponReloadSpeed * multipler);
     }
 
     public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {

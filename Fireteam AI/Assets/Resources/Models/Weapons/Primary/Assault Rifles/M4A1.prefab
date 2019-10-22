@@ -664,6 +664,7 @@ MonoBehaviour:
   gunSmoke: {fileID: 3013963004515157933, guid: 22f01094768fa2c4e8513fa10c2a4c94,
     type: 3}
   weaponShell: {fileID: 0}
+  weaponShellPoint: {fileID: 0}
   muzzleFlash: {fileID: 769095558280985029}
   bulletTracer: {fileID: 5982825342497029221}
   fpcPosMale: {x: -0.000135, y: 0.001877, z: -0.00058}
@@ -677,6 +678,9 @@ MonoBehaviour:
   femaleOverrideController: {fileID: 22100000, guid: e3183ca19050b924f9663368a8a939f3,
     type: 2}
   weaponAnimator: {fileID: 2555637585113248637}
+  defaultFpcReloadSpeed: 0
+  defaultWeaponReloadSpeed: 0
+  reloadTransitionSpeed: 0.2
 --- !u!114 &6958528854486181673
 MonoBehaviour:
   m_ObjectHideFlags: 0
