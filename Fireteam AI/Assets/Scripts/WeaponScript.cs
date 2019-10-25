@@ -152,7 +152,7 @@ public class WeaponScript : MonoBehaviour
         {
             return;
         }
-        if (equipmentScript.isFirstPerson() && !weaponActionScript.isCockingGrenade) {
+        if (CheckCanSwitchWeapon()) {
             if (Input.GetKeyDown(KeyCode.Alpha1)) {
                 DrawPrimary();
             } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
@@ -161,6 +161,18 @@ public class WeaponScript : MonoBehaviour
                 DrawSupport();
             }
         }
+    }
+
+    // If the user has a grenade cocked or is currently loading a weapon, don't let him switch weapons
+    bool CheckCanSwitchWeapon() {
+        if (!equipmentScript.isFirstPerson()) {
+            return false;
+        } else if (weaponActionScript.isCockingGrenade) {
+            return false;
+        } else if (weaponActionScript.isCocking) {
+            return false;
+        }
+        return true;
     }
 
     void DrawWeapon(int weaponCat) {
@@ -195,7 +207,8 @@ public class WeaponScript : MonoBehaviour
         }
         ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(equippedWep);
         pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, equippedType, modInfo.equippedSuppressor);
-
+        // Cock weapon upon drawing weapon
+        weaponActionScript.CockingAction();
     }
 
     // void SetAnimationsForWeapon() {

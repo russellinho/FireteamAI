@@ -663,8 +663,9 @@ MonoBehaviour:
   reloadSound: {fileID: 4756034625404087878}
   gunSmoke: {fileID: 3013963004515157933, guid: 22f01094768fa2c4e8513fa10c2a4c94,
     type: 3}
-  weaponShell: {fileID: 0}
-  weaponShellPoint: {fileID: 0}
+  weaponShell: {fileID: 1024758332188650045, guid: 453aecfa68509a74aa388ce58f54eb75,
+    type: 3}
+  weaponShellPoint: {fileID: 1340159367887962039}
   muzzleFlash: {fileID: 769095558280985029}
   bulletTracer: {fileID: 5982825342497029221}
   fpcPosMale: {x: -0.000135, y: 0.001877, z: -0.00058}
@@ -678,9 +679,10 @@ MonoBehaviour:
   femaleOverrideController: {fileID: 22100000, guid: e3183ca19050b924f9663368a8a939f3,
     type: 2}
   weaponAnimator: {fileID: 2555637585113248637}
-  defaultFpcReloadSpeed: 0
-  defaultWeaponReloadSpeed: 0
+  defaultFpcReloadSpeed: 1.25
+  defaultWeaponReloadSpeed: 0.625
   reloadTransitionSpeed: 0.2
+  cockStartTime: 0.6
 --- !u!114 &6958528854486181673
 MonoBehaviour:
   m_ObjectHideFlags: 0

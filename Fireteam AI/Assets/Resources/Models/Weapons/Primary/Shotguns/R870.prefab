@@ -5207,6 +5207,10 @@ MonoBehaviour:
   femaleOverrideController: {fileID: 22100000, guid: e62a29bc8cfa7f647ba292410ece9d37,
     type: 2}
   weaponAnimator: {fileID: 5744465215577492251}
+  defaultFpcReloadSpeed: 0
+  defaultWeaponReloadSpeed: 0
+  reloadTransitionSpeed: 0.2
+  cockStartTime: 0
 --- !u!114 &1332715869736488834
 MonoBehaviour:
   m_ObjectHideFlags: 0

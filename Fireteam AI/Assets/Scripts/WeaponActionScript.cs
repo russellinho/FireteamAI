@@ -113,7 +113,7 @@ public class WeaponActionScript : MonoBehaviour
 
         CreateAnimEvents();
 
-        CockingAction();
+        //CockingAction();
     }
 
     void CreateAnimEvents() {
