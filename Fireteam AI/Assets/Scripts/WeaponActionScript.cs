@@ -472,13 +472,14 @@ public class WeaponActionScript : MonoBehaviour
 
     public void FireBoltAction ()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading)
+        if (currentAmmo <= 0 || isReloading || isCocking)
         {
             return;
         }
 
         cameraShakeScript.SetShake(true);
         animatorFpc.Play("Firing");
+        isCocking = true;
         IncreaseRecoil();
         UpdateRecoil(true);
         RaycastHit hit;
