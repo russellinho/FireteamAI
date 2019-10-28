@@ -50,6 +50,7 @@ public class WeaponActionScript : MonoBehaviour
     public Transform fpcShootPoint;
     public bool isReloading = false;
     public bool isCocking = false;
+    public bool isFiring = false;
     public bool isAiming;
     // Used for allowing arms to move during aim down sight movement
     private bool aimDownSightsLock;
@@ -171,6 +172,7 @@ public class WeaponActionScript : MonoBehaviour
         {
             return;
         }
+        
         if (Input.GetKeyDown(KeyCode.R))
         {
             if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0)
@@ -211,7 +213,13 @@ public class WeaponActionScript : MonoBehaviour
             FireBooster();
             return;
         }
-//        Debug.Log(shootInput + " " + isReloading + " " + playerActionScript.canShoot);
+
+        // Automatically reload if no ammo
+        if (currentAmmo <= 0 && !isFiring && totalAmmoLeft > 0 && !isReloading && playerActionScript.canShoot) {
+            cameraShakeScript.SetShake(false);
+            ReloadAction();
+        }
+
         if (shootInput && !isReloading && playerActionScript.canShoot)
         {
             if (currentAmmo > 0)
@@ -223,11 +231,11 @@ public class WeaponActionScript : MonoBehaviour
                 }
                 voidRecoilRecover = false;
             }
-            else if (totalAmmoLeft > 0)
-            {
-                cameraShakeScript.SetShake(false);
-                ReloadAction();
-            }
+            // else if (totalAmmoLeft > 0)
+            // {
+            //     cameraShakeScript.SetShake(false);
+            //     ReloadAction();
+            // }
         }
         else
         {
@@ -386,13 +394,14 @@ public class WeaponActionScript : MonoBehaviour
     // Comment
     public void Fire()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking)
         {
             return;
         }
 
         cameraShakeScript.SetShake(true);
         animatorFpc.Play("Firing");
+        isFiring = true;
         weaponStats.weaponAnimator.Play("Fire");
         SpawnShellCasing();
         IncreaseSpread();
@@ -472,7 +481,7 @@ public class WeaponActionScript : MonoBehaviour
 
     public void FireBoltAction ()
     {
-        if (currentAmmo <= 0 || isReloading || isCocking)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking)
         {
             return;
         }
@@ -480,6 +489,7 @@ public class WeaponActionScript : MonoBehaviour
         cameraShakeScript.SetShake(true);
         animatorFpc.Play("Firing");
         isCocking = true;
+        isFiring = true;
         IncreaseRecoil();
         UpdateRecoil(true);
         RaycastHit hit;
@@ -715,14 +725,13 @@ public class WeaponActionScript : MonoBehaviour
         //     animatorFpc.SetTrigger("Reloading");
         // } else {
             //animator.CrossFadeInFixedTime("Reload", 0.1f);
-            // if (weaponStats.category.Equals("Shotgun")) {
-            //     animatorFpc.Play("ShotgunLoad");
-            // } else {
-            //     animatorFpc.Play("Reload");
-            // }
+            if (weaponStats.category.Equals("Shotgun")) {
+                animatorFpc.CrossFade("ShotgunLoad", weaponStats.reloadTransitionSpeed);
+            } else {
+                animatorFpc.CrossFade("Reload", weaponStats.reloadTransitionSpeed);
+                FpcChangeMagazine(weaponStats.reloadTransitionSpeed);
+            }
             // animatorFpc.SetTrigger("Reload");
-            animatorFpc.CrossFade("Reload", weaponStats.reloadTransitionSpeed);
-            FpcChangeMagazine(weaponStats.reloadTransitionSpeed);
             // FpcChangeMagazine();
         // }
     }
@@ -743,7 +752,7 @@ public class WeaponActionScript : MonoBehaviour
     void FpcCockingAnim() {
         if (weaponStats.category.Equals("Shotgun")) {
             animatorFpc.Play("ShotgunCock");
-            FpcCockShotgun();
+            //FpcCockShotgun();
         } else {
             weaponStats.weaponAnimator.Play("Reload", 0, weaponStats.cockStartTime);
             animatorFpc.Play("Reload", 0, weaponStats.cockStartTime);
@@ -851,11 +860,16 @@ public class WeaponActionScript : MonoBehaviour
             fpc.fpcAnimator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;
         }
         SetReloadSpeed();
+        SetFiringSpeed();
     }
 
     public void SetReloadSpeed(float multipler = 1f) {
         animatorFpc.SetFloat("ReloadSpeed", weaponStats.defaultFpcReloadSpeed * multipler);
         weaponStats.weaponAnimator.SetFloat("ReloadSpeed", weaponStats.defaultWeaponReloadSpeed * multipler);
+    }
+
+    public void SetFiringSpeed(float multiplier = 1f) {
+        animatorFpc.SetFloat("FireSpeed", weaponStats.defaultFireSpeed * multiplier);
     }
 
     public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {

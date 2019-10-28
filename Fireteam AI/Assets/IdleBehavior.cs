@@ -2,27 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PumpActionReloadBehavior : StateMachineBehaviour
+public class IdleBehavior : StateMachineBehaviour
 {
-    private WeaponActionScript weaponActionScript;
-    private bool done;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animator.ResetTrigger("CockShotgun");
-        done = false;
-        weaponActionScript = animator.GetComponentInParent<WeaponActionScript>();
-        weaponActionScript.isReloading = true;
+        WeaponActionScript was = animator.GetComponentInParent<WeaponActionScript>();
+       was.isCocking = false;
+       was.isCockingGrenade = false;
+       was.isFiring = false;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        if (!done && (weaponActionScript.currentAmmo >= weaponActionScript.weaponStats.clipCapacity || Input.GetButtonDown("Fire1"))) {
-            animator.SetTrigger("CockShotgun");
-            done = true;
-        }
-    }
+    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
+    //    
+    //}
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

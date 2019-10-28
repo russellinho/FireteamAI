@@ -41,6 +41,7 @@ public class WeaponStats : MonoBehaviour
     public Animator weaponAnimator;
     public float defaultFpcReloadSpeed;
     public float defaultWeaponReloadSpeed;
+    public float defaultFireSpeed;
     public float reloadTransitionSpeed;
     public float cockStartTime;
 

@@ -2,37 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PumpActionCockBehavior : StateMachineBehaviour
+public class FiringBehavior : StateMachineBehaviour
 {
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-
-    private WeaponActionScript was;
-    private bool shellCasingFired;
-
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        shellCasingFired = false;
-        was = animator.GetComponentInParent<WeaponActionScript>();
-        was.FpcCockShotgun();
-    }
+    //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
+    //    
+    //}
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-       if (stateInfo.normalizedTime >= 0.5f) {
-           was.isCocking = false;
-       }
-       if (!shellCasingFired && stateInfo.normalizedTime >= 0.2f) {
-           was.SpawnShellCasing();
-           shellCasingFired = true;
-       }
-    }
+    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
+    //    
+    //}
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        was.isCocking = false;
-		was.isReloading = false;
+       WeaponActionScript was = animator.GetComponentInParent<WeaponActionScript>();
+       was.isFiring = false;
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

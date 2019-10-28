@@ -114,7 +114,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4499242527628648946}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6496, y: 0.05, z: -0.0003}
+  m_LocalPosition: {x: -2.674, y: 0.2, z: -0.0003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3714699676722414183}
@@ -5173,7 +5173,7 @@ MonoBehaviour:
   category: Shotgun
   damage: 80
   mobility: 95
-  fireRate: 1.4
+  fireRate: 0.5
   accuracy: 0
   recoil: 8
   range: 40
@@ -5207,9 +5207,10 @@ MonoBehaviour:
   femaleOverrideController: {fileID: 22100000, guid: e62a29bc8cfa7f647ba292410ece9d37,
     type: 2}
   weaponAnimator: {fileID: 5744465215577492251}
-  defaultFpcReloadSpeed: 0
-  defaultWeaponReloadSpeed: 0
-  reloadTransitionSpeed: 0.2
+  defaultFpcReloadSpeed: 1
+  defaultWeaponReloadSpeed: 0.5
+  defaultFireSpeed: 1
+  reloadTransitionSpeed: 0.035
   cockStartTime: 0
 --- !u!114 &1332715869736488834
 MonoBehaviour:
