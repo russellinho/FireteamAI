@@ -616,6 +616,7 @@ public class WeaponScript : MonoBehaviour
     public void RespawnPlayer()
     {
         pView.RPC("RpcToggleWeaponVisible", RpcTarget.All, true);
+        weaponHolderFpc.SwitchWeaponToRightHand();
         //drawnSuppressorRenderer.enabled = true;
         DrawPrimary();
     }

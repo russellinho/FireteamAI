@@ -24740,6 +24740,8 @@ MonoBehaviour:
   handle: {fileID: 0}
   weapon: {fileID: 0}
   leftShoulder: {fileID: 6545086241112944531}
+  leftHand: {fileID: 0}
+  rightHand: {fileID: 0}
   fpc: {fileID: 4997301263046971767}
 --- !u!1 &3747650471785524426
 GameObject:
@@ -25521,6 +25523,7 @@ MonoBehaviour:
   fpcShootPoint: {fileID: 5358521169694850170}
   isReloading: 0
   isCocking: 0
+  isFiring: 0
   isAiming: 0
   hitParticles: {fileID: 1617700753897852, guid: 2b61531c3d65e3f4e949e45eb6021b7b,
     type: 3}
@@ -25790,6 +25793,8 @@ MonoBehaviour:
   handle: {fileID: 0}
   weapon: {fileID: 0}
   leftShoulder: {fileID: 8395974561293240434}
+  leftHand: {fileID: 8395974561293240346}
+  rightHand: {fileID: 8395974561293240344}
   fpc: {fileID: 4997301263046971767}
 --- !u!1 &6545086241112781377
 GameObject:

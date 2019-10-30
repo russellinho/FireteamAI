@@ -8,6 +8,8 @@ public class WeaponHandlerScript : MonoBehaviour
     public Transform handle;
     public Transform weapon;
     public Transform leftShoulder;
+    public Transform leftHand;
+    public Transform rightHand;
     private Vector3 steadyHandPos;
     private Vector3 originalShoulderPos;
     public FirstPersonController fpc;
@@ -78,6 +80,14 @@ public class WeaponHandlerScript : MonoBehaviour
         if (!Vector3.Equals(Vector3.zero, steadyHandPos) && !fpc.m_IsRunning) {
             leftShoulder.localPosition = new Vector3(steadyHandPos.x, steadyHandPos.y, steadyHandPos.z);
         }
+    }
+
+    public void SwitchWeaponToLeftHand() {
+        weapon.SetParent(leftHand);
+    }
+
+    public void SwitchWeaponToRightHand() {
+        weapon.SetParent(rightHand);
     }
 
 }

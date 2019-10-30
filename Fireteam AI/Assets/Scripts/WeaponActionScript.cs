@@ -119,10 +119,10 @@ public class WeaponActionScript : MonoBehaviour
 
     void CreateAnimEvents() {
         foreach (AnimationClip a in animatorFpc.runtimeAnimatorController.animationClips) {
-            AnimationEvent ae = new AnimationEvent();
-            ae.time = 0.7f;
-            ae.functionName = "ReloadShotgun";
             if (a.name.Equals("Loading_R870")) {
+                AnimationEvent ae = new AnimationEvent();
+                ae.time = 0.7f;
+                ae.functionName = "ReloadShotgun";
                 a.AddEvent(ae);
             }
         }
@@ -727,6 +727,8 @@ public class WeaponActionScript : MonoBehaviour
             //animator.CrossFadeInFixedTime("Reload", 0.1f);
             if (weaponStats.category.Equals("Shotgun")) {
                 animatorFpc.CrossFade("ShotgunLoad", weaponStats.reloadTransitionSpeed);
+            } else if (weaponStats.category.Equals("Sniper Rifle")) {
+                animatorFpc.CrossFade("BoltActionLoad", weaponStats.reloadTransitionSpeed);
             } else {
                 animatorFpc.CrossFade("Reload", weaponStats.reloadTransitionSpeed);
                 FpcChangeMagazine(weaponStats.reloadTransitionSpeed);
@@ -753,6 +755,8 @@ public class WeaponActionScript : MonoBehaviour
         if (weaponStats.category.Equals("Shotgun")) {
             animatorFpc.Play("ShotgunCock");
             //FpcCockShotgun();
+        } else if (weaponStats.category.Equals("Sniper Rifle")) {
+            animatorFpc.Play("BoltActionCock");
         } else {
             weaponStats.weaponAnimator.Play("Reload", 0, weaponStats.cockStartTime);
             animatorFpc.Play("Reload", 0, weaponStats.cockStartTime);
@@ -760,6 +764,14 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     public void FpcCockShotgun() {
+        weaponStats.weaponAnimator.Play("Reload");
+    }
+
+    public void FpcCockBoltAction() {
+        weaponStats.weaponAnimator.Play("Cock");
+    }
+
+    public void FpcLoadBoltAction() {
         weaponStats.weaponAnimator.Play("Reload");
     }
 
@@ -925,9 +937,7 @@ public class WeaponActionScript : MonoBehaviour
                 pView.RPC("RpcUseBooster", RpcTarget.All);
             }
         }
-
-
-        }
+    }
 
     public void UseSupportItem() {
         // If the item is a grenade, instantiate and launch the grenade

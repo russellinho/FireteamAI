@@ -7,4 +7,5 @@ public class FpcAnimationEventHelper : MonoBehaviour
     public void ReloadShotgun() {
         transform.GetComponentInParent<WeaponActionScript>().ReloadShotgun();
     }
+
 }
