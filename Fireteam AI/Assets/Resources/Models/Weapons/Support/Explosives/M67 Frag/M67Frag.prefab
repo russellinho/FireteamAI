@@ -451,12 +451,16 @@ MonoBehaviour:
   weaponShellPoint: {fileID: 0}
   muzzleFlash: {fileID: 0}
   bulletTracer: {fileID: 0}
-  fpcPosMale: {x: 0, y: 0, z: 0}
-  fpcRotMale: {x: 0, y: 0, z: 0}
-  fpcScaleMale: {x: 0, y: 0, z: 0}
-  fpcPosFemale: {x: 0, y: 0, z: 0}
-  fpcRotFemale: {x: 0, y: 0, z: 0}
-  fpcScaleFemale: {x: 0, y: 0, z: 0}
+  fpcPosMale: {x: -0.000434, y: 0.001399, z: -0.000124}
+  fpcLeftHandPosMale: {x: 0, y: 0, z: 0}
+  fpcLeftHandRotMale: {x: 0, y: 0, z: 0}
+  fpcRotMale: {x: 23.805, y: -117.915, z: 60.46}
+  fpcScaleMale: {x: 0.001215708, y: 0.001215708, z: 0.001215708}
+  fpcPosFemale: {x: -0.000434, y: 0.001399, z: -0.000124}
+  fpcLeftHandPosFemale: {x: 0, y: 0, z: 0}
+  fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
+  fpcRotFemale: {x: 23.805, y: -117.915, z: 60.46}
+  fpcScaleFemale: {x: 0.001215708, y: 0.001215708, z: 0.001215708}
   maleOverrideController: {fileID: 0}
   femaleOverrideController: {fileID: 0}
   weaponAnimator: {fileID: 0}
