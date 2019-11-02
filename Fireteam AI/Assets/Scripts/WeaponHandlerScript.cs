@@ -83,11 +83,20 @@ public class WeaponHandlerScript : MonoBehaviour
     }
 
     public void SwitchWeaponToLeftHand() {
-        weapon.SetParent(leftHand);
+        WeaponStats wepStats = weapon.GetComponent<WeaponStats>();
+        weapon.SetParent(leftHand, false);
+        if (fpc.equipmentScript.gender == 'M') {
+            weapon.localPosition = wepStats.fpcLeftHandPosMale;
+            weapon.localRotation = Quaternion.Euler(wepStats.fpcLeftHandRotMale);            
+        } else if (fpc.equipmentScript.gender == 'F') {
+            weapon.localPosition = wepStats.fpcLeftHandPosFemale;
+            weapon.localRotation = Quaternion.Euler(wepStats.fpcLeftHandRotFemale);
+        }
     }
 
     public void SwitchWeaponToRightHand() {
-        weapon.SetParent(rightHand);
+        weapon.SetParent(gameObject.transform, false);
+        SetWeaponPosition(true);
     }
 
 }

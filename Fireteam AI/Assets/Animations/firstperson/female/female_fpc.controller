@@ -192,6 +192,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: isShotgun
     m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isBoltAction
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -8366318837900180111}
   m_Solo: 0
@@ -300,7 +303,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: BoltActionLoad
-  m_Speed: 1
+  m_Speed: 0.25
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -1859425793630426199}
@@ -407,6 +410,12 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
+  - m_Name: isBoltAction
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
   - m_Name: ReloadSpeed
     m_Type: 1
     m_DefaultFloat: 0
@@ -499,6 +508,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 2
     m_ConditionEvent: isShotgun
     m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isBoltAction
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102381845598262758}
   m_Solo: 0
@@ -576,6 +588,9 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: isShotgun
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isBoltAction
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102032924175839876}
@@ -785,6 +800,7 @@ AnimatorState:
   - {fileID: 1101305083600014494}
   - {fileID: 1101581870337693178}
   - {fileID: -2334519162674727415}
+  - {fileID: 8193370143299543517}
   m_StateMachineBehaviours:
   - {fileID: 9060632615709263504}
   m_Position: {x: 50, y: 50, z: 0}
@@ -922,7 +938,7 @@ AnimatorStateMachine:
     m_Position: {x: 530, y: 630, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -8366318837900180111}
-    m_Position: {x: 630, y: 490, z: 0}
+    m_Position: {x: 640, y: 510, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -189486676171053960}
     m_Position: {x: 800, y: 580, z: 0}
@@ -964,6 +980,18 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &1580708966902355672
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acb35449ca858224f8e3fadaabe9787d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1101 &1852785502109409759
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1022,14 +1050,14 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: BoltActionCock
-  m_Speed: 1
+  m_Speed: 0.65
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -7898668249667512819}
   - {fileID: 3134766691718182544}
   - {fileID: -4035372207496573401}
   m_StateMachineBehaviours:
-  - {fileID: -5847718125611344117}
+  - {fileID: 1580708966902355672}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1128,6 +1156,34 @@ AnimatorStateTransition:
   m_TransitionDuration: 0.25
   m_TransitionOffset: 0
   m_ExitTime: 0.39999998
+  m_HasExitTime: 1
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 1
+--- !u!1101 &8193370143299543517
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: isBoltAction
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isShotgun
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: 3252350738248461323}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.25
+  m_TransitionOffset: 0
+  m_ExitTime: 0.06250006
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0

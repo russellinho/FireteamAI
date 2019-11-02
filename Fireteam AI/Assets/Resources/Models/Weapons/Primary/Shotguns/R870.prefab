@@ -5212,6 +5212,10 @@ MonoBehaviour:
   defaultFireSpeed: 1
   reloadTransitionSpeed: 0.035
   cockStartTime: 0
+  weaponParts:
+  - {fileID: 7246815484541960433}
+  - {fileID: 7246815484541960435}
+  suppressorSlot: {fileID: 0}
 --- !u!114 &1332715869736488834
 MonoBehaviour:
   m_ObjectHideFlags: 0

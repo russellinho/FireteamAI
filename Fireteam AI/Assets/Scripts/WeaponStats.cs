@@ -31,9 +31,13 @@ public class WeaponStats : MonoBehaviour
     public ParticleSystem muzzleFlash;
     public ParticleSystem bulletTracer;
     public Vector3 fpcPosMale;
+    public Vector3 fpcLeftHandPosMale;
+    public Vector3 fpcLeftHandRotMale;
     public Vector3 fpcRotMale;
     public Vector3 fpcScaleMale;
     public Vector3 fpcPosFemale;
+    public Vector3 fpcLeftHandPosFemale;
+    public Vector3 fpcLeftHandRotFemale;
     public Vector3 fpcRotFemale;
     public Vector3 fpcScaleFemale;
     public AnimatorOverrideController maleOverrideController;
@@ -44,5 +48,8 @@ public class WeaponStats : MonoBehaviour
     public float defaultFireSpeed;
     public float reloadTransitionSpeed;
     public float cockStartTime;
+
+    public MeshRenderer[] weaponParts;
+    public GameObject suppressorSlot;
 
 }

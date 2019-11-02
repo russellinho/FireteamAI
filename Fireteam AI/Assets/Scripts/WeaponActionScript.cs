@@ -227,7 +227,7 @@ public class WeaponActionScript : MonoBehaviour
                 if (shotMode == ShotMode.Single) {
                     Fire();
                 } else {
-                    FireBoltAction();
+                    FireShotgun();
                 }
                 voidRecoilRecover = false;
             }
@@ -290,6 +290,18 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
+    void ToggleFpsWeapon(bool b) {
+        foreach (MeshRenderer weaponPart in weaponStats.weaponParts) {
+            weaponPart.enabled = b;
+        }
+        if (weaponStats.suppressorSlot != null) {
+            MeshRenderer suppressorRenderer = weaponStats.suppressorSlot.GetComponentInChildren<MeshRenderer>();
+            if (suppressorRenderer != null) {
+                suppressorRenderer.enabled = b;
+            }
+        }
+    }
+
     public void AimDownSights()
     {
         if (!playerActionScript.fpc.m_IsRunning)
@@ -324,7 +336,8 @@ public class WeaponActionScript : MonoBehaviour
                     //if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosMale) < 0.005f) {
                     if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(camTransform.localPosition), Vector3.Magnitude(weaponStats.aimDownSightPosMale))) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
-                      weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = false;
+                    //   weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = false;
+                    ToggleFpsWeapon(false);
                       mouseLook.XSensitivity = 0.25f;
                       mouseLook.YSensitivity = 0.25f;
                       hudScript.toggleSniperOverlay(true);
@@ -342,7 +355,8 @@ public class WeaponActionScript : MonoBehaviour
                     //if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosFemale) < 0.005f) {
                     if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(camTransform.localPosition), Vector3.Magnitude(weaponStats.aimDownSightPosFemale))) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
-                      weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = false;
+                    //   weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = false;
+                    ToggleFpsWeapon(false);
                       mouseLook.XSensitivity = 0.25f;
                       mouseLook.YSensitivity = 0.25f;
                       hudScript.toggleSniperOverlay(true);
@@ -364,7 +378,8 @@ public class WeaponActionScript : MonoBehaviour
 
                 // Sets everything back to default after zooming in with sniper rifle
                 camTransform.GetComponent<Camera>().fieldOfView = defaultFov;
-                weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = true;
+                // weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = true;
+                ToggleFpsWeapon(true);
                 mouseLook.XSensitivity = mouseLook.originalXSensitivity;
                 mouseLook.YSensitivity = mouseLook.originalYSensitivity;
                 //camTransform.GetComponent<Camera>().nearClipPlane = 0.05f;
@@ -479,7 +494,73 @@ public class WeaponActionScript : MonoBehaviour
         Destroy(o, 3f);
     }
 
-    public void FireBoltAction ()
+    public void FireBoltAction() {
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking)
+        {
+            return;
+        }
+
+        cameraShakeScript.SetShake(true);
+        animatorFpc.Play("Firing");
+        isFiring = true;
+        IncreaseSpread();
+        IncreaseRecoil();
+        UpdateRecoil(true);
+        RaycastHit hit;
+        float xSpread = Random.Range(-spread, spread);
+        float ySpread = Random.Range(-spread, spread);
+        float zSpread = Random.Range(-spread, spread);
+        Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
+        int headshotLayer = (1 << 13);
+        if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer))
+        {
+            pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
+            if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().health > 0)
+            {
+                hudScript.InstantiateHitmarker();
+                hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().TakeDamage(100);
+                RewardKill(true);
+                audioController.PlayHeadshotSound();
+            }
+        }
+        else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range))
+        {
+            GameObject bloodSpill = null;
+            if (hit.transform.tag.Equals("Human"))
+            {
+                pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+                int beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript>().health;
+                if (beforeHp > 0)
+                {
+                    hudScript.InstantiateHitmarker();
+                    audioController.PlayHitmarkerSound();
+                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
+                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().PlayGruntSound();
+                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted(true);
+                    if (hit.transform.gameObject.GetComponent<BetaEnemyScript>().health <= 0 && beforeHp > 0)
+                    {
+                        RewardKill(false);
+                    }
+                }
+            } else if (hit.transform.tag.Equals("Player")) {
+                pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+            } else {
+                pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
+                pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
+            }
+        }
+        if (weaponMods.suppressorRef == null)
+        {
+            playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+            pView.RPC("FireEffects", RpcTarget.All);
+        }
+        else
+        {
+            pView.RPC("FireEffectsSuppressed", RpcTarget.All);
+        }
+    }
+
+    public void FireShotgun ()
     {
         if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking)
         {
