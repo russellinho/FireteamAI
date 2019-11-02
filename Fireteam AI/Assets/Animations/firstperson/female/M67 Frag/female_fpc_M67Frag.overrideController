@@ -8,4 +8,14 @@ AnimatorOverrideController:
   m_PrefabAsset: {fileID: 0}
   m_Name: female_fpc_M67Frag
   m_Controller: {fileID: 9100000, guid: 29afe052bb137184e807626e37b027f1, type: 2}
-  m_Clips: []
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 6e0fedbf52137de418116b839247429c, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 6e0fedbf52137de418116b839247429c, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 871f7c8053d470947adbf24e0e62543a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: a6b27fea3cb1fe940ab906b9a8ae29d1, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 13374b5dc91641947aa248bb131cacd4, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 25d1c250187538e44b406a4057faaf1b, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 9b0d5ca874aff934ea53e5a29bb86bb9, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 4831bea0a47e0ad4fb74b5a25b4c8254, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 4ac44cc91d7a85f44a4a3168ee8b2997, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 4ac44cc91d7a85f44a4a3168ee8b2997, type: 2}

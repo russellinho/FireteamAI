@@ -7,20 +7,18 @@ AnimatorOverrideController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: male_fpc_L96A1
-  m_Controller: {fileID: 9100000, guid: cb3a698a5baac2140bb5d28fd30c15cc, type: 2}
+  m_Controller: {fileID: 9100000, guid: 01a8a60f53bd13d4a963ec5945c8b348, type: 2}
   m_Clips:
-  - m_OriginalClip: {fileID: 7400000, guid: e40388d9e5524724aa76eb80d6a49a56, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: fcaead019fb79df4a83741a588283133, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 885bae612fcaa4019babefee7ec4418f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 6eaa11b2e75b8f54080a780468fdd3df, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 6eaa11b2e75b8f54080a780468fdd3df, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 755d9c35b6dd1fb4096b3041dd0107f3, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: cae0728c3ebf54a2eb51d47e78554081, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 520c7e23a33654545b8aefc3d4025f87, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 29439e412742f4350b870bb26d4a7539, type: 2}
-  - m_OriginalClip: {fileID: 7400000, guid: 33646e57fde4ca748bac537de956c8da, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 0490ee0533ecb40b4b228962619e12b8, type: 2}
-  - m_OriginalClip: {fileID: 7400000, guid: fcaead019fb79df4a83741a588283133, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 885bae612fcaa4019babefee7ec4418f, type: 2}
-  - m_OriginalClip: {fileID: 7400000, guid: c5d222d6ba06971449e57174269c155d, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 0490ee0533ecb40b4b228962619e12b8, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 0cde3581febd30a4fba5576b66b939dd, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 0cde3581febd30a4fba5576b66b939dd, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 561ed1b160bc0c34dbeccf4e2d48ccdb, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 3a321621c3d1ae04ea075b184763f845, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: c0fd1bd323ab35248831865f0d6195a1, type: 2}

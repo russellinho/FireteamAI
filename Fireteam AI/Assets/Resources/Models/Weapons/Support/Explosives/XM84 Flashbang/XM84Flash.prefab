@@ -10112,8 +10112,10 @@ MonoBehaviour:
   fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
   fpcRotFemale: {x: 11.859, y: -106.004, z: 74.01601}
   fpcScaleFemale: {x: 0.001183675, y: 0.001183675, z: 0.001183675}
-  maleOverrideController: {fileID: 0}
-  femaleOverrideController: {fileID: 0}
+  maleOverrideController: {fileID: 22100000, guid: 3155f753841c2bb4381f22cfb26107b9,
+    type: 2}
+  femaleOverrideController: {fileID: 22100000, guid: d36b07c5dae04c44b9e5de9528ba09cd,
+    type: 2}
   weaponAnimator: {fileID: 0}
   defaultFpcReloadSpeed: 0
   defaultWeaponReloadSpeed: 0

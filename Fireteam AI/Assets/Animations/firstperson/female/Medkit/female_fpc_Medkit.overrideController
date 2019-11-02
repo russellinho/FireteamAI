@@ -8,4 +8,12 @@ AnimatorOverrideController:
   m_PrefabAsset: {fileID: 0}
   m_Name: female_fpc_Medkit
   m_Controller: {fileID: 9100000, guid: 29afe052bb137184e807626e37b027f1, type: 2}
-  m_Clips: []
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 871f7c8053d470947adbf24e0e62543a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 5f66229e46f2f424cb0f8823b65ea5c8, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 88f097db0fb18494298864ad03b79f14, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 88f097db0fb18494298864ad03b79f14, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 13374b5dc91641947aa248bb131cacd4, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ffd70d5c776f4ad458ced17fdec292ae, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 9b0d5ca874aff934ea53e5a29bb86bb9, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ec4a88a8276f74d4fa9edb0175bbe2b8, type: 2}
