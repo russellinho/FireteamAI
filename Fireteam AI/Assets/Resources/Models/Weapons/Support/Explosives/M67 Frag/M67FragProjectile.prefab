@@ -471,6 +471,7 @@ MonoBehaviour:
   maxAmmo: 3
   aimDownSightPosMale: {x: 0, y: 0, z: 0}
   aimDownSightPosFemale: {x: 0, y: 0, z: 0}
+  aimDownSightSpeed: 0
   aimDownSightClipping: 0
   titleHandPositionsMale: {x: 0, y: 0, z: 0}
   titleHandPositionsFemale: {x: 0, y: 0, z: 0}
@@ -479,20 +480,30 @@ MonoBehaviour:
   suppressedFireSound: {fileID: 0}
   reloadSound: {fileID: 0}
   gunSmoke: {fileID: 0}
+  weaponShell: {fileID: 0}
+  weaponShellPoint: {fileID: 0}
   muzzleFlash: {fileID: 0}
   bulletTracer: {fileID: 0}
   fpcPosMale: {x: 0, y: 0, z: 0}
+  fpcLeftHandPosMale: {x: 0, y: 0, z: 0}
+  fpcLeftHandRotMale: {x: 0, y: 0, z: 0}
   fpcRotMale: {x: 0, y: 0, z: 0}
   fpcScaleMale: {x: 0, y: 0, z: 0}
   fpcPosFemale: {x: 0, y: 0, z: 0}
+  fpcLeftHandPosFemale: {x: 0, y: 0, z: 0}
+  fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
   fpcRotFemale: {x: 0, y: 0, z: 0}
   fpcScaleFemale: {x: 0, y: 0, z: 0}
-  fpcIdleAnim: {fileID: 0}
-  fpcFiringAnim: {fileID: 0}
-  fpcReloadAnim: {fileID: 0}
-  fpcAimingAnim: {fileID: 0}
-  fpcSprintingAnim: {fileID: 0}
-  fpcMovingAnim: {fileID: 0}
+  maleOverrideController: {fileID: 0}
+  femaleOverrideController: {fileID: 0}
+  weaponAnimator: {fileID: 0}
+  defaultFpcReloadSpeed: 0
+  defaultWeaponReloadSpeed: 0
+  defaultFireSpeed: 0
+  reloadTransitionSpeed: 0
+  cockStartTime: 0
+  weaponParts: []
+  suppressorSlot: {fileID: 0}
 --- !u!114 &533506344782479917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -542,7 +553,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 4083596899743687192}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &4083596899743687192
 MonoBehaviour:
