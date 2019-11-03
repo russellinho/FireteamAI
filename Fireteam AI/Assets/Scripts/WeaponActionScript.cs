@@ -75,8 +75,9 @@ public class WeaponActionScript : MonoBehaviour
     private Vector3 originalPosCamSecondary;
     // Aiming speed
     public PhotonView pView;
-    private bool isWieldingSupportItem;
+    public bool isWieldingSupportItem;
     public bool isCockingGrenade;
+    public bool isUsingBooster;
     public Transform rightCollar;
     public Transform leftCollar;
     private Vector3 leftCollarAimingPos;
@@ -93,6 +94,7 @@ public class WeaponActionScript : MonoBehaviour
     {
         leftCollarAimingPos = Vector3.negativeInfinity;
         isCockingGrenade = false;
+        isUsingBooster = false;
         isWieldingSupportItem = false;
         aimDownSightsLock = false;
         defaultLeftCollarPos = Vector3.negativeInfinity;
@@ -137,12 +139,6 @@ public class WeaponActionScript : MonoBehaviour
         }
         if (playerActionScript.health <= 0) return;
 
-        if (weaponStats.category.Equals("Shotgun")) {
-            shotMode = ShotMode.Burst;
-        } else {
-            shotMode = ShotMode.Single;
-        }
-
         if (Input.GetKeyDown(KeyCode.Q))
         {
             if (firingMode == FireMode.Semi)
@@ -150,14 +146,7 @@ public class WeaponActionScript : MonoBehaviour
             else
                 firingMode = FireMode.Semi;
         }
-        if (weaponStats.type.Equals("Support")) {
-            isWieldingSupportItem = true;
-        } else {
-            isWieldingSupportItem = false;
-        }
-        if (weaponStats.category.Equals("Pistol") || weaponStats.category.Equals("Shotgun") || isWieldingSupportItem) {
-            firingMode = FireMode.Semi;
-        }
+
         switch (firingMode)
         {
             case FireMode.Auto:
@@ -810,6 +799,8 @@ public class WeaponActionScript : MonoBehaviour
                 animatorFpc.CrossFade("ShotgunLoad", weaponStats.reloadTransitionSpeed);
             } else if (weaponStats.category.Equals("Sniper Rifle")) {
                 animatorFpc.CrossFade("BoltActionLoad", weaponStats.reloadTransitionSpeed);
+            } else if (weaponStats.type.Equals("Support")) {
+                animatorFpc.Play("SupportLoad");
             } else {
                 animatorFpc.CrossFade("Reload", weaponStats.reloadTransitionSpeed);
                 FpcChangeMagazine(weaponStats.reloadTransitionSpeed);
@@ -838,6 +829,8 @@ public class WeaponActionScript : MonoBehaviour
             //FpcCockShotgun();
         } else if (weaponStats.category.Equals("Sniper Rifle")) {
             animatorFpc.Play("BoltActionCock");
+        } else if (weaponStats.type.Equals("Support")) {
+            animatorFpc.Play("SupportLoad");
         } else {
             weaponStats.weaponAnimator.Play("Reload", 0, weaponStats.cockStartTime);
             animatorFpc.Play("Reload", 0, weaponStats.cockStartTime);
@@ -952,8 +945,25 @@ public class WeaponActionScript : MonoBehaviour
         } else {
             fpc.fpcAnimator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;
         }
-        SetReloadSpeed();
-        SetFiringSpeed();
+        if (!ws.type.Equals("Support")) {
+            SetReloadSpeed();
+            SetFiringSpeed();
+        }
+        if (weaponStats.type.Equals("Support")) {
+            isWieldingSupportItem = true;
+            firingMode = FireMode.Semi;
+        } else {
+            isWieldingSupportItem = false;
+            if (weaponStats.category.Equals("Shotgun")) {
+                shotMode = ShotMode.Burst;
+                firingMode = FireMode.Semi;
+            } else {
+                shotMode = ShotMode.Single;
+                if (weaponStats.category.Equals("Pistol")) {
+                    firingMode = FireMode.Semi;
+                }
+            }
+        }
     }
 
     public void SetReloadSpeed(float multipler = 1f) {
@@ -988,13 +998,13 @@ public class WeaponActionScript : MonoBehaviour
         }
         if (currentAmmo <= 0) return;
         if (weaponStats.category.Equals("Explosive")) {
-            if (!isCockingGrenade && isWieldingSupportItem && (Input.GetButtonDown("Fire1") || Input.GetButton("Fire1"))) {
-                isCockingGrenade = true;
+            if (isCockingGrenade) {
+                animatorFpc.SetTrigger("isCockingGrenade");
                 pView.RPC("RpcCockGrenade", RpcTarget.All, isCockingGrenade);
-                return;
+                // return;
             }
             if (isCockingGrenade && Input.GetButtonUp("Fire1")) {
-                isCockingGrenade = false;
+                animatorFpc.SetTrigger("ThrowGrenade");
                 pView.RPC("RpcCockGrenade", RpcTarget.All, isCockingGrenade);
             }
         }
@@ -1014,8 +1024,9 @@ public class WeaponActionScript : MonoBehaviour
             if (weaponStats.weaponName.Equals("Medkit") && playerActionScript.health == playerActionScript.playerScript.health) {
                 return;
             }
-            if (isWieldingSupportItem && Input.GetButtonDown("Fire1")) {
+            if (isWieldingSupportItem && Input.GetButtonDown("Fire1") && animatorFpc.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
                 pView.RPC("RpcUseBooster", RpcTarget.All);
+                animatorFpc.SetTrigger("UseBooster");
             }
         }
     }
@@ -1029,8 +1040,7 @@ public class WeaponActionScript : MonoBehaviour
             // Reset fire timer and subtract ammo used
             currentAmmo--;
             fireTimer = 0.0f;
-        }
-        else if (weaponStats.category.Equals("Booster")) {
+        } else if (weaponStats.category.Equals("Booster")) {
             // Reset fire timer and subtract ammo used
             BoosterScript boosterScript = GetComponentInChildren<BoosterScript>();
             boosterScript.UseBoosterItem(weaponStats.weaponName);
