@@ -773,6 +773,9 @@ public class WeaponActionScript : MonoBehaviour
 
     public void CockingAction()
     {
+        // if (!weaponStats.type.Equals("Support")) {
+        //     isCocking = true;
+        // }
         isCocking = true;
         ReloadAction();
     }
@@ -1000,12 +1003,12 @@ public class WeaponActionScript : MonoBehaviour
         if (weaponStats.category.Equals("Explosive")) {
             if (isCockingGrenade) {
                 animatorFpc.SetTrigger("isCockingGrenade");
-                pView.RPC("RpcCockGrenade", RpcTarget.All, isCockingGrenade);
+                pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
                 // return;
             }
             if (isCockingGrenade && Input.GetButtonUp("Fire1")) {
                 animatorFpc.SetTrigger("ThrowGrenade");
-                pView.RPC("RpcCockGrenade", RpcTarget.All, isCockingGrenade);
+                pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
             }
         }
     }

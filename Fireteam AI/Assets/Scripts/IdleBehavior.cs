@@ -11,6 +11,7 @@ public class IdleBehavior : StateMachineBehaviour
         was = animator.GetComponentInParent<WeaponActionScript>();
        was.isCocking = false;
        was.isCockingGrenade = false;
+       was.isReloading = false;
        was.isUsingBooster = false;
        was.isFiring = false;
        animator.ResetTrigger("ThrowGrenade");

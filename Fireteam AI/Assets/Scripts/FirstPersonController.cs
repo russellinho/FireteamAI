@@ -497,7 +497,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public void SetSprintingInAnimator(bool x) {
             if (fpcAnimator.GetBool("Sprinting") == x) return;
             fpcAnimator.SetBool("Sprinting", x);
-            Debug.Log("Running fpc: " + fpcAnimator.GetBool("Sprinting"));
             photonView.RPC("RpcSetSprintingInAnimator", RpcTarget.Others, x);
         }
 

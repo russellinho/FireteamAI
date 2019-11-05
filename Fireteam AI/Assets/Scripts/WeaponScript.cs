@@ -152,6 +152,9 @@ public class WeaponScript : MonoBehaviour
         {
             return;
         }
+        // Debug.Log("isCockingGrenade: " + weaponActionScript.isCockingGrenade);
+        // Debug.Log("isCocking: " + weaponActionScript.isCocking);
+        // Debug.Log("isUsingBooster: " + weaponActionScript.isUsingBooster);
         if (CheckCanSwitchWeapon()) {
             if (Input.GetKeyDown(KeyCode.Alpha1)) {
                 DrawPrimary();
@@ -634,7 +637,7 @@ public class WeaponScript : MonoBehaviour
         drawnWeaponReference.SetActive(b);
     }
 
-    void ToggleWeaponVisible(bool b) {
+    public void ToggleWeaponVisible(bool b) {
         drawnWeaponReference.SetActive(b);
     }
 
