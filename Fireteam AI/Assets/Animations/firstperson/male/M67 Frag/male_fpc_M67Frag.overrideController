@@ -7,7 +7,7 @@ AnimatorOverrideController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: male_fpc_M67Frag
-  m_Controller: {fileID: 9100000, guid: 01a8a60f53bd13d4a963ec5945c8b348, type: 2}
+  m_Controller: {fileID: 9100000, guid: d67f13cbc072b104c89189890b868db0, type: 2}
   m_Clips:
   - m_OriginalClip: {fileID: 7400000, guid: 4b0d53b0f73740f4390f11de4310b2c2, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 4b0d53b0f73740f4390f11de4310b2c2, type: 2}
@@ -19,3 +19,5 @@ AnimatorOverrideController:
     m_OverrideClip: {fileID: 7400000, guid: 9f9348e78fc98cd43b7cf420da21e37d, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: f2b1e2c45212ff445bd11e45f15fa406, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: f2b1e2c45212ff445bd11e45f15fa406, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 76b603a6062ddd640be484a3527b1d7a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 76b603a6062ddd640be484a3527b1d7a, type: 2}

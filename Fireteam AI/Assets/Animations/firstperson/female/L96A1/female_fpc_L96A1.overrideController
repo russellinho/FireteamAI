@@ -7,7 +7,7 @@ AnimatorOverrideController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: female_fpc_L96A1
-  m_Controller: {fileID: 9100000, guid: 29afe052bb137184e807626e37b027f1, type: 2}
+  m_Controller: {fileID: 9100000, guid: 4277e325ff18d8b4fac8f89a434ca94f, type: 2}
   m_Clips:
   - m_OriginalClip: {fileID: 7400000, guid: 4f22280a7872c494eb6688f09708e359, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 748fa411474ee44ed9d8ea188a7ef97a, type: 2}
@@ -25,3 +25,5 @@ AnimatorOverrideController:
     m_OverrideClip: {fileID: 7400000, guid: 82f633312726c13499efd55f6bef976a, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 35ea692d9d2e45f4f9f5b96a3a6942dc, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 35ea692d9d2e45f4f9f5b96a3a6942dc, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 8f16f0dfc9c365b4cbc1d789087c7f41, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 59b0c544f969dec47aac52719b1f2736, type: 2}

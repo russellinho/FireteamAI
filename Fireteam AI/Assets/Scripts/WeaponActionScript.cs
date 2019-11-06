@@ -803,7 +803,7 @@ public class WeaponActionScript : MonoBehaviour
             } else if (weaponStats.category.Equals("Sniper Rifle")) {
                 animatorFpc.CrossFade("BoltActionLoad", weaponStats.reloadTransitionSpeed);
             } else if (weaponStats.type.Equals("Support")) {
-                animatorFpc.Play("SupportLoad");
+                animatorFpc.Play("DrawWeapon");
             } else {
                 animatorFpc.CrossFade("Reload", weaponStats.reloadTransitionSpeed);
                 FpcChangeMagazine(weaponStats.reloadTransitionSpeed);
@@ -831,9 +831,9 @@ public class WeaponActionScript : MonoBehaviour
             animatorFpc.Play("ShotgunCock");
             //FpcCockShotgun();
         } else if (weaponStats.category.Equals("Sniper Rifle")) {
-            animatorFpc.Play("BoltActionCock");
+            animatorFpc.Play("DrawWeapon");
         } else if (weaponStats.type.Equals("Support")) {
-            animatorFpc.Play("SupportLoad");
+            animatorFpc.Play("DrawWeapon");
         } else {
             weaponStats.weaponAnimator.Play("Reload", 0, weaponStats.cockStartTime);
             animatorFpc.Play("Reload", 0, weaponStats.cockStartTime);
