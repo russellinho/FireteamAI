@@ -462,7 +462,9 @@ MonoBehaviour:
   shotMode: 0
   camTransform: {fileID: 7779637992460143791}
   pView: {fileID: 720653860272823642}
+  isWieldingSupportItem: 0
   isCockingGrenade: 0
+  isUsingBooster: 0
   rightCollar: {fileID: 9030208476792900232}
   leftCollar: {fileID: 9030208476792900238}
   leftCollarOriginalPos: {x: 0, y: 0, z: 0}
@@ -626,7 +628,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 720653860272823643}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &720653860272823643
 MonoBehaviour:
@@ -45201,7 +45203,7 @@ Animator:
   m_GameObject: {fileID: 9030208476792608502}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c2ed40df840f7f34d99a13f1277c1784, type: 3}
-  m_Controller: {fileID: 9100000, guid: dcd34267b6bd3f9439dd83aefe0a75e1, type: 2}
+  m_Controller: {fileID: 9100000, guid: 21e22c30fb2163e44a46faad96ce1da2, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
