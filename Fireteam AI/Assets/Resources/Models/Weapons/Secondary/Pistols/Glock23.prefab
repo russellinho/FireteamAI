@@ -5107,9 +5107,13 @@ MonoBehaviour:
   muzzleFlash: {fileID: 6429990121772297589}
   bulletTracer: {fileID: 6810274940899095293}
   fpcPosMale: {x: -0.000388, y: 0.001686, z: -0.000453}
+  fpcLeftHandPosMale: {x: 0, y: 0, z: 0}
+  fpcLeftHandRotMale: {x: 0, y: 0, z: 0}
   fpcRotMale: {x: -0.241, y: 79.6, z: -82.8}
   fpcScaleMale: {x: 0.0033, y: 0.0033, z: 0.0033}
   fpcPosFemale: {x: -0.000388, y: 0.001686, z: -0.000453}
+  fpcLeftHandPosFemale: {x: 0, y: 0, z: 0}
+  fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
   fpcRotFemale: {x: -0.241, y: 79.6, z: -82.8}
   fpcScaleFemale: {x: 0.003, y: 0.003, z: 0.003}
   maleOverrideController: {fileID: 22100000, guid: 65faa7f2461b45c498a9a3d74702ecb4,
@@ -5119,8 +5123,8 @@ MonoBehaviour:
   weaponAnimator: {fileID: 1349628395274398008}
   defaultFpcReloadSpeed: 1
   defaultWeaponReloadSpeed: 0.5
-  defaultFireSpeed: 1.25
-  reloadTransitionSpeed: 0.2
+  defaultFireSpeed: 1.75
+  reloadTransitionSpeed: 0.02
   cockStartTime: 0.7
   weaponParts:
   - {fileID: 5383536960207155720}
