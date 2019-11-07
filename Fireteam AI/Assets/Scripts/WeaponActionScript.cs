@@ -170,6 +170,13 @@ public class WeaponActionScript : MonoBehaviour
             }
         }
 
+        // Automatically reload if no ammo
+        if (currentAmmo <= 0 && !isFiring && totalAmmoLeft > 0 && !isReloading && playerActionScript.canShoot) {
+            //Debug.Log("current ammo: " + currentAmmo + " isFiring: " + isFiring + " isReloading: " + isReloading);
+            cameraShakeScript.SetShake(false);
+            ReloadAction();
+        }
+
         AimDownSights();
     }
 
@@ -201,12 +208,6 @@ public class WeaponActionScript : MonoBehaviour
         if (weaponStats.category.Equals("Booster")) {
             FireBooster();
             return;
-        }
-
-        // Automatically reload if no ammo
-        if (currentAmmo <= 0 && !isFiring && totalAmmoLeft > 0 && !isReloading && playerActionScript.canShoot) {
-            cameraShakeScript.SetShake(false);
-            ReloadAction();
         }
 
         if (shootInput && !isReloading && playerActionScript.canShoot)
