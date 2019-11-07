@@ -5091,7 +5091,7 @@ MonoBehaviour:
   maxAmmo: 60
   aimDownSightPosMale: {x: -0.00125, y: 0.00177, z: 0.00036}
   aimDownSightPosFemale: {x: -0.00125, y: 0.00177, z: 0.00036}
-  aimDownSightSpeed: 7
+  aimDownSightSpeed: 8
   aimDownSightClipping: 0.05
   titleHandPositionsMale: {x: 0, y: 0, z: 0}
   titleHandPositionsFemale: {x: 0, y: 0, z: 0}
@@ -5123,6 +5123,7 @@ MonoBehaviour:
   weaponAnimator: {fileID: 1349628395274398008}
   defaultFpcReloadSpeed: 1
   defaultWeaponReloadSpeed: 0.5
+  defaultWeaponCockingSpeed: 0
   defaultFireSpeed: 1.75
   reloadTransitionSpeed: 0.02
   cockStartTime: 0.7
@@ -5438,14 +5439,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2311903087163953047}
     m_Modifications:
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Name
-      value: BulletTracer
-      objectReference: {fileID: 0}
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Layer
-      value: 16
-      objectReference: {fileID: 0}
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5489,6 +5482,14 @@ PrefabInstance:
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Name
+      value: BulletTracer
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Layer
+      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
