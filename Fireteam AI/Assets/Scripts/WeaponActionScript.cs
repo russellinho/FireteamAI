@@ -973,6 +973,7 @@ public class WeaponActionScript : MonoBehaviour
     public void SetReloadSpeed(float multipler = 1f) {
         animatorFpc.SetFloat("ReloadSpeed", weaponStats.defaultFpcReloadSpeed * multipler);
         weaponStats.weaponAnimator.SetFloat("ReloadSpeed", weaponStats.defaultWeaponReloadSpeed * multipler);
+        weaponStats.weaponAnimator.SetFloat("CockingSpeed", weaponStats.defaultWeaponCockingSpeed * multipler);
     }
 
     public void SetFiringSpeed(float multiplier = 1f) {

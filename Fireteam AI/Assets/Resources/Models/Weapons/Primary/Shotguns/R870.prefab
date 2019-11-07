@@ -5213,6 +5213,7 @@ MonoBehaviour:
   weaponAnimator: {fileID: 5744465215577492251}
   defaultFpcReloadSpeed: 1.5
   defaultWeaponReloadSpeed: 0.5
+  defaultWeaponCockingSpeed: 0
   defaultFireSpeed: 0.8
   reloadTransitionSpeed: 0.035
   cockStartTime: 0
