@@ -162,8 +162,7 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
         
-        if (Input.GetKeyDown(KeyCode.R))
-        {
+        if (Input.GetKeyDown(KeyCode.R)) {
             if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0)
             {
                 ReloadAction();

@@ -397,6 +397,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f && playerActionScript.sprintTime > 0f && !sprintLock) {
 						m_IsWalking = false;
 						m_IsRunning = true;
+                        if (weaponActionScript.isReloading || weaponActionScript.isCocking) {
+                            SwitchToSprintingInAnimator();
+                        }
 					} else {
 						m_IsWalking = false;
 						m_IsRunning = false;
@@ -498,6 +501,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
             if (fpcAnimator.GetBool("Sprinting") == x) return;
             fpcAnimator.SetBool("Sprinting", x);
             photonView.RPC("RpcSetSprintingInAnimator", RpcTarget.Others, x);
+        }
+
+        void SwitchToSprintingInAnimator() {
+            fpcAnimator.CrossFade("Sprinting", 0.01f);
         }
 
         [PunRPC]
