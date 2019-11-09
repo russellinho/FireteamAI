@@ -10096,7 +10096,9 @@ MonoBehaviour:
   recoveryConstant: 0
   fireSound: {fileID: 0}
   suppressedFireSound: {fileID: 0}
-  reloadSound: {fileID: 0}
+  weaponSoundSource: {fileID: 6689340121689838720}
+  reloadSounds: []
+  supportActionSound: {fileID: 8300000, guid: 1e8e2372dca8d3943ac529eadf06aa7e, type: 3}
   gunSmoke: {fileID: 0}
   weaponShell: {fileID: 0}
   weaponShellPoint: {fileID: 0}
@@ -10119,6 +10121,7 @@ MonoBehaviour:
   weaponAnimator: {fileID: 0}
   defaultFpcReloadSpeed: 0
   defaultWeaponReloadSpeed: 0
+  defaultWeaponCockingSpeed: 0
   defaultFireSpeed: 0
   reloadTransitionSpeed: 0
   cockStartTime: 0

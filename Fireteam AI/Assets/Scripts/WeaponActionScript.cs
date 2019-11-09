@@ -726,9 +726,6 @@ public class WeaponActionScript : MonoBehaviour
             totalAmmoLeft -= bulletsToDeduct;
             currentAmmo += bulletsToDeduct;
         }
-        if (weaponStats.reloadSound != null) {
-            pView.RPC("RpcPlayReloadSound", RpcTarget.All);
-        }
     }
 
     public void ReloadShotgun() {
@@ -739,9 +736,6 @@ public class WeaponActionScript : MonoBehaviour
 
             totalAmmoLeft--;
             currentAmmo++;
-        }
-        if (weaponStats.reloadSound != null) {
-            pView.RPC("RpcPlayReloadSound", RpcTarget.All);
         }
     }
 
@@ -858,14 +852,25 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     [PunRPC]
-    void RpcPlayReloadSound()
+    void RpcPlayReloadSound(int soundNumber)
     {
-        weaponStats.reloadSound.Play();
+        weaponStats.weaponSoundSource.clip = weaponStats.reloadSounds[soundNumber];
+        weaponStats.weaponSoundSource.Play();
     }
 
-    void PlayReloadSound()
+    void PlayReloadSound(int soundNumber)
     {
-        weaponStats.reloadSound.Play();
+        pView.RPC("RpcPlayReloadSound", RpcTarget.All, soundNumber);
+    }
+
+    [PunRPC]
+    void RpcPlaySupportActionSound() {
+        weaponStats.weaponSoundSource.clip = weaponStats.supportActionSound;
+        weaponStats.weaponSoundSource.Play();
+    }
+
+    public void PlaySupportActionSound() {
+        pView.RPC("RpcPlaySupportActionSound", RpcTarget.All);
     }
 
     private void PlayShootSound()

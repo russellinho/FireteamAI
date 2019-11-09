@@ -5428,7 +5428,11 @@ MonoBehaviour:
   recoveryConstant: 4
   fireSound: {fileID: 7360348420455637470}
   suppressedFireSound: {fileID: 7591045511944915951}
-  reloadSound: {fileID: 3959337845877743138}
+  weaponSoundSource: {fileID: 3959337845877743138}
+  reloadSounds:
+  - {fileID: 8300000, guid: 79c0c4efbcdd68f448370a20c381768c, type: 3}
+  - {fileID: 8300000, guid: b54f1d2e1afe7044389af6706966ec22, type: 3}
+  - {fileID: 8300000, guid: 06dccb131c0164a408439cde64a42c22, type: 3}
   gunSmoke: {fileID: 3013963004515157933, guid: 22f01094768fa2c4e8513fa10c2a4c94,
     type: 3}
   weaponShell: {fileID: 1024758332188650045, guid: 453aecfa68509a74aa388ce58f54eb75,
@@ -5503,6 +5507,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4804414172645788110}
     m_Modifications:
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Name
+      value: BulletTracer
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5558,14 +5570,6 @@ PrefabInstance:
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Name
-      value: BulletTracer
-      objectReference: {fileID: 0}
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Layer
-      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}

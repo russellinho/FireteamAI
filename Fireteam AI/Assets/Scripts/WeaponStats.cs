@@ -24,7 +24,9 @@ public class WeaponStats : MonoBehaviour
     public float recoveryConstant;
     public AudioSource fireSound;
     public AudioSource suppressedFireSound;
-    public AudioSource reloadSound;
+    public AudioSource weaponSoundSource;
+    public AudioClip[] reloadSounds;
+    public AudioClip supportActionSound;
     public GameObject gunSmoke;
     public GameObject weaponShell;
     public Transform weaponShellPoint;

@@ -5189,7 +5189,11 @@ MonoBehaviour:
   recoveryConstant: 18
   fireSound: {fileID: 4605048646455382328}
   suppressedFireSound: {fileID: 0}
-  reloadSound: {fileID: 7519509711271469613}
+  weaponSoundSource: {fileID: 7519509711271469613}
+  reloadSounds:
+  - {fileID: 8300000, guid: a5eeca7d66eaa8a4b9fc6ad0bd506eb3, type: 3}
+  - {fileID: 8300000, guid: d022cc64e09b181458af1d93679a691a, type: 3}
+  - {fileID: 8300000, guid: 63c4f45d6edcdff4fae402c2fa15b479, type: 3}
   gunSmoke: {fileID: 3013963004515157933, guid: 22f01094768fa2c4e8513fa10c2a4c94,
     type: 3}
   weaponShell: {fileID: 9079607785464774775, guid: b5cc5d4da601f5746abc3396e82d849c,
