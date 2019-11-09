@@ -5103,6 +5103,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: db4765b485a60c941be1a69fc45c5aff, type: 3}
   - {fileID: 8300000, guid: a045c4a86598740428a74dd97255c1da, type: 3}
   - {fileID: 8300000, guid: 700c0ff8ad166104faf3e7013ba21c5e, type: 3}
+  supportActionSound: {fileID: 0}
   gunSmoke: {fileID: 3013963004515157933, guid: 22f01094768fa2c4e8513fa10c2a4c94,
     type: 3}
   weaponShell: {fileID: 495810041075087592, guid: 01f2dbe1746c1dc46923a4d9bf972eb9,
@@ -5131,6 +5132,10 @@ MonoBehaviour:
   defaultFireSpeed: 1.75
   reloadTransitionSpeed: 0.02
   cockStartTime: 0.7
+  reloadSound1Time: 0.1
+  reloadSound2Time: 0.4
+  reloadSound3Time: 0.8
+  supportSoundTime: -1
   weaponParts:
   - {fileID: 5383536960207155720}
   - {fileID: 5383536960207155722}

@@ -474,6 +474,10 @@ MonoBehaviour:
   defaultFireSpeed: 0
   reloadTransitionSpeed: 0
   cockStartTime: 0
+  reloadSound1Time: -1
+  reloadSound2Time: -1
+  reloadSound3Time: -1
+  supportSoundTime: 0.45
   weaponParts:
   - {fileID: 3860504239684545413}
   - {fileID: 3860504239684545415}

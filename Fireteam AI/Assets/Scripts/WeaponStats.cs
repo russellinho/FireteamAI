@@ -51,6 +51,10 @@ public class WeaponStats : MonoBehaviour
     public float defaultFireSpeed;
     public float reloadTransitionSpeed;
     public float cockStartTime;
+    public float reloadSound1Time;
+    public float reloadSound2Time;
+    public float reloadSound3Time;
+    public float supportSoundTime;
 
     public MeshRenderer[] weaponParts;
     public GameObject suppressorSlot;

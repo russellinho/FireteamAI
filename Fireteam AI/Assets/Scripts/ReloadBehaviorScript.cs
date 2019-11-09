@@ -5,12 +5,19 @@ using UnityEngine;
 public class ReloadBehaviorScript : StateMachineBehaviour {
 
 	bool hasReloaded = false;
+	bool reload1Played;
+	bool reload2Played;
+	bool reload3Played;
+	bool supportSoundPlayed;
 	WeaponActionScript was;
 
 	 // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		was = animator.GetComponentInParent<WeaponActionScript> ();
 		hasReloaded = false;
+		reload1Played = false;
+		reload2Played = false;
+		reload3Played = false;
 	}
 
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -22,6 +29,22 @@ public class ReloadBehaviorScript : StateMachineBehaviour {
 	// }
 
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+		if (!reload1Played && was.weaponStats.reloadSound1Time != -1f && stateInfo.normalizedTime >= was.weaponStats.reloadSound1Time) {
+			reload1Played = true;
+			was.PlayReloadSound(0);
+		}
+		if (!reload2Played && was.weaponStats.reloadSound2Time != -1f && stateInfo.normalizedTime >= was.weaponStats.reloadSound2Time) {
+			reload2Played = true;
+			was.PlayReloadSound(1);
+		}
+		if (!reload3Played && was.weaponStats.reloadSound3Time != -1f && stateInfo.normalizedTime >= was.weaponStats.reloadSound3Time) {
+			reload3Played = true;
+			was.PlayReloadSound(2);
+		}
+		if (!supportSoundPlayed && was.weaponStats.supportSoundTime != -1f && stateInfo.normalizedTime >= was.weaponStats.supportSoundTime) {
+			supportSoundPlayed = true;
+			was.PlaySupportActionSound();
+		}
 		if (stateInfo.normalizedTime >= 0.9f) {
 			was.Reload ();
 			was.isCocking = false;

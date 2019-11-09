@@ -858,7 +858,7 @@ public class WeaponActionScript : MonoBehaviour
         weaponStats.weaponSoundSource.Play();
     }
 
-    void PlayReloadSound(int soundNumber)
+    public void PlayReloadSound(int soundNumber)
     {
         pView.RPC("RpcPlayReloadSound", RpcTarget.All, soundNumber);
     }

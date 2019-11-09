@@ -8,10 +8,12 @@ public class PumpActionCockBehavior : StateMachineBehaviour
 
     private WeaponActionScript was;
     private bool shellCasingFired;
+    bool cockSoundPlayed;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         shellCasingFired = false;
+        cockSoundPlayed = false;
         was = animator.GetComponentInParent<WeaponActionScript>();
         was.FpcCockShotgun();
     }
@@ -19,6 +21,10 @@ public class PumpActionCockBehavior : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (!cockSoundPlayed && was.weaponStats.reloadSound2Time != -1f && stateInfo.normalizedTime >= was.weaponStats.reloadSound2Time) {
+            cockSoundPlayed = true;
+            was.PlayReloadSound(1);
+        }
        if (stateInfo.normalizedTime >= 0.5f) {
            was.isCocking = false;
        }

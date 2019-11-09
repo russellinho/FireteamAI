@@ -7,6 +7,7 @@ public class BoltActionCockBehavior : StateMachineBehaviour
     private WeaponActionScript was;
     private WeaponScript ws;
     private bool shellCasingFired;
+    bool cockSoundPlayed;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -15,11 +16,16 @@ public class BoltActionCockBehavior : StateMachineBehaviour
         ws.weaponHolderFpc.SwitchWeaponToLeftHand();
         was = animator.GetComponentInParent<WeaponActionScript>();
         was.FpcCockBoltAction();
+        cockSoundPlayed = false;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (!cockSoundPlayed && was.weaponStats.reloadSound3Time != -1f && stateInfo.normalizedTime >= was.weaponStats.reloadSound3Time) {
+			cockSoundPlayed = true;
+			was.PlayReloadSound(2);
+		}
         if (stateInfo.normalizedTime >= 0.5f) {
            was.isCocking = false;
            if (was.isReloading) {

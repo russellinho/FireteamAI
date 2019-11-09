@@ -5,6 +5,7 @@ using UnityEngine;
 public class PumpActionReloadBehavior : StateMachineBehaviour
 {
     private WeaponActionScript weaponActionScript;
+    bool loadSoundPlayed;
     private bool done;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -18,6 +19,14 @@ public class PumpActionReloadBehavior : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (stateInfo.normalizedTime >= weaponActionScript.weaponStats.reloadSound1Time - 0.1f && stateInfo.normalizedTime <= weaponActionScript.weaponStats.reloadSound1Time + 0.1f) {
+            if (!loadSoundPlayed) {
+                weaponActionScript.PlayReloadSound(0);
+                loadSoundPlayed = true;
+            }
+        } else {
+            loadSoundPlayed = false;
+        }
         if (!done && (weaponActionScript.currentAmmo >= weaponActionScript.weaponStats.clipCapacity || Input.GetButtonDown("Fire1"))) {
             animator.SetTrigger("CockShotgun");
             done = true;
