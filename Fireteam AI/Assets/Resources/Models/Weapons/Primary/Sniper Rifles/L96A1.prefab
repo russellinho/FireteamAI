@@ -5439,7 +5439,7 @@ MonoBehaviour:
   mobility: 87
   fireRate: 1.4
   accuracy: 0
-  recoil: 8
+  recoil: 13
   range: 3000
   clipCapacity: 5
   maxAmmo: 20
@@ -5449,7 +5449,7 @@ MonoBehaviour:
   aimDownSightClipping: 0.06
   titleHandPositionsMale: {x: -0.019, y: -0.038, z: -0.203}
   titleHandPositionsFemale: {x: -0.019, y: -0.038, z: -0.203}
-  recoveryConstant: 3
+  recoveryConstant: 25
   fireSound: {fileID: 3776016423299394771}
   suppressedFireSound: {fileID: 222132909018512194}
   weaponSoundSource: {fileID: 6932990759497229397}
