@@ -27,6 +27,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public ParticleSystem healParticleEffect;
     public ParticleSystem boostParticleEffect;
     public SpriteRenderer hudMarker;
+    public GameObject fpcBodyRef;
 
     // Player variables
     public int health;
@@ -49,6 +50,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public float totalSpeedBoost;
     private float itemSpeedModifier;
     public float weaponSpeedModifier;
+    private float originalFpcBodyPosY;
 
     // Game logic helper variables
     public FirstPersonController fpc;
@@ -89,6 +91,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
          escapeValueSent = false;
          assaultModeChangedIndicator = false;
          isDefusing = false;
+         originalFpcBodyPosY = fpcBodyRef.transform.localPosition.y;
 
         health = 100;
         kills = 0;
@@ -296,6 +299,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         {
             if (charController.isGrounded) {
                 fpc.m_IsCrouching = !fpc.m_IsCrouching;
+                FpcCrouch(fpc.m_IsCrouching);
             }
         }
 
@@ -317,6 +321,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // {
         //     photonView.RPC("RpcCrouch", RpcTarget.Others, fpc.m_IsCrouching);
         // }
+    }
+
+    void FpcCrouch(bool crouch) {
+        if (crouch) {
+            fpcBodyRef.transform.localPosition = new Vector3(fpcBodyRef.transform.localPosition.x, -0.5f, fpcBodyRef.transform.localPosition.z);
+        } else {
+            fpcBodyRef.transform.localPosition = new Vector3(fpcBodyRef.transform.localPosition.x, originalFpcBodyPosY, fpcBodyRef.transform.localPosition.z);
+        }
     }
 
     [PunRPC]
@@ -735,6 +747,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hud.ToggleSpectatorMessage(false);
         fpc.m_IsCrouching = false;
         fpc.m_IsWalking = true;
+        FpcCrouch(false);
         escapeValueSent = false;
         canShoot = true;
         fpc.canMove = true;
