@@ -763,6 +763,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         wepActionScript.currentAmmo = wepActionScript.GetWeaponStats().clipCapacity;
         equipmentScript.ToggleFullBody(false);
         equipmentScript.ToggleFirstPersonBody(true);
+        equipmentScript.ToggleFpcMesh(true);
         //weaponScript.SwitchWeaponToFpcBody();
         equipmentScript.RespawnPlayer();
         weaponScript.RespawnPlayer();
