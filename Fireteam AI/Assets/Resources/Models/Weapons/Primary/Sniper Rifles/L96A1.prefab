@@ -5435,7 +5435,7 @@ MonoBehaviour:
   weaponName: L96A1
   type: Primary
   category: Sniper Rifle
-  damage: 100
+  damage: 112
   mobility: 87
   fireRate: 1.4
   accuracy: 0
@@ -5488,7 +5488,7 @@ MonoBehaviour:
   cockStartTime: 0
   reloadSound1Time: 0.3
   reloadSound2Time: 0.6
-  reloadSound3Time: 0.3
+  reloadSound3Time: 0.35
   supportSoundTime: -1
   weaponParts:
   - {fileID: 7401028900599595538}

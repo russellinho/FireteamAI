@@ -50,6 +50,7 @@ public class EquipmentScript : MonoBehaviour
     public GameObject myHairRenderer;
     public GameObject myFpcSkinRenderer;
     public GameObject myFpcTopRenderer;
+    public GameObject myFpcGlovesRenderer;
 
     public bool renderHair;
 
@@ -127,6 +128,14 @@ public class EquipmentScript : MonoBehaviour
         if (equippedArmorBottomRef != null) {
             equippedArmorBottomRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
         }
+    }
+
+    public void ToggleFpcMesh(bool b) {
+        if (equippedFpcSkinRef != null) {
+            equippedFpcSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = b;
+        }
+        equippedFpcTopRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = b;
+        myFpcGlovesRenderer.GetComponent<SkinnedMeshRenderer>().enabled = b;
     }
 
     public bool isFirstPerson() {

@@ -87,7 +87,7 @@ public class WeaponActionScript : MonoBehaviour
     public Vector3 rightCollarOriginalPos;
 
     // Zoom variables
-    private int zoom = 6;
+    private int zoom = 3;
     private int defaultFov = 60;
     // Use this for initialization
     void Start()
@@ -320,15 +320,15 @@ public class WeaponActionScript : MonoBehaviour
                         leftCollarAimingPos = leftCollar.localPosition + offset;
                         aimDownSightsTimer = 0f;
                     }
-
+                
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
-                    //if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosMale) < 0.005f) {
-                    if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(camTransform.localPosition), Vector3.Magnitude(weaponStats.aimDownSightPosMale))) {
+                    if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(leftCollar.localPosition), Vector3.Magnitude(leftCollarAimingPos))) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
                     //   weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = false;
                     ToggleFpsWeapon(false);
                       mouseLook.XSensitivity = 0.25f;
                       mouseLook.YSensitivity = 0.25f;
+                      fpc.equipmentScript.ToggleFpcMesh(false);
                       hudScript.toggleSniperOverlay(true);
                     }
                 } else {
@@ -339,15 +339,15 @@ public class WeaponActionScript : MonoBehaviour
                         leftCollarAimingPos = leftCollar.localPosition + offset;
                         aimDownSightsTimer = 0f;
                     }
-
+                    
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
-                    //if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosFemale) < 0.005f) {
-                    if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(camTransform.localPosition), Vector3.Magnitude(weaponStats.aimDownSightPosFemale))) {
+                    if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(leftCollar.localPosition), Vector3.Magnitude(leftCollarAimingPos))) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
                     //   weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = false;
                     ToggleFpsWeapon(false);
                       mouseLook.XSensitivity = 0.25f;
                       mouseLook.YSensitivity = 0.25f;
+                      fpc.equipmentScript.ToggleFpcMesh(false);
                       hudScript.toggleSniperOverlay(true);
                     }
 
@@ -372,6 +372,7 @@ public class WeaponActionScript : MonoBehaviour
                 mouseLook.XSensitivity = mouseLook.originalXSensitivity;
                 mouseLook.YSensitivity = mouseLook.originalYSensitivity;
                 //camTransform.GetComponent<Camera>().nearClipPlane = 0.05f;
+                fpc.equipmentScript.ToggleFpcMesh(true);
                 hudScript.toggleSniperOverlay(false);
 
             }
