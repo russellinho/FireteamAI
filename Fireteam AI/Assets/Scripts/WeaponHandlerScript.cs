@@ -31,6 +31,18 @@ public class WeaponHandlerScript : MonoBehaviour
         handle = weapon.gameObject.GetComponentsInChildren<Transform>()[1];
         return o;
     }
+
+    public void SetWeapon(Transform wep, bool firstPerson) {
+        weapon = wep;
+        wep.SetParent(gameObject.transform);
+        handle = weapon.gameObject.GetComponentsInChildren<Transform>()[1];
+        if (firstPerson) {
+            SetWeaponPosition(true);
+        } else {
+            SetWeaponPosition(false);
+        }
+    }
+
     public void SetWeaponPosition(bool firstPersonMode)
     {
         // Vector3 offset = new Vector3(transform.position.x - handle.position.x, transform.position.y - handle.position.y, transform.position.z - handle.position.z);

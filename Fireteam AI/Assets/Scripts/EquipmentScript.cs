@@ -73,11 +73,11 @@ public class EquipmentScript : MonoBehaviour
 
         if (pView != null) {
             if (pView.IsMine) {
-                fullBodyRef.SetActive(false);
-                firstPersonRef.SetActive(true);
+                ToggleFullBody(false);
+                ToggleFirstPersonBody(true);
             } else {
-                fullBodyRef.SetActive(true);
-                firstPersonRef.SetActive(false);
+                ToggleFullBody(true);
+                ToggleFirstPersonBody(false);
             }
         }
     }
@@ -105,28 +105,36 @@ public class EquipmentScript : MonoBehaviour
         }
     }
 
+    public void ToggleFirstPersonBody(bool b) {
+        firstPersonRef.SetActive(b);
+    }
+
+    public void ToggleFullBody(bool b) {
+        fullBodyRef.SetActive(b);
+    }
+
     public void ToggleMesh(bool b) {
         myEyesRenderer.GetComponent<SkinnedMeshRenderer>().enabled = b;
         myEyelashRenderer.GetComponent<SkinnedMeshRenderer>().enabled = b;
         myGlovesRenderer.GetComponent<SkinnedMeshRenderer>().enabled = b;
-        equippedTopRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
-        equippedBottomRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
-        equippedFootwearRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
-        equippedSkinRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
+        equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = b;
+        equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = b;
+        equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = b;
+        equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = b;
         if (renderHair) {
             myHairRenderer.GetComponent<SkinnedMeshRenderer>().enabled = b;
         }
         if (equippedFacewearRef != null) {
-            equippedFacewearRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
+            equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = b;
         }
         if (equippedHeadgearRef != null) {
-            equippedHeadgearRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
+            equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = b;
         }
         if (equippedArmorTopRef != null) {
-            equippedArmorTopRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
+            equippedArmorTopRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = b;
         }
         if (equippedArmorBottomRef != null) {
-            equippedArmorBottomRef.GetComponent<SkinnedMeshRenderer>().enabled = b;
+            equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = b;
         }
     }
 
@@ -640,12 +648,14 @@ public class EquipmentScript : MonoBehaviour
         // Equips skin on FPC if is local player
         if (isFirstPerson()) {
             string skinPath = (skin != 0) ? InventoryScript.characterCatalog[equippedCharacter].fpcFullSkinPath : InventoryScript.characterCatalog[equippedCharacter].fpcNoSkinPath;
-            equippedFpcSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(skinPath));
-            equippedFpcSkinRef.transform.SetParent(firstPersonRef.transform);
-            m = equippedFpcSkinRef.GetComponentInChildren<MeshFixer>();
-            m.target = myFpcSkinRenderer.gameObject;
-            m.rootBone = myFpcBones.transform;
-            m.AdaptMesh();
+            if (!"".Equals(skinPath)) {
+                equippedFpcSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(skinPath));
+                equippedFpcSkinRef.transform.SetParent(firstPersonRef.transform);
+                m = equippedFpcSkinRef.GetComponentInChildren<MeshFixer>();
+                m.target = myFpcSkinRenderer.gameObject;
+                m.rootBone = myFpcBones.transform;
+                m.AdaptMesh();
+            }
         }
     }
 

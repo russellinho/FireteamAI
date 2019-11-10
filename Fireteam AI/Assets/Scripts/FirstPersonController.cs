@@ -514,7 +514,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void SetIsDeadInAnimator(bool x) {
             if (fpcAnimator.GetBool("isDead") == x) return;
-            photonView.RPC("RpcSetIsDeadInAnimator", RpcTarget.Others, x);
+            photonView.RPC("RpcSetIsDeadInAnimator", RpcTarget.All, x);
         }
 
         [PunRPC]

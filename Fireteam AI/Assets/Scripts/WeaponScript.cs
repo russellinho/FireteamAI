@@ -323,6 +323,14 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
+    public void SwitchWeaponToFullBody() {
+        weaponHolder.SetWeapon(drawnWeaponReference.transform, false);
+    }
+
+    public void SwitchWeaponToFpcBody() {
+        weaponHolderFpc.SetWeapon(drawnWeaponReference.transform, true);
+    }
+
     public void EquipWeapon(string weaponType, string weaponName, string suppressorName, GameObject shopItemRef) {
         if (onTitle && (weaponName.Equals(equippedPrimaryWeapon) || weaponName.Equals(equippedSecondaryWeapon) || weaponName.Equals(equippedSupportWeapon))) return;
         // Get the weapon from the weapon catalog for its properties

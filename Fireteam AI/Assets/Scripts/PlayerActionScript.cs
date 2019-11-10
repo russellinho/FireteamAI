@@ -351,6 +351,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (health <= 0)
         {
             if (fpc.enabled) {
+                equipmentScript.ToggleFirstPersonBody(false);
+                equipmentScript.ToggleFullBody(true);
+                equipmentScript.ToggleMesh(true);
+                //weaponScript.SwitchWeaponToFullBody();
                 fpc.SetIsDeadInAnimator(true);
             }
             fpc.enabled = false;
@@ -744,6 +748,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         bombDefuseCounter = 0f;
         wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo;
         wepActionScript.currentAmmo = wepActionScript.GetWeaponStats().clipCapacity;
+        equipmentScript.ToggleFullBody(false);
+        equipmentScript.ToggleFirstPersonBody(true);
+        //weaponScript.SwitchWeaponToFpcBody();
         equipmentScript.RespawnPlayer();
         weaponScript.RespawnPlayer();
         fpc.ResetAnimationState();
