@@ -30,6 +30,7 @@ public class WeaponStats : MonoBehaviour
     public GameObject gunSmoke;
     public GameObject weaponShell;
     public Transform weaponShellPoint;
+    public Transform weaponShootPoint;
     public ParticleSystem muzzleFlash;
     public ParticleSystem bulletTracer;
     public Vector3 fpcPosMale;

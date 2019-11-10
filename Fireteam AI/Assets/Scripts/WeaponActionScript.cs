@@ -671,11 +671,11 @@ public class WeaponActionScript : MonoBehaviour
     void InstantiateGunSmokeEffect() {
         if (weaponStats.gunSmoke != null) {
             GameObject gunSmokeEffect = null;
-            if (fpc.equipmentScript.isFirstPerson()) {
-                gunSmokeEffect = Instantiate(weaponStats.gunSmoke, fpcShootPoint.position - new Vector3(0f, 0.05f, 0f), Quaternion.Euler(315f, 0f, 0f));
-            } else {
-                gunSmokeEffect = Instantiate(weaponStats.gunSmoke, shootPoint.position - new Vector3(0f, 0.05f, 0f), Quaternion.Euler(315f, 0f, 0f));
-            }
+            //if (fpc.equipmentScript.isFirstPerson()) {
+                //gunSmokeEffect = Instantiate(weaponStats.gunSmoke, weaponStats.weaponShootPoint.position, Quaternion.Euler(315f, 0f, 0f));
+            //} else {
+                gunSmokeEffect = Instantiate(weaponStats.gunSmoke, weaponStats.weaponShootPoint.position, Quaternion.Euler(315f, 0f, 0f));
+            //}
             Destroy(gunSmokeEffect, 1.5f);
         }
     }

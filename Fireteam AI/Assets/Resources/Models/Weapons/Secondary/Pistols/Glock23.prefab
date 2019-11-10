@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 183552308540871330}
   m_LocalRotation: {x: -0.0073977103, y: -0.7160698, z: 0.015737562, w: 0.69781214}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.010000022, y: 0.010000008, z: 0.010000022}
+  m_LocalScale: {x: 0.03, y: 0.03, z: 0.03}
   m_Children: []
   m_Father: {fileID: 2311903087163953047}
   m_RootOrder: 0
@@ -5109,6 +5109,7 @@ MonoBehaviour:
   weaponShell: {fileID: 495810041075087592, guid: 01f2dbe1746c1dc46923a4d9bf972eb9,
     type: 3}
   weaponShellPoint: {fileID: 2753802585551084857}
+  weaponShootPoint: {fileID: 2311903087163953047}
   muzzleFlash: {fileID: 6429990121772297589}
   bulletTracer: {fileID: 6810274940899095293}
   fpcPosMale: {x: -0.000388, y: 0.001686, z: -0.000453}

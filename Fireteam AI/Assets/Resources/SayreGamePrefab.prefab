@@ -5863,6 +5863,7 @@ GameObject:
   - component: {fileID: 749899371048575082}
   - component: {fileID: 7548990337718321357}
   - component: {fileID: 6585994898760364830}
+  - component: {fileID: 8522087482041994637}
   m_Layer: 0
   m_Name: PlayerCam
   m_TagString: MainCamera
@@ -5992,6 +5993,19 @@ AudioReverbFilter:
   m_LFReference: 250
   m_ReflectionsDelay: 0
   m_ReverbPreset: 27
+--- !u!114 &8522087482041994637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2167236522489520574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31aec6efb1df6344091734678c951904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fpc: {fileID: 1029626021163347192}
 --- !u!1 &2376037439433279039
 GameObject:
   m_ObjectHideFlags: 0
