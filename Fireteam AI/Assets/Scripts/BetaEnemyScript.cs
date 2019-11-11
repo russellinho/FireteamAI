@@ -147,7 +147,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		meleeTrigger = GetComponent<BoxCollider> ();
 		gameController = GameObject.Find("GameController");
 		gameController.GetComponent<GameControllerScript>().enemyList.Add(pView.ViewID, gameObject);
-		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
+		//enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
 
 		if (enemyType == EnemyType.Patrol) {
 			range = 10f;
@@ -230,7 +230,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		CheckAlerted ();
 		CheckTargetDead ();
-		displayAlerted();
+		//displayAlerted();
 
 		// If disoriented, don't have the ability to do anything else except die
 		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
@@ -261,7 +261,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	void FixedUpdate() {
 		// Hot fix for death animation not working on client
 		if (!PhotonNetwork.IsMasterClient && health <= 0) {
-			removeFromMarkerList();
+			//removeFromMarkerList();
 			actionState = ActionStates.Dead;
 		}
 
@@ -1506,7 +1506,7 @@ public class BetaEnemyScript : MonoBehaviour {
 								// Debug.Log("I hear sum body");
 							}
 							else {
-								removeFromMarkerList();
+								//removeFromMarkerList();
 								// Debug.Log("Guess it was my imagination");
 							}
 							continue;
@@ -1654,9 +1654,9 @@ public class BetaEnemyScript : MonoBehaviour {
 			alertStatus = 2;
 			Debug.Log("I see you");
 		}
-		else {
-			removeFromMarkerList();
-		}
+		// else {
+		// 	removeFromMarkerList();
+		// }
 	}
 
 	void removeFromMarkerList() {
