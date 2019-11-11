@@ -452,11 +452,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetMovingInAnimator(int x) {
+            fpcAnimator.SetFloat("MoveSpeed", 2f);
             if (fpcAnimator.GetInteger("MovingDir") == x || !canMove) return;
             fpcAnimator.SetBool("Moving", (x == 0 ? false : true));
             fpcAnimator.SetInteger("MovingDir", x);
             photonView.RPC("RpcSetMovingInAnimator", RpcTarget.Others, x);
-            fpcAnimator.SetFloat("MoveSpeed", 2f);
         }
 
         [PunRPC]
@@ -488,6 +488,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public void SetCrouchingInAnimator(bool x) {
             if (fpcAnimator.GetBool("Crouching") == x) return;
             photonView.RPC("RpcSetCrouchingInAnimator", RpcTarget.Others, x);
+            if (x) {
+                fpcAnimator.SetFloat("MoveSpeed", 0.5f);
+            } else {
+                fpcAnimator.SetFloat("MoveSpeed", 2f);
+            }
         }
 
         public void PlayFiringInFPCAnimator() {

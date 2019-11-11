@@ -25375,6 +25375,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsWalking: 0
+  m_IsAiming: 0
   m_IsCrouching: 0
   m_IsRunning: 0
   m_IsMoving: 0
@@ -25555,6 +25556,8 @@ MonoBehaviour:
   isUsingBooster: 0
   rightCollar: {fileID: 8395974561293240392}
   leftCollar: {fileID: 8395974561293240394}
+  defaultLeftCollarPos: {x: -3.758436e-10, y: 0.001242948, z: -2.449463e-12}
+  defaultRightCollarPos: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   leftCollarOriginalPos: {x: 0, y: 0, z: 0}
   rightCollarOriginalPos: {x: 0, y: 0, z: 0}
 --- !u!114 &4997301263046971765
@@ -25716,7 +25719,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 4997301263046971774}
-  viewIdField: 0
+  viewIdField: 4
   InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &4997301263046971774

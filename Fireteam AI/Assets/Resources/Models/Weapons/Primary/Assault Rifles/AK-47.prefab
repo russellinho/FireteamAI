@@ -5420,7 +5420,7 @@ MonoBehaviour:
   clipCapacity: 30
   maxAmmo: 120
   aimDownSightPosMale: {x: -0.000525, y: 0.00159, z: 0.001303}
-  aimDownSightPosFemale: {x: -0.0005, y: 0.00145, z: 0.00131}
+  aimDownSightPosFemale: {x: -0.0005, y: 0.0016, z: 0.00131}
   aimDownSightSpeed: 7
   aimDownSightClipping: 0.06
   titleHandPositionsMale: {x: -0.072, y: 0.145, z: 0.022}
@@ -5513,14 +5513,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4804414172645788110}
     m_Modifications:
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Name
-      value: BulletTracer
-      objectReference: {fileID: 0}
-    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
-      propertyPath: m_Layer
-      value: 16
-      objectReference: {fileID: 0}
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5576,6 +5568,14 @@ PrefabInstance:
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Name
+      value: BulletTracer
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
+      propertyPath: m_Layer
+      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
