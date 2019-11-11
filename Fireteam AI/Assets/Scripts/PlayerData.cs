@@ -43,15 +43,15 @@ public class PlayerData : MonoBehaviour
         string levelName = SceneManager.GetActiveScene().name;
         string characterPrefabName = "";
         if (PlayerData.playerdata.info.equippedCharacter.Equals("Lucas")) {
-            characterPrefabName = "PlayerPrefabLucasAction";
+            characterPrefabName = "LucasGamePrefab";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Daryl")) {
-            characterPrefabName = "PlayerPrefabDarylAction";
+            characterPrefabName = "DarylGamePrefab";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Codename Sayre")) {
-            characterPrefabName = "PlayerPrefabSayreAction";
+            characterPrefabName = "SayreGamePrefab";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Hana")) {
-            characterPrefabName = "PlayerPrefabHanaAction";
+            characterPrefabName = "HanaGamePrefab";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Jade")) {
-            characterPrefabName = "PlayerPrefabJadeAction";
+            characterPrefabName = "JadeGamePrefab";
         }
         if (levelName.Equals("BetaLevelNetwork"))
         {
@@ -60,7 +60,7 @@ public class PlayerData : MonoBehaviour
                 Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
                 Quaternion.Euler(Vector3.zero));
         } else if (levelName.Equals("Test")) {
-            Debug.Log(characterPrefabName);
+            //Debug.Log(characterPrefabName);
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
                 characterPrefabName,
                 Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
@@ -169,9 +169,11 @@ public class PlayerData : MonoBehaviour
             characterEquips.EquipBottom(info.equippedBottom, null);
             characterEquips.EquipFootwear(info.equippedFootwear, null);
             characterEquips.EquipArmor(info.equippedArmor, null);
-            characterWeps.EquipWeapon(info.equippedPrimaryType, info.equippedPrimary, null);
-            characterWeps.EquipWeapon(info.equippedSecondaryType, info.equippedSecondary, null);
-            characterWeps.EquipWeapon(info.equippedSupportType, info.equippedSupport, null);
+            ModInfo primaryModInfo = LoadModDataForWeapon(info.equippedPrimary);
+            ModInfo secondaryModInfo = LoadModDataForWeapon(info.equippedSecondary);
+            characterWeps.EquipWeapon(info.equippedPrimaryType, info.equippedPrimary, primaryModInfo.equippedSuppressor, null);
+            characterWeps.EquipWeapon(info.equippedSecondaryType, info.equippedSecondary, secondaryModInfo.equippedSuppressor, null);
+            characterWeps.EquipWeapon(info.equippedSupportType, info.equippedSupport, null, null);
         }
         else
         {

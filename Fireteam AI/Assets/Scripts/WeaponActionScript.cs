@@ -9,6 +9,9 @@ using UnityStandardAssets.Characters.FirstPerson;
 public class WeaponActionScript : MonoBehaviour
 {
 
+    private const float SHELL_SPEED = 3f;
+    private const float SHELL_TUMBLE = 4f;
+
     public MouseLook mouseLook;
     public PlayerActionScript playerActionScript;
     public CameraShakeScript cameraShakeScript;
@@ -16,10 +19,12 @@ public class WeaponActionScript : MonoBehaviour
     public AudioControllerScript audioController;
     public FirstPersonController fpc;
     public GameObject weaponHolder;
+    public GameObject weaponHolderFpc;
     private AudioSource weaponSound;
     private AudioSource reloadSound;
     public Animator animator;
-    private WeaponStats weaponStats;
+    public Animator animatorFpc;
+    public WeaponStats weaponStats;
     private WeaponMods weaponMods;
 
     // Projectile spread constants
@@ -42,9 +47,14 @@ public class WeaponActionScript : MonoBehaviour
     public int currentAmmo;
 
     public Transform shootPoint;
+    public Transform fpcShootPoint;
     public bool isReloading = false;
     public bool isCocking = false;
+    public bool isFiring = false;
     public bool isAiming;
+    // Used for allowing arms to move during aim down sight movement
+    private bool aimDownSightsLock;
+    private float aimDownSightsTimer;
 
     public GameObject hitParticles;
     public GameObject bulletImpact;
@@ -64,19 +74,32 @@ public class WeaponActionScript : MonoBehaviour
     private Vector3 originalPosCam;
     private Vector3 originalPosCamSecondary;
     // Aiming speed
-    public float aodSpeed = 8f;
     public PhotonView pView;
-    private bool isWieldingSupportItem;
-    private bool isCockingGrenade;
+    public bool isWieldingSupportItem;
+    public bool isCockingGrenade;
+    public bool isUsingBooster;
+    public Transform rightCollar;
+    public Transform leftCollar;
+    private Vector3 leftCollarAimingPos;
+    private Vector3 defaultLeftCollarPos;
+    private Vector3 defaultRightCollarPos;
+    public Vector3 leftCollarOriginalPos;
+    public Vector3 rightCollarOriginalPos;
 
     // Zoom variables
-    private int zoom = 6;
+    private int zoom = 3;
     private int defaultFov = 60;
     // Use this for initialization
     void Start()
     {
+        leftCollarAimingPos = Vector3.negativeInfinity;
         isCockingGrenade = false;
+        isUsingBooster = false;
         isWieldingSupportItem = false;
+        aimDownSightsLock = false;
+        defaultLeftCollarPos = Vector3.negativeInfinity;
+        defaultRightCollarPos = Vector3.negativeInfinity;
+        aimDownSightsTimer = 0f;
         if (pView != null && !pView.IsMine)
         {
             return;
@@ -89,7 +112,22 @@ public class WeaponActionScript : MonoBehaviour
 
         mouseLook = fpc.m_MouseLook;
 
-        CockingAction();
+        // Create animation event for shotgun reload
+
+        CreateAnimEvents();
+
+        //CockingAction();
+    }
+
+    void CreateAnimEvents() {
+        foreach (AnimationClip a in animatorFpc.runtimeAnimatorController.animationClips) {
+            if (a.name.Equals("Loading_R870")) {
+                AnimationEvent ae = new AnimationEvent();
+                ae.time = 0.7f;
+                ae.functionName = "ReloadShotgun";
+                a.AddEvent(ae);
+            }
+        }
     }
 
     // Update is called once per frame
@@ -99,14 +137,10 @@ public class WeaponActionScript : MonoBehaviour
         {
             return;
         }
+
         if (playerActionScript.health <= 0) {
-          hudScript.toggleSniperOverlay(false);
-          return;
-        }
-        if (weaponStats.category.Equals("Shotgun")) {
-            shotMode = ShotMode.Burst;
-        } else {
-            shotMode = ShotMode.Single;
+            hudScript.toggleSniperOverlay(false);
+            return;
         }
 
         if (Input.GetKeyDown(KeyCode.Q))
@@ -116,14 +150,7 @@ public class WeaponActionScript : MonoBehaviour
             else
                 firingMode = FireMode.Semi;
         }
-        if (weaponStats.type.Equals("Support")) {
-            isWieldingSupportItem = true;
-        } else {
-            isWieldingSupportItem = false;
-        }
-        if (weaponStats.category.Equals("Pistol") || weaponStats.category.Equals("Shotgun") || isWieldingSupportItem) {
-            firingMode = FireMode.Semi;
-        }
+
         switch (firingMode)
         {
             case FireMode.Auto:
@@ -138,12 +165,19 @@ public class WeaponActionScript : MonoBehaviour
         {
             return;
         }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
+        
+        if (Input.GetKeyDown(KeyCode.R)) {
             if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0)
             {
                 ReloadAction();
             }
+        }
+
+        // Automatically reload if no ammo
+        if (currentAmmo <= 0 && !isFiring && totalAmmoLeft > 0 && !isReloading && playerActionScript.canShoot) {
+            //Debug.Log("current ammo: " + currentAmmo + " isFiring: " + isFiring + " isReloading: " + isReloading);
+            cameraShakeScript.SetShake(false);
+            ReloadAction();
         }
 
         AimDownSights();
@@ -178,6 +212,7 @@ public class WeaponActionScript : MonoBehaviour
             FireBooster();
             return;
         }
+
         if (shootInput && !isReloading && playerActionScript.canShoot)
         {
             if (currentAmmo > 0)
@@ -185,15 +220,15 @@ public class WeaponActionScript : MonoBehaviour
                 if (shotMode == ShotMode.Single) {
                     Fire();
                 } else {
-                    FireBurst();
+                    FireShotgun();
                 }
                 voidRecoilRecover = false;
             }
-            else if (totalAmmoLeft > 0)
-            {
-                cameraShakeScript.SetShake(false);
-                ReloadAction();
-            }
+            // else if (totalAmmoLeft > 0)
+            // {
+            //     cameraShakeScript.SetShake(false);
+            //     ReloadAction();
+            // }
         }
         else
         {
@@ -207,6 +242,55 @@ public class WeaponActionScript : MonoBehaviour
             } else {
                 voidRecoilRecover = true;
                 recoilTime = 0f;
+            }
+        }
+    }
+    
+    // If aim down sights lock is enabled, arms have free range movement apart from their animations
+    void UpdateAimDownSightsArms() {
+        if (aimDownSightsLock) {
+            aimDownSightsTimer += (Time.deltaTime * weaponStats.aimDownSightSpeed);
+            // If going to center
+            if (isAiming) {
+                if (fpc.equipmentScript.gender == 'M') {
+                    leftCollar.localPosition = Vector3.Lerp(leftCollarOriginalPos, leftCollarAimingPos, aimDownSightsTimer);
+                    rightCollar.localPosition = Vector3.Lerp(rightCollarOriginalPos, weaponStats.aimDownSightPosMale, aimDownSightsTimer);
+                } else if (fpc.equipmentScript.gender == 'F') {
+                    leftCollar.localPosition = Vector3.Lerp(leftCollarOriginalPos, leftCollarAimingPos, aimDownSightsTimer);
+                    rightCollar.localPosition = Vector3.Lerp(rightCollarOriginalPos, weaponStats.aimDownSightPosFemale, aimDownSightsTimer);
+                }
+            // If coming back to normal
+            } else {
+                leftCollar.localPosition = Vector3.Lerp(leftCollarOriginalPos, defaultLeftCollarPos, aimDownSightsTimer);
+                rightCollar.localPosition = Vector3.Lerp(rightCollarOriginalPos, defaultRightCollarPos, aimDownSightsTimer);
+                // If the player is back in the normal position, then disable the lock
+                if (Mathf.Approximately(Vector3.Magnitude(leftCollar.localPosition), Vector3.Magnitude(defaultLeftCollarPos))) {
+                    aimDownSightsLock = false;
+                }
+            }
+        }
+    }
+
+    void LateUpdate() {
+        UpdateAimDownSightsArms();
+    }
+
+    void SetDefaultArmPositions() {
+        // Set the default arm positions if they aren't set yet
+        if (Vector3.Equals(defaultLeftCollarPos, Vector3.negativeInfinity)) {
+            defaultLeftCollarPos = leftCollar.localPosition;
+            defaultRightCollarPos = rightCollar.localPosition;
+        }
+    }
+
+    void ToggleFpsWeapon(bool b) {
+        foreach (MeshRenderer weaponPart in weaponStats.weaponParts) {
+            weaponPart.enabled = b;
+        }
+        if (weaponStats.suppressorSlot != null) {
+            MeshRenderer suppressorRenderer = weaponStats.suppressorSlot.GetComponentInChildren<MeshRenderer>();
+            if (suppressorRenderer != null) {
+                suppressorRenderer.enabled = b;
             }
         }
     }
@@ -227,54 +311,72 @@ public class WeaponActionScript : MonoBehaviour
 
             if (Input.GetButton("Fire2") && !isReloading)
             {
+                SetDefaultArmPositions();
+                fpc.SetAiminginFPCAnimator(true);
                 isAiming = true;
-                if (animator.GetInteger("Moving") == 0)
-                {
-                    animator.speed = 0f;
-                }
-                else
-                {
-                    animator.speed = 1f;
-                }
+                aimDownSightsLock = true;
                 if (fpc.equipmentScript.gender == 'M') {
-                    camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, weaponStats.aimDownSightPosMale, Time.deltaTime * aodSpeed);
+                    // Setting original arm positions
+                    if (leftCollarAimingPos.Equals(Vector3.negativeInfinity)) {
+                        leftCollarOriginalPos = leftCollar.localPosition;
+                        rightCollarOriginalPos = rightCollar.localPosition;
+                        Vector3 offset = weaponStats.aimDownSightPosMale - rightCollar.localPosition;
+                        leftCollarAimingPos = leftCollar.localPosition + offset;
+                        aimDownSightsTimer = 0f;
+                    }
+                
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
-                    if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosMale) < 0.005f) {
+                    if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(leftCollar.localPosition), Vector3.Magnitude(leftCollarAimingPos))) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
-                      weaponHolder.GetComponentInChildren<MeshRenderer>().enabled = false;
+                    //   weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = false;
+                    ToggleFpsWeapon(false);
                       mouseLook.XSensitivity = 0.25f;
                       mouseLook.YSensitivity = 0.25f;
+                      fpc.equipmentScript.ToggleFpcMesh(false);
                       hudScript.toggleSniperOverlay(true);
                     }
                 } else {
-                    camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, weaponStats.aimDownSightPosFemale, Time.deltaTime * aodSpeed);
+                    if (leftCollarAimingPos.Equals(Vector3.negativeInfinity)) {
+                        leftCollarOriginalPos = leftCollar.localPosition;
+                        rightCollarOriginalPos = rightCollar.localPosition;
+                        Vector3 offset = weaponStats.aimDownSightPosFemale - rightCollar.localPosition;
+                        leftCollarAimingPos = leftCollar.localPosition + offset;
+                        aimDownSightsTimer = 0f;
+                    }
+                    
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
-                    if (weaponStats.category == "Sniper Rifle" && Vector3.Distance(camTransform.localPosition, weaponStats.aimDownSightPosFemale) < 0.005f) {
+                    if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(leftCollar.localPosition), Vector3.Magnitude(leftCollarAimingPos))) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
-                      weaponHolder.GetComponentInChildren<MeshRenderer>().enabled = false;
+                    //   weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = false;
+                    ToggleFpsWeapon(false);
                       mouseLook.XSensitivity = 0.25f;
                       mouseLook.YSensitivity = 0.25f;
+                      fpc.equipmentScript.ToggleFpcMesh(false);
                       hudScript.toggleSniperOverlay(true);
                     }
 
                 }
-                camTransform.GetComponent<Camera>().nearClipPlane = weaponStats.aimDownSightClipping;
+                //camTransform.GetComponent<Camera>().nearClipPlane = weaponStats.aimDownSightClipping;
             }
             else
             {
+                fpc.SetAiminginFPCAnimator(false);
                 isAiming = false;
-                animator.speed = 1f;
-                //if (animator.GetInteger("WeaponType") == 1) {
-                camTransform.localPosition = Vector3.Slerp(camTransform.localPosition, originalPosCam, Time.deltaTime * aodSpeed);
+                if (!Vector3.Equals(leftCollarAimingPos, Vector3.negativeInfinity)) {
+                    leftCollarOriginalPos = leftCollar.localPosition;
+                    rightCollarOriginalPos = rightCollar.localPosition;
+                    leftCollarAimingPos = Vector3.negativeInfinity;
+                    aimDownSightsTimer = 0f;
+                }
+
                 // Sets everything back to default after zooming in with sniper rifle
                 camTransform.GetComponent<Camera>().fieldOfView = defaultFov;
-                weaponHolder.GetComponentInChildren<MeshRenderer>().enabled = true;
+                // weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = true;
+                ToggleFpsWeapon(true);
                 mouseLook.XSensitivity = mouseLook.originalXSensitivity;
                 mouseLook.YSensitivity = mouseLook.originalYSensitivity;
-                //} else if (animator.GetInteger("WeaponType") == 2) {
-                  //  camTransform.localPosition = Vector3.Slerp(camTransform.localPosition, originalPosCamSecondary, Time.deltaTime * aodSpeed);
-                //}
-                camTransform.GetComponent<Camera>().nearClipPlane = 0.05f;
+                //camTransform.GetComponent<Camera>().nearClipPlane = 0.05f;
+                fpc.equipmentScript.ToggleFpcMesh(true);
                 hudScript.toggleSniperOverlay(false);
 
             }
@@ -301,12 +403,16 @@ public class WeaponActionScript : MonoBehaviour
     // Comment
     public void Fire()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking)
         {
             return;
         }
 
         cameraShakeScript.SetShake(true);
+        animatorFpc.Play("Firing");
+        isFiring = true;
+        weaponStats.weaponAnimator.Play("Fire");
+        SpawnShellCasing();
         IncreaseSpread();
         IncreaseRecoil();
         UpdateRecoil(true);
@@ -314,9 +420,9 @@ public class WeaponActionScript : MonoBehaviour
         float xSpread = Random.Range(-spread, spread);
         float ySpread = Random.Range(-spread, spread);
         float zSpread = Random.Range(-spread, spread);
-        Vector3 impactDir = new Vector3(shootPoint.transform.forward.x + xSpread, shootPoint.transform.forward.y + ySpread, shootPoint.transform.forward.z + zSpread);
+        Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
         int headshotLayer = (1 << 13);
-        if (Physics.Raycast(shootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer))
+        if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer))
         {
             pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
             if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().health > 0)
@@ -327,7 +433,7 @@ public class WeaponActionScript : MonoBehaviour
                 audioController.PlayHeadshotSound();
             }
         }
-        else if (Physics.Raycast(shootPoint.position, impactDir, out hit, weaponStats.range))
+        else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range))
         {
             GameObject bloodSpill = null;
             if (hit.transform.tag.Equals("Human"))
@@ -364,14 +470,101 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
-    public void FireBurst ()
-    {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading)
+    public void SpawnShellCasing() {
+        GameObject o = Instantiate(weaponStats.weaponShell, weaponStats.weaponShellPoint.position, Quaternion.Euler(0f, 0f, 0f));
+        o.transform.forward = -weaponStats.transform.right;
+        o.GetComponent<Rigidbody>().velocity = weaponStats.transform.forward * SHELL_SPEED;
+        o.GetComponent<Rigidbody>().angularVelocity = Random.insideUnitSphere * SHELL_TUMBLE;
+        Destroy(o, 3f);
+        pView.RPC("RpcSpawnShellCasing", RpcTarget.Others);
+    }
+
+    [PunRPC]
+    void RpcSpawnShellCasing() {
+        GameObject o = Instantiate(weaponStats.weaponShell, weaponStats.weaponShellPoint.position, Quaternion.Euler(-90f, -90f, 90f));
+        o.transform.forward = -weaponStats.transform.right;
+        o.GetComponent<Rigidbody>().velocity = weaponStats.transform.forward * SHELL_SPEED;
+        o.GetComponent<Rigidbody>().angularVelocity = Random.insideUnitSphere * SHELL_TUMBLE;
+        Destroy(o, 3f);
+    }
+
+    public void FireBoltAction() {
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking)
         {
             return;
         }
 
         cameraShakeScript.SetShake(true);
+        animatorFpc.Play("Firing");
+        isFiring = true;
+        IncreaseSpread();
+        IncreaseRecoil();
+        UpdateRecoil(true);
+        RaycastHit hit;
+        float xSpread = Random.Range(-spread, spread);
+        float ySpread = Random.Range(-spread, spread);
+        float zSpread = Random.Range(-spread, spread);
+        Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
+        int headshotLayer = (1 << 13);
+        if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer))
+        {
+            pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
+            if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().health > 0)
+            {
+                hudScript.InstantiateHitmarker();
+                hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().TakeDamage(100);
+                RewardKill(true);
+                audioController.PlayHeadshotSound();
+            }
+        }
+        else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range))
+        {
+            GameObject bloodSpill = null;
+            if (hit.transform.tag.Equals("Human"))
+            {
+                pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+                int beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript>().health;
+                if (beforeHp > 0)
+                {
+                    hudScript.InstantiateHitmarker();
+                    audioController.PlayHitmarkerSound();
+                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
+                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().PlayGruntSound();
+                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted(true);
+                    if (hit.transform.gameObject.GetComponent<BetaEnemyScript>().health <= 0 && beforeHp > 0)
+                    {
+                        RewardKill(false);
+                    }
+                }
+            } else if (hit.transform.tag.Equals("Player")) {
+                pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+            } else {
+                pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
+                pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
+            }
+        }
+        if (weaponMods.suppressorRef == null)
+        {
+            playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+            pView.RPC("FireEffects", RpcTarget.All);
+        }
+        else
+        {
+            pView.RPC("FireEffectsSuppressed", RpcTarget.All);
+        }
+    }
+
+    public void FireShotgun ()
+    {
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking)
+        {
+            return;
+        }
+
+        cameraShakeScript.SetShake(true);
+        animatorFpc.Play("Firing");
+        isCocking = true;
+        isFiring = true;
         IncreaseRecoil();
         UpdateRecoil(true);
         RaycastHit hit;
@@ -383,9 +576,9 @@ public class WeaponActionScript : MonoBehaviour
             float xSpread = Random.Range(-0.1f, 0.1f);
             float ySpread = Random.Range(-0.1f, 0.1f);
             float zSpread = Random.Range(-0.1f, 0.1f);
-            Vector3 impactDir = new Vector3(shootPoint.transform.forward.x + xSpread, shootPoint.transform.forward.y + ySpread, shootPoint.transform.forward.z + zSpread);
+            Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
             int headshotLayer = (1 << 13);
-            if (Physics.Raycast(shootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer) && !headshotDetected)
+            if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer) && !headshotDetected)
             {
                 pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
                 if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().health > 0)
@@ -397,7 +590,7 @@ public class WeaponActionScript : MonoBehaviour
                 }
                 headshotDetected = true;
             }
-            else if (Physics.Raycast(shootPoint.position, impactDir, out hit, weaponStats.range))
+            else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range))
             {
                 int beforeHp = 0;
                 GameObject bloodSpill = null;
@@ -481,7 +674,12 @@ public class WeaponActionScript : MonoBehaviour
 
     void InstantiateGunSmokeEffect() {
         if (weaponStats.gunSmoke != null) {
-            GameObject gunSmokeEffect = Instantiate(weaponStats.gunSmoke, shootPoint.position - new Vector3(0f, 0.05f, 0f), Quaternion.Euler(315f, 0f, 0f));
+            GameObject gunSmokeEffect = null;
+            //if (fpc.equipmentScript.isFirstPerson()) {
+                //gunSmokeEffect = Instantiate(weaponStats.gunSmoke, weaponStats.weaponShootPoint.position, Quaternion.Euler(315f, 0f, 0f));
+            //} else {
+                gunSmokeEffect = Instantiate(weaponStats.gunSmoke, weaponStats.weaponShootPoint.position, Quaternion.Euler(315f, 0f, 0f));
+            //}
             Destroy(gunSmokeEffect, 1.5f);
         }
     }
@@ -533,8 +731,16 @@ public class WeaponActionScript : MonoBehaviour
             totalAmmoLeft -= bulletsToDeduct;
             currentAmmo += bulletsToDeduct;
         }
-        if (weaponStats.reloadSound != null) {
-            pView.RPC("RpcPlayReloadSound", RpcTarget.All);
+    }
+
+    public void ReloadShotgun() {
+        if (!isCocking)
+        {
+            if (totalAmmoLeft <= 0)
+                return;
+
+            totalAmmoLeft--;
+            currentAmmo++;
         }
     }
 
@@ -554,16 +760,21 @@ public class WeaponActionScript : MonoBehaviour
         isReloading = true;
         if (isCocking)
         {
-            pView.RPC("RpcCockingAnim", RpcTarget.All);
+            FpcCockingAnim();
+            pView.RPC("RpcCockingAnim", RpcTarget.Others);
         }
         else
         {
-            pView.RPC("RpcReloadAnim", RpcTarget.All);
+            FpcReloadAnim();
+            pView.RPC("RpcReloadAnim", RpcTarget.Others);
         }
     }
 
     public void CockingAction()
     {
+        // if (!weaponStats.type.Equals("Support")) {
+        //     isCocking = true;
+        // }
         isCocking = true;
         ReloadAction();
     }
@@ -571,13 +782,34 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcReloadAnim()
     {
-        if (fpc.m_IsCrouching) {
-            //animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f);
-            animator.SetTrigger("Reloading");
-        } else {
+        // if (isCrouching) {
+        //     //animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f);
+        //     animator.SetTrigger("Reloading");
+        // } else {
             //animator.CrossFadeInFixedTime("Reload", 0.1f);
             animator.SetTrigger("Reloading");
-        }
+        // }
+    }
+
+    void FpcReloadAnim() {
+        // if (fpc.m_IsCrouching) {
+        //     //animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f);
+        //     animatorFpc.SetTrigger("Reloading");
+        // } else {
+            //animator.CrossFadeInFixedTime("Reload", 0.1f);
+            if (weaponStats.category.Equals("Shotgun")) {
+                animatorFpc.CrossFade("ShotgunLoad", weaponStats.reloadTransitionSpeed);
+            } else if (weaponStats.category.Equals("Sniper Rifle")) {
+                animatorFpc.CrossFade("BoltActionLoad", weaponStats.reloadTransitionSpeed);
+            } else if (weaponStats.type.Equals("Support")) {
+                animatorFpc.Play("DrawWeapon");
+            } else {
+                animatorFpc.CrossFade("Reload", weaponStats.reloadTransitionSpeed);
+                FpcChangeMagazine(weaponStats.reloadTransitionSpeed);
+            }
+            // animatorFpc.SetTrigger("Reload");
+            // FpcChangeMagazine();
+        // }
     }
 
     [PunRPC]
@@ -593,15 +825,57 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
-    [PunRPC]
-    void RpcPlayReloadSound()
-    {
-        weaponStats.reloadSound.Play();
+    void FpcCockingAnim() {
+        if (weaponStats.category.Equals("Shotgun")) {
+            animatorFpc.Play("ShotgunCock");
+            //FpcCockShotgun();
+        } else if (weaponStats.category.Equals("Sniper Rifle")) {
+            animatorFpc.Play("DrawWeapon");
+        } else if (weaponStats.type.Equals("Support")) {
+            animatorFpc.Play("DrawWeapon");
+        } else {
+            weaponStats.weaponAnimator.Play("Reload", 0, weaponStats.cockStartTime);
+            animatorFpc.Play("Reload", 0, weaponStats.cockStartTime);
+        }
     }
 
-    void PlayReloadSound()
+    public void FpcCockShotgun() {
+        weaponStats.weaponAnimator.Play("Reload");
+    }
+
+    public void FpcCockBoltAction() {
+        weaponStats.weaponAnimator.Play("Cock");
+    }
+
+    public void FpcLoadBoltAction() {
+        weaponStats.weaponAnimator.Play("Reload");
+    }
+
+    public void FpcChangeMagazine(float startFrame) {
+        // weaponStats.weaponAnimator.Play("Reload", 0, startFrame);
+        weaponStats.weaponAnimator.CrossFade("Reload", startFrame);
+    }
+
+    [PunRPC]
+    void RpcPlayReloadSound(int soundNumber)
     {
-        weaponStats.reloadSound.Play();
+        weaponStats.weaponSoundSource.clip = weaponStats.reloadSounds[soundNumber];
+        weaponStats.weaponSoundSource.Play();
+    }
+
+    public void PlayReloadSound(int soundNumber)
+    {
+        pView.RPC("RpcPlayReloadSound", RpcTarget.All, soundNumber);
+    }
+
+    [PunRPC]
+    void RpcPlaySupportActionSound() {
+        weaponStats.weaponSoundSource.clip = weaponStats.supportActionSound;
+        weaponStats.weaponSoundSource.Play();
+    }
+
+    public void PlaySupportActionSound() {
+        pView.RPC("RpcPlaySupportActionSound", RpcTarget.All);
     }
 
     private void PlayShootSound()
@@ -662,14 +936,14 @@ public class WeaponActionScript : MonoBehaviour
         {
             if (recoilTime < MAX_RECOIL_TIME)
             {
-                mouseLook.m_SpineTargetRot *= Quaternion.Euler(-weaponStats.recoil, 0f, 0f);
+                mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(weaponStats.recoil, 0f, 0f);
             }
         }
         else
         {
             if (recoilTime > 0f)
             {
-                mouseLook.m_SpineTargetRot *= Quaternion.Euler(weaponStats.recoil / weaponStats.recoveryConstant, 0f, 0f);
+                mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(-weaponStats.recoil / weaponStats.recoveryConstant, 0f, 0f);
             }
         }
     }
@@ -679,6 +953,40 @@ public class WeaponActionScript : MonoBehaviour
         weaponMods = ws.GetComponent<WeaponMods>();
         fireTimer = ws.fireRate;
         playerActionScript.weaponSpeedModifier = ws.mobility/100f;
+        if (playerActionScript.equipmentScript.gender == 'M') {
+            fpc.fpcAnimator.runtimeAnimatorController = ws.maleOverrideController as RuntimeAnimatorController;
+        } else {
+            fpc.fpcAnimator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;
+        }
+        if (!ws.type.Equals("Support")) {
+            SetReloadSpeed();
+            SetFiringSpeed();
+        }
+        if (weaponStats.type.Equals("Support")) {
+            isWieldingSupportItem = true;
+            firingMode = FireMode.Semi;
+        } else {
+            isWieldingSupportItem = false;
+            if (weaponStats.category.Equals("Shotgun")) {
+                shotMode = ShotMode.Burst;
+                firingMode = FireMode.Semi;
+            } else {
+                shotMode = ShotMode.Single;
+                if (weaponStats.category.Equals("Pistol")) {
+                    firingMode = FireMode.Semi;
+                }
+            }
+        }
+    }
+
+    public void SetReloadSpeed(float multipler = 1f) {
+        animatorFpc.SetFloat("ReloadSpeed", weaponStats.defaultFpcReloadSpeed * multipler);
+        weaponStats.weaponAnimator.SetFloat("ReloadSpeed", weaponStats.defaultWeaponReloadSpeed * multipler);
+        weaponStats.weaponAnimator.SetFloat("CockingSpeed", weaponStats.defaultWeaponCockingSpeed * multipler);
+    }
+
+    public void SetFiringSpeed(float multiplier = 1f) {
+        animatorFpc.SetFloat("FireSpeed", weaponStats.defaultFireSpeed * multiplier);
     }
 
     public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {
@@ -704,14 +1012,14 @@ public class WeaponActionScript : MonoBehaviour
         }
         if (currentAmmo <= 0) return;
         if (weaponStats.category.Equals("Explosive")) {
-            if (!isCockingGrenade && isWieldingSupportItem && (Input.GetButtonDown("Fire1") || Input.GetButton("Fire1"))) {
-                isCockingGrenade = true;
-                pView.RPC("RpcCockGrenade", RpcTarget.All, isCockingGrenade);
-                return;
+            if (isCockingGrenade) {
+                animatorFpc.SetTrigger("isCockingGrenade");
+                pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
+                // return;
             }
             if (isCockingGrenade && Input.GetButtonUp("Fire1")) {
-                isCockingGrenade = false;
-                pView.RPC("RpcCockGrenade", RpcTarget.All, isCockingGrenade);
+                animatorFpc.SetTrigger("ThrowGrenade");
+                pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
             }
         }
     }
@@ -730,25 +1038,23 @@ public class WeaponActionScript : MonoBehaviour
             if (weaponStats.weaponName.Equals("Medkit") && playerActionScript.health == playerActionScript.playerScript.health) {
                 return;
             }
-            if (isWieldingSupportItem && Input.GetButtonDown("Fire1")) {
+            if (isWieldingSupportItem && Input.GetButtonDown("Fire1") && animatorFpc.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
                 pView.RPC("RpcUseBooster", RpcTarget.All);
+                animatorFpc.SetTrigger("UseBooster");
             }
         }
-
-
-        }
+    }
 
     public void UseSupportItem() {
         // If the item is a grenade, instantiate and launch the grenade
         if (weaponStats.category.Equals("Explosive")) {
-            GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.weaponCatalog[weaponStats.weaponName].prefabPath + "Projectile", weaponHolder.transform.position, Quaternion.identity);
-            projectile.transform.forward = weaponHolder.transform.forward;
+            GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.weaponCatalog[weaponStats.weaponName].prefabPath + "Projectile", weaponHolderFpc.transform.position, Quaternion.identity);
+            projectile.transform.forward = weaponHolderFpc.transform.forward;
             projectile.GetComponent<ThrowableScript>().Launch(gameObject, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
             // Reset fire timer and subtract ammo used
             currentAmmo--;
             fireTimer = 0.0f;
-        }
-        else if (weaponStats.category.Equals("Booster")) {
+        } else if (weaponStats.category.Equals("Booster")) {
             // Reset fire timer and subtract ammo used
             BoosterScript boosterScript = GetComponentInChildren<BoosterScript>();
             boosterScript.UseBoosterItem(weaponStats.weaponName);

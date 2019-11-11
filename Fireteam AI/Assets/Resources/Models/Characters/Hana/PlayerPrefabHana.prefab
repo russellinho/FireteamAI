@@ -796,6 +796,8 @@ MonoBehaviour:
   ts: {fileID: 0}
   playerScript: {fileID: 2377182879810501776}
   tws: {fileID: 2282748257884432631}
+  fullBodyRef: {fileID: 0}
+  firstPersonRef: {fileID: 0}
   equippedCharacter: Hana
   equippedHeadgear: 
   equippedFacewear: 
@@ -825,6 +827,7 @@ MonoBehaviour:
   myEyesRenderer: {fileID: 2052873151880461117}
   myEyelashRenderer: {fileID: 2052873151880461119}
   myHairRenderer: {fileID: 2052873151880461107}
+  renderHair: 0
   myBones: {fileID: 2052873151880461097}
   pView: {fileID: 0}
 --- !u!114 &2282748257884432631
@@ -2073,7 +2076,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 76350802b8519364691272ed0cb35f5a, type: 2}
+  - {fileID: 2100000, guid: 0a69265391df035499cc85fb75fed7dc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

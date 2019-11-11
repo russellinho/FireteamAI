@@ -14,7 +14,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
     {
         [SerializeField] public bool m_IsWalking;
         [SerializeField] public bool m_IsCrouching;
-    	  [SerializeField] public bool m_IsRunning;
+    	[SerializeField] public bool m_IsRunning;
         [SerializeField] public bool m_IsMoving;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
         [SerializeField] private float m_JumpSpeed;
@@ -53,9 +53,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public PlayerActionScript playerActionScript;
         public PhotonView photonView;
 
+        public Transform charTransform;
         public Transform spineTransform;
+        public Transform fpcTransformSpine;
+        public Transform fpcTransformBody;
         public Transform headTransform;
         public Animator animator;
+        public Animator fpcAnimator;
 
         private int networkDelay = 5;
         private int networkDelayCount = 0;
@@ -63,8 +67,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Use this for initialization
         private void Start()
         {
-            animator.SetBool("onTitle", false);
-            m_MouseLook.Init(transform, spineTransform);
+            if (animator.gameObject.activeInHierarchy) {
+                animator.SetBool("onTitle", false);
+            }
+            m_MouseLook.Init(charTransform, spineTransform, fpcTransformSpine, fpcTransformBody);
             if (photonView != null && !photonView.IsMine) {
 				//this.enabled = false;
                 return;
@@ -122,15 +128,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 return;
             }
             if (playerActionScript.health > 0) {
-                Vector3 spineRotAngles = RotateView();
-                if (networkDelayCount < 5)
+                Rotations rotAngles = RotateView();
+                if (networkDelayCount < 3)
                 {
                     networkDelayCount++;
                 }
-                if (!Vector3.Equals(spineRotAngles, Vector3.negativeInfinity) && networkDelayCount == 5)
+                if (!Vector3.Equals(rotAngles.spineRot, Vector3.negativeInfinity) && networkDelayCount == 3)
                 {
                     networkDelayCount = 0;
-                    photonView.RPC("RpcUpdateSpineRotation", RpcTarget.Others, spineRotAngles.x, spineRotAngles.y, spineRotAngles.z);
+                    photonView.RPC("RpcUpdateSpineRotation", RpcTarget.Others, rotAngles.spineRot.x, rotAngles.spineRot.y, rotAngles.spineRot.z,
+                    rotAngles.charRot.x, rotAngles.charRot.y, rotAngles.charRot.z);
                 }
             }
         }
@@ -244,7 +251,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 SetWalkingInAnimator(false);
             }
 
-            Vector3 desiredMove = m_Camera.transform.forward*m_Input.y + m_Camera.transform.right*m_Input.x;
+            Vector3 desiredMove = fpcTransformBody.forward*m_Input.y + fpcTransformBody.right*m_Input.x;
 
             // get a normal for the surface that is being touched to move along it
             RaycastHit hitInfo;
@@ -390,6 +397,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f && playerActionScript.sprintTime > 0f && !sprintLock) {
 						m_IsWalking = false;
 						m_IsRunning = true;
+                        if (weaponActionScript.isReloading || weaponActionScript.isCocking) {
+                            SwitchToSprintingInAnimator();
+                        }
 					} else {
 						m_IsWalking = false;
 						m_IsRunning = false;
@@ -426,23 +436,25 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         private void ClientRotateView() {
-            m_MouseLook.LookRotationClient (spineTransform);
+            m_MouseLook.LookRotationClient (spineTransform, charTransform);
         }
 
-        private Vector3 RotateView()
+        private Rotations RotateView()
         {
-            return m_MouseLook.LookRotation (transform, spineTransform, m_Camera.transform);
+            return m_MouseLook.LookRotation (charTransform, spineTransform, fpcTransformSpine, fpcTransformBody);
         }
 
         [PunRPC]
-        private void RpcUpdateSpineRotation(float xSpineRot, float ySpineRot, float zSpineRot)
+        private void RpcUpdateSpineRotation(float xSpineRot, float ySpineRot, float zSpineRot, float xCharRot, float yCharRot, float zCharRot)
         {
-            m_MouseLook.NetworkedLookRotation(spineTransform, xSpineRot, ySpineRot, zSpineRot);
+            m_MouseLook.NetworkedLookRotation(spineTransform, xSpineRot, ySpineRot, zSpineRot, charTransform, xCharRot, yCharRot, zCharRot);
         }
 
         public void SetMovingInAnimator(int x) {
-            if (animator.GetInteger("Moving") == x || !canMove) return;
-            photonView.RPC("RpcSetMovingInAnimator", RpcTarget.All, x);
+            if (fpcAnimator.GetInteger("MovingDir") == x || !canMove) return;
+            fpcAnimator.SetBool("Moving", (x == 0 ? false : true));
+            fpcAnimator.SetInteger("MovingDir", x);
+            photonView.RPC("RpcSetMovingInAnimator", RpcTarget.Others, x);
         }
 
         [PunRPC]
@@ -451,8 +463,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetWeaponTypeInAnimator(int x) {
-            if (animator.GetInteger("WeaponType") == x) return;
-            photonView.RPC("RpcSetWeaponTypeInAnimator", RpcTarget.All, x);
+            if (fpcAnimator.GetInteger("WeaponType") == x) return;
+            photonView.RPC("RpcSetWeaponTypeInAnimator", RpcTarget.Others, x);
         }
 
         [PunRPC]
@@ -461,8 +473,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetWeaponReadyInAnimator(bool x) {
-            if (animator.GetBool("weaponReady") == x) return;
-            photonView.RPC("RpcSetWeaponReadyInAnimator", RpcTarget.All, x);
+            if (fpcAnimator.GetBool("weaponReady") == x) return;
+            fpcAnimator.SetBool("weaponReady", x);
+            photonView.RPC("RpcSetWeaponReadyInAnimator", RpcTarget.Others, x);
         }
 
         [PunRPC]
@@ -471,8 +484,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetCrouchingInAnimator(bool x) {
-            if (animator.GetBool("Crouching") == x) return;
-            photonView.RPC("RpcSetCrouchingInAnimator", RpcTarget.All, x);
+            if (fpcAnimator.GetBool("Crouching") == x) return;
+            photonView.RPC("RpcSetCrouchingInAnimator", RpcTarget.Others, x);
+        }
+
+        public void PlayFiringInFPCAnimator() {
+            fpcAnimator.Play("Firing");
         }
 
         [PunRPC]
@@ -481,8 +498,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetSprintingInAnimator(bool x) {
-            if (animator.GetBool("isSprinting") == x) return;
-            photonView.RPC("RpcSetSprintingInAnimator", RpcTarget.All, x);
+            if (fpcAnimator.GetBool("Sprinting") == x) return;
+            fpcAnimator.SetBool("Sprinting", x);
+            photonView.RPC("RpcSetSprintingInAnimator", RpcTarget.Others, x);
+        }
+
+        void SwitchToSprintingInAnimator() {
+            fpcAnimator.CrossFade("Sprinting", 0.01f);
         }
 
         [PunRPC]
@@ -491,7 +513,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetIsDeadInAnimator(bool x) {
-            if (animator.GetBool("isDead") == x) return;
+            if (fpcAnimator.GetBool("isDead") == x) return;
             photonView.RPC("RpcSetIsDeadInAnimator", RpcTarget.All, x);
         }
 
@@ -503,8 +525,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetWalkingInAnimator(bool x) {
-            if (animator.GetBool("isWalking") == x) return;
-            photonView.RPC("RpcSetWalkingInAnimator", RpcTarget.All, x);
+            if (fpcAnimator.GetBool("isWalking") == x) return;
+            photonView.RPC("RpcSetWalkingInAnimator", RpcTarget.Others, x);
         }
 
         [PunRPC]
@@ -513,7 +535,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void TriggerJumpInAnimator() {
-            photonView.RPC("RpcTriggerJumpInAnimator", RpcTarget.All);
+            photonView.RPC("RpcTriggerJumpInAnimator", RpcTarget.Others);
         }
 
         [PunRPC]
@@ -522,7 +544,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void TriggerReloadingInAnimator() {
-            photonView.RPC("RpcTriggerReloadingInAnimator", RpcTarget.All);
+            photonView.RPC("RpcTriggerReloadingInAnimator", RpcTarget.Others);
         }
 
         [PunRPC]
@@ -562,7 +584,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // }
 
         public void ResetAnimationState() {
-            photonView.RPC("RpcResetAnimationState", RpcTarget.All);
+            photonView.RPC("RpcResetAnimationState", RpcTarget.Others);
         }
 
         [PunRPC]
@@ -578,5 +600,23 @@ namespace UnityStandardAssets.Characters.FirstPerson
             animator.Play("IdleAssaultRifle", 0);
             animator.Play("IdleAssaultRifle", 1);
         }
+
+        public void SetAiminginFPCAnimator(bool x) {
+            fpcAnimator.SetBool("Aiming", x);
+        }
+
+        public void ResetFPCAnimator() {
+            fpcAnimator.SetBool("Aiming", false);
+            fpcAnimator.SetBool("weaponReady", false);
+            fpcAnimator.SetBool("Moving", false);
+            fpcAnimator.SetBool("Sprinting", false);
+            fpcAnimator.SetBool("Crouching", false);
+            fpcAnimator.SetBool("isSprinting", false);
+            fpcAnimator.SetBool("isDead", false);
+            fpcAnimator.SetBool("isWalking", false);
+            fpcAnimator.SetInteger("WeaponType", 1);
+            fpcAnimator.SetInteger("MovingDir", 0);
+        }
+
     }
 }

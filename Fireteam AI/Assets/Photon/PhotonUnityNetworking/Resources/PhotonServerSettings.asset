@@ -157,4 +157,6 @@ MonoBehaviour:
   - RpcToggleWeaponVisible
   - RpcResetAnimationState
   - RpcSetPlayerThrownByReference
+  - RpcSpawnShellCasing
+  - RpcPlaySupportActionSound
   DisableAutoOpenWizard: 1

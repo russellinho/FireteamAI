@@ -8,6 +8,8 @@ public class WeaponHandlerScript : MonoBehaviour
     public Transform handle;
     public Transform weapon;
     public Transform leftShoulder;
+    public Transform leftHand;
+    public Transform rightHand;
     private Vector3 steadyHandPos;
     private Vector3 originalShoulderPos;
     public FirstPersonController fpc;
@@ -29,24 +31,52 @@ public class WeaponHandlerScript : MonoBehaviour
         handle = weapon.gameObject.GetComponentsInChildren<Transform>()[1];
         return o;
     }
-    public void SetWeaponPosition()
+
+    public void SetWeapon(Transform wep, bool firstPerson) {
+        weapon = wep;
+        wep.SetParent(gameObject.transform);
+        handle = weapon.gameObject.GetComponentsInChildren<Transform>()[1];
+        if (firstPerson) {
+            SetWeaponPosition(true);
+        } else {
+            SetWeaponPosition(false);
+        }
+    }
+
+    public void SetWeaponPosition(bool firstPersonMode)
     {
         // Vector3 offset = new Vector3(transform.position.x - handle.position.x, transform.position.y - handle.position.y, transform.position.z - handle.position.z);
         //Vector3 offset = new Vector3();
         //weapon.localPosition = new Vector3(weapon.localPosition.x + (-handle.localPosition.x) + offset.x, weapon.localPosition.y + (-handle.localPosition.y) + offset.y, weapon.localPosition.z + (-handle.localPosition.z) + offset.z);
         //weapon.position = new Vector3(transform.localPosition.x + handle.localPosition.x, transform.localPosition.y + handle.localPosition.y, transform.localPosition.z + handle.localPosition.z);
-        Vector3 oldHandlePos = handle.localPosition;
-        handle.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z);
-        oldHandlePos = new Vector3(oldHandlePos.x - handle.localPosition.x, oldHandlePos.y - handle.localPosition.y, oldHandlePos.z - handle.localPosition.z);
-        if (fpc.equipmentScript.gender == 'M') {
-            weapon.localPosition = new Vector3(weapon.localPosition.x - oldHandlePos.x - 0.01f, weapon.localPosition.y - oldHandlePos.y + 0.06f, weapon.localPosition.z - oldHandlePos.z + 0.02f);
+        if (firstPersonMode) {
+            WeaponStats wepStats = weapon.GetComponent<WeaponStats>();
+            if (fpc.equipmentScript.gender == 'M') {
+                // Set the weapon position for males, get from stats
+                weapon.localPosition = wepStats.fpcPosMale;
+                weapon.localRotation = Quaternion.Euler(wepStats.fpcRotMale);
+                weapon.localScale = wepStats.fpcScaleMale;
+            } else {
+                // Set the weapon position for females, get from stats
+                weapon.localPosition = wepStats.fpcPosFemale;
+                weapon.localRotation = Quaternion.Euler(wepStats.fpcRotFemale);
+                weapon.localScale = wepStats.fpcScaleFemale;
+            }
         } else {
-            weapon.localPosition = new Vector3(weapon.localPosition.x - oldHandlePos.x - 0.01f, weapon.localPosition.y - oldHandlePos.y + 0.04f, weapon.localPosition.z - oldHandlePos.z + 0.02f);
+            Vector3 oldHandlePos = handle.localPosition;
+            handle.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z);
+            oldHandlePos = new Vector3(oldHandlePos.x - handle.localPosition.x, oldHandlePos.y - handle.localPosition.y, oldHandlePos.z - handle.localPosition.z);
+            if (fpc.equipmentScript.gender == 'M') {
+                weapon.localPosition = new Vector3(weapon.localPosition.x - oldHandlePos.x - 0.01f, weapon.localPosition.y - oldHandlePos.y + 0.06f, weapon.localPosition.z - oldHandlePos.z + 0.02f);
+            } else {
+                weapon.localPosition = new Vector3(weapon.localPosition.x - oldHandlePos.x - 0.01f, weapon.localPosition.y - oldHandlePos.y + 0.04f, weapon.localPosition.z - oldHandlePos.z + 0.02f);
+            }
         }
     }
 
-    public void SetWeaponPositionForTitle(Vector3 offset) {
-        weapon.localPosition = new Vector3(weapon.localPosition.x + (-handle.localPosition.x) + offset.x, weapon.localPosition.y + (-handle.localPosition.y) + offset.y, weapon.localPosition.z + (-handle.localPosition.z) + offset.z);
+    public void SetWeaponPositionForTitle(Vector3 pos) {
+        //weapon.localPosition = new Vector3(weapon.localPosition.x + (-handle.localPosition.x) + offset.x, weapon.localPosition.y + (-handle.localPosition.y) + offset.y, weapon.localPosition.z + (-handle.localPosition.z) + offset.z);
+        weapon.localPosition = new Vector3(pos.x, pos.y, pos.z);
         weapon.localRotation = Quaternion.Euler(13.891f, 177.759f, -92.145f);
     }
 
@@ -62,6 +92,23 @@ public class WeaponHandlerScript : MonoBehaviour
         if (!Vector3.Equals(Vector3.zero, steadyHandPos) && !fpc.m_IsRunning) {
             leftShoulder.localPosition = new Vector3(steadyHandPos.x, steadyHandPos.y, steadyHandPos.z);
         }
+    }
+
+    public void SwitchWeaponToLeftHand() {
+        WeaponStats wepStats = weapon.GetComponent<WeaponStats>();
+        weapon.SetParent(leftHand, false);
+        if (fpc.equipmentScript.gender == 'M') {
+            weapon.localPosition = wepStats.fpcLeftHandPosMale;
+            weapon.localRotation = Quaternion.Euler(wepStats.fpcLeftHandRotMale);            
+        } else if (fpc.equipmentScript.gender == 'F') {
+            weapon.localPosition = wepStats.fpcLeftHandPosFemale;
+            weapon.localRotation = Quaternion.Euler(wepStats.fpcLeftHandRotFemale);
+        }
+    }
+
+    public void SwitchWeaponToRightHand() {
+        weapon.SetParent(gameObject.transform, false);
+        SetWeaponPosition(true);
     }
 
 }
