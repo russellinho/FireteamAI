@@ -295,6 +295,14 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
+    // Determines if the weapon currently wielded is something to aim slowly
+    bool IsSlowAimingWeapon() {
+        if (weaponStats.type.Equals("Primary")) {
+            return true;
+        }
+        return false;
+    }
+
     public void AimDownSights()
     {
         if (!playerActionScript.fpc.m_IsRunning)
@@ -313,6 +321,9 @@ public class WeaponActionScript : MonoBehaviour
             {
                 SetDefaultArmPositions();
                 fpc.SetAiminginFPCAnimator(true);
+                if (!fpc.m_IsAiming && IsSlowAimingWeapon()) {
+                    fpc.m_IsAiming = true;
+                }
                 isAiming = true;
                 aimDownSightsLock = true;
                 if (fpc.equipmentScript.gender == 'M') {
@@ -361,6 +372,7 @@ public class WeaponActionScript : MonoBehaviour
             else
             {
                 fpc.SetAiminginFPCAnimator(false);
+                fpc.m_IsAiming = false;
                 isAiming = false;
                 if (!Vector3.Equals(leftCollarAimingPos, Vector3.negativeInfinity)) {
                     leftCollarOriginalPos = leftCollar.localPosition;

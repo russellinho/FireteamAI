@@ -51168,6 +51168,7 @@ MonoBehaviour:
   myHairRenderer: {fileID: 5444638920274394554}
   myFpcSkinRenderer: {fileID: 2046010767416519264}
   myFpcTopRenderer: {fileID: 2046010767416519230}
+  myFpcGlovesRenderer: {fileID: 0}
   renderHair: 1
   myBones: {fileID: 5444638920274394528}
   myFpcBones: {fileID: 2046010767416519266}
@@ -51279,6 +51280,7 @@ MonoBehaviour:
   healParticleEffect: {fileID: 5079098931040698832}
   boostParticleEffect: {fileID: 3942875095976654817}
   hudMarker: {fileID: 432539218821783541}
+  fpcBodyRef: {fileID: 0}
   health: 0
   sprintTime: 0
   godMode: 0

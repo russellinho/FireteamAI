@@ -13,6 +13,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
     public class FirstPersonController : MonoBehaviour
     {
         [SerializeField] public bool m_IsWalking;
+        [SerializeField] public bool m_IsAiming;
         [SerializeField] public bool m_IsCrouching;
     	[SerializeField] public bool m_IsRunning;
         [SerializeField] public bool m_IsMoving;
@@ -412,7 +413,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			speed = playerActionScript.totalSpeedBoost;
 			if (m_IsRunning) {
 				speed = playerActionScript.totalSpeedBoost * 2f;
-			} else if (m_IsCrouching || m_IsWalking) {
+			} else if (m_IsCrouching || m_IsWalking || m_IsAiming) {
                 speed = playerActionScript.totalSpeedBoost / 3f;
             }
 
@@ -455,6 +456,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             fpcAnimator.SetBool("Moving", (x == 0 ? false : true));
             fpcAnimator.SetInteger("MovingDir", x);
             photonView.RPC("RpcSetMovingInAnimator", RpcTarget.Others, x);
+            fpcAnimator.SetFloat("MoveSpeed", 2f);
         }
 
         [PunRPC]
@@ -527,6 +529,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public void SetWalkingInAnimator(bool x) {
             if (fpcAnimator.GetBool("isWalking") == x) return;
             photonView.RPC("RpcSetWalkingInAnimator", RpcTarget.Others, x);
+            if (x) {
+                fpcAnimator.SetFloat("MoveSpeed", 0.5f);
+            } else {
+                fpcAnimator.SetFloat("MoveSpeed", 2f);
+            }
         }
 
         [PunRPC]
