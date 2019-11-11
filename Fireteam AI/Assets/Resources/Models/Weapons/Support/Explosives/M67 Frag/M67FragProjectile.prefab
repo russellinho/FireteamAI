@@ -478,10 +478,13 @@ MonoBehaviour:
   recoveryConstant: 0
   fireSound: {fileID: 0}
   suppressedFireSound: {fileID: 0}
-  reloadSound: {fileID: 0}
+  weaponSoundSource: {fileID: 0}
+  reloadSounds: []
+  supportActionSound: {fileID: 0}
   gunSmoke: {fileID: 0}
   weaponShell: {fileID: 0}
   weaponShellPoint: {fileID: 0}
+  weaponShootPoint: {fileID: 0}
   muzzleFlash: {fileID: 0}
   bulletTracer: {fileID: 0}
   fpcPosMale: {x: 0, y: 0, z: 0}
@@ -499,9 +502,14 @@ MonoBehaviour:
   weaponAnimator: {fileID: 0}
   defaultFpcReloadSpeed: 0
   defaultWeaponReloadSpeed: 0
+  defaultWeaponCockingSpeed: 0
   defaultFireSpeed: 0
   reloadTransitionSpeed: 0
   cockStartTime: 0
+  reloadSound1Time: 0
+  reloadSound2Time: 0
+  reloadSound3Time: 0
+  supportSoundTime: 0
   weaponParts: []
   suppressorSlot: {fileID: 0}
 --- !u!114 &533506344782479917
@@ -552,7 +560,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 4083596899743687192}
-  viewIdField: 0
+  viewIdField: 4
   InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &4083596899743687192

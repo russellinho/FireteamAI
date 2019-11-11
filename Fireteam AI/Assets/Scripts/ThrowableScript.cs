@@ -99,6 +99,7 @@ public class ThrowableScript : MonoBehaviour
         // Freeze the physics
         isLive = false;
         rBody.useGravity = false;
+        rBody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
         rBody.isKinematic = true;
         // Create blast radius trigger collider - enemy will be affected if within this collider sphere during explosion
         EnableBlastCollider();

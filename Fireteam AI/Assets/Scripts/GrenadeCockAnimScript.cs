@@ -33,6 +33,8 @@ public class GrenadeCockAnimScript : StateMachineBehaviour {
 
 	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		weaponScript.ToggleWeaponVisible(true);
+		animator.ResetTrigger("isCockingGrenade");
+		animator.ResetTrigger("ThrowGrenade");
 	}
 
 	// OnStateMove is called right after Animator.OnAnimatorMove(). Code that processes and affects root motion should be implemented here

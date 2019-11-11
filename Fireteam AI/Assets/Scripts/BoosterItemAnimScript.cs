@@ -25,6 +25,7 @@ public class BoosterItemAnimScript : StateMachineBehaviour {
 		// Use item when animation ends
 		WeaponActionScript was = animator.GetComponentInParent<WeaponActionScript> ();
 		was.UseSupportItem();
+		animator.ResetTrigger("UseBooster");
 	}
 
 	// OnStateMove is called right after Animator.OnAnimatorMove(). Code that processes and affects root motion should be implemented here
