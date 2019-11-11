@@ -802,7 +802,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         boostParticleEffect.Play();
     }
 
-    public IEnumerator addHealth(){
+    public void InjectMedkit() {
+        StartCoroutine(HealthBoostEffect());
+    }
+
+    public IEnumerator HealthBoostEffect(){
         int healthIncrement = (int)(playerScript.health*.6f/5f);
         if (this.health < playerScript.health && this.health > 0){
           for (int i = 0; i < 5; i++) {
@@ -820,8 +824,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
          }
     }
 
+    public void InjectAdrenaphine() {
+        StartCoroutine(StaminaBoostEffect(10f, 1.5f));
+    }
 
-    public IEnumerator useStaminaBoost(float staminaBoost, float speedBoost){
+    public IEnumerator StaminaBoostEffect(float staminaBoost, float speedBoost){
         itemSpeedModifier = speedBoost;
         unlimitedStamina = true;
 

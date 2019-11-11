@@ -1050,7 +1050,7 @@ public class WeaponActionScript : MonoBehaviour
             if (weaponStats.weaponName.Equals("Medkit") && playerActionScript.health == playerActionScript.playerScript.health) {
                 return;
             }
-            if (isWieldingSupportItem && Input.GetButtonDown("Fire1") && animatorFpc.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
+            if (isWieldingSupportItem && Input.GetButtonDown("Fire1")) {
                 pView.RPC("RpcUseBooster", RpcTarget.All);
                 animatorFpc.SetTrigger("UseBooster");
             }
@@ -1068,7 +1068,7 @@ public class WeaponActionScript : MonoBehaviour
             fireTimer = 0.0f;
         } else if (weaponStats.category.Equals("Booster")) {
             // Reset fire timer and subtract ammo used
-            BoosterScript boosterScript = GetComponentInChildren<BoosterScript>();
+            BoosterScript boosterScript = weaponStats.GetComponentInChildren<BoosterScript>();
             boosterScript.UseBoosterItem(weaponStats.weaponName);
             currentAmmo--;
             fireTimer = 0.0f;

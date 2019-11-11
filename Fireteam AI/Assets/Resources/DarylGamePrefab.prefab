@@ -84727,8 +84727,6 @@ MonoBehaviour:
   isUsingBooster: 0
   rightCollar: {fileID: 597822533608994393}
   leftCollar: {fileID: 597822533608994399}
-  defaultLeftCollarPos: {x: 0, y: 0, z: 0}
-  defaultRightCollarPos: {x: 0, y: 0, z: 0}
   leftCollarOriginalPos: {x: 0, y: 0, z: 0}
   rightCollarOriginalPos: {x: 0, y: 0, z: 0}
 --- !u!114 &9158664062041186689
@@ -84890,7 +84888,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 9158664062041186698}
-  viewIdField: 4
+  viewIdField: 0
   InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &9158664062041186698

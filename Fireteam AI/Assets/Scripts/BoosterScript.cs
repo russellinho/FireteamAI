@@ -40,14 +40,14 @@ public class BoosterScript : MonoBehaviour
       playerActionScript.ResetHealTimer();
       playerActionScript.PlayHealParticleEffect();
       playerActionScript.audioController.PlayGruntSound();
-      StartCoroutine(playerActionScript.addHealth());
+      playerActionScript.InjectMedkit();
     }
 
     public void UseAdrenaphine() {
       playerActionScript.ResetBoostTimer();
       playerActionScript.PlayBoostParticleEffect();
       playerActionScript.audioController.PlayGruntSound();
-      StartCoroutine(playerActionScript.useStaminaBoost(10f, 1.15f));
+      playerActionScript.InjectAdrenaphine();
     }
 
 
