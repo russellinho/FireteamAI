@@ -4183,6 +4183,8 @@ MonoBehaviour:
   comBox: {fileID: 1056823358785976}
   respawnBar: {fileID: 114716897727638660}
   gameOverBanner: {fileID: 1175043373019112}
+  enemyAlerted: {fileID: 6845018501397345808, guid: 1776c86dbe1d74d86ab8f64bf0bd160b,
+    type: 3}
 --- !u!1 &1602882613727916
 GameObject:
   m_ObjectHideFlags: 0
@@ -7459,7 +7461,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000030517578, y: 0.000015258789}
+  m_AnchoredPosition: {x: 0, y: 0.000030517578}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5170033949403156981

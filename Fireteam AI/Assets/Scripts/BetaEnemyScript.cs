@@ -57,6 +57,9 @@ public class BetaEnemyScript : MonoBehaviour {
 	private Vector3 spawnRot;
 	public bool alerted = false;
 	private bool wasMasterClient;
+	private GameObject gameController;
+	private ArrayList enemyAlertMarkers;
+	public int alertStatus;
 
 	// Finite state machine states
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Disoriented};
@@ -142,6 +145,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		marker = GetComponentInChildren<SpriteRenderer> ();
 		gunRef = GetComponentInChildren<MeshRenderer> ();
 		meleeTrigger = GetComponent<BoxCollider> ();
+		gameController = GameObject.Find("GameController");
+		gameController.GetComponent<GameControllerScript>().enemyList.Add(pView.ViewID, gameObject);
+		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
 
 		if (enemyType == EnemyType.Patrol) {
 			range = 10f;
@@ -224,6 +230,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		CheckAlerted ();
 		CheckTargetDead ();
+		displayAlerted();
 
 		// If disoriented, don't have the ability to do anything else except die
 		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
@@ -254,6 +261,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	void FixedUpdate() {
 		// Hot fix for death animation not working on client
 		if (!PhotonNetwork.IsMasterClient && health <= 0) {
+			removeFromMarkerList();
 			actionState = ActionStates.Dead;
 		}
 
@@ -965,7 +973,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 				if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Firing && actionState != ActionStates.Reloading) {
 					int r = Random.Range (1, aggression - 1);
-					if (r <= 2) {
+					if (r <= 4) {
 						bool coverFound = DynamicTakeCover ();
 						if (coverFound) {
 							if (actionState != ActionStates.TakingCover) {
@@ -984,7 +992,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 
 				if (actionState == ActionStates.Seeking) {
-					if (navMeshReachedDestination (0.5f) && player == null) {
+					if (navMeshReachedDestination (20f) && player == null) {
 						pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander);
 					}
 				}
@@ -1413,19 +1421,25 @@ public class BetaEnemyScript : MonoBehaviour {
 				// If there's something blocking the player and the enemy, then the enemy wants to hide behind it
 				if (Physics.Linecast (coverSpots[i].position, player.transform.position)) {
 					coverPos = coverSpots [i].position;
+					// Find objects near cover spot, and search the array for AI teammates
+					Collider[] objectsNearCover = Physics.OverlapSphere(coverPos, 5f);
+					bool coverIsGood = true;
+					foreach(Collider go in objectsNearCover) {
+						if (go.name.Contains("Cicada")) {
+							coverIsGood = false;
+							break;
+						}
+					}
+					if (coverIsGood) {
+						return true;
+					}
+
 					//pView.RPC ("RpcSetCoverPos", RpcTarget.All, true, coverSpots[i].position.x, coverSpots[i].position.y, coverSpots[i].position.z);
-					foundOne = true;
-					break;
 				}
 			}
-			// If a unique cover spot wasn't found, then just choose a random spot
-			if (!foundOne) {
-				Vector3 spot = coverSpots [Random.Range (1, coverSpots.Length)].position;
-				coverPos = spot;
-				//pView.RPC ("RpcSetCoverPos", RpcTarget.All, true, spot.x, spot.y, spot.z);
-			}
+
 		}
-		return true;
+		return false;
 	}
 
 	[PunRPC]
@@ -1459,13 +1473,14 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (Vector3.Distance (transform.position, p.transform.position) < range + 20f) {
 					Vector3 toPlayer = p.transform.position - transform.position;
 					float angleBetween = Vector3.Angle (transform.forward, toPlayer);
-					if (angleBetween <= 60f) {
+					if (angleBetween <= 90f) {
 						// Cast a ray to make sure there's nothing in between the player and the enemy
 						Debug.DrawRay (headTransform.position, toPlayer, Color.blue);
 						Transform playerHead = p.GetComponent<FirstPersonController>().headTransform;
 						RaycastHit hit1;
 						RaycastHit hit2;
-						Vector3 middleHalfCheck = new Vector3 (p.transform.position.x, p.transform.position.y + PLAYER_HEIGHT_OFFSET, p.transform.position.z);
+						// Vector3 middleHalfCheck = new Vector3 (p.transform.position.x, p.transform.position.y + PLAYER_HEIGHT_OFFSET, p.transform.position.z);
+						Vector3 middleHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y - 0.1f, playerHead.position.z);
 						Vector3 topHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y, playerHead.position.z);
 						if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2))
 						{
@@ -1483,6 +1498,17 @@ public class BetaEnemyScript : MonoBehaviour {
 						// 	continue;
 						// }
 						if (!hit1.transform.gameObject.tag.Equals("Player") && !hit2.transform.gameObject.tag.Equals("Player")) {
+							// If we don't see a player, check if player is in close range.
+							// Check objects within a certain distance for a player
+							if (Vector3.Distance(p.transform.position, headTransform.position) < 8f) {
+								gameController.GetComponent<GameControllerScript>().enemyAlertMarkers.Add(pView.ViewID);
+								alertStatus = 1;
+								// Debug.Log("I hear sum body");
+							}
+							else {
+								removeFromMarkerList();
+								// Debug.Log("Guess it was my imagination");
+							}
 							continue;
 						}
 						keysNearBy.Add (p.GetComponent<PhotonView>().OwnerActorNr);
@@ -1620,5 +1646,36 @@ public class BetaEnemyScript : MonoBehaviour {
 	void StopVoices() {
 		audioSource.Stop();
 	}
+
+	void displayAlerted() {
+		if (player != null) {
+			// Activate exclamation sign, and disable question mark
+			gameController.GetComponent<GameControllerScript>().enemyAlertMarkers.Add(pView.ViewID);
+			alertStatus = 2;
+			Debug.Log("I see you");
+		}
+		else {
+			removeFromMarkerList();
+		}
+	}
+
+	void removeFromMarkerList() {
+		Debug.Log(enemyAlertMarkers);
+		if (enemyAlertMarkers == null) {
+			return;
+		}
+		foreach (int item in enemyAlertMarkers) {
+			if ((int)item == pView.ViewID) {
+				enemyAlertMarkers.Remove(item);
+			}
+		}
+		alertStatus = 0;
+	}
+
+	// Draw a sphere to see effective range for stealth
+	// void OnDrawGizmos() {
+	// 		Gizmos.color = Color.yellow;
+	// 		Gizmos.DrawSphere(headTransform.position, 8f);
+	// }
 
 }
