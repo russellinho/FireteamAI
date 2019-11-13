@@ -3,7 +3,17 @@ guid: c0ac13877b3186e4ab060a0657ecc3ff
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 870_Shotgun
+    second: {fileID: 2100000, guid: 939b938098d340b4e9c4329571da747e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Pistol
+    second: {fileID: 2100000, guid: 3eefeab386fb81642a2f5d3e691d2cf3, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

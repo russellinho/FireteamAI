@@ -10708,8 +10708,8 @@ MonoBehaviour:
   aimDownSightPosFemale: {x: -0.0005, y: 0.0016, z: 0.00131}
   aimDownSightSpeed: 7
   aimDownSightClipping: 0.06
-  titleHandPositionsMale: {x: -0.072, y: 0.145, z: 0.022}
-  titleHandPositionsFemale: {x: -0.072, y: 0.145, z: 0.022}
+  titleHandPositionsMale: {x: -0.047, y: 0.145, z: 0.022}
+  titleHandPositionsFemale: {x: -0.047, y: 0.145, z: 0.022}
   recoveryConstant: 4
   fireSound: {fileID: 2377782362321042014}
   suppressedFireSound: {fileID: 7053767870305652231}
@@ -10727,16 +10727,16 @@ MonoBehaviour:
   weaponShootPoint: {fileID: 8910731136347168561}
   muzzleFlash: {fileID: 7688252933740233025}
   bulletTracer: {fileID: 7555741254343047361}
-  fpcPosMale: {x: -0.000148, y: 0.001877, z: -0.00057}
+  fpcPosMale: {x: -0.0002, y: 0.00187, z: -0.00033}
   fpcLeftHandPosMale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotMale: {x: 0, y: 0, z: 0}
   fpcRotMale: {x: 8.299, y: 73.521, z: -76.409}
-  fpcScaleMale: {x: 0.003124, y: 0.003124, z: 0.003124}
-  fpcPosFemale: {x: -0.000148, y: 0.001877, z: -0.00057}
+  fpcScaleMale: {x: 0.000178, y: 0.000178, z: 0.000178}
+  fpcPosFemale: {x: -0.0002, y: 0.00187, z: -0.00033}
   fpcLeftHandPosFemale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
   fpcRotFemale: {x: 8.299, y: 73.521, z: -76.409}
-  fpcScaleFemale: {x: 0.003124, y: 0.003124, z: 0.003124}
+  fpcScaleFemale: {x: 0.000178, y: 0.000178, z: 0.000178}
   maleOverrideController: {fileID: 22100000, guid: 0d98f8fb76ec86f4b95fc70b1b384b96,
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: 683d52a6c039ec749bd14b689ad5146c,

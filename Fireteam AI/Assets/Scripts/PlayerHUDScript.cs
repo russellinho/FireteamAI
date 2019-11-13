@@ -64,9 +64,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.scoreboard.GetComponent<Canvas> ().enabled = false;
 		container.spectatorText.enabled = false;
 
-		if (wepScript.currentlyEquippedType == 4 && wepScript.equippedSupportType.Equals("Explosive")) {
+		//if (wepScript.currentlyEquippedType == 4 && wepScript.equippedSupportType.Equals("Explosive")) {
 			ToggleCrosshair(true);
-		}
+		//}
 
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
