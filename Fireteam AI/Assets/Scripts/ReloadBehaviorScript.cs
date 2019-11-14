@@ -47,18 +47,18 @@ public class ReloadBehaviorScript : StateMachineBehaviour {
 		}
 		if (stateInfo.normalizedTime >= 0.9f) {
 			was.Reload ();
-			was.isCocking = false;
+			//was.isCocking = false;
 			was.isReloading = false;
 		}
 	}
 
-	// OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-	// override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-	// 	was = animator.GetComponentInParent<WeaponActionScript> ();
-	// 	was.Reload ();
-	// 	was.isCocking = false;
-	// 	was.isReloading = false;
-	// }
+	//OnStateExit is called when a transition ends and the state machine finishes evaluating this state
+	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+		//was = animator.GetComponentInParent<WeaponActionScript> ();
+		//was.Reload ();
+		was.isCocking = false;
+		was.isReloading = false;
+	}
 
 	// OnStateMove is called right after Animator.OnAnimatorMove(). Code that processes and affects root motion should be implemented here
 	//override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {

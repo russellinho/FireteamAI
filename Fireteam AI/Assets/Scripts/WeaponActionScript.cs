@@ -55,7 +55,7 @@ public class WeaponActionScript : MonoBehaviour
     // Used for allowing arms to move during aim down sight movement
     private bool aimDownSightsLock;
     private float aimDownSightsTimer;
-
+    
     public GameObject hitParticles;
     public GameObject bulletImpact;
     public GameObject bloodEffect;
@@ -317,7 +317,7 @@ public class WeaponActionScript : MonoBehaviour
                 originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
             }*/
 
-            if (Input.GetButton("Fire2") && !isReloading)
+            if (Input.GetButton("Fire2") && !isReloading && !isCocking)
             {
                 SetDefaultArmPositions();
                 fpc.SetAiminginFPCAnimator(true);

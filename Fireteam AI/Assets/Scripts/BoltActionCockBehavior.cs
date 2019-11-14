@@ -27,7 +27,7 @@ public class BoltActionCockBehavior : StateMachineBehaviour
 			was.PlayReloadSound(2);
 		}
         if (stateInfo.normalizedTime >= 0.5f) {
-           was.isCocking = false;
+           //was.isCocking = false;
            if (was.isReloading) {
                was.Reload();
                was.isReloading = false;

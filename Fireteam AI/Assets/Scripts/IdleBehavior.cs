@@ -5,15 +5,12 @@ using UnityEngine;
 public class IdleBehavior : StateMachineBehaviour
 {
     WeaponActionScript was;
+    bool entered;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         was = animator.GetComponentInParent<WeaponActionScript>();
-       was.isCocking = false;
-       was.isCockingGrenade = false;
-       was.isReloading = false;
-       was.isUsingBooster = false;
-       was.isFiring = false;
+        entered = true;
        animator.ResetTrigger("ThrowGrenade");
        animator.ResetTrigger("isCockingGrenade");
        animator.ResetTrigger("UseBooster");
@@ -22,6 +19,14 @@ public class IdleBehavior : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (entered && stateInfo.normalizedTime >= 0.2f) {
+            entered = false;
+            was.isCocking = false;
+            was.isCockingGrenade = false;
+            was.isReloading = false;
+            was.isUsingBooster = false;
+            was.isFiring = false;
+        }
         if (was.isWieldingSupportItem && (Input.GetButtonDown("Fire1") || Input.GetButton("Fire1"))) {
             was.isCockingGrenade = true;
         }

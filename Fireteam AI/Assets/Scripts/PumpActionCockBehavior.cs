@@ -25,9 +25,9 @@ public class PumpActionCockBehavior : StateMachineBehaviour
             cockSoundPlayed = true;
             was.PlayReloadSound(1);
         }
-       if (stateInfo.normalizedTime >= 0.5f) {
-           was.isCocking = false;
-       }
+    //    if (stateInfo.normalizedTime >= 0.5f) {
+    //        was.isCocking = false;
+    //    }
        if (!shellCasingFired && stateInfo.normalizedTime >= 0.2f) {
            was.SpawnShellCasing();
            shellCasingFired = true;
