@@ -11561,8 +11561,8 @@ MonoBehaviour:
   range: 100
   clipCapacity: 30
   maxAmmo: 120
-  aimDownSightPosMale: {x: -0.0005, y: 0.00115, z: 0.00131}
-  aimDownSightPosFemale: {x: -0.0005, y: 0.00115, z: 0.00131}
+  aimDownSightPosMale: {x: -0.0005, y: 0.001208, z: 0.00131}
+  aimDownSightPosFemale: {x: -0.0005, y: 0.001208, z: 0.00131}
   aimDownSightSpeed: 7
   aimDownSightClipping: 0.06
   titleHandPositionsMale: {x: -0.06, y: 0.13, z: 0.011}
@@ -11587,12 +11587,12 @@ MonoBehaviour:
   fpcPosMale: {x: -0.000233, y: 0.00183, z: -0.00041}
   fpcLeftHandPosMale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotMale: {x: 0, y: 0, z: 0}
-  fpcRotMale: {x: 8.299, y: 73.521, z: -76.409}
+  fpcRotMale: {x: 9.42, y: 73.521, z: -76.409}
   fpcScaleMale: {x: 0.00018, y: 0.00018, z: 0.00018}
   fpcPosFemale: {x: -0.000233, y: 0.00183, z: -0.00041}
   fpcLeftHandPosFemale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
-  fpcRotFemale: {x: 8.299, y: 73.521, z: -76.409}
+  fpcRotFemale: {x: 9.42, y: 73.521, z: -76.409}
   fpcScaleFemale: {x: 0.00018, y: 0.00018, z: 0.00018}
   maleOverrideController: {fileID: 22100000, guid: 8e0cb44d1f46cc549b698e63992683e0,
     type: 2}
