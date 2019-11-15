@@ -25,7 +25,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private ArrayList missionWaypoints;
 	private Dictionary<int, GameObject> playerMarkers = new Dictionary<int, GameObject> ();
 	private Dictionary<int, GameObject> enemyMarkers = new Dictionary<int, GameObject> ();
-	private ArrayList enemyAlertMarkers;
+	//private ArrayList enemyAlertMarkers;
 	private ObjectivesTextScript objectiveFormatter;
 
 	// Other vars
@@ -69,7 +69,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
-		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
+		//enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
 		killPopupTimer = 0f;
 		hitmarkerTimer = 0f;
 		popupIsStarting = false;
@@ -152,7 +152,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.weaponLabelTxt.text = wepScript.equippedWep;
 		container.ammoTxt.text = "" + wepActionScript.currentAmmo + '/' + wepActionScript.totalAmmoLeft;
 		UpdatePlayerMarkers ();
-		UpdateEnemyStatus();
+		//UpdateEnemyStatus();
 		UpdateWaypoints ();
 		UpdateCursorStatus ();
 
@@ -316,74 +316,74 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	void UpdateEnemyStatus() {
-		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
-		foreach (int actorNo in enemyAlertMarkers) {
-			if (!enemyMarkers.ContainsKey (actorNo)) {
-				GameObject marker = GameObject.Instantiate(container.enemyAlerted);
-				marker.GetComponent<RectTransform>().SetParent(container.transform);
-				enemyMarkers.Add(actorNo, marker);
-			}
-			GameObject e = gameController.enemyList[actorNo];
-			BetaEnemyScript en = e.GetComponent<BetaEnemyScript>();
-			// Check if it can be rendered to the screen
-			if (playerActionScript.viewCam.enabled) {
-				float renderCheck = Vector3.Dot((e.transform.position - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
-				if (renderCheck <= 0)
-					continue;
+	// void UpdateEnemyStatus() {
+	// 	enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
+	// 	foreach (int actorNo in enemyAlertMarkers) {
+	// 		if (!enemyMarkers.ContainsKey (actorNo)) {
+	// 			GameObject marker = GameObject.Instantiate(container.enemyAlerted);
+	// 			marker.GetComponent<RectTransform>().SetParent(container.transform);
+	// 			enemyMarkers.Add(actorNo, marker);
+	// 		}
+	// 		GameObject e = gameController.enemyList[actorNo];
+	// 		BetaEnemyScript en = e.GetComponent<BetaEnemyScript>();
+	// 		// Check if it can be rendered to the screen
+	// 		if (playerActionScript.viewCam.enabled) {
+	// 			float renderCheck = Vector3.Dot((e.transform.position - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
+	// 			if (renderCheck <= 0)
+	// 				continue;
 
-				if (en.alertStatus == 2) {
-					// if enemy is alerted, display the alert symbol
-					if (en.alertDisplay != 2) {
-						enemyMarkers[actorNo].SetActive(true);
-						en.alertDisplay = 2;
-						enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("alert");
-					}
-					// Debug.Log(enemyMarkers[actorNo]);
-				}
-				else if (en.alertStatus == 1) {
-					// if enemy is close to player, display the caution symbol
-					if (en.alertDisplay != 1) {
-						enemyMarkers[actorNo].SetActive(true);
-						en.alertDisplay = 1;
-						enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("caution");
-					}
-				}
-				else {
-					enemyMarkers[actorNo].SetActive(false);
-				}
+	// 			if (en.alertStatus == 2) {
+	// 				// if enemy is alerted, display the alert symbol
+	// 				if (en.alertDisplay != 2) {
+	// 					enemyMarkers[actorNo].SetActive(true);
+	// 					en.alertDisplay = 2;
+	// 					enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("alert");
+	// 				}
+	// 				// Debug.Log(enemyMarkers[actorNo]);
+	// 			}
+	// 			else if (en.alertStatus == 1) {
+	// 				// if enemy is close to player, display the caution symbol
+	// 				if (en.alertDisplay != 1) {
+	// 					enemyMarkers[actorNo].SetActive(true);
+	// 					en.alertDisplay = 1;
+	// 					enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("caution");
+	// 				}
+	// 			}
+	// 			else {
+	// 				enemyMarkers[actorNo].SetActive(false);
+	// 			}
 
-				Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + (HEIGHT_OFFSET * 1.5f), e.transform.position.z);
-				enemyMarkers[actorNo].GetComponent<RectTransform>().position = playerActionScript.viewCam.WorldToScreenPoint(o);
+	// 			Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + (HEIGHT_OFFSET * 1.5f), e.transform.position.z);
+	// 			enemyMarkers[actorNo].GetComponent<RectTransform>().position = playerActionScript.viewCam.WorldToScreenPoint(o);
 
-			} else if (playerActionScript.thisSpectatorCam != null) {
-				float renderCheck = Vector3.Dot((e.transform.position - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
-				if (renderCheck <= 0)
-					continue;
-				if (en.alertStatus == 2) {
-					// if enemy is alerted, display the alert symbol
-					if (en.alertDisplay != 2) {
-						enemyMarkers[actorNo].SetActive(true);
-						en.alertDisplay = 2;
-						enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("alert");
-					}
-				}
-				else if (en.alertStatus == 1) {
-					// if enemy is close to player, display the caution symbol
-					if (en.alertDisplay != 1) {
-						enemyMarkers[actorNo].SetActive(true);
-						en.alertDisplay = 1;
-						enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("caution");
-					}
-				}
-				else {
-					enemyMarkers[actorNo].SetActive(false);
-				}
-				Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + (HEIGHT_OFFSET * 1.5f), e.transform.position.z);
-				enemyMarkers[actorNo].GetComponent<RectTransform>().position = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
-			}
-		}
-	}
+	// 		} else if (playerActionScript.thisSpectatorCam != null) {
+	// 			float renderCheck = Vector3.Dot((e.transform.position - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
+	// 			if (renderCheck <= 0)
+	// 				continue;
+	// 			if (en.alertStatus == 2) {
+	// 				// if enemy is alerted, display the alert symbol
+	// 				if (en.alertDisplay != 2) {
+	// 					enemyMarkers[actorNo].SetActive(true);
+	// 					en.alertDisplay = 2;
+	// 					enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("alert");
+	// 				}
+	// 			}
+	// 			else if (en.alertStatus == 1) {
+	// 				// if enemy is close to player, display the caution symbol
+	// 				if (en.alertDisplay != 1) {
+	// 					enemyMarkers[actorNo].SetActive(true);
+	// 					en.alertDisplay = 1;
+	// 					enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("caution");
+	// 				}
+	// 			}
+	// 			else {
+	// 				enemyMarkers[actorNo].SetActive(false);
+	// 			}
+	// 			Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + (HEIGHT_OFFSET * 1.5f), e.transform.position.z);
+	// 			enemyMarkers[actorNo].GetComponent<RectTransform>().position = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
+	// 		}
+	// 	}
+	// }
 
 	public void InstantiateHitmarker() {
 		hitmarkerTimer = 0.75f;
