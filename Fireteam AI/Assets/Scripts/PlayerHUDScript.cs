@@ -152,7 +152,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.weaponLabelTxt.text = wepScript.equippedWep;
 		container.ammoTxt.text = "" + wepActionScript.currentAmmo + '/' + wepActionScript.totalAmmoLeft;
 		UpdatePlayerMarkers ();
-		//UpdateEnemyStatus();
+		UpdateEnemyStatus();
 		UpdateWaypoints ();
 		UpdateCursorStatus ();
 
@@ -318,57 +318,68 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void UpdateEnemyStatus() {
 		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
-		Debug.Log(enemyAlertMarkers + "hiiiiii");
 		foreach (int actorNo in enemyAlertMarkers) {
-			Debug.Log(actorNo);
 			if (!enemyMarkers.ContainsKey (actorNo)) {
 				GameObject marker = GameObject.Instantiate(container.enemyAlerted);
 				marker.GetComponent<RectTransform>().SetParent(container.transform);
 				enemyMarkers.Add(actorNo, marker);
 			}
 			GameObject e = gameController.enemyList[actorNo];
+			BetaEnemyScript en = e.GetComponent<BetaEnemyScript>();
 			// Check if it can be rendered to the screen
 			if (playerActionScript.viewCam.enabled) {
 				float renderCheck = Vector3.Dot((e.transform.position - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
 				if (renderCheck <= 0)
 					continue;
 
-				if (e.GetComponent<BetaEnemyScript>().alertStatus == 2) {
+				if (en.alertStatus == 2) {
 					// if enemy is alerted, display the alert symbol
-					enemyMarkers[actorNo].SetActive(true);
-					enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("alert.png");
-					Debug.Log(enemyMarkers[actorNo]);
+					if (en.alertDisplay != 2) {
+						enemyMarkers[actorNo].SetActive(true);
+						en.alertDisplay = 2;
+						enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("alert");
+					}
+					// Debug.Log(enemyMarkers[actorNo]);
 				}
-				else if (e.GetComponent<BetaEnemyScript>().alertStatus == 1) {
+				else if (en.alertStatus == 1) {
 					// if enemy is close to player, display the caution symbol
-					enemyMarkers[actorNo].SetActive(true);
-					enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("caution.png");
+					if (en.alertDisplay != 1) {
+						enemyMarkers[actorNo].SetActive(true);
+						en.alertDisplay = 1;
+						enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("caution");
+					}
 				}
 				else {
 					enemyMarkers[actorNo].SetActive(false);
 				}
 
-				Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + HEIGHT_OFFSET, e.transform.position.z);
+				Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + (HEIGHT_OFFSET * 1.5f), e.transform.position.z);
 				enemyMarkers[actorNo].GetComponent<RectTransform>().position = playerActionScript.viewCam.WorldToScreenPoint(o);
 
 			} else if (playerActionScript.thisSpectatorCam != null) {
 				float renderCheck = Vector3.Dot((e.transform.position - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
 				if (renderCheck <= 0)
 					continue;
-				if (e.GetComponent<BetaEnemyScript>().alertStatus == 2) {
+				if (en.alertStatus == 2) {
 					// if enemy is alerted, display the alert symbol
-					enemyMarkers[actorNo].SetActive(true);
-					enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("alert.png");
+					if (en.alertDisplay != 2) {
+						enemyMarkers[actorNo].SetActive(true);
+						en.alertDisplay = 2;
+						enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("alert");
+					}
 				}
-				else if (e.GetComponent<BetaEnemyScript>().alertStatus == 1) {
+				else if (en.alertStatus == 1) {
 					// if enemy is close to player, display the caution symbol
-					enemyMarkers[actorNo].SetActive(true);
-					enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("caution.png");
+					if (en.alertDisplay != 1) {
+						enemyMarkers[actorNo].SetActive(true);
+						en.alertDisplay = 1;
+						enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("caution");
+					}
 				}
 				else {
 					enemyMarkers[actorNo].SetActive(false);
 				}
-				Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + HEIGHT_OFFSET, e.transform.position.z);
+				Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + (HEIGHT_OFFSET * 1.5f), e.transform.position.z);
 				enemyMarkers[actorNo].GetComponent<RectTransform>().position = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
 			}
 		}

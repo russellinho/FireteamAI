@@ -60,6 +60,8 @@ public class BetaEnemyScript : MonoBehaviour {
 	private GameObject gameController;
 	private ArrayList enemyAlertMarkers;
 	public int alertStatus;
+	// Responsible for displaying the correct alert symbol
+	public int alertDisplay;
 
 	// Finite state machine states
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Disoriented};
@@ -147,7 +149,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		meleeTrigger = GetComponent<BoxCollider> ();
 		gameController = GameObject.Find("GameController");
 		gameController.GetComponent<GameControllerScript>().enemyList.Add(pView.ViewID, gameObject);
-		//enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
+		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
 
 		if (enemyType == EnemyType.Patrol) {
 			range = 10f;
@@ -230,7 +232,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		CheckAlerted ();
 		CheckTargetDead ();
-		//displayAlerted();
+		displayAlerted();
 
 		// If disoriented, don't have the ability to do anything else except die
 		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
@@ -261,7 +263,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	void FixedUpdate() {
 		// Hot fix for death animation not working on client
 		if (!PhotonNetwork.IsMasterClient && health <= 0) {
-			//removeFromMarkerList();
+			removeFromMarkerList();
 			actionState = ActionStates.Dead;
 		}
 
@@ -1506,7 +1508,7 @@ public class BetaEnemyScript : MonoBehaviour {
 								// Debug.Log("I hear sum body");
 							}
 							else {
-								//removeFromMarkerList();
+								removeFromMarkerList();
 								// Debug.Log("Guess it was my imagination");
 							}
 							continue;
@@ -1654,17 +1656,19 @@ public class BetaEnemyScript : MonoBehaviour {
 	void displayAlerted() {
 		if (player != null) {
 			// Activate exclamation sign, and disable question mark
-			gameController.GetComponent<GameControllerScript>().enemyAlertMarkers.Add(pView.ViewID);
-			alertStatus = 2;
-			Debug.Log("I see you");
+			if (alertStatus != 2) {
+				gameController.GetComponent<GameControllerScript>().enemyAlertMarkers.Add(pView.ViewID);
+				alertStatus = 2;
+				Debug.Log("I see you");
+			}
 		}
-		// else {
-		// 	removeFromMarkerList();
-		// }
+		else {
+			removeFromMarkerList();
+		}
 	}
 
 	void removeFromMarkerList() {
-		Debug.Log(enemyAlertMarkers);
+		// Debug.Log(enemyAlertMarkers);
 		if (enemyAlertMarkers == null) {
 			return;
 		}

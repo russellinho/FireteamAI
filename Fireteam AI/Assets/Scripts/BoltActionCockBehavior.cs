@@ -31,6 +31,7 @@ public class BoltActionCockBehavior : StateMachineBehaviour
            if (was.isReloading) {
                was.Reload();
                was.isReloading = false;
+               was.isCocking = true;
            }
         }
        if (!shellCasingFired && stateInfo.normalizedTime >= 0.4f) {
