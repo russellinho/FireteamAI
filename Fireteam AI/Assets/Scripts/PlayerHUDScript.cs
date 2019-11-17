@@ -35,6 +35,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private float hitmarkerTimer;
 	private float disorientationTimer;
 	private float totalDisorientationTime;
+	private float detectedTextTimer;
 	public bool screenGrab;
 	private const float HEIGHT_OFFSET = 1.9f;
 
@@ -63,6 +64,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.hintText.enabled = false;
 		container.scoreboard.GetComponent<Canvas> ().enabled = false;
 		container.spectatorText.enabled = false;
+		ToggleDetectionHUD(false);
 
 		if (wepScript.currentlyEquippedType == 4 && wepScript.equippedSupportType.Equals("Explosive")) {
 			ToggleCrosshair(true);
@@ -72,6 +74,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		//enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
 		killPopupTimer = 0f;
 		hitmarkerTimer = 0f;
+		detectedTextTimer = 0f;
 		popupIsStarting = false;
 		screenGrab = false;
 
@@ -180,6 +183,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		HandleRespawnBar ();
 		UpdateObjectives ();
 		FlashbangUpdate();
+		UpdateDetectedText();
     }
 
 	void FixedUpdate() {
@@ -708,6 +712,39 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void toggleSniperOverlay(bool b) {
 		container.SniperOverlay.SetActive(b);
+	}
+
+	public void ToggleDetectionHUD(bool on) {
+		if (on) {
+			container.detectionMeter.enabled = true;
+		} else {
+			ToggleDetectedText(false);
+			container.detectionMeter.enabled = false;
+			SetDetectionMeter(0f);
+		}
+	}
+
+	public void ToggleDetectedText(bool on) {
+		if (on) {
+			detectedTextTimer = 0f;
+			container.detectionText.rectTransform.localScale = Vector3.zero;
+			container.detectionText.enabled = true;
+		} else {
+			container.detectionText.enabled = false;
+		}
+	}
+
+	void UpdateDetectedText() {
+		if (detectedTextTimer < 0.5f) {
+			detectedTextTimer += Time.deltaTime;
+			float scaleAmount = (detectedTextTimer / 0.5f);
+			scaleAmount = (scaleAmount > 1f ? 1f : scaleAmount);
+			container.detectionText.rectTransform.localScale = new Vector3(scaleAmount, scaleAmount, scaleAmount);
+		}
+	}
+
+	public void SetDetectionMeter(float detection) {
+		container.detectionMeter.fillAmount = detection;
 	}
 
 }

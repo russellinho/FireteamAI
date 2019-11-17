@@ -84818,6 +84818,8 @@ MonoBehaviour:
   hitmarkerSound: {fileID: 8300000, guid: f5f9c7f44fd0db94fb7457a968a1def7, type: 3}
   sirenSound: {fileID: 8300000, guid: e4fdcd319d7fc2f459e5894d9c267ee5, type: 3}
   missionStartSound: {fileID: 8300000, guid: c995c036e32e4f447bdaaa1124e4c370, type: 3}
+  alertSound: {fileID: 8300000, guid: 962c3e36eb6e3634599fc2846e2d38f9, type: 3}
+  cautionSound: {fileID: 8300000, guid: e1f6f769003b1ce4db2348eab63c8679, type: 3}
 --- !u!54 &9158664062041186718
 Rigidbody:
   m_ObjectHideFlags: 0

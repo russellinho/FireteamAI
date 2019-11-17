@@ -43,6 +43,8 @@ public class AudioControllerScript : MonoBehaviour {
 	public AudioClip hitmarkerSound;
 	public AudioClip sirenSound;
 	public AudioClip missionStartSound;
+	public AudioClip alertSound;
+	public AudioClip cautionSound;
 
 	private bool wasRunning;
 	private PhotonView pView;
@@ -151,6 +153,22 @@ public class AudioControllerScript : MonoBehaviour {
 		}
 		fxSound1.clip = headshotSound;
 		fxSound1.Play ();
+	}
+
+	public void PlayAlertSound() {
+		if (!pView.IsMine) {
+			return;
+		}
+		fxSound1.clip = alertSound;
+		fxSound1.Play();
+	}
+
+	public void PlayCautionSound() {
+		if (!pView.IsMine) {
+			return;
+		}
+		fxSound1.clip = cautionSound;
+		fxSound1.Play();
 	}
 
 	void PlayMissionStartSound() {

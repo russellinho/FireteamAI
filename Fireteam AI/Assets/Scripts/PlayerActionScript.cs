@@ -8,6 +8,8 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
+    const float MAX_DETECTION_LEVEL = 100f;
+
     // Object references
     public GameControllerScript gameController;
     public AudioControllerScript audioController;
@@ -77,6 +79,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private int currentBombIndex;
     private int bombIterator;
     private float bombDefuseCounter = 0f;
+    private float detectionLevel;
+    private float detectionCoolDownDelay;
+    private float increaseDetectionDelay;
+    private bool detectionResetUnderway;
 
     void Start()
     {
@@ -96,6 +102,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         health = 100;
         kills = 0;
         deaths = 0;
+        detectionLevel = 0;
+        detectionCoolDownDelay = 0f;
+        increaseDetectionDelay = 0f;
+        detectionResetUnderway = false;
         sprintTime = playerScript.stamina;
 
          currentBombIndex = 0;
@@ -257,6 +267,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         DetermineEscaped();
         RespawnRoutine();
 
+        DecreaseDetectionLevel();
+        UpdateDetectionHUD();
 
     }
 
@@ -840,6 +852,79 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public void updatePlayerSpeed(){
         originalSpeed = playerScript.speed;
         totalSpeedBoost = originalSpeed * itemSpeedModifier * weaponSpeedModifier;
+    }
+
+    public void IncreaseDetectionLevel() {
+        if (gameController.assaultMode) {
+            return;
+        }
+
+        if (increaseDetectionDelay > 0f) {
+            increaseDetectionDelay -= Time.deltaTime;
+        }
+
+        if (photonView.IsMine && increaseDetectionDelay <= 0f) {
+            // TODO: Eventually update this to increase detection level gradually based on distance, time, equipment, weapons
+            detectionLevel = MAX_DETECTION_LEVEL;
+            detectionCoolDownDelay = 4f;
+
+            if (detectionLevel == MAX_DETECTION_LEVEL) {
+                increaseDetectionDelay = 6f;
+            }
+        }
+    }
+
+    public void DecreaseDetectionLevel() {
+        if (detectionCoolDownDelay <= 0f) {
+            if (detectionLevel > 0f) {
+                float detectionDeduction = detectionLevel - (5 * Time.deltaTime);
+                detectionLevel = (detectionDeduction < 0f ? 0f : detectionDeduction);
+            }
+        } else {
+            detectionCoolDownDelay -= Time.deltaTime;
+        }
+    }
+
+    void UpdateDetectionHUD() {
+        if (gameController.assaultMode) {
+            hud.ToggleDetectionHUD(false);
+            hud.SetDetectionMeter(0f);
+            return;
+        }
+
+        if (detectionLevel > 0f) {
+            // Show the detection meter if it isn't currently shown
+            if (!hud.container.detectionMeter.enabled) {
+                hud.ToggleDetectionHUD(true);
+                audioController.PlayCautionSound();
+            }
+            // Update the detection meter
+            hud.SetDetectionMeter(detectionLevel / MAX_DETECTION_LEVEL);
+            if (detectionLevel == MAX_DETECTION_LEVEL) {
+                // Display the detected text
+                if (!hud.container.detectionText.enabled) {
+                    hud.ToggleDetectedText(true);
+                }
+                // Begin the detection HUD reset if one currently hasn't begun
+                if (!detectionResetUnderway) {
+                    audioController.PlayAlertSound();
+                    StartCoroutine("DetectionHUDReset");
+                }
+            }
+        } else {
+            // Hide the detection HUD
+            //Debug.Log("hero");
+            hud.ToggleDetectionHUD(false);
+            // Reset its value to 0
+            hud.SetDetectionMeter(0f);
+        }
+    }
+
+    IEnumerator DetectionHUDReset() {
+        detectionResetUnderway = true;
+        yield return new WaitForSeconds(4f);
+        detectionLevel = 0f;
+        detectionResetUnderway = false;
     }
 
 }

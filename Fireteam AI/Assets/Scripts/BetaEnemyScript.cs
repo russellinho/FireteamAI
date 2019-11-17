@@ -712,7 +712,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Sees a player?
 		if (player != null) {
 			alertTimer = 10f;
-
+			player.GetComponent<PlayerActionScript>().IncreaseDetectionLevel();
 			if (Vector3.Distance (player.transform.position, transform.position) <= MELEE_DISTANCE) {
 				if (actionState != ActionStates.Melee) {
 					pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee);
@@ -948,6 +948,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (alerted) {
 			if (player != null) {
 				// If the enemy has seen a player
+				if (!alerted) {
+					player.GetComponent<PlayerActionScript>().IncreaseDetectionLevel();
+				}
 				alertTimer = 12f;
 				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue && actionState != ActionStates.Reloading) {
 					int r = Random.Range (1, aggression - 2);
@@ -1492,27 +1495,25 @@ public class BetaEnemyScript : MonoBehaviour {
 						{
 								continue;
 						}
-						// Debug.Log(hit2.transform.gameObject);
-						// Debug.Log(hit1.transform.gameObject);
-						// // Debug.Log(hit1.transform.gameObject.tag + " and " + hit2.transform.gameObject.tag);
-						// if (hit1.transform.gameObject == null || hit2.transform.gameObject == null)
-						// {
-						// 	continue;
-						// }
-						// if (!hit1.transform.gameObject.tag.Equals("Player") && !hit2.transform.gameObject.tag.Equals("Player")) {
-						// 	// If we don't see a player, check if player is in close range.
-						// 	// Check objects within a certain distance for a player
-						// 	if (Vector3.Distance(p.transform.position, headTransform.position) < 8f) {
-						// 		gameController.GetComponent<GameControllerScript>().enemyAlertMarkers.Add(pView.ViewID);
-						// 		alertStatus = 1;
-						// 		// Debug.Log("I hear sum body");
-						// 	}
-						// 	else {
-						// 		removeFromMarkerList();
-						// 		// Debug.Log("Guess it was my imagination");
-						// 	}
-						// 	continue;
-						// }
+						
+						if (hit1.transform.gameObject == null || hit2.transform.gameObject == null)
+						{
+							continue;
+						}
+						if (!hit1.transform.gameObject.tag.Equals("Player") && !hit2.transform.gameObject.tag.Equals("Player")) {
+							// If we don't see a player, check if player is in close range.
+							// Check objects within a certain distance for a player
+							// if (Vector3.Distance(p.transform.position, headTransform.position) < 8f) {
+							// 	gameController.GetComponent<GameControllerScript>().enemyAlertMarkers.Add(pView.ViewID);
+							// 	alertStatus = 1;
+							// 	// Debug.Log("I hear sum body");
+							// }
+							// else {
+							// 	removeFromMarkerList();
+							// 	// Debug.Log("Guess it was my imagination");
+							// }
+							continue;
+						}
 						keysNearBy.Add (p.GetComponent<PhotonView>().OwnerActorNr);
 					}
 				}
