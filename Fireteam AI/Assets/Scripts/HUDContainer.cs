@@ -56,5 +56,7 @@ public class HUDContainer : MonoBehaviour {
 	public Slider respawnBar;
 	public GameObject gameOverBanner;
 	public GameObject enemyAlerted;
+	public Image detectionMeter;
+	public RawImage detectionText;
 
 }
