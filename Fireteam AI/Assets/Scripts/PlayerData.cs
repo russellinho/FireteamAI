@@ -17,6 +17,9 @@ public class PlayerData : MonoBehaviour
     public string disconnectReason;
     public bool testMode;
     public PlayerInfo info;
+    public ModInfo primaryModInfo;
+    public ModInfo secondaryModInfo;
+    public ModInfo supportModInfo;
 
     public GameObject bodyReference;
     public GameObject inGamePlayerReference;
@@ -169,11 +172,12 @@ public class PlayerData : MonoBehaviour
             characterEquips.EquipBottom(info.equippedBottom, null);
             characterEquips.EquipFootwear(info.equippedFootwear, null);
             characterEquips.EquipArmor(info.equippedArmor, null);
-            ModInfo primaryModInfo = LoadModDataForWeapon(info.equippedPrimary);
-            ModInfo secondaryModInfo = LoadModDataForWeapon(info.equippedSecondary);
+            primaryModInfo = LoadModDataForWeapon(info.equippedPrimary);
+            secondaryModInfo = LoadModDataForWeapon(info.equippedSecondary);
+            supportModInfo = LoadModDataForWeapon(info.equippedSupport);
             characterWeps.EquipWeapon(info.equippedPrimaryType, info.equippedPrimary, primaryModInfo.equippedSuppressor, null);
             characterWeps.EquipWeapon(info.equippedSecondaryType, info.equippedSecondary, secondaryModInfo.equippedSuppressor, null);
-            characterWeps.EquipWeapon(info.equippedSupportType, info.equippedSupport, null, null);
+            characterWeps.EquipWeapon(info.equippedSupportType, info.equippedSupport, supportModInfo.equippedSuppressor, null);
         }
         else
         {
@@ -260,9 +264,9 @@ public class PlayerData : MonoBehaviour
         return modInfo;
     }
 
-    public void SaveModInventoryData() {
+    // public void SaveModInventoryData() {
 
-    }
+    // }
 
 }
 

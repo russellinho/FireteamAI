@@ -183,6 +183,7 @@ public class WeaponScript : MonoBehaviour
     void DrawWeapon(int weaponCat) {
         string equippedWep = "";
         string equippedType = "";
+        ModInfo modInfo = null;
         
         if (weaponCat == 1)
         {
@@ -191,6 +192,7 @@ public class WeaponScript : MonoBehaviour
             equippedType = equippedPrimaryType;
             weaponActionScript.currentAmmo = currentAmmoPrimary;
             weaponActionScript.totalAmmoLeft = totalPrimaryAmmoLeft;
+            modInfo = PlayerData.playerdata.primaryModInfo;
         }
         else if (weaponCat == 2)
         {
@@ -199,6 +201,7 @@ public class WeaponScript : MonoBehaviour
             equippedType = equippedSecondaryType;
             weaponActionScript.currentAmmo = currentAmmoSecondary;
             weaponActionScript.totalAmmoLeft = totalSecondaryAmmoLeft;
+            modInfo = PlayerData.playerdata.secondaryModInfo;
         }
         else if (weaponCat == 4)
         {
@@ -209,8 +212,9 @@ public class WeaponScript : MonoBehaviour
             equippedType = equippedSupportType;
             weaponActionScript.currentAmmo = currentAmmoSupport;
             weaponActionScript.totalAmmoLeft = totalSupportAmmoLeft;
+            modInfo = PlayerData.playerdata.supportModInfo;
         }
-        ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(equippedWep);
+        //ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(equippedWep);
         pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, equippedType, modInfo.equippedSuppressor);
         // Cock weapon upon drawing weapon
         weaponActionScript.CockingAction();

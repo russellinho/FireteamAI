@@ -81,6 +81,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             case "Weapon":
                 ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemName);
                 PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(weaponCategory, itemName, modInfo.equippedSuppressor, gameObject);
+                SetModInfo(modInfo);
                 break;
         }
     }
@@ -144,4 +145,17 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             itemDescriptionPopupRef.SetActive(false);
         }
     }
+
+    void SetModInfo(ModInfo modInfo) {
+        if (weaponDetails.type.Equals("Primary")) {
+            PlayerData.playerdata.primaryModInfo = modInfo;
+        }
+        if (weaponDetails.type.Equals("Secondary")) {
+            PlayerData.playerdata.secondaryModInfo = modInfo;
+        }
+        if (weaponDetails.type.Equals("Support")) {
+            PlayerData.playerdata.supportModInfo = modInfo;
+        }
+    }
+
 }
