@@ -58,9 +58,9 @@ public class BetaEnemyScript : MonoBehaviour {
 	public bool alerted = false;
 	private bool wasMasterClient;
 	private GameObject gameController;
-	//private ArrayList enemyAlertMarkers;
+	private ArrayList enemyAlertMarkers;
 	public int alertStatus;
-	// Responsible for displaying the correct alert symbol
+	// Responsible for displaying the correct alert symbol. If equals 0, then the alert display is inactive
 	public int alertDisplay;
 
 	// Finite state machine states
@@ -117,6 +117,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		alertDisplay = 0;
 		alertTimer = -100f;
 		coverWaitTimer = Random.Range (2f, 7f);
 		coverSwitchPositionsTimer = Random.Range (12f, 18f);
@@ -149,7 +150,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		meleeTrigger = GetComponent<BoxCollider> ();
 		gameController = GameObject.Find("GameController");
 		gameController.GetComponent<GameControllerScript>().enemyList.Add(pView.ViewID, gameObject);
-		//enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
+		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
 
 		if (enemyType == EnemyType.Patrol) {
 			range = 10f;
@@ -232,7 +233,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		CheckAlerted ();
 		CheckTargetDead ();
-		//displayAlerted();
+		displayAlerted();
 
 		// If disoriented, don't have the ability to do anything else except die
 		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
@@ -1503,15 +1504,17 @@ public class BetaEnemyScript : MonoBehaviour {
 						if (!hit1.transform.gameObject.tag.Equals("Player") && !hit2.transform.gameObject.tag.Equals("Player")) {
 							// If we don't see a player, check if player is in close range.
 							// Check objects within a certain distance for a player
-							// if (Vector3.Distance(p.transform.position, headTransform.position) < 8f) {
-							// 	gameController.GetComponent<GameControllerScript>().enemyAlertMarkers.Add(pView.ViewID);
-							// 	alertStatus = 1;
-							// 	// Debug.Log("I hear sum body");
-							// }
-							// else {
-							// 	removeFromMarkerList();
-							// 	// Debug.Log("Guess it was my imagination");
-							// }
+							if (!alerted) {
+								if (Vector3.Distance(p.transform.position, headTransform.position) < 8f) {
+									gameController.GetComponent<GameControllerScript>().enemyAlertMarkers.Add(pView.ViewID);
+									alertStatus = 1;
+									// Debug.Log("I hear sum body");
+								}
+								else {
+									removeFromMarkerList();
+									// Debug.Log("Guess it was my imagination");
+								}
+							}
 							continue;
 						}
 						keysNearBy.Add (p.GetComponent<PhotonView>().OwnerActorNr);
@@ -1561,7 +1564,12 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 		}
 		// Play grunt when enemy dies or hit by flashbang
-		if (action == ActionStates.Dead || action == ActionStates.Disoriented) {
+		if (action == ActionStates.Dead) {
+			PlayGruntSound();
+			removeFromMarkerList();
+			AddToMarkerRemovalQueue();
+		}
+		if (action == ActionStates.Disoriented) {
 			PlayGruntSound();
 		}
 		actionState = action;
@@ -1655,31 +1663,36 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void displayAlerted() {
-		if (player != null) {
-			// Activate exclamation sign, and disable question mark
-			if (alertStatus != 2) {
-				gameController.GetComponent<GameControllerScript>().enemyAlertMarkers.Add(pView.ViewID);
-				alertStatus = 2;
-				Debug.Log("I see you");
-			}
+		if (health <= 0 || gameController.GetComponent<GameControllerScript>().assaultMode) {
+			return;
 		}
-		// else {
-		// 	removeFromMarkerList();
-		// }
+
+		// Activate exclamation sign, and disable question mark
+		if (alerted && alertStatus != 2) {
+			gameController.GetComponent<GameControllerScript>().enemyAlertMarkers.Add(pView.ViewID);
+			alertStatus = 2;
+			//Debug.Log("I see you");
+		}
+
 	}
 
-	// void removeFromMarkerList() {
-	// 	// Debug.Log(enemyAlertMarkers);
-	// 	if (enemyAlertMarkers == null) {
-	// 		return;
-	// 	}
-	// 	foreach (int item in enemyAlertMarkers) {
-	// 		if ((int)item == pView.ViewID) {
-	// 			enemyAlertMarkers.Remove(item);
-	// 		}
-	// 	}
-	// 	alertStatus = 0;
-	// }
+	void removeFromMarkerList() {
+		// Debug.Log(enemyAlertMarkers);
+		if (enemyAlertMarkers == null || alertStatus == 0) {
+			return;
+		}
+		foreach (int item in enemyAlertMarkers) {
+			if ((int)item == pView.ViewID) {
+				enemyAlertMarkers.Remove(item);
+				break;
+			}
+		}
+		alertStatus = 0;
+	}
+
+	void AddToMarkerRemovalQueue() {
+		gameController.GetComponent<GameControllerScript>().enemyMarkerRemovalQueue.Enqueue(pView.ViewID);
+	}
 
 	// Draw a sphere to see effective range for stealth
 	// void OnDrawGizmos() {
