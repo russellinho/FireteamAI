@@ -675,9 +675,6 @@ MonoBehaviour:
   isUsingBooster: 0
   rightCollar: {fileID: 4166761373134640685}
   leftCollar: {fileID: 4166761373134640687}
-  leftCollarAimingPos: {x: 0, y: 0, z: 0}
-  defaultLeftCollarPos: {x: -3.758436e-10, y: 0.001242948, z: -2.449463e-12}
-  defaultRightCollarPos: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   leftCollarOriginalPos: {x: -0.0003447553, y: 0.001482724, z: 0.001311174}
   rightCollarOriginalPos: {x: 0, y: 0, z: 0}
 --- !u!114 &580623507002314512
@@ -769,6 +766,8 @@ MonoBehaviour:
   hitmarkerSound: {fileID: 8300000, guid: f5f9c7f44fd0db94fb7457a968a1def7, type: 3}
   sirenSound: {fileID: 8300000, guid: e4fdcd319d7fc2f459e5894d9c267ee5, type: 3}
   missionStartSound: {fileID: 8300000, guid: c995c036e32e4f447bdaaa1124e4c370, type: 3}
+  alertSound: {fileID: 8300000, guid: 962c3e36eb6e3634599fc2846e2d38f9, type: 3}
+  cautionSound: {fileID: 8300000, guid: e1f6f769003b1ce4db2348eab63c8679, type: 3}
 --- !u!54 &580623507002314511
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -839,7 +838,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 580623507002314523}
-  viewIdField: 4
+  viewIdField: 0
   InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &580623507002314523

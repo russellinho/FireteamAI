@@ -23,8 +23,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public static Dictionary<int, GameObject> playerList = new Dictionary<int, GameObject> ();
 	public static Dictionary<string, int> totalKills = new Dictionary<string, int> ();
 	public static Dictionary<string, int> totalDeaths = new Dictionary<string, int> ();
-  public Dictionary<int, GameObject> enemyList = new Dictionary<int, GameObject> ();
-  public ArrayList enemyAlertMarkers;
+	public Dictionary<int, GameObject> enemyList = new Dictionary<int, GameObject> ();
+	public ArrayList enemyAlertMarkers;
+	public Queue enemyMarkerRemovalQueue;
 
     // Bomb defusal mission variables
 	public GameObject[] bombs;
@@ -76,7 +77,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		lastGunshotHeardPos = Vector3.negativeInfinity;
 		lastGunshotHeardPosClone = Vector3.negativeInfinity;
 
-    enemyAlertMarkers = new ArrayList ();
+    	enemyAlertMarkers = new ArrayList ();
+		enemyMarkerRemovalQueue = new Queue();
 	}
 
 	// Update is called once per frame
@@ -134,6 +136,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	IEnumerator UpdateAssaultModeTimer(float secs, bool assaultInProgress) {
 		yield return new WaitForSeconds (secs);
 		assaultMode = assaultInProgress;
+		if (assaultInProgress) {
+			ClearEnemyAlertMarkers();
+		}
 	}
 
 	public bool CheckEscape() {
@@ -363,6 +368,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		} else {
 			PhotonNetwork.LoadLevel("GameOverSuccess");
 		}
+	}
+
+	void ClearEnemyAlertMarkers() {
+		enemyAlertMarkers.Clear();
+		enemyMarkerRemovalQueue.Clear();
 	}
 
 }
