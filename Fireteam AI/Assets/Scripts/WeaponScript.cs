@@ -187,7 +187,7 @@ public class WeaponScript : MonoBehaviour
         
         if (weaponCat == 1)
         {
-            //weaponActionScript.hudScript.ToggleCrosshair(false);
+            weaponActionScript.hudScript.ToggleCrosshair(false);
             equippedWep = equippedPrimaryWeapon;
             equippedType = equippedPrimaryType;
             weaponActionScript.currentAmmo = currentAmmoPrimary;
@@ -196,7 +196,7 @@ public class WeaponScript : MonoBehaviour
         }
         else if (weaponCat == 2)
         {
-            //weaponActionScript.hudScript.ToggleCrosshair(false);
+            weaponActionScript.hudScript.ToggleCrosshair(false);
             equippedWep = equippedSecondaryWeapon;
             equippedType = equippedSecondaryType;
             weaponActionScript.currentAmmo = currentAmmoSecondary;

@@ -67,10 +67,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.spectatorText.enabled = false;
 		ToggleDetectionHUD(false);
 
-		if (wepScript.currentlyEquippedType == 4 && wepScript.equippedSupportType.Equals("Explosive")) {
-			ToggleCrosshair(true);
-		}
-
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
 		killPopupTimer = 0f;
