@@ -752,6 +752,7 @@ MonoBehaviour:
   boostTimer: 0
   hitLocation: {x: 0, y: 0, z: 0}
   headTransform: {fileID: 2450817521813131945}
+  cameraParent: {fileID: 8725741272739199842}
 --- !u!114 &1029626021163347195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -866,7 +867,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 1029626021163347185}
   viewIdField: 0
-  InstantiationId: 4
+  InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &1029626021163347185
 MonoBehaviour:

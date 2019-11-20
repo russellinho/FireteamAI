@@ -73,6 +73,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public float boostTimer;
     public Vector3 hitLocation;
     public Transform headTransform;
+    public Transform cameraParent;
 
     // Mission references
     private GameObject currentBomb;
@@ -167,9 +168,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         updatePlayerSpeed();
         // Instant respawn hack
-        // if (Input.GetKeyDown (KeyCode.P)) {
-        //     BeginRespawn ();
-        // }
+        if (Input.GetKeyDown (KeyCode.P)) {
+            BeginRespawn ();
+        }
 
          if (enterSpectatorModeTimer > 0f)
          {
@@ -704,8 +705,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             fpc.enabled = status;
             fpc.m_MouseLook.ResetRot();
             viewCam.GetComponent<AudioListener>().enabled = status;
-            viewCam.transform.localPosition = Vector3.zero;
-            viewCam.transform.localRotation = Quaternion.identity;
+            viewCam.transform.localPosition = new Vector3(0.001179763f, 0.003319679f, -0.000299095f);
+            viewCam.transform.localRotation = Quaternion.Euler(-11.903f, 90f, 0f);
             viewCam.enabled = status;
             wepActionScript.enabled = status;
         }
@@ -754,7 +755,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         health = 100;
         photonView.RPC("RpcSetHealth", RpcTarget.Others, 100);
-        viewCam.transform.SetParent(headTransform);
+        viewCam.transform.SetParent(cameraParent);
         hud.ToggleHUD(true);
         hud.ToggleSpectatorMessage(false);
         fpc.m_IsCrouching = false;

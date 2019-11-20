@@ -453,8 +453,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void SetMovingInAnimator(int x) {
             fpcAnimator.SetFloat("MoveSpeed", 2f);
-            if (fpcAnimator.GetInteger("MovingDir") == x || !canMove) return;
             fpcAnimator.SetBool("Moving", (x == 0 ? false : true));
+            if (fpcAnimator.GetInteger("MovingDir") == x || !canMove) return;
             fpcAnimator.SetInteger("MovingDir", x);
             photonView.RPC("RpcSetMovingInAnimator", RpcTarget.Others, x);
         }
