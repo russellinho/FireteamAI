@@ -451,6 +451,7 @@ MonoBehaviour:
   gunSmoke: {fileID: 0}
   weaponShell: {fileID: 0}
   weaponShellPoint: {fileID: 0}
+  weaponShootPoint: {fileID: 0}
   muzzleFlash: {fileID: 0}
   bulletTracer: {fileID: 0}
   fpcPosMale: {x: -0.000434, y: 0.001399, z: -0.000124}
@@ -463,6 +464,12 @@ MonoBehaviour:
   fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
   fpcRotFemale: {x: 23.805, y: -117.915, z: 60.46}
   fpcScaleFemale: {x: 0.001215708, y: 0.001215708, z: 0.001215708}
+  fullPosMale: {x: -0.0123, y: 0.1027, z: 0.0327}
+  fullRotMale: {x: -72.249, y: 0, z: 90}
+  fullScaleMale: {x: 0.0978, y: 0.0978, z: 0.0978}
+  fullPosFemale: {x: -0.007, y: 0.078, z: 0.042}
+  fullRotFemale: {x: -72.249, y: 0, z: 90}
+  fullScaleFemale: {x: 0.0978, y: 0.0978, z: 0.0978}
   maleOverrideController: {fileID: 22100000, guid: 3155f753841c2bb4381f22cfb26107b9,
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: d36b07c5dae04c44b9e5de9528ba09cd,

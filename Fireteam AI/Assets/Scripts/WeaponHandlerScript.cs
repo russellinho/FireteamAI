@@ -45,12 +45,8 @@ public class WeaponHandlerScript : MonoBehaviour
 
     public void SetWeaponPosition(bool firstPersonMode)
     {
-        // Vector3 offset = new Vector3(transform.position.x - handle.position.x, transform.position.y - handle.position.y, transform.position.z - handle.position.z);
-        //Vector3 offset = new Vector3();
-        //weapon.localPosition = new Vector3(weapon.localPosition.x + (-handle.localPosition.x) + offset.x, weapon.localPosition.y + (-handle.localPosition.y) + offset.y, weapon.localPosition.z + (-handle.localPosition.z) + offset.z);
-        //weapon.position = new Vector3(transform.localPosition.x + handle.localPosition.x, transform.localPosition.y + handle.localPosition.y, transform.localPosition.z + handle.localPosition.z);
+        WeaponStats wepStats = weapon.GetComponent<WeaponStats>();
         if (firstPersonMode) {
-            WeaponStats wepStats = weapon.GetComponent<WeaponStats>();
             if (fpc.equipmentScript.gender == 'M') {
                 // Set the weapon position for males, get from stats
                 weapon.localPosition = wepStats.fpcPosMale;
@@ -63,13 +59,16 @@ public class WeaponHandlerScript : MonoBehaviour
                 weapon.localScale = wepStats.fpcScaleFemale;
             }
         } else {
-            Vector3 oldHandlePos = handle.localPosition;
-            handle.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z);
-            oldHandlePos = new Vector3(oldHandlePos.x - handle.localPosition.x, oldHandlePos.y - handle.localPosition.y, oldHandlePos.z - handle.localPosition.z);
             if (fpc.equipmentScript.gender == 'M') {
-                weapon.localPosition = new Vector3(weapon.localPosition.x - oldHandlePos.x - 0.01f, weapon.localPosition.y - oldHandlePos.y + 0.06f, weapon.localPosition.z - oldHandlePos.z + 0.02f);
+                // Set the weapon position for males, get from stats
+                weapon.localPosition = wepStats.fullPosMale;
+                weapon.localRotation = Quaternion.Euler(wepStats.fullRotMale);
+                weapon.localScale = wepStats.fullScaleMale;
             } else {
-                weapon.localPosition = new Vector3(weapon.localPosition.x - oldHandlePos.x - 0.01f, weapon.localPosition.y - oldHandlePos.y + 0.04f, weapon.localPosition.z - oldHandlePos.z + 0.02f);
+                // Set the weapon position for males, get from stats
+                weapon.localPosition = wepStats.fullPosFemale;
+                weapon.localRotation = Quaternion.Euler(wepStats.fullRotFemale);
+                weapon.localScale = wepStats.fullScaleFemale;
             }
         }
     }

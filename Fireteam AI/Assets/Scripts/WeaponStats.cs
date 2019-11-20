@@ -43,6 +43,12 @@ public class WeaponStats : MonoBehaviour
     public Vector3 fpcLeftHandRotFemale;
     public Vector3 fpcRotFemale;
     public Vector3 fpcScaleFemale;
+    public Vector3 fullPosMale;
+    public Vector3 fullRotMale;
+    public Vector3 fullScaleMale;
+    public Vector3 fullPosFemale;
+    public Vector3 fullRotFemale;
+    public Vector3 fullScaleFemale;
     public AnimatorOverrideController maleOverrideController;
     public AnimatorOverrideController femaleOverrideController;
     public Animator weaponAnimator;

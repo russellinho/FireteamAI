@@ -5320,6 +5320,12 @@ MonoBehaviour:
   fpcLeftHandRotFemale: {x: -52.627, y: 87.269, z: -84.797}
   fpcRotFemale: {x: 8.299, y: 73.521, z: -76.409}
   fpcScaleFemale: {x: 0.00013, y: 0.00013, z: 0.00013}
+  fullPosMale: {x: -0.051, y: 0.173, z: 0.062}
+  fullRotMale: {x: -10.172, y: 178.648, z: -92.116}
+  fullScaleMale: {x: 0.0129, y: 0.0129, z: 0.0129}
+  fullPosFemale: {x: -0.05, y: 0.15, z: 0.049}
+  fullRotFemale: {x: 2.078, y: 178.199, z: -92.08401}
+  fullScaleFemale: {x: 0.0129, y: 0.0129, z: 0.0129}
   maleOverrideController: {fileID: 22100000, guid: 749ab73531898d84eb1cc4760dc8b355,
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: b36e9ac72a075c4448233fbf7eb59f4d,
