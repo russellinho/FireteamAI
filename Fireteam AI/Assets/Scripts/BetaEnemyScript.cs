@@ -153,8 +153,8 @@ public class BetaEnemyScript : MonoBehaviour {
 		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
 
 		if (enemyType == EnemyType.Patrol) {
-			range = 10f;
-			accuracyOffset = 3f;
+			range = 20f;
+			accuracyOffset = 0.5f;
 			fireRate = 0.4f;
 			damage = 20f;
 			shootSound = (AudioClip)Resources.Load ("Gun Sounds/M16A3");
@@ -163,14 +163,14 @@ public class BetaEnemyScript : MonoBehaviour {
 		} else {
 			if (sniper) {
 				range = 35f;
-				accuracyOffset = 2f;
+				accuracyOffset = 1.5f;
 				fireRate = 20f;
 				damage = 35f;
 				shootSound = (AudioClip)Resources.Load ("Gun Sounds/L96A1");
 				gunAudio.minDistance = 18f;
 			} else {
 				range = 27f;
-				accuracyOffset = 3f;
+				accuracyOffset = 0.5f;
 				fireRate = 0.4f;
 				damage = 20f;
 				shootSound = (AudioClip)Resources.Load ("Gun Sounds/M16A3");
@@ -1196,7 +1196,8 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (player != null) {
 			RaycastHit hit;
 			// Locks onto the player and shoots at him
-			Vector3 playerPos = player.GetComponentsInChildren<Transform>()[0].position;
+			Vector3 playerPos = player.GetComponent<FirstPersonController>().fpcTransformSpine.position;
+			playerPos = new Vector3(playerPos.x, playerPos.y - 0.1f, playerPos.z);
 			Vector3 dir = playerPos - shootPoint.position;
 
 			// Adding artificial stupidity - ensures that the player isn't hit every time by offsetting
