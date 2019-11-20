@@ -1236,8 +1236,12 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcInstantiateBulletHole(Vector3 point, Vector3 normal, string parentName) {
+		GameObject attachToObject = GameObject.Find(parentName);
+		if (!attachToObject) {
+			return;
+		}
 		GameObject bulletHoleEffect = Instantiate (bulletImpact, point, Quaternion.FromToRotation (Vector3.forward, normal));
-		bulletHoleEffect.transform.SetParent (GameObject.Find(parentName).transform);
+		bulletHoleEffect.transform.SetParent (attachToObject.transform);
 		Destroy (bulletHoleEffect, 3f);
 	}
 
