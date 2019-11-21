@@ -248,9 +248,6 @@ public class WeaponScript : MonoBehaviour
                 weaponHolderFpc.SetWeaponPosition(true);
             } else {
                 weaponHolder.SetWeaponPosition(false);
-                if (InventoryScript.rifleHandPositionsPerCharacter != null) {
-                    weaponHolder.SetSteadyHand(InventoryScript.rifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
-                }
             }
         }
     }
@@ -263,9 +260,6 @@ public class WeaponScript : MonoBehaviour
                 weaponHolderFpc.SetWeaponPosition(true);
             } else {
                 weaponHolder.SetWeaponPosition(false);
-                if (InventoryScript.shotgunHandPositionsPerCharacter != null) {
-                    weaponHolder.SetSteadyHand(InventoryScript.shotgunHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
-                }
             }
         }
     }
@@ -279,7 +273,6 @@ public class WeaponScript : MonoBehaviour
                 weaponHolderFpc.SetWeaponPosition(true);
             } else {
                 weaponHolder.SetWeaponPosition(false);
-                weaponHolder.ResetSteadyHand();
             }
         }
     }
@@ -292,9 +285,6 @@ public class WeaponScript : MonoBehaviour
                 weaponHolderFpc.SetWeaponPosition(true);
             } else {
                 weaponHolder.SetWeaponPosition(false);
-                if (InventoryScript.sniperRifleHandPositionsPerCharacter != null) {
-                    weaponHolder.SetSteadyHand(InventoryScript.sniperRifleHandPositionsPerCharacter[PlayerData.playerdata.info.equippedCharacter][weaponName]);
-                }
             }
         }
     }
