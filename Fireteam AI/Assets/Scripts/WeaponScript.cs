@@ -172,8 +172,6 @@ public class WeaponScript : MonoBehaviour
             return false;
         } else if (weaponActionScript.isCockingGrenade) {
             return false;
-        } else if (weaponActionScript.isCocking) {
-            return false;
         } else if (weaponActionScript.isUsingBooster) {
             return false;
         }
