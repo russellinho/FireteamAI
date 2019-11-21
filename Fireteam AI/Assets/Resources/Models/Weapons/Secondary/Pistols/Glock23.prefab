@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2494524895397913867}
   - component: {fileID: 2882473750099635102}
   - component: {fileID: 205030255786283087}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Pistol.007
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 1744675161071523367}
   - component: {fileID: 5730634546233472569}
   - component: {fileID: 4612622112483829603}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Pistol
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -165,7 +165,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1188904012867975873}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -197,7 +197,7 @@ GameObject:
   - component: {fileID: 8141503492496271854}
   - component: {fileID: 4496471157508096275}
   - component: {fileID: 812442129586809586}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Pistol.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -275,7 +275,7 @@ GameObject:
   - component: {fileID: 7642412844895279251}
   - component: {fileID: 3588129735104215703}
   - component: {fileID: 6449061140298402551}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Pistol.005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -353,7 +353,7 @@ GameObject:
   - component: {fileID: 597943093960656815}
   - component: {fileID: 8692768281928196542}
   - component: {fileID: 6749472542164423841}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: BulletTracer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5104,7 +5104,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7314970135703596312}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: SuppressorSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5134,7 +5134,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2649958236745523858}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: ShootPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5168,7 +5168,7 @@ GameObject:
   - component: {fileID: 4958745957689178647}
   - component: {fileID: 2927452349419459663}
   - component: {fileID: 8724494551387910961}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Pistol.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5246,7 +5246,7 @@ GameObject:
   - component: {fileID: 1852526081933173989}
   - component: {fileID: 2470383916810868941}
   - component: {fileID: 4601555272663348952}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Pistol.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5322,7 +5322,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2565629412601382877}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: ShellPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5358,7 +5358,7 @@ GameObject:
   - component: {fileID: 7894633171439637485}
   - component: {fileID: 4139141902987927314}
   - component: {fileID: 7307065412465032637}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Glock23
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5809,7 +5809,7 @@ GameObject:
   - component: {fileID: 8519576808717694959}
   - component: {fileID: 5597816350263776371}
   - component: {fileID: 7024065987392167390}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Pistol.008
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5887,7 +5887,7 @@ GameObject:
   - component: {fileID: 7242473972822524740}
   - component: {fileID: 5610070842234121563}
   - component: {fileID: 5993193399045874662}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Flare
   m_TagString: Untagged
   m_Icon: {fileID: 0}

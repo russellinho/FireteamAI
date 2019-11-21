@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2939470741175653408}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: SteadyHandPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 7345376465869060285}
   - component: {fileID: 967028380876258909}
   - component: {fileID: 4389802685595752248}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Flare
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4686,7 +4686,7 @@ GameObject:
   - component: {fileID: 31634139527065827}
   - component: {fileID: 7596185973563281713}
   - component: {fileID: 675790284091954249}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96_SR_Shoulderpad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4762,7 +4762,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7519234183730667970}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: SuppressorSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4794,7 +4794,7 @@ GameObject:
   - component: {fileID: 3008031976476543503}
   - component: {fileID: 3899744623714668498}
   - component: {fileID: 1102193448540144142}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96_SR_ActionStick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4870,7 +4870,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 187364545190114607}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: ShellPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4900,7 +4900,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5519136530734239172}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4936,7 +4936,7 @@ GameObject:
   - component: {fileID: 7817632979148059479}
   - component: {fileID: 3255668330452203357}
   - component: {fileID: 7284105682409530744}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96A1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5402,7 +5402,7 @@ GameObject:
   - component: {fileID: 5183965959464289304}
   - component: {fileID: 3568079530570047824}
   - component: {fileID: 8893228008184773232}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96_SR_TriggerBox.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5480,7 +5480,7 @@ GameObject:
   - component: {fileID: 5188594973001356127}
   - component: {fileID: 2416500997563658705}
   - component: {fileID: 7156384840501195846}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96_SR_Barrel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5558,7 +5558,7 @@ GameObject:
   - component: {fileID: 5450543309140514612}
   - component: {fileID: 1751668477816511209}
   - component: {fileID: 4759409338516649105}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96_SR_Barrel.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5636,7 +5636,7 @@ GameObject:
   - component: {fileID: 6624504949784911223}
   - component: {fileID: 493941101800873985}
   - component: {fileID: 346103166992481204}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96_SR_cheekPad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5714,7 +5714,7 @@ GameObject:
   - component: {fileID: 5184192757642979864}
   - component: {fileID: 2523069117950927793}
   - component: {fileID: 9195903751127165692}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96_SR_mount3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5792,7 +5792,7 @@ GameObject:
   - component: {fileID: 4440969556454071882}
   - component: {fileID: 7761125234423028871}
   - component: {fileID: 8754900998464016377}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96_SR_mount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5870,7 +5870,7 @@ GameObject:
   - component: {fileID: 605450862525988572}
   - component: {fileID: 8752574911723234651}
   - component: {fileID: 7848038330553835608}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96_Sniper_Rifle.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5949,7 +5949,7 @@ GameObject:
   - component: {fileID: 7407605760957607584}
   - component: {fileID: 8903175936057898028}
   - component: {fileID: 5700399059344323347}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96_SR_Scope.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6025,7 +6025,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6235929911505419026}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: ShootPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6059,7 +6059,7 @@ GameObject:
   - component: {fileID: 4475002942141720737}
   - component: {fileID: 7020853863829749049}
   - component: {fileID: 8092053882001347817}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96_SR_TriggerBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6137,7 +6137,7 @@ GameObject:
   - component: {fileID: 1642286580661309662}
   - component: {fileID: 4459736896068193820}
   - component: {fileID: 5460131640367698634}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96_SR_Scope
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6215,7 +6215,7 @@ GameObject:
   - component: {fileID: 3824184786280769076}
   - component: {fileID: 6005668923024509550}
   - component: {fileID: 5697625961010741519}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96_SR_MagCover.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6293,7 +6293,7 @@ GameObject:
   - component: {fileID: 5148337995148539296}
   - component: {fileID: 8507150125458328821}
   - component: {fileID: 967568677268102701}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: L96_SR_Mag.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6373,7 +6373,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_Layer
-      value: 16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalPosition.x

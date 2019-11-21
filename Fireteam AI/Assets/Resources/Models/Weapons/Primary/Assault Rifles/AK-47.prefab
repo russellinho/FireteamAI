@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2213734215418157226}
   - component: {fileID: 3643383872302523329}
   - component: {fileID: 3501158507023492476}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: AK-47.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 7295666860846232120}
   - component: {fileID: 8134093138265920616}
   - component: {fileID: 4660402016569617627}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: AK-47.008
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -167,7 +167,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5277240488764616831}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -199,7 +199,7 @@ GameObject:
   - component: {fileID: 3773986579872827732}
   - component: {fileID: 8980115122059643222}
   - component: {fileID: 5765222306166598342}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: AK-47.024
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -278,7 +278,7 @@ GameObject:
   - component: {fileID: 4455852674479786810}
   - component: {fileID: 7688252933740233025}
   - component: {fileID: 3268291815955009245}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Flare
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4921,7 +4921,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2821740573402994379}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: SteadyHandPlacement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4954,7 +4954,7 @@ GameObject:
   - component: {fileID: 2635174915501458276}
   - component: {fileID: 110141609950329420}
   - component: {fileID: 2888754328627710018}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: AK-47.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5031,7 +5031,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8910731136347168561}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: ShootPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5063,7 +5063,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4237367911387468872}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: SuppressorSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5095,7 +5095,7 @@ GameObject:
   - component: {fileID: 1991192351593909207}
   - component: {fileID: 4702648886637463538}
   - component: {fileID: 408046768106738228}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: AK-47.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5174,7 +5174,7 @@ GameObject:
   - component: {fileID: 6788381263052045989}
   - component: {fileID: 6277219088874751570}
   - component: {fileID: 4349956721504931502}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: AK-47.005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5253,7 +5253,7 @@ GameObject:
   - component: {fileID: 1035291535741311322}
   - component: {fileID: 7555741254343047361}
   - component: {fileID: 8755137723647322044}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: BulletTracer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10006,7 +10006,7 @@ GameObject:
   - component: {fileID: 110934955304439884}
   - component: {fileID: 8392880027097689961}
   - component: {fileID: 5524883215597754340}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: AK-47.009
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10085,7 +10085,7 @@ GameObject:
   - component: {fileID: 5166903212816879653}
   - component: {fileID: 4630990721663350012}
   - component: {fileID: 2660097820219736170}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: AK-47.011
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10164,7 +10164,7 @@ GameObject:
   - component: {fileID: 4127018555602220378}
   - component: {fileID: 8354600028908087637}
   - component: {fileID: 4462715404612781816}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: AK-47.012
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10243,7 +10243,7 @@ GameObject:
   - component: {fileID: 7686485505032168181}
   - component: {fileID: 4246983813585181543}
   - component: {fileID: 3281227270840540236}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: AK-47.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10320,7 +10320,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1828789718180478015}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: ShellPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10356,7 +10356,7 @@ GameObject:
   - component: {fileID: 4533343316843662230}
   - component: {fileID: 7050752128688314349}
   - component: {fileID: 3318048559081335545}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: AK-47
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10816,7 +10816,7 @@ GameObject:
   - component: {fileID: 2858158248693947730}
   - component: {fileID: 8377894596443470044}
   - component: {fileID: 794254567241863287}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: AK-47.006
   m_TagString: Untagged
   m_Icon: {fileID: 0}

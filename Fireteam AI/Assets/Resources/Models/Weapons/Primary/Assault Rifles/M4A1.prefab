@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 77815082017830170}
   - component: {fileID: 1809431344146356688}
   - component: {fileID: 6603765456154597383}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.019
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 4694685062735040598}
   - component: {fileID: 7696130783562876098}
   - component: {fileID: 3464404167572563355}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.060
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -167,7 +167,7 @@ GameObject:
   - component: {fileID: 5508918066850628229}
   - component: {fileID: 4350706945936647280}
   - component: {fileID: 7518765305487317900}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.066
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -245,7 +245,7 @@ GameObject:
   - component: {fileID: 6933151634323645880}
   - component: {fileID: 1551188471774725369}
   - component: {fileID: 8034220632176650441}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.036
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -323,7 +323,7 @@ GameObject:
   - component: {fileID: 2850397116324258145}
   - component: {fileID: 3384954991328315998}
   - component: {fileID: 1313337261467952210}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.052
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -401,7 +401,7 @@ GameObject:
   - component: {fileID: 6299243647798497639}
   - component: {fileID: 8030451133255247241}
   - component: {fileID: 4416963883450342402}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.043
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -479,7 +479,7 @@ GameObject:
   - component: {fileID: 6451068083085253944}
   - component: {fileID: 889522072892555084}
   - component: {fileID: 8239623430190984189}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.042
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -557,7 +557,7 @@ GameObject:
   - component: {fileID: 6119029146463450445}
   - component: {fileID: 4991254853542896896}
   - component: {fileID: 8631350626928870112}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.039
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -635,7 +635,7 @@ GameObject:
   - component: {fileID: 6377998888216869809}
   - component: {fileID: 7068813295324320020}
   - component: {fileID: 5631408886429642720}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.062
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -713,7 +713,7 @@ GameObject:
   - component: {fileID: 8793854501766120697}
   - component: {fileID: 5702428972731265392}
   - component: {fileID: 4633853433156490931}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.048
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -791,7 +791,7 @@ GameObject:
   - component: {fileID: 7265869031156479579}
   - component: {fileID: 7271264293564804266}
   - component: {fileID: 3258401267752296351}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.063
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -867,7 +867,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4889248434952622897}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: ShootPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -899,7 +899,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4889248435013981716}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: ShellPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -929,7 +929,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4889248435127244660}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: SupportHandPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -961,7 +961,7 @@ GameObject:
   - component: {fileID: 4889248435189107019}
   - component: {fileID: 4889248435189107029}
   - component: {fileID: 4889248435189107018}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Flare
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5604,7 +5604,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4889248435352453135}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: SuppressorSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5634,7 +5634,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4889248436073650956}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5666,7 +5666,7 @@ GameObject:
   - component: {fileID: 4889248436476359673}
   - component: {fileID: 4889248436476359675}
   - component: {fileID: 4889248436476359672}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: BulletTracer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10419,7 +10419,7 @@ GameObject:
   - component: {fileID: 2050297458884199316}
   - component: {fileID: 6988032783338328805}
   - component: {fileID: 116821120651825053}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.018
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10497,7 +10497,7 @@ GameObject:
   - component: {fileID: 2096466634329502955}
   - component: {fileID: 8509938105394599500}
   - component: {fileID: 7091399772551071199}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.061
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10575,7 +10575,7 @@ GameObject:
   - component: {fileID: 7460012531315963207}
   - component: {fileID: 1087579742458828194}
   - component: {fileID: 3525703770821653975}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.059
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10653,7 +10653,7 @@ GameObject:
   - component: {fileID: 3851916680849330125}
   - component: {fileID: 5764158421531992845}
   - component: {fileID: 7705666030932944257}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.065
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10731,7 +10731,7 @@ GameObject:
   - component: {fileID: 1399960479508327644}
   - component: {fileID: 4875063881273953076}
   - component: {fileID: 2064687076227783371}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.037
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10809,7 +10809,7 @@ GameObject:
   - component: {fileID: 2499504221644007105}
   - component: {fileID: 8990517470838738990}
   - component: {fileID: 5916150130605504995}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.038
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10887,7 +10887,7 @@ GameObject:
   - component: {fileID: 5577045470472912245}
   - component: {fileID: 7086214398471732983}
   - component: {fileID: 6994263416723984930}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.053
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10965,7 +10965,7 @@ GameObject:
   - component: {fileID: 6334360229082547032}
   - component: {fileID: 430239540799737381}
   - component: {fileID: 4434345893745639449}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.055
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11043,7 +11043,7 @@ GameObject:
   - component: {fileID: 8416058189026194061}
   - component: {fileID: 8997392419517459366}
   - component: {fileID: 497629855431215156}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.057
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11121,7 +11121,7 @@ GameObject:
   - component: {fileID: 6318981689334534645}
   - component: {fileID: 3792551184181178033}
   - component: {fileID: 7879873005095308798}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4_Carbine.054
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11203,7 +11203,7 @@ GameObject:
   - component: {fileID: 8375060916527802190}
   - component: {fileID: 8375060916527802191}
   - component: {fileID: 8375060916527802188}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: M4A1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

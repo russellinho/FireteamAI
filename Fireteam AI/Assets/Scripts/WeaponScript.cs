@@ -346,6 +346,7 @@ public class WeaponScript : MonoBehaviour
                     weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
                     weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                     weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                    SetWeaponCulling(wepEquipped);
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
@@ -366,6 +367,7 @@ public class WeaponScript : MonoBehaviour
                         weaponActionScript.animatorFpc.SetInteger("WeaponType", 2);
                         weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                         weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                        SetWeaponCulling(wepEquipped);
                     } else {
                         wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     }
@@ -386,6 +388,7 @@ public class WeaponScript : MonoBehaviour
                     weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
                     weaponActionScript.animatorFpc.SetBool("isShotgun", true);
                     weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                    SetWeaponCulling(wepEquipped);
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
@@ -405,6 +408,7 @@ public class WeaponScript : MonoBehaviour
                     weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
                     weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                     weaponActionScript.animatorFpc.SetBool("isBoltAction", true);
+                    SetWeaponCulling(wepEquipped);
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
@@ -425,6 +429,7 @@ public class WeaponScript : MonoBehaviour
                         weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
                         weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                         weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                        SetWeaponCulling(wepEquipped);
                     } else {
                         wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     }
@@ -443,6 +448,7 @@ public class WeaponScript : MonoBehaviour
                         weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
                         weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                         weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                        SetWeaponCulling(wepEquipped);
                     } else {
                         wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     }
@@ -649,6 +655,13 @@ public class WeaponScript : MonoBehaviour
 
     public void ToggleWeaponVisible(bool b) {
         drawnWeaponReference.SetActive(b);
+    }
+
+    void SetWeaponCulling(GameObject weapon) {
+        WeaponStats ws = weapon.GetComponent<WeaponStats>();
+        foreach (MeshRenderer part in ws.weaponParts) {
+            part.gameObject.layer = 16;
+        }
     }
 
 }

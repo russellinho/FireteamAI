@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 906895934748807784}
   - component: {fileID: 3790389946666586189}
   - component: {fileID: 9041164655346080639}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: 870_Rifle.006
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 4654652197106879230}
   - component: {fileID: 231770959027444620}
   - component: {fileID: 8811586902079322902}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: 870_Rifle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -165,7 +165,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2886118215861326542}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: ShootPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -199,7 +199,7 @@ GameObject:
   - component: {fileID: 6906126568381320846}
   - component: {fileID: 7009609522360211764}
   - component: {fileID: 9079225332461550595}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: 870_Rifle.008
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -275,7 +275,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 482483363615398230}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: ShellPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -305,7 +305,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4482965571530654909}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -337,7 +337,7 @@ GameObject:
   - component: {fileID: 2349120426421636010}
   - component: {fileID: 4186886601786629947}
   - component: {fileID: 5928090433958757079}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: 870_Rifle.009
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -415,7 +415,7 @@ GameObject:
   - component: {fileID: 6676505512309360608}
   - component: {fileID: 2189628253571173303}
   - component: {fileID: 882284454196616417}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: 870_Rifle.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -493,7 +493,7 @@ GameObject:
   - component: {fileID: 410005413414195819}
   - component: {fileID: 5715284451911562993}
   - component: {fileID: 2173668211617461703}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: 870_Rifle.007
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -574,7 +574,7 @@ GameObject:
   - component: {fileID: 1771693618349739629}
   - component: {fileID: 7278336588414938335}
   - component: {fileID: 3891285268470631582}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: R870
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -935,7 +935,7 @@ GameObject:
   - component: {fileID: 8151352822163661947}
   - component: {fileID: 9050997809510368866}
   - component: {fileID: 4053489032718617347}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Flare
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5580,7 +5580,7 @@ GameObject:
   - component: {fileID: 6331590841591979071}
   - component: {fileID: 6495507382640768854}
   - component: {fileID: 500927099388733071}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: 870_Rifle.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5659,7 +5659,7 @@ GameObject:
   - component: {fileID: 8304289408057258149}
   - component: {fileID: 556159671171613408}
   - component: {fileID: 3690515718133651749}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: 870_Rifle.Sight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5750,7 +5750,7 @@ GameObject:
   - component: {fileID: 2776440968710408791}
   - component: {fileID: 5190665410334977755}
   - component: {fileID: 1972923537891371485}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: 870_Rifle.010
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5828,7 +5828,7 @@ GameObject:
   - component: {fileID: 7724024794341763183}
   - component: {fileID: 5522602965696224252}
   - component: {fileID: 4123792931772898687}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: 870_Rifle.005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5904,7 +5904,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1052177056567441911}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: SteadyHandPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5938,7 +5938,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1820163738121910, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_Layer
-      value: 16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4460723384122750, guid: c4f5b88ec37f1f04db5f170233b15cb3, type: 3}
       propertyPath: m_LocalPosition.x
