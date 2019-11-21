@@ -76,7 +76,8 @@ public class WeaponActionScript : MonoBehaviour
     private Vector3 originalPosCamSecondary;
     // Aiming speed
     public PhotonView pView;
-    public bool isWieldingSupportItem;
+    public bool isWieldingThrowable;
+    public bool isWieldingBooster;
     public bool isCockingGrenade;
     public bool isUsingBooster;
     public Transform rightCollar;
@@ -96,7 +97,8 @@ public class WeaponActionScript : MonoBehaviour
         leftCollarAimingPos = Vector3.negativeInfinity;
         isCockingGrenade = false;
         isUsingBooster = false;
-        isWieldingSupportItem = false;
+        isWieldingThrowable = false;
+        isWieldingBooster = false;
         aimDownSightsLock = false;
         defaultLeftCollarPos = Vector3.negativeInfinity;
         defaultRightCollarPos = Vector3.negativeInfinity;
@@ -163,7 +165,7 @@ public class WeaponActionScript : MonoBehaviour
                 break;
         }
 
-        if (!playerActionScript.canShoot || isWieldingSupportItem)
+        if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster)
         {
             return;
         }
@@ -977,10 +979,17 @@ public class WeaponActionScript : MonoBehaviour
             SetFiringSpeed();
         }
         if (weaponStats.type.Equals("Support")) {
-            isWieldingSupportItem = true;
+            if (weaponStats.category.Equals("Explosive")) {
+                isWieldingThrowable = true;
+                isWieldingBooster = false;
+            } else if (weaponStats.category.Equals("Booster")) {
+                isWieldingThrowable = false;
+                isWieldingBooster = true;
+            }
             firingMode = FireMode.Semi;
         } else {
-            isWieldingSupportItem = false;
+            isWieldingThrowable = false;
+            isWieldingBooster = false;
             if (weaponStats.category.Equals("Shotgun")) {
                 shotMode = ShotMode.Burst;
                 firingMode = FireMode.Semi;
@@ -1057,9 +1066,10 @@ public class WeaponActionScript : MonoBehaviour
             if (weaponStats.weaponName.Equals("Medkit") && playerActionScript.health == playerActionScript.playerScript.health) {
                 return;
             }
-            if (isWieldingSupportItem && Input.GetButtonDown("Fire1")) {
+            if (isWieldingBooster && Input.GetButtonDown("Fire1")) {
                 pView.RPC("RpcUseBooster", RpcTarget.All);
                 animatorFpc.SetTrigger("UseBooster");
+                isUsingBooster = true;
             }
         }
     }
@@ -1086,11 +1096,16 @@ public class WeaponActionScript : MonoBehaviour
         throwGrenade = true;
     }
 
-    void ResetGrenadeState() {
+    public void ResetGrenadeState() {
         throwGrenade = false;
         isCockingGrenade = false;
         animatorFpc.ResetTrigger("isCockingGrenade");
         animatorFpc.ResetTrigger("ThrowGrenade");
+    }
+
+    public void ResetBoosterState() {
+        isUsingBooster = false;
+        animatorFpc.ResetTrigger("UseBooster");
     }
 
     [PunRPC]

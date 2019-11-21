@@ -10,11 +10,9 @@ public class IdleBehavior : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         was = animator.GetComponentInParent<WeaponActionScript>();
-        was.isCockingGrenade = false;
+        was.ResetGrenadeState();
+        was.ResetBoosterState();
         entered = true;
-       animator.ResetTrigger("ThrowGrenade");
-       animator.ResetTrigger("isCockingGrenade");
-       animator.ResetTrigger("UseBooster");
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -23,15 +21,13 @@ public class IdleBehavior : StateMachineBehaviour
         if (entered && stateInfo.normalizedTime >= 0.2f) {
             entered = false;
             was.isCocking = false;
-            //was.isCockingGrenade = false;
             was.isReloading = false;
-            was.isUsingBooster = false;
             was.isFiring = false;
         }
-        if (was.isWieldingSupportItem && (Input.GetButtonDown("Fire1") || Input.GetButton("Fire1"))) {
+        if (was.isWieldingThrowable && (Input.GetButtonDown("Fire1") || Input.GetButton("Fire1"))) {
             was.isCockingGrenade = true;
         }
-        if (was.isWieldingSupportItem && (Input.GetButtonUp("Fire1"))) {
+        if (was.isWieldingThrowable && (Input.GetButtonUp("Fire1"))) {
             was.ConfirmGrenadeThrow();
         }
     }
