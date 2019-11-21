@@ -313,6 +313,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (charController.isGrounded) {
                 fpc.m_IsCrouching = !fpc.m_IsCrouching;
                 FpcCrouch(fpc.m_IsCrouching);
+                fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
             }
         }
 
@@ -327,7 +328,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         // Set the animation to crouching
         // animator.SetBool("Crouching", fpc.m_IsCrouching);
-        fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
 
         // Network it
         // if (fpc.m_IsCrouching != originalCrouch)

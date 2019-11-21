@@ -487,6 +487,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void SetCrouchingInAnimator(bool x) {
             if (fpcAnimator.GetBool("Crouching") == x) return;
+            fpcAnimator.SetBool("Crouching", x);
             photonView.RPC("RpcSetCrouchingInAnimator", RpcTarget.Others, x);
             if (x) {
                 fpcAnimator.SetFloat("MoveSpeed", 0.5f);
