@@ -10,6 +10,7 @@ public class IdleBehavior : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         was = animator.GetComponentInParent<WeaponActionScript>();
+        was.isCockingGrenade = false;
         entered = true;
        animator.ResetTrigger("ThrowGrenade");
        animator.ResetTrigger("isCockingGrenade");
@@ -22,13 +23,16 @@ public class IdleBehavior : StateMachineBehaviour
         if (entered && stateInfo.normalizedTime >= 0.2f) {
             entered = false;
             was.isCocking = false;
-            was.isCockingGrenade = false;
+            //was.isCockingGrenade = false;
             was.isReloading = false;
             was.isUsingBooster = false;
             was.isFiring = false;
         }
         if (was.isWieldingSupportItem && (Input.GetButtonDown("Fire1") || Input.GetButton("Fire1"))) {
             was.isCockingGrenade = true;
+        }
+        if (was.isWieldingSupportItem && (Input.GetButtonUp("Fire1"))) {
+            was.ConfirmGrenadeThrow();
         }
     }
 

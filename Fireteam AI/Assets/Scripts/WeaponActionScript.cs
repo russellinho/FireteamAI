@@ -41,6 +41,7 @@ public class WeaponActionScript : MonoBehaviour
     public float spread = 0f;
     private float recoilTime = 0f;
     private bool voidRecoilRecover = true;
+    private bool throwGrenade;
     //private float recoilSlerp = 0f;
 
     public int totalAmmoLeft;
@@ -100,6 +101,7 @@ public class WeaponActionScript : MonoBehaviour
         defaultLeftCollarPos = Vector3.negativeInfinity;
         defaultRightCollarPos = Vector3.negativeInfinity;
         aimDownSightsTimer = 0f;
+        throwGrenade = false;
         if (pView != null && !pView.IsMine)
         {
             return;
@@ -1017,20 +1019,25 @@ public class WeaponActionScript : MonoBehaviour
     void FireGrenades() {
         if (fireTimer < weaponStats.fireRate)
         {
+            ResetGrenadeState();
             return;
         }
         if (currentAmmo == 0) {
             ReloadSupportItem();
         }
-        if (currentAmmo <= 0) return;
+        if (currentAmmo <= 0) {
+            ResetGrenadeState();
+            return;
+        }
         if (weaponStats.category.Equals("Explosive")) {
             if (isCockingGrenade) {
                 animatorFpc.SetTrigger("isCockingGrenade");
                 pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
                 // return;
             }
-            if (isCockingGrenade && Input.GetButtonUp("Fire1")) {
+            if (isCockingGrenade && (throwGrenade || Input.GetButtonUp("Fire1"))) {
                 animatorFpc.SetTrigger("ThrowGrenade");
+                throwGrenade = false;
                 pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
             }
         }
@@ -1073,6 +1080,17 @@ public class WeaponActionScript : MonoBehaviour
             currentAmmo--;
             fireTimer = 0.0f;
         }
+    }
+
+    public void ConfirmGrenadeThrow() {
+        throwGrenade = true;
+    }
+
+    void ResetGrenadeState() {
+        throwGrenade = false;
+        isCockingGrenade = false;
+        animatorFpc.ResetTrigger("isCockingGrenade");
+        animatorFpc.ResetTrigger("ThrowGrenade");
     }
 
     [PunRPC]

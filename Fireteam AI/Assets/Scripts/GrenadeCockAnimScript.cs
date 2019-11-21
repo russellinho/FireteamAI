@@ -7,6 +7,7 @@ using Photon.Realtime;
 public class GrenadeCockAnimScript : StateMachineBehaviour {
 
 	private WeaponScript weaponScript;
+	private WeaponActionScript was;
 	private bool hidden;
 
 	 // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
@@ -14,7 +15,7 @@ public class GrenadeCockAnimScript : StateMachineBehaviour {
 		weaponScript = animator.GetComponentInParent<WeaponScript>();
 		if (animator.GetComponentInParent<PhotonView>().IsMine) {
 			// Throw grenade/use item when animation is done
-			WeaponActionScript was = animator.GetComponentInParent<WeaponActionScript> ();
+			was = animator.GetComponentInParent<WeaponActionScript> ();
 			was.UseSupportItem();
 			hidden = false;
 		} else {
@@ -33,6 +34,7 @@ public class GrenadeCockAnimScript : StateMachineBehaviour {
 
 	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		weaponScript.ToggleWeaponVisible(true);
+		was.isCockingGrenade = false;
 		animator.ResetTrigger("isCockingGrenade");
 		animator.ResetTrigger("ThrowGrenade");
 	}
