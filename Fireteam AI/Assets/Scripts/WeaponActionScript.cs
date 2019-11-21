@@ -130,6 +130,7 @@ public class WeaponActionScript : MonoBehaviour
                 ae.time = 0.7f;
                 ae.functionName = "ReloadShotgun";
                 a.AddEvent(ae);
+                break;
             }
         }
     }
