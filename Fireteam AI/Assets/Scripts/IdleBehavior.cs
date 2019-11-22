@@ -12,6 +12,7 @@ public class IdleBehavior : StateMachineBehaviour
         was = animator.GetComponentInParent<WeaponActionScript>();
         was.ResetGrenadeState();
         was.ResetBoosterState();
+        was.isReloading = false;
         entered = true;
     }
 
@@ -21,7 +22,7 @@ public class IdleBehavior : StateMachineBehaviour
         if (entered && stateInfo.normalizedTime >= 0.2f) {
             entered = false;
             was.isCocking = false;
-            was.isReloading = false;
+            //was.isReloading = false;
             was.isFiring = false;
         }
         if (was.isWieldingThrowable && (Input.GetButtonDown("Fire1") || Input.GetButton("Fire1"))) {

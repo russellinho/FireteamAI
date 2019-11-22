@@ -2,25 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GrenadeLoadAnimScript : StateMachineBehaviour
+public class MovingBehaviorScript : StateMachineBehaviour
 {
     WeaponActionScript was;
-    bool cockSoundPlayed;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        was = animator.GetComponentInParent<WeaponActionScript>();
-        cockSoundPlayed = false;
+       was = animator.GetComponentInParent<WeaponActionScript>();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (!cockSoundPlayed && was.weaponStats.supportSoundTime != -1f && stateInfo.normalizedTime >= was.weaponStats.supportSoundTime) {
-			cockSoundPlayed = true;
-			was.PlaySupportActionSound();
-		}
-        if (was.isWieldingThrowable && Input.GetButtonUp("Fire1")) {
+        if (was.isWieldingThrowable && (Input.GetButtonDown("Fire1") || Input.GetButton("Fire1"))) {
+            was.isCockingGrenade = true;
+        }
+        if (was.isWieldingThrowable && (Input.GetButtonUp("Fire1"))) {
             was.ConfirmGrenadeThrow();
         }
     }

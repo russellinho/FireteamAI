@@ -217,7 +217,7 @@ public class WeaponActionScript : MonoBehaviour
             FireBooster();
             return;
         }
-
+        
         if (shootInput && !isReloading && playerActionScript.canShoot)
         {
             if (currentAmmo > 0)
@@ -1045,7 +1045,7 @@ public class WeaponActionScript : MonoBehaviour
                 pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
                 // return;
             }
-            if (isCockingGrenade && (throwGrenade || Input.GetButtonUp("Fire1"))) {
+            if (isCockingGrenade && throwGrenade) {
                 animatorFpc.SetTrigger("ThrowGrenade");
                 throwGrenade = false;
                 pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);

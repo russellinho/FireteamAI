@@ -133,7 +133,7 @@ public class WeaponScript : MonoBehaviour
 
     void DrawSupport()
     {
-        if (currentlyEquippedType == 4) return;
+        if (currentlyEquippedType == 4 || totalSupportAmmoLeft <= 0) return;
         if (currentlyEquippedType == 1)
         {
             totalPrimaryAmmoLeft = weaponActionScript.totalAmmoLeft;
@@ -156,7 +156,7 @@ public class WeaponScript : MonoBehaviour
         // Debug.Log("isCocking: " + weaponActionScript.isCocking);
         // Debug.Log("isUsingBooster: " + weaponActionScript.isUsingBooster);
         if (CheckCanSwitchWeapon()) {
-            if (Input.GetKeyDown(KeyCode.Alpha1)) {
+            if (Input.GetKeyDown(KeyCode.Alpha1) || (currentlyEquippedType == 4 && weaponActionScript.totalAmmoLeft <= 0 && weaponActionScript.currentAmmo <= 0)) {
                 DrawPrimary();
             } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
                 DrawSecondary();
