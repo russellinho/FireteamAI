@@ -172,7 +172,7 @@ public class WeaponActionScript : MonoBehaviour
         }
         
         if (Input.GetKeyDown(KeyCode.R)) {
-            if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0)
+            if (CanInitiateReload())
             {
                 ReloadAction();
             }
@@ -1118,6 +1118,13 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcUseBooster() {
         animator.SetTrigger("useBooster");
+    }
+
+    bool CanInitiateReload() {
+        if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && !isCocking && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
+            return true;
+        }
+        return false;
     }
 
 }

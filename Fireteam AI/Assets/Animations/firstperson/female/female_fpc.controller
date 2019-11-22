@@ -1587,7 +1587,8 @@ AnimatorState:
   - {fileID: -164298937832251198}
   - {fileID: -6345147318389292069}
   - {fileID: 6291690345092310302}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 8946960297133835007}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1680,6 +1681,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c9a72a9672d341a89b277eb2327412d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8946960297133835007
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc9d798cb68aae243aefa9ef7209355d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &9060632615709263504

@@ -17,6 +17,9 @@ public class BoltActionCockBehavior : StateMachineBehaviour
         was = animator.GetComponentInParent<WeaponActionScript>();
         was.FpcCockBoltAction();
         cockSoundPlayed = false;
+        if (!was.isReloading) {
+            was.isCocking = true;
+        }
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
