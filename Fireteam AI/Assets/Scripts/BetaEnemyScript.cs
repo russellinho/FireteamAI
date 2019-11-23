@@ -1611,7 +1611,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Reset values to respawn
 	IEnumerator Respawn() {
-		yield return new WaitForSeconds (44f);
+		yield return new WaitForSeconds (100f);
 		if (gameController.GetComponent<GameControllerScript>().assaultMode) {
 			RespawnAction ();
 		} else {
