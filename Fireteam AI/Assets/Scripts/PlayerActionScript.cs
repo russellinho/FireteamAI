@@ -903,7 +903,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     IEnumerator SyncDetectionValuesProcessor() {
         syncDetectionValuesSemiphore = true;
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(0.5f);
         photonView.RPC("RpcSyncDetectionValues", RpcTarget.Others, detectionLevel, increaseDetectionDelay, detectionCoolDownDelay);
         syncDetectionValuesSemiphore = false;
     }
