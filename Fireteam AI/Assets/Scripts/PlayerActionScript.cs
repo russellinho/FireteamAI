@@ -861,20 +861,30 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (gameController.assaultMode) return;
 
         bool somethingChanged = false;
+        float previousDetectionLevel = detectionLevel;
+        float previousDetectionCoolDownDelay = detectionCoolDownDelay;
+        float previousIncreaseDetectionDelay = increaseDetectionDelay;
 
         if (increaseDetectionDelay > 0f) {
             increaseDetectionDelay -= Time.deltaTime;
-            somethingChanged = true;
+            if (increaseDetectionDelay != previousIncreaseDetectionDelay) {
+                somethingChanged = true;
+            }
         }
 
         if (increaseDetectionDelay <= 0f) {
             // TODO: Eventually update this to increase detection level gradually based on distance, time, equipment, weapons
             detectionLevel = MAX_DETECTION_LEVEL;
             detectionCoolDownDelay = 4f;
-            somethingChanged = true;
+            if ((previousDetectionLevel != detectionLevel) || (previousDetectionCoolDownDelay != detectionCoolDownDelay)) {
+                somethingChanged = true;
+            }
 
             if (detectionLevel == MAX_DETECTION_LEVEL) {
                 increaseDetectionDelay = 6f;
+                if (previousIncreaseDetectionDelay != increaseDetectionDelay) {
+                    somethingChanged = true;
+                }
             }
         }
 
@@ -893,7 +903,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     IEnumerator SyncDetectionValuesProcessor() {
         syncDetectionValuesSemiphore = true;
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1.5f);
         photonView.RPC("RpcSyncDetectionValues", RpcTarget.Others, detectionLevel, increaseDetectionDelay, detectionCoolDownDelay);
         syncDetectionValuesSemiphore = false;
     }
