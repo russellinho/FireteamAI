@@ -36,6 +36,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public float sprintTime;
     public bool godMode;
     public bool canShoot;
+    private bool syncDetectionValuesSemiphore;
     private float charHeightOriginal;
     private float charCenterYOriginal;
     public bool escapeValueSent;
@@ -98,6 +99,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
          escapeValueSent = false;
          assaultModeChangedIndicator = false;
          isDefusing = false;
+         syncDetectionValuesSemiphore = false;
          originalFpcBodyPosY = fpcBodyRef.transform.localPosition.y;
 
         health = 100;
@@ -856,23 +858,44 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     public void IncreaseDetectionLevel() {
-        if (gameController.assaultMode) {
-            return;
-        }
+        if (gameController.assaultMode) return;
+
+        bool somethingChanged = false;
 
         if (increaseDetectionDelay > 0f) {
             increaseDetectionDelay -= Time.deltaTime;
+            somethingChanged = true;
         }
 
-        if (photonView.IsMine && increaseDetectionDelay <= 0f) {
+        if (increaseDetectionDelay <= 0f) {
             // TODO: Eventually update this to increase detection level gradually based on distance, time, equipment, weapons
             detectionLevel = MAX_DETECTION_LEVEL;
             detectionCoolDownDelay = 4f;
+            somethingChanged = true;
 
             if (detectionLevel == MAX_DETECTION_LEVEL) {
                 increaseDetectionDelay = 6f;
             }
         }
+
+        // Sync values to all other players
+        if (somethingChanged && !syncDetectionValuesSemiphore) {
+            StartCoroutine("SyncDetectionValuesProcessor");
+        }
+    }
+
+    [PunRPC]
+    void RpcSyncDetectionValues(float detectionLevel, float increaseDetectionDelay, float detectionCoolDownDelay) {
+        this.detectionLevel = detectionLevel;
+        this.increaseDetectionDelay = increaseDetectionDelay;
+        this.detectionCoolDownDelay = detectionCoolDownDelay;
+    }
+
+    IEnumerator SyncDetectionValuesProcessor() {
+        syncDetectionValuesSemiphore = true;
+        yield return new WaitForSeconds(3f);
+        photonView.RPC("RpcSyncDetectionValues", RpcTarget.Others, detectionLevel, increaseDetectionDelay, detectionCoolDownDelay);
+        syncDetectionValuesSemiphore = false;
     }
 
     public void DecreaseDetectionLevel() {

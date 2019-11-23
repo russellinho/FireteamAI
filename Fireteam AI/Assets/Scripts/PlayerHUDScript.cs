@@ -739,9 +739,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void UpdateDetectedText() {
-		if (detectedTextTimer < 0.5f) {
+		if (detectedTextTimer < 0.35f) {
 			detectedTextTimer += Time.deltaTime;
-			float scaleAmount = (detectedTextTimer / 0.5f);
+			float scaleAmount = (detectedTextTimer / 0.35f);
 			scaleAmount = (scaleAmount > 1f ? 1f : scaleAmount);
 			container.detectionText.rectTransform.localScale = new Vector3(scaleAmount, scaleAmount, scaleAmount);
 		}
