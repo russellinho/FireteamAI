@@ -573,7 +573,7 @@ public class WeaponActionScript : MonoBehaviour
 
     public void FireShotgun ()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading)
         {
             return;
         }
