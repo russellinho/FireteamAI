@@ -53,10 +53,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_FpcCharacterHorizontalTargetRot = Quaternion.identity;
         }
 
-        public Rotations LookRotation(Transform character, Transform spineTransform, Transform fpcCharacterV, Transform fpcCharacterH)
+        public Rotations LookRotation(Transform character, Transform spineTransform, Transform fpcCharacterV, Transform fpcCharacterH, bool isPaused)
         {
             float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
+
+            if (isPaused) {
+                xRot = 0f;
+                yRot = 0f;
+            }
 
             float angleX = 2.0f * Mathf.Rad2Deg * Mathf.Atan (m_SpineTargetRot.x);
 

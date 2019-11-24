@@ -607,7 +607,6 @@ MonoBehaviour:
   photonView: {fileID: 580623507002314522}
   charTransform: {fileID: 7942259398586826861}
   spineTransform: {fileID: 7942259398586826869}
-  enemyTargetPoint: {fileID: 4166761373134640747}
   fpcTransformSpine: {fileID: 4166761373134640749}
   fpcTransformBody: {fileID: 4166761373134640755}
   headTransform: {fileID: 7942259398586827253}
@@ -671,13 +670,14 @@ MonoBehaviour:
   shotMode: 0
   camTransform: {fileID: 580623506623331171}
   pView: {fileID: 580623507002314522}
-  isWieldingSupportItem: 0
+  isWieldingThrowable: 0
+  isWieldingBooster: 0
   isCockingGrenade: 0
   isUsingBooster: 0
   rightCollar: {fileID: 4166761373134640685}
   leftCollar: {fileID: 4166761373134640687}
-  leftCollarOriginalPos: {x: -0.0003447553, y: 0.001482724, z: 0.001311174}
-  rightCollarOriginalPos: {x: 0, y: 0, z: 0}
+  leftCollarCurrentPos: {x: 0, y: 0, z: 0}
+  rightCollarCurrentPos: {x: 0, y: 0, z: 0}
 --- !u!114 &580623507002314512
 MonoBehaviour:
   m_ObjectHideFlags: 0

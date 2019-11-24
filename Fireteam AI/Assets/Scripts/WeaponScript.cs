@@ -174,6 +174,8 @@ public class WeaponScript : MonoBehaviour
             return false;
         } else if (weaponActionScript.isUsingBooster) {
             return false;
+        } else if (weaponActionScript.hudScript.container.pauseMenuGUI.activeInHierarchy) {
+            return false;
         }
         return true;
     }

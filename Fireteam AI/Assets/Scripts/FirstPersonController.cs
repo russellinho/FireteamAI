@@ -101,7 +101,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             //RotateView();
             // the jump state needs to read here to make sure it is not missed
-			if (!m_Jump && canMove)
+			if (!m_Jump && canMove && !playerActionScript.hud.container.pauseMenuGUI.activeInHierarchy)
             {
                 m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
             }
@@ -374,6 +374,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			float horizontal = CrossPlatformInputManager.GetAxis ("Horizontal");
 			float vertical = CrossPlatformInputManager.GetAxis ("Vertical");
 
+            // Nullify movement if the user is paused
+            if (playerActionScript.hud.container.pauseMenuGUI.activeInHierarchy) {
+                horizontal = 0f;
+                vertical = 0f;
+            }
+
 			bool waswalking = m_IsWalking;
 
 #if !MOBILE_INPUT
@@ -442,7 +448,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private Rotations RotateView()
         {
-            return m_MouseLook.LookRotation (charTransform, spineTransform, fpcTransformSpine, fpcTransformBody);
+            return m_MouseLook.LookRotation (charTransform, spineTransform, fpcTransformSpine, fpcTransformBody, playerActionScript.hud.container.pauseMenuGUI.activeInHierarchy);
         }
 
         [PunRPC]

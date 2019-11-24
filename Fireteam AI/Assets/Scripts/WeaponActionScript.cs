@@ -160,7 +160,7 @@ public class WeaponActionScript : MonoBehaviour
                 break;
         }
 
-        if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster)
+        if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster || hudScript.container.pauseMenuGUI.activeInHierarchy)
         {
             return;
         }
@@ -212,7 +212,7 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
         
-        if (shootInput && !isReloading && playerActionScript.canShoot)
+        if (shootInput && !isReloading && playerActionScript.canShoot && !hudScript.container.pauseMenuGUI.activeInHierarchy)
         {
             if (currentAmmo > 0)
             {
@@ -1031,7 +1031,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     void FireBooster() {
-        if (fireTimer < weaponStats.fireRate)
+        if (fireTimer < weaponStats.fireRate || hudScript.container.pauseMenuGUI.activeInHierarchy)
         {
             return;
         }

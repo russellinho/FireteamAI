@@ -196,7 +196,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void UpdateCursorStatus() {
-		if (Input.GetKeyDown(KeyCode.Escape) && !container.scoreboard.GetComponent<Canvas>().enabled)
+		if (Input.GetKeyDown(KeyCode.Escape) && !wepActionScript.isCockingGrenade && !container.scoreboard.GetComponent<Canvas>().enabled)
 			Pause();
 
 		if (container.pauseMenuGUI.activeInHierarchy)

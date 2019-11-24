@@ -263,7 +263,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             BombCheck();
         }
 
-        if (fpc.enabled && fpc.canMove)
+        if (fpc.enabled && fpc.canMove && !hud.container.pauseMenuGUI.activeInHierarchy)
         {
             Crouch();
         }
@@ -481,7 +481,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 return;
             }
 
-            if (health > 0) {
+            if (health > 0 && !hud.container.pauseMenuGUI.activeInHierarchy) {
                 if (Input.GetKey(KeyCode.E)) {
                     fpc.canMove = false;
                     isDefusing = true;
@@ -522,7 +522,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 isDefusing = false;
                 hud.ToggleActionBar(false);
                 hud.container.defusingText.enabled = false;
-                hud.container.hintText.enabled = true;
+                hud.container.hintText.enabled = false;
                 bombDefuseCounter = 0f;
             }
         }
