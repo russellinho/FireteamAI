@@ -826,6 +826,12 @@ MonoBehaviour:
   maxAmmo: 48
   aimDownSightPosMale: {x: -0.00058, y: 0.00185, z: 0.00132}
   aimDownSightPosFemale: {x: -0.00058, y: 0.00185, z: 0.00132}
+  stableHandPosMale: {x: -0.0004247553, y: 0.001882724, z: 0.001321174}
+  stableHandPosFemale: {x: -0.0004247553, y: 0.001882724, z: 0.001321174}
+  defaultLeftCollarPosMale: {x: -3.758436e-10, y: 0.001242948, z: -2.449463e-12}
+  defaultLeftCollarPosFemale: {x: -3.758436e-10, y: 0.001242948, z: -2.449463e-12}
+  defaultRightCollarPosMale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
+  defaultRightCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   aimDownSightSpeed: 7
   aimDownSightClipping: 0.03
   titleHandPositionsMale: {x: -0.02, y: 0.05, z: 0.03}
