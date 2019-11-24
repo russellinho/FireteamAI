@@ -82,8 +82,6 @@ public class WeaponActionScript : MonoBehaviour
     public bool isUsingBooster;
     public Transform rightCollar;
     public Transform leftCollar;
-    private Vector3 defaultLeftCollarPos;
-    private Vector3 defaultRightCollarPos;
     public Vector3 leftCollarCurrentPos;
     public Vector3 rightCollarCurrentPos;
 
@@ -262,15 +260,17 @@ public class WeaponActionScript : MonoBehaviour
                 }
             // If coming back to normal
             } else {
-                leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, defaultLeftCollarPos, aimDownSightsTimer);
-                rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, defaultRightCollarPos, aimDownSightsTimer);
                 // If the player is back in the normal position, then disable the lock
                 if (fpc.equipmentScript.gender == 'M') {
-                    if (Mathf.Approximately(Vector3.Magnitude(rightCollar.localPosition), Vector3.Magnitude(weaponStats.defaultRightCollarPosMale))) {
+                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponStats.defaultLeftCollarPosMale, aimDownSightsTimer);
+                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponStats.defaultRightCollarPosMale, aimDownSightsTimer);
+                    if (aimDownSightsLock && Vector3.SqrMagnitude(rightCollar.localPosition - weaponStats.defaultRightCollarPosMale) < 0.0000001f) {
                         aimDownSightsLock = false;
                     }
                 } else if (fpc.equipmentScript.gender == 'F') {
-                    if (Mathf.Approximately(Vector3.Magnitude(rightCollar.localPosition), Vector3.Magnitude(weaponStats.defaultRightCollarPosFemale))) {
+                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponStats.defaultLeftCollarPosFemale, aimDownSightsTimer);
+                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponStats.defaultRightCollarPosFemale, aimDownSightsTimer);
+                    if (aimDownSightsLock && Vector3.SqrMagnitude(rightCollar.localPosition - weaponStats.defaultRightCollarPosFemale) < 0.0000001f) {
                         aimDownSightsLock = false;
                     }
                 }
@@ -322,7 +322,12 @@ public class WeaponActionScript : MonoBehaviour
                 if (!fpc.m_IsAiming && IsSlowAimingWeapon()) {
                     fpc.m_IsAiming = true;
                 }
-                isAiming = true;
+                if (!isAiming) {
+                    isAiming = true;
+                    leftCollarCurrentPos = leftCollar.localPosition;
+                    rightCollarCurrentPos = rightCollar.localPosition;
+                    aimDownSightsTimer = 0f;
+                }
                 aimDownSightsLock = true;
                 if (fpc.equipmentScript.gender == 'M') {
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
@@ -351,7 +356,12 @@ public class WeaponActionScript : MonoBehaviour
             {
                 fpc.SetAiminginFPCAnimator(false);
                 fpc.m_IsAiming = false;
-                isAiming = false;
+                if (isAiming) {
+                    isAiming = false;
+                    leftCollarCurrentPos = leftCollar.localPosition;
+                    rightCollarCurrentPos = rightCollar.localPosition;
+                    aimDownSightsTimer = 0f;
+                }
 
                 // Sets everything back to default after zooming in with sniper rifle
                 camTransform.GetComponent<Camera>().fieldOfView = defaultFov;
