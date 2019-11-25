@@ -624,17 +624,22 @@ namespace UnityStandardAssets.Characters.FirstPerson
             fpcAnimator.SetBool("Aiming", x);
         }
 
-        public void ResetFPCAnimator() {
+        public void ResetFPCAnimator(int currentlyEquippedType) {
             fpcAnimator.SetBool("Aiming", false);
             fpcAnimator.SetBool("weaponReady", false);
             fpcAnimator.SetBool("Moving", false);
             fpcAnimator.SetBool("Sprinting", false);
             fpcAnimator.SetBool("Crouching", false);
-            fpcAnimator.SetBool("isSprinting", false);
             fpcAnimator.SetBool("isDead", false);
             fpcAnimator.SetBool("isWalking", false);
-            fpcAnimator.SetInteger("WeaponType", 1);
+            fpcAnimator.SetInteger("WeaponType", currentlyEquippedType);
             fpcAnimator.SetInteger("MovingDir", 0);
+            fpcAnimator.ResetTrigger("Reload");
+            fpcAnimator.ResetTrigger("CockShotgun");
+            fpcAnimator.ResetTrigger("CockBoltAction");
+            fpcAnimator.ResetTrigger("isCockingGrenade");
+            fpcAnimator.ResetTrigger("ThrowGrenade");
+            fpcAnimator.ResetTrigger("UseBooster");
         }
 
     }

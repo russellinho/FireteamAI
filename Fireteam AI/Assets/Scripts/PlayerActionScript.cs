@@ -170,9 +170,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         updatePlayerSpeed();
         // Instant respawn hack
-        // if (Input.GetKeyDown (KeyCode.P)) {
-        //     BeginRespawn ();
-        // }
+        if (Input.GetKeyDown (KeyCode.P)) {
+            BeginRespawn ();
+        }
 
          if (enterSpectatorModeTimer > 0f)
          {
@@ -783,6 +783,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         equipmentScript.RespawnPlayer();
         weaponScript.RespawnPlayer();
         fpc.ResetAnimationState();
+        fpc.ResetFPCAnimator(weaponScript.currentlyEquippedType);
 
         // Send player back to spawn position, reset rotation, leave spectator mode
         //transform.rotation = Quaternion.Euler(Vector3.zero);
