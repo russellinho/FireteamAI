@@ -11,6 +11,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	// HUD object reference
 	public HUDContainer container;
+	private PauseMenuScript pauseMenuScript;
 
     // Player reference
     public PlayerActionScript playerActionScript;
@@ -58,6 +59,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.hitFlare.GetComponent<RawImage> ().enabled = false;
 		container.hitDir.GetComponent<RawImage> ().enabled = false;
 		container.hitMarker.GetComponent<RawImage> ().enabled = false;
+		pauseMenuScript = container.pauseMenuGUI.GetComponent<PauseMenuScript>();
 
 		container.pauseMenuGUI.SetActive (false);
 		ToggleActionBar(false);
@@ -94,15 +96,15 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			container.objectivesText.text = objectiveFormatter.LoadObjectives(gameController.currentMap, gameController.bombsRemaining);
 
 			GameObject m1 = GameObject.Instantiate (container.hudWaypoint);
-			m1.GetComponent<RectTransform> ().SetParent (container.hudMap.transform.parent);
+			m1.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
 			GameObject m2 = GameObject.Instantiate (container.hudWaypoint);
-			m2.GetComponent<RectTransform> ().SetParent (container.hudMap.transform.parent);
+			m2.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
 			GameObject m3 = GameObject.Instantiate (container.hudWaypoint);
-			m3.GetComponent<RectTransform> ().SetParent (container.hudMap.transform.parent);
+			m3.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
 			GameObject m4 = GameObject.Instantiate (container.hudWaypoint);
-			m4.GetComponent<RectTransform> ().SetParent (container.hudMap.transform.parent);
+			m4.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
 			GameObject m5 = GameObject.Instantiate (container.hudWaypoint);
-			m5.GetComponent<RectTransform> ().SetParent (container.hudMap.transform.parent);
+			m5.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
 			m5.GetComponent<RawImage> ().enabled = false;
 
 			missionWaypoints.Add (m1);
@@ -276,7 +278,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (!playerMarkers.ContainsKey (actorNo)) {
 				GameObject marker = GameObject.Instantiate (container.hudPlayerMarker);
 				marker.GetComponent<TextMeshProUGUI> ().text = p.GetComponent<PhotonView> ().Owner.NickName;
-				marker.GetComponent<RectTransform> ().SetParent (container.hudMap.transform.parent);
+				marker.GetComponent<RectTransform> ().SetParent (container.playerMarkers.transform);
 				playerMarkers.Add (actorNo, marker);
 			}
 			// Check if it can be rendered to the screen
@@ -327,7 +329,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		foreach (int actorNo in enemyAlertMarkers) {
 			if (!enemyMarkers.ContainsKey (actorNo)) {
 				GameObject marker = GameObject.Instantiate(container.enemyAlerted);
-				marker.GetComponent<RectTransform>().SetParent(container.transform);
+				marker.GetComponent<RectTransform>().SetParent(container.enemyMarkers.transform);
 				enemyMarkers.Add(actorNo, marker);
 			}
 
@@ -453,6 +455,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleHUD(bool b)
     {
+		if (b && container.healthText.enabled) {
+			return;
+		}
+		if (!b && !container.healthText.enabled) {
+			return;
+		}
         container.healthText.enabled = b;
 		container.staminaBar.gameObject.SetActive (b);
         container.weaponLabelTxt.enabled = b;
@@ -460,7 +468,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.hudMap.enabled = b;
 		container.hudMap2.enabled = b;
 		container.hintText.enabled = false;
-		ToggleCrosshair(false);
+		// ToggleCrosshair(false);
     }
 
 	public void ToggleScoreboard(bool b)
@@ -494,10 +502,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         if (!container.pauseMenuGUI.activeInHierarchy)
         {
             container.pauseMenuGUI.SetActive(true);
+			pauseMenuScript.CloseKeyMappings();
+			pauseMenuScript.CloseOptionsMenu();
         }
         else
         {
-            container.pauseMenuGUI.SetActive(false);
+            pauseMenuScript.HandleEscPress();
         }
     }
 

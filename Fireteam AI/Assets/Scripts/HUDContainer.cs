@@ -58,5 +58,8 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject enemyAlerted;
 	public Image detectionMeter;
 	public RawImage detectionText;
+	public GameObject waypointMarkers;
+	public GameObject playerMarkers;
+	public GameObject enemyMarkers;
 
 }
