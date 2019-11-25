@@ -96,12 +96,16 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			container.objectivesText.text = objectiveFormatter.LoadObjectives(gameController.currentMap, gameController.bombsRemaining);
 
 			GameObject m1 = GameObject.Instantiate (container.hudWaypoint);
+			m1.GetComponent<RawImage>().enabled = false;
 			m1.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
 			GameObject m2 = GameObject.Instantiate (container.hudWaypoint);
+			m2.GetComponent<RawImage>().enabled = false;
 			m2.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
 			GameObject m3 = GameObject.Instantiate (container.hudWaypoint);
+			m3.GetComponent<RawImage>().enabled = false;
 			m3.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
 			GameObject m4 = GameObject.Instantiate (container.hudWaypoint);
+			m4.GetComponent<RawImage>().enabled = false;
 			m4.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
 			GameObject m5 = GameObject.Instantiate (container.hudWaypoint);
 			m5.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
@@ -251,6 +255,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					if (renderCheck <= 0)
 						continue;
 					if (!gameController.bombs [i].GetComponent<BombScript> ().defused) {
+						((GameObject)missionWaypoints [i]).GetComponent<RawImage>().enabled = true;
 						Vector3 p = new Vector3 (gameController.bombs [i].transform.position.x, gameController.bombs [i].transform.position.y + gameController.bombs [i].transform.lossyScale.y, gameController.bombs [i].transform.position.z);
 						RectTransform missionWaypointTrans = ((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ();
 						Vector3 destPoint = playerActionScript.viewCam.WorldToScreenPoint (p);
@@ -265,6 +270,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					if (renderCheck <= 0)
 						continue;
 					if (!gameController.bombs [i].GetComponent<BombScript> ().defused) {
+						((GameObject)missionWaypoints [i]).GetComponent<RawImage>().enabled = true;
 						Vector3 p = new Vector3 (gameController.bombs [i].transform.position.x, gameController.bombs [i].transform.position.y + gameController.bombs [i].transform.lossyScale.y, gameController.bombs [i].transform.position.z);
 						RectTransform missionWaypointTrans = ((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ();
 						Vector3 destPoint = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint (p);
@@ -291,6 +297,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				GameObject marker = GameObject.Instantiate (container.hudPlayerMarker);
 				marker.GetComponent<TextMeshProUGUI> ().text = p.GetComponent<PhotonView> ().Owner.NickName;
 				marker.GetComponent<RectTransform> ().SetParent (container.playerMarkers.transform);
+				marker.SetActive(false);
 				playerMarkers.Add (actorNo, marker);
 			}
 			// Check if it can be rendered to the screen
@@ -348,6 +355,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (!enemyMarkers.ContainsKey (actorNo)) {
 				GameObject marker = GameObject.Instantiate(container.enemyAlerted);
 				marker.GetComponent<RectTransform>().SetParent(container.enemyMarkers.transform);
+				marker.SetActive(false);
 				enemyMarkers.Add(actorNo, marker);
 			}
 
