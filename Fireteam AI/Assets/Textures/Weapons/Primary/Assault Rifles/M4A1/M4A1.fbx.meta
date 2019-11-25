@@ -3,7 +3,17 @@ guid: 7c4289b952487154c8877db9ed951f23
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: AK-47
+    second: {fileID: 2100000, guid: e1b68af952b42174e9afa2d4f9c1b4d5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M4_Carbine
+    second: {fileID: 2100000, guid: 89a57b2d1570b9e439f5eb1f0380c740, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
