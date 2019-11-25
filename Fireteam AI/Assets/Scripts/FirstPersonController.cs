@@ -37,7 +37,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_YRotation;
         public Vector2 m_Input;
         private Vector3 m_MoveDir = Vector3.zero;
-        private CharacterController m_CharacterController;
+        public CharacterController m_CharacterController;
         private CollisionFlags m_CollisionFlags;
         private bool m_PreviouslyGrounded;
         private Vector3 m_OriginalCameraPosition;
@@ -106,12 +106,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
             }
 
+            // Handle character landing
             if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
             {
                 StartCoroutine(m_JumpBob.DoBobCycle());
                 PlayLandingSound();
                 m_MoveDir.y = 0f;
                 m_Jumping = false;
+                // Calculate fall damage
+                playerActionScript.DetermineFallDamage();
+                // Reset vertical velocity before landing
+                playerActionScript.ResetVerticalVelocityBeforeLanding();
             }
             if (!m_CharacterController.isGrounded && !m_Jumping && m_PreviouslyGrounded)
             {

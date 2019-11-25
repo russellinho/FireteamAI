@@ -1214,7 +1214,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal);
 					if (hit.transform.tag.Equals ("Player")) {
 						PlayerActionScript ps = hit.transform.GetComponent<PlayerActionScript> ();
-						ps.TakeDamage((int)damage);
+						ps.TakeDamage((int)damage, true);
 						//ps.ResetHitTimer ();
 						ps.SetHitLocation (transform.position);
 					} else {
@@ -1292,7 +1292,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				PlayVoiceClip (13);
 			}
 			PlayerActionScript ps = playerToHit.GetComponent<PlayerActionScript> ();
-			ps.TakeDamage (50);
+			ps.TakeDamage (50, true);
 			//ps.ResetHitTimer();
 			ps.SetHitLocation (transform.position);
 			if (Vector3.Distance(transform.position, playerToHit.transform.position) > MELEE_DISTANCE) {
