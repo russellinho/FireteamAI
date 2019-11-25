@@ -225,7 +225,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					if (gameController.bombsRemaining == 0)
 					{
 						((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled = true;
-						((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = playerActionScript.viewCam.WorldToScreenPoint(gameController.exitPoint.transform.position);
+						RectTransform missionWaypointTrans = ((GameObject)missionWaypoints[i]).GetComponent<RectTransform>();
+						Vector3 destPoint = playerActionScript.viewCam.WorldToScreenPoint(gameController.exitPoint.transform.position);
+						Vector3 startPoint = missionWaypointTrans.position;
+						missionWaypointTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 15f);
 					}
 				} else if (playerActionScript.thisSpectatorCam != null) {
 					float renderCheck = Vector3.Dot((gameController.exitPoint.transform.position - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
@@ -234,7 +237,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					if (gameController.bombsRemaining == 0)
 					{
 						((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled = true;
-						((GameObject)missionWaypoints[i]).GetComponent<RectTransform>().position = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(gameController.exitPoint.transform.position);
+						RectTransform missionWaypointTrans = ((GameObject)missionWaypoints[i]).GetComponent<RectTransform>();
+						Vector3 destPoint = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(gameController.exitPoint.transform.position);
+						Vector3 startPoint = missionWaypointTrans.position;
+						missionWaypointTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 15f);
 					}
 				}
 			}
@@ -246,7 +252,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 						continue;
 					if (!gameController.bombs [i].GetComponent<BombScript> ().defused) {
 						Vector3 p = new Vector3 (gameController.bombs [i].transform.position.x, gameController.bombs [i].transform.position.y + gameController.bombs [i].transform.lossyScale.y, gameController.bombs [i].transform.position.z);
-						((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ().position = playerActionScript.viewCam.WorldToScreenPoint (p);
+						RectTransform missionWaypointTrans = ((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ();
+						Vector3 destPoint = playerActionScript.viewCam.WorldToScreenPoint (p);
+						Vector3 startPoint = missionWaypointTrans.position;
+						missionWaypointTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 15f);
 					}
 					if (((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled && gameController.bombs [i].GetComponent<BombScript> ().defused) {
 						((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled = false;
@@ -257,7 +266,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 						continue;
 					if (!gameController.bombs [i].GetComponent<BombScript> ().defused) {
 						Vector3 p = new Vector3 (gameController.bombs [i].transform.position.x, gameController.bombs [i].transform.position.y + gameController.bombs [i].transform.lossyScale.y, gameController.bombs [i].transform.position.z);
-						((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ().position = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint (p);
+						RectTransform missionWaypointTrans = ((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ();
+						Vector3 destPoint = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint (p);
+						Vector3 startPoint = missionWaypointTrans.position;
+						missionWaypointTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 15f);
 					}
 					if (((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled && gameController.bombs [i].GetComponent<BombScript> ().defused) {
 						((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled = false;
@@ -292,7 +304,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					playerMarkers [actorNo].SetActive (true);
 					playerMarkers[actorNo].GetComponentInChildren<Slider>().value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
 					Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + HEIGHT_OFFSET, p.transform.position.z);
-					playerMarkers[actorNo].GetComponent<RectTransform>().position = playerActionScript.viewCam.WorldToScreenPoint(o);
+					RectTransform playerMarkerTrans = playerMarkers[actorNo].GetComponent<RectTransform>();
+					Vector3 destPoint = playerActionScript.viewCam.WorldToScreenPoint(o);
+					Vector3 startPoint = playerMarkerTrans.position;
+					playerMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 15f);
 				}
 				if (playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled && p.GetComponent<PlayerActionScript>().health <= 0)
 				{
@@ -309,7 +324,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					playerMarkers [actorNo].SetActive (true);
 					playerMarkers[actorNo].GetComponentInChildren<Slider>().value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
 					Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + HEIGHT_OFFSET, p.transform.position.z);
-					playerMarkers[actorNo].GetComponent<RectTransform>().position = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
+					RectTransform playerMarkerTrans = playerMarkers[actorNo].GetComponent<RectTransform>();
+					Vector3 destPoint = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
+					Vector3 startPoint = playerMarkerTrans.position;
+					playerMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 15f);
 				}
 				if (playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled && p.GetComponent<PlayerActionScript>().health <= 0)
 				{
@@ -363,7 +381,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				}
 
 				Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + (HEIGHT_OFFSET * 1.5f), e.transform.position.z);
-				enemyMarkers[actorNo].GetComponent<RectTransform>().position = playerActionScript.viewCam.WorldToScreenPoint(o);
+				RectTransform enemyMarkerTrans = enemyMarkers[actorNo].GetComponent<RectTransform>();
+				Vector3 destPoint = playerActionScript.viewCam.WorldToScreenPoint(o);
+				Vector3 startPoint = enemyMarkerTrans.position;
+				enemyMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 15f);
 
 			} else if (playerActionScript.thisSpectatorCam != null) {
 				float renderCheck = Vector3.Dot((e.transform.position - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
@@ -389,7 +410,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					enemyMarkers[actorNo].SetActive(false);
 				}
 				Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + (HEIGHT_OFFSET * 1.5f), e.transform.position.z);
-				enemyMarkers[actorNo].GetComponent<RectTransform>().position = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
+				RectTransform enemyMarkerTrans = enemyMarkers[actorNo].GetComponent<RectTransform>();
+				Vector3 destPoint = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
+				Vector3 startPoint = enemyMarkerTrans.position;
+				enemyMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 15f);
 			}
 		}
 		HandleMarkerRemoval();
