@@ -983,9 +983,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void DetermineFallDamage() {
         float totalFallDamage = 0f;
-      // Debug.Log("HERE IT IS: " + verticalVelocityBeforeLanding);
-        if (verticalVelocityBeforeLanding >= 20f) {
-            totalFallDamage = 10f * (verticalVelocityBeforeLanding / 40f);
+       Debug.Log("HERE IT IS: " + verticalVelocityBeforeLanding);
+        if (verticalVelocityBeforeLanding <= -20f) {
+            //totalFallDamage = 40f * (Mathf.Abs(verticalVelocityBeforeLanding) / 20f);
+            totalFallDamage = 10f * Mathf.Pow(2, Mathf.Abs(verticalVelocityBeforeLanding) / 10f);
         }
         //Debug.Log("total fall damage: " + totalFallDamage);
         totalFallDamage = Mathf.Clamp(totalFallDamage, 0f, 100f);
@@ -993,9 +994,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     public void UpdateVerticalVelocityBeforeLanding() {
-        float currentVerticalVelocity = Mathf.Abs(CalculateVerticalVelocity());
+        float currentVerticalVelocity = CalculateVerticalVelocity();
         //Debug.Log(currentVerticalVelocity);
-        verticalVelocityBeforeLanding = currentVerticalVelocity > verticalVelocityBeforeLanding ? currentVerticalVelocity : verticalVelocityBeforeLanding;
+        verticalVelocityBeforeLanding = currentVerticalVelocity < verticalVelocityBeforeLanding ? currentVerticalVelocity : verticalVelocityBeforeLanding;
         //Debug.Log("v: " + verticalVelocityBeforeLanding);
     }
 
