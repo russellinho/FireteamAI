@@ -820,6 +820,8 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     void FpcCockingAnim() {
+        animatorFpc.StopPlayback();
+
         if (weaponStats.category.Equals("Shotgun")) {
             animatorFpc.Play("ShotgunCock");
             //FpcCockShotgun();
@@ -828,6 +830,7 @@ public class WeaponActionScript : MonoBehaviour
         } else if (weaponStats.type.Equals("Support")) {
             animatorFpc.Play("DrawWeapon");
         } else {
+            weaponStats.weaponAnimator.StopPlayback();
             weaponStats.weaponAnimator.Play("Reload", 0, weaponStats.cockStartTime);
             animatorFpc.Play("Reload", 0, weaponStats.cockStartTime);
         }
