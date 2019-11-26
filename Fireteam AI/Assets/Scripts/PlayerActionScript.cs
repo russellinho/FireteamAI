@@ -181,9 +181,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         //     BeginRespawn ();
         // }
         // Physics sky drop test hack
-        if (Input.GetKeyDown(KeyCode.O)) {
-            transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
-        }
+        // if (Input.GetKeyDown(KeyCode.O)) {
+        //     transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
+        // }
 
          if (enterSpectatorModeTimer > 0f)
          {

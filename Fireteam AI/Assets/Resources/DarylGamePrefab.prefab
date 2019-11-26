@@ -84553,7 +84553,7 @@ MonoBehaviour:
   m_RunstepLenghten: 0.7
   m_JumpSpeed: 10
   m_StickToGroundForce: 10
-  m_GravityMultiplier: 2.25
+  m_GravityMultiplier: 2.95
   m_MouseLook:
     XSensitivity: 2
     YSensitivity: 2
@@ -84650,6 +84650,7 @@ MonoBehaviour:
   m_JumpSound: {fileID: 8300000, guid: 5897aeed9b676024fbb8c694b421a861, type: 3}
   m_LandSound: {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
   m_Input: {x: 0, y: 0}
+  m_CharacterController: {fileID: 0}
   sprintLock: 0
   canMove: 0
   weaponActionScript: {fileID: 9158664062041186690}
@@ -84772,6 +84773,7 @@ MonoBehaviour:
   respawnTimer: 0
   totalSpeedBoost: 0
   weaponSpeedModifier: 0
+  verticalVelocityBeforeLanding: 0
   fpc: {fileID: 9158664062041186691}
   hitTimer: 0
   healTimer: 0
@@ -84892,7 +84894,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 9158664062041186698}
-  viewIdField: 3
+  viewIdField: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &9158664062041186698
