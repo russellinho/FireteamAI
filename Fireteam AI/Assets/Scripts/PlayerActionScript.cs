@@ -286,6 +286,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     void FixedUpdate() {
+        if (!photonView.IsMine) {
+            return;
+        }
         if (!fpc.m_CharacterController.isGrounded) {
             UpdateVerticalVelocityBeforeLanding();
         }
