@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MeshFixer : MonoBehaviour
 {
-
+    public Transform meshTransform;
     public GameObject target;
     public Transform rootBone;
     
@@ -37,6 +37,12 @@ public class MeshFixer : MonoBehaviour
             }
         }
         myRenderer.bones = newBones;
+        RecalculateBounds();
+    }
+
+    void RecalculateBounds() {
+        meshTransform.localPosition = Vector3.zero;
+        meshTransform.localRotation = Quaternion.identity;
     }
 
 }

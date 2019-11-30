@@ -983,7 +983,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void DetermineFallDamage() {
         float totalFallDamage = 0f;
-       Debug.Log("HERE IT IS: " + verticalVelocityBeforeLanding);
         if (verticalVelocityBeforeLanding <= -20f) {
             //totalFallDamage = 40f * (Mathf.Abs(verticalVelocityBeforeLanding) / 20f);
             totalFallDamage = 10f * Mathf.Pow(2, Mathf.Abs(verticalVelocityBeforeLanding) / 10f);

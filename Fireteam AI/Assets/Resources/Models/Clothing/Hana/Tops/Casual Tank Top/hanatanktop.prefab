@@ -2102,6 +2102,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2116,7 +2117,7 @@ SkinnedMeshRenderer:
   m_SortingOrder: 0
   serializedVersion: 2
   m_Quality: 0
-  m_UpdateWhenOffscreen: 1
+  m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300012, guid: 0bf1442a6bbe1e54d95f81e4f4a87e3c, type: 3}
   m_Bones:
@@ -2150,6 +2151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50bf978b290cbac40bd11df92fc9b7f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  meshTransform: {fileID: 2316255295824166914}
   target: {fileID: 0}
   rootBone: {fileID: 0}
 --- !u!1 &2316255295823683004
