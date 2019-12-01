@@ -1422,7 +1422,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			pView.RPC ("RpcSetCoverPos", RpcTarget.All, true, spot.x, spot.y, spot.z);
 		} else {
 			Transform bestFoundCoverSpot = null;
-			for (int i = 0; i < coverSpots.Length; i++) {
+			for (int i = 1; i < coverSpots.Length; i++) {
 				// Don't want to hide in the same place again
 				if (Vector3.Distance (transform.position, coverSpots[i].position) <= 0.5f) {
 					continue;
