@@ -58,7 +58,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	public bool alerted = false;
 	private bool suspicious = false;
 	private bool wasMasterClient;
-	private GameObject gameController;
+	public GameObject gameController;
 	private ArrayList enemyAlertMarkers;
 	public int alertStatus;
 	// Responsible for displaying the correct alert symbol. If equals 0, then the alert display is inactive
@@ -149,7 +149,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		marker = GetComponentInChildren<SpriteRenderer> ();
 		gunRef = GetComponentInChildren<MeshRenderer> ();
 		meleeTrigger = GetComponent<BoxCollider> ();
-		gameController = GameObject.Find("GameController");
+		//gameController = GameObject.Find("GameController");
 		gameController.GetComponent<GameControllerScript>().enemyList.Add(pView.ViewID, gameObject);
 		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
 
@@ -1390,9 +1390,6 @@ public class BetaEnemyScript : MonoBehaviour {
 			return false;
 		}
 		// If cover is nearby, find the closest one
-		if (nearbyCover.Length == 0) {
-			return false;
-		}
 		//ArrayList coverIndices = new ArrayList ();
 		int minCoverIndex = -1;
 		for (int i = 0; i < nearbyCover.Length; i++) {
@@ -1421,36 +1418,34 @@ public class BetaEnemyScript : MonoBehaviour {
 		Transform[] coverSpots = nearbyCover [minCoverIndex].gameObject.GetComponentsInChildren<Transform>();
 		if (player == null) {
 			Vector3 spot = coverSpots [Random.Range (1, coverSpots.Length)].position;
-			coverPos = spot;
-			//pView.RPC ("RpcSetCoverPos", RpcTarget.All, true, spot.x, spot.y, spot.z);
+			//coverPos = spot;
+			pView.RPC ("RpcSetCoverPos", RpcTarget.All, true, spot.x, spot.y, spot.z);
 		} else {
-			// Determines if a unique cover spot was found or not
-			bool foundOne = false;
+			Transform bestFoundCoverSpot = null;
 			for (int i = 0; i < coverSpots.Length; i++) {
 				// Don't want to hide in the same place again
 				if (Vector3.Distance (transform.position, coverSpots[i].position) <= 0.5f) {
 					continue;
 				}
-				// If there's something blocking the player and the enemy, then the enemy wants to hide behind it
+				// If a teammate is already taking that cover spot, find another
+				if (coverSpots[i].GetComponent<CoverSpotScript>().IsTaken()) {
+					continue;
+				}
+				// If there's something blocking the player and the enemy, then the enemy wants to hide behind it. This is priority
 				if (Physics.Linecast (coverSpots[i].position, player.transform.position)) {
-					coverPos = coverSpots [i].position;
-					// Find objects near cover spot, and search the array for AI teammates
-					Collider[] objectsNearCover = Physics.OverlapSphere(coverPos, 5f);
-					bool coverIsGood = true;
-					foreach(Collider go in objectsNearCover) {
-						if (go.name.Contains("Cicada")) {
-							coverIsGood = false;
-							break;
-						}
-					}
-					if (coverIsGood) {
-						return true;
-					}
-
-					//pView.RPC ("RpcSetCoverPos", RpcTarget.All, true, coverSpots[i].position.x, coverSpots[i].position.y, coverSpots[i].position.z);
+					bestFoundCoverSpot = coverSpots [i];
+					break;
+				} else {
+					// Else if there's nothing blocking the player and the enemy, then try to rush to cover anyways. Second priority
+					bestFoundCoverSpot = coverSpots[i];
 				}
 			}
 
+			// If a cover spot was found, then take it
+			if (bestFoundCoverSpot != null) {
+				pView.RPC ("RpcSetCoverPos", RpcTarget.All, true, bestFoundCoverSpot.position.x, bestFoundCoverSpot.position.y, bestFoundCoverSpot.position.z);
+				return true;
+			}
 		}
 		return false;
 	}
@@ -1458,9 +1453,11 @@ public class BetaEnemyScript : MonoBehaviour {
 	[PunRPC]
 	void RpcSetCoverPos(bool n, float x, float y, float z) {
 		if (!n) {
+			gameController.GetComponent<GameControllerScript>().LeaveCoverSpot(coverPos);
 			coverPos = Vector3.negativeInfinity;
 		} else {
 			coverPos = new Vector3 (x, y, z);
+			gameController.GetComponent<GameControllerScript>().TakeCoverSpot(coverPos);
 		}
 	}
 
