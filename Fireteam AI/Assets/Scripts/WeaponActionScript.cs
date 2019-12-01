@@ -567,9 +567,9 @@ public class WeaponActionScript : MonoBehaviour
         int regularHitsLanded = 0;
         float totalDamageDealt = 0f;
         for (int i = 0; i < 8; i++) {
-            float xSpread = Random.Range(-0.1f, 0.1f);
-            float ySpread = Random.Range(-0.1f, 0.1f);
-            float zSpread = Random.Range(-0.1f, 0.1f);
+            float xSpread = Random.Range(-0.035f, 0.035f);
+            float ySpread = Random.Range(-0.035f, 0.035f);
+            float zSpread = Random.Range(-0.035f, 0.035f);
             Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
             int headshotLayer = (1 << 13);
             if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer) && !headshotDetected)

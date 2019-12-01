@@ -23,7 +23,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public static Dictionary<int, GameObject> playerList = new Dictionary<int, GameObject> ();
 	public static Dictionary<string, int> totalKills = new Dictionary<string, int> ();
 	public static Dictionary<string, int> totalDeaths = new Dictionary<string, int> ();
-	public Dictionary<Vector3, CoverSpotScript> coverSpots;
+	public Dictionary<short, GameObject> coverSpots;
 	public Dictionary<int, GameObject> enemyList = new Dictionary<int, GameObject> ();
 	public ArrayList enemyAlertMarkers;
 	public Queue enemyMarkerRemovalQueue;
@@ -50,7 +50,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
 	void Awake() {
-		coverSpots = new Dictionary<Vector3, CoverSpotScript>();
+		coverSpots = new Dictionary<short, GameObject>();
 	}
 
     void Start () {
@@ -380,35 +380,35 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		enemyMarkerRemovalQueue.Clear();
 	}
 
-	public void AddCoverSpot(CoverSpotScript coverSpot) {
-		coverSpots.Add(coverSpot.transform.position, coverSpot);
+	public void AddCoverSpot(GameObject coverSpot) {
+		CoverSpotScript cs = coverSpot.GetComponent<CoverSpotScript>();
+		coverSpots.Add(cs.coverId, coverSpot);
 	}
 
 	public override void OnPlayerEnteredRoom(Player newPlayer) {
 		// Sync cover positions status if a player enters the room
 		if (PhotonNetwork.IsMasterClient) {
-			foreach(KeyValuePair<Vector3, CoverSpotScript> entry in coverSpots) {
+			foreach(KeyValuePair<short, GameObject> entry in coverSpots) {
 				SyncCoverSpot(entry.Key, entry.Value);
 			}
 		}
 	}
 
-	void SyncCoverSpot(Vector3 key, CoverSpotScript value) {
-		pView.RPC("RpcSyncCoverSpot", RpcTarget.Others, key.x, key.y, key.z, value.IsTaken());
+	void SyncCoverSpot(short key, GameObject value) {
+		pView.RPC("RpcSyncCoverSpot", RpcTarget.Others, key, value.GetComponent<CoverSpotScript>().IsTaken());
 	}
 
 	[PunRPC]
-	void RpcSyncCoverSpot(float keyX, float keyY, float keyZ, bool value) {
-		Vector3 key = new Vector3(keyX,  keyY, keyZ);
-		coverSpots[key].SetCoverSpot(value);
+	void RpcSyncCoverSpot(short key, bool value) {
+		coverSpots[key].GetComponent<CoverSpotScript>().SetCoverSpot(value);
 	}
 
-	public void TakeCoverSpot(Vector3 pos) {
-		coverSpots[pos].TakeCoverSpot();
+	public void TakeCoverSpot(short id) {
+		coverSpots[id].GetComponent<CoverSpotScript>().TakeCoverSpot();
 	}
 
-	public void LeaveCoverSpot(Vector3 pos) {
-		coverSpots[pos].LeaveCoverSpot();
+	public void LeaveCoverSpot(short id) {
+		coverSpots[id].GetComponent<CoverSpotScript>().LeaveCoverSpot();
 	}
 
 }

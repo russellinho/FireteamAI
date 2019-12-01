@@ -8,11 +8,12 @@ public class CoverSpotScript : MonoBehaviour
 {
     public GameControllerScript gameController;
     private bool taken;
+    public short coverId;
     // Start is called before the first frame update
     void Start()
     {
         taken = false;
-        gameController.AddCoverSpot(this);
+        gameController.AddCoverSpot(gameObject);
     }
 
     public bool IsTaken() {
@@ -28,6 +29,7 @@ public class CoverSpotScript : MonoBehaviour
     }
 
     public void SetCoverSpot(bool b) {
+        Debug.Log("entering");
         taken = b;
     }
 

@@ -59,6 +59,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	private bool suspicious = false;
 	private bool wasMasterClient;
 	public GameObject gameController;
+	private GameControllerScript gameControllerScript;
 	private ArrayList enemyAlertMarkers;
 	public int alertStatus;
 	// Responsible for displaying the correct alert symbol. If equals 0, then the alert display is inactive
@@ -104,9 +105,9 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	private float wanderStallDelay = -1f;
 	private bool inCover;
-	private Vector3 coverPos;
+	private Transform coverPos;
 	private int crouchMode = 2;
-	private float coverScanRange = 50f;
+	private float coverScanRange = 22f;
 
 	// Collision
 	private float originalColliderHeight = 0f;
@@ -149,9 +150,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		marker = GetComponentInChildren<SpriteRenderer> ();
 		gunRef = GetComponentInChildren<MeshRenderer> ();
 		meleeTrigger = GetComponent<BoxCollider> ();
-		//gameController = GameObject.Find("GameController");
-		gameController.GetComponent<GameControllerScript>().enemyList.Add(pView.ViewID, gameObject);
-		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
+		gameControllerScript = gameController.GetComponent<GameControllerScript>();
+		gameControllerScript.enemyList.Add(pView.ViewID, gameObject);
+		enemyAlertMarkers = gameControllerScript.enemyAlertMarkers;
 
 		if (enemyType == EnemyType.Patrol) {
 			range = 20f;
@@ -299,7 +300,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	bool ShouldRotateTowardsPlayerTarget() {
-		if (actionState == ActionStates.Firing || actionState == ActionStates.Melee || actionState == ActionStates.Reloading) {
+		if (actionState == ActionStates.Firing || actionState == ActionStates.Melee || actionState == ActionStates.Reloading || actionState == ActionStates.InCover) {
 			return true;
 		}
 		return false;
@@ -503,10 +504,10 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		if (actionState == ActionStates.TakingCover) {
 			// If the enemy is not near the cover spot, run towards it
-			if (!coverPos.Equals (Vector3.negativeInfinity)) {
+			if (coverPos != null) {
 				pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 6f);
-				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, coverPos.x, coverPos.y, coverPos.z);
-				pView.RPC ("RpcSetCoverPos", RpcTarget.All, false, 0f, 0f, 0f);
+				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, coverPos.position.x, coverPos.position.y, coverPos.position.z);
+				pView.RPC ("RpcSetCoverPos", RpcTarget.All, coverPos.GetComponent<CoverSpotScript>().coverId, false, 0f, 0f, 0f);
 			} else {
 				// If the enemy has finally reached cover, then he will get into cover mode
 				if (navMeshReachedDestination(0f)) {
@@ -976,9 +977,9 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 			} else {
 				// If the enemy has not seen a player
-				if (alertTimer <= 0f && alertTimer != -100f && alerted) {
-					pView.RPC ("RpcUpdateAlertedStatus", RpcTarget.All);
-				}
+				// if (alertTimer <= 0f && alertTimer != -100f && alerted) {
+				// 	pView.RPC ("RpcUpdateAlertedStatus", RpcTarget.All);
+				// }
 				if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Firing && actionState != ActionStates.Reloading) {
 					int r = Random.Range (1, aggression - 1);
 					if (r <= 4) {
@@ -1385,7 +1386,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	// Take cover algorithm for moving enemies - returns true if cover was found, false if not
 	bool DynamicTakeCover() {
 		// Scan for cover first
-		Collider[] nearbyCover = Physics.OverlapBox(transform.position, new Vector3(coverScanRange, 20f, coverScanRange));
+		Collider[] nearbyCover = Physics.OverlapBox(transform.position, new Vector3(coverScanRange, 25f, coverScanRange));
 		if (nearbyCover == null || nearbyCover.Length == 0) {
 			return false;
 		}
@@ -1417,9 +1418,8 @@ public class BetaEnemyScript : MonoBehaviour {
 		// If there is no target player, just choose a random cover
 		Transform[] coverSpots = nearbyCover [minCoverIndex].gameObject.GetComponentsInChildren<Transform>();
 		if (player == null) {
-			Vector3 spot = coverSpots [Random.Range (1, coverSpots.Length)].position;
-			//coverPos = spot;
-			pView.RPC ("RpcSetCoverPos", RpcTarget.All, true, spot.x, spot.y, spot.z);
+			CoverSpotScript spot = coverSpots [Random.Range (1, coverSpots.Length)].GetComponent<CoverSpotScript>();
+			pView.RPC ("RpcSetCoverPos", RpcTarget.All, spot.coverId, true, spot.transform.position.x, spot.transform.position.y, spot.transform.position.z);
 		} else {
 			Transform bestFoundCoverSpot = null;
 			for (int i = 1; i < coverSpots.Length; i++) {
@@ -1443,7 +1443,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 			// If a cover spot was found, then take it
 			if (bestFoundCoverSpot != null) {
-				pView.RPC ("RpcSetCoverPos", RpcTarget.All, true, bestFoundCoverSpot.position.x, bestFoundCoverSpot.position.y, bestFoundCoverSpot.position.z);
+				pView.RPC ("RpcSetCoverPos", RpcTarget.All, bestFoundCoverSpot.GetComponent<CoverSpotScript>().coverId, true, bestFoundCoverSpot.position.x, bestFoundCoverSpot.position.y, bestFoundCoverSpot.position.z);
 				return true;
 			}
 		}
@@ -1451,13 +1451,13 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcSetCoverPos(bool n, float x, float y, float z) {
+	void RpcSetCoverPos(short id, bool n, float x, float y, float z) {
 		if (!n) {
-			gameController.GetComponent<GameControllerScript>().LeaveCoverSpot(coverPos);
-			coverPos = Vector3.negativeInfinity;
+			gameControllerScript.LeaveCoverSpot(id);
+			coverPos = null;
 		} else {
-			coverPos = new Vector3 (x, y, z);
-			gameController.GetComponent<GameControllerScript>().TakeCoverSpot(coverPos);
+			coverPos = gameControllerScript.coverSpots[id].transform;
+			gameControllerScript.TakeCoverSpot(id);
 		}
 	}
 
@@ -1511,11 +1511,9 @@ public class BetaEnemyScript : MonoBehaviour {
 							if (!alerted) {
 								if (Vector3.Distance(p.transform.position, headTransform.position) < 8f) {
 									suspicious = true;
-									// Debug.Log("I hear sum body");
 								}
 								else {
 									suspicious = false;
-									// Debug.Log("Guess it was my imagination");
 								}
 							}
 							continue;
@@ -1609,7 +1607,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	// Reset values to respawn
 	IEnumerator Respawn() {
 		yield return new WaitForSeconds (100f);
-		if (gameController.GetComponent<GameControllerScript>().assaultMode) {
+		if (gameControllerScript.assaultMode) {
 			RespawnAction ();
 		} else {
 			StartCoroutine ("Respawn");
@@ -1645,7 +1643,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		firingModeTimer = 0f;
 
 		wanderStallDelay = -1f;
-		coverPos = Vector3.negativeInfinity;
+		coverPos = null;
 		crouchMode = 2;
 		coverScanRange = 50f;
 
@@ -1666,16 +1664,16 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void HandleEnemyAlerts() {
-		if (health <= 0 || gameController.GetComponent<GameControllerScript>().assaultMode) {
+		if (health <= 0 || gameControllerScript.assaultMode) {
 			return;
 		}
 
 		// Activate exclamation sign, and disable question mark
 		if (alerted && alertStatus != 2) {
-			gameController.GetComponent<GameControllerScript>().enemyAlertMarkers.Add(pView.ViewID);
+			gameControllerScript.enemyAlertMarkers.Add(pView.ViewID);
 			alertStatus = 2;
 		} else if (suspicious && alertStatus != 1) {
-			gameController.GetComponent<GameControllerScript>().enemyAlertMarkers.Add(pView.ViewID);
+			gameControllerScript.enemyAlertMarkers.Add(pView.ViewID);
 			alertStatus = 1;
 		} else {
 			removeFromMarkerList();
@@ -1697,7 +1695,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void AddToMarkerRemovalQueue() {
-		gameController.GetComponent<GameControllerScript>().enemyMarkerRemovalQueue.Enqueue(pView.ViewID);
+		gameControllerScript.enemyMarkerRemovalQueue.Enqueue(pView.ViewID);
 	}
 
 	void EnsureNotSuspiciousAndAlerted() {
