@@ -113,8 +113,6 @@ public class WeaponActionScript : MonoBehaviour
         // Create animation event for shotgun reload
 
         CreateAnimEvents();
-
-        //CockingAction();
     }
 
     void CreateAnimEvents() {
@@ -764,15 +762,6 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
-    public void CockingAction()
-    {
-        // if (!weaponStats.type.Equals("Support")) {
-        //     isCocking = true;
-        // }
-        isCocking = true;
-        ReloadAction();
-    }
-
     [PunRPC]
     void RpcReloadAnim()
     {
@@ -820,19 +809,8 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     void FpcCockingAnim() {
-        animatorFpc.StopPlayback();
-
         if (weaponStats.category.Equals("Shotgun")) {
             animatorFpc.Play("ShotgunCock");
-            //FpcCockShotgun();
-        } else if (weaponStats.category.Equals("Sniper Rifle")) {
-            animatorFpc.Play("DrawWeapon");
-        } else if (weaponStats.type.Equals("Support")) {
-            animatorFpc.Play("DrawWeapon");
-        } else {
-            weaponStats.weaponAnimator.StopPlayback();
-            weaponStats.weaponAnimator.Play("Reload", 0, weaponStats.cockStartTime);
-            animatorFpc.Play("Reload", 0, weaponStats.cockStartTime);
         }
     }
 

@@ -812,7 +812,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         transform.position = new Vector3(gameController.spawnLocation.position.x, gameController.spawnLocation.position.y, gameController.spawnLocation.position.z);
         fpc.m_MouseLook.Init(fpc.charTransform, fpc.spineTransform, fpc.fpcTransformSpine, fpc.fpcTransformBody);
         LeaveSpectatorMode();
-        wepActionScript.CockingAction();
+        weaponScript.DrawWeapon(1);
     }
 
     [PunRPC]
