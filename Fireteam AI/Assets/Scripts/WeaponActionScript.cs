@@ -52,7 +52,12 @@ public class WeaponActionScript : MonoBehaviour
     public bool isReloading = false;
     public bool isCocking = false;
     public bool isFiring = false;
-    public bool isAiming;
+    public bool isAiming = false;
+    public bool isDrawing = false;
+    public bool isWieldingThrowable = false;
+    public bool isWieldingBooster = false;
+    public bool isCockingGrenade = false;
+    public bool isUsingBooster = false;
     // Used for allowing arms to move during aim down sight movement
     private bool aimDownSightsLock;
     private float aimDownSightsTimer;
@@ -76,10 +81,6 @@ public class WeaponActionScript : MonoBehaviour
     private Vector3 originalPosCamSecondary;
     // Aiming speed
     public PhotonView pView;
-    public bool isWieldingThrowable;
-    public bool isWieldingBooster;
-    public bool isCockingGrenade;
-    public bool isUsingBooster;
     public Transform rightCollar;
     public Transform leftCollar;
     public Vector3 leftCollarCurrentPos;
@@ -91,10 +92,6 @@ public class WeaponActionScript : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        isCockingGrenade = false;
-        isUsingBooster = false;
-        isWieldingThrowable = false;
-        isWieldingBooster = false;
         aimDownSightsLock = false;
         aimDownSightsTimer = 0f;
         throwGrenade = false;
@@ -314,7 +311,7 @@ public class WeaponActionScript : MonoBehaviour
                 originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
             }*/
 
-            if (Input.GetButton("Fire2") && !isReloading && !isCocking)
+            if (Input.GetButton("Fire2") && !isReloading && !isCocking && !isDrawing)
             {
                 fpc.SetAiminginFPCAnimator(true);
                 if (!fpc.m_IsAiming && IsSlowAimingWeapon()) {
@@ -693,6 +690,7 @@ public class WeaponActionScript : MonoBehaviour
         }
         PlayShootSound();
         currentAmmo--;
+        playerActionScript.weaponScript.SyncAmmoCounts();
         // Reset fire timer
         fireTimer = 0.0f;
     }
@@ -707,6 +705,7 @@ public class WeaponActionScript : MonoBehaviour
         }
         PlaySuppressedShootSound();
         currentAmmo--;
+        playerActionScript.weaponScript.SyncAmmoCounts();
         // Reset fire timer
         fireTimer = 0.0f;
     }
@@ -722,6 +721,7 @@ public class WeaponActionScript : MonoBehaviour
             int bulletsToDeduct = (totalAmmoLeft >= bulletsToLoad) ? bulletsToLoad : totalAmmoLeft;
             totalAmmoLeft -= bulletsToDeduct;
             currentAmmo += bulletsToDeduct;
+            playerActionScript.weaponScript.SyncAmmoCounts();
         }
     }
 
@@ -733,6 +733,7 @@ public class WeaponActionScript : MonoBehaviour
 
             totalAmmoLeft--;
             currentAmmo++;
+            playerActionScript.weaponScript.SyncAmmoCounts();
         }
     }
 
@@ -740,6 +741,7 @@ public class WeaponActionScript : MonoBehaviour
         if (totalAmmoLeft > 0) {
             totalAmmoLeft -= weaponStats.clipCapacity;
             currentAmmo = weaponStats.clipCapacity;
+            playerActionScript.weaponScript.SyncAmmoCounts();
         }
     }
 
@@ -1041,15 +1043,14 @@ public class WeaponActionScript : MonoBehaviour
             projectile.transform.forward = weaponHolderFpc.transform.forward;
             projectile.GetComponent<ThrowableScript>().Launch(gameObject, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
             // Reset fire timer and subtract ammo used
-            currentAmmo--;
-            fireTimer = 0.0f;
         } else if (weaponStats.category.Equals("Booster")) {
             // Reset fire timer and subtract ammo used
             BoosterScript boosterScript = weaponStats.GetComponentInChildren<BoosterScript>();
             boosterScript.UseBoosterItem(weaponStats.weaponName);
-            currentAmmo--;
-            fireTimer = 0.0f;
         }
+        currentAmmo--;
+        playerActionScript.weaponScript.SyncAmmoCounts();
+        fireTimer = 0.0f;
     }
 
     public void ConfirmGrenadeThrow() {

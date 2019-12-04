@@ -645,6 +645,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             fpcAnimator.ResetTrigger("isCockingGrenade");
             fpcAnimator.ResetTrigger("ThrowGrenade");
             fpcAnimator.ResetTrigger("UseBooster");
+            fpcAnimator.ResetTrigger("HolsterWeapon");
         }
 
     }

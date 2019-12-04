@@ -10,6 +10,7 @@ public class DrawWeaponBehavior : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
        was = animator.GetComponentInParent<WeaponActionScript>();
+       was.isDrawing = true;
        ws = was.playerActionScript.weaponScript;
        if (ws.currentlyEquippedType == 1) {
           ws.EquipWeapon(ws.equippedPrimaryType, ws.equippedPrimaryWeapon, PlayerData.playerdata.primaryModInfo.equippedSuppressor, null);
@@ -29,7 +30,7 @@ public class DrawWeaponBehavior : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       was.isCocking = false;
+       was.isDrawing = false;
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
