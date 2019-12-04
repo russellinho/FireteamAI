@@ -16,12 +16,12 @@ public class HolsterBehavior : StateMachineBehaviour
     //}
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-       WeaponActionScript was = animator.GetComponentInParent<WeaponActionScript>();
-       WeaponScript ws = was.playerActionScript.weaponScript;
-       ws.DrawWeapon(ws.currentlyEquippedType);
-    }
+    // override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    // {
+    //    WeaponActionScript was = animator.GetComponentInParent<WeaponActionScript>();
+    //    WeaponScript ws = was.playerActionScript.weaponScript;
+    //    ws.DrawWeapon(ws.currentlyEquippedType);
+    // }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
     //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
