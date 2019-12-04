@@ -83,8 +83,37 @@ public class WeaponScript : MonoBehaviour
             totalSecondaryAmmoLeft = InventoryScript.weaponCatalog[equippedSecondaryWeapon].maxAmmo;
             totalSupportAmmoLeft = InventoryScript.weaponCatalog[equippedSupportWeapon].maxAmmo;
             equippedWep = equippedPrimaryWeapon;
-            DrawWeapon(1);
+            //DrawWeapon(1);
+            InitializeWeapon();
         }
+    }
+
+    // Use when spawning/respawning
+    void InitializeWeapon() {
+        string equippedWep = "";
+        string equippedType = "";
+        ModInfo modInfo = null;
+        
+        weaponActionScript.hudScript.ToggleCrosshair(false);
+        equippedWep = equippedPrimaryWeapon;
+        equippedType = equippedPrimaryType;
+        weaponActionScript.currentAmmo = currentAmmoPrimary;
+        weaponActionScript.totalAmmoLeft = totalPrimaryAmmoLeft;
+        modInfo = PlayerData.playerdata.primaryModInfo;
+
+        pView.RPC("RpcInitializeWeapon", RpcTarget.All, 1, equippedWep, equippedType, modInfo.equippedSuppressor);
+    }
+
+    [PunRPC]
+    void RpcInitializeWeapon(int weaponCat, string equippedWep, string equippedType, string equippedSuppressor) {
+        weaponReady = false;
+        currentlyEquippedType = weaponCat;
+        if (!equipmentScript.isFirstPerson()) {
+            animator.SetInteger("WeaponType", weaponCat);
+        } else {
+            weaponActionScript.animatorFpc.SetInteger("WeaponType", weaponCat);
+        }
+        EquipWeapon(equippedType, equippedWep, equippedSuppressor, null);
     }
 
     void DrawPrimary()
@@ -100,7 +129,7 @@ public class WeaponScript : MonoBehaviour
             totalSupportAmmoLeft = weaponActionScript.totalAmmoLeft;
             currentAmmoSupport = weaponActionScript.currentAmmo;
         }
-        //DrawWeapon(1);
+        DrawWeapon(1);
         currentlyEquippedType = 1;
         weaponActionScript.firingMode = WeaponActionScript.FireMode.Auto;
     }
@@ -118,7 +147,7 @@ public class WeaponScript : MonoBehaviour
             totalSupportAmmoLeft = weaponActionScript.totalAmmoLeft;
             currentAmmoSupport = weaponActionScript.currentAmmo;
         }
-        //DrawWeapon(2);
+        DrawWeapon(2);
         currentlyEquippedType = 2;
     }
 
@@ -135,7 +164,7 @@ public class WeaponScript : MonoBehaviour
             totalSecondaryAmmoLeft = weaponActionScript.totalAmmoLeft;
             currentAmmoSecondary = weaponActionScript.currentAmmo;
         }
-        //DrawWeapon(4);
+        DrawWeapon(4);
         currentlyEquippedType = 4;
     }
 
@@ -218,7 +247,7 @@ public class WeaponScript : MonoBehaviour
             EquipWeapon(equippedType, equippedWep, equippedSuppressor, null);
         } else {
             weaponActionScript.animatorFpc.SetInteger("WeaponType", weaponCat);
-            weaponActionScript.animatorFpc.Play("DrawWeapon");
+            weaponActionScript.animatorFpc.SetTrigger("HolsterWeapon");
         }
     }
 
@@ -618,7 +647,8 @@ public class WeaponScript : MonoBehaviour
         pView.RPC("RpcToggleWeaponVisible", RpcTarget.All, true);
         weaponHolderFpc.SwitchWeaponToRightHand();
         //drawnSuppressorRenderer.enabled = true;
-        DrawPrimary();
+        // DrawPrimary();
+        InitializeWeapon();
     }
 
     [PunRPC]

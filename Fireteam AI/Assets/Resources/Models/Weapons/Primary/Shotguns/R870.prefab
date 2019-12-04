@@ -877,9 +877,9 @@ MonoBehaviour:
   defaultFpcReloadSpeed: 1.5
   defaultWeaponReloadSpeed: 0.5
   defaultWeaponCockingSpeed: 0
+  defaultWeaponDrawSpeed: 3
   defaultFireSpeed: 0.8
   reloadTransitionSpeed: 0.035
-  cockStartTime: 0
   reloadSound1Time: 0.6
   reloadSound2Time: 0.4
   reloadSound3Time: -1
