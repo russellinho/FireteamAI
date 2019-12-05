@@ -409,9 +409,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f && playerActionScript.sprintTime > 0f && !sprintLock) {
 						m_IsWalking = false;
 						m_IsRunning = true;
-                        if (weaponActionScript.isReloading || weaponActionScript.isCocking) {
-                            SwitchToSprintingInAnimator();
-                        }
+                        // if (weaponActionScript.isReloading || weaponActionScript.isCocking) {
+                        //     SwitchToSprintingInAnimator();
+                        // }
 					} else {
 						m_IsWalking = false;
 						m_IsRunning = false;

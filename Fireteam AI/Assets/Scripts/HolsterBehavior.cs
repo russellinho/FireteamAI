@@ -9,9 +9,10 @@ public class HolsterBehavior : StateMachineBehaviour
     {
         WeaponActionScript was = animator.GetComponentInParent<WeaponActionScript>();
         was.isDrawing = true;
+        was.isCocking = false;
+        was.isReloading = false;
         if (was.weaponStats.weaponAnimator != null) {
-            was.weaponStats.weaponAnimator.enabled = false;
-            was.weaponStats.weaponAnimator.enabled = true;
+            was.weaponStats.weaponAnimator.Play("null");
         }
     }
 
