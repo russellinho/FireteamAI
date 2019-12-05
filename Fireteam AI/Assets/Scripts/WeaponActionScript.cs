@@ -119,7 +119,6 @@ public class WeaponActionScript : MonoBehaviour
                 ae.time = 0.7f;
                 ae.functionName = "ReloadShotgun";
                 a.AddEvent(ae);
-                break;
             }
         }
     }
@@ -207,7 +206,7 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
         
-        if (shootInput && !isReloading && playerActionScript.canShoot && !hudScript.container.pauseMenuGUI.activeInHierarchy)
+        if (shootInput && !isDrawing && !isReloading && playerActionScript.canShoot && !hudScript.container.pauseMenuGUI.activeInHierarchy)
         {
             if (currentAmmo > 0)
             {
@@ -392,7 +391,7 @@ public class WeaponActionScript : MonoBehaviour
     // Comment
     public void Fire()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking || isDrawing)
         {
             return;
         }
@@ -478,7 +477,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     public void FireBoltAction() {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking || isDrawing)
         {
             return;
         }
@@ -545,7 +544,7 @@ public class WeaponActionScript : MonoBehaviour
 
     public void FireShotgun ()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isDrawing)
         {
             return;
         }
@@ -1081,7 +1080,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     bool CanInitiateReload() {
-        if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && !isCocking && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
+        if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && !isCocking && !isDrawing && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
             return true;
         }
         return false;

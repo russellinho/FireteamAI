@@ -10,6 +10,11 @@ public class SprintingBehavior : StateMachineBehaviour
        WeaponActionScript was = animator.GetComponentInParent<WeaponActionScript>();
        was.isReloading = false;
        was.isCocking = false;
+       was.isDrawing = false;
+        if (was.weaponStats.weaponAnimator != null) {
+            was.weaponStats.weaponAnimator.enabled = false;
+            was.weaponStats.weaponAnimator.enabled = true;
+        }
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

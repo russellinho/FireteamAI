@@ -9,6 +9,10 @@ public class HolsterBehavior : StateMachineBehaviour
     {
         WeaponActionScript was = animator.GetComponentInParent<WeaponActionScript>();
         was.isDrawing = true;
+        if (was.weaponStats.weaponAnimator != null) {
+            was.weaponStats.weaponAnimator.enabled = false;
+            was.weaponStats.weaponAnimator.enabled = true;
+        }
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

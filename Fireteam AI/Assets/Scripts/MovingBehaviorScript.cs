@@ -9,6 +9,7 @@ public class MovingBehaviorScript : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
        was = animator.GetComponentInParent<WeaponActionScript>();
+       was.isDrawing = false;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
