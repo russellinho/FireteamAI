@@ -277,9 +277,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 {
                     if (m_IsCrouching)
                     {
-                        // animator.SetBool("Crouching", false);
-                        SetCrouchingInAnimator(false);
                         m_IsCrouching = false;
+                        playerActionScript.HandleCrouch();
                     }
                     else
                     {

@@ -276,7 +276,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         if (fpc.enabled && fpc.canMove && !hud.container.pauseMenuGUI.activeInHierarchy)
         {
-            Crouch();
+            HandleCrouch();
         }
         DetermineEscaped();
         RespawnRoutine();
@@ -329,35 +329,28 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    public void Crouch()
+    public void HandleCrouch()
     {
-        bool originalCrouch = fpc.m_IsCrouching;
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            if (charController.isGrounded) {
-                fpc.m_IsCrouching = !fpc.m_IsCrouching;
-                FpcCrouch(fpc.m_IsCrouching);
-                fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
-            }
+            fpc.m_IsCrouching = !fpc.m_IsCrouching;
         }
+
+        FpcCrouch(fpc.m_IsCrouching);
+        fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
 
         // Collect the original y position of the FPS controller since we're going to move it downwards to crouch
         if (fpc.m_IsCrouching) {
             charController.height = 1f;
             charController.center = new Vector3(0f, 0.54f, 0f);
+            // Network it
+            photonView.RPC("RpcCrouch", RpcTarget.Others, 1f, 0.54f);
         } else {
             charController.height = charHeightOriginal;
             charController.center = new Vector3(0f, charCenterYOriginal, 0f);
+            // Network it
+            photonView.RPC("RpcCrouch", RpcTarget.Others, charHeightOriginal, charCenterYOriginal);
         }
-
-        // Set the animation to crouching
-        // animator.SetBool("Crouching", fpc.m_IsCrouching);
-
-        // Network it
-        // if (fpc.m_IsCrouching != originalCrouch)
-        // {
-        //     photonView.RPC("RpcCrouch", RpcTarget.Others, fpc.m_IsCrouching);
-        // }
     }
 
     void FpcCrouch(bool crouch) {
@@ -369,30 +362,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void RpcCrouch(bool crouch)
+    public void RpcCrouch(float height, float center)
     {
-        fpc.m_IsCrouching = crouch;
-        float h = charHeightOriginal;
-        //float viewH = fpcPositionYOriginal;
-        //float speed = charController.velocity;
-
-        // if (fpc.m_IsCrouching)
-        // {
-        //     h = charHeightOriginal * .65f;
-        //     viewH = .55f;
-        //     bodyScale = .7f;
-        // }
-        // else
-        // {
-        //     viewH = .8f;
-        //     bodyScale = bodyScaleOriginal;
-        // }
-
-        float lastHeight = charController.height;
-        // float lastCameraHeight = fpcPosition.position.y;
-        // charController.height = Mathf.Lerp(charController.height, h, 10 * Time.deltaTime);
-        // fpcPosition.localPosition = new Vector3(fpcPosition.localPosition.x, viewH, fpcPosition.localPosition.z);
-        transform.position = new Vector3(transform.position.x, transform.position.y + ((charController.height - lastHeight) / 2), transform.position.z);
+        charController.height = height;
+        charController.center = new Vector3(0f, center, 0f);   
     }
 
     void DeathCheck()
