@@ -782,13 +782,13 @@ public class WeaponActionScript : MonoBehaviour
         // } else {
             //animator.CrossFadeInFixedTime("Reload", 0.1f);
             if (weaponStats.category.Equals("Shotgun")) {
-                animatorFpc.CrossFade("ShotgunLoad", weaponStats.reloadTransitionSpeed);
+                animatorFpc.CrossFadeInFixedTime("ShotgunLoad", weaponStats.reloadTransitionSpeed);
             } else if (weaponStats.category.Equals("Sniper Rifle")) {
-                animatorFpc.CrossFade("BoltActionLoad", weaponStats.reloadTransitionSpeed);
+                animatorFpc.CrossFadeInFixedTime("BoltActionLoad", weaponStats.reloadTransitionSpeed);
             } else if (weaponStats.type.Equals("Support")) {
                 animatorFpc.Play("DrawWeapon");
             } else {
-                animatorFpc.CrossFade("Reload", weaponStats.reloadTransitionSpeed);
+                animatorFpc.CrossFadeInFixedTime("Reload", weaponStats.reloadTransitionSpeed);
                 FpcChangeMagazine(weaponStats.reloadTransitionSpeed);
             }
             // animatorFpc.SetTrigger("Reload");
@@ -828,8 +828,8 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     public void FpcChangeMagazine(float startFrame) {
-        // weaponStats.weaponAnimator.Play("Reload", 0, startFrame);
-        weaponStats.weaponAnimator.CrossFade("Reload", startFrame);
+        //weaponStats.weaponAnimator.Play("Reload", 0, startFrame);
+        weaponStats.weaponAnimator.CrossFadeInFixedTime("Reload", startFrame);
     }
 
     [PunRPC]

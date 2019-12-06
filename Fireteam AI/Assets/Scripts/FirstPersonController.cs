@@ -113,6 +113,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 PlayLandingSound();
                 m_MoveDir.y = 0f;
                 m_Jumping = false;
+                fpcAnimator.SetBool("Jumping", false);
                 // Calculate fall damage
                 playerActionScript.DetermineFallDamage();
                 // Reset vertical velocity before landing
@@ -558,7 +559,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void TriggerJumpInAnimator() {
-            //fpcAnimator.SetTrigger("Jump");
+            fpcAnimator.SetBool("Jumping", true);
             photonView.RPC("RpcTriggerJumpInAnimator", RpcTarget.Others);
         }
 
