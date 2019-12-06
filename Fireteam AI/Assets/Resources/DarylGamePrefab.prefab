@@ -691,7 +691,7 @@ Animator:
   m_GameObject: {fileID: 597822533608892967}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c2ed40df840f7f34d99a13f1277c1784, type: 3}
-  m_Controller: {fileID: 9100000, guid: c1af2abe4a371b24eb8d44e3e5faca95, type: 2}
+  m_Controller: {fileID: 9100000, guid: d8f19d5539a094850973413a3c2ca3d8, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -45226,6 +45226,11 @@ MonoBehaviour:
   isCocking: 0
   isFiring: 0
   isAiming: 0
+  isDrawing: 0
+  isWieldingThrowable: 0
+  isWieldingBooster: 0
+  isCockingGrenade: 0
+  isUsingBooster: 0
   hitParticles: {fileID: 1617700753897852, guid: 2b61531c3d65e3f4e949e45eb6021b7b,
     type: 3}
   bulletImpact: {fileID: 1235035097298946, guid: 1abe832de1d01be48b12062549dcc9fb,
@@ -45236,10 +45241,6 @@ MonoBehaviour:
   shotMode: 0
   camTransform: {fileID: 2228306718875644030}
   pView: {fileID: 9158664062041186699}
-  isWieldingThrowable: 0
-  isWieldingBooster: 0
-  isCockingGrenade: 0
-  isUsingBooster: 0
   rightCollar: {fileID: 597822533608994393}
   leftCollar: {fileID: 597822533608994399}
   leftCollarCurrentPos: {x: 0, y: 0, z: 0}
@@ -45408,7 +45409,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 9158664062041186698}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &9158664062041186698
 MonoBehaviour:

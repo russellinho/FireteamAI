@@ -10089,6 +10089,12 @@ MonoBehaviour:
   maxAmmo: 3
   aimDownSightPosMale: {x: 0, y: 0, z: 0}
   aimDownSightPosFemale: {x: 0, y: 0, z: 0}
+  stableHandPosMale: {x: 0, y: 0, z: 0}
+  stableHandPosFemale: {x: 0, y: 0, z: 0}
+  defaultLeftCollarPosMale: {x: 0, y: 0, z: 0}
+  defaultLeftCollarPosFemale: {x: 0, y: 0, z: 0}
+  defaultRightCollarPosMale: {x: 0, y: 0, z: 0}
+  defaultRightCollarPosFemale: {x: 0, y: 0, z: 0}
   aimDownSightSpeed: 0
   aimDownSightClipping: 0
   titleHandPositionsMale: {x: 0, y: 0, z: 0}
@@ -10129,9 +10135,9 @@ MonoBehaviour:
   defaultFpcReloadSpeed: 0
   defaultWeaponReloadSpeed: 0
   defaultWeaponCockingSpeed: 0
+  defaultWeaponDrawSpeed: 3
   defaultFireSpeed: 0
   reloadTransitionSpeed: 0
-  cockStartTime: 0
   reloadSound1Time: -1
   reloadSound2Time: -1
   reloadSound3Time: -1

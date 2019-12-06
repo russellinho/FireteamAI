@@ -558,6 +558,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void TriggerJumpInAnimator() {
+            //fpcAnimator.SetTrigger("Jump");
             photonView.RPC("RpcTriggerJumpInAnimator", RpcTarget.Others);
         }
 

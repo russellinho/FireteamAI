@@ -7,14 +7,18 @@ AnimatorOverrideController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: male_fpc_L96A1
-  m_Controller: {fileID: 9100000, guid: c1af2abe4a371b24eb8d44e3e5faca95, type: 2}
+  m_Controller: {fileID: 9100000, guid: d8f19d5539a094850973413a3c2ca3d8, type: 2}
   m_Clips:
   - m_OriginalClip: {fileID: 7400000, guid: fcaead019fb79df4a83741a588283133, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 885bae612fcaa4019babefee7ec4418f, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 6eaa11b2e75b8f54080a780468fdd3df, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 6eaa11b2e75b8f54080a780468fdd3df, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: d86c5d9204e625840b4099f3a7514307, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 109f6bd4ceda2cf4fb336e1061b1e8eb, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 755d9c35b6dd1fb4096b3041dd0107f3, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: cae0728c3ebf54a2eb51d47e78554081, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 1b50915e7b3b4a341a7d4c735bacec39, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 5908ff34232bec54b953028337ab675e, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 520c7e23a33654545b8aefc3d4025f87, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 29439e412742f4350b870bb26d4a7539, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 0cde3581febd30a4fba5576b66b939dd, type: 2}
@@ -23,7 +27,3 @@ AnimatorOverrideController:
     m_OverrideClip: {fileID: 7400000, guid: 3a321621c3d1ae04ea075b184763f845, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: c0fd1bd323ab35248831865f0d6195a1, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 949ed27433f8e3946ba6461631ea9d48, type: 2}
-  - m_OriginalClip: {fileID: 7400000, guid: d86c5d9204e625840b4099f3a7514307, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 109f6bd4ceda2cf4fb336e1061b1e8eb, type: 2}
-  - m_OriginalClip: {fileID: 7400000, guid: f196f02120964554e955ddf521cf9891, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 5908ff34232bec54b953028337ab675e, type: 2}
