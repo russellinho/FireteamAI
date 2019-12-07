@@ -447,7 +447,9 @@ public class WeaponActionScript : MonoBehaviour
                     }
                 }
             } else if (hit.transform.tag.Equals("Player")) {
-                pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+                if (hit.transform != gameObject.transform) {
+                    pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+                }
             } else {
                 pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
                 pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
@@ -500,12 +502,12 @@ public class WeaponActionScript : MonoBehaviour
         bool headshotDetected = false;
         int regularHitsLanded = 0;
         float totalDamageDealt = 0f;
+        int headshotLayer = (1 << 13);
         for (int i = 0; i < 8; i++) {
-            float xSpread = Random.Range(-0.035f, 0.035f);
-            float ySpread = Random.Range(-0.035f, 0.035f);
-            float zSpread = Random.Range(-0.035f, 0.035f);
+            float xSpread = Random.Range(-0.07f, 0.07f);
+            float ySpread = Random.Range(-0.07f, 0.07f);
+            float zSpread = Random.Range(-0.07f, 0.07f);
             Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
-            int headshotLayer = (1 << 13);
             if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer) && !headshotDetected)
             {
                 pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
@@ -520,6 +522,7 @@ public class WeaponActionScript : MonoBehaviour
             }
             else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range))
             {
+                Debug.DrawRay(fpcShootPoint.position, impactDir, Color.blue, 10f, false);
                 int beforeHp = 0;
                 GameObject bloodSpill = null;
                 if (hit.transform.tag.Equals("Human"))
@@ -543,7 +546,9 @@ public class WeaponActionScript : MonoBehaviour
                     }
                     totalDamageDealt += (weaponStats.damage / 8f);
                 } else if (hit.transform.tag.Equals("Player")) {
-                    pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+                    if (hit.transform != gameObject.transform) {
+                        pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+                    }
                 } else {
                     pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
                     pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
