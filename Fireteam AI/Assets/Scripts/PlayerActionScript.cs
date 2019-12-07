@@ -756,7 +756,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hud.ToggleHUD(true);
         hud.ToggleSpectatorMessage(false);
         fpc.m_IsCrouching = false;
-        fpc.m_IsWalking = true;
+        fpc.m_IsWalking = false;
         FpcCrouch(false);
         escapeValueSent = false;
         canShoot = true;

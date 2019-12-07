@@ -13,7 +13,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
     public class FirstPersonController : MonoBehaviour
     {
         [SerializeField] public bool m_IsWalking;
-        [SerializeField] public bool m_IsAiming;
         [SerializeField] public bool m_IsCrouching;
     	[SerializeField] public bool m_IsRunning;
         [SerializeField] public bool m_IsMoving;
@@ -393,7 +392,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // if (weaponActionScript == null) {
             //     weaponActionScript = GetComponent<WeaponActionScript>();
             // }
-			if (weaponActionScript != null && weaponActionScript.isAiming) {
+			if (weaponActionScript != null && (weaponActionScript.isAiming && weaponActionScript.weaponStats.steadyAim)) {
 				if (!m_IsCrouching) {
 					m_IsWalking = true;
 					m_IsRunning = false;
@@ -424,7 +423,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			speed = playerActionScript.totalSpeedBoost;
 			if (m_IsRunning) {
 				speed = playerActionScript.totalSpeedBoost * 2f;
-			} else if (m_IsCrouching || m_IsWalking || m_IsAiming) {
+			} else if (m_IsCrouching || m_IsWalking) {
                 speed = playerActionScript.totalSpeedBoost / 3f;
             }
 

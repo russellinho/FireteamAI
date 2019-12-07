@@ -288,14 +288,6 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
-    // Determines if the weapon currently wielded is something to aim slowly
-    bool IsSlowAimingWeapon() {
-        if (weaponStats.type.Equals("Primary")) {
-            return true;
-        }
-        return false;
-    }
-
     public void AimDownSights()
     {
         if (!playerActionScript.fpc.m_IsRunning)
@@ -313,9 +305,6 @@ public class WeaponActionScript : MonoBehaviour
             if (Input.GetButton("Fire2") && !isReloading && !isCocking && !isDrawing)
             {
                 fpc.SetAiminginFPCAnimator(true);
-                if (!fpc.m_IsAiming && IsSlowAimingWeapon()) {
-                    fpc.m_IsAiming = true;
-                }
                 if (!isAiming) {
                     isAiming = true;
                     leftCollarCurrentPos = leftCollar.localPosition;
@@ -349,7 +338,6 @@ public class WeaponActionScript : MonoBehaviour
             else
             {
                 fpc.SetAiminginFPCAnimator(false);
-                fpc.m_IsAiming = false;
                 if (isAiming) {
                     isAiming = false;
                     leftCollarCurrentPos = leftCollar.localPosition;

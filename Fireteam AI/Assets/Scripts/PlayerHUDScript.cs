@@ -500,7 +500,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.hudMap.enabled = b;
 		container.hudMap2.enabled = b;
 		container.hintText.enabled = false;
-		// ToggleCrosshair(false);
+		if (!b) {
+			ToggleCrosshair(false);
+		}
     }
 
 	public void ToggleScoreboard(bool b)
