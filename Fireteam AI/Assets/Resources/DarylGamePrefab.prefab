@@ -45059,7 +45059,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsWalking: 0
-  m_IsAiming: 0
   m_IsCrouching: 0
   m_IsRunning: 0
   m_IsMoving: 0
@@ -45408,8 +45407,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 9158664062041186698}
-  viewIdField: 0
-  InstantiationId: 1
+  viewIdField: 3
+  InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &9158664062041186698
 MonoBehaviour:

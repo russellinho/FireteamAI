@@ -89,7 +89,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void LoadBetaLevel() {
-		if (SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
+		if (SceneManager.GetActiveScene().name.Equals("BetaLevelNetworkOriginal")) {
 			container.screenColor.color = new Color (0f, 0f, 0f, 1f);
 			gameController.bombsRemaining = 4;
 			gameController.currentMap = 1;

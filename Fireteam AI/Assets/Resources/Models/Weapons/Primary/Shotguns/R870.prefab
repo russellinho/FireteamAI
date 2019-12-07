@@ -824,6 +824,7 @@ MonoBehaviour:
   range: 50
   clipCapacity: 8
   maxAmmo: 48
+  steadyAim: 0
   aimDownSightPosMale: {x: -0.00058, y: 0.00185, z: 0.00132}
   aimDownSightPosFemale: {x: -0.00058, y: 0.00185, z: 0.00132}
   stableHandPosMale: {x: -0.0004247553, y: 0.001882724, z: 0.001321174}

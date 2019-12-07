@@ -130,7 +130,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		void StartGame(string level) {
 			// Photon switch scene from lobby to loading screen to actual game. automaticallySyncScene should load map on clients.
 			if (level.Equals ("Citadel")) {
-				PhotonNetwork.LoadLevel ("BetaLevelNetwork");
+				PhotonNetwork.LoadLevel ("BetaLevelNetworkOriginal");
 			} else {
 				PhotonNetwork.LoadLevel (level);
 			}

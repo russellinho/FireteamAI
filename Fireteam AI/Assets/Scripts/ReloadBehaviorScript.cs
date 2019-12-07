@@ -45,8 +45,9 @@ public class ReloadBehaviorScript : StateMachineBehaviour {
 			supportSoundPlayed = true;
 			was.PlaySupportActionSound();
 		}
-		if (stateInfo.normalizedTime >= 0.9f) {
+		if (stateInfo.normalizedTime >= 0.9f && !hasReloaded) {
 			was.Reload ();
+			hasReloaded = true;
 			//was.isCocking = false;
 			was.isReloading = false;
 		}
