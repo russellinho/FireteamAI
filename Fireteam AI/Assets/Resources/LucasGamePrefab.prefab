@@ -288,7 +288,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsWalking: 0
-  m_IsAiming: 0
   m_IsCrouching: 0
   m_IsRunning: 0
   m_IsMoving: 0
@@ -45227,7 +45226,7 @@ Animator:
   m_GameObject: {fileID: 9030208476792608502}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c2ed40df840f7f34d99a13f1277c1784, type: 3}
-  m_Controller: {fileID: 9100000, guid: d8f19d5539a094850973413a3c2ca3d8, type: 2}
+  m_Controller: {fileID: 9100000, guid: d57f067a589fa5f46b31b2fb248cdf5a, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
