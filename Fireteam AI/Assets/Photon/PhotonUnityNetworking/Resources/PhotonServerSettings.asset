@@ -160,4 +160,6 @@ MonoBehaviour:
   - RpcSpawnShellCasing
   - RpcPlaySupportActionSound
   - RpcSyncDetectionValues
+  - RpcSyncCoverSpot
+  - RpcInitializeWeapon
   DisableAutoOpenWizard: 1

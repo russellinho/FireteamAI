@@ -5287,8 +5287,15 @@ MonoBehaviour:
   range: 3000
   clipCapacity: 5
   maxAmmo: 20
+  steadyAim: 1
   aimDownSightPosMale: {x: -0.000491, y: 0.0014, z: 0.001282}
   aimDownSightPosFemale: {x: -0.000491, y: 0.0014, z: 0.001282}
+  stableHandPosMale: {x: -0.0003357553, y: 0.001432724, z: 0.001283174}
+  stableHandPosFemale: {x: -0.0003357553, y: 0.001432724, z: 0.001283174}
+  defaultLeftCollarPosMale: {x: -3.758436e-10, y: 0.001242948, z: -2.449463e-12}
+  defaultLeftCollarPosFemale: {x: -3.758436e-10, y: 0.001242948, z: -2.449463e-12}
+  defaultRightCollarPosMale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
+  defaultRightCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   aimDownSightSpeed: 4
   aimDownSightClipping: 0.06
   titleHandPositionsMale: {x: -0.031, y: 0.092, z: 0.026}
@@ -5334,9 +5341,9 @@ MonoBehaviour:
   defaultFpcReloadSpeed: 0.4
   defaultWeaponReloadSpeed: 0.25
   defaultWeaponCockingSpeed: 0.35
+  defaultWeaponDrawSpeed: 2
   defaultFireSpeed: 0.75
   reloadTransitionSpeed: 0.02
-  cockStartTime: 0
   reloadSound1Time: 0.3
   reloadSound2Time: 0.6
   reloadSound3Time: 0.35

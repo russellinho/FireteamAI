@@ -54,6 +54,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private float itemSpeedModifier;
     public float weaponSpeedModifier;
     private float originalFpcBodyPosY;
+    public float verticalVelocityBeforeLanding;
+    private Rigidbody rBody;
 
     // Game logic helper variables
     public FirstPersonController fpc;
@@ -75,6 +77,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public Vector3 hitLocation;
     public Transform headTransform;
     public Transform cameraParent;
+    private Vector3 previousPos;
+    private Vector3 nextPos;
 
     // Mission references
     private GameObject currentBomb;
@@ -110,9 +114,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         increaseDetectionDelay = 0f;
         detectionResetUnderway = false;
         sprintTime = playerScript.stamina;
+        previousPos = transform.position;
+        nextPos = transform.position;
 
          currentBombIndex = 0;
          bombIterator = 0;
+         rBody = GetComponent<Rigidbody>();
 
         // // If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
          if (!GetComponent<PhotonView>().IsMine)
@@ -172,6 +179,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // Instant respawn hack
         // if (Input.GetKeyDown (KeyCode.P)) {
         //     BeginRespawn ();
+        // }
+        // Physics sky drop test hack
+        // if (Input.GetKeyDown(KeyCode.O)) {
+        //     transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
         // }
 
          if (enterSpectatorModeTimer > 0f)
@@ -263,16 +274,24 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             BombCheck();
         }
 
-        if (fpc.enabled && fpc.canMove)
+        if (fpc.enabled && fpc.canMove && !hud.container.pauseMenuGUI.activeInHierarchy)
         {
-            Crouch();
+            HandleCrouch();
         }
         DetermineEscaped();
         RespawnRoutine();
 
         DecreaseDetectionLevel();
         UpdateDetectionHUD();
+    }
 
+    void FixedUpdate() {
+        if (!photonView.IsMine) {
+            return;
+        }
+        if (!fpc.m_CharacterController.isGrounded) {
+            UpdateVerticalVelocityBeforeLanding();
+        }
     }
 
     void AddMyselfToPlayerList()
@@ -282,11 +301,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         GameControllerScript.totalDeaths.Add(photonView.Owner.NickName, deaths);
     }
 
-    public void TakeDamage(int d)
+    public void TakeDamage(int d, bool useArmor)
     {
+        if (d <= 0) return;
         // Calculate damage done including armor
-        float damageReduction = playerScript.armor - 1f;
-        d = Mathf.RoundToInt((float)d * (1f - damageReduction));
+        if (useArmor) {
+            float damageReduction = playerScript.armor - 1f;
+            d = Mathf.RoundToInt((float)d * (1f - damageReduction));
+        }
 
         // Send over network
         photonView.RPC("RpcTakeDamage", RpcTarget.All, d);
@@ -307,35 +329,28 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    public void Crouch()
+    public void HandleCrouch()
     {
-        bool originalCrouch = fpc.m_IsCrouching;
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            if (charController.isGrounded) {
-                fpc.m_IsCrouching = !fpc.m_IsCrouching;
-                FpcCrouch(fpc.m_IsCrouching);
-                fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
-            }
+            fpc.m_IsCrouching = !fpc.m_IsCrouching;
         }
+
+        FpcCrouch(fpc.m_IsCrouching);
+        fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
 
         // Collect the original y position of the FPS controller since we're going to move it downwards to crouch
         if (fpc.m_IsCrouching) {
             charController.height = 1f;
             charController.center = new Vector3(0f, 0.54f, 0f);
+            // Network it
+            photonView.RPC("RpcCrouch", RpcTarget.Others, 1f, 0.54f);
         } else {
             charController.height = charHeightOriginal;
             charController.center = new Vector3(0f, charCenterYOriginal, 0f);
+            // Network it
+            photonView.RPC("RpcCrouch", RpcTarget.Others, charHeightOriginal, charCenterYOriginal);
         }
-
-        // Set the animation to crouching
-        // animator.SetBool("Crouching", fpc.m_IsCrouching);
-
-        // Network it
-        // if (fpc.m_IsCrouching != originalCrouch)
-        // {
-        //     photonView.RPC("RpcCrouch", RpcTarget.Others, fpc.m_IsCrouching);
-        // }
     }
 
     void FpcCrouch(bool crouch) {
@@ -347,30 +362,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void RpcCrouch(bool crouch)
+    public void RpcCrouch(float height, float center)
     {
-        fpc.m_IsCrouching = crouch;
-        float h = charHeightOriginal;
-        //float viewH = fpcPositionYOriginal;
-        //float speed = charController.velocity;
-
-        // if (fpc.m_IsCrouching)
-        // {
-        //     h = charHeightOriginal * .65f;
-        //     viewH = .55f;
-        //     bodyScale = .7f;
-        // }
-        // else
-        // {
-        //     viewH = .8f;
-        //     bodyScale = bodyScaleOriginal;
-        // }
-
-        float lastHeight = charController.height;
-        // float lastCameraHeight = fpcPosition.position.y;
-        // charController.height = Mathf.Lerp(charController.height, h, 10 * Time.deltaTime);
-        // fpcPosition.localPosition = new Vector3(fpcPosition.localPosition.x, viewH, fpcPosition.localPosition.z);
-        transform.position = new Vector3(transform.position.x, transform.position.y + ((charController.height - lastHeight) / 2), transform.position.z);
+        charController.height = height;
+        charController.center = new Vector3(0f, center, 0f);   
     }
 
     void DeathCheck()
@@ -481,7 +476,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 return;
             }
 
-            if (health > 0) {
+            if (health > 0 && !hud.container.pauseMenuGUI.activeInHierarchy) {
                 if (Input.GetKey(KeyCode.E)) {
                     fpc.canMove = false;
                     isDefusing = true;
@@ -522,7 +517,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 isDefusing = false;
                 hud.ToggleActionBar(false);
                 hud.container.defusingText.enabled = false;
-                hud.container.hintText.enabled = true;
+                hud.container.hintText.enabled = false;
                 bombDefuseCounter = 0f;
             }
         }
@@ -598,7 +593,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 // Validate that this enemy has already been affected
                 t.AddHitPlayer(photonView.ViewID);
                 // Deal damage to the player
-                TakeDamage(damageReceived);
+                TakeDamage(damageReceived, false);
                 //ResetHitTimer();
                 SetHitLocation(other.transform.position);
             }
@@ -761,7 +756,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hud.ToggleHUD(true);
         hud.ToggleSpectatorMessage(false);
         fpc.m_IsCrouching = false;
-        fpc.m_IsWalking = true;
+        fpc.m_IsWalking = false;
         FpcCrouch(false);
         escapeValueSent = false;
         canShoot = true;
@@ -783,13 +778,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         equipmentScript.RespawnPlayer();
         weaponScript.RespawnPlayer();
         fpc.ResetAnimationState();
+        fpc.ResetFPCAnimator(weaponScript.currentlyEquippedType);
 
         // Send player back to spawn position, reset rotation, leave spectator mode
         //transform.rotation = Quaternion.Euler(Vector3.zero);
         transform.position = new Vector3(gameController.spawnLocation.position.x, gameController.spawnLocation.position.y, gameController.spawnLocation.position.z);
         fpc.m_MouseLook.Init(fpc.charTransform, fpc.spineTransform, fpc.fpcTransformSpine, fpc.fpcTransformBody);
         LeaveSpectatorMode();
-        wepActionScript.CockingAction();
+        //weaponScript.DrawWeapon(1);
     }
 
     [PunRPC]
@@ -959,6 +955,35 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(4f);
         detectionLevel = 0f;
         detectionResetUnderway = false;
+    }
+
+    public void DetermineFallDamage() {
+        float totalFallDamage = 0f;
+        if (verticalVelocityBeforeLanding <= -20f) {
+            //totalFallDamage = 40f * (Mathf.Abs(verticalVelocityBeforeLanding) / 20f);
+            totalFallDamage = 10f * Mathf.Pow(2, Mathf.Abs(verticalVelocityBeforeLanding) / 10f);
+        }
+        //Debug.Log("total fall damage: " + totalFallDamage);
+        totalFallDamage = Mathf.Clamp(totalFallDamage, 0f, 100f);
+        TakeDamage((int)totalFallDamage, false);
+    }
+
+    public void UpdateVerticalVelocityBeforeLanding() {
+        float currentVerticalVelocity = CalculateVerticalVelocity();
+        //Debug.Log(currentVerticalVelocity);
+        verticalVelocityBeforeLanding = currentVerticalVelocity < verticalVelocityBeforeLanding ? currentVerticalVelocity : verticalVelocityBeforeLanding;
+        //Debug.Log("v: " + verticalVelocityBeforeLanding);
+    }
+
+    public void ResetVerticalVelocityBeforeLanding() {
+        verticalVelocityBeforeLanding = 0f;
+    }
+
+    float CalculateVerticalVelocity() {
+        nextPos = transform.position;
+        Vector3 totalVelocity = (nextPos - previousPos) / Time.fixedDeltaTime;
+        previousPos = nextPos;
+        return totalVelocity.y;
     }
 
 }

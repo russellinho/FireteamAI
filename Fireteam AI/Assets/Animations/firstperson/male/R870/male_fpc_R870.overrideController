@@ -7,14 +7,18 @@ AnimatorOverrideController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: male_fpc_R870
-  m_Controller: {fileID: 9100000, guid: c1af2abe4a371b24eb8d44e3e5faca95, type: 2}
+  m_Controller: {fileID: 9100000, guid: d8f19d5539a094850973413a3c2ca3d8, type: 2}
   m_Clips:
   - m_OriginalClip: {fileID: 7400000, guid: fcaead019fb79df4a83741a588283133, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 7b4bb0f109b9c4fa9a893030f71105ab, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 86c6a3cf7827b11498fde47149a11021, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 86c6a3cf7827b11498fde47149a11021, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: d86c5d9204e625840b4099f3a7514307, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 2cbacfb01373b224f9d868088d260e53, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 755d9c35b6dd1fb4096b3041dd0107f3, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: b520636015e6f9140ad18946d788078d, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 1b50915e7b3b4a341a7d4c735bacec39, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: bff9b2250e0599241ac189753d6627da, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 520c7e23a33654545b8aefc3d4025f87, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: c432d5984fa4544fdb35a33aa106c374, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 466d3ebceafa81f4781903ced25dbb9b, type: 2}

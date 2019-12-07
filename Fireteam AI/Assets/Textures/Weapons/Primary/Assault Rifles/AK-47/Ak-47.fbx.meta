@@ -3,7 +3,12 @@ guid: a897fe9e35affce49887cd53b1809b73
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: AK-47.001
+    second: {fileID: 2100000, guid: ebabd5e643816d64f81ecbe385b8ca98, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

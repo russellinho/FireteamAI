@@ -23,6 +23,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public static Dictionary<int, GameObject> playerList = new Dictionary<int, GameObject> ();
 	public static Dictionary<string, int> totalKills = new Dictionary<string, int> ();
 	public static Dictionary<string, int> totalDeaths = new Dictionary<string, int> ();
+	public Dictionary<short, GameObject> coverSpots;
 	public Dictionary<int, GameObject> enemyList = new Dictionary<int, GameObject> ();
 	public ArrayList enemyAlertMarkers;
 	public Queue enemyMarkerRemovalQueue;
@@ -48,6 +49,10 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private PhotonView pView;
 
 	// Use this for initialization
+	void Awake() {
+		coverSpots = new Dictionary<short, GameObject>();
+	}
+
     void Start () {
         PhotonNetwork.AutomaticallySyncScene = true;
 		Physics.IgnoreLayerCollision (9, 12);
@@ -373,6 +378,37 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void ClearEnemyAlertMarkers() {
 		enemyAlertMarkers.Clear();
 		enemyMarkerRemovalQueue.Clear();
+	}
+
+	public void AddCoverSpot(GameObject coverSpot) {
+		CoverSpotScript cs = coverSpot.GetComponent<CoverSpotScript>();
+		coverSpots.Add(cs.coverId, coverSpot);
+	}
+
+	public override void OnPlayerEnteredRoom(Player newPlayer) {
+		// Sync cover positions status if a player enters the room
+		if (PhotonNetwork.IsMasterClient) {
+			foreach(KeyValuePair<short, GameObject> entry in coverSpots) {
+				SyncCoverSpot(entry.Key, entry.Value);
+			}
+		}
+	}
+
+	void SyncCoverSpot(short key, GameObject value) {
+		pView.RPC("RpcSyncCoverSpot", RpcTarget.Others, key, value.GetComponent<CoverSpotScript>().IsTaken());
+	}
+
+	[PunRPC]
+	void RpcSyncCoverSpot(short key, bool value) {
+		coverSpots[key].GetComponent<CoverSpotScript>().SetCoverSpot(value);
+	}
+
+	public void TakeCoverSpot(short id) {
+		coverSpots[id].GetComponent<CoverSpotScript>().TakeCoverSpot();
+	}
+
+	public void LeaveCoverSpot(short id) {
+		coverSpots[id].GetComponent<CoverSpotScript>().LeaveCoverSpot();
 	}
 
 }

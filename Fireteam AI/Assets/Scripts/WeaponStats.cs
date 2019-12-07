@@ -15,8 +15,15 @@ public class WeaponStats : MonoBehaviour
     public float range;
     public int clipCapacity;
     public int maxAmmo;
+    public bool steadyAim;
     public Vector3 aimDownSightPosMale;
     public Vector3 aimDownSightPosFemale;
+    public Vector3 stableHandPosMale;
+    public Vector3 stableHandPosFemale;
+    public Vector3 defaultLeftCollarPosMale;
+    public Vector3 defaultLeftCollarPosFemale;
+    public Vector3 defaultRightCollarPosMale;
+    public Vector3 defaultRightCollarPosFemale;
     public float aimDownSightSpeed;
     public float aimDownSightClipping;
     public Vector3 titleHandPositionsMale;
@@ -55,9 +62,9 @@ public class WeaponStats : MonoBehaviour
     public float defaultFpcReloadSpeed;
     public float defaultWeaponReloadSpeed;
     public float defaultWeaponCockingSpeed;
+    public float defaultWeaponDrawSpeed;
     public float defaultFireSpeed;
     public float reloadTransitionSpeed;
-    public float cockStartTime;
     public float reloadSound1Time;
     public float reloadSound2Time;
     public float reloadSound3Time;

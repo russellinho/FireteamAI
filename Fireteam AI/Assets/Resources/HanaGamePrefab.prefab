@@ -494,14 +494,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsWalking: 0
-  m_IsAiming: 0
   m_IsCrouching: 0
   m_IsRunning: 0
   m_IsMoving: 0
   m_RunstepLenghten: 0.7
   m_JumpSpeed: 10
   m_StickToGroundForce: 10
-  m_GravityMultiplier: 2.25
+  m_GravityMultiplier: 2.95
   m_MouseLook:
     XSensitivity: 2
     YSensitivity: 2
@@ -598,6 +597,7 @@ MonoBehaviour:
   m_JumpSound: {fileID: 8300000, guid: 5897aeed9b676024fbb8c694b421a861, type: 3}
   m_LandSound: {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
   m_Input: {x: 0, y: 0}
+  m_CharacterController: {fileID: 0}
   sprintLock: 0
   canMove: 0
   weaponActionScript: {fileID: 580623507002314515}
@@ -607,7 +607,6 @@ MonoBehaviour:
   photonView: {fileID: 580623507002314522}
   charTransform: {fileID: 7942259398586826861}
   spineTransform: {fileID: 7942259398586826869}
-  enemyTargetPoint: {fileID: 4166761373134640747}
   fpcTransformSpine: {fileID: 4166761373134640749}
   fpcTransformBody: {fileID: 4166761373134640755}
   headTransform: {fileID: 7942259398586827253}
@@ -661,6 +660,11 @@ MonoBehaviour:
   isCocking: 0
   isFiring: 0
   isAiming: 0
+  isDrawing: 0
+  isWieldingThrowable: 0
+  isWieldingBooster: 0
+  isCockingGrenade: 0
+  isUsingBooster: 0
   hitParticles: {fileID: 1617700753897852, guid: 2b61531c3d65e3f4e949e45eb6021b7b,
     type: 3}
   bulletImpact: {fileID: 1235035097298946, guid: 1abe832de1d01be48b12062549dcc9fb,
@@ -671,13 +675,10 @@ MonoBehaviour:
   shotMode: 0
   camTransform: {fileID: 580623506623331171}
   pView: {fileID: 580623507002314522}
-  isWieldingSupportItem: 0
-  isCockingGrenade: 0
-  isUsingBooster: 0
   rightCollar: {fileID: 4166761373134640685}
   leftCollar: {fileID: 4166761373134640687}
-  leftCollarOriginalPos: {x: -0.0003447553, y: 0.001482724, z: 0.001311174}
-  rightCollarOriginalPos: {x: 0, y: 0, z: 0}
+  leftCollarCurrentPos: {x: 0, y: 0, z: 0}
+  rightCollarCurrentPos: {x: 0, y: 0, z: 0}
 --- !u!114 &580623507002314512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -712,7 +713,7 @@ MonoBehaviour:
   fpcBodyRef: {fileID: 580623507404202083}
   health: 0
   sprintTime: 0
-  godMode: 0
+  godMode: 1
   canShoot: 0
   escapeValueSent: 0
   kills: 0
@@ -720,6 +721,7 @@ MonoBehaviour:
   respawnTimer: 0
   totalSpeedBoost: 0
   weaponSpeedModifier: 0
+  verticalVelocityBeforeLanding: 0
   fpc: {fileID: 580623507002314514}
   hitTimer: 0
   healTimer: 0

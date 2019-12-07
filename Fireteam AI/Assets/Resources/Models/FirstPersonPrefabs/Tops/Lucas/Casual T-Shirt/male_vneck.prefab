@@ -1088,7 +1088,7 @@ SkinnedMeshRenderer:
   m_SortingOrder: 0
   serializedVersion: 2
   m_Quality: 0
-  m_UpdateWhenOffscreen: 1
+  m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300004, guid: c2ed40df840f7f34d99a13f1277c1784, type: 3}
   m_Bones:
@@ -1152,6 +1152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50bf978b290cbac40bd11df92fc9b7f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  meshTransform: {fileID: 5691781109194524098}
   target: {fileID: 0}
   rootBone: {fileID: 0}
 --- !u!1 &5691781109194824168

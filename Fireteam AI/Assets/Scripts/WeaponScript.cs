@@ -16,18 +16,7 @@ public class WeaponScript : MonoBehaviour
     public TitleControllerScript ts;
     public Animation titleAnimFemale;
     public Animation titleAnimMale;
-    // public Animation idleAnimFemale;
-    // public Animation idleAnimMale;
-    // public Animation firingAnimFemale;
-    // public Animation firingAnimMale;
-    // public Animation aimingAnimFemale;
-    // public Animation aimingAnimMale;
-    // public Animation sprintingAnimFemale;
-    // public Animation sprintingAnimMale;
-    // public Animation reloadAnimFemale;
-    // public Animation reloadAnimMale;
-    // public Animation movingAnimFemale;
-    // public Animation movingAnimMale;
+    
     public string equippedPrimaryWeapon;
     public string equippedPrimaryType;
     public string equippedSecondaryWeapon;
@@ -94,57 +83,59 @@ public class WeaponScript : MonoBehaviour
             totalSecondaryAmmoLeft = InventoryScript.weaponCatalog[equippedSecondaryWeapon].maxAmmo;
             totalSupportAmmoLeft = InventoryScript.weaponCatalog[equippedSupportWeapon].maxAmmo;
             equippedWep = equippedPrimaryWeapon;
-            DrawWeapon(1);
+            //DrawWeapon(1);
+            InitializeWeapon();
         }
+    }
+
+    // Use when spawning/respawning
+    void InitializeWeapon() {
+        string equippedWep = "";
+        string equippedType = "";
+        ModInfo modInfo = null;
+        
+        weaponActionScript.hudScript.ToggleCrosshair(false);
+        equippedWep = equippedPrimaryWeapon;
+        equippedType = equippedPrimaryType;
+        weaponActionScript.currentAmmo = currentAmmoPrimary;
+        weaponActionScript.totalAmmoLeft = totalPrimaryAmmoLeft;
+        modInfo = PlayerData.playerdata.primaryModInfo;
+
+        pView.RPC("RpcInitializeWeapon", RpcTarget.All, 1, equippedWep, equippedType, modInfo.equippedSuppressor);
+    }
+
+    [PunRPC]
+    void RpcInitializeWeapon(int weaponCat, string equippedWep, string equippedType, string equippedSuppressor) {
+        weaponReady = false;
+        currentlyEquippedType = weaponCat;
+        if (!equipmentScript.isFirstPerson()) {
+            animator.SetInteger("WeaponType", weaponCat);
+        } else {
+            weaponActionScript.animatorFpc.SetInteger("WeaponType", weaponCat);
+        }
+        EquipWeapon(equippedType, equippedWep, equippedSuppressor, null);
     }
 
     void DrawPrimary()
     {
         if (currentlyEquippedType == 1) return;
-        if (currentlyEquippedType == 2)
-        {
-            totalSecondaryAmmoLeft = weaponActionScript.totalAmmoLeft;
-            currentAmmoSecondary = weaponActionScript.currentAmmo;
-        }
-        else if (currentlyEquippedType == 4)
-        {
-            totalSupportAmmoLeft = weaponActionScript.totalAmmoLeft;
-            currentAmmoSupport = weaponActionScript.currentAmmo;
-        }
         DrawWeapon(1);
+        currentlyEquippedType = 1;
         weaponActionScript.firingMode = WeaponActionScript.FireMode.Auto;
     }
 
     void DrawSecondary()
     {
         if (currentlyEquippedType == 2) return;
-        if (currentlyEquippedType == 1)
-        {
-            totalPrimaryAmmoLeft = weaponActionScript.totalAmmoLeft;
-            currentAmmoPrimary = weaponActionScript.currentAmmo;
-        }
-        else if (currentlyEquippedType == 4)
-        {
-            totalSupportAmmoLeft = weaponActionScript.totalAmmoLeft;
-            currentAmmoSupport = weaponActionScript.currentAmmo;
-        }
         DrawWeapon(2);
+        currentlyEquippedType = 2;
     }
 
     void DrawSupport()
     {
         if (currentlyEquippedType == 4 || totalSupportAmmoLeft <= 0) return;
-        if (currentlyEquippedType == 1)
-        {
-            totalPrimaryAmmoLeft = weaponActionScript.totalAmmoLeft;
-            currentAmmoPrimary = weaponActionScript.currentAmmo;
-        }
-        else if (currentlyEquippedType == 2)
-        {
-            totalSecondaryAmmoLeft = weaponActionScript.totalAmmoLeft;
-            currentAmmoSecondary = weaponActionScript.currentAmmo;
-        }
         DrawWeapon(4);
+        currentlyEquippedType = 4;
     }
 
     void Update() {
@@ -174,11 +165,13 @@ public class WeaponScript : MonoBehaviour
             return false;
         } else if (weaponActionScript.isUsingBooster) {
             return false;
+        } else if (weaponActionScript.hudScript.container.pauseMenuGUI.activeInHierarchy) {
+            return false;
         }
         return true;
     }
 
-    void DrawWeapon(int weaponCat) {
+    public void DrawWeapon(int weaponCat) {
         string equippedWep = "";
         string equippedType = "";
         ModInfo modInfo = null;
@@ -188,8 +181,6 @@ public class WeaponScript : MonoBehaviour
             weaponActionScript.hudScript.ToggleCrosshair(false);
             equippedWep = equippedPrimaryWeapon;
             equippedType = equippedPrimaryType;
-            weaponActionScript.currentAmmo = currentAmmoPrimary;
-            weaponActionScript.totalAmmoLeft = totalPrimaryAmmoLeft;
             modInfo = PlayerData.playerdata.primaryModInfo;
         }
         else if (weaponCat == 2)
@@ -197,8 +188,6 @@ public class WeaponScript : MonoBehaviour
             weaponActionScript.hudScript.ToggleCrosshair(false);
             equippedWep = equippedSecondaryWeapon;
             equippedType = equippedSecondaryType;
-            weaponActionScript.currentAmmo = currentAmmoSecondary;
-            weaponActionScript.totalAmmoLeft = totalSecondaryAmmoLeft;
             modInfo = PlayerData.playerdata.secondaryModInfo;
         }
         else if (weaponCat == 4)
@@ -208,35 +197,40 @@ public class WeaponScript : MonoBehaviour
             }
             equippedWep = equippedSupportWeapon;
             equippedType = equippedSupportType;
-            weaponActionScript.currentAmmo = currentAmmoSupport;
-            weaponActionScript.totalAmmoLeft = totalSupportAmmoLeft;
             modInfo = PlayerData.playerdata.supportModInfo;
         }
-        //ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(equippedWep);
         pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, equippedType, modInfo.equippedSuppressor);
-        // Cock weapon upon drawing weapon
-        weaponActionScript.CockingAction();
     }
-
-    // void SetAnimationsForWeapon() {
-    //     if (equipmentScript.gender == 'M') {
-    //         weaponActionScript.fpc.animator
-    //     } else if (equipmentScript.gender == 'F') {
-
-    //     }
-    // }
 
     [PunRPC]
     private void RpcDrawWeapon(int weaponCat, string equippedWep, string equippedType, string equippedSuppressor) {
         weaponReady = false;
+        currentlyEquippedType = weaponCat;
         if (!equipmentScript.isFirstPerson()) {
             animator.SetInteger("WeaponType", weaponCat);
+            EquipWeapon(equippedType, equippedWep, equippedSuppressor, null);
         } else {
             weaponActionScript.animatorFpc.SetInteger("WeaponType", weaponCat);
+            weaponActionScript.animatorFpc.SetTrigger("HolsterWeapon");
         }
-        currentlyEquippedType = weaponCat;
-        EquipWeapon(equippedType, equippedWep, equippedSuppressor, null);
-//            animator.CrossFadeInFixedTime("DrawWeapon", 0.1f, 0, 1f);
+    }
+
+    void SetCurrentAmmo(int weaponCat) {
+        if (weaponCat == 1)
+        {
+            weaponActionScript.currentAmmo = currentAmmoPrimary;
+            weaponActionScript.totalAmmoLeft = totalPrimaryAmmoLeft;
+        }
+        else if (weaponCat == 2)
+        {
+            weaponActionScript.currentAmmo = currentAmmoSecondary;
+            weaponActionScript.totalAmmoLeft = totalSecondaryAmmoLeft;
+        }
+        else if (weaponCat == 4)
+        {
+            weaponActionScript.currentAmmo = currentAmmoSupport;
+            weaponActionScript.totalAmmoLeft = totalSupportAmmoLeft;
+        }
     }
 
     void EquipAssaultRifle(string weaponName) {
@@ -492,6 +486,8 @@ public class WeaponScript : MonoBehaviour
                 ts.equippedSupportSlot.GetComponentInChildren<RawImage>().enabled = true;
                 ts.equippedSupportSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
             }
+        } else {
+            SetCurrentAmmo(currentlyEquippedType);
         }
     }
 
@@ -635,7 +631,8 @@ public class WeaponScript : MonoBehaviour
         pView.RPC("RpcToggleWeaponVisible", RpcTarget.All, true);
         weaponHolderFpc.SwitchWeaponToRightHand();
         //drawnSuppressorRenderer.enabled = true;
-        DrawPrimary();
+        // DrawPrimary();
+        InitializeWeapon();
     }
 
     [PunRPC]
@@ -651,6 +648,19 @@ public class WeaponScript : MonoBehaviour
         WeaponStats ws = weapon.GetComponent<WeaponStats>();
         foreach (MeshRenderer part in ws.weaponParts) {
             part.gameObject.layer = 16;
+        }
+    }
+
+    public void SyncAmmoCounts() {
+        if (currentlyEquippedType == 1) {
+            currentAmmoPrimary = weaponActionScript.currentAmmo;
+            totalPrimaryAmmoLeft = weaponActionScript.totalAmmoLeft;
+        } else if (currentlyEquippedType == 2) {
+            currentAmmoSecondary = weaponActionScript.currentAmmo;
+            totalSecondaryAmmoLeft = weaponActionScript.totalAmmoLeft;
+        } else if (currentlyEquippedType == 4) {
+            currentAmmoSupport = weaponActionScript.currentAmmo;
+            totalSupportAmmoLeft = weaponActionScript.totalAmmoLeft;
         }
     }
 

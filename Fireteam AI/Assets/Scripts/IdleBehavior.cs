@@ -13,6 +13,7 @@ public class IdleBehavior : StateMachineBehaviour
         was.ResetGrenadeState();
         was.ResetBoosterState();
         was.isReloading = false;
+        was.isDrawing = false;
         entered = true;
     }
 

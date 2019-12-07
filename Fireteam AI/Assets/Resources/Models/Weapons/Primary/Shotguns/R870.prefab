@@ -816,17 +816,23 @@ MonoBehaviour:
   weaponName: R870
   type: Primary
   category: Shotgun
-  damage: 120
+  damage: 110
   mobility: 95
-  fireRate: 0.5
+  fireRate: 0.4
   accuracy: 0
   recoil: 10
-  range: 40
+  range: 50
   clipCapacity: 8
   maxAmmo: 48
   aimDownSightPosMale: {x: -0.00058, y: 0.00185, z: 0.00132}
   aimDownSightPosFemale: {x: -0.00058, y: 0.00185, z: 0.00132}
-  aimDownSightSpeed: 7
+  stableHandPosMale: {x: -0.0004247553, y: 0.001882724, z: 0.001321174}
+  stableHandPosFemale: {x: -0.0004247553, y: 0.001882724, z: 0.001321174}
+  defaultLeftCollarPosMale: {x: -3.758436e-10, y: 0.001242948, z: -2.449463e-12}
+  defaultLeftCollarPosFemale: {x: -3.758436e-10, y: 0.001242948, z: -2.449463e-12}
+  defaultRightCollarPosMale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
+  defaultRightCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
+  aimDownSightSpeed: 6
   aimDownSightClipping: 0.03
   titleHandPositionsMale: {x: -0.02, y: 0.05, z: 0.03}
   titleHandPositionsFemale: {x: -0.01, y: 0.02, z: 0.02}
@@ -871,9 +877,9 @@ MonoBehaviour:
   defaultFpcReloadSpeed: 1.5
   defaultWeaponReloadSpeed: 0.5
   defaultWeaponCockingSpeed: 0
+  defaultWeaponDrawSpeed: 3.5
   defaultFireSpeed: 0.8
-  reloadTransitionSpeed: 0.035
-  cockStartTime: 0
+  reloadTransitionSpeed: 0.15
   reloadSound1Time: 0.6
   reloadSound2Time: 0.4
   reloadSound3Time: -1

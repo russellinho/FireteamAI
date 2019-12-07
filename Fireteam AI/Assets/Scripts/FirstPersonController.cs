@@ -13,7 +13,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
     public class FirstPersonController : MonoBehaviour
     {
         [SerializeField] public bool m_IsWalking;
-        [SerializeField] public bool m_IsAiming;
         [SerializeField] public bool m_IsCrouching;
     	[SerializeField] public bool m_IsRunning;
         [SerializeField] public bool m_IsMoving;
@@ -37,7 +36,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_YRotation;
         public Vector2 m_Input;
         private Vector3 m_MoveDir = Vector3.zero;
-        private CharacterController m_CharacterController;
+        public CharacterController m_CharacterController;
         private CollisionFlags m_CollisionFlags;
         private bool m_PreviouslyGrounded;
         private Vector3 m_OriginalCameraPosition;
@@ -101,17 +100,23 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             //RotateView();
             // the jump state needs to read here to make sure it is not missed
-			if (!m_Jump && canMove)
+			if (!m_Jump && canMove && !playerActionScript.hud.container.pauseMenuGUI.activeInHierarchy)
             {
                 m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
             }
 
+            // Handle character landing
             if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
             {
                 StartCoroutine(m_JumpBob.DoBobCycle());
                 PlayLandingSound();
                 m_MoveDir.y = 0f;
                 m_Jumping = false;
+                fpcAnimator.SetBool("Jumping", false);
+                // Calculate fall damage
+                playerActionScript.DetermineFallDamage();
+                // Reset vertical velocity before landing
+                playerActionScript.ResetVerticalVelocityBeforeLanding();
             }
             if (!m_CharacterController.isGrounded && !m_Jumping && m_PreviouslyGrounded)
             {
@@ -272,9 +277,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 {
                     if (m_IsCrouching)
                     {
-                        // animator.SetBool("Crouching", false);
-                        SetCrouchingInAnimator(false);
                         m_IsCrouching = false;
+                        playerActionScript.HandleCrouch();
                     }
                     else
                     {
@@ -374,6 +378,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			float horizontal = CrossPlatformInputManager.GetAxis ("Horizontal");
 			float vertical = CrossPlatformInputManager.GetAxis ("Vertical");
 
+            // Nullify movement if the user is paused
+            if (playerActionScript.hud.container.pauseMenuGUI.activeInHierarchy) {
+                horizontal = 0f;
+                vertical = 0f;
+            }
+
 			bool waswalking = m_IsWalking;
 
 #if !MOBILE_INPUT
@@ -382,7 +392,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // if (weaponActionScript == null) {
             //     weaponActionScript = GetComponent<WeaponActionScript>();
             // }
-			if (weaponActionScript != null && weaponActionScript.isAiming) {
+			if (weaponActionScript != null && (weaponActionScript.isAiming && weaponActionScript.weaponStats.steadyAim)) {
 				if (!m_IsCrouching) {
 					m_IsWalking = true;
 					m_IsRunning = false;
@@ -398,9 +408,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f && playerActionScript.sprintTime > 0f && !sprintLock) {
 						m_IsWalking = false;
 						m_IsRunning = true;
-                        if (weaponActionScript.isReloading || weaponActionScript.isCocking) {
-                            SwitchToSprintingInAnimator();
-                        }
+                        // if (weaponActionScript.isReloading || weaponActionScript.isCocking) {
+                        //     SwitchToSprintingInAnimator();
+                        // }
 					} else {
 						m_IsWalking = false;
 						m_IsRunning = false;
@@ -413,7 +423,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			speed = playerActionScript.totalSpeedBoost;
 			if (m_IsRunning) {
 				speed = playerActionScript.totalSpeedBoost * 2f;
-			} else if (m_IsCrouching || m_IsWalking || m_IsAiming) {
+			} else if (m_IsCrouching || m_IsWalking) {
                 speed = playerActionScript.totalSpeedBoost / 3f;
             }
 
@@ -442,7 +452,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private Rotations RotateView()
         {
-            return m_MouseLook.LookRotation (charTransform, spineTransform, fpcTransformSpine, fpcTransformBody);
+            return m_MouseLook.LookRotation (charTransform, spineTransform, fpcTransformSpine, fpcTransformBody, playerActionScript.hud.container.pauseMenuGUI.activeInHierarchy);
         }
 
         [PunRPC]
@@ -548,6 +558,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void TriggerJumpInAnimator() {
+            fpcAnimator.SetBool("Jumping", true);
             photonView.RPC("RpcTriggerJumpInAnimator", RpcTarget.Others);
         }
 
@@ -618,17 +629,23 @@ namespace UnityStandardAssets.Characters.FirstPerson
             fpcAnimator.SetBool("Aiming", x);
         }
 
-        public void ResetFPCAnimator() {
+        public void ResetFPCAnimator(int currentlyEquippedType) {
             fpcAnimator.SetBool("Aiming", false);
             fpcAnimator.SetBool("weaponReady", false);
             fpcAnimator.SetBool("Moving", false);
             fpcAnimator.SetBool("Sprinting", false);
             fpcAnimator.SetBool("Crouching", false);
-            fpcAnimator.SetBool("isSprinting", false);
             fpcAnimator.SetBool("isDead", false);
             fpcAnimator.SetBool("isWalking", false);
-            fpcAnimator.SetInteger("WeaponType", 1);
+            fpcAnimator.SetInteger("WeaponType", currentlyEquippedType);
             fpcAnimator.SetInteger("MovingDir", 0);
+            fpcAnimator.ResetTrigger("Reload");
+            fpcAnimator.ResetTrigger("CockShotgun");
+            fpcAnimator.ResetTrigger("CockBoltAction");
+            fpcAnimator.ResetTrigger("isCockingGrenade");
+            fpcAnimator.ResetTrigger("ThrowGrenade");
+            fpcAnimator.ResetTrigger("UseBooster");
+            fpcAnimator.ResetTrigger("HolsterWeapon");
         }
 
     }

@@ -25382,7 +25382,7 @@ MonoBehaviour:
   m_RunstepLenghten: 0.7
   m_JumpSpeed: 10
   m_StickToGroundForce: 10
-  m_GravityMultiplier: 2.25
+  m_GravityMultiplier: 2.95
   m_MouseLook:
     XSensitivity: 2
     YSensitivity: 2
@@ -25479,6 +25479,7 @@ MonoBehaviour:
   m_JumpSound: {fileID: 8300000, guid: 5897aeed9b676024fbb8c694b421a861, type: 3}
   m_LandSound: {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
   m_Input: {x: 0, y: 0}
+  m_CharacterController: {fileID: 0}
   sprintLock: 0
   canMove: 0
   weaponActionScript: {fileID: 4997301263046971766}
@@ -25488,7 +25489,6 @@ MonoBehaviour:
   photonView: {fileID: 4997301263046971775}
   charTransform: {fileID: 6545086241112944193}
   spineTransform: {fileID: 6545086241112944217}
-  enemyTargetPoint: {fileID: 8395974561293240334}
   fpcTransformSpine: {fileID: 8395974561293240328}
   fpcTransformBody: {fileID: 8395974561293240342}
   headTransform: {fileID: 6545086241112944601}
@@ -25542,6 +25542,11 @@ MonoBehaviour:
   isCocking: 0
   isFiring: 0
   isAiming: 0
+  isDrawing: 0
+  isWieldingThrowable: 0
+  isWieldingBooster: 0
+  isCockingGrenade: 0
+  isUsingBooster: 0
   hitParticles: {fileID: 1617700753897852, guid: 2b61531c3d65e3f4e949e45eb6021b7b,
     type: 3}
   bulletImpact: {fileID: 1235035097298946, guid: 1abe832de1d01be48b12062549dcc9fb,
@@ -25552,13 +25557,10 @@ MonoBehaviour:
   shotMode: 0
   camTransform: {fileID: 4997301262654219526}
   pView: {fileID: 4997301263046971775}
-  isWieldingSupportItem: 0
-  isCockingGrenade: 0
-  isUsingBooster: 0
   rightCollar: {fileID: 8395974561293240392}
   leftCollar: {fileID: 8395974561293240394}
-  leftCollarOriginalPos: {x: 0, y: 0, z: 0}
-  rightCollarOriginalPos: {x: 0, y: 0, z: 0}
+  leftCollarCurrentPos: {x: 0, y: 0, z: 0}
+  rightCollarCurrentPos: {x: 0, y: 0, z: 0}
 --- !u!114 &4997301263046971765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25601,6 +25603,7 @@ MonoBehaviour:
   respawnTimer: 0
   totalSpeedBoost: 0
   weaponSpeedModifier: 0
+  verticalVelocityBeforeLanding: 0
   fpc: {fileID: 4997301263046971767}
   hitTimer: 0
   healTimer: 0

@@ -52,7 +52,12 @@ public class WeaponActionScript : MonoBehaviour
     public bool isReloading = false;
     public bool isCocking = false;
     public bool isFiring = false;
-    public bool isAiming;
+    public bool isAiming = false;
+    public bool isDrawing = false;
+    public bool isWieldingThrowable = false;
+    public bool isWieldingBooster = false;
+    public bool isCockingGrenade = false;
+    public bool isUsingBooster = false;
     // Used for allowing arms to move during aim down sight movement
     private bool aimDownSightsLock;
     private float aimDownSightsTimer;
@@ -76,17 +81,10 @@ public class WeaponActionScript : MonoBehaviour
     private Vector3 originalPosCamSecondary;
     // Aiming speed
     public PhotonView pView;
-    public bool isWieldingThrowable;
-    public bool isWieldingBooster;
-    public bool isCockingGrenade;
-    public bool isUsingBooster;
     public Transform rightCollar;
     public Transform leftCollar;
-    private Vector3 leftCollarAimingPos;
-    private Vector3 defaultLeftCollarPos;
-    private Vector3 defaultRightCollarPos;
-    public Vector3 leftCollarOriginalPos;
-    public Vector3 rightCollarOriginalPos;
+    public Vector3 leftCollarCurrentPos;
+    public Vector3 rightCollarCurrentPos;
 
     // Zoom variables
     private int zoom = 3;
@@ -94,14 +92,7 @@ public class WeaponActionScript : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        leftCollarAimingPos = Vector3.negativeInfinity;
-        isCockingGrenade = false;
-        isUsingBooster = false;
-        isWieldingThrowable = false;
-        isWieldingBooster = false;
         aimDownSightsLock = false;
-        defaultLeftCollarPos = Vector3.negativeInfinity;
-        defaultRightCollarPos = Vector3.negativeInfinity;
         aimDownSightsTimer = 0f;
         throwGrenade = false;
         if (pView != null && !pView.IsMine)
@@ -119,8 +110,6 @@ public class WeaponActionScript : MonoBehaviour
         // Create animation event for shotgun reload
 
         CreateAnimEvents();
-
-        //CockingAction();
     }
 
     void CreateAnimEvents() {
@@ -130,7 +119,6 @@ public class WeaponActionScript : MonoBehaviour
                 ae.time = 0.7f;
                 ae.functionName = "ReloadShotgun";
                 a.AddEvent(ae);
-                break;
             }
         }
     }
@@ -166,7 +154,7 @@ public class WeaponActionScript : MonoBehaviour
                 break;
         }
 
-        if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster)
+        if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster || hudScript.container.pauseMenuGUI.activeInHierarchy)
         {
             return;
         }
@@ -218,7 +206,7 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
         
-        if (shootInput && !isReloading && playerActionScript.canShoot)
+        if (shootInput && !isDrawing && !isReloading && playerActionScript.canShoot && !hudScript.container.pauseMenuGUI.activeInHierarchy)
         {
             if (currentAmmo > 0)
             {
@@ -258,19 +246,27 @@ public class WeaponActionScript : MonoBehaviour
             // If going to center
             if (isAiming) {
                 if (fpc.equipmentScript.gender == 'M') {
-                    leftCollar.localPosition = Vector3.Lerp(leftCollarOriginalPos, leftCollarAimingPos, aimDownSightsTimer);
-                    rightCollar.localPosition = Vector3.Lerp(rightCollarOriginalPos, weaponStats.aimDownSightPosMale, aimDownSightsTimer);
+                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponStats.stableHandPosMale, aimDownSightsTimer);
+                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponStats.aimDownSightPosMale, aimDownSightsTimer);
                 } else if (fpc.equipmentScript.gender == 'F') {
-                    leftCollar.localPosition = Vector3.Lerp(leftCollarOriginalPos, leftCollarAimingPos, aimDownSightsTimer);
-                    rightCollar.localPosition = Vector3.Lerp(rightCollarOriginalPos, weaponStats.aimDownSightPosFemale, aimDownSightsTimer);
+                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponStats.stableHandPosFemale, aimDownSightsTimer);
+                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponStats.aimDownSightPosFemale, aimDownSightsTimer);
                 }
             // If coming back to normal
             } else {
-                leftCollar.localPosition = Vector3.Lerp(leftCollarOriginalPos, defaultLeftCollarPos, aimDownSightsTimer);
-                rightCollar.localPosition = Vector3.Lerp(rightCollarOriginalPos, defaultRightCollarPos, aimDownSightsTimer);
                 // If the player is back in the normal position, then disable the lock
-                if (Mathf.Approximately(Vector3.Magnitude(leftCollar.localPosition), Vector3.Magnitude(defaultLeftCollarPos))) {
-                    aimDownSightsLock = false;
+                if (fpc.equipmentScript.gender == 'M') {
+                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponStats.defaultLeftCollarPosMale, aimDownSightsTimer);
+                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponStats.defaultRightCollarPosMale, aimDownSightsTimer);
+                    if (aimDownSightsLock && Vector3.SqrMagnitude(rightCollar.localPosition - weaponStats.defaultRightCollarPosMale) < 0.0000001f) {
+                        aimDownSightsLock = false;
+                    }
+                } else if (fpc.equipmentScript.gender == 'F') {
+                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponStats.defaultLeftCollarPosFemale, aimDownSightsTimer);
+                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponStats.defaultRightCollarPosFemale, aimDownSightsTimer);
+                    if (aimDownSightsLock && Vector3.SqrMagnitude(rightCollar.localPosition - weaponStats.defaultRightCollarPosFemale) < 0.0000001f) {
+                        aimDownSightsLock = false;
+                    }
                 }
             }
         }
@@ -278,14 +274,6 @@ public class WeaponActionScript : MonoBehaviour
 
     void LateUpdate() {
         UpdateAimDownSightsArms();
-    }
-
-    void SetDefaultArmPositions() {
-        // Set the default arm positions if they aren't set yet
-        if (Vector3.Equals(defaultLeftCollarPos, Vector3.negativeInfinity)) {
-            defaultLeftCollarPos = leftCollar.localPosition;
-            defaultRightCollarPos = rightCollar.localPosition;
-        }
     }
 
     void ToggleFpsWeapon(bool b) {
@@ -298,14 +286,6 @@ public class WeaponActionScript : MonoBehaviour
                 suppressorRenderer.enabled = b;
             }
         }
-    }
-
-    // Determines if the weapon currently wielded is something to aim slowly
-    bool IsSlowAimingWeapon() {
-        if (weaponStats.type.Equals("Primary")) {
-            return true;
-        }
-        return false;
     }
 
     public void AimDownSights()
@@ -322,29 +302,20 @@ public class WeaponActionScript : MonoBehaviour
                 originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
             }*/
 
-            if (Input.GetButton("Fire2") && !isReloading && !isCocking)
+            if (Input.GetButton("Fire2") && !isReloading && !isCocking && !isDrawing)
             {
-                SetDefaultArmPositions();
                 fpc.SetAiminginFPCAnimator(true);
-                if (!fpc.m_IsAiming && IsSlowAimingWeapon()) {
-                    fpc.m_IsAiming = true;
+                if (!isAiming) {
+                    isAiming = true;
+                    leftCollarCurrentPos = leftCollar.localPosition;
+                    rightCollarCurrentPos = rightCollar.localPosition;
+                    aimDownSightsTimer = 0f;
                 }
-                isAiming = true;
                 aimDownSightsLock = true;
                 if (fpc.equipmentScript.gender == 'M') {
-                    // Setting original arm positions
-                    if (leftCollarAimingPos.Equals(Vector3.negativeInfinity)) {
-                        leftCollarOriginalPos = leftCollar.localPosition;
-                        rightCollarOriginalPos = rightCollar.localPosition;
-                        Vector3 offset = weaponStats.aimDownSightPosMale - rightCollar.localPosition;
-                        leftCollarAimingPos = leftCollar.localPosition + offset;
-                        aimDownSightsTimer = 0f;
-                    }
-                
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
-                    if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(leftCollar.localPosition), Vector3.Magnitude(leftCollarAimingPos))) {
+                    if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(rightCollar.localPosition), Vector3.Magnitude(weaponStats.aimDownSightPosMale))) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
-                    //   weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = false;
                     ToggleFpsWeapon(false);
                       mouseLook.XSensitivity = 0.25f;
                       mouseLook.YSensitivity = 0.25f;
@@ -352,37 +323,25 @@ public class WeaponActionScript : MonoBehaviour
                       hudScript.toggleSniperOverlay(true);
                     }
                 } else {
-                    if (leftCollarAimingPos.Equals(Vector3.negativeInfinity)) {
-                        leftCollarOriginalPos = leftCollar.localPosition;
-                        rightCollarOriginalPos = rightCollar.localPosition;
-                        Vector3 offset = weaponStats.aimDownSightPosFemale - rightCollar.localPosition;
-                        leftCollarAimingPos = leftCollar.localPosition + offset;
-                        aimDownSightsTimer = 0f;
-                    }
-                    
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
-                    if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(leftCollar.localPosition), Vector3.Magnitude(leftCollarAimingPos))) {
+                    if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(rightCollar.localPosition), Vector3.Magnitude(weaponStats.aimDownSightPosFemale))) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
-                    //   weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = false;
                     ToggleFpsWeapon(false);
                       mouseLook.XSensitivity = 0.25f;
                       mouseLook.YSensitivity = 0.25f;
                       fpc.equipmentScript.ToggleFpcMesh(false);
                       hudScript.toggleSniperOverlay(true);
                     }
-
                 }
                 //camTransform.GetComponent<Camera>().nearClipPlane = weaponStats.aimDownSightClipping;
             }
             else
             {
                 fpc.SetAiminginFPCAnimator(false);
-                fpc.m_IsAiming = false;
-                isAiming = false;
-                if (!Vector3.Equals(leftCollarAimingPos, Vector3.negativeInfinity)) {
-                    leftCollarOriginalPos = leftCollar.localPosition;
-                    rightCollarOriginalPos = rightCollar.localPosition;
-                    leftCollarAimingPos = Vector3.negativeInfinity;
+                if (isAiming) {
+                    isAiming = false;
+                    leftCollarCurrentPos = leftCollar.localPosition;
+                    rightCollarCurrentPos = rightCollar.localPosition;
                     aimDownSightsTimer = 0f;
                 }
 
@@ -420,7 +379,7 @@ public class WeaponActionScript : MonoBehaviour
     // Comment
     public void Fire()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking || isDrawing)
         {
             return;
         }
@@ -506,7 +465,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     public void FireBoltAction() {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking || isDrawing)
         {
             return;
         }
@@ -573,7 +532,7 @@ public class WeaponActionScript : MonoBehaviour
 
     public void FireShotgun ()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isDrawing)
         {
             return;
         }
@@ -590,9 +549,9 @@ public class WeaponActionScript : MonoBehaviour
         int regularHitsLanded = 0;
         float totalDamageDealt = 0f;
         for (int i = 0; i < 8; i++) {
-            float xSpread = Random.Range(-0.1f, 0.1f);
-            float ySpread = Random.Range(-0.1f, 0.1f);
-            float zSpread = Random.Range(-0.1f, 0.1f);
+            float xSpread = Random.Range(-0.035f, 0.035f);
+            float ySpread = Random.Range(-0.035f, 0.035f);
+            float zSpread = Random.Range(-0.035f, 0.035f);
             Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
             int headshotLayer = (1 << 13);
             if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer) && !headshotDetected)
@@ -718,6 +677,7 @@ public class WeaponActionScript : MonoBehaviour
         }
         PlayShootSound();
         currentAmmo--;
+        playerActionScript.weaponScript.SyncAmmoCounts();
         // Reset fire timer
         fireTimer = 0.0f;
     }
@@ -732,6 +692,7 @@ public class WeaponActionScript : MonoBehaviour
         }
         PlaySuppressedShootSound();
         currentAmmo--;
+        playerActionScript.weaponScript.SyncAmmoCounts();
         // Reset fire timer
         fireTimer = 0.0f;
     }
@@ -747,6 +708,7 @@ public class WeaponActionScript : MonoBehaviour
             int bulletsToDeduct = (totalAmmoLeft >= bulletsToLoad) ? bulletsToLoad : totalAmmoLeft;
             totalAmmoLeft -= bulletsToDeduct;
             currentAmmo += bulletsToDeduct;
+            playerActionScript.weaponScript.SyncAmmoCounts();
         }
     }
 
@@ -758,6 +720,7 @@ public class WeaponActionScript : MonoBehaviour
 
             totalAmmoLeft--;
             currentAmmo++;
+            playerActionScript.weaponScript.SyncAmmoCounts();
         }
     }
 
@@ -765,6 +728,7 @@ public class WeaponActionScript : MonoBehaviour
         if (totalAmmoLeft > 0) {
             totalAmmoLeft -= weaponStats.clipCapacity;
             currentAmmo = weaponStats.clipCapacity;
+            playerActionScript.weaponScript.SyncAmmoCounts();
         }
     }
 
@@ -787,15 +751,6 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
-    public void CockingAction()
-    {
-        // if (!weaponStats.type.Equals("Support")) {
-        //     isCocking = true;
-        // }
-        isCocking = true;
-        ReloadAction();
-    }
-
     [PunRPC]
     void RpcReloadAnim()
     {
@@ -815,13 +770,13 @@ public class WeaponActionScript : MonoBehaviour
         // } else {
             //animator.CrossFadeInFixedTime("Reload", 0.1f);
             if (weaponStats.category.Equals("Shotgun")) {
-                animatorFpc.CrossFade("ShotgunLoad", weaponStats.reloadTransitionSpeed);
+                animatorFpc.CrossFadeInFixedTime("ShotgunLoad", weaponStats.reloadTransitionSpeed);
             } else if (weaponStats.category.Equals("Sniper Rifle")) {
-                animatorFpc.CrossFade("BoltActionLoad", weaponStats.reloadTransitionSpeed);
+                animatorFpc.CrossFadeInFixedTime("BoltActionLoad", weaponStats.reloadTransitionSpeed);
             } else if (weaponStats.type.Equals("Support")) {
                 animatorFpc.Play("DrawWeapon");
             } else {
-                animatorFpc.CrossFade("Reload", weaponStats.reloadTransitionSpeed);
+                animatorFpc.CrossFadeInFixedTime("Reload", weaponStats.reloadTransitionSpeed);
                 FpcChangeMagazine(weaponStats.reloadTransitionSpeed);
             }
             // animatorFpc.SetTrigger("Reload");
@@ -845,14 +800,6 @@ public class WeaponActionScript : MonoBehaviour
     void FpcCockingAnim() {
         if (weaponStats.category.Equals("Shotgun")) {
             animatorFpc.Play("ShotgunCock");
-            //FpcCockShotgun();
-        } else if (weaponStats.category.Equals("Sniper Rifle")) {
-            animatorFpc.Play("DrawWeapon");
-        } else if (weaponStats.type.Equals("Support")) {
-            animatorFpc.Play("DrawWeapon");
-        } else {
-            weaponStats.weaponAnimator.Play("Reload", 0, weaponStats.cockStartTime);
-            animatorFpc.Play("Reload", 0, weaponStats.cockStartTime);
         }
     }
 
@@ -869,8 +816,8 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     public void FpcChangeMagazine(float startFrame) {
-        // weaponStats.weaponAnimator.Play("Reload", 0, startFrame);
-        weaponStats.weaponAnimator.CrossFade("Reload", startFrame);
+        //weaponStats.weaponAnimator.Play("Reload", 0, startFrame);
+        weaponStats.weaponAnimator.CrossFadeInFixedTime("Reload", startFrame);
     }
 
     [PunRPC]
@@ -1005,6 +952,7 @@ public class WeaponActionScript : MonoBehaviour
 
     public void SetReloadSpeed(float multipler = 1f) {
         animatorFpc.SetFloat("ReloadSpeed", weaponStats.defaultFpcReloadSpeed * multipler);
+        animatorFpc.SetFloat("DrawSpeed", weaponStats.defaultWeaponDrawSpeed * multipler);
         weaponStats.weaponAnimator.SetFloat("ReloadSpeed", weaponStats.defaultWeaponReloadSpeed * multipler);
         weaponStats.weaponAnimator.SetFloat("CockingSpeed", weaponStats.defaultWeaponCockingSpeed * multipler);
     }
@@ -1054,7 +1002,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     void FireBooster() {
-        if (fireTimer < weaponStats.fireRate)
+        if (fireTimer < weaponStats.fireRate || hudScript.container.pauseMenuGUI.activeInHierarchy)
         {
             return;
         }
@@ -1082,15 +1030,14 @@ public class WeaponActionScript : MonoBehaviour
             projectile.transform.forward = weaponHolderFpc.transform.forward;
             projectile.GetComponent<ThrowableScript>().Launch(gameObject, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
             // Reset fire timer and subtract ammo used
-            currentAmmo--;
-            fireTimer = 0.0f;
         } else if (weaponStats.category.Equals("Booster")) {
             // Reset fire timer and subtract ammo used
             BoosterScript boosterScript = weaponStats.GetComponentInChildren<BoosterScript>();
             boosterScript.UseBoosterItem(weaponStats.weaponName);
-            currentAmmo--;
-            fireTimer = 0.0f;
         }
+        currentAmmo--;
+        playerActionScript.weaponScript.SyncAmmoCounts();
+        fireTimer = 0.0f;
     }
 
     public void ConfirmGrenadeThrow() {
@@ -1121,7 +1068,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     bool CanInitiateReload() {
-        if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && !isCocking && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
+        if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && !isCocking && !isDrawing && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
             return true;
         }
         return false;
