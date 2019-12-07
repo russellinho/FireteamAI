@@ -15,6 +15,7 @@ public class PumpActionCockBehavior : StateMachineBehaviour
         shellCasingFired = false;
         cockSoundPlayed = false;
         was = animator.GetComponentInParent<WeaponActionScript>();
+        was.isCocking = true;
         was.FpcCockShotgun();
     }
 

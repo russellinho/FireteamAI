@@ -13,12 +13,12 @@ public class PumpActionReloadBehavior : StateMachineBehaviour
         animator.ResetTrigger("CockShotgun");
         done = false;
         weaponActionScript = animator.GetComponentInParent<WeaponActionScript>();
-        weaponActionScript.isReloading = true;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        weaponActionScript.isReloading = true;
         if (stateInfo.normalizedTime >= weaponActionScript.weaponStats.reloadSound1Time - 0.1f && stateInfo.normalizedTime <= weaponActionScript.weaponStats.reloadSound1Time + 0.1f) {
             if (!loadSoundPlayed) {
                 weaponActionScript.PlayReloadSound(0);

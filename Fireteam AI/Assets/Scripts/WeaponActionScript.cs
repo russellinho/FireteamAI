@@ -173,6 +173,8 @@ public class WeaponActionScript : MonoBehaviour
             ReloadAction();
         }
 
+        Debug.Log("isReloading" + isReloading);
+        Debug.Log("isCocking" + isCocking);
         AimDownSights();
     }
 
@@ -288,6 +290,17 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
+    bool IsPumpActionCocking() {
+        if (isCocking) {
+            if (fpc.fpcAnimator.GetBool("isShotgun")) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void AimDownSights()
     {
         if (!playerActionScript.fpc.m_IsRunning)
@@ -302,7 +315,7 @@ public class WeaponActionScript : MonoBehaviour
                 originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
             }*/
 
-            if (Input.GetButton("Fire2") && !isReloading && !isCocking && !isDrawing)
+            if (Input.GetButton("Fire2") && !isReloading && IsPumpActionCocking() && !isDrawing)
             {
                 fpc.SetAiminginFPCAnimator(true);
                 if (!isAiming) {
@@ -379,7 +392,7 @@ public class WeaponActionScript : MonoBehaviour
     // Comment
     public void Fire()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking || isDrawing)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isDrawing)
         {
             return;
         }
@@ -532,7 +545,7 @@ public class WeaponActionScript : MonoBehaviour
 
     public void FireShotgun ()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isDrawing)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || (isCocking && isReloading) || isDrawing)
         {
             return;
         }
@@ -739,7 +752,7 @@ public class WeaponActionScript : MonoBehaviour
             return;
 
         isReloading = true;
-        if (isCocking)
+        if (isCocking && !fpc.fpcAnimator.GetBool("isShotgun"))
         {
             FpcCockingAnim();
             pView.RPC("RpcCockingAnim", RpcTarget.Others);
@@ -1068,7 +1081,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     bool CanInitiateReload() {
-        if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && !isCocking && !isDrawing && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
+        if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && IsPumpActionCocking() && !isDrawing && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
             return true;
         }
         return false;
