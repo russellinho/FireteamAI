@@ -637,6 +637,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             fpcAnimator.SetBool("Crouching", false);
             fpcAnimator.SetBool("isDead", false);
             fpcAnimator.SetBool("isWalking", false);
+            fpcAnimator.SetBool("Jumping", false);
             fpcAnimator.SetInteger("WeaponType", currentlyEquippedType);
             fpcAnimator.SetInteger("MovingDir", 0);
             fpcAnimator.ResetTrigger("Reload");

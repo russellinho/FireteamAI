@@ -777,6 +777,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         //weaponScript.SwitchWeaponToFpcBody();
         equipmentScript.RespawnPlayer();
         weaponScript.RespawnPlayer();
+        wepActionScript.ResetMyActionStates();
         fpc.ResetAnimationState();
         fpc.ResetFPCAnimator(weaponScript.currentlyEquippedType);
 

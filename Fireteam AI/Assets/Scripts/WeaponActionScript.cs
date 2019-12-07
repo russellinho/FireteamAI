@@ -177,7 +177,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     bool AutoReloadCheck() {
-        if (isDrawing || isFiring || isReloading || isCockingGrenade || isUsingBooster || isCocking) {
+        if (isDrawing || isFiring || isReloading || isCockingGrenade || isUsingBooster || isCocking || fpc.m_IsRunning) {
             return false;
         }
         return true;
@@ -956,12 +956,16 @@ public class WeaponActionScript : MonoBehaviour
     void FireBooster() {
         if (fireTimer < weaponStats.fireRate || hudScript.container.pauseMenuGUI.activeInHierarchy)
         {
+            ResetBoosterState();
             return;
         }
         if (currentAmmo == 0) {
             ReloadSupportItem();
         }
-        if (currentAmmo <= 0) return;
+        if (currentAmmo <= 0) {
+            ResetBoosterState();
+            return;
+        }
         if (weaponStats.category.Equals("Booster")) {
             // If using a medkit on max health, ignore the request
             if (weaponStats.weaponName.Equals("Medkit") && playerActionScript.health == playerActionScript.playerScript.health) {
@@ -1024,6 +1028,15 @@ public class WeaponActionScript : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void ResetMyActionStates() {
+        isDrawing = false;
+        isFiring = false;
+        isReloading = false;
+        isCockingGrenade = false;
+        isUsingBooster = false;
+        isCocking = false;
     }
 
 }
