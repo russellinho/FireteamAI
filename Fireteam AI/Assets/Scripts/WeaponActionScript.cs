@@ -167,15 +167,20 @@ public class WeaponActionScript : MonoBehaviour
         }
 
         // Automatically reload if no ammo
-        if (currentAmmo <= 0 && !isFiring && totalAmmoLeft > 0 && !isReloading && playerActionScript.canShoot) {
+        if (currentAmmo <= 0 && totalAmmoLeft > 0 && AutoReloadCheck() && playerActionScript.canShoot) {
             //Debug.Log("current ammo: " + currentAmmo + " isFiring: " + isFiring + " isReloading: " + isReloading);
             cameraShakeScript.SetShake(false);
             ReloadAction();
         }
 
-        Debug.Log("isReloading" + isReloading);
-        Debug.Log("isCocking" + isCocking);
         AimDownSights();
+    }
+
+    bool AutoReloadCheck() {
+        if (isDrawing || isFiring || isReloading || isCockingGrenade || isUsingBooster || isCocking) {
+            return false;
+        }
+        return true;
     }
 
     public void RefillFireTimer()
@@ -392,7 +397,7 @@ public class WeaponActionScript : MonoBehaviour
     // Comment
     public void Fire()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isDrawing)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking || isDrawing)
         {
             return;
         }
@@ -475,72 +480,6 @@ public class WeaponActionScript : MonoBehaviour
         o.GetComponent<Rigidbody>().velocity = weaponStats.transform.forward * SHELL_SPEED;
         o.GetComponent<Rigidbody>().angularVelocity = Random.insideUnitSphere * SHELL_TUMBLE;
         Destroy(o, 3f);
-    }
-
-    public void FireBoltAction() {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking || isDrawing)
-        {
-            return;
-        }
-
-        cameraShakeScript.SetShake(true);
-        animatorFpc.Play("Firing");
-        isFiring = true;
-        IncreaseSpread();
-        IncreaseRecoil();
-        UpdateRecoil(true);
-        RaycastHit hit;
-        float xSpread = Random.Range(-spread, spread);
-        float ySpread = Random.Range(-spread, spread);
-        float zSpread = Random.Range(-spread, spread);
-        Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
-        int headshotLayer = (1 << 13);
-        if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer))
-        {
-            pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
-            if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().health > 0)
-            {
-                hudScript.InstantiateHitmarker();
-                hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().TakeDamage(100);
-                RewardKill(true);
-                audioController.PlayHeadshotSound();
-            }
-        }
-        else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range))
-        {
-            GameObject bloodSpill = null;
-            if (hit.transform.tag.Equals("Human"))
-            {
-                pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
-                int beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript>().health;
-                if (beforeHp > 0)
-                {
-                    hudScript.InstantiateHitmarker();
-                    audioController.PlayHitmarkerSound();
-                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
-                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().PlayGruntSound();
-                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted(true);
-                    if (hit.transform.gameObject.GetComponent<BetaEnemyScript>().health <= 0 && beforeHp > 0)
-                    {
-                        RewardKill(false);
-                    }
-                }
-            } else if (hit.transform.tag.Equals("Player")) {
-                pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
-            } else {
-                pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
-                pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
-            }
-        }
-        if (weaponMods.suppressorRef == null)
-        {
-            playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
-            pView.RPC("FireEffects", RpcTarget.All);
-        }
-        else
-        {
-            pView.RPC("FireEffectsSuppressed", RpcTarget.All);
-        }
     }
 
     public void FireShotgun ()
