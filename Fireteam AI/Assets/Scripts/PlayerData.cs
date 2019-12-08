@@ -56,7 +56,7 @@ public class PlayerData : MonoBehaviour
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Jade")) {
             characterPrefabName = "JadeGamePrefab";
         }
-        if (levelName.Equals("BetaLevelNetworkOriginal"))
+        if (levelName.Equals("BetaLevelNetwork"))
         {
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
                 characterPrefabName,

@@ -16,7 +16,7 @@ public class EnemySpawnerScript : NetworkBehaviour {
 		enemyList = new ArrayList ();
 		enemySpawns = GameObject.FindGameObjectsWithTag ("EnemySpawnPoint");
 
-		if (SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetworkTest") || SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetworkOriginal")) {
+		if (SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetworkTest") || SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetwork")) {
 			for (int i = 0; i < enemySpawns.Length; i++) {
 				Vector3 t = ((GameObject)enemySpawns [i]).transform.position;
 				Quaternion q = ((GameObject)enemySpawns [i]).transform.rotation;

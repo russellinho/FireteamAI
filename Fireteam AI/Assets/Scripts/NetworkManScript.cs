@@ -14,7 +14,7 @@ public class NetworkManScript : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (manHud.showGUI == true && SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetworkOriginal")) {
+		if (manHud.showGUI == true && SceneManager.GetActiveScene ().name.Equals ("BetaLevelNetwork")) {
 			manHud.showGUI = false;
 		}
 	}
