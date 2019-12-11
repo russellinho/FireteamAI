@@ -45278,7 +45278,7 @@ MonoBehaviour:
   fpcBodyRef: {fileID: 5586924236429968885}
   health: 0
   sprintTime: 0
-  godMode: 0
+  godMode: 1
   canShoot: 0
   escapeValueSent: 0
   kills: 0
@@ -45408,7 +45408,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 9158664062041186698}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: -1
   isRuntimeInstantiated: 0
 --- !u!114 &9158664062041186698
 MonoBehaviour:
