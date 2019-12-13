@@ -2149,7 +2149,7 @@ GameObject:
   - component: {fileID: 124549900}
   - component: {fileID: 124549899}
   m_Layer: 0
-  m_Name: Cube (4)
+  m_Name: NavP5
   m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2163,7 +2163,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 124549897}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 60.072, y: 49.751, z: 70.333}
+  m_LocalPosition: {x: -52.8, y: 0.66, z: 117.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1498125208}
@@ -2945,7 +2945,7 @@ GameObject:
   - component: {fileID: 187967857}
   - component: {fileID: 187967856}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: NavP1
   m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3018,7 +3018,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 187967855}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 87.58, y: -1.74, z: 134.94}
+  m_LocalPosition: {x: 32.99, y: -0.27, z: 9.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1498125208}
@@ -8001,7 +8001,7 @@ GameObject:
   - component: {fileID: 484976825}
   - component: {fileID: 484976824}
   m_Layer: 0
-  m_Name: Cube (11)
+  m_Name: NavP12
   m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8015,7 +8015,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 484976822}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 86.93, y: -0.492, z: 30.8}
+  m_LocalPosition: {x: 167.8, y: -0.492, z: 116.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1498125208}
@@ -8608,7 +8608,7 @@ GameObject:
   - component: {fileID: 509471617}
   - component: {fileID: 509471616}
   m_Layer: 0
-  m_Name: Cube (1)
+  m_Name: NavP2
   m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8622,7 +8622,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 509471614}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -37.47, y: -0.75, z: 87.01}
+  m_LocalPosition: {x: 9.68, y: -1.36, z: 38.74}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1498125208}
@@ -9392,7 +9392,7 @@ GameObject:
   - component: {fileID: 552857823}
   - component: {fileID: 552857822}
   m_Layer: 0
-  m_Name: Cube (7)
+  m_Name: NavP8
   m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9406,7 +9406,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 552857820}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 49, y: -0.565, z: 30}
+  m_LocalPosition: {x: 58.49, y: 0.52, z: 116.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1498125208}
@@ -16660,7 +16660,7 @@ GameObject:
   - component: {fileID: 846577659}
   - component: {fileID: 846577658}
   m_Layer: 0
-  m_Name: Cube (9)
+  m_Name: NavP10
   m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16674,7 +16674,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 846577656}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.3, y: -0.239, z: 44.2}
+  m_LocalPosition: {x: 91.5, y: -0.239, z: 20.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1498125208}
@@ -21549,7 +21549,7 @@ GameObject:
   - component: {fileID: 1196537376}
   - component: {fileID: 1196537375}
   m_Layer: 0
-  m_Name: Cube (6)
+  m_Name: NavP7
   m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21563,7 +21563,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1196537373}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 84.74, y: -0.531, z: -30}
+  m_LocalPosition: {x: 52.07, y: 0.89, z: 74.62}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1498125208}
@@ -30957,7 +30957,7 @@ GameObject:
   - component: {fileID: 1631370886}
   - component: {fileID: 1631370885}
   m_Layer: 0
-  m_Name: Cube (10)
+  m_Name: NavP11
   m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30971,7 +30971,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1631370883}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10.95, y: 0.07, z: 87.37}
+  m_LocalPosition: {x: 141.1, y: 0.42, z: 56.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1498125208}
@@ -31158,7 +31158,7 @@ GameObject:
   - component: {fileID: 1651348770}
   - component: {fileID: 1651348769}
   m_Layer: 0
-  m_Name: Cube (13)
+  m_Name: NavP14
   m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31172,7 +31172,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1651348767}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 89.48, y: -1.262, z: 92.25}
+  m_LocalPosition: {x: 153.7, y: -2.04, z: 164.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1498125208}
@@ -33891,7 +33891,7 @@ GameObject:
   - component: {fileID: 1806464773}
   - component: {fileID: 1806464772}
   m_Layer: 0
-  m_Name: Cube (3)
+  m_Name: NavP4
   m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33905,7 +33905,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1806464770}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 69.3, y: 24.378, z: 76.11}
+  m_LocalPosition: {x: 12.72, y: -0.975, z: 110.14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1498125208}
@@ -37886,7 +37886,7 @@ GameObject:
   - component: {fileID: 1945202664}
   - component: {fileID: 1945202663}
   m_Layer: 0
-  m_Name: Cube (12)
+  m_Name: NavP13
   m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37900,7 +37900,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1945202661}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 125.02, y: -0.835, z: 129.74}
+  m_LocalPosition: {x: 125.02, y: -0.835, z: 144.55}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1498125208}
@@ -38619,7 +38619,7 @@ GameObject:
   - component: {fileID: 2011634614}
   - component: {fileID: 2011634613}
   m_Layer: 0
-  m_Name: Cube (5)
+  m_Name: NavP6
   m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -38633,7 +38633,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2011634611}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 148.74, y: -0.403, z: -3.5}
+  m_LocalPosition: {x: 24.58, y: 0.48, z: 142}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1498125208}
@@ -39428,7 +39428,7 @@ GameObject:
   - component: {fileID: 2082014904}
   - component: {fileID: 2082014903}
   m_Layer: 0
-  m_Name: Cube (8)
+  m_Name: NavP9
   m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39442,7 +39442,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2082014901}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 19.41, y: -0.759, z: -4.3}
+  m_LocalPosition: {x: 153.9, y: 1.87, z: -11.77}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1498125208}
@@ -39520,7 +39520,7 @@ GameObject:
   - component: {fileID: 2082966527}
   - component: {fileID: 2082966526}
   m_Layer: 0
-  m_Name: Cube (2)
+  m_Name: NavP3
   m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39534,7 +39534,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2082966524}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 20.52, y: -0.775, z: 19.4}
+  m_LocalPosition: {x: 20.52, y: 0.47, z: -35.38}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1498125208}
