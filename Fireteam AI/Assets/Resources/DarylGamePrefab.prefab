@@ -31739,7 +31739,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.7
+  m_Volume: 0.75
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -45278,7 +45278,7 @@ MonoBehaviour:
   fpcBodyRef: {fileID: 5586924236429968885}
   health: 0
   sprintTime: 0
-  godMode: 1
+  godMode: 0
   canShoot: 0
   escapeValueSent: 0
   kills: 0

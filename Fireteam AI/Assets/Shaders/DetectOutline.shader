@@ -5,7 +5,7 @@
 Shader "Koobando/Silhouetted Diffuse" {
 	Properties {
 		_OutlineColor ("Outline Color", Color) = (0,0,0,1)
-		_Outline ("Outline width", Range (0.0, 0.5)) = .005
+		_Outline ("Outline width", Range (0.0, 1)) = .005
 	}
  
 CGINCLUDE
@@ -40,11 +40,14 @@ ENDCG
  
 	SubShader {
 		Tags { "Queue" = "Transparent" }
- 
+		
 		Pass {
 			Name "BASE"
 			Cull Back
 			Blend Zero One
+			LOD 200
+    		ZTest Always // Draw only if occluded by other object
+    		ZWrite Off // Dont write into Zbuffer
  
 			// uncomment this to hide inner details:
 			Offset -8, -8
@@ -60,10 +63,13 @@ ENDCG
 			Name "OUTLINE"
 			Tags { "LightMode" = "Always" }
 			Cull Front
+			LOD 200
+    		ZTest Greater // Draw only if occluded by other object
+    		ZWrite Off // Dont write into Zbuffer
  
 			// you can choose what kind of blending mode you want for the outline
 			Blend SrcAlpha OneMinusSrcAlpha // Normal
-			//Blend One One // Additive
+			// Blend One One // Additive
 			//Blend One OneMinusDstColor // Soft Additive
 			//Blend DstColor Zero // Multiplicative
 			//Blend DstColor SrcColor // 2x Multiplicative

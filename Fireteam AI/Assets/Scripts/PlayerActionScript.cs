@@ -175,6 +175,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
 
+        previousPos = nextPos;
+        nextPos = transform.position;
+
         updatePlayerSpeed();
         // Instant respawn hack
         // if (Input.GetKeyDown (KeyCode.P)) {
@@ -395,6 +398,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 // deathCameraLerpPos = new Vector3(headTransform.localPosition.x, headTransform.localPosition.y + 2.5f, headTransform.localPosition.z - 4.5f);
                 enterSpectatorModeTimer = 6f;
                 viewCam.transform.SetParent(transform);
+                viewCam.fieldOfView = 60;
                 rotationSaved = true;
                 photonView.RPC("RpcAddToTotalDeaths", RpcTarget.All);
             }
@@ -757,6 +761,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         health = 100;
         photonView.RPC("RpcSetHealth", RpcTarget.Others, 100);
         viewCam.transform.SetParent(cameraParent);
+        viewCam.transform.GetComponent<Camera>().fieldOfView = 60;
         hud.ToggleHUD(true);
         hud.ToggleSpectatorMessage(false);
         fpc.m_IsCrouching = false;
@@ -968,7 +973,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             //totalFallDamage = 40f * (Mathf.Abs(verticalVelocityBeforeLanding) / 20f);
             totalFallDamage = 10f * Mathf.Pow(2, Mathf.Abs(verticalVelocityBeforeLanding) / 10f);
         }
-        //Debug.Log("total fall damage: " + totalFallDamage);
+        // Debug.Log("total fall damage: " + totalFallDamage);
         totalFallDamage = Mathf.Clamp(totalFallDamage, 0f, 100f);
         TakeDamage((int)totalFallDamage, false);
     }
@@ -985,14 +990,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     float CalculateVerticalVelocity() {
-        nextPos = transform.position;
+        //nextPos = transform.position;
         Vector3 totalVelocity = (nextPos - previousPos) / Time.fixedDeltaTime;
-        previousPos = nextPos;
+        //previousPos = nextPos;
         return totalVelocity.y;
     }
 
     void MarkEnemy() {
-        if (!isDefusing) {
+        if (!isDefusing && !gameController.assaultMode) {
             RaycastHit hit;
             if (Physics.Raycast(wepActionScript.fpcShootPoint.position, wepActionScript.fpcShootPoint.transform.forward, out hit, 300f)) {
                 if (hit.transform.tag.Equals("Human")) {

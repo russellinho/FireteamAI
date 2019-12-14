@@ -270,10 +270,10 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	void FixedUpdate() {
 		// Test for detection outline
-		if (Input.GetKeyDown(KeyCode.M)) {
-			isOutlined = !isOutlined;
-			ToggleDetectionOutline(isOutlined);
-		}
+		// if (Input.GetKeyDown(KeyCode.M)) {
+		// 	isOutlined = !isOutlined;
+		// 	ToggleDetectionOutline(isOutlined);
+		// }
 		if (health <= 0) {
 			if (isOutlined) {
 				isOutlined = false;
@@ -294,7 +294,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 		// Handle animations and detection outline independent of frame rate
 		DecideAnimation ();
-		//HandleDetectionOutline();
+		HandleDetectionOutline();
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Disoriented")) {
 			if (PhotonNetwork.IsMasterClient && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
@@ -591,7 +591,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 			}
 
-			if (player != null) {
+			if (player != null && navMesh.isOnNavMesh) {
 				if (firingState == FiringStates.Forward) {
 					navMesh.isStopped = true;
 					navMesh.ResetPath ();
@@ -1432,15 +1432,15 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		// Once the closest cover is found, set the AI to be in cover, pick a cover side opposite of the player and run to it
 		// If there is no target player, just choose a random cover
-		Transform[] coverSpots = nearbyCover [minCoverIndex].gameObject.GetComponentsInChildren<Transform>();
+		CoverSpotScript[] coverSpots = nearbyCover [minCoverIndex].gameObject.GetComponentsInChildren<CoverSpotScript>();
 		if (player == null) {
-			CoverSpotScript spot = coverSpots [Random.Range (1, coverSpots.Length)].GetComponent<CoverSpotScript>();
+			CoverSpotScript spot = coverSpots [Random.Range (0, coverSpots.Length)];
 			pView.RPC ("RpcSetCoverPos", RpcTarget.All, spot.coverId, true, spot.transform.position.x, spot.transform.position.y, spot.transform.position.z);
 		} else {
 			Transform bestFoundCoverSpot = null;
-			for (int i = 1; i < coverSpots.Length; i++) {
+			for (int i = 0; i < coverSpots.Length; i++) {
 				// Don't want to hide in the same place again
-				if (Vector3.Distance (transform.position, coverSpots[i].position) <= 0.5f) {
+				if (Vector3.Distance (transform.position, coverSpots[i].transform.position) <= 0.5f) {
 					continue;
 				}
 				// If a teammate is already taking that cover spot, find another
@@ -1448,12 +1448,12 @@ public class BetaEnemyScript : MonoBehaviour {
 					continue;
 				}
 				// If there's something blocking the player and the enemy, then the enemy wants to hide behind it. This is priority
-				if (Physics.Linecast (coverSpots[i].position, player.transform.position)) {
-					bestFoundCoverSpot = coverSpots [i];
+				if (Physics.Linecast (coverSpots[i].transform.position, player.transform.position)) {
+					bestFoundCoverSpot = coverSpots [i].transform;
 					break;
 				} else {
 					// Else if there's nothing blocking the player and the enemy, then try to rush to cover anyways. Second priority
-					bestFoundCoverSpot = coverSpots[i];
+					bestFoundCoverSpot = coverSpots[i].transform;
 				}
 			}
 
@@ -1731,6 +1731,14 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void HandleDetectionOutline() {
+		if (gameControllerScript.assaultMode) {
+			if (isOutlined) {
+				detectionTimer = 0f;
+				isOutlined = false;
+				ToggleDetectionOutline(false);
+			}
+			return;
+		}
 		if (detectionTimer <= 0f) {
 			if (isOutlined) {
 				isOutlined = false;

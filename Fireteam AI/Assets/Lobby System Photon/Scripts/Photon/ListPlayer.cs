@@ -34,8 +34,8 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		// Map options
 		private int mapIndex = 0;
-		private string[] mapNames = new string[]{"Citadel"};
-		private string[] mapStrings = new string[]{"MapImages/citadel"};
+		private string[] mapNames = new string[]{"Badlands: Act I"};
+		private string[] mapStrings = new string[]{"MapImages/badlands1"};
 		public static Vector3[] mapSpawnPoints = new Vector3[]{ new Vector3(-2f,1f,1f)};
 
 		// Ready status
@@ -129,7 +129,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		void StartGame(string level) {
 			// Photon switch scene from lobby to loading screen to actual game. automaticallySyncScene should load map on clients.
-			if (level.Equals ("Citadel")) {
+			if (level.Equals ("Badlands: Act I")) {
 				PhotonNetwork.LoadLevel ("BetaLevelNetwork");
 			} else {
 				PhotonNetwork.LoadLevel (level);

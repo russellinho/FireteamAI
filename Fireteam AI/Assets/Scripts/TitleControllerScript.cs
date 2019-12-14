@@ -153,8 +153,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void InstantiateLoadingScreen(string mapName) {
 		jukebox.GetComponent<AudioSource> ().Stop ();
-		if (mapName.Equals ("Citadel")) {
-			screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/citadel_load");
+		if (mapName.Equals ("Badlands: Act I")) {
+			screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands1_load");
 		}
         proTipText.text = proTips[Random.Range(0, 2)];
 		mapTitleText.text = mapName;
