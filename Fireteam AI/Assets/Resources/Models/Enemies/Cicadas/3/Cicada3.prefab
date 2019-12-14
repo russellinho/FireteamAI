@@ -6647,6 +6647,7 @@ MonoBehaviour:
   deathBy: 0
   disorientationTime: 0
   alerted: 0
+  gameController: {fileID: 0}
   alertStatus: 0
   alertDisplay: 0
   range: 27
@@ -6787,6 +6788,7 @@ MonoBehaviour:
   myEyelashRenderer: {fileID: 8502661351813044427}
   myBones: {fileID: 8502661351813044445}
   pView: {fileID: 1547763192778326438}
+  detectionOutline: {fileID: 2100000, guid: 86c473c32ea30644e8494426949a59cb, type: 2}
 --- !u!1 &8502661351813044427
 GameObject:
   m_ObjectHideFlags: 0

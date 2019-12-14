@@ -10,6 +10,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	private const float MELEE_DISTANCE = 2.3f;
 	private const float PLAYER_HEIGHT_OFFSET = 1f;
+	private const float DETECTION_OUTLINE_MAX_TIME = 10f;
 
 	// Prefab references
 	public GameObject ammoBoxPickup;
@@ -61,6 +62,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	public GameObject gameController;
 	private GameControllerScript gameControllerScript;
 	private ArrayList enemyAlertMarkers;
+	private bool isOutlined;
 	public int alertStatus;
 	// Responsible for displaying the correct alert symbol. If equals 0, then the alert display is inactive
 	public int alertDisplay;
@@ -102,6 +104,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	private float coverSwitchPositionsTimer = 0f;
 	// Time to change firing positions
 	private float firingModeTimer = 0f;
+	private float detectionTimer = 0f;
 
 	private float wanderStallDelay = -1f;
 	private bool inCover;
@@ -137,6 +140,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		rigid = GetComponent<Rigidbody> ();
 		rigid.freezeRotation = true;
 		isCrouching = false;
+		isOutlined = false;
 
 		coverTimer = 0f;
 		inCover = false;
@@ -265,10 +269,21 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		// Hot fix for death animation not working on client
-		if (!PhotonNetwork.IsMasterClient && health <= 0) {
+		// Test for detection outline
+		if (Input.GetKeyDown(KeyCode.M)) {
+			isOutlined = !isOutlined;
+			ToggleDetectionOutline(isOutlined);
+		}
+		if (health <= 0) {
+			if (isOutlined) {
+				isOutlined = false;
+				detectionTimer = 0f;
+				ToggleDetectionOutline(false);
+			}
 			//removeFromMarkerList();
-			actionState = ActionStates.Dead;
+			if (!PhotonNetwork.IsMasterClient) {
+				actionState = ActionStates.Dead;
+			}
 		}
 
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
@@ -277,8 +292,9 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 			return;
 		}
-		// Handle animations independent of frame rate
+		// Handle animations and detection outline independent of frame rate
 		DecideAnimation ();
+		//HandleDetectionOutline();
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Disoriented")) {
 			if (PhotonNetwork.IsMasterClient && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
@@ -1709,5 +1725,34 @@ public class BetaEnemyScript : MonoBehaviour {
 	// 		Gizmos.color = Color.yellow;
 	// 		Gizmos.DrawSphere(headTransform.position, 8f);
 	// }
+	
+	void ToggleDetectionOutline(bool b) {
+		modeler.ToggleDetectionOutline(b);
+	}
+
+	void HandleDetectionOutline() {
+		if (detectionTimer <= 0f) {
+			if (isOutlined) {
+				isOutlined = false;
+				ToggleDetectionOutline(false);
+			}
+		} else {
+			if (!isOutlined) {
+				isOutlined = true;
+				ToggleDetectionOutline(true);
+			}
+			detectionTimer -= Time.deltaTime;
+		}
+	}
+
+	// Use when a player marks an enemy in stealth mode
+	public void MarkEnemyOutline() {
+		pView.RPC("RpcMarkEnemyOutline", RpcTarget.All);
+	}
+
+	[PunRPC]
+	void RpcMarkEnemyOutline() {
+		detectionTimer = DETECTION_OUTLINE_MAX_TIME;
+	}
 
 }

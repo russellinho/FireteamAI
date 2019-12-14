@@ -41,6 +41,7 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
 
     public GameObject myBones;
     public PhotonView pView;
+    public Material detectionOutline;
 
     public override void OnEnable() {
         if (PhotonNetwork.IsMasterClient) {
@@ -435,5 +436,25 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
             myBeardRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
         }
     }
+    
+    public void ToggleDetectionOutline(bool b) {
+        if (b) {
+            equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().materials[1] = detectionOutline;
+            if (equippedHeadgearRef != null) {
+                equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().materials[1] = detectionOutline;
+            }
+            equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().materials[1] = detectionOutline;
+            equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().materials[1] = detectionOutline;
+            equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().materials[1] = detectionOutline;
+        } else {
+            equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().materials[1] = null;
+            if (equippedHeadgearRef != null) {
+                equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().materials[1] = null;
+            }
+            equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().materials[1] = null;
+            equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().materials[1] = null;
+            equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().materials[1] = null;
+        }
+	}
 
 }

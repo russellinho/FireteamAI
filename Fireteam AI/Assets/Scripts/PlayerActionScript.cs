@@ -277,7 +277,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (fpc.enabled && fpc.canMove && !hud.container.pauseMenuGUI.activeInHierarchy)
         {
             HandleCrouch();
+            if (Input.GetKeyDown(KeyCode.F)) {
+                MarkEnemy();
+            }
         }
+        
         DetermineEscaped();
         RespawnRoutine();
 
@@ -477,7 +481,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             }
 
             if (health > 0 && !hud.container.pauseMenuGUI.activeInHierarchy) {
-                if (Input.GetKey(KeyCode.E)) {
+                if (Input.GetKey(KeyCode.F)) {
                     fpc.canMove = false;
                     isDefusing = true;
                     hud.container.hintText.enabled = false;
@@ -985,6 +989,17 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         Vector3 totalVelocity = (nextPos - previousPos) / Time.fixedDeltaTime;
         previousPos = nextPos;
         return totalVelocity.y;
+    }
+
+    void MarkEnemy() {
+        if (!isDefusing) {
+            RaycastHit hit;
+            if (Physics.Raycast(wepActionScript.fpcShootPoint.position, wepActionScript.fpcShootPoint.transform.forward, out hit, 300f)) {
+                if (hit.transform.tag.Equals("Human")) {
+                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().MarkEnemyOutline();
+                }
+            }
+        }
     }
 
 }

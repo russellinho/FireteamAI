@@ -142,7 +142,7 @@ public class AudioControllerScript : MonoBehaviour {
 	IEnumerator RestartBgmTimer(float secs) {
 		yield return new WaitForSeconds (secs);
 		bgm.Stop ();
-		bgm.time = 1.15f;
+		bgm.time = 1.09f;
 		bgm.Play ();
 		StartCoroutine (RestartBgmTimer(assaultMusic.length - bgm.time));
 	}
