@@ -235,6 +235,19 @@ public class PlayerData : MonoBehaviour
         newModInfo.equippedSuppressor = equippedSuppressor;
         bf.Serialize(file, newModInfo);
         file.Close();
+        WeaponScript myWeps = bodyReference.GetComponent<WeaponScript>();
+        // Set mod data that was just saved
+        if (weaponName == myWeps.equippedPrimaryWeapon)
+        {
+            Debug.Log("sup m9s");
+            PlayerData.playerdata.primaryModInfo = newModInfo;
+        } else if (weaponName == myWeps.equippedSecondaryWeapon)
+        {
+            PlayerData.playerdata.secondaryModInfo = newModInfo;
+        } else if (weaponName == myWeps.equippedSupportWeapon)
+        {
+            PlayerData.playerdata.supportModInfo = newModInfo;
+        }
     }
 
     public ModInfo LoadModDataForWeapon(string weaponName) {

@@ -1019,7 +1019,7 @@ public class WeaponActionScript : MonoBehaviour
 
     [PunRPC]
     void RpcCockGrenade(bool cocking) {
-        GetComponentInChildren<ThrowableScript>().PlayPinSound();
+        //GetComponentInChildren<ThrowableScript>().PlayPinSound();
         animator.SetBool("isCockingGrenade", cocking);
     }
 
