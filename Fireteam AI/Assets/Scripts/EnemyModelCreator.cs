@@ -26,11 +26,6 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     public GameObject equippedTopRef;
     public GameObject equippedBottomRef;
     public GameObject equippedFootwearRef;
-    public SkinnedMeshRenderer equippedSkinRenderer;
-    public SkinnedMeshRenderer equippedHeadgearRenderer;
-    public SkinnedMeshRenderer equippedTopRenderer;
-    public SkinnedMeshRenderer equippedBottomRenderer;
-    public SkinnedMeshRenderer equippedFootwearRenderer;
 
     public GameObject myHeadgearRenderer;
     public GameObject myFacewearRenderer;
@@ -226,7 +221,6 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         m.target = myTopRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh();
-        equippedTopRenderer = equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>();
     }
 
     void EquipBottom(string prefabPath) {
@@ -236,7 +230,6 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         m.target = myBottomRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh();
-        equippedBottomRenderer = equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>();
     }
 
     void EquipEyewear(string prefabPath) {
@@ -264,7 +257,6 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         m.target = myFootwearRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh();
-        equippedFootwearRenderer = equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>();
     }
 
     void EquipSkin(string prefabPath) {
@@ -274,7 +266,6 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         m.target = mySkinRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh();
-        equippedSkinRenderer = equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>();
     }
 
     void EquipHeadgear(string prefabPath) {
@@ -284,14 +275,12 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         m.target = myHeadgearRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh();
-        equippedHeadgearRenderer = equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>();
     }
 
     void UnequipTop() {
         if (equippedTopRef != null) {
             Destroy(equippedTopRef);
             equippedTopRef = null;
-            equippedTopRenderer = null;
         }
     }
 
@@ -299,7 +288,6 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         if (equippedBottomRef != null) {
             Destroy(equippedBottomRef);
             equippedBottomRef = null;
-            equippedBottomRenderer = null;
         }
     }
 
@@ -321,7 +309,6 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         if (equippedFootwearRef != null) {
             Destroy(equippedFootwearRef);
             equippedFootwearRef = null;
-            equippedBottomRenderer = null;
         }
     }
 
@@ -329,7 +316,6 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         if (equippedSkinRef != null) {
             Destroy(equippedSkinRef);
             equippedSkinRef = null;
-            equippedSkinRenderer = null;
         }
     }
 
@@ -337,7 +323,6 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         if (equippedHeadgearRef != null) {
             Destroy(equippedHeadgearRef);
             equippedHeadgearRef = null;
-            equippedHeadgearRenderer = null;
         }
     }
 
@@ -453,38 +438,23 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     }
     
     public void ToggleDetectionOutline(bool b) {
-        Material[] skinRendererMatsRef = null;
-        Material[] headgearRendererMatsRef = null;
-        Material[] topRendererMatsRef = null;
-        Material[] bottomRendererMatsRef = null;
-        Material[] footwearRendererMatsRef = null;
-        if (equippedSkinRenderer == null) {
-            skinRendererMatsRef = equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().materials;
-        } else {
-            skinRendererMatsRef = equippedSkinRenderer.materials;
-        }
+        SkinnedMeshRenderer equippedSkinRenderer = equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>();
+        SkinnedMeshRenderer equippedHeadgearRenderer = null;
+        SkinnedMeshRenderer equippedTopRenderer = equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>();
+        SkinnedMeshRenderer equippedBottomRenderer = equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>();
+        SkinnedMeshRenderer equippedFootwearRenderer = equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>();
         if (equippedHeadgearRef != null) {
-            if (equippedHeadgearRenderer == null) {
-                headgearRendererMatsRef = equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().materials;
-            } else {
-                headgearRendererMatsRef = equippedHeadgearRenderer.materials;
-            }
+            equippedHeadgearRenderer = equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>();
         }
-        if (equippedTopRenderer == null) {
-            topRendererMatsRef = equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().materials;
-        } else {
-            topRendererMatsRef = equippedTopRenderer.materials;
+
+        Material[] skinRendererMatsRef = equippedSkinRenderer.materials;
+        Material[] headgearRendererMatsRef = null;
+        if (equippedHeadgearRef != null) {
+            headgearRendererMatsRef = equippedHeadgearRenderer.materials;
         }
-        if (equippedBottomRenderer == null) {
-            bottomRendererMatsRef = equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().materials;
-        } else {
-            bottomRendererMatsRef = equippedBottomRenderer.materials;
-        }
-        if (equippedFootwearRenderer == null) {
-            footwearRendererMatsRef = equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().materials;
-        } else {
-            footwearRendererMatsRef = equippedFootwearRenderer.materials;
-        }
+        Material[] topRendererMatsRef = equippedTopRenderer.materials;
+        Material[] bottomRendererMatsRef = equippedBottomRenderer.materials;
+        Material[] footwearRendererMatsRef = equippedFootwearRenderer.materials;
 
         if (b) {
             skinRendererMatsRef[1] = detectionOutline;
