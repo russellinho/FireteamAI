@@ -1670,7 +1670,9 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		if (enemyType == EnemyType.Patrol) {
 			navMesh.enabled = true;
+			navMeshObstacle.enabled = false;
 		} else {
+			navMesh.enabled = false;
 			navMeshObstacle.enabled = true;
 		}
 	}
