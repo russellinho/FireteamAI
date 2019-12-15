@@ -156,6 +156,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         itemSpeedModifier = 1f;
         originalSpeed = playerScript.speed;
         totalSpeedBoost = originalSpeed;
+
+        StartCoroutine(SpawnInvincibilityRoutine());
     }
 
     void Update()
@@ -184,9 +186,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         //     BeginRespawn ();
         // }
         // Physics sky drop test hack
-        if (Input.GetKeyDown(KeyCode.O)) {
-            transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
-        }
+        // if (Input.GetKeyDown(KeyCode.O)) {
+        //     transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
+        // }
 
          if (enterSpectatorModeTimer > 0f)
          {
@@ -796,6 +798,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         fpc.m_MouseLook.Init(fpc.charTransform, fpc.spineTransform, fpc.fpcTransformSpine, fpc.fpcTransformBody);
         LeaveSpectatorMode();
         //weaponScript.DrawWeapon(1);
+        StartCoroutine(SpawnInvincibilityRoutine());
     }
 
     [PunRPC]
@@ -969,9 +972,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void DetermineFallDamage() {
         float totalFallDamage = 0f;
-        if (verticalVelocityBeforeLanding <= -40f) {
+        if (verticalVelocityBeforeLanding <= -35f) {
             //totalFallDamage = 40f * (Mathf.Abs(verticalVelocityBeforeLanding) / 20f);
-            totalFallDamage = 10f * Mathf.Pow(2, Mathf.Abs(verticalVelocityBeforeLanding) / 20f);
+            totalFallDamage = 10f * Mathf.Pow(2, Mathf.Abs(verticalVelocityBeforeLanding) / 22f);
         }
         // Debug.Log("total fall damage: " + totalFallDamage);
         totalFallDamage = Mathf.Clamp(totalFallDamage, 0f, 100f);
@@ -1007,6 +1010,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             }
         }
+    }
+
+    IEnumerator SpawnInvincibilityRoutine() {
+        godMode = true;
+        yield return new WaitForSeconds(3f);
+        godMode = false;
     }
 
 }

@@ -453,14 +453,38 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     }
     
     public void ToggleDetectionOutline(bool b) {
-        Material[] skinRendererMatsRef = equippedSkinRenderer.materials;
+        Material[] skinRendererMatsRef = null;
         Material[] headgearRendererMatsRef = null;
-        if (equippedHeadgearRef != null) {
-            headgearRendererMatsRef = equippedHeadgearRenderer.materials;
+        Material[] topRendererMatsRef = null;
+        Material[] bottomRendererMatsRef = null;
+        Material[] footwearRendererMatsRef = null;
+        if (equippedSkinRenderer == null) {
+            skinRendererMatsRef = equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().materials;
+        } else {
+            skinRendererMatsRef = equippedSkinRenderer.materials;
         }
-        Material[] topRendererMatsRef = equippedTopRenderer.materials;
-        Material[] bottomRendererMatsRef = equippedBottomRenderer.materials;
-        Material[] footwearRendererMatsRef = equippedFootwearRenderer.materials;
+        if (equippedHeadgearRef != null) {
+            if (equippedHeadgearRenderer == null) {
+                headgearRendererMatsRef = equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().materials;
+            } else {
+                headgearRendererMatsRef = equippedHeadgearRenderer.materials;
+            }
+        }
+        if (equippedTopRenderer == null) {
+            topRendererMatsRef = equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().materials;
+        } else {
+            topRendererMatsRef = equippedTopRenderer.materials;
+        }
+        if (equippedBottomRenderer == null) {
+            bottomRendererMatsRef = equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().materials;
+        } else {
+            bottomRendererMatsRef = equippedBottomRenderer.materials;
+        }
+        if (equippedFootwearRenderer == null) {
+            footwearRendererMatsRef = equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().materials;
+        } else {
+            footwearRendererMatsRef = equippedFootwearRenderer.materials;
+        }
 
         if (b) {
             skinRendererMatsRef[1] = detectionOutline;
