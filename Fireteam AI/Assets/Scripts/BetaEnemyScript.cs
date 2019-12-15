@@ -1681,6 +1681,12 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	void HandleEnemyAlerts() {
 		if (health <= 0 || gameControllerScript.assaultMode) {
+            if (alertStatus != 0)
+            {
+                alertStatus = 0;
+                removeFromMarkerList();
+                AddToMarkerRemovalQueue();
+            }
 			return;
 		}
 
