@@ -974,7 +974,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         //Debug.Log("Vert velocity was: " + verticalVelocityBeforeLanding);
         if (verticalVelocityBeforeLanding <= -25f) {
             //totalFallDamage = 40f * (Mathf.Abs(verticalVelocityBeforeLanding) / 20f);
-            totalFallDamage = 10f * Mathf.Pow(2, Mathf.Abs(verticalVelocityBeforeLanding) / 15f);
+            totalFallDamage = 10f * Mathf.Pow(2, Mathf.Abs(verticalVelocityBeforeLanding) / 14f);
         }
         // Debug.Log("total fall damage: " + totalFallDamage);
         totalFallDamage = Mathf.Clamp(totalFallDamage, 0f, 100f);
