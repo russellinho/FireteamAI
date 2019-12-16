@@ -463,7 +463,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					//pView.RPC ("RpcSetWanderStallDelay", RpcTarget.Others, wanderStallDelay);
 				} else {
 					// Else, check if the enemy has reached its destination
-					if (navMeshReachedDestination (0.3f)) {
+					if (navMeshReachedDestination (2f)) {
 						pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 					}
 				}
@@ -526,7 +526,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				pView.RPC ("RpcSetCoverPos", RpcTarget.All, coverPos.GetComponent<CoverSpotScript>().coverId, false, 0f, 0f, 0f);
 			} else {
 				// If the enemy has finally reached cover, then he will get into cover mode
-				if (navMeshReachedDestination(0f)) {
+				if (navMeshReachedDestination(1.5f)) {
 					// Done
 					pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true);
 					if (actionState != ActionStates.InCover) {
@@ -1044,7 +1044,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 				// If the enemy was in pursuit of a player but has lost track of him, then go back to wandering
 				if (actionState == ActionStates.Pursue && Vector3.Equals(lastSeenPlayerPos, Vector3.negativeInfinity)) {
-					if (navMeshReachedDestination(0.5f)) {
+					if (navMeshReachedDestination(2f)) {
 						pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander);
 					}
 				}

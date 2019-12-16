@@ -741,6 +741,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             // Then, actually start the respawn process
             respawnTimer = 5f;
             isRespawning = true;
+        } else {
+            health = 100;
         }
     }
 
