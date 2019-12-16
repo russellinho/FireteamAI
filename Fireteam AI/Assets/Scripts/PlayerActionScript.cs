@@ -77,8 +77,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public Vector3 hitLocation;
     public Transform headTransform;
     public Transform cameraParent;
-    private Vector3 previousPos;
-    private Vector3 nextPos;
 
     // Mission references
     private GameObject currentBomb;
@@ -114,8 +112,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         increaseDetectionDelay = 0f;
         detectionResetUnderway = false;
         sprintTime = playerScript.stamina;
-        previousPos = transform.position;
-        nextPos = transform.position;
 
          currentBombIndex = 0;
          bombIterator = 0;
@@ -177,18 +173,15 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
 
-        previousPos = nextPos;
-        nextPos = transform.position;
-
         updatePlayerSpeed();
         // Instant respawn hack
         // if (Input.GetKeyDown (KeyCode.P)) {
         //     BeginRespawn ();
         // }
         // Physics sky drop test hack
-        // if (Input.GetKeyDown(KeyCode.O)) {
-        //     transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
-        // }
+        if (Input.GetKeyDown(KeyCode.O)) {
+            transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
+        }
 
          if (enterSpectatorModeTimer > 0f)
          {
@@ -978,9 +971,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
         float totalFallDamage = 0f;
-        if (verticalVelocityBeforeLanding <= -35f) {
+        //Debug.Log("Vert velocity was: " + verticalVelocityBeforeLanding);
+        if (verticalVelocityBeforeLanding <= -25f) {
             //totalFallDamage = 40f * (Mathf.Abs(verticalVelocityBeforeLanding) / 20f);
-            totalFallDamage = 10f * Mathf.Pow(2, Mathf.Abs(verticalVelocityBeforeLanding) / 22f);
+            totalFallDamage = 10f * Mathf.Pow(2, Mathf.Abs(verticalVelocityBeforeLanding) / 15f);
         }
         // Debug.Log("total fall damage: " + totalFallDamage);
         totalFallDamage = Mathf.Clamp(totalFallDamage, 0f, 100f);
@@ -988,24 +982,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     public void UpdateVerticalVelocityBeforeLanding() {
-        float currentVerticalVelocity = CalculateVerticalVelocity();
         //Debug.Log("current vert velocity: " + currentVerticalVelocity + ",vert velocity before land: " + verticalVelocityBeforeLanding);
-        verticalVelocityBeforeLanding = currentVerticalVelocity < verticalVelocityBeforeLanding ? currentVerticalVelocity : verticalVelocityBeforeLanding;
+        verticalVelocityBeforeLanding = charController.velocity.y;
         //Debug.Log("v: " + verticalVelocityBeforeLanding);
     }
 
     public void ResetVerticalVelocityBeforeLanding() {
         verticalVelocityBeforeLanding = 0f;
-    }
-
-    float CalculateVerticalVelocity() {
-        //nextPos = transform.position;
-        Vector3 totalVelocity = (nextPos - previousPos) / Time.fixedDeltaTime;
-        //Debug.Log("Time passed: " + Time.fixedDeltaTime);
-        // Debug.Log("prev pos: " + previousPos.y);
-        // Debug.Log("next pos: " + nextPos.y);
-        //previousPos = nextPos;
-        return totalVelocity.y;
     }
 
     void MarkEnemy() {
