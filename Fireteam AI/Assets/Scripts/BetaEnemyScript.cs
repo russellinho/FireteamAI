@@ -788,7 +788,13 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
 		int ignoreLayers = (1 << 9) & (1 << 11) & (1 << 12) & (1 << 13) & (1 << 14) & (1 << 15);
 		ignoreLayers = ~ignoreLayers;
-		return Physics.Linecast(a, b, ignoreLayers);
+		// Debug.Log("obstruction: " + Physics.Linecast(a, b, ignoreLayers));
+		RaycastHit hitInfo;
+		bool t = Physics.Linecast(a, b, out hitInfo, ignoreLayers);
+		if (t) {
+			t = (hitInfo.transform.tag == "Human") ? false : true;
+		}
+		return t;
 	}
 
 	void KilledByGrenade(int killedByViewId) {
@@ -814,7 +820,6 @@ public class BetaEnemyScript : MonoBehaviour {
 				// Scale damage done to enemy by the distance from the explosion
 				WeaponStats grenadeStats = other.gameObject.GetComponent<WeaponStats>();
 				int damageReceived = (int)(grenadeStats.damage * scale);
-
 				// Deal damage to the enemy
 				TakeDamage(damageReceived);
                 // Validate that this enemy has already been affected
