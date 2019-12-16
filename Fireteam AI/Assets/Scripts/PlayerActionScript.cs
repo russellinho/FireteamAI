@@ -814,6 +814,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (fpc.enabled)
         {
             EnterSpectatorMode();
+            equipmentScript.ToggleFirstPersonBody(false);
         }
         if (thisSpectatorCam != null) {
             thisSpectatorCam.GetComponent<SpectatorScript>().GameOverCam();

@@ -93,6 +93,10 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
         if (currentMap == 1)
         {
+			// Auto end game for testing
+			// if (Input.GetKeyDown(KeyCode.B)) {
+			// 	pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
+			// }
 			if (bombsRemaining == 0) {
 				escapeAvailable = true;
 			}
