@@ -42,12 +42,14 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     public GameObject myBones;
     public PhotonView pView;
     public Material detectionOutline;
+    private bool modelCreated;
 
     public override void OnEnable() {
         if (PhotonNetwork.IsMasterClient) {
             EquipRandomOutfitForEnemy();
+            modelCreated = true;
         } else {
-            PingServerForEquipment();
+            modelCreated = false;
         }
     }
 
@@ -57,6 +59,14 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     //         EquipRandomOutfitForEnemy();
     //     }
     // }
+
+    void Update() {
+        if (!modelCreated) {
+            if (!PhotonNetwork.IsMasterClient) {
+                PingServerForEquipment();
+            }
+        }
+    }
 
     void EquipRandomOutfitForEnemy() {
         if (enemyName.Equals("Cicadas")) {

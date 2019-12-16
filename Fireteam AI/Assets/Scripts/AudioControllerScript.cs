@@ -55,12 +55,13 @@ public class AudioControllerScript : MonoBehaviour {
 		fxSound2 = fxRef.GetComponents<AudioSource>() [1];
 		pView = GetComponent<PhotonView> ();
 		if (pView.IsMine) {
-			fxSound1 = fxRef.GetComponents<AudioSource>() [0];
-			fxSound3 = fxRef.GetComponents<AudioSource>() [2];
-			fxSound4 = fxRef.GetComponents<AudioSource>() [3];
-			fxSound5 = fxRef.GetComponents<AudioSource> () [4];
-			fxSound6 = fxRef.GetComponents<AudioSource> () [5];
-			fxSound7 = fxRef.GetComponents<AudioSource>()[6];
+			AudioSource[] fxRefs = fxRef.GetComponents<AudioSource>();
+			fxSound1 = fxRefs [0];
+			fxSound3 = fxRefs [2];
+			fxSound4 = fxRefs [3];
+			fxSound5 = fxRefs [4];
+			fxSound6 = fxRefs [5];
+			fxSound7 = fxRefs [6];
 			PlayMissionStartSound ();
 		}
 

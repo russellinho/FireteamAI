@@ -23,22 +23,22 @@ public class BetaEnemyScript : MonoBehaviour {
 	public GameObject bloodEffectHeadshot;
 
 	// Body/Component references
-	private AudioSource audioSource;
-	private AudioSource gunAudio;
-	private PhotonView pView;
+	public AudioSource audioSource;
+	public AudioSource gunAudio;
+	public PhotonView pView;
 	public Transform headTransform;
 	public Transform shootPoint;
 	public LineRenderer sniperTracer;
-	private Animator animator;
-	private Rigidbody rigid;
-	private SpriteRenderer marker;
+	public Animator animator;
+	public Rigidbody rigid;
+	public SpriteRenderer marker;
 	public EnemyModelCreator modeler;
 	public NavMeshAgent navMesh;
 	public NavMeshObstacle navMeshObstacle;
-	private CapsuleCollider myCollider;
-	private CapsuleCollider headCollider;
-	private MeshRenderer gunRef;
-	private BoxCollider meleeTrigger;
+	public CapsuleCollider myCollider;
+	public CapsuleCollider headCollider;
+	public MeshRenderer gunRef;
+	public BoxCollider meleeTrigger;
 	private Vector3 prevNavDestination;
 	private bool prevWasStopped;
 
@@ -60,7 +60,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	private bool suspicious = false;
 	private bool wasMasterClient;
 	public GameObject gameController;
-	private GameControllerScript gameControllerScript;
+	public GameControllerScript gameControllerScript;
 	private ArrayList enemyAlertMarkers;
 	private bool isOutlined;
 	public int alertStatus;
@@ -130,31 +130,20 @@ public class BetaEnemyScript : MonoBehaviour {
 		player = null;
 		spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 		spawnRot = new Vector3 (transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
-		animator = GetComponent<Animator> ();
 		health = 100;
 		disorientationTime = 0f;
 		currentBullets = bulletsPerMag;
-		audioSource = GetComponent<AudioSource> ();
 		audioSource.maxDistance = 100f;
-		gunAudio = GetComponentsInChildren<AudioSource> () [1];
-		rigid = GetComponent<Rigidbody> ();
 		rigid.freezeRotation = true;
 		isCrouching = false;
 		isOutlined = false;
 
 		coverTimer = 0f;
 		inCover = false;
-		pView = GetComponent<PhotonView> ();
 
-		myCollider = GetComponent<CapsuleCollider> ();
-		headCollider = GetComponentsInChildren<CapsuleCollider> () [1];
 		originalColliderHeight = myCollider.height;
 		originalColliderRadius = myCollider.radius;
 		originalColliderCenter = new Vector3 (myCollider.center.x, myCollider.center.y, myCollider.center.z);
-		marker = GetComponentInChildren<SpriteRenderer> ();
-		gunRef = GetComponentInChildren<MeshRenderer> ();
-		meleeTrigger = GetComponent<BoxCollider> ();
-		gameControllerScript = gameController.GetComponent<GameControllerScript>();
 		gameControllerScript.enemyList.Add(pView.ViewID, gameObject);
 		enemyAlertMarkers = gameControllerScript.enemyAlertMarkers;
 
@@ -163,7 +152,6 @@ public class BetaEnemyScript : MonoBehaviour {
 			accuracyOffset = 0.5f;
 			fireRate = 0.4f;
 			damage = 20f;
-			shootSound = (AudioClip)Resources.Load ("Gun Sounds/M16A3");
 			gunAudio.minDistance = 9f;
 			aggression = 7;
 		} else {
@@ -172,14 +160,12 @@ public class BetaEnemyScript : MonoBehaviour {
 				accuracyOffset = 1.5f;
 				fireRate = 20f;
 				damage = 35f;
-				shootSound = (AudioClip)Resources.Load ("Gun Sounds/L96A1");
 				gunAudio.minDistance = 18f;
 			} else {
 				range = 27f;
 				accuracyOffset = 0.5f;
 				fireRate = 0.4f;
 				damage = 20f;
-				shootSound = (AudioClip)Resources.Load ("Gun Sounds/M16A3");
 				gunAudio.minDistance = 9f;
 			}
 		}
