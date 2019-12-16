@@ -681,7 +681,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	public void PlayGruntSound() {
 		if (gruntSounds.Length == 0) return;
 		int r = Random.Range(0, gruntSounds.Length);
-		audioSource.clip = voiceClips [r];
+		audioSource.clip = gruntSounds [r];
 		audioSource.Play ();
 	}
 

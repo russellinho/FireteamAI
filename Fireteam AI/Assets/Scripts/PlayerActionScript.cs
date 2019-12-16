@@ -973,6 +973,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     public void DetermineFallDamage() {
+        if (godMode) {
+            return;
+        }
         float totalFallDamage = 0f;
         if (verticalVelocityBeforeLanding <= -35f) {
             //totalFallDamage = 40f * (Mathf.Abs(verticalVelocityBeforeLanding) / 20f);
@@ -997,6 +1000,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     float CalculateVerticalVelocity() {
         //nextPos = transform.position;
         Vector3 totalVelocity = (nextPos - previousPos) / Time.fixedDeltaTime;
+        //Debug.Log("Time passed: " + Time.fixedDeltaTime);
         // Debug.Log("prev pos: " + previousPos.y);
         // Debug.Log("next pos: " + nextPos.y);
         //previousPos = nextPos;
