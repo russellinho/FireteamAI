@@ -43,6 +43,7 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     public PhotonView pView;
     public Material detectionOutline;
     private bool modelCreated;
+    private static bool createModelSemaphore;
 
     public override void OnEnable() {
         if (PhotonNetwork.IsMasterClient) {
@@ -61,9 +62,12 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     // }
 
     void Update() {
-        if (!modelCreated) {
-            if (!PhotonNetwork.IsMasterClient) {
+        if (!modelCreated && !PhotonNetwork.IsMasterClient) {
+            if (!createModelSemaphore) {
+                createModelSemaphore = true;
                 PingServerForEquipment();
+                createModelSemaphore = false;
+                modelCreated = true;
             }
         }
     }
@@ -448,6 +452,9 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     }
     
     public void ToggleDetectionOutline(bool b) {
+        if (!modelCreated) {
+            return;
+        }
         SkinnedMeshRenderer equippedSkinRenderer = equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>();
         SkinnedMeshRenderer equippedHeadgearRenderer = null;
         SkinnedMeshRenderer equippedTopRenderer = equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>();
