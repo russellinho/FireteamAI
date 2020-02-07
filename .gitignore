@@ -34,3 +34,10 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+#Custom
+ProjectSettings/
+Fireteam AI/Assets/FirebaseContainer/
+Fireteam AI/Assets/Firebase*
+Fireteam AI/Assets/StreamingAssets/
+*StreamingAssets.meta
