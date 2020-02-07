@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "48394739890",
+    "firebase_url": "https://koobando-web.firebaseio.com",
+    "project_id": "koobando-web",
+    "storage_bucket": "koobando-web.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:48394739890:android:cb96c8df004953c451e9ab",
+        "android_client_info": {
+          "package_name": "com.KoobandoInteractive.FireteamAI"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "48394739890-0pbihuusjb9d45p62h6ehm33cpmmnk8s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjjPridiV7j2BhhgfdSS_96sXB8a-dlYE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "48394739890-0pbihuusjb9d45p62h6ehm33cpmmnk8s.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "48394739890-nvlnbttp5hlq6oms0i0mc84eq95lmohb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.KoobandoInteractive.FireteamAI"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
