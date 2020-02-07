@@ -1140,6 +1140,9 @@ MonoBehaviour:
   titleLogoImg: {fileID: 1658138936}
   popupAlert: {fileID: 761464501}
   popupAlertTxt: {fileID: 761464500}
+  emailField: {fileID: 1435054291}
+  passwordField: {fileID: 1751892916}
+  loginBtn: {fileID: 1474203895}
 --- !u!1 &1435054289
 GameObject:
   m_ObjectHideFlags: 0
@@ -1222,14 +1225,14 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1435054292}
   m_TextComponent: {fileID: 840387020}
   m_Placeholder: {fileID: 0}
-  m_ContentType: 0
+  m_ContentType: 6
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 7
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 0
-  m_CharacterLimit: 0
+  m_CharacterValidation: 5
+  m_CharacterLimit: 50
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
@@ -1432,7 +1435,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1474203896}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1363362850}
+        m_MethodName: OnLoginClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1474203896
@@ -1641,14 +1655,14 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1751892917}
   m_TextComponent: {fileID: 342682538}
   m_Placeholder: {fileID: 0}
-  m_ContentType: 0
-  m_InputType: 0
+  m_ContentType: 7
+  m_InputType: 2
   m_AsteriskChar: 42
   m_KeyboardType: 0
   m_LineType: 0
   m_HideMobileInput: 0
   m_CharacterValidation: 0
-  m_CharacterLimit: 0
+  m_CharacterLimit: 50
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
