@@ -68,5 +68,13 @@ public class AuthScript : MonoBehaviour
             QueuePopup("User signed in successfully: {" + newUser.DisplayName + "} ({" + newUser.UserId + "})");
         });
     }
+
+    public void OnRegisterClick() {
+        Application.OpenURL("https://www.koobando.com/signup");
+    }
+
+    public void OnForgotPasswordClick() {
+        Application.OpenURL("https://www.koobando.com/forgotPassword");
+    }
     
 }
