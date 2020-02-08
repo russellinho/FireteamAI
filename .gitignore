@@ -36,8 +36,15 @@ sysinfo.txt
 *.unitypackage
 
 #Custom
-ProjectSettings/
-Fireteam AI/Assets/FirebaseContainer/
-Fireteam AI/Assets/Firebase*
+Fireteam AI/Assets/Plugins/
+*Plugins.meta
+Fireteam AI/Assets/PlayServicesResolver/
+*PlayServicesResolver.meta
+Fireteam AI/Assets/Parse/
+*Parse.meta
+Fireteam AI/Assets/Editor Default Resources/
+*Editor Default Resources.meta
+Fireteam AI/Assets/Firebase/
+*Firebase.meta
 Fireteam AI/Assets/StreamingAssets/
 *StreamingAssets.meta

@@ -65,8 +65,17 @@ public class AuthScript : MonoBehaviour
             }
 
             Firebase.Auth.FirebaseUser newUser = task.Result;
-            QueuePopup("User signed in successfully: {" + newUser.DisplayName + "} ({" + newUser.UserId + "})");
+            //QueuePopup("User signed in successfully: {" + newUser.DisplayName + "} ({" + newUser.UserId + "})");
+            // Query DB to see if the user is set up yet. If not, go to setup. Else, go to title page.
         });
+    }
+
+    public void ProceedToTitle() {
+
+    }
+
+    public void ProceedToSetup() {
+
     }
 
     public void OnRegisterClick() {
