@@ -39,12 +39,19 @@ public class WeaponScript : MonoBehaviour
     public PhotonView pView;
 
     private bool onTitle;
+    private bool onSetup;
+    public char setupGender;
 
     void Awake() {
         // If the photon view is null, then the player is not in-game
         if (!equipmentScript.isFirstPerson()) {
             if (pView == null) {
-                onTitle = true;
+                if (SceneManager.GetActiveScene().name.Equals("Title")) {
+                    onTitle = true;
+                } else {
+                    onTitle = false;
+                    onSetup = true;
+                }
                 animator.SetBool("onTitle", true);
             } else {
                 onTitle = false;
@@ -67,6 +74,13 @@ public class WeaponScript : MonoBehaviour
             ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
             equipmentScript = GetComponent<EquipmentScript>();
             weaponReady = false;
+        } else if (onSetup) {
+            drawnWeaponReference = weaponHolder.LoadWeapon("Models/Weapons/Primary/Assault Rifles/M4A1");
+            if (setupGender == 'M') {
+                SetTitleWeaponPositions(drawnWeaponReference.GetComponent<WeaponStats>().titleHandPositionsMale);
+            } else {
+                SetTitleWeaponPositions(drawnWeaponReference.GetComponent<WeaponStats>().titleHandPositionsFemale);
+            }
         } else {
             //EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
             //EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);

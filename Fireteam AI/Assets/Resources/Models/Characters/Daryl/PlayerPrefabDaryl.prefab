@@ -46,6 +46,9 @@ MonoBehaviour:
   handle: {fileID: 0}
   weapon: {fileID: 0}
   leftShoulder: {fileID: 3999816085970153230}
+  leftHand: {fileID: 0}
+  rightHand: {fileID: 0}
+  fpc: {fileID: 0}
 --- !u!1 &3204773140212058034
 GameObject:
   m_ObjectHideFlags: 0
@@ -102,6 +105,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -207,6 +211,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1076,6 +1081,8 @@ MonoBehaviour:
   ts: {fileID: 0}
   playerScript: {fileID: 3007310823573728124}
   tws: {fileID: 4803882290888310498}
+  fullBodyRef: {fileID: 0}
+  firstPersonRef: {fileID: 0}
   equippedCharacter: Daryl
   equippedHeadgear: 
   equippedFacewear: 
@@ -1084,6 +1091,7 @@ MonoBehaviour:
   equippedFootwear: 
   equippedArmor: 
   equippedSkin: 0
+  gender: 0
   equippedSkinRef: {fileID: 0}
   equippedHeadgearRef: {fileID: 0}
   equippedFacewearRef: {fileID: 0}
@@ -1092,6 +1100,8 @@ MonoBehaviour:
   equippedFootwearRef: {fileID: 0}
   equippedArmorTopRef: {fileID: 0}
   equippedArmorBottomRef: {fileID: 0}
+  equippedFpcSkinRef: {fileID: 0}
+  equippedFpcTopRef: {fileID: 0}
   myHeadgearRenderer: {fileID: 3204773140212058034}
   myFacewearRenderer: {fileID: 5086548052702941819}
   myTopRenderer: {fileID: 3999816085970055934}
@@ -1104,7 +1114,17 @@ MonoBehaviour:
   myEyesRenderer: {fileID: 3999816085970056044}
   myEyelashRenderer: {fileID: 3999816085970056046}
   myHairRenderer: {fileID: 3907844673449295170}
+  myFpcSkinRenderer: {fileID: 0}
+  myFpcTopRenderer: {fileID: 0}
+  myFpcGlovesRenderer: {fileID: 0}
+  renderHair: 0
   myBones: {fileID: 3999816085970056036}
+  myFpcBones: {fileID: 0}
+  pView: {fileID: 0}
+  topPrefabSetupPath: Models/Clothing/Lucas/Tops/Standard Fatigues/lucasstandardfatiguestop
+  bottomPrefabSetupPath: Models/Clothing/Lucas/Bottoms/Standard Fatigues/lucasstandardfatiguebottom
+  footwearPrefabSetupPath: Models/Clothing/Lucas/Shoes/Standard Boots/lucasstandardboots
+  skinPrefabSetupPath: Models/Characters/Daryl/1/skindonald1
 --- !u!114 &4803882290888310498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1118,15 +1138,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equipmentScript: {fileID: 517835709440268875}
+  weaponActionScript: {fileID: 0}
   weaponHolder: {fileID: 5110459532735141376}
+  weaponHolderFpc: {fileID: 0}
   animator: {fileID: 3999816085979398314}
   ts: {fileID: 0}
+  titleAnimFemale: {fileID: 0}
+  titleAnimMale: {fileID: 0}
   equippedPrimaryWeapon: 
   equippedPrimaryType: 
   equippedSecondaryWeapon: 
   equippedSecondaryType: 
+  equippedSupportWeapon: 
+  equippedSupportType: 
+  equippedWep: 
   currentlyEquippedType: 0
+  totalPrimaryAmmoLeft: 0
+  totalSecondaryAmmoLeft: 0
+  totalSupportAmmoLeft: 0
+  currentAmmoPrimary: 0
+  currentAmmoSecondary: 0
+  currentAmmoSupport: 0
   weaponReady: 0
+  pView: {fileID: 0}
+  setupGender: 77
 --- !u!114 &3007310823573728124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1142,6 +1177,7 @@ MonoBehaviour:
   speed: 0
   stamina: 0
   armor: 0
+  health: 0
 --- !u!1 &3999816085970055930
 GameObject:
   m_ObjectHideFlags: 0
@@ -1198,6 +1234,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1284,6 +1321,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2409,6 +2447,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2586,6 +2625,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2674,6 +2714,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2779,6 +2820,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2860,6 +2902,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -3192,6 +3235,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0

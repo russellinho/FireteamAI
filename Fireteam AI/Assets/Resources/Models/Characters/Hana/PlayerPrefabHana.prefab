@@ -56,6 +56,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -687,6 +688,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -815,6 +817,8 @@ MonoBehaviour:
   equippedFootwearRef: {fileID: 0}
   equippedArmorTopRef: {fileID: 0}
   equippedArmorBottomRef: {fileID: 0}
+  equippedFpcSkinRef: {fileID: 0}
+  equippedFpcTopRef: {fileID: 0}
   myHeadgearRenderer: {fileID: 7568732749520786901}
   myFacewearRenderer: {fileID: 1677404027871520742}
   myTopRenderer: {fileID: 2052873151880460975}
@@ -827,9 +831,17 @@ MonoBehaviour:
   myEyesRenderer: {fileID: 2052873151880461117}
   myEyelashRenderer: {fileID: 2052873151880461119}
   myHairRenderer: {fileID: 2052873151880461107}
+  myFpcSkinRenderer: {fileID: 0}
+  myFpcTopRenderer: {fileID: 0}
+  myFpcGlovesRenderer: {fileID: 0}
   renderHair: 0
   myBones: {fileID: 2052873151880461097}
+  myFpcBones: {fileID: 0}
   pView: {fileID: 0}
+  topPrefabSetupPath: Models/Clothing/Hana/Tops/Standard Fatigues/hanastandardfatiguestop
+  bottomPrefabSetupPath: Models/Clothing/Hana/Bottoms/Standard Fatigues/hanastandardfatiguesbottom
+  footwearPrefabSetupPath: Models/Clothing/Hana/Shoes/Standard Boots/hanastandardboots
+  skinPrefabSetupPath: Models/Characters/Hana/1/skinhana1
 --- !u!114 &2282748257884432631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -845,8 +857,11 @@ MonoBehaviour:
   equipmentScript: {fileID: 5377080248621935676}
   weaponActionScript: {fileID: 0}
   weaponHolder: {fileID: 6533164353316158212}
+  weaponHolderFpc: {fileID: 0}
   animator: {fileID: 2052873151873026297}
   ts: {fileID: 0}
+  titleAnimFemale: {fileID: 0}
+  titleAnimMale: {fileID: 0}
   equippedPrimaryWeapon: 
   equippedPrimaryType: 
   equippedSecondaryWeapon: 
@@ -863,6 +878,7 @@ MonoBehaviour:
   currentAmmoSupport: 0
   weaponReady: 0
   pView: {fileID: 0}
+  setupGender: 70
 --- !u!114 &2377182879810501776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -935,6 +951,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1542,6 +1559,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1656,6 +1674,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1807,6 +1826,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1915,6 +1935,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2003,6 +2024,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2084,6 +2106,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -3155,6 +3178,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -3251,4 +3275,6 @@ MonoBehaviour:
   handle: {fileID: 0}
   weapon: {fileID: 0}
   leftShoulder: {fileID: 2052873151880292191}
+  leftHand: {fileID: 0}
+  rightHand: {fileID: 0}
   fpc: {fileID: 0}

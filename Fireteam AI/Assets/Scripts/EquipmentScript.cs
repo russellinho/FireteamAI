@@ -59,6 +59,11 @@ public class EquipmentScript : MonoBehaviour
     public PhotonView pView;
 
     private bool onTitle;
+    private bool onSetup;
+    public string topPrefabSetupPath;
+    public string bottomPrefabSetupPath;
+    public string footwearPrefabSetupPath;
+    public string skinPrefabSetupPath;
 
     void Awake()
     {
@@ -69,6 +74,9 @@ public class EquipmentScript : MonoBehaviour
         else
         {
             onTitle = false;
+            if (SceneManager.GetActiveScene().name.Equals("Setup")) {
+                onSetup = true;
+            }
         }
 
         if (pView != null) {
@@ -92,9 +100,9 @@ public class EquipmentScript : MonoBehaviour
             {
                 ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
             }
-        }
-        else
-        {
+        } else if (onSetup) {
+            EquipDefaultsForSetup();
+        } else {
             pView.RPC("RpcEquipCharacterInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedCharacter);
             pView.RPC("RpcEquipHeadgearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedHeadgear);
             pView.RPC("RpcEquipFacewearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedFacewear);
@@ -165,6 +173,13 @@ public class EquipmentScript : MonoBehaviour
             EquipBottom("Standard Fatigues Bottom", null);
             EquipFootwear("Standard Boots", null);
         }
+    }
+
+    public void EquipDefaultsForSetup() {
+        EquipSkinForSetup();
+        EquipTopForSetup();
+        EquipBottomForSetup();
+        EquipFootwearForSetup();
     }
 
     public void HighlightItemPrefab(GameObject shopItemRef) {
@@ -275,6 +290,15 @@ public class EquipmentScript : MonoBehaviour
         ts.equippedTopSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
     }
 
+    void EquipTopForSetup() {
+        equippedTopRef = (GameObject)Instantiate((GameObject)Resources.Load(topPrefabSetupPath));
+        equippedTopRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedTopRef.GetComponentInChildren<MeshFixer>();
+        m.target = myTopRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
+
     private void EquipSkin(int skinType) {
         if (equippedSkin == skinType) {
             return;
@@ -286,6 +310,15 @@ public class EquipmentScript : MonoBehaviour
             equippedSkinRef = null;
         }
         equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[equippedCharacter].skins[skinType]));
+        equippedSkinRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
+        m.target = mySkinRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
+
+    void EquipSkinForSetup() {
+        equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(skinPrefabSetupPath));
         equippedSkinRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
         m.target = mySkinRenderer.gameObject;
@@ -327,6 +360,15 @@ public class EquipmentScript : MonoBehaviour
         ts.equippedBottomSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
     }
 
+    void EquipBottomForSetup() {
+        equippedBottomRef = (GameObject)Instantiate((GameObject)Resources.Load(bottomPrefabSetupPath));
+        equippedBottomRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedBottomRef.GetComponentInChildren<MeshFixer>();
+        m.target = myBottomRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
+
     public void EquipFootwear(string name, GameObject shopItemRef) {
         if (name.Equals(equippedFootwear)) {
             return;
@@ -359,6 +401,15 @@ public class EquipmentScript : MonoBehaviour
 
         ts.equippedFootSlot.GetComponentInChildren<RawImage>().enabled = true;
         ts.equippedFootSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+    }
+
+    void EquipFootwearForSetup() {
+        equippedFootwearRef = (GameObject)Instantiate((GameObject)Resources.Load(footwearPrefabSetupPath));
+        equippedFootwearRef.transform.SetParent(gameObject.transform);
+        MeshFixer m = equippedFootwearRef.GetComponentInChildren<MeshFixer>();
+        m.target = myFootwearRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
     }
 
     public void EquipFacewear(string name, GameObject shopItemRef) {
