@@ -42,6 +42,7 @@ public class LoginControllerScript : MonoBehaviour
     }
 
     void QueuePopup(string message) {
+        ClosePopup();
         activatePopupFlag = true;
         popupMessage = message;
     }
