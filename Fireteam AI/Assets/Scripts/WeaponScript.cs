@@ -90,12 +90,12 @@ public class WeaponScript : MonoBehaviour
             equippedSecondaryType = PlayerData.playerdata.info.equippedSecondaryType;
             equippedSupportWeapon = PlayerData.playerdata.info.equippedSupport;
             equippedSupportType = PlayerData.playerdata.info.equippedSupportType;
-            currentAmmoPrimary = InventoryScript.weaponCatalog[equippedPrimaryWeapon].clipCapacity;
-            currentAmmoSecondary = InventoryScript.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
-            currentAmmoSupport = InventoryScript.weaponCatalog[equippedSupportWeapon].clipCapacity;
-            totalPrimaryAmmoLeft = InventoryScript.weaponCatalog[equippedPrimaryWeapon].maxAmmo;
-            totalSecondaryAmmoLeft = InventoryScript.weaponCatalog[equippedSecondaryWeapon].maxAmmo;
-            totalSupportAmmoLeft = InventoryScript.weaponCatalog[equippedSupportWeapon].maxAmmo;
+            currentAmmoPrimary = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].clipCapacity;
+            currentAmmoSecondary = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
+            currentAmmoSupport = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].clipCapacity;
+            totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo;
+            totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo;
+            totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo;
             equippedWep = equippedPrimaryWeapon;
             //DrawWeapon(1);
             InitializeWeapon();
@@ -334,7 +334,7 @@ public class WeaponScript : MonoBehaviour
     public void EquipWeapon(string weaponType, string weaponName, string suppressorName, GameObject shopItemRef) {
         if (onTitle && (weaponName.Equals(equippedPrimaryWeapon) || weaponName.Equals(equippedSecondaryWeapon) || weaponName.Equals(equippedSupportWeapon))) return;
         // Get the weapon from the weapon catalog for its properties
-        Weapon w = InventoryScript.weaponCatalog[weaponName];
+        Weapon w = InventoryScript.itemData.weaponCatalog[weaponName];
         GameObject wepEquipped = null;
         switch (weaponType) {
             case "Assault Rifle":
@@ -509,7 +509,7 @@ public class WeaponScript : MonoBehaviour
         // If no mod equipped, don't equip anything
         if (modName == null || modName.Equals("") || modName.Equals("None") || equipOnWeapon == null) return;
         // Load mod from catalog
-        Mod m = InventoryScript.modCatalog[modName];
+        Mod m = InventoryScript.itemData.modCatalog[modName];
         switch (modType) {
             case "Suppressor":
                 EquipSuppressor(modName, equipOnWeapon);

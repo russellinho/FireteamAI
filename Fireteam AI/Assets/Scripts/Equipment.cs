@@ -5,8 +5,10 @@ using UnityEngine;
 public class Equipment
 {
     public string name;
-    public string prefabPath;
-    public string fpcPrefabPath;
+    public string malePrefabPath;
+    public string femalePrefabPath;
+    public string maleFpcPrefabPath;
+    public string femaleFpcPrefabPath;
     public string category;
     public string thumbnailPath;
     public string description;
@@ -17,11 +19,13 @@ public class Equipment
     public float stamina;
     public float armor;
 
-    public Equipment(string name, string category, string prefabPath, string fpcPrefabPath, string thumbnailPath, string description, bool hideHairFlag, int skinType, float speed, float stamina, float armor) {
+    public Equipment(string name, string category, string malePrefabPath, string femalePrefabPath, string maleFpcPrefabPath, string femaleFpcPrefabPath, string thumbnailPath, string description, bool hideHairFlag, int skinType, float speed, float stamina, float armor) {
         this.name = name;
         this.category = category;
-        this.prefabPath = prefabPath;
-        this.fpcPrefabPath = fpcPrefabPath;
+        this.malePrefabPath = malePrefabPath;
+        this.femalePrefabPath = femalePrefabPath;
+        this.maleFpcPrefabPath = maleFpcPrefabPath;
+        this.femaleFpcPrefabPath = femaleFpcPrefabPath;
         this.thumbnailPath = thumbnailPath;
         this.description = description;
         this.hideHairFlag = hideHairFlag;

@@ -49,6 +49,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private float t;
 	private string[] proTips = new string[2]{"Aim for the head for faster kills.", "Be on the lookout for ammo and health drops from enemies."};
 	private bool versionWarning;
+	public GameObject splashScreen;
+	public Text splashScreenPopup;
 
 	// Customization menu
 	public GameObject contentPrefab;
@@ -108,6 +110,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Text modMaxAmmoTxt;
 
 	// Use this for initialization
+	void Awake() {
+		if (PlayerData.playerdata == null) {
+			ToggleSplashScreen(true, "Loading player details...");
+		}
+	}
+
 	void Start () {
 		//PlayerData.playerdata.FindBodyRef ();
 		titleText.enabled = true;
@@ -166,6 +174,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void Update() {
+		if (splashScreen.activeInHierarchy && PlayerData.playerdata.bodyReference != null) {
+			ToggleSplashScreen(false);
+		}
+
 		if (PlayerData.playerdata.disconnectedFromServer) {
 			PlayerData.playerdata.disconnectedFromServer = false;
 			mainMenuPopup.GetComponentInChildren<Text> ().text = "Lost connection to server.\nReason: " + PlayerData.playerdata.disconnectReason;
@@ -392,18 +404,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
-		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
-		for (int i = 0; i < InventoryScript.myHeadgear.Count; i++) {
-			string thisItemName = (string)InventoryScript.myHeadgear[i];
-			Equipment thisHeadgear = characterEquipment[thisItemName];
+		for (int i = 0; i < PlayerData.playerdata.myHeadgear.Count; i++) {
+			string thisItemName = (string)PlayerData.playerdata.myHeadgear[i];
+			Equipment thisHeadgear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().equipmentDetails = thisHeadgear;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Headgear";
 			o.GetComponent<ShopItemScript>().itemDescription = thisHeadgear.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
@@ -433,18 +444,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
-		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
-		for (int i = 0; i < InventoryScript.myFacewear.Count; i++) {
-			string thisItemName = (string)InventoryScript.myFacewear[i];
-			Equipment thisFacewear = characterEquipment[thisItemName];
+		for (int i = 0; i < PlayerData.playerdata.myFacewear.Count; i++) {
+			string thisItemName = (string)PlayerData.playerdata.myFacewear[i];
+			Equipment thisFacewear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().equipmentDetails = thisFacewear;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Facewear";
 			o.GetComponent<ShopItemScript>().itemDescription = thisFacewear.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
@@ -474,18 +484,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
-		Dictionary<string, Armor> characterArmor = InventoryScript.characterCatalog[characterName].armorCatalog;
 		// Populate into grid layout
-		for (int i = 0; i < InventoryScript.myArmor.Count; i++) {
-			string thisItemName = (string)InventoryScript.myArmor[i];
-			Armor thisArmor = characterArmor[thisItemName];
+		for (int i = 0; i < PlayerData.playerdata.myArmor.Count; i++) {
+			string thisItemName = (string)PlayerData.playerdata.myArmor[i];
+			Armor thisArmor = InventoryScript.itemData.armorCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().armorDetails = thisArmor;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Armor";
 			o.GetComponent<ShopItemScript>().itemDescription = thisArmor.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].armorCatalog[thisItemName].thumbnailPath);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.itemData.armorCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 3f, t.sizeDelta.y / 3f);
@@ -515,18 +524,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
-		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
-		for (int i = 0; i < InventoryScript.myTops.Count; i++) {
-			string thisItemName = (string)InventoryScript.myTops[i];
-			Equipment thisTop = characterEquipment[thisItemName];
+		for (int i = 0; i < PlayerData.playerdata.myTops.Count; i++) {
+			string thisItemName = (string)PlayerData.playerdata.myTops[i];
+			Equipment thisTop = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().equipmentDetails = thisTop;
             o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Top";
 			o.GetComponent<ShopItemScript>().itemDescription = thisTop.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 4f, t.sizeDelta.y / 4f);
@@ -556,18 +564,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
-		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
-		for (int i = 0; i < InventoryScript.myBottoms.Count; i++) {
-			string thisItemName = (string)InventoryScript.myBottoms[i];
-			Equipment thisBottom = characterEquipment[thisItemName];
+		for (int i = 0; i < PlayerData.playerdata.myBottoms.Count; i++) {
+			string thisItemName = (string)PlayerData.playerdata.myBottoms[i];
+			Equipment thisBottom = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().equipmentDetails = thisBottom;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Bottom";
 			o.GetComponent<ShopItemScript>().itemDescription = thisBottom.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
@@ -597,18 +604,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
-		Dictionary<string, Equipment> characterEquipment = InventoryScript.characterCatalog[characterName].equipmentCatalog;
 		// Populate into grid layout
-		for (int i = 0; i < InventoryScript.myFootwear.Count; i++) {
-			string thisItemName = (string)InventoryScript.myFootwear[i];
-			Equipment thisFootwear = characterEquipment[thisItemName];
+		for (int i = 0; i < PlayerData.playerdata.myFootwear.Count; i++) {
+			string thisItemName = (string)PlayerData.playerdata.myFootwear[i];
+			Equipment thisFootwear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().equipmentDetails = thisFootwear;
 			o.GetComponent<ShopItemScript>().itemName = thisItemName;
             o.GetComponent<ShopItemScript>().itemType = "Footwear";
 			o.GetComponent<ShopItemScript>().itemDescription = thisFootwear.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.characterCatalog[characterName].equipmentCatalog[thisItemName].thumbnailPath);
+			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
 			o.GetComponentInChildren<RawImage>().SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 3f, t.sizeDelta.y / 3f);
@@ -653,8 +659,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		// Populate into grid layout
-		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
-			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
+			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Primary")) {
 				continue;
 			}
@@ -710,8 +717,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		// Populate into grid layout
-		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
-			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
+			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Secondary")) {
 				continue;
 			}
@@ -765,8 +773,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		// Populate into grid layout
-		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
-			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
+			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Support")) {
 				continue;
 			}
@@ -801,8 +810,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		// Populate with assault rifles
-		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
-			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
+			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Assault Rifle")) {
 				continue;
 			}
@@ -837,8 +847,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		// Populate with shotguns
-		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
-			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
+			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Shotgun")) {
 				continue;
 			}
@@ -873,8 +884,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		// Populate with sniper rifles
-		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
-			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
+			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Sniper Rifle")) {
 				continue;
 			}
@@ -907,8 +919,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		// Populate with pistols
-		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
-			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
+			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Pistol")) {
 				continue;
 			}
@@ -942,8 +955,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		// Populate with pistols
-		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
-			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
+			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Explosive")) {
 				continue;
 			}
@@ -977,8 +991,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		// Populate with pistols
-		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
-			Weapon w = InventoryScript.weaponCatalog[(string)InventoryScript.myWeapons[i]];
+		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
+			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Booster")) {
 				continue;
 			}
@@ -1019,9 +1034,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
 		// Populate into grid layout
-		for (int i = 0; i < InventoryScript.myCharacters.Count; i++) {
-			string thisCharacterName = (string)InventoryScript.myCharacters[i];
-			Character c = InventoryScript.characterCatalog[thisCharacterName];
+		for (int i = 0; i < PlayerData.playerdata.myCharacters.Count; i++) {
+			string thisCharacterName = (string)PlayerData.playerdata.myCharacters[i];
+			Character c = InventoryScript.itemData.characterCatalog[thisCharacterName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
 			o.GetComponent<ShopItemScript>().characterDetails = c;
@@ -1076,8 +1091,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearModCustomizationContent();
 
 		// Populate into grid layout
-		for (int i = 0; i < InventoryScript.myMods.Count; i++) {
-			Mod m = InventoryScript.modCatalog[(string)InventoryScript.myMods[i]];
+		for (int i = 0; i < PlayerData.playerdata.myMods.Count; i++) {
+			string thisModName = (string)PlayerData.playerdata.myMods[i];
+			Mod m = InventoryScript.itemData.modCatalog[thisModName];
 			if (!m.category.Equals("Suppressor")) {
 				continue;
 			}
@@ -1228,9 +1244,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		modWeaponSelect.ClearOptions();
 		// Populate the dropdown with all weapons the player owns
 		List<string> myWepsList = new List<string>();
-		for (int i = 0; i < InventoryScript.myWeapons.Count; i++) {
-			string weaponName = (string)InventoryScript.myWeapons[i];
-			Weapon w = InventoryScript.weaponCatalog[weaponName];
+		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
+			string weaponName = (string)PlayerData.playerdata.myWeapons[i];
+			Weapon w = InventoryScript.itemData.weaponCatalog[weaponName];
 			if (w.canBeModded) {
 				myWepsList.Add(weaponName);
 			}
@@ -1274,7 +1290,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		equippedSuppressorTxt.text = (suppressorName == null || suppressorName.Equals("") || suppressorName.Equals("None")) ? "None" : suppressorName;
 		
 		// Set base stats
-		Weapon w = InventoryScript.weaponCatalog[weaponName];
+		Weapon w = InventoryScript.itemData.weaponCatalog[weaponName];
 		float totalDamage = w.damage;
 		float totalAccuracy = w.accuracy;
 		float totalRecoil = w.recoil;
@@ -1290,7 +1306,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Add suppressor stats
 		if (suppressorName != null && !suppressorName.Equals("") && !suppressorName.Equals("None")) {
-			Mod suppressor = InventoryScript.modCatalog[suppressorName];
+			Mod suppressor = InventoryScript.itemData.modCatalog[suppressorName];
 			damageBoost += suppressor.damageBoost;
 			accuracyBoost += suppressor.accuracyBoost;
 			recoilBoost += suppressor.recoilBoost;
@@ -1419,7 +1435,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public string EquipModOnWeaponTemplate(string modName, string modType) {
 		if (modName == null || modName.Equals("") || modName.Equals("None")) return modWeaponLbl.text;
-		Weapon w = InventoryScript.weaponCatalog[modWeaponLbl.text];
+		Weapon w = InventoryScript.itemData.weaponCatalog[modWeaponLbl.text];
 		switch(modType) {
 			case "Suppressor":
 				if (w.suppressorCompatible) {
@@ -1441,6 +1457,21 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		} else {
 			modMenuPopup.SetActive(false);
 		}
+	}
+
+	void ToggleSplashScreen(bool b, string message = "") {
+		splashScreen.SetActive(b);
+		splashScreenPopup.text = message;
+	}
+
+	public void CloseGameOnError() {
+		ToggleSplashScreen(true, "Your data could not be loaded. Either your data is corrupted or the service is unavailable. Please check the webiste for further details. If this issue persists, please create a ticket at koobando.com/support.");
+		StartCoroutine(CloseGameOnErrorRoutine());
+	}
+
+	IEnumerator CloseGameOnErrorRoutine() {
+		yield return new WaitForSeconds(8f);
+		Application.Quit();
 	}
 		
 }

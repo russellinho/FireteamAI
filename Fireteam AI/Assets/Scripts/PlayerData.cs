@@ -7,6 +7,7 @@ using System.IO;
 using UnityEngine.SceneManagement;
 using Photon.Realtime;
 using Photon.Pun;
+using Firebase.Database;
 
 public class PlayerData : MonoBehaviour
 {
@@ -23,6 +24,16 @@ public class PlayerData : MonoBehaviour
 
     public GameObject bodyReference;
     public GameObject inGamePlayerReference;
+    public TitleControllerScript titleRef;
+    public ArrayList myHeadgear;
+    public ArrayList myTops;
+    public ArrayList myBottoms;
+    public ArrayList myFacewear;
+    public ArrayList myFootwear;
+    public ArrayList myArmor;
+    public ArrayList myWeapons;
+    public ArrayList myCharacters;
+    public ArrayList myMods;
 
     void Awake()
     {
@@ -30,6 +41,9 @@ public class PlayerData : MonoBehaviour
         {
             DontDestroyOnLoad(gameObject);
             this.info = new PlayerInfo();
+            this.primaryModInfo = new ModInfo();
+            this.secondaryModInfo = new ModInfo();
+            this.supportModInfo = new ModInfo();
             playerdata = this;
             LoadPlayerData();
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
@@ -115,83 +129,84 @@ public class PlayerData : MonoBehaviour
 
     public void LoadPlayerData()
     {
-        if (File.Exists(Application.persistentDataPath + "/playerData.dat"))
-        {
-            try {
-                BinaryFormatter bf = new BinaryFormatter();
-                FileStream file = File.Open(Application.persistentDataPath + "/playerData.dat", FileMode.Open);
-                info = (PlayerInfo)bf.Deserialize(file);
-                file.Close();
-                if (info.equippedCharacter == null || info.equippedCharacter == "") {
-                    info.equippedCharacter = "Lucas";
-                }
-                if (info.equippedPrimary == null || info.equippedPrimary == "") {
-                    info.equippedPrimary = "AK-47";
-                    info.equippedPrimaryType = "Assault Rifle";
-                }
-                if (info.equippedSecondary == null || info.equippedSecondary == "") {
+        if (titleRef == null) {
+            titleRef = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+        }
+        // Check if the DB has equipped data for the player. If not, then set default char and equips.
+        // If error occurs, show error message on splash and quit the application
+        DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
+            DataSnapshot snapshot = task.Result;
+            if (task.IsFaulted || task.IsCanceled) {
+                titleRef.CloseGameOnError();
+            } else {
+                playername = snapshot.Child("username").Value.ToString();
+                // Equip previously equipped if available. Else, equip defaults and save it
+                if (snapshot.HasChild("equipment")) {
+                    DataSnapshot equipSnapshot = snapshot.Child("equipment");
+                    info.equippedCharacter = equipSnapshot.Child("equippedCharacter").Value.ToString();
+                    info.equippedPrimary = equipSnapshot.Child("equippedPrimary").Value.ToString();
+                    info.equippedSecondary = equipSnapshot.Child("equippedSecondary").Value.ToString();
+                    info.equippedSupport = equipSnapshot.Child("equippedSupport").Value.ToString();
+                    info.equippedTop = equipSnapshot.Child("equippedTop").Value.ToString();
+                    info.equippedBottom = equipSnapshot.Child("equippedBottom").Value.ToString();
+                    info.equippedFootwear = equipSnapshot.Child("equippedFootwear").Value.ToString();
+                    info.equippedFacewear = equipSnapshot.Child("equippedFacewear").Value.ToString();
+                    info.equippedHeadgear = equipSnapshot.Child("equippedHeadgear").Value.ToString();
+                    info.equippedArmor = equipSnapshot.Child("equippedArmor").Value.ToString();
+
+                    // TODO
+
+                    DataSnapshot modSnapshot = snapshot.Child("primaryMods");
+                    primaryModInfo.equippedSuppressor = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                    primaryModInfo.weaponName = modSnapshot.Child("weaponName").Value.ToString();
+
+                    modSnapshot = snapshot.Child("secondaryMods");
+                    secondaryModInfo.equippedSuppressor = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                    secondaryModInfo.weaponName = modSnapshot.Child("weaponName").Value.ToString();
+
+                    modSnapshot = snapshot.Child("supportMods");
+                    supportModInfo.equippedSuppressor = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                    supportModInfo.weaponName = modSnapshot.Child("weaponName").Value.ToString();
+                } else {
+                    info.equippedCharacter = snapshot.Child("defaultChar").Value.ToString();
+                    char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
+                    info.equippedPrimary = "M4A1";
                     info.equippedSecondary = "Glock23";
-                    info.equippedSecondaryType = "Pistol";
-                }
-                if (info.equippedSupport == null || info.equippedSupport == "") {
                     info.equippedSupport = "M67 Frag";
-                    info.equippedSupportType = "Explosive";
+                    info.equippedTop = "Standard Fatigues Top (" + g + ")";
+                    info.equippedBottom = "Standard Fatigues Bottom (" + g + ")";
+                    info.equippedFootwear = "Standard Boots (" + g + ")";
+                    info.equippedFacewear = "";
+                    info.equippedHeadgear = "";
+                    info.equippedArmor = "";
+
+                    primaryModInfo.equippedSuppressor = "";
+                    primaryModInfo.weaponName = "";
+
+                    secondaryModInfo.equippedSuppressor = "";
+                    secondaryModInfo.weaponName = "";
+
+                    supportModInfo.equippedSuppressor = "";
+                    supportModInfo.weaponName = "";
+                    SavePlayerData();
                 }
-                if (info.equippedTop == null || info.equippedTop == "") {
-                    info.equippedTop = "Standard Fatigues Top";
-                }
-                if (info.equippedBottom == null || info.equippedBottom == "") {
-                    info.equippedBottom = "Standard Fatigues Bottom";
-                }
-                if (info.equippedFootwear == null || info.equippedFootwear == "") {
-                    info.equippedFootwear = "Standard Boots";
-                }
-            } catch (Exception e) {
-                Debug.Log("Exception occurred/corrupted file while loading player data. Message: " + e.Message);
-                info.equippedCharacter = "Lucas";
-                info.equippedPrimary = "AK-47";
-                info.equippedPrimaryType = "Assault Rifle";
-                info.equippedSecondary = "Glock23";
-                info.equippedSecondaryType = "Pistol";
-                info.equippedSupport = "M67 Frag";
-                info.equippedSupportType = "Explosive";
-                info.equippedTop = "Standard Fatigues Top";
-                info.equippedBottom = "Standard Fatigues Bottom";
-                info.equippedFootwear = "Standard Boots";
             }
-            FindBodyRef(info.equippedCharacter);
-            playername = info.playername;
-            EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
-            WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
-            characterEquips.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
-            characterWeps.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
-            characterEquips.EquipCharacter(info.equippedCharacter, null);
-            characterEquips.EquipHeadgear(info.equippedHeadgear, null);
-            characterEquips.EquipFacewear(info.equippedFacewear, null);
-            characterEquips.EquipTop(info.equippedTop, null);
-            characterEquips.EquipBottom(info.equippedBottom, null);
-            characterEquips.EquipFootwear(info.equippedFootwear, null);
-            characterEquips.EquipArmor(info.equippedArmor, null);
-            primaryModInfo = LoadModDataForWeapon(info.equippedPrimary);
-            secondaryModInfo = LoadModDataForWeapon(info.equippedSecondary);
-            supportModInfo = LoadModDataForWeapon(info.equippedSupport);
-            characterWeps.EquipWeapon(info.equippedPrimaryType, info.equippedPrimary, primaryModInfo.equippedSuppressor, null);
-            characterWeps.EquipWeapon(info.equippedSecondaryType, info.equippedSecondary, secondaryModInfo.equippedSuppressor, null);
-            characterWeps.EquipWeapon(info.equippedSupportType, info.equippedSupport, supportModInfo.equippedSuppressor, null);
-        }
-        else
-        {
-            // Else, load defaults
-            FindBodyRef("Lucas");
-            EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
-            WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
-            characterEquips.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
-            characterWeps.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
-            playername = "Player";
-            characterEquips.EquipCharacter("Lucas", null);
-            characterWeps.EquipDefaultWeapons();
-            SavePlayerData();
-        }
+        });
+        FindBodyRef(info.equippedCharacter);
+        EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
+        WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
+        characterEquips.ts = titleRef;
+        characterWeps.ts = titleRef;
+        characterEquips.EquipCharacter(info.equippedCharacter, null);
+        characterEquips.EquipHeadgear(info.equippedHeadgear, null);
+        characterEquips.EquipFacewear(info.equippedFacewear, null);
+        characterEquips.EquipTop(info.equippedTop, null);
+        characterEquips.EquipBottom(info.equippedBottom, null);
+        characterEquips.EquipFootwear(info.equippedFootwear, null);
+        characterEquips.EquipArmor(info.equippedArmor, null);
+        characterWeps.EquipWeapon(info.equippedPrimaryType, info.equippedPrimary, primaryModInfo.equippedSuppressor, null);
+        characterWeps.EquipWeapon(info.equippedSecondaryType, info.equippedSecondary, secondaryModInfo.equippedSuppressor, null);
+        characterWeps.EquipWeapon(info.equippedSupportType, info.equippedSupport, supportModInfo.equippedSuppressor, null);
         PhotonNetwork.NickName = playername;
     }
 
@@ -199,7 +214,7 @@ public class PlayerData : MonoBehaviour
     {
         if (bodyReference == null)
         {
-            bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[character].prefabPath));
+            bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.itemData.characterCatalog[character].prefabPath));
         }
         else
         {
@@ -209,6 +224,9 @@ public class PlayerData : MonoBehaviour
 
     public void ChangeBodyRef(string character, GameObject shopItem)
     {
+        if (titleRef == null) {
+            titleRef = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+        }
         WeaponScript weaponScrpt = bodyReference.GetComponent<WeaponScript>();
         PlayerData.playerdata.info.equippedPrimary = weaponScrpt.equippedPrimaryWeapon;
         PlayerData.playerdata.info.equippedSecondary = weaponScrpt.equippedSecondaryWeapon;
@@ -218,11 +236,11 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.equippedSupportType = weaponScrpt.equippedSupportType;
         Destroy(bodyReference);
         bodyReference = null;
-        bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[character].prefabPath));
+        bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.itemData.characterCatalog[character].prefabPath));
         EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
         WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
-        characterEquips.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
-        characterWeps.ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+        characterEquips.ts = titleRef;
+        characterWeps.ts = titleRef;
         bodyReference.GetComponent<EquipmentScript>().HighlightItemPrefab(shopItem);
         characterEquips.EquipCharacter(character, null);
     }
@@ -239,7 +257,6 @@ public class PlayerData : MonoBehaviour
         // Set mod data that was just saved
         if (weaponName == myWeps.equippedPrimaryWeapon)
         {
-            Debug.Log("sup m9s");
             PlayerData.playerdata.primaryModInfo = newModInfo;
         } else if (weaponName == myWeps.equippedSecondaryWeapon)
         {
@@ -277,10 +294,6 @@ public class PlayerData : MonoBehaviour
         return modInfo;
     }
 
-    // public void SaveModInventoryData() {
-
-    // }
-
 }
 
 [Serializable]
@@ -307,12 +320,4 @@ public class ModInfo
 {
     public string weaponName;
     public string equippedSuppressor;
-}
-
-[Serializable]
-public class ModInventoryInfo
-{
-    public string modName;
-    public int modCount;
-    public string[] weaponsAttachedTo;
 }

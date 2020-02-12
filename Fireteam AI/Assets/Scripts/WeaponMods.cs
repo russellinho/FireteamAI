@@ -15,7 +15,7 @@ public class WeaponMods : MonoBehaviour
     public void EquipSuppressor(string suppressorName) {
         if (suppressorName.Equals(this.suppressorName)) return;
         // Load the prefab/game object for the suppressor
-        Mod newSuppressorStats = InventoryScript.modCatalog[suppressorName];
+        Mod newSuppressorStats = InventoryScript.itemData.modCatalog[suppressorName];
         // If error occurred and suppressor wasn't found, cancel the procedure
         if (newSuppressorStats == null) {
             return;
