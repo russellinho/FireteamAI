@@ -100,6 +100,7 @@ public class PlayerData : MonoBehaviour
 
     }
 
+    // TODO: REFACTOR
     public void SavePlayerData()
     {
         BinaryFormatter bf = new BinaryFormatter();
@@ -154,19 +155,31 @@ public class PlayerData : MonoBehaviour
                     info.equippedHeadgear = equipSnapshot.Child("equippedHeadgear").Value.ToString();
                     info.equippedArmor = equipSnapshot.Child("equippedArmor").Value.ToString();
 
-                    // TODO
+                    DataSnapshot modsInventory = snapshot.Child("mods");
 
-                    DataSnapshot modSnapshot = snapshot.Child("primaryMods");
-                    primaryModInfo.equippedSuppressor = modSnapshot.Child("equippedSuppressor").Value.ToString();
-                    primaryModInfo.weaponName = modSnapshot.Child("weaponName").Value.ToString();
+                    DataSnapshot modSnapshot = snapshot.Child("weapons").Child(info.equippedPrimary);
+                    string modId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                    primaryModInfo.weaponName = info.equippedPrimary;
+                    primaryModInfo.id = modId;
+                    if (!"".Equals(modId)) {
+                        primaryModInfo.equippedSuppressor = modsInventory.Child(modId).Child("name").Value.ToString();
+                    }
 
-                    modSnapshot = snapshot.Child("secondaryMods");
-                    secondaryModInfo.equippedSuppressor = modSnapshot.Child("equippedSuppressor").Value.ToString();
-                    secondaryModInfo.weaponName = modSnapshot.Child("weaponName").Value.ToString();
+                    modSnapshot = snapshot.Child("weapons").Child(info.equippedSecondary);
+                    modId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                    secondaryModInfo.weaponName = info.equippedSecondary;
+                    secondaryModInfo.id = modId;
+                    if (!"".Equals(modId)) {
+                        secondaryModInfo.equippedSuppressor = modsInventory.Child(modId).Child("name").Value.ToString();
+                    }
 
-                    modSnapshot = snapshot.Child("supportMods");
-                    supportModInfo.equippedSuppressor = modSnapshot.Child("equippedSuppressor").Value.ToString();
-                    supportModInfo.weaponName = modSnapshot.Child("weaponName").Value.ToString();
+                    modSnapshot = snapshot.Child("weapons").Child(info.equippedSupport);
+                    modId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                    supportModInfo.weaponName = info.equippedSupport;
+                    supportModInfo.id = modId;
+                    if (!"".Equals(modId)) {
+                        supportModInfo.equippedSuppressor = modsInventory.Child(modId).Child("name").Value.ToString();
+                    }
                 } else {
                     info.equippedCharacter = snapshot.Child("defaultChar").Value.ToString();
                     char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
@@ -182,12 +195,15 @@ public class PlayerData : MonoBehaviour
 
                     primaryModInfo.equippedSuppressor = "";
                     primaryModInfo.weaponName = "";
+                    primaryModInfo.id = "";
 
                     secondaryModInfo.equippedSuppressor = "";
                     secondaryModInfo.weaponName = "";
+                    secondaryModInfo.id = "";
 
                     supportModInfo.equippedSuppressor = "";
                     supportModInfo.weaponName = "";
+                    supportModInfo.id = "";
                     SavePlayerData();
                 }
             }
@@ -245,14 +261,24 @@ public class PlayerData : MonoBehaviour
         characterEquips.EquipCharacter(character, null);
     }
 
-    public void SaveModDataForWeapon(string weaponName, string equippedSuppressor) {
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(Application.persistentDataPath + "/" + weaponName + "_mods.dat");
+    public void SaveModDataForWeapon(string weaponName, string equippedSuppressor, string id, bool removeFlag) {
         ModInfo newModInfo = new ModInfo();
-        newModInfo.weaponName = weaponName;
         newModInfo.equippedSuppressor = equippedSuppressor;
-        bf.Serialize(file, newModInfo);
-        file.Close();
+        newModInfo.weaponName = weaponName;
+        newModInfo.id = id;
+
+        if (removeFlag) {
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
+                .Child("mods").Child(id).Child("equippedOn").SetValueAsync("");
+            DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("weapons")
+                .Child(weaponName).Child("equippedSuppressor").SetValueAsync("");
+        } else {
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
+                .Child("mods").Child(id).Child("equippedOn").SetValueAsync(weaponName);
+            DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("weapons")
+                .Child(weaponName).Child("equippedSuppressor").SetValueAsync(id);
+        }
+
         WeaponScript myWeps = bodyReference.GetComponent<WeaponScript>();
         // Set mod data that was just saved
         if (weaponName == myWeps.equippedPrimaryWeapon)
@@ -268,28 +294,27 @@ public class PlayerData : MonoBehaviour
     }
 
     public ModInfo LoadModDataForWeapon(string weaponName) {
-        ModInfo modInfo = null;
-        if (File.Exists(Application.persistentDataPath + "/" + weaponName + "_mods.dat"))
-        {
-            try {
-                BinaryFormatter bf = new BinaryFormatter();
-                FileStream file = File.Open(Application.persistentDataPath + "/" + weaponName + "_mods.dat", FileMode.Open);
-                modInfo = (ModInfo)bf.Deserialize(file);
-                file.Close();
-                if (modInfo.equippedSuppressor == null) {
-                    modInfo.equippedSuppressor = "";
-                }
-            } catch (Exception e) {
-                Debug.Log("Exception occurred/corrupted file while loading mod data for " + weaponName + ". Message: " + e.Message);
-                modInfo.equippedSuppressor = "";
-            }
-            return modInfo;
-        }
-        // Else, load defaults
-        modInfo = new ModInfo();
+        bool loading = true;
+        ModInfo modInfo = new ModInfo();
         modInfo.weaponName = weaponName;
-        modInfo.equippedSuppressor = "";
-        SaveModDataForWeapon(weaponName, "");
+        
+        DAOScript.dao.dbRef.Child("fteam_ai_users").Child("weapons").Child(weaponName)
+            .Child("equippedSuppressor").GetValueAsync().ContinueWith(task => {
+                string id = task.Result.Value.ToString();
+                modInfo.id = id;
+                if (id.Equals("")) {
+                    modInfo.equippedSuppressor = "";
+                    loading = false;
+                } else {
+                    DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
+                        .Child("mods").Child(id).Child("name").GetValueAsync().ContinueWith(taskA => {
+                            modInfo.equippedSuppressor = taskA.Result.Value.ToString();
+                            loading = false;
+                        });
+                }
+            });
+        
+        while (loading);
 
         return modInfo;
     }
@@ -318,6 +343,7 @@ public class PlayerInfo
 [Serializable]
 public class ModInfo
 {
+    public string id;
     public string weaponName;
     public string equippedSuppressor;
 }

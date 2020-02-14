@@ -1415,7 +1415,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	private void SaveModsForCurrentWeapon() {
 		if (!modWeaponLbl.text.Equals("")) {
-			PlayerData.playerdata.SaveModDataForWeapon(modWeaponLbl.text, equippedSuppressorTxt.text);
+			PlayerData.playerdata.SaveModDataForWeapon(modWeaponLbl.text, equippedSuppressorTxt.text, "", false);
 		}
 	}
 

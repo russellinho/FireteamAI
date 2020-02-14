@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using Firebase.Database;
 
 public class SetupControllerScript : MonoBehaviour
 {
@@ -195,11 +197,31 @@ public class SetupControllerScript : MonoBehaviour
                         json = "{'weapons':{" +
                         "'M4A1': {" +
                             "'acquireDate':'" + DateTime.Now + "'," +
-                            "'duration':'-1'"
+                            "'duration':'-1'," +
+                            "'equippedSuppressor':''," +
+                            "'equippedSight':''," +
+                            "'equippedClip':''"
                         + "}," +
                         "'AK-47': {" +
                             "'acquireDate':'" + DateTime.Now + "'," +
-                            "'duration':'-1'"
+                            "'duration':'-1'," +
+                            "'equippedSuppressor':''," +
+                            "'equippedSight':''," +
+                            "'equippedClip':''"
+                        + "}," + 
+                        "'Glock23': {" +
+                            "'acquireDate':'" + DateTime.Now + "'," +
+                            "'duration':'-1'," +
+                            "'equippedSuppressor':''," +
+                            "'equippedSight':''," +
+                            "'equippedClip':''"
+                        + "}," + 
+                        "'M67 Frag': {" +
+                            "'acquireDate':'" + DateTime.Now + "'," +
+                            "'duration':'-1'," +
+                            "'equippedSuppressor':''," +
+                            "'equippedSight':''," +
+                            "'equippedClip':''"
                         + "}" + 
                         "}," +
                         "'armor':{" +
@@ -305,18 +327,22 @@ public class SetupControllerScript : MonoBehaviour
                                 "'acquireDate':'" + DateTime.Now + "'," +
                                 "'duration':'-1'"
                             + "}" +
-                        "}," +
-                        "'mods':{" +
-                            "'Standard Suppressor': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}" +
                         "}" +
                         "}";
                         DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
                             .SetRawJsonValueAsync(json).ContinueWith(taskC => {
-                                // Proceed to the next screen
-
+                                string jsonTemp = "{" +
+                                    "'name':'Standard Suppressor'," +
+                                    "'equippedOn':''," +
+                                    "'acquireDate':'" + DateTime.Now + "'," +
+                                    "'duration':'-1'" +
+                                "}";
+                                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
+                                    .Child("mods").Push().SetRawJsonValueAsync(jsonTemp).ContinueWith(taskD => {
+                                        // Continue to home screen
+                                        // TODO: Uncomment once testing is done
+                                        // SceneManager.LoadScene("Title");
+                                    });
                             });
                     }
                 });
