@@ -906,7 +906,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1363362850}
     - target: {fileID: 508069580713984080, guid: 3168ce6bdc8420f4fa7bd30ab7671954,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -2155,6 +2155,7 @@ GameObject:
   - component: {fileID: 1820121352}
   - component: {fileID: 1820121351}
   - component: {fileID: 1820121350}
+  - component: {fileID: 1820121353}
   m_Layer: 0
   m_Name: Firebase
   m_TagString: Untagged
@@ -2200,3 +2201,15 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1820121353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1820121349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48f275a5efd6dc040a8f6b7ae5402e10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

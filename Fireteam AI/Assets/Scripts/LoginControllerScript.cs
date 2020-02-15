@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LoginControllerScript : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class LoginControllerScript : MonoBehaviour
     public Button loginBtn;
     private bool activatePopupFlag;
     private string popupMessage;
+    private int signInFlag;
 
     // Start is called before the first frame update
     void Start()
@@ -26,9 +28,21 @@ public class LoginControllerScript : MonoBehaviour
     void Update()
     {
         if (activatePopupFlag) {
+            ConvertPopupMessage();
             TriggerPopup();
             activatePopupFlag = false;
         }
+        if (signInFlag == 1) {
+            SceneManager.LoadScene("Setup");
+            signInFlag = 0;
+        } else if (signInFlag == 2) {
+            SceneManager.LoadScene("Title");
+            signInFlag = 0;
+        }
+    }
+
+    void ConvertPopupMessage() {
+        popupMessage = (popupMessage.Contains("password") ? "The password is invalid. Please try again." : "Couldn't establish connection to server. Please try again later.");
     }
 
     public void ClosePopup() {
@@ -41,60 +55,45 @@ public class LoginControllerScript : MonoBehaviour
         popupAlert.SetActive(true);
     }
 
-    void QueuePopup(string message) {
-        ClosePopup();
-        activatePopupFlag = true;
-        popupMessage = message;
-    }
-
     public void OnLoginClick() {
+        if (popupAlert.activeInHierarchy) {
+            return;
+        }
         loginBtn.interactable = false;
         AuthScript.authHandler.auth.SignInWithEmailAndPasswordAsync(emailField.text, passwordField.text).ContinueWith(task => {
             if (task.IsCanceled) {
-                QueuePopup("SignInWithEmailAndPasswordAsync was canceled.");
+                activatePopupFlag = true;
+                popupMessage = ""+task.Exception;
                 loginBtn.interactable = true;
                 return;
             }
             if (task.IsFaulted) {
-                QueuePopup("SignInWithEmailAndPasswordAsync encountered an error: " + task.Exception);
+                activatePopupFlag = true;
+                popupMessage = ""+task.Exception;
                 loginBtn.interactable = true;
                 return;
             }
-
             AuthScript.authHandler.user = task.Result;
             //QueuePopup("User signed in successfully: {" + newUser.DisplayName + "} ({" + newUser.UserId + "})");
             // Query DB to see if the user is set up yet. If not, go to setup. Else, go to title page.
             DAOScript.dao.dbRef.Child("fteam_ai_users").GetValueAsync().ContinueWith(taskA => {
                 if (taskA.IsFaulted) {
-                    QueuePopup("Database is currently unavailable. Please try again later.\nError: " + taskA.Exception);
+                    Debug.Log("ridin");
+                    activatePopupFlag = true;
+                    popupMessage = ""+taskA.Exception;
                     loginBtn.interactable = true;
                     return;
                 } else if (taskA.IsCompleted) {
                     if (!taskA.Result.HasChild(AuthScript.authHandler.user.UserId)) {
-                        // DAOScript.dao.dbRef.Child("fteam_ai_users").Child(user.UserId).Child("test").SetValueAsync("testyman").ContinueWith(taskB => {
-                        //     if (taskB.IsFaulted) {
-                        //         QueuePopup("Database is currently unavailable. Please try again later.\nError: " + taskB.Exception);
-                        //         loginBtn.interactable = false;
-                        //         return;
-                        //     } else if (taskB.IsCompleted) {
-                        //         ProceedToSetup();
-                        //     }
-                        // });
-                        ProceedToSetup();
+                        Debug.Log("Success going to setup!");
+                        signInFlag = 1;
                     } else {
-                        ProceedToTitle();
+                        Debug.Log("Success going to title!");
+                        signInFlag = 2;
                     }
                 }
             });
         });
-    }
-
-    public void ProceedToTitle() {
-        QueuePopup("Success going to title!");
-    }
-
-    public void ProceedToSetup() {
-        QueuePopup("Success going to setup!");
     }
 
     public void OnRegisterClick() {

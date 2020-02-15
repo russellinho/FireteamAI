@@ -346,6 +346,7 @@ public class SetupControllerScript : MonoBehaviour
                                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
                                     .Child("mods").Push().SetRawJsonValueAsync(jsonTemp).ContinueWith(taskD => {
                                         // Continue to home screen
+                                        Debug.Log("DONE!");
                                         // TODO: Uncomment once testing is done
                                         // SceneManager.LoadScene("Title");
                                     });
@@ -382,13 +383,17 @@ public class SetupControllerScript : MonoBehaviour
     }
 
     void QueuePopup(string message) {
-        ClosePopup();
+        if (popupAlert.activeInHierarchy) {
+            ClosePopup();
+        }
         activatePopupFlag = true;
         popupMessage = message;
     }
 
     void QueueConfirmPopup(string message) {
-        ClosePopup();
+        if (popupAlert.activeInHierarchy) {
+            ClosePopup();
+        }
         activateConfirmFlag = true;
         popupMessage = message;
     }
