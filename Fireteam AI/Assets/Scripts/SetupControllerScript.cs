@@ -224,6 +224,12 @@ public class SetupControllerScript : MonoBehaviour
                             "'equippedClip':''"
                         + "}" + 
                         "}," +
+                        "'characters':{" +
+                            "'" + selectedCharacter + "': {" +
+                                "'acquireDate':'" + DateTime.Now + "'," +
+                                "'duration':'-1'"
+                            + "}" +
+                        "}," +
                         "'armor':{" +
                             "'Standard Vest': {" +
                                 "'acquireDate':'" + DateTime.Now + "'," +

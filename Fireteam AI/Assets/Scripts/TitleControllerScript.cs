@@ -406,7 +406,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myHeadgear.Count; i++) {
-			string thisItemName = (string)PlayerData.playerdata.myHeadgear[i];
+			string thisItemName = ((EquipmentData)PlayerData.playerdata.myHeadgear[i]).name;
 			Equipment thisHeadgear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
@@ -446,7 +446,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myFacewear.Count; i++) {
-			string thisItemName = (string)PlayerData.playerdata.myFacewear[i];
+			string thisItemName = ((EquipmentData)PlayerData.playerdata.myFacewear[i]).name;
 			Equipment thisFacewear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
@@ -486,7 +486,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myArmor.Count; i++) {
-			string thisItemName = (string)PlayerData.playerdata.myArmor[i];
+			string thisItemName = ((ArmorData)PlayerData.playerdata.myArmor[i]).name;
 			Armor thisArmor = InventoryScript.itemData.armorCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
@@ -526,7 +526,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myTops.Count; i++) {
-			string thisItemName = (string)PlayerData.playerdata.myTops[i];
+			string thisItemName = ((EquipmentData)PlayerData.playerdata.myTops[i]).name;
 			Equipment thisTop = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
@@ -566,7 +566,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myBottoms.Count; i++) {
-			string thisItemName = (string)PlayerData.playerdata.myBottoms[i];
+			string thisItemName = ((EquipmentData)PlayerData.playerdata.myBottoms[i]).name;
 			Equipment thisBottom = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
@@ -606,7 +606,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		string characterName = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter;
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myFootwear.Count; i++) {
-			string thisItemName = (string)PlayerData.playerdata.myFootwear[i];
+			string thisItemName = ((EquipmentData)PlayerData.playerdata.myFootwear[i]).name;
 			Equipment thisFootwear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
@@ -660,7 +660,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Primary")) {
 				continue;
@@ -718,7 +718,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Secondary")) {
 				continue;
@@ -774,7 +774,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Support")) {
 				continue;
@@ -811,7 +811,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate with assault rifles
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Assault Rifle")) {
 				continue;
@@ -848,7 +848,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate with shotguns
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Shotgun")) {
 				continue;
@@ -885,7 +885,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate with sniper rifles
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Sniper Rifle")) {
 				continue;
@@ -920,7 +920,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate with pistols
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Pistol")) {
 				continue;
@@ -956,7 +956,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate with pistols
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Explosive")) {
 				continue;
@@ -992,7 +992,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate with pistols
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = (string)PlayerData.playerdata.myWeapons[i];
+			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Booster")) {
 				continue;
@@ -1035,7 +1035,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myCharacters.Count; i++) {
-			string thisCharacterName = (string)PlayerData.playerdata.myCharacters[i];
+			string thisCharacterName = ((CharacterData)PlayerData.playerdata.myCharacters[i]).name;
 			Character c = InventoryScript.itemData.characterCatalog[thisCharacterName];
 			GameObject o = Instantiate(contentPrefab);
 			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
@@ -1092,7 +1092,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myMods.Count; i++) {
-			string thisModName = (string)PlayerData.playerdata.myMods[i];
+			string thisModName = ((ModData)PlayerData.playerdata.myMods[i]).name;
 			Mod m = InventoryScript.itemData.modCatalog[thisModName];
 			if (!m.category.Equals("Suppressor")) {
 				continue;
@@ -1245,7 +1245,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Populate the dropdown with all weapons the player owns
 		List<string> myWepsList = new List<string>();
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string weaponName = (string)PlayerData.playerdata.myWeapons[i];
+			string weaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[weaponName];
 			if (w.canBeModded) {
 				myWepsList.Add(weaponName);
