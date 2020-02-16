@@ -28,6 +28,7 @@ public class SetupControllerScript : MonoBehaviour
     public Text confirmAlertTxt;
     private bool activatePopupFlag;
     private bool activateConfirmFlag;
+    private bool completeCharCreationFlag;
     private string popupMessage;
     // Start is called before the first frame update
     void Start()
@@ -99,262 +100,272 @@ public class SetupControllerScript : MonoBehaviour
         bodyRef = null;
     }
 
-    public short CheckCharacterName() {
+    public void CheckCharacterName() {
         string potentialName = characterNameInput.text;
+        string potentialNameLower = potentialName.ToLower();
         if (potentialName.Length > 12 || potentialName.Length < 3) {
-            QueuePopup("Your character name must be between 3 and 12 characters long!");
-            return 0;
+            activatePopupFlag = true;
+            popupMessage = "Your character name must be between 3 and 12 characters long!";
+            completeCharCreationFlag = false;
+            return;
         }
 
         if (potentialName.Contains(" ")) {
-            QueuePopup("Your character name must not contain spaces.");
-            return 0;
+            activatePopupFlag = true;
+            popupMessage = "Your character name must not contain spaces.";
+            completeCharCreationFlag = false;
+            return;
         }
 
         foreach (string word in RegexLibrary.profanityList) {
-            if (potentialName.Contains(word)) {
-                QueuePopup("You cannot use this name. Please try another.");
-                return 0;
+            if (potentialNameLower.Contains(word)) {
+                activatePopupFlag = true;
+                popupMessage = "You cannot use this name. Please try another.";
+                completeCharCreationFlag = false;
+                return;
             }
         }
 
         Regex regex = new Regex(@"^[a-zA-Z0-9]+$");
-        if (regex.Matches(potentialName).Count > 0) {
-            QueuePopup("Your name must only consist of alphanumeric characters.");
-            return 0;
+        if (regex.Matches(potentialName).Count == 0) {
+            activatePopupFlag = true;
+            popupMessage = "Your name must only consist of alphanumeric characters.";
+            completeCharCreationFlag = false;
+            return;
         }
 
         // Check if username is taken
-        short status = 0;
         DAOScript.dao.dbRef.Child("fteam_ai_takenUsernames").GetValueAsync().ContinueWith(taskA => {
             if (taskA.IsFaulted) {
-                QueuePopup("Database is currently unavailable. Please try again later.\nError: " + taskA.Exception);
-                status = 1;
+                activatePopupFlag = true;
+                popupMessage = "Database is currently unavailable. Please try again later.";
+                completeCharCreationFlag = false;
             } else if (taskA.IsCompleted) {
-                if (!taskA.Result.HasChild(potentialName)) {
-                    QueuePopup("This username is taken! Please try another.");
-                    status = 1;
+                if (taskA.Result.HasChild(potentialName)) {
+                    activatePopupFlag = true;
+                    popupMessage = "This username is taken! Please try another.";
+                    completeCharCreationFlag = false;
                 } else {
-                    if (proceedBtn.interactable) {
-                        QueuePopup("This name is available!");
-                        status = 2;
+                    if (!completeCharCreationFlag) {
+                        activatePopupFlag = true;
+                        popupMessage = "This name is available! You may use this name if you wish.";
+                        completeCharCreationFlag = false;
+                    } else {
+                        // Everything is passed, create player data and mark username as taken
+                        DAOScript.dao.dbRef.Child("fteam_ai_takenUsernames").Child(potentialName).SetValueAsync("true").ContinueWith(taskB => {
+                            if (taskB.IsFaulted) {
+                                activatePopupFlag = true;
+                                popupMessage = "Database is currently unavailable. Please try again later.";
+                                characterNameInput.interactable = true;
+                                proceedBtn.interactable = true;
+                                checkBtn.interactable = true;
+                                completeCharCreationFlag = false;
+                                return;
+                            } else if (taskB.IsCompleted) {
+                                string json = "{\"username\":\"" + potentialName + "\",\"defaultChar\":\"" + selectedCharacter + "\"}";
+                                DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).SetRawJsonValueAsync(json).ContinueWith(taskE => {
+                                    Debug.Log("yohoho");
+                                    if (taskE.IsFaulted) {
+                                        activatePopupFlag = true;
+                                        popupMessage = "Database is currently unavailable. Please try again later.";
+                                        characterNameInput.interactable = true;
+                                        proceedBtn.interactable = true;
+                                        checkBtn.interactable = true;
+                                        completeCharCreationFlag = false;
+                                        return;
+                                    } else if (taskE.IsCompleted) {
+                                        Debug.Log("bohoho");
+                                        json = "{\"weapons\":{" +
+                                        "\"M4A1\": {" +
+                                            "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            "\"duration\":\"-1\"," +
+                                            "\"equippedSuppressor\":\"\"," +
+                                            "\"equippedSight\":\"\"," +
+                                            "\"equippedClip\":\"\""
+                                        + "}," +
+                                        "\"AK-47\": {" +
+                                            "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            "\"duration\":\"-1\"," +
+                                            "\"equippedSuppressor\":\"\"," +
+                                            "\"equippedSight\":\"\"," +
+                                            "\"equippedClip\":\"\""
+                                        + "}," + 
+                                        "\"Glock23\": {" +
+                                            "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            "\"duration\":\"-1\"," +
+                                            "\"equippedSuppressor\":\"\"," +
+                                            "\"equippedSight\":\"\"," +
+                                            "\"equippedClip\":\"\""
+                                        + "}," + 
+                                        "\"M67 Frag\": {" +
+                                            "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            "\"duration\":\"-1\"," +
+                                            "\"equippedSuppressor\":\"\"," +
+                                            "\"equippedSight\":\"\"," +
+                                            "\"equippedClip\":\"\""
+                                        + "}" + 
+                                        "}," +
+                                        "\"characters\":{" +
+                                            "\"" + selectedCharacter + "\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}" +
+                                        "}," +
+                                        "\"armor\":{" +
+                                            "\"Standard Vest\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}" +
+                                        "}," +
+                                        "\"tops\":{" +
+                                            "\"Casual T-Shirt (M)\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Casual T-Shirt (F)\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Casual Shirt\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Standard Fatigues Top (M)\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Standard Fatigues Top (F)\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Casual Tank Top\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}" +
+                                        "}," +
+                                        "\"bottoms\":{" +
+                                            "\"Dark Wash Denim Jeans (M)\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Dark Wash Denim Jeans (F)\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Light Wash Denim Jeans (M)\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Light Wash Denim Jeans (F)\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Standard Fatigues Bottom (M)\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Standard Fatigues Bottom (F)\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}" +
+                                        "}," +
+                                        "\"footwear\":{" +
+                                            "\"White Chucks\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Red Chucks\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Standard Boots (M)\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Standard Boots (F)\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}" +
+                                        "}," +
+                                        "\"headgear\":{" +
+                                            "\"COM Hat\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"MICH\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Combat Beanie\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}" +
+                                        "}," +
+                                        "\"facewear\":{" +
+                                            "\"Standard Goggles\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Sport Shades\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}," +
+                                            "\"Aviators\": {" +
+                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                "\"duration\":\"-1\""
+                                            + "}" +
+                                        "}" +
+                                        "}";
+                                        DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
+                                            .SetRawJsonValueAsync(json).ContinueWith(taskC => {
+                                                string jsonTemp = "{" +
+                                                    "\"name\":\"Standard Suppressor\"," +
+                                                    "\"equippedOn\":\"\"," +
+                                                    "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                                    "\"duration\":\"-1\"" +
+                                                "}";
+                                                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
+                                                    .Child("mods").Push().SetRawJsonValueAsync(jsonTemp).ContinueWith(taskD => {
+                                                        // Continue to home screen
+                                                        Debug.Log("DONE!");
+                                                        // TODO: Uncomment once testing is done
+                                                        // SceneManager.LoadScene("Title");
+                                                    });
+                                        });
+                                    }
+                                });
+                            }
+                        });
                     }
                 }
             }
         });
+    }
 
-        while (status == 0);
-
-        if (status == 1) {
-            return 0;
+    public void OnCheckCharacterNameClick() {
+        if (popupAlert.activeInHierarchy || confirmAlert.activeInHierarchy) {
+            return;
         }
 
-        return 1;
+        CheckCharacterName();
     }
 
     public void ConfirmCharacterCreation() {
+        if (popupAlert.activeInHierarchy || confirmAlert.activeInHierarchy) {
+            return;
+        }
+
         QueueConfirmPopup("Are you sure you wish to proceed with this name and character? It cannot be changed later.");
     }
 
     public void CompleteCharacterCreation() {
+        completeCharCreationFlag = true;
         string finalCharacterName = characterNameInput.text;
+        characterNameInput.interactable = false;
         proceedBtn.interactable = false;
         checkBtn.interactable = false;
 
-        short finalNamePass = 2;
-        finalNamePass = CheckCharacterName();
-        bool semPhore = false;
-
-        while (!semPhore) {
-            if (finalNamePass != 2) {
-                semPhore = true;
-            }
-        }
-
-        if (finalNamePass == 0) {
-            QueuePopup("Your name is ineligible. Please check your character name and try again.");
-            proceedBtn.interactable = true;
-            checkBtn.interactable = true;
-        }
-
-        // Everything is passed, create player data and mark username as taken
-        DAOScript.dao.dbRef.Child("fteam_ai_takenUsernames").Child(finalCharacterName).SetValueAsync("true").ContinueWith(taskA => {
-            if (taskA.IsFaulted) {
-                QueuePopup("Database is currently unavailable. Please try again later.\nError: " + taskA.Exception);
-                proceedBtn.interactable = true;
-                checkBtn.interactable = true;
-                return;
-            } else if (taskA.IsCompleted) {
-                string json = "{'username':'" + finalCharacterName + "','defaultChar':'" + selectedCharacter + "'}";
-                DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).SetRawJsonValueAsync(json).ContinueWith(taskB => {
-                    if (taskB.IsFaulted) {
-                        QueuePopup("Database is currently unavailable. Please try again later.\nError: " + taskA.Exception);
-                        proceedBtn.interactable = true;
-                        checkBtn.interactable = true;
-                        
-                        return;
-                    } else if (taskB.IsCompleted) {
-                        json = "{'weapons':{" +
-                        "'M4A1': {" +
-                            "'acquireDate':'" + DateTime.Now + "'," +
-                            "'duration':'-1'," +
-                            "'equippedSuppressor':''," +
-                            "'equippedSight':''," +
-                            "'equippedClip':''"
-                        + "}," +
-                        "'AK-47': {" +
-                            "'acquireDate':'" + DateTime.Now + "'," +
-                            "'duration':'-1'," +
-                            "'equippedSuppressor':''," +
-                            "'equippedSight':''," +
-                            "'equippedClip':''"
-                        + "}," + 
-                        "'Glock23': {" +
-                            "'acquireDate':'" + DateTime.Now + "'," +
-                            "'duration':'-1'," +
-                            "'equippedSuppressor':''," +
-                            "'equippedSight':''," +
-                            "'equippedClip':''"
-                        + "}," + 
-                        "'M67 Frag': {" +
-                            "'acquireDate':'" + DateTime.Now + "'," +
-                            "'duration':'-1'," +
-                            "'equippedSuppressor':''," +
-                            "'equippedSight':''," +
-                            "'equippedClip':''"
-                        + "}" + 
-                        "}," +
-                        "'characters':{" +
-                            "'" + selectedCharacter + "': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}" +
-                        "}," +
-                        "'armor':{" +
-                            "'Standard Vest': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}" +
-                        "}," +
-                        "'tops':{" +
-                            "'Casual T-Shirt (M)': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Casual T-Shirt (F)': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Casual Shirt': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Standard Fatigues Top (M)': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Standard Fatigues Top (F)': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Casual Tank Top': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}" +
-                        "}," +
-                        "'bottoms':{" +
-                            "'Dark Wash Denim Jeans (M)': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Dark Wash Denim Jeans (F)': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Light Wash Denim Jeans (M)': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Light Wash Denim Jeans (F)': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Standard Fatigues Bottom (M)': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Standard Fatigues Bottom (F)': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}" +
-                        "}," +
-                        "'footwear':{" +
-                            "'White Chucks': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Red Chucks': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Standard Boots (M)': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Standard Boots (F)': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}" +
-                        "}," +
-                        "'headgear':{" +
-                            "'COM Hat': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'MICH': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Combat Beanie': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}" +
-                        "}," +
-                        "'facewear':{" +
-                            "'Standard Goggles': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Sport Shades': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}," +
-                            "'Aviators': {" +
-                                "'acquireDate':'" + DateTime.Now + "'," +
-                                "'duration':'-1'"
-                            + "}" +
-                        "}" +
-                        "}";
-                        DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                            .SetRawJsonValueAsync(json).ContinueWith(taskC => {
-                                string jsonTemp = "{" +
-                                    "'name':'Standard Suppressor'," +
-                                    "'equippedOn':''," +
-                                    "'acquireDate':'" + DateTime.Now + "'," +
-                                    "'duration':'-1'" +
-                                "}";
-                                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                                    .Child("mods").Push().SetRawJsonValueAsync(jsonTemp).ContinueWith(taskD => {
-                                        // Continue to home screen
-                                        Debug.Log("DONE!");
-                                        // TODO: Uncomment once testing is done
-                                        // SceneManager.LoadScene("Title");
-                                    });
-                            });
-                    }
-                });
-            }
-        });
+        CheckCharacterName();
     }
 
     public void ClosePopup() {
@@ -364,7 +375,6 @@ public class SetupControllerScript : MonoBehaviour
     }
 
     public void OnConfirmButtonClicked() {
-        ClosePopup();
         CompleteCharacterCreation();
     }
 
@@ -382,18 +392,7 @@ public class SetupControllerScript : MonoBehaviour
         confirmAlert.SetActive(true);
     }
 
-    void QueuePopup(string message) {
-        if (popupAlert.activeInHierarchy) {
-            ClosePopup();
-        }
-        activatePopupFlag = true;
-        popupMessage = message;
-    }
-
     void QueueConfirmPopup(string message) {
-        if (popupAlert.activeInHierarchy) {
-            ClosePopup();
-        }
         activateConfirmFlag = true;
         popupMessage = message;
     }

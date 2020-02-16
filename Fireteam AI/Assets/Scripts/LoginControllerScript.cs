@@ -22,6 +22,7 @@ public class LoginControllerScript : MonoBehaviour
     void Start()
     {
         copyrightTxt.text = DateTime.Now.Year + " ©";
+
     }
 
     // Update is called once per frame
@@ -78,7 +79,6 @@ public class LoginControllerScript : MonoBehaviour
             // Query DB to see if the user is set up yet. If not, go to setup. Else, go to title page.
             DAOScript.dao.dbRef.Child("fteam_ai_users").GetValueAsync().ContinueWith(taskA => {
                 if (taskA.IsFaulted) {
-                    Debug.Log("ridin");
                     activatePopupFlag = true;
                     popupMessage = ""+taskA.Exception;
                     loginBtn.interactable = true;
