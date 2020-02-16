@@ -17,6 +17,8 @@ public class PlayerData : MonoBehaviour
     public bool disconnectedFromServer;
     public string disconnectReason;
     public bool testMode;
+    private bool dataLoadedFlag;
+    private bool saveDataFlag;
     public PlayerInfo info;
     public ModInfo primaryModInfo;
     public ModInfo secondaryModInfo;
@@ -65,9 +67,19 @@ public class PlayerData : MonoBehaviour
 
     }
 
-    public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
-    {
-        string levelName = SceneManager.GetActiveScene().name;
+    void Update() {
+        // Handle async calls
+        if (dataLoadedFlag) {
+            InstantiatePlayer();
+            dataLoadedFlag = false;
+        }
+        if (saveDataFlag) {
+            SavePlayerData();
+            saveDataFlag = false;
+        }
+    }
+
+    string GetCharacterPrefabName() {
         string characterPrefabName = "";
         if (PlayerData.playerdata.info.equippedCharacter.Equals("Lucas")) {
             characterPrefabName = "LucasGamePrefab";
@@ -80,14 +92,21 @@ public class PlayerData : MonoBehaviour
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Jade")) {
             characterPrefabName = "JadeGamePrefab";
         }
+        return characterPrefabName;
+    }
+
+    public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+        string levelName = SceneManager.GetActiveScene().name;
         if (levelName.Equals("BetaLevelNetwork"))
         {
+            string characterPrefabName = GetCharacterPrefabName();
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
                 characterPrefabName,
                 Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
                 Quaternion.Euler(Vector3.zero));
         } else if (levelName.Equals("Test")) {
-            //Debug.Log(characterPrefabName);
+            string characterPrefabName = GetCharacterPrefabName();
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
                 characterPrefabName,
                 Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
@@ -129,19 +148,23 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.equippedSupportType = myWeps.equippedSupportType;
 
         string saveJson = "{" +
-            "'equippedCharacter':'" + PlayerData.playerdata.info.equippedCharacter + "'," +
-            "'equippedPrimary':'" + PlayerData.playerdata.info.equippedPrimary + "'," +
-            "'equippedSecondary':'" + PlayerData.playerdata.info.equippedSecondary + "'," +
-            "'equippedSupport':'" + PlayerData.playerdata.info.equippedSupport + "'," +
-            "'equippedTop':'" + PlayerData.playerdata.info.equippedTop + "'," +
-            "'equippedBottom':'" + PlayerData.playerdata.info.equippedBottom + "'," +
-            "'equippedFootwear':'" + PlayerData.playerdata.info.equippedFootwear + "'," +
-            "'equippedFacewear':'" + PlayerData.playerdata.info.equippedFacewear + "'," +
-            "'equippedHeadgear':'" + PlayerData.playerdata.info.equippedHeadgear + "'," +
-            "'equippedArmor':'" + PlayerData.playerdata.info.equippedArmor + "'" +
+            "\"equippedCharacter\":\"" + PlayerData.playerdata.info.equippedCharacter + "\"," +
+            "\"equippedPrimary\":\"" + PlayerData.playerdata.info.equippedPrimary + "\"," +
+            "\"equippedSecondary\":\"" + PlayerData.playerdata.info.equippedSecondary + "\"," +
+            "\"equippedSupport\":\"" + PlayerData.playerdata.info.equippedSupport + "\"," +
+            "\"equippedTop\":\"" + PlayerData.playerdata.info.equippedTop + "\"," +
+            "\"equippedBottom\":\"" + PlayerData.playerdata.info.equippedBottom + "\"," +
+            "\"equippedFootwear\":\"" + PlayerData.playerdata.info.equippedFootwear + "\"," +
+            "\"equippedFacewear\":\"" + PlayerData.playerdata.info.equippedFacewear + "\"," +
+            "\"equippedHeadgear\":\"" + PlayerData.playerdata.info.equippedHeadgear + "\"," +
+            "\"equippedArmor\":\"" + PlayerData.playerdata.info.equippedArmor + "\"" +
         "}";
         DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("equipment")
-            .SetRawJsonValueAsync(saveJson);
+            .SetRawJsonValueAsync(saveJson).ContinueWith(task => {
+                if (task.IsCompleted) {
+                    Debug.Log("Player data saved successfully.");
+                }
+            });
     }
 
     public void LoadPlayerData()
@@ -196,6 +219,7 @@ public class PlayerData : MonoBehaviour
                     if (!"".Equals(modId)) {
                         supportModInfo.equippedSuppressor = modsInventory.Child(modId).Child("name").Value.ToString();
                     }
+                    dataLoadedFlag = true;
                 } else {
                     info.equippedCharacter = snapshot.Child("defaultChar").Value.ToString();
                     char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
@@ -220,10 +244,14 @@ public class PlayerData : MonoBehaviour
                     supportModInfo.equippedSuppressor = "";
                     supportModInfo.weaponName = "";
                     supportModInfo.id = "";
-                    SavePlayerData();
+                    dataLoadedFlag = true;
+                    saveDataFlag = true;
                 }
             }
         });
+    }
+
+    void InstantiatePlayer() {
         FindBodyRef(info.equippedCharacter);
         EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
         WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
@@ -258,11 +286,12 @@ public class PlayerData : MonoBehaviour
                 w.equippedSuppressor = thisSnapshot.Child("equippedSuppressor").Value.ToString();
                 w.equippedClip = thisSnapshot.Child("equippedClip").Value.ToString();
                 w.equippedSight = thisSnapshot.Child("equippedSight").Value.ToString();
+                myWeapons.Add(w);
             }
 
             subSnapshot = snapshot.Child("characters");
             dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load weapons
+            // Load characters
             while (dataLoaded.MoveNext()) {
                 CharacterData c = new CharacterData();
                 string key = dataLoaded.Current.Key;
@@ -270,11 +299,12 @@ public class PlayerData : MonoBehaviour
                 c.name = key;
                 c.acquireData = thisSnapshot.Child("acquireData").Value.ToString();
                 c.duration = thisSnapshot.Child("duration").Value.ToString();
+                myCharacters.Add(c);
             }
 
             subSnapshot = snapshot.Child("armor");
             dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load weapons
+            // Load armor
             while (dataLoaded.MoveNext()) {
                 ArmorData a = new ArmorData();
                 string key = dataLoaded.Current.Key;
@@ -282,11 +312,12 @@ public class PlayerData : MonoBehaviour
                 a.name = key;
                 a.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
                 a.duration = thisSnapshot.Child("duration").Value.ToString();
+                myArmor.Add(a);
             }
 
             subSnapshot = snapshot.Child("tops");
             dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load weapons
+            // Load tops
             while (dataLoaded.MoveNext()) {
                 EquipmentData d = new EquipmentData();
                 string key = dataLoaded.Current.Key;
@@ -294,11 +325,12 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
+                myTops.Add(d);
             }
 
             subSnapshot = snapshot.Child("bottoms");
             dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load weapons
+            // Load bottoms
             while (dataLoaded.MoveNext()) {
                 EquipmentData d = new EquipmentData();
                 string key = dataLoaded.Current.Key;
@@ -306,11 +338,12 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
+                myBottoms.Add(d);
             }
 
             subSnapshot = snapshot.Child("footwear");
             dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load weapons
+            // Load footwear
             while (dataLoaded.MoveNext()) {
                 EquipmentData d = new EquipmentData();
                 string key = dataLoaded.Current.Key;
@@ -318,11 +351,12 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
+                myFootwear.Add(d);
             }
 
             subSnapshot = snapshot.Child("headgear");
             dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load weapons
+            // Load headgear
             while (dataLoaded.MoveNext()) {
                 EquipmentData d = new EquipmentData();
                 string key = dataLoaded.Current.Key;
@@ -330,11 +364,12 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
+                myHeadgear.Add(d);
             }
 
             subSnapshot = snapshot.Child("facewear");
             dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load weapons
+            // Load facewear
             while (dataLoaded.MoveNext()) {
                 EquipmentData d = new EquipmentData();
                 string key = dataLoaded.Current.Key;
@@ -342,11 +377,12 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
+                myFacewear.Add(d);
             }
 
             subSnapshot = snapshot.Child("mods");
             dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load weapons
+            // Load mods
             while (dataLoaded.MoveNext()) {
                 ModData m = new ModData();
                 string key = dataLoaded.Current.Key;
@@ -355,6 +391,7 @@ public class PlayerData : MonoBehaviour
                 m.name = thisSnapshot.Child("name").Value.ToString();
                 m.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
                 m.duration = thisSnapshot.Child("duration").Value.ToString();
+                myMods.Add(m);
             }
         });
     }
@@ -427,28 +464,25 @@ public class PlayerData : MonoBehaviour
     }
 
     public ModInfo LoadModDataForWeapon(string weaponName) {
-        bool loading = true;
         ModInfo modInfo = new ModInfo();
         modInfo.weaponName = weaponName;
         
-        DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(weaponName)
-            .Child("equippedSuppressor").GetValueAsync().ContinueWith(task => {
-                string id = task.Result.Value.ToString();
-                modInfo.id = id;
-                if (id.Equals("")) {
-                    modInfo.equippedSuppressor = "";
-                    loading = false;
-                } else {
-                    DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                        .Child("mods").Child(id).Child("name").GetValueAsync().ContinueWith(taskA => {
-                            modInfo.equippedSuppressor = taskA.Result.Value.ToString();
-                            loading = false;
-                    });
+        for (int i = 0; i < myMods.Count; i++) {
+            // If the mod is equipped on the given weapon, load it into the requested mod info
+            ModData m = (ModData)myMods[i];
+            if (m.equippedOn.Equals(weaponName)) {
+                Mod modDetails = InventoryScript.itemData.modCatalog[m.name];
+                modInfo.id = m.id;
+                if (modDetails.category.Equals("Suppressor")) {
+                    modInfo.equippedSuppressor = m.name;
+                } else if (modDetails.category.Equals("Sight")) {
+                    modInfo.equippedSight = m.name;
+                } else if (modDetails.category.Equals("Clip")) {
+                    modInfo.equippedClip = m.name;
                 }
-            });
+            }
+        }
         
-        while (loading);
-
         return modInfo;
     }
 
@@ -477,6 +511,8 @@ public class ModInfo
     public string id;
     public string weaponName;
     public string equippedSuppressor;
+    public string equippedSight;
+    public string equippedClip;
 }
 
 public class WeaponData {

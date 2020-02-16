@@ -164,7 +164,6 @@ public class SetupControllerScript : MonoBehaviour
                             } else if (taskB.IsCompleted) {
                                 string json = "{\"username\":\"" + potentialName + "\",\"defaultChar\":\"" + selectedCharacter + "\"}";
                                 DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).SetRawJsonValueAsync(json).ContinueWith(taskE => {
-                                    Debug.Log("yohoho");
                                     if (taskE.IsFaulted) {
                                         activatePopupFlag = true;
                                         popupMessage = "Database is currently unavailable. Please try again later.";
@@ -173,9 +172,8 @@ public class SetupControllerScript : MonoBehaviour
                                         checkBtn.interactable = true;
                                         completeCharCreationFlag = false;
                                         return;
-                                    } else if (taskE.IsCompleted) {
-                                        Debug.Log("bohoho");
-                                        json = "{\"weapons\":{" +
+                                    } else {
+                                        string jsonA = "{\"weapons\":{" +
                                         "\"M4A1\": {" +
                                             "\"acquireDate\":\"" + DateTime.Now + "\"," +
                                             "\"duration\":\"-1\"," +
@@ -317,7 +315,10 @@ public class SetupControllerScript : MonoBehaviour
                                         "}" +
                                         "}";
                                         DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                                            .SetRawJsonValueAsync(json).ContinueWith(taskC => {
+                                            .SetRawJsonValueAsync(jsonA).ContinueWith(taskC => {
+                                            if (taskC.IsFaulted) {
+                                                Debug.Log(taskC.Exception.Message);
+                                            } else {
                                                 string jsonTemp = "{" +
                                                     "\"name\":\"Standard Suppressor\"," +
                                                     "\"equippedOn\":\"\"," +
@@ -330,7 +331,8 @@ public class SetupControllerScript : MonoBehaviour
                                                         Debug.Log("DONE!");
                                                         // TODO: Uncomment once testing is done
                                                         // SceneManager.LoadScene("Title");
-                                                    });
+                                                });
+                                            }
                                         });
                                     }
                                 });

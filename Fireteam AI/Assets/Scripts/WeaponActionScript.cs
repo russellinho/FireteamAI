@@ -252,23 +252,23 @@ public class WeaponActionScript : MonoBehaviour
             aimDownSightsTimer += (Time.deltaTime * weaponStats.aimDownSightSpeed);
             // If going to center
             if (isAiming) {
-                if (fpc.equipmentScript.gender == 'M') {
+                if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
                     leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponStats.stableHandPosMale, aimDownSightsTimer);
                     rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponStats.aimDownSightPosMale, aimDownSightsTimer);
-                } else if (fpc.equipmentScript.gender == 'F') {
+                } else if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'F') {
                     leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponStats.stableHandPosFemale, aimDownSightsTimer);
                     rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponStats.aimDownSightPosFemale, aimDownSightsTimer);
                 }
             // If coming back to normal
             } else {
                 // If the player is back in the normal position, then disable the lock
-                if (fpc.equipmentScript.gender == 'M') {
+                if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
                     leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponStats.defaultLeftCollarPosMale, aimDownSightsTimer);
                     rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponStats.defaultRightCollarPosMale, aimDownSightsTimer);
                     if (aimDownSightsLock && Vector3.SqrMagnitude(rightCollar.localPosition - weaponStats.defaultRightCollarPosMale) < 0.0000001f) {
                         aimDownSightsLock = false;
                     }
-                } else if (fpc.equipmentScript.gender == 'F') {
+                } else if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'F') {
                     leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponStats.defaultLeftCollarPosFemale, aimDownSightsTimer);
                     rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponStats.defaultRightCollarPosFemale, aimDownSightsTimer);
                     if (aimDownSightsLock && Vector3.SqrMagnitude(rightCollar.localPosition - weaponStats.defaultRightCollarPosFemale) < 0.0000001f) {
@@ -330,7 +330,7 @@ public class WeaponActionScript : MonoBehaviour
                     aimDownSightsTimer = 0f;
                 }
                 aimDownSightsLock = true;
-                if (fpc.equipmentScript.gender == 'M') {
+                if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
                     if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(rightCollar.localPosition), Vector3.Magnitude(weaponStats.aimDownSightPosMale))) {
                       camTransform.GetComponent<Camera>().fieldOfView = zoom;
@@ -874,7 +874,7 @@ public class WeaponActionScript : MonoBehaviour
         weaponMods = ws.GetComponent<WeaponMods>();
         fireTimer = ws.fireRate;
         playerActionScript.weaponSpeedModifier = ws.mobility/100f;
-        if (playerActionScript.equipmentScript.gender == 'M') {
+        if (playerActionScript.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
             fpc.fpcAnimator.runtimeAnimatorController = ws.maleOverrideController as RuntimeAnimatorController;
         } else {
             fpc.fpcAnimator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;

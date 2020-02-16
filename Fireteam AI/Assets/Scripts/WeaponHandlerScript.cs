@@ -47,7 +47,7 @@ public class WeaponHandlerScript : MonoBehaviour
     {
         WeaponStats wepStats = weapon.GetComponent<WeaponStats>();
         if (firstPersonMode) {
-            if (fpc.equipmentScript.gender == 'M') {
+            if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
                 // Set the weapon position for males, get from stats
                 weapon.localPosition = wepStats.fpcPosMale;
                 weapon.localRotation = Quaternion.Euler(wepStats.fpcRotMale);
@@ -59,7 +59,7 @@ public class WeaponHandlerScript : MonoBehaviour
                 weapon.localScale = wepStats.fpcScaleFemale;
             }
         } else {
-            if (fpc.equipmentScript.gender == 'M') {
+            if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
                 // Set the weapon position for males, get from stats
                 weapon.localPosition = wepStats.fullPosMale;
                 weapon.localRotation = Quaternion.Euler(wepStats.fullRotMale);
@@ -96,10 +96,10 @@ public class WeaponHandlerScript : MonoBehaviour
     public void SwitchWeaponToLeftHand() {
         WeaponStats wepStats = weapon.GetComponent<WeaponStats>();
         weapon.SetParent(leftHand, false);
-        if (fpc.equipmentScript.gender == 'M') {
+        if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
             weapon.localPosition = wepStats.fpcLeftHandPosMale;
             weapon.localRotation = Quaternion.Euler(wepStats.fpcLeftHandRotMale);            
-        } else if (fpc.equipmentScript.gender == 'F') {
+        } else if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'F') {
             weapon.localPosition = wepStats.fpcLeftHandPosFemale;
             weapon.localRotation = Quaternion.Euler(wepStats.fpcLeftHandRotFemale);
         }
