@@ -279,25 +279,25 @@ public class PlayerData : MonoBehaviour
             while (dataLoaded.MoveNext()) {
                 WeaponData w = new WeaponData();
                 string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current.Child(key);
+                DataSnapshot thisSnapshot = dataLoaded.Current;
                 w.name = key;
-                w.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
+                w.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 w.duration = thisSnapshot.Child("duration").Value.ToString();
                 w.equippedSuppressor = thisSnapshot.Child("equippedSuppressor").Value.ToString();
                 w.equippedClip = thisSnapshot.Child("equippedClip").Value.ToString();
                 w.equippedSight = thisSnapshot.Child("equippedSight").Value.ToString();
                 myWeapons.Add(w);
             }
-
+            
             subSnapshot = snapshot.Child("characters");
             dataLoaded = subSnapshot.Children.GetEnumerator();
             // Load characters
             while (dataLoaded.MoveNext()) {
                 CharacterData c = new CharacterData();
                 string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current.Child(key);
+                DataSnapshot thisSnapshot = dataLoaded.Current;
                 c.name = key;
-                c.acquireData = thisSnapshot.Child("acquireData").Value.ToString();
+                c.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 c.duration = thisSnapshot.Child("duration").Value.ToString();
                 myCharacters.Add(c);
             }
@@ -308,9 +308,9 @@ public class PlayerData : MonoBehaviour
             while (dataLoaded.MoveNext()) {
                 ArmorData a = new ArmorData();
                 string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current.Child(key);
+                DataSnapshot thisSnapshot = dataLoaded.Current;
                 a.name = key;
-                a.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
+                a.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 a.duration = thisSnapshot.Child("duration").Value.ToString();
                 myArmor.Add(a);
             }
@@ -321,9 +321,9 @@ public class PlayerData : MonoBehaviour
             while (dataLoaded.MoveNext()) {
                 EquipmentData d = new EquipmentData();
                 string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current.Child(key);
+                DataSnapshot thisSnapshot = dataLoaded.Current;
                 d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
+                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
                 myTops.Add(d);
             }
@@ -334,9 +334,9 @@ public class PlayerData : MonoBehaviour
             while (dataLoaded.MoveNext()) {
                 EquipmentData d = new EquipmentData();
                 string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current.Child(key);
+                DataSnapshot thisSnapshot = dataLoaded.Current;
                 d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
+                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
                 myBottoms.Add(d);
             }
@@ -347,9 +347,9 @@ public class PlayerData : MonoBehaviour
             while (dataLoaded.MoveNext()) {
                 EquipmentData d = new EquipmentData();
                 string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current.Child(key);
+                DataSnapshot thisSnapshot = dataLoaded.Current;
                 d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
+                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
                 myFootwear.Add(d);
             }
@@ -360,9 +360,9 @@ public class PlayerData : MonoBehaviour
             while (dataLoaded.MoveNext()) {
                 EquipmentData d = new EquipmentData();
                 string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current.Child(key);
+                DataSnapshot thisSnapshot = dataLoaded.Current;
                 d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
+                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
                 myHeadgear.Add(d);
             }
@@ -373,9 +373,9 @@ public class PlayerData : MonoBehaviour
             while (dataLoaded.MoveNext()) {
                 EquipmentData d = new EquipmentData();
                 string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current.Child(key);
+                DataSnapshot thisSnapshot = dataLoaded.Current;
                 d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
+                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
                 myFacewear.Add(d);
             }
@@ -386,11 +386,12 @@ public class PlayerData : MonoBehaviour
             while (dataLoaded.MoveNext()) {
                 ModData m = new ModData();
                 string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current.Child(key);
+                DataSnapshot thisSnapshot = dataLoaded.Current;
                 m.id = key;
                 m.name = thisSnapshot.Child("name").Value.ToString();
-                m.acquireDate = thisSnapshot.Child("acquireData").Value.ToString();
+                m.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 m.duration = thisSnapshot.Child("duration").Value.ToString();
+                m.equippedOn = thisSnapshot.Child("equippedOn").Value.ToString();
                 myMods.Add(m);
             }
         });
@@ -540,6 +541,6 @@ public class ArmorData {
 
 public class CharacterData {
     public string name;
-    public string acquireData;
+    public string acquireDate;
     public string duration;
 }
