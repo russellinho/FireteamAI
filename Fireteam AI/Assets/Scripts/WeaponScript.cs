@@ -18,11 +18,8 @@ public class WeaponScript : MonoBehaviour
     public Animation titleAnimMale;
     
     public string equippedPrimaryWeapon;
-    public string equippedPrimaryType;
     public string equippedSecondaryWeapon;
-    public string equippedSecondaryType;
     public string equippedSupportWeapon;
-    public string equippedSupportType;
     public string equippedWep;
     public int currentlyEquippedType;
     public int totalPrimaryAmmoLeft;
@@ -85,11 +82,8 @@ public class WeaponScript : MonoBehaviour
             //EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
             //EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);
             equippedPrimaryWeapon = PlayerData.playerdata.info.equippedPrimary;
-            equippedPrimaryType = PlayerData.playerdata.info.equippedPrimaryType;
             equippedSecondaryWeapon = PlayerData.playerdata.info.equippedSecondary;
-            equippedSecondaryType = PlayerData.playerdata.info.equippedSecondaryType;
             equippedSupportWeapon = PlayerData.playerdata.info.equippedSupport;
-            equippedSupportType = PlayerData.playerdata.info.equippedSupportType;
             currentAmmoPrimary = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].clipCapacity;
             currentAmmoSecondary = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
             currentAmmoSupport = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].clipCapacity;
@@ -105,21 +99,19 @@ public class WeaponScript : MonoBehaviour
     // Use when spawning/respawning
     void InitializeWeapon() {
         string equippedWep = "";
-        string equippedType = "";
         ModInfo modInfo = null;
         
         weaponActionScript.hudScript.ToggleCrosshair(false);
         equippedWep = equippedPrimaryWeapon;
-        equippedType = equippedPrimaryType;
         weaponActionScript.currentAmmo = currentAmmoPrimary;
         weaponActionScript.totalAmmoLeft = totalPrimaryAmmoLeft;
         modInfo = PlayerData.playerdata.primaryModInfo;
 
-        pView.RPC("RpcInitializeWeapon", RpcTarget.All, 1, equippedWep, equippedType, modInfo.equippedSuppressor);
+        pView.RPC("RpcInitializeWeapon", RpcTarget.All, 1, equippedWep, modInfo.equippedSuppressor);
     }
 
     [PunRPC]
-    void RpcInitializeWeapon(int weaponCat, string equippedWep, string equippedType, string equippedSuppressor) {
+    void RpcInitializeWeapon(int weaponCat, string equippedWep, string equippedSuppressor) {
         weaponReady = false;
         currentlyEquippedType = weaponCat;
         if (!equipmentScript.isFirstPerson()) {
@@ -127,7 +119,7 @@ public class WeaponScript : MonoBehaviour
         } else {
             weaponActionScript.animatorFpc.SetInteger("WeaponType", weaponCat);
         }
-        EquipWeapon(equippedType, equippedWep, equippedSuppressor, null);
+        EquipWeapon(equippedWep, equippedSuppressor, null);
     }
 
     void DrawPrimary()
@@ -187,42 +179,38 @@ public class WeaponScript : MonoBehaviour
 
     public void DrawWeapon(int weaponCat) {
         string equippedWep = "";
-        string equippedType = "";
         ModInfo modInfo = null;
         
         if (weaponCat == 1)
         {
             weaponActionScript.hudScript.ToggleCrosshair(false);
             equippedWep = equippedPrimaryWeapon;
-            equippedType = equippedPrimaryType;
             modInfo = PlayerData.playerdata.primaryModInfo;
         }
         else if (weaponCat == 2)
         {
             weaponActionScript.hudScript.ToggleCrosshair(false);
             equippedWep = equippedSecondaryWeapon;
-            equippedType = equippedSecondaryType;
             modInfo = PlayerData.playerdata.secondaryModInfo;
         }
         else if (weaponCat == 4)
         {
-            if (equippedSupportType.Equals("Explosive")) {
+            if (InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].category.Equals("Explosive")) {
                 weaponActionScript.hudScript.ToggleCrosshair(true);
             }
             equippedWep = equippedSupportWeapon;
-            equippedType = equippedSupportType;
             modInfo = PlayerData.playerdata.supportModInfo;
         }
-        pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, equippedType, modInfo.equippedSuppressor);
+        pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, modInfo.equippedSuppressor);
     }
 
     [PunRPC]
-    private void RpcDrawWeapon(int weaponCat, string equippedWep, string equippedType, string equippedSuppressor) {
+    private void RpcDrawWeapon(int weaponCat, string equippedWep, string equippedSuppressor) {
         weaponReady = false;
         currentlyEquippedType = weaponCat;
         if (!equipmentScript.isFirstPerson()) {
             animator.SetInteger("WeaponType", weaponCat);
-            EquipWeapon(equippedType, equippedWep, equippedSuppressor, null);
+            EquipWeapon(equippedWep, equippedSuppressor, null);
         } else {
             weaponActionScript.animatorFpc.SetInteger("WeaponType", weaponCat);
             weaponActionScript.animatorFpc.SetTrigger("HolsterWeapon");
@@ -249,7 +237,6 @@ public class WeaponScript : MonoBehaviour
 
     void EquipAssaultRifle(string weaponName) {
         // Set animation and hand positions
-        equippedPrimaryType = "Assault Rifle";
         equippedPrimaryWeapon = weaponName;
         if (!animator.GetBool("onTitle")) {
             if (equipmentScript.isFirstPerson()) {
@@ -261,7 +248,6 @@ public class WeaponScript : MonoBehaviour
     }
 
     void EquipShotgun(string weaponName) {
-        equippedPrimaryType = "Shotgun";
         equippedPrimaryWeapon = weaponName;
         if (!animator.GetBool("onTitle")) {
             if (equipmentScript.isFirstPerson()) {
@@ -274,7 +260,6 @@ public class WeaponScript : MonoBehaviour
 
     public void EquipPistol(string weaponName) {
         // Set animation and hand positions
-        equippedSecondaryType = "Pistol";
         equippedSecondaryWeapon = weaponName;
         if (!onTitle) {
             if (equipmentScript.isFirstPerson()) {
@@ -286,7 +271,6 @@ public class WeaponScript : MonoBehaviour
     }
 
     public void EquipSniperRifle(string weaponName) {
-        equippedPrimaryType = "Sniper Rifle";
         equippedPrimaryWeapon = weaponName;
         if (!animator.GetBool("onTitle")) {
             if (equipmentScript.isFirstPerson()) {
@@ -298,7 +282,6 @@ public class WeaponScript : MonoBehaviour
     }
 
     public void EquipExplosive(string weaponName) {
-        equippedSupportType = "Explosive";
         equippedSupportWeapon = weaponName;
         if (!onTitle) {
             if (equipmentScript.isFirstPerson()) {
@@ -311,7 +294,6 @@ public class WeaponScript : MonoBehaviour
     }
 
     public void EquipBooster(string weaponName) {
-        equippedSupportType = "Booster";
         equippedSupportWeapon = weaponName;
         if (!onTitle) {
             if (equipmentScript.isFirstPerson()) {
@@ -331,11 +313,12 @@ public class WeaponScript : MonoBehaviour
         weaponHolderFpc.SetWeapon(drawnWeaponReference.transform, true);
     }
 
-    public void EquipWeapon(string weaponType, string weaponName, string suppressorName, GameObject shopItemRef) {
+    public void EquipWeapon(string weaponName, string suppressorName, GameObject shopItemRef) {
         if (onTitle && (weaponName.Equals(equippedPrimaryWeapon) || weaponName.Equals(equippedSecondaryWeapon) || weaponName.Equals(equippedSupportWeapon))) return;
         // Get the weapon from the weapon catalog for its properties
         Weapon w = InventoryScript.itemData.weaponCatalog[weaponName];
         GameObject wepEquipped = null;
+        string weaponType = InventoryScript.itemData.weaponCatalog[weaponName].category;
         switch (weaponType) {
             case "Assault Rifle":
                 currentlyEquippedType = 1;
@@ -626,13 +609,10 @@ public class WeaponScript : MonoBehaviour
 
     public void EquipDefaultWeapons() {
         equippedPrimaryWeapon = "AK-47";
-        equippedPrimaryType = "Assault Rifle";
         equippedSecondaryWeapon = "Glock23";
-        equippedSecondaryType = "Pistol";
         equippedSupportWeapon = "M67 Frag";
-        equippedSupportType = "Explosive";
-        EquipWeapon(equippedPrimaryType, equippedPrimaryWeapon, null, null);
-        EquipWeapon(equippedSecondaryType, equippedSecondaryWeapon, null, null);
+        EquipWeapon(equippedPrimaryWeapon, null, null);
+        EquipWeapon(equippedSecondaryWeapon, null, null);
     }
 
     public void DespawnPlayer()

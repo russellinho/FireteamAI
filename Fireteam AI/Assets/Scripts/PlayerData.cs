@@ -141,11 +141,8 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.equippedFootwear = myEquips.equippedFootwear;
         PlayerData.playerdata.info.equippedArmor = myEquips.equippedArmor;
         PlayerData.playerdata.info.equippedPrimary = myWeps.equippedPrimaryWeapon;
-        PlayerData.playerdata.info.equippedPrimaryType = myWeps.equippedPrimaryType;
         PlayerData.playerdata.info.equippedSecondary = myWeps.equippedSecondaryWeapon;
-        PlayerData.playerdata.info.equippedSecondaryType = myWeps.equippedSecondaryType;
         PlayerData.playerdata.info.equippedSupport = myWeps.equippedSupportWeapon;
-        PlayerData.playerdata.info.equippedSupportType = myWeps.equippedSupportType;
 
         string saveJson = "{" +
             "\"equippedCharacter\":\"" + PlayerData.playerdata.info.equippedCharacter + "\"," +
@@ -182,44 +179,47 @@ public class PlayerData : MonoBehaviour
                 playername = snapshot.Child("username").Value.ToString();
                 // Equip previously equipped if available. Else, equip defaults and save it
                 if (snapshot.HasChild("equipment")) {
-                    DataSnapshot equipSnapshot = snapshot.Child("equipment");
-                    info.equippedCharacter = equipSnapshot.Child("equippedCharacter").Value.ToString();
-                    info.equippedPrimary = equipSnapshot.Child("equippedPrimary").Value.ToString();
-                    info.equippedSecondary = equipSnapshot.Child("equippedSecondary").Value.ToString();
-                    info.equippedSupport = equipSnapshot.Child("equippedSupport").Value.ToString();
-                    info.equippedTop = equipSnapshot.Child("equippedTop").Value.ToString();
-                    info.equippedBottom = equipSnapshot.Child("equippedBottom").Value.ToString();
-                    info.equippedFootwear = equipSnapshot.Child("equippedFootwear").Value.ToString();
-                    info.equippedFacewear = equipSnapshot.Child("equippedFacewear").Value.ToString();
-                    info.equippedHeadgear = equipSnapshot.Child("equippedHeadgear").Value.ToString();
-                    info.equippedArmor = equipSnapshot.Child("equippedArmor").Value.ToString();
+                    DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(taskA => {
+                        DataSnapshot inventorySnapshot = taskA.Result;
+                        DataSnapshot equipSnapshot = snapshot.Child("equipment");
+                        info.equippedCharacter = equipSnapshot.Child("equippedCharacter").Value.ToString();
+                        info.equippedPrimary = equipSnapshot.Child("equippedPrimary").Value.ToString();
+                        info.equippedSecondary = equipSnapshot.Child("equippedSecondary").Value.ToString();
+                        info.equippedSupport = equipSnapshot.Child("equippedSupport").Value.ToString();
+                        info.equippedTop = equipSnapshot.Child("equippedTop").Value.ToString();
+                        info.equippedBottom = equipSnapshot.Child("equippedBottom").Value.ToString();
+                        info.equippedFootwear = equipSnapshot.Child("equippedFootwear").Value.ToString();
+                        info.equippedFacewear = equipSnapshot.Child("equippedFacewear").Value.ToString();
+                        info.equippedHeadgear = equipSnapshot.Child("equippedHeadgear").Value.ToString();
+                        info.equippedArmor = equipSnapshot.Child("equippedArmor").Value.ToString();
 
-                    DataSnapshot modsInventory = snapshot.Child("mods");
+                        DataSnapshot modsInventory = inventorySnapshot.Child("mods");
 
-                    DataSnapshot modSnapshot = snapshot.Child("weapons").Child(info.equippedPrimary);
-                    string modId = modSnapshot.Child("equippedSuppressor").Value.ToString();
-                    primaryModInfo.weaponName = info.equippedPrimary;
-                    primaryModInfo.id = modId;
-                    if (!"".Equals(modId)) {
-                        primaryModInfo.equippedSuppressor = modsInventory.Child(modId).Child("name").Value.ToString();
-                    }
+                        DataSnapshot modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedPrimary);
+                        string modId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                        primaryModInfo.weaponName = info.equippedPrimary;
+                        primaryModInfo.id = modId;
+                        if (!"".Equals(modId)) {
+                            primaryModInfo.equippedSuppressor = modsInventory.Child(modId).Child("name").Value.ToString();
+                        }
 
-                    modSnapshot = snapshot.Child("weapons").Child(info.equippedSecondary);
-                    modId = modSnapshot.Child("equippedSuppressor").Value.ToString();
-                    secondaryModInfo.weaponName = info.equippedSecondary;
-                    secondaryModInfo.id = modId;
-                    if (!"".Equals(modId)) {
-                        secondaryModInfo.equippedSuppressor = modsInventory.Child(modId).Child("name").Value.ToString();
-                    }
+                        modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedSecondary);
+                        modId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                        secondaryModInfo.weaponName = info.equippedSecondary;
+                        secondaryModInfo.id = modId;
+                        if (!"".Equals(modId)) {
+                            secondaryModInfo.equippedSuppressor = modsInventory.Child(modId).Child("name").Value.ToString();
+                        }
 
-                    modSnapshot = snapshot.Child("weapons").Child(info.equippedSupport);
-                    modId = modSnapshot.Child("equippedSuppressor").Value.ToString();
-                    supportModInfo.weaponName = info.equippedSupport;
-                    supportModInfo.id = modId;
-                    if (!"".Equals(modId)) {
-                        supportModInfo.equippedSuppressor = modsInventory.Child(modId).Child("name").Value.ToString();
-                    }
-                    dataLoadedFlag = true;
+                        modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedSupport);
+                        modId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                        supportModInfo.weaponName = info.equippedSupport;
+                        supportModInfo.id = modId;
+                        if (!"".Equals(modId)) {
+                            supportModInfo.equippedSuppressor = modsInventory.Child(modId).Child("name").Value.ToString();
+                        }
+                        dataLoadedFlag = true;
+                    });
                 } else {
                     info.equippedCharacter = snapshot.Child("defaultChar").Value.ToString();
                     char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
@@ -264,9 +264,9 @@ public class PlayerData : MonoBehaviour
         characterEquips.EquipBottom(info.equippedBottom, null);
         characterEquips.EquipFootwear(info.equippedFootwear, null);
         characterEquips.EquipArmor(info.equippedArmor, null);
-        characterWeps.EquipWeapon(info.equippedPrimaryType, info.equippedPrimary, primaryModInfo.equippedSuppressor, null);
-        characterWeps.EquipWeapon(info.equippedSecondaryType, info.equippedSecondary, secondaryModInfo.equippedSuppressor, null);
-        characterWeps.EquipWeapon(info.equippedSupportType, info.equippedSupport, supportModInfo.equippedSuppressor, null);
+        characterWeps.EquipWeapon(info.equippedPrimary, primaryModInfo.equippedSuppressor, null);
+        characterWeps.EquipWeapon(info.equippedSecondary, secondaryModInfo.equippedSuppressor, null);
+        characterWeps.EquipWeapon(info.equippedSupport, supportModInfo.equippedSuppressor, null);
         PhotonNetwork.NickName = playername;
     }
 
@@ -417,9 +417,6 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.equippedPrimary = weaponScrpt.equippedPrimaryWeapon;
         PlayerData.playerdata.info.equippedSecondary = weaponScrpt.equippedSecondaryWeapon;
         PlayerData.playerdata.info.equippedSupport = weaponScrpt.equippedSupportWeapon;
-        PlayerData.playerdata.info.equippedPrimaryType = weaponScrpt.equippedPrimaryType;
-        PlayerData.playerdata.info.equippedSecondaryType = weaponScrpt.equippedSecondaryType;
-        PlayerData.playerdata.info.equippedSupportType = weaponScrpt.equippedSupportType;
         Destroy(bodyReference);
         bodyReference = null;
         bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.itemData.characterCatalog[character].prefabPath));
@@ -499,11 +496,8 @@ public class PlayerInfo
     public string equippedFootwear;
     public string equippedArmor;
     public string equippedPrimary;
-    public string equippedPrimaryType;
     public string equippedSecondary;
-    public string equippedSecondaryType;
     public string equippedSupport;
-    public string equippedSupportType;
 }
 
 public class ModInfo

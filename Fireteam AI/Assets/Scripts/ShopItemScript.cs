@@ -80,7 +80,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 break;
             case "Weapon":
                 ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemName);
-                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(weaponCategory, itemName, modInfo.equippedSuppressor, gameObject);
+                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, modInfo.equippedSuppressor, gameObject);
                 SetModInfo(modInfo);
                 break;
         }
