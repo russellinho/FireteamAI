@@ -180,13 +180,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		if (PlayerData.playerdata.disconnectedFromServer) {
 			PlayerData.playerdata.disconnectedFromServer = false;
-			mainMenuPopup.GetComponentInChildren<Text> ().text = "Lost connection to server.\nReason: " + PlayerData.playerdata.disconnectReason;
+			TriggerPopup("Lost connection to server.\nReason: " + PlayerData.playerdata.disconnectReason);
 			PlayerData.playerdata.disconnectReason = "";
-			mainMenuPopup.SetActive (true);
 		} else if (versionWarning) {
 			versionWarning = false;
-			mainMenuPopup.GetComponentInChildren<Text> ().text = "Your game is not updated to the latest version of Fireteam AI!\nThis may affect your matchmaking experience.";
-			mainMenuPopup.SetActive (true);
+			TriggerPopup("Your game is not updated to the latest version of Fireteam AI!\nThis may affect your matchmaking experience.");
 		}
 		if (loadingScreen.activeInHierarchy) {
 			progressBar.value = PhotonNetwork.LevelLoadingProgress;
@@ -367,6 +365,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		mainMenuPopup.SetActive (false);
 		modMenuPopup.SetActive(false);
 		customizationMenuPopup.SetActive(false);
+	}
+
+	public void TriggerPopup(string message) {
+		mainMenuPopup.GetComponentInChildren<Text> ().text = message;
+		mainMenuPopup.SetActive (true);
 	}
 
 	// Clears existing items from the shop panel

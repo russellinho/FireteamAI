@@ -18,8 +18,10 @@ public class Equipment
     public float speed;
     public float stamina;
     public float armor;
+    public char gender;
+    public string[] characterRestrictions;
 
-    public Equipment(string name, string category, string malePrefabPath, string femalePrefabPath, string maleFpcPrefabPath, string femaleFpcPrefabPath, string thumbnailPath, string description, bool hideHairFlag, int skinType, float speed, float stamina, float armor) {
+    public Equipment(string name, string category, string malePrefabPath, string femalePrefabPath, string maleFpcPrefabPath, string femaleFpcPrefabPath, string thumbnailPath, string description, bool hideHairFlag, int skinType, float speed, float stamina, float armor, char gender, string[] characterRestrictions) {
         this.name = name;
         this.category = category;
         this.malePrefabPath = malePrefabPath;
@@ -33,6 +35,8 @@ public class Equipment
         this.speed = speed;
         this.stamina = stamina;
         this.armor = armor;
+        this.gender = gender;
+        this.characterRestrictions = characterRestrictions;
     }
 
     private int CheckSkinType(string clothingName, char gender) {
