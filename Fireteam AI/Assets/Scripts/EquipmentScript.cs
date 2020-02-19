@@ -269,11 +269,11 @@ public class EquipmentScript : MonoBehaviour
         char charGender = GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter);
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
-            ts.TriggerPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
             return;
         }
         if (IsCharacterRestricted(e)) {
-            ts.TriggerPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+            ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
             return;
         }
         if (name.Equals(equippedTop)) {
@@ -352,11 +352,11 @@ public class EquipmentScript : MonoBehaviour
         char charGender = GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter);
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
-            ts.TriggerPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
             return;
         }
         if (IsCharacterRestricted(e)) {
-            ts.TriggerPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+            ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
             return;
         }
         if (name.Equals(equippedBottom)) {
@@ -406,11 +406,11 @@ public class EquipmentScript : MonoBehaviour
         char charGender = GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter);
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
-            ts.TriggerPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
             return;
         }
         if (IsCharacterRestricted(e)) {
-            ts.TriggerPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+            ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
             return;
         }
         if (name.Equals(equippedFootwear)) {

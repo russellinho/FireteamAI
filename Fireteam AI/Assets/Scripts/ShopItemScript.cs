@@ -14,6 +14,8 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public Armor armorDetails;
     public Weapon weaponDetails;
     public Mod modDetails;
+    public string id;
+    public string equippedOn;
     public string itemName;
     public string itemType;
     public string itemDescription;
@@ -90,6 +92,10 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         switch (modCategory)
         {
             case "Suppressor":
+                // If this weapon already has a suppressor on it, unequip it first
+
+                // If this mod is equipped to another weapon, unequip it from that weapon as well
+
                 // Attach to player weapon and attach to weapon mod template as well
                 TitleControllerScript ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
                 string weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory);
@@ -108,7 +114,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             ips.SetTitle(itemName);
             ips.SetThumbnail(thumbnailRef);
             ips.SetDescription(itemDescription);
-            ips.SetModStats(modDetails.damageBoost, modDetails.accuracyBoost, modDetails.recoilBoost, modDetails.rangeBoost, modDetails.clipCapacityBoost, modDetails.maxAmmoBoost);
+            ips.SetModStats(modDetails.damageBoost, modDetails.accuracyBoost, modDetails.recoilBoost, modDetails.rangeBoost, modDetails.clipCapacityBoost, modDetails.maxAmmoBoost, equippedOn);
             ips.ToggleModStatDescriptor(true);
         } else {
             if (itemDescriptionPopupRef.activeInHierarchy) {
@@ -121,11 +127,11 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             ips.SetDescription(itemDescription);
             if (itemType.Equals("Headgear") || itemType.Equals("Facewear")) {
                 ips.ToggleWeaponStatDescriptor(false);
-                ips.SetEquipmentStats(equipmentDetails.armor, equipmentDetails.speed, equipmentDetails.stamina);
+                ips.SetEquipmentStats(equipmentDetails.armor, equipmentDetails.speed, equipmentDetails.stamina, equipmentDetails.gender, equipmentDetails.characterRestrictions);
                 ips.ToggleEquipmentStatDescriptor(true);
             } else if (itemType.Equals("Armor")) {
                 ips.ToggleWeaponStatDescriptor(false);
-                ips.SetEquipmentStats(armorDetails.armor, armorDetails.speed, armorDetails.stamina);
+                ips.SetArmorStats(armorDetails.armor, armorDetails.speed, armorDetails.stamina);
                 ips.ToggleEquipmentStatDescriptor(true);
             } else if (itemType.Equals("Weapon")) {
                 ips.ToggleEquipmentStatDescriptor(false);

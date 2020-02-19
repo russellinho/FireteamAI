@@ -14,6 +14,8 @@ public class ItemPopupScript : MonoBehaviour
     public Text armorStatTxt;
     public Text speedStatTxt;
     public Text staminaStatTxt;
+    public Text genderRestTxt;
+    public Text characterRestTxt;
 
     // Weapon stat labels
     public Text damageStatTxt;
@@ -31,6 +33,7 @@ public class ItemPopupScript : MonoBehaviour
     public Text modRangeStatTxt;
     public Text modClipCapacityStatTxt;
     public Text modMaxAmmoStatTxt;
+    public Text equippedOnTxt;
 
     public Text title;
     public RawImage thumbnail;
@@ -73,7 +76,15 @@ public class ItemPopupScript : MonoBehaviour
         modStatDescriptor.SetActive(b);
     }
 
-    public void SetEquipmentStats(float armor, float speed, float stamina) {
+    public void SetEquipmentStats(float armor, float speed, float stamina, char gender, string[] characterRestrictions) {
+        armorStatTxt.text = ConvertToPercent(armor) + "%";
+        speedStatTxt.text = ConvertToPercent(speed) + "%";
+        staminaStatTxt.text = ConvertToPercent(stamina) + "%";
+        genderRestTxt.text = ""+gender;
+        characterRestTxt.text = ""+characterRestrictions;
+    }
+
+    public void SetArmorStats(float armor, float speed, float stamina) {
         armorStatTxt.text = ConvertToPercent(armor) + "%";
         speedStatTxt.text = ConvertToPercent(speed) + "%";
         staminaStatTxt.text = ConvertToPercent(stamina) + "%";
@@ -89,13 +100,14 @@ public class ItemPopupScript : MonoBehaviour
         clipCapacityTxt.text = clipCapacity == -1f ? "-" : "" + (int)clipCapacity;
     }
 
-    public void SetModStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {
+    public void SetModStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo, string equippedOn) {
         modDamageStatTxt.text = damage == -1f ? "-" : "" + (int)damage;
         modAccuracyStatTxt.text = accuracy == -1f ? "-" : "" + (int)accuracy;
         modRecoilStatTxt.text = recoil == -1f ? "-" : "" + (int)recoil;
         modRangeStatTxt.text = range == -1f ? "-" : "" + (int)range;
         modClipCapacityStatTxt.text = clipCapacity == -1f ? "-" : "" + clipCapacity;
         modMaxAmmoStatTxt.text = maxAmmo == -1f ? "-" : "" + maxAmmo;
+        equippedOnTxt.text = ("".Equals(equippedOn) ? "-" : equippedOn);
     }
 
     private int ConvertToPercent(float f) {
@@ -113,6 +125,8 @@ public class ItemPopupScript : MonoBehaviour
         mobilityTxt.text = "-";
         rangeTxt.text = "-";
         clipCapacityTxt.text = "-";
+        genderRestTxt.text = "";
+        characterRestTxt.text = "";
     }
 
 }
