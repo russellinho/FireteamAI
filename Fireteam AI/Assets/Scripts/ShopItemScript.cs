@@ -8,6 +8,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 {
     public GameObject itemDescriptionPopupRef;
     public GameObject modDescriptionPopupRef;
+    public TitleControllerScript ts;
     public RawImage thumbnailRef;
     public Character characterDetails;
     public Equipment equipmentDetails;
@@ -29,6 +30,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     void Start() {
         clickCount = 0;
         clickTimer = 0f;
+        ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
     }
 
     void FixedUpdate() {
@@ -93,11 +95,17 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         {
             case "Suppressor":
                 // If this weapon already has a suppressor on it, unequip it first
+                ts.OnRemoveSuppressorClicked();
 
                 // If this mod is equipped to another weapon, unequip it from that weapon as well
+                if (equippedOn != null && "".Equals(equippedOn))
+                {
+                    ts.RemoveSuppressorFromWeapon(equippedOn, false);
+                    equippedOn = "";
+                    // TODO: Ensure that it gets saved in the DB
+                }
 
                 // Attach to player weapon and attach to weapon mod template as well
-                TitleControllerScript ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
                 string weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory);
                 PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipMod(modCategory, itemName, weaponNameAttachedTo, gameObject);
                 break;

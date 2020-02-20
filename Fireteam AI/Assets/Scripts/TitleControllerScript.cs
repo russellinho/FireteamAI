@@ -1358,10 +1358,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void OnRemoveSuppressorClicked() {
-		// Remove suppressor model from the player's weapon and the template weapon
-		PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().UnequipMod("Suppressor", modWeaponLbl.text);
-		UnequipModFromWeaponTemplate("Suppressor");
+        // Remove suppressor model from the player's weapon and the template weapon
+        RemoveSuppressorFromWeapon(modWeaponLbl.text, true);
 	}
+
+    public void RemoveSuppressorFromWeapon(string weaponName, bool removeSuppressorClicked)
+    {
+        PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().UnequipMod("Suppressor", weaponName);
+        if (removeSuppressorClicked)
+        {
+            UnequipModFromWeaponTemplate("Suppressor");
+        }
+    }
 
 	private void SetWeaponModdedStatsTextColor(float damage, float accuracy, float recoil, float range, float clipCapacity, float maxAmmo) {
 		if (damage > 0) {
