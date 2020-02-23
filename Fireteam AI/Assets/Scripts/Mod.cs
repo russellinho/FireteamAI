@@ -15,8 +15,10 @@ public class Mod
     public float rangeBoost;
     public int clipCapacityBoost;
     public int maxAmmoBoost;
+    public bool purchasable;
+    public int gpPrice;
 
-    public Mod(string name, string category, string prefabPath, string thumbnailPath, string description, float damageBoost, float accuracyBoost, float recoilBoost, float rangeBoost, int clipCapacityBoost, int maxAmmoBoost) {
+    public Mod(string name, string category, string prefabPath, string thumbnailPath, string description, float damageBoost, float accuracyBoost, float recoilBoost, float rangeBoost, int clipCapacityBoost, int maxAmmoBoost, int gpPrice, bool purchasable) {
         this.name = name;
         this.category = category;
         this.prefabPath = prefabPath;
@@ -28,6 +30,8 @@ public class Mod
         this.rangeBoost = rangeBoost;
         this.clipCapacityBoost = clipCapacityBoost;
         this.maxAmmoBoost = maxAmmoBoost;
+        this.gpPrice = gpPrice;
+        this.purchasable = purchasable;
     }
 
 }

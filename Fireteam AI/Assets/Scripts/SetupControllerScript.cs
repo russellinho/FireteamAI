@@ -162,7 +162,13 @@ public class SetupControllerScript : MonoBehaviour
                                 completeCharCreationFlag = false;
                                 return;
                             } else if (taskB.IsCompleted) {
-                                string json = "{\"username\":\"" + potentialName + "\",\"defaultChar\":\"" + selectedCharacter + "\"}";
+                                string json = "{" +
+                                    "\"username\":\"" + potentialName + "\"," +
+                                    "\"defaultChar\":\"" + selectedCharacter + "\"," +
+                                    "\"exp\":\"0\"," +
+                                    "\"gp\":\"0\"," +
+                                    "\"kcoin\":\"0\"" +
+                                "}";
                                 DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).SetRawJsonValueAsync(json).ContinueWith(taskE => {
                                     if (taskE.IsFaulted) {
                                         activatePopupFlag = true;
@@ -209,25 +215,29 @@ public class SetupControllerScript : MonoBehaviour
                                                 "\"duration\":\"-1\""
                                             + "}" +
                                         "}," +
-                                        "\"armor\":{" +
-                                            "\"Standard Vest\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}" +
-                                        "}," +
+                                        // "\"armor\":{" +
+                                        //     "\"Standard Vest\": {" +
+                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                        //         "\"duration\":\"-1\""
+                                        //     + "}" +
+                                        // "}," +
                                         "\"tops\":{" +
-                                            "\"Casual T-Shirt (M)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Casual T-Shirt (F)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Casual Shirt\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
+                                            // "\"Casual T-Shirt (M)\": {" +
+                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            //     "\"duration\":\"-1\""
+                                            // + "}," +
+                                            // "\"Casual T-Shirt (F)\": {" +
+                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            //     "\"duration\":\"-1\""
+                                            // + "}," +
+                                            // "\"Casual Shirt\": {" +
+                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            //     "\"duration\":\"-1\""
+                                            // + "}," +
+                                            // "\"Casual Tank Top\": {" +
+                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            //     "\"duration\":\"-1\""
+                                            // + "}," +
                                             "\"Standard Fatigues Top (M)\": {" +
                                                 "\"acquireDate\":\"" + DateTime.Now + "\"," +
                                                 "\"duration\":\"-1\""
@@ -235,29 +245,25 @@ public class SetupControllerScript : MonoBehaviour
                                             "\"Standard Fatigues Top (F)\": {" +
                                                 "\"acquireDate\":\"" + DateTime.Now + "\"," +
                                                 "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Casual Tank Top\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
                                             + "}" +
                                         "}," +
                                         "\"bottoms\":{" +
-                                            "\"Dark Wash Denim Jeans (M)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Dark Wash Denim Jeans (F)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Light Wash Denim Jeans (M)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Light Wash Denim Jeans (F)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
+                                            // "\"Dark Wash Denim Jeans (M)\": {" +
+                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            //     "\"duration\":\"-1\""
+                                            // + "}," +
+                                            // "\"Dark Wash Denim Jeans (F)\": {" +
+                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            //     "\"duration\":\"-1\""
+                                            // + "}," +
+                                            // "\"Light Wash Denim Jeans (M)\": {" +
+                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            //     "\"duration\":\"-1\""
+                                            // + "}," +
+                                            // "\"Light Wash Denim Jeans (F)\": {" +
+                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            //     "\"duration\":\"-1\""
+                                            // + "}," +
                                             "\"Standard Fatigues Bottom (M)\": {" +
                                                 "\"acquireDate\":\"" + DateTime.Now + "\"," +
                                                 "\"duration\":\"-1\""
@@ -268,14 +274,14 @@ public class SetupControllerScript : MonoBehaviour
                                             + "}" +
                                         "}," +
                                         "\"footwear\":{" +
-                                            "\"White Chucks\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Red Chucks\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
+                                            // "\"White Chucks\": {" +
+                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            //     "\"duration\":\"-1\""
+                                            // + "}," +
+                                            // "\"Red Chucks\": {" +
+                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            //     "\"duration\":\"-1\""
+                                            // + "}," +
                                             "\"Standard Boots (M)\": {" +
                                                 "\"acquireDate\":\"" + DateTime.Now + "\"," +
                                                 "\"duration\":\"-1\""
@@ -285,34 +291,34 @@ public class SetupControllerScript : MonoBehaviour
                                                 "\"duration\":\"-1\""
                                             + "}" +
                                         "}," +
-                                        "\"headgear\":{" +
-                                            "\"COM Hat\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"MICH\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Combat Beanie\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}" +
-                                        "}," +
-                                        "\"facewear\":{" +
-                                            "\"Standard Goggles\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Sport Shades\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Aviators\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}" +
-                                        "}" +
+                                        // "\"headgear\":{" +
+                                        //     "\"COM Hat\": {" +
+                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                        //         "\"duration\":\"-1\""
+                                        //     + "}," +
+                                        //     "\"MICH\": {" +
+                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                        //         "\"duration\":\"-1\""
+                                        //     + "}," +
+                                        //     "\"Combat Beanie\": {" +
+                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                        //         "\"duration\":\"-1\""
+                                        //     + "}" +
+                                        // "}," +
+                                        // "\"facewear\":{" +
+                                        //     "\"Standard Goggles\": {" +
+                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                        //         "\"duration\":\"-1\""
+                                        //     + "}," +
+                                        //     "\"Sport Shades\": {" +
+                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                        //         "\"duration\":\"-1\""
+                                        //     + "}," +
+                                        //     "\"Aviators\": {" +
+                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                        //         "\"duration\":\"-1\""
+                                        //     + "}" +
+                                        // "}" +
                                         "}";
                                         DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
                                             .SetRawJsonValueAsync(jsonA).ContinueWith(taskC => {

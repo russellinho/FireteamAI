@@ -20,8 +20,10 @@ public class Equipment
     public float armor;
     public char gender;
     public string[] characterRestrictions;
+    public bool purchasable;
+    public int gpPrice;
 
-    public Equipment(string name, string category, string malePrefabPath, string femalePrefabPath, string maleFpcPrefabPath, string femaleFpcPrefabPath, string thumbnailPath, string description, bool hideHairFlag, int skinType, float speed, float stamina, float armor, char gender, string[] characterRestrictions) {
+    public Equipment(string name, string category, string malePrefabPath, string femalePrefabPath, string maleFpcPrefabPath, string femaleFpcPrefabPath, string thumbnailPath, string description, bool hideHairFlag, int skinType, float speed, float stamina, float armor, char gender, string[] characterRestrictions, int gpPrice, bool purchasable) {
         this.name = name;
         this.category = category;
         this.malePrefabPath = malePrefabPath;
@@ -37,6 +39,8 @@ public class Equipment
         this.armor = armor;
         this.gender = gender;
         this.characterRestrictions = characterRestrictions;
+        this.gpPrice = gpPrice;
+        this.purchasable = purchasable;
     }
 
     private int CheckSkinType(string clothingName, char gender) {

@@ -26,11 +26,17 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public Text equippedInd;
     private int clickCount;
     private float clickTimer;
+    public Text gpPriceTxt;
+    public Button previewBtn;
+    public Button purchaseBtn;
 
     void Start() {
         clickCount = 0;
         clickTimer = 0f;
         ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+        if (modDetails != null) {
+            previewBtn.gameObject.SetActive(false);
+        }
     }
 
     void FixedUpdate() {
@@ -48,7 +54,11 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         clickCount++;
         if (clickCount == 2) {
             if (modDetails == null) {
-                EquipItem();
+                if (gpPriceTxt == null) {
+                    EquipItem();
+                } else {
+                    PreviewItem();
+                }
             } else {
                 EquipMod();
             }
@@ -57,12 +67,52 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
+    public void OnPreviewBtnClicked() {
+        PreviewItem();
+    }
+
+    public void OnPurchaseBtnClicked() {
+        ts.PreparePurchase(itemName, itemType, thumbnailRef.texture);
+    }
+
+    private void PreviewItem() {
+        switch (itemType)
+        {
+            case "Character":
+                PlayerData.playerdata.ChangeBodyRef(itemName, gameObject, true);
+                break;
+            case "Top":
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipTop(itemName, gameObject);
+                break;
+            case "Bottom":
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipBottom(itemName, gameObject);
+                break;
+            case "Footwear":
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipFootwear(itemName, gameObject);
+                break;
+            case "Headgear":
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipHeadgear(itemName, gameObject);
+                break;
+            case "Facewear":
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipFacewear(itemName, gameObject);
+                break;
+            case "Armor":
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipArmor(itemName, gameObject);
+                break;
+            case "Weapon":
+                ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemName);
+                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, modInfo.equippedSuppressor, gameObject);
+                SetModInfo(modInfo);
+                break;
+        }
+    }
+
     private void EquipItem()
     {
         switch (itemType)
         {
             case "Character":
-                PlayerData.playerdata.ChangeBodyRef(itemName, gameObject);
+                PlayerData.playerdata.ChangeBodyRef(itemName, gameObject, false);
                 break;
             case "Top":
                 PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipTop(itemName, gameObject);
@@ -106,7 +156,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 }
 
                 // Attach to player weapon and attach to weapon mod template as well
-                string weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory);
+                string weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory, id);
                 PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipMod(modCategory, itemName, weaponNameAttachedTo, gameObject);
                 break;
         }

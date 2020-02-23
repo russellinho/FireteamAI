@@ -19,8 +19,10 @@ public class Weapon
     public int maxAmmo;
     public bool canBeModded;
     public bool suppressorCompatible;
+    public bool purchasable;
+    public int gpPrice;
 
-    public Weapon(string name, string type, string category, string prefabPath, string thumbnailPath, string description, float damage, float mobility, float fireRate, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo, bool canBeModded, bool suppressorCompatible) {
+    public Weapon(string name, string type, string category, string prefabPath, string thumbnailPath, string description, float damage, float mobility, float fireRate, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo, bool canBeModded, bool suppressorCompatible, int gpPrice, bool purchasable) {
         this.name = name;
         this.type = type;
         this.category = category;
@@ -37,6 +39,8 @@ public class Weapon
         this.maxAmmo = maxAmmo;
         this.suppressorCompatible = suppressorCompatible;
         this.canBeModded = canBeModded;
+        this.gpPrice = gpPrice;
+        this.purchasable = purchasable;
     }
 
 }

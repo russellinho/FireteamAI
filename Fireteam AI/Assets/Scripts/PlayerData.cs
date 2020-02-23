@@ -19,6 +19,9 @@ public class PlayerData : MonoBehaviour
     public bool testMode;
     private bool dataLoadedFlag;
     private bool saveDataFlag;
+    private bool purchaseSuccessfulFlag;
+    private bool purchaseFailFlag;
+    private bool updateCurrencyFlag;
     public PlayerInfo info;
     public ModInfo primaryModInfo;
     public ModInfo secondaryModInfo;
@@ -76,6 +79,18 @@ public class PlayerData : MonoBehaviour
         if (saveDataFlag) {
             SavePlayerData();
             saveDataFlag = false;
+        }
+        if (purchaseSuccessfulFlag) {
+            titleRef.TriggerMarketplacePopup("Purchase successful! The item has been added to your inventory.");
+            purchaseSuccessfulFlag = false;
+        }
+        if (purchaseFailFlag) {
+            titleRef.TriggerMarketplacePopup("Purchase failed. Please try again later.");
+            purchaseFailFlag = false;
+        }
+        if (updateCurrencyFlag) {
+            titleRef.UpdateCurrency();
+            updateCurrencyFlag = false;
         }
     }
 
@@ -176,7 +191,10 @@ public class PlayerData : MonoBehaviour
             if (task.IsFaulted || task.IsCanceled) {
                 titleRef.CloseGameOnError();
             } else {
-                playername = snapshot.Child("username").Value.ToString();
+                info.playername = snapshot.Child("username").Value.ToString();
+                info.exp = float.Parse(snapshot.Child("exp").Value.ToString());
+                info.gp = uint.Parse(snapshot.Child("gp").Value.ToString());
+                info.kcoin = uint.Parse(snapshot.Child("kcoin").Value.ToString());
                 // Equip previously equipped if available. Else, equip defaults and save it
                 if (snapshot.HasChild("equipment")) {
                     DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(taskA => {
@@ -219,6 +237,7 @@ public class PlayerData : MonoBehaviour
                             supportModInfo.equippedSuppressor = modsInventory.Child(modId).Child("name").Value.ToString();
                         }
                         dataLoadedFlag = true;
+                        updateCurrencyFlag = true;
                     });
                 } else {
                     info.equippedCharacter = snapshot.Child("defaultChar").Value.ToString();
@@ -246,12 +265,13 @@ public class PlayerData : MonoBehaviour
                     supportModInfo.id = "";
                     dataLoadedFlag = true;
                     saveDataFlag = true;
+                    updateCurrencyFlag = true;
                 }
             }
         });
     }
 
-    void InstantiatePlayer() {
+    public void InstantiatePlayer() {
         FindBodyRef(info.equippedCharacter);
         EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
         WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
@@ -409,15 +429,12 @@ public class PlayerData : MonoBehaviour
         }
     }
 
-    public void ChangeBodyRef(string character, GameObject shopItem)
+    public void ChangeBodyRef(string character, GameObject shopItem, bool previewFlag)
     {
         if (titleRef == null) {
             titleRef = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
         }
         WeaponScript weaponScrpt = bodyReference.GetComponent<WeaponScript>();
-        PlayerData.playerdata.info.equippedPrimary = weaponScrpt.equippedPrimaryWeapon;
-        PlayerData.playerdata.info.equippedSecondary = weaponScrpt.equippedSecondaryWeapon;
-        PlayerData.playerdata.info.equippedSupport = weaponScrpt.equippedSupportWeapon;
         Destroy(bodyReference);
         bodyReference = null;
         bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.itemData.characterCatalog[character].prefabPath));
@@ -425,27 +442,25 @@ public class PlayerData : MonoBehaviour
         WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
         characterEquips.ts = titleRef;
         characterWeps.ts = titleRef;
-        bodyReference.GetComponent<EquipmentScript>().HighlightItemPrefab(shopItem);
+        if (!previewFlag) {
+            bodyReference.GetComponent<EquipmentScript>().HighlightItemPrefab(shopItem);
+            PlayerData.playerdata.info.equippedPrimary = weaponScrpt.equippedPrimaryWeapon;
+            PlayerData.playerdata.info.equippedSecondary = weaponScrpt.equippedSecondaryWeapon;
+            PlayerData.playerdata.info.equippedSupport = weaponScrpt.equippedSupportWeapon;
+        }
         characterEquips.EquipCharacter(character, null);
     }
 
-    public void SaveModDataForWeapon(string weaponName, string equippedSuppressor, string id, bool removeFlag) {
+    public void SaveModDataForWeapon(string weaponName, string equippedSuppressor, string id) {
         ModInfo newModInfo = new ModInfo();
         newModInfo.equippedSuppressor = equippedSuppressor;
         newModInfo.weaponName = weaponName;
         newModInfo.id = id;
 
-        if (removeFlag) {
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                .Child("mods").Child(id).Child("equippedOn").SetValueAsync("");
-            DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                .Child(weaponName).Child("equippedSuppressor").SetValueAsync("");
-        } else {
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                .Child("mods").Child(id).Child("equippedOn").SetValueAsync(weaponName);
-            DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                .Child(weaponName).Child("equippedSuppressor").SetValueAsync(id);
-        }
+        DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
+            .Child("mods").Child(id).Child("equippedOn").SetValueAsync(weaponName);
+        DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
+            .Child(weaponName).Child("equippedSuppressor").SetValueAsync(id);
 
         WeaponScript myWeps = bodyReference.GetComponent<WeaponScript>();
         // Set mod data that was just saved
@@ -484,6 +499,248 @@ public class PlayerData : MonoBehaviour
         return modInfo;
     }
 
+    public void AddItemToInventory(string itemName, string type, float duration, bool purchased, uint gpCost, uint kCoinCost) {
+        string json = "";
+        if (type.Equals("Weapon")) {
+            WeaponData w = new WeaponData();
+            w.name = itemName;
+            w.acquireDate = DateTime.Now.ToString();
+            w.duration = ""+duration;
+            w.equippedClip = "";
+            w.equippedSight = "";
+            w.equippedSuppressor = "";
+            json = "{" +
+                "\"acquireDate\":\"" + w.acquireDate + "\"," +
+                "\"duration\":\"" + duration + "\"," +
+                "\"equippedSuppressor\":\"\"," +
+                "\"equippedSight\":\"\"," +
+                "\"equippedClip\":\"\"" +
+            "}";
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
+                .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task => {
+                    if (purchased) {
+                        if (task.IsFaulted || task.IsCanceled) {
+                            purchaseFailFlag = true;
+                        } else {
+                            DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+                            userInfoRef.Child("gp").SetValueAsync(""+(PlayerData.playerdata.info.gp - gpCost)).ContinueWith(taskA => {
+                                userInfoRef.Child("kcoin").SetValueAsync(""+(PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB => {
+                                    myWeapons.Add(w);
+                                    purchaseSuccessfulFlag = true;
+                                });
+                            });
+                        }
+                    }
+                });
+        } else if (type.Equals("Character")) {
+            CharacterData c = new CharacterData();
+            c.name = itemName;
+            c.acquireDate = DateTime.Now.ToString();
+            c.duration = ""+duration;
+            json = "{" +
+                "\"acquireDate\":\"" + c.acquireDate + "\"," +
+                "\"duration\":\"" + duration + "\"" +
+            "}";
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters")
+                .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task => {
+                    if (purchased) {
+                        if (task.IsFaulted || task.IsCanceled) {
+                            purchaseFailFlag = true;
+                        } else {
+                            DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+                            userInfoRef.Child("gp").SetValueAsync(""+(PlayerData.playerdata.info.gp - gpCost)).ContinueWith(taskA => {
+                                userInfoRef.Child("kcoin").SetValueAsync(""+(PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB => {
+                                    myCharacters.Add(c);
+                                    purchaseSuccessfulFlag = true;
+                                });
+                            });
+                        }
+                    }
+                });
+        } else if (type.Equals("Top")) {
+            EquipmentData e = new EquipmentData();
+            e.name = itemName;
+            e.acquireDate = DateTime.Now.ToString();
+            e.duration = ""+duration;
+            json = "{" +
+                "\"acquireDate\":\"" + e.acquireDate + "\"," +
+                "\"duration\":\"" + duration + "\"" +
+            "}";
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops")
+                .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task => {
+                    if (purchased) {
+                        if (task.IsFaulted || task.IsCanceled) {
+                            purchaseFailFlag = true;
+                        } else {
+                            DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+                            userInfoRef.Child("gp").SetValueAsync(""+(PlayerData.playerdata.info.gp - gpCost)).ContinueWith(taskA => {
+                                userInfoRef.Child("kcoin").SetValueAsync(""+(PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB => {
+                                    myTops.Add(e);
+                                    purchaseSuccessfulFlag = true;
+                                });
+                            });
+                        }
+                    }
+                });
+        } else if (type.Equals("Bottom")) {
+            EquipmentData e = new EquipmentData();
+            e.name = itemName;
+            e.acquireDate = DateTime.Now.ToString();
+            e.duration = ""+duration;
+            json = "{" +
+                "\"acquireDate\":\"" + e.acquireDate + "\"," +
+                "\"duration\":\"" + duration + "\"" +
+            "}";
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms")
+                .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task => {
+                    if (purchased) {
+                        if (task.IsFaulted || task.IsCanceled) {
+                            purchaseFailFlag = true;
+                        } else {
+                            DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+                            userInfoRef.Child("gp").SetValueAsync(""+(PlayerData.playerdata.info.gp - gpCost)).ContinueWith(taskA => {
+                                userInfoRef.Child("kcoin").SetValueAsync(""+(PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB => {
+                                    myBottoms.Add(e);
+                                    purchaseSuccessfulFlag = true;
+                                });
+                            });
+                        }
+                    }
+                });
+        } else if (type.Equals("Armor")) {
+            ArmorData e = new ArmorData();
+            e.name = itemName;
+            e.acquireDate = DateTime.Now.ToString();
+            e.duration = ""+duration;
+            json = "{" +
+                "\"acquireDate\":\"" + e.acquireDate + "\"," +
+                "\"duration\":\"" + duration + "\"" +
+            "}";
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor")
+                .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task => {
+                    if (purchased) {
+                        if (task.IsFaulted || task.IsCanceled) {
+                            purchaseFailFlag = true;
+                        } else {
+                            DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+                            userInfoRef.Child("gp").SetValueAsync(""+(PlayerData.playerdata.info.gp - gpCost)).ContinueWith(taskA => {
+                                userInfoRef.Child("kcoin").SetValueAsync(""+(PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB => {
+                                    myArmor.Add(e);
+                                    purchaseSuccessfulFlag = true;
+                                });
+                            });
+                        }
+                    }
+                });
+        } else if (type.Equals("Footwear")) {
+            EquipmentData e = new EquipmentData();
+            e.name = itemName;
+            e.acquireDate = DateTime.Now.ToString();
+            e.duration = ""+duration;
+            json = "{" +
+                "\"acquireDate\":\"" + e.acquireDate + "\"," +
+                "\"duration\":\"" + duration + "\"" +
+            "}";
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear")
+                .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task => {
+                    if (purchased) {
+                        if (task.IsFaulted || task.IsCanceled) {
+                            purchaseFailFlag = true;
+                        } else {
+                            DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+                            userInfoRef.Child("gp").SetValueAsync(""+(PlayerData.playerdata.info.gp - gpCost)).ContinueWith(taskA => {
+                                userInfoRef.Child("kcoin").SetValueAsync(""+(PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB => {
+                                    myFootwear.Add(e);
+                                    purchaseSuccessfulFlag = true;
+                                });
+                            });
+                        }
+                    }
+                });
+        } else if (type.Equals("Headgear")) {
+            EquipmentData e = new EquipmentData();
+            e.name = itemName;
+            e.acquireDate = DateTime.Now.ToString();
+            e.duration = ""+duration;
+            json = "{" +
+                "\"acquireDate\":\"" + e.acquireDate + "\"," +
+                "\"duration\":\"" + duration + "\"" +
+            "}";
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear")
+                .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task => {
+                    if (purchased) {
+                        if (task.IsFaulted || task.IsCanceled) {
+                            purchaseFailFlag = true;
+                        } else {
+                            DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+                            userInfoRef.Child("gp").SetValueAsync(""+(PlayerData.playerdata.info.gp - gpCost)).ContinueWith(taskA => {
+                                userInfoRef.Child("kcoin").SetValueAsync(""+(PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB => {
+                                    myHeadgear.Add(e);
+                                    purchaseSuccessfulFlag = true;
+                                });
+                            });
+                        }
+                    }
+                });
+        } else if (type.Equals("Facewear")) {
+            EquipmentData e = new EquipmentData();
+            e.name = itemName;
+            e.acquireDate = DateTime.Now.ToString();
+            e.duration = ""+duration;
+            json = "{" +
+                "\"acquireDate\":\"" + e.acquireDate + "\"," +
+                "\"duration\":\"" + duration + "\"" +
+            "}";
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear")
+                .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task => {
+                    if (purchased) {
+                        if (task.IsFaulted || task.IsCanceled) {
+                            purchaseFailFlag = true;
+                        } else {
+                            DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+                            userInfoRef.Child("gp").SetValueAsync(""+(PlayerData.playerdata.info.gp - gpCost)).ContinueWith(taskA => {
+                                userInfoRef.Child("kcoin").SetValueAsync(""+(PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB => {
+                                    myFacewear.Add(e);
+                                    purchaseSuccessfulFlag = true;
+                                });
+                            });
+                        }
+                    }
+                });
+        } else if (type.Equals("Mod")) {
+            ModData m = new ModData();
+            m.name = itemName;
+            m.acquireDate = DateTime.Now.ToString();
+            m.duration = ""+duration;
+            m.equippedOn = "";
+            json = "{" +
+                "\"name\":\"" + itemName + "\"," +
+                "\"equippedOn\":\"\"," +
+                "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                "\"duration\":\"" + duration + "\"" +
+            "}";
+            DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Push();
+            string pushKey = d.Key;
+            m.id = pushKey;
+            d.SetRawJsonValueAsync(json).ContinueWith(task => {
+                if (purchased) {
+                    if (task.IsFaulted || task.IsCanceled) {
+                        purchaseFailFlag = true;
+                    } else {
+                        DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+                            userInfoRef.Child("gp").SetValueAsync(""+(PlayerData.playerdata.info.gp - gpCost)).ContinueWith(taskA => {
+                                userInfoRef.Child("kcoin").SetValueAsync(""+(PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB => {
+                                    myMods.Add(m);
+                                    purchaseSuccessfulFlag = true;
+                                    updateCurrencyFlag = true;
+                                });
+                            });
+                    }
+                }
+            });
+        }
+    }
+
 }
 
 public class PlayerInfo
@@ -499,6 +756,9 @@ public class PlayerInfo
     public string equippedPrimary;
     public string equippedSecondary;
     public string equippedSupport;
+    public float exp;
+    public uint gp;
+    public uint kcoin;
 }
 
 public class ModInfo
