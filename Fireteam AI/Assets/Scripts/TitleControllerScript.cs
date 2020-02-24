@@ -2382,7 +2382,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		preparePurchasePopup.SetActive(true);
 	}
 
-	void OnConfirmPreparePurchaseClicked() {
+	public void OnConfirmPreparePurchaseClicked() {
 		preparePurchasePopup.SetActive(false);
 		confirmPurchaseTxt.text = "Are you sure you would like to buy " + itemBeingPurchased + " for " +
 			durationSelectionDropdown.options[durationSelectionDropdown.value].text + "? (" + totalGpCostBeingPurchased + " GP)";

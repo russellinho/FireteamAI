@@ -167,7 +167,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        if (expirationDate == null || "".Equals(expirationDate)) {
+        if (purchaseBtn != null && (expirationDate == null || "".Equals(expirationDate))) {
                 CalculateExpirationDate();
             }
         if (itemType.Equals("Mod")) {

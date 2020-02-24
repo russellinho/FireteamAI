@@ -139,13 +139,17 @@ MonoBehaviour:
   thumbnailRef: {fileID: 5722862971687186158}
   id: 
   equippedOn: 
+  acquireDate: 
+  duration: 
   itemName: 
   itemType: 
   itemDescription: 
   weaponCategory: 
   modCategory: 
   equippedInd: {fileID: 4753007453993827064}
-  gpPriceTxt: {fileID: 0}
+  gpPriceTxt: {fileID: 2409627596821696210}
+  previewBtn: {fileID: 7471857382006091990}
+  purchaseBtn: {fileID: 229183938156974313}
 --- !u!1 &1375148356151475967
 GameObject:
   m_ObjectHideFlags: 0
@@ -475,7 +479,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 660978115278291574}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4324697429329254581}
+        m_MethodName: OnPurchaseBtnClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &4464688701042678925
@@ -913,7 +928,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6973167822710486776}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4324697429329254581}
+        m_MethodName: OnPreviewBtnClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &8651144757492772891

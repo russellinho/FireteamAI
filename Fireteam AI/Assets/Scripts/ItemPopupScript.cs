@@ -131,7 +131,9 @@ public class ItemPopupScript : MonoBehaviour
     }
 
     public void SetExpirationDate(string expirationDate) {
-        expirationDateTxt.text = expirationDate;
+        if (expirationDateTxt != null) {
+            expirationDateTxt.text = expirationDate;
+        }
     }
 
 }
