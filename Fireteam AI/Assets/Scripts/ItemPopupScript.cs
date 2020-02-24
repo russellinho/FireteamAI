@@ -34,6 +34,7 @@ public class ItemPopupScript : MonoBehaviour
     public Text modClipCapacityStatTxt;
     public Text modMaxAmmoStatTxt;
     public Text equippedOnTxt;
+    public Text expirationDateTxt;
 
     public Text title;
     public RawImage thumbnail;
@@ -127,6 +128,10 @@ public class ItemPopupScript : MonoBehaviour
         clipCapacityTxt.text = "-";
         genderRestTxt.text = "";
         characterRestTxt.text = "";
+    }
+
+    public void SetExpirationDate(string expirationDate) {
+        expirationDateTxt.text = expirationDate;
     }
 
 }

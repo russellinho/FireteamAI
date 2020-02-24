@@ -99,6 +99,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject shopEquippedSupportSlot;
 	public GameObject preparePurchasePopup;
 	public GameObject confirmPurchasePopup;
+	public Text confirmPurchaseTxt;
 	public Dropdown durationSelectionDropdown;
 	public Text totalGpCostTxt;
 	public Text myGpTxt;
@@ -2383,6 +2384,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	void OnConfirmPreparePurchaseClicked() {
 		preparePurchasePopup.SetActive(false);
+		confirmPurchaseTxt.text = "Are you sure you would like to buy " + itemBeingPurchased + " for " +
+			durationSelectionDropdown.options[durationSelectionDropdown.value].text + "? (" + totalGpCostBeingPurchased + " GP)";
 		confirmPurchasePopup.SetActive(true);
 	}
 
@@ -2410,6 +2413,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	void ConfirmPurchase() {
 		confirmPurchasePopup.SetActive(false);
+		// Ensure that the user doesn't already have this item
+		if (HasDuplicateItem(itemBeingPurchased, typeBeingPurchased)) {
+			TriggerMarketplacePopup("You already own this item.");
+			return;
+		}
 		// Reach out to DB to verify player's GP and KCoin before purchase
 		DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
 			if (task.IsCompleted) {
@@ -2464,6 +2472,81 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void UpdateCurrency() {
 		myGpTxt.text = ""+PlayerData.playerdata.info.gp;
 		myKCoinTxt.text = ""+PlayerData.playerdata.info.kcoin;
+	}
+
+	// Players cannot own multiple of the same item unless they're mods.
+	// Mods are always permanent.
+	// Items can only be purchased again if they don't own it for permanent
+	public bool HasDuplicateItem(string itemName, string type) {
+		if (type.Equals("Weapon")) {
+			for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
+				WeaponData item = (WeaponData)PlayerData.playerdata.myWeapons[i];
+				if (item.name.Equals(itemName)) {
+					float duration = float.Parse(item.duration);
+					if (duration == -1f || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+			}
+		} else if (type.Equals("Character")) {
+			for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
+				CharacterData item = (CharacterData)PlayerData.playerdata.myCharacters[i];
+				if (item.name.Equals(itemName)) {
+					float duration = float.Parse(item.duration);
+					if (duration == -1f || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+			}
+		} else if (type.Equals("Armor")) {
+			for (int i = 0; i < PlayerData.playerdata.myArmor.Count; i++) {
+				ArmorData item = (ArmorData)PlayerData.playerdata.myArmor[i];
+				if (item.name.Equals(itemName)) {
+					float duration = float.Parse(item.duration);
+					if (duration == -1f || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+			}
+		} else {
+			string itemCategory = InventoryScript.itemData.equipmentCatalog[itemName].category;
+			ArrayList inventoryRefForCat = null;
+			switch (itemCategory) {
+				case "Top":
+					inventoryRefForCat = PlayerData.playerdata.myTops;
+					break;
+				case "Bottom":
+					inventoryRefForCat = PlayerData.playerdata.myBottoms;
+					break;
+				case "Footwear":
+					inventoryRefForCat = PlayerData.playerdata.myFootwear;
+					break;
+				case "Headgear":
+					inventoryRefForCat = PlayerData.playerdata.myHeadgear;
+					break;
+				case "Facewear":
+					inventoryRefForCat = PlayerData.playerdata.myFacewear;
+					break;
+			}
+			for (int i = 0; i < inventoryRefForCat.Count; i++) {
+				EquipmentData item = (EquipmentData)inventoryRefForCat[i];
+				if (item.name.Equals(itemName)) {
+					float duration = float.Parse(item.duration);
+					if (duration == -1f || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+			}
+		}
+		return false;
 	}
 		
 }

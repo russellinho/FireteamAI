@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -17,6 +18,9 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public Mod modDetails;
     public string id;
     public string equippedOn;
+    public string acquireDate;
+    private string expirationDate;
+    public string duration;
     public string itemName;
     public string itemType;
     public string itemDescription;
@@ -163,12 +167,16 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
+        if (expirationDate == null || "".Equals(expirationDate)) {
+                CalculateExpirationDate();
+            }
         if (itemType.Equals("Mod")) {
             if (modDescriptionPopupRef.activeInHierarchy) {
                 return;
             }
             modDescriptionPopupRef.SetActive(true);
             ItemPopupScript ips = modDescriptionPopupRef.GetComponent<ItemPopupScript>();
+            ips.SetExpirationDate(expirationDate);
             ips.SetTitle(itemName);
             ips.SetThumbnail(thumbnailRef);
             ips.SetDescription(itemDescription);
@@ -180,6 +188,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             }
             itemDescriptionPopupRef.SetActive(true);
             ItemPopupScript ips = itemDescriptionPopupRef.GetComponent<ItemPopupScript>();
+            ips.SetExpirationDate(expirationDate);
             ips.SetTitle(itemName);
             ips.SetThumbnail(thumbnailRef);
             ips.SetDescription(itemDescription);
@@ -219,6 +228,19 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
         if (weaponDetails.type.Equals("Support")) {
             PlayerData.playerdata.supportModInfo = modInfo;
+        }
+    }
+
+    private void CalculateExpirationDate() {
+        if (duration.Equals("-1")) {
+            expirationDate = "Permanent";
+        } else {
+            // Calculate expiration date - add duration to acquire date and convert to DateTime
+            DateTime acquireDateDate = DateTime.Parse(acquireDate);
+            float dur = float.Parse(duration);
+            acquireDateDate.AddMinutes((double)dur);
+            // Set the calculated expiration date
+            expirationDate = acquireDateDate.ToString();
         }
     }
 
