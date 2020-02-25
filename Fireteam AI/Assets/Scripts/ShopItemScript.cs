@@ -113,6 +113,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     private void EquipItem()
     {
+        ts.equipsModifiedFlag = true;
         switch (itemType)
         {
             case "Character":

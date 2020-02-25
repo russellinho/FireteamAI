@@ -45,7 +45,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private string typeBeingPurchased;
 	private uint totalGpCostBeingPurchased;
 	public char currentCharGender;
-
+	public bool equipsModifiedFlag;
 	public InputField PlayerNameInput;
 
 	// Loading screen stuff
@@ -115,7 +115,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button bottomsBtn;
 	public Button footwearBtn;
 	public Button characterBtn;
-
 	public GameObject equippedHeadSlot;
 	public GameObject equippedFaceSlot;
 	public GameObject equippedTopSlot;
@@ -350,8 +349,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void ReturnToMainMenuFromCustomization() {
         // Save settings if the settings are active
 		 if (customizationMenu.activeInHierarchy) {
-		 	savePlayerData ();
-			 ClearCustomizationContent();
+			if (equipsModifiedFlag) {
+				savePlayerData ();
+				equipsModifiedFlag = false;
+			}
+			ClearCustomizationContent();
 		 }
 		SwitchToEquipmentScreen();
 		customizationMenu.SetActive (false);
