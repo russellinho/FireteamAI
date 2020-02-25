@@ -28,6 +28,7 @@ public class SetupControllerScript : MonoBehaviour
     public Text confirmAlertTxt;
     private bool activatePopupFlag;
     private bool activateConfirmFlag;
+    private bool finishedFlag;
     private bool completeCharCreationFlag;
     private string popupMessage;
     // Start is called before the first frame update
@@ -46,6 +47,9 @@ public class SetupControllerScript : MonoBehaviour
         } else if (activateConfirmFlag) {
             TriggerConfirmPopup();
             activateConfirmFlag = false;
+        } else if (finishedFlag) {
+            SceneManager.LoadScene("Title");
+            finishedFlag = false;
         }
     }
 
@@ -141,7 +145,7 @@ public class SetupControllerScript : MonoBehaviour
                 popupMessage = "Database is currently unavailable. Please try again later.";
                 completeCharCreationFlag = false;
             } else if (taskA.IsCompleted) {
-                if (taskA.Result.HasChild(potentialName)) {
+                if (taskA.Result.HasChild(potentialNameLower)) {
                     activatePopupFlag = true;
                     popupMessage = "This username is taken! Please try another.";
                     completeCharCreationFlag = false;
@@ -152,7 +156,7 @@ public class SetupControllerScript : MonoBehaviour
                         completeCharCreationFlag = false;
                     } else {
                         // Everything is passed, create player data and mark username as taken
-                        DAOScript.dao.dbRef.Child("fteam_ai_takenUsernames").Child(potentialName).SetValueAsync("true").ContinueWith(taskB => {
+                        DAOScript.dao.dbRef.Child("fteam_ai_takenUsernames").Child(potentialNameLower).SetValueAsync("true").ContinueWith(taskB => {
                             if (taskB.IsFaulted) {
                                 activatePopupFlag = true;
                                 popupMessage = "Database is currently unavailable. Please try again later.";
@@ -334,9 +338,8 @@ public class SetupControllerScript : MonoBehaviour
                                                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
                                                     .Child("mods").Push().SetRawJsonValueAsync(jsonTemp).ContinueWith(taskD => {
                                                         // Continue to home screen
-                                                        Debug.Log("DONE!");
-                                                        // TODO: Uncomment once testing is done
-                                                        // SceneManager.LoadScene("Title");
+                                                        // Debug.Log("DONE!");
+                                                        finishedFlag = true;
                                                 });
                                             }
                                         });
@@ -363,16 +366,18 @@ public class SetupControllerScript : MonoBehaviour
             return;
         }
 
-        QueueConfirmPopup("Are you sure you wish to proceed with this name and character? It cannot be changed later.");
-    }
-
-    public void CompleteCharacterCreation() {
         completeCharCreationFlag = true;
         string finalCharacterName = characterNameInput.text;
         characterNameInput.interactable = false;
         proceedBtn.interactable = false;
         checkBtn.interactable = false;
 
+        QueueConfirmPopup("Are you sure you wish to proceed with this name and character? It cannot be changed later.");
+    }
+
+    public void CompleteCharacterCreation() {
+        confirmAlertCancelBtn.interactable = false;
+        confirmAlertConfirmBtn.interactable = false;
         CheckCharacterName();
     }
 

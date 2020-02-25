@@ -5405,7 +5405,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1615888902}
-        m_MethodName: GoToCustomization
+        m_MethodName: GoToMarketplace
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10329,12 +10329,12 @@ MonoBehaviour:
     m_Left: -10
     m_Right: 0
     m_Top: 20
-    m_Bottom: 20
+    m_Bottom: 250
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 100, y: 100}
-  m_Spacing: {x: 92, y: 80}
+  m_Spacing: {x: 92, y: 275}
   m_Constraint: 1
   m_ConstraintCount: 3
 --- !u!1 &384468219
@@ -45706,6 +45706,7 @@ MonoBehaviour:
   marketplaceMenuPopup: {fileID: 1823351476}
   modMenuPopup: {fileID: 1350207333}
   currentCharGender: 0
+  equipsModifiedFlag: 0
   PlayerNameInput: {fileID: 594636315}
   screenArt: {fileID: 2000213805}
   bottomShade: {fileID: 619397403}
