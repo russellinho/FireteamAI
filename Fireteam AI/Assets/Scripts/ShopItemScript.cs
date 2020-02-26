@@ -83,29 +83,29 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         switch (itemType)
         {
             case "Character":
-                PlayerData.playerdata.ChangeBodyRef(itemName, gameObject, true);
+                PlayerData.playerdata.ChangeBodyRef(itemName, null, true);
                 break;
             case "Top":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipTop(itemName, gameObject);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipTop(itemName, null);
                 break;
             case "Bottom":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipBottom(itemName, gameObject);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipBottom(itemName, null);
                 break;
             case "Footwear":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipFootwear(itemName, gameObject);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipFootwear(itemName, null);
                 break;
             case "Headgear":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipHeadgear(itemName, gameObject);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipHeadgear(itemName, null);
                 break;
             case "Facewear":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipFacewear(itemName, gameObject);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipFacewear(itemName, null);
                 break;
             case "Armor":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipArmor(itemName, gameObject);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipArmor(itemName, null);
                 break;
             case "Weapon":
                 ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemName);
-                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, modInfo.equippedSuppressor, gameObject);
+                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, modInfo.equippedSuppressor, null);
                 SetModInfo(modInfo);
                 break;
         }
@@ -168,7 +168,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        if (purchaseBtn != null && (expirationDate == null || "".Equals(expirationDate))) {
+        if (purchaseBtn == null && (expirationDate == null || "".Equals(expirationDate))) {
                 CalculateExpirationDate();
             }
         if (itemType.Equals("Mod")) {
@@ -237,6 +237,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             expirationDate = "Permanent";
         } else {
             // Calculate expiration date - add duration to acquire date and convert to DateTime
+            Debug.Log("d: " + acquireDate);
             DateTime acquireDateDate = DateTime.Parse(acquireDate);
             float dur = float.Parse(duration);
             acquireDateDate.AddMinutes((double)dur);
