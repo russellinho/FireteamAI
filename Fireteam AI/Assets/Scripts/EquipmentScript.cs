@@ -269,11 +269,19 @@ public class EquipmentScript : MonoBehaviour
         char charGender = GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter);
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
-            ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            if (shopItemRef != null) {
+                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            } else {
+                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            }
             return;
         }
         if (IsCharacterRestricted(e)) {
-            ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+            if (shopItemRef != null) {
+                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+            } else {
+                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+            }
             return;
         }
         if (name.Equals(equippedTop)) {
@@ -307,8 +315,13 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        ts.equippedTopSlot.GetComponentInChildren<RawImage>().enabled = true;
-        ts.equippedTopSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        if (shopItemRef != null) {
+            ts.equippedTopSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedTopSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        } else {
+            ts.shopEquippedTopSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.shopEquippedTopSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        }
     }
 
     void EquipTopForSetup() {
@@ -352,11 +365,19 @@ public class EquipmentScript : MonoBehaviour
         char charGender = GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter);
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
-            ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            if (shopItemRef != null) {
+                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            } else {
+                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            }
             return;
         }
         if (IsCharacterRestricted(e)) {
-            ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+            if (shopItemRef != null) {
+                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+            } else {
+                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+            }
             return;
         }
         if (name.Equals(equippedBottom)) {
@@ -388,8 +409,13 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        ts.equippedBottomSlot.GetComponentInChildren<RawImage>().enabled = true;
-        ts.equippedBottomSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        if (shopItemRef != null) {
+            ts.equippedBottomSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedBottomSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        } else {
+            ts.shopEquippedBottomSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.shopEquippedBottomSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        }
     }
 
     void EquipBottomForSetup() {
@@ -406,11 +432,19 @@ public class EquipmentScript : MonoBehaviour
         char charGender = GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter);
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
-            ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            if (shopItemRef != null) {
+                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            } else {
+                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            }
             return;
         }
         if (IsCharacterRestricted(e)) {
-            ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+            if (shopItemRef != null) {
+                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+            } else {
+                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+            }
             return;
         }
         if (name.Equals(equippedFootwear)) {
@@ -442,8 +476,13 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        ts.equippedFootSlot.GetComponentInChildren<RawImage>().enabled = true;
-        ts.equippedFootSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        if (shopItemRef != null) {
+            ts.equippedFootSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedFootSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        } else {
+            ts.shopEquippedFootSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.shopEquippedFootSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        }
     }
 
     void EquipFootwearForSetup() {
@@ -487,8 +526,13 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = true;
-        ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        if (shopItemRef != null) {
+            ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        } else {
+            ts.shopEquippedFaceSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.shopEquippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        }
 
         playerScript.stats.updateStats(e.speed, e.stamina, e.armor, 0);
         playerScript.updateStats();
@@ -537,8 +581,14 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = true;
-        ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        if (shopItemRef != null) {
+            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        } else {
+            ts.shopEquippedHeadSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.shopEquippedHeadSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        }
+
         // Adds headgear stat to player
         playerScript.stats.updateStats(e.speed, e.stamina, e.armor, 0);
         playerScript.updateStats();
@@ -589,8 +639,14 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        ts.equippedArmorSlot.GetComponentInChildren<RawImage>().enabled = true;
-        ts.equippedArmorSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(a.thumbnailPath);
+        if (shopItemRef != null) {
+            ts.equippedArmorSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.equippedArmorSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(a.thumbnailPath);
+        } else {
+            ts.shopEquippedArmorSlot.GetComponentInChildren<RawImage>().enabled = true;
+            ts.shopEquippedArmorSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(a.thumbnailPath);
+        }
+
         playerScript.stats.updateStats(a.speed, a.stamina, a.armor, 0);
         playerScript.updateStats();
         ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));

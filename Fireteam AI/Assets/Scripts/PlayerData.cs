@@ -423,10 +423,10 @@ public class PlayerData : MonoBehaviour
         {
             bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.itemData.characterCatalog[character].prefabPath));
         }
-        else
-        {
-            bodyReference = GameObject.FindGameObjectWithTag("Player");
-        }
+        // else
+        // {
+        //     bodyReference = GameObject.FindGameObjectWithTag("Player");
+        // }
     }
 
     public void ChangeBodyRef(string character, GameObject shopItem, bool previewFlag)
