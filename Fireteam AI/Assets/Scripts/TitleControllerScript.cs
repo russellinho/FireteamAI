@@ -357,6 +357,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				equipsModifiedFlag = false;
 			}
 			ClearCustomizationContent();
+			ResetCustomizationButtons();
 		 }
 		SwitchToEquipmentScreen();
 		customizationMenu.SetActive (false);
@@ -371,6 +372,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		 if (marketplaceMenu.activeInHierarchy) {
 		 	ClearPreview();
 			ClearMarketplaceContent();
+			ResetMarketplaceButtons();
 		 }
 		SwitchToMarketplaceEquipmentScreen();
 		marketplaceMenu.SetActive (false);
@@ -417,9 +419,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		titleText.enabled = false;
 		mainMenu.SetActive (false);
 		modMenu.SetActive(false);
-		equippedPrimarySlot.SetActive(false);
-		equippedSecondarySlot.SetActive(false);
-		equippedSupportSlot.SetActive(false);
+		shopEquippedPrimarySlot.SetActive(false);
+		shopEquippedSecondarySlot.SetActive(false);
+		shopEquippedSupportSlot.SetActive(false);
 		matchmakingMenu.SetActive (false);
 		customizationMenu.SetActive(false);
 		previousCamPos = camPos;
@@ -531,21 +533,25 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myHeadgear.Count; i++) {
-			string thisItemName = ((EquipmentData)PlayerData.playerdata.myHeadgear[i]).name;
+			EquipmentData ed = ((EquipmentData)PlayerData.playerdata.myHeadgear[i]);
+			string thisItemName = ed.name;
 			Equipment thisHeadgear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().equipmentDetails = thisHeadgear;
-			o.GetComponent<ShopItemScript>().itemName = thisItemName;
-            o.GetComponent<ShopItemScript>().itemType = "Headgear";
-			o.GetComponent<ShopItemScript>().itemDescription = thisHeadgear.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(thisHeadgear.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.equipmentDetails = thisHeadgear;
+			s.itemName = thisItemName;
+            s.itemType = "Headgear";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = thisHeadgear.description;
+			s.thumbnailRef.texture = (Texture)Resources.Load(thisHeadgear.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			if (thisItemName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedHeadgear)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -575,14 +581,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().equipmentDetails = thisHeadgear;
-			o.GetComponent<ShopItemScript>().itemName = entry.Key;
-            o.GetComponent<ShopItemScript>().itemType = "Headgear";
-			o.GetComponent<ShopItemScript>().itemDescription = thisHeadgear.description;
-			o.GetComponent<ShopItemScript>().gpPriceTxt.text = ""+thisHeadgear.gpPrice;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(thisHeadgear.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.equipmentDetails = thisHeadgear;
+			s.itemName = entry.Key;
+            s.itemType = "Headgear";
+			s.itemDescription = thisHeadgear.description;
+			s.gpPriceTxt.text = ""+thisHeadgear.gpPrice;
+			s.thumbnailRef.texture = (Texture)Resources.Load(thisHeadgear.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -607,21 +614,25 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myFacewear.Count; i++) {
-			string thisItemName = ((EquipmentData)PlayerData.playerdata.myFacewear[i]).name;
+			EquipmentData ed = ((EquipmentData)PlayerData.playerdata.myFacewear[i]);
+			string thisItemName = ed.name;
 			Equipment thisFacewear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().equipmentDetails = thisFacewear;
-			o.GetComponent<ShopItemScript>().itemName = thisItemName;
-            o.GetComponent<ShopItemScript>().itemType = "Facewear";
-			o.GetComponent<ShopItemScript>().itemDescription = thisFacewear.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(thisFacewear.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.equipmentDetails = thisFacewear;
+			s.itemName = thisItemName;
+            s.itemType = "Facewear";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = thisFacewear.description;
+			s.thumbnailRef.texture = (Texture)Resources.Load(thisFacewear.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			if (thisItemName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedFacewear)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -651,14 +662,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().equipmentDetails = thisFacewear;
-			o.GetComponent<ShopItemScript>().itemName = entry.Key;
-            o.GetComponent<ShopItemScript>().itemType = "Facewear";
-			o.GetComponent<ShopItemScript>().itemDescription = thisFacewear.description;
-			o.GetComponent<ShopItemScript>().gpPriceTxt.text = ""+thisFacewear.gpPrice;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(thisFacewear.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.equipmentDetails = thisFacewear;
+			s.itemName = entry.Key;
+            s.itemType = "Facewear";
+			s.itemDescription = thisFacewear.description;
+			s.gpPriceTxt.text = ""+thisFacewear.gpPrice;
+			s.thumbnailRef.texture = (Texture)Resources.Load(thisFacewear.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -683,21 +695,25 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myArmor.Count; i++) {
-			string thisItemName = ((ArmorData)PlayerData.playerdata.myArmor[i]).name;
+			ArmorData ed = ((ArmorData)PlayerData.playerdata.myArmor[i]);
+			string thisItemName = ed.name;
 			Armor thisArmor = InventoryScript.itemData.armorCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().armorDetails = thisArmor;
-			o.GetComponent<ShopItemScript>().itemName = thisItemName;
-            o.GetComponent<ShopItemScript>().itemType = "Armor";
-			o.GetComponent<ShopItemScript>().itemDescription = thisArmor.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(thisArmor.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.armorDetails = thisArmor;
+			s.itemName = thisItemName;
+            s.itemType = "Armor";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = thisArmor.description;
+			s.thumbnailRef.texture = (Texture)Resources.Load(thisArmor.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 3f, t.sizeDelta.y / 3f);
 			if (thisItemName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedArmor)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -727,14 +743,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().armorDetails = thisArmor;
-			o.GetComponent<ShopItemScript>().itemName = entry.Key;
-            o.GetComponent<ShopItemScript>().itemType = "Armor";
-			o.GetComponent<ShopItemScript>().itemDescription = thisArmor.description;
-			o.GetComponent<ShopItemScript>().gpPriceTxt.text = ""+thisArmor.gpPrice;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(thisArmor.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.armorDetails = thisArmor;
+			s.itemName = entry.Key;
+            s.itemType = "Armor";
+			s.itemDescription = thisArmor.description;
+			s.gpPriceTxt.text = ""+thisArmor.gpPrice;
+			s.thumbnailRef.texture = (Texture)Resources.Load(thisArmor.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -759,21 +776,25 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myTops.Count; i++) {
-			string thisItemName = ((EquipmentData)PlayerData.playerdata.myTops[i]).name;
+			EquipmentData ed = ((EquipmentData)PlayerData.playerdata.myTops[i]);
+			string thisItemName = ed.name;
 			Equipment thisTop = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().equipmentDetails = thisTop;
-            o.GetComponent<ShopItemScript>().itemName = thisItemName;
-            o.GetComponent<ShopItemScript>().itemType = "Top";
-			o.GetComponent<ShopItemScript>().itemDescription = thisTop.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.equipmentDetails = thisTop;
+            s.itemName = thisItemName;
+            s.itemType = "Top";
+			s.itemDescription = thisTop.description;
+			s.thumbnailRef.texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 4f, t.sizeDelta.y / 4f);
 			if (thisItemName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedTop)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -803,14 +824,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().equipmentDetails = thisEquipment;
-			o.GetComponent<ShopItemScript>().itemName = entry.Key;
-            o.GetComponent<ShopItemScript>().itemType = "Tops";
-			o.GetComponent<ShopItemScript>().itemDescription = thisEquipment.description;
-			o.GetComponent<ShopItemScript>().gpPriceTxt.text = ""+thisEquipment.gpPrice;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(thisEquipment.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.equipmentDetails = thisEquipment;
+			s.itemName = entry.Key;
+            s.itemType = "Tops";
+			s.itemDescription = thisEquipment.description;
+			s.gpPriceTxt.text = ""+thisEquipment.gpPrice;
+			s.thumbnailRef.texture = (Texture)Resources.Load(thisEquipment.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -835,21 +857,25 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myBottoms.Count; i++) {
-			string thisItemName = ((EquipmentData)PlayerData.playerdata.myBottoms[i]).name;
+			EquipmentData ed = ((EquipmentData)PlayerData.playerdata.myBottoms[i]);
+			string thisItemName = ed.name;
 			Equipment thisBottom = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().equipmentDetails = thisBottom;
-			o.GetComponent<ShopItemScript>().itemName = thisItemName;
-            o.GetComponent<ShopItemScript>().itemType = "Bottom";
-			o.GetComponent<ShopItemScript>().itemDescription = thisBottom.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.equipmentDetails = thisBottom;
+			s.itemName = thisItemName;
+            s.itemType = "Bottom";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = thisBottom.description;
+			s.thumbnailRef.texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			if (thisItemName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedBottom)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -879,14 +905,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().equipmentDetails = thisBottom;
-			o.GetComponent<ShopItemScript>().itemName = entry.Key;
-            o.GetComponent<ShopItemScript>().itemType = "Bottom";
-			o.GetComponent<ShopItemScript>().itemDescription = thisBottom.description;
-			o.GetComponent<ShopItemScript>().gpPriceTxt.text = ""+thisBottom.gpPrice;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(thisBottom.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.equipmentDetails = thisBottom;
+			s.itemName = entry.Key;
+            s.itemType = "Bottom";
+			s.itemDescription = thisBottom.description;
+			s.gpPriceTxt.text = ""+thisBottom.gpPrice;
+			s.thumbnailRef.texture = (Texture)Resources.Load(thisBottom.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -911,21 +938,25 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myFootwear.Count; i++) {
-			string thisItemName = ((EquipmentData)PlayerData.playerdata.myFootwear[i]).name;
+			EquipmentData ed = ((EquipmentData)PlayerData.playerdata.myFootwear[i]);
+			string thisItemName = ed.name;
 			Equipment thisFootwear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().equipmentDetails = thisFootwear;
-			o.GetComponent<ShopItemScript>().itemName = thisItemName;
-            o.GetComponent<ShopItemScript>().itemType = "Footwear";
-			o.GetComponent<ShopItemScript>().itemDescription = thisFootwear.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.equipmentDetails = thisFootwear;
+			s.itemName = thisItemName;
+            s.itemType = "Footwear";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = thisFootwear.description;
+			s.thumbnailRef.texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 3f, t.sizeDelta.y / 3f);
 			if (thisItemName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedFootwear)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -955,14 +986,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().equipmentDetails = thisFootwear;
-			o.GetComponent<ShopItemScript>().itemName = entry.Key;
-            o.GetComponent<ShopItemScript>().itemType = "Footwear";
-			o.GetComponent<ShopItemScript>().itemDescription = thisFootwear.description;
-			o.GetComponent<ShopItemScript>().gpPriceTxt.text = ""+thisFootwear.gpPrice;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(thisFootwear.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.equipmentDetails = thisFootwear;
+			s.itemName = entry.Key;
+            s.itemType = "Footwear";
+			s.itemDescription = thisFootwear.description;
+			s.gpPriceTxt.text = ""+thisFootwear.gpPrice;
+			s.thumbnailRef.texture = (Texture)Resources.Load(thisFootwear.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -1002,25 +1034,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
+			WeaponData ed = ((WeaponData)PlayerData.playerdata.myWeapons[i]);
+			string thisWeaponName = ed.name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Primary")) {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedPrimaryWeapon)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -1070,14 +1106,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -1117,25 +1154,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
+			WeaponData ed = ((WeaponData)PlayerData.playerdata.myWeapons[i]);
+			string thisWeaponName = ed.name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Secondary")) {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSecondaryWeapon)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -1185,14 +1226,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -1230,25 +1272,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
+			WeaponData ed = ((WeaponData)PlayerData.playerdata.myWeapons[i]);
+			string thisWeaponName = ed.name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Support")) {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSupportWeapon)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -1295,14 +1341,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -1321,25 +1368,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate with assault rifles
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
+			WeaponData ed = ((WeaponData)PlayerData.playerdata.myWeapons[i]);
+			string thisWeaponName = ed.name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Assault Rifle")) {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedPrimaryWeapon)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -1363,14 +1414,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -1389,25 +1441,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate with shotguns
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
+			WeaponData ed = ((WeaponData)PlayerData.playerdata.myWeapons[i]);
+			string thisWeaponName = ed.name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Shotgun")) {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedPrimaryWeapon)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -1431,14 +1487,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -1457,25 +1514,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate with sniper rifles
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
+			WeaponData ed = ((WeaponData)PlayerData.playerdata.myWeapons[i]);
+			string thisWeaponName = ed.name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Sniper Rifle")) {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedPrimaryWeapon)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -1499,14 +1560,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -1523,25 +1585,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate with pistols
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
+			WeaponData ed = ((WeaponData)PlayerData.playerdata.myWeapons[i]);
+			string thisWeaponName = ed.name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Pistol")) {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSecondaryWeapon)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -1563,14 +1629,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -1588,25 +1655,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate with pistols
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
+			WeaponData ed = ((WeaponData)PlayerData.playerdata.myWeapons[i]);
+			string thisWeaponName = ed.name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Explosive")) {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSecondaryWeapon)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -1629,14 +1700,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -1654,25 +1726,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate with pistols
 		for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
-			string thisWeaponName = ((WeaponData)PlayerData.playerdata.myWeapons[i]).name;
+			WeaponData ed = ((WeaponData)PlayerData.playerdata.myWeapons[i]);
+			string thisWeaponName = ed.name;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Booster")) {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSupportWeapon)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -1695,14 +1771,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().weaponDetails = w;
-			o.GetComponent<ShopItemScript>().itemName = w.name;
-            o.GetComponent<ShopItemScript>().itemType = "Weapon";
-			o.GetComponent<ShopItemScript>().itemDescription = w.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = w.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -1744,14 +1821,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().modDescriptionPopupRef = marketplaceModDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().modDetails = m;
-			o.GetComponent<ShopItemScript>().itemName = m.name;
-            o.GetComponent<ShopItemScript>().itemType = "Mod";
-			o.GetComponent<ShopItemScript>().itemDescription = m.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = m.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(m.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.modDescriptionPopupRef = marketplaceModDescriptionPopupRef;
+			s.modDetails = m;
+			s.itemName = m.name;
+            s.itemType = "Mod";
+			s.itemDescription = m.description;
+			s.weaponCategory = m.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -1773,14 +1851,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().modDescriptionPopupRef = marketplaceModDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().modDetails = m;
-			o.GetComponent<ShopItemScript>().itemName = m.name;
-            o.GetComponent<ShopItemScript>().itemType = "Mod";
-			o.GetComponent<ShopItemScript>().itemDescription = m.description;
-			o.GetComponent<ShopItemScript>().weaponCategory = m.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(m.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.modDescriptionPopupRef = marketplaceModDescriptionPopupRef;
+			s.modDetails = m;
+			s.itemName = m.name;
+            s.itemType = "Mod";
+			s.itemDescription = m.description;
+			s.weaponCategory = m.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -1805,21 +1884,25 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Populate into grid layout
 		for (int i = 0; i < PlayerData.playerdata.myCharacters.Count; i++) {
-			string thisCharacterName = ((CharacterData)PlayerData.playerdata.myCharacters[i]).name;
+			CharacterData ed = ((CharacterData)PlayerData.playerdata.myCharacters[i]);
+			string thisCharacterName = ed.name;
 			Character c = InventoryScript.itemData.characterCatalog[thisCharacterName];
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = itemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().characterDetails = c;
-			o.GetComponent<ShopItemScript>().itemName = thisCharacterName;
-            o.GetComponent<ShopItemScript>().itemType = "Character";
-			o.GetComponent<ShopItemScript>().itemDescription = c.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(c.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.characterDetails = c;
+			s.itemName = thisCharacterName;
+            s.itemType = "Character";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = c.description;
+			s.thumbnailRef.texture = (Texture)Resources.Load(c.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			if (thisCharacterName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedItemPrefab = o;
 			}
 			o.transform.SetParent(contentInventory.transform);
@@ -1849,13 +1932,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
-			o.GetComponent<ShopItemScript>().itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().characterDetails = c;
-			o.GetComponent<ShopItemScript>().itemName = entry.Key;
-            o.GetComponent<ShopItemScript>().itemType = "Character";
-			o.GetComponent<ShopItemScript>().itemDescription = c.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(c.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.characterDetails = c;
+			s.itemName = entry.Key;
+            s.itemType = "Character";
+			s.itemDescription = c.description;
+			s.thumbnailRef.texture = (Texture)Resources.Load(c.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			o.transform.SetParent(shopContentInventory.transform);
@@ -1909,10 +1993,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// If you're on equipment screen, go to loadout screen. Else, go back to loadout.
 		if (t.text.Equals("Weapons")) {
 			t.text = "Equipment";
-			SwitchToMarketplaceEquipmentScreen();
+			SwitchToMarketplaceWeaponsScreen();
 		} else {
 			t.text = "Weapons";
-			SwitchToMarketplaceWeaponsScreen();
+			SwitchToMarketplaceEquipmentScreen();
 		}
 	}
 
@@ -1933,21 +2017,22 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
-			o.GetComponent<ShopItemScript>().modDescriptionPopupRef = modDescriptionPopupRef;
-			o.GetComponent<ShopItemScript>().modDetails = m;
-			o.GetComponent<ShopItemScript>().id = modData.id;
-			o.GetComponent<ShopItemScript>().equippedOn = modData.equippedOn;
-			o.GetComponent<ShopItemScript>().itemName = m.name;
-            o.GetComponent<ShopItemScript>().itemType = "Mod";
-			o.GetComponent<ShopItemScript>().itemDescription = m.description;
-			o.GetComponent<ShopItemScript>().modCategory = m.category;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(m.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.modDescriptionPopupRef = modDescriptionPopupRef;
+			s.modDetails = m;
+			s.id = modData.id;
+			s.equippedOn = modData.equippedOn;
+			s.itemName = m.name;
+            s.itemType = "Mod";
+			s.itemDescription = m.description;
+			s.modCategory = m.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
 			if (modWeaponLbl.text.Equals(modData.equippedOn)) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				o.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+				s.outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+				s.equippedInd.enabled = true;
 				currentlyEquippedModPrefab = o;
 			}
 			o.transform.SetParent(modInventoryContent.transform);
@@ -2042,7 +2127,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void SwitchToMarketplaceEquipmentScreen() {
-		loadoutBtn.GetComponentInChildren<Text>().text = "Weapons";
+		weaponsBtn.GetComponentInChildren<Text>().text = "Weapons";
 		shopHeadgearBtn.gameObject.SetActive(true);
 		shopFaceBtn.gameObject.SetActive(true);
 		shopTopsBtn.gameObject.SetActive(true);
@@ -2552,6 +2637,32 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 		}
 		return false;
+	}
+
+	void ResetMarketplaceButtons() {
+		shopHeadgearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopFaceBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopArmorBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopTopsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopBottomsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopFootwearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+	}
+
+	void ResetCustomizationButtons() {
+		headgearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		faceBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		armorBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		topsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		bottomsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		footwearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 	}
 		
 }

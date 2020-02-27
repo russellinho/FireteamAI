@@ -11,6 +11,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public GameObject modDescriptionPopupRef;
     public TitleControllerScript ts;
     public RawImage thumbnailRef;
+    public Image outline;
     public Character characterDetails;
     public Equipment equipmentDetails;
     public Armor armorDetails;
@@ -237,7 +238,6 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             expirationDate = "Permanent";
         } else {
             // Calculate expiration date - add duration to acquire date and convert to DateTime
-            Debug.Log("d: " + acquireDate);
             DateTime acquireDateDate = DateTime.Parse(acquireDate);
             float dur = float.Parse(duration);
             acquireDateDate.AddMinutes((double)dur);

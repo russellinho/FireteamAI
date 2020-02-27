@@ -217,6 +217,8 @@ public class EquipmentScript : MonoBehaviour
 
         ts.equippedCharacterSlot.GetComponentInChildren<RawImage>().enabled = true;
         ts.equippedCharacterSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(c.thumbnailPath);
+        ts.shopEquippedCharacterSlot.GetComponentInChildren<RawImage>().enabled = true;
+        ts.shopEquippedCharacterSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(c.thumbnailPath);
 
         if (name.Equals("Lucas") || name.Equals("Daryl") || name.Equals("Codename Sayre")) {
             ts.currentCharGender = 'M';
@@ -315,13 +317,10 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        if (shopItemRef != null) {
-            ts.equippedTopSlot.GetComponentInChildren<RawImage>().enabled = true;
-            ts.equippedTopSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
-        } else {
-            ts.shopEquippedTopSlot.GetComponentInChildren<RawImage>().enabled = true;
-            ts.shopEquippedTopSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
-        }
+        ts.equippedTopSlot.GetComponentInChildren<RawImage>().enabled = true;
+        ts.equippedTopSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        ts.shopEquippedTopSlot.GetComponentInChildren<RawImage>().enabled = true;
+        ts.shopEquippedTopSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
     }
 
     void EquipTopForSetup() {
@@ -409,13 +408,10 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        if (shopItemRef != null) {
-            ts.equippedBottomSlot.GetComponentInChildren<RawImage>().enabled = true;
-            ts.equippedBottomSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
-        } else {
-            ts.shopEquippedBottomSlot.GetComponentInChildren<RawImage>().enabled = true;
-            ts.shopEquippedBottomSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
-        }
+        ts.equippedBottomSlot.GetComponentInChildren<RawImage>().enabled = true;
+        ts.equippedBottomSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        ts.shopEquippedBottomSlot.GetComponentInChildren<RawImage>().enabled = true;
+        ts.shopEquippedBottomSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
     }
 
     void EquipBottomForSetup() {
@@ -476,13 +472,11 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        if (shopItemRef != null) {
-            ts.equippedFootSlot.GetComponentInChildren<RawImage>().enabled = true;
-            ts.equippedFootSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
-        } else {
-            ts.shopEquippedFootSlot.GetComponentInChildren<RawImage>().enabled = true;
-            ts.shopEquippedFootSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
-        }
+        ts.equippedFootSlot.GetComponentInChildren<RawImage>().enabled = true;
+        ts.equippedFootSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        ts.shopEquippedFootSlot.GetComponentInChildren<RawImage>().enabled = true;
+        ts.shopEquippedFootSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        
     }
 
     void EquipFootwearForSetup() {
@@ -526,13 +520,11 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        if (shopItemRef != null) {
-            ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = true;
-            ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
-        } else {
-            ts.shopEquippedFaceSlot.GetComponentInChildren<RawImage>().enabled = true;
-            ts.shopEquippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
-        }
+        ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = true;
+        ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        ts.shopEquippedFaceSlot.GetComponentInChildren<RawImage>().enabled = true;
+        ts.shopEquippedFaceSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        
 
         playerScript.stats.updateStats(e.speed, e.stamina, e.armor, 0);
         playerScript.updateStats();
@@ -581,13 +573,11 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        if (shopItemRef != null) {
-            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = true;
-            ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
-        } else {
-            ts.shopEquippedHeadSlot.GetComponentInChildren<RawImage>().enabled = true;
-            ts.shopEquippedHeadSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
-        }
+        ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = true;
+        ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        ts.shopEquippedHeadSlot.GetComponentInChildren<RawImage>().enabled = true;
+        ts.shopEquippedHeadSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(e.thumbnailPath);
+        
 
         // Adds headgear stat to player
         playerScript.stats.updateStats(e.speed, e.stamina, e.armor, 0);
@@ -639,13 +629,10 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        if (shopItemRef != null) {
-            ts.equippedArmorSlot.GetComponentInChildren<RawImage>().enabled = true;
-            ts.equippedArmorSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(a.thumbnailPath);
-        } else {
-            ts.shopEquippedArmorSlot.GetComponentInChildren<RawImage>().enabled = true;
-            ts.shopEquippedArmorSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(a.thumbnailPath);
-        }
+        ts.equippedArmorSlot.GetComponentInChildren<RawImage>().enabled = true;
+        ts.equippedArmorSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(a.thumbnailPath);
+        ts.shopEquippedArmorSlot.GetComponentInChildren<RawImage>().enabled = true;
+        ts.shopEquippedArmorSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(a.thumbnailPath);
 
         playerScript.stats.updateStats(a.speed, a.stamina, a.armor, 0);
         playerScript.updateStats();
@@ -662,6 +649,8 @@ public class EquipmentScript : MonoBehaviour
         }
         ts.equippedHeadSlot.GetComponentInChildren<RawImage>().texture = null;
         ts.equippedHeadSlot.GetComponentInChildren<RawImage>().enabled = false;
+        ts.shopEquippedHeadSlot.GetComponentInChildren<RawImage>().texture = null;
+        ts.shopEquippedHeadSlot.GetComponentInChildren<RawImage>().enabled = false;
         if (string.IsNullOrEmpty(equippedHeadgear)) {
             return;
         }
@@ -690,6 +679,8 @@ public class EquipmentScript : MonoBehaviour
         }
         ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = null;
         ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = false;
+        ts.shopEquippedFaceSlot.GetComponentInChildren<RawImage>().texture = null;
+        ts.shopEquippedFaceSlot.GetComponentInChildren<RawImage>().enabled = false;
         if (string.IsNullOrEmpty(equippedFacewear))
         {
             return;
@@ -723,6 +714,8 @@ public class EquipmentScript : MonoBehaviour
         }
         ts.equippedArmorSlot.GetComponentInChildren<RawImage>().texture = null;
         ts.equippedArmorSlot.GetComponentInChildren<RawImage>().enabled = false;
+        ts.shopEquippedArmorSlot.GetComponentInChildren<RawImage>().texture = null;
+        ts.shopEquippedArmorSlot.GetComponentInChildren<RawImage>().enabled = false;
         if (string.IsNullOrEmpty(equippedArmor))
         {
             return;
