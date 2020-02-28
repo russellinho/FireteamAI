@@ -2064,6 +2064,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopCharacterBtn.gameObject.SetActive(false);
 		shopArmorBtn.gameObject.SetActive(false);
 
+		shopEquippedHeadSlot.SetActive(false);
+		shopEquippedFaceSlot.SetActive(false);
+		shopEquippedTopSlot.SetActive(false);
+		shopEquippedBottomSlot.SetActive(false);
+		shopEquippedFootSlot.SetActive(false);
+		shopEquippedCharacterSlot.SetActive(false);
+		shopEquippedArmorSlot.SetActive(false);
+		shopEquippedStatsSlot.SetActive(false);
+
 		shopPrimaryWepBtn.gameObject.SetActive(true);
 		shopSecondaryWepBtn.gameObject.SetActive(true);
 		shopSupportWepBtn.gameObject.SetActive(true);
@@ -2074,6 +2083,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1 - 30f);
 		rt = shopModsBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1 - 60f);
+		shopEquippedPrimarySlot.SetActive(true);
+		shopEquippedSecondarySlot.SetActive(true);
+		shopEquippedSupportSlot.SetActive(true);
 	}
 
 	void SwitchToEquipmentScreen() {
@@ -2139,6 +2151,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopBoostersSubBtn.gameObject.SetActive(false);
 		shopModsBtn.gameObject.SetActive(false);
 		shopSuppressorsSubBtn.gameObject.SetActive(false);
+
+		shopEquippedPrimarySlot.SetActive(false);
+		shopEquippedSecondarySlot.SetActive(false);
+		shopEquippedSupportSlot.SetActive(false);
 	}
 
 	public void OnRemoveArmorClicked() {

@@ -473,10 +473,13 @@ public class WeaponScript : MonoBehaviour
             // Puts the item that you just equipped in its proper slot
             if (w.type.Equals("Primary")) {
                 ts.equippedPrimarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
+                ts.shopEquippedPrimarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
             } else if (w.type.Equals("Secondary")) {
                 ts.equippedSecondarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
+                ts.shopEquippedSecondarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
             } else if (w.type.Equals("Support")) {
                 ts.equippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
+                ts.shopEquippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
             }
         } else {
             SetCurrentAmmo(currentlyEquippedType);
