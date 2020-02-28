@@ -452,14 +452,12 @@ public class WeaponScript : MonoBehaviour
             if (shopItemRef != null) {
                 // Sets item that you unequipped to white
                 if (ts.currentlyEquippedItemPrefab != null) {
-                    ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
-                    ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+                    ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
                 }
 
                 // Sets item that you just equipped to orange in the shop
                 if (shopItemRef != null) {
-                    shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-                    shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+                    shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
                     ts.currentlyEquippedItemPrefab = shopItemRef;
                 }
             }
@@ -474,14 +472,11 @@ public class WeaponScript : MonoBehaviour
 
             // Puts the item that you just equipped in its proper slot
             if (w.type.Equals("Primary")) {
-                ts.equippedPrimarySlot.GetComponentInChildren<RawImage>().enabled = true;
-                ts.equippedPrimarySlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+                ts.equippedPrimarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
             } else if (w.type.Equals("Secondary")) {
-                ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().enabled = true;
-                ts.equippedSecondarySlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+                ts.equippedSecondarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
             } else if (w.type.Equals("Support")) {
-                ts.equippedSupportSlot.GetComponentInChildren<RawImage>().enabled = true;
-                ts.equippedSupportSlot.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(w.thumbnailPath);
+                ts.equippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
             }
         } else {
             SetCurrentAmmo(currentlyEquippedType);
@@ -503,14 +498,12 @@ public class WeaponScript : MonoBehaviour
             if (shopItemRef != null) {
                 // Sets item that you unequipped to white
                 if (ts.currentlyEquippedModPrefab != null) {
-                    ts.currentlyEquippedModPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
-                    ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+                    ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
                 }
 
                 // Sets item that you just equipped to orange in the shop
                 if (shopItemRef != null) {
-                    shopItemRef.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-                    shopItemRef.GetComponent<ShopItemScript>().equippedInd.enabled = true;
+                    shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
                     ts.currentlyEquippedModPrefab = shopItemRef;
                 }
             }
@@ -530,8 +523,7 @@ public class WeaponScript : MonoBehaviour
         if (onTitle) {
             // Sets item that you unequipped to white
             if (ts.currentlyEquippedModPrefab != null) {
-                ts.currentlyEquippedModPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
-                ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().equippedInd.enabled = false;
+                ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
             }
         }
     }

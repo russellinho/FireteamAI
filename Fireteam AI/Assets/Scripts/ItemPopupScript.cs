@@ -9,6 +9,7 @@ public class ItemPopupScript : MonoBehaviour
     public GameObject equipmentStatDescriptor;
     public GameObject weaponStatDescriptor;
     public GameObject modStatDescriptor;
+    public GameObject restrictionsDescriptor;
 
     // Equipment stat labels
     public Text armorStatTxt;
@@ -77,12 +78,25 @@ public class ItemPopupScript : MonoBehaviour
         modStatDescriptor.SetActive(b);
     }
 
+    public void ToggleRestrictionsDescriptor(bool b) {
+        restrictionsDescriptor.SetActive(b);
+    }
+
     public void SetEquipmentStats(float armor, float speed, float stamina, char gender, string[] characterRestrictions) {
         armorStatTxt.text = ConvertToPercent(armor) + "%";
         speedStatTxt.text = ConvertToPercent(speed) + "%";
         staminaStatTxt.text = ConvertToPercent(stamina) + "%";
-        genderRestTxt.text = ""+gender;
-        characterRestTxt.text = ""+characterRestrictions;
+    }
+
+    public void SetRestrictions(char gender, string[] characterRestrictions) {
+        if (gender == 'M') {
+            genderRestTxt.text = "Male";
+        } else if (gender == 'F') {
+            genderRestTxt.text = "Female";
+        } else {
+            genderRestTxt.text = "None";
+        }
+        characterRestTxt.text = characterRestrictions.Length == 0 ? "None" : string.Join(", ", characterRestrictions);
     }
 
     public void SetArmorStats(float armor, float speed, float stamina) {

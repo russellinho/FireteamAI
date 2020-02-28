@@ -184,6 +184,9 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             ips.SetDescription(itemDescription);
             ips.SetModStats(modDetails.damageBoost, modDetails.accuracyBoost, modDetails.recoilBoost, modDetails.rangeBoost, modDetails.clipCapacityBoost, modDetails.maxAmmoBoost, equippedOn);
             ips.ToggleModStatDescriptor(true);
+            if (ips.restrictionsDescriptor != null) {
+                ips.ToggleRestrictionsDescriptor(false);
+            }
         } else {
             if (itemDescriptionPopupRef.activeInHierarchy) {
                 return;
@@ -198,17 +201,28 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 ips.ToggleWeaponStatDescriptor(false);
                 ips.SetEquipmentStats(equipmentDetails.armor, equipmentDetails.speed, equipmentDetails.stamina, equipmentDetails.gender, equipmentDetails.characterRestrictions);
                 ips.ToggleEquipmentStatDescriptor(true);
+                ips.SetRestrictions(equipmentDetails.gender, equipmentDetails.characterRestrictions);
+                ips.ToggleRestrictionsDescriptor(true);
             } else if (itemType.Equals("Armor")) {
                 ips.ToggleWeaponStatDescriptor(false);
                 ips.SetArmorStats(armorDetails.armor, armorDetails.speed, armorDetails.stamina);
                 ips.ToggleEquipmentStatDescriptor(true);
+                ips.ToggleRestrictionsDescriptor(false);
             } else if (itemType.Equals("Weapon")) {
                 ips.ToggleEquipmentStatDescriptor(false);
                 ips.SetWeaponStats(weaponDetails.damage, weaponDetails.accuracy, weaponDetails.recoil, weaponDetails.fireRate, weaponDetails.mobility, weaponDetails.range, weaponDetails.clipCapacity);
                 ips.ToggleWeaponStatDescriptor(true);
+                ips.ToggleRestrictionsDescriptor(false);
             } else {
+                // For clothing and shoes
                 ips.ToggleEquipmentStatDescriptor(false);
                 ips.ToggleWeaponStatDescriptor(false);
+                if (!itemType.Equals("Character")) {
+                    ips.ToggleRestrictionsDescriptor(true);
+                    ips.SetRestrictions(equipmentDetails.gender, equipmentDetails.characterRestrictions);
+                } else {
+                    ips.ToggleRestrictionsDescriptor(false);
+                }
             }
         }
     }
@@ -243,6 +257,16 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             acquireDateDate.AddMinutes((double)dur);
             // Set the calculated expiration date
             expirationDate = acquireDateDate.ToString();
+        }
+    }
+
+    public void ToggleEquippedIndicator(bool b) {
+        if (b) {
+            outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+            equippedInd.enabled = true;
+        } else {
+            outline.color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+            equippedInd.enabled = false;
         }
     }
 

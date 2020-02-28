@@ -943,6 +943,7 @@ MonoBehaviour:
   equipmentStatDescriptor: {fileID: 0}
   weaponStatDescriptor: {fileID: 0}
   modStatDescriptor: {fileID: 0}
+  restrictionsDescriptor: {fileID: 0}
   armorStatTxt: {fileID: 0}
   speedStatTxt: {fileID: 0}
   staminaStatTxt: {fileID: 0}
@@ -2566,6 +2567,7 @@ MonoBehaviour:
   equipmentStatDescriptor: {fileID: 0}
   weaponStatDescriptor: {fileID: 0}
   modStatDescriptor: {fileID: 24432837}
+  restrictionsDescriptor: {fileID: 0}
   armorStatTxt: {fileID: 0}
   speedStatTxt: {fileID: 0}
   staminaStatTxt: {fileID: 0}
@@ -2799,6 +2801,7 @@ GameObject:
   - component: {fileID: 67780812}
   - component: {fileID: 67780814}
   - component: {fileID: 67780813}
+  - component: {fileID: 67780815}
   m_Layer: 5
   m_Name: EquippedSupport
   m_TagString: Untagged
@@ -2866,6 +2869,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 67780811}
   m_CullTransparentMesh: 0
+--- !u!114 &67780815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 67780811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 801053973}
 --- !u!1 &68748257
 GameObject:
   m_ObjectHideFlags: 0
@@ -4323,6 +4339,7 @@ GameObject:
   - component: {fileID: 126712225}
   - component: {fileID: 126712227}
   - component: {fileID: 126712226}
+  - component: {fileID: 126712228}
   m_Layer: 5
   m_Name: EquippedTop
   m_TagString: Untagged
@@ -4390,6 +4407,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 126712224}
   m_CullTransparentMesh: 0
+--- !u!114 &126712228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 126712224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 2122995142}
 --- !u!1 &128516141
 GameObject:
   m_ObjectHideFlags: 0
@@ -5226,6 +5256,7 @@ GameObject:
   - component: {fileID: 164749773}
   - component: {fileID: 164749775}
   - component: {fileID: 164749774}
+  - component: {fileID: 164749776}
   m_Layer: 5
   m_Name: EquippedSecondary
   m_TagString: Untagged
@@ -5292,6 +5323,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 164749772}
   m_CullTransparentMesh: 0
+--- !u!114 &164749776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164749772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 1156434464}
 --- !u!1 &165932616
 GameObject:
   m_ObjectHideFlags: 0
@@ -7387,6 +7431,7 @@ GameObject:
   - component: {fileID: 273406673}
   - component: {fileID: 273406675}
   - component: {fileID: 273406674}
+  - component: {fileID: 273406676}
   m_Layer: 5
   m_Name: EquippedBottom
   m_TagString: Untagged
@@ -7454,6 +7499,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 273406672}
   m_CullTransparentMesh: 0
+--- !u!114 &273406676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 273406672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 1025862805}
 --- !u!1 &275312957
 GameObject:
   m_ObjectHideFlags: 0
@@ -10208,6 +10266,7 @@ GameObject:
   - component: {fileID: 367438639}
   - component: {fileID: 367438641}
   - component: {fileID: 367438640}
+  - component: {fileID: 367438642}
   m_Layer: 5
   m_Name: EquippedFoot
   m_TagString: Untagged
@@ -10275,6 +10334,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 367438638}
   m_CullTransparentMesh: 0
+--- !u!114 &367438642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 367438638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 94839240}
 --- !u!1 &368912382
 GameObject:
   m_ObjectHideFlags: 0
@@ -11941,6 +12013,7 @@ GameObject:
   - component: {fileID: 454040045}
   - component: {fileID: 454040047}
   - component: {fileID: 454040046}
+  - component: {fileID: 454040048}
   m_Layer: 5
   m_Name: EquippedFace
   m_TagString: Untagged
@@ -12008,6 +12081,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 454040044}
   m_CullTransparentMesh: 0
+--- !u!114 &454040048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 454040044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 1569217394}
 --- !u!1 &455663431
 GameObject:
   m_ObjectHideFlags: 0
@@ -12950,6 +13036,7 @@ MonoBehaviour:
   equipmentStatDescriptor: {fileID: 1781836948}
   weaponStatDescriptor: {fileID: 1990170298}
   modStatDescriptor: {fileID: 0}
+  restrictionsDescriptor: {fileID: 2100270302}
   armorStatTxt: {fileID: 1361651601}
   speedStatTxt: {fileID: 772724924}
   staminaStatTxt: {fileID: 1008644634}
@@ -13161,6 +13248,7 @@ GameObject:
   - component: {fileID: 491952037}
   - component: {fileID: 491952039}
   - component: {fileID: 491952038}
+  - component: {fileID: 491952040}
   m_Layer: 5
   m_Name: EquippedBottom
   m_TagString: Untagged
@@ -13228,6 +13316,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 491952036}
   m_CullTransparentMesh: 0
+--- !u!114 &491952040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491952036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 1412765749}
 --- !u!1 &495174825
 GameObject:
   m_ObjectHideFlags: 0
@@ -13488,6 +13589,7 @@ MonoBehaviour:
   equipmentStatDescriptor: {fileID: 0}
   weaponStatDescriptor: {fileID: 0}
   modStatDescriptor: {fileID: 0}
+  restrictionsDescriptor: {fileID: 0}
   armorStatTxt: {fileID: 0}
   speedStatTxt: {fileID: 0}
   staminaStatTxt: {fileID: 0}
@@ -16308,6 +16410,7 @@ MonoBehaviour:
   equipmentStatDescriptor: {fileID: 0}
   weaponStatDescriptor: {fileID: 0}
   modStatDescriptor: {fileID: 0}
+  restrictionsDescriptor: {fileID: 0}
   armorStatTxt: {fileID: 0}
   speedStatTxt: {fileID: 0}
   staminaStatTxt: {fileID: 0}
@@ -21723,8 +21826,8 @@ MonoBehaviour:
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: '
 
@@ -23918,6 +24021,7 @@ GameObject:
   - component: {fileID: 868566700}
   - component: {fileID: 868566702}
   - component: {fileID: 868566701}
+  - component: {fileID: 868566703}
   m_Layer: 5
   m_Name: EquippedCharacter
   m_TagString: Untagged
@@ -23985,6 +24089,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 868566699}
   m_CullTransparentMesh: 0
+--- !u!114 &868566703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 868566699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 99243061}
 --- !u!1 &874469254
 GameObject:
   m_ObjectHideFlags: 0
@@ -25618,6 +25735,7 @@ GameObject:
   - component: {fileID: 938912594}
   - component: {fileID: 938912596}
   - component: {fileID: 938912595}
+  - component: {fileID: 938912597}
   m_Layer: 5
   m_Name: EquippedPrimary
   m_TagString: Untagged
@@ -25684,6 +25802,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 938912593}
   m_CullTransparentMesh: 0
+--- !u!114 &938912597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 938912593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 856281760}
 --- !u!1 &939747681
 GameObject:
   m_ObjectHideFlags: 0
@@ -27769,6 +27900,7 @@ GameObject:
   - component: {fileID: 995254285}
   - component: {fileID: 995254287}
   - component: {fileID: 995254286}
+  - component: {fileID: 995254288}
   m_Layer: 5
   m_Name: EquippedPrimary
   m_TagString: Untagged
@@ -27835,6 +27967,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 995254284}
   m_CullTransparentMesh: 0
+--- !u!114 &995254288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 995254284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 760179216}
 --- !u!1 &996544887
 GameObject:
   m_ObjectHideFlags: 0
@@ -27925,6 +28070,7 @@ GameObject:
   - component: {fileID: 1008349818}
   - component: {fileID: 1008349820}
   - component: {fileID: 1008349819}
+  - component: {fileID: 1008349821}
   m_Layer: 5
   m_Name: EquippedSecondary
   m_TagString: Untagged
@@ -27991,6 +28137,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1008349817}
   m_CullTransparentMesh: 0
+--- !u!114 &1008349821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008349817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 1210208366}
 --- !u!1 &1008644632
 GameObject:
   m_ObjectHideFlags: 0
@@ -28874,6 +29033,7 @@ GameObject:
   - component: {fileID: 1042788618}
   - component: {fileID: 1042788620}
   - component: {fileID: 1042788619}
+  - component: {fileID: 1042788621}
   m_Layer: 5
   m_Name: EquippedTop
   m_TagString: Untagged
@@ -28941,6 +29101,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1042788617}
   m_CullTransparentMesh: 0
+--- !u!114 &1042788621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1042788617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 1693674782}
 --- !u!1 &1044728082
 GameObject:
   m_ObjectHideFlags: 0
@@ -31112,8 +31285,8 @@ MonoBehaviour:
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: '
 
@@ -32275,6 +32448,7 @@ MonoBehaviour:
   equipmentStatDescriptor: {fileID: 1267247065}
   weaponStatDescriptor: {fileID: 504976359}
   modStatDescriptor: {fileID: 0}
+  restrictionsDescriptor: {fileID: 573675217}
   armorStatTxt: {fileID: 1606154893}
   speedStatTxt: {fileID: 1767203135}
   staminaStatTxt: {fileID: 704394877}
@@ -36541,6 +36715,7 @@ MonoBehaviour:
   equipmentStatDescriptor: {fileID: 0}
   weaponStatDescriptor: {fileID: 0}
   modStatDescriptor: {fileID: 0}
+  restrictionsDescriptor: {fileID: 0}
   armorStatTxt: {fileID: 0}
   speedStatTxt: {fileID: 0}
   staminaStatTxt: {fileID: 0}
@@ -41850,6 +42025,7 @@ GameObject:
   - component: {fileID: 1464981787}
   - component: {fileID: 1464981789}
   - component: {fileID: 1464981788}
+  - component: {fileID: 1464981790}
   m_Layer: 5
   m_Name: EquippedHead
   m_TagString: Untagged
@@ -41917,6 +42093,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1464981786}
   m_CullTransparentMesh: 0
+--- !u!114 &1464981790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1464981786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 424512232}
 --- !u!1 &1465586359
 GameObject:
   m_ObjectHideFlags: 0
@@ -45448,8 +45637,8 @@ MonoBehaviour:
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: '
 
@@ -47425,6 +47614,7 @@ MonoBehaviour:
   equipmentStatDescriptor: {fileID: 0}
   weaponStatDescriptor: {fileID: 0}
   modStatDescriptor: {fileID: 1994118575}
+  restrictionsDescriptor: {fileID: 0}
   armorStatTxt: {fileID: 0}
   speedStatTxt: {fileID: 0}
   staminaStatTxt: {fileID: 0}
@@ -47824,6 +48014,7 @@ GameObject:
   - component: {fileID: 1643723784}
   - component: {fileID: 1643723786}
   - component: {fileID: 1643723785}
+  - component: {fileID: 1643723787}
   m_Layer: 5
   m_Name: EquippedFoot
   m_TagString: Untagged
@@ -47891,6 +48082,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1643723783}
   m_CullTransparentMesh: 0
+--- !u!114 &1643723787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1643723783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 1225705362}
 --- !u!1 &1651362561
 GameObject:
   m_ObjectHideFlags: 0
@@ -48528,6 +48732,7 @@ GameObject:
   - component: {fileID: 1661168104}
   - component: {fileID: 1661168106}
   - component: {fileID: 1661168105}
+  - component: {fileID: 1661168107}
   m_Layer: 5
   m_Name: EquippedCharacter
   m_TagString: Untagged
@@ -48595,6 +48800,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1661168103}
   m_CullTransparentMesh: 0
+--- !u!114 &1661168107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1661168103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 811702262}
 --- !u!1 &1666678181
 GameObject:
   m_ObjectHideFlags: 0
@@ -52265,6 +52483,7 @@ GameObject:
   - component: {fileID: 1765968899}
   - component: {fileID: 1765968901}
   - component: {fileID: 1765968900}
+  - component: {fileID: 1765968902}
   m_Layer: 5
   m_Name: EquippedFace
   m_TagString: Untagged
@@ -52332,6 +52551,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1765968898}
   m_CullTransparentMesh: 0
+--- !u!114 &1765968902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765968898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 1118736454}
 --- !u!1 &1767203133
 GameObject:
   m_ObjectHideFlags: 0
@@ -53153,6 +53385,7 @@ MonoBehaviour:
   equipmentStatDescriptor: {fileID: 0}
   weaponStatDescriptor: {fileID: 0}
   modStatDescriptor: {fileID: 0}
+  restrictionsDescriptor: {fileID: 0}
   armorStatTxt: {fileID: 0}
   speedStatTxt: {fileID: 0}
   staminaStatTxt: {fileID: 0}
@@ -53707,8 +53940,8 @@ MonoBehaviour:
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: '
 
@@ -55101,6 +55334,7 @@ GameObject:
   - component: {fileID: 1849947399}
   - component: {fileID: 1849947401}
   - component: {fileID: 1849947400}
+  - component: {fileID: 1849947402}
   m_Layer: 5
   m_Name: EquippedHead
   m_TagString: Untagged
@@ -55168,6 +55402,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1849947398}
   m_CullTransparentMesh: 0
+--- !u!114 &1849947402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1849947398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 725818984}
 --- !u!1 &1861566073
 GameObject:
   m_ObjectHideFlags: 0
@@ -58680,6 +58927,7 @@ MonoBehaviour:
   equipmentStatDescriptor: {fileID: 0}
   weaponStatDescriptor: {fileID: 0}
   modStatDescriptor: {fileID: 0}
+  restrictionsDescriptor: {fileID: 0}
   armorStatTxt: {fileID: 0}
   speedStatTxt: {fileID: 0}
   staminaStatTxt: {fileID: 0}
@@ -58880,6 +59128,7 @@ MonoBehaviour:
   equipmentStatDescriptor: {fileID: 0}
   weaponStatDescriptor: {fileID: 0}
   modStatDescriptor: {fileID: 0}
+  restrictionsDescriptor: {fileID: 0}
   armorStatTxt: {fileID: 0}
   speedStatTxt: {fileID: 0}
   staminaStatTxt: {fileID: 0}
@@ -59214,6 +59463,7 @@ GameObject:
   - component: {fileID: 2005418010}
   - component: {fileID: 2005418009}
   - component: {fileID: 2005418008}
+  - component: {fileID: 2005418011}
   m_Layer: 5
   m_Name: EquippedSupport
   m_TagString: Untagged
@@ -59281,6 +59531,19 @@ RectTransform:
   m_AnchoredPosition: {x: -130.00006, y: -248.50006}
   m_SizeDelta: {x: 90, y: 95}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2005418011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2005418007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 571225396}
 --- !u!1 &2015397707
 GameObject:
   m_ObjectHideFlags: 0
@@ -61009,6 +61272,7 @@ GameObject:
   - component: {fileID: 2099365008}
   - component: {fileID: 2099365010}
   - component: {fileID: 2099365009}
+  - component: {fileID: 2099365011}
   m_Layer: 5
   m_Name: EquippedArmor
   m_TagString: Untagged
@@ -61076,6 +61340,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2099365007}
   m_CullTransparentMesh: 0
+--- !u!114 &2099365011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2099365007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 1986967875}
 --- !u!1 &2100270302
 GameObject:
   m_ObjectHideFlags: 0
@@ -61132,6 +61409,7 @@ MonoBehaviour:
   equipmentStatDescriptor: {fileID: 0}
   weaponStatDescriptor: {fileID: 0}
   modStatDescriptor: {fileID: 0}
+  restrictionsDescriptor: {fileID: 0}
   armorStatTxt: {fileID: 0}
   speedStatTxt: {fileID: 0}
   staminaStatTxt: {fileID: 0}
@@ -61901,6 +62179,7 @@ GameObject:
   - component: {fileID: 2131661454}
   - component: {fileID: 2131661456}
   - component: {fileID: 2131661455}
+  - component: {fileID: 2131661457}
   m_Layer: 5
   m_Name: EquippedArmor
   m_TagString: Untagged
@@ -61968,6 +62247,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2131661453}
   m_CullTransparentMesh: 0
+--- !u!114 &2131661457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2131661453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448003538a6e78447af9a1a25b91e355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbnailPic: {fileID: 2078926856}
 --- !u!1 &2133877418
 GameObject:
   m_ObjectHideFlags: 0
