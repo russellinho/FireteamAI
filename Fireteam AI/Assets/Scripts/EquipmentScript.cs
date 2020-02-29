@@ -166,11 +166,11 @@ public class EquipmentScript : MonoBehaviour
             EquipTop("Scrubs Top", null);
             EquipBottom("Scrubs Bottom", null);
             EquipFootwear("Standard Boots (M)", null);
-            EquipFacewear("Surgical Mask", null);
+            //EquipFacewear("Surgical Mask", null);
         } else {
-            EquipTop("Standard Fatigues Top" + " (" + GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) + ")", null);
-            EquipBottom("Standard Fatigues Bottom" + " (" + GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) + ")", null);
-            EquipFootwear("Standard Boots" + " (" + GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) + ")", null);
+            EquipTop("Standard Fatigues Top" + " (" + GetGenderByCharacter(equippedCharacter) + ")", null);
+            EquipBottom("Standard Fatigues Bottom" + " (" + GetGenderByCharacter(equippedCharacter) + ")", null);
+            EquipFootwear("Standard Boots" + " (" + GetGenderByCharacter(equippedCharacter) + ")", null);
         }
     }
 
@@ -251,7 +251,7 @@ public class EquipmentScript : MonoBehaviour
         if (e.characterRestrictions.Length > 0) {
             for (int i = 0; i < e.characterRestrictions.Length; i++) {
                 string c = e.characterRestrictions[i];
-                if (PlayerData.playerdata.info.equippedCharacter.Equals(c)) {
+                if (equippedCharacter.Equals(c)) {
                     return false;
                 }
             }
@@ -262,7 +262,7 @@ public class EquipmentScript : MonoBehaviour
 
     public void EquipTop(string name, GameObject shopItemRef) {
         // Don't equip if not same gender or if restricted to certain characers
-        char charGender = GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter);
+        char charGender = GetGenderByCharacter(equippedCharacter);
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
             if (shopItemRef != null) {
@@ -274,9 +274,9 @@ public class EquipmentScript : MonoBehaviour
         }
         if (IsCharacterRestricted(e)) {
             if (shopItemRef != null) {
-                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
             } else {
-                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
             }
             return;
         }
@@ -351,7 +351,7 @@ public class EquipmentScript : MonoBehaviour
 
     public void EquipBottom(string name, GameObject shopItemRef) {
         // Don't equip if not same gender or if restricted to certain characers
-        char charGender = GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter);
+        char charGender = GetGenderByCharacter(equippedCharacter);
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
             if (shopItemRef != null) {
@@ -363,9 +363,9 @@ public class EquipmentScript : MonoBehaviour
         }
         if (IsCharacterRestricted(e)) {
             if (shopItemRef != null) {
-                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
             } else {
-                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
             }
             return;
         }
@@ -411,7 +411,7 @@ public class EquipmentScript : MonoBehaviour
 
     public void EquipFootwear(string name, GameObject shopItemRef) {
         // Don't equip if not same gender or if restricted to certain characers
-        char charGender = GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter);
+        char charGender = GetGenderByCharacter(equippedCharacter);
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
             if (shopItemRef != null) {
@@ -423,9 +423,9 @@ public class EquipmentScript : MonoBehaviour
         }
         if (IsCharacterRestricted(e)) {
             if (shopItemRef != null) {
-                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
             } else {
-                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + e.characterRestrictions);
+                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
             }
             return;
         }
@@ -481,7 +481,7 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedFacewearRef);
             equippedFacewearRef = null;
         }
-        string absPrefabPath = (GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M' ? e.malePrefabPath : e.femalePrefabPath);
+        string absPrefabPath = (GetGenderByCharacter(equippedCharacter) == 'M' ? e.malePrefabPath : e.femalePrefabPath);
         equippedFacewearRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
         equippedFacewearRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedFacewearRef.GetComponentInChildren<MeshFixer>();
@@ -531,7 +531,7 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedHeadgearRef);
             equippedHeadgearRef = null;
         }
-        string absPrefabPath = (GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M' ? e.malePrefabPath : e.femalePrefabPath);
+        string absPrefabPath = (GetGenderByCharacter(equippedCharacter) == 'M' ? e.malePrefabPath : e.femalePrefabPath);
         equippedHeadgearRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
         equippedHeadgearRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedHeadgearRef.GetComponentInChildren<MeshFixer>();
@@ -575,10 +575,10 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedArmorBottomRef);
             equippedArmorBottomRef = null;
         }
-        string absPrefabPath = (GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M' ? a.malePrefabPathTop : a.femalePrefabPathTop);
+        string absPrefabPath = (GetGenderByCharacter(equippedCharacter) == 'M' ? a.malePrefabPathTop : a.femalePrefabPathTop);
         equippedArmorTopRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
         equippedArmorTopRef.transform.SetParent(gameObject.transform);
-        absPrefabPath = (GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M' ? a.malePrefabPathBottom : a.femalePrefabPathBottom);
+        absPrefabPath = (GetGenderByCharacter(equippedCharacter) == 'M' ? a.malePrefabPathBottom : a.femalePrefabPathBottom);
         equippedArmorBottomRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
         equippedArmorBottomRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedArmorTopRef.GetComponentInChildren<MeshFixer>();

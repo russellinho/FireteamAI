@@ -134,8 +134,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button primaryWepBtn;
 	public Button secondaryWepBtn;
 	public Button supportWepBtn;
-	private float secondaryWepBtnYPos1 = -95f;
-	private float secondaryWepBtnYPos2 = -185f;
+	// Number of sub buttons for primary weapon dropdown in shop
+	private const uint PRIMARY_SUBBUTTON_COUNT = 3;
+	private const uint SECONDARY_SUBBUTTON_COUNT = 1;
+	private const uint SUPPORT_SUBBUTTON_COUNT = 2;
+	private const uint MOD_SUBBUTTON_COUNT = 1;
+	private const float SHOP_BUTTON_SPACING = -30f;
+	private float primaryWepBtnYPos = -65f;
+	private float secondaryWepBtnYPos = -95f;
+	private float supportWepBtnYPos = -125f;
+	private float modWepBtnYPos = -155f;
 	public Button assaultRifleSubBtn;
 	public Button shotgunSubBtn;
 	public Button sniperRifleSubBtn;
@@ -471,6 +479,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void ClosePopup() {
 		mainMenuPopup.SetActive (false);
+		marketplaceMenuPopup.SetActive (false);
 		modMenuPopup.SetActive(false);
 		customizationMenuPopup.SetActive(false);
 	}
@@ -824,7 +833,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
 			s.equipmentDetails = thisEquipment;
 			s.itemName = entry.Key;
-            s.itemType = "Tops";
+            s.itemType = "Top";
 			s.itemDescription = thisEquipment.description;
 			s.gpPriceTxt.text = ""+thisEquipment.gpPrice;
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisEquipment.thumbnailPath);
@@ -995,12 +1004,19 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	float CalculateButtonPositioning(float startingPoint, uint places) {
+		// Calculate button positioning
+		return startingPoint + (places * SHOP_BUTTON_SPACING);
+	}
+
 	public void OnPrimaryWepBtnClicked() {
 		// Moving secondary and support button down for submenu
-		RectTransform rt = secondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos2);
+		RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		rt = secondaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
 		rt = supportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos2 - 30f);
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
 
 		// Change all button colors
 		primaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
@@ -1058,12 +1074,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void OnMarketplacePrimaryWepBtnClicked() {
 		// Moving secondary and support button down for submenu
-		RectTransform rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos2);
+		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
 		rt = shopSupportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos2 - 30f);
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
 		rt = shopModsBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos2 - 60f);
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
 
 		// Change all button colors
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
@@ -1119,12 +1137,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		RectTransform rt = secondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1);
-
-		// Move support wep button down for submenus
+		RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		rt = secondaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
 		rt = supportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1 - 60f);
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
 
 		// Remove sub buttons
 		assaultRifleSubBtn.gameObject.SetActive(false);
@@ -1181,14 +1199,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		RectTransform rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1);
-
-		// Move support wep button down for submenus
+		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
 		rt = shopSupportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1 - 60f);
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
 		rt = shopModsBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1 - 90f);
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
 
 		// Remove sub buttons
 		shopAssaultRifleSubBtn.gameObject.SetActive(false);
@@ -1238,10 +1256,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		supportWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		RectTransform rt = secondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1);
+		RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		rt = secondaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
 		rt = supportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1 - 30f);
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
 
 		// Remove sub buttons
 		assaultRifleSubBtn.gameObject.SetActive(false);
@@ -1297,12 +1317,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		RectTransform rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1);
+		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
 		rt = shopSupportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1 - 30f);
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
 		rt = shopModsBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1 - 60f);
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, SUPPORT_SUBBUTTON_COUNT));
 
 		// Remove sub buttons
 		shopAssaultRifleSubBtn.gameObject.SetActive(false);
@@ -1777,8 +1799,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		RectTransform rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1 - 60);
+		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
+		rt = shopSupportWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
+		rt = shopModsBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, 0));
 
 		// Remove sub buttons
 		shopAssaultRifleSubBtn.gameObject.SetActive(false);
@@ -2044,14 +2072,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.gameObject.SetActive(true);
 		secondaryWepBtn.gameObject.SetActive(true);
 		supportWepBtn.gameObject.SetActive(true);
-		RectTransform rt = secondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1);
+		RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		rt = secondaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
 		rt = supportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1 - 30f);
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
 		equippedPrimarySlot.SetActive(true);
 		equippedSecondarySlot.SetActive(true);
 		equippedSupportSlot.SetActive(true);
-
 	}
 
 	void SwitchToMarketplaceWeaponsScreen() {
@@ -2077,12 +2106,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSecondaryWepBtn.gameObject.SetActive(true);
 		shopSupportWepBtn.gameObject.SetActive(true);
 		shopModsBtn.gameObject.SetActive(true);
-		RectTransform rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1);
-		rt = supportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1 - 30f);
+		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
+		rt = shopSupportWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
 		rt = shopModsBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, secondaryWepBtnYPos1 - 60f);
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, 0));
 		shopEquippedPrimarySlot.SetActive(true);
 		shopEquippedSecondarySlot.SetActive(true);
 		shopEquippedSupportSlot.SetActive(true);
@@ -2580,7 +2611,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		} else if (type.Equals("Character")) {
-			for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
+			for (int i = 0; i < PlayerData.playerdata.myCharacters.Count; i++) {
 				CharacterData item = (CharacterData)PlayerData.playerdata.myCharacters[i];
 				if (item.name.Equals(itemName)) {
 					float duration = float.Parse(item.duration);

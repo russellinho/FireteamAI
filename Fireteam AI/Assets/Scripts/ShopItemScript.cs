@@ -254,7 +254,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             // Calculate expiration date - add duration to acquire date and convert to DateTime
             DateTime acquireDateDate = DateTime.Parse(acquireDate);
             float dur = float.Parse(duration);
-            acquireDateDate.AddMinutes((double)dur);
+            acquireDateDate = acquireDateDate.AddMinutes((double)dur);
             // Set the calculated expiration date
             expirationDate = acquireDateDate.ToString();
         }
