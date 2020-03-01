@@ -14,8 +14,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private const float SEVEN_DAYS_MINS = 10080f;
 	private const float ONE_DAY_MINS = 1440f;
 	private const float PERMANENT = -1f;
+    private const float COST_MULT_FRACTION = 0.5f / 3f;
+    private const float SEVEN_DAY_COST_MULTIPLIER = 7f * (1f - (COST_MULT_FRACTION * 1f));
+    private const float THIRTY_DAY_COST_MULTIPLIER = 30f * (1f - (COST_MULT_FRACTION * 2f));
+    private const float NINETY_DAY_COST_MULTIPLIER = 90f * (1f - (COST_MULT_FRACTION * 3f));
+    private const float PERMANENT_COST_MULTIPLIER = 365f;
 
-	private Vector3 customizationCameraPos = new Vector3(-4.7f, 4.08f, 21.5f);
+    private Vector3 customizationCameraPos = new Vector3(-4.7f, 4.08f, 21.5f);
 	private Vector3 defaultCameraPos = new Vector3(-7.3f, 4.08f, 22.91f);
 	private Vector3 defaultCameraRot = new Vector3(10f, 36.2f, 0f);
 	private Vector3 modCameraRot = new Vector3(3.5f, 43.5f, 0f);
@@ -2500,12 +2505,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		typeBeingPurchased = itemType;
 		preparePurchasePopup.GetComponentInChildren<RawImage>().texture = thumb;
 		preparePurchasePopup.SetActive(true);
-	}
+        // Initialize with 1 day price
+        SetTotalGPCost(0);
+
+    }
 
 	public void OnConfirmPreparePurchaseClicked() {
 		preparePurchasePopup.SetActive(false);
 		confirmPurchaseTxt.text = "Are you sure you would like to buy " + itemBeingPurchased + " for " +
-			durationSelectionDropdown.options[durationSelectionDropdown.value].text + "? (" + totalGpCostBeingPurchased + " GP)";
+		durationSelectionDropdown.options[durationSelectionDropdown.value].text + "? (" + totalGpCostBeingPurchased + " GP)";
 		confirmPurchasePopup.SetActive(true);
 	}
 
@@ -2515,9 +2523,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void OnDurationSelect() {
 		int durationInput = durationSelectionDropdown.value;
-		totalGpCostBeingPurchased = GetGPCostForItemAndType(itemBeingPurchased, typeBeingPurchased, durationInput);
-		totalGpCostTxt.text = ""+totalGpCostBeingPurchased;
+        SetTotalGPCost(durationInput);
 	}
+
+    void SetTotalGPCost(int duration)
+    {
+        totalGpCostBeingPurchased = GetGPCostForItemAndType(itemBeingPurchased, typeBeingPurchased, duration);
+        totalGpCostTxt.text = "" + totalGpCostBeingPurchased;
+    }
 
 	public void OnCancelPurchaseClicked() {
 		itemBeingPurchased = null;
@@ -2533,18 +2546,22 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	void ConfirmPurchase() {
 		confirmPurchasePopup.SetActive(false);
-		// Ensure that the user doesn't already have this item
-		if (HasDuplicateItem(itemBeingPurchased, typeBeingPurchased)) {
+        // Ensure that the user doesn't already have this item
+        float hasDuplicateCheck = HasDuplicateItem(itemBeingPurchased, typeBeingPurchased);
+        if (hasDuplicateCheck < 0f) {
 			TriggerMarketplacePopup("You already own this item.");
 			return;
 		}
-		// Reach out to DB to verify player's GP and KCoin before purchase
-		DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
+        bool isStacking = (hasDuplicateCheck >= 0f && !Mathf.Approximately(0f, hasDuplicateCheck));
+        float totalNewDuration = ConvertDurationInput(durationSelectionDropdown.value);
+        totalNewDuration = (Mathf.Approximately(totalNewDuration, -1f) ? totalNewDuration : totalNewDuration + hasDuplicateCheck);
+        // Reach out to DB to verify player's GP and KCoin before purchase
+        DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
 			if (task.IsCompleted) {
 				PlayerData.playerdata.info.gp = uint.Parse(task.Result.Child("gp").Value.ToString());
 				// PlayerData.playerdata.info.kcoin = uint.Parse(task.Result.Child("kcoin").Value.ToString());
 				if (PlayerData.playerdata.info.gp >= totalGpCostBeingPurchased) {
-					PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, ConvertDurationInput(durationSelectionDropdown.value), true, totalGpCostBeingPurchased, 0);
+					PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, isStacking, totalGpCostBeingPurchased, 0);
 				} else {
 					TriggerMarketplacePopup("You do not have enough GP to purchase this item.");
 				}
@@ -2576,17 +2593,38 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		return duration;
 	}
 
+
+
 	uint GetGPCostForItemAndType(string itemName, string itemType, int duration) {
+        float durationMultiplier = 1f;
+        switch (duration)
+        {
+            case 1:
+                durationMultiplier = SEVEN_DAY_COST_MULTIPLIER;
+                break;
+            case 2:
+                durationMultiplier = THIRTY_DAY_COST_MULTIPLIER;
+                break;
+            case 3:
+                durationMultiplier = NINETY_DAY_COST_MULTIPLIER;
+                break;
+            case 4:
+                durationMultiplier = PERMANENT_COST_MULTIPLIER;
+                break;
+            default:
+                break;
+
+        }
 		if (itemType.Equals("Armor")) {
-			return (uint)InventoryScript.itemData.armorCatalog[itemName].gpPrice;
+			return (uint)(InventoryScript.itemData.armorCatalog[itemName].gpPrice * durationMultiplier);
 		} else if (itemType.Equals("Character")) {
-			return (uint)InventoryScript.itemData.characterCatalog[itemName].gpPrice;
+			return (uint)(InventoryScript.itemData.characterCatalog[itemName].gpPrice * durationMultiplier);
 		} else if (itemType.Equals("Weapon")) {
-			return (uint)InventoryScript.itemData.weaponCatalog[itemName].gpPrice;
+			return (uint)(InventoryScript.itemData.weaponCatalog[itemName].gpPrice * durationMultiplier);
 		} else if (itemType.Equals("Mod")) {
-			return (uint)InventoryScript.itemData.modCatalog[itemName].gpPrice;
+			return (uint)(InventoryScript.itemData.modCatalog[itemName].gpPrice * durationMultiplier);
 		}
-		return (uint)InventoryScript.itemData.equipmentCatalog[itemName].gpPrice;
+		return (uint)(InventoryScript.itemData.equipmentCatalog[itemName].gpPrice * durationMultiplier);
 	}
 
 	public void UpdateCurrency() {
@@ -2597,16 +2635,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	// Players cannot own multiple of the same item unless they're mods.
 	// Mods are always permanent.
 	// Items can only be purchased again if they don't own it for permanent
-	public bool HasDuplicateItem(string itemName, string type) {
+	public float HasDuplicateItem(string itemName, string type) {
 		if (type.Equals("Weapon")) {
 			for (int i = 0; i < PlayerData.playerdata.myWeapons.Count; i++) {
 				WeaponData item = (WeaponData)PlayerData.playerdata.myWeapons[i];
 				if (item.name.Equals(itemName)) {
 					float duration = float.Parse(item.duration);
-					if (duration == -1f || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
-						return true;
+					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
+						return -1f;
 					} else {
-						return false;
+						return duration;
 					}
 				}
 			}
@@ -2615,10 +2653,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				CharacterData item = (CharacterData)PlayerData.playerdata.myCharacters[i];
 				if (item.name.Equals(itemName)) {
 					float duration = float.Parse(item.duration);
-					if (duration == -1f || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
-						return true;
+					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
+						return -1f;
 					} else {
-						return false;
+						return duration;
 					}
 				}
 			}
@@ -2627,10 +2665,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				ArmorData item = (ArmorData)PlayerData.playerdata.myArmor[i];
 				if (item.name.Equals(itemName)) {
 					float duration = float.Parse(item.duration);
-					if (duration == -1f || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
-						return true;
+					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
+						return -1f;
 					} else {
-						return false;
+						return duration;
 					}
 				}
 			}
@@ -2658,15 +2696,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				EquipmentData item = (EquipmentData)inventoryRefForCat[i];
 				if (item.name.Equals(itemName)) {
 					float duration = float.Parse(item.duration);
-					if (duration == -1f || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
-						return true;
+					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
+						return -1f;
 					} else {
-						return false;
+						return duration;
 					}
 				}
 			}
 		}
-		return false;
+		return 0f;
 	}
 
 	void ResetMarketplaceButtons() {
