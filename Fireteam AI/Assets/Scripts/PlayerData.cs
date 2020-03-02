@@ -11,6 +11,11 @@ using Firebase.Database;
 
 public class PlayerData : MonoBehaviour
 {
+    private const string DEFAULT_PRIMARY = "M4A1";
+    private const string DEFAULT_SECONDARY = "Glock23";
+    private const string DEFAULT_SUPPORT = "M67 Frag";
+    private const string DEFAULT_FOOTWEAR_MALE = "Standard Boots (M)";
+    private const string DEFAULT_FOOTWEAR_FEMALE = "Standard Boots (F)";
 
     public static PlayerData playerdata;
     public string playername;
@@ -22,6 +27,11 @@ public class PlayerData : MonoBehaviour
     private bool purchaseSuccessfulFlag;
     private bool purchaseFailFlag;
     private bool updateCurrencyFlag;
+    private bool reloadPlayerFlag;
+    private bool skipReloadCharacterFlag;
+    private string addDefaultClothingFlag;
+    private string deleteDefaultClothingFlag;
+    private ArrayList itemsExpired;
     public PlayerInfo info;
     public ModInfo primaryModInfo;
     public ModInfo secondaryModInfo;
@@ -30,15 +40,15 @@ public class PlayerData : MonoBehaviour
     public GameObject bodyReference;
     public GameObject inGamePlayerReference;
     public TitleControllerScript titleRef;
-    public ArrayList myHeadgear;
-    public ArrayList myTops;
-    public ArrayList myBottoms;
-    public ArrayList myFacewear;
-    public ArrayList myFootwear;
-    public ArrayList myArmor;
-    public ArrayList myWeapons;
-    public ArrayList myCharacters;
-    public ArrayList myMods;
+    public Dictionary<string, EquipmentData> myHeadgear;
+    public Dictionary<string, EquipmentData> myTops;
+    public Dictionary<string, EquipmentData> myBottoms;
+    public Dictionary<string, EquipmentData> myFacewear;
+    public Dictionary<string, EquipmentData> myFootwear;
+    public Dictionary<string, ArmorData> myArmor;
+    public Dictionary<string, WeaponData> myWeapons;
+    public Dictionary<string, CharacterData> myCharacters;
+    public Dictionary<string, ModData> myMods;
 
     void Awake()
     {
@@ -49,15 +59,15 @@ public class PlayerData : MonoBehaviour
             this.primaryModInfo = new ModInfo();
             this.secondaryModInfo = new ModInfo();
             this.supportModInfo = new ModInfo();
-            this.myHeadgear = new ArrayList();
-            this.myTops = new ArrayList();
-            this.myBottoms = new ArrayList();
-            this.myFacewear = new ArrayList();
-            this.myFootwear = new ArrayList();
-            this.myArmor = new ArrayList();
-            this.myWeapons = new ArrayList();
-            this.myCharacters = new ArrayList();
-            this.myMods = new ArrayList();
+            this.myHeadgear = new Dictionary<string, EquipmentData>();
+            this.myTops = new Dictionary<string, EquipmentData>();
+            this.myBottoms = new Dictionary<string, EquipmentData>();
+            this.myFacewear = new Dictionary<string, EquipmentData>();
+            this.myFootwear = new Dictionary<string, EquipmentData>();
+            this.myArmor = new Dictionary<string, ArmorData>();
+            this.myWeapons = new Dictionary<string, WeaponData>();
+            this.myCharacters = new Dictionary<string, CharacterData>();
+            this.myMods = new Dictionary<string, ModData>();
             playerdata = this;
             LoadPlayerData();
             LoadInventory();
@@ -67,7 +77,7 @@ public class PlayerData : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
+        itemsExpired = new ArrayList();
     }
 
     void Update() {
@@ -91,6 +101,33 @@ public class PlayerData : MonoBehaviour
         if (updateCurrencyFlag) {
             titleRef.UpdateCurrency();
             updateCurrencyFlag = false;
+        }
+        if (itemsExpired.Count > 0)
+        {
+            titleRef.TriggerExpirationPopup(itemsExpired);
+            itemsExpired.Clear();
+        }
+        if (reloadPlayerFlag)
+        {
+            ReinstantiatePlayer();
+            skipReloadCharacterFlag = false;
+            reloadPlayerFlag = false;
+        }
+        if (addDefaultClothingFlag != null)
+        {
+            string dTop = InventoryScript.itemData.characterCatalog[addDefaultClothingFlag].defaultTop;
+            string dBottom = InventoryScript.itemData.characterCatalog[addDefaultClothingFlag].defaultBottom;
+            AddItemToInventory(dTop, "Top", -1f, false, false, 0, 0);
+            AddItemToInventory(dBottom, "Bottom", -1f, false, false, 0, 0);
+            addDefaultClothingFlag = null;
+        }
+        if (deleteDefaultClothingFlag != null)
+        {
+            string dTop = InventoryScript.itemData.characterCatalog[deleteDefaultClothingFlag].defaultTop;
+            string dBottom = InventoryScript.itemData.characterCatalog[deleteDefaultClothingFlag].defaultBottom;
+            DeleteItemFromInventory(dTop, "Top", null, false);
+            DeleteItemFromInventory(dBottom, "Bottom", null, false);
+            deleteDefaultClothingFlag = null;
         }
     }
 
@@ -191,6 +228,7 @@ public class PlayerData : MonoBehaviour
             if (task.IsFaulted || task.IsCanceled) {
                 titleRef.CloseGameOnError();
             } else {
+                info.defaultChar = snapshot.Child("defaultChar").Value.ToString();
                 info.playername = snapshot.Child("username").Value.ToString();
                 info.exp = float.Parse(snapshot.Child("exp").Value.ToString());
                 info.gp = uint.Parse(snapshot.Child("gp").Value.ToString());
@@ -242,12 +280,12 @@ public class PlayerData : MonoBehaviour
                 } else {
                     info.equippedCharacter = snapshot.Child("defaultChar").Value.ToString();
                     char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
-                    info.equippedPrimary = "M4A1";
-                    info.equippedSecondary = "Glock23";
-                    info.equippedSupport = "M67 Frag";
-                    info.equippedTop = "Standard Fatigues Top (" + g + ")";
-                    info.equippedBottom = "Standard Fatigues Bottom (" + g + ")";
-                    info.equippedFootwear = "Standard Boots (" + g + ")";
+                    info.equippedPrimary = DEFAULT_PRIMARY;
+                    info.equippedSecondary = DEFAULT_SECONDARY;
+                    info.equippedSupport = DEFAULT_SUPPORT;
+                    info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
+                    info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
+                    info.equippedFootwear = (g == 'M' ? DEFAULT_FOOTWEAR_MALE : DEFAULT_FOOTWEAR_FEMALE);
                     info.equippedFacewear = "";
                     info.equippedHeadgear = "";
                     info.equippedArmor = "";
@@ -275,9 +313,15 @@ public class PlayerData : MonoBehaviour
         FindBodyRef(info.equippedCharacter);
         EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
         WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
+        this.primaryModInfo = LoadModDataForWeapon(info.equippedPrimary);
+        this.secondaryModInfo = LoadModDataForWeapon(info.equippedSecondary);
+        this.supportModInfo = LoadModDataForWeapon(info.equippedSupport);
         characterEquips.ts = titleRef;
         characterWeps.ts = titleRef;
-        characterEquips.EquipCharacter(info.equippedCharacter, null);
+        if (!skipReloadCharacterFlag)
+        {
+            characterEquips.EquipCharacter(info.equippedCharacter, null);
+        }
         characterEquips.EquipHeadgear(info.equippedHeadgear, null);
         characterEquips.EquipFacewear(info.equippedFacewear, null);
         characterEquips.EquipTop(info.equippedTop, null);
@@ -288,6 +332,12 @@ public class PlayerData : MonoBehaviour
         characterWeps.EquipWeapon(info.equippedSecondary, secondaryModInfo.equippedSuppressor, null);
         characterWeps.EquipWeapon(info.equippedSupport, supportModInfo.equippedSuppressor, null);
         PhotonNetwork.NickName = playername;
+    }
+
+    public void ReinstantiatePlayer()
+    {
+        InstantiatePlayer();
+        saveDataFlag = true;
     }
 
     public void LoadInventory() {
@@ -306,7 +356,24 @@ public class PlayerData : MonoBehaviour
                 w.equippedSuppressor = thisSnapshot.Child("equippedSuppressor").Value.ToString();
                 w.equippedClip = thisSnapshot.Child("equippedClip").Value.ToString();
                 w.equippedSight = thisSnapshot.Child("equippedSight").Value.ToString();
-                myWeapons.Add(w);
+                // If item is expired, delete from database. Else, add it to inventory
+                float dur = float.Parse(w.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(w.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(w.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
+                    {
+                        DeleteItemFromInventory(key, "Weapon", null, true);
+                    } else
+                    {
+                        myWeapons.Add(key, w);
+                    }
+                } else
+                {
+                    myWeapons.Add(key, w);
+                }
             }
             
             subSnapshot = snapshot.Child("characters");
@@ -319,7 +386,26 @@ public class PlayerData : MonoBehaviour
                 c.name = key;
                 c.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 c.duration = thisSnapshot.Child("duration").Value.ToString();
-                myCharacters.Add(c);
+                // If item is expired, delete from database. Else, add it to inventory
+                float dur = float.Parse(c.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(c.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(c.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
+                    {
+                        DeleteItemFromInventory(key, "Character", null, true);
+                    }
+                    else
+                    {
+                        myCharacters.Add(key, c);
+                    }
+                }
+                else
+                {
+                    myCharacters.Add(key, c);
+                }
             }
 
             subSnapshot = snapshot.Child("armor");
@@ -332,7 +418,26 @@ public class PlayerData : MonoBehaviour
                 a.name = key;
                 a.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 a.duration = thisSnapshot.Child("duration").Value.ToString();
-                myArmor.Add(a);
+                // If item is expired, delete from database. Else, add it to inventory
+                float dur = float.Parse(a.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(a.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(a.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
+                    {
+                        DeleteItemFromInventory(key, "Armor", null, true);
+                    }
+                    else
+                    {
+                        myArmor.Add(key, a);
+                    }
+                }
+                else
+                {
+                    myArmor.Add(key, a);
+                }
             }
 
             subSnapshot = snapshot.Child("tops");
@@ -345,7 +450,26 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
-                myTops.Add(d);
+                // If item is expired, delete from database. Else, add it to inventory
+                float dur = float.Parse(d.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
+                    {
+                        DeleteItemFromInventory(key, "Top", null, true);
+                    }
+                    else
+                    {
+                        myTops.Add(key, d);
+                    }
+                }
+                else
+                {
+                    myTops.Add(key, d);
+                }
             }
 
             subSnapshot = snapshot.Child("bottoms");
@@ -358,7 +482,25 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
-                myBottoms.Add(d);
+                float dur = float.Parse(d.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
+                    {
+                        DeleteItemFromInventory(key, "Bottom", null, true);
+                    }
+                    else
+                    {
+                        myBottoms.Add(key, d);
+                    }
+                }
+                else
+                {
+                    myBottoms.Add(key, d);
+                }
             }
 
             subSnapshot = snapshot.Child("footwear");
@@ -371,7 +513,25 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
-                myFootwear.Add(d);
+                float dur = float.Parse(d.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
+                    {
+                        DeleteItemFromInventory(key, "Footwear", null, true);
+                    }
+                    else
+                    {
+                        myFootwear.Add(key, d);
+                    }
+                }
+                else
+                {
+                    myFootwear.Add(key, d);
+                }
             }
 
             subSnapshot = snapshot.Child("headgear");
@@ -384,7 +544,25 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
-                myHeadgear.Add(d);
+                float dur = float.Parse(d.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
+                    {
+                        DeleteItemFromInventory(key, "Headgear", null, true);
+                    }
+                    else
+                    {
+                        myHeadgear.Add(key, d);
+                    }
+                }
+                else
+                {
+                    myHeadgear.Add(key, d);
+                }
             }
 
             subSnapshot = snapshot.Child("facewear");
@@ -397,7 +575,25 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 d.duration = thisSnapshot.Child("duration").Value.ToString();
-                myFacewear.Add(d);
+                float dur = float.Parse(d.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
+                    {
+                        DeleteItemFromInventory(key, "Facewear", null, true);
+                    }
+                    else
+                    {
+                        myFacewear.Add(key, d);
+                    }
+                }
+                else
+                {
+                    myFacewear.Add(key, d);
+                }
             }
 
             subSnapshot = snapshot.Child("mods");
@@ -412,7 +608,7 @@ public class PlayerData : MonoBehaviour
                 m.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 m.duration = thisSnapshot.Child("duration").Value.ToString();
                 m.equippedOn = thisSnapshot.Child("equippedOn").Value.ToString();
-                myMods.Add(m);
+                myMods.Add(key, m);
             }
         });
     }
@@ -433,6 +629,10 @@ public class PlayerData : MonoBehaviour
     {
         if (titleRef == null) {
             titleRef = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+        }
+        if (bodyReference.GetComponent<EquipmentScript>().equippedCharacter == character)
+        {
+            return;
         }
         WeaponScript weaponScrpt = bodyReference.GetComponent<WeaponScript>();
         Destroy(bodyReference);
@@ -479,10 +679,11 @@ public class PlayerData : MonoBehaviour
     public ModInfo LoadModDataForWeapon(string weaponName) {
         ModInfo modInfo = new ModInfo();
         modInfo.weaponName = weaponName;
-        
-        for (int i = 0; i < myMods.Count; i++) {
+
+        foreach (KeyValuePair<string, ModData> entry in PlayerData.playerdata.myMods)
+        {
             // If the mod is equipped on the given weapon, load it into the requested mod info
-            ModData m = (ModData)myMods[i];
+            ModData m = entry.Value;
             if (m.equippedOn.Equals(weaponName)) {
                 Mod modDetails = InventoryScript.itemData.modCatalog[m.name];
                 modInfo.id = m.id;
@@ -505,6 +706,11 @@ public class PlayerData : MonoBehaviour
             // Only update duration if purchasing the item again
             if (!stacking)
             {
+                // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                if (myWeapons.ContainsKey(itemName))
+                {
+                    return;
+                }
                 WeaponData w = new WeaponData();
                 w.name = itemName;
                 w.acquireDate = DateTime.Now.ToString();
@@ -536,18 +742,23 @@ public class PlayerData : MonoBehaviour
                                 {
                                     userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
                                     {
-                                        myWeapons.Add(w);
                                         PlayerData.playerdata.info.gp = gpDiff;
                                         updateCurrencyFlag = true;
                                         purchaseSuccessfulFlag = true;
                                     });
                                 });
                             }
+                        } else
+                        {
+                            if (!task.IsCanceled && !task.IsFaulted)
+                            {
+                                myWeapons.Add(itemName, w);
+                            }
                         }
                     });
             } else
             {
-                WeaponData w = GetExistingWeaponDataForName(itemName);
+                WeaponData w = myWeapons[itemName];
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
                     .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
                     {
@@ -578,6 +789,11 @@ public class PlayerData : MonoBehaviour
         } else if (type.Equals("Character")) {
             if (!stacking)
             {
+                // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                if (myCharacters.ContainsKey(itemName))
+                {
+                    return;
+                }
                 CharacterData c = new CharacterData();
                 c.name = itemName;
                 c.acquireDate = DateTime.Now.ToString();
@@ -603,18 +819,25 @@ public class PlayerData : MonoBehaviour
                                 {
                                     userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
                                     {
-                                        myCharacters.Add(c);
+                                        myCharacters.Add(itemName, c);
                                         PlayerData.playerdata.info.gp = gpDiff;
                                         updateCurrencyFlag = true;
                                         purchaseSuccessfulFlag = true;
+                                        addDefaultClothingFlag = itemName;
                                     });
                                 });
+                            }
+                        } else
+                        {
+                            if (!task.IsCanceled && !task.IsFaulted)
+                            {
+                                myCharacters.Add(itemName, c);
                             }
                         }
                     });
             } else
             {
-                CharacterData c = GetExistingCharacterDataForName(itemName);
+                CharacterData c = myCharacters[itemName];
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters")
                     .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
                     {
@@ -645,6 +868,11 @@ public class PlayerData : MonoBehaviour
         } else if (type.Equals("Top")) {
             if (!stacking)
             {
+                // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                if (myTops.ContainsKey(itemName))
+                {
+                    return;
+                }
                 EquipmentData e = new EquipmentData();
                 e.name = itemName;
                 e.acquireDate = DateTime.Now.ToString();
@@ -670,18 +898,25 @@ public class PlayerData : MonoBehaviour
                                 {
                                     userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
                                     {
-                                        myTops.Add(e);
+                                        myTops.Add(itemName, e);
                                         PlayerData.playerdata.info.gp = gpDiff;
                                         updateCurrencyFlag = true;
                                         purchaseSuccessfulFlag = true;
                                     });
                                 });
                             }
+                        } else
+                        {
+                            if (!task.IsCanceled && !task.IsFaulted)
+                            {
+                                myTops.Add(itemName, e);
+                            }
                         }
+                        
                     });
             } else
             {
-                EquipmentData e = GetExistingTopDataForName(itemName);
+                EquipmentData e = myTops[itemName];
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops")
                     .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
                     {
@@ -712,6 +947,11 @@ public class PlayerData : MonoBehaviour
         } else if (type.Equals("Bottom")) {
             if (!stacking)
             {
+                // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                if (myBottoms.ContainsKey(itemName))
+                {
+                    return;
+                }
                 EquipmentData e = new EquipmentData();
                 e.name = itemName;
                 e.acquireDate = DateTime.Now.ToString();
@@ -737,18 +977,25 @@ public class PlayerData : MonoBehaviour
                                 {
                                     userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
                                     {
-                                        myBottoms.Add(e);
+                                        myBottoms.Add(itemName, e);
                                         PlayerData.playerdata.info.gp = gpDiff;
                                         updateCurrencyFlag = true;
                                         purchaseSuccessfulFlag = true;
                                     });
                                 });
                             }
+                        } else
+                        {
+                            if (!task.IsCanceled && !task.IsFaulted)
+                            {
+                                myBottoms.Add(itemName, e);
+                            }
                         }
+                        
                     });
             } else
             {
-                EquipmentData e = GetExistingBottomDataForName(itemName);
+                EquipmentData e = myBottoms[itemName];
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms")
                     .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
                     {
@@ -779,6 +1026,11 @@ public class PlayerData : MonoBehaviour
         } else if (type.Equals("Armor")) {
             if (!stacking)
             {
+                // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                if (myArmor.ContainsKey(itemName))
+                {
+                    return;
+                }
                 ArmorData e = new ArmorData();
                 e.name = itemName;
                 e.acquireDate = DateTime.Now.ToString();
@@ -804,18 +1056,25 @@ public class PlayerData : MonoBehaviour
                                 {
                                     userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
                                     {
-                                        myArmor.Add(e);
+                                        myArmor.Add(itemName, e);
                                         PlayerData.playerdata.info.gp = gpDiff;
                                         updateCurrencyFlag = true;
                                         purchaseSuccessfulFlag = true;
                                     });
                                 });
                             }
+                        } else
+                        {
+                            if (!task.IsCanceled && !task.IsFaulted)
+                            {
+                                myArmor.Add(itemName, e);
+                            }
                         }
+                        
                     });
             } else
             {
-                ArmorData a = GetExistingArmorDataForName(itemName);
+                ArmorData a = myArmor[itemName];
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor")
                     .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
                     {
@@ -846,6 +1105,11 @@ public class PlayerData : MonoBehaviour
         } else if (type.Equals("Footwear")) {
             if (!stacking)
             {
+                // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                if (myFootwear.ContainsKey(itemName))
+                {
+                    return;
+                }
                 EquipmentData e = new EquipmentData();
                 e.name = itemName;
                 e.acquireDate = DateTime.Now.ToString();
@@ -871,18 +1135,25 @@ public class PlayerData : MonoBehaviour
                                 {
                                     userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
                                     {
-                                        myFootwear.Add(e);
+                                        myFootwear.Add(itemName, e);
                                         PlayerData.playerdata.info.gp = gpDiff;
                                         updateCurrencyFlag = true;
                                         purchaseSuccessfulFlag = true;
                                     });
                                 });
                             }
+                        } else
+                        {
+                            if (!task.IsCanceled && !task.IsFaulted)
+                            {
+                                myFootwear.Add(itemName, e);
+                            }
                         }
+                        
                     });
             } else
             {
-                EquipmentData e = GetExistingFootwearDataForName(itemName);
+                EquipmentData e = myFootwear[itemName];
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear")
                     .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
                     {
@@ -913,6 +1184,11 @@ public class PlayerData : MonoBehaviour
         } else if (type.Equals("Headgear")) {
             if (!stacking)
             {
+                // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                if (myHeadgear.ContainsKey(itemName))
+                {
+                    return;
+                }
                 EquipmentData e = new EquipmentData();
                 e.name = itemName;
                 e.acquireDate = DateTime.Now.ToString();
@@ -938,18 +1214,25 @@ public class PlayerData : MonoBehaviour
                                 {
                                     userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
                                     {
-                                        myHeadgear.Add(e);
+                                        myHeadgear.Add(itemName, e);
                                         PlayerData.playerdata.info.gp = gpDiff;
                                         updateCurrencyFlag = true;
                                         purchaseSuccessfulFlag = true;
                                     });
                                 });
                             }
+                        } else
+                        {
+                            if (!task.IsCanceled && !task.IsFaulted)
+                            {
+                                myHeadgear.Add(itemName, e);
+                            }
                         }
+                        
                     });
             } else
             {
-                EquipmentData e = GetExistingHeadgearDataForName(itemName);
+                EquipmentData e = myHeadgear[itemName];
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear")
                     .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
                     {
@@ -980,6 +1263,11 @@ public class PlayerData : MonoBehaviour
         } else if (type.Equals("Facewear")) {
             if (!stacking)
             {
+                // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                if (myFacewear.ContainsKey(itemName))
+                {
+                    return;
+                }
                 EquipmentData e = new EquipmentData();
                 e.name = itemName;
                 e.acquireDate = DateTime.Now.ToString();
@@ -1005,18 +1293,25 @@ public class PlayerData : MonoBehaviour
                                 {
                                     userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
                                     {
-                                        myFacewear.Add(e);
+                                        myFacewear.Add(itemName, e);
                                         PlayerData.playerdata.info.gp = gpDiff;
                                         updateCurrencyFlag = true;
                                         purchaseSuccessfulFlag = true;
                                     });
                                 });
                             }
+                        } else
+                        {
+                            if (!task.IsCanceled && !task.IsFaulted)
+                            {
+                                myFacewear.Add(itemName, e);
+                            }
                         }
+                        
                     });
             } else
             {
-                EquipmentData e = GetExistingFacewearDataForName(itemName);
+                EquipmentData e = myFacewear[itemName];
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear")
                     .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
                     {
@@ -1068,130 +1363,351 @@ public class PlayerData : MonoBehaviour
                         DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                             userInfoRef.Child("gp").SetValueAsync(""+gpDiff).ContinueWith(taskA => {
                                 userInfoRef.Child("kcoin").SetValueAsync(""+(PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB => {
-                                    myMods.Add(m);
+                                    myMods.Add(pushKey, m);
                                     PlayerData.playerdata.info.gp = gpDiff;
                                     updateCurrencyFlag = true;
                                     purchaseSuccessfulFlag = true;
                                 });
                             });
                     }
+                } else
+                {
+                    if (!task.IsCanceled && !task.IsFaulted)
+                    {
+                        myMods.Add(pushKey, m);
+                    }
                 }
+                
             });
         }
     }
 
-    public WeaponData GetExistingWeaponDataForName(string name)
+    // Removes item from inventory in DB
+    public void DeleteItemFromInventory(string itemName, string type, string modId, bool expiring)
     {
-        foreach (WeaponData w in myWeapons)
+        if (type.Equals("Weapon"))
         {
-            if (w.name == name)
+            // If item cannot be deleted, then skip
+            if (!InventoryScript.itemData.weaponCatalog[itemName].deleteable)
             {
-                return w;
+                return;
             }
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
+                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+                {
+                    if (task.IsCanceled || task.IsFaulted)
+                    {
+                        Debug.Log(itemName + " could not be deleted!");
+                    }
+                    else
+                    {
+                        // Delete item locally
+                        myWeapons.Remove(itemName);
+                        if (expiring)
+                        {
+                            itemsExpired.Add(itemName);
+                        }
+                        Debug.Log(itemName + " has been deleted!");
+                        if (PlayerData.playerdata.info.equippedPrimary == itemName)
+                        {
+                            PlayerData.playerdata.info.equippedPrimary = DEFAULT_PRIMARY;
+                            //PlayerData.playerdata.primaryModInfo = LoadModDataForWeapon(DEFAULT_PRIMARY);
+                            reloadPlayerFlag = true;
+                        } else if (PlayerData.playerdata.info.equippedSecondary == itemName)
+                        {
+                            PlayerData.playerdata.info.equippedSecondary = DEFAULT_SECONDARY;
+                            //PlayerData.playerdata.secondaryModInfo = LoadModDataForWeapon(DEFAULT_SECONDARY);
+                            reloadPlayerFlag = true;
+                        } else if (PlayerData.playerdata.info.equippedSupport == itemName)
+                        {
+                            PlayerData.playerdata.info.equippedSupport = DEFAULT_SUPPORT;
+                            //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
+                            reloadPlayerFlag = true;
+                        }
+                    }
+                });
         }
-        return null;
-    }
-
-    public CharacterData GetExistingCharacterDataForName(string name)
-    {
-        foreach (CharacterData c in myCharacters)
+        else if (type.Equals("Character"))
         {
-            if (c.name == name)
-            {
-                return c;
-            }
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters")
+                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+                {
+                    if (task.IsCanceled || task.IsFaulted)
+                    {
+                        Debug.Log(itemName + " could not be deleted!");
+                    } else
+                    {
+                        // Delete item locally
+                        myCharacters.Remove(itemName);
+                        if (expiring)
+                        {
+                            itemsExpired.Add(itemName);
+                        }
+                        Debug.Log(itemName + " has been deleted!");
+                        // Equip default if item currently equipped
+                        if (PlayerData.playerdata.info.equippedCharacter == itemName)
+                        {
+                            PlayerData.playerdata.info.equippedCharacter = PlayerData.playerdata.info.defaultChar;
+                            PlayerData.playerdata.info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
+                            PlayerData.playerdata.info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
+                            reloadPlayerFlag = true;
+                        }
+                        deleteDefaultClothingFlag = itemName;
+                    }
+                });
         }
-        return null;
-    }
-
-    public EquipmentData GetExistingTopDataForName(string name)
-    {
-        foreach (EquipmentData e in myTops)
+        else if (type.Equals("Top"))
         {
-            if (e.name == name)
+            // If item cannot be deleted, then skip
+            if (!InventoryScript.itemData.equipmentCatalog[itemName].deleteable)
             {
-                return e;
+                return;
             }
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops")
+                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+                {
+                    if (task.IsCanceled || task.IsFaulted)
+                    {
+                        Debug.Log(itemName + " could not be deleted!");
+                    }
+                    else
+                    {
+                        // Delete item locally
+                        myTops.Remove(itemName);
+                        if (expiring)
+                        {
+                            itemsExpired.Add(itemName);
+                        }
+                        Debug.Log(itemName + " has been deleted!");
+                        // Equip default if item currently equipped
+                        if (PlayerData.playerdata.info.equippedTop == itemName)
+                        {
+                            PlayerData.playerdata.info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
+                            reloadPlayerFlag = true;
+                        }
+                    }
+                });
         }
-        return null;
-    }
-
-    public EquipmentData GetExistingBottomDataForName(string name)
-    {
-        foreach (EquipmentData e in myBottoms)
+        else if (type.Equals("Bottom"))
         {
-            if (e.name == name)
+            // If item cannot be deleted, then skip
+            if (!InventoryScript.itemData.equipmentCatalog[itemName].deleteable)
             {
-                return e;
+                return;
             }
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms")
+                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+                {
+                    if (task.IsCanceled || task.IsFaulted)
+                    {
+                        Debug.Log(itemName + " could not be deleted!");
+                    }
+                    else
+                    {
+                        // Delete item locally
+                        myBottoms.Remove(itemName);
+                        if (expiring)
+                        {
+                            itemsExpired.Add(itemName);
+                        }
+                        Debug.Log(itemName + " has been deleted!");
+                        // Equip default if item currently equipped
+                        if (PlayerData.playerdata.info.equippedBottom == itemName)
+                        {
+                            PlayerData.playerdata.info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
+                            reloadPlayerFlag = true;
+                        }
+                    }
+                });
         }
-        return null;
-    }
-
-    public EquipmentData GetExistingFootwearDataForName(string name)
-    {
-        foreach (EquipmentData e in myFootwear)
+        else if (type.Equals("Armor"))
         {
-            if (e.name == name)
-            {
-                return e;
-            }
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor")
+                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+                {
+                    if (task.IsCanceled || task.IsFaulted)
+                    {
+                        Debug.Log(itemName + " could not be deleted!");
+                    }
+                    else
+                    {
+                        // Delete item locally
+                        myArmor.Remove(itemName);
+                        if (expiring)
+                        {
+                            itemsExpired.Add(itemName);
+                        }
+                        Debug.Log(itemName + " has been deleted!");
+                        // Equip default if item currently equipped
+                        if (PlayerData.playerdata.info.equippedArmor == itemName)
+                        {
+                            PlayerData.playerdata.info.equippedArmor = "";
+                            reloadPlayerFlag = true;
+                            skipReloadCharacterFlag = true;
+                        }
+                    }
+                });
         }
-        return null;
-    }
-
-    public EquipmentData GetExistingFacewearDataForName(string name)
-    {
-        foreach (EquipmentData e in myFacewear)
+        else if (type.Equals("Footwear"))
         {
-            if (e.name == name)
+            // If item cannot be deleted, then skip
+            if (!InventoryScript.itemData.equipmentCatalog[itemName].deleteable)
             {
-                return e;
+                return;
             }
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear")
+                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+                {
+                    if (task.IsCanceled || task.IsFaulted)
+                    {
+                        Debug.Log(itemName + " could not be deleted!");
+                    }
+                    else
+                    {
+                        // Delete item locally
+                        myFootwear.Remove(itemName);
+                        if (expiring)
+                        {
+                            itemsExpired.Add(itemName);
+                        }
+                        Debug.Log(itemName + " has been deleted!");
+                        // Equip default if item currently equipped
+                        if (PlayerData.playerdata.info.equippedFootwear == itemName)
+                        {
+                            char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
+                            PlayerData.playerdata.info.equippedFootwear = (g == 'M' ? DEFAULT_FOOTWEAR_MALE : DEFAULT_FOOTWEAR_FEMALE); 
+                            reloadPlayerFlag = true;
+                        }
+                    }
+                });
         }
-        return null;
-    }
-
-    public EquipmentData GetExistingHeadgearDataForName(string name)
-    {
-        foreach (EquipmentData e in myHeadgear)
+        else if (type.Equals("Headgear"))
         {
-            if (e.name == name)
+            // If item cannot be deleted, then skip
+            if (!InventoryScript.itemData.equipmentCatalog[itemName].deleteable)
             {
-                return e;
+                return;
             }
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear")
+                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+                {
+                    if (task.IsCanceled || task.IsFaulted)
+                    {
+                        Debug.Log(itemName + " could not be deleted!");
+                    }
+                    else
+                    {
+                        // Delete item locally
+                        myHeadgear.Remove(itemName);
+                        if (expiring)
+                        {
+                            itemsExpired.Add(itemName);
+                        }
+                        Debug.Log(itemName + " has been deleted!");
+                        // Equip default if item currently equipped
+                        if (PlayerData.playerdata.info.equippedHeadgear == itemName)
+                        {
+                            PlayerData.playerdata.info.equippedHeadgear = "";
+                            reloadPlayerFlag = true;
+                            skipReloadCharacterFlag = true;
+                        }
+                    }
+                });
         }
-        return null;
-    }
-
-    public ArmorData GetExistingArmorDataForName(string name)
-    {
-        foreach (ArmorData a in myArmor)
+        else if (type.Equals("Facewear"))
         {
-            if (a.name == name)
+            // If item cannot be deleted, then skip
+            if (!InventoryScript.itemData.equipmentCatalog[itemName].deleteable)
             {
-                return a;
+                return;
             }
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear")
+                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+                {
+                    if (task.IsCanceled || task.IsFaulted)
+                    {
+                        Debug.Log(itemName + " could not be deleted!");
+                    }
+                    else
+                    {
+                        // Delete item locally
+                        myFacewear.Remove(itemName);
+                        if (expiring)
+                        {
+                            itemsExpired.Add(itemName);
+                        }
+                        Debug.Log(itemName + " has been deleted!");
+                        // Equip default if item currently equipped
+                        if (PlayerData.playerdata.info.equippedFacewear == itemName)
+                        {
+                            PlayerData.playerdata.info.equippedFacewear = "";
+                            reloadPlayerFlag = true;
+                            skipReloadCharacterFlag = true;
+                        }
+                    }
+                });
         }
-        return null;
-    }
-
-    public ModData GetExistingModDataForName(string name)
-    {
-        foreach (ModData m in myMods)
+        else if (type.Equals("Mod"))
         {
-            if (m.name == name)
-            {
-                return m;
-            }
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods")
+                .Child(modId).RemoveValueAsync().ContinueWith(task =>
+                {
+                    if (task.IsCanceled || task.IsFaulted)
+                    {
+                        Debug.Log(itemName + " could not be deleted!");
+                    }
+                    else
+                    {
+                        // Get weapon that the mod was equipped on
+                        ModData m = myMods[modId];
+                        string weaponName = m.equippedOn;
+                        // If the mod was equipped to a weapon, unequip it from that weapon first and save
+                        if (weaponName == null || !"".Equals(weaponName))
+                        {
+                            // Delete locally and in DB
+                            string childModType = "";
+                            if (InventoryScript.itemData.modCatalog[m.name].category == "Suppressor")
+                            {
+                                childModType = "equippedSuppressor";
+                                myWeapons[weaponName].equippedSuppressor = "";
+                            } else if (InventoryScript.itemData.modCatalog[m.name].category == "Sight")
+                            {
+                                childModType = "equippedSight";
+                                myWeapons[weaponName].equippedSight = "";
+                            } else if (InventoryScript.itemData.modCatalog[m.name].category == "Clip")
+                            {
+                                childModType = "equippedClip";
+                                myWeapons[weaponName].equippedClip = "";
+                            }
+                            // Remove attachment from weapon
+                            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
+                                .Child(weaponName).Child(childModType).SetValueAsync("").ContinueWith(taskA =>
+                                {
+                                    if (taskA.IsFaulted || taskA.IsCanceled)
+                                    {
+                                        Debug.Log(itemName + " could not be deleted when removing from weapon " + weaponName + "!");
+                                    } else
+                                    {
+                                        Debug.Log(itemName + " was removed from " + weaponName + " since it was deleted from your inventory.");
+                                        myMods.Remove(modId);
+                                    }
+                                });
+                        } else
+                        {
+                            // Delete item locally
+                            myMods.Remove(modId);
+                            Debug.Log(itemName + " has been deleted!");
+                        }
+                    }
+                });
         }
-        return null;
     }
 
 }
 
 public class PlayerInfo
 {
+    public string defaultChar;
 	public string playername;
     public string equippedCharacter;
     public string equippedHeadgear;

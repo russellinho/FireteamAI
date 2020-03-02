@@ -162,16 +162,10 @@ public class EquipmentScript : MonoBehaviour
         RemoveFacewear();
         RemoveArmor();
         RemoveHeadgear();
-        if (equippedCharacter.Equals("Codename Sayre")) {
-            EquipTop("Scrubs Top", null);
-            EquipBottom("Scrubs Bottom", null);
-            EquipFootwear("Standard Boots (M)", null);
-            //EquipFacewear("Surgical Mask", null);
-        } else {
-            EquipTop("Standard Fatigues Top" + " (" + GetGenderByCharacter(equippedCharacter) + ")", null);
-            EquipBottom("Standard Fatigues Bottom" + " (" + GetGenderByCharacter(equippedCharacter) + ")", null);
-            EquipFootwear("Standard Boots" + " (" + GetGenderByCharacter(equippedCharacter) + ")", null);
-        }
+        Character c = InventoryScript.itemData.characterCatalog[equippedCharacter];
+        EquipTop(c.defaultTop, null);
+        EquipBottom(c.defaultBottom, null);
+        EquipFootwear((c.gender == 'M' ? "Standard Boots (M)" : "Standard Boots (F)"), null);
     }
 
     public char GetGenderByCharacter(string characterName) {
@@ -213,12 +207,13 @@ public class EquipmentScript : MonoBehaviour
 
         ts.equippedCharacterSlot.GetComponent<SlotScript>().ToggleThumbnail(true, c.thumbnailPath);
         ts.shopEquippedCharacterSlot.GetComponent<SlotScript>().ToggleThumbnail(true, c.thumbnailPath);
+        ts.currentCharGender = InventoryScript.itemData.characterCatalog[name].gender;
 
-        if (name.Equals("Lucas") || name.Equals("Daryl") || name.Equals("Codename Sayre")) {
-            ts.currentCharGender = 'M';
-        } else {
-            ts.currentCharGender = 'F';
-        }
+        //if (name.Equals("Lucas") || name.Equals("Daryl") || name.Equals("Codename Sayre")) {
+        //    ts.currentCharGender = 'M';
+        //} else {
+        //    ts.currentCharGender = 'F';
+        //}
 
         // Clear all equipment stats
         playerScript.stats.SetDefaults();
