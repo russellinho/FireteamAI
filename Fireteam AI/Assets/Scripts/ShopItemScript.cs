@@ -160,11 +160,12 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 ts.OnRemoveSuppressorClicked();
 
                 // If this mod is equipped to another weapon, unequip it from that weapon as well
-                if (equippedOn != null && "".Equals(equippedOn))
+                if (equippedOn != null && !"".Equals(equippedOn))
                 {
                     ts.RemoveSuppressorFromWeapon(equippedOn, false);
+                    // Ensure that it gets saved in the DB
+                    PlayerData.playerdata.SaveModDataForWeapon(equippedOn, "", id);
                     equippedOn = "";
-                    // TODO: Ensure that it gets saved in the DB
                 }
 
                 // Attach to player weapon and attach to weapon mod template as well
