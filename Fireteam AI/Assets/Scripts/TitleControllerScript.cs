@@ -69,6 +69,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject splashScreen;
 	public Text splashScreenPopup;
 	// Marketplace menu
+	public Button clearPreviewBtn;
+	public Button marketplaceBackBtn;
 	public GameObject shopContentPrefab;
 	public GameObject shopContentInventory;
 	public Button shopHeadgearBtn;
@@ -110,7 +112,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Dropdown durationSelectionDropdown;
 	public Text totalGpCostTxt;
 	public Text myGpTxt;
-	public Text myKCoinTxt;
+	public Text myKashTxt;
 
 	// Customization menu
 	public GameObject contentPrefab;
@@ -484,6 +486,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void ClosePopup() {
 		mainMenuPopup.SetActive (false);
+		if (marketplaceMenuPopup.activeInHierarchy) {
+			ToggleActiveMarketplaceButtons(true);
+		}
 		marketplaceMenuPopup.SetActive (false);
 		modMenuPopup.SetActive(false);
 		customizationMenuPopup.SetActive(false);
@@ -2034,6 +2039,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -2535,14 +2541,30 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void PreparePurchase(string itemName, string itemType, Texture thumb) {
+		PrepareDurationDropdown(itemType == "Mod");
+		durationSelectionDropdown.value = 0;
+		durationSelectionDropdown.RefreshShownValue();
+		ToggleActiveMarketplaceButtons(false);
 		itemBeingPurchased = itemName;
 		typeBeingPurchased = itemType;
 		preparePurchasePopup.GetComponentInChildren<RawImage>().texture = thumb;
 		preparePurchasePopup.SetActive(true);
         // Initialize with 1 day price
         SetTotalGPCost(0);
-
     }
+
+	void PrepareDurationDropdown(bool permOnly) {
+		durationSelectionDropdown.options.Clear();
+		if (permOnly) {
+			durationSelectionDropdown.options.Add(new Dropdown.OptionData("Permanent"));
+		} else {
+			durationSelectionDropdown.options.Add(new Dropdown.OptionData("1 day"));
+			durationSelectionDropdown.options.Add(new Dropdown.OptionData("7 days"));
+			durationSelectionDropdown.options.Add(new Dropdown.OptionData("30 days"));
+			durationSelectionDropdown.options.Add(new Dropdown.OptionData("90 days"));
+			durationSelectionDropdown.options.Add(new Dropdown.OptionData("Permanent"));
+		}
+	}
 
 	public void OnConfirmPreparePurchaseClicked() {
 		preparePurchasePopup.SetActive(false);
@@ -2570,12 +2592,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		itemBeingPurchased = null;
 		typeBeingPurchased = null;
 		confirmPurchasePopup.SetActive(false);
+		ToggleActiveMarketplaceButtons(true);
 	}
 
 	public void OnCancelPreparePurchaseClicked() {
 		itemBeingPurchased = null;
 		typeBeingPurchased = null;
 		preparePurchasePopup.SetActive(false);
+		ToggleActiveMarketplaceButtons(true);
 	}
 
 	void ConfirmPurchase() {
@@ -2589,11 +2613,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         bool isStacking = (hasDuplicateCheck >= 0f && !Mathf.Approximately(0f, hasDuplicateCheck));
         float totalNewDuration = ConvertDurationInput(durationSelectionDropdown.value);
         totalNewDuration = (Mathf.Approximately(totalNewDuration, -1f) ? totalNewDuration : totalNewDuration + hasDuplicateCheck);
-        // Reach out to DB to verify player's GP and KCoin before purchase
+        // Reach out to DB to verify player's GP and KASH before purchase
         DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
 			if (task.IsCompleted) {
 				PlayerData.playerdata.info.gp = uint.Parse(task.Result.Child("gp").Value.ToString());
-				// PlayerData.playerdata.info.kcoin = uint.Parse(task.Result.Child("kcoin").Value.ToString());
+				// PlayerData.playerdata.info.kash = uint.Parse(task.Result.Child("kash").Value.ToString());
 				if (PlayerData.playerdata.info.gp >= totalGpCostBeingPurchased) {
 					PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, isStacking, totalGpCostBeingPurchased, 0);
 				} else {
@@ -2631,24 +2655,27 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	uint GetGPCostForItemAndType(string itemName, string itemType, int duration) {
         float durationMultiplier = 1f;
-        switch (duration)
-        {
-            case 1:
-                durationMultiplier = SEVEN_DAY_COST_MULTIPLIER;
-                break;
-            case 2:
-                durationMultiplier = THIRTY_DAY_COST_MULTIPLIER;
-                break;
-            case 3:
-                durationMultiplier = NINETY_DAY_COST_MULTIPLIER;
-                break;
-            case 4:
-                durationMultiplier = PERMANENT_COST_MULTIPLIER;
-                break;
-            default:
-                break;
+		
+		if (itemType != "Mod") {
+			switch (duration)
+			{
+				case 1:
+					durationMultiplier = SEVEN_DAY_COST_MULTIPLIER;
+					break;
+				case 2:
+					durationMultiplier = THIRTY_DAY_COST_MULTIPLIER;
+					break;
+				case 3:
+					durationMultiplier = NINETY_DAY_COST_MULTIPLIER;
+					break;
+				case 4:
+					durationMultiplier = PERMANENT_COST_MULTIPLIER;
+					break;
+				default:
+					break;
 
-        }
+			}
+		}
 		if (itemType.Equals("Armor")) {
 			return (uint)(InventoryScript.itemData.armorCatalog[itemName].gpPrice * durationMultiplier);
 		} else if (itemType.Equals("Character")) {
@@ -2663,13 +2690,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void UpdateCurrency() {
 		myGpTxt.text = ""+PlayerData.playerdata.info.gp;
-		myKCoinTxt.text = ""+PlayerData.playerdata.info.kcoin;
+		myKashTxt.text = ""+PlayerData.playerdata.info.kash;
 	}
 
 	// Players cannot own multiple of the same item unless they're mods.
 	// Mods are always permanent.
 	// Items can only be purchased again if they don't own it for permanent
 	public float HasDuplicateItem(string itemName, string type) {
+		if (type == "Mod") return 0f;
 		if (type.Equals("Weapon")) {
             foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
             {
@@ -2755,6 +2783,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 	}
 
@@ -2769,6 +2798,34 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+	}
+
+	void ToggleActiveMarketplaceButtons(bool b) {
+		marketplaceBackBtn.interactable = b;
+		clearPreviewBtn.interactable = b;
+		weaponsBtn.interactable = b;
+		shopHeadgearBtn.interactable = b;
+		shopFaceBtn.interactable = b;
+		shopArmorBtn.interactable = b;
+		shopTopsBtn.interactable = b;
+		shopBottomsBtn.interactable = b;
+		shopFootwearBtn.interactable = b;
+		shopCharacterBtn.interactable = b;
+		shopPrimaryWepBtn.interactable = b;
+		shopSecondaryWepBtn.interactable = b;
+		shopSupportWepBtn.interactable = b;
+		shopAssaultRifleSubBtn.interactable = b;
+		shopShotgunSubBtn.interactable = b;
+		shopSniperRifleSubBtn.interactable = b;
+		shopPistolSubBtn.interactable = b;
+		shopExplosivesSubBtn.interactable = b;
+		shopBoostersSubBtn.interactable = b;
+		shopModsBtn.interactable = b;
+		shopSuppressorsSubBtn.interactable = b;
+		Button[] shopItemsBtns = shopContentInventory.GetComponentsInChildren<Button>();
+		foreach (Button btn in shopItemsBtns) {
+			btn.interactable = b;
+		}
 	}
 		
 }

@@ -232,7 +232,7 @@ public class PlayerData : MonoBehaviour
                 info.playername = snapshot.Child("username").Value.ToString();
                 info.exp = float.Parse(snapshot.Child("exp").Value.ToString());
                 info.gp = uint.Parse(snapshot.Child("gp").Value.ToString());
-                info.kcoin = uint.Parse(snapshot.Child("kcoin").Value.ToString());
+                info.kash = uint.Parse(snapshot.Child("kash").Value.ToString());
                 // Equip previously equipped if available. Else, equip defaults and save it
                 if (snapshot.HasChild("equipment")) {
                     DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(taskA => {
@@ -700,7 +700,7 @@ public class PlayerData : MonoBehaviour
         return modInfo;
     }
 
-    public void AddItemToInventory(string itemName, string type, float duration, bool purchased, bool stacking, uint gpCost, uint kCoinCost) {
+    public void AddItemToInventory(string itemName, string type, float duration, bool purchased, bool stacking, uint gpCost, uint kashCost) {
         string json = "";
         if (type.Equals("Weapon")) {
             // Only update duration if purchasing the item again
@@ -740,8 +740,9 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
+                                        myWeapons.Add(itemName, w);
                                         PlayerData.playerdata.info.gp = gpDiff;
                                         updateCurrencyFlag = true;
                                         purchaseSuccessfulFlag = true;
@@ -774,7 +775,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         w.duration = ""+duration;
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -817,7 +818,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         myCharacters.Add(itemName, c);
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -853,7 +854,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         c.duration = ""+duration;
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -896,7 +897,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         myTops.Add(itemName, e);
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -932,7 +933,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         e.duration = ""+duration;
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -975,7 +976,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         myBottoms.Add(itemName, e);
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -1011,7 +1012,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         e.duration = ""+duration;
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -1054,7 +1055,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         myArmor.Add(itemName, e);
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -1090,7 +1091,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         a.duration = ""+duration;
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -1133,7 +1134,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         myFootwear.Add(itemName, e);
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -1169,7 +1170,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         e.duration = ""+duration;
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -1212,7 +1213,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         myHeadgear.Add(itemName, e);
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -1248,7 +1249,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         e.duration = ""+duration;
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -1291,7 +1292,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         myFacewear.Add(itemName, e);
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -1327,7 +1328,7 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kcoin").SetValueAsync("" + (PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB =>
+                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
                                     {
                                         e.duration = ""+duration;
                                         PlayerData.playerdata.info.gp = gpDiff;
@@ -1349,7 +1350,7 @@ public class PlayerData : MonoBehaviour
                 "\"name\":\"" + itemName + "\"," +
                 "\"equippedOn\":\"\"," +
                 "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                "\"duration\":\"" + duration + "\"" +
+                "\"duration\":\"-1\"" +
             "}";
             DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Push();
             string pushKey = d.Key;
@@ -1362,7 +1363,7 @@ public class PlayerData : MonoBehaviour
                         uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
                         DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                             userInfoRef.Child("gp").SetValueAsync(""+gpDiff).ContinueWith(taskA => {
-                                userInfoRef.Child("kcoin").SetValueAsync(""+(PlayerData.playerdata.info.kcoin - kCoinCost)).ContinueWith(taskB => {
+                                userInfoRef.Child("kash").SetValueAsync(""+(PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB => {
                                     myMods.Add(pushKey, m);
                                     PlayerData.playerdata.info.gp = gpDiff;
                                     updateCurrencyFlag = true;
@@ -1721,7 +1722,7 @@ public class PlayerInfo
     public string equippedSupport;
     public float exp;
     public uint gp;
-    public uint kcoin;
+    public uint kash;
 }
 
 public class ModInfo

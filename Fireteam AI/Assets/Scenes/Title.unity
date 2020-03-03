@@ -47016,6 +47016,8 @@ MonoBehaviour:
   mapTitleText: {fileID: 544749033}
   splashScreen: {fileID: 593234951}
   splashScreenPopup: {fileID: 1877499643}
+  clearPreviewBtn: {fileID: 2096310028}
+  marketplaceBackBtn: {fileID: 953388102}
   shopContentPrefab: {fileID: 1375148354975599472, guid: e85dc7701948e0042960a8b95b8a18cb,
     type: 3}
   shopContentInventory: {fileID: 382261446}
@@ -47058,7 +47060,7 @@ MonoBehaviour:
   durationSelectionDropdown: {fileID: 1342984529}
   totalGpCostTxt: {fileID: 833731009}
   myGpTxt: {fileID: 1870499729}
-  myKCoinTxt: {fileID: 387883961}
+  myKashTxt: {fileID: 387883961}
   contentPrefab: {fileID: 1375148354975599472, guid: eabccbf300d242249a23f298a4ae77a6,
     type: 3}
   contentInventory: {fileID: 1801953599}
@@ -57982,7 +57984,7 @@ GameObject:
   - component: {fileID: 1964268573}
   - component: {fileID: 1964268572}
   m_Layer: 5
-  m_Name: KCoinLabel
+  m_Name: KashLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -58041,7 +58043,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: KCoin
+  m_Text: KASH
 --- !u!222 &1964268573
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -5,7 +5,6 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 public class WeaponHandlerScript : MonoBehaviour
 {
-    public Transform handle;
     public Transform weapon;
     public Transform leftShoulder;
     public Transform leftHand;
@@ -23,19 +22,16 @@ public class WeaponHandlerScript : MonoBehaviour
         if (weapon != null) {
             Destroy(weapon.gameObject);
             weapon = null;
-            handle = null;
         }
-        GameObject o = Instantiate((GameObject)Resources.Load(weaponPath), gameObject.transform);
+        GameObject o = Instantiate((GameObject)Resources.Load(weaponPath));
         weapon = o.transform;
         weapon.SetParent(gameObject.transform);
-        handle = weapon.gameObject.GetComponentsInChildren<Transform>()[1];
         return o;
     }
 
     public void SetWeapon(Transform wep, bool firstPerson) {
         weapon = wep;
         wep.SetParent(gameObject.transform);
-        handle = weapon.gameObject.GetComponentsInChildren<Transform>()[1];
         if (firstPerson) {
             SetWeaponPosition(true);
         } else {

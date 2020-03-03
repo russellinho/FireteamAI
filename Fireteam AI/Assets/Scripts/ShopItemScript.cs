@@ -39,8 +39,14 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         clickCount = 0;
         clickTimer = 0f;
         ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
-        if (modDetails != null) {
-            previewBtn.gameObject.SetActive(false);
+        // Only allow previewing for characters, equipment, and primary weapons
+        if (previewBtn != null) {
+            if (modDetails != null) {
+                previewBtn.gameObject.SetActive(false);
+            }
+            if (weaponDetails != null && (weaponDetails.type != "Primary")) {
+                previewBtn.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -169,9 +175,9 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        if (purchaseBtn == null && (expirationDate == null || "".Equals(expirationDate))) {
-                CalculateExpirationDate();
-            }
+        if (modDetails == null && purchaseBtn == null && (expirationDate == null || "".Equals(expirationDate))) {
+            CalculateExpirationDate();
+        }
         if (itemType.Equals("Mod")) {
             if (modDescriptionPopupRef.activeInHierarchy) {
                 return;
