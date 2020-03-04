@@ -63,14 +63,14 @@ public class LoginControllerScript : MonoBehaviour
         loginBtn.interactable = false;
         AuthScript.authHandler.auth.SignInWithEmailAndPasswordAsync(emailField.text, passwordField.text).ContinueWith(task => {
             if (task.IsCanceled) {
-                activatePopupFlag = true;
                 popupMessage = ""+task.Exception;
+                activatePopupFlag = true;
                 loginBtn.interactable = true;
                 return;
             }
             if (task.IsFaulted) {
-                activatePopupFlag = true;
                 popupMessage = ""+task.Exception;
+                activatePopupFlag = true;
                 loginBtn.interactable = true;
                 return;
             }
@@ -79,8 +79,8 @@ public class LoginControllerScript : MonoBehaviour
             // Query DB to see if the user is set up yet. If not, go to setup. Else, go to title page.
             DAOScript.dao.dbRef.Child("fteam_ai_users").GetValueAsync().ContinueWith(taskA => {
                 if (taskA.IsFaulted) {
-                    activatePopupFlag = true;
                     popupMessage = ""+taskA.Exception;
+                    activatePopupFlag = true;
                     loginBtn.interactable = true;
                     return;
                 } else if (taskA.IsCompleted) {

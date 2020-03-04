@@ -170,8 +170,8 @@ public class SetupControllerScript : MonoBehaviour
                                     "\"username\":\"" + potentialName + "\"," +
                                     "\"defaultChar\":\"" + selectedCharacter + "\"," +
                                     "\"exp\":\"0\"," +
-                                    "\"gp\":\"0\"," +
-                                    "\"kcoin\":\"0\"" +
+                                    "\"gp\":\"100000\"," +
+                                    "\"kash\":\"0\"" +
                                 "}";
                                 DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).SetRawJsonValueAsync(json).ContinueWith(taskE => {
                                     if (taskE.IsFaulted) {
