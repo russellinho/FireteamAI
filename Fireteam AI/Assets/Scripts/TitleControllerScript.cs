@@ -177,6 +177,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Text modRangeTxt;
 	public Text modClipCapacityTxt;
 	public Text modMaxAmmoTxt;
+    public Button removeSuppressorBtn;
 
 	// Use this for initialization
 	void Awake() {
@@ -329,7 +330,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 							// Bring up the mod menu
 							modMenu.SetActive(true);
 							// Set up the weapon dropdown, stats, and template weapon
-							PopulateWeaponDropdownForModScreen();						
+							PopulateWeaponDropdownForModScreen();
+                            // Start on the suppressors menu
+                            OnSuppressorsBtnClicked();
 						}
 					}
 				}
@@ -2339,13 +2342,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void SetWeaponModValues(string weaponName, string suppressorName, string id) {
 		modWeaponLbl.text = weaponName;
-		if (suppressorName == null || suppressorName.Equals("") || suppressorName.Equals("None")) {
-			equippedSuppressorTxt.text = "None";
-			equippedSuppressorId = "";
+		if (suppressorName == null || suppressorName.Equals("")) {
+			equippedSuppressorTxt.text = "";
 		} else {
 			equippedSuppressorTxt.text = suppressorName;
-			equippedSuppressorId = id;
 		}
+        equippedSuppressorId = id;
 		
 		// Set base stats
 		Weapon w = InventoryScript.itemData.weaponCatalog[weaponName];
@@ -2363,7 +2365,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		int maxAmmoBoost = 0;
 
 		// Add suppressor stats
-		if (suppressorName != null && !suppressorName.Equals("") && !suppressorName.Equals("None")) {
+		if (suppressorName != null && !suppressorName.Equals("")) {
 			Mod suppressor = InventoryScript.itemData.modCatalog[suppressorName];
 			damageBoost += suppressor.damageBoost;
 			accuracyBoost += suppressor.accuracyBoost;
@@ -2387,8 +2389,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private void UnequipModFromWeaponTemplate(string modType) {
 		switch(modType) {
 			case "Suppressor":
-				if (equippedSuppressorTxt.Equals("None")) return;
-				SetWeaponModValues(modWeaponLbl.text, null, "");
+				if (equippedSuppressorTxt.Equals("")) return;
+				SetWeaponModValues(modWeaponLbl.text, null, equippedSuppressorId);
 				weaponPreviewRef.GetComponent<WeaponMods>().UnequipSuppressor();
 				break;
 		}
@@ -2401,11 +2403,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		modRangeTxt.text = range != -1 ? ""+range : "-";
 		modClipCapacityTxt.text = clipCapacity != -1 ? ""+clipCapacity : "-";
 		modMaxAmmoTxt.text = maxAmmo != -1 ? ""+maxAmmo : "-";
-	}
-
-	public void OnRemoveSuppressorClicked() {
-        // Remove suppressor model from the player's weapon and the template weapon
-        RemoveSuppressorFromWeapon(modWeaponLbl.text, true);
 	}
 
     public void RemoveSuppressorFromWeapon(string weaponName, bool removeSuppressorClicked)
@@ -2500,7 +2497,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public string EquipModOnWeaponTemplate(string modName, string modType, string modId) {
-		if (modName == null || modName.Equals("") || modName.Equals("None")) return modWeaponLbl.text;
+		if (modName == null || modName.Equals("")) return modWeaponLbl.text;
 		Weapon w = InventoryScript.itemData.weaponCatalog[modWeaponLbl.text];
 		switch(modType) {
 			case "Suppressor":

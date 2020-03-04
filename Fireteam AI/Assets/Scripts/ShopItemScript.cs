@@ -47,6 +47,12 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             if (weaponDetails != null && (weaponDetails.type != "Primary")) {
                 previewBtn.gameObject.SetActive(false);
             }
+        } else
+        {
+            if (modDetails != null)
+            {
+                ts.removeSuppressorBtn.onClick.AddListener(() => OnRemoveSuppressorClicked());
+            }
         }
     }
 
@@ -153,11 +159,15 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     private void EquipMod() {
+        if (equippedOn == ts.modWeaponLbl.text)
+        {
+            return;
+        }
         switch (modCategory)
         {
             case "Suppressor":
                 // If this weapon already has a suppressor on it, unequip it first
-                ts.OnRemoveSuppressorClicked();
+                OnRemoveSuppressorClicked();
 
                 // If this mod is equipped to another weapon, unequip it from that weapon as well
                 if (equippedOn != null && !"".Equals(equippedOn))
@@ -165,11 +175,11 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                     ts.RemoveSuppressorFromWeapon(equippedOn, false);
                     // Ensure that it gets saved in the DB
                     PlayerData.playerdata.SaveModDataForWeapon(equippedOn, "", id);
-                    equippedOn = "";
                 }
 
                 // Attach to player weapon and attach to weapon mod template as well
                 string weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory, id);
+                equippedOn = weaponNameAttachedTo;
                 PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipMod(modCategory, itemName, weaponNameAttachedTo, gameObject);
                 break;
         }
@@ -275,6 +285,18 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             outline.color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
             equippedInd.enabled = false;
         }
+    }
+
+    public void OnRemoveSuppressorClicked()
+    {
+        if (equippedOn != ts.modWeaponLbl.text)
+        {
+            return;
+        }
+        // Remove suppressor model from the player's weapon and the template weapon
+        ts.RemoveSuppressorFromWeapon(equippedOn, true);
+        ToggleEquippedIndicator(false);
+        equippedOn = "";
     }
 
 }

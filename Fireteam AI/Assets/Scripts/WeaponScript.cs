@@ -488,7 +488,7 @@ public class WeaponScript : MonoBehaviour
 
     public void EquipMod(string modType, string modName, string equipOnWeapon, GameObject shopItemRef) {
         // If no mod equipped, don't equip anything
-        if (modName == null || modName.Equals("") || modName.Equals("None") || equipOnWeapon == null) return;
+        if (modName == null || modName.Equals("") || equipOnWeapon == null) return;
         // Load mod from catalog
         Mod m = InventoryScript.itemData.modCatalog[modName];
         switch (modType) {
@@ -518,7 +518,7 @@ public class WeaponScript : MonoBehaviour
         switch(modType) {
             case "Suppressor":
                 string equippedSuppressor = weaponHolder.GetComponentInChildren<WeaponMods>().GetEquippedSuppressor();
-                if (equippedSuppressor == null || equippedSuppressor.Equals("") || equippedSuppressor.Equals("None")) return;
+                if (equippedSuppressor == null || equippedSuppressor.Equals("")) return;
                 UnequipSuppressor(unequipFromWeapon);
                 break;
         }

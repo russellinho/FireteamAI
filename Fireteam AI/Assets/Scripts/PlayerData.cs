@@ -651,16 +651,43 @@ public class PlayerData : MonoBehaviour
         characterEquips.EquipCharacter(character, null);
     }
 
+    // Saves mod data for given weapon. If ID is null, then that means there was no mod on that weapon to begin with when it was saved.
+    // Therefore, don't do anything.
+    // If the ID is not null but the equippedSuppressor is, then that means that a suppressor was unequipped from a weapon.
+    // Therefore, set the equipped on for the mod to empty string and set the equippedSuppressor for the weapon to empty string.
     public void SaveModDataForWeapon(string weaponName, string equippedSuppressor, string id) {
-        ModInfo newModInfo = new ModInfo();
-        newModInfo.equippedSuppressor = equippedSuppressor;
-        newModInfo.weaponName = weaponName;
-        newModInfo.id = id;
+        //Debug.Log("Data passed in: " + weaponName + ", " + equippedSuppressor + ", " + id);
+        if (string.IsNullOrEmpty(id))
+        {
+            return;
+        }
 
-        DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-            .Child("mods").Child(id).Child("equippedOn").SetValueAsync(weaponName);
-        DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-            .Child(weaponName).Child("equippedSuppressor").SetValueAsync(id);
+        ModInfo newModInfo = new ModInfo();
+
+        // Mod was removed
+        if (!string.IsNullOrEmpty(id) && string.IsNullOrEmpty(equippedSuppressor))
+        {
+            newModInfo.equippedSuppressor = "";
+            newModInfo.weaponName = weaponName;
+            newModInfo.id = "";
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
+                .Child("mods").Child(id).Child("equippedOn").SetValueAsync("");
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
+                .Child(weaponName).Child("equippedSuppressor").SetValueAsync("");
+            myMods[id].equippedOn = "";
+        }
+        else
+        {
+            // Mod was added/changed
+            newModInfo.equippedSuppressor = equippedSuppressor;
+            newModInfo.weaponName = weaponName;
+            newModInfo.id = id;
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
+                .Child("mods").Child(id).Child("equippedOn").SetValueAsync(weaponName);
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
+                .Child(weaponName).Child("equippedSuppressor").SetValueAsync(id);
+            myMods[id].equippedOn = weaponName;
+        }
 
         WeaponScript myWeps = bodyReference.GetComponent<WeaponScript>();
         // Set mod data that was just saved
@@ -674,6 +701,7 @@ public class PlayerData : MonoBehaviour
         {
             PlayerData.playerdata.supportModInfo = newModInfo;
         }
+
     }
 
     public ModInfo LoadModDataForWeapon(string weaponName) {
