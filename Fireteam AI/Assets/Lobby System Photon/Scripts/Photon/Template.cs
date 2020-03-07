@@ -4,7 +4,8 @@ using TMPro;
 
 namespace UITemplate
 {
-	public class Template : MonoBehaviour	{
+	public class Template : MonoBehaviour
+	{
 
 		//[Header("Input Panel")]
 		//public GameObject InputPanel;
@@ -26,9 +27,11 @@ namespace UITemplate
 
 		[Header("Room Panel")]
 		public GameObject RoomPanel;
+		public GameObject preplanningRoomPanel;
 		public Text TitleRoom;
 
 		[Header("Chat Panel")]
 		public TextMeshProUGUI ChatText;
+		public TextMeshProUGUI ChatTextPreplanning;
 	}
 }
