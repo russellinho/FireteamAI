@@ -7,6 +7,7 @@ using TMPro;
 public class PlayerEntryScript : MonoBehaviour
 {
     public char team;
+    public string nickname;
     public TMP_Text nametag;
     public Text readyIndicator;
 
@@ -24,6 +25,7 @@ public class PlayerEntryScript : MonoBehaviour
     }
 
     public void SetNameTag(string tag) {
+        nickname = tag;
         nametag.text = tag;
     }
 

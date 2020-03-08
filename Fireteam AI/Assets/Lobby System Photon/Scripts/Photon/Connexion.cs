@@ -98,6 +98,25 @@ namespace Photon.Pun.LobbySystemPhoton
 			PhotonNetwork.CreateRoom(roomName, options, null);
 			templateUIClass.NbrPlayers.text = "00";
 		}
+
+        public void CreateVersusPreplanningRoom(string versusId, string team)
+        {
+            templateUIClass.BtnCreatRoom.interactable = false;
+            templateUIClass.ExitMatchmakingBtn.interactable = false;
+            string roomName = "Table_" + Random.Range(1000, 10000);
+            roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
+
+            RoomOptions options = new RoomOptions { MaxPlayers = 8 };
+            options.CustomRoomProperties["versusId"] = versusId;
+            options.IsVisible = false;
+
+            PhotonNetwork.CreateRoom(roomName, options, null);
+            templateUIClass.NbrPlayers.text = "00";
+
+            // Save the information to DB so that the other players can join
+            string newRoomId = PhotonNetwork.CurrentRoom.Name;
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(team).Child("roomId").SetValueAsync(newRoomId);
+        }
 		
 		public void OnLeaveGameButtonClicked()
 		{

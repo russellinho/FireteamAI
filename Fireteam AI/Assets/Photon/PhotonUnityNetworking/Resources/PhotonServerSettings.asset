@@ -129,4 +129,6 @@ MonoBehaviour:
   - StartDespawn
   - UpdateAssaultMode
   - RpcMarkEnemyOutline
+  - RpcSendBlueTeamToPreplanning
+  - RpcSendRedTeamToPreplanning
   DisableAutoOpenWizard: 1

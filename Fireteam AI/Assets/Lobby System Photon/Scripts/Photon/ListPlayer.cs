@@ -1,6 +1,7 @@
 ﻿using Photon.Realtime;
 using System.Collections.Generic;
 using System.Collections;
+using Firebase.Database;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -11,6 +12,8 @@ namespace Photon.Pun.LobbySystemPhoton
 {
 	public class ListPlayer : MonoBehaviourPunCallbacks
 	{
+        // Timeout from joining preplanning after attempting 8 times
+        private const short MAX_PREPLANNING_TIMEOUT_CNT = 8; 
 
 		private PhotonView pView;
 
@@ -21,6 +24,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public Template templateUIClass;
 		public Template templateUIClassVs;
+        public Connexion connexion;
 		public GameObject PlayerListEntryPrefab;
 		public Dictionary<int, GameObject> playerListEntries;
 		public TChat chat;
@@ -41,6 +45,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public Button leaveGameBtnVs;
 		public GameObject titleController;
 		public AudioClip countdownSfx;
+        private short preplanningJoinTimeoutCount;
 
 		// Map options
 		private int mapIndex = 0;
@@ -77,6 +82,13 @@ namespace Photon.Pun.LobbySystemPhoton
 				StartGameVersus();
 			}
 		}
+
+        void HandleTimeout()
+        {
+            templateUIClassVs.LoadingPanel.SetActive(false);
+            templateUIClass.LoadingPanel.SetActive(false);
+            DisplayPopup("Joining preplanning timed out.");
+        }
 
 		void StartGameCampaign() {
 			// If we're the host, start the game assuming there are at least two ready players
@@ -234,26 +246,93 @@ namespace Photon.Pun.LobbySystemPhoton
 			yield return new WaitForSeconds(5f);
 			// Send teams to preplanning if there are still members on both sides
 			if (redTeam.Count >= 1 && blueTeam.Count >= 1) {
-				SendRedTeamToPreplanning();
-				SendBlueTeamToPreplanning();
+                pView.RPC("RpcSendRedTeamToPreplanning", RpcTarget.All);
+                pView.RPC("RpcSendBlueTeamToPreplanning", RpcTarget.All);
 			} else {
 				chatVs.sendChatOfMaster("Match could not start because there were not enough players on both teams.");
 				pView.RPC ("RpcToggleButtons", RpcTarget.All, true, true);
 			}
 		}
 
-		private void SendRedTeamToPreplanning() {
-			// Enable loading panel
-
-			// Enable preplanning panel
-
-			// Leave current room and join preplanning room for all players on red team
-			// Ensure that the match ID is carried from the versus room into this one
+        [PunRPC]
+		private void RpcSendRedTeamToPreplanning() {
+            // Get the unique room ID to match the team rooms together in DB
+            string roomId = PhotonNetwork.CurrentRoom.Name;
+            string redTeamCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["redCaptain"];
+            // Enable loading panel
+            templateUIClassVs.LoadingPanel.SetActive(true);
+            // Leave the current room
+            PhotonNetwork.LeaveRoom();
+            // Enable preplanning panel
+            //templateUIClassVs.RoomPanel.SetActive(false);
+            // Leave current room and join preplanning room for all players on red team
+            if (PhotonNetwork.LocalPlayer.NickName == redTeamCaptain)
+            {
+                // Start the preplanning room if you're master client, else wait for it to be created and then join
+                connexion.CreateVersusPreplanningRoom(roomId, "red");
+            } else
+            {
+                preplanningJoinTimeoutCount = 0;
+                StartCoroutine("TryToJoinPreplanning", "red");
+            }
 		}
 
-		private void SendBlueTeamToPreplanning() {
+        [PunRPC]
+		private void RpcSendBlueTeamToPreplanning() {
+            // Get the unique room ID to match the team rooms together in DB
+            string roomId = PhotonNetwork.CurrentRoom.Name;
+            string blueTeamCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["blueCaptain"];
+            // Enable loading panel
+            templateUIClassVs.LoadingPanel.SetActive(true);
+            // Leave the current room
+            PhotonNetwork.LeaveRoom();
+            // Enable preplanning panel
+            //templateUIClassVs.RoomPanel.SetActive(false);
+            // Leave current room and join preplanning room for all players on red team
+            if (PhotonNetwork.LocalPlayer.NickName == blueTeamCaptain)
+            {
+                // Start the preplanning room if you're master client, else wait for it to be created and then join
+                connexion.CreateVersusPreplanningRoom(roomId, "blue");
+            }
+            else
+            {
+                preplanningJoinTimeoutCount = 0;
+                StartCoroutine("TryToJoinPreplanning", "blue");
+            }
+        }
 
-		}
+        IEnumerator TryToJoinPreplanning(string team)
+        {
+            yield return new WaitForSeconds(3f);
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(team).GetValueAsync().ContinueWith(task =>
+            {
+                DataSnapshot snapshot = task.Result;
+                string roomId = snapshot.Child("roomId").Value.ToString();
+                if (string.IsNullOrEmpty(roomId))
+                {
+                    // Room is not established yet, so try again
+                    preplanningJoinTimeoutCount++;
+                    if (preplanningJoinTimeoutCount == MAX_PREPLANNING_TIMEOUT_CNT)
+                    {
+                        // Timeout, disable loading screens, popup of joining room timed out, and re-enable all buttons
+                        HandleTimeout();
+                    }
+                    else
+                    {
+                        StartCoroutine("TryToJoinPreplanning", team);
+                    }
+                } else
+                {
+                    // Room was created, join it
+                    AttemptToJoinPreplanningRoom(roomId);
+                }
+            });
+        }
+
+        void AttemptToJoinPreplanningRoom(string roomName)
+        {
+            PhotonNetwork.JoinRoom(roomName);
+        }
 
 		[PunRPC]
 		void RpcLoadingScreen() {
@@ -308,7 +387,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		void OnJoinedRoomCampaign() {
 			templateUIClass.ListRoomPanel.SetActive(false);
 			templateUIClass.RoomPanel.SetActive(true);
-			templateUIClass.TitleRoom.text = PhotonNetwork.CurrentRoom.Name;
+            templateUIClass.TitleRoom.text = PhotonNetwork.CurrentRoom.Name;
 
 			if (playerListEntries == null)
 			{
@@ -359,18 +438,90 @@ namespace Photon.Pun.LobbySystemPhoton
 				entry.transform.SetParent(InsideRoomPanelVs[lastSlotUsed++].transform);
 				entry.transform.localPosition = Vector3.zero;
 				entryScript.SetNameTag(p.NickName);
-				// Select team if versus mode. Choose red by default and blue if red has more members
+				// Select team if versus mode. Choose red by default and blue if red has more members. First one on each team is "team captain"
+                // TODO: Probably going to need to move this somewhere else after all players are loaded in
 				if (redTeam.Count <= blueTeam.Count) {
+                    SetTeamCaptain('R');
 					entryScript.SetTeam('R');
 					redTeam.Add(p.ActorNumber);
+                    SetTeamCaptain('R');
 				} else {
+                    SetTeamCaptain('B');
 					entryScript.SetTeam('B');
 					blueTeam.Add(p.ActorNumber);
-				}
+                    SetTeamCaptain('B');
+                }
 				playerListEntries.Add(p.ActorNumber, entry);
 			}
             chatVs.SendMsgConnection(PhotonNetwork.LocalPlayer.NickName);
 		}
+
+        public void OnSwitchTeamsButtonClicked()
+        {
+            GameObject playerEntry = playerListEntries[PhotonNetwork.LocalPlayer.ActorNumber];
+            PlayerEntryScript entry = playerEntry.GetComponent<PlayerEntryScript>();
+            entry.ChangeTeam();
+            char newTeam = entry.team;
+            if (newTeam == 'R')
+            {
+                blueTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
+                redTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
+            } else
+            {
+                redTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
+                blueTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
+            }
+            SetTeamCaptain(newTeam);
+        }
+
+        void SetTeamCaptain(char team)
+        {
+            string myNickname = PhotonNetwork.LocalPlayer.NickName;
+            if (team == 'R')
+            {
+                string currentRedCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["redCaptain"];
+                // Add yourself as a captain if there isn't one
+                if (string.IsNullOrEmpty(currentRedCaptain))
+                {
+                    PhotonNetwork.CurrentRoom.CustomProperties.Add("redCaptain", myNickname);
+                    // Remove yourself from captain of blue team if you were captain and set the next available person if there is one
+                    string currentBlueCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["blueCaptain"];
+                    if (!string.IsNullOrEmpty(currentBlueCaptain) && currentBlueCaptain == myNickname)
+                    {
+                        if (blueTeam.Count > 0)
+                        {
+                            string nextBlueCaptainName = playerListEntries[(int)blueTeam[0]].GetComponent<PlayerEntryScript>().nickname;
+                            PhotonNetwork.CurrentRoom.CustomProperties["blueCaptain"] = nextBlueCaptainName;
+                        } else
+                        {
+                            PhotonNetwork.CurrentRoom.CustomProperties["blueCaptain"] = null;
+                        }
+                    }
+                }
+            } else
+            {
+                string currentBlueCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["blueCaptain"];
+                // Add yourself as a captain if there isn't one
+                if (string.IsNullOrEmpty(currentBlueCaptain))
+                {
+                    PhotonNetwork.CurrentRoom.CustomProperties.Add("blueCaptain", myNickname);
+                    // Remove yourself from captain of red team if you were captain and set the next available person if there is one
+                    string currentRedCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["redCaptain"];
+                    if (!string.IsNullOrEmpty(currentRedCaptain) && currentRedCaptain == myNickname)
+                    {
+                        if (redTeam.Count > 0)
+                        {
+                            string nextRedCaptainName = playerListEntries[(int)redTeam[0]].GetComponent<PlayerEntryScript>().nickname;
+                            PhotonNetwork.CurrentRoom.CustomProperties["redCaptain"] = nextRedCaptainName;
+                        }
+                        else
+                        {
+                            PhotonNetwork.CurrentRoom.CustomProperties["redCaptain"] = null;
+                        }
+                    }
+                }
+            }
+        }
 
 		public override void OnPlayerEnteredRoom(Player newPlayer)
 		{
@@ -393,7 +544,10 @@ namespace Photon.Pun.LobbySystemPhoton
 		public override void OnLeftRoom()
 		{
 			templateUIClass.RoomPanel.SetActive(false);
+            templateUIClassVs.RoomPanel.SetActive(false);
+            templateUIClassVs.preplanningRoomPanel.SetActive(false);
 			templateUIClass.ListRoomPanel.SetActive(true);
+            templateUIClassVs.ListRoomPanel.SetActive(true);
 
 			foreach (GameObject entry in playerListEntries.Values)
 			{
@@ -403,6 +557,8 @@ namespace Photon.Pun.LobbySystemPhoton
 			playerListEntries.Clear();
 			playerListEntries = null;
 			templateUIClass.ChatText.text = "";
+            templateUIClassVs.ChatText.text = "";
+            templateUIClassVs.ChatTextPreplanning.text = "";
 			PhotonNetwork.JoinLobby();
 		}
 
