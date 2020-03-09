@@ -20,6 +20,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		[Header("Inside Room Panel")]
 		public GameObject[] InsideRoomPanel;
 		public GameObject[] InsideRoomPanelVs;
+        public GameObject[] InsideRoomPanelPreplanning;
 		private int lastSlotUsed;
 
 		public Template templateUIClass;
@@ -29,6 +30,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public Dictionary<int, GameObject> playerListEntries;
 		public TChat chat;
 		public TChat chatVs;
+        public TChat chatPreplanning;
 		public GameObject readyButton;
 		public GameObject readyButtonVs;
 		public GameObject mapPreview;
@@ -46,6 +48,11 @@ namespace Photon.Pun.LobbySystemPhoton
 		public GameObject titleController;
 		public AudioClip countdownSfx;
         private short preplanningJoinTimeoutCount;
+        private string preplanningTeam;
+        private string preplanningVersusId;
+        private bool preplanningIsReady;
+        private short preplanningSyncDelay;
+        private bool versusGameStarting;
 
 		// Map options
 		private int mapIndex = 0;
@@ -57,6 +64,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		private GameObject myPlayerListEntry;
 		private bool isReady = false;
 		private bool gameStarting = false;
+        private char currentMode;
 
 		// Versus mode state
 		private ArrayList redTeam;
@@ -67,28 +75,63 @@ namespace Photon.Pun.LobbySystemPhoton
 			pView = GetComponent<PhotonView> ();
 			redTeam = new ArrayList();
 			blueTeam = new ArrayList();
+            preplanningSyncDelay = 5;
 		}
 
-		public void DisplayPopup(string message) {
+        void FixedUpdate()
+        {
+            // Check whether we can start the game or not
+            CheckCanStartVersusMatch();
+        }
+
+        void CheckCanStartVersusMatch()
+        {
+            if (preplanningSyncDelay > 0)
+            {
+                preplanningSyncDelay--;
+                return;
+            } else
+            {
+                preplanningSyncDelay = 5;
+            }
+            // Only do this if the user is in preplanning and the user is the host.
+            // If both sides are marked as ready (in DB), then start the countdown
+            // TODO: Later ensure that most players are ready before starting
+            if (PhotonNetwork.IsMasterClient && !string.IsNullOrEmpty(preplanningVersusId) && !versusGameStarting)
+            {
+                DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(preplanningVersusId).Child(preplanningTeam).Child("isReady").SetValueAsync(preplanningIsReady).ContinueWith(task =>
+                {
+                    DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(preplanningVersusId).GetValueAsync().ContinueWith(taskA =>
+                    {
+                        DataSnapshot snapshot = taskA.Result;
+                        string redReady = snapshot.Child("red").Child("isReady").ToString();
+                        string blueReady = snapshot.Child("blue").Child("isReady").ToString();
+                        if (redReady == "true" && blueReady == "true")
+                        {
+                            versusGameStarting = true;
+                            StartCoroutine(StartPreplanningCountdown());
+                        }
+                    });
+                });
+            }
+        }
+
+        public void DisplayPopup(string message) {
 			ToggleButtons (false);
 			templateUIClass.popup.GetComponentsInChildren<Text> () [0].text = message;
 			templateUIClass.popup.SetActive (true);
 		}
 
 		public void StartGameBtn() {
-			if (templateUIClass.gameObject.activeInHierarchy) {
-				StartGameCampaign();
-			} else {
+			if (currentMode == 'V') {
 				StartGameVersus();
-			}
+			} else if (currentMode == 'P') {
+				StartGamePreplanning();
+			} else
+            {
+                StartGameCampaign();
+            }
 		}
-
-        void HandleTimeout()
-        {
-            templateUIClassVs.LoadingPanel.SetActive(false);
-            templateUIClass.LoadingPanel.SetActive(false);
-            DisplayPopup("Joining preplanning timed out.");
-        }
 
 		void StartGameCampaign() {
 			// If we're the host, start the game assuming there are at least two ready players
@@ -143,8 +186,11 @@ namespace Photon.Pun.LobbySystemPhoton
 						StartCoroutine ("StartVersusGameCountdown");
 						return;
 					} else {
-						// If there's only 1 player, they cannot start the game
-						DisplayPopup("You cannot start a versus game without a player on both teams!");
+                        // If there's only 1 player, they cannot start the game
+                        // Set room invisible once it begins, for now
+                        PhotonNetwork.CurrentRoom.IsOpen = true;
+                        PhotonNetwork.CurrentRoom.IsVisible = true;
+                        DisplayPopup("You cannot start a versus game without a player on both teams!");
 						return;
 					}
 				}
@@ -174,6 +220,56 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 		}
 
+        void StartGamePreplanning()
+        {
+            // If we're the host, start the game assuming there are at least two ready players
+            if (PhotonNetwork.IsMasterClient)
+            {
+                // Testing - comment in release
+                if (PlayerData.playerdata.testMode == true)
+                {
+                    // Set ready/unready in the DB
+                    preplanningIsReady = !preplanningIsReady;
+                    if (preplanningIsReady)
+                    {
+                        chatPreplanning.sendChatOfMaster("Waiting for the other team to be ready... match will begin when both teams are ready.");
+                    }
+                    return;
+                }
+
+                int readyCount = 0;
+
+                // Loops through player entry prefabs and checks if they're ready by their color
+                foreach (GameObject o in playerListEntries.Values)
+                {
+                    Image indicator = o.GetComponentInChildren<Image>();
+                    // If the ready status is green or the indicator doesn't exist (master)
+                    if (!indicator || indicator.color.g == 1f)
+                    {
+                        readyCount++;
+                    }
+                    if (readyCount >= 2)
+                    {
+                        break;
+                    }
+                }
+
+                if (readyCount >= 2)
+                {
+                    pView.RPC("RpcToggleButtons", RpcTarget.All, false, true);
+                    StartCoroutine("StartVersusGameCountdown");
+                }
+                else
+                {
+                    DisplayPopup("There must be at least two ready players to start the game!");
+                }
+            }
+            else
+            {
+                ChangeReadyStatus();
+            }
+        }
+
 		void ToggleButtons(bool status) {
 			mapNext.interactable = status;
 			mapPrev.interactable = status;
@@ -202,9 +298,9 @@ namespace Photon.Pun.LobbySystemPhoton
 		[PunRPC]
 		public void RpcChangeReadyStatus(int playerId, bool readyStatus) {
 			if (readyStatus) {
-				playerListEntries [playerId].GetComponentInChildren<Image> ().color = Color.green;
+				playerListEntries [playerId].GetComponent<PlayerEntryScript> ().SetNameColor(Color.green);
 			} else {
-				playerListEntries [playerId].GetComponentInChildren<Image> ().color = Color.red;
+				playerListEntries [playerId].GetComponent<PlayerEntryScript> ().SetNameColor(Color.red);
 			}
 		}
 
@@ -241,7 +337,34 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 		}
 
-		private IEnumerator StartVersusGameCountdown() {
+        private IEnumerator StartPreplanningCountdown()
+        {
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+            titleController.GetComponent<AudioSource>().clip = countdownSfx;
+            titleController.GetComponent<AudioSource>().Play();
+            chatPreplanning.sendChatOfMaster("Game starting in 5");
+            yield return new WaitForSeconds(1f);
+            titleController.GetComponent<AudioSource>().Play();
+            chatPreplanning.sendChatOfMaster("Game starting in 4");
+            yield return new WaitForSeconds(1f);
+            titleController.GetComponent<AudioSource>().Play();
+            chatPreplanning.sendChatOfMaster("Game starting in 3");
+            yield return new WaitForSeconds(1f);
+            titleController.GetComponent<AudioSource>().Play();
+            chatPreplanning.sendChatOfMaster("Game starting in 2");
+            yield return new WaitForSeconds(1f);
+            titleController.GetComponent<AudioSource>().Play();
+            chatPreplanning.sendChatOfMaster("Game starting in 1");
+            yield return new WaitForSeconds(1f);
+
+            pView.RPC("RpcLoadingScreen", RpcTarget.All);
+            if (PhotonNetwork.IsMasterClient)
+            {
+                StartGame(mapNames[mapIndex]);
+            }
+        }
+
+        private IEnumerator StartVersusGameCountdown() {
 			chatVs.sendChatOfMaster("The match is starting. Sending teams to preplanning...");
 			yield return new WaitForSeconds(5f);
 			// Send teams to preplanning if there are still members on both sides
@@ -273,7 +396,7 @@ namespace Photon.Pun.LobbySystemPhoton
             } else
             {
                 preplanningJoinTimeoutCount = 0;
-                StartCoroutine("TryToJoinPreplanning", "red");
+                StartCoroutine(TryToJoinPreplanning("red", roomId));
             }
 		}
 
@@ -297,14 +420,14 @@ namespace Photon.Pun.LobbySystemPhoton
             else
             {
                 preplanningJoinTimeoutCount = 0;
-                StartCoroutine("TryToJoinPreplanning", "blue");
+                StartCoroutine(TryToJoinPreplanning("blue", roomId));
             }
         }
 
-        IEnumerator TryToJoinPreplanning(string team)
+        IEnumerator TryToJoinPreplanning(string team, string versusId)
         {
             yield return new WaitForSeconds(3f);
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(team).GetValueAsync().ContinueWith(task =>
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(team).GetValueAsync().ContinueWith(task =>
             {
                 DataSnapshot snapshot = task.Result;
                 string roomId = snapshot.Child("roomId").Value.ToString();
@@ -315,23 +438,22 @@ namespace Photon.Pun.LobbySystemPhoton
                     if (preplanningJoinTimeoutCount == MAX_PREPLANNING_TIMEOUT_CNT)
                     {
                         // Timeout, disable loading screens, popup of joining room timed out, and re-enable all buttons
-                        HandleTimeout();
+                        templateUIClassVs.LoadingPanel.SetActive(false); 
+                        templateUIClass.LoadingPanel.SetActive(false);
+                        DisplayPopup("Joining preplanning timed out.");
                     }
                     else
                     {
-                        StartCoroutine("TryToJoinPreplanning", team);
+                        StartCoroutine(TryToJoinPreplanning(team, versusId));
                     }
                 } else
                 {
                     // Room was created, join it
-                    AttemptToJoinPreplanningRoom(roomId);
+                    PhotonNetwork.JoinRoom(roomId);
+                    PhotonNetwork.CurrentRoom.CustomProperties.Add("versusId", versusId);
+                    PhotonNetwork.CurrentRoom.CustomProperties.Add("myTeam", team);
                 }
             });
-        }
-
-        void AttemptToJoinPreplanningRoom(string roomName)
-        {
-            PhotonNetwork.JoinRoom(roomName);
         }
 
 		[PunRPC]
@@ -376,12 +498,15 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnJoinedRoom()
 		{
-			bool isVersusMode = templateUIClassVs.gameObject.activeInHierarchy;
-			if (isVersusMode) {
+			currentMode = (templateUIClassVs.gameObject.activeInHierarchy ? 'V' : (string.IsNullOrEmpty((string)PhotonNetwork.CurrentRoom.CustomProperties["versusId"]) ? 'C' : 'P'));
+			if (currentMode == 'V') {
 				OnJoinedRoomVersus();
-			} else {
-				OnJoinedRoomCampaign();
-			}
+			} else if (currentMode == 'P') {
+				OnJoinedRoomPreplanning();
+			} else
+            {
+                OnJoinedRoomCampaign();
+            }
 		}
 
 		void OnJoinedRoomCampaign() {
@@ -455,6 +580,39 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
             chatVs.SendMsgConnection(PhotonNetwork.LocalPlayer.NickName);
 		}
+
+        void OnJoinedRoomPreplanning()
+        {
+            templateUIClassVs.ListRoomPanel.SetActive(false);
+            templateUIClassVs.preplanningRoomPanel.SetActive(true);
+            templateUIClassVs.TitleRoomPreplanning.text = (string)PhotonNetwork.CurrentRoom.CustomProperties["versusId"];
+
+            if (playerListEntries == null)
+            {
+                playerListEntries = new Dictionary<int, GameObject>();
+            }
+
+            lastSlotUsed = 0;
+            foreach (Player p in PhotonNetwork.PlayerList)
+            {
+                GameObject entry = Instantiate(PlayerListEntryPrefab);
+                PlayerEntryScript entryScript = entry.GetComponent<PlayerEntryScript>();
+                if (p.IsLocal)
+                {
+                    myPlayerListEntry = entry;
+                }
+                if (p.IsMasterClient)
+                {
+                    entryScript.ToggleReadyIndicator(false);
+                }
+                entry.transform.SetParent(InsideRoomPanelPreplanning[lastSlotUsed++].transform);
+                entry.transform.localPosition = Vector3.zero;
+                entryScript.SetNameTag(p.NickName);
+
+                playerListEntries.Add(p.ActorNumber, entry);
+            }
+            chatPreplanning.SendMsgConnection(PhotonNetwork.LocalPlayer.NickName);
+        }
 
         public void OnSwitchTeamsButtonClicked()
         {

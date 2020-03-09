@@ -107,7 +107,8 @@ namespace Photon.Pun.LobbySystemPhoton
             roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
             RoomOptions options = new RoomOptions { MaxPlayers = 8 };
-            options.CustomRoomProperties["versusId"] = versusId;
+            options.CustomRoomProperties.Add("versusId", versusId);
+            options.CustomRoomProperties.Add("myTeam", team);
             options.IsVisible = false;
 
             PhotonNetwork.CreateRoom(roomName, options, null);

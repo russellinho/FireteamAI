@@ -5,12 +5,14 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using Firebase.Database;
 
 public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     // Timer
     public static float missionTime;
     public static float MAX_MISSION_TIME = 1800f;
+    private static short SYNC_SCORE_DELAY = 400;
 
 	public int currentMap;
 
@@ -48,9 +50,30 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	private PhotonView pView;
 
+    // Match state data
+    public char matchType;
+    public string versusId;
+    private string myTeam;
+    private string opposingTeam;
+    public short redTeamScore;
+    public short blueTeamScore;
+    private short syncScoresDelay;
+
 	// Use this for initialization
 	void Awake() {
 		coverSpots = new Dictionary<short, GameObject>();
+        versusId = (string)PhotonNetwork.CurrentRoom.CustomProperties["versusId"];
+        myTeam = (string)PhotonNetwork.CurrentRoom.CustomProperties["myTeam"];
+        opposingTeam = (myTeam == "red" ? "blue" : "red");
+        if (string.IsNullOrEmpty(versusId))
+        {
+            matchType = 'V';
+        } else
+        {
+            matchType = 'C';
+        }
+        redTeamScore = 0;
+        blueTeamScore = 0;
 	}
 
     void Start () {
@@ -84,6 +107,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     	enemyAlertMarkers = new ArrayList ();
 		enemyMarkerRemovalQueue = new Queue();
+
 	}
 
 	// Update is called once per frame
@@ -129,6 +153,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				UpdateEndGameTimer();
             }
         }
+        // Actions done only on versus mode
+        if (matchType == 'V')
+        {
+            // Update versus team scores every 5 seconds
+            UpdateVersusScores();
+            DetermineVersusVictory();
+        }
 	}
 
 	[PunRPC]
@@ -156,6 +187,48 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 		return false;
 	}
+
+    void UpdateVersusScores()
+    {
+        if (syncScoresDelay > 0)
+        {
+            syncScoresDelay--;
+            return;
+        } else
+        {
+            syncScoresDelay = SYNC_SCORE_DELAY;
+        }
+        short myScore = (myTeam == "red" ? redTeamScore : blueTeamScore);
+        // Set my score and then get the opposing team score
+        DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "Scr").SetValueAsync(myScore).ContinueWith(task =>
+        {
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(opposingTeam + "Scr").GetValueAsync().ContinueWith(taskA =>
+            {
+                if (taskA.IsFaulted || taskA.IsCanceled)
+                {
+                    // If a problem occurs, end the game immediately.
+                    // TODO: End the game
+                } else {
+                    DataSnapshot snapshot = taskA.Result;
+                    if (opposingTeam == "red")
+                    {
+                        redTeamScore = short.Parse(snapshot.Value.ToString());
+                    } else if (opposingTeam == "blue")
+                    {
+                        blueTeamScore = short.Parse(snapshot.Value.ToString());
+                    }
+                }
+            });
+        });
+    }
+
+    void DetermineVersusVictory()
+    {
+        // TODO: 
+        // If one team gets to 100% completion before another, end the game and the team that made it to 100 wins.
+        // If one team forfeits, the other wins
+
+    }
 
 	[PunRPC]
 	void RpcSetLastGunshotHeardTimer(float t) {

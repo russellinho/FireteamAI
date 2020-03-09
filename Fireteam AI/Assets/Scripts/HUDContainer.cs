@@ -62,4 +62,10 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject playerMarkers;
 	public GameObject enemyMarkers;
 
+    // Versus mode HUD
+    public GameObject redScore;
+    public GameObject blueScore;
+    public Text redScoreTxt;
+    public Text blueScoreTxt;
+
 }

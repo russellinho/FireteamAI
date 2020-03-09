@@ -162,6 +162,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		UpdateEnemyMarkers();
 		UpdateWaypoints ();
 		UpdateCursorStatus ();
+        UpdateRedTeamScore(gameController.redTeamScore);
+        UpdateBlueTeamScore(gameController.blueTeamScore);
 
 		if (gameController.gameOver) {
 			if (gameController.exitLevelLoaded) {
@@ -813,5 +815,21 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			enemyMarkers.Remove(enemyId);
 		}
 	}
+
+    public void ToggleVersusHUD(bool b)
+    {
+        container.blueScore.SetActive(b);
+        container.redScore.SetActive(b);
+    }
+
+    public void UpdateRedTeamScore(int score)
+    {
+        container.redScoreTxt.text = score + "%";
+    }
+
+    public void UpdateBlueTeamScore(int score)
+    {
+        container.blueScoreTxt.text = score + "%";
+    }
 
 }
