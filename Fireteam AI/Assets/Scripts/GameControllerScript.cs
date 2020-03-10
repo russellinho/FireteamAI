@@ -58,6 +58,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public short redTeamScore;
     public short blueTeamScore;
     private short syncScoresDelay;
+    private short objectiveCount;
+    private short objectiveCompleted;
+    private string versusWinner;
 
 	// Use this for initialization
 	void Awake() {
@@ -74,6 +77,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         }
         redTeamScore = 0;
         blueTeamScore = 0;
+        objectiveCount = 0;
+        objectiveCompleted = 0;
 	}
 
     void Start () {
@@ -117,30 +122,59 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
         if (currentMap == 1)
         {
-			// Auto end game for testing
-			// if (Input.GetKeyDown(KeyCode.B)) {
-			// 	pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
-			// }
+            // Auto end game for testing
+            // if (Input.GetKeyDown(KeyCode.B)) {
+            // 	pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
+            // }
+            objectiveCount = 5;
 			if (bombsRemaining == 0) {
 				escapeAvailable = true;
 			}
             if (!gameOver)
             {
                 UpdateMissionTime();
+                if (matchType == 'V')
+                {
+                    // Check to see if the other team has won
+                    DetermineVersusVictory();
+                }
             }
             if (PhotonNetwork.IsMasterClient) {
-				// Check if the mission is over or if all players eliminated or out of time
-				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime()) {
-					if (!gameOver)
-					{
-						pView.RPC ("RpcEndGame", RpcTarget.All, 9f);
-					}
-				} else if (bombsRemaining == 0) {
-					if (!gameOver && CheckEscape ()) {
-						// If they can escape, end the game and bring up the stat board
-						pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
-					}
-				}
+                if (matchType == 'C')
+                {
+                    // Check if the mission is over or if all players eliminated or out of time
+                    if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime())
+                    {
+                        if (!gameOver)
+                        {
+                            pView.RPC("RpcEndGame", RpcTarget.All, 9f);
+                        }
+                    }
+                    else if (bombsRemaining == 0)
+                    {
+                        if (!gameOver && CheckEscape())
+                        {
+                            // If they can escape, end the game and bring up the stat board
+                            pView.RPC("RpcEndGame", RpcTarget.All, 3f);
+                        }
+                    }
+                } else if (matchType == 'V')
+                {
+                    if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime())
+                    {
+                        if (!gameOver)
+                        {
+                            pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f);
+                        }
+                    } else if (bombsRemaining == 0)
+                    {
+                        if (!gameOver && CheckEscape())
+                        {
+                            // If they can escape, end the game and bring up the stat board
+                            pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f);
+                        }
+                    }
+                }
 
 				// Cbeck if mode has been changed to assault or not
 				if (!assaultMode) {
@@ -148,6 +182,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 						pView.RPC ("UpdateAssaultMode", RpcTarget.All, true);
 					}
 				}
+
 
 				ResetLastGunshotPos ();
 				UpdateEndGameTimer();
@@ -168,7 +203,31 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		gameOver = true;
 	}
 
-	[PunRPC]
+    [PunRPC]
+    void RpcEndVersusGame(float f)
+    {
+        endGameTimer = f;
+        gameOver = true;
+        // If host, send the victory to the other team if you're the winner
+        if (PhotonNetwork.IsMasterClient)
+        {
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child("winner").GetValueAsync().ContinueWith(task =>
+            {
+                DataSnapshot snapshot = task.Result;
+                string winnerWas = snapshot.Value.ToString();
+                if (string.IsNullOrEmpty(winnerWas))
+                {
+                    DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child("winner").SetValueAsync(myTeam).ContinueWith(taskA =>
+                    {
+                        versusWinner = myTeam;
+                        Debug.Log("Setting victory in DB to your team. (" + myTeam + ")");
+                    });
+                }
+            });
+        }
+    }
+
+    [PunRPC]
 	public void UpdateAssaultMode(bool assaultInProgress) {
 		StartCoroutine (UpdateAssaultModeTimer(5f, assaultInProgress));
 	}
@@ -199,35 +258,73 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             syncScoresDelay = SYNC_SCORE_DELAY;
         }
         short myScore = (myTeam == "red" ? redTeamScore : blueTeamScore);
-        // Set my score and then get the opposing team score
-        DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "Scr").SetValueAsync(myScore).ContinueWith(task =>
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // Set my score and then get the opposing team score
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "Scr").SetValueAsync(myScore).ContinueWith(task =>
+            {
+                DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(opposingTeam + "Scr").GetValueAsync().ContinueWith(taskA =>
+                {
+                    if (taskA.IsFaulted || taskA.IsCanceled)
+                    {
+                        // If a problem occurs, end the game immediately.
+                        // TODO: End the game
+                    }
+                    else
+                    {
+                        DataSnapshot snapshot = taskA.Result;
+                        if (opposingTeam == "red")
+                        {
+                            redTeamScore = short.Parse(snapshot.Value.ToString());
+                        }
+                        else if (opposingTeam == "blue")
+                        {
+                            blueTeamScore = short.Parse(snapshot.Value.ToString());
+                        }
+                    }
+                });
+            });
+        } else
         {
             DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(opposingTeam + "Scr").GetValueAsync().ContinueWith(taskA =>
             {
-                if (taskA.IsFaulted || taskA.IsCanceled)
+                DataSnapshot snapshot = taskA.Result;
+                if (opposingTeam == "red")
                 {
-                    // If a problem occurs, end the game immediately.
-                    // TODO: End the game
-                } else {
-                    DataSnapshot snapshot = taskA.Result;
-                    if (opposingTeam == "red")
-                    {
-                        redTeamScore = short.Parse(snapshot.Value.ToString());
-                    } else if (opposingTeam == "blue")
-                    {
-                        blueTeamScore = short.Parse(snapshot.Value.ToString());
-                    }
+                    redTeamScore = short.Parse(snapshot.Value.ToString());
+                } else if (opposingTeam == "blue")
+                {
+                    blueTeamScore = short.Parse(snapshot.Value.ToString());
                 }
             });
-        });
+        }
     }
 
     void DetermineVersusVictory()
     {
-        // TODO: 
         // If one team gets to 100% completion before another, end the game and the team that made it to 100 wins.
         // If one team forfeits, the other wins
-
+        if (PhotonNetwork.IsMasterClient)
+        {
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child("winner").GetValueAsync().ContinueWith(task =>
+            {
+                if (task.IsFaulted || task.IsCanceled)
+                {
+                    // TODO: If something is wrong with the DB, end the match immediately.
+                } else
+                {
+                    DataSnapshot snapshot = task.Result;
+                    versusWinner = snapshot.Value.ToString();
+                    if (versusWinner == myTeam)
+                    {
+                        pView.RPC("RpcEndVersusGame", RpcTarget.All, 5f);
+                    } else if (versusWinner == opposingTeam)
+                    {
+                        pView.RPC("RpcEndVersusGame", RpcTarget.All, 5f);
+                    }
+                }
+            });
+        }
     }
 
 	[PunRPC]
@@ -401,6 +498,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	[PunRPC]
 	void RpcDecrementBombsRemaining() {
 		bombsRemaining--;
+        UpdateMyTeamScore(true);
 	}
 
 	[PunRPC]
@@ -408,6 +506,24 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		exitLevelLoaded = true;
 		exitLevelLoadedTimer = 4f;
 	}
+
+    void UpdateMyTeamScore(bool increase)
+    {
+        if (increase)
+        {
+            objectiveCompleted++;
+        } else
+        {
+            objectiveCompleted--;
+        }
+        if (myTeam == "red")
+        {
+            redTeamScore = (short)(objectiveCompleted / objectiveCount);
+        } else if (myTeam == "blue")
+        {
+            blueTeamScore = (short)(objectiveCompleted / objectiveCount);
+        }
+    }
 
     void UpdateEndGameTimer() {
         if (gameOver) {
@@ -422,12 +538,27 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					pView.RPC ("RpcSetExitLevelLoaded", RpcTarget.All);
 				} else {
 					if (exitLevelLoadedTimer <= 0f && !loadExitCalled) {
-						loadExitCalled = true;
-						if (deadCount == PhotonNetwork.CurrentRoom.Players.Count) {
-							SwitchToGameOverScene (false);
-						} else {
-							SwitchToGameOverScene (true);
-						}
+                        loadExitCalled = true;
+                        if (matchType == 'C')
+                        {
+                            if (deadCount == PhotonNetwork.CurrentRoom.Players.Count)
+                            {
+                                SwitchToGameOverScene(false);
+                            }
+                            else
+                            {
+                                SwitchToGameOverScene(true);
+                            }
+                        } else if (matchType == 'V')
+                        {
+                            if (versusWinner == myTeam)
+                            {
+                                SwitchToGameOverScene(true);
+                            } else
+                            {
+                                SwitchToGameOverScene(false);
+                            }
+                        }
 					} else {
 						exitLevelLoadedTimer -= Time.deltaTime;
 					}
@@ -452,7 +583,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	void ClearEnemyAlertMarkers() {
+    void ClearEnemyAlertMarkers() {
 		enemyAlertMarkers.Clear();
 		enemyMarkerRemovalQueue.Clear();
 	}
