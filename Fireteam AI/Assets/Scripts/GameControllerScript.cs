@@ -208,7 +208,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     {
         endGameTimer = f;
         gameOver = true;
-        // If host, send the victory to the other team if you're the winner
+        string json = "{" +
+            "\"kills\":\"" + totalKills[PhotonNetwork.LocalPlayer.NickName] + "\"," +
+            "\"deaths\":\"" + totalDeaths[PhotonNetwork.LocalPlayer.NickName] + "\"" +
+        "}";
+        // If host, send the victory to the other team if you're the winner. Also send your kills and deaths to the DB
         if (PhotonNetwork.IsMasterClient)
         {
             DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child("winner").GetValueAsync().ContinueWith(task =>
@@ -221,9 +225,14 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                     {
                         versusWinner = myTeam;
                         Debug.Log("Setting victory in DB to your team. (" + myTeam + ")");
+                        // Send kills and deaths to DB
+                        DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").SetRawJsonValueAsync(json);
                     });
                 }
             });
+        } else
+        {
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").SetRawJsonValueAsync(json);
         }
     }
 
@@ -268,7 +277,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                     if (taskA.IsFaulted || taskA.IsCanceled)
                     {
                         // If a problem occurs, end the game immediately.
-                        // TODO: End the game
+                        pView.RPC("RpcEndVersusGame", RpcTarget.All, 5f);
                     }
                     else
                     {
@@ -310,7 +319,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             {
                 if (task.IsFaulted || task.IsCanceled)
                 {
-                    // TODO: If something is wrong with the DB, end the match immediately.
+                    pView.RPC("RpcEndVersusGame", RpcTarget.All, 5f);
                 } else
                 {
                     DataSnapshot snapshot = task.Result;
