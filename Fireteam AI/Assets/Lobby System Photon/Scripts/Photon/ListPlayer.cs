@@ -33,8 +33,13 @@ namespace Photon.Pun.LobbySystemPhoton
         public TChat chatPreplanning;
 		public GameObject readyButton;
 		public GameObject readyButtonVs;
+        public GameObject readyButtonPreplanning;
+        public Text readyButtonTxt;
+        public Text readyButtonVsTxt;
+        public Text readyButtonPreplanningTxt;
 		public GameObject mapPreview;
 		public GameObject mapPreviewVs;
+        public GameObject mapPreviewPreplanning;
 		public Button mapNext;
 		public Button mapNextVs;
 		public Button mapPrev;
@@ -75,7 +80,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			pView = GetComponent<PhotonView> ();
 			redTeam = new ArrayList();
 			blueTeam = new ArrayList();
-            preplanningSyncDelay = 5;
+            preplanningSyncDelay = 1800;
 		}
 
         void FixedUpdate()
@@ -92,7 +97,7 @@ namespace Photon.Pun.LobbySystemPhoton
                 return;
             } else
             {
-                preplanningSyncDelay = 5;
+                preplanningSyncDelay = 400;
             }
             // Only do this if the user is in preplanning and the user is the host.
             // If both sides are marked as ready (in DB), then start the countdown
@@ -469,10 +474,14 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 
 			if (PhotonNetwork.IsMasterClient) {
-				readyButton.GetComponentInChildren<Text> ().text = "START";
-			} else {
-				readyButton.GetComponentInChildren<Text> ().text = "READY";
-			}
+				readyButtonTxt.text = "START";
+                readyButtonVsTxt.text = "START";
+                readyButtonPreplanningTxt.text = "START";
+            } else {
+                readyButtonTxt.text = "READY";
+                readyButtonVsTxt.text = "READY";
+                readyButtonPreplanningTxt.text = "READY";
+            }
 		}
 
 		void SetMapInfo() {
@@ -583,6 +592,11 @@ namespace Photon.Pun.LobbySystemPhoton
 
         void OnJoinedRoomPreplanning()
         {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                // Initialize initial delay before starting match
+                preplanningSyncDelay = 1800;
+            }
             templateUIClassVs.ListRoomPanel.SetActive(false);
             templateUIClassVs.preplanningRoomPanel.SetActive(true);
             templateUIClassVs.TitleRoomPreplanning.text = (string)PhotonNetwork.CurrentRoom.CustomProperties["versusId"];

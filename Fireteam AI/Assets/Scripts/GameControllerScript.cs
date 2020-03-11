@@ -61,6 +61,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     private short objectiveCount;
     private short objectiveCompleted;
     private string versusWinner;
+    private RoomInfo opposingTeamRoom;
+    private string opposingTeamRoomId;
+    private bool opposingTeamRoomFound;
 
 	// Use this for initialization
 	void Awake() {
@@ -309,13 +312,31 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         }
     }
 
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        if (!string.IsNullOrEmpty(opposingTeamRoomId))
+        {
+            for (int i = 0; i < roomList.Count; i++)
+            {
+                if (roomList[i].Name == opposingTeamRoomId)
+                {
+                    opposingTeamRoom = roomList[i];
+                    opposingTeamRoomFound = true;
+                    return;
+                }
+            }
+            opposingTeamRoom = null;
+            opposingTeamRoomFound = true;
+        }
+    }
+
     void DetermineVersusVictory()
     {
         // If one team gets to 100% completion before another, end the game and the team that made it to 100 wins.
         // If one team forfeits, the other wins
         if (PhotonNetwork.IsMasterClient)
         {
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child("winner").GetValueAsync().ContinueWith(task =>
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).GetValueAsync().ContinueWith(task =>
             {
                 if (task.IsFaulted || task.IsCanceled)
                 {
@@ -323,7 +344,23 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                 } else
                 {
                     DataSnapshot snapshot = task.Result;
-                    versusWinner = snapshot.Value.ToString();
+                    // Check if the other team has forfeited - can be determine by if the room still exists or not
+                    if (string.IsNullOrEmpty(opposingTeamRoomId))
+                    {
+                        opposingTeamRoomId = snapshot.Child(opposingTeam).Child("roomId").Value.ToString();
+                    }
+
+                    if (opposingTeamRoomFound)
+                    {
+                        // If the opposing team room no longer exists, then they've forfeited. Else, 
+                        if (opposingTeamRoom == null)
+                        {
+                            pView.RPC("RpcEndVersusGame", RpcTarget.All, 5f);
+                        }
+                    }
+
+                    // Check if either team has won
+                    versusWinner = snapshot.Child("winner").Value.ToString();
                     if (versusWinner == myTeam)
                     {
                         pView.RPC("RpcEndVersusGame", RpcTarget.All, 5f);
