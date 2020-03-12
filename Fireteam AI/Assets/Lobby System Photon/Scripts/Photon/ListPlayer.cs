@@ -37,9 +37,12 @@ namespace Photon.Pun.LobbySystemPhoton
         public Text readyButtonTxt;
         public Text readyButtonVsTxt;
         public Text readyButtonPreplanningTxt;
-		public GameObject mapPreview;
-		public GameObject mapPreviewVs;
-        public GameObject mapPreviewPreplanning;
+		public RawImage mapPreviewThumb;
+        public Text mapPreviewTxt;
+		public RawImage mapPreviewVsThumb;
+        public Text mapPreviewVsTxt;
+        public RawImage mapPreviewPreplanningThumb;
+        public Text mapPreviewPreplanningTxt;
 		public Button mapNext;
 		public Button mapNextVs;
 		public Button mapPrev;
@@ -126,8 +129,15 @@ namespace Photon.Pun.LobbySystemPhoton
 
         public void DisplayPopup(string message) {
 			ToggleButtons (false);
-			templateUIClass.popup.GetComponentsInChildren<Text> () [0].text = message;
-			templateUIClass.popup.SetActive (true);
+            if (templateUIClass.gameObject.activeInHierarchy)
+            {
+                templateUIClass.popup.GetComponentsInChildren<Text>()[0].text = message;
+                templateUIClass.popup.SetActive(true);
+            } else if (templateUIClassVs.gameObject.activeInHierarchy)
+            {
+                templateUIClassVs.popup.GetComponentsInChildren<Text>()[0].text = message;
+                templateUIClassVs.popup.SetActive(true);
+            }
 		}
 
 		public void StartGameBtn() {
@@ -135,7 +145,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				StartGameVersus();
 			} else if (currentMode == 'P') {
 				StartGamePreplanning();
-			} else
+			} else if (currentMode == 'C')
             {
                 StartGameCampaign();
             }
@@ -280,11 +290,21 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		void ToggleButtons(bool status) {
 			mapNext.interactable = status;
+            mapNextVs.interactable = status;
 			mapPrev.interactable = status;
+            mapPrevVs.interactable = status;
 			readyButton.GetComponent<Button> ().interactable = status;
-			sendMsgBtn.interactable = status;
+            readyButtonVs.GetComponent<Button>().interactable = status;
+            readyButtonPreplanning.GetComponent<Button>().interactable = status;
+            sendMsgBtn.interactable = status;
+            sendMsgBtnVs.interactable = status;
+            sendMsgBtnPreplanning.interactable = status;
 			emojiBtn.interactable = status;
+            emojiBtnVs.interactable = status;
+            emojiBtnPreplanning.interactable = status;
 			leaveGameBtn.interactable = status;
+            leaveGameBtnVs.interactable = status;
+            leaveGameBtnPreplanning.interactable = status;
 		}
 
 		[PunRPC]
@@ -488,8 +508,13 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		void SetMapInfo() {
-			mapPreview.GetComponent<RawImage> ().texture = (Texture) Resources.Load (mapStrings[mapIndex]);
-			mapPreview.GetComponentInChildren<Text>().text = mapNames [mapIndex];
+            Texture mapTexture = (Texture)Resources.Load(mapStrings[mapIndex]);
+            mapPreviewThumb.texture = mapTexture;
+			mapPreviewTxt.text = mapNames [mapIndex];
+            mapPreviewVsThumb.texture = mapTexture;
+            mapPreviewVsTxt.text = mapNames[mapIndex];
+            mapPreviewPreplanningThumb.texture = mapTexture;
+            mapPreviewPreplanningTxt.text = mapNames[mapIndex];
 		}
 
 		public void goToNextMap() {
@@ -658,7 +683,7 @@ namespace Photon.Pun.LobbySystemPhoton
                 // Add yourself as a captain if there isn't one
                 if (string.IsNullOrEmpty(currentRedCaptain))
                 {
-                    PhotonNetwork.CurrentRoom.CustomProperties.Add("redCaptain", myNickname);
+                    PhotonNetwork.CurrentRoom.CustomProperties["redCaptain"] = myNickname;
                     // Remove yourself from captain of blue team if you were captain and set the next available person if there is one
                     string currentBlueCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["blueCaptain"];
                     if (!string.IsNullOrEmpty(currentBlueCaptain) && currentBlueCaptain == myNickname)
@@ -679,7 +704,7 @@ namespace Photon.Pun.LobbySystemPhoton
                 // Add yourself as a captain if there isn't one
                 if (string.IsNullOrEmpty(currentBlueCaptain))
                 {
-                    PhotonNetwork.CurrentRoom.CustomProperties.Add("blueCaptain", myNickname);
+                    PhotonNetwork.CurrentRoom.CustomProperties["blueCaptain"] = myNickname;
                     // Remove yourself from captain of red team if you were captain and set the next available person if there is one
                     string currentRedCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["redCaptain"];
                     if (!string.IsNullOrEmpty(currentRedCaptain) && currentRedCaptain == myNickname)

@@ -182,6 +182,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void ClosePopup() {
 			templateUIClass.popup.SetActive (false);
+            templateUIVersusClass.popup.SetActive(false);
 		}
 
 		public void PopupMessage(string message) {
