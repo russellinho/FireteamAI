@@ -9,6 +9,7 @@ namespace Photon.Pun.LobbySystemPhoton
 	public class Connexion : MonoBehaviourPunCallbacks
 	{
 		public Template templateUIClass;
+        public Template templateUIVersusClass;
 		private int nbrPlayersInLobby = 0;
 
 		void Start()
@@ -40,7 +41,9 @@ namespace Photon.Pun.LobbySystemPhoton
 		{
 			templateUIClass.BtnCreatRoom.interactable = true;
 			templateUIClass.ExitMatchmakingBtn.interactable = true;
-			StartCoroutine("AutoRefreshListRoom");
+            templateUIVersusClass.BtnCreatRoom.interactable = true;
+            templateUIVersusClass.ExitMatchmakingBtn.interactable = true;
+            StartCoroutine("AutoRefreshListRoom");
 		}
 
 		public void OnRefreshButtonClicked()
@@ -60,16 +63,37 @@ namespace Photon.Pun.LobbySystemPhoton
 			templateUIClass.NbrPlayers.text = nbrPlayersInLobby.ToString("00");
 		}
 
+        public void OnVersusRefreshButtonClicked()
+        {
+            StopCoroutine("AutoRefreshListRoom");
+            PhotonNetwork.JoinLobby();
+            if (PhotonNetwork.CountOfRooms == 0)
+            {
+                templateUIVersusClass.ListRoomEmpty.SetActive(true);
+            }
+            else
+            {
+                templateUIVersusClass.ListRoomEmpty.SetActive(false);
+            }
+            StartCoroutine("AutoRefreshListRoom");
+            nbrPlayersInLobby = PhotonNetwork.CountOfPlayers;
+            templateUIVersusClass.NbrPlayers.text = nbrPlayersInLobby.ToString("00");
+        }
+
 		public override void OnConnectedToMaster()
 		{
+            PhotonNetwork.NickName = PlayerData.playerdata.info.playername;
 			templateUIClass.LoadingPanel.SetActive(false);
 			templateUIClass.ListRoomPanel.SetActive(true);
-			if (!PhotonNetwork.InLobby) {
+            templateUIVersusClass.LoadingPanel.SetActive(false);
+            templateUIVersusClass.ListRoomPanel.SetActive(true);
+            if (!PhotonNetwork.InLobby) {
 				PhotonNetwork.JoinLobby ();
 			}
 			nbrPlayersInLobby = PhotonNetwork.CountOfPlayers;
 			templateUIClass.NbrPlayers.text = nbrPlayersInLobby.ToString("00");
-		}
+            templateUIVersusClass.NbrPlayers.text = nbrPlayersInLobby.ToString("00");
+        }
 
 		public void OnCreateCampaignRoomButtonClicked()
 		{
@@ -79,21 +103,27 @@ namespace Photon.Pun.LobbySystemPhoton
 			roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
 			RoomOptions options = new RoomOptions { MaxPlayers = 8 };
-			options.CustomRoomProperties["gameMode"] = "camp";
+            ExitGames.Client.Photon.Hashtable h = new ExitGames.Client.Photon.Hashtable();
+            h.Add("gameMode", "camp");
+            //options.CustomRoomProperties.Add("gameMode", "camp");
+            options.CustomRoomProperties = h;
 
-			PhotonNetwork.CreateRoom(roomName, options, null);
+            PhotonNetwork.CreateRoom(roomName, options, null);
 			templateUIClass.NbrPlayers.text = "00";
 		}
 
 		public void OnCreateVersusRoomButtonClicked()
 		{
-			templateUIClass.BtnCreatRoom.interactable = false;
-			templateUIClass.ExitMatchmakingBtn.interactable = false;
+			templateUIVersusClass.BtnCreatRoom.interactable = false;
+			templateUIVersusClass.ExitMatchmakingBtn.interactable = false;
 			string roomName = "Table_"+ Random.Range(1000, 10000);
 			roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
 			RoomOptions options = new RoomOptions { MaxPlayers = 16 };
-			options.CustomRoomProperties["gameMode"] = "versus";
+            ExitGames.Client.Photon.Hashtable h = new ExitGames.Client.Photon.Hashtable();
+            h.Add("gameMode", "versus");
+			//options.CustomRoomProperties.Add("gameMode", "versus");
+            options.CustomRoomProperties = h;
 
 			PhotonNetwork.CreateRoom(roomName, options, null);
 			templateUIClass.NbrPlayers.text = "00";
@@ -101,8 +131,8 @@ namespace Photon.Pun.LobbySystemPhoton
 
         public void CreateVersusPreplanningRoom(string versusId, string team)
         {
-            templateUIClass.BtnCreatRoom.interactable = false;
-            templateUIClass.ExitMatchmakingBtn.interactable = false;
+            templateUIVersusClass.BtnCreatRoom.interactable = false;
+            templateUIVersusClass.ExitMatchmakingBtn.interactable = false;
             string roomName = "Table_" + Random.Range(1000, 10000);
             roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
@@ -139,10 +169,12 @@ namespace Photon.Pun.LobbySystemPhoton
 			if (PhotonNetwork.CountOfRooms == 0)
 			{
 				templateUIClass.ListRoomEmpty.SetActive(true);
+                templateUIVersusClass.ListRoomEmpty.SetActive(true);
 			}
 			else
 			{
 				templateUIClass.ListRoomEmpty.SetActive(false);
+                templateUIVersusClass.ListRoomEmpty.SetActive(false);
 			}
             StopCoroutine("AutoRefreshListRoom");
             StartCoroutine("AutoRefreshListRoom");
@@ -153,8 +185,15 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		public void PopupMessage(string message) {
-			templateUIClass.popup.GetComponentInChildren<Text> ().text = message;
-			templateUIClass.popup.SetActive (true);
+            if (templateUIClass.gameObject.activeInHierarchy)
+            {
+                templateUIClass.popup.GetComponentInChildren<Text>().text = message;
+                templateUIClass.popup.SetActive(true);
+            } else
+            {
+                templateUIVersusClass.popup.GetComponentInChildren<Text>().text = message;
+                templateUIVersusClass.popup.SetActive(true);
+            }
 		}
 	}
 }

@@ -685,7 +685,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &15623406
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15809,7 +15809,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1774841156}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.9889442
+  m_Size: 0.98810107
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -22520,7 +22520,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1731172551}
   m_HandleRect: {fileID: 1731172550}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -24950,7 +24950,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &681879747
 RectTransform:
   m_ObjectHideFlags: 0
@@ -30531,7 +30531,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1615888902}
-        m_MethodName: GoToMatchmakingMenu
+        m_MethodName: GoToVersusMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -36291,6 +36291,11 @@ PrefabInstance:
       propertyPath: lobbyType
       value: versus
       objectReference: {fileID: 0}
+    - target: {fileID: 114972685017542850, guid: 15b33641d19fb46fe80cb87ef5583139,
+        type: 3}
+      propertyPath: templateUIVersusClass
+      value: 
+      objectReference: {fileID: 1885361459}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 15b33641d19fb46fe80cb87ef5583139, type: 3}
 --- !u!1 &979395149
@@ -50784,6 +50789,21 @@ PrefabInstance:
       propertyPath: RoomListContent
       value: 
       objectReference: {fileID: 1133649172}
+    - target: {fileID: 114422629435736320, guid: 6ad64f5323b2d44409afa883d4d9c4c9,
+        type: 3}
+      propertyPath: RoomListPanelVs
+      value: 
+      objectReference: {fileID: 1060802147}
+    - target: {fileID: 114422629435736320, guid: 6ad64f5323b2d44409afa883d4d9c4c9,
+        type: 3}
+      propertyPath: RoomListContentVs
+      value: 
+      objectReference: {fileID: 477172546}
+    - target: {fileID: 114422629435736320, guid: 6ad64f5323b2d44409afa883d4d9c4c9,
+        type: 3}
+      propertyPath: templateUIClassVs
+      value: 
+      objectReference: {fileID: 1885361459}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ad64f5323b2d44409afa883d4d9c4c9, type: 3}
 --- !u!1 &1345176033
@@ -59485,6 +59505,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
         type: 3}
+      propertyPath: InsideRoomPanelVs.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelPreplanning.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
       propertyPath: templateUIClass
       value: 
       objectReference: {fileID: 1865562018}
@@ -59583,6 +59613,181 @@ PrefabInstance:
       propertyPath: countdownSfx
       value: 
       objectReference: {fileID: 8300000, guid: 954276496b63b8c42b2220e702c7ed34, type: 3}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: readyButtonVs
+      value: 
+      objectReference: {fileID: 1503185614}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: templateUIClassVs
+      value: 
+      objectReference: {fileID: 1885361459}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: connexion
+      value: 
+      objectReference: {fileID: 2053386075}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: chatVs
+      value: 
+      objectReference: {fileID: 2040635063}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: chatPreplanning
+      value: 
+      objectReference: {fileID: 1231076854}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: readyButtonPreplanning
+      value: 
+      objectReference: {fileID: 124299911}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: readyButtonVsTxt
+      value: 
+      objectReference: {fileID: 690535833}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: readyButtonTxt
+      value: 
+      objectReference: {fileID: 1183075311}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: readyButtonPreplanningTxt
+      value: 
+      objectReference: {fileID: 1693678377}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: mapPreviewVs
+      value: 
+      objectReference: {fileID: 15206664}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: mapPreviewPreplanning
+      value: 
+      objectReference: {fileID: 1242604007}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: mapNextVs
+      value: 
+      objectReference: {fileID: 338932706}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: mapPrevVs
+      value: 
+      objectReference: {fileID: 152233366}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: sendMsgBtnVs
+      value: 
+      objectReference: {fileID: 410258503}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: emojiBtnVs
+      value: 
+      objectReference: {fileID: 765080924}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: leaveGameBtnVs
+      value: 
+      objectReference: {fileID: 651638439}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: leaveGameBtnPreplanning
+      value: 
+      objectReference: {fileID: 1543223874}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: emojiBtnPreplanning
+      value: 
+      objectReference: {fileID: 2112230297}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: sendMsgBtnPreplanning
+      value: 
+      objectReference: {fileID: 1504249574}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelVs.Array.data[0]
+      value: 
+      objectReference: {fileID: 185178589}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelVs.Array.data[1]
+      value: 
+      objectReference: {fileID: 57052663}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelVs.Array.data[2]
+      value: 
+      objectReference: {fileID: 1624287969}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelVs.Array.data[3]
+      value: 
+      objectReference: {fileID: 1359287285}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelVs.Array.data[4]
+      value: 
+      objectReference: {fileID: 332603700}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelVs.Array.data[5]
+      value: 
+      objectReference: {fileID: 1658628342}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelVs.Array.data[6]
+      value: 
+      objectReference: {fileID: 1212024548}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelVs.Array.data[7]
+      value: 
+      objectReference: {fileID: 1094120669}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelPreplanning.Array.data[0]
+      value: 
+      objectReference: {fileID: 1318168312}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelPreplanning.Array.data[1]
+      value: 
+      objectReference: {fileID: 1867747091}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelPreplanning.Array.data[2]
+      value: 
+      objectReference: {fileID: 338665539}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelPreplanning.Array.data[3]
+      value: 
+      objectReference: {fileID: 1140296461}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelPreplanning.Array.data[4]
+      value: 
+      objectReference: {fileID: 621708342}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelPreplanning.Array.data[5]
+      value: 
+      objectReference: {fileID: 935970317}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelPreplanning.Array.data[6]
+      value: 
+      objectReference: {fileID: 789927765}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: InsideRoomPanelPreplanning.Array.data[7]
+      value: 
+      objectReference: {fileID: 31017708}
     - target: {fileID: 4950750915714128, guid: 5abdf14a6d1684959a3511f4a2bcf083, type: 3}
       propertyPath: m_LocalPosition.x
       value: 699.3318
@@ -60760,6 +60965,7 @@ MonoBehaviour:
   titleText: {fileID: 728495811}
   matchmakingMenu: {fileID: 685629494}
   customizationMenu: {fileID: 942626100}
+  versusMenu: {fileID: 2022232081}
   marketplaceMenu: {fileID: 237127963}
   modMenu: {fileID: 2074872410}
   keyBindingsPopup: {fileID: 1406977519}
@@ -72956,6 +73162,11 @@ PrefabInstance:
       propertyPath: ChatTextPreplanning
       value: 
       objectReference: {fileID: 1565975454}
+    - target: {fileID: 114542054788538680, guid: 99063f89c1ae341ff82d59a9f68d27b7,
+        type: 3}
+      propertyPath: TitleRoomPreplanning
+      value: 
+      objectReference: {fileID: 1257446883}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 99063f89c1ae341ff82d59a9f68d27b7, type: 3}
 --- !u!4 &1885361458 stripped
@@ -72964,6 +73175,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1885361457}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1885361459 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114542054788538680, guid: 99063f89c1ae341ff82d59a9f68d27b7,
+    type: 3}
+  m_PrefabInstance: {fileID: 1885361457}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11fb523ad104d274fa91bea9807ac9de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1885510859
 GameObject:
   m_ObjectHideFlags: 0

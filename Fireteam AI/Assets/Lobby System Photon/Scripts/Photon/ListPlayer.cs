@@ -46,10 +46,13 @@ namespace Photon.Pun.LobbySystemPhoton
 		public Button mapPrevVs;
 		public Button sendMsgBtn;
 		public Button sendMsgBtnVs;
+        public Button sendMsgBtnPreplanning;
 		public Button emojiBtn;
 		public Button emojiBtnVs;
+        public Button emojiBtnPreplanning;
 		public Button leaveGameBtn;
 		public Button leaveGameBtnVs;
+        public Button leaveGameBtnPreplanning;
 		public GameObject titleController;
 		public AudioClip countdownSfx;
         private short preplanningJoinTimeoutCount;
@@ -303,9 +306,9 @@ namespace Photon.Pun.LobbySystemPhoton
 		[PunRPC]
 		public void RpcChangeReadyStatus(int playerId, bool readyStatus) {
 			if (readyStatus) {
-				playerListEntries [playerId].GetComponent<PlayerEntryScript> ().SetNameColor(Color.green);
+				playerListEntries [playerId].GetComponent<PlayerEntryScript> ().SetReady(true);
 			} else {
-				playerListEntries [playerId].GetComponent<PlayerEntryScript> ().SetNameColor(Color.red);
+				playerListEntries [playerId].GetComponent<PlayerEntryScript> ().SetReady(false);
 			}
 		}
 
@@ -512,7 +515,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				OnJoinedRoomVersus();
 			} else if (currentMode == 'P') {
 				OnJoinedRoomPreplanning();
-			} else
+			} else if (currentMode == 'C')
             {
                 OnJoinedRoomCampaign();
             }

@@ -39,6 +39,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	//public GameObject networkMan;
 	public GameObject matchmakingMenu;
 	public GameObject customizationMenu;
+    public GameObject versusMenu;
 	public GameObject marketplaceMenu;
 	public GameObject modMenu;
 	public GameObject keyBindingsPopup;
@@ -278,7 +279,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		} else {
-			if (!matchmakingMenu.activeInHierarchy) {
+			if (!matchmakingMenu.activeInHierarchy && !versusMenu.activeInHierarchy) {
 				// If going to main menu screen
 				if (camPos == 0) {
 					mainCam.transform.position = Vector3.Lerp(customizationCameraPos, defaultCameraPos, camMoveTimer);
@@ -349,13 +350,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		titleText.enabled = false;
 		mainMenu.SetActive (false);
 		customizationMenu.SetActive (false);
+        versusMenu.SetActive(false);
 		matchmakingMenu.SetActive (true);
 	}
+
+    public void GoToVersusMenu()
+    {
+        if (!PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.playername;
+            PhotonNetwork.ConnectUsingSettings();
+        }
+
+        titleText.enabled = false;
+        mainMenu.SetActive(false);
+        customizationMenu.SetActive(false);
+        versusMenu.SetActive(true);
+    }
 		
 	public void ReturnToMainMenu() {
 		// Save settings if the settings are active
 		customizationMenu.SetActive (false);
 		matchmakingMenu.SetActive (false);
+        versusMenu.SetActive(false);
 		keyBindingsPopup.SetActive(false);
 		titleText.enabled = true;
 		mainMenu.SetActive(true);
@@ -380,6 +397,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		SwitchToEquipmentScreen();
 		customizationMenu.SetActive (false);
 		matchmakingMenu.SetActive (false);
+        versusMenu.SetActive(false);
 		previousCamPos = camPos;
 		camPos = 0;
 		camMoveTimer = 0f;
@@ -395,6 +413,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		SwitchToMarketplaceEquipmentScreen();
 		marketplaceMenu.SetActive (false);
 		matchmakingMenu.SetActive (false);
+        versusMenu.SetActive(false);
 		previousCamPos = camPos;
 		camPos = 0;
 		camMoveTimer = 0f;
@@ -415,6 +434,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     {
         base.OnDisconnected(cause);
         matchmakingMenu.SetActive(false);
+        versusMenu.SetActive(false);
 		titleText.enabled = true;
         mainMenu.SetActive(true);
     }
@@ -427,6 +447,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		equippedSecondarySlot.SetActive(false);
 		equippedSupportSlot.SetActive(false);
 		matchmakingMenu.SetActive (false);
+        versusMenu.SetActive(false);
 		marketplaceMenu.SetActive(false);
 		previousCamPos = camPos;
 		camPos = 1;
@@ -441,6 +462,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopEquippedSecondarySlot.SetActive(false);
 		shopEquippedSupportSlot.SetActive(false);
 		matchmakingMenu.SetActive (false);
+        versusMenu.SetActive(false);
 		customizationMenu.SetActive(false);
 		previousCamPos = camPos;
 		camPos = 2;
