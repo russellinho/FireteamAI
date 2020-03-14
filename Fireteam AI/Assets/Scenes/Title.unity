@@ -59557,6 +59557,16 @@ PrefabInstance:
       propertyPath: mapPreviewPreplanningTxt
       value: 
       objectReference: {fileID: 1872864163}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: myTeamVsTxt
+      value: 
+      objectReference: {fileID: 836413352}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: myTeamPreplanningTxt
+      value: 
+      objectReference: {fileID: 1718098908}
     - target: {fileID: 4950750915714128, guid: 5abdf14a6d1684959a3511f4a2bcf083, type: 3}
       propertyPath: m_LocalPosition.x
       value: 699.3318

@@ -21,6 +21,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		public GameObject[] InsideRoomPanel;
 		public GameObject[] InsideRoomPanelVs;
         public GameObject[] InsideRoomPanelPreplanning;
+        public Text myTeamVsTxt;
+        public Text myTeamPreplanningTxt;
 		private int lastSlotUsed;
 
 		public Template templateUIClass;
@@ -607,11 +609,15 @@ namespace Photon.Pun.LobbySystemPhoton
 					entryScript.SetTeam('R');
 					redTeam.Add(p.ActorNumber);
                     SetTeamCaptain('R');
+                    myTeamVsTxt.text = "RED TEAM";
+                    myTeamPreplanningTxt.text = "RED TEAM";
 				} else {
                     SetTeamCaptain('B');
 					entryScript.SetTeam('B');
 					blueTeam.Add(p.ActorNumber);
                     SetTeamCaptain('B');
+                    myTeamVsTxt.text = "BLUE TEAM";
+                    myTeamPreplanningTxt.text = "BLUE TEAM";
                 }
 				playerListEntries.Add(p.ActorNumber, entry);
 			}
@@ -666,10 +672,14 @@ namespace Photon.Pun.LobbySystemPhoton
             {
                 blueTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 redTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
+                myTeamVsTxt.text = "RED TEAM";
+                myTeamPreplanningTxt.text = "RED TEAM";
             } else
             {
                 redTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 blueTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
+                myTeamVsTxt.text = "BLUE TEAM";
+                myTeamPreplanningTxt.text = "BLUE TEAM";
             }
             SetTeamCaptain(newTeam);
         }
@@ -725,8 +735,21 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnPlayerEnteredRoom(Player newPlayer)
 		{
+            string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
 			GameObject entry = Instantiate(PlayerListEntryPrefab);
-			entry.transform.SetParent(InsideRoomPanel[lastSlotUsed++].transform);
+            if (gameMode == "versus")
+            {
+                if (InsideRoomPanelVs[0].activeInHierarchy)
+                {
+                    entry.transform.SetParent(InsideRoomPanelVs[lastSlotUsed++].transform);
+                } else if (InsideRoomPanelPreplanning[0].activeInHierarchy)
+                {
+                    entry.transform.SetParent(InsideRoomPanelPreplanning[lastSlotUsed++].transform);
+                }
+            } else if (gameMode == "camp")
+            {
+                entry.transform.SetParent(InsideRoomPanel[lastSlotUsed++].transform);
+            }
 			entry.transform.localPosition = Vector3.zero;
 			entry.transform.localScale = Vector3.one;
 			entry.GetComponent<TextMeshProUGUI>().text = newPlayer.NickName;

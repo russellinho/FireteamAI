@@ -122,8 +122,10 @@ namespace Photon.Pun.LobbySystemPhoton
 			RoomOptions options = new RoomOptions { MaxPlayers = 16 };
             ExitGames.Client.Photon.Hashtable h = new ExitGames.Client.Photon.Hashtable();
             h.Add("gameMode", "versus");
+            string[] lobbyProperties = new string[1] {"gameMode"};
 			//options.CustomRoomProperties.Add("gameMode", "versus");
             options.CustomRoomProperties = h;
+            options.CustomRoomPropertiesForLobby = lobbyProperties;
 
 			PhotonNetwork.CreateRoom(roomName, options, null);
 			templateUIClass.NbrPlayers.text = "00";
