@@ -204,6 +204,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 				// Testing - comment in release
 				if (PlayerData.playerdata.testMode == true) {
+                    Debug.Log("red: " + redTeam.Count + " blue: " + blueTeam.Count);
 					if (redTeam.Count >= 1 && blueTeam.Count >= 1) {
 						pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
 						StartCoroutine ("StartVersusGameCountdown");
@@ -725,13 +726,13 @@ namespace Photon.Pun.LobbySystemPhoton
             if (newTeam == "red")
             {
                 entryScript.SetTeam('R');
-                blueTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
-                redTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
+                blueTeam.Remove(actorId);
+                redTeam.Add(actorId);
             } else if (newTeam == "blue")
             {
                 entryScript.SetTeam('B');
-                redTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
-                blueTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
+                redTeam.Remove(actorId);
+                blueTeam.Add(actorId);
             }
         }
 
