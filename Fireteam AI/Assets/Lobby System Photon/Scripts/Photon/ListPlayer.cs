@@ -7,6 +7,8 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UITemplate;
 using TMPro;
+using ExitGames.Client.Photon;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Photon.Pun.LobbySystemPhoton
 {
@@ -82,6 +84,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		// Versus mode state
 		private ArrayList redTeam;
 		private ArrayList blueTeam;
+        private Queue loadPlayerQueue;
 
 		void Start() {
 			SetMapInfo ();
@@ -507,7 +510,31 @@ namespace Photon.Pun.LobbySystemPhoton
                 readyButtonVsTxt.text = "READY";
                 readyButtonPreplanningTxt.text = "READY";
             }
+
+            LoadVersusPlayerData();
 		}
+
+        void LoadVersusPlayerData()
+        {
+            while (loadPlayerQueue.Peek() != null)
+            {
+                Player player = (Player)loadPlayerQueue.Dequeue();
+                if (player == null)
+                {
+                    continue;
+                }
+                PlayerEntryScript playerEntry = playerListEntries[player.ActorNumber].GetComponent<PlayerEntryScript>();
+                string theirTeam = (string)player.CustomProperties["team"];
+                if (theirTeam == "red")
+                {
+                    playerEntry.SetTeam('R');
+                }
+                else if (theirTeam == "blue")
+                {
+                    playerEntry.SetTeam('B');
+                }
+            }
+        }
 
 		void SetMapInfo() {
             Texture mapTexture = (Texture)Resources.Load(mapStrings[mapIndex]);
@@ -588,7 +615,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				playerListEntries = new Dictionary<int, GameObject>();
 			}
 
-			lastSlotUsed = 0;
+            lastSlotUsed = 0;
 			foreach (Player p in PhotonNetwork.PlayerList)
 			{
 				GameObject entry = Instantiate(PlayerListEntryPrefab);
@@ -602,22 +629,46 @@ namespace Photon.Pun.LobbySystemPhoton
 				entry.transform.SetParent(InsideRoomPanelVs[lastSlotUsed++].transform);
 				entry.transform.localPosition = Vector3.zero;
 				entryScript.SetNameTag(p.NickName);
-				// Select team if versus mode. Choose red by default and blue if red has more members. First one on each team is "team captain"
-                // TODO: Probably going to need to move this somewhere else after all players are loaded in
-				if (redTeam.Count <= blueTeam.Count) {
-                    SetTeamCaptain('R');
-					entryScript.SetTeam('R');
-					redTeam.Add(p.ActorNumber);
-                    SetTeamCaptain('R');
-                    myTeamVsTxt.text = "RED TEAM";
-                    myTeamPreplanningTxt.text = "RED TEAM";
-				} else {
-                    SetTeamCaptain('B');
-					entryScript.SetTeam('B');
-					blueTeam.Add(p.ActorNumber);
-                    SetTeamCaptain('B');
-                    myTeamVsTxt.text = "BLUE TEAM";
-                    myTeamPreplanningTxt.text = "BLUE TEAM";
+                if (p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
+                {
+                    // If it's me, set team captain as me if possible and set my team
+                    if (redTeam.Count <= blueTeam.Count)
+                    {
+                        entryScript.SetTeam('R');
+                        redTeam.Add(p.ActorNumber);
+                        SetTeamCaptain('R');
+                        myTeamVsTxt.text = "RED TEAM";
+                        myTeamPreplanningTxt.text = "RED TEAM";
+                        Hashtable h = new Hashtable();
+                        h.Add("team", "red");
+                        PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+                    }
+                    else
+                    {
+                        entryScript.SetTeam('B');
+                        blueTeam.Add(p.ActorNumber);
+                        SetTeamCaptain('B');
+                        myTeamVsTxt.text = "BLUE TEAM";
+                        myTeamPreplanningTxt.text = "BLUE TEAM";
+                        Hashtable h = new Hashtable();
+                        h.Add("team", "blue");
+                        PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+                    }
+                }
+                else
+                {
+                    // Set this player's team on your end. Set the value for entry script and UI
+                    string theirTeam = (string)p.CustomProperties["team"];
+                    if (theirTeam == "red")
+                    {
+                        entryScript.SetTeam('R');
+                        redTeam.Add(p.ActorNumber);
+                    }
+                    else if (theirTeam == "blue")
+                    {
+                        entryScript.SetTeam('B');
+                        blueTeam.Add(p.ActorNumber);
+                    }
                 }
 				playerListEntries.Add(p.ActorNumber, entry);
 			}
@@ -674,14 +725,35 @@ namespace Photon.Pun.LobbySystemPhoton
                 redTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
                 myTeamVsTxt.text = "RED TEAM";
                 myTeamPreplanningTxt.text = "RED TEAM";
-            } else
+                PhotonNetwork.LocalPlayer.CustomProperties["team"] = "red";
+            } else if (newTeam == 'B')
             {
                 redTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 blueTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
                 myTeamVsTxt.text = "BLUE TEAM";
                 myTeamPreplanningTxt.text = "BLUE TEAM";
+                PhotonNetwork.LocalPlayer.CustomProperties["team"] = "blue";
             }
             SetTeamCaptain(newTeam);
+            pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber);
+        }
+
+        [PunRPC]
+        void RpcSwitchTeams(int actorId)
+        {
+            GameObject entry = playerListEntries[actorId];
+            PlayerEntryScript entryScript = entry.GetComponent<PlayerEntryScript>();
+            entryScript.ChangeTeam();
+            char newTeam = entryScript.team;
+            if (newTeam == 'R')
+            {
+                blueTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
+                redTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
+            } else if (newTeam == 'B')
+            {
+                redTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
+                blueTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
+            }
         }
 
         void SetTeamCaptain(char team)
@@ -755,6 +827,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			entry.GetComponent<TextMeshProUGUI>().text = newPlayer.NickName;
 
 			playerListEntries.Add(newPlayer.ActorNumber, entry);
+            loadPlayerQueue.Enqueue(newPlayer);
 		}
 
 		public override void OnPlayerLeftRoom(Player otherPlayer)
