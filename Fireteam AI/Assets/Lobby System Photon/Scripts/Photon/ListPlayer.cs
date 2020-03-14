@@ -84,7 +84,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		// Versus mode state
 		private ArrayList redTeam;
 		private ArrayList blueTeam;
-        private Queue loadPlayerQueue;
+        private Queue loadPlayerQueue = new Queue();
 
 		void Start() {
 			SetMapInfo ();
@@ -511,30 +511,7 @@ namespace Photon.Pun.LobbySystemPhoton
                 readyButtonPreplanningTxt.text = "READY";
             }
 
-            LoadVersusPlayerData();
 		}
-
-        void LoadVersusPlayerData()
-        {
-            while (loadPlayerQueue.Peek() != null)
-            {
-                Player player = (Player)loadPlayerQueue.Dequeue();
-                if (player == null)
-                {
-                    continue;
-                }
-                PlayerEntryScript playerEntry = playerListEntries[player.ActorNumber].GetComponent<PlayerEntryScript>();
-                string theirTeam = (string)player.CustomProperties["team"];
-                if (theirTeam == "red")
-                {
-                    playerEntry.SetTeam('R');
-                }
-                else if (theirTeam == "blue")
-                {
-                    playerEntry.SetTeam('B');
-                }
-            }
-        }
 
 		void SetMapInfo() {
             Texture mapTexture = (Texture)Resources.Load(mapStrings[mapIndex]);
@@ -642,6 +619,7 @@ namespace Photon.Pun.LobbySystemPhoton
                         Hashtable h = new Hashtable();
                         h.Add("team", "red");
                         PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+                        pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, 'R');
                     }
                     else
                     {
@@ -653,6 +631,7 @@ namespace Photon.Pun.LobbySystemPhoton
                         Hashtable h = new Hashtable();
                         h.Add("team", "blue");
                         PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+                        pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, 'B');
                     }
                 }
                 else
@@ -739,18 +718,18 @@ namespace Photon.Pun.LobbySystemPhoton
         }
 
         [PunRPC]
-        void RpcSwitchTeams(int actorId)
+        void RpcSwitchTeams(int actorId, char newTeam)
         {
             GameObject entry = playerListEntries[actorId];
             PlayerEntryScript entryScript = entry.GetComponent<PlayerEntryScript>();
-            entryScript.ChangeTeam();
-            char newTeam = entryScript.team;
             if (newTeam == 'R')
             {
+                entryScript.SetTeam(newTeam);
                 blueTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 redTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
             } else if (newTeam == 'B')
             {
+                entryScript.SetTeam(newTeam);
                 redTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 blueTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
             }
