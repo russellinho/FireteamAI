@@ -57,14 +57,12 @@ namespace Photon.Pun.LobbySystemPhoton
 			char gameMode = (templateUIClass.gameObject.activeInHierarchy ? 'C' : 'V');
 			foreach (RoomInfo info in roomList)
 			{
-                Debug.Log("gameMode: " + gameMode + " custom: " + (string)info.CustomProperties["gameMode"]);
 				// Remove room from cached room list if it got closed, became invisible or was marked as removed
 				// If we are in the versus lobby, don't load campaign matches and vice versa
                 if (!info.IsOpen || !info.IsVisible || info.removedFromList || 
 					((string)info.CustomProperties["gameMode"] == "camp" && gameMode == 'V') ||
 					((string)info.CustomProperties["gameMode"] == "versus" && gameMode == 'C'))
 				{
-                    Debug.Log("b");
 					if (cachedRoomList.ContainsKey(info.Name))
 					{
 						cachedRoomList.Remove(info.Name);
@@ -81,7 +79,6 @@ namespace Photon.Pun.LobbySystemPhoton
 				// Add new room info to cache
 				else
 				{
-                    Debug.Log("a");
 					cachedRoomList.Add(info.Name, info);
 				}
 			}

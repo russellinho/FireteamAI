@@ -619,7 +619,7 @@ namespace Photon.Pun.LobbySystemPhoton
                         Hashtable h = new Hashtable();
                         h.Add("team", "red");
                         PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-                        pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, 'R');
+                        pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, "red");
                     }
                     else
                     {
@@ -631,7 +631,7 @@ namespace Photon.Pun.LobbySystemPhoton
                         Hashtable h = new Hashtable();
                         h.Add("team", "blue");
                         PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-                        pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, 'B');
+                        pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, "blue");
                     }
                 }
                 else
@@ -714,22 +714,22 @@ namespace Photon.Pun.LobbySystemPhoton
                 PhotonNetwork.LocalPlayer.CustomProperties["team"] = "blue";
             }
             SetTeamCaptain(newTeam);
-            pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber);
+            pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (newTeam == 'R' ? "red" : "blue"));
         }
 
         [PunRPC]
-        void RpcSwitchTeams(int actorId, char newTeam)
+        void RpcSwitchTeams(int actorId, string newTeam)
         {
             GameObject entry = playerListEntries[actorId];
             PlayerEntryScript entryScript = entry.GetComponent<PlayerEntryScript>();
-            if (newTeam == 'R')
+            if (newTeam == "red")
             {
-                entryScript.SetTeam(newTeam);
+                entryScript.SetTeam('R');
                 blueTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 redTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
-            } else if (newTeam == 'B')
+            } else if (newTeam == "blue")
             {
-                entryScript.SetTeam(newTeam);
+                entryScript.SetTeam('B');
                 redTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 blueTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
             }
