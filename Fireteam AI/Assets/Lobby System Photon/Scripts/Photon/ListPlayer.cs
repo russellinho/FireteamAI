@@ -66,6 +66,7 @@ namespace Photon.Pun.LobbySystemPhoton
         private string preplanningVersusId;
         private bool preplanningIsReady;
         private short preplanningSyncDelay;
+        private bool preplanningSyncComplete;
         private bool versusGameStarting;
 
 		// Map options
@@ -101,33 +102,37 @@ namespace Photon.Pun.LobbySystemPhoton
 
         void CheckCanStartVersusMatch()
         {
-            if (preplanningSyncDelay > 0)
-            {
-                preplanningSyncDelay--;
-                return;
-            } else
-            {
-                preplanningSyncDelay = 400;
-            }
-            // Only do this if the user is in preplanning and the user is the host.
-            // If both sides are marked as ready (in DB), then start the countdown
-            // TODO: Later ensure that most players are ready before starting
-            if (PhotonNetwork.IsMasterClient && !string.IsNullOrEmpty(preplanningVersusId) && !versusGameStarting)
-            {
-                DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(preplanningVersusId).Child(preplanningTeam).Child("isReady").SetValueAsync(preplanningIsReady).ContinueWith(task =>
+            if (!string.IsNullOrEmpty(preplanningVersusId)) {
+                if (!preplanningSyncComplete && preplanningSyncDelay > 0)
                 {
-                    DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(preplanningVersusId).GetValueAsync().ContinueWith(taskA =>
+                    preplanningSyncDelay--;
+                    return;
+                } else
+                {
+                    preplanningSyncComplete = true;
+                    preplanningSyncDelay = 400;
+                    readyButtonPreplanning.GetComponent<Button>().interactable = true;
+                }
+                // Only do this if the user is in preplanning and the user is the host.
+                // If both sides are marked as ready (in DB), then start the countdown
+                // TODO: Later ensure that most players are ready before starting
+                if (PhotonNetwork.IsMasterClient && !versusGameStarting)
+                {
+                    DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(preplanningVersusId).Child(preplanningTeam).Child("isReady").SetValueAsync(preplanningIsReady).ContinueWith(task =>
                     {
-                        DataSnapshot snapshot = taskA.Result;
-                        string redReady = snapshot.Child("red").Child("isReady").ToString();
-                        string blueReady = snapshot.Child("blue").Child("isReady").ToString();
-                        if (redReady == "true" && blueReady == "true")
+                        DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(preplanningVersusId).GetValueAsync().ContinueWith(taskA =>
                         {
-                            versusGameStarting = true;
-                            StartCoroutine(StartPreplanningCountdown());
-                        }
+                            DataSnapshot snapshot = taskA.Result;
+                            string redReady = snapshot.Child("red").Child("isReady").ToString();
+                            string blueReady = snapshot.Child("blue").Child("isReady").ToString();
+                            if (redReady == "true" && blueReady == "true")
+                            {
+                                versusGameStarting = true;
+                                StartCoroutine(StartPreplanningCountdown());
+                            }
+                        });
                     });
-                });
+                }
             }
         }
 
@@ -301,6 +306,9 @@ namespace Photon.Pun.LobbySystemPhoton
 			readyButton.GetComponent<Button> ().interactable = status;
             readyButtonVs.GetComponent<Button>().interactable = status;
             readyButtonPreplanning.GetComponent<Button>().interactable = status;
+            if (PhotonNetwork.IsMasterClient && !preplanningSyncComplete) {
+                readyButtonPreplanning.GetComponent<Button>().interactable = false;
+            }
             sendMsgBtn.interactable = status;
             sendMsgBtnVs.interactable = status;
             sendMsgBtnPreplanning.interactable = status;
@@ -519,7 +527,10 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnJoinedRoom()
 		{
-			currentMode = (templateUIClassVs.gameObject.activeInHierarchy ? 'V' : (string.IsNullOrEmpty((string)PhotonNetwork.CurrentRoom.CustomProperties["versusId"]) ? 'C' : 'P'));
+            // Disable any loading screens
+            templateUIClass.LoadingPanel.SetActive(false);
+            templateUIClassVs.LoadingPanel.SetActive(false);
+			currentMode = (!templateUIClassVs.gameObject.activeInHierarchy ? 'C' : (string.IsNullOrEmpty((string)PhotonNetwork.CurrentRoom.CustomProperties["versusId"]) ? 'V' : 'P'));
 			if (currentMode == 'V') {
 				OnJoinedRoomVersus();
 			} else if (currentMode == 'P') {
@@ -637,6 +648,8 @@ namespace Photon.Pun.LobbySystemPhoton
             if (PhotonNetwork.IsMasterClient)
             {
                 // Initialize initial delay before starting match
+                preplanningSyncComplete = false;
+                readyButtonPreplanning.GetComponent<Button>().interactable = false;
                 preplanningSyncDelay = 1800;
             }
             templateUIClassVs.ListRoomPanel.SetActive(false);
