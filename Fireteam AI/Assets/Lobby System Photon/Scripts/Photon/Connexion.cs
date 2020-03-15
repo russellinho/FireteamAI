@@ -3,6 +3,8 @@ using UnityEngine;
 using UITemplate;
 using System.Collections;
 using UnityEngine.UI;
+using ExitGames.Client.Photon;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Photon.Pun.LobbySystemPhoton
 {
@@ -103,10 +105,11 @@ namespace Photon.Pun.LobbySystemPhoton
 			roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
 			RoomOptions options = new RoomOptions { MaxPlayers = 8 };
-            ExitGames.Client.Photon.Hashtable h = new ExitGames.Client.Photon.Hashtable();
+            Hashtable h = new Hashtable();
             h.Add("gameMode", "camp");
-            //options.CustomRoomProperties.Add("gameMode", "camp");
+			string[] lobbyProperties = new string[1] {"gameMode"};
             options.CustomRoomProperties = h;
+			options.CustomRoomPropertiesForLobby = lobbyProperties;
 
             PhotonNetwork.CreateRoom(roomName, options, null);
 			templateUIClass.NbrPlayers.text = "00";
@@ -120,10 +123,9 @@ namespace Photon.Pun.LobbySystemPhoton
 			roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
 			RoomOptions options = new RoomOptions { MaxPlayers = 16 };
-            ExitGames.Client.Photon.Hashtable h = new ExitGames.Client.Photon.Hashtable();
+            Hashtable h = new Hashtable();
             h.Add("gameMode", "versus");
             string[] lobbyProperties = new string[1] {"gameMode"};
-			//options.CustomRoomProperties.Add("gameMode", "versus");
             options.CustomRoomProperties = h;
             options.CustomRoomPropertiesForLobby = lobbyProperties;
 
@@ -139,9 +141,10 @@ namespace Photon.Pun.LobbySystemPhoton
             roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
             RoomOptions options = new RoomOptions { MaxPlayers = 8 };
-			// TODO: Create the hashtable here and set it
-            options.CustomRoomProperties.Add("versusId", versusId);
-            options.CustomRoomProperties.Add("myTeam", team);
+			Hashtable h = new Hashtable();
+            h.Add("versusId", versusId);
+            h.Add("myTeam", team);
+			options.CustomRoomProperties = h;
             options.IsVisible = false;
 
             PhotonNetwork.CreateRoom(roomName, options, null);
