@@ -17,6 +17,7 @@ namespace Photon.Pun.LobbySystemPhoton
         // Timeout from joining preplanning after attempting 8 times
         private const short MAX_PREPLANNING_TIMEOUT_CNT = 8;
         private const short PREPLANNING_CHECK_READY_DELAY = 600; // 10 second check if both teams ready in preplanning delay
+        private const short PREPLANNING_SYNC_DELAY = 400;
 
 		private PhotonView pView;
 
@@ -70,6 +71,7 @@ namespace Photon.Pun.LobbySystemPhoton
         private bool preplanningSyncComplete;
         private short preplanningCheckReadyDelay;
         private bool versusGameStarting;
+        private bool startVersusFromPreplanningTrigger;
 
 		// Map options
 		private int mapIndex = 0;
@@ -93,7 +95,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			pView = GetComponent<PhotonView> ();
 			redTeam = new ArrayList();
 			blueTeam = new ArrayList();
-            preplanningSyncDelay = 1800;
+            preplanningSyncDelay = PREPLANNING_SYNC_DELAY;
             preplanningCheckReadyDelay = PREPLANNING_CHECK_READY_DELAY;
 		}
 
@@ -101,6 +103,10 @@ namespace Photon.Pun.LobbySystemPhoton
         {
             // Check whether we can start the game or not
             CheckCanStartVersusMatch();
+            if (startVersusFromPreplanningTrigger) {
+                startVersusFromPreplanningTrigger = false;
+                StartCoroutine("StartPreplanningCountdown");
+            }
         }
 
         void CheckCanStartVersusMatch()
@@ -113,7 +119,7 @@ namespace Photon.Pun.LobbySystemPhoton
                 } else
                 {
                     preplanningSyncComplete = true;
-                    preplanningSyncDelay = 400;
+                    preplanningSyncDelay = PREPLANNING_SYNC_DELAY;
                     readyButtonPreplanning.GetComponent<Button>().interactable = true;
                 }
                 // Only do this if the user is in preplanning and the user is the host.
@@ -135,10 +141,11 @@ namespace Photon.Pun.LobbySystemPhoton
                             DataSnapshot snapshot = taskA.Result;
                             string redReady = snapshot.Child("red").Child("isReady").Value.ToString();
                             string blueReady = snapshot.Child("blue").Child("isReady").Value.ToString();
-                            if (redReady == "true" && blueReady == "true")
+                            if (redReady == "True" && blueReady == "True")
                             {
                                 versusGameStarting = true;
-                                StartCoroutine(StartPreplanningCountdown());
+                                // StartCoroutine(StartPreplanningCountdown());
+                                startVersusFromPreplanningTrigger = true;
                             }
                         });
                     });
@@ -390,6 +397,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
         private IEnumerator StartPreplanningCountdown()
         {
+            Debug.Log("two");
             PhotonNetwork.CurrentRoom.IsOpen = false;
             titleController.GetComponent<AudioSource>().clip = countdownSfx;
             titleController.GetComponent<AudioSource>().Play();
@@ -660,7 +668,7 @@ namespace Photon.Pun.LobbySystemPhoton
                 // Initialize initial delay before starting match
                 preplanningSyncComplete = false;
                 readyButtonPreplanning.GetComponent<Button>().interactable = false;
-                preplanningSyncDelay = 1800;
+                preplanningSyncDelay = PREPLANNING_SYNC_DELAY;
                 preplanningCheckReadyDelay = PREPLANNING_CHECK_READY_DELAY;
             }
 
