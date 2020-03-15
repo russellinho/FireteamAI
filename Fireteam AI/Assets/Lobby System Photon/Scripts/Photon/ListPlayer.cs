@@ -426,7 +426,8 @@ namespace Photon.Pun.LobbySystemPhoton
             if (PhotonNetwork.LocalPlayer.NickName == redTeamCaptain)
             {
                 // Start the preplanning room if you're master client, else wait for it to be created and then join
-                connexion.CreateVersusPreplanningRoom(roomId, "red");
+                // connexion.CreateVersusPreplanningRoom(roomId, "red");
+                connexion.SetCreatePreplanningRoomValues(roomId, "red");
             } else
             {
                 preplanningJoinTimeoutCount = 0;
@@ -449,7 +450,8 @@ namespace Photon.Pun.LobbySystemPhoton
             if (PhotonNetwork.LocalPlayer.NickName == blueTeamCaptain)
             {
                 // Start the preplanning room if you're master client, else wait for it to be created and then join
-                connexion.CreateVersusPreplanningRoom(roomId, "blue");
+                // connexion.CreateVersusPreplanningRoom(roomId, "blue");
+                connexion.SetCreatePreplanningRoomValues(roomId, "blue");
             }
             else
             {

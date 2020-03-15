@@ -13,6 +13,9 @@ namespace Photon.Pun.LobbySystemPhoton
 		public Template templateUIClass;
         public Template templateUIVersusClass;
 		private int nbrPlayersInLobby = 0;
+		private bool createPreplanningRoomFlag;
+		private string createPreplanningRoomTeam;
+		private string createPreplanningRoomId;
 
 		void Start()
 		{
@@ -41,11 +44,22 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnJoinedLobby()  
 		{
-			templateUIClass.BtnCreatRoom.interactable = true;
-			templateUIClass.ExitMatchmakingBtn.interactable = true;
-            templateUIVersusClass.BtnCreatRoom.interactable = true;
-            templateUIVersusClass.ExitMatchmakingBtn.interactable = true;
-            StartCoroutine("AutoRefreshListRoom");
+			if (createPreplanningRoomFlag) {
+				createPreplanningRoomFlag = false;
+				CreateVersusPreplanningRoom(createPreplanningRoomId, createPreplanningRoomTeam);
+			} else {
+				templateUIClass.BtnCreatRoom.interactable = true;
+				templateUIClass.ExitMatchmakingBtn.interactable = true;
+				templateUIVersusClass.BtnCreatRoom.interactable = true;
+				templateUIVersusClass.ExitMatchmakingBtn.interactable = true;
+				StartCoroutine("AutoRefreshListRoom");
+			}
+		}
+
+		public void SetCreatePreplanningRoomValues(string roomId, string team) {
+			createPreplanningRoomFlag = true;
+			createPreplanningRoomId = roomId;
+			createPreplanningRoomTeam = team;
 		}
 
 		public void OnRefreshButtonClicked()
@@ -151,7 +165,7 @@ namespace Photon.Pun.LobbySystemPhoton
             templateUIClass.NbrPlayers.text = "00";
 
             // Save the information to DB so that the other players can join
-            string newRoomId = PhotonNetwork.CurrentRoom.Name;
+            string newRoomId = roomName;
             DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(team).Child("roomId").SetValueAsync(newRoomId);
         }
 		
