@@ -133,8 +133,8 @@ namespace Photon.Pun.LobbySystemPhoton
                         DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(preplanningVersusId).GetValueAsync().ContinueWith(taskA =>
                         {
                             DataSnapshot snapshot = taskA.Result;
-                            string redReady = snapshot.Child("red").Child("isReady").ToString();
-                            string blueReady = snapshot.Child("blue").Child("isReady").ToString();
+                            string redReady = snapshot.Child("red").Child("isReady").Value.ToString();
+                            string blueReady = snapshot.Child("blue").Child("isReady").Value.ToString();
                             if (redReady == "true" && blueReady == "true")
                             {
                                 versusGameStarting = true;
