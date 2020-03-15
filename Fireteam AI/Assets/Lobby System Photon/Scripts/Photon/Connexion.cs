@@ -171,7 +171,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		{
 			templateUIClass.BtnCreatRoom.interactable = false;
 			templateUIClass.ExitMatchmakingBtn.interactable = false;
-			string roomName = "Table_"+ Random.Range(1000, 10000);
+			string roomName = "Camp_"+ Random.Range(1000, 10000);
 			roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
 			RoomOptions options = new RoomOptions { MaxPlayers = 8 };
@@ -189,7 +189,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		{
 			templateUIVersusClass.BtnCreatRoom.interactable = false;
 			templateUIVersusClass.ExitMatchmakingBtn.interactable = false;
-			string roomName = "Table_"+ Random.Range(1000, 10000);
+			string roomName = "Vs_"+ Random.Range(1000, 10000);
 			roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
 			RoomOptions options = new RoomOptions { MaxPlayers = 16 };
@@ -207,7 +207,7 @@ namespace Photon.Pun.LobbySystemPhoton
         {
             templateUIVersusClass.BtnCreatRoom.interactable = false;
             templateUIVersusClass.ExitMatchmakingBtn.interactable = false;
-            string roomName = "Table_" + Random.Range(1000, 10000);
+            string roomName = "Pre_" + Random.Range(1000, 10000);
             roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
             RoomOptions options = new RoomOptions { MaxPlayers = 8 };
