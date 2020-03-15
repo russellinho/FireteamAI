@@ -62,7 +62,6 @@ namespace Photon.Pun.LobbySystemPhoton
         public Button leaveGameBtnPreplanning;
 		public GameObject titleController;
 		public AudioClip countdownSfx;
-        private short preplanningJoinTimeoutCount;
         private string preplanningTeam;
         private string preplanningVersusId;
         private bool preplanningIsReady;
@@ -403,8 +402,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			yield return new WaitForSeconds(5f);
 			// Send teams to preplanning if there are still members on both sides
 			if (redTeam.Count >= 1 && blueTeam.Count >= 1) {
-                pView.RPC("RpcSendRedTeamToPreplanning", RpcTarget.All);
-                pView.RPC("RpcSendBlueTeamToPreplanning", RpcTarget.All);
+                pView.RPC("RpcSendTeamsToPreplanning", RpcTarget.All);
 			} else {
 				chatVs.sendChatOfMaster("Match could not start because there were not enough players on both teams.");
 				pView.RPC ("RpcToggleButtons", RpcTarget.All, true, true);
@@ -412,7 +410,17 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
         [PunRPC]
-		private void RpcSendRedTeamToPreplanning() {
+        private void RpcSendTeamsToPreplanning() {
+            char myTeam = myPlayerListEntry.GetComponent<PlayerEntryScript>().team;
+            if (myTeam == 'R') {
+                SendRedTeamToPreplanning();
+            } else if (myTeam == 'B') {
+                SendBlueTeamToPreplanning();
+            }
+        }
+
+		void SendRedTeamToPreplanning() {
+            
             // Get the unique room ID to match the team rooms together in DB
             string roomId = PhotonNetwork.CurrentRoom.Name;
             string redTeamCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["redCaptain"];
@@ -430,13 +438,12 @@ namespace Photon.Pun.LobbySystemPhoton
                 connexion.SetCreatePreplanningRoomValues(roomId, "red");
             } else
             {
-                preplanningJoinTimeoutCount = 0;
-                StartCoroutine(TryToJoinPreplanning("red", roomId));
+                connexion.SetJoinPreplanningRoomValues(roomId, "red");
+                // StartCoroutine(TryToJoinPreplanning("red", roomId));
             }
 		}
 
-        [PunRPC]
-		private void RpcSendBlueTeamToPreplanning() {
+		void SendBlueTeamToPreplanning() {
             // Get the unique room ID to match the team rooms together in DB
             string roomId = PhotonNetwork.CurrentRoom.Name;
             string blueTeamCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["blueCaptain"];
@@ -455,41 +462,9 @@ namespace Photon.Pun.LobbySystemPhoton
             }
             else
             {
-                preplanningJoinTimeoutCount = 0;
-                StartCoroutine(TryToJoinPreplanning("blue", roomId));
+                connexion.SetJoinPreplanningRoomValues(roomId, "blue");
+                // StartCoroutine(TryToJoinPreplanning("blue", roomId));
             }
-        }
-
-        IEnumerator TryToJoinPreplanning(string team, string versusId)
-        {
-            yield return new WaitForSeconds(3f);
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(team).GetValueAsync().ContinueWith(task =>
-            {
-                DataSnapshot snapshot = task.Result;
-                string roomId = snapshot.Child("roomId").Value.ToString();
-                if (string.IsNullOrEmpty(roomId))
-                {
-                    // Room is not established yet, so try again
-                    preplanningJoinTimeoutCount++;
-                    if (preplanningJoinTimeoutCount == MAX_PREPLANNING_TIMEOUT_CNT)
-                    {
-                        // Timeout, disable loading screens, popup of joining room timed out, and re-enable all buttons
-                        templateUIClassVs.LoadingPanel.SetActive(false); 
-                        templateUIClass.LoadingPanel.SetActive(false);
-                        DisplayPopup("Joining preplanning timed out.");
-                    }
-                    else
-                    {
-                        StartCoroutine(TryToJoinPreplanning(team, versusId));
-                    }
-                } else
-                {
-                    // Room was created, join it
-                    PhotonNetwork.JoinRoom(roomId);
-                    PhotonNetwork.CurrentRoom.CustomProperties.Add("versusId", versusId);
-                    PhotonNetwork.CurrentRoom.CustomProperties.Add("myTeam", team);
-                }
-            });
         }
 
 		[PunRPC]

@@ -36036,6 +36036,16 @@ PrefabInstance:
       propertyPath: templateUIVersusClass
       value: 
       objectReference: {fileID: 1885361459}
+    - target: {fileID: 114972685017542850, guid: 15b33641d19fb46fe80cb87ef5583139,
+        type: 3}
+      propertyPath: templateUIClassVs
+      value: 
+      objectReference: {fileID: 1885361459}
+    - target: {fileID: 114972685017542850, guid: 15b33641d19fb46fe80cb87ef5583139,
+        type: 3}
+      propertyPath: listPlayer
+      value: 
+      objectReference: {fileID: 722466561}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 15b33641d19fb46fe80cb87ef5583139, type: 3}
 --- !u!1 &979395149
