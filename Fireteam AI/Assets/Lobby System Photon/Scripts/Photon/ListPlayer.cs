@@ -15,7 +15,8 @@ namespace Photon.Pun.LobbySystemPhoton
 	public class ListPlayer : MonoBehaviourPunCallbacks
 	{
         // Timeout from joining preplanning after attempting 8 times
-        private const short MAX_PREPLANNING_TIMEOUT_CNT = 8; 
+        private const short MAX_PREPLANNING_TIMEOUT_CNT = 8;
+        private const short PREPLANNING_CHECK_READY_DELAY = 600; // 10 second check if both teams ready in preplanning delay
 
 		private PhotonView pView;
 
@@ -67,6 +68,7 @@ namespace Photon.Pun.LobbySystemPhoton
         private bool preplanningIsReady;
         private short preplanningSyncDelay;
         private bool preplanningSyncComplete;
+        private short preplanningCheckReadyDelay;
         private bool versusGameStarting;
 
 		// Map options
@@ -92,6 +94,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			redTeam = new ArrayList();
 			blueTeam = new ArrayList();
             preplanningSyncDelay = 1800;
+            preplanningCheckReadyDelay = PREPLANNING_CHECK_READY_DELAY;
 		}
 
         void FixedUpdate()
@@ -115,10 +118,17 @@ namespace Photon.Pun.LobbySystemPhoton
                 }
                 // Only do this if the user is in preplanning and the user is the host.
                 // If both sides are marked as ready (in DB), then start the countdown
+                // Only check if both teams are ready every few seconds to reduce database access usage
+                if (preplanningCheckReadyDelay == PREPLANNING_CHECK_READY_DELAY) {
+                    preplanningCheckReadyDelay = 0;
+                } else {
+                    preplanningCheckReadyDelay++;
+                    return;
+                }
                 // TODO: Later ensure that most players are ready before starting
                 if (PhotonNetwork.IsMasterClient && !versusGameStarting)
                 {
-                    DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(preplanningVersusId).Child(preplanningTeam).Child("isReady").SetValueAsync(preplanningIsReady).ContinueWith(task =>
+                    DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(preplanningVersusId).Child(preplanningTeam).Child("isReady").SetValueAsync(""+preplanningIsReady).ContinueWith(task =>
                     {
                         DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(preplanningVersusId).GetValueAsync().ContinueWith(taskA =>
                         {
@@ -651,8 +661,10 @@ namespace Photon.Pun.LobbySystemPhoton
                 preplanningSyncComplete = false;
                 readyButtonPreplanning.GetComponent<Button>().interactable = false;
                 preplanningSyncDelay = 1800;
+                preplanningCheckReadyDelay = PREPLANNING_CHECK_READY_DELAY;
             }
 
+            preplanningTeam = (string)PhotonNetwork.CurrentRoom.CustomProperties["myTeam"];
             preplanningVersusId = (string)PhotonNetwork.CurrentRoom.CustomProperties["versusId"];
             templateUIClassVs.ListRoomPanel.SetActive(false);
             templateUIClassVs.preplanningRoomPanel.SetActive(true);
