@@ -652,9 +652,11 @@ namespace Photon.Pun.LobbySystemPhoton
                 readyButtonPreplanning.GetComponent<Button>().interactable = false;
                 preplanningSyncDelay = 1800;
             }
+
+            preplanningVersusId = (string)PhotonNetwork.CurrentRoom.CustomProperties["versusId"];
             templateUIClassVs.ListRoomPanel.SetActive(false);
             templateUIClassVs.preplanningRoomPanel.SetActive(true);
-            templateUIClassVs.TitleRoomPreplanning.text = (string)PhotonNetwork.CurrentRoom.CustomProperties["versusId"];
+            templateUIClassVs.TitleRoomPreplanning.text = preplanningVersusId;
 
             if (playerListEntries == null)
             {
@@ -809,6 +811,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnLeftRoom()
 		{
+            preplanningVersusId = null;
 			templateUIClass.RoomPanel.SetActive(false);
             templateUIClassVs.RoomPanel.SetActive(false);
             templateUIClassVs.preplanningRoomPanel.SetActive(false);
@@ -825,6 +828,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			templateUIClass.ChatText.text = "";
             templateUIClassVs.ChatText.text = "";
             templateUIClassVs.ChatTextPreplanning.text = "";
+            ToggleButtons(true);
 			PhotonNetwork.JoinLobby();
 		}
 
