@@ -173,6 +173,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                     {
                         if (!gameOver && CheckEscape())
                         {
+                            // Set completion to 100%
+                            SetMyTeamScore(100);
                             // If they can escape, end the game and bring up the stat board
                             pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f);
                         }
@@ -562,12 +564,18 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         {
             objectiveCompleted--;
         }
+        SetMyTeamScore((short)(((float)objectiveCompleted / (float)objectiveCount) * 100f));
+    }
+
+    void SetMyTeamScore(short score)
+    {
         if (myTeam == "red")
         {
-            redTeamScore = (short)(((float)objectiveCompleted / (float)objectiveCount) * 100f);
-        } else if (myTeam == "blue")
+            redTeamScore = score;
+        }
+        else if (myTeam == "blue")
         {
-            blueTeamScore = (short)(((float)objectiveCompleted / (float)objectiveCount) * 100f);
+            blueTeamScore = score;
         }
     }
 
