@@ -73,10 +73,10 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         opposingTeam = (myTeam == "red" ? "blue" : "red");
         if (string.IsNullOrEmpty(versusId))
         {
-            matchType = 'V';
+            matchType = 'C';
         } else
         {
-            matchType = 'C';
+            matchType = 'V';
         }
         redTeamScore = 0;
         blueTeamScore = 0;
@@ -229,13 +229,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                         versusWinner = myTeam;
                         Debug.Log("Setting victory in DB to your team. (" + myTeam + ")");
                         // Send kills and deaths to DB
-                        DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").SetRawJsonValueAsync(json);
+                        DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).SetRawJsonValueAsync(json);
                     });
                 }
             });
         } else
         {
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").SetRawJsonValueAsync(json);
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).SetRawJsonValueAsync(json);
         }
     }
 
@@ -564,10 +564,10 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         }
         if (myTeam == "red")
         {
-            redTeamScore = (short)(objectiveCompleted / objectiveCount);
+            redTeamScore = (short)(((float)objectiveCompleted / (float)objectiveCount) * 100f);
         } else if (myTeam == "blue")
         {
-            blueTeamScore = (short)(objectiveCompleted / objectiveCount);
+            blueTeamScore = (short)(((float)objectiveCompleted / (float)objectiveCount) * 100f);
         }
     }
 
