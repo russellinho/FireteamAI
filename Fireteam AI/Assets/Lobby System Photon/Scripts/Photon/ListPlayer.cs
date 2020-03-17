@@ -397,7 +397,6 @@ namespace Photon.Pun.LobbySystemPhoton
 
         private IEnumerator StartPreplanningCountdown()
         {
-            Debug.Log("two");
             PhotonNetwork.CurrentRoom.IsOpen = false;
             titleController.GetComponent<AudioSource>().clip = countdownSfx;
             titleController.GetComponent<AudioSource>().Play();

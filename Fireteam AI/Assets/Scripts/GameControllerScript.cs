@@ -64,6 +64,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     private RoomInfo opposingTeamRoom;
     private string opposingTeamRoomId;
     private bool opposingTeamRoomFound;
+    private bool endVersusGameFlag;
+    private float endVersusGameDelay;
 
 	// Use this for initialization
 	void Awake() {
@@ -167,7 +169,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                     {
                         if (!gameOver)
                         {
-                            pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f);
+                            endVersusGameFlag = true;
+                            endVersusGameDelay = 9f;
                         }
                     } else if (bombsRemaining == 0)
                     {
@@ -176,7 +179,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                             // Set completion to 100%
                             SetMyTeamScore(100);
                             // If they can escape, end the game and bring up the stat board
-                            pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f);
+                            endVersusGameFlag = true;
+                            endVersusGameDelay = 3f;
                         }
                     }
                 }
@@ -198,12 +202,17 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         {
             // Update versus team scores every 5 seconds
             UpdateVersusScores();
-            DetermineVersusVictory();
+        }
+        if (endVersusGameFlag)
+        {
+            endVersusGameFlag = false;
+            pView.RPC("RpcEndVersusGame", RpcTarget.All, endVersusGameDelay);
         }
 	}
 
 	[PunRPC]
 	void RpcEndGame(float f) {
+        Debug.Log("definitely not here");
 		endGameTimer = f;
 		gameOver = true;
 	}
@@ -220,23 +229,31 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         // If host, send the victory to the other team if you're the winner. Also send your kills and deaths to the DB
         if (PhotonNetwork.IsMasterClient)
         {
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child("winner").GetValueAsync().ContinueWith(task =>
+            Debug.Log("should go here");
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).GetValueAsync().ContinueWith(task =>
             {
-                DataSnapshot snapshot = task.Result;
-                string winnerWas = snapshot.Value.ToString();
-                if (string.IsNullOrEmpty(winnerWas))
-                {
-                    DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child("winner").SetValueAsync(myTeam).ContinueWith(taskA =>
+                if (task.IsCompleted) {
+                    DataSnapshot snapshot = task.Result;
+                    string winnerWas = snapshot.Child("winner").Value.ToString();
+                    Debug.Log("winner was: " + winnerWas);
+                    if (string.IsNullOrEmpty(winnerWas))
                     {
-                        versusWinner = myTeam;
-                        Debug.Log("Setting victory in DB to your team. (" + myTeam + ")");
+                        DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child("winner").SetValueAsync(myTeam).ContinueWith(taskA =>
+                        {
+                            versusWinner = myTeam;
+                            Debug.Log("Setting victory in DB to your team. (" + myTeam + ")");
                         // Send kills and deaths to DB
                         DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).SetRawJsonValueAsync(json);
-                    });
+                        });
+                    }
+                } else if (task.IsFaulted || task.IsCanceled)
+                {
+                    Debug.Log("Could not end versus game because of " + task.Exception.Message);
                 }
             });
         } else
         {
+            Debug.Log("maybe here");
             DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).SetRawJsonValueAsync(json);
         }
     }
@@ -282,7 +299,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                     if (taskA.IsFaulted || taskA.IsCanceled)
                     {
                         // If a problem occurs, end the game immediately.
-                        pView.RPC("RpcEndVersusGame", RpcTarget.All, 5f);
+                        endVersusGameFlag = true;
+                        endVersusGameDelay = 5f;
                     }
                     else
                     {
@@ -342,7 +360,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             {
                 if (task.IsFaulted || task.IsCanceled)
                 {
-                    pView.RPC("RpcEndVersusGame", RpcTarget.All, 5f);
+                    endVersusGameFlag = true;
+                    endVersusGameDelay = 5f;
                 } else
                 {
                     DataSnapshot snapshot = task.Result;
@@ -357,7 +376,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                         // If the opposing team room no longer exists, then they've forfeited. Else, 
                         if (opposingTeamRoom == null)
                         {
-                            pView.RPC("RpcEndVersusGame", RpcTarget.All, 5f);
+                            endVersusGameFlag = true;
+                            endVersusGameDelay = 5f;
                         }
                     }
 
@@ -365,10 +385,12 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                     versusWinner = snapshot.Child("winner").Value.ToString();
                     if (versusWinner == myTeam)
                     {
-                        pView.RPC("RpcEndVersusGame", RpcTarget.All, 5f);
+                        endVersusGameFlag = true;
+                        endVersusGameDelay = 5f;
                     } else if (versusWinner == opposingTeam)
                     {
-                        pView.RPC("RpcEndVersusGame", RpcTarget.All, 5f);
+                        endVersusGameFlag = true;
+                        endVersusGameDelay = 5f;
                     }
                 }
             });
