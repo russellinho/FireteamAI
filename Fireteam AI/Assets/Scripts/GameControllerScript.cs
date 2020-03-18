@@ -212,7 +212,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	[PunRPC]
 	void RpcEndGame(float f) {
-        Debug.Log("definitely not here");
 		endGameTimer = f;
 		gameOver = true;
 	}
@@ -229,31 +228,26 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         // If host, send the victory to the other team if you're the winner. Also send your kills and deaths to the DB
         if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("should go here");
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).GetValueAsync().ContinueWith(task =>
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).RunTransaction(mutableData =>
             {
-                if (task.IsCompleted) {
-                    DataSnapshot snapshot = task.Result;
-                    string winnerWas = snapshot.Child("winner").Value.ToString();
-                    Debug.Log("winner was: " + winnerWas);
-                    if (string.IsNullOrEmpty(winnerWas))
-                    {
-                        DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child("winner").SetValueAsync(myTeam).ContinueWith(taskA =>
-                        {
-                            versusWinner = myTeam;
-                            Debug.Log("Setting victory in DB to your team. (" + myTeam + ")");
-                        // Send kills and deaths to DB
-                        DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).SetRawJsonValueAsync(json);
-                        });
-                    }
-                } else if (task.IsFaulted || task.IsCanceled)
+                string winnerWas = (mutableData.Child("winner").Value == null ? null : mutableData.Child("winner").Value.ToString());
+                Debug.Log("winner was: " + winnerWas);
+                if (string.IsNullOrEmpty(winnerWas))
                 {
-                    Debug.Log("Could not end versus game because of " + task.Exception.Message);
+                    mutableData.Child("winner").Value = myTeam;
+                    versusWinner = myTeam;
+                    Debug.Log("Setting victory in DB to your team. (" + myTeam + ")");
+                    // Send kills and deaths to DB
+                    mutableData.Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).Child("kills").Value = totalKills[PhotonNetwork.LocalPlayer.NickName];
+                    mutableData.Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).Child("deaths").Value = totalDeaths[PhotonNetwork.LocalPlayer.NickName];
+                    return TransactionResult.Success(mutableData);
+                } else
+                {
+                    return TransactionResult.Abort();
                 }
             });
         } else
         {
-            Debug.Log("maybe here");
             DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).SetRawJsonValueAsync(json);
         }
     }
@@ -292,42 +286,33 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         if (PhotonNetwork.IsMasterClient)
         {
             // Set my score and then get the opposing team score
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "Scr").SetValueAsync(myScore).ContinueWith(task =>
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).RunTransaction(mutableData =>
             {
-                DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(opposingTeam + "Scr").GetValueAsync().ContinueWith(taskA =>
+                string opposingTeamScore = (mutableData.Child(opposingTeam + "Scr").Value == null ? "0" : mutableData.Child(opposingTeam + "Scr").Value.ToString());
+                mutableData.Child(myTeam + "Scr").Value = myScore;
+                if (opposingTeam == "red")
                 {
-                    if (taskA.IsFaulted || taskA.IsCanceled)
-                    {
-                        // If a problem occurs, end the game immediately.
-                        endVersusGameFlag = true;
-                        endVersusGameDelay = 5f;
-                    }
-                    else
-                    {
-                        DataSnapshot snapshot = taskA.Result;
-                        if (opposingTeam == "red")
-                        {
-                            redTeamScore = short.Parse(snapshot.Value.ToString());
-                        }
-                        else if (opposingTeam == "blue")
-                        {
-                            blueTeamScore = short.Parse(snapshot.Value.ToString());
-                        }
-                    }
-                });
+                    redTeamScore = short.Parse(opposingTeamScore);
+                }
+                else if (opposingTeam == "blue")
+                {
+                    blueTeamScore = short.Parse(opposingTeamScore);
+                }
+                return TransactionResult.Success(mutableData);
             });
         } else
         {
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(opposingTeam + "Scr").GetValueAsync().ContinueWith(taskA =>
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(opposingTeam + "Scr").RunTransaction(mutableData =>
             {
-                DataSnapshot snapshot = taskA.Result;
+                string opposingTeamScore = mutableData.Value.ToString();
                 if (opposingTeam == "red")
                 {
-                    redTeamScore = short.Parse(snapshot.Value.ToString());
+                    redTeamScore = short.Parse(opposingTeamScore);
                 } else if (opposingTeam == "blue")
                 {
-                    blueTeamScore = short.Parse(snapshot.Value.ToString());
+                    blueTeamScore = short.Parse(opposingTeamScore);
                 }
+                return TransactionResult.Success(mutableData);
             });
         }
     }
