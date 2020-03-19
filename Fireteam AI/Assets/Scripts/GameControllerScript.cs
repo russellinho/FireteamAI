@@ -12,7 +12,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     // Timer
     public static float missionTime;
     public static float MAX_MISSION_TIME = 1800f;
-    private static short SYNC_SCORE_DELAY = 400;
+    private static short SYNC_SCORE_DELAY = 240;
 
 	public int currentMap;
 
@@ -221,10 +221,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     {
         endGameTimer = f;
         gameOver = true;
-        string json = "{" +
-            "\"kills\":\"" + totalKills[PhotonNetwork.LocalPlayer.NickName] + "\"," +
-            "\"deaths\":\"" + totalDeaths[PhotonNetwork.LocalPlayer.NickName] + "\"" +
-        "}";
         // If host, send the victory to the other team if you're the winner. Also send your kills and deaths to the DB
         if (PhotonNetwork.IsMasterClient)
         {
@@ -248,7 +244,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             });
         } else
         {
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).SetRawJsonValueAsync(json);
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).RunTransaction(mutableData => {
+                mutableData.Child("kills").Value = totalKills[PhotonNetwork.LocalPlayer.NickName];
+                mutableData.Child("deaths").Value = totalDeaths[PhotonNetwork.LocalPlayer.NickName];
+                return TransactionResult.Success(mutableData);
+            });
         }
     }
 
@@ -341,19 +341,20 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         // If one team forfeits, the other wins
         if (PhotonNetwork.IsMasterClient)
         {
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).GetValueAsync().ContinueWith(task =>
+            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).RunTransaction(mutableData =>
             {
-                if (task.IsFaulted || task.IsCanceled)
+                if (mutableData.Value == null)
                 {
                     endVersusGameFlag = true;
                     endVersusGameDelay = 5f;
+                    return TransactionResult.Abort();
                 } else
                 {
-                    DataSnapshot snapshot = task.Result;
                     // Check if the other team has forfeited - can be determine by if the room still exists or not
                     if (string.IsNullOrEmpty(opposingTeamRoomId))
                     {
-                        opposingTeamRoomId = snapshot.Child(opposingTeam).Child("roomId").Value.ToString();
+                        object oppRoomIdSnap = mutableData.Child(opposingTeam).Child("roomId").Value;
+                        opposingTeamRoomId = (oppRoomIdSnap == null ? null : oppRoomIdSnap.ToString());
                     }
 
                     if (opposingTeamRoomFound)
@@ -367,7 +368,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                     }
 
                     // Check if either team has won
-                    versusWinner = snapshot.Child("winner").Value.ToString();
+                    object vsWinnerSnap = mutableData.Child("winner").Value;
+                    versusWinner = (vsWinnerSnap == null ? null : vsWinnerSnap.ToString());
                     if (versusWinner == myTeam)
                     {
                         endVersusGameFlag = true;
@@ -377,6 +379,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                         endVersusGameFlag = true;
                         endVersusGameDelay = 5f;
                     }
+                    return TransactionResult.Success(mutableData);
                 }
             });
         }
