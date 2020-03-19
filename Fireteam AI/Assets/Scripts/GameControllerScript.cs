@@ -234,22 +234,23 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                     versusWinner = myTeam;
                     Debug.Log("Setting victory in DB to your team. (" + myTeam + ")");
                     // Send kills and deaths to DB
-                    mutableData.Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).Child("kills").Value = totalKills[PhotonNetwork.LocalPlayer.NickName];
-                    mutableData.Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).Child("deaths").Value = totalDeaths[PhotonNetwork.LocalPlayer.NickName];
+                    // mutableData.Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).Child("kills").Value = totalKills[PhotonNetwork.LocalPlayer.NickName];
+                    // mutableData.Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).Child("deaths").Value = totalDeaths[PhotonNetwork.LocalPlayer.NickName];
                     return TransactionResult.Success(mutableData);
                 } else
                 {
                     return TransactionResult.Abort();
                 }
             });
-        } else
-        {
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).RunTransaction(mutableData => {
-                mutableData.Child("kills").Value = totalKills[PhotonNetwork.LocalPlayer.NickName];
-                mutableData.Child("deaths").Value = totalDeaths[PhotonNetwork.LocalPlayer.NickName];
-                return TransactionResult.Success(mutableData);
-            });
         }
+        // } else
+        // {
+        //     DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).RunTransaction(mutableData => {
+        //         mutableData.Child("kills").Value = totalKills[PhotonNetwork.LocalPlayer.NickName];
+        //         mutableData.Child("deaths").Value = totalDeaths[PhotonNetwork.LocalPlayer.NickName];
+        //         return TransactionResult.Success(mutableData);
+        //     });
+        // }
     }
 
     [PunRPC]
@@ -297,6 +298,25 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                 else if (opposingTeam == "blue")
                 {
                     blueTeamScore = short.Parse(opposingTeamScore);
+                }
+                // Remove any players that have disconnected
+                string sub = myTeam + "TeamPlayers";
+                IEnumerator<MutableData> existingPlayerStats = mutableData.Child(sub).Children.GetEnumerator();
+                while (existingPlayerStats.MoveNext()) {
+                    MutableData thisPlayerStats = existingPlayerStats.Current;
+                    if (!totalKills.ContainsKey(thisPlayerStats.Key.ToString())) {
+                        // Remove
+                        thisPlayerStats.Value = null;
+                    }
+                }
+                // Last, update all player kills and deaths
+                foreach (KeyValuePair<string, int> entry in totalKills)
+                {
+                    string p = entry.Key;
+                    int k = entry.Value;
+                    int d = totalDeaths[p];
+                    mutableData.Child(sub).Child(p).Child("kills").Value = k;
+                    mutableData.Child(sub).Child(p).Child("deaths").Value = d;
                 }
                 return TransactionResult.Success(mutableData);
             });
