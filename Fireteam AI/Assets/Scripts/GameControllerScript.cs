@@ -61,9 +61,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     private short objectiveCount;
     private short objectiveCompleted;
     private string versusWinner;
-    private RoomInfo opposingTeamRoom;
-    private string opposingTeamRoomId;
-    private bool opposingTeamRoomFound;
+    //private RoomInfo opposingTeamRoom;
+    //private string opposingTeamRoomId;
+    //private bool opposingTeamRoomFound;
     private bool endVersusGameFlag;
     private float endVersusGameDelay;
 
@@ -337,23 +337,23 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         }
     }
 
-    public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    {
-        if (!string.IsNullOrEmpty(opposingTeamRoomId))
-        {
-            for (int i = 0; i < roomList.Count; i++)
-            {
-                if (roomList[i].Name == opposingTeamRoomId)
-                {
-                    opposingTeamRoom = roomList[i];
-                    opposingTeamRoomFound = true;
-                    return;
-                }
-            }
-            opposingTeamRoom = null;
-            opposingTeamRoomFound = true;
-        }
-    }
+    //public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    //{
+    //    if (!string.IsNullOrEmpty(opposingTeamRoomId))
+    //    {
+    //        for (int i = 0; i < roomList.Count; i++)
+    //        {
+    //            if (roomList[i].Name == opposingTeamRoomId)
+    //            {
+    //                opposingTeamRoom = roomList[i];
+    //                opposingTeamRoomFound = true;
+    //                return;
+    //            }
+    //        }
+    //        opposingTeamRoom = null;
+    //        opposingTeamRoomFound = true;
+    //    }
+    //}
 
     void DetermineVersusVictory()
     {
@@ -371,21 +371,21 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                 } else
                 {
                     // Check if the other team has forfeited - can be determine by if the room still exists or not
-                    if (string.IsNullOrEmpty(opposingTeamRoomId))
-                    {
-                        object oppRoomIdSnap = mutableData.Child(opposingTeam).Child("roomId").Value;
-                        opposingTeamRoomId = (oppRoomIdSnap == null ? null : oppRoomIdSnap.ToString());
-                    }
+                    //if (string.IsNullOrEmpty(opposingTeamRoomId))
+                    //{
+                    //    object oppRoomIdSnap = mutableData.Child(opposingTeam).Child("roomId").Value;
+                    //    opposingTeamRoomId = (oppRoomIdSnap == null ? null : oppRoomIdSnap.ToString());
+                    //}
 
-                    if (opposingTeamRoomFound)
-                    {
-                        // If the opposing team room no longer exists, then they've forfeited. Else, 
-                        if (opposingTeamRoom == null)
-                        {
-                            endVersusGameFlag = true;
-                            endVersusGameDelay = 5f;
-                        }
-                    }
+                    //if (opposingTeamRoomFound)
+                    //{
+                    //    // If the opposing team room no longer exists, then they've forfeited. Else, 
+                    //    if (opposingTeamRoom == null)
+                    //    {
+                    //        endVersusGameFlag = true;
+                    //        endVersusGameDelay = 5f;
+                    //    }
+                    //}
 
                     // Check if either team has won
                     object vsWinnerSnap = mutableData.Child("winner").Value;
