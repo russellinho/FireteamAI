@@ -73,12 +73,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         objectiveCount = 0;
         objectiveCompleted = 0;
         forfeitDelay = FORFEIT_CHECK_DELAY;
+        Debug.Log("autosync: " + PhotonNetwork.AutomaticallySyncScene);
 	}
 
     void Start () {
         if (matchType == 'C') {
+            Debug.Log("qq");
             PhotonNetwork.AutomaticallySyncScene = true;
         } else if (matchType == 'V') {
+            Debug.Log("pp");
             PhotonNetwork.AutomaticallySyncScene = false;
             if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(myTeam + "Kills")) {
                 PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Kills"] = totalKills;
