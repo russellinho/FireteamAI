@@ -27,12 +27,9 @@ namespace UITemplate
 
 		[Header("Room Panel")]
 		public GameObject RoomPanel;
-		public GameObject preplanningRoomPanel;
 		public Text TitleRoom;
-        public Text TitleRoomPreplanning;
 
 		[Header("Chat Panel")]
 		public TextMeshProUGUI ChatText;
-		public TextMeshProUGUI ChatTextPreplanning;
 	}
 }

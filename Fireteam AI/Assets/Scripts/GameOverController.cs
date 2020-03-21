@@ -28,20 +28,23 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 
     public GameObject versusPanel;
     public GameObject campaignPanel;
-    private string versusId;
-
+    private bool isVersus;
 	void Awake() {
 		ClearPlayerData ();
         exitButtonPressed = false;
-        versusId = (string)PhotonNetwork.CurrentRoom.CustomProperties["versusId"];
-        if (string.IsNullOrEmpty(versusId))
-        {
-            campaignPanel.SetActive(true);
-            versusPanel.SetActive(false);
-        } else
+        if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
+            isVersus = true;
+        } else if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp") {
+            isVersus = false;
+        }
+        if (isVersus)
         {
             versusPanel.SetActive(true);
             campaignPanel.SetActive(false);
+        } else
+        {
+            campaignPanel.SetActive(true);
+            versusPanel.SetActive(false);
         }
 	}
 
@@ -50,12 +53,12 @@ public class GameOverController : MonoBehaviourPunCallbacks {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        if (string.IsNullOrEmpty(versusId))
-        {
-            PopulateCampaignFinalStats();
-        } else
+        if (isVersus)
         {
             PopulateVersusFinalStats();
+        } else
+        {
+            PopulateCampaignFinalStats();
         }
     }
 
@@ -82,54 +85,46 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 
     void PopulateVersusFinalStats()
     {
+        Dictionary<string, int> redTeamKills = (Dictionary<string, int>)PhotonNetwork.CurrentRoom.CustomProperties["redKills"];
+        Dictionary<string, int> redTeamDeaths = (Dictionary<string, int>)PhotonNetwork.CurrentRoom.CustomProperties["redDeaths"];
+        Dictionary<string, int> blueTeamKills = (Dictionary<string, int>)PhotonNetwork.CurrentRoom.CustomProperties["blueKills"];
+        Dictionary<string, int> blueTeamDeaths = (Dictionary<string, int>)PhotonNetwork.CurrentRoom.CustomProperties["blueDeaths"];
+
         int i = 0;
-        DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).GetValueAsync().ContinueWith(task =>
+
+        foreach (string s in redTeamKills.Keys)
         {
-            if (task.IsCompleted)
-            {
-                DataSnapshot snapshot = task.Result;
-                IEnumerator<DataSnapshot> redTeamStats = snapshot.Child("redTeamPlayers").Children.GetEnumerator();
-                IEnumerator<DataSnapshot> blueTeamStats = snapshot.Child("blueTeamPlayers").Children.GetEnumerator();
+            redNames[i].text = s;
+            redKills[i].text = "" + redTeamKills[s];
+            redDeaths[i].text = "" + redTeamDeaths[s];
+            i++;
+        }
 
-                while (redTeamStats.MoveNext())
-                {
-                    string thisRedTeamName = redTeamStats.Current.Key;
-                    DataSnapshot thisRedPlayerData = redTeamStats.Current;
-                    redNames[i].text = thisRedTeamName;
-                    redKills[i].text = thisRedPlayerData.Child("kills").Value.ToString();
-                    redDeaths[i].text = thisRedPlayerData.Child("deaths").Value.ToString();
-                    i++;
-                }
+        while (i < 8)
+        {
+            redNames[i].text = "";
+            redKills[i].text = "";
+            redDeaths[i].text = "";
+            i++;
+        }
 
-                while (i < 8)
-                {
-                    redNames[i].text = "";
-                    redKills[i].text = "";
-                    redDeaths[i].text = "";
-                    i++;
-                }
+        i = 0;
 
-                i = 0;
+        foreach (string s in blueTeamKills.Keys)
+        {
+            blueNames[i].text = s;
+            blueKills[i].text = "" + blueTeamKills[s];
+            blueDeaths[i].text = "" + blueTeamDeaths[s];
+            i++;
+        }
 
-                while (blueTeamStats.MoveNext())
-                {
-                    string thisBlueTeamName = blueTeamStats.Current.Key;
-                    DataSnapshot thisBluePlayerData = blueTeamStats.Current;
-                    blueNames[i].text = thisBlueTeamName;
-                    blueKills[i].text = thisBluePlayerData.Child("kills").Value.ToString();
-                    blueDeaths[i].text = thisBluePlayerData.Child("deaths").Value.ToString();
-                    i++;
-                }
-
-                while (i < 8)
-                {
-                    blueNames[i].text = "";
-                    blueKills[i].text = "";
-                    blueDeaths[i].text = "";
-                    i++;
-                }
-            }
-        });
+        while (i < 8)
+        {
+            blueNames[i].text = "";
+            blueKills[i].text = "";
+            blueDeaths[i].text = "";
+            i++;
+        }
     }
 
     public void ExitButton() {

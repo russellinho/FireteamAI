@@ -11,20 +11,10 @@ namespace Photon.Pun.LobbySystemPhoton
 {
 	public class Connexion : MonoBehaviourPunCallbacks
 	{
-		private const short MAX_PREPLANNING_TIMEOUT_CNT = 8;
-
 		public Template templateUIClass;
         public Template templateUIVersusClass;
 		public ListPlayer listPlayer;
 		private int nbrPlayersInLobby = 0;
-		private short preplanningJoinTimeoutCount;
-		private bool createPreplanningRoomFlag;
-		private string createPreplanningRoomTeam;
-		private string createPreplanningRoomId;
-
-		private bool joinPreplanningRoomFlag;
-		private string joinPreplanningRoomTeam;
-		private string joinPreplanningRoomId;
 
 		void Start()
 		{
@@ -53,64 +43,11 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnJoinedLobby()  
 		{
-			if (createPreplanningRoomFlag) {
-				createPreplanningRoomFlag = false;
-				CreateVersusPreplanningRoom(createPreplanningRoomId, createPreplanningRoomTeam);
-			} else if (joinPreplanningRoomFlag) {
-				preplanningJoinTimeoutCount = 0;
-				joinPreplanningRoomFlag = false;
-				StartCoroutine(TryToJoinPreplanning(joinPreplanningRoomTeam, joinPreplanningRoomId));
-			} else {
-				templateUIClass.BtnCreatRoom.interactable = true;
-				templateUIClass.ExitMatchmakingBtn.interactable = true;
-				templateUIVersusClass.BtnCreatRoom.interactable = true;
-				templateUIVersusClass.ExitMatchmakingBtn.interactable = true;
-				StartCoroutine("AutoRefreshListRoom");
-			}
-		}
-
-		IEnumerator TryToJoinPreplanning(string team, string versusId)
-        {
-            yield return new WaitForSeconds(3f);
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(team).GetValueAsync().ContinueWith(task =>
-            {
-                DataSnapshot snapshot = task.Result;
-                string roomId = snapshot.Child("roomId").Value.ToString();
-                if (string.IsNullOrEmpty(roomId))
-                {
-                    // Room is not established yet, so try again
-                    preplanningJoinTimeoutCount++;
-                    if (preplanningJoinTimeoutCount == MAX_PREPLANNING_TIMEOUT_CNT)
-                    {
-                        // Timeout, disable loading screens, popup of joining room timed out, and re-enable all buttons
-                        templateUIVersusClass.LoadingPanel.SetActive(false); 
-                        templateUIClass.LoadingPanel.SetActive(false);
-                        listPlayer.DisplayPopup("Joining preplanning timed out.");
-                    }
-                    else
-                    {
-                        StartCoroutine(TryToJoinPreplanning(team, versusId));
-                    }
-                } else
-                {
-                    // Room was created, join it
-                    PhotonNetwork.JoinRoom(roomId);
-                    PhotonNetwork.CurrentRoom.CustomProperties.Add("versusId", versusId);
-                    PhotonNetwork.CurrentRoom.CustomProperties.Add("myTeam", team);
-                }
-            });
-        }
-
-		public void SetCreatePreplanningRoomValues(string roomId, string team) {
-			createPreplanningRoomFlag = true;
-			createPreplanningRoomId = roomId;
-			createPreplanningRoomTeam = team;
-		}
-
-		public void SetJoinPreplanningRoomValues(string roomId, string team) {
-			joinPreplanningRoomFlag = true;
-			joinPreplanningRoomId = roomId;
-			joinPreplanningRoomTeam = team;
+			templateUIClass.BtnCreatRoom.interactable = true;
+			templateUIClass.ExitMatchmakingBtn.interactable = true;
+			templateUIVersusClass.BtnCreatRoom.interactable = true;
+			templateUIVersusClass.ExitMatchmakingBtn.interactable = true;
+			StartCoroutine("AutoRefreshListRoom");
 		}
 
 		public void OnRefreshButtonClicked()
@@ -152,13 +89,6 @@ namespace Photon.Pun.LobbySystemPhoton
             PhotonNetwork.NickName = PlayerData.playerdata.info.playername;
 			templateUIClass.ListRoomPanel.SetActive(true);
 			templateUIVersusClass.ListRoomPanel.SetActive(true);
-			if (createPreplanningRoomFlag || joinPreplanningRoomFlag) {
-				templateUIClass.LoadingPanel.SetActive(true);
-				templateUIVersusClass.LoadingPanel.SetActive(true);
-			} else {
-				templateUIClass.LoadingPanel.SetActive(false);
-				templateUIVersusClass.LoadingPanel.SetActive(false);
-			}
             if (!PhotonNetwork.InLobby) {
 				PhotonNetwork.JoinLobby ();
 			}
@@ -202,28 +132,6 @@ namespace Photon.Pun.LobbySystemPhoton
 			PhotonNetwork.CreateRoom(roomName, options, null);
 			templateUIClass.NbrPlayers.text = "00";
 		}
-
-        public void CreateVersusPreplanningRoom(string versusId, string team)
-        {
-            templateUIVersusClass.BtnCreatRoom.interactable = false;
-            templateUIVersusClass.ExitMatchmakingBtn.interactable = false;
-            string roomName = "Pre_" + Random.Range(1000, 10000);
-            roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
-
-            RoomOptions options = new RoomOptions { MaxPlayers = 8 };
-			Hashtable h = new Hashtable();
-            h.Add("versusId", versusId);
-            h.Add("myTeam", team);
-			options.CustomRoomProperties = h;
-            options.IsVisible = false;
-
-            PhotonNetwork.CreateRoom(roomName, options, null);
-            templateUIClass.NbrPlayers.text = "00";
-
-            // Save the information to DB so that the other players can join
-            string newRoomId = roomName;
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(team).Child("roomId").SetValueAsync(newRoomId);
-        }
 		
 		public void OnLeaveGameButtonClicked()
 		{

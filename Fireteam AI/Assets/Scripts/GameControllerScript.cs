@@ -12,7 +12,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     // Timer
     public static float missionTime;
     public static float MAX_MISSION_TIME = 1800f;
-    private static short SYNC_SCORE_DELAY = 240;
+    private static float FORFEIT_CHECK_DELAY = 700f;
 
 	public int currentMap;
 
@@ -52,42 +52,46 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     // Match state data
     public char matchType;
-    public string versusId;
     private string myTeam;
     private string opposingTeam;
-    public short redTeamScore;
-    public short blueTeamScore;
-    private short syncScoresDelay;
     private short objectiveCount;
     private short objectiveCompleted;
-    private string versusWinner;
-    //private RoomInfo opposingTeamRoom;
-    //private string opposingTeamRoomId;
-    //private bool opposingTeamRoomFound;
-    private bool endVersusGameFlag;
-    private float endVersusGameDelay;
+    private float forfeitDelay;
 
 	// Use this for initialization
 	void Awake() {
 		coverSpots = new Dictionary<short, GameObject>();
-        versusId = (string)PhotonNetwork.CurrentRoom.CustomProperties["versusId"];
         myTeam = (string)PhotonNetwork.CurrentRoom.CustomProperties["myTeam"];
         opposingTeam = (myTeam == "red" ? "blue" : "red");
-        if (string.IsNullOrEmpty(versusId))
+        if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp")
         {
             matchType = 'C';
-        } else
+        } else if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus")
         {
             matchType = 'V';
         }
-        redTeamScore = 0;
-        blueTeamScore = 0;
         objectiveCount = 0;
         objectiveCompleted = 0;
+        forfeitDelay = FORFEIT_CHECK_DELAY;
 	}
 
     void Start () {
-        PhotonNetwork.AutomaticallySyncScene = true;
+        if (matchType == 'C') {
+            PhotonNetwork.AutomaticallySyncScene = true;
+        } else if (matchType == 'V') {
+            PhotonNetwork.AutomaticallySyncScene = false;
+            if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(myTeam + "Kills")) {
+                PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Kills"] = totalKills;
+            }
+            if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(myTeam + "Deaths")) {
+                PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Deaths"] = totalDeaths;
+            }
+            if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(myTeam + "List")) {
+                PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "List"] = new ArrayList();
+            } else {
+                ((ArrayList)PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "List"]).Add(PhotonNetwork.LocalPlayer.ActorNumber);
+            }
+        }
 		Physics.IgnoreLayerCollision (9, 12);
 		Physics.IgnoreLayerCollision (9, 15);
 		Physics.IgnoreLayerCollision (14, 12);
@@ -138,11 +142,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             if (!gameOver)
             {
                 UpdateMissionTime();
-                if (matchType == 'V')
-                {
-                    // Check to see if the other team has won
-                    DetermineVersusVictory();
-                }
             }
             if (PhotonNetwork.IsMasterClient) {
                 if (matchType == 'C')
@@ -169,8 +168,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                     {
                         if (!gameOver)
                         {
-                            endVersusGameFlag = true;
-                            endVersusGameDelay = 9f;
+                            pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, false);
                         }
                     } else if (bombsRemaining == 0)
                     {
@@ -179,10 +177,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                             // Set completion to 100%
                             SetMyTeamScore(100);
                             // If they can escape, end the game and bring up the stat board
-                            endVersusGameFlag = true;
-                            endVersusGameDelay = 3f;
+                            pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true);
                         }
                     }
+                    // Check to see if either team has won
+                    DetermineGameOver();
                 }
 
 				// Cbeck if mode has been changed to assault or not
@@ -197,16 +196,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				UpdateEndGameTimer();
             }
         }
-        // Actions done only on versus mode
-        if (matchType == 'V')
-        {
-            // Update versus team scores every 5 seconds
-            UpdateVersusScores();
-        }
-        if (endVersusGameFlag)
-        {
-            endVersusGameFlag = false;
-            pView.RPC("RpcEndVersusGame", RpcTarget.All, endVersusGameDelay);
+        if (forfeitDelay > 0f) {
+            forfeitDelay -= Time.deltaTime;
         }
 	}
 
@@ -217,40 +208,16 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
     [PunRPC]
-    void RpcEndVersusGame(float f)
+    void RpcEndVersusGame(float f, bool winner)
     {
         endGameTimer = f;
         gameOver = true;
-        // If host, send the victory to the other team if you're the winner. Also send your kills and deaths to the DB
-        if (PhotonNetwork.IsMasterClient)
-        {
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).RunTransaction(mutableData =>
-            {
-                string winnerWas = (mutableData.Child("winner").Value == null ? null : mutableData.Child("winner").Value.ToString());
-                Debug.Log("winner was: " + winnerWas);
-                if (string.IsNullOrEmpty(winnerWas))
-                {
-                    mutableData.Child("winner").Value = myTeam;
-                    versusWinner = myTeam;
-                    Debug.Log("Setting victory in DB to your team. (" + myTeam + ")");
-                    // Send kills and deaths to DB
-                    // mutableData.Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).Child("kills").Value = totalKills[PhotonNetwork.LocalPlayer.NickName];
-                    // mutableData.Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).Child("deaths").Value = totalDeaths[PhotonNetwork.LocalPlayer.NickName];
-                    return TransactionResult.Success(mutableData);
-                } else
-                {
-                    return TransactionResult.Abort();
-                }
-            });
+        
+        if (winner) {
+            PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Status"] = "win";
+        } else {
+            PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Status"] = "lose";
         }
-        // } else
-        // {
-        //     DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(myTeam + "TeamPlayers").Child(PhotonNetwork.LocalPlayer.NickName).RunTransaction(mutableData => {
-        //         mutableData.Child("kills").Value = totalKills[PhotonNetwork.LocalPlayer.NickName];
-        //         mutableData.Child("deaths").Value = totalDeaths[PhotonNetwork.LocalPlayer.NickName];
-        //         return TransactionResult.Success(mutableData);
-        //     });
-        // }
     }
 
     [PunRPC]
@@ -273,136 +240,36 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		return false;
 	}
 
-    void UpdateVersusScores()
+    void DetermineGameOver()
     {
-        if (syncScoresDelay > 0)
-        {
-            syncScoresDelay--;
-            return;
-        } else
-        {
-            syncScoresDelay = SYNC_SCORE_DELAY;
-        }
-        short myScore = (myTeam == "red" ? redTeamScore : blueTeamScore);
-        if (PhotonNetwork.IsMasterClient)
-        {
-            // Set my score and then get the opposing team score
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).RunTransaction(mutableData =>
-            {
-                string opposingTeamScore = (mutableData.Child(opposingTeam + "Scr").Value == null ? "0" : mutableData.Child(opposingTeam + "Scr").Value.ToString());
-                mutableData.Child(myTeam + "Scr").Value = myScore;
-                if (opposingTeam == "red")
-                {
-                    redTeamScore = short.Parse(opposingTeamScore);
-                }
-                else if (opposingTeam == "blue")
-                {
-                    blueTeamScore = short.Parse(opposingTeamScore);
-                }
-                // Remove any players that have disconnected
-                string sub = myTeam + "TeamPlayers";
-                IEnumerator<MutableData> existingPlayerStats = mutableData.Child(sub).Children.GetEnumerator();
-                while (existingPlayerStats.MoveNext()) {
-                    MutableData thisPlayerStats = existingPlayerStats.Current;
-                    if (!totalKills.ContainsKey(thisPlayerStats.Key.ToString())) {
-                        // Remove
-                        thisPlayerStats.Value = null;
-                    }
-                }
-                // Last, update all player kills and deaths
-                foreach (KeyValuePair<string, int> entry in totalKills)
-                {
-                    string p = entry.Key;
-                    int k = entry.Value;
-                    int d = totalDeaths[p];
-                    mutableData.Child(sub).Child(p).Child("kills").Value = k;
-                    mutableData.Child(sub).Child(p).Child("deaths").Value = d;
-                }
-                return TransactionResult.Success(mutableData);
-            });
-        } else
-        {
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).Child(opposingTeam + "Scr").RunTransaction(mutableData =>
-            {
-                string opposingTeamScore = mutableData.Value.ToString();
-                if (opposingTeam == "red")
-                {
-                    redTeamScore = short.Parse(opposingTeamScore);
-                } else if (opposingTeam == "blue")
-                {
-                    blueTeamScore = short.Parse(opposingTeamScore);
-                }
-                return TransactionResult.Success(mutableData);
-            });
-        }
-    }
-
-    //public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    //{
-    //    if (!string.IsNullOrEmpty(opposingTeamRoomId))
-    //    {
-    //        for (int i = 0; i < roomList.Count; i++)
-    //        {
-    //            if (roomList[i].Name == opposingTeamRoomId)
-    //            {
-    //                opposingTeamRoom = roomList[i];
-    //                opposingTeamRoomFound = true;
-    //                return;
-    //            }
-    //        }
-    //        opposingTeamRoom = null;
-    //        opposingTeamRoomFound = true;
-    //    }
-    //}
-
-    void DetermineVersusVictory()
-    {
+        if (gameOver) return;
         // If one team gets to 100% completion before another, end the game and the team that made it to 100 wins.
         // If one team forfeits, the other wins
-        if (PhotonNetwork.IsMasterClient)
-        {
-            DAOScript.dao.dbRef.Child("fteam_ai_matches").Child(versusId).RunTransaction(mutableData =>
-            {
-                if (mutableData.Value == null)
-                {
-                    endVersusGameFlag = true;
-                    endVersusGameDelay = 5f;
-                    return TransactionResult.Abort();
-                } else
-                {
-                    // Check if the other team has forfeited - can be determine by if the room still exists or not
-                    //if (string.IsNullOrEmpty(opposingTeamRoomId))
-                    //{
-                    //    object oppRoomIdSnap = mutableData.Child(opposingTeam).Child("roomId").Value;
-                    //    opposingTeamRoomId = (oppRoomIdSnap == null ? null : oppRoomIdSnap.ToString());
-                    //}
-
-                    //if (opposingTeamRoomFound)
-                    //{
-                    //    // If the opposing team room no longer exists, then they've forfeited. Else, 
-                    //    if (opposingTeamRoom == null)
-                    //    {
-                    //        endVersusGameFlag = true;
-                    //        endVersusGameDelay = 5f;
-                    //    }
-                    //}
-
-                    // Check if either team has won
-                    object vsWinnerSnap = mutableData.Child("winner").Value;
-                    versusWinner = (vsWinnerSnap == null ? null : vsWinnerSnap.ToString());
-                    if (versusWinner == myTeam)
-                    {
-                        endVersusGameFlag = true;
-                        endVersusGameDelay = 5f;
-                    } else if (versusWinner == opposingTeam)
-                    {
-                        endVersusGameFlag = true;
-                        endVersusGameDelay = 5f;
-                    }
-                    return TransactionResult.Success(mutableData);
-                }
-            });
+        string opposingTeamStatus = (string)PhotonNetwork.CurrentRoom.CustomProperties[opposingTeam + "Status"];
+        
+        // Check if either team has won or they've lost
+        if (opposingTeamStatus == "win") {
+            pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, false);
+            return;
+        } else if (opposingTeamStatus == "lose") {
+            pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true);
+            return;
         }
+
+        // Check if the other team has forfeited - can be determine by any players left on the opposing team
+        // TODO: Need to add/remove players to this list as they join/leave game
+        if (forfeitDelay <= 0f) {
+            ArrayList opposingTeamPlayers = (ArrayList)PhotonNetwork.CurrentRoom.CustomProperties[opposingTeam + "Team"];
+            for (int i = 0; i < opposingTeamPlayers.Count; i++) {
+                int aPlayerId = (int)opposingTeamPlayers[i];
+                if (PhotonNetwork.CurrentRoom.Players.ContainsKey(aPlayerId)) {
+                    return;
+                }
+            }
+        }
+
+        // Couldn't find another player on the other team. This means that they forfeit
+        pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true);
     }
 
 	[PunRPC]
@@ -552,6 +419,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		playerList.Remove (otherPlayer.ActorNumber);
 		totalKills.Remove (otherPlayer.NickName);
 		totalDeaths.Remove (otherPlayer.NickName);
+        ((ArrayList)PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "List"]).Remove(PhotonNetwork.LocalPlayer.ActorNumber);
 	}
 
 	/**public override void OnPlayerEnteredRoom(Player newPlayer) {
@@ -599,14 +467,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     void SetMyTeamScore(short score)
     {
-        if (myTeam == "red")
-        {
-            redTeamScore = score;
-        }
-        else if (myTeam == "blue")
-        {
-            blueTeamScore = score;
-        }
+        PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Score"] = score;
     }
 
     void UpdateEndGameTimer() {
@@ -635,10 +496,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                             }
                         } else if (matchType == 'V')
                         {
-                            if (versusWinner == myTeam)
+                            string teamStatus = (string)PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Status"];
+                            if (teamStatus == "win")
                             {
                                 SwitchToGameOverScene(true);
-                            } else
+                            } else if (teamStatus == "lose")
                             {
                                 SwitchToGameOverScene(false);
                             }

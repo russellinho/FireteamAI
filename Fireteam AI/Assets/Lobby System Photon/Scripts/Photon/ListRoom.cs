@@ -21,14 +21,17 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void Awake()
 		{
-			PhotonNetwork.AutomaticallySyncScene = true;
 			cachedRoomList = new Dictionary<string, RoomInfo>();
 			roomListEntries = new Dictionary<string, GameObject>();
-
 		}
 
 		public override void OnRoomListUpdate(List<RoomInfo> roomList)
 		{
+			if (templateUIClass.gameObject.activeInHierarchy) {
+				PhotonNetwork.AutomaticallySyncScene = true;
+			} else {
+				PhotonNetwork.AutomaticallySyncScene = false;
+			}
 			ClearRoomListView();
 
 			UpdateCachedRoomList(roomList);

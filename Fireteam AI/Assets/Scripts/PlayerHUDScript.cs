@@ -162,8 +162,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		UpdateEnemyMarkers();
 		UpdateWaypoints ();
 		UpdateCursorStatus ();
-        UpdateRedTeamScore(gameController.redTeamScore);
-        UpdateBlueTeamScore(gameController.blueTeamScore);
+		if (gameController.matchType == 'V') {
+			UpdateRedTeamScore((int)PhotonNetwork.CurrentRoom.CustomProperties["redScore"]);
+			UpdateBlueTeamScore((int)PhotonNetwork.CurrentRoom.CustomProperties["blueScore"]);
+		}
 
 		if (gameController.gameOver) {
 			if (gameController.exitLevelLoaded) {
