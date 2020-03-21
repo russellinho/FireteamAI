@@ -150,7 +150,7 @@ public class PlayerData : MonoBehaviour
     public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
     {
         string levelName = SceneManager.GetActiveScene().name;
-        if (levelName.Equals("BetaLevelNetwork"))
+        if (levelName.Equals("BetaLevelNetwork") || levelName.Equals("BetaLevelNetworkRed") || levelName.Equals("BetaLevelNetworkBlue"))
         {
             string characterPrefabName = GetCharacterPrefabName();
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(

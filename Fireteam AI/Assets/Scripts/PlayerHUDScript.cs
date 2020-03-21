@@ -78,7 +78,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		screenGrab = false;
 		enemyMarkersCleared = false;
 
-		LoadBetaLevel ();
+		LoadHUDForMission ();
 		StartMatchCameraFade ();
 	}
 
@@ -88,7 +88,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		roundStartFadeIn = true;
 	}
 
-	void LoadBetaLevel() {
+	void LoadHUDForMission() {
 		if (SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
 			container.screenColor.color = new Color (0f, 0f, 0f, 1f);
 			gameController.bombsRemaining = 4;
