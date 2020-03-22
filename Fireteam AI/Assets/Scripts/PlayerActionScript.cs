@@ -15,6 +15,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public AudioControllerScript audioController;
     public CharacterController charController;
     public WeaponActionScript wepActionScript;
+    public CameraShakeScript cameraShakeScript;
+    public PhotonTransformView photonTransformView;
     public AudioSource aud;
     public Camera viewCam;
     public GameObject spectatorCam;
@@ -30,6 +32,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public ParticleSystem boostParticleEffect;
     public SpriteRenderer hudMarker;
     public GameObject fpcBodyRef;
+    public GameObject[] objectsToDisable;
 
     // Player variables
     public int health;
@@ -87,6 +90,17 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private float detectionCoolDownDelay;
     private float increaseDetectionDelay;
     private bool detectionResetUnderway;
+
+    void Awake()
+    {
+        if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
+            bool isMyTeamMap = (((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red" && SceneManager.GetActiveScene().name.EndsWith("Red")) || ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "blue" && SceneManager.GetActiveScene().name.EndsWith("Blue")));
+            if (!isMyTeamMap)
+            {
+                DisablePlayerForVersus();
+            }
+        }
+    }
 
     void Start()
     {
@@ -1006,6 +1020,35 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         godMode = true;
         yield return new WaitForSeconds(3f);
         godMode = false;
+    }
+
+    // Disables player in current scene since they shouldn't exist in this scene
+    void DisablePlayerForVersus()
+    {
+        gameObject.tag = "Untagged";
+        gameObject.layer = 0;
+
+        for (int i = 0; i < objectsToDisable.Length; i++)
+        {
+            objectsToDisable[i].SetActive(false);
+        }
+
+        equipmentScript.enabled = false;
+        weaponScript.enabled = false;
+        playerScript.enabled = false;
+        charController.enabled = false;
+        aud.enabled = false;
+        fpc.enabled = false;
+        wepActionScript.enabled = false;
+        cameraShakeScript.enabled = false;
+        audioController.enabled = false;
+        inGameMessengerHud.enabled = false;
+        hud.enabled = false;
+        photonTransformView.enabled = false;
+        GetComponent<Rigidbody>().detectCollisions = false;
+        this.enabled = false;
+
+
     }
 
 }

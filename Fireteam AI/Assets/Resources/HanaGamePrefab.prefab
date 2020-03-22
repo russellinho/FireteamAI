@@ -43,7 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef467fedef6ed24d8dbd8d62cb74c13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handle: {fileID: 0}
   weapon: {fileID: 0}
   leftShoulder: {fileID: 7942259398586827199}
   leftHand: {fileID: 0}
@@ -285,7 +284,6 @@ MonoBehaviour:
   equippedFootwear: 
   equippedArmor: 
   equippedSkin: 0
-  gender: 70
   equippedSkinRef: {fileID: 0}
   equippedHeadgearRef: {fileID: 0}
   equippedFacewearRef: {fileID: 0}
@@ -315,6 +313,10 @@ MonoBehaviour:
   myBones: {fileID: 7942259398586473929}
   myFpcBones: {fileID: 4166761373134866955}
   pView: {fileID: 580623507002314522}
+  topPrefabSetupPath: 
+  bottomPrefabSetupPath: 
+  footwearPrefabSetupPath: 
+  skinPrefabSetupPath: 
 --- !u!114 &580623507002314518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,11 +338,8 @@ MonoBehaviour:
   titleAnimFemale: {fileID: 0}
   titleAnimMale: {fileID: 0}
   equippedPrimaryWeapon: 
-  equippedPrimaryType: 
   equippedSecondaryWeapon: 
-  equippedSecondaryType: 
   equippedSupportWeapon: 
-  equippedSupportType: 
   equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryAmmoLeft: 0
@@ -351,6 +350,7 @@ MonoBehaviour:
   currentAmmoSupport: 0
   weaponReady: 0
   pView: {fileID: 580623507002314522}
+  setupGender: 0
 --- !u!114 &580623507002314519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -696,6 +696,8 @@ MonoBehaviour:
   audioController: {fileID: 580623507002314510}
   charController: {fileID: 580623507002314516}
   wepActionScript: {fileID: 580623507002314515}
+  cameraShakeScript: {fileID: 580623507002314513}
+  photonTransformView: {fileID: 580623507002314523}
   aud: {fileID: 580623507002314517}
   viewCam: {fileID: 580623506623331172}
   spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
@@ -712,6 +714,16 @@ MonoBehaviour:
   boostParticleEffect: {fileID: 1369169697262901128}
   hudMarker: {fileID: 2573557285086674844}
   fpcBodyRef: {fileID: 580623507404202083}
+  objectsToDisable:
+  - {fileID: 7942259398586473549}
+  - {fileID: 580623507404202083}
+  - {fileID: 3019983665833520901}
+  - {fileID: 6371285978435341390}
+  - {fileID: 8743005554772947631}
+  - {fileID: 2480159187007255527}
+  - {fileID: 5671488159512719685}
+  - {fileID: 3417306565219832954}
+  - {fileID: 5375672228478509974}
   health: 0
   sprintTime: 0
   godMode: 0
@@ -844,7 +856,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 580623507002314523}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &580623507002314523
 MonoBehaviour:
@@ -935,7 +947,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef467fedef6ed24d8dbd8d62cb74c13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handle: {fileID: 0}
   weapon: {fileID: 0}
   leftShoulder: {fileID: 4166761373134640663}
   leftHand: {fileID: 4166761373134640767}
