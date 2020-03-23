@@ -12,7 +12,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     // Timer
     public static float missionTime;
     public static float MAX_MISSION_TIME = 1800f;
-    private static float FORFEIT_CHECK_DELAY = 700f;
+    private static float FORFEIT_CHECK_DELAY = 1000f;
 
 	public int currentMap;
     public string teamMap;
@@ -259,19 +259,17 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         }
 
         // Check if the other team has forfeited - can be determine by any players left on the opposing team
-        // TODO: Need to add/remove players to this list as they join/leave game
         if (forfeitDelay <= 0f) {
-            ArrayList opposingTeamPlayers = (ArrayList)PhotonNetwork.CurrentRoom.CustomProperties[opposingTeam + "Team"];
+            ArrayList opposingTeamPlayers = (ArrayList)PhotonNetwork.CurrentRoom.CustomProperties[opposingTeam + "List"];
             for (int i = 0; i < opposingTeamPlayers.Count; i++) {
                 int aPlayerId = (int)opposingTeamPlayers[i];
                 if (PhotonNetwork.CurrentRoom.Players.ContainsKey(aPlayerId)) {
                     return;
                 }
             }
+            // Couldn't find another player on the other team. This means that they forfeit
+            pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true);
         }
-
-        // Couldn't find another player on the other team. This means that they forfeit
-        pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true);
     }
 
 	[PunRPC]
@@ -487,12 +485,12 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             if (endGameTimer > 0f)
             {
                 endGameTimer -= Time.deltaTime;
-				pView.RPC ("RpcUpdateEndGameTimer", RpcTarget.Others, endGameTimer);
+				pView.RPC ("RpcUpdateEndGameTimer", RpcTarget.Others, endGameTimer, teamMap);
             }
 
             if (endGameTimer <= 0f) {
 				if (!exitLevelLoaded) {
-					pView.RPC ("RpcSetExitLevelLoaded", RpcTarget.All);
+					pView.RPC ("RpcSetExitLevelLoaded", RpcTarget.All, teamMap);
 				} else {
 					if (exitLevelLoadedTimer <= 0f && !loadExitCalled) {
                         loadExitCalled = true;

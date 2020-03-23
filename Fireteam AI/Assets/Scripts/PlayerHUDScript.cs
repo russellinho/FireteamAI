@@ -89,7 +89,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void LoadHUDForMission() {
-		if (SceneManager.GetActiveScene().name.Equals("BetaLevelNetwork")) {
+        string levelName = SceneManager.GetActiveScene().name;
+        if (levelName == "BetaLevelNetwork" || levelName == "BetaLevelNetworkRed" || levelName == "BetaLevelNetworkBlue") {
 			container.screenColor.color = new Color (0f, 0f, 0f, 1f);
 			gameController.bombsRemaining = 4;
 			gameController.currentMap = 1;
