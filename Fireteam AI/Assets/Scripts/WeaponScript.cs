@@ -10,6 +10,7 @@ public class WeaponScript : MonoBehaviour
 {
     public EquipmentScript equipmentScript;
     public WeaponActionScript weaponActionScript;
+    public PlayerActionScript playerActionScript;
     public WeaponHandlerScript weaponHolder;
     public WeaponHandlerScript weaponHolderFpc;
     public Animator animator;
@@ -626,6 +627,7 @@ public class WeaponScript : MonoBehaviour
 
     [PunRPC]
     void RpcToggleWeaponVisible(bool b) {
+        if (playerActionScript.isNotOnTeamMap) return;
         drawnWeaponReference.SetActive(b);
     }
 

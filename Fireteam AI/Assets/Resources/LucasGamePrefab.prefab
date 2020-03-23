@@ -68,6 +68,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ts: {fileID: 0}
   playerScript: {fileID: 720653860272823639}
+  playerActionScript: {fileID: 720653860272823632}
   tws: {fileID: 720653860272823638}
   fullBodyRef: {fileID: 4260894050299789587}
   firstPersonRef: {fileID: 4076574946525411620}
@@ -126,6 +127,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equipmentScript: {fileID: 720653860272823641}
   weaponActionScript: {fileID: 720653860272823635}
+  playerActionScript: {fileID: 720653860272823632}
   weaponHolder: {fileID: 1510986921894706179}
   weaponHolderFpc: {fileID: 4528069227279452866}
   animator: {fileID: 4260894050290283357}
@@ -531,6 +533,7 @@ MonoBehaviour:
   weaponSpeedModifier: 0
   verticalVelocityBeforeLanding: 0
   fpc: {fileID: 720653860272823634}
+  isNotOnTeamMap: 0
   hitTimer: 0
   healTimer: 0
   boostTimer: 0

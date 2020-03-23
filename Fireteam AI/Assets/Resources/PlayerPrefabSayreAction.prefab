@@ -7554,6 +7554,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ts: {fileID: 0}
   playerScript: {fileID: 218755859189559228}
+  playerActionScript: {fileID: 0}
   tws: {fileID: 8241961466619712412}
   fullBodyRef: {fileID: 0}
   firstPersonRef: {fileID: 0}
@@ -7565,7 +7566,6 @@ MonoBehaviour:
   equippedFootwear: 
   equippedArmor: 
   equippedSkin: 0
-  gender: 77
   equippedSkinRef: {fileID: 0}
   equippedHeadgearRef: {fileID: 0}
   equippedFacewearRef: {fileID: 0}
@@ -7590,10 +7590,15 @@ MonoBehaviour:
   myHairRenderer: {fileID: 7426473737837668800}
   myFpcSkinRenderer: {fileID: 0}
   myFpcTopRenderer: {fileID: 0}
+  myFpcGlovesRenderer: {fileID: 0}
   renderHair: 0
   myBones: {fileID: 2464462323615951097}
   myFpcBones: {fileID: 0}
   pView: {fileID: 2147986590652865928}
+  topPrefabSetupPath: 
+  bottomPrefabSetupPath: 
+  footwearPrefabSetupPath: 
+  skinPrefabSetupPath: 
 --- !u!114 &8241961466619712412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7608,16 +7613,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equipmentScript: {fileID: 384782906892189734}
   weaponActionScript: {fileID: 9067648845777745277}
+  playerActionScript: {fileID: 0}
   weaponHolder: {fileID: 8153228017515657656}
   weaponHolderFpc: {fileID: 0}
   animator: {fileID: 2464462323623336759}
   ts: {fileID: 0}
+  titleAnimFemale: {fileID: 0}
+  titleAnimMale: {fileID: 0}
   equippedPrimaryWeapon: 
-  equippedPrimaryType: 
   equippedSecondaryWeapon: 
-  equippedSecondaryType: 
   equippedSupportWeapon: 
-  equippedSupportType: 
   equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryAmmoLeft: 0
@@ -7628,6 +7633,7 @@ MonoBehaviour:
   currentAmmoSupport: 0
   weaponReady: 0
   pView: {fileID: 2147986590652865928}
+  setupGender: 0
 --- !u!114 &218755859189559228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7874,6 +7880,8 @@ MonoBehaviour:
   m_JumpSound: {fileID: 8300000, guid: 5897aeed9b676024fbb8c694b421a861, type: 3}
   m_LandSound: {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
   m_Input: {x: 0, y: 0}
+  m_CharacterController: {fileID: 0}
+  m_AudioSource: {fileID: 0}
   sprintLock: 0
   canMove: 0
   weaponActionScript: {fileID: 9067648845777745277}
@@ -7926,6 +7934,7 @@ MonoBehaviour:
   weaponHolderFpc: {fileID: 0}
   animator: {fileID: 2464462323623336759}
   animatorFpc: {fileID: 0}
+  weaponStats: {fileID: 0}
   spread: 0
   totalAmmoLeft: 0
   currentAmmo: 0
@@ -7933,7 +7942,13 @@ MonoBehaviour:
   fpcShootPoint: {fileID: 0}
   isReloading: 0
   isCocking: 0
+  isFiring: 0
   isAiming: 0
+  isDrawing: 0
+  isWieldingThrowable: 0
+  isWieldingBooster: 0
+  isCockingGrenade: 0
+  isUsingBooster: 0
   hitParticles: {fileID: 1617700753897852, guid: 2b61531c3d65e3f4e949e45eb6021b7b,
     type: 3}
   bulletImpact: {fileID: 1235035097298946, guid: 1abe832de1d01be48b12062549dcc9fb,
@@ -7943,13 +7958,11 @@ MonoBehaviour:
   firingMode: 0
   shotMode: 0
   camTransform: {fileID: 4427920815530877115}
-  aodSpeed: 8
   pView: {fileID: 2147986590652865928}
-  isCockingGrenade: 0
   rightCollar: {fileID: 0}
   leftCollar: {fileID: 0}
-  leftCollarOriginalPos: {x: 0, y: 0, z: 0}
-  rightCollarOriginalPos: {x: 0, y: 0, z: 0}
+  leftCollarCurrentPos: {x: 0, y: 0, z: 0}
+  rightCollarCurrentPos: {x: 0, y: 0, z: 0}
 --- !u!114 &3253031339457809183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7966,6 +7979,8 @@ MonoBehaviour:
   audioController: {fileID: 287251196678012730}
   charController: {fileID: 1482661691639375730}
   wepActionScript: {fileID: 9067648845777745277}
+  cameraShakeScript: {fileID: 0}
+  photonTransformView: {fileID: 0}
   aud: {fileID: 1199510586969991429}
   viewCam: {fileID: 7414277011786800713}
   spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
@@ -7981,6 +7996,8 @@ MonoBehaviour:
   healParticleEffect: {fileID: 5363174903410596630}
   boostParticleEffect: {fileID: 9068672888607000721}
   hudMarker: {fileID: 490126032958896902}
+  fpcBodyRef: {fileID: 0}
+  objectsToDisable: []
   health: 0
   sprintTime: 0
   godMode: 0
@@ -7991,12 +8008,15 @@ MonoBehaviour:
   respawnTimer: 0
   totalSpeedBoost: 0
   weaponSpeedModifier: 0
+  verticalVelocityBeforeLanding: 0
   fpc: {fileID: 8161771613342906849}
+  isNotOnTeamMap: 0
   hitTimer: 0
   healTimer: 0
   boostTimer: 0
   hitLocation: {x: 0, y: 0, z: 0}
   headTransform: {fileID: 2464462323615659229}
+  cameraParent: {fileID: 0}
 --- !u!114 &4095976291033229494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8038,6 +8058,8 @@ MonoBehaviour:
   hitmarkerSound: {fileID: 8300000, guid: f5f9c7f44fd0db94fb7457a968a1def7, type: 3}
   sirenSound: {fileID: 8300000, guid: e4fdcd319d7fc2f459e5894d9c267ee5, type: 3}
   missionStartSound: {fileID: 8300000, guid: c995c036e32e4f447bdaaa1124e4c370, type: 3}
+  alertSound: {fileID: 0}
+  cautionSound: {fileID: 0}
 --- !u!54 &6354137144372038668
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -8074,7 +8096,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 839698624353317809}
   viewIdField: 0
-  InstantiationId: 4
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &839698624353317809
 MonoBehaviour:
@@ -13208,9 +13230,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef467fedef6ed24d8dbd8d62cb74c13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handle: {fileID: 0}
   weapon: {fileID: 0}
   leftShoulder: {fileID: 2464462323615659155}
+  leftHand: {fileID: 0}
+  rightHand: {fileID: 0}
   fpc: {fileID: 8161771613342906849}
 --- !u!1 &3971829910217167166
 GameObject:
@@ -32827,7 +32850,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31aec6efb1df6344091734678c951904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponHolderTrans: {fileID: 3133394732938295655}
   fpc: {fileID: 8161771613342906849}
 --- !u!81 &8258095143926733259
 AudioListener:

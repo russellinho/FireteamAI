@@ -62,6 +62,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     // Game logic helper variables
     public FirstPersonController fpc;
+    public bool isNotOnTeamMap;
 
     private float crouchPosY;
     private float crouchBodyPosY;
@@ -348,7 +349,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         bool isMyTeamMap = ((myTeam == "red" && SceneManager.GetActiveScene().name.EndsWith("Red")) || (myTeam == "blue" && SceneManager.GetActiveScene().name.EndsWith("Blue")));
         if (!isMyTeamMap)
         {
-            Debug.Log("three");
             DisablePlayerForVersus();
         }
     }
@@ -1033,6 +1033,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     // Disables player in current scene since they shouldn't exist in this scene
     void DisablePlayerForVersus()
     {
+        isNotOnTeamMap = true;
         gameObject.tag = "Untagged";
         gameObject.layer = 0;
 
