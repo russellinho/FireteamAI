@@ -15,6 +15,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     private static float FORFEIT_CHECK_DELAY = 700f;
 
 	public int currentMap;
+    public char teamMap;
 
     // variable for last gunshot position
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
@@ -190,7 +191,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				// Cbeck if mode has been changed to assault or not
 				if (!assaultMode) {
 					if (!lastGunshotHeardPos.Equals (Vector3.negativeInfinity)) {
-						pView.RPC ("UpdateAssaultMode", RpcTarget.All, true);
+						pView.RPC ("UpdateAssaultMode", RpcTarget.All, true, teamMap);
 					}
 				}
 
@@ -224,7 +225,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     }
 
     [PunRPC]
-	public void UpdateAssaultMode(bool assaultInProgress) {
+	public void UpdateAssaultMode(bool assaultInProgress, char team) {
+        if (team != teamMap) return;
 		StartCoroutine (UpdateAssaultModeTimer(5f, assaultInProgress));
 	}
 
@@ -276,16 +278,18 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     }
 
 	[PunRPC]
-	void RpcSetLastGunshotHeardTimer(float t) {
+	void RpcSetLastGunshotHeardTimer(float t, char team) {
+        if (team != teamMap) return;
 		lastGunshotTimer = t;
 	}
 
 	public void SetLastGunshotHeardPos(float x, float y, float z) {
-		pView.RPC ("RpcSetLastGunshotHeardPos", RpcTarget.All, true, x, y, z);
+		pView.RPC ("RpcSetLastGunshotHeardPos", RpcTarget.All, true, x, y, z, teamMap);
 	}
 
 	[PunRPC]
-	void RpcSetLastGunshotHeardPos(bool b, float x, float y, float z) {
+	void RpcSetLastGunshotHeardPos(bool b, float x, float y, float z, char team) {
+        if (team != teamMap) return;
 		if (!b) {
 			lastGunshotHeardPos = Vector3.negativeInfinity;
 		} else {
@@ -294,7 +298,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	[PunRPC]
-	void RpcSetLastGunshotHeardPosClone(bool b, float x, float y, float z) {
+	void RpcSetLastGunshotHeardPosClone(bool b, float x, float y, float z, char team) {
+        if (team != teamMap) return;
 		if (!b) {
 			lastGunshotHeardPosClone = Vector3.negativeInfinity;
 		} else {
@@ -304,44 +309,47 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	void ResetLastGunshotPos() {
 		if (!Vector3.Equals (lastGunshotHeardPos, lastGunshotHeardPosClone)) {
-			pView.RPC ("RpcSetLastGunshotHeardTimer", RpcTarget.All, 10f);
-			pView.RPC ("RpcSetLastGunshotHeardPosClone", RpcTarget.All, true, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z);
+			pView.RPC ("RpcSetLastGunshotHeardTimer", RpcTarget.All, 10f, teamMap);
+			pView.RPC ("RpcSetLastGunshotHeardPosClone", RpcTarget.All, true, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, teamMap);
 		} else {
 			lastGunshotTimer -= Time.deltaTime;
 			if (lastGunshotTimer <= 0f) {
-				pView.RPC ("RpcSetLastGunshotHeardTimer", RpcTarget.All, 10f);
-				pView.RPC ("RpcSetLastGunshotHeardPos", RpcTarget.All, false, 0f, 0f, 0f);
-				pView.RPC ("RpcSetLastGunshotHeardPosClone", RpcTarget.All, false, 0f, 0f, 0f);
+				pView.RPC ("RpcSetLastGunshotHeardTimer", RpcTarget.All, 10f, teamMap);
+				pView.RPC ("RpcSetLastGunshotHeardPos", RpcTarget.All, false, 0f, 0f, 0f, teamMap);
+				pView.RPC ("RpcSetLastGunshotHeardPosClone", RpcTarget.All, false, 0f, 0f, 0f, teamMap);
 			}
 		}
 	}
 
 	public void IncrementDeathCount() {
-		pView.RPC ("RpcIncrementDeathCount", RpcTarget.All);
+		pView.RPC ("RpcIncrementDeathCount", RpcTarget.All, teamMap);
 	}
 
 	[PunRPC]
-	void RpcIncrementDeathCount() {
+	void RpcIncrementDeathCount(char team) {
+        if (team != teamMap) return;
 		deadCount++;
 	}
 
 	public void ConvertCounts(int dead, int escape) {
-		pView.RPC ("RpcConvertCounts", RpcTarget.All, dead, escape);
+		pView.RPC ("RpcConvertCounts", RpcTarget.All, dead, escape, teamMap);
 	}
 
 	[PunRPC]
-	void RpcConvertCounts(int dead, int escape) {
+	void RpcConvertCounts(int dead, int escape, char team) {
+        if (team != teamMap) return;
 		deadCount += dead;
 		escaperCount += escape;
 	}
 
 	public void IncrementEscapeCount() {
-		pView.RPC ("RpcIncrementEscapeCount", RpcTarget.All);
+		pView.RPC ("RpcIncrementEscapeCount", RpcTarget.All, teamMap);
 	}
 
 	[PunRPC]
-	void RpcIncrementEscapeCount() {
-		escaperCount++;
+	void RpcIncrementEscapeCount(char team) {
+        if (team != teamMap) return;
+        escaperCount++;
 	}
 
     void UpdateMissionTime() {
@@ -360,14 +368,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     }
 
     [PunRPC]
-    void RpcUpdateMissionTime(float t) {
+    void RpcUpdateMissionTime(float t, char team) {
+        if (team != teamMap) return;
         missionTime = t;
     }
 
     [PunRPC]
     void RpcSendMissionTimeToClients()
     {
-        pView.RPC("RpcUpdateMissionTime", RpcTarget.Others, missionTime);
+        pView.RPC("RpcUpdateMissionTime", RpcTarget.Others, missionTime, teamMap);
     }
 
     // When someone leaves the game in the middle of an escape, reset the values to recount
@@ -436,23 +445,26 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}*/
 
 	[PunRPC]
-	void RpcUpdateEndGameTimer(float t) {
-		endGameTimer = t;
+	void RpcUpdateEndGameTimer(float t, char team) {
+        if (team != teamMap) return;
+        endGameTimer = t;
 	}
 
 	public void DecrementBombsRemaining() {
-		pView.RPC ("RpcDecrementBombsRemaining", RpcTarget.All);
+		pView.RPC ("RpcDecrementBombsRemaining", RpcTarget.All, teamMap);
 	}
 
 	[PunRPC]
-	void RpcDecrementBombsRemaining() {
-		bombsRemaining--;
+	void RpcDecrementBombsRemaining(char team) {
+        if (team != teamMap) return;
+        bombsRemaining--;
         UpdateMyTeamScore(true);
 	}
 
 	[PunRPC]
-	void RpcSetExitLevelLoaded() {
-		exitLevelLoaded = true;
+	void RpcSetExitLevelLoaded(char team) {
+        if (team != teamMap) return;
+        exitLevelLoaded = true;
 		exitLevelLoadedTimer = 4f;
 	}
 
@@ -552,12 +564,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void SyncCoverSpot(short key, GameObject value) {
-		pView.RPC("RpcSyncCoverSpot", RpcTarget.Others, key, value.GetComponent<CoverSpotScript>().IsTaken());
+		pView.RPC("RpcSyncCoverSpot", RpcTarget.Others, key, value.GetComponent<CoverSpotScript>().IsTaken(), teamMap);
 	}
 
 	[PunRPC]
-	void RpcSyncCoverSpot(short key, bool value) {
-		coverSpots[key].GetComponent<CoverSpotScript>().SetCoverSpot(value);
+	void RpcSyncCoverSpot(short key, bool value, char team) {
+        if (team != teamMap) return;
+        coverSpots[key].GetComponent<CoverSpotScript>().SetCoverSpot(value);
 	}
 
 	public void TakeCoverSpot(short id) {
