@@ -93,11 +93,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void Awake()
     {
-        if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
-            bool isMyTeamMap = (((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red" && SceneManager.GetActiveScene().name.EndsWith("Red")) || ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "blue" && SceneManager.GetActiveScene().name.EndsWith("Blue")));
-            if (!isMyTeamMap)
-            {
-                DisablePlayerForVersus();
+        if (photonView.IsMine) {
+            if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
+                photonView.RPC("RpcDisablePlayerForVersus", RpcTarget.AllBuffered, (string)PhotonNetwork.LocalPlayer.CustomProperties["team"]);
             }
         }
     }
@@ -342,6 +340,16 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (!godMode)
         {
             health -= d;
+        }
+    }
+
+    [PunRPC]
+    void RpcDisablePlayerForVersus(string myTeam) {
+        bool isMyTeamMap = ((myTeam == "red" && SceneManager.GetActiveScene().name.EndsWith("Red")) || (myTeam == "blue" && SceneManager.GetActiveScene().name.EndsWith("Blue")));
+        if (!isMyTeamMap)
+        {
+            Debug.Log("three");
+            DisablePlayerForVersus();
         }
     }
 
