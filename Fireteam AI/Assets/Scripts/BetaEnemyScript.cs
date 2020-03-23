@@ -366,14 +366,14 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcSetAlertTimer(float t, char team) {
+	void RpcSetAlertTimer(float t, string team) {
         if (team != gameControllerScript.teamMap) return;
 		alertTimer = t;
 	}
 
 	// What happens when the enemy is alerted
 	[PunRPC]
-	void RpcSetAlerted(bool b, char team) {
+	void RpcSetAlerted(bool b, string team) {
         if (team != gameControllerScript.teamMap) return;
         alerted = b;
 		if (range == 10f) {
@@ -384,7 +384,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcSetIsCrouching(bool b, char team)
+	void RpcSetIsCrouching(bool b, string team)
 	{
         if (team != gameControllerScript.teamMap) return;
         isCrouching = b;
@@ -399,13 +399,13 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcSetWanderStallDelay(float f, char team) {
+	void RpcSetWanderStallDelay(float f, string team) {
         if (team != gameControllerScript.teamMap) return;
         wanderStallDelay = f;
 	}
 
 	[PunRPC]
-	void RpcSetNavMeshDestination(float x, float y, float z, char team) {
+	void RpcSetNavMeshDestination(float x, float y, float z, string team) {
         if (team != gameControllerScript.teamMap) return;
         if (PhotonNetwork.IsMasterClient) {
 			if (navMesh.isOnNavMesh) {
@@ -419,13 +419,13 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcSetInCover(bool n, char team) {
+	void RpcSetInCover(bool n, string team) {
         if (team != gameControllerScript.teamMap) return;
         inCover = n;
 	}
 
 	[PunRPC]
-	void RpcSetFiringModeTimer(float t, char team) {
+	void RpcSetFiringModeTimer(float t, string team) {
         if (team != gameControllerScript.teamMap) return;
         firingModeTimer = t;
 	}
@@ -623,13 +623,13 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcSetCoverWaitTimer(float t, char team) {
+	void RpcSetCoverWaitTimer(float t, string team) {
         if (team != gameControllerScript.teamMap) return;
         coverWaitTimer = t;
 	}
 
 	[PunRPC]
-	void RpcSetCoverSwitchPositionsTimer(float t, char team) {
+	void RpcSetCoverSwitchPositionsTimer(float t, string team) {
         if (team != gameControllerScript.teamMap) return;
         coverSwitchPositionsTimer = t;
 	}
@@ -688,13 +688,13 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcDie(char team) {
+	void RpcDie(string team) {
         if (team != gameControllerScript.teamMap) return;
         marker.enabled = false;
 	}
 
 	[PunRPC]
-	void RpcSetCrouchMode(int n, char team) {
+	void RpcSetCrouchMode(int n, string team) {
         if (team != gameControllerScript.teamMap) return;
         crouchMode = n;
 	}
@@ -772,7 +772,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcSetPlayerToHit(int id, char team) {
+	void RpcSetPlayerToHit(int id, string team) {
         if (team != gameControllerScript.teamMap) return;
         if (id == -1) {
 			playerToHit = null;
@@ -885,7 +885,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcRegisterGrenadeKill(int playerNetworkId, char team) {
+	void RpcRegisterGrenadeKill(int playerNetworkId, string team) {
         if (team != gameControllerScript.teamMap) return;
         // If the player id of the person who killed the enemy matches my player id
         if (playerNetworkId == PlayerData.playerdata.inGamePlayerReference.GetComponent<PhotonView>().ViewID) {
@@ -921,7 +921,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcUpdateNavMesh(bool stopped, char team) {
+	void RpcUpdateNavMesh(bool stopped, string team) {
         if (team != gameControllerScript.teamMap) return;
         if (PhotonNetwork.IsMasterClient) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
@@ -933,13 +933,13 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcUpdateNavMeshSpeed(float speed, char team) {
+	void RpcUpdateNavMeshSpeed(float speed, string team) {
         if (team != gameControllerScript.teamMap) return;
         navMesh.speed = speed;
 	}
 
 	[PunRPC]
-	void StartDespawn(char team) {
+	void StartDespawn(string team) {
         if (team != gameControllerScript.teamMap) return;
         StartCoroutine(Despawn());
 	}
@@ -1255,7 +1255,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcInstantiateBloodSpill(Vector3 point, Vector3 normal, char team) {
+	void RpcInstantiateBloodSpill(Vector3 point, Vector3 normal, string team) {
         if (team != gameControllerScript.teamMap) return;
         GameObject bloodSpill = Instantiate(bloodEffect, point, Quaternion.FromToRotation (Vector3.forward, normal));
 		bloodSpill.transform.Rotate (180f, 0f, 0f);
@@ -1263,7 +1263,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcInstantiateBulletHole(Vector3 point, Vector3 normal, string parentName, char team) {
+	void RpcInstantiateBulletHole(Vector3 point, Vector3 normal, string parentName, string team) {
         if (team != gameControllerScript.teamMap) return;
         GameObject attachToObject = GameObject.Find(parentName);
 		if (!attachToObject) {
@@ -1276,14 +1276,14 @@ public class BetaEnemyScript : MonoBehaviour {
 
 
 	[PunRPC]
-	void RpcInstantiateHitParticleEffect(Vector3 point, Vector3 normal, char team) {
+	void RpcInstantiateHitParticleEffect(Vector3 point, Vector3 normal, string team) {
         if (team != gameControllerScript.teamMap) return;
         GameObject hitParticleEffect = Instantiate (hitParticles, point, Quaternion.FromToRotation (Vector3.up, normal));
 		Destroy (hitParticleEffect, 1f);
 	}
 
 	[PunRPC]
-	void RpcShootAction(char team) {
+	void RpcShootAction(string team) {
         if (team != gameControllerScript.teamMap) return;
         muzzleFlash.Play();
 		PlayShootSound();
@@ -1307,7 +1307,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcReload(int bullets, char team) {
+	void RpcReload(int bullets, string team) {
         if (team != gameControllerScript.teamMap) return;
         currentBullets = bullets;
 	}
@@ -1407,7 +1407,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcSetCoverTimer(float f, char team) {
+	void RpcSetCoverTimer(float f, string team) {
         if (team != gameControllerScript.teamMap) return;
         coverTimer = f;
 	}
@@ -1480,7 +1480,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcSetCoverPos(short id, bool n, float x, float y, float z, char team) {
+	void RpcSetCoverPos(short id, bool n, float x, float y, float z, string team) {
         if (team != gameControllerScript.teamMap) return;
         if (!n) {
 			gameControllerScript.LeaveCoverSpot(id);
@@ -1566,7 +1566,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcSetLastSeenPlayerPos(bool n, float x, float y, float z, char team) {
+	void RpcSetLastSeenPlayerPos(bool n, float x, float y, float z, string team) {
         if (team != gameControllerScript.teamMap) return;
         if (!n) {
 			lastSeenPlayerPos = Vector3.negativeInfinity;
@@ -1580,13 +1580,13 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	public void RpcTakeDamage(int d, char team) {
+	public void RpcTakeDamage(int d, string team) {
         if (team != gameControllerScript.teamMap) return;
         health -= d;
 	}
 
 	[PunRPC]
-	private void RpcUpdateActionState(ActionStates action, char team) {
+	private void RpcUpdateActionState(ActionStates action, string team) {
         if (team != gameControllerScript.teamMap) return;
         //{Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking}
         if (action == ActionStates.Firing || action == ActionStates.Moving || action == ActionStates.Reloading || action == ActionStates.Pursue || action == ActionStates.TakingCover || action == ActionStates.InCover) {
@@ -1610,7 +1610,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	private void RpcUpdateFiringState(FiringStates firing, char team) {
+	private void RpcUpdateFiringState(FiringStates firing, string team) {
         if (team != gameControllerScript.teamMap) return;
         firingState = firing;
 	}
@@ -1622,7 +1622,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcSetTarget(int id, char team) {
+	void RpcSetTarget(int id, string team) {
         if (team != gameControllerScript.teamMap) return;
         if (id == -1) {
 			player = null;
@@ -1632,7 +1632,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcUpdateAlertedStatus(char team) {
+	void RpcUpdateAlertedStatus(string team) {
         if (team != gameControllerScript.teamMap) return;
         alerted = false;
 		GameControllerScript.lastGunshotHeardPos = Vector3.negativeInfinity;
@@ -1787,7 +1787,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void RpcMarkEnemyOutline(char team) {
+	void RpcMarkEnemyOutline(string team) {
         if (team != gameControllerScript.teamMap) return;
         detectionTimer = DETECTION_OUTLINE_MAX_TIME;
 	}

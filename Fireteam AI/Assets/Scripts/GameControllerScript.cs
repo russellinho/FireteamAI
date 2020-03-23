@@ -15,7 +15,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     private static float FORFEIT_CHECK_DELAY = 700f;
 
 	public int currentMap;
-    public char teamMap;
+    public string teamMap;
 
     // variable for last gunshot position
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
@@ -74,15 +74,12 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         objectiveCount = 0;
         objectiveCompleted = 0;
         forfeitDelay = FORFEIT_CHECK_DELAY;
-        Debug.Log("autosync: " + PhotonNetwork.AutomaticallySyncScene);
 	}
 
     void Start () {
         if (matchType == 'C') {
-            Debug.Log("qq");
             PhotonNetwork.AutomaticallySyncScene = true;
         } else if (matchType == 'V') {
-            Debug.Log("pp");
             PhotonNetwork.AutomaticallySyncScene = false;
             if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(myTeam + "Kills")) {
                 PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Kills"] = totalKills;
@@ -225,7 +222,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     }
 
     [PunRPC]
-	public void UpdateAssaultMode(bool assaultInProgress, char team) {
+	public void UpdateAssaultMode(bool assaultInProgress, string team) {
         if (team != teamMap) return;
 		StartCoroutine (UpdateAssaultModeTimer(5f, assaultInProgress));
 	}
@@ -278,7 +275,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     }
 
 	[PunRPC]
-	void RpcSetLastGunshotHeardTimer(float t, char team) {
+	void RpcSetLastGunshotHeardTimer(float t, string team) {
         if (team != teamMap) return;
 		lastGunshotTimer = t;
 	}
@@ -288,7 +285,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	[PunRPC]
-	void RpcSetLastGunshotHeardPos(bool b, float x, float y, float z, char team) {
+	void RpcSetLastGunshotHeardPos(bool b, float x, float y, float z, string team) {
         if (team != teamMap) return;
 		if (!b) {
 			lastGunshotHeardPos = Vector3.negativeInfinity;
@@ -298,7 +295,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	[PunRPC]
-	void RpcSetLastGunshotHeardPosClone(bool b, float x, float y, float z, char team) {
+	void RpcSetLastGunshotHeardPosClone(bool b, float x, float y, float z, string team) {
         if (team != teamMap) return;
 		if (!b) {
 			lastGunshotHeardPosClone = Vector3.negativeInfinity;
@@ -326,7 +323,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	[PunRPC]
-	void RpcIncrementDeathCount(char team) {
+	void RpcIncrementDeathCount(string team) {
         if (team != teamMap) return;
 		deadCount++;
 	}
@@ -336,7 +333,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	[PunRPC]
-	void RpcConvertCounts(int dead, int escape, char team) {
+	void RpcConvertCounts(int dead, int escape, string team) {
         if (team != teamMap) return;
 		deadCount += dead;
 		escaperCount += escape;
@@ -347,7 +344,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	[PunRPC]
-	void RpcIncrementEscapeCount(char team) {
+	void RpcIncrementEscapeCount(string team) {
         if (team != teamMap) return;
         escaperCount++;
 	}
@@ -368,7 +365,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     }
 
     [PunRPC]
-    void RpcUpdateMissionTime(float t, char team) {
+    void RpcUpdateMissionTime(float t, string team) {
         if (team != teamMap) return;
         missionTime = t;
     }
@@ -445,7 +442,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}*/
 
 	[PunRPC]
-	void RpcUpdateEndGameTimer(float t, char team) {
+	void RpcUpdateEndGameTimer(float t, string team) {
         if (team != teamMap) return;
         endGameTimer = t;
 	}
@@ -455,14 +452,14 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	[PunRPC]
-	void RpcDecrementBombsRemaining(char team) {
+	void RpcDecrementBombsRemaining(string team) {
         if (team != teamMap) return;
         bombsRemaining--;
         UpdateMyTeamScore(true);
 	}
 
 	[PunRPC]
-	void RpcSetExitLevelLoaded(char team) {
+	void RpcSetExitLevelLoaded(string team) {
         if (team != teamMap) return;
         exitLevelLoaded = true;
 		exitLevelLoadedTimer = 4f;
@@ -568,7 +565,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	[PunRPC]
-	void RpcSyncCoverSpot(short key, bool value, char team) {
+	void RpcSyncCoverSpot(short key, bool value, string team) {
         if (team != teamMap) return;
         coverSpots[key].GetComponent<CoverSpotScript>().SetCoverSpot(value);
 	}
