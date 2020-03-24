@@ -62,7 +62,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	// Use this for initialization
 	void Awake() {
 		coverSpots = new Dictionary<short, GameObject>();
-        myTeam = (string)PhotonNetwork.CurrentRoom.CustomProperties["myTeam"];
+        myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
         opposingTeam = (myTeam == "red" ? "blue" : "red");
         if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp")
         {
@@ -477,6 +477,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     void SetMyTeamScore(short score)
     {
+		Debug.Log("Setting my team score: " + score + " " + myTeam + "Score");
         PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Score"] = score;
     }
 
