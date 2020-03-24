@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -164,8 +165,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		UpdateWaypoints ();
 		UpdateCursorStatus ();
 		if (gameController.matchType == 'V') {
-			UpdateRedTeamScore(PhotonNetwork.CurrentRoom.CustomProperties["redScore"] == null ? 0 : (int)PhotonNetwork.CurrentRoom.CustomProperties["redScore"]);
-			UpdateBlueTeamScore(PhotonNetwork.CurrentRoom.CustomProperties["blueScore"] == null ? 0 : (int)PhotonNetwork.CurrentRoom.CustomProperties["blueScore"]);
+			UpdateRedTeamScore(!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("redScore") ? 0 : Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redScore"]));
+			UpdateBlueTeamScore(!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("blueScore") ? 0 : Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueScore"]));
 		}
 
 		if (gameController.gameOver) {
