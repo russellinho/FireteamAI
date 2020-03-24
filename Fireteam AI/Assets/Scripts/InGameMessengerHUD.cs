@@ -60,6 +60,7 @@ public class InGameMessengerHUD : MonoBehaviour {
 
 	[PunRPC]
 	void RpcSendChatMessage(string message) {
+		if (gameObject.layer == 0) return;
 		container.inGameMessenger.AddMessage (message, pView.Owner.NickName);
 	}
 

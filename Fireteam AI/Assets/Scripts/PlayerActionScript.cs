@@ -332,6 +332,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcTakeDamage(int d)
     {
+        if (gameObject.layer == 0) return;
         ResetHitTimer();
         audioController.PlayGruntSound();
         if (photonView.IsMine)
@@ -388,6 +389,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RpcCrouch(float height, float center)
     {
+        if (gameObject.layer == 0) return;
         charController.height = height;
         charController.center = new Vector3(0f, center, 0f);   
     }
@@ -428,6 +430,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcAddToTotalDeaths()
     {
+        if (gameObject.layer == 0) return;
         deaths++;
         GameControllerScript.totalDeaths[photonView.Owner.NickName]++;
     }
@@ -565,6 +568,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcSetHealth(int h)
     {
+        if (gameObject.layer == 0) return;
         health = h;
     }
 
@@ -716,6 +720,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcChangePlayerDisableStatus(bool status)
     {
+        if (gameObject.layer == 0) return;
         if (!status) {
             equipmentScript.DespawnPlayer();
             weaponScript.DespawnPlayer();
@@ -821,6 +826,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcDefuseBomb(int index)
     {
+        if (gameObject.layer == 0) return;
         gameController.bombs[index].GetComponent<BombScript>().Defuse();
     }
 
@@ -923,6 +929,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     [PunRPC]
     void RpcSyncDetectionValues(float detectionLevel, float increaseDetectionDelay, float detectionCoolDownDelay) {
+        if (gameObject.layer == 0) return;
         this.detectionLevel = detectionLevel;
         this.increaseDetectionDelay = increaseDetectionDelay;
         this.detectionCoolDownDelay = detectionCoolDownDelay;

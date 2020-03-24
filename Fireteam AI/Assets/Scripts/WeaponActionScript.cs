@@ -380,6 +380,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcAddToTotalKills()
     {
+        if (gameObject.layer == 0) return;
         playerActionScript.kills++;
         GameControllerScript.totalKills[pView.Owner.NickName]++;
     }
@@ -477,6 +478,7 @@ public class WeaponActionScript : MonoBehaviour
 
     [PunRPC]
     void RpcSpawnShellCasing() {
+        if (gameObject.layer == 0) return;
         GameObject o = Instantiate(weaponStats.weaponShell, weaponStats.weaponShellPoint.position, Quaternion.Euler(-90f, -90f, 90f));
         o.transform.forward = -weaponStats.transform.right;
         o.GetComponent<Rigidbody>().velocity = weaponStats.transform.forward * SHELL_SPEED;
@@ -563,6 +565,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcInstantiateBloodSpill(Vector3 point, Vector3 normal, bool headshot)
     {
+        if (gameObject.layer == 0) return;
         GameObject bloodSpill;
         if (headshot)
         {
@@ -580,6 +583,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcInstantiateBulletHole(Vector3 point, Vector3 normal, string parentName)
     {
+        if (gameObject.layer == 0) return;
         GameObject bulletHoleEffect = Instantiate(bulletImpact, point, Quaternion.FromToRotation(Vector3.forward, normal));
         bulletHoleEffect.transform.SetParent(GameObject.Find(parentName).transform);
         Destroy(bulletHoleEffect, 3f);
@@ -595,6 +599,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcInstantiateHitParticleEffect(Vector3 point, Vector3 normal)
     {
+        if (gameObject.layer == 0) return;
         GameObject hitParticleEffect = Instantiate(hitParticles, point, Quaternion.FromToRotation(Vector3.up, normal));
         Destroy(hitParticleEffect, 1f);
     }
@@ -626,6 +631,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void FireEffects()
     {
+        if (gameObject.layer == 0) return;
         PlayMuzzleFlash();
         InstantiateGunSmokeEffect();
         if (weaponStats.bulletTracer != null && !weaponStats.bulletTracer.isPlaying && !pView.IsMine)
@@ -642,6 +648,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void FireEffectsSuppressed()
     {
+        if (gameObject.layer == 0) return;
         InstantiateGunSmokeEffect();
         if (weaponStats.bulletTracer != null && !weaponStats.bulletTracer.isPlaying && !pView.IsMine)
         {
@@ -711,6 +718,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcReloadAnim()
     {
+        if (gameObject.layer == 0) return;
         // if (isCrouching) {
         //     //animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f);
         //     animator.SetTrigger("Reloading");
@@ -744,6 +752,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcCockingAnim()
     {
+        if (gameObject.layer == 0) return;
         if (animator.GetBool("Crouching") == true)
         {
             animator.CrossFadeInFixedTime("ReloadCrouch", 0.1f, -1, 2.3f);
@@ -780,6 +789,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcPlayReloadSound(int soundNumber)
     {
+        if (gameObject.layer == 0) return;
         weaponStats.weaponSoundSource.clip = weaponStats.reloadSounds[soundNumber];
         weaponStats.weaponSoundSource.Play();
     }
@@ -791,6 +801,7 @@ public class WeaponActionScript : MonoBehaviour
 
     [PunRPC]
     void RpcPlaySupportActionSound() {
+        if (gameObject.layer == 0) return;
         weaponStats.weaponSoundSource.clip = weaponStats.supportActionSound;
         weaponStats.weaponSoundSource.Play();
     }
@@ -1019,12 +1030,14 @@ public class WeaponActionScript : MonoBehaviour
 
     [PunRPC]
     void RpcCockGrenade(bool cocking) {
+        if (gameObject.layer == 0) return;
         //GetComponentInChildren<ThrowableScript>().PlayPinSound();
         animator.SetBool("isCockingGrenade", cocking);
     }
 
     [PunRPC]
     void RpcUseBooster() {
+        if (gameObject.layer == 0) return;
         animator.SetTrigger("useBooster");
     }
 
