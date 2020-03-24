@@ -477,7 +477,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     void SetMyTeamScore(short score)
     {
-		Debug.Log("Setting my team score: " + score + " " + myTeam + "Score");
         PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Score"] = score;
     }
 
