@@ -29,6 +29,7 @@ namespace Photon.Pun
 
         private Quaternion m_NetworkRotation;
 
+        public GameControllerScript gameController;
         public bool m_SynchronizePosition = true;
         public bool m_SynchronizeRotation = true;
         public bool m_SynchronizeScale = false;
@@ -54,6 +55,14 @@ namespace Photon.Pun
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
+            if (gameController != null && gameController.matchType == 'V') {
+                SerializeViewVersus(stream, info);
+            } else {
+                SerializeViewCampaign(stream, info);
+            }
+        }
+
+        void SerializeViewCampaign(PhotonStream stream, PhotonMessageInfo info) {
             if (stream.IsWriting)
             {
                 if (this.m_SynchronizePosition)
@@ -77,6 +86,61 @@ namespace Photon.Pun
             }
             else
             {
+                if (this.m_SynchronizePosition)
+                {
+                    this.m_NetworkPosition = (Vector3)stream.ReceiveNext();
+                    this.m_Direction = (Vector3)stream.ReceiveNext();
+
+                    float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.timestamp));
+                    this.m_NetworkPosition += this.m_Direction * lag;
+
+                    this.m_Distance = Vector3.Distance(transform.position, this.m_NetworkPosition);
+                }
+
+                if (this.m_SynchronizeRotation)
+                {
+                    this.m_NetworkRotation = (Quaternion)stream.ReceiveNext();
+
+                    this.m_Angle = Quaternion.Angle(transform.rotation, this.m_NetworkRotation);
+                }
+
+                if (this.m_SynchronizeScale)
+                {
+                    transform.localScale = (Vector3)stream.ReceiveNext();
+                }
+            }
+        }
+
+        void SerializeViewVersus(PhotonStream stream, PhotonMessageInfo info) {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(gameController.teamMap);
+
+                if (this.m_SynchronizePosition)
+                {
+                    this.m_Direction = transform.position - this.m_StoredPosition;
+                    this.m_StoredPosition = transform.position;
+
+                    stream.SendNext(transform.position);
+                    stream.SendNext(this.m_Direction);
+                }
+
+                if (this.m_SynchronizeRotation)
+                {
+                    stream.SendNext(transform.rotation);
+                }
+
+                if (this.m_SynchronizeScale)
+                {
+                    stream.SendNext(transform.localScale);
+                }
+            }
+            else
+            {
+                string team = (string)stream.ReceiveNext();
+
+                if (team != gameController.teamMap) return;
+
                 if (this.m_SynchronizePosition)
                 {
                     this.m_NetworkPosition = (Vector3)stream.ReceiveNext();
