@@ -99,13 +99,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (photonView.IsMine) {
             if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
                 string myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
-                int redMapInd = 0;
-                if (SceneManager.GetActiveScene().name.EndsWith("Red")) {
-                    redMapInd = 1;
-                } else if (SceneManager.GetActiveScene().name.EndsWith("Blue")) {
-                    redMapInd = -1;
-                }
-                photonView.RPC("RpcDisablePlayerForVersus", RpcTarget.AllBuffered, myTeam, redMapInd);
+                photonView.RPC("RpcDisablePlayerForVersus", RpcTarget.AllBuffered, myTeam);
                 SetTeamHost();
             }
         }
@@ -356,7 +350,16 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void RpcDisablePlayerForVersus(string myTeam, int isRedMap) {
+    void RpcDisablePlayerForVersus(string myTeam) {
+        int isRedMap = 0;
+        if (SceneManager.GetActiveScene().name.EndsWith("Red"))
+        {
+            isRedMap = 1;
+        }
+        else if (SceneManager.GetActiveScene().name.EndsWith("Blue"))
+        {
+            isRedMap = -1;
+        }
         onMyMap = ((myTeam == "red" && isRedMap == 1) || (myTeam == "blue" && isRedMap == -1));
         if (!onMyMap)
         {

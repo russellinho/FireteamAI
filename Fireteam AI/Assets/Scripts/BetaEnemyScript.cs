@@ -2096,7 +2096,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (gameControllerScript.teamMap == "R" && Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]) == PhotonNetwork.LocalPlayer.ActorNumber) {
 			return true;
 		} else if (gameControllerScript.teamMap == "B" && Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueHost"]) == PhotonNetwork.LocalPlayer.ActorNumber) {
-			return true;
+            return true;
 		}
 		return false;
 	}
