@@ -117,11 +117,22 @@ public class BetaEnemyScript : MonoBehaviour {
 	private float originalColliderRadius = 0f;
 	private Vector3 originalColliderCenter;
 
-	// Testing mode - set in inspector
-	//public bool testingMode;
+    // Testing mode - set in inspector
+    //public bool testingMode;
 
-	// Use this for initialization
-	void Start () {
+    void Start()
+    {
+        if (gameControllerScript.matchType == 'C')
+        {
+            StartForCampaign();
+        } else if (gameControllerScript.matchType == 'V')
+        {
+            StartForVersus();
+        }
+    }
+
+    // Use this for initialization
+    void StartForCampaign () {
 		alertDisplay = 0;
 		alertTimer = -100f;
 		coverWaitTimer = Random.Range (2f, 7f);
@@ -183,8 +194,90 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	}
 
-	// Update is called once per frame
-	void Update () {
+    void StartForVersus()
+    {
+        alertDisplay = 0;
+        alertTimer = -100f;
+        coverWaitTimer = Random.Range(2f, 7f);
+        coverSwitchPositionsTimer = Random.Range(12f, 18f);
+
+        player = null;
+        spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        spawnRot = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
+        health = 100;
+        disorientationTime = 0f;
+        currentBullets = bulletsPerMag;
+        audioSource.maxDistance = 100f;
+        rigid.freezeRotation = true;
+        isCrouching = false;
+        isOutlined = false;
+
+        coverTimer = 0f;
+        inCover = false;
+
+        originalColliderHeight = myCollider.height;
+        originalColliderRadius = myCollider.radius;
+        originalColliderCenter = new Vector3(myCollider.center.x, myCollider.center.y, myCollider.center.z);
+        gameControllerScript.enemyList.Add(pView.ViewID, gameObject);
+        enemyAlertMarkers = gameControllerScript.enemyAlertMarkers;
+
+        if (enemyType == EnemyType.Patrol)
+        {
+            range = 20f;
+            accuracyOffset = 0.5f;
+            fireRate = 0.4f;
+            damage = 20f;
+            gunAudio.minDistance = 9f;
+            aggression = 7;
+        }
+        else
+        {
+            if (sniper)
+            {
+                range = 35f;
+                accuracyOffset = 1.5f;
+                fireRate = 20f;
+                damage = 35f;
+                gunAudio.minDistance = 18f;
+            }
+            else
+            {
+                range = 27f;
+                accuracyOffset = 0.5f;
+                fireRate = 0.4f;
+                damage = 20f;
+                gunAudio.minDistance = 9f;
+            }
+        }
+
+        prevWasStopped = true;
+        prevNavDestination = Vector3.negativeInfinity;
+
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            navMesh.enabled = false;
+            navMeshObstacle.enabled = false;
+            wasMasterClient = false;
+        }
+        else
+        {
+            wasMasterClient = true;
+        }
+    }
+
+    void Update()
+    {
+        if (gameControllerScript.matchType == 'C')
+        {
+            UpdateForCampaign();
+        } else if (gameControllerScript.matchType == 'V')
+        {
+            UpdateForVersus();
+        }
+    }
+
+    // Update is called once per frame
+    void UpdateForCampaign () {
 		if (PhotonNetwork.IsMasterClient) {
 			if (!wasMasterClient) {
 				wasMasterClient = true;
@@ -253,6 +346,11 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 	}
+
+    void UpdateForVersus()
+    {
+
+    }
 
 	void FixedUpdate() {
 		// Test for detection outline
