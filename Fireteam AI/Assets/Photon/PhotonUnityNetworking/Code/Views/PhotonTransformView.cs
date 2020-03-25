@@ -29,7 +29,7 @@ namespace Photon.Pun
 
         private Quaternion m_NetworkRotation;
 
-        public GameControllerScript gameController;
+        public GameControllerScript m_GameController;
         public bool m_SynchronizePosition = true;
         public bool m_SynchronizeRotation = true;
         public bool m_SynchronizeScale = false;
@@ -55,7 +55,7 @@ namespace Photon.Pun
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
-            if (gameController != null && gameController.matchType == 'V') {
+            if (m_GameController != null && m_GameController.matchType == 'V') {
                 SerializeViewVersus(stream, info);
             } else {
                 SerializeViewCampaign(stream, info);
@@ -114,7 +114,7 @@ namespace Photon.Pun
         void SerializeViewVersus(PhotonStream stream, PhotonMessageInfo info) {
             if (stream.IsWriting)
             {
-                stream.SendNext(gameController.teamMap);
+                stream.SendNext(m_GameController.teamMap);
 
                 if (this.m_SynchronizePosition)
                 {
@@ -139,7 +139,7 @@ namespace Photon.Pun
             {
                 string team = (string)stream.ReceiveNext();
 
-                if (team != gameController.teamMap) return;
+                if (team != m_GameController.teamMap) return;
 
                 if (this.m_SynchronizePosition)
                 {

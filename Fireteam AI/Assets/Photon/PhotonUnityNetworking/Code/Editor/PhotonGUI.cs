@@ -181,6 +181,10 @@ namespace Photon.Pun
             return DoContainerHeaderToggle(headline, toggle);
         }
 
+        public static GameControllerScript ContainerHeaderGameControllerScript(string headline, GameControllerScript scr) {
+            return DoContainerHeaderGameControllerScript(headline, scr);
+        }
+
         public static bool ContainerHeaderFoldout(string headline, bool foldout)
         {
             return DoContainerHeaderFoldout(headline, foldout);
@@ -271,6 +275,13 @@ namespace Photon.Pun
             Rect toggleRect = new Rect(rect.xMin + 5, rect.yMin + 5, EditorGUIUtility.labelWidth, rect.height);
 
             return EditorGUI.Toggle(toggleRect, toggle);
+        }
+
+        static GameControllerScript DoContainerHeaderGameControllerScript(string headline, GameControllerScript scr) {
+            Rect rect = DoContainerHeader(headline, 27, 15);
+            Rect toggleRect = new Rect(rect.xMin + 5, rect.yMin + 5, rect.width - 5, rect.height - 5);
+
+            return (GameControllerScript)EditorGUI.ObjectField(toggleRect, "Game Controller", scr, typeof(GameControllerScript), true);
         }
 
 
