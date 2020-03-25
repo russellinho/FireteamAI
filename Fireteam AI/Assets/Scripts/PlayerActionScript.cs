@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -59,6 +60,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private float originalFpcBodyPosY;
     public float verticalVelocityBeforeLanding;
     private Rigidbody rBody;
+    private bool onMyMap;
 
     // Game logic helper variables
     public FirstPersonController fpc;
@@ -96,7 +98,15 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (photonView.IsMine) {
             if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
-                photonView.RPC("RpcDisablePlayerForVersus", RpcTarget.AllBuffered, (string)PhotonNetwork.LocalPlayer.CustomProperties["team"]);
+                string myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
+                int redMapInd = 0;
+                if (SceneManager.GetActiveScene().name.EndsWith("Red")) {
+                    redMapInd = 1;
+                } else if (SceneManager.GetActiveScene().name.EndsWith("Blue")) {
+                    redMapInd = -1;
+                }
+                photonView.RPC("RpcDisablePlayerForVersus", RpcTarget.AllBuffered, myTeam, redMapInd);
+                SetTeamHost();
             }
         }
     }
@@ -346,9 +356,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void RpcDisablePlayerForVersus(string myTeam) {
-        bool isMyTeamMap = ((myTeam == "red" && SceneManager.GetActiveScene().name.EndsWith("Red")) || (myTeam == "blue" && SceneManager.GetActiveScene().name.EndsWith("Blue")));
-        if (!isMyTeamMap)
+    void RpcDisablePlayerForVersus(string myTeam, int isRedMap) {
+        onMyMap = ((myTeam == "red" && isRedMap == 1) || (myTeam == "blue" && isRedMap == -1));
+        if (!onMyMap)
         {
             DisablePlayerForVersus();
         }
@@ -742,6 +752,18 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         escapeValueSent = false;
+        if (gameController.matchType == 'V' && onMyMap) {
+            RemovePlayerAsHost(otherPlayer.ActorNumber);
+            SetTeamHost();
+        }
+    }
+    
+    void RemovePlayerAsHost(int pId) {
+        string t = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"] + "Host";
+        if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(t)) return;
+        if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties[t]) == pId) {
+            PhotonNetwork.CurrentRoom.CustomProperties.Remove(t);
+        }
     }
 
     public override void OnDisconnected(DisconnectCause cause)
@@ -1063,8 +1085,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         photonTransformView.enabled = false;
         GetComponent<Rigidbody>().detectCollisions = false;
         this.enabled = false;
+    }
 
-
+    void SetTeamHost() {
+        string t = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"] + "Host";
+        if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(t)) {
+            PhotonNetwork.CurrentRoom.CustomProperties[t] = PhotonNetwork.LocalPlayer.ActorNumber;
+        }
     }
 
 }

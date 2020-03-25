@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.AI;
 using UnityStandardAssets.Characters.FirstPerson;
+using Random = UnityEngine.Random;
 
 public class BetaEnemyScript : MonoBehaviour {
 
@@ -253,7 +255,7 @@ public class BetaEnemyScript : MonoBehaviour {
         prevWasStopped = true;
         prevNavDestination = Vector3.negativeInfinity;
 
-        if (!PhotonNetwork.IsMasterClient)
+        if (!isVersusHostForThisTeam())
         {
             navMesh.enabled = false;
             navMeshObstacle.enabled = false;
@@ -349,10 +351,83 @@ public class BetaEnemyScript : MonoBehaviour {
 
     void UpdateForVersus()
     {
+		if (isVersusHostForThisTeam()) {
+			if (!wasMasterClient) {
+				wasMasterClient = true;
+				if (enemyType == EnemyType.Patrol) {
+					navMesh.enabled = true;
+					navMeshObstacle.enabled = false;
+					if (!prevWasStopped) {
+						if (navMesh.isOnNavMesh) {
+							navMesh.isStopped = prevWasStopped;
+							navMesh.SetDestination (prevNavDestination);
+						}
+					}
+				} else {
+					navMeshObstacle.enabled = true;
+					navMesh.enabled = false;
+				}
+			}
+			if (actionState == ActionStates.Disoriented && disorientationTime <= 0f) {
+				pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Idle, gameControllerScript.teamMap);
+			}
+		} else {
+			wasMasterClient = false;
+			navMesh.enabled = false;
+			navMeshObstacle.enabled = false;
+		}
 
+		UpdateDisorientationTime();
+		ReplenishFireRate ();
+		DecreaseAlertTime ();
+		UpdateFiringModeTimer ();
+		EnsureNotSuspiciousAndAlerted();
+		HandleEnemyAlerts();
+
+		if (!isVersusHostForThisTeam() || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
+			if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
+				StopVoices();
+			}
+			return;
+		}
+
+		CheckAlerted ();
+		CheckTargetDead ();
+
+		// If disoriented, don't have the ability to do anything else except die
+		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
+			StopVoices();
+			return;
+		}
+
+		HandleCrouching ();
+
+		if (enemyType == EnemyType.Patrol) {
+			DecideActionPatrolInCombat();
+			DecideActionPatrol ();
+			HandleMovementPatrol ();
+		} else {
+			DecideActionScout ();
+		}
+
+		// Shoot at player
+		// Add !isCrouching if you don't want the AI to fire while crouched behind cover
+		if (actionState == ActionStates.Firing || (actionState == ActionStates.InCover && player != null)) {
+			if (currentBullets > 0) {
+				Fire ();
+			}
+		}
     }
 
 	void FixedUpdate() {
+		if (gameControllerScript.matchType == 'C') {
+			FixedUpdateForCampaign();
+		} else if (gameControllerScript.matchType == 'V') {
+			FixedUpdateForVersus();
+		}
+	}
+
+	void FixedUpdateForCampaign() {
 		// Test for detection outline
 		// if (Input.GetKeyDown(KeyCode.M)) {
 		// 	isOutlined = !isOutlined;
@@ -389,7 +464,52 @@ public class BetaEnemyScript : MonoBehaviour {
 		isReloading = (info.IsName ("Reloading") || info.IsName("CrouchReload"));
 	}
 
+	void FixedUpdateForVersus() {
+		// Test for detection outline
+		// if (Input.GetKeyDown(KeyCode.M)) {
+		// 	isOutlined = !isOutlined;
+		// 	ToggleDetectionOutline(isOutlined);
+		// }
+		if (health <= 0) {
+			if (isOutlined) {
+				isOutlined = false;
+				detectionTimer = 0f;
+				ToggleDetectionOutline(false);
+			}
+			//removeFromMarkerList();
+			if (!isVersusHostForThisTeam()) {
+				actionState = ActionStates.Dead;
+			}
+		}
+
+		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
+			if (isVersusHostForThisTeam() && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
+				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
+			}
+			return;
+		}
+		// Handle animations and detection outline independent of frame rate
+		DecideAnimation ();
+		HandleDetectionOutline();
+		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Disoriented")) {
+			if (isVersusHostForThisTeam() && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
+				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
+			}
+			return;
+		}
+		AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo (0);
+		isReloading = (info.IsName ("Reloading") || info.IsName("CrouchReload"));
+	}
+
 	void LateUpdate() {
+		if (gameControllerScript.matchType == 'C') {
+			LateUpdateForCampaign();
+		} else if (gameControllerScript.matchType == 'V') {
+			LateUpdateForVersus();
+		}
+	}
+
+	void LateUpdateForCampaign() {
 		if (!PhotonNetwork.IsMasterClient || health <= 0)
 			return;
 		// If the enemy sees the player, rotate the enemy towards the player only if the enemy is aiming at the player
@@ -397,6 +517,15 @@ public class BetaEnemyScript : MonoBehaviour {
 			RotateTowardsPlayer();
 		}
 
+	}
+
+	void LateUpdateForVersus() {
+		if (!isVersusHostForThisTeam() || health <= 0)
+			return;
+		// If the enemy sees the player, rotate the enemy towards the player only if the enemy is aiming at the player
+		if (player != null && ShouldRotateTowardsPlayerTarget()) {
+			RotateTowardsPlayer();
+		}
 	}
 
 	bool ShouldRotateTowardsPlayerTarget() {
@@ -505,7 +634,27 @@ public class BetaEnemyScript : MonoBehaviour {
 	[PunRPC]
 	void RpcSetNavMeshDestination(float x, float y, float z, string team) {
         if (team != gameControllerScript.teamMap) return;
-        if (PhotonNetwork.IsMasterClient) {
+		if (gameControllerScript.matchType == 'V') {
+			SetNavMeshDestinationForVersus(x, y, z);
+		} else {
+			SetNavMeshDestinationForCampaign(x, y, z);
+		}
+	}
+
+	void SetNavMeshDestinationForCampaign(float x, float y, float z) {
+		if (PhotonNetwork.IsMasterClient) {
+			if (navMesh.isOnNavMesh) {
+				navMesh.SetDestination (new Vector3 (x, y, z));
+				navMesh.isStopped = false;
+			}
+		} else {
+			prevNavDestination = new Vector3 (x,y,z);
+			prevWasStopped = false;
+		}
+	}
+
+	void SetNavMeshDestinationForVersus(float x, float y, float z) {
+		if (isVersusHostForThisTeam()) {
 			if (navMesh.isOnNavMesh) {
 				navMesh.SetDestination (new Vector3 (x, y, z));
 				navMesh.isStopped = false;
@@ -529,6 +678,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void HandleMovementPatrol() {
+		bool isMaster = (gameControllerScript.matchType == 'C' && PhotonNetwork.IsMasterClient) || (gameControllerScript.matchType == 'V' && isVersusHostForThisTeam());
 		// Melee attack trumps all
 		if (actionState == ActionStates.Melee || actionState == ActionStates.Dead || actionState == ActionStates.Disoriented) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
@@ -538,7 +688,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 		// Handle movement for wandering
 		if (actionState == ActionStates.Wander) {
-			if (PhotonNetwork.IsMasterClient) {
+			if (isMaster) {
 				if (navMesh.speed != 1.5f) {
 					pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 1.5f, gameControllerScript.teamMap);
 				}
@@ -993,8 +1143,42 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
+		if (gameControllerScript.matchType == 'V') {
+			OnTriggerEnterForVersus(other);
+		} else {
+			OnTriggerEnterForCampaign(other);
+		}
+	}
+
+	void OnTriggerEnterForCampaign(Collider other) {
 		/** Explosive trigger functionality below - only operate on master client/server to avoid duplicate effects */
 		if (PhotonNetwork.IsMasterClient) {
+			HandleExplosiveEffectTriggers(other);
+		}
+
+		/** Melee trigger functionality below */
+		if (!PhotonNetwork.LocalPlayer.IsLocal) {
+			return;
+		}
+
+		if (!other.gameObject.tag.Equals ("Player")) {
+			return;
+		}
+		// Don't consider dead players
+		if (other.gameObject.GetComponent<PlayerActionScript> ().health <= 0f) {
+			return;
+		}
+
+		// If the player enters the enemy's sight range, determine if the player is in the right angle. If he is and there is no current player to target, then
+		// assign the player and stop searching
+		if (actionState != ActionStates.Disoriented && health > 0f) {
+			HandleMeleeEffectTriggers(other);
+		}
+	}
+
+	void OnTriggerEnterForVersus(Collider other) {
+		/** Explosive trigger functionality below - only operate on master client/server to avoid duplicate effects */
+		if (isVersusHostForThisTeam()) {
 			HandleExplosiveEffectTriggers(other);
 		}
 
@@ -1021,7 +1205,25 @@ public class BetaEnemyScript : MonoBehaviour {
 	[PunRPC]
 	void RpcUpdateNavMesh(bool stopped, string team) {
         if (team != gameControllerScript.teamMap) return;
-        if (PhotonNetwork.IsMasterClient) {
+        if (gameControllerScript.matchType == 'V') {
+			UpdateNavMeshForVersus(stopped);
+		} else {
+			UpdateNavMeshForCampaign(stopped);
+		}
+	}
+
+	void UpdateNavMeshForCampaign(bool stopped) {
+		if (PhotonNetwork.IsMasterClient) {
+			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
+				navMesh.isStopped = stopped;
+			}
+		} else {
+			prevWasStopped = stopped;
+		}
+	}
+
+	void UpdateNavMeshForVersus(bool stopped) {
+		if (isVersusHostForThisTeam()) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
 				navMesh.isStopped = stopped;
 			}
@@ -1888,6 +2090,15 @@ public class BetaEnemyScript : MonoBehaviour {
 	void RpcMarkEnemyOutline(string team) {
         if (team != gameControllerScript.teamMap) return;
         detectionTimer = DETECTION_OUTLINE_MAX_TIME;
+	}
+
+	bool isVersusHostForThisTeam() {
+		if (gameControllerScript.teamMap == "R" && Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]) == PhotonNetwork.LocalPlayer.ActorNumber) {
+			return true;
+		} else if (gameControllerScript.teamMap == "B" && Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueHost"]) == PhotonNetwork.LocalPlayer.ActorNumber) {
+			return true;
+		}
+		return false;
 	}
 
 }
