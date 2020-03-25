@@ -686,7 +686,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     [PunRPC]
     void RpcDestroyPickup(int pickupId, string team) {
-        if (team != gameController.teamMap) return;
+        if (gameObject.layer == 0) return;
         GameObject o = gameController.GetPickup(pickupId);
         o.GetComponent<PickupScript>().PlayPickupSound();
         o.GetComponent<PickupScript>().DestroyPickup();
