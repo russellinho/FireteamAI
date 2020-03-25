@@ -674,18 +674,19 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (other.gameObject.tag.Equals("AmmoBox"))
         {
             wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo + (wepActionScript.GetWeaponStats().clipCapacity - wepActionScript.currentAmmo);
-            photonView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId);
+            photonView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId, gameController.teamMap);
         }
         else if (other.gameObject.tag.Equals("HealthBox"))
         {
             ResetHealTimer();
             photonView.RPC("RpcSetHealth", RpcTarget.All, 100);
-            photonView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId);
+            photonView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId, gameController.teamMap);
         }
     }
 
     [PunRPC]
-    void RpcDestroyPickup(int pickupId) {
+    void RpcDestroyPickup(int pickupId, string team) {
+        if (team != gameController.teamMap) return;
         GameObject o = gameController.GetPickup(pickupId);
         o.GetComponent<PickupScript>().PlayPickupSound();
         o.GetComponent<PickupScript>().DestroyPickup();

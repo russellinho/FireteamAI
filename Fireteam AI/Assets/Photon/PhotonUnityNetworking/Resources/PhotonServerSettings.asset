@@ -136,4 +136,7 @@ MonoBehaviour:
   - RpcSendTeamsToPreplanning
   - RpcStartVersusGame
   - RpcDisablePlayerForVersus
+  - RpcDestroyPickup
+  - RpcDropAmmoPickup
+  - RpcDropHealthPickup
   DisableAutoOpenWizard: 1
