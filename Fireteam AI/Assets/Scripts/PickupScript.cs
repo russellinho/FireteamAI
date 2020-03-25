@@ -1,11 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
-using Photon.Realtime;
 
 public class PickupScript : MonoBehaviour {
 
+	public int pickupId;
 	private bool done;
 	private float spawnTime;
 	private float destroyTimer;
@@ -24,9 +23,7 @@ public class PickupScript : MonoBehaviour {
 	void Update () {
 		if (destroyed) {
 			if (destroyTimer <= 0f) {
-				if (PhotonNetwork.IsMasterClient) {
-					PhotonNetwork.Destroy (gameObject);
-				}
+				Destroy (gameObject);
 			} else {
 				destroyTimer -= Time.deltaTime;
 			}
@@ -38,9 +35,7 @@ public class PickupScript : MonoBehaviour {
 		}
 		spawnTime += Time.deltaTime;
 		if (spawnTime >= 15f) {
-			if (PhotonNetwork.IsMasterClient) {
-				PhotonNetwork.Destroy (gameObject);
-			}
+			Destroy (gameObject);
 		}
 	}
 

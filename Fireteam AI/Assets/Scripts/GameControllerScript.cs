@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -28,6 +29,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public static Dictionary<string, int> totalDeaths = new Dictionary<string, int> ();
 	public Dictionary<short, GameObject> coverSpots;
 	public Dictionary<int, GameObject> enemyList = new Dictionary<int, GameObject> ();
+	private Dictionary<int, GameObject> pickupList = new Dictionary<int, GameObject>();
 	public ArrayList enemyAlertMarkers;
 	public Queue enemyMarkerRemovalQueue;
 
@@ -130,9 +132,16 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		if (!PhotonNetwork.InRoom) {
 			return;
 		}
-        if (currentMap == 1)
-        {
-            // Auto end game for testing
+		if (matchType == 'C') {
+			GameOverCheckForCampaign();
+		} else if (matchType == 'V') {
+			GameOverCheckForVersus();
+		}
+	}
+
+	void GameOverCheckForCampaign() {
+		if (currentMap == 1) {
+			// Auto end game for testing
             // if (Input.GetKeyDown(KeyCode.B)) {
             // 	pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
             // }
@@ -144,46 +153,23 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             {
                 UpdateMissionTime();
             }
-            if (PhotonNetwork.IsMasterClient) {
-                if (matchType == 'C')
-                {
-                    // Check if the mission is over or if all players eliminated or out of time
-                    if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime())
-                    {
-                        if (!gameOver)
-                        {
-                            pView.RPC("RpcEndGame", RpcTarget.All, 9f);
-                        }
-                    }
-                    else if (bombsRemaining == 0)
-                    {
-                        if (!gameOver && CheckEscape())
-                        {
-                            // If they can escape, end the game and bring up the stat board
-                            pView.RPC("RpcEndGame", RpcTarget.All, 3f);
-                        }
-                    }
-                } else if (matchType == 'V')
-                {
-                    if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime())
-                    {
-                        if (!gameOver)
-                        {
-                            pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, false);
-                        }
-                    } else if (bombsRemaining == 0)
-                    {
-                        if (!gameOver && CheckEscape())
-                        {
-                            // Set completion to 100%
-                            SetMyTeamScore(100);
-                            // If they can escape, end the game and bring up the stat board
-                            pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true);
-                        }
-                    }
-                    // Check to see if either team has won
-                    DetermineGameOver();
-                }
+			if (PhotonNetwork.IsMasterClient) {
+				// Check if the mission is over or if all players eliminated or out of time
+				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime())
+				{
+					if (!gameOver)
+					{
+						pView.RPC("RpcEndGame", RpcTarget.All, 9f);
+					}
+				}
+				else if (bombsRemaining == 0)
+				{
+					if (!gameOver && CheckEscape())
+					{
+						// If they can escape, end the game and bring up the stat board
+						pView.RPC("RpcEndGame", RpcTarget.All, 3f);
+					}
+				}
 
 				// Cbeck if mode has been changed to assault or not
 				if (!assaultMode) {
@@ -195,9 +181,57 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 				ResetLastGunshotPos ();
 				UpdateEndGameTimer();
+			}
+		}
+	}
+
+	void GameOverCheckForVersus() {
+		if (currentMap == 1) {
+			// Auto end game for testing
+            // if (Input.GetKeyDown(KeyCode.B)) {
+            // 	pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
+            // }
+            objectiveCount = 5;
+			if (bombsRemaining == 0) {
+				escapeAvailable = true;
+			}
+            if (!gameOver)
+            {
+                UpdateMissionTime();
             }
-        }
-        if (forfeitDelay > 0f) {
+			if (isVersusHostForThisTeam()) {
+				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime())
+				{
+					if (!gameOver)
+					{
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, false);
+					}
+				} else if (bombsRemaining == 0)
+				{
+					if (!gameOver && CheckEscape())
+					{
+						// Set completion to 100%
+						SetMyTeamScore(100);
+						// If they can escape, end the game and bring up the stat board
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true);
+					}
+				}
+				// Check to see if either team has won
+				DetermineGameOver();
+
+				// Cbeck if mode has been changed to assault or not
+				if (!assaultMode) {
+					if (!lastGunshotHeardPos.Equals (Vector3.negativeInfinity)) {
+						pView.RPC ("UpdateAssaultMode", RpcTarget.All, true, teamMap);
+					}
+				}
+
+
+				ResetLastGunshotPos ();
+				UpdateEndGameTimer();
+			}
+		}
+		if (forfeitDelay > 0f) {
             forfeitDelay -= Time.deltaTime;
         }
 	}
@@ -550,8 +584,25 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public override void OnPlayerEnteredRoom(Player newPlayer) {
+		if (matchType == 'C') {
+			HandlePlayerEnteredRoomCampaign();
+		} else if (matchType == 'V') {
+			HandlePlayerEnteredRoomVersus();
+		}
+	}
+
+	void HandlePlayerEnteredRoomCampaign() {
 		// Sync cover positions status if a player enters the room
 		if (PhotonNetwork.IsMasterClient) {
+			foreach(KeyValuePair<short, GameObject> entry in coverSpots) {
+				SyncCoverSpot(entry.Key, entry.Value);
+			}
+		}
+	}
+
+	void HandlePlayerEnteredRoomVersus() {
+		// Sync cover positions status if a player enters the room
+		if (isVersusHostForThisTeam()) {
 			foreach(KeyValuePair<short, GameObject> entry in coverSpots) {
 				SyncCoverSpot(entry.Key, entry.Value);
 			}
@@ -574,6 +625,28 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public void LeaveCoverSpot(short id) {
 		coverSpots[id].GetComponent<CoverSpotScript>().LeaveCoverSpot();
+	}
+
+	public bool isVersusHostForThisTeam() {
+		if (teamMap == "R" && Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]) == PhotonNetwork.LocalPlayer.ActorNumber) {
+			return true;
+		} else if (teamMap == "B" && Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueHost"]) == PhotonNetwork.LocalPlayer.ActorNumber) {
+            return true;
+		}
+		return false;
+	}
+
+	public void DropPickup(int pickupId, GameObject pickupRef) {
+		pickupList.Add(pickupId, pickupRef);
+	}
+
+	public void DestroyPickup(int pickupId) {
+		GameObject.Destroy(pickupList[pickupId]);
+		pickupList.Remove(pickupId);
+	}
+
+	public GameObject GetPickup(int pickupId) {
+		return pickupList[pickupId];
 	}
 
 }

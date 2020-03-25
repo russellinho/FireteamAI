@@ -255,7 +255,7 @@ public class BetaEnemyScript : MonoBehaviour {
         prevWasStopped = true;
         prevNavDestination = Vector3.negativeInfinity;
 
-        if (!isVersusHostForThisTeam())
+        if (!gameControllerScript.isVersusHostForThisTeam())
         {
             navMesh.enabled = false;
             navMeshObstacle.enabled = false;
@@ -351,7 +351,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
     void UpdateForVersus()
     {
-		if (isVersusHostForThisTeam()) {
+		if (gameControllerScript.isVersusHostForThisTeam()) {
 			if (!wasMasterClient) {
 				wasMasterClient = true;
 				if (enemyType == EnemyType.Patrol) {
@@ -384,7 +384,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		EnsureNotSuspiciousAndAlerted();
 		HandleEnemyAlerts();
 
-		if (!isVersusHostForThisTeam() || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
+		if (!gameControllerScript.isVersusHostForThisTeam() || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
 			if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
 				StopVoices();
 			}
@@ -477,13 +477,13 @@ public class BetaEnemyScript : MonoBehaviour {
 				ToggleDetectionOutline(false);
 			}
 			//removeFromMarkerList();
-			if (!isVersusHostForThisTeam()) {
+			if (!gameControllerScript.isVersusHostForThisTeam()) {
 				actionState = ActionStates.Dead;
 			}
 		}
 
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
-			if (isVersusHostForThisTeam() && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
+			if (gameControllerScript.isVersusHostForThisTeam() && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
 			}
 			return;
@@ -492,7 +492,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		DecideAnimation ();
 		HandleDetectionOutline();
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Disoriented")) {
-			if (isVersusHostForThisTeam() && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
+			if (gameControllerScript.isVersusHostForThisTeam() && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
 			}
 			return;
@@ -520,7 +520,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void LateUpdateForVersus() {
-		if (!isVersusHostForThisTeam() || health <= 0)
+		if (!gameControllerScript.isVersusHostForThisTeam() || health <= 0)
 			return;
 		// If the enemy sees the player, rotate the enemy towards the player only if the enemy is aiming at the player
 		if (player != null && ShouldRotateTowardsPlayerTarget()) {
@@ -654,7 +654,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void SetNavMeshDestinationForVersus(float x, float y, float z) {
-		if (isVersusHostForThisTeam()) {
+		if (gameControllerScript.isVersusHostForThisTeam()) {
 			if (navMesh.isOnNavMesh) {
 				navMesh.SetDestination (new Vector3 (x, y, z));
 				navMesh.isStopped = false;
@@ -678,7 +678,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void HandleMovementPatrol() {
-		bool isMaster = (gameControllerScript.matchType == 'C' && PhotonNetwork.IsMasterClient) || (gameControllerScript.matchType == 'V' && isVersusHostForThisTeam());
+		bool isMaster = (gameControllerScript.matchType == 'C' && PhotonNetwork.IsMasterClient) || (gameControllerScript.matchType == 'V' && gameControllerScript.isVersusHostForThisTeam());
 		// Melee attack trumps all
 		if (actionState == ActionStates.Melee || actionState == ActionStates.Dead || actionState == ActionStates.Disoriented) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
@@ -955,10 +955,12 @@ public class BetaEnemyScript : MonoBehaviour {
 			int r = Random.Range (1,12);
 			if (r == 6) {
 				// 1/6 chance of getting a health box
-				PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
+				DropHealthPickup();
+				// PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			} else if (r >= 1 && r < 5) {
 				// 1/3 chance of getting ammo box
-				PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
+				DropAmmoPickup();
+				// PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			}
 
 			pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead, gameControllerScript.teamMap);
@@ -1178,7 +1180,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	void OnTriggerEnterForVersus(Collider other) {
 		/** Explosive trigger functionality below - only operate on master client/server to avoid duplicate effects */
-		if (isVersusHostForThisTeam()) {
+		if (gameControllerScript.isVersusHostForThisTeam()) {
 			HandleExplosiveEffectTriggers(other);
 		}
 
@@ -1223,7 +1225,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void UpdateNavMeshForVersus(bool stopped) {
-		if (isVersusHostForThisTeam()) {
+		if (gameControllerScript.isVersusHostForThisTeam()) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
 				navMesh.isStopped = stopped;
 			}
@@ -1252,10 +1254,12 @@ public class BetaEnemyScript : MonoBehaviour {
 			int r = Random.Range (1,12);
 			if (r == 6) {
 				// 1/6 chance of getting a health box
-				PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
+				DropHealthPickup();
+				// PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			} else if (r >= 1 && r < 5) {
 				// 1/3 chance of getting ammo box
-				PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
+				DropAmmoPickup();
+				// PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			}
 
 			pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
@@ -2092,13 +2096,34 @@ public class BetaEnemyScript : MonoBehaviour {
         detectionTimer = DETECTION_OUTLINE_MAX_TIME;
 	}
 
-	bool isVersusHostForThisTeam() {
-		if (gameControllerScript.teamMap == "R" && Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]) == PhotonNetwork.LocalPlayer.ActorNumber) {
-			return true;
-		} else if (gameControllerScript.teamMap == "B" && Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueHost"]) == PhotonNetwork.LocalPlayer.ActorNumber) {
-            return true;
-		}
-		return false;
+	void DropAmmoPickup() {
+		GameObject o = GameObject.Instantiate(ammoBoxPickup, transform.position, Quaternion.Euler(Vector3.zero));
+		o.GetComponent<PickupScript>().pickupId = o.GetInstanceID();
+		gameControllerScript.DropPickup(o.GetInstanceID(), o);
+		pView.RPC("RpcDropAmmoPickup", RpcTarget.Others, o.GetInstanceID(), gameControllerScript.teamMap);
+	}
+
+	void DropHealthPickup() {
+		GameObject o = GameObject.Instantiate(healthBoxPickup, transform.position, Quaternion.Euler(Vector3.zero));
+		o.GetComponent<PickupScript>().pickupId = o.GetInstanceID();
+		gameControllerScript.DropPickup(o.GetInstanceID(), o);
+		pView.RPC("RpcDropHealthPickup", RpcTarget.Others, o.GetInstanceID(), gameControllerScript.teamMap);
+	}
+
+	[PunRPC]
+	void RpcDropAmmoPickup(int pickupId, string team) {
+		if (team != gameControllerScript.teamMap) return;
+		GameObject o = GameObject.Instantiate(ammoBoxPickup, transform.position, Quaternion.Euler(Vector3.zero));
+		o.GetComponent<PickupScript>().pickupId = pickupId;
+		gameControllerScript.DropPickup(pickupId, o);
+	}
+
+	[PunRPC]
+	void RpcDropHealthPickup(int pickupId, string team) {
+		if (team != gameControllerScript.teamMap) return;
+		GameObject o = GameObject.Instantiate(healthBoxPickup, transform.position, Quaternion.Euler(Vector3.zero));
+		o.GetComponent<PickupScript>().pickupId = pickupId;
+		gameControllerScript.DropPickup(pickupId, o);
 	}
 
 }

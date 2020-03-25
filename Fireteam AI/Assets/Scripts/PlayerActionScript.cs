@@ -674,16 +674,22 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (other.gameObject.tag.Equals("AmmoBox"))
         {
             wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo + (wepActionScript.GetWeaponStats().clipCapacity - wepActionScript.currentAmmo);
-            other.gameObject.GetComponent<PickupScript>().PlayPickupSound();
-            other.gameObject.GetComponent<PickupScript>().DestroyPickup();
+            photonView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId);
         }
         else if (other.gameObject.tag.Equals("HealthBox"))
         {
             ResetHealTimer();
             photonView.RPC("RpcSetHealth", RpcTarget.All, 100);
-            other.gameObject.GetComponent<PickupScript>().PlayPickupSound();
-            other.gameObject.GetComponent<PickupScript>().DestroyPickup();
+            photonView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId);
         }
+    }
+
+    [PunRPC]
+    void RpcDestroyPickup(int pickupId) {
+        GameObject o = gameController.GetPickup(pickupId);
+        o.GetComponent<PickupScript>().PlayPickupSound();
+        o.GetComponent<PickupScript>().DestroyPickup();
+        gameController.DestroyPickup(pickupId);
     }
 
     void OnTriggerEnter(Collider other)
@@ -696,17 +702,17 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             HandleExplosiveEffects(other);
             HandlePickups(other);
         }
-        else
-        {
-            if (other.gameObject.tag.Equals("AmmoBox"))
-            {
-                other.gameObject.GetComponent<PickupScript>().DestroyPickup();
-            }
-            else if (other.gameObject.tag.Equals("HealthBox"))
-            {
-                other.gameObject.GetComponent<PickupScript>().DestroyPickup();
-            }
-        }
+        // else
+        // {
+        //     if (other.gameObject.tag.Equals("AmmoBox"))
+        //     {
+        //         other.gameObject.GetComponent<PickupScript>().DestroyPickup();
+        //     }
+        //     else if (other.gameObject.tag.Equals("HealthBox"))
+        //     {
+        //         other.gameObject.GetComponent<PickupScript>().DestroyPickup();
+        //     }
+        // }
     }
 
     void DeathCameraEffect()
