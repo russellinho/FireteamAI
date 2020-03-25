@@ -29,6 +29,7 @@ namespace Photon.Pun
 
         private Quaternion m_NetworkRotation;
 
+        [SerializeField]
         public GameControllerScript m_GameController;
         public bool m_SynchronizePosition = true;
         public bool m_SynchronizeRotation = true;

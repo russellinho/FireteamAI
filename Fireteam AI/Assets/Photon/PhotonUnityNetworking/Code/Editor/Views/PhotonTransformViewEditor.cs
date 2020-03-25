@@ -26,8 +26,11 @@ namespace Photon.Pun
             }
 
             PhotonTransformView view = (PhotonTransformView)target;
-
-            view.m_GameController = PhotonGUI.ContainerHeaderGameControllerScript("Game Controller", view.m_GameController);
+            
+            // view.m_GameController = PhotonGUI.ContainerHeaderGameControllerScript("Game Controller", view.m_GameController);
+            SerializedProperty offsetProperty = serializedObject.FindProperty("m_GameController");
+            EditorGUILayout.ObjectField(offsetProperty);
+            serializedObject.ApplyModifiedProperties();
             view.m_SynchronizePosition = PhotonGUI.ContainerHeaderToggle("Synchronize Position", view.m_SynchronizePosition);
             view.m_SynchronizeRotation = PhotonGUI.ContainerHeaderToggle("Synchronize Rotation", view.m_SynchronizeRotation);
             view.m_SynchronizeScale = PhotonGUI.ContainerHeaderToggle("Synchronize Scale", view.m_SynchronizeScale);
