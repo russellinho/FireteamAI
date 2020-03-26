@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityStandardAssets.Characters.FirstPerson;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
@@ -772,7 +773,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         string t = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"] + "Host";
         if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(t)) return;
         if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties[t]) == pId) {
-            PhotonNetwork.CurrentRoom.CustomProperties.Remove(t);
+            Hashtable h = new Hashtable();
+            h[t] = null;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(h);
         }
     }
 
@@ -1100,7 +1103,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void SetTeamHost() {
         string t = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"] + "Host";
         if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(t)) {
-            PhotonNetwork.CurrentRoom.CustomProperties[t] = PhotonNetwork.LocalPlayer.ActorNumber;
+            Hashtable h = new Hashtable();
+            h.Add(t, PhotonNetwork.LocalPlayer.ActorNumber);
+            PhotonNetwork.CurrentRoom.SetCustomProperties(h);
         }
     }
 

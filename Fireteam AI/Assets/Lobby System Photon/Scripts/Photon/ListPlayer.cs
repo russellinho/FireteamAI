@@ -466,13 +466,17 @@ namespace Photon.Pun.LobbySystemPhoton
                 blueTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 redTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
                 myTeamVsTxt.text = "RED TEAM";
-                PhotonNetwork.LocalPlayer.CustomProperties["team"] = "red";
+				Hashtable h = new Hashtable();
+				h.Add("team", "red");
+                PhotonNetwork.LocalPlayer.SetCustomProperties(h);
             } else if (newTeam == 'B')
             {
                 redTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 blueTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
                 myTeamVsTxt.text = "BLUE TEAM";
-                PhotonNetwork.LocalPlayer.CustomProperties["team"] = "blue";
+				Hashtable h = new Hashtable();
+				h.Add("team", "blue");
+                PhotonNetwork.LocalPlayer.SetCustomProperties(h);
             }
             SetTeamCaptain(newTeam);
             pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (newTeam == 'R' ? "red" : "blue"));
@@ -501,46 +505,50 @@ namespace Photon.Pun.LobbySystemPhoton
             string myNickname = PhotonNetwork.LocalPlayer.NickName;
             if (team == 'R')
             {
-                string currentRedCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["redCaptain"];
+                string currentRedCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["redHost"];
                 // Add yourself as a captain if there isn't one
                 if (string.IsNullOrEmpty(currentRedCaptain))
                 {
-                    PhotonNetwork.CurrentRoom.CustomProperties["redCaptain"] = myNickname;
+					Hashtable h = new Hashtable();
+					h.Add("redHost", myNickname);
                     // Remove yourself from captain of blue team if you were captain and set the next available person if there is one
-                    string currentBlueCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["blueCaptain"];
+                    string currentBlueCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["blueHost"];
                     if (!string.IsNullOrEmpty(currentBlueCaptain) && currentBlueCaptain == myNickname)
                     {
                         if (blueTeam.Count > 0)
                         {
                             string nextBlueCaptainName = playerListEntries[(int)blueTeam[0]].GetComponent<PlayerEntryScript>().nickname;
-                            PhotonNetwork.CurrentRoom.CustomProperties["blueCaptain"] = nextBlueCaptainName;
+                            h.Add("blueHost", nextBlueCaptainName);
                         } else
                         {
-                            PhotonNetwork.CurrentRoom.CustomProperties["blueCaptain"] = null;
+                            h.Add("blueHost", null);
                         }
                     }
+					PhotonNetwork.CurrentRoom.SetCustomProperties(h);
                 }
             } else
             {
-                string currentBlueCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["blueCaptain"];
+                string currentBlueCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["blueHost"];
                 // Add yourself as a captain if there isn't one
                 if (string.IsNullOrEmpty(currentBlueCaptain))
                 {
-                    PhotonNetwork.CurrentRoom.CustomProperties["blueCaptain"] = myNickname;
+					Hashtable h = new Hashtable();
+                    h.Add("blueHost", myNickname);
                     // Remove yourself from captain of red team if you were captain and set the next available person if there is one
-                    string currentRedCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["redCaptain"];
+                    string currentRedCaptain = (string)PhotonNetwork.CurrentRoom.CustomProperties["redHost"];
                     if (!string.IsNullOrEmpty(currentRedCaptain) && currentRedCaptain == myNickname)
                     {
                         if (redTeam.Count > 0)
                         {
                             string nextRedCaptainName = playerListEntries[(int)redTeam[0]].GetComponent<PlayerEntryScript>().nickname;
-                            PhotonNetwork.CurrentRoom.CustomProperties["redCaptain"] = nextRedCaptainName;
+                            h.Add("redHost", nextRedCaptainName);
                         }
                         else
                         {
-                            PhotonNetwork.CurrentRoom.CustomProperties["redCaptain"] = null;
+                            h.Add("redHost", null);
                         }
                     }
+					PhotonNetwork.CurrentRoom.SetCustomProperties(h);
                 }
             }
         }

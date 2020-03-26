@@ -25,9 +25,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private float lastGunshotTimer = 0f;
     public float endGameTimer = 0f;
 	private bool loadExitCalled;
-	public static Dictionary<int, GameObject> playerList = new Dictionary<int, GameObject> ();
-	public static Dictionary<string, int> totalKills = new Dictionary<string, int> ();
-	public static Dictionary<string, int> totalDeaths = new Dictionary<string, int> ();
+	// TODO: This needs to be reinstantiated everywhere, fix all the errors
+	public static Dictionary<int, PlayerStat> playerList = new Dictionary<int, PlayerStat> ();
 	public Dictionary<short, GameObject> coverSpots;
 	public Dictionary<int, GameObject> enemyList = new Dictionary<int, GameObject> ();
 	private Dictionary<int, GameObject> pickupList = new Dictionary<int, GameObject>();
@@ -48,6 +47,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public int deadCount;
 	public int escaperCount;
+	// TODO: These numbers need to be instantiated and networked
+	public int redTeamPlayerCount;
+	public int blueTeamPlayerCount;
 	public bool assaultMode;
     // Sync mission time to clients every 10 seconds
     private float syncMissionTimeTimer;
@@ -84,17 +86,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             PhotonNetwork.AutomaticallySyncScene = true;
         } else if (matchType == 'V') {
             PhotonNetwork.AutomaticallySyncScene = false;
-            if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(myTeam + "Kills")) {
-                PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Kills"] = totalKills;
-            }
-            if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(myTeam + "Deaths")) {
-                PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Deaths"] = totalDeaths;
-            }
-            // if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(myTeam + "List")) {
-            //     PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "List"] = new ArrayList();
-            // } else {
-            //     ((ArrayList)PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "List"]).Add(PhotonNetwork.LocalPlayer.ActorNumber);
-            // }
         }
 		Physics.IgnoreLayerCollision (9, 12);
 		Physics.IgnoreLayerCollision (9, 15);
@@ -249,10 +240,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         endGameTimer = f;
         gameOver = true;
         
+		Hashtable h = new Hashtable();
         if (winner) {
-            PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Status"] = "win";
+			h.Add(myTeam + "Status", "win");
+            PhotonNetwork.CurrentRoom.SetCustomProperties(h);
         } else {
-            PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Status"] = "lose";
+            h.Add(myTeam + "Status", "lose");
+            PhotonNetwork.CurrentRoom.SetCustomProperties(h);
         }
     }
 
@@ -294,17 +288,12 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         }
 
         // Check if the other team has forfeited - can be determine by any players left on the opposing team
-        // if (forfeitDelay <= 0f) {
-        //     // ArrayList opposingTeamPlayers = (ArrayList)PhotonNetwork.CurrentRoom.CustomProperties[opposingTeam + "List"];
-        //     for (int i = 0; i < opposingTeamPlayers.Count; i++) {
-        //         int aPlayerId = (int)opposingTeamPlayers[i];
-        //         if (PhotonNetwork.CurrentRoom.Players.ContainsKey(aPlayerId)) {
-        //             return;
-        //         }
-        //     }
-        //     // Couldn't find another player on the other team. This means that they forfeit
-        //     pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true);
-        // }
+        if (forfeitDelay <= 0f) {
+            if ((teamMap == "R" && blueTeamPlayerCount == 0) || (teamMap == "B" && redTeamPlayerCount == 0)) {
+				// Couldn't find another player on the other team. This means that they forfeit
+            	pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true);
+			}
+        }
     }
 
 	[PunRPC]
@@ -436,32 +425,43 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public override void OnLeftRoom()
 	{
-		foreach (GameObject entry in playerList.Values)
+		foreach (PlayerStat entry in playerList.Values)
 		{
-			Destroy(entry.gameObject);
+			Destroy(entry.objRef);
 		}
 
 		playerList.Clear();
-		totalKills.Clear ();
-		totalDeaths.Clear ();
-		/**playerList = null;
-		totalKills = null;
-		totalDeaths = null;*/
 	}
 
 	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
 		ResetEscapeValues ();
-		foreach (GameObject entry in playerList.Values)
+		foreach (PlayerStat entry in playerList.Values)
 		{
-			entry.GetComponent<PlayerActionScript> ().escapeValueSent = false;
+			entry.objRef.GetComponent<PlayerActionScript> ().escapeValueSent = false;
 		}
 
-		Destroy (playerList[otherPlayer.ActorNumber].gameObject);
+		char wasTeam = playerList[otherPlayer.ActorNumber].team;
+		Destroy (playerList[otherPlayer.ActorNumber].objRef);
 		playerList.Remove (otherPlayer.ActorNumber);
-		totalKills.Remove (otherPlayer.NickName);
-		totalDeaths.Remove (otherPlayer.NickName);
-        // ((ArrayList)PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "List"]).Remove(PhotonNetwork.LocalPlayer.ActorNumber);
+
+		// Update team counts if versus mode
+		if (matchType == 'V') {
+			if (PhotonNetwork.IsMasterClient) {
+				if (wasTeam == 'R') {
+					redTeamPlayerCount--;
+				} else if (wasTeam == 'B') {
+					blueTeamPlayerCount--;
+				}
+				pView.RPC("RpcSetTeamCounts", RpcTarget.All, redTeamPlayerCount, blueTeamPlayerCount);
+			}
+		}
+	}
+
+	[PunRPC]
+	void RpcSetTeamCounts(int red, int blue) {
+		redTeamPlayerCount = red;
+		blueTeamPlayerCount = blue;
 	}
 
 	/**public override void OnPlayerEnteredRoom(Player newPlayer) {
@@ -652,4 +652,18 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		return pickupList[pickupId];
 	}
 
+}
+
+public class PlayerStat {
+	public GameObject objRef;
+	public string name;
+	public char team;
+	public int kills;
+	public int deaths;
+
+	public PlayerStat(GameObject objRef, string name, char team) {
+		this.objRef = objRef;
+		this.name = name;
+		this.team = team;
+	}
 }
