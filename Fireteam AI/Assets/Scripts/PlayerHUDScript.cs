@@ -165,8 +165,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		UpdateWaypoints ();
 		UpdateCursorStatus ();
 		if (gameController.matchType == 'V') {
-			UpdateRedTeamScore(!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("redScore") ? 0 : Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redScore"]));
-			UpdateBlueTeamScore(!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("blueScore") ? 0 : Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueScore"]));
+			UpdateRedTeamScore(Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redScore"]));
+			UpdateBlueTeamScore(Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueScore"]));
 		}
 
 		if (gameController.gameOver) {

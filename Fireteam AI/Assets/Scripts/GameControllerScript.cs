@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using Firebase.Database;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class GameControllerScript : MonoBehaviourPunCallbacks {
 
@@ -89,11 +90,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(myTeam + "Deaths")) {
                 PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Deaths"] = totalDeaths;
             }
-            if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(myTeam + "List")) {
-                PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "List"] = new ArrayList();
-            } else {
-                ((ArrayList)PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "List"]).Add(PhotonNetwork.LocalPlayer.ActorNumber);
-            }
+            // if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(myTeam + "List")) {
+            //     PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "List"] = new ArrayList();
+            // } else {
+            //     ((ArrayList)PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "List"]).Add(PhotonNetwork.LocalPlayer.ActorNumber);
+            // }
         }
 		Physics.IgnoreLayerCollision (9, 12);
 		Physics.IgnoreLayerCollision (9, 15);
@@ -293,17 +294,17 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         }
 
         // Check if the other team has forfeited - can be determine by any players left on the opposing team
-        if (forfeitDelay <= 0f) {
-            ArrayList opposingTeamPlayers = (ArrayList)PhotonNetwork.CurrentRoom.CustomProperties[opposingTeam + "List"];
-            for (int i = 0; i < opposingTeamPlayers.Count; i++) {
-                int aPlayerId = (int)opposingTeamPlayers[i];
-                if (PhotonNetwork.CurrentRoom.Players.ContainsKey(aPlayerId)) {
-                    return;
-                }
-            }
-            // Couldn't find another player on the other team. This means that they forfeit
-            pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true);
-        }
+        // if (forfeitDelay <= 0f) {
+        //     // ArrayList opposingTeamPlayers = (ArrayList)PhotonNetwork.CurrentRoom.CustomProperties[opposingTeam + "List"];
+        //     for (int i = 0; i < opposingTeamPlayers.Count; i++) {
+        //         int aPlayerId = (int)opposingTeamPlayers[i];
+        //         if (PhotonNetwork.CurrentRoom.Players.ContainsKey(aPlayerId)) {
+        //             return;
+        //         }
+        //     }
+        //     // Couldn't find another player on the other team. This means that they forfeit
+        //     pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true);
+        // }
     }
 
 	[PunRPC]
@@ -460,7 +461,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		playerList.Remove (otherPlayer.ActorNumber);
 		totalKills.Remove (otherPlayer.NickName);
 		totalDeaths.Remove (otherPlayer.NickName);
-        ((ArrayList)PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "List"]).Remove(PhotonNetwork.LocalPlayer.ActorNumber);
+        // ((ArrayList)PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "List"]).Remove(PhotonNetwork.LocalPlayer.ActorNumber);
 	}
 
 	/**public override void OnPlayerEnteredRoom(Player newPlayer) {
@@ -511,7 +512,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     void SetMyTeamScore(short score)
     {
-        PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Score"] = score;
+		Hashtable h = new Hashtable();
+		h.Add(myTeam + "Score", (int)score);
+		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
     }
 
     void UpdateEndGameTimer() {

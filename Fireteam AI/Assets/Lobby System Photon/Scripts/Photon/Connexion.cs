@@ -125,6 +125,8 @@ namespace Photon.Pun.LobbySystemPhoton
 			RoomOptions options = new RoomOptions { MaxPlayers = 16 };
             Hashtable h = new Hashtable();
             h.Add("gameMode", "versus");
+			h.Add("redScore", 0);
+			h.Add("blueScore", 0);
             string[] lobbyProperties = new string[1] {"gameMode"};
             options.CustomRoomProperties = h;
             options.CustomRoomPropertiesForLobby = lobbyProperties;
