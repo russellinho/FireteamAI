@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,32 +30,48 @@ public class ScoreboardScript : MonoBehaviour {
 			playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
 			return;
 		}
-		// This mean that is has reached the end
-		if (!playerIterator.MoveNext()) {
-			if (index < 9) {
-				names [index].text = "";
-				kills [index].text = "";
-				deaths [index].text = "";
-				index++;
-			} else {
-				index = 1;
-				playerIterator.Reset();
-			}
-		} else {
-			PlayerStat curr = (PlayerStat)playerIterator.Current;
-			if (curr.team == 'R') {
-				names[index].color = Color.red;
-				kills[index].color = Color.red;
-				deaths[index].color = Color.red;
-			} else if (curr.team == 'B') {
-				names[index].color = Color.blue;
-				kills[index].color = Color.blue;
-				deaths[index].color = Color.blue;
-			}
-			names [index].text = curr.name;
-			kills [index].text = "" + curr.kills;
-			deaths [index].text = "" + curr.deaths;
-			index++;
-		}
+        try
+        {
+            // This mean that is has reached the end
+            if (!playerIterator.MoveNext())
+            {
+                if (index < 9)
+                {
+                    names[index].text = "";
+                    kills[index].text = "";
+                    deaths[index].text = "";
+                    index++;
+                }
+                else
+                {
+                    index = 1;
+                    playerIterator.Reset();
+                }
+            }
+            else
+            {
+                PlayerStat curr = (PlayerStat)playerIterator.Current;
+                if (curr.team == 'R')
+                {
+                    names[index].color = Color.red;
+                    kills[index].color = Color.red;
+                    deaths[index].color = Color.red;
+                }
+                else if (curr.team == 'B')
+                {
+                    names[index].color = Color.blue;
+                    kills[index].color = Color.blue;
+                    deaths[index].color = Color.blue;
+                }
+                names[index].text = curr.name;
+                kills[index].text = "" + curr.kills;
+                deaths[index].text = "" + curr.deaths;
+                index++;
+            }
+        } catch (InvalidOperationException e)
+        {
+            playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
+            playerIterator.Reset();
+        }
 	}
 }

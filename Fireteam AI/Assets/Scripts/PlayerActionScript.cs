@@ -97,6 +97,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void Awake()
     {
+        DontDestroyOnLoad(gameObject);
+        AddMyselfToPlayerList();
         if (photonView.IsMine) {
             if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
                 string myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
@@ -109,8 +111,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void Start()
     {
         // Load the in-game necessities
-        DontDestroyOnLoad(gameObject);
-        AddMyselfToPlayerList();
+        //DontDestroyOnLoad(gameObject);
+        //AddMyselfToPlayerList();
 
         // Setting original positions for returning from crouching
         charHeightOriginal = charController.height;
