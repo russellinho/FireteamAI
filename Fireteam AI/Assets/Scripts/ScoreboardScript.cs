@@ -18,7 +18,6 @@ public class ScoreboardScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		index = 1;
 		names = namesCol.GetComponentsInChildren<Text> ();
 		kills = killsCol.GetComponentsInChildren<Text> ();
 		deaths = deathsCol.GetComponentsInChildren<Text> ();
@@ -27,6 +26,7 @@ public class ScoreboardScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (playerIterator == null) {
+            index = 1;
 			playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
 			return;
 		}
@@ -71,6 +71,7 @@ public class ScoreboardScript : MonoBehaviour {
         } catch (InvalidOperationException e)
         {
             playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
+            index = 1;
             playerIterator.Reset();
         }
 	}
