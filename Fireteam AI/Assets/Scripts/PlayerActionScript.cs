@@ -324,10 +324,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void AddMyselfToPlayerList()
     {
         char team = 'N';
-        if ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red") {
+        if ((string)photonView.Owner.CustomProperties["team"] == "red") {
             team = 'R';
-        } else if ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "blue") {
+            gameController.redTeamPlayerCount++;
+            Debug.Log(photonView.Owner.NickName + " joined red team.");
+        } else if ((string)photonView.Owner.CustomProperties["team"] == "blue") {
             team = 'B';
+            gameController.blueTeamPlayerCount++;
+            Debug.Log(photonView.Owner.NickName + " joined blue team.");
         }
         PlayerStat p = new PlayerStat(gameObject, PhotonNetwork.LocalPlayer.NickName, team);
         GameControllerScript.playerList.Add(photonView.OwnerActorNr, p);
