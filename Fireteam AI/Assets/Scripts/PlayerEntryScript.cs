@@ -8,6 +8,7 @@ public class PlayerEntryScript : MonoBehaviour
 {
     public char team;
     public string nickname;
+    public int actorId;
     public TMP_Text nametag;
     public GameObject readyIndicator;
     public Image readyMarker;
@@ -27,9 +28,13 @@ public class PlayerEntryScript : MonoBehaviour
     }
 
     public void SetNameTag(string tag) {
-        Debug.Log("Setting name tag: " + tag);
         nickname = tag;
         nametag.text = tag;
+    }
+
+    public void SetActorId(int id)
+    {
+        actorId = id;
     }
 
     public void ToggleReadyIndicator(bool b) {
