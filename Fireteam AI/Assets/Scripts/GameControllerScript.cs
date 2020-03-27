@@ -254,6 +254,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 			versusAlertMessage = "The enemy team has reached victory!";
         }
+		Debug.Log("red team: " + PhotonNetwork.CurrentRoom.CustomProperties["redStatus"] + " blue: " + PhotonNetwork.CurrentRoom.CustomProperties["blueStatus"]);
     }
 
     [PunRPC]
