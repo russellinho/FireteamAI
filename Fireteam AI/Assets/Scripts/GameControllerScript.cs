@@ -14,7 +14,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     // Timer
     public static float missionTime;
     public static float MAX_MISSION_TIME = 1800f;
-    private static float FORFEIT_CHECK_DELAY = 1000f;
+    private static float FORFEIT_CHECK_DELAY = 10f;
 
 	public int currentMap;
     public string teamMap;
@@ -197,7 +197,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				{
 					if (!gameOver)
 					{
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, false);
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, false, false);
 					}
 				} else if (bombsRemaining == 0)
 				{
@@ -206,7 +206,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 						// Set completion to 100%
 						SetMyTeamScore(100);
 						// If they can escape, end the game and bring up the stat board
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true);
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true, false);
 					}
 				}
 				// Check to see if either team has won
@@ -440,6 +440,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
+		if (!playerList.ContainsKey(otherPlayer.ActorNumber)) return;
 		ResetEscapeValues ();
 		foreach (PlayerStat entry in playerList.Values)
 		{

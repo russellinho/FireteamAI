@@ -97,6 +97,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void Awake()
     {
+        gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
         DontDestroyOnLoad(gameObject);
         AddMyselfToPlayerList();
         if (photonView.IsMine) {
@@ -148,7 +149,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
              return;
          }
 
-        gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
+        // gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 
         // Initialize variables
         canShoot = true;
