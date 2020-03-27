@@ -157,7 +157,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				}
 				else if (bombsRemaining == 0)
 				{
-					if (!gameOver && CheckEscape())
+					if (!gameOver && CheckEscapeForCampaign())
 					{
 						// If they can escape, end the game and bring up the stat board
 						pView.RPC("RpcEndGame", RpcTarget.All, 3f);
@@ -193,7 +193,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                 UpdateMissionTime();
             }
 			if (isVersusHostForThisTeam()) {
-				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime())
+				int playerCount = (teamMap == "R" ? redTeamPlayerCount : blueTeamPlayerCount);
+				if (deadCount == playerCount || CheckOutOfTime())
 				{
 					if (!gameOver)
 					{
@@ -201,7 +202,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				} else if (bombsRemaining == 0)
 				{
-					if (!gameOver && CheckEscape())
+					if (!gameOver && CheckEscapeForVersus())
 					{
 						// Set completion to 100%
 						SetMyTeamScore(100);
@@ -269,9 +270,22 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	public bool CheckEscape() {
+	bool CheckEscapeForCampaign() {
 		if (deadCount + escaperCount == PhotonNetwork.CurrentRoom.PlayerCount) {
 			return true;
+		}
+		return false;
+	}
+
+	bool CheckEscapeForVersus() {
+		if (teamMap == "R") {
+			if (deadCount + escaperCount == redTeamPlayerCount) {
+				return true;
+			}
+		} else if (teamMap == "B") {
+			if (deadCount + escaperCount == blueTeamPlayerCount) {
+				return true;
+			}
 		}
 		return false;
 	}

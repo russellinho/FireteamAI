@@ -167,20 +167,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		if (gameController.matchType == 'V') {
 			UpdateRedTeamScore(Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redScore"]));
 			UpdateBlueTeamScore(Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueScore"]));
-		}
-
-		if (gameController.gameOver) {
-			if (gameController.exitLevelLoaded) {
-				ToggleGameOverPopup (false);
-				ToggleGameOverBanner (true);
-			} else if (PhotonNetwork.CurrentRoom.Players.Count == gameController.deadCount) {
-				ToggleGameOverPopup (true);
-			}
-			ToggleHUD (false);
-		} else {
-			if (playerActionScript.health > 0 || playerActionScript.isRespawning) {
-				ToggleGameOverPopup (false);
-			}
+			HandleGameOverPopupsForVersus();
+		} else if (gameController.matchType == 'C') {
+			HandleGameOverPopupsForCampaign();
 		}
 
         UpdateMissionTimeText();
@@ -203,6 +192,38 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			UpdateHealFlare();
 			if (!container.healFlare.GetComponent<RawImage>().enabled) {
 				UpdateBoostFlare();
+			}
+		}
+	}
+
+	void HandleGameOverPopupsForCampaign() {
+		if (gameController.gameOver) {
+			if (gameController.exitLevelLoaded) {
+				ToggleGameOverPopup (false);
+				ToggleGameOverBanner (true);
+			} else if (PhotonNetwork.CurrentRoom.Players.Count == gameController.deadCount) {
+				ToggleGameOverPopup (true);
+			}
+			ToggleHUD (false);
+		} else {
+			if (playerActionScript.health > 0 || playerActionScript.isRespawning) {
+				ToggleGameOverPopup (false);
+			}
+		}
+	}
+
+	void HandleGameOverPopupsForVersus() {
+		if (gameController.gameOver) {
+			if (gameController.exitLevelLoaded) {
+				ToggleGameOverPopup (false);
+				ToggleGameOverBanner (true);
+			} else if ((gameController.teamMap == "R" && gameController.redTeamPlayerCount == gameController.deadCount) || (gameController.teamMap == "B" && gameController.blueTeamPlayerCount == gameController.deadCount)) {
+				ToggleGameOverPopup (true);
+			}
+			ToggleHUD (false);
+		} else {
+			if (playerActionScript.health > 0 || playerActionScript.isRespawning) {
+				ToggleGameOverPopup (false);
 			}
 		}
 	}
