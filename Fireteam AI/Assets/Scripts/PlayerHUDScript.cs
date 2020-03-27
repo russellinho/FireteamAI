@@ -292,7 +292,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void UpdatePlayerMarkers() {
-		foreach (GameObject p in GameControllerScript.playerList.Values) {
+		foreach (PlayerStat stat in GameControllerScript.playerList.Values) {
+			GameObject p = stat.objRef;
 			if (!p)
 				continue;
 			int actorNo = p.GetComponent<PhotonView> ().OwnerActorNr;

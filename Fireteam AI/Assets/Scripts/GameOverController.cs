@@ -66,11 +66,11 @@ public class GameOverController : MonoBehaviourPunCallbacks {
     {
         int i = 0;
 
-        foreach (string s in GameControllerScript.totalKills.Keys)
+        foreach (PlayerStat s in GameControllerScript.playerList.Values)
         {
-            campaignNames[i].text = s;
-            campaignKills[i].text = "" + GameControllerScript.totalKills[s];
-            campaignDeaths[i].text = "" + GameControllerScript.totalDeaths[s];
+            campaignNames[i].text = s.name;
+            campaignKills[i].text = ""+s.kills;
+            campaignDeaths[i].text = ""+s.deaths;
             i++;
         }
 
@@ -85,45 +85,37 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 
     void PopulateVersusFinalStats()
     {
-        Dictionary<string, int> redTeamKills = (Dictionary<string, int>)PhotonNetwork.CurrentRoom.CustomProperties["redKills"];
-        Dictionary<string, int> redTeamDeaths = (Dictionary<string, int>)PhotonNetwork.CurrentRoom.CustomProperties["redDeaths"];
-        Dictionary<string, int> blueTeamKills = (Dictionary<string, int>)PhotonNetwork.CurrentRoom.CustomProperties["blueKills"];
-        Dictionary<string, int> blueTeamDeaths = (Dictionary<string, int>)PhotonNetwork.CurrentRoom.CustomProperties["blueDeaths"];
-
-        int i = 0;
-
-        foreach (string s in redTeamKills.Keys)
-        {
-            redNames[i].text = s;
-            redKills[i].text = "" + redTeamKills[s];
-            redDeaths[i].text = "" + redTeamDeaths[s];
-            i++;
+        int redI = 0;
+        int blueI = 0;
+        
+        foreach (PlayerStat s in GameControllerScript.playerList.Values) {
+            if (s.team == 'R') {
+                redNames[redI].text = s.name;
+                redKills[redI].text = ""+s.kills;
+                redDeaths[redI].text = ""+s.deaths;
+                redI++;
+            } else if (s.team == 'B') {
+                blueNames[blueI].text = s.name;
+                blueKills[blueI].text = ""+s.kills;
+                blueDeaths[blueI].text = ""+s.deaths;
+                blueI++;
+            }
         }
 
-        while (i < 8)
+        while (redI < 8)
         {
-            redNames[i].text = "";
-            redKills[i].text = "";
-            redDeaths[i].text = "";
-            i++;
+            redNames[redI].text = "";
+            redKills[redI].text = "";
+            redDeaths[redI].text = "";
+            redI++;
         }
 
-        i = 0;
-
-        foreach (string s in blueTeamKills.Keys)
+        while (blueI < 8)
         {
-            blueNames[i].text = s;
-            blueKills[i].text = "" + blueTeamKills[s];
-            blueDeaths[i].text = "" + blueTeamDeaths[s];
-            i++;
-        }
-
-        while (i < 8)
-        {
-            blueNames[i].text = "";
-            blueKills[i].text = "";
-            blueDeaths[i].text = "";
-            i++;
+            blueNames[blueI].text = "";
+            blueKills[blueI].text = "";
+            blueDeaths[blueI].text = "";
+            blueI++;
         }
     }
 
@@ -143,17 +135,16 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 
 	void ClearPlayerData() {
 		// Destroy the 
-		foreach (GameObject entry in GameControllerScript.playerList.Values)
+		foreach (PlayerStat entry in GameControllerScript.playerList.Values)
 		{
-			Destroy(entry.gameObject);
+			Destroy(entry.objRef);
 		}
 
 		GameControllerScript.playerList.Clear();
 	}
 
 	void ClearMatchData() {
-		GameControllerScript.totalKills.Clear ();
-		GameControllerScript.totalDeaths.Clear ();
+		GameControllerScript.playerList.Clear ();
 	}
 
 }

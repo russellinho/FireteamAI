@@ -63,6 +63,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     private short objectiveCount;
     private short objectiveCompleted;
     private float forfeitDelay;
+	public string versusAlertMessage;
 
 	// Use this for initialization
 	void Awake() {
@@ -235,7 +236,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
     [PunRPC]
-    void RpcEndVersusGame(float f, bool winner)
+    void RpcEndVersusGame(float f, bool winner, bool wasForfeit)
     {
         endGameTimer = f;
         gameOver = true;
@@ -244,9 +245,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         if (winner) {
 			h.Add(myTeam + "Status", "win");
             PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			if (wasForfeit) {
+				versusAlertMessage = "The enemy team has forfeited!";
+			}
         } else {
             h.Add(myTeam + "Status", "lose");
             PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			versusAlertMessage = "The enemy team has reached victory!";
         }
     }
 
@@ -280,10 +285,10 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         
         // Check if either team has won or they've lost
         if (opposingTeamStatus == "win") {
-            pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, false);
+            pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, false, false);
             return;
         } else if (opposingTeamStatus == "lose") {
-            pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true);
+            pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true, false);
             return;
         }
 
@@ -291,7 +296,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         if (forfeitDelay <= 0f) {
             if ((teamMap == "R" && blueTeamPlayerCount == 0) || (teamMap == "B" && redTeamPlayerCount == 0)) {
 				// Couldn't find another player on the other team. This means that they forfeit
-            	pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true);
+            	pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true, true);
 			}
         }
     }

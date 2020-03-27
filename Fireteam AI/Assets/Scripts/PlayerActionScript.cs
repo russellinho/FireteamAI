@@ -237,6 +237,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             hud.ComBoxPopup(20f, "Cicadas on the rooftops! Watch the rooftops!");
         }
 
+        if (gameController.versusAlertMessage != null) {
+            hud.MessagePopup(gameController.versusAlertMessage);
+            gameController.versusAlertMessage = null;
+        }
+
         if (health > 0 && fpc.enabled && fpc.m_IsRunning)
         {
             audioController.PlaySprintSound(true);
@@ -316,9 +321,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void AddMyselfToPlayerList()
     {
-        GameControllerScript.playerList.Add(photonView.OwnerActorNr, gameObject);
-        GameControllerScript.totalKills.Add(photonView.Owner.NickName, kills);
-        GameControllerScript.totalDeaths.Add(photonView.Owner.NickName, deaths);
+        char team = 'N';
+        if ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red") {
+            team = 'R';
+        } else if ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "blue") {
+            team = 'B';
+        }
+        PlayerStat p = new PlayerStat(gameObject, PhotonNetwork.LocalPlayer.NickName, team);
+        GameControllerScript.playerList.Add(photonView.OwnerActorNr, p);
     }
 
     public void TakeDamage(int d, bool useArmor)
@@ -446,7 +456,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (gameObject.layer == 0) return;
         deaths++;
-        GameControllerScript.totalDeaths[photonView.Owner.NickName]++;
+        GameControllerScript.playerList[photonView.Owner.ActorNumber].deaths++;
     }
 
     // If map objective is defusing bombs, this method checks if the player is near any bombs

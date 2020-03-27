@@ -1027,7 +1027,7 @@ public class BetaEnemyScript : MonoBehaviour {
         if (id == -1) {
 			playerToHit = null;
 		} else {
-			playerToHit = GameControllerScript.playerList [id];
+			playerToHit = GameControllerScript.playerList [id].objRef;
 		}
 	}
 
@@ -1811,7 +1811,8 @@ public class BetaEnemyScript : MonoBehaviour {
 		// If we do not have a target player, try to find one
 		if (player == null || player.GetComponent<PlayerActionScript>().health <= 0) {
 			ArrayList keysNearBy = new ArrayList ();
-			foreach (GameObject p in GameControllerScript.playerList.Values) {
+			foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
+				GameObject p = playerStat.objRef;
 				if (!p || p.GetComponent<PlayerActionScript>().health <= 0)
 					continue;
 				if (Vector3.Distance (transform.position, p.transform.position) < range + 20f) {
@@ -1931,7 +1932,7 @@ public class BetaEnemyScript : MonoBehaviour {
         if (id == -1) {
 			player = null;
 		} else {
-			player = (GameObject)GameControllerScript.playerList [id];
+			player = (GameObject)GameControllerScript.playerList [id].objRef;
 		}
 	}
 

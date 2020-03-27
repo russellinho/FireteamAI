@@ -10,7 +10,7 @@ public class ScoreboardScript : MonoBehaviour {
 	public GameObject killsCol;
 	public GameObject deathsCol;
 
-	private List<string> playerIterator;
+	private IEnumerator playerIterator;
 	private Text[] names;
 	private Text[] kills;
 	private Text[] deaths;
@@ -26,28 +26,35 @@ public class ScoreboardScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (playerIterator == null) {
-			playerIterator = new List<string> (GameControllerScript.totalKills.Keys);
+			playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
 			return;
 		}
-		// This means it's reached the end
-		if (index > 8) {
-			index = 1;
-			if (GameControllerScript.totalKills.Keys.Count != playerIterator.Count) {
-				playerIterator = new List<string> (GameControllerScript.totalKills.Keys);
+		// This mean that is has reached the end
+		if (!playerIterator.MoveNext()) {
+			if (index < 9) {
+				names [index].text = "";
+				kills [index].text = "";
+				deaths [index].text = "";
+				index++;
+			} else {
+				index = 1;
+				playerIterator.Reset();
 			}
-		}
-			
-		string c = ((index - 1) >= playerIterator.Count ? null : playerIterator [index - 1]);
-		if (c == null) {
-			names [index].text = "";
-			kills [index].text = "";
-			deaths [index].text = "";
 		} else {
-			string name = (string)c;
-			names [index].text = name;
-			kills [index].text = "" + GameControllerScript.totalKills [name];
-			deaths [index].text = "" + GameControllerScript.totalDeaths [name];
+			PlayerStat curr = (PlayerStat)playerIterator.Current;
+			if (curr.team == 'R') {
+				names[index].color = Color.red;
+				kills[index].color = Color.red;
+				deaths[index].color = Color.red;
+			} else if (curr.team == 'B') {
+				names[index].color = Color.blue;
+				kills[index].color = Color.blue;
+				deaths[index].color = Color.blue;
+			}
+			names [index].text = curr.name;
+			kills [index].text = "" + curr.kills;
+			deaths [index].text = "" + curr.deaths;
+			index++;
 		}
-		index++;
 	}
 }

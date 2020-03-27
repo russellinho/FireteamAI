@@ -26,7 +26,8 @@ public class SpectatorScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		foreach (GameObject o in GameControllerScript.playerList.Values) {
+		foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
+			GameObject o = playerStat.objRef;
             if (o.GetComponent<PlayerActionScript> ().health > 0 && !o.GetComponent<PhotonView>().IsMine) {
 				following = o;
 				playerListKey = o.GetComponent<PhotonView> ().OwnerActorNr;
@@ -71,7 +72,8 @@ public class SpectatorScript : MonoBehaviour {
 		int numberSkipped = 0;
 		GameObject first = null;
 		bool currentIdFound = false;
-		foreach (GameObject o in GameControllerScript.playerList.Values) {
+		foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
+			GameObject o = playerStat.objRef;
 			if (o.GetComponent<PlayerActionScript> ().health > 0) {
 				// If we haven't defined first person in the collection yet, define it
 				if (!first) {

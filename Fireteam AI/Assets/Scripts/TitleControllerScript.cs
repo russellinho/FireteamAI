@@ -199,17 +199,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		Cursor.visible = true;
 
 		// Safety destroy previous match data
-		foreach (GameObject entry in GameControllerScript.playerList.Values)
+		foreach (PlayerStat entry in GameControllerScript.playerList.Values)
 		{
-			Destroy(entry.gameObject);
+			Destroy(entry.objRef);
 		}
 		GameControllerScript.playerList.Clear();
-		GameControllerScript.totalKills.Clear ();
-		GameControllerScript.totalDeaths.Clear ();
 		PlayerNameInput.text = PhotonNetwork.NickName;
 
 		StartCoroutine (VersionNumberCheck());
-
 	}
 
 	IEnumerator VersionNumberCheck() {
