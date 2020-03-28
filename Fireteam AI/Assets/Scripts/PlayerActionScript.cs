@@ -334,7 +334,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             gameController.blueTeamPlayerCount++;
             Debug.Log(photonView.Owner.NickName + " joined blue team.");
         }
-        PlayerStat p = new PlayerStat(gameObject, PhotonNetwork.LocalPlayer.NickName, team);
+        PlayerStat p = new PlayerStat(gameObject, photonView.Owner.NickName, team);
         GameControllerScript.playerList.Add(photonView.OwnerActorNr, p);
     }
 
@@ -461,9 +461,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcAddToTotalDeaths()
     {
+        GameControllerScript.playerList[photonView.Owner.ActorNumber].deaths++;
         if (gameObject.layer == 0) return;
         deaths++;
-        GameControllerScript.playerList[photonView.Owner.ActorNumber].deaths++;
     }
 
     // If map objective is defusing bombs, this method checks if the player is near any bombs

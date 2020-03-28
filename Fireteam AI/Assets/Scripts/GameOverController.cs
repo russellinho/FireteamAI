@@ -30,7 +30,6 @@ public class GameOverController : MonoBehaviourPunCallbacks {
     public GameObject campaignPanel;
     private bool isVersus;
 	void Awake() {
-		ClearPlayerData ();
         exitButtonPressed = false;
         if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
             isVersus = true;
@@ -89,6 +88,7 @@ public class GameOverController : MonoBehaviourPunCallbacks {
         int blueI = 0;
         
         foreach (PlayerStat s in GameControllerScript.playerList.Values) {
+            Debug.Log(s.name + " " + s.team);
             if (s.team == 'R') {
                 redNames[redI].text = s.name;
                 redKills[redI].text = ""+s.kills;
@@ -133,7 +133,7 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 		SceneManager.LoadScene ("Title");
 	}
 
-	void ClearPlayerData() {
+	void ClearMatchData() {
 		// Destroy the 
 		foreach (PlayerStat entry in GameControllerScript.playerList.Values)
 		{
@@ -141,10 +141,6 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 		}
 
 		GameControllerScript.playerList.Clear();
-	}
-
-	void ClearMatchData() {
-		GameControllerScript.playerList.Clear ();
 	}
 
 }

@@ -380,9 +380,10 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcAddToTotalKills()
     {
+        GameControllerScript.playerList[pView.Owner.ActorNumber].kills++;
         if (gameObject.layer == 0) return;
         playerActionScript.kills++;
-        GameControllerScript.playerList[pView.Owner.ActorNumber].kills++;
+        //GameControllerScript.playerList[pView.Owner.ActorNumber].kills++;
     }
 
     // Increment kill count and display HUD popup for kill
