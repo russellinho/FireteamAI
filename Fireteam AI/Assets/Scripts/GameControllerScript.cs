@@ -3,10 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
-using Firebase.Database;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class GameControllerScript : MonoBehaviourPunCallbacks {
@@ -194,11 +192,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             }
 			if (isVersusHostForThisTeam()) {
 				int playerCount = (teamMap == "R" ? redTeamPlayerCount : blueTeamPlayerCount);
-				if (deadCount == playerCount || CheckOutOfTime())
+				if (deadCount == playerCount)
 				{
 					if (!gameOver)
 					{
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, false, false);
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, (teamMap == "R" ? "B" : "R"), false, true);
+					}
+				} else if (CheckOutOfTime()) {
+					if (!gameOver) {
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, "T", false, false);
 					}
 				} else if (bombsRemaining == 0)
 				{
@@ -207,11 +209,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 						// Set completion to 100%
 						SetMyTeamScore(100);
 						// If they can escape, end the game and bring up the stat board
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true, false);
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, teamMap, false, false);
 					}
 				}
-				// Check to see if either team has won
-				DetermineGameOver();
+				// Check to see if either team has forfeited
+				DetermineEnemyTeamForfeited();
 
 				// Cbeck if mode has been changed to assault or not
 				if (!assaultMode) {
@@ -237,24 +239,46 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
     [PunRPC]
-    void RpcEndVersusGame(float f, bool winner, bool wasForfeit)
+    void RpcEndVersusGame(float f, string winner, bool wasForfeit, bool enemyTeamWasEliminated)
     {
+		if (gameOver) return;
+
         endGameTimer = f;
         gameOver = true;
         
 		Hashtable h = new Hashtable();
-        if (winner) {
-			h.Add(myTeam + "Status", "win");
-            PhotonNetwork.CurrentRoom.SetCustomProperties(h);
-			if (wasForfeit) {
-				versusAlertMessage = "The enemy team has forfeited!";
+
+		if (winner == "R") {
+			h.Add("redStatus", "win");
+			h.Add("blueStatus", "lose");
+			if (teamMap != winner) {
+				versusAlertMessage = "The enemy team has won!";
+			} else {
+				if (enemyTeamWasEliminated) {
+					versusAlertMessage = "The enemy team has been eliminated!";
+				}
 			}
-        } else {
-            h.Add(myTeam + "Status", "lose");
-            PhotonNetwork.CurrentRoom.SetCustomProperties(h);
-			versusAlertMessage = "The enemy team has reached victory!";
-        }
-		Debug.Log("red team: " + PhotonNetwork.CurrentRoom.CustomProperties["redStatus"] + " blue: " + PhotonNetwork.CurrentRoom.CustomProperties["blueStatus"]);
+		} else if (winner == "B") {
+			h.Add("redStatus", "lose");
+			h.Add("blueStatus", "win");
+			if (teamMap != winner) {
+				versusAlertMessage = "The enemy team has won!";
+			} else {
+				if (enemyTeamWasEliminated) {
+					versusAlertMessage = "The enemy team has been eliminated!";
+				}
+			}
+		} else if (winner == "T") {
+			h.Add("redStatus", "lose");
+			h.Add("blueStatus", "lose");
+			versusAlertMessage = "Time up!";
+		}
+
+		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+
+		if (wasForfeit) {
+			versusAlertMessage = "The enemy team has forfeited!";
+		}
     }
 
     [PunRPC]
@@ -291,27 +315,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		return false;
 	}
 
-    void DetermineGameOver()
+    void DetermineEnemyTeamForfeited()
     {
         if (gameOver) return;
-        // If one team gets to 100% completion before another, end the game and the team that made it to 100 wins.
-        // If one team forfeits, the other wins
-        string opposingTeamStatus = (string)PhotonNetwork.CurrentRoom.CustomProperties[opposingTeam + "Status"];
-        
-        // Check if either team has won or they've lost
-        if (opposingTeamStatus == "win") {
-            pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, false, false);
-            return;
-        } else if (opposingTeamStatus == "lose") {
-            pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true, false);
-            return;
-        }
 
         // Check if the other team has forfeited - can be determine by any players left on the opposing team
         if (forfeitDelay <= 0f) {
             if ((teamMap == "R" && blueTeamPlayerCount == 0) || (teamMap == "B" && redTeamPlayerCount == 0)) {
 				// Couldn't find another player on the other team. This means that they forfeit
-            	pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, true, true);
+            	pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, teamMap, true, false);
 			}
         }
     }

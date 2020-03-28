@@ -130,7 +130,7 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 	public override void OnLeftRoom() {
 		ClearMatchData ();
 		PhotonNetwork.Disconnect ();
-		SceneManager.LoadScene (0);
+		SceneManager.LoadScene ("Title");
 	}
 
 	void ClearPlayerData() {
