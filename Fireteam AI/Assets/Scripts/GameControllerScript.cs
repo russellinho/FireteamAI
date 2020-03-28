@@ -586,7 +586,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			PlayerData.playerdata.disconnectedFromServer = true;
 			PlayerData.playerdata.disconnectReason = cause.ToString ();
 		}
-		SceneManager.LoadScene (0);
+		SceneManager.LoadScene ("Title");
 	}
 
 	void SwitchToGameOverScene(bool win) {
