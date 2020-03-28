@@ -851,11 +851,21 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     public void UpdateRedTeamScore(int score)
     {
         container.redScoreTxt.text = score + "%";
+		if (!gameController.enemyTeamNearingVictoryTrigger && score >= 80) {
+			if (gameController.teamMap != "R") {
+				gameController.SetEnemyTeamNearingVictoryMessage();
+			}
+ 		}
     }
 
     public void UpdateBlueTeamScore(int score)
     {
         container.blueScoreTxt.text = score + "%";
+		if (!gameController.enemyTeamNearingVictoryTrigger && score >= 80) {
+			if (gameController.teamMap != "B") {
+				gameController.SetEnemyTeamNearingVictoryMessage();
+			}
+		}
     }
 
 }

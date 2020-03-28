@@ -61,6 +61,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     private short objectiveCount;
     private short objectiveCompleted;
     private float forfeitDelay;
+	public bool enemyTeamNearingVictoryTrigger;
 	public string versusAlertMessage;
 
 	// Use this for initialization
@@ -683,6 +684,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public GameObject GetPickup(int pickupId) {
 		return pickupList[pickupId];
+	}
+
+	public void SetEnemyTeamNearingVictoryMessage() {
+		enemyTeamNearingVictoryTrigger = true;
+		versusAlertMessage = "Enemy team is nearing victory!";
 	}
 
 }
