@@ -34,6 +34,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject marketplaceModDescriptionPopupRef;
 
 	public GameObject mainMenu;
+	public Text mainNametagTxt;
+	public RawImage mainRankImg;
+	public Text mainRankTxt;
+	public Slider mainLevelProgress;
+	public Text mainLevelProgressPercentTxt;
+	public Text mainExpTxt;
 	public Camera mainCam;
 	public Text titleText;
 	//public GameObject networkMan;

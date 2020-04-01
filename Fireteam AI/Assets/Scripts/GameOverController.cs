@@ -8,6 +8,9 @@ using UnityEngine.UI;
 using Firebase.Database;
 
 public class GameOverController : MonoBehaviourPunCallbacks {
+    public Slider prevExpSlider;
+    public Slider newExpSlider;
+    public Text expGainedTxt;
 
 	public GameObject namesCol;
 	public GameObject killsCol;
@@ -16,14 +19,26 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 	public Text[] campaignNames;
 	public Text[] campaignKills;
 	public Text[] campaignDeaths;
+    public Text[] campaignExp;
+    public Text[] campaignGp;
+    public Text[] campaignLevelUp;
+    public RawImage[] campaignRanks;
 
     public Text[] redNames;
     public Text[] redKills;
     public Text[] redDeaths;
+    public Text[] redExp;
+    public Text[] redGp;
+    public Text[] redLevelUp;
+    public RawImage[] redRanks;
 
     public Text[] blueNames;
     public Text[] blueKills;
     public Text[] blueDeaths;
+    public Text[] blueExp;
+    public Text[] blueGp;
+    public Text[] blueLevelUp;
+    public RawImage[] blueRanks;
     private bool exitButtonPressed;
 
     public GameObject versusPanel;

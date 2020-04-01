@@ -22075,7 +22075,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Russellinho
+  m_Text: null
 --- !u!222 &575296439
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -54049,7 +54049,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Student
+  m_Text: null
 --- !u!222 &1449541665
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -61460,6 +61460,12 @@ MonoBehaviour:
   marketplaceItemDescriptionPopupRef: {fileID: 1135130573}
   marketplaceModDescriptionPopupRef: {fileID: 1633675159}
   mainMenu: {fileID: 1059975864}
+  mainNametagTxt: {fileID: 575296438}
+  mainRankImg: {fileID: 1466149408}
+  mainRankTxt: {fileID: 1449541664}
+  mainLevelProgress: {fileID: 677816651}
+  mainLevelProgressPercentTxt: {fileID: 843158477}
+  mainExpTxt: {fileID: 1078068384}
   mainCam: {fileID: 1699646752}
   titleText: {fileID: 728495811}
   matchmakingMenu: {fileID: 685629494}
