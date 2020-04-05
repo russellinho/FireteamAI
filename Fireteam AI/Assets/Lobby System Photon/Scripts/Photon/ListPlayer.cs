@@ -385,7 +385,7 @@ namespace Photon.Pun.LobbySystemPhoton
 					entryScript.SetRank(PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.exp).name);
 					myPlayerListEntry = entry;
 				} else {
-					entryScript.SetRank((string)p.CustomProperties["exp"]);
+					entryScript.SetRank(PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name);
 				}
 				if (p.IsMasterClient) {
 					entryScript.ToggleReadyIndicator(false);
@@ -419,7 +419,7 @@ namespace Photon.Pun.LobbySystemPhoton
 					entryScript.SetRank(PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.exp).name);
 					myPlayerListEntry = entry;
 				} else {
-					entryScript.SetRank((string)p.CustomProperties["rank"]);
+					entryScript.SetRank(PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name);
 				}
 				if (p.IsMasterClient) {
 					entryScript.ToggleReadyIndicator(false);
