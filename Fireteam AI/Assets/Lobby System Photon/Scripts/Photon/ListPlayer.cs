@@ -342,11 +342,21 @@ namespace Photon.Pun.LobbySystemPhoton
 			SetMapInfo ();
 		}
 
+		[PunRPC]
+		void RpcSetRank(int actorId, uint exp) {
+			PlayerEntryScript p = playerListEntries[actorId].GetComponent<PlayerEntryScript>();
+			p.SetRank(PlayerData.playerdata.GetRankFromExp(exp).name);
+		}
+
 		public override void OnJoinedRoom()
 		{
             // Disable any loading screens
             templateUIClass.LoadingPanel.SetActive(false);
             templateUIClassVs.LoadingPanel.SetActive(false);
+			Hashtable h = new Hashtable();
+			h.Add("exp", PlayerData.playerdata.info.exp);
+			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+			pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, PlayerData.playerdata.info.exp);
 			currentMode = (!templateUIClassVs.gameObject.activeInHierarchy ? 'C' : 'V');
 			if (currentMode == 'V') {
 				OnJoinedRoomVersus();
@@ -372,7 +382,10 @@ namespace Photon.Pun.LobbySystemPhoton
 				GameObject entry = Instantiate(PlayerListEntryPrefab);
 				PlayerEntryScript entryScript = entry.GetComponent<PlayerEntryScript>();
 				if (p.IsLocal) {
+					entryScript.SetRank(PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.exp).name);
 					myPlayerListEntry = entry;
+				} else {
+					entryScript.SetRank((string)p.CustomProperties["exp"]);
 				}
 				if (p.IsMasterClient) {
 					entryScript.ToggleReadyIndicator(false);
@@ -403,7 +416,10 @@ namespace Photon.Pun.LobbySystemPhoton
 				GameObject entry = Instantiate(PlayerListEntryPrefab);
 				PlayerEntryScript entryScript = entry.GetComponent<PlayerEntryScript>();
 				if (p.IsLocal) {
+					entryScript.SetRank(PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.exp).name);
 					myPlayerListEntry = entry;
+				} else {
+					entryScript.SetRank((string)p.CustomProperties["rank"]);
 				}
 				if (p.IsMasterClient) {
 					entryScript.ToggleReadyIndicator(false);

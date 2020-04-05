@@ -325,6 +325,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void AddMyselfToPlayerList()
     {
         char team = 'N';
+        uint exp = Convert.ToUInt32(photonView.Owner.CustomProperties["exp"]);
         if ((string)photonView.Owner.CustomProperties["team"] == "red") {
             team = 'R';
             gameController.redTeamPlayerCount++;
@@ -334,7 +335,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             gameController.blueTeamPlayerCount++;
             Debug.Log(photonView.Owner.NickName + " joined blue team.");
         }
-        PlayerStat p = new PlayerStat(gameObject, photonView.Owner.NickName, team);
+        PlayerStat p = new PlayerStat(gameObject, photonView.Owner.ActorNumber, photonView.Owner.NickName, team, exp);
         GameControllerScript.playerList.Add(photonView.OwnerActorNr, p);
     }
 

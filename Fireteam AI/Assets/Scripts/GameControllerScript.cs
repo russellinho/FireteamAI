@@ -23,7 +23,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private float lastGunshotTimer = 0f;
     public float endGameTimer = 0f;
 	private bool loadExitCalled;
-	// TODO: This needs to be reinstantiated everywhere, fix all the errors
 	public static Dictionary<int, PlayerStat> playerList = new Dictionary<int, PlayerStat> ();
 	public Dictionary<short, GameObject> coverSpots;
 	public Dictionary<int, GameObject> enemyList = new Dictionary<int, GameObject> ();
@@ -63,6 +62,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     private float forfeitDelay;
 	public bool enemyTeamNearingVictoryTrigger;
 	public string versusAlertMessage;
+	private bool endingGainsCalculated;
 
 	// Use this for initialization
 	void Awake() {
@@ -144,7 +144,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             if (!gameOver)
             {
                 UpdateMissionTime();
-            }
+            } else {
+				if (!endingGainsCalculated) {
+					endingGainsCalculated = true;
+					int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
+					pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths), CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths));
+				}
+			}
 			if (PhotonNetwork.IsMasterClient) {
 				// Check if the mission is over or if all players eliminated or out of time
 				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime())
@@ -152,6 +158,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					if (!gameOver)
 					{
 						pView.RPC("RpcEndGame", RpcTarget.All, 9f);
+
 					}
 				}
 				else if (bombsRemaining == 0)
@@ -190,7 +197,14 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             if (!gameOver)
             {
                 UpdateMissionTime();
-            }
+            } else {
+				if (!endingGainsCalculated) {
+					endingGainsCalculated = true;
+					int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
+					bool winner = (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Score"]) == 100);
+					pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths, winner), CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths, winner));
+				}
+			}
 			if (isVersusHostForThisTeam()) {
 				int playerCount = (teamMap == "R" ? redTeamPlayerCount : blueTeamPlayerCount);
 				if (deadCount == playerCount)
@@ -691,18 +705,131 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		versusAlertMessage = "Enemy team is nearing victory!";
 	}
 
+	uint CalculateExpGained(int kills, int deaths, bool versusWin = false) {
+		if (matchType == 'V') {
+			return CalculateExpGainedVersus(kills, deaths, versusWin);
+		}
+		return CalculateExpGainedCampaign(kills, deaths);
+	}
+
+	uint CalculateGpGained(int kills, int deaths, bool versusWin = false) {
+		if (matchType == 'V') {
+			return CalculateGpGainedVersus(kills, deaths, versusWin);
+		}
+		return CalculateGpGainedCampaign(kills, deaths);
+	}
+
+	uint CalculateGpGainedCampaign(int kills, int deaths) {
+		float gradeMultiplier = ConvertGradeToMultiplier(GetCompletionGrade());
+		return (uint)((gradeMultiplier) * (100f + (GetKillMultiplier(kills) * (float)kills)));
+	}
+
+	uint CalculateGpGainedVersus(int kills, int deaths, bool win) {
+		float winMultiplier = (win ? 1.25f : 0.75f);
+		float gradeMultiplier = ConvertGradeToMultiplier(GetCompletionGrade());
+		return (uint)((winMultiplier) * (gradeMultiplier) * (100f + (GetKillMultiplier(kills) * (float)kills)));
+	}
+
+	uint CalculateExpGainedCampaign(int kills, int deaths) {
+		float gradeMultiplier = ConvertGradeToMultiplier(GetCompletionGrade());
+		return (uint)((gradeMultiplier) * (500f + (GetKillMultiplier(kills) * (float)kills) - (200f * (float)deaths)));
+	}
+
+	uint CalculateExpGainedVersus(int kills, int deaths, bool win) {
+		float winMultiplier = (win ? 1.25f : 0.75f);
+		float gradeMultiplier = ConvertGradeToMultiplier(GetCompletionGrade());
+		return (uint)((winMultiplier) * (gradeMultiplier) * (500f + (GetKillMultiplier(kills) * (float)kills) - (200f * (float)deaths)));
+	}
+
+	char GetCompletionGrade() {
+		if (matchType == 'V') {
+			return GetCompletionGradeForMapVersus(SceneManager.GetActiveScene().name);
+		}
+		return GetCompletionGradeForMapCampaign(SceneManager.GetActiveScene().name);
+	}
+
+	// View the Leveling system documentation on drive to determine how these thresholds were determined
+	char GetCompletionGradeForMapCampaign(string map) {
+		if (map == "BetaLevelNetwork") {
+			if (deadCount == playerList.Count || CheckOutOfTime()) {
+				return 'F';
+			} else {
+				if (missionTime <= 180f) {
+					return 'A';
+				} else if (missionTime <= 300f) {
+					return 'B';
+				} else if (missionTime <= 900f) {
+					return 'C';
+				}
+			}
+			return 'D';
+		}
+		return 'C';
+	}
+
+	char GetCompletionGradeForMapVersus(string map) {
+		if (map == "BetaLevelNetworkRed" || map == "BetaLevelNetworkBlue") {
+			if (CheckOutOfTime() || (teamMap == "R" && deadCount == redTeamPlayerCount) || (teamMap == "B" && deadCount == blueTeamPlayerCount)) {
+				return 'F';
+			} else {
+				if (missionTime <= 180f) {
+					return 'A';
+				} else if (missionTime <= 300f) {
+					return 'B';
+				} else if (missionTime <= 900f) {
+					return 'C';
+				}
+			}
+			return 'D';
+		}
+		return 'C';
+	}
+
+	float ConvertGradeToMultiplier(char grade) {
+		switch (grade) {
+			case 'A':
+				return 1.8f;
+			case 'B':
+				return 1.4f;
+			case 'C':
+				return 1f;
+			case 'D':
+				return 0.75f;
+			case 'F':
+				return 0.5f;
+			default:
+				return 1f;
+		}
+	}
+
+	float GetKillMultiplier(int kills) {
+		return Mathf.Clamp(51f - Mathf.Pow(1.032f, (kills / 10)), 25f, 51f);
+	}
+
+	[PunRPC]
+	void RpcSetMyExpAndGpGained(int actorId, uint expGained, uint gpGained) {
+		playerList[actorId].expGained = expGained;
+		playerList[actorId].gpGained = expGained;
+	}
+
 }
 
 public class PlayerStat {
 	public GameObject objRef;
+	public int actorId;
 	public string name;
 	public char team;
 	public int kills;
 	public int deaths;
+	public uint exp;
+	public uint expGained;
+	public uint gpGained;
 
-	public PlayerStat(GameObject objRef, string name, char team) {
+	public PlayerStat(GameObject objRef, int actorId, string name, char team, uint exp) {
 		this.objRef = objRef;
+		this.actorId = actorId;
 		this.name = name;
 		this.team = team;
+		this.exp = exp;
 	}
 }

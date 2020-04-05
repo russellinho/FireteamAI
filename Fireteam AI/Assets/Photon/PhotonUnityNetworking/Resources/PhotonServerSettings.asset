@@ -140,4 +140,6 @@ MonoBehaviour:
   - RpcDropAmmoPickup
   - RpcDropHealthPickup
   - RpcSetTeamCounts
+  - RpcSetRank
+  - RpcSetMyExpAndGpGained
   DisableAutoOpenWizard: 1

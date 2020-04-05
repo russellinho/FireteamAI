@@ -16,6 +16,9 @@ public class PlayerData : MonoBehaviour
     private const string DEFAULT_SUPPORT = "M67 Frag";
     private const string DEFAULT_FOOTWEAR_MALE = "Standard Boots (M)";
     private const string DEFAULT_FOOTWEAR_FEMALE = "Standard Boots (F)";
+    public const uint MAX_EXP = 50000000;
+    public const uint MAX_GP = uint.MaxValue;
+    public const uint MAX_KASH = uint.MaxValue;
 
     public static PlayerData playerdata;
     public string playername;
@@ -49,6 +52,7 @@ public class PlayerData : MonoBehaviour
     public Dictionary<string, WeaponData> myWeapons;
     public Dictionary<string, CharacterData> myCharacters;
     public Dictionary<string, ModData> myMods;
+    public Texture[] rankInsignias;
 
     void Awake()
     {
@@ -230,7 +234,7 @@ public class PlayerData : MonoBehaviour
             } else {
                 info.defaultChar = snapshot.Child("defaultChar").Value.ToString();
                 info.playername = snapshot.Child("username").Value.ToString();
-                info.exp = float.Parse(snapshot.Child("exp").Value.ToString());
+                info.exp = uint.Parse(snapshot.Child("exp").Value.ToString());
                 info.gp = uint.Parse(snapshot.Child("gp").Value.ToString());
                 info.kash = uint.Parse(snapshot.Child("kash").Value.ToString());
                 // Equip previously equipped if available. Else, equip defaults and save it
@@ -1732,6 +1736,274 @@ public class PlayerData : MonoBehaviour
         }
     }
 
+    public void AddExpAndGpToPlayer(uint aExp, uint aGp) {
+        // Save locally
+        PlayerData.playerdata.info.exp = (uint)Mathf.Min(PlayerData.playerdata.info.exp + aExp, PlayerData.MAX_EXP);
+        PlayerData.playerdata.info.gp = (uint)Mathf.Min(PlayerData.playerdata.info.gp + aGp, PlayerData.MAX_GP);
+        // Save to DB
+        DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+        userInfoRef.Child("exp").SetValueAsync("" + PlayerData.playerdata.info.exp).ContinueWith(task =>
+        {
+            userInfoRef.Child("gp").SetValueAsync("" + PlayerData.playerdata.info.gp);
+        });
+    }
+
+    public Texture GetRankInsigniaForRank(string rank) {
+        switch (rank) {
+            case "Trainee":
+                return rankInsignias[0];
+            case "Recruit":
+                return rankInsignias[1];
+            case "Private":
+                return rankInsignias[2];
+            case "Private First Class":
+                return rankInsignias[3];
+            case "Corporal":
+                return rankInsignias[4];
+            case "Sergeant":
+                return rankInsignias[5];
+            case "Staff Sergeant I":
+                return rankInsignias[6];
+            case "Staff Sergeant II":
+                return rankInsignias[7];
+            case "Staff Sergeant III":
+                return rankInsignias[8];
+            case "Sergeant First Class I":
+                return rankInsignias[9];
+            case "Sergeant First Class II":
+                return rankInsignias[10];
+            case "Sergeant First Class III":
+                return rankInsignias[11];
+            case "Master Sergeant I":
+                return rankInsignias[12];
+            case "Master Sergeant II":
+                return rankInsignias[13];
+            case "Master Sergeant III":
+                return rankInsignias[14];
+            case "Master Sergeant IV":
+                return rankInsignias[15];
+            case "Command Sergeant Major I":
+                return rankInsignias[16];
+            case "Command Sergeant Major II":
+                return rankInsignias[17];
+            case "Command Sergeant Major III":
+                return rankInsignias[18];
+            case "Command Sergeant Major IV":
+                return rankInsignias[19];
+            case "Command Sergeant Major V":
+                return rankInsignias[20];
+            case "Second Lieutenant I":
+                return rankInsignias[21];
+            case "Second Lieutenant II":
+                return rankInsignias[22];
+            case "Second Lieutenant III":
+                return rankInsignias[23];
+            case "Second Lieutenant IV":
+                return rankInsignias[24];
+            case "Second Lieutenant V":
+                return rankInsignias[25];
+            case "First Lieutenant I":
+                return rankInsignias[26];
+            case "First Lieutenant II":
+                return rankInsignias[27];
+            case "First Lieutenant III":
+                return rankInsignias[28];
+            case "First Lieutenant IV":
+                return rankInsignias[29];
+            case "First Lieutenant V":
+                return rankInsignias[30];
+            case "Captain I":
+                return rankInsignias[31];
+            case "Captain II":
+                return rankInsignias[32];
+            case "Captain III":
+                return rankInsignias[33];
+            case "Captain IV":
+                return rankInsignias[34];
+            case "Captain V":
+                return rankInsignias[35];
+            case "Major I":
+                return rankInsignias[36];
+            case "Major II":
+                return rankInsignias[37];
+            case "Major III":
+                return rankInsignias[38];
+            case "Major IV":
+                return rankInsignias[39];
+            case "Major V":
+                return rankInsignias[40];
+            case "Lieutenant Colonel I":
+                return rankInsignias[41];
+            case "Lieutenant Colonel II":
+                return rankInsignias[42];
+            case "Lieutenant Colonel III":
+                return rankInsignias[43];
+            case "Lieutenant Colonel IV":
+                return rankInsignias[44];
+            case "Lieutenant Colonel V":
+                return rankInsignias[45];
+            case "Colonel I":
+                return rankInsignias[46];
+            case "Colonel II":
+                return rankInsignias[47];
+            case "Colonel III":
+                return rankInsignias[48];
+            case "Colonel IV":
+                return rankInsignias[49];
+            case "Colonel V":
+                return rankInsignias[50];
+            case "Brigadier General":
+                return rankInsignias[51];
+            case "Major General":
+                return rankInsignias[52];
+            case "Lieutenant General":
+                return rankInsignias[53];
+            case "General":
+                return rankInsignias[54];
+            case "General of the Army":
+                return rankInsignias[55];
+            case "Commander in Chief I":
+                return rankInsignias[56];
+            case "Commander in Chief II":
+                return rankInsignias[57];
+            case "Commander in Chief III":
+                return rankInsignias[58];
+            case "Commander in Chief IV":
+                return rankInsignias[59];
+            case "Commander in Chief V":
+                return rankInsignias[60];
+            default:
+                return rankInsignias[0];
+        }
+    }
+
+    public Rank GetRankFromExp(uint exp) {
+        if (exp >= 0 && exp <= 1999) {
+            return new Rank("Trainee", 0, 1999);
+        } else if (exp >= 2000 && exp <= 4499) {
+            return new Rank("Recruit", 2000, 4499);
+        } else if (exp >= 4500 && exp <= 5999) {
+            return new Rank("Private", 4500, 5999);
+        } else if (exp >= 6000 && exp <= 17999) {
+            return new Rank("Private First Class", 6000, 17999);
+        } else if (exp >= 18000 && exp <= 31999) {
+            return new Rank("Corporal", 18000, 31999);
+        } else if (exp >= 32000 && exp <= 53999) {
+            return new Rank("Sergeant", 32000, 53999);
+        } else if (exp >= 54000 && exp <= 78999) {
+            return new Rank("Staff Sergeant I", 54000, 78999);
+        } else if (exp >= 79000 && exp <= 108999) {
+            return new Rank("Staff Sergeant II", 79000, 108999);
+        } else if (exp >= 109000 && exp <= 144999) {
+            return new Rank("Staff Sergeant III", 109000, 144999);
+        } else if (exp >= 145000 && exp <= 185499) {
+            return new Rank("Sergeant First Class I", 145000, 185499);
+        } else if (exp >= 185500 && exp <= 232999) {
+            return new Rank("Sergeant First Class II", 185500, 232999);
+        } else if (exp >= 233000 && exp <= 291499) {
+            return new Rank("Sergeant First Class III", 233000, 291499);
+        } else if (exp >= 291500 && exp <= 353999) {
+            return new Rank("Master Sergeant I", 291500, 353999);
+        } else if (exp >= 354000 && exp <= 424999) {
+            return new Rank("Master Sergeant II", 354000, 424999);
+        } else if (exp >= 425000 && exp <= 503499) {
+            return new Rank("Master Sergeant III", 425000, 503499);
+        } else if (exp >= 503500 && exp <= 592999) {
+            return new Rank("Master Sergeant IV", 503500, 592999);
+        } else if (exp >= 593000 && exp <= 692999) {
+            return new Rank("Command Sergeant Major I", 593000, 692999);
+        } else if (exp >= 693000 && exp <= 803499) {
+            return new Rank("Command Sergeant Major II", 693000, 803499);
+        } else if (exp >= 803500 && exp <= 924999) {
+            return new Rank("Command Sergeant Major III", 803500, 924999);
+        } else if (exp >= 925000 && exp <= 1059999) {
+            return new Rank("Command Sergeant Major IV", 925000, 1059999);
+        } else if (exp >= 1060000 && exp <= 1199999) {
+            return new Rank("Command Sergeant Major V", 1060000, 1199999);
+        } else if (exp >= 1200000 && exp <= 1353499) {
+            return new Rank("Second Lieutenant I", 1200000, 1353499);
+        } else if (exp >= 1353500 && exp <= 1517999) {
+            return new Rank("Second Lieutenant II", 1353500, 1517999);
+        } else if (exp >= 1518000 && exp <= 1692999) {
+            return new Rank("Second Lieutenant III", 1518000, 1692999);
+        } else if (exp >= 1693000 && exp <= 1878499) {
+            return new Rank("Second Lieutenant IV", 1693000, 1878499);
+        } else if (exp >= 1878500 && exp <= 2071499) {
+            return new Rank("Second Lieutenant V", 1878500, 2071499);
+        } else if (exp >= 2071500 && exp <= 2278499) {
+            return new Rank("First Lieutenant I", 2071500, 2278499);
+        } else if (exp >= 2278500 && exp <= 2496999) {
+            return new Rank("First Lieutenant II", 2278500, 2496999);
+        } else if (exp >= 2497000 && exp <= 2724999) {
+            return new Rank("First Lieutenant III", 2497000, 2724999);
+        } else if (exp >= 2725000 && exp <= 2964999) {
+            return new Rank("First Lieutenant IV", 2725000, 2964999);
+        } else if (exp >= 2965000 && exp <= 3214499) {
+            return new Rank("First Lieutenant V", 2965000, 3214499);
+        } else if (exp >= 3214500 && exp <= 3510999) {
+            return new Rank("Captain I", 3214500, 3510999);
+        } else if (exp >= 3511000 && exp <= 3835999) {
+            return new Rank("Captain II", 3511000, 3835999);
+        } else if (exp >= 3836000 && exp <= 4189999) {
+            return new Rank("Captain III", 3836000, 4189999);
+        } else if (exp >= 4190000 && exp <= 4571499) {
+            return new Rank("Captain IV", 4190000, 4571499);
+        } else if (exp >= 4571500 && exp <= 4999999) {
+            return new Rank("Captain V", 4571500, 4999999);
+        } else if (exp >= 5000000 && exp <= 5474999) {
+            return new Rank("Major I", 5000000, 5474999);
+        } else if (exp >= 5475000 && exp <= 5996499) {
+            return new Rank("Major II", 5475000, 5996499);
+        } else if (exp >= 5996500 && exp <= 6564499) {
+            return new Rank("Major III", 5996500, 6564499);
+        } else if (exp >= 6564500 && exp <= 7178999) {
+            return new Rank("Major IV", 6564500, 7178999);
+        } else if (exp >= 7179000 && exp <= 7857999) {
+            return new Rank("Major V", 7179000, 7857999);
+        } else if (exp >= 7858000 && exp <= 8599999) {
+            return new Rank("Lieutenant Colonel I", 7858000, 8599999);
+        } else if (exp >= 8600000 && exp <= 9407499) {
+            return new Rank("Lieutenant Colonel II", 8600000, 9407499);
+        } else if (exp >= 9407500 && exp <= 10278999) {
+            return new Rank("Lieutenant Colonel III", 9407500, 10278999);
+        } else if (exp >= 10279000 && exp <= 11214999) {
+            return new Rank("Lieutenant Colonel IV", 10279000, 11214999);
+        } else if (exp >= 11215000 && exp <= 12214199) {
+            return new Rank("Lieutenant Colonel V", 11215000, 12214199);
+        } else if (exp >= 12215000 && exp <= 13278999) {
+            return new Rank("Colonel I", 12215000, 13278999);
+        } else if (exp >= 13279000 && exp <= 14406999) {
+            return new Rank("Colonel II", 13279000, 14406999);
+        } else if (exp >= 14407000 && exp <= 15599999) {
+            return new Rank("Colonel III", 14407000, 15599999);
+        } else if (exp >= 15600000 && exp <= 16857499) {
+            return new Rank("Colonel IV", 15600000, 16857499);
+        } else if (exp >= 16857500 && exp <= 18214999) {
+            return new Rank("Colonel V", 16857500, 18214999);
+        } else if (exp >= 18215000 && exp <= 19642999) {
+            return new Rank("Brigadier General", 18215000, 19642999);
+        } else if (exp >= 19643000 && exp <= 21429999) {
+            return new Rank("Major General", 19643000, 21429999);
+        } else if (exp >= 21430000 && exp <= 24285999) {
+            return new Rank("Lieutenant General", 21430000, 24285999);
+        } else if (exp >= 24286000 && exp <= 28571999) {
+            return new Rank("General", 24286000, 28571999);
+        } else if (exp >= 28572000 && exp <= 32856999) {
+            return new Rank("General of the Army", 28572000, 32856999);
+        } else if (exp >= 32857000 && exp <= 37142999) {
+            return new Rank("Commander in Chief I", 32857000, 37142999);
+        } else if (exp >= 37143000 && exp <= 41499999) {
+            return new Rank("Commander in Chief II", 37143000, 41499999);
+        } else if (exp >= 41500000 && exp <= 45719999) {
+            return new Rank("Commander in Chief III", 41500000, 45719999);
+        } else if (exp >= 45720000 && exp <= 49999999) {
+            return new Rank("Commander in Chief IV", 45720000, 49999999);
+        } else if (exp >= 50000000) {
+            return new Rank("Commander in Chief V", 50000000, uint.MaxValue);
+        }
+        return new Rank("Trainee", 0, 1999);
+    }
+
 }
 
 public class PlayerInfo
@@ -1748,7 +2020,7 @@ public class PlayerInfo
     public string equippedPrimary;
     public string equippedSecondary;
     public string equippedSupport;
-    public float exp;
+    public uint exp;
     public uint gp;
     public uint kash;
 }
@@ -1795,4 +2067,15 @@ public class CharacterData {
     public string name;
     public string acquireDate;
     public string duration;
+}
+
+public class Rank {
+    public string name;
+    public uint minExp;
+    public uint maxExp;
+    public Rank(string name, uint minExp, uint maxExp) {
+        this.name = name;
+        this.minExp = minExp;
+        this.maxExp = maxExp;
+    }
 }

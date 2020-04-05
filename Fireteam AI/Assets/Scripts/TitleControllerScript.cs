@@ -60,7 +60,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private uint totalGpCostBeingPurchased;
 	public char currentCharGender;
 	public bool equipsModifiedFlag;
-	public InputField PlayerNameInput;
 
 	// Loading screen stuff
 	public RawImage screenArt;
@@ -210,7 +209,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Destroy(entry.objRef);
 		}
 		GameControllerScript.playerList.Clear();
-		PlayerNameInput.text = PhotonNetwork.NickName;
+		SetPlayerStatsForTitle();
 
 		StartCoroutine (VersionNumberCheck());
 	}
@@ -508,7 +507,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void savePlayerData()
 	{
-		PlayerData.playerdata.playername = PlayerNameInput.text;
 		PlayerData.playerdata.SavePlayerData();
 	}
 
@@ -2848,6 +2846,33 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		foreach (Button btn in shopItemsBtns) {
 			btn.interactable = b;
 		}
+	}
+
+	void SetPlayerNameForTitle() {
+		mainNametagTxt.text = PlayerData.playerdata.info.playername;
+	}
+
+	void SetPlayerRankForTitle() {
+		Rank rank = PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.exp);
+		mainRankTxt.text = rank.name;
+		mainRankImg.texture = PlayerData.playerdata.GetRankInsigniaForRank(rank.name);
+	}
+
+	void SetPlayerLevelProgressForTitle() {
+		uint myExp = PlayerData.playerdata.info.exp;
+		Rank rank = PlayerData.playerdata.GetRankFromExp(myExp);
+		uint currExp = myExp - rank.minExp;
+		uint toExp = rank.maxExp - rank.minExp;
+		float percentProgress = (float)currExp / (float)toExp;
+		mainLevelProgress.value = percentProgress;
+		mainLevelProgressPercentTxt.text = "" + (uint)(percentProgress * 100);
+		mainExpTxt.text = currExp + " / " + toExp;
+	}
+
+	public void SetPlayerStatsForTitle() {
+		SetPlayerNameForTitle();
+		SetPlayerRankForTitle();
+		SetPlayerLevelProgressForTitle();
 	}
 		
 }

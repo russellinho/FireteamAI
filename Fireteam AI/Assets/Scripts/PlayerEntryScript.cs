@@ -10,6 +10,8 @@ public class PlayerEntryScript : MonoBehaviour
     public string nickname;
     public int actorId;
     public TMP_Text nametag;
+    public RawImage rankInsignia;
+    public string rank;
     public GameObject readyIndicator;
     public Image readyMarker;
     public bool isReady;
@@ -51,6 +53,11 @@ public class PlayerEntryScript : MonoBehaviour
         {
             readyMarker.color = Color.red;
         }
+    }
+
+    public void SetRank(string rank) {
+        this.rank = rank;
+        rankInsignia.texture = PlayerData.playerdata.GetRankInsigniaForRank(rank);
     }
 
 }

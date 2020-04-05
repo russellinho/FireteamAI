@@ -323,7 +323,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			}
 			if (!playerMarkers.ContainsKey (actorNo)) {
 				GameObject marker = GameObject.Instantiate (container.hudPlayerMarker);
-				marker.GetComponent<TextMeshProUGUI> ().text = p.GetComponent<PhotonView> ().Owner.NickName;
+				PlayerMarkerScript pms = marker.GetComponent<PlayerMarkerScript>();
+				pms.nametagRef.text = p.GetComponent<PhotonView> ().Owner.NickName;
+				pms.rankInsigniaRef.texture = PlayerData.playerdata.GetRankInsigniaForRank(PlayerData.playerdata.GetRankFromExp(stat.exp).name);
 				marker.GetComponent<RectTransform> ().SetParent (container.playerMarkers.transform);
 				marker.SetActive(false);
 				playerMarkers.Add (actorNo, marker);
@@ -337,17 +339,16 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				if (p.GetComponent<PlayerActionScript>().health > 0)
 				{
 					playerMarkers [actorNo].SetActive (true);
-					playerMarkers[actorNo].GetComponentInChildren<Slider>().value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
+					playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().healthbarRef.value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
 					Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + HEIGHT_OFFSET, p.transform.position.z);
 					RectTransform playerMarkerTrans = playerMarkers[actorNo].GetComponent<RectTransform>();
 					Vector3 destPoint = playerActionScript.viewCam.WorldToScreenPoint(o);
 					Vector3 startPoint = playerMarkerTrans.position;
 					playerMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
 				}
-				if (playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled && p.GetComponent<PlayerActionScript>().health <= 0)
+				if (playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().nametagRef.enabled && p.GetComponent<PlayerActionScript>().health <= 0)
 				{
 					playerMarkers [actorNo].SetActive (false);
-					//playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled = false;
 				}
 			} else if (playerActionScript.thisSpectatorCam != null) {
 				float renderCheck = Vector3.Dot((p.transform.position - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
@@ -357,17 +358,16 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				if (p.GetComponent<PlayerActionScript>().health > 0)
 				{
 					playerMarkers [actorNo].SetActive (true);
-					playerMarkers[actorNo].GetComponentInChildren<Slider>().value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
+					playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().healthbarRef.value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
 					Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + HEIGHT_OFFSET, p.transform.position.z);
 					RectTransform playerMarkerTrans = playerMarkers[actorNo].GetComponent<RectTransform>();
 					Vector3 destPoint = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
 					Vector3 startPoint = playerMarkerTrans.position;
 					playerMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
 				}
-				if (playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled && p.GetComponent<PlayerActionScript>().health <= 0)
+				if (playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().nametagRef.enabled && p.GetComponent<PlayerActionScript>().health <= 0)
 				{
 					playerMarkers [actorNo].SetActive (false);
-					//playerMarkers[actorNo].GetComponent<TextMeshProUGUI>().enabled = false;
 				}
 			}
 		}
