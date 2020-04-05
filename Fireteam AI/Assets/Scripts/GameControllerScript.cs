@@ -148,7 +148,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				if (!endingGainsCalculated) {
 					endingGainsCalculated = true;
 					int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
-					pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths), CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths));
+					pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths));
 				}
 			}
 			if (PhotonNetwork.IsMasterClient) {
@@ -202,7 +202,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					endingGainsCalculated = true;
 					int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
 					bool winner = (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Score"]) == 100);
-					pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths, winner), CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths, winner));
+					pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths, winner), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths, winner));
 				}
 			}
 			if (isVersusHostForThisTeam()) {
@@ -732,7 +732,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	uint CalculateExpGainedCampaign(int kills, int deaths) {
 		float gradeMultiplier = ConvertGradeToMultiplier(GetCompletionGrade());
-		return (uint)((gradeMultiplier) * (500f + (GetKillMultiplier(kills) * (float)kills) - (200f * (float)deaths)));
+		return (uint)((gradeMultiplier) * (30000f + (GetKillMultiplier(kills) * (float)kills) - (200f * (float)deaths)));
 	}
 
 	uint CalculateExpGainedVersus(int kills, int deaths, bool win) {
@@ -807,9 +807,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	[PunRPC]
-	void RpcSetMyExpAndGpGained(int actorId, uint expGained, uint gpGained) {
-		playerList[actorId].expGained = expGained;
-		playerList[actorId].gpGained = expGained;
+	void RpcSetMyExpAndGpGained(int actorId, int expGained, int gpGained) {
+		playerList[actorId].expGained = (uint)expGained;
+		playerList[actorId].gpGained = (uint)expGained;
 	}
 
 }

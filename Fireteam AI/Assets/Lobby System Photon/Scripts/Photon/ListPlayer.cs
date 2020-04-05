@@ -343,9 +343,9 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		[PunRPC]
-		void RpcSetRank(int actorId, uint exp) {
+		void RpcSetRank(int actorId, int exp) {
 			PlayerEntryScript p = playerListEntries[actorId].GetComponent<PlayerEntryScript>();
-			p.SetRank(PlayerData.playerdata.GetRankFromExp(exp).name);
+			p.SetRank(PlayerData.playerdata.GetRankFromExp((uint)exp).name);
 		}
 
 		public override void OnJoinedRoom()
@@ -354,9 +354,9 @@ namespace Photon.Pun.LobbySystemPhoton
             templateUIClass.LoadingPanel.SetActive(false);
             templateUIClassVs.LoadingPanel.SetActive(false);
 			Hashtable h = new Hashtable();
-			h.Add("exp", PlayerData.playerdata.info.exp);
+			h.Add("exp", (int)PlayerData.playerdata.info.exp);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-			pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, PlayerData.playerdata.info.exp);
+			pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (int)PlayerData.playerdata.info.exp);
 			currentMode = (!templateUIClassVs.gameObject.activeInHierarchy ? 'C' : 'V');
 			if (currentMode == 'V') {
 				OnJoinedRoomVersus();

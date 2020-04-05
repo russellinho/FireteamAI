@@ -72,6 +72,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
+		if (gameController.matchType == 'C') {
+			ToggleVersusHUD(false);
+		} else if (gameController.matchType == 'V') {
+			ToggleVersusHUD(true);
+		}
 		killPopupTimer = 0f;
 		hitmarkerTimer = 0f;
 		detectedTextTimer = 0f;

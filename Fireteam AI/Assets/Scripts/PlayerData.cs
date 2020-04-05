@@ -88,6 +88,7 @@ public class PlayerData : MonoBehaviour
         // Handle async calls
         if (dataLoadedFlag) {
             InstantiatePlayer();
+            titleRef.SetPlayerStatsForTitle();
             dataLoadedFlag = false;
         }
         if (saveDataFlag) {
@@ -176,10 +177,11 @@ public class PlayerData : MonoBehaviour
             }
             if (levelName.Equals("Title"))
             {
-                if (PlayerData.playerdata.bodyReference == null)
+                if (PlayerData.playerdata.bodyReference == null && !dataLoadedFlag)
                 {
                     LoadPlayerData();
                 }
+                titleRef.SetPlayerStatsForTitle();
             }
         }
 

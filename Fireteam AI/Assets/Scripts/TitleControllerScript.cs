@@ -209,7 +209,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Destroy(entry.objRef);
 		}
 		GameControllerScript.playerList.Clear();
-		SetPlayerStatsForTitle();
+		// SetPlayerStatsForTitle();
 
 		StartCoroutine (VersionNumberCheck());
 	}
@@ -2865,7 +2865,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		uint toExp = rank.maxExp - rank.minExp;
 		float percentProgress = (float)currExp / (float)toExp;
 		mainLevelProgress.value = percentProgress;
-		mainLevelProgressPercentTxt.text = "" + (uint)(percentProgress * 100);
+		mainLevelProgressPercentTxt.text = (uint)(percentProgress * 100) + "%";
 		mainExpTxt.text = currExp + " / " + toExp;
 	}
 
