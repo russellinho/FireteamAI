@@ -732,7 +732,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	uint CalculateExpGainedCampaign(int kills, int deaths) {
 		float gradeMultiplier = ConvertGradeToMultiplier(GetCompletionGrade());
-		return (uint)((gradeMultiplier) * (30000f + (GetKillMultiplier(kills) * (float)kills) - (200f * (float)deaths)));
+		return (uint)((gradeMultiplier) * (500f + (GetKillMultiplier(kills) * (float)kills) - (200f * (float)deaths)));
 	}
 
 	uint CalculateExpGainedVersus(int kills, int deaths, bool win) {
