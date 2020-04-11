@@ -102,11 +102,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button shopSecondaryWepBtn;
 	public Button shopSupportWepBtn;
 	public Button shopAssaultRifleSubBtn;
+	public Button shopSmgSubBtn;
+	public Button shopLmgSubBtn;
 	public Button shopShotgunSubBtn;
 	public Button shopSniperRifleSubBtn;
 	public Button shopPistolSubBtn;
+	public Button shopLauncherSubBtn;
 	public Button shopExplosivesSubBtn;
 	public Button shopBoostersSubBtn;
+	public Button shopDeployablesSubBtn;
 	public Button shopModsBtn;
 	public Button shopSuppressorsSubBtn;
 	public GameObject shopEquippedPrimarySlot;
@@ -148,9 +152,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button secondaryWepBtn;
 	public Button supportWepBtn;
 	// Number of sub buttons for primary weapon dropdown in shop
-	private const uint PRIMARY_SUBBUTTON_COUNT = 3;
-	private const uint SECONDARY_SUBBUTTON_COUNT = 1;
-	private const uint SUPPORT_SUBBUTTON_COUNT = 2;
+	private const uint PRIMARY_SUBBUTTON_COUNT = 5;
+	private const uint SECONDARY_SUBBUTTON_COUNT = 2;
+	private const uint SUPPORT_SUBBUTTON_COUNT = 3;
 	private const uint MOD_SUBBUTTON_COUNT = 1;
 	private const float SHOP_BUTTON_SPACING = -30f;
 	private float primaryWepBtnYPos = -65f;
@@ -158,11 +162,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private float supportWepBtnYPos = -125f;
 	private float modWepBtnYPos = -155f;
 	public Button assaultRifleSubBtn;
+	public Button smgSubBtn;
+	public Button lmgSubBtn;
 	public Button shotgunSubBtn;
 	public Button sniperRifleSubBtn;
 	public Button pistolSubBtn;
+	public Button launcherSubBtn;
 	public Button explosivesSubBtn;
 	public Button boostersSubBtn;
+	public Button deployablesSubBtn;
 	public GameObject equippedPrimarySlot;
 	public GameObject equippedSecondarySlot;
 	public GameObject equippedSupportSlot;
@@ -1073,14 +1081,22 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Remove sub buttons
 		pistolSubBtn.gameObject.SetActive(false);
 		pistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		launcherSubBtn.gameObject.SetActive(false);
+		launcherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		explosivesSubBtn.gameObject.SetActive(false);
 		explosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		boostersSubBtn.gameObject.SetActive(false);
 		boostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		deployablesSubBtn.gameObject.SetActive(false);
+		deployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		assaultRifleSubBtn.gameObject.SetActive(true);
 		assaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		smgSubBtn.gameObject.SetActive(true);
+		smgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		lmgSubBtn.gameObject.SetActive(true);
+		lmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shotgunSubBtn.gameObject.SetActive(true);
 		shotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		sniperRifleSubBtn.gameObject.SetActive(true);
@@ -1139,16 +1155,24 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Remove sub buttons
 		shopPistolSubBtn.gameObject.SetActive(false);
 		shopPistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLauncherSubBtn.gameObject.SetActive(false);
+		shopLauncherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopExplosivesSubBtn.gameObject.SetActive(false);
 		shopExplosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopBoostersSubBtn.gameObject.SetActive(false);
 		shopBoostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopDeployablesSubBtn.gameObject.SetActive(false);
+		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSuppressorsSubBtn.gameObject.SetActive(false);
 		shopSuppressorsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		shopAssaultRifleSubBtn.gameObject.SetActive(true);
 		shopAssaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSmgSubBtn.gameObject.SetActive(true);
+		shopSmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLmgSubBtn.gameObject.SetActive(true);
+		shopLmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopShotgunSubBtn.gameObject.SetActive(true);
 		shopShotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSniperRifleSubBtn.gameObject.SetActive(true);
@@ -1195,6 +1219,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Remove sub buttons
 		assaultRifleSubBtn.gameObject.SetActive(false);
 		assaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		smgSubBtn.gameObject.SetActive(false);
+		smgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		lmgSubBtn.gameObject.SetActive(false);
+		lmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shotgunSubBtn.gameObject.SetActive(false);
 		shotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		sniperRifleSubBtn.gameObject.SetActive(false);
@@ -1203,10 +1231,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		explosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		boostersSubBtn.gameObject.SetActive(false);
 		boostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		deployablesSubBtn.gameObject.SetActive(false);
+		deployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		pistolSubBtn.gameObject.SetActive(true);
 		pistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		launcherSubBtn.gameObject.SetActive(true);
+		launcherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
 		ClearCustomizationContent();
@@ -1260,6 +1292,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Remove sub buttons
 		shopAssaultRifleSubBtn.gameObject.SetActive(false);
 		shopAssaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSmgSubBtn.gameObject.SetActive(false);
+		shopSmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLmgSubBtn.gameObject.SetActive(false);
+		shopLmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopShotgunSubBtn.gameObject.SetActive(false);
 		shopShotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSniperRifleSubBtn.gameObject.SetActive(false);
@@ -1268,12 +1304,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopExplosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopBoostersSubBtn.gameObject.SetActive(false);
 		shopBoostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopDeployablesSubBtn.gameObject.SetActive(false);
+		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSuppressorsSubBtn.gameObject.SetActive(false);
 		shopSuppressorsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		shopPistolSubBtn.gameObject.SetActive(true);
 		shopPistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLauncherSubBtn.gameObject.SetActive(true);
+		shopLauncherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
 		ClearMarketplaceContent();
@@ -1316,18 +1356,26 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Remove sub buttons
 		assaultRifleSubBtn.gameObject.SetActive(false);
 		assaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		smgSubBtn.gameObject.SetActive(false);
+		smgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		lmgSubBtn.gameObject.SetActive(false);
+		lmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shotgunSubBtn.gameObject.SetActive(false);
 		shotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		sniperRifleSubBtn.gameObject.SetActive(false);
 		sniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		pistolSubBtn.gameObject.SetActive(false);
 		pistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		launcherSubBtn.gameObject.SetActive(false);
+		launcherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		explosivesSubBtn.gameObject.SetActive(true);
 		explosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		boostersSubBtn.gameObject.SetActive(true);
 		boostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		deployablesSubBtn.gameObject.SetActive(true);
+		deployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
 		ClearCustomizationContent();
@@ -1380,12 +1428,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Remove sub buttons
 		shopAssaultRifleSubBtn.gameObject.SetActive(false);
 		shopAssaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSmgSubBtn.gameObject.SetActive(false);
+		shopSmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLmgSubBtn.gameObject.SetActive(false);
+		shopLmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopShotgunSubBtn.gameObject.SetActive(false);
 		shopShotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSniperRifleSubBtn.gameObject.SetActive(false);
 		shopSniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopPistolSubBtn.gameObject.SetActive(false);
 		shopPistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLauncherSubBtn.gameObject.SetActive(false);
+		shopLauncherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSuppressorsSubBtn.gameObject.SetActive(false);
 		shopSuppressorsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
@@ -1394,6 +1448,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopExplosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopBoostersSubBtn.gameObject.SetActive(true);
 		shopBoostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopDeployablesSubBtn.gameObject.SetActive(true);
+		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
 		ClearMarketplaceContent();
@@ -1424,6 +1480,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnAssaultRifleSubBtnClicked() {
 		// Make tab orange and clear other tabs
 		assaultRifleSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		smgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		lmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		sniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
@@ -1465,6 +1523,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnMarketplaceAssaultRifleSubBtnClicked() {
 		// Make tab orange and clear other tabs
 		shopAssaultRifleSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		shopSmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopShotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
@@ -1495,10 +1555,168 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	public void OnSmgSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		assaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		smgSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		lmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		sniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		ClearCustomizationContent();
+
+        // Populate with SMGs
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = ed.name;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.category.Equals("SMG")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
+			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedPrimaryWeapon)) {
+				s.ToggleEquippedIndicator(true);
+				currentlyEquippedItemPrefab = o;
+			}
+			o.transform.SetParent(contentInventory.transform);
+		}
+	}
+
+	public void OnMarketplaceSmgSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		shopAssaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSmgSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		shopLmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopShotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		ClearMarketplaceContent();
+
+		// Populate with assault rifles
+		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
+			Weapon w = entry.Value;
+			if (!w.category.Equals("SMG") || !w.purchasable) {
+				continue;
+			}
+			GameObject o = Instantiate(shopContentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
+			o.transform.SetParent(shopContentInventory.transform);
+		}
+	}
+
+	public void OnLmgSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		assaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		smgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		lmgSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		shotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		sniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		ClearCustomizationContent();
+
+        // Populate with SMGs
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = ed.name;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.category.Equals("LMG")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
+			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedPrimaryWeapon)) {
+				s.ToggleEquippedIndicator(true);
+				currentlyEquippedItemPrefab = o;
+			}
+			o.transform.SetParent(contentInventory.transform);
+		}
+	}
+
+	public void OnMarketplaceLmgSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		shopAssaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLmgSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		shopShotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		ClearMarketplaceContent();
+
+		// Populate with assault rifles
+		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
+			Weapon w = entry.Value;
+			if (!w.category.Equals("LMG") || !w.purchasable) {
+				continue;
+			}
+			GameObject o = Instantiate(shopContentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
+			o.transform.SetParent(shopContentInventory.transform);
+		}
+	}
+
 	public void OnShotgunSubBtnClicked() {
 		// Make tab orange and clear other tabs
 		shotgunSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		assaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		smgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		lmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		sniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
@@ -1540,6 +1758,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Make tab orange and clear other tabs
 		shopShotgunSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		shopAssaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
@@ -1573,6 +1793,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Make tab orange and clear other tabs
 		sniperRifleSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		assaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		smgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		lmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
@@ -1614,6 +1836,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Make tab orange and clear other tabs
 		shopSniperRifleSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		shopAssaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopShotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
@@ -1646,6 +1870,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnPistolSubBtnClicked() {
 		// Make tab orange and clear other tabs
 		pistolSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		launcherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
@@ -1685,6 +1910,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnMarketplacePistolSubBtnClicked() {
 		// Make tab orange and clear other tabs
 		shopPistolSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		shopLauncherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
@@ -1713,10 +1939,83 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	public void OnLaunchersSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		pistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		launcherSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		ClearCustomizationContent();
+
+        // Populate with pistols
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = ed.name;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.category.Equals("Launcher")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
+			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSecondaryWeapon)) {
+				s.ToggleEquippedIndicator(true);
+				currentlyEquippedItemPrefab = o;
+			}
+			o.transform.SetParent(contentInventory.transform);
+		}
+	}
+
+	public void OnMarketplaceLaunchersSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		shopPistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLauncherSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		ClearMarketplaceContent();
+
+		// Populate with pistols
+		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
+			Weapon w = entry.Value;
+			if (!w.category.Equals("Launcher") || !w.purchasable) {
+				continue;
+			}
+			GameObject o = Instantiate(shopContentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
+			o.transform.SetParent(shopContentInventory.transform);
+		}
+	}
+
 	public void OnExplosivesSubBtnClicked() {
 		// Make tab orange and clear other tabs
 		explosivesSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		boostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		deployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
@@ -1757,6 +2056,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Make tab orange and clear other tabs
 		shopExplosivesSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		shopBoostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
@@ -1788,6 +2088,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnBoostersSubBtnClicked() {
 		// Make tab orange and clear other tabs
 		boostersSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		deployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		explosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
@@ -1829,6 +2130,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Make tab orange and clear other tabs
 		shopBoostersSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		shopExplosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
@@ -1838,6 +2140,80 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
 			Weapon w = entry.Value;
 			if (!w.category.Equals("Booster") || !w.purchasable) {
+				continue;
+			}
+			GameObject o = Instantiate(shopContentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
+			o.transform.SetParent(shopContentInventory.transform);
+		}
+	}
+
+	public void OnDeployablesSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		boostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		deployablesSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		explosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		ClearCustomizationContent();
+
+        // Populate with pistols
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = ed.name;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.category.Equals("Deployable")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
+			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSupportWeapon)) {
+				s.ToggleEquippedIndicator(true);
+				currentlyEquippedItemPrefab = o;
+			}
+			o.transform.SetParent(contentInventory.transform);
+		}
+	}
+
+	public void OnMarketplaceDeployablesSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		shopBoostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopExplosivesSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		ClearMarketplaceContent();
+
+		// Populate with pistols
+		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
+			Weapon w = entry.Value;
+			if (!w.category.Equals("Deployable") || !w.purchasable) {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
@@ -1875,6 +2251,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Remove sub buttons
 		shopAssaultRifleSubBtn.gameObject.SetActive(false);
 		shopAssaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSmgSubBtn.gameObject.SetActive(false);
+		shopSmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLmgSubBtn.gameObject.SetActive(false);
+		shopLmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopShotgunSubBtn.gameObject.SetActive(false);
 		shopShotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSniperRifleSubBtn.gameObject.SetActive(false);
@@ -1883,6 +2263,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopExplosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopBoostersSubBtn.gameObject.SetActive(false);
 		shopBoostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopDeployablesSubBtn.gameObject.SetActive(false);
+		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		shopSuppressorsSubBtn.gameObject.SetActive(true);
@@ -2212,11 +2594,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.gameObject.SetActive(false);
 		supportWepBtn.gameObject.SetActive(false);
 		assaultRifleSubBtn.gameObject.SetActive(false);
+		smgSubBtn.gameObject.SetActive(false);
+		lmgSubBtn.gameObject.SetActive(false);
 		shotgunSubBtn.gameObject.SetActive(false);
 		sniperRifleSubBtn.gameObject.SetActive(false);
 		pistolSubBtn.gameObject.SetActive(false);
+		launcherSubBtn.gameObject.SetActive(false);
 		explosivesSubBtn.gameObject.SetActive(false);
 		boostersSubBtn.gameObject.SetActive(false);
+		deployablesSubBtn.gameObject.SetActive(false);
 		equippedPrimarySlot.SetActive(false);
 		equippedSecondarySlot.SetActive(false);
 		equippedSupportSlot.SetActive(false);
@@ -2245,11 +2631,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSecondaryWepBtn.gameObject.SetActive(false);
 		shopSupportWepBtn.gameObject.SetActive(false);
 		shopAssaultRifleSubBtn.gameObject.SetActive(false);
+		shopSmgSubBtn.gameObject.SetActive(false);
+		shopLmgSubBtn.gameObject.SetActive(false);
 		shopShotgunSubBtn.gameObject.SetActive(false);
 		shopSniperRifleSubBtn.gameObject.SetActive(false);
 		shopPistolSubBtn.gameObject.SetActive(false);
+		shopLauncherSubBtn.gameObject.SetActive(false);
 		shopExplosivesSubBtn.gameObject.SetActive(false);
 		shopBoostersSubBtn.gameObject.SetActive(false);
+		shopDeployablesSubBtn.gameObject.SetActive(false);
 		shopModsBtn.gameObject.SetActive(false);
 		shopSuppressorsSubBtn.gameObject.SetActive(false);
 
@@ -2835,11 +3225,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSecondaryWepBtn.interactable = b;
 		shopSupportWepBtn.interactable = b;
 		shopAssaultRifleSubBtn.interactable = b;
+		shopSmgSubBtn.interactable = b;
+		shopLmgSubBtn.interactable = b;
 		shopShotgunSubBtn.interactable = b;
 		shopSniperRifleSubBtn.interactable = b;
 		shopPistolSubBtn.interactable = b;
+		shopLauncherSubBtn.interactable = b;
 		shopExplosivesSubBtn.interactable = b;
 		shopBoostersSubBtn.interactable = b;
+		shopDeployablesSubBtn.interactable = b;
 		shopModsBtn.interactable = b;
 		shopSuppressorsSubBtn.interactable = b;
 		Button[] shopItemsBtns = shopContentInventory.GetComponentsInChildren<Button>();
