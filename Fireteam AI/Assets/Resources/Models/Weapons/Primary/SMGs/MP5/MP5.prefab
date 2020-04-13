@@ -5959,10 +5959,10 @@ MonoBehaviour:
     type: 3}
   weaponShell: {fileID: 495810041075087592, guid: 01f2dbe1746c1dc46923a4d9bf972eb9,
     type: 3}
-  weaponShellPoint: {fileID: 0}
-  weaponShootPoint: {fileID: 0}
-  muzzleFlash: {fileID: 0}
-  bulletTracer: {fileID: 0}
+  weaponShellPoint: {fileID: 2582121642263356117}
+  weaponShootPoint: {fileID: 8610047173386822907}
+  muzzleFlash: {fileID: 3577575085467413776}
+  bulletTracer: {fileID: 5263190240143908139}
   fpcPosMale: {x: -0.00074, y: 0.00241, z: 0.00137}
   fpcLeftHandPosMale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotMale: {x: 0, y: 0, z: 0}
@@ -5994,23 +5994,23 @@ MonoBehaviour:
   reloadSound3Time: 0.68
   supportSoundTime: -1
   weaponParts:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 2058229804633504764}
+  - {fileID: 3209885657754068737}
+  - {fileID: 7890003475973218903}
+  - {fileID: 2564507803893524231}
+  - {fileID: 8170496860331871996}
+  - {fileID: 56247703757688677}
+  - {fileID: 5580212672409658604}
+  - {fileID: 7789988413859187984}
+  - {fileID: 2823054207337650588}
+  - {fileID: 2391480297294013162}
+  - {fileID: 4787375774354037585}
+  - {fileID: 7114432691482845426}
+  - {fileID: 8345958677867127364}
+  - {fileID: 6369827592381658739}
+  - {fileID: 2135643330274583886}
+  - {fileID: 5809502128190494644}
+  - {fileID: 7226274329836365539}
   suppressorSlot: {fileID: 3914815247478950301}
 --- !u!114 &8218351316202008355
 MonoBehaviour:
