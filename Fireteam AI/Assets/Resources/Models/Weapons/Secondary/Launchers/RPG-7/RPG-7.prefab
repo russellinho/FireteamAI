@@ -891,12 +891,12 @@ MonoBehaviour:
   fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
   fpcRotFemale: {x: 8.299, y: 73.521, z: -76.409}
   fpcScaleFemale: {x: 0.00008060481, y: 0.00008060481, z: 0.00008060481}
-  fullPosMale: {x: -0.0528, y: 0.1813, z: 0.0199}
-  fullRotMale: {x: -11.1, y: 179.995, z: -85.716}
-  fullScaleMale: {x: 0.0172, y: 0.0172, z: 0.0172}
-  fullPosFemale: {x: -0.048, y: 0.129, z: 0.016}
-  fullRotFemale: {x: -4.206, y: 179.213, z: -84.88901}
-  fullScaleFemale: {x: 0.0172, y: 0.0172, z: 0.0172}
+  fullPosMale: {x: -0.028, y: 0.276, z: -0.002}
+  fullRotMale: {x: 0, y: 180, z: -90}
+  fullScaleMale: {x: 0.0077, y: 0.0077, z: 0.0077}
+  fullPosFemale: {x: -0.028, y: 0.276, z: -0.002}
+  fullRotFemale: {x: 0, y: 180, z: -90}
+  fullScaleFemale: {x: 0.0077, y: 0.0077, z: 0.0077}
   maleOverrideController: {fileID: 0}
   femaleOverrideController: {fileID: 0}
   weaponAnimator: {fileID: 2899657694831400474}

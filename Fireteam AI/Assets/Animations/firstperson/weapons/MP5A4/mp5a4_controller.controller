@@ -20,7 +20,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 9333c84b43f434a7bb7c93332b7a21bc, type: 2}
+  m_Motion: {fileID: 7400000, guid: bf3330d0b4b4947d6af0cc84ab16c7b7, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -54,7 +54,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: m60_controller
+  m_Name: mp5a4_controller
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: ReloadSpeed
@@ -97,7 +97,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 8a80bc0bbd37f4f468e939e9aa0d176f, type: 2}
+  m_Motion: {fileID: 7400000, guid: e571953933e8a4a3a86cc423a0fe95d8, type: 2}
   m_Tag: 
   m_SpeedParameter: ReloadSpeed
   m_MirrorParameter: 
@@ -174,7 +174,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: af95e4ac46f2449a991f14d869f21224, type: 2}
+  m_Motion: {fileID: 7400000, guid: 0eccbe41f3fb2461998bcb30ad5321c1, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
