@@ -764,10 +764,10 @@ MonoBehaviour:
   clipCapacity: 100
   maxAmmo: 300
   steadyAim: 1
-  aimDownSightPosMale: {x: -0.0005, y: 0.001208, z: 0.00131}
-  aimDownSightPosFemale: {x: -0.0005, y: 0.001208, z: 0.00131}
-  stableHandPosMale: {x: -0.000844755, y: 0.0007977759, z: 0.001511174}
-  stableHandPosFemale: {x: -0.000844755, y: 0.001240724, z: 0.001311174}
+  aimDownSightPosMale: {x: -0.00026, y: 0.001675, z: 0.00128}
+  aimDownSightPosFemale: {x: -0.00026, y: 0.001675, z: 0.00128}
+  stableHandPosMale: {x: -0.00005, y: 0.00146, z: 0.00124}
+  stableHandPosFemale: {x: -0.00005, y: 0.00146, z: 0.00124}
   defaultLeftCollarPosMale: {x: -0.0005, y: 0.0008, z: 0.0002}
   defaultLeftCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   defaultRightCollarPosMale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}

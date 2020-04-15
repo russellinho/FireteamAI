@@ -5934,15 +5934,15 @@ MonoBehaviour:
   clipCapacity: 30
   maxAmmo: 120
   steadyAim: 0
-  aimDownSightPosMale: {x: -0.0005, y: 0.001208, z: 0.00131}
-  aimDownSightPosFemale: {x: -0.0005, y: 0.001208, z: 0.00131}
-  stableHandPosMale: {x: -0.000844755, y: 0.0007977759, z: 0.001511174}
-  stableHandPosFemale: {x: -0.000844755, y: 0.001240724, z: 0.001311174}
+  aimDownSightPosMale: {x: -0.00015, y: 0.0014, z: 0.00134}
+  aimDownSightPosFemale: {x: -0.00015, y: 0.0014, z: 0.00134}
+  stableHandPosMale: {x: -0.00004, y: 0.00144, z: 0.00135}
+  stableHandPosFemale: {x: -0.00004, y: 0.00144, z: 0.00135}
   defaultLeftCollarPosMale: {x: -0.0005, y: 0.0008, z: 0.0002}
-  defaultLeftCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
+  defaultLeftCollarPosFemale: {x: -3.758436e-10, y: 0.001242948, z: -2.449463e-12}
   defaultRightCollarPosMale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
-  defaultRightCollarPosFemale: {x: -0.0005, y: 0.001242948, z: -2.449463e-12}
-  aimDownSightSpeed: 6
+  defaultRightCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
+  aimDownSightSpeed: 8
   aimDownSightClipping: 0.06
   titleHandPositionsMale: {x: -0.06, y: 0.13, z: 0.011}
   titleHandPositionsFemale: {x: -0.06, y: 0.13, z: 0.011}
@@ -5966,12 +5966,12 @@ MonoBehaviour:
   fpcPosMale: {x: -0.00074, y: 0.00241, z: 0.00137}
   fpcLeftHandPosMale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotMale: {x: 0, y: 0, z: 0}
-  fpcRotMale: {x: 8.388, y: 71.7, z: -76.424}
+  fpcRotMale: {x: 8.8, y: 71.61, z: -78.3}
   fpcScaleMale: {x: 0.00018, y: 0.00018, z: 0.00018}
   fpcPosFemale: {x: -0.00074, y: 0.00241, z: 0.00137}
   fpcLeftHandPosFemale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
-  fpcRotFemale: {x: 8.388, y: 71.7, z: -76.424}
+  fpcRotFemale: {x: 8.8, y: 71.61, z: -78.3}
   fpcScaleFemale: {x: 0.00018, y: 0.00018, z: 0.00018}
   fullPosMale: {x: 0.108, y: 0.244, z: 0.028}
   fullRotMale: {x: 0, y: 180, z: -90}
