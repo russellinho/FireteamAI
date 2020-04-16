@@ -5936,14 +5936,14 @@ MonoBehaviour:
   steadyAim: 0
   aimDownSightPosMale: {x: -0.00015, y: 0.0014, z: 0.00134}
   aimDownSightPosFemale: {x: -0.00015, y: 0.0014, z: 0.00134}
-  stableHandPosMale: {x: -0.00004, y: 0.00144, z: 0.00135}
+  stableHandPosMale: {x: -0.00016, y: 0.00106, z: 0.00155}
   stableHandPosFemale: {x: -0.00004, y: 0.00144, z: 0.00135}
-  defaultLeftCollarPosMale: {x: -0.0005, y: 0.0008, z: 0.0002}
+  defaultLeftCollarPosMale: {x: 0, y: 0.0008, z: 0.0002}
   defaultLeftCollarPosFemale: {x: -3.758436e-10, y: 0.001242948, z: -2.449463e-12}
   defaultRightCollarPosMale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   defaultRightCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
-  aimDownSightSpeed: 8
-  aimDownSightClipping: 0.06
+  aimDownSightSpeed: 6.5
+  aimDownSightClipping: 0.03
   titleHandPositionsMale: {x: -0.06, y: 0.13, z: 0.011}
   titleHandPositionsFemale: {x: -0.06, y: 0.13, z: 0.011}
   recoveryConstant: 3

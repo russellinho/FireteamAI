@@ -462,7 +462,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 6d911401a58fa954891d4c3b1809a6f4, type: 3}
+  m_audioClip: {fileID: 8300000, guid: cb523b17e2bd64d139c13ef77e43501f, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -764,26 +764,27 @@ MonoBehaviour:
   clipCapacity: 100
   maxAmmo: 300
   steadyAim: 1
-  aimDownSightPosMale: {x: -0.00026, y: 0.001675, z: 0.00128}
+  aimDownSightPosMale: {x: -0.00026, y: 0.00167, z: 0.00128}
   aimDownSightPosFemale: {x: -0.00026, y: 0.001675, z: 0.00128}
-  stableHandPosMale: {x: -0.00005, y: 0.00146, z: 0.00124}
+  stableHandPosMale: {x: -0.00045, y: 0.00102, z: 0.0015}
   stableHandPosFemale: {x: -0.00005, y: 0.00146, z: 0.00124}
-  defaultLeftCollarPosMale: {x: -0.0005, y: 0.0008, z: 0.0002}
+  defaultLeftCollarPosMale: {x: 0, y: 0.0008, z: 0.0002}
   defaultLeftCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   defaultRightCollarPosMale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   defaultRightCollarPosFemale: {x: -0.0005, y: 0.001242948, z: -2.449463e-12}
-  aimDownSightSpeed: 6
-  aimDownSightClipping: 0.06
+  aimDownSightSpeed: 5
+  aimDownSightClipping: 0.03
   titleHandPositionsMale: {x: -0.06, y: 0.13, z: 0.011}
   titleHandPositionsFemale: {x: -0.06, y: 0.13, z: 0.011}
-  recoveryConstant: 3
-  fireSound: {fileID: 0}
-  suppressedFireSound: {fileID: 0}
-  weaponSoundSource: {fileID: 0}
+  recoveryConstant: 6
+  fireSound: {fileID: 4141903191445553918}
+  suppressedFireSound: {fileID: 2519210481575103112}
+  weaponSoundSource: {fileID: 168316482079909108}
   reloadSounds:
-  - {fileID: 8300000, guid: 589edbf9c62439b408a6ad22f8f4498f, type: 3}
-  - {fileID: 8300000, guid: ff4591e3f8c9c7b43b1fa435c5deb056, type: 3}
-  - {fileID: 8300000, guid: 3d06b3319560853488f4d0a8ddb3d3d0, type: 3}
+  - {fileID: 8300000, guid: 5466ef20bdf004dacb7222d7d4d113ab, type: 3}
+  - {fileID: 8300000, guid: c17992bb2f0044c1e906c4ad033103cd, type: 3}
+  - {fileID: 8300000, guid: 9a23184e74c704965af0fc3ad791e3d2, type: 3}
+  - {fileID: 8300000, guid: 5e3008463f5e24b958d39c708fd23332, type: 3}
   supportActionSound: {fileID: 0}
   gunSmoke: {fileID: 3013963004515157933, guid: 22f01094768fa2c4e8513fa10c2a4c94,
     type: 3}
@@ -794,13 +795,13 @@ MonoBehaviour:
   muzzleFlash: {fileID: 7566674854180206822}
   bulletTracer: {fileID: 6255451281734940113}
   fpcPosMale: {x: -0.000233, y: 0.00183, z: -0.00041}
-  fpcLeftHandPosMale: {x: 0, y: 0, z: 0}
-  fpcLeftHandRotMale: {x: 0, y: 0, z: 0}
-  fpcRotMale: {x: 9.42, y: 73.521, z: -76.409}
+  fpcLeftHandPosMale: {x: 0.002307727, y: -0.0008365694, z: -0.0002629997}
+  fpcLeftHandRotMale: {x: -52.742, y: 86.843, z: -87.96301}
+  fpcRotMale: {x: 8.235001, y: 73.23901, z: -77.173}
   fpcScaleMale: {x: 0.00018, y: 0.00018, z: 0.00018}
   fpcPosFemale: {x: -0.000233, y: 0.00183, z: -0.00041}
-  fpcLeftHandPosFemale: {x: 0, y: 0, z: 0}
-  fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
+  fpcLeftHandPosFemale: {x: 0.002238571, y: -0.000835629, z: -0.0001953794}
+  fpcLeftHandRotFemale: {x: -51.527, y: 86.925, z: -87.30701}
   fpcRotFemale: {x: 9.42, y: 73.521, z: -76.409}
   fpcScaleFemale: {x: 0.00018, y: 0.00018, z: 0.00018}
   fullPosMale: {x: -0.063, y: 0.174, z: 0.03}
@@ -809,8 +810,10 @@ MonoBehaviour:
   fullPosFemale: {x: -0.0593, y: 0.1399, z: 0.029}
   fullRotFemale: {x: 0, y: 180, z: -90}
   fullScaleFemale: {x: 0.0212, y: 0.0212, z: 0.0212}
-  maleOverrideController: {fileID: 0}
-  femaleOverrideController: {fileID: 0}
+  maleOverrideController: {fileID: 22100000, guid: 7d109b205cb5580439edd57b5a946312,
+    type: 2}
+  femaleOverrideController: {fileID: 22100000, guid: 29d9bb6630d4a294fa97f265cf8765e1,
+    type: 2}
   weaponAnimator: {fileID: 5875603532940506053}
   defaultFpcReloadSpeed: 1.25
   defaultWeaponReloadSpeed: 0.625
