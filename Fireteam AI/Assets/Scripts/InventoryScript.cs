@@ -58,6 +58,9 @@ public class InventoryScript : MonoBehaviour
 
         // Weapons
         weaponCatalog.Add("AK-47", new Weapon("AK-47", "Primary", "Assault Rifle", "Models/Weapons/Primary/Assault Rifles/AK-47", "Models/Pics/ak47-thumb", "A classic assault rifle developed in the Soviet Union during the World War II era. It's known for its unmatched stopping power and relatively light weight.", 48f, 90f, 68f, 90f, 70f, 3000f, 30, 120, true, true, 100, true, true));
+        // weaponCatalog.Add("MP5A4", new Weapon("MP5A3", "Primary", "SMG", "Models/Weapons/Primary/SMGs/MP5A3/MP5A3", "Models/Pics/mp5a3-thumb", "The world renowned German engineered masterpiece of submachine guns, the MP5A3"));
+        // weaponCatalog.Add("M60", new Weapon());
+        // weaponCatalog.Add("RPG-7", new Weapon());
         weaponCatalog.Add("Glock23", new Weapon("Glock23", "Secondary", "Pistol", "Models/Weapons/Secondary/Pistols/Glock23", "Models/Pics/glock23-thumb", "The standard pistol used by United States police officers because of its reliability.", 33f, 100f, 45f, 60f, 56f, 3000f, 12, 60, true, true, 100, true, false));
         weaponCatalog.Add("R870", new Weapon("R870", "Primary", "Shotgun","Models/Weapons/Primary/Shotguns/R870", "Models/Pics/r870-thumb", "Short for Remington 870, this shotgun is widely used for home defence due to its quick reload speed and reliability.", 75f, 95f, 17f, -1f, 60f, 1000f, 8, 56, true, false, 100, true, true));
         weaponCatalog.Add("L96A1", new Weapon("L96A1", "Primary", "Sniper Rifle", "Models/Weapons/Primary/Sniper Rifles/L96A1", "Models/Pics/l96a1-thumb", "Developed in the 1980s by the British, this bolt-action sniper rifle is known for its deadly stopping power and quick operation speed.", 100f, 40f, 10f, 90f, 65f, 3000f, 5, 20, true, true, 100, true, true));
