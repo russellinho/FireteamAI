@@ -1013,6 +1013,15 @@ public class WeaponActionScript : MonoBehaviour
         fireTimer = 0.0f;
     }
 
+    public void LaunchProjectile() {
+        GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.itemData.weaponCatalog[weaponStats.weaponName].prefabPath + "Projectile", weaponHolderFpc.transform.position, Quaternion.identity);
+        projectile.transform.forward = weaponHolderFpc.transform.forward;
+        // projectile.GetComponent<LauncherScript>().Launch(gameObject, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
+        currentAmmo--;
+        playerActionScript.weaponScript.SyncAmmoCounts();
+        fireTimer = 0.0f;
+    }
+
     public void ConfirmGrenadeThrow() {
         throwGrenade = true;
     }

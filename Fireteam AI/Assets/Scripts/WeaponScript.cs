@@ -248,6 +248,28 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
+    void EquipSmg(string weaponName) {
+        equippedPrimaryWeapon = weaponName;
+        if (!animator.GetBool("onTitle")) {
+            if (equipmentScript.isFirstPerson()) {
+                weaponHolderFpc.SetWeaponPosition(true);
+            } else {
+                weaponHolder.SetWeaponPosition(false);
+            }
+        }
+    }
+
+    void EquipLmg(string weaponName) {
+        equippedPrimaryWeapon = weaponName;
+        if (!animator.GetBool("onTitle")) {
+            if (equipmentScript.isFirstPerson()) {
+                weaponHolderFpc.SetWeaponPosition(true);
+            } else {
+                weaponHolder.SetWeaponPosition(false);
+            }
+        }
+    }
+
     void EquipShotgun(string weaponName) {
         equippedPrimaryWeapon = weaponName;
         if (!animator.GetBool("onTitle")) {
@@ -259,7 +281,7 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
-    public void EquipPistol(string weaponName) {
+    void EquipPistol(string weaponName) {
         // Set animation and hand positions
         equippedSecondaryWeapon = weaponName;
         if (!onTitle) {
@@ -271,7 +293,18 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
-    public void EquipSniperRifle(string weaponName) {
+    void EquipLauncher(string weaponName) {
+        equippedSecondaryWeapon = weaponName;
+        if (!onTitle) {
+            if (equipmentScript.isFirstPerson()) {
+                weaponHolderFpc.SetWeaponPosition(true);
+            } else {
+                weaponHolder.SetWeaponPosition(false);
+            }
+        }
+    }
+
+    void EquipSniperRifle(string weaponName) {
         equippedPrimaryWeapon = weaponName;
         if (!animator.GetBool("onTitle")) {
             if (equipmentScript.isFirstPerson()) {
@@ -282,7 +315,7 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
-    public void EquipExplosive(string weaponName) {
+    void EquipExplosive(string weaponName) {
         equippedSupportWeapon = weaponName;
         if (!onTitle) {
             if (equipmentScript.isFirstPerson()) {
@@ -294,7 +327,7 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
-    public void EquipBooster(string weaponName) {
+    void EquipBooster(string weaponName) {
         equippedSupportWeapon = weaponName;
         if (!onTitle) {
             if (equipmentScript.isFirstPerson()) {
@@ -341,21 +374,39 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Suppressor", suppressorName, weaponName, null);
                 }
                 break;
-            case "Pistol":
-                if (!onTitle) {
-                    currentlyEquippedType = 2;
-                    if (equipmentScript.isFirstPerson()) {
-                        wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
-                        weaponActionScript.animatorFpc.SetInteger("WeaponType", 2);
-                        weaponActionScript.animatorFpc.SetBool("isShotgun", false);
-                        weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
-                        SetWeaponCulling(wepEquipped);
-                    } else {
-                        wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
-                    }
+            case "SMG":
+                currentlyEquippedType = 1;
+                if (equipmentScript.isFirstPerson()) {
+                    wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
+                    weaponActionScript.animatorFpc.SetBool("isShotgun", false);
+                    weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                    SetWeaponCulling(wepEquipped);
+                } else {
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
                 equippedWep = weaponName;
-                EquipPistol(weaponName);
+                EquipSmg(weaponName);
+                if (!onTitle) {
+                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                }
+                if (w.suppressorCompatible) {
+                    EquipMod("Suppressor", suppressorName, weaponName, null);
+                }
+                break;
+            case "LMG":
+                currentlyEquippedType = 1;
+                if (equipmentScript.isFirstPerson()) {
+                    wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
+                    weaponActionScript.animatorFpc.SetBool("isShotgun", false);
+                    weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                    SetWeaponCulling(wepEquipped);
+                } else {
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                }
+                equippedWep = weaponName;
+                EquipLmg(weaponName);
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
                 }
@@ -401,6 +452,47 @@ public class WeaponScript : MonoBehaviour
                 }
                 if (w.suppressorCompatible) {
                     EquipMod("Suppressor", suppressorName, weaponName, null);
+                }
+                break;
+            case "Pistol":
+                if (!onTitle) {
+                    currentlyEquippedType = 2;
+                    if (equipmentScript.isFirstPerson()) {
+                        wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                        weaponActionScript.animatorFpc.SetInteger("WeaponType", 2);
+                        weaponActionScript.animatorFpc.SetBool("isShotgun", false);
+                        weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                        SetWeaponCulling(wepEquipped);
+                    } else {
+                        wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                    }
+                }
+                equippedWep = weaponName;
+                EquipPistol(weaponName);
+                if (!onTitle) {
+                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                }
+                if (w.suppressorCompatible) {
+                    EquipMod("Suppressor", suppressorName, weaponName, null);
+                }
+                break;
+            case "Launcher":
+                if (!onTitle) {
+                    currentlyEquippedType = 2;
+                    if (equipmentScript.isFirstPerson()) {
+                        wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                        weaponActionScript.animatorFpc.SetInteger("WeaponType", 2);
+                        weaponActionScript.animatorFpc.SetBool("isShotgun", false);
+                        weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                        SetWeaponCulling(wepEquipped);
+                    } else {
+                        wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                    }
+                }
+                equippedWep = weaponName;
+                EquipLauncher(weaponName);
+                if (!onTitle) {
+                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
                 }
                 break;
             case "Explosive":
