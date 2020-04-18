@@ -17,7 +17,6 @@ public class ThrowableScript : MonoBehaviour
     private float explosionDelayTimer;
     public float blastRadius;
     public bool isLive;
-    private float explosionDuration;
     public AudioSource explosionSound;
     public AudioSource pinSound;
     public int playerThrownByReference;
