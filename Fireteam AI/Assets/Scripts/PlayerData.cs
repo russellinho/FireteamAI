@@ -142,12 +142,18 @@ public class PlayerData : MonoBehaviour
             characterPrefabName = "LucasGamePrefab";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Daryl")) {
             characterPrefabName = "DarylGamePrefab";
+        } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Yongjin")) {
+            characterPrefabName = "YongjinGamePrefab";
+        } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Rocko")) {
+            characterPrefabName = "RockoGamePrefab";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Codename Sayre")) {
             characterPrefabName = "SayreGamePrefab";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Hana")) {
             characterPrefabName = "HanaGamePrefab";
         } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Jade")) {
             characterPrefabName = "JadeGamePrefab";
+        } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Dani")) {
+            characterPrefabName = "DaniGamePrefab";
         }
         return characterPrefabName;
     }

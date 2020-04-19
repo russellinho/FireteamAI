@@ -13,7 +13,7 @@ public class SetupControllerScript : MonoBehaviour
     public GameObject bodyRef;
     public GameObject contentInventory;
     public InputField characterNameInput;
-    private ArrayList starterCharacters = new ArrayList(){"Lucas", "Daryl", "Hana", "Jade"};
+    private ArrayList starterCharacters = new ArrayList(){"Lucas", "Daryl", "Yongjin", "Rocko", "Hana", "Jade", "Dani"};
     private string selectedCharacter;
     public GameObject selectedPrefab;
     public GameObject contentPrefab;
