@@ -71,6 +71,7 @@ public class WeaponStats : MonoBehaviour
     public float supportSoundTime;
 
     public MeshRenderer[] weaponParts;
+    public MeshRenderer warheadRenderer;
     public GameObject suppressorSlot;
 
 }

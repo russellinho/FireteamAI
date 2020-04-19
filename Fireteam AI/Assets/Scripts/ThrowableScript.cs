@@ -19,7 +19,7 @@ public class ThrowableScript : MonoBehaviour
     public bool isLive;
     public AudioSource explosionSound;
     public AudioSource pinSound;
-    public int playerThrownByReference;
+    public int fromPlayerId;
     private ArrayList playersHit;
     public PhotonView pView;
 
@@ -53,7 +53,7 @@ public class ThrowableScript : MonoBehaviour
 
     [PunRPC]
     void RpcSetPlayerThrownByReference(int playerViewId) {
-        playerThrownByReference = playerViewId;
+        fromPlayerId = playerViewId;
     }
 
     void Update() {

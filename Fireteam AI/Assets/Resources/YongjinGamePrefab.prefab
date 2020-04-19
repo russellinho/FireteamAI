@@ -84597,6 +84597,7 @@ MonoBehaviour:
     type: 3}
   firingMode: 0
   shotMode: 0
+  quickFiredRocket: 0
   camTransform: {fileID: 2224817998599058335}
   pView: {fileID: 9157702028478079594}
   rightCollar: {fileID: 596526171494708664}
@@ -84780,7 +84781,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 9157702028478079595}
   viewIdField: 0
-  InstantiationId: 2
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &9157702028478079595
 MonoBehaviour:

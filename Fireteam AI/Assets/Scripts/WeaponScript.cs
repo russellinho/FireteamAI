@@ -155,13 +155,17 @@ public class WeaponScript : MonoBehaviour
         // Debug.Log("isUsingBooster: " + weaponActionScript.isUsingBooster);
         if (CheckCanSwitchWeapon()) {
             if (Input.GetKeyDown(KeyCode.Alpha1) || (currentlyEquippedType == 4 && weaponActionScript.totalAmmoLeft <= 0 && weaponActionScript.currentAmmo <= 0)) {
+                weaponActionScript.quickFiredRocket = false;
                 DrawPrimary();
             } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+                weaponActionScript.quickFiredRocket = false;
                 DrawSecondary();
             } else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+                weaponActionScript.quickFiredRocket = false;
                 DrawSupport();
             }
         }
+        HideWeaponParts();
     }
 
     // If the user has a grenade cocked or is currently loading a weapon, don't let him switch weapons
@@ -176,6 +180,17 @@ public class WeaponScript : MonoBehaviour
             return false;
         }
         return true;
+    }
+
+    void HideWeaponParts() {
+        WeaponStats ws = drawnWeaponReference.GetComponent<WeaponStats>();
+        if (ws.warheadRenderer != null && currentAmmoSecondary == 0) {
+            if (currentAmmoSecondary == 0) {
+                ws.warheadRenderer.enabled = false;
+            } else {
+                ws.warheadRenderer.enabled = true;
+            }
+        }
     }
 
     public void DrawWeapon(int weaponCat) {

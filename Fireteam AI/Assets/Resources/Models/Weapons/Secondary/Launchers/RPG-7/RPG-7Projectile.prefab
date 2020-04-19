@@ -5027,6 +5027,7 @@ MonoBehaviour:
   explosionSound: {fileID: 5330093724744580253}
   projectileSound: {fileID: 69582147260723278}
   fromPlayerId: 0
+  isLive: 0
   pView: {fileID: 2151426271236342496}
 --- !u!114 &2151426271236342496
 MonoBehaviour:
@@ -5047,7 +5048,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 996301665543101967}
-  viewIdField: 0
+  viewIdField: 1
   InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &996301665543101967
@@ -10190,13 +10191,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6262831058002092296}
     m_Modifications:
+    - target: {fileID: 19800000, guid: 54ee7bbfb33e3044293f12b4348f6b4b, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 54ee7bbfb33e3044293f12b4348f6b4b, type: 3}
       propertyPath: m_Name
       value: MissileTrail
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 54ee7bbfb33e3044293f12b4348f6b4b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 14.6
+      value: -126
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 54ee7bbfb33e3044293f12b4348f6b4b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -10237,10 +10242,6 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 54ee7bbfb33e3044293f12b4348f6b4b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 19800000, guid: 54ee7bbfb33e3044293f12b4348f6b4b, type: 3}
-      propertyPath: InitialModule.startSize.scalar
-      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54ee7bbfb33e3044293f12b4348f6b4b, type: 3}

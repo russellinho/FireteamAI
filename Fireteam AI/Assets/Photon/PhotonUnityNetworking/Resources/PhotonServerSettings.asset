@@ -142,4 +142,6 @@ MonoBehaviour:
   - RpcSetTeamCounts
   - RpcSetRank
   - RpcSetMyExpAndGpGained
+  - RpcSetPlayerLaunchedByReference
+  - FireEffectsLauncher
   DisableAutoOpenWizard: 1

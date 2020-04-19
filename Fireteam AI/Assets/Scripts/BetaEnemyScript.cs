@@ -1057,24 +1057,47 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (other.gameObject.tag.Equals("Explosive")) {
             // If the grenade is still active or if the grenade has already affected the enemy, ignore it
             ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
-            // If a ray casted from the enemy head to the grenade position is obscured, then the explosion is blocked
-            if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !t.isLive && !t.PlayerHasBeenAffected(pView.ViewID)) {
-				// Determine how far from the explosion the enemy was
-				float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
-				float blastRadius = other.gameObject.GetComponent<ThrowableScript>().blastRadius;
-				distanceFromGrenade = Mathf.Min(distanceFromGrenade, blastRadius);
-				float scale = 1f - (distanceFromGrenade / blastRadius);
+            // If a ray caszed from the enemy head to the grenade position is obscured, then the explosion is blocked
+            if (t != null) {
+				if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !t.isLive && !t.PlayerHasBeenAffected(pView.ViewID)) {
+					// Determine how far from the explosion the enemy was
+					float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
+					float blastRadius = other.gameObject.GetComponent<ThrowableScript>().blastRadius;
+					distanceFromGrenade = Mathf.Min(distanceFromGrenade, blastRadius);
+					float scale = 1f - (distanceFromGrenade / blastRadius);
 
-				// Scale damage done to enemy by the distance from the explosion
-				WeaponStats grenadeStats = other.gameObject.GetComponent<WeaponStats>();
-				int damageReceived = (int)(grenadeStats.damage * scale);
-				// Deal damage to the enemy
-				TakeDamage(damageReceived);
-                // Validate that this enemy has already been affected
-                t.AddHitPlayer(pView.ViewID);
-				if (health <= 0) {
-					deathBy = 1;
-					KilledByGrenade(t.playerThrownByReference);
+					// Scale damage done to enemy by the distance from the explosion
+					WeaponStats grenadeStats = other.gameObject.GetComponent<WeaponStats>();
+					int damageReceived = (int)(grenadeStats.damage * scale);
+					// Deal damage to the enemy
+					TakeDamage(damageReceived);
+					// Validate that this enemy has already been affected
+					t.AddHitPlayer(pView.ViewID);
+					if (health <= 0) {
+						deathBy = 1;
+						KilledByGrenade(t.fromPlayerId);
+					}
+				}
+			} else {
+				LauncherScript l = other.gameObject.GetComponent<LauncherScript>();
+				if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !l.isLive && !l.PlayerHasBeenAffected(pView.ViewID)) {
+					// Determine how far from the explosion the enemy was
+					float distanceFromProjectile = Vector3.Distance(transform.position, other.gameObject.transform.position);
+					float blastRadius = other.gameObject.GetComponent<LauncherScript>().blastRadius;
+					distanceFromProjectile = Mathf.Min(distanceFromProjectile, blastRadius);
+					float scale = 1f - (distanceFromProjectile / blastRadius);
+
+					// Scale damage done to enemy by the distance from the explosion
+					WeaponStats projectileStats = other.gameObject.GetComponent<WeaponStats>();
+					int damageReceived = (int)(projectileStats.damage * scale);
+					// Deal damage to the enemy
+					TakeDamage(damageReceived);
+					// Validate that this enemy has already been affected
+					l.AddHitPlayer(pView.ViewID);
+					if (health <= 0) {
+						deathBy = 1;
+						KilledByGrenade(l.fromPlayerId);
+					}
 				}
 			}
 
