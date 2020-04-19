@@ -8,8 +8,13 @@ public class WeaponMods : MonoBehaviour
     public Vector3 suppressorScaler;
     public Transform suppressorPos;
     public GameObject suppressorRef;
+    public Vector3 sightScaler;
+    public Transform sightPos;
+    public GameObject sightRef;
     private Mod suppressorStats;
+    private Mod sightStats; 
     private string suppressorName;
+    private string sightName;
     // Size to scale the suppressor by for this weapon
 
     public void EquipSuppressor(string suppressorName) {
@@ -50,6 +55,46 @@ public class WeaponMods : MonoBehaviour
 
     public Mod GetEquippedSuppressorStats() {
         return this.suppressorStats;
+    }
+
+    public void EquipSight(string sightName) {
+        if (sightName.Equals(this.sightName)) return;
+        // Load the prefab/game object for the suppressor
+        Mod newSightStats = InventoryScript.itemData.modCatalog[sightName];
+        // If error occurred and suppressor wasn't found, cancel the procedure
+        if (newSightStats == null) {
+            return;
+        }
+        // Unequip the previous sight just in case
+        UnequipSight();
+        // Set the suppressor name
+        this.sightName = sightName;
+        sightStats = newSightStats;
+        sightRef = (GameObject)Instantiate(Resources.Load(sightStats.prefabPath));
+        // Equip it and place it in the correct position
+        sightRef.transform.SetParent(sightPos);
+        sightRef.transform.localPosition = Vector3.zero;
+        sightRef.transform.localRotation = Quaternion.identity;
+        sightRef.transform.localScale = suppressorScaler;
+    }
+
+    public void UnequipSight() {
+        // Set the sight name
+        this.sightName = null;
+        // Destroy the previous suppressor game object
+        if (sightRef != null) {
+            Destroy(sightRef);
+        }
+        sightRef = null;
+        sightStats = null;
+    }
+
+    public string GetEquippedSight() {
+        return this.sightName;
+    }
+
+    public Mod GetEquippedSightStats() {
+        return this.sightStats;
     }
 
 }

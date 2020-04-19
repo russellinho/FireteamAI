@@ -546,6 +546,36 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &2888444321551842540
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1133808201872007299}
+  m_Layer: 0
+  m_Name: SightSlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1133808201872007299
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2888444321551842540}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.01, y: 7.44, z: 0.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4783219037455996254}
+  m_RootOrder: 25
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3430779621468456776
 GameObject:
   m_ObjectHideFlags: 0
@@ -918,7 +948,7 @@ Transform:
   m_LocalScale: {x: 16.666676, y: 16.666676, z: 16.666681}
   m_Children: []
   m_Father: {fileID: 4783219037455996254}
-  m_RootOrder: 25
+  m_RootOrder: 26
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4889248435127244661
 GameObject:
@@ -11246,6 +11276,7 @@ Transform:
   - {fileID: 4889248435127244660}
   - {fileID: 4889248434952622897}
   - {fileID: 4889248435352453135}
+  - {fileID: 1133808201872007299}
   - {fileID: 4889248435013981716}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -11623,6 +11654,8 @@ MonoBehaviour:
   reloadSound3Time: 0.68
   reloadSound4Time: -1
   supportSoundTime: -1
+  switchToLeftDuringReload: 0
+  switchToLeftTime: 0
   weaponParts:
   - {fileID: 8239623430190984189}
   - {fileID: 116821120651825053}
@@ -11647,6 +11680,7 @@ MonoBehaviour:
   - {fileID: 7518765305487317900}
   warheadRenderer: {fileID: 0}
   suppressorSlot: {fileID: 4889248435352453132}
+  sightSlot: {fileID: 2888444321551842540}
 --- !u!114 &8375060916527802191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11662,6 +11696,9 @@ MonoBehaviour:
   suppressorScaler: {x: 10, y: 10, z: 8}
   suppressorPos: {fileID: 4889248435352453135}
   suppressorRef: {fileID: 0}
+  sightScaler: {x: 0, y: 0, z: 0}
+  sightPos: {fileID: 1133808201872007299}
+  sightRef: {fileID: 0}
 --- !u!95 &8375060916527802188
 Animator:
   serializedVersion: 3
