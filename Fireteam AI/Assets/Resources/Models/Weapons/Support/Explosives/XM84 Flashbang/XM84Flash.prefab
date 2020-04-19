@@ -10087,6 +10087,7 @@ MonoBehaviour:
   range: 0
   clipCapacity: 1
   maxAmmo: 3
+  steadyAim: 0
   aimDownSightPosMale: {x: 0, y: 0, z: 0}
   aimDownSightPosFemale: {x: 0, y: 0, z: 0}
   stableHandPosMale: {x: 0, y: 0, z: 0}
@@ -10141,6 +10142,7 @@ MonoBehaviour:
   reloadSound1Time: -1
   reloadSound2Time: -1
   reloadSound3Time: -1
+  reloadSound4Time: -1
   supportSoundTime: 0.45
   weaponParts:
   - {fileID: 6406873327241063062}
@@ -10149,6 +10151,7 @@ MonoBehaviour:
   - {fileID: 6406873327241063056}
   - {fileID: 6406873327241063070}
   - {fileID: 6406873327241063068}
+  warheadRenderer: {fileID: 0}
   suppressorSlot: {fileID: 0}
 --- !u!114 &2728034347623794609
 MonoBehaviour:
@@ -10178,7 +10181,7 @@ MonoBehaviour:
   isLive: 0
   explosionSound: {fileID: 0}
   pinSound: {fileID: 6689340121689838720}
-  playerThrownByReference: 0
+  fromPlayerId: 0
   pView: {fileID: 0}
 --- !u!82 &6689340121689838720
 AudioSource:

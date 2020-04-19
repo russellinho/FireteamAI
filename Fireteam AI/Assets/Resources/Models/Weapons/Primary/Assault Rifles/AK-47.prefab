@@ -10764,6 +10764,7 @@ MonoBehaviour:
   reloadSound1Time: 0.18
   reloadSound2Time: 0.5
   reloadSound3Time: 0.85
+  reloadSound4Time: -1
   supportSoundTime: -1
   weaponParts:
   - {fileID: 408046768106738228}
@@ -10777,6 +10778,7 @@ MonoBehaviour:
   - {fileID: 4660402016569617627}
   - {fileID: 4462715404612781816}
   - {fileID: 5765222306166598342}
+  warheadRenderer: {fileID: 0}
   suppressorSlot: {fileID: 5360229509172740715}
 --- !u!114 &7050752128688314349
 MonoBehaviour:

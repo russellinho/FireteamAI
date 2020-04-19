@@ -5728,7 +5728,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 888244326a287794dbed763e7d06cb26, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 4e0a4811aec962849b3d9159eda623d6, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -5927,7 +5927,7 @@ MonoBehaviour:
   category: SMG
   damage: 23
   mobility: 98
-  fireRate: 0.08
+  fireRate: 0.092
   accuracy: 0
   recoil: 1.7
   range: 100
@@ -5944,8 +5944,8 @@ MonoBehaviour:
   defaultRightCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   aimDownSightSpeed: 6.5
   aimDownSightClipping: 0.03
-  titleHandPositionsMale: {x: -0.06, y: 0.13, z: 0.011}
-  titleHandPositionsFemale: {x: -0.06, y: 0.13, z: 0.011}
+  titleHandPositionsMale: {x: 0.0986, y: 0.2469, z: 0.024}
+  titleHandPositionsFemale: {x: 0.0986, y: 0.2469, z: 0.024}
   recoveryConstant: 3
   fireSound: {fileID: 5663577134389803121}
   suppressedFireSound: {fileID: 713158900217568471}
@@ -5984,15 +5984,16 @@ MonoBehaviour:
   femaleOverrideController: {fileID: 22100000, guid: 524b231cc3157bf449081cc33505e55e,
     type: 2}
   weaponAnimator: {fileID: 5944581755048063385}
-  defaultFpcReloadSpeed: 1.25
-  defaultWeaponReloadSpeed: 0.625
+  defaultFpcReloadSpeed: 1
+  defaultWeaponReloadSpeed: 0.5
   defaultWeaponCockingSpeed: 0
-  defaultWeaponDrawSpeed: 3.5
+  defaultWeaponDrawSpeed: 3.7
   defaultFireSpeed: 2
   reloadTransitionSpeed: 0.02
-  reloadSound1Time: 0.2
-  reloadSound2Time: 0.5
-  reloadSound3Time: 0.68
+  reloadSound1Time: 0.26
+  reloadSound2Time: 0.56
+  reloadSound3Time: 0.67
+  reloadSound4Time: -1
   supportSoundTime: -1
   weaponParts:
   - {fileID: 2058229804633504764}
@@ -6012,6 +6013,7 @@ MonoBehaviour:
   - {fileID: 2135643330274583886}
   - {fileID: 5809502128190494644}
   - {fileID: 7226274329836365539}
+  warheadRenderer: {fileID: 0}
   suppressorSlot: {fileID: 3914815247478950301}
 --- !u!114 &8218351316202008355
 MonoBehaviour:

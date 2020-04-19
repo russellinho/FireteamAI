@@ -68,7 +68,10 @@ public class WeaponStats : MonoBehaviour
     public float reloadSound1Time;
     public float reloadSound2Time;
     public float reloadSound3Time;
+    public float reloadSound4Time;
     public float supportSoundTime;
+    public bool switchToLeftDuringReload;
+    public float switchToLeftTime;
 
     public MeshRenderer[] weaponParts;
     public MeshRenderer warheadRenderer;

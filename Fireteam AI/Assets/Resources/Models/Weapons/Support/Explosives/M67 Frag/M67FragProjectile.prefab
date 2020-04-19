@@ -460,8 +460,10 @@ MonoBehaviour:
   reloadSound1Time: 0
   reloadSound2Time: 0
   reloadSound3Time: 0
+  reloadSound4Time: 0
   supportSoundTime: 0
   weaponParts: []
+  warheadRenderer: {fileID: 0}
   suppressorSlot: {fileID: 0}
 --- !u!114 &533506344782479917
 MonoBehaviour:
@@ -490,7 +492,7 @@ MonoBehaviour:
   isLive: 0
   explosionSound: {fileID: 8243386482449264105}
   pinSound: {fileID: 0}
-  playerThrownByReference: 0
+  fromPlayerId: 0
   pView: {fileID: 4237617246100750234}
 --- !u!114 &4237617246100750234
 MonoBehaviour:
@@ -512,7 +514,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 4083596899743687192}
   viewIdField: 0
-  InstantiationId: 2
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &4083596899743687192
 MonoBehaviour:

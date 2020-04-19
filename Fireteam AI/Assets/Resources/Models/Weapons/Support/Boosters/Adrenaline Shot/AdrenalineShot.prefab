@@ -246,6 +246,7 @@ MonoBehaviour:
   range: 0
   clipCapacity: 1
   maxAmmo: 2
+  steadyAim: 0
   aimDownSightPosMale: {x: 0, y: 0, z: 0}
   aimDownSightPosFemale: {x: 0, y: 0, z: 0}
   stableHandPosMale: {x: 0, y: 0, z: 0}
@@ -300,11 +301,13 @@ MonoBehaviour:
   reloadSound1Time: -1
   reloadSound2Time: -1
   reloadSound3Time: -1
+  reloadSound4Time: -1
   supportSoundTime: 0.7
   weaponParts:
   - {fileID: 8147905294427851674}
   - {fileID: 8147905294427851672}
   - {fileID: 8147905294427851678}
+  warheadRenderer: {fileID: 0}
   suppressorSlot: {fileID: 0}
 --- !u!114 &8901895664094087800
 MonoBehaviour:

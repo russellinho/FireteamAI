@@ -8,7 +8,9 @@ public class ReloadBehaviorScript : StateMachineBehaviour {
 	bool reload1Played;
 	bool reload2Played;
 	bool reload3Played;
+	bool reload4Played;
 	bool supportSoundPlayed;
+	bool inLeftHand;
 	WeaponActionScript was;
 
 	 // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
@@ -18,6 +20,8 @@ public class ReloadBehaviorScript : StateMachineBehaviour {
 		reload1Played = false;
 		reload2Played = false;
 		reload3Played = false;
+		reload4Played = false;
+		inLeftHand = false;
 	}
 
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -41,9 +45,17 @@ public class ReloadBehaviorScript : StateMachineBehaviour {
 			reload3Played = true;
 			was.PlayReloadSound(2);
 		}
+		if (!reload4Played && was.weaponStats.reloadSound4Time != -1f && stateInfo.normalizedTime >= was.weaponStats.reloadSound4Time) {
+			reload4Played = true;
+			was.PlayReloadSound(3);
+		}
 		if (!supportSoundPlayed && was.weaponStats.supportSoundTime != -1f && stateInfo.normalizedTime >= was.weaponStats.supportSoundTime) {
 			supportSoundPlayed = true;
 			was.PlaySupportActionSound();
+		}
+		if (!inLeftHand && was.weaponStats.switchToLeftDuringReload && stateInfo.normalizedTime >= was.weaponStats.switchToLeftTime) {
+			inLeftHand = true;
+			was.playerActionScript.weaponScript.weaponHolderFpc.SwitchWeaponToLeftHand();
 		}
 		if (stateInfo.normalizedTime >= 0.9f && !hasReloaded) {
 			was.Reload ();
@@ -57,6 +69,9 @@ public class ReloadBehaviorScript : StateMachineBehaviour {
 	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		//was = animator.GetComponentInParent<WeaponActionScript> ();
 		//was.Reload ();
+		if (inLeftHand) {
+			was.playerActionScript.weaponScript.weaponHolderFpc.SwitchWeaponToRightHand();
+		}
 		was.isCocking = false;
 		was.isReloading = false;
 	}
