@@ -31,7 +31,8 @@ public class WeaponScript : MonoBehaviour
     public int currentAmmoSupport;
 
     private GameObject drawnWeaponReference;
-    private GameObject drawnSuppressorReference;
+    // private GameObject drawnSuppressorReference;
+    // private GameObject drawnSightReference;
 
     public bool weaponReady;
     public PhotonView pView;
@@ -108,11 +109,11 @@ public class WeaponScript : MonoBehaviour
         weaponActionScript.totalAmmoLeft = totalPrimaryAmmoLeft;
         modInfo = PlayerData.playerdata.primaryModInfo;
 
-        pView.RPC("RpcInitializeWeapon", RpcTarget.All, 1, equippedWep, modInfo.equippedSuppressor);
+        pView.RPC("RpcInitializeWeapon", RpcTarget.All, 1, equippedWep, modInfo.equippedSuppressor, modInfo.equippedSight);
     }
 
     [PunRPC]
-    void RpcInitializeWeapon(int weaponCat, string equippedWep, string equippedSuppressor) {
+    void RpcInitializeWeapon(int weaponCat, string equippedWep, string equippedSuppressor, string equippedSight) {
         weaponReady = false;
         currentlyEquippedType = weaponCat;
         if (!equipmentScript.isFirstPerson()) {
@@ -120,7 +121,7 @@ public class WeaponScript : MonoBehaviour
         } else {
             weaponActionScript.animatorFpc.SetInteger("WeaponType", weaponCat);
         }
-        EquipWeapon(equippedWep, equippedSuppressor, null);
+        EquipWeapon(equippedWep, equippedSuppressor, equippedSight, null);
     }
 
     void DrawPrimary()
@@ -217,16 +218,16 @@ public class WeaponScript : MonoBehaviour
             equippedWep = equippedSupportWeapon;
             modInfo = PlayerData.playerdata.supportModInfo;
         }
-        pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, modInfo.equippedSuppressor);
+        pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, modInfo.equippedSuppressor, modInfo.equippedSight);
     }
 
     [PunRPC]
-    private void RpcDrawWeapon(int weaponCat, string equippedWep, string equippedSuppressor) {
+    private void RpcDrawWeapon(int weaponCat, string equippedWep, string equippedSuppressor, string equippedSight) {
         weaponReady = false;
         currentlyEquippedType = weaponCat;
         if (!equipmentScript.isFirstPerson()) {
             animator.SetInteger("WeaponType", weaponCat);
-            EquipWeapon(equippedWep, equippedSuppressor, null);
+            EquipWeapon(equippedWep, equippedSuppressor, equippedSight, null);
         } else {
             weaponActionScript.animatorFpc.SetInteger("WeaponType", weaponCat);
             weaponActionScript.animatorFpc.SetTrigger("HolsterWeapon");
@@ -362,7 +363,7 @@ public class WeaponScript : MonoBehaviour
         weaponHolderFpc.SetWeapon(drawnWeaponReference.transform, true);
     }
 
-    public void EquipWeapon(string weaponName, string suppressorName, GameObject shopItemRef) {
+    public void EquipWeapon(string weaponName, string suppressorName, string sightName, GameObject shopItemRef) {
         if (onTitle && (weaponName.Equals(equippedPrimaryWeapon) || weaponName.Equals(equippedSecondaryWeapon) || weaponName.Equals(equippedSupportWeapon))) return;
         // Get the weapon from the weapon catalog for its properties
         Weapon w = InventoryScript.itemData.weaponCatalog[weaponName];
@@ -384,9 +385,14 @@ public class WeaponScript : MonoBehaviour
                 EquipAssaultRifle(weaponName);
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
+                    weaponActionScript.hudScript.EquipSightCrosshair(false);
                 }
                 if (w.suppressorCompatible) {
                     EquipMod("Suppressor", suppressorName, weaponName, null);
+                }
+                if (w.sightCompatible) {
+                    EquipMod("Sight", sightName, weaponName, null);
                 }
                 break;
             case "SMG":
@@ -404,9 +410,14 @@ public class WeaponScript : MonoBehaviour
                 EquipSmg(weaponName);
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
+                    weaponActionScript.hudScript.EquipSightCrosshair(false);
                 }
                 if (w.suppressorCompatible) {
                     EquipMod("Suppressor", suppressorName, weaponName, null);
+                }
+                if (w.sightCompatible) {
+                    EquipMod("Sight", sightName, weaponName, null);
                 }
                 break;
             case "LMG":
@@ -424,9 +435,14 @@ public class WeaponScript : MonoBehaviour
                 EquipLmg(weaponName);
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
+                    weaponActionScript.hudScript.EquipSightCrosshair(false);
                 }
                 if (w.suppressorCompatible) {
                     EquipMod("Suppressor", suppressorName, weaponName, null);
+                }
+                if (w.sightCompatible) {
+                    EquipMod("Sight", sightName, weaponName, null);
                 }
                 break;
             case "Shotgun":
@@ -444,9 +460,14 @@ public class WeaponScript : MonoBehaviour
                 EquipShotgun(weaponName);
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
+                    weaponActionScript.hudScript.EquipSightCrosshair(false);
                 }
                 if (w.suppressorCompatible) {
                     EquipMod("Suppressor", suppressorName, weaponName, null);
+                }
+                if (w.sightCompatible) {
+                    EquipMod("Sight", sightName, weaponName, null);
                 }
                 break;
             case "Sniper Rifle":
@@ -464,9 +485,14 @@ public class WeaponScript : MonoBehaviour
                 EquipSniperRifle(weaponName);
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
+                    weaponActionScript.hudScript.EquipSightCrosshair(false);
                 }
                 if (w.suppressorCompatible) {
                     EquipMod("Suppressor", suppressorName, weaponName, null);
+                }
+                if (w.sightCompatible) {
+                    EquipMod("Sight", sightName, weaponName, null);
                 }
                 break;
             case "Pistol":
@@ -486,9 +512,14 @@ public class WeaponScript : MonoBehaviour
                 EquipPistol(weaponName);
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
+                    weaponActionScript.hudScript.EquipSightCrosshair(false);
                 }
                 if (w.suppressorCompatible) {
                     EquipMod("Suppressor", suppressorName, weaponName, null);
+                }
+                if (w.sightCompatible) {
+                    EquipMod("Sight", sightName, weaponName, null);
                 }
                 break;
             case "Launcher":
@@ -508,6 +539,8 @@ public class WeaponScript : MonoBehaviour
                 EquipLauncher(weaponName);
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
+                    weaponActionScript.hudScript.EquipSightCrosshair(false);
                 }
                 break;
             case "Explosive":
@@ -527,6 +560,8 @@ public class WeaponScript : MonoBehaviour
                 EquipExplosive(weaponName);
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
+                    weaponActionScript.hudScript.EquipSightCrosshair(false);
                 }
                 break;
             case "Booster":
@@ -546,6 +581,8 @@ public class WeaponScript : MonoBehaviour
                 EquipBooster(weaponName);
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
+                    weaponActionScript.hudScript.EquipSightCrosshair(false);
                 }
                 break;
         }
@@ -603,6 +640,9 @@ public class WeaponScript : MonoBehaviour
             case "Suppressor":
                 EquipSuppressor(modName, equipOnWeapon);
                 break;
+            case "Sight":
+                EquipSight(modName, equipOnWeapon);
+                break;
         }
         // Change shop item highlight if in the mod area
         if (onTitle) {
@@ -629,6 +669,11 @@ public class WeaponScript : MonoBehaviour
                 if (equippedSuppressor == null || equippedSuppressor.Equals("")) return;
                 UnequipSuppressor(unequipFromWeapon);
                 break;
+            case "Sight":
+                string equippedSight = weaponHolder.GetComponentInChildren<WeaponMods>().GetEquippedSight();
+                if (equippedSight == null || equippedSight.Equals("")) return;
+                UnequipSight(unequipFromWeapon);
+                break;
         }
         // Change shop item highlight if in the mod area
         if (onTitle) {
@@ -650,7 +695,7 @@ public class WeaponScript : MonoBehaviour
                 wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
             }
             wm.EquipSuppressor(modName);
-            drawnSuppressorReference = wm.suppressorRef;
+            // drawnSuppressorReference = wm.suppressorRef;
             if (!onTitle) {
                 Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
                 weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
@@ -699,6 +744,69 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
+    void EquipSight(string modName, string equipOnWeapon) {
+        // If primary, attach to weapon on title screen and in-game
+        if (equipOnWeapon.Equals(equippedPrimaryWeapon)) {
+            WeaponMods wm = null;
+            if (equipmentScript.isFirstPerson()) {
+                wm = weaponHolderFpc.weapon.GetComponentInChildren<WeaponMods>();
+            } else {
+                wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
+            }
+            wm.EquipSight(modName);
+            // drawnSuppressorReference = wm.suppressorRef;
+            if (!onTitle) {
+                Mod sightBoosts = wm.GetEquippedSightStats();
+                weaponActionScript.ModifyWeaponStats(sightBoosts.damageBoost, sightBoosts.accuracyBoost, sightBoosts.recoilBoost, sightBoosts.rangeBoost, sightBoosts.clipCapacityBoost, sightBoosts.maxAmmoBoost);
+                weaponActionScript.hudScript.EquipSightCrosshair(true);
+                weaponActionScript.hudScript.SetSightCrosshairForSight(modName);
+            }
+        } else if (equipOnWeapon.Equals(equippedSecondaryWeapon)) {
+            // If secondary, only attach to weapon if in-game
+            if (!onTitle) {
+                WeaponMods wm = null;
+                if (equipmentScript.isFirstPerson()) {
+                    wm = weaponHolderFpc.weapon.GetComponentInChildren<WeaponMods>();
+                } else {
+                    wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
+                }
+                wm.EquipSight(modName);
+                Mod sightBoosts = wm.GetEquippedSightStats();
+                weaponActionScript.ModifyWeaponStats(sightBoosts.damageBoost, sightBoosts.accuracyBoost, sightBoosts.recoilBoost*.03f, sightBoosts.rangeBoost, sightBoosts.clipCapacityBoost, sightBoosts.maxAmmoBoost);
+                weaponActionScript.hudScript.EquipSightCrosshair(true);
+                weaponActionScript.hudScript.SetSightCrosshairForSight(modName);
+            }
+        }
+    }
+
+    void UnequipSight(string unequipFromWeapon) {
+        if (unequipFromWeapon.Equals(equippedPrimaryWeapon)) {
+            WeaponMods wm = null;
+            if (equipmentScript.isFirstPerson()) {
+                wm = weaponHolderFpc.GetComponentInChildren<WeaponMods>();
+            } else {
+                wm = weaponHolder.GetComponentInChildren<WeaponMods>();
+            }
+            if (!onTitle) {
+                Mod sightBoosts = wm.GetEquippedSightStats();
+                weaponActionScript.ModifyWeaponStats(-sightBoosts.damageBoost, -sightBoosts.accuracyBoost, -sightBoosts.recoilBoost*.03f, -sightBoosts.rangeBoost, -sightBoosts.clipCapacityBoost, -sightBoosts.maxAmmoBoost);
+            }
+            wm.UnequipSight();
+        } else if (unequipFromWeapon.Equals(equippedSecondaryWeapon)) {
+            if (!onTitle) {
+                WeaponMods wm = null;
+                if (equipmentScript.isFirstPerson()) {
+                    wm = weaponHolderFpc.GetComponentInChildren<WeaponMods>();
+                } else {
+                    wm = weaponHolder.GetComponentInChildren<WeaponMods>();
+                }
+                Mod sightBoosts = wm.GetEquippedSightStats();
+                weaponActionScript.ModifyWeaponStats(-sightBoosts.damageBoost, -sightBoosts.accuracyBoost, -sightBoosts.recoilBoost*.03f, -sightBoosts.rangeBoost, -sightBoosts.clipCapacityBoost, -sightBoosts.maxAmmoBoost);
+                wm.UnequipSight();
+            }
+        }
+    }
+
     public void SetTitleWeaponPositions(Vector3 p) {
         weaponHolder.SetWeaponPositionForTitle(p);
         // if (ts != null) {
@@ -714,8 +822,8 @@ public class WeaponScript : MonoBehaviour
         equippedPrimaryWeapon = "AK-47";
         equippedSecondaryWeapon = "Glock23";
         equippedSupportWeapon = "M67 Frag";
-        EquipWeapon(equippedPrimaryWeapon, null, null);
-        EquipWeapon(equippedSecondaryWeapon, null, null);
+        EquipWeapon(equippedPrimaryWeapon, null, null, null);
+        EquipWeapon(equippedSecondaryWeapon, null, null, null);
     }
 
     public void DespawnPlayer()

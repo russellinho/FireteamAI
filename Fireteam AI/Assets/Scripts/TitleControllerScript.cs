@@ -113,6 +113,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button shopDeployablesSubBtn;
 	public Button shopModsBtn;
 	public Button shopSuppressorsSubBtn;
+	public Button shopSightsSubBtn;
 	public GameObject shopEquippedPrimarySlot;
 	public GameObject shopEquippedSecondarySlot;
 	public GameObject shopEquippedSupportSlot;
@@ -181,10 +182,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject weaponPreviewRef;
 	public GameObject modInventoryContent;
 	public Button suppressorsBtn;
+	public Button sightsBtn;
 	public TMP_Dropdown modWeaponSelect;
 	public Text modWeaponLbl;
 	public Text equippedSuppressorTxt;
+	public Text equippedSightTxt;
 	public string equippedSuppressorId;
+	public string equippedSightId;
 	public Text modDamageTxt;
 	public Text modAccuracyTxt;
 	public Text modRecoilTxt;
@@ -192,6 +196,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Text modClipCapacityTxt;
 	public Text modMaxAmmoTxt;
     public Button removeSuppressorBtn;
+	public Button removeSightBtn;
 
 	// Use this for initialization
 	void Awake() {
@@ -499,6 +504,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private void ResetModMenu() {
 		// Return all buttons to regular color
 		suppressorsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		sightsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		// Destroy weapon template
 		Destroy(weaponPreviewRef);
 		weaponPreviewRef = null;
@@ -1165,6 +1171,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSuppressorsSubBtn.gameObject.SetActive(false);
 		shopSuppressorsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSightsSubBtn.gameObject.SetActive(false);
+		shopSightsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		shopAssaultRifleSubBtn.gameObject.SetActive(true);
@@ -1308,6 +1316,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSuppressorsSubBtn.gameObject.SetActive(false);
 		shopSuppressorsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSightsSubBtn.gameObject.SetActive(false);
+		shopSightsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		shopPistolSubBtn.gameObject.SetActive(true);
@@ -1442,6 +1452,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopLauncherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSuppressorsSubBtn.gameObject.SetActive(false);
 		shopSuppressorsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSightsSubBtn.gameObject.SetActive(false);
+		shopSightsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		shopExplosivesSubBtn.gameObject.SetActive(true);
@@ -2269,6 +2281,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Add sub buttons
 		shopSuppressorsSubBtn.gameObject.SetActive(true);
 		shopSuppressorsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSightsSubBtn.gameObject.SetActive(true);
+		shopSightsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
 		ClearMarketplaceContent();
@@ -2299,6 +2313,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnMarketplaceSuppressorsSubBtnClicked() {
 		// Make tab orange and clear other tabs
 		shopSuppressorsSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		shopSightsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
@@ -2308,6 +2323,38 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		foreach(KeyValuePair<string, Mod> entry in InventoryScript.itemData.modCatalog) {
 			Mod m = entry.Value;
 			if (!m.category.Equals("Suppressor") || !m.purchasable) {
+				continue;
+			}
+			GameObject o = Instantiate(shopContentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.modDescriptionPopupRef = marketplaceModDescriptionPopupRef;
+			s.modDetails = m;
+			s.itemName = m.name;
+            s.itemType = "Mod";
+			s.itemDescription = m.description;
+			s.weaponCategory = m.category;
+            s.gpPriceTxt.text = "" + m.gpPrice;
+            s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
+			o.transform.SetParent(shopContentInventory.transform);
+		}
+	}
+
+	public void OnMarketplaceSightsSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		shopSightsSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		shopSuppressorsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		ClearMarketplaceContent();
+
+		// Populate with pistols
+		foreach(KeyValuePair<string, Mod> entry in InventoryScript.itemData.modCatalog) {
+			Mod m = entry.Value;
+			if (!m.category.Equals("Sight") || !m.purchasable) {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
@@ -2466,6 +2513,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnSuppressorsBtnClicked() {
 		// Change all button colors
 		suppressorsBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		sightsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
 		ClearModCustomizationContent();
@@ -2478,6 +2526,46 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			string thisModName = modData.name;
 			Mod m = InventoryScript.itemData.modCatalog[thisModName];
 			if (!m.category.Equals("Suppressor")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.modDescriptionPopupRef = modDescriptionPopupRef;
+			s.modDetails = m;
+			s.id = modData.id;
+			s.equippedOn = modData.equippedOn;
+			s.itemName = m.name;
+            s.itemType = "Mod";
+			s.itemDescription = m.description;
+			s.modCategory = m.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
+			if (modWeaponLbl.text.Equals(modData.equippedOn)) {
+				s.ToggleEquippedIndicator(true);
+				currentlyEquippedModPrefab = o;
+			}
+			o.transform.SetParent(modInventoryContent.transform);
+		}
+	}
+
+	public void OnSightsBtnClicked() {
+		// Change all button colors
+		sightsBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		suppressorsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent();
+		WeaponScript ws = PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>();
+
+        // Populate into grid layout
+        foreach (KeyValuePair<string, ModData> entry in PlayerData.playerdata.myMods)
+        {
+            ModData modData = entry.Value;
+			string thisModName = modData.name;
+			Mod m = InventoryScript.itemData.modCatalog[thisModName];
+			if (!m.category.Equals("Sight")) {
 				continue;
 			}
 			GameObject o = Instantiate(contentPrefab);
@@ -2642,6 +2730,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopDeployablesSubBtn.gameObject.SetActive(false);
 		shopModsBtn.gameObject.SetActive(false);
 		shopSuppressorsSubBtn.gameObject.SetActive(false);
+		shopSightsSubBtn.gameObject.SetActive(false);
 
 		shopEquippedPrimarySlot.SetActive(false);
 		shopEquippedSecondarySlot.SetActive(false);
@@ -2743,25 +2832,20 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Place the saved mods for that weapon back on the weapon template
 		ModInfo savedModInfo = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
-		SetWeaponModValues(modWeaponLbl.text, null, savedModInfo.id);
-		EquipModOnWeaponTemplate(savedModInfo.equippedSuppressor, "Suppressor", savedModInfo.id);
+		SetWeaponModValues(modWeaponLbl.text, true, null, savedModInfo.suppressorId, true, null, savedModInfo.sightId);
+		EquipModOnWeaponTemplate(savedModInfo.equippedSuppressor, "Suppressor", savedModInfo.suppressorId);
+		EquipModOnWeaponTemplate(savedModInfo.equippedSight, "Sight", savedModInfo.sightId);
 
 		// Update shop items with the mods that are equipped
 		// If the suppressors menu was selected, update the shop items with what's equipped on the current weapon
 		if (suppressorsBtn.GetComponent<Image>().color.r == (188f / 255f)) {
 			OnSuppressorsBtnClicked();
+		} else if (sightsBtn.GetComponent<Image>().color.r == (188f / 255f)) {
+			OnSightsBtnClicked();
 		}
 	}
 
-	public void SetWeaponModValues(string weaponName, string suppressorName, string id) {
-		modWeaponLbl.text = weaponName;
-		if (suppressorName == null || suppressorName.Equals("")) {
-			equippedSuppressorTxt.text = "";
-		} else {
-			equippedSuppressorTxt.text = suppressorName;
-		}
-        equippedSuppressorId = id;
-		
+	public void SetWeaponModValues(string weaponName, bool updateSuppressor, string suppressorName, string suppressorId, bool updateSight, string sightName, string sightId) {
 		// Set base stats
 		Weapon w = InventoryScript.itemData.weaponCatalog[weaponName];
 		float totalDamage = w.damage;
@@ -2776,16 +2860,47 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		float rangeBoost = 0f;
 		int clipCapacityBoost = 0;
 		int maxAmmoBoost = 0;
+		
+		modWeaponLbl.text = weaponName;
 
-		// Add suppressor stats
-		if (suppressorName != null && !suppressorName.Equals("")) {
-			Mod suppressor = InventoryScript.itemData.modCatalog[suppressorName];
-			damageBoost += suppressor.damageBoost;
-			accuracyBoost += suppressor.accuracyBoost;
-			recoilBoost += suppressor.recoilBoost;
-			rangeBoost += suppressor.rangeBoost;
-			clipCapacityBoost += suppressor.clipCapacityBoost;
-			maxAmmoBoost += suppressor.maxAmmoBoost;
+		if (updateSuppressor) {
+			if (string.IsNullOrEmpty(suppressorName)) {
+				equippedSuppressorTxt.text = "";
+			} else {
+				equippedSuppressorTxt.text = suppressorName;
+			}
+			equippedSuppressorId = suppressorId;
+
+			// Add suppressor stats
+			if (!string.IsNullOrEmpty(suppressorName)) {
+				Mod suppressor = InventoryScript.itemData.modCatalog[suppressorName];
+				damageBoost += suppressor.damageBoost;
+				accuracyBoost += suppressor.accuracyBoost;
+				recoilBoost += suppressor.recoilBoost;
+				rangeBoost += suppressor.rangeBoost;
+				clipCapacityBoost += suppressor.clipCapacityBoost;
+				maxAmmoBoost += suppressor.maxAmmoBoost;
+			}
+		}
+
+		if (updateSight) {
+			if (string.IsNullOrEmpty(sightName)) {
+				equippedSightTxt.text = "";
+			} else {
+				equippedSightTxt.text = sightName;
+			}
+			equippedSightId = sightId;
+
+			// Add sight stats
+			if (!string.IsNullOrEmpty(sightName)) {
+				Mod sight = InventoryScript.itemData.modCatalog[sightName];
+				damageBoost += sight.damageBoost;
+				accuracyBoost += sight.accuracyBoost;
+				recoilBoost += sight.recoilBoost;
+				rangeBoost += sight.rangeBoost;
+				clipCapacityBoost += sight.clipCapacityBoost;
+				maxAmmoBoost += sight.maxAmmoBoost;
+			}
 		}
 
 		totalDamage += damageBoost;
@@ -2802,9 +2917,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private void UnequipModFromWeaponTemplate(string modType) {
 		switch(modType) {
 			case "Suppressor":
-				if (equippedSuppressorTxt.Equals("")) return;
-				SetWeaponModValues(modWeaponLbl.text, null, equippedSuppressorId);
+				if (equippedSuppressorTxt.text.Equals("")) return;
+				SetWeaponModValues(modWeaponLbl.text, true, null, equippedSuppressorId, false, null, null);
 				weaponPreviewRef.GetComponent<WeaponMods>().UnequipSuppressor();
+				break;
+			case "Sight":
+				if (equippedSightTxt.text.Equals("")) return;
+				SetWeaponModValues(modWeaponLbl.text, false, null, null, true, null, equippedSightId);
+				weaponPreviewRef.GetComponent<WeaponMods>().UnequipSight();
 				break;
 		}
 	}
@@ -2826,6 +2946,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             UnequipModFromWeaponTemplate("Suppressor");
         }
     }
+
+	public void RemoveSightFromWeapon(string weaponName, bool removeSightClicked) {
+		PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().UnequipMod("Sight", weaponName);
+        if (removeSightClicked)
+        {
+            UnequipModFromWeaponTemplate("Sight");
+        }
+	}
 
 	private void SetWeaponModdedStatsTextColor(float damage, float accuracy, float recoil, float range, float clipCapacity, float maxAmmo) {
 		if (damage > 0) {
@@ -2891,7 +3019,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	private void SaveModsForCurrentWeapon() {
 		if (!modWeaponLbl.text.Equals("")) {
-			PlayerData.playerdata.SaveModDataForWeapon(modWeaponLbl.text, equippedSuppressorTxt.text, equippedSuppressorId);
+			PlayerData.playerdata.SaveModDataForWeapon(modWeaponLbl.text, equippedSuppressorTxt.text, equippedSightTxt.text, equippedSuppressorId, equippedSightId);
 		}
 	}
 
@@ -2915,11 +3043,20 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		switch(modType) {
 			case "Suppressor":
 				if (w.suppressorCompatible) {
-					SetWeaponModValues(modWeaponLbl.text, modName, modId);
+					SetWeaponModValues(modWeaponLbl.text, true, modName, modId, false, null, null);
 					weaponPreviewRef.GetComponent<WeaponMods>().EquipSuppressor(modName);
 					return modWeaponLbl.text;
 				} else {
 					ToggleModMenuPopup(true, "Suppressors cannot be equipped on this weapon!");
+				}
+				break;
+			case "Sight":
+				if (w.sightCompatible) {
+					SetWeaponModValues(modWeaponLbl.text, false, null, null, true, modName, modId);
+					weaponPreviewRef.GetComponent<WeaponMods>().EquipSight(modName);
+					return modWeaponLbl.text;
+				} else {
+					ToggleModMenuPopup(true, "Sights cannot be equipped on this weapon!");
 				}
 				break;
 		}
@@ -3236,6 +3373,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopDeployablesSubBtn.interactable = b;
 		shopModsBtn.interactable = b;
 		shopSuppressorsSubBtn.interactable = b;
+		shopSightsSubBtn.interactable = b;
 		Button[] shopItemsBtns = shopContentInventory.GetComponentsInChildren<Button>();
 		foreach (Button btn in shopItemsBtns) {
 			btn.interactable = b;

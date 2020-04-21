@@ -237,9 +237,9 @@ public class EquipmentScript : MonoBehaviour
         }
         ModInfo primaryModInfo = PlayerData.playerdata.LoadModDataForWeapon(PlayerData.playerdata.info.equippedPrimary);
         ModInfo secondaryModInfo = PlayerData.playerdata.LoadModDataForWeapon(PlayerData.playerdata.info.equippedSecondary);
-        tws.EquipWeapon(PlayerData.playerdata.info.equippedPrimary, primaryModInfo.equippedSuppressor, null);
-        tws.EquipWeapon(PlayerData.playerdata.info.equippedSecondary, secondaryModInfo.equippedSuppressor, null);
-        tws.EquipWeapon(PlayerData.playerdata.info.equippedSupport, null, null);
+        tws.EquipWeapon(PlayerData.playerdata.info.equippedPrimary, primaryModInfo.equippedSuppressor, primaryModInfo.equippedSight, null);
+        tws.EquipWeapon(PlayerData.playerdata.info.equippedSecondary, secondaryModInfo.equippedSuppressor, secondaryModInfo.equippedSight, null);
+        tws.EquipWeapon(PlayerData.playerdata.info.equippedSupport, null, null, null);
 
     }
 

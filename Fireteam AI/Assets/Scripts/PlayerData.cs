@@ -264,27 +264,42 @@ public class PlayerData : MonoBehaviour
                         DataSnapshot modsInventory = inventorySnapshot.Child("mods");
 
                         DataSnapshot modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedPrimary);
-                        string modId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                        string suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                        string sightModId = modSnapshot.Child("equippedSight").Value.ToString();
                         primaryModInfo.weaponName = info.equippedPrimary;
-                        primaryModInfo.id = modId;
-                        if (!"".Equals(modId)) {
-                            primaryModInfo.equippedSuppressor = modsInventory.Child(modId).Child("name").Value.ToString();
+                        primaryModInfo.suppressorId = suppressorModId;
+                        primaryModInfo.sightId = sightModId;
+                        if (!"".Equals(suppressorModId)) {
+                            primaryModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
+                        }
+                        if (!"".Equals(sightModId)) {
+                            primaryModInfo.equippedSight = modsInventory.Child(sightModId).Child("name").Value.ToString();
                         }
 
                         modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedSecondary);
-                        modId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                        suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                        sightModId = modSnapshot.Child("equippedSight").Value.ToString();
                         secondaryModInfo.weaponName = info.equippedSecondary;
-                        secondaryModInfo.id = modId;
-                        if (!"".Equals(modId)) {
-                            secondaryModInfo.equippedSuppressor = modsInventory.Child(modId).Child("name").Value.ToString();
+                        secondaryModInfo.suppressorId = suppressorModId;
+                        secondaryModInfo.sightId = sightModId;
+                        if (!"".Equals(suppressorModId)) {
+                            secondaryModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
+                        }
+                        if (!"".Equals(sightModId)) {
+                            secondaryModInfo.equippedSight = modsInventory.Child(sightModId).Child("name").Value.ToString();
                         }
 
                         modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedSupport);
-                        modId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                        suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                        sightModId = modSnapshot.Child("equippedSight").Value.ToString();
                         supportModInfo.weaponName = info.equippedSupport;
-                        supportModInfo.id = modId;
-                        if (!"".Equals(modId)) {
-                            supportModInfo.equippedSuppressor = modsInventory.Child(modId).Child("name").Value.ToString();
+                        supportModInfo.suppressorId = suppressorModId;
+                        supportModInfo.sightId = sightModId;
+                        if (!"".Equals(suppressorModId)) {
+                            supportModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
+                        }
+                        if (!"".Equals(sightModId)) {
+                            supportModInfo.equippedSuppressor = modsInventory.Child(sightModId).Child("name").Value.ToString();
                         }
                         dataLoadedFlag = true;
                         updateCurrencyFlag = true;
@@ -303,16 +318,22 @@ public class PlayerData : MonoBehaviour
                     info.equippedArmor = "";
 
                     primaryModInfo.equippedSuppressor = "";
+                    primaryModInfo.equippedSight = "";
                     primaryModInfo.weaponName = "";
-                    primaryModInfo.id = "";
+                    primaryModInfo.suppressorId = "";
+                    primaryModInfo.sightId = "";
 
                     secondaryModInfo.equippedSuppressor = "";
+                    secondaryModInfo.equippedSight = "";
                     secondaryModInfo.weaponName = "";
-                    secondaryModInfo.id = "";
+                    secondaryModInfo.suppressorId = "";
+                    secondaryModInfo.sightId = "";
 
                     supportModInfo.equippedSuppressor = "";
+                    supportModInfo.equippedSight = "";
                     supportModInfo.weaponName = "";
-                    supportModInfo.id = "";
+                    supportModInfo.suppressorId = "";
+                    supportModInfo.sightId = "";
                     dataLoadedFlag = true;
                     saveDataFlag = true;
                     updateCurrencyFlag = true;
@@ -340,9 +361,9 @@ public class PlayerData : MonoBehaviour
         characterEquips.EquipBottom(info.equippedBottom, null);
         characterEquips.EquipFootwear(info.equippedFootwear, null);
         characterEquips.EquipArmor(info.equippedArmor, null);
-        characterWeps.EquipWeapon(info.equippedPrimary, primaryModInfo.equippedSuppressor, null);
-        characterWeps.EquipWeapon(info.equippedSecondary, secondaryModInfo.equippedSuppressor, null);
-        characterWeps.EquipWeapon(info.equippedSupport, supportModInfo.equippedSuppressor, null);
+        characterWeps.EquipWeapon(info.equippedPrimary, primaryModInfo.equippedSuppressor, primaryModInfo.equippedSight, null);
+        characterWeps.EquipWeapon(info.equippedSecondary, secondaryModInfo.equippedSuppressor, secondaryModInfo.equippedSight, null);
+        characterWeps.EquipWeapon(info.equippedSupport, supportModInfo.equippedSuppressor, supportModInfo.equippedSight, null);
         PhotonNetwork.NickName = playername;
     }
 
@@ -667,51 +688,103 @@ public class PlayerData : MonoBehaviour
     // Therefore, don't do anything.
     // If the ID is not null but the equippedSuppressor is, then that means that a suppressor was unequipped from a weapon.
     // Therefore, set the equipped on for the mod to empty string and set the equippedSuppressor for the weapon to empty string.
-    public void SaveModDataForWeapon(string weaponName, string equippedSuppressor, string id) {
+    public void SaveModDataForWeapon(string weaponName, string equippedSuppressor, string equippedSight, string suppressorId, string sightId) {
         //Debug.Log("Data passed in: " + weaponName + ", " + equippedSuppressor + ", " + id);
-        if (string.IsNullOrEmpty(id))
+        if (string.IsNullOrEmpty(suppressorId) && string.IsNullOrEmpty(sightId))
         {
             return;
         }
 
         ModInfo newModInfo = new ModInfo();
-
-        // Mod was removed
-        if (!string.IsNullOrEmpty(id) && string.IsNullOrEmpty(equippedSuppressor))
-        {
-            newModInfo.equippedSuppressor = "";
-            newModInfo.weaponName = weaponName;
-            newModInfo.id = "";
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                .Child("mods").Child(id).Child("equippedOn").SetValueAsync("");
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                .Child(weaponName).Child("equippedSuppressor").SetValueAsync("");
-            myMods[id].equippedOn = "";
-        }
-        else
-        {
-            // Mod was added/changed
-            newModInfo.equippedSuppressor = equippedSuppressor;
-            newModInfo.weaponName = weaponName;
-            newModInfo.id = id;
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                .Child("mods").Child(id).Child("equippedOn").SetValueAsync(weaponName);
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                .Child(weaponName).Child("equippedSuppressor").SetValueAsync(id);
-            myMods[id].equippedOn = weaponName;
-        }
-
         WeaponScript myWeps = bodyReference.GetComponent<WeaponScript>();
-        // Set mod data that was just saved
-        if (weaponName == myWeps.equippedPrimaryWeapon)
-        {
-            PlayerData.playerdata.primaryModInfo = newModInfo;
-        } else if (weaponName == myWeps.equippedSecondaryWeapon)
-        {
-            PlayerData.playerdata.secondaryModInfo = newModInfo;
-        } else if (weaponName == myWeps.equippedSupportWeapon)
-        {
-            PlayerData.playerdata.supportModInfo = newModInfo;
+
+        if (!string.IsNullOrEmpty(suppressorId)) {
+        // Mod was removed
+            if (!string.IsNullOrEmpty(suppressorId) && string.IsNullOrEmpty(equippedSuppressor))
+            {
+                newModInfo.equippedSuppressor = "";
+                newModInfo.weaponName = weaponName;
+                newModInfo.suppressorId = "";
+                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
+                    .Child("mods").Child(suppressorId).Child("equippedOn").SetValueAsync("");
+                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
+                    .Child(weaponName).Child("equippedSuppressor").SetValueAsync("");
+                myMods[suppressorId].equippedOn = "";
+            }
+            else
+            {
+                // Mod was added/changed
+                newModInfo.equippedSuppressor = equippedSuppressor;
+                newModInfo.weaponName = weaponName;
+                newModInfo.suppressorId = suppressorId;
+                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
+                    .Child("mods").Child(suppressorId).Child("equippedOn").SetValueAsync(weaponName);
+                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
+                    .Child(weaponName).Child("equippedSuppressor").SetValueAsync(suppressorId);
+                myMods[suppressorId].equippedOn = weaponName;
+            }
+
+            // Set mod data that was just saved
+            if (weaponName == myWeps.equippedPrimaryWeapon)
+            {
+                PlayerData.playerdata.primaryModInfo.equippedSuppressor = newModInfo.equippedSuppressor;
+                PlayerData.playerdata.primaryModInfo.weaponName = newModInfo.weaponName;
+                PlayerData.playerdata.primaryModInfo.suppressorId = newModInfo.suppressorId;
+            } else if (weaponName == myWeps.equippedSecondaryWeapon)
+            {
+                PlayerData.playerdata.secondaryModInfo.equippedSuppressor = newModInfo.equippedSuppressor;
+                PlayerData.playerdata.secondaryModInfo.weaponName = newModInfo.weaponName;
+                PlayerData.playerdata.secondaryModInfo.suppressorId = newModInfo.suppressorId;
+            } else if (weaponName == myWeps.equippedSupportWeapon)
+            {
+                PlayerData.playerdata.supportModInfo.equippedSuppressor = newModInfo.equippedSuppressor;
+                PlayerData.playerdata.supportModInfo.weaponName = newModInfo.weaponName;
+                PlayerData.playerdata.supportModInfo.suppressorId = newModInfo.suppressorId;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(sightId)) {
+            if (!string.IsNullOrEmpty(sightId) && string.IsNullOrEmpty(equippedSight))
+            {
+                newModInfo.equippedSight = "";
+                newModInfo.weaponName = weaponName;
+                newModInfo.sightId = "";
+                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
+                    .Child("mods").Child(sightId).Child("equippedOn").SetValueAsync("");
+                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
+                    .Child(weaponName).Child("equippedSight").SetValueAsync("");
+                myMods[sightId].equippedOn = "";
+            }
+            else
+            {
+                // Mod was added/changed
+                newModInfo.equippedSight = equippedSight;
+                newModInfo.weaponName = weaponName;
+                newModInfo.sightId = sightId;
+                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
+                    .Child("mods").Child(sightId).Child("equippedOn").SetValueAsync(weaponName);
+                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
+                    .Child(weaponName).Child("equippedSight").SetValueAsync(sightId);
+                myMods[sightId].equippedOn = weaponName;
+            }
+
+            // Set mod data that was just saved
+            if (weaponName == myWeps.equippedPrimaryWeapon)
+            {
+                PlayerData.playerdata.primaryModInfo.equippedSight = newModInfo.equippedSight;
+                PlayerData.playerdata.primaryModInfo.weaponName = newModInfo.weaponName;
+                PlayerData.playerdata.primaryModInfo.sightId = newModInfo.sightId;
+            } else if (weaponName == myWeps.equippedSecondaryWeapon)
+            {
+                PlayerData.playerdata.secondaryModInfo.equippedSight = newModInfo.equippedSight;
+                PlayerData.playerdata.secondaryModInfo.weaponName = newModInfo.weaponName;
+                PlayerData.playerdata.secondaryModInfo.sightId = newModInfo.sightId;
+            } else if (weaponName == myWeps.equippedSupportWeapon)
+            {
+                PlayerData.playerdata.supportModInfo.equippedSight = newModInfo.equippedSight;
+                PlayerData.playerdata.supportModInfo.weaponName = newModInfo.weaponName;
+                PlayerData.playerdata.supportModInfo.sightId = newModInfo.sightId;
+            }
         }
 
     }
@@ -726,12 +799,14 @@ public class PlayerData : MonoBehaviour
             ModData m = entry.Value;
             if (m.equippedOn.Equals(weaponName)) {
                 Mod modDetails = InventoryScript.itemData.modCatalog[m.name];
-                modInfo.id = m.id;
                 if (modDetails.category.Equals("Suppressor")) {
+                    modInfo.suppressorId = m.id;
                     modInfo.equippedSuppressor = m.name;
                 } else if (modDetails.category.Equals("Sight")) {
+                    modInfo.sightId = m.id;
                     modInfo.equippedSight = m.name;
                 } else if (modDetails.category.Equals("Clip")) {
+                    // modInfo.clipId = m.id;
                     modInfo.equippedClip = m.name;
                 }
             }
@@ -2035,7 +2110,8 @@ public class PlayerInfo
 
 public class ModInfo
 {
-    public string id;
+    public string suppressorId;
+    public string sightId;
     public string weaponName;
     public string equippedSuppressor;
     public string equippedSight;

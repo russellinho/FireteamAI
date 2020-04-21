@@ -61,6 +61,8 @@ public class WeaponActionScript : MonoBehaviour
     // Used for allowing arms to move during aim down sight movement
     private bool aimDownSightsLock;
     private float aimDownSightsTimer;
+    public Vector3 currentAimDownSightPos;
+    public Vector3 currentAimStableHandPos;
     
     public GameObject hitParticles;
     public GameObject bulletImpact;
@@ -265,11 +267,11 @@ public class WeaponActionScript : MonoBehaviour
             // If going to center
             if (isAiming) {
                 if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
-                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponStats.stableHandPosMale, aimDownSightsTimer);
-                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponStats.aimDownSightPosMale, aimDownSightsTimer);
+                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, currentAimStableHandPos, aimDownSightsTimer);
+                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, currentAimDownSightPos, aimDownSightsTimer);
                 } else if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'F') {
-                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponStats.stableHandPosFemale, aimDownSightsTimer);
-                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponStats.aimDownSightPosFemale, aimDownSightsTimer);
+                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, currentAimStableHandPos, aimDownSightsTimer);
+                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, currentAimDownSightPos, aimDownSightsTimer);
                 }
                 if (quickFiredRocket && aimDownSightsTimer >= 1f) {
                     FireLauncher();
@@ -347,23 +349,31 @@ public class WeaponActionScript : MonoBehaviour
                 aimDownSightsLock = true;
                 if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
-                    if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(rightCollar.localPosition), Vector3.Magnitude(weaponStats.aimDownSightPosMale))) {
-                      camTransform.GetComponent<Camera>().fieldOfView = zoom;
-                    ToggleFpsWeapon(false);
-                      mouseLook.XSensitivity = 0.25f;
-                      mouseLook.YSensitivity = 0.25f;
-                      fpc.equipmentScript.ToggleFpcMesh(false);
-                      hudScript.toggleSniperOverlay(true);
+                    if (aimDownSightsTimer >= 1f) {
+                        if (weaponStats.category == "Sniper Rifle") {
+                            camTransform.GetComponent<Camera>().fieldOfView = zoom;
+                            ToggleFpsWeapon(false);
+                            mouseLook.XSensitivity = 0.25f;
+                            mouseLook.YSensitivity = 0.25f;
+                            fpc.equipmentScript.ToggleFpcMesh(false);
+                            hudScript.toggleSniperOverlay(true);
+                        } else {
+                            hudScript.ToggleSightCrosshair(true);
+                        }
                     }
                 } else {
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
-                    if (weaponStats.category == "Sniper Rifle" && Mathf.Approximately(Vector3.Magnitude(rightCollar.localPosition), Vector3.Magnitude(weaponStats.aimDownSightPosFemale))) {
-                      camTransform.GetComponent<Camera>().fieldOfView = zoom;
-                    ToggleFpsWeapon(false);
-                      mouseLook.XSensitivity = 0.25f;
-                      mouseLook.YSensitivity = 0.25f;
-                      fpc.equipmentScript.ToggleFpcMesh(false);
-                      hudScript.toggleSniperOverlay(true);
+                    if (aimDownSightsTimer >= 1f) {
+                        if (weaponStats.category == "Sniper Rifle") {
+                            camTransform.GetComponent<Camera>().fieldOfView = zoom;
+                            ToggleFpsWeapon(false);
+                            mouseLook.XSensitivity = 0.25f;
+                            mouseLook.YSensitivity = 0.25f;
+                            fpc.equipmentScript.ToggleFpcMesh(false);
+                            hudScript.toggleSniperOverlay(true);
+                        } else {
+                            hudScript.ToggleSightCrosshair(true);
+                        }
                     }
                 }
                 //camTransform.GetComponent<Camera>().nearClipPlane = weaponStats.aimDownSightClipping;
@@ -387,7 +397,7 @@ public class WeaponActionScript : MonoBehaviour
                 //camTransform.GetComponent<Camera>().nearClipPlane = 0.05f;
                 fpc.equipmentScript.ToggleFpcMesh(true);
                 hudScript.toggleSniperOverlay(false);
-
+                hudScript.ToggleSightCrosshair(false);
             }
         } else {
             quickFiredRocket = false;
@@ -924,6 +934,20 @@ public class WeaponActionScript : MonoBehaviour
             {
                 mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(-weaponStats.recoil / weaponStats.recoveryConstant, 0f, 0f);
             }
+        }
+    }
+
+    public void SetCurrentAimDownSightPos(string sightName) {
+        if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
+            currentAimDownSightPos = weaponStats.aimDownSightPosMale;
+            currentAimStableHandPos = weaponStats.stableHandPosMale;
+        } else if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'F') {
+            currentAimDownSightPos = weaponStats.aimDownSightPosFemale;
+            currentAimStableHandPos = weaponStats.stableHandPosFemale;
+        }
+        if (sightName != null) {
+            currentAimDownSightPos.y += InventoryScript.itemData.modCatalog[sightName].crosshairAimOffset;
+            currentAimStableHandPos.y += InventoryScript.itemData.modCatalog[sightName].crosshairAimOffset;
         }
     }
 

@@ -52,6 +52,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             if (modDetails != null)
             {
                 ts.removeSuppressorBtn.onClick.AddListener(() => OnRemoveSuppressorClicked());
+                ts.removeSightBtn.onClick.AddListener(() => OnRemoveSightClicked());
             }
         }
     }
@@ -118,7 +119,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 break;
             case "Weapon":
                 ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemName);
-                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, modInfo.equippedSuppressor, null);
+                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, modInfo.equippedSuppressor, modInfo.equippedSight, null);
                 SetModInfo(modInfo);
                 break;
         }
@@ -152,7 +153,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 break;
             case "Weapon":
                 ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemName);
-                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, modInfo.equippedSuppressor, gameObject);
+                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, modInfo.equippedSuppressor, modInfo.equippedSight, gameObject);
                 SetModInfo(modInfo);
                 break;
         }
@@ -174,11 +175,28 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 {
                     ts.RemoveSuppressorFromWeapon(equippedOn, false);
                     // Ensure that it gets saved in the DB
-                    PlayerData.playerdata.SaveModDataForWeapon(equippedOn, "", id);
+                    PlayerData.playerdata.SaveModDataForWeapon(equippedOn, "", null, id, null);
                 }
 
                 // Attach to player weapon and attach to weapon mod template as well
                 string weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory, id);
+                equippedOn = weaponNameAttachedTo;
+                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipMod(modCategory, itemName, weaponNameAttachedTo, gameObject);
+                break;
+            case "Sight":
+                // If this weapon already has a sight on it, unequip it first
+                OnRemoveSightClicked();
+
+                // If this mod is equipped to another weapon, unequip it from that weapon as well
+                if (equippedOn != null && !"".Equals(equippedOn))
+                {
+                    ts.RemoveSightFromWeapon(equippedOn, false);
+                    // Ensure that it gets saved in the DB
+                    PlayerData.playerdata.SaveModDataForWeapon(equippedOn, null, "", null, id);
+                }
+
+                // Attach to player weapon and attach to weapon mod template as well
+                weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory, id);
                 equippedOn = weaponNameAttachedTo;
                 PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipMod(modCategory, itemName, weaponNameAttachedTo, gameObject);
                 break;
@@ -295,6 +313,16 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
         // Remove suppressor model from the player's weapon and the template weapon
         ts.RemoveSuppressorFromWeapon(equippedOn, true);
+        ToggleEquippedIndicator(false);
+        equippedOn = "";
+    }
+
+    public void OnRemoveSightClicked() {
+        if (equippedOn != ts.modWeaponLbl.text) {
+            return;
+        }
+        // Remove sight model from the player's weapon and the template weapon
+        ts.RemoveSightFromWeapon(equippedOn, true);
         ToggleEquippedIndicator(false);
         equippedOn = "";
     }

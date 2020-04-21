@@ -780,6 +780,36 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &4763965791244725837
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2314159429895476132}
+  m_Layer: 0
+  m_Name: SightSlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2314159429895476132
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4763965791244725837}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.01, y: 7.2, z: 0.13}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4783219037455996254}
+  m_RootOrder: 22
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4803975852445268919
 GameObject:
   m_ObjectHideFlags: 0
@@ -1718,6 +1748,7 @@ Transform:
   - {fileID: 3851916680849330125}
   - {fileID: 5508918066850628229}
   - {fileID: 4889248435352453135}
+  - {fileID: 2314159429895476132}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -140, z: 0}
@@ -1736,3 +1767,6 @@ MonoBehaviour:
   suppressorScaler: {x: 10, y: 10, z: 8}
   suppressorPos: {fileID: 4889248435352453135}
   suppressorRef: {fileID: 0}
+  sightScaler: {x: 0.15, y: 0.15, z: 0.15}
+  sightPos: {fileID: 2314159429895476132}
+  sightRef: {fileID: 0}

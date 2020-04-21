@@ -12,7 +12,7 @@ public class WeaponMods : MonoBehaviour
     public Transform sightPos;
     public GameObject sightRef;
     private Mod suppressorStats;
-    private Mod sightStats; 
+    private Mod sightStats;
     private string suppressorName;
     private string sightName;
     // Size to scale the suppressor by for this weapon
@@ -74,8 +74,8 @@ public class WeaponMods : MonoBehaviour
         // Equip it and place it in the correct position
         sightRef.transform.SetParent(sightPos);
         sightRef.transform.localPosition = Vector3.zero;
-        sightRef.transform.localRotation = Quaternion.identity;
-        sightRef.transform.localScale = suppressorScaler;
+        sightRef.transform.localRotation = Quaternion.Euler(new Vector3(-3.166f, 89.6f, -1.5f));
+        sightRef.transform.localScale = sightScaler;
     }
 
     public void UnequipSight() {

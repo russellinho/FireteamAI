@@ -3958,6 +3958,7 @@ MonoBehaviour:
   weaponLabelTxt: {fileID: 114429233446019188}
   ammoTxt: {fileID: 114569361003768576}
   crosshair: {fileID: 1116762358087676}
+  sightCrosshair: {fileID: 8315420961355887572}
   SniperOverlay: {fileID: 6247356216375507949}
   pauseMenuGUI: {fileID: 3673108890281833776}
   pauseExitBtn: {fileID: 8591400575318602080}
@@ -10445,7 +10446,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 8, y: 8}
+  m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.49999994, y: 0.50000006}
 --- !u!222 &7967205576343708814
 CanvasRenderer:
@@ -10462,7 +10463,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4924491187735105975}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
