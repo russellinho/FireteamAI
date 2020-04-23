@@ -144,4 +144,8 @@ MonoBehaviour:
   - RpcSetMyExpAndGpGained
   - RpcSetPlayerLaunchedByReference
   - FireEffectsLauncher
+  - RpcDeployDeployable
+  - RpcUseAmmoBag
+  - RpcUseDeployable
+  - RpcUseFirstAidKit
   DisableAutoOpenWizard: 1

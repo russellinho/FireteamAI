@@ -502,7 +502,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             {
                 fpc.canMove = true;
                 isDefusing = false;
-                hud.ToggleActionBar(false);
+                hud.ToggleActionBar(false, null);
                 hud.container.defusingText.enabled = false;
                 hud.container.hintText.enabled = false;
                 bombDefuseCounter = 0f;
@@ -541,7 +541,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     fpc.canMove = false;
                     isDefusing = true;
                     hud.container.hintText.enabled = false;
-                    hud.ToggleActionBar(true);
+                    hud.ToggleActionBar(true, "DEFUSING...");
                     hud.container.defusingText.enabled = true;
                     bombDefuseCounter += (Time.deltaTime / 8f);
                     hud.SetActionBarSlider(bombDefuseCounter);
@@ -553,7 +553,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                         gameController.DecrementBombsRemaining();
                         currentBomb = null;
 
-                        hud.ToggleActionBar(false);
+                        hud.ToggleActionBar(false, null);
                         hud.container.defusingText.enabled = false;
                         hud.container.hintText.enabled = false;
                         // Enable movement again
@@ -566,7 +566,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     {
                         fpc.canMove = true;
                         isDefusing = false;
-                        hud.ToggleActionBar(false);
+                        hud.ToggleActionBar(false, null);
                         hud.container.defusingText.enabled = false;
                         bombDefuseCounter = 0f;
                     }
@@ -575,7 +575,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             } else {
                 fpc.canMove = false;
                 isDefusing = false;
-                hud.ToggleActionBar(false);
+                hud.ToggleActionBar(false, null);
                 hud.container.defusingText.enabled = false;
                 hud.container.hintText.enabled = false;
                 bombDefuseCounter = 0f;
@@ -855,6 +855,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         boostTimer = 1f;
         currentBomb = null;
         bombDefuseCounter = 0f;
+        wepActionScript.deployInProgress = false;
+        wepActionScript.deployTimer = 0f;
         wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo;
         wepActionScript.currentAmmo = wepActionScript.GetWeaponStats().clipCapacity;
         equipmentScript.ToggleFullBody(false);

@@ -27,6 +27,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public Dictionary<short, GameObject> coverSpots;
 	public Dictionary<int, GameObject> enemyList = new Dictionary<int, GameObject> ();
 	private Dictionary<int, GameObject> pickupList = new Dictionary<int, GameObject>();
+	private Dictionary<int, GameObject> deployableList = new Dictionary<int, GameObject>();
 	public ArrayList enemyAlertMarkers;
 	public Queue enemyMarkerRemovalQueue;
 
@@ -698,6 +699,19 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public GameObject GetPickup(int pickupId) {
 		return pickupList[pickupId];
+	}
+
+	public void DeployDeployable(int deployableId, GameObject deployableRef) {
+		deployableList.Add(deployableId, deployableRef);
+	}
+
+	public void DestroyDeployable(int deployableId) {
+		GameObject.Destroy(deployableList[deployableId]);
+		deployableList.Remove(deployableId);
+	}
+
+	public GameObject GetDeployable(int deployableId) {
+		return deployableList[deployableId];
 	}
 
 	public void SetEnemyTeamNearingVictoryMessage() {

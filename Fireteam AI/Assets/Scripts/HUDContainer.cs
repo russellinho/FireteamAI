@@ -43,6 +43,8 @@ public class HUDContainer : MonoBehaviour {
 	// On-screen indication HUD
 	public Text objectivesText;
 	public GameObject missionText;
+	public Text deployInvalidText;
+	public Text actionBarText;
 	public GameObject actionBar;
 	public Text defusingText;
 	public Text hintText;

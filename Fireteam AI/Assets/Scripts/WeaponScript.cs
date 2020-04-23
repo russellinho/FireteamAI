@@ -177,6 +177,8 @@ public class WeaponScript : MonoBehaviour
             return false;
         } else if (weaponActionScript.isUsingBooster) {
             return false;
+        } else if (weaponActionScript.isUsingDeployable) {
+            return false;
         } else if (weaponActionScript.hudScript.container.pauseMenuGUI.activeInHierarchy) {
             return false;
         }
@@ -868,6 +870,40 @@ public class WeaponScript : MonoBehaviour
             currentAmmoSupport = weaponActionScript.currentAmmo;
             totalSupportAmmoLeft = weaponActionScript.totalAmmoLeft;
         }
+    }
+
+    public void RefreshAmmoCounts() {
+        if (currentlyEquippedType == 1) {
+            weaponActionScript.currentAmmo = currentAmmoPrimary;
+            weaponActionScript.totalAmmoLeft = totalPrimaryAmmoLeft;
+        } else if (currentlyEquippedType == 2) {
+            weaponActionScript.currentAmmo = currentAmmoSecondary;
+            weaponActionScript.totalAmmoLeft = totalSecondaryAmmoLeft;
+        } else if (currentlyEquippedType == 4) {
+            weaponActionScript.currentAmmo = currentAmmoSupport;
+            weaponActionScript.totalAmmoLeft = totalSupportAmmoLeft;
+        }
+    }
+
+    public void MaxRefillAllAmmo() {
+        MaxRefillAmmoOnPrimary();
+        MaxRefillAmmoOnSecondary();
+        MaxRefillAmmoOnSupport();
+    }
+
+    public void MaxRefillAmmoOnPrimary() {
+        currentAmmoPrimary = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].clipCapacity;
+        totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo;
+    }
+
+    public void MaxRefillAmmoOnSecondary() {
+        currentAmmoSecondary = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
+        totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo;
+    }
+
+    public void MaxRefillAmmoOnSupport() {
+        currentAmmoSupport = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].clipCapacity;
+        totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo;
     }
 
 }

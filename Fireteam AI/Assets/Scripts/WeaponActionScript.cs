@@ -11,6 +11,8 @@ public class WeaponActionScript : MonoBehaviour
 
     private const float SHELL_SPEED = 3f;
     private const float SHELL_TUMBLE = 4f;
+    private const float DEPLOY_BASE_TIME = 3f;
+    private const short DEPLOY_OFFSET = 4;
 
     public MouseLook mouseLook;
     public PlayerActionScript playerActionScript;
@@ -56,8 +58,10 @@ public class WeaponActionScript : MonoBehaviour
     public bool isDrawing = false;
     public bool isWieldingThrowable = false;
     public bool isWieldingBooster = false;
+    public bool isWieldingDeployable = false;
     public bool isCockingGrenade = false;
     public bool isUsingBooster = false;
+    public bool isUsingDeployable = false;
     // Used for allowing arms to move during aim down sight movement
     private bool aimDownSightsLock;
     private float aimDownSightsTimer;
@@ -92,9 +96,16 @@ public class WeaponActionScript : MonoBehaviour
     // Zoom variables
     private int zoom = 3;
     private int defaultFov = 60;
+    // Other variables
+    public DeployMeshScript deployPlanMesh;
+    private Vector3 deployPos;
+    private Quaternion deployRot;
+    public float deployTimer;
+    public bool deployInProgress;
     // Use this for initialization
     void Start()
     {
+        deployTimer = 0f;
         aimDownSightsLock = false;
         aimDownSightsTimer = 0f;
         throwGrenade = false;
@@ -139,6 +150,10 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
 
+        if (deployPlanMesh != null) {
+            UpdateDeployPlanMesh();
+        }
+
         if (Input.GetKeyDown(KeyCode.Q))
         {
             if (firingMode == FireMode.Semi)
@@ -157,7 +172,7 @@ public class WeaponActionScript : MonoBehaviour
                 break;
         }
 
-        if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster || hudScript.container.pauseMenuGUI.activeInHierarchy)
+        if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster || isWieldingDeployable || hudScript.container.pauseMenuGUI.activeInHierarchy)
         {
             return;
         }
@@ -180,7 +195,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     bool AutoReloadCheck() {
-        if (isDrawing || isFiring || isReloading || isCockingGrenade || isUsingBooster || isCocking || fpc.m_IsRunning) {
+        if (isDrawing || isFiring || isReloading || isCockingGrenade || isUsingBooster || isUsingDeployable || isCocking || fpc.m_IsRunning) {
             return false;
         }
         return true;
@@ -213,6 +228,10 @@ public class WeaponActionScript : MonoBehaviour
         }
         if (weaponStats.category.Equals("Booster")) {
             FireBooster();
+            return;
+        }
+        if (weaponStats.category.Equals("Deployable")) {
+            FireDeployable();
             return;
         }
         
@@ -969,14 +988,21 @@ public class WeaponActionScript : MonoBehaviour
             if (weaponStats.category.Equals("Explosive")) {
                 isWieldingThrowable = true;
                 isWieldingBooster = false;
+                isWieldingDeployable = false;
             } else if (weaponStats.category.Equals("Booster")) {
                 isWieldingThrowable = false;
                 isWieldingBooster = true;
+                isWieldingDeployable = false;
+            } else if (weaponStats.category.Equals("Deployable")) {
+                isWieldingThrowable = false;
+                isWieldingBooster = false;
+                isWieldingDeployable = true;
             }
             firingMode = FireMode.Semi;
         } else {
             isWieldingThrowable = false;
             isWieldingBooster = false;
+            isWieldingDeployable = false;
             if (weaponStats.category.Equals("Shotgun")) {
                 shotMode = ShotMode.Burst;
                 firingMode = FireMode.Semi;
@@ -1026,17 +1052,15 @@ public class WeaponActionScript : MonoBehaviour
             ResetGrenadeState();
             return;
         }
-        if (weaponStats.category.Equals("Explosive")) {
-            if (isCockingGrenade) {
-                animatorFpc.SetTrigger("isCockingGrenade");
-                pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
-                // return;
-            }
-            if (isCockingGrenade && throwGrenade) {
-                animatorFpc.SetTrigger("ThrowGrenade");
-                throwGrenade = false;
-                pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
-            }
+        if (isCockingGrenade) {
+            animatorFpc.SetTrigger("isCockingGrenade");
+            pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
+            // return;
+        }
+        if (isCockingGrenade && throwGrenade) {
+            animatorFpc.SetTrigger("ThrowGrenade");
+            throwGrenade = false;
+            pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
         }
     }
 
@@ -1053,15 +1077,59 @@ public class WeaponActionScript : MonoBehaviour
             ResetBoosterState();
             return;
         }
-        if (weaponStats.category.Equals("Booster")) {
-            // If using a medkit on max health, ignore the request
-            if (weaponStats.weaponName.Equals("Medkit") && playerActionScript.health == playerActionScript.playerScript.health) {
-                return;
-            }
-            if (isWieldingBooster && Input.GetButtonDown("Fire1")) {
-                pView.RPC("RpcUseBooster", RpcTarget.All);
-                animatorFpc.SetTrigger("UseBooster");
-                isUsingBooster = true;
+        // If using a medkit on max health, ignore the request
+        if (weaponStats.weaponName.Equals("Medkit") && playerActionScript.health == playerActionScript.playerScript.health) {
+            return;
+        }
+        if (isWieldingBooster && Input.GetButtonDown("Fire1")) {
+            pView.RPC("RpcUseBooster", RpcTarget.All);
+            animatorFpc.SetTrigger("UseBooster");
+            isUsingBooster = true;
+        }
+    }
+
+    void FireDeployable() {
+        if (fireTimer < weaponStats.fireRate || hudScript.container.pauseMenuGUI.activeInHierarchy)
+        {
+            ResetDeployableState();
+            return;
+        }
+        if (currentAmmo == 0) {
+            ReloadSupportItem();
+        }
+        if (currentAmmo <= 0) {
+            ResetDeployableState();
+            return;
+        }
+        // Handle deployment time and initiating deployment
+        if (isWieldingDeployable) {
+            if (shootInput && !isUsingDeployable) {
+                // Charge up deploy gauge
+                deployTimer += (Time.deltaTime / DEPLOY_BASE_TIME);
+                if (!deployInProgress) {
+                    InstantiateDeployPlanMesh();
+                    hudScript.ToggleActionBar(true, "DEPLOYING...");
+                }
+                deployInProgress = true;
+                hudScript.SetActionBarSlider(deployTimer);
+            } else {
+                // Determine if the deploy position is valid or not. If it isn't valid,
+                // then skip deployment and reset. Else,
+                // Reset deploy time and set deploy position
+                if (deployTimer >= 1f && deployInProgress && DeployPositionIsValid()) {
+                    deployPos = deployPlanMesh.gameObject.transform.position;
+                    deployRot = deployPlanMesh.gameObject.transform.rotation;
+                    isUsingDeployable = true;
+                    pView.RPC("RpcUseDeployable", RpcTarget.All);
+                    animatorFpc.SetTrigger("UseDeployable");
+                }
+                DestroyDeployPlanMesh();
+                deployTimer = 0f;
+                if (deployInProgress) {
+                    hudScript.ToggleActionBar(false, null);
+                    hudScript.ToggleDeployInvalidText(false);
+                }
+                deployInProgress = false;
             }
         }
     }
@@ -1077,6 +1145,8 @@ public class WeaponActionScript : MonoBehaviour
             // Reset fire timer and subtract ammo used
             BoosterScript boosterScript = weaponStats.GetComponentInChildren<BoosterScript>();
             boosterScript.UseBoosterItem(weaponStats.weaponName);
+        } else if (weaponStats.category.Equals("Deployable")) {
+            DeployDeployable(weaponStats.weaponName, deployPos, deployRot);
         }
         currentAmmo--;
         playerActionScript.weaponScript.SyncAmmoCounts();
@@ -1090,6 +1160,48 @@ public class WeaponActionScript : MonoBehaviour
         currentAmmo--;
         playerActionScript.weaponScript.SyncAmmoCounts();
         fireTimer = 0.0f;
+    }
+
+    bool DeployPositionIsValid() {
+        // If the deploy plan mesh is sticky, then it can be planted anywhere.
+        // If it isn't, then it can only be planted if the up vector is above 45 degrees
+        if (weaponStats.isSticky) {
+            return true;
+        }
+        if (deployPlanMesh.gameObject.transform.up.y >= 0.5f) {
+            return true;
+        }
+        return false;
+    }
+
+    void InstantiateDeployPlanMesh() {
+        GameObject m = (GameObject)Instantiate(weaponStats.deployPlanMesh, CalculateDeployPlanMeshPos(), Quaternion.identity);
+        deployPlanMesh = m.GetComponent<DeployMeshScript>();
+    }
+
+    Vector3 CalculateDeployPlanMeshPos() {
+        return camTransform.position + (camTransform.forward * DEPLOY_OFFSET); 
+    }
+
+    void UpdateDeployPlanMesh() {
+        deployPlanMesh.gameObject.transform.position = CalculateDeployPlanMeshPos();
+        if (deployPlanMesh.collidingWithObject == null) {
+            deployPlanMesh.gameObject.transform.rotation = Quaternion.identity;
+        } else {
+            deployPlanMesh.gameObject.transform.up = deployPlanMesh.collidingWithObject.transform.up;
+        }
+        if (!DeployPositionIsValid()) {
+            hudScript.ToggleDeployInvalidText(true);
+            deployPlanMesh.IndicateIsInvalid(true);
+        } else {
+            hudScript.ToggleDeployInvalidText(false);
+            deployPlanMesh.IndicateIsInvalid(false);
+        }
+    }
+
+    void DestroyDeployPlanMesh() {
+        Destroy(deployPlanMesh.gameObject);
+        deployPlanMesh = null;
     }
 
     public void ConfirmGrenadeThrow() {
@@ -1108,6 +1220,11 @@ public class WeaponActionScript : MonoBehaviour
         animatorFpc.ResetTrigger("UseBooster");
     }
 
+    public void ResetDeployableState() {
+        isUsingDeployable = false;
+        animatorFpc.ResetTrigger("UseDeployable");
+    }
+
     [PunRPC]
     void RpcCockGrenade(bool cocking) {
         if (gameObject.layer == 0) return;
@@ -1118,6 +1235,13 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcUseBooster() {
         if (gameObject.layer == 0) return;
+        animator.SetTrigger("useBooster");
+    }
+
+    [PunRPC]
+    void RpcUseDeployable() {
+        if (gameObject.layer == 0) return;
+        // TODO: This needs to be changed later to a different animation
         animator.SetTrigger("useBooster");
     }
 
@@ -1134,8 +1258,53 @@ public class WeaponActionScript : MonoBehaviour
         isReloading = false;
         isCockingGrenade = false;
         isUsingBooster = false;
+        isUsingDeployable = false;
         isCocking = false;
         quickFiredRocket = false;
+    }
+
+    void UseFirstAidKit(int deployableId) {
+        pView.RPC("RpcUseFirstAidKit", RpcTarget.All, deployableId);
+    }
+
+    [PunRPC]
+    void RpcUseFirstAidKit(int deployableId) {
+        playerActionScript.health = 100;
+        DeployableScript d = playerActionScript.gameController.GetDeployable(deployableId).GetComponent<DeployableScript>();
+        d.UseDeployableItem();
+        if (d.CheckOutOfUses()) {
+            playerActionScript.gameController.DestroyDeployable(d.deployableId);
+        }
+    }
+
+    void UseAmmoBag(int deployableId) {
+        pView.RPC("RpcUseAmmoBag", RpcTarget.All, deployableId);
+    }
+
+    [PunRPC]
+    void RpcUseAmmoBag(int deployableId) {
+        playerActionScript.weaponScript.MaxRefillAllAmmo();
+        DeployableScript d = playerActionScript.gameController.GetDeployable(deployableId).GetComponent<DeployableScript>();
+        d.UseDeployableItem();
+        if (d.CheckOutOfUses()) {
+            playerActionScript.gameController.DestroyDeployable(d.deployableId);
+        }
+    }
+
+    public void DeployDeployable(string deployable, Vector3 pos, Quaternion rot) {
+        GameObject o = GameObject.Instantiate((GameObject)Resources.Load(InventoryScript.itemData.weaponCatalog[deployable].prefabPath + "Deploy"), pos, rot);
+        DeployableScript d = o.GetComponent<DeployableScript>();
+        int dId = d.InstantiateDeployable();
+		playerActionScript.gameController.DeployDeployable(dId, o);
+		pView.RPC("RpcDeployDeployable", RpcTarget.Others, dId, deployable, playerActionScript.gameController.teamMap, pos.x, pos.y, pos.z, rot.eulerAngles.x, rot.eulerAngles.y, rot.eulerAngles.z);
+    }
+
+    [PunRPC]
+    public void RpcDeployDeployable(int deployableId, string deployableName, string team, float posX, float posY, float posZ, float rotX, float rotY, float rotZ) {
+        if (team != playerActionScript.gameController.teamMap) return;
+		GameObject o = GameObject.Instantiate((GameObject)Resources.Load(InventoryScript.itemData.weaponCatalog[deployableName].prefabPath + "Deploy"), new Vector3(posX, posY, posZ), Quaternion.Euler(rotX, rotY, rotZ));
+		o.GetComponent<DeployableScript>().deployableId = deployableId;
+		playerActionScript.gameController.DeployDeployable(deployableId, o);
     }
 
 }

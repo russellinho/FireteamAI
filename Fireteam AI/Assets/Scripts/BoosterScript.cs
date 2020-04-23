@@ -5,23 +5,11 @@ using UnityEngine;
 public class BoosterScript : MonoBehaviour
 {
     private PlayerActionScript playerActionScript;
-    private WeaponStats weaponStats;
-
-
-
 
     void Start()
     {
       playerActionScript = transform.GetComponentInParent<PlayerActionScript>();
-
     }
-
-    void Update()
-    {
-
-    }
-
-
 
     public void UseBoosterItem(string boosterName) {
       if (boosterName.Equals("Medkit")) {

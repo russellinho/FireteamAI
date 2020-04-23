@@ -75,6 +75,8 @@ public class WeaponStats : MonoBehaviour
 
     public MeshRenderer[] weaponParts;
     public MeshRenderer warheadRenderer;
+    public GameObject deployPlanMesh;
+    public bool isSticky;
     public GameObject suppressorSlot;
     public GameObject sightSlot;
 

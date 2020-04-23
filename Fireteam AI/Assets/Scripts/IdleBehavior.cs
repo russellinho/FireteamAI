@@ -12,6 +12,7 @@ public class IdleBehavior : StateMachineBehaviour
         was = animator.GetComponentInParent<WeaponActionScript>();
         was.ResetGrenadeState();
         was.ResetBoosterState();
+        was.ResetDeployableState();
         was.isReloading = false;
         was.isDrawing = false;
         entered = true;

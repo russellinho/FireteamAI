@@ -63,7 +63,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		pauseMenuScript = container.pauseMenuGUI.GetComponent<PauseMenuScript>();
 
 		container.pauseMenuGUI.SetActive (false);
-		ToggleActionBar(false);
+		ToggleActionBar(false, null);
 		container.defusingText.enabled = false;
 		container.hintText.enabled = false;
 		container.scoreboard.GetComponent<Canvas> ().enabled = false;
@@ -594,7 +594,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		StartCoroutine (ShowComBox(t, s));
 	}
 
-    public void ToggleActionBar(bool enable)
+    public void ToggleActionBar(bool enable, string actionText)
     {
         int c = container.actionBar.GetComponentsInChildren<Image>().Length;
         if (!enable)
@@ -607,6 +607,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         }
         else
         {
+			container.actionBarText.text = actionText;
             for (int i = 0; i < c; i++)
             {
                 container.actionBar.GetComponentsInChildren<Image>()[i].enabled = true;
@@ -887,6 +888,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleSightCrosshair(bool b) {
 		container.sightCrosshair.enabled = b;
+	}
+
+	public void ToggleDeployInvalidText(bool b) {
+		container.deployInvalidText.enabled = b;
 	}
 
 }
