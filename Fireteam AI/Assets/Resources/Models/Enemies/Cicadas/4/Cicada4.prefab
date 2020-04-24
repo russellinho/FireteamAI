@@ -5279,9 +5279,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7271996880874543239}
-  m_Layer: 0
+  - component: {fileID: 6423292896586226148}
+  m_Layer: 17
   m_Name: mixamorig:LeftArm
-  m_TagString: Untagged
+  m_TagString: EnemyArm
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5301,6 +5302,20 @@ Transform:
   m_Father: {fileID: 7271996880874543315}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &6423292896586226148
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7271996880874177703}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.06
+  m_Height: 0.73
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.4, z: 0.02}
 --- !u!1 &7271996880874177705
 GameObject:
   m_ObjectHideFlags: 0
@@ -5608,7 +5623,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.26
+  m_Radius: 0.22
   m_Height: 1.47
   m_Direction: 1
   m_Center: {x: 0, y: 0.73, z: 0}
@@ -5756,13 +5771,23 @@ MonoBehaviour:
     type: 3}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 3}
+  audioSource: {fileID: 0}
+  gunAudio: {fileID: 0}
+  pView: {fileID: 0}
   headTransform: {fileID: 7271996880874543261}
   shootPoint: {fileID: 3940422534523389917}
   sniperTracer: {fileID: 120618447016034370, guid: d2f76ff8a9655024c83a8ede7a1b4bcf,
     type: 3}
+  animator: {fileID: 0}
+  rigid: {fileID: 0}
+  marker: {fileID: 0}
   modeler: {fileID: 6796253373759659883}
   navMesh: {fileID: 828927375671589308}
   navMeshObstacle: {fileID: 6669402545296423026}
+  myCollider: {fileID: 0}
+  headCollider: {fileID: 0}
+  gunRef: {fileID: 0}
+  meleeTrigger: {fileID: 0}
   enemyType: 0
   actionState: 0
   aggression: 5
@@ -5773,6 +5798,7 @@ MonoBehaviour:
   disorientationTime: 0
   alerted: 0
   gameController: {fileID: 0}
+  gameControllerScript: {fileID: 0}
   alertStatus: 0
   alertDisplay: 0
   range: 27
@@ -5832,8 +5858,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 8608421893283418589}
-  viewIdField: 3
-  InstantiationId: 3
+  viewIdField: 0
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &8608421893283418589
 MonoBehaviour:
@@ -5847,6 +5873,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_GameController: {fileID: 0}
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
@@ -5900,11 +5927,6 @@ MonoBehaviour:
   equippedTopRef: {fileID: 0}
   equippedBottomRef: {fileID: 0}
   equippedFootwearRef: {fileID: 0}
-  equippedSkinRenderer: {fileID: 0}
-  equippedHeadgearRenderer: {fileID: 0}
-  equippedTopRenderer: {fileID: 0}
-  equippedBottomRenderer: {fileID: 0}
-  equippedFootwearRenderer: {fileID: 0}
   myHeadgearRenderer: {fileID: 3119354972703306139}
   myFacewearRenderer: {fileID: 723615417086561867}
   myTopRenderer: {fileID: 7271996880874177829}
@@ -7206,9 +7228,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7271996880874543321}
-  m_Layer: 0
+  - component: {fileID: 3012737919457451867}
+  m_Layer: 17
   m_Name: mixamorig:RightArm
-  m_TagString: Untagged
+  m_TagString: EnemyArm
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7228,6 +7251,20 @@ Transform:
   m_Father: {fileID: 7271996880874543381}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &3012737919457451867
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7271996880874177785}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.06
+  m_Height: 0.73
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.4, z: 0.02}
 --- !u!1 &7271996880874177787
 GameObject:
   m_ObjectHideFlags: 0

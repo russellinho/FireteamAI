@@ -1034,7 +1034,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	bool EnvObstructionExists(Vector3 a, Vector3 b) {
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
-		int ignoreLayers = (1 << 9) & (1 << 11) & (1 << 12) & (1 << 13) & (1 << 14) & (1 << 15);
+		int ignoreLayers = (1 << 9) & (1 << 11) & (1 << 12) & (1 << 13) & (1 << 14) & (1 << 15) & (1 << 17);
 		ignoreLayers = ~ignoreLayers;
 		// Debug.Log("obstruction: " + Physics.Linecast(a, b, ignoreLayers));
 		RaycastHit hitInfo;
@@ -1565,11 +1565,12 @@ public class BetaEnemyScript : MonoBehaviour {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					if (hit.transform.tag.Equals ("Player")) {
 						PlayerActionScript ps = hit.transform.GetComponent<PlayerActionScript> ();
-						ps.TakeDamage((int)damage, true);
+						ps.TakeDamage(CalculateDamageDealt(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height), true);
 						//ps.ResetHitTimer ();
 						ps.SetHitLocation (transform.position);
 					} else {
-						hit.transform.GetComponent<BetaEnemyScript>().TakeDamage((int)damage);
+						WeaponActionScript ws = hit.transform.GetComponent<WeaponActionScript>();
+						hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(ws.CalculateDamageDealt(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height, false));
 					}
 				} else {
 					pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name, gameControllerScript.teamMap);
@@ -1852,11 +1853,11 @@ public class BetaEnemyScript : MonoBehaviour {
 						Vector3 topHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y, playerHead.position.z);
 						if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2))
 						{
-								continue;
+							continue;
 						}
 						if (!Physics.Linecast (headTransform.position, topHalfCheck, out hit1))
 						{
-								continue;
+							continue;
 						}
 						
 						if (hit1.transform.gameObject == null || hit2.transform.gameObject == null)
@@ -2149,5 +2150,18 @@ public class BetaEnemyScript : MonoBehaviour {
 		o.GetComponent<PickupScript>().pickupId = pickupId;
 		gameControllerScript.DropPickup(pickupId, o);
 	}
+
+	int CalculateDamageDealt(float initialDamage, float baseY, float hitY, float height) {
+        float total = initialDamage;
+		// Determine how high/low on the body was hit. The closer to 1, the closer to shoulders; closer to 0, closer to feet
+		float bodyHeightHit = Mathf.Abs(hitY - baseY) / height;
+		// Higher the height, the more damage dealt
+		if (bodyHeightHit <= 0.25f) {
+			total *= 0.25f;
+		} else if (bodyHeightHit < 0.8f) {
+			total *= bodyHeightHit;
+		}
+        return (int)total;
+    }
 
 }

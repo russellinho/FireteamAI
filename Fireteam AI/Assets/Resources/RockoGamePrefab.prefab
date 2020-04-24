@@ -68225,8 +68225,12 @@ MonoBehaviour:
   isDrawing: 0
   isWieldingThrowable: 0
   isWieldingBooster: 0
+  isWieldingDeployable: 0
   isCockingGrenade: 0
   isUsingBooster: 0
+  isUsingDeployable: 0
+  currentAimDownSightPos: {x: 0, y: 0, z: 0}
+  currentAimStableHandPos: {x: 0, y: 0, z: 0}
   hitParticles: {fileID: 1617700753897852, guid: 2b61531c3d65e3f4e949e45eb6021b7b,
     type: 3}
   bulletImpact: {fileID: 1235035097298946, guid: 1abe832de1d01be48b12062549dcc9fb,
@@ -68242,6 +68246,9 @@ MonoBehaviour:
   leftCollar: {fileID: 4391917949692346715}
   leftCollarCurrentPos: {x: 0, y: 0, z: 0}
   rightCollarCurrentPos: {x: 0, y: 0, z: 0}
+  deployPlanMesh: {fileID: 0}
+  deployTimer: 0
+  deployInProgress: 0
 --- !u!114 &5450131833376609925
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68418,7 +68425,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 5450131833376609934}
-  viewIdField: 1
+  viewIdField: 0
   InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &5450131833376609934
@@ -73786,7 +73793,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 63287
+    m_Bits: 194359
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
