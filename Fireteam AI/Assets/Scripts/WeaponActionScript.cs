@@ -1174,6 +1174,7 @@ public class WeaponActionScript : MonoBehaviour
                     deployRot = deployPlanMesh.gameObject.transform.rotation;
                     isUsingDeployable = true;
                     pView.RPC("RpcUseDeployable", RpcTarget.All);
+                    UseDeployable();
                     animatorFpc.SetTrigger("UseDeployable");
                 }
                 DestroyDeployPlanMesh();
@@ -1296,6 +1297,12 @@ public class WeaponActionScript : MonoBehaviour
         if (gameObject.layer == 0) return;
         // TODO: This needs to be changed later to a different animation
         animator.SetTrigger("useBooster");
+    }
+
+    void UseDeployable() {
+        PlaySupportActionSound();
+        UseSupportItem();
+		animator.ResetTrigger("UseDeployable");
     }
 
     bool CanInitiateReload() {

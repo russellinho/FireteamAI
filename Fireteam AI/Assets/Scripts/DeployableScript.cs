@@ -10,7 +10,6 @@ public class DeployableScript : MonoBehaviour
     public string deployableName;
     private short usesRemaining;
     // Determines if deployable can be stuck to any surface
-    public bool isSticky;
 
     public int InstantiateDeployable() {
         if (deployableName.Equals("First Aid Kit")) {

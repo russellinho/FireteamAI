@@ -5,7 +5,10 @@ using UnityEngine;
 public class DeployMeshScript : MonoBehaviour
 {
     public GameObject collidingWithObject;
-    public GameObject invalidDeployIndicator;
+    public MeshRenderer[] rends;
+    public Material validMat;
+    public Material invalidMat;
+    private bool isValid;
 
     void OnCollisionEnter(Collision collision) {
         collidingWithObject = collision.gameObject;
@@ -17,9 +20,19 @@ public class DeployMeshScript : MonoBehaviour
 
     public void IndicateIsInvalid(bool b) {
         if (b) {
-            invalidDeployIndicator.SetActive(true);
+            if (!isValid) {
+                isValid = true;
+                for (int i = 0; i < rends.Length; i++) {
+                    rends[i].material = validMat;
+                }
+            }
         } else {
-            invalidDeployIndicator.SetActive(false);
+            if (isValid) {
+                isValid = false;
+                for (int i = 0; i < rends.Length; i++) {
+                    rends[i].material = invalidMat;
+                }
+            }
         }
     }
 }

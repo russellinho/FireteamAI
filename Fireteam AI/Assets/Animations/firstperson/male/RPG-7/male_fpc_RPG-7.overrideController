@@ -7,12 +7,8 @@ AnimatorOverrideController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: male_fpc_RPG-7
-  m_Controller: {fileID: 9100000, guid: d57f067a589fa5f46b31b2fb248cdf5a, type: 2}
+  m_Controller: {fileID: 9100000, guid: adeb0f83edec9604dab552659bd9d07d, type: 2}
   m_Clips:
-  - m_OriginalClip: {fileID: 7400000, guid: dfa80501fa3a0cf4fbe490a167a754cc, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: dfa80501fa3a0cf4fbe490a167a754cc, type: 2}
-  - m_OriginalClip: {fileID: 7400000, guid: ee52b09f35560ae4a8b04a8c6d7d0041, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 5faab96c544de2f498e0b958f302e82b, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: fcaead019fb79df4a83741a588283133, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: eabb508f99401e647b1902f1971d2540, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: d86c5d9204e625840b4099f3a7514307, type: 2}

@@ -6,18 +6,20 @@ AnimatorOverrideController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: male_fpc_Medkit
+  m_Name: male_fpc_AmmoBag
   m_Controller: {fileID: 9100000, guid: adeb0f83edec9604dab552659bd9d07d, type: 2}
   m_Clips:
   - m_OriginalClip: {fileID: 7400000, guid: d86c5d9204e625840b4099f3a7514307, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: fe4cdb2feb96cf249a7cdc274fe4ab4d, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 5c3391508024c3f4c89bbc0a47e63851, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 1b50915e7b3b4a341a7d4c735bacec39, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 1a02320290aff024196f5a72494acdc3, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 7c1766a7683d3fb46abc50ab1c89f28e, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 520c7e23a33654545b8aefc3d4025f87, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 05c1787f2d7607740a2b3d82e4fe27f8, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 15e341df63443ef44957a830ac28eb24, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 29c6d90ad4204b940af5c98b1c1bc2ab, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 29c6d90ad4204b940af5c98b1c1bc2ab, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 158aea67f1aa5c14da7a16474b62475c, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 561ed1b160bc0c34dbeccf4e2d48ccdb, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 99f159ef37aedea45bf5120d7d3c813f, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 8c8f317960e2659499795f3fdf023846, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: c0fd1bd323ab35248831865f0d6195a1, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: ac240f6250d7ba84d8b617f820ddbb45, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: f2b01ba30645dc740b4ceca80b277dd8, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 158aea67f1aa5c14da7a16474b62475c, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 158aea67f1aa5c14da7a16474b62475c, type: 2}
