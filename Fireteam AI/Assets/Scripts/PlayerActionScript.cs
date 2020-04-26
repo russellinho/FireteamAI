@@ -11,6 +11,9 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
     const float MAX_DETECTION_LEVEL = 100f;
+    const float INTERACTION_DISTANCE = 4.5f;
+    const float BOMB_DEFUSE_TIME = 8f;
+    const float DEPLOY_USE_TIME = 3f;
 
     // Object references
     public GameControllerScript gameController;
@@ -51,7 +54,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public bool isRespawning;
     public float respawnTimer;
     private bool escapeAvailablePopup;
-    private bool isDefusing;
+    private bool isInteracting;
+    private string interactingWith;
+    private GameObject activeInteractable;
+    private float interactionTimer;
     private float enterSpectatorModeTimer;
     private bool unlimitedStamina;
     private float originalSpeed;
@@ -86,10 +92,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public Transform cameraParent;
 
     // Mission references
-    private GameObject currentBomb;
-    private int currentBombIndex;
-    private int bombIterator;
-    private float bombDefuseCounter = 0f;
     private float detectionLevel;
     private float detectionCoolDownDelay;
     private float increaseDetectionDelay;
@@ -119,11 +121,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         charHeightOriginal = charController.height;
         charCenterYOriginal = charController.center.y;
 
-         escapeValueSent = false;
-         assaultModeChangedIndicator = false;
-         isDefusing = false;
-         syncDetectionValuesSemiphore = false;
-         originalFpcBodyPosY = fpcBodyRef.transform.localPosition.y;
+        escapeValueSent = false;
+        assaultModeChangedIndicator = false;
+        SetInteracting(false, null);
+        syncDetectionValuesSemiphore = false;
+        originalFpcBodyPosY = fpcBodyRef.transform.localPosition.y;
 
         health = 100;
         kills = 0;
@@ -134,9 +136,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         detectionResetUnderway = false;
         sprintTime = playerScript.stamina;
 
-         currentBombIndex = 0;
-         bombIterator = 0;
-         rBody = GetComponent<Rigidbody>();
+        rBody = GetComponent<Rigidbody>();
 
         // // If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
          if (!GetComponent<PhotonView>().IsMine)
@@ -269,7 +269,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             {
                 sprintTime += Time.deltaTime;
             }
-            if (!isDefusing)
+            if (!isInteracting)
             {
                 canShoot = true;
             }
@@ -287,6 +287,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         DeathCheck();
         if (health <= 0)
         {
+            SetInteracting(false, null);
             if (!escapeValueSent)
             {
                 escapeValueSent = true;
@@ -295,8 +296,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         else
         {
-            BombCheck();
+            CheckForInteractables();
+            BombDefuseCheck();
+            DeployUseCheck();
         }
+
+        HandleInteracting();
 
         if (fpc.enabled && fpc.canMove && !hud.container.pauseMenuGUI.activeInHierarchy)
         {
@@ -436,6 +441,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 equipmentScript.ToggleMesh(true);
                 //weaponScript.SwitchWeaponToFullBody();
                 fpc.SetIsDeadInAnimator(true);
+                SetInteracting(false, null);
             }
             fpc.enabled = false;
             if (!rotationSaved)
@@ -467,119 +473,106 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         deaths++;
     }
 
+    void HandleInteracting() {
+        if (isInteracting) {
+            // Disable movement
+            fpc.canMove = false;
+            // Set interaction HUD
+            hud.ToggleChatText(false);
+            // Handle interaction timer
+            if (interactingWith == "Bomb") {
+                hud.ToggleActionBar(true, "DEFUSING...");
+                interactionTimer += (Time.deltaTime / BOMB_DEFUSE_TIME);
+                hud.SetActionBarSlider(interactionTimer);
+                if (interactionTimer >= 1f)
+                {
+                    BombScript b = activeInteractable.GetComponent<BombScript>();
+                    interactionTimer = 0f;
+                    photonView.RPC("RpcDefuseBomb", RpcTarget.All, b.bombId);
+                    gameController.DecrementBombsRemaining();
+                    activeInteractable = null;
+                }
+            } else if (interactingWith == "Deploy") {
+                hud.ToggleActionBar(true, "USING...");
+                interactionTimer += (Time.deltaTime / DEPLOY_USE_TIME);
+                hud.SetActionBarSlider(interactionTimer);
+                if (interactionTimer >= 1f) {
+                    DeployableScript d = activeInteractable.GetComponent<DeployableScript>();
+                    interactionTimer = 0f;
+                    if (d.deployableName == "Ammo Bag") {
+                        wepActionScript.UseAmmoBag(d.deployableId);
+                    } else if (d.deployableName == "First Aid Kit") {
+                        wepActionScript.UseFirstAidKit(d.deployableId);
+                    }
+                }
+            }
+        } else {
+            fpc.canMove = true;
+            hud.ToggleActionBar(false, null);
+            hud.ToggleChatText(true);
+            interactionTimer = 0f;
+        }
+    }
+
     // If map objective is defusing bombs, this method checks if the player is near any bombs
-    void BombCheck()
+    void BombDefuseCheck()
     {
         if (gameController == null || gameController.bombs == null)
         {
             return;
         }
 
-        if (!currentBomb) {
-            bool found = false;
-            int count = 0;
-            foreach (GameObject i in gameController.bombs) {
-                BombScript b = i.GetComponent<BombScript> ();
-                if (!b.defused) {
-                    if (Vector3.Distance (gameObject.transform.position, i.transform.position) <= 4.5f) {
-                        currentBomb = i;
-                        currentBombIndex = count;
-                        found = true;
-                        break;
-                    }
+        // Is near and looking at a bomb that can be defused
+        if (activeInteractable != null && !hud.PauseIsActive()) {
+            BombScript b = activeInteractable.GetComponent<BombScript>();
+            if (b != null) {
+                if (b.defused) {
+                    SetInteracting(false, null);
                 }
-                count++;
-            }
-            if (!found) {
-                currentBomb = null;
-            }
-        }
-
-        if (!currentBomb)
-        {
-            // Enable movement again
-            if (!fpc.canMove && !hud.container.inGameMessenger.inputText.enabled)
-            {
-                fpc.canMove = true;
-                isDefusing = false;
-                hud.ToggleActionBar(false, null);
-                hud.container.defusingText.enabled = false;
-                hud.container.hintText.enabled = false;
-                bombDefuseCounter = 0f;
-            }
-
-            if (bombIterator >= gameController.bombs.Length)
-            {
-                currentBomb = null;
-                bombIterator = 0;
-            }
-            BombScript b = gameController.bombs[bombIterator].GetComponent<BombScript>();
-            if (!b.defused)
-            {
-                if (Vector3.Distance(gameObject.transform.position, gameController.bombs[bombIterator].transform.position) <= 4.5f)
-                {
-                    currentBombIndex = bombIterator;
-                    currentBomb = gameController.bombs[currentBombIndex];
-                    bombIterator = -1;
-                }
-            }
-            bombIterator++;
-        }
-
-        if (currentBomb != null)
-        {
-            // Check if the player is still near the bomb or if it's already defused
-            if (Vector3.Distance(gameObject.transform.position, currentBomb.transform.position) > 4.5f || currentBomb.GetComponent<BombScript>().defused)
-            {
-                currentBomb = null;
-                hud.container.hintText.enabled = false;
-                return;
-            }
-
-            if (health > 0 && !hud.container.pauseMenuGUI.activeInHierarchy) {
                 if (Input.GetKey(KeyCode.F)) {
-                    fpc.canMove = false;
-                    isDefusing = true;
-                    hud.container.hintText.enabled = false;
-                    hud.ToggleActionBar(true, "DEFUSING...");
-                    hud.container.defusingText.enabled = true;
-                    bombDefuseCounter += (Time.deltaTime / 8f);
-                    hud.SetActionBarSlider(bombDefuseCounter);
-                    if (bombDefuseCounter >= 1f)
-                    {
-                        bombDefuseCounter = 0f;
-
-                        photonView.RPC("RpcDefuseBomb", RpcTarget.All, currentBombIndex);
-                        gameController.DecrementBombsRemaining();
-                        currentBomb = null;
-
-                        hud.ToggleActionBar(false, null);
-                        hud.container.defusingText.enabled = false;
-                        hud.container.hintText.enabled = false;
-                        // Enable movement again
-                        fpc.canMove = true;
-                        isDefusing = false;
-                    }
+                    // Use the deployable
+                    SetInteracting(true, "Bomb");
+                    hud.ToggleHintText(null);
                 } else {
-                    // Enable movement again
-                    if (!fpc.canMove)
-                    {
-                        fpc.canMove = true;
-                        isDefusing = false;
-                        hud.ToggleActionBar(false, null);
-                        hud.container.defusingText.enabled = false;
-                        bombDefuseCounter = 0f;
-                    }
-                    hud.container.hintText.enabled = true;
+                    // Stop using the deployable
+                    SetInteracting(false, null);
+                    hud.ToggleHintText("HOLD [F] TO DEFUSE");
                 }
-            } else {
-                fpc.canMove = false;
-                isDefusing = false;
-                hud.ToggleActionBar(false, null);
-                hud.container.defusingText.enabled = false;
-                hud.container.hintText.enabled = false;
-                bombDefuseCounter = 0f;
             }
+        } else {
+            // Stop using the deployable
+            SetInteracting(false, null);
+        }
+    }
+
+    void DeployUseCheck() {
+        // If we are looking at the deploy item and near it, we can use it
+        if (activeInteractable != null && !hud.PauseIsActive()) {
+            DeployableScript d = activeInteractable.GetComponent<DeployableScript>();
+            if (d != null) {
+                if (Input.GetKey(KeyCode.F)) {
+                    // Use the deployable
+                    SetInteracting(true, "Deploy");
+                    hud.ToggleHintText(null);
+                } else {
+                    // Stop using the deployable
+                    SetInteracting(false, null);
+                    hud.ToggleHintText("HOLD [F] TO USE [" + d.deployableName + "]");
+                }
+            }
+        } else {
+            // Stop using the deployable
+            SetInteracting(false, null);
+        }
+    }
+
+    void CheckForInteractables() {
+        RaycastHit hit;
+        int interactableMask = (1 << 18);
+        if (Physics.Raycast(viewCam.transform.position, viewCam.transform.forward, out hit, INTERACTION_DISTANCE, interactableMask)) {
+            activeInteractable = hit.transform.gameObject;
+        } else {
+            activeInteractable = null;
         }
     }
 
@@ -627,9 +620,18 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 	bool EnvObstructionExists(Vector3 a, Vector3 b) {
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
-		int ignoreLayers = (1 << 9) & (1 << 11) & (1 << 12) & (1 << 13) & (1 << 14) & (1 << 15) & (1 << 17);
+		int ignoreLayers = (1 << 9) & (1 << 11) & (1 << 12) & (1 << 13) & (1 << 14) & (1 << 15) & (1 << 17) & (1 << 18);
         ignoreLayers = ~ignoreLayers;
-		return Physics.Linecast(a, b, ignoreLayers);
+        RaycastHit hitInfo;
+        bool obstructed = Physics.Linecast(a, b, out hitInfo, ignoreLayers, QueryTriggerInteraction.Ignore);
+        if (obstructed) {
+            if (hitInfo.transform.gameObject.layer == 18) {
+				if (hitInfo.transform.gameObject.GetComponent<BombScript>() == null) {
+					obstructed = false;
+				}
+			}
+        }
+		return obstructed;
 	}
 
     void HandleExplosiveEffects(Collider other)
@@ -853,8 +855,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hitTimer = 1f;
         healTimer = 1f;
         boostTimer = 1f;
-        currentBomb = null;
-        bombDefuseCounter = 0f;
+        SetInteracting(false, null);
+        interactionTimer = 0f;
         wepActionScript.deployInProgress = false;
         wepActionScript.deployTimer = 0f;
         wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo;
@@ -882,7 +884,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcDefuseBomb(int index)
     {
         if (gameObject.layer == 0) return;
-        gameController.bombs[index].GetComponent<BombScript>().Defuse();
+        for (int i = 0; i < gameController.bombs.Length; i++) {
+            BombScript b = gameController.bombs[i].GetComponent<BombScript>();
+            if (b.bombId == index) {
+                b.Defuse();
+                break;
+            }
+        }
     }
 
     public void HandleGameOverBanner()
@@ -1076,7 +1084,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     void MarkEnemy() {
-        if (!isDefusing && !gameController.assaultMode) {
+        if (!isInteracting && !gameController.assaultMode) {
             RaycastHit hit;
             if (Physics.Raycast(wepActionScript.fpcShootPoint.position, wepActionScript.fpcShootPoint.transform.forward, out hit, 300f)) {
                 if (hit.transform.tag.Equals("Human")) {
@@ -1127,6 +1135,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             h.Add(t, PhotonNetwork.LocalPlayer.ActorNumber);
             PhotonNetwork.CurrentRoom.SetCustomProperties(h);
         }
+    }
+
+    void SetInteracting(bool b, string objectName) {
+        isInteracting = b;
+        interactingWith = objectName;
     }
 
 }

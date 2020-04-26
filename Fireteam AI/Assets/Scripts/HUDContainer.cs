@@ -46,7 +46,7 @@ public class HUDContainer : MonoBehaviour {
 	public Text deployInvalidText;
 	public Text actionBarText;
 	public GameObject actionBar;
-	public Text defusingText;
+	public Image[] actionBarImgs;
 	public Text hintText;
 	public Text spectatorText;
 	public Text missionTimeText;

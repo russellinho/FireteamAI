@@ -5,6 +5,7 @@ using UnityEngine;
 public class BombScript : MonoBehaviour {
 
 	public bool defused;
+	public int bombId;
 
 	// Use this for initialization
 	void Start () {

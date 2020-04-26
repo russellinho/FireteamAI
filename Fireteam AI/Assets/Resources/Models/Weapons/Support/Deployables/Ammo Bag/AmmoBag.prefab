@@ -129,7 +129,7 @@ MonoBehaviour:
   type: Support
   category: Deployable
   damage: 0
-  mobility: 86
+  mobility: 90
   fireRate: 1.5
   accuracy: 0
   recoil: 0
@@ -199,7 +199,8 @@ MonoBehaviour:
   - {fileID: 6331191317196748143}
   - {fileID: 1284838953677047542}
   warheadRenderer: {fileID: 0}
-  deployPlanMesh: {fileID: 0}
+  deployPlanMesh: {fileID: 6525966089271743202, guid: cfe57ac70b12f5649aa18174efcf9ec1,
+    type: 3}
   isSticky: 0
   suppressorSlot: {fileID: 0}
   sightSlot: {fileID: 0}

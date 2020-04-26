@@ -1323,7 +1323,7 @@ public class WeaponActionScript : MonoBehaviour
         quickFiredRocket = false;
     }
 
-    void UseFirstAidKit(int deployableId) {
+    public void UseFirstAidKit(int deployableId) {
         pView.RPC("RpcUseFirstAidKit", RpcTarget.All, deployableId);
     }
 
@@ -1337,7 +1337,7 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
-    void UseAmmoBag(int deployableId) {
+    public void UseAmmoBag(int deployableId) {
         pView.RPC("RpcUseAmmoBag", RpcTarget.All, deployableId);
     }
 

@@ -64,7 +64,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		container.pauseMenuGUI.SetActive (false);
 		ToggleActionBar(false, null);
-		container.defusingText.enabled = false;
+		container.actionBarText.enabled = false;
 		container.hintText.enabled = false;
 		container.scoreboard.GetComponent<Canvas> ().enabled = false;
 		container.spectatorText.enabled = false;
@@ -596,21 +596,29 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     public void ToggleActionBar(bool enable, string actionText)
     {
-        int c = container.actionBar.GetComponentsInChildren<Image>().Length;
+        int c = container.actionBarImgs.Length;
         if (!enable)
         {
+			// Preemptive check
+			if (!container.actionBarImgs[0].enabled) {
+				return;
+			}
             // Disable all actionbar components
             for (int i = 0; i < c; i++)
             {
-                container.actionBar.GetComponentsInChildren<Image>()[i].enabled = false;
+                container.actionBarImgs[i].enabled = false;
             }
         }
         else
         {
+			// Preemptive check
+			if (container.actionBarImgs[0].enabled) {
+				return;
+			}
 			container.actionBarText.text = actionText;
             for (int i = 0; i < c; i++)
             {
-                container.actionBar.GetComponentsInChildren<Image>()[i].enabled = true;
+                container.actionBarImgs[i].enabled = true;
             }
         }
     }
@@ -892,6 +900,24 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleDeployInvalidText(bool b) {
 		container.deployInvalidText.enabled = b;
+	}
+
+	public void ToggleHintText(string message) {
+		if (message != null) {
+			container.hintText.text = message;
+			container.hintText.enabled = true;
+		} else {
+			container.hintText.enabled = false;
+			container.hintText.text = "";
+		}
+	}
+
+	public void ToggleChatText(bool b) {
+		container.inGameMessenger.inputText.enabled = b;
+	}
+
+	public bool PauseIsActive() {
+		return container.pauseMenuGUI.activeInHierarchy;
 	}
 
 }

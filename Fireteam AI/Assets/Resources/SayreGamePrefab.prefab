@@ -768,7 +768,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 1029626021163347185}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &1029626021163347185
 MonoBehaviour:
@@ -5731,7 +5731,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 194359
+    m_Bits: 456503
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
