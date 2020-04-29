@@ -148,4 +148,9 @@ MonoBehaviour:
   - RpcUseAmmoBag
   - RpcUseDeployable
   - RpcUseFirstAidKit
+  - RpcClearEnemySeenBy
+  - RpcSetAlertedTimer
+  - RpcSetEnemySeenBy
+  - RpcSyncSuspicionValues
+  - RpcUpdateAssaultMode
   DisableAutoOpenWizard: 1

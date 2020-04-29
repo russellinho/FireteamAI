@@ -174,7 +174,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				// Cbeck if mode has been changed to assault or not
 				if (!assaultMode) {
 					if (!lastGunshotHeardPos.Equals (Vector3.negativeInfinity)) {
-						pView.RPC ("UpdateAssaultMode", RpcTarget.All, true, teamMap);
+						UpdateAssaultMode();
 					}
 				}
 
@@ -234,7 +234,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				// Cbeck if mode has been changed to assault or not
 				if (!assaultMode) {
 					if (!lastGunshotHeardPos.Equals (Vector3.negativeInfinity)) {
-						pView.RPC ("UpdateAssaultMode", RpcTarget.All, true, teamMap);
+						UpdateAssaultMode();
 					}
 				}
 
@@ -297,8 +297,12 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
     }
 
+	public void UpdateAssaultMode() {
+		pView.RPC ("RpcUpdateAssaultMode", RpcTarget.All, true, teamMap);
+	}
+
     [PunRPC]
-	public void UpdateAssaultMode(bool assaultInProgress, string team) {
+	public void RpcUpdateAssaultMode(bool assaultInProgress, string team) {
         if (team != teamMap) return;
 		StartCoroutine (UpdateAssaultModeTimer(5f, assaultInProgress));
 	}

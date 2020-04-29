@@ -17,13 +17,13 @@ public class SpineScript : MonoBehaviour {
 			GetComponentInParent<BetaEnemyScript> ();
 			return;
 		}
-		if (parent.player != null && parent.health > 0) {
+		if (parent.playerTargeting != null && parent.health > 0) {
 			RotateTowardsPlayer ();
 		}
 	}
 
 	void RotateTowardsPlayer() {
-		transform.LookAt(parent.player.transform);
+		transform.LookAt(parent.playerTargeting.transform);
 		transform.localRotation = Quaternion.Euler(new Vector3(transform.localRotation.eulerAngles.x, 0f, 0f));
 	}
 }

@@ -11,6 +11,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
     const float MAX_DETECTION_LEVEL = 100f;
+    const float BASE_DETECTION_RATE = 20f;
     const float INTERACTION_DISTANCE = 4.5f;
     const float BOMB_DEFUSE_TIME = 8f;
     const float DEPLOY_USE_TIME = 3f;
@@ -38,13 +39,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public SpriteRenderer hudMarker;
     public GameObject fpcBodyRef;
     public GameObject[] objectsToDisable;
+    private BetaEnemyScript enemySeenBy;
 
     // Player variables
     public int health;
     public float sprintTime;
     public bool godMode;
     public bool canShoot;
-    private bool syncDetectionValuesSemiphore;
     private float charHeightOriginal;
     private float charCenterYOriginal;
     public bool escapeValueSent;
@@ -93,9 +94,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     // Mission references
     private float detectionLevel;
-    private float detectionCoolDownDelay;
-    private float increaseDetectionDelay;
-    private bool detectionResetUnderway;
 
     void Awake()
     {
@@ -124,16 +122,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         escapeValueSent = false;
         assaultModeChangedIndicator = false;
         SetInteracting(false, null);
-        syncDetectionValuesSemiphore = false;
         originalFpcBodyPosY = fpcBodyRef.transform.localPosition.y;
 
         health = 100;
         kills = 0;
         deaths = 0;
         detectionLevel = 0;
-        detectionCoolDownDelay = 0f;
-        increaseDetectionDelay = 0f;
-        detectionResetUnderway = false;
         sprintTime = playerScript.stamina;
 
         rBody = GetComponent<Rigidbody>();
@@ -314,7 +308,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         DetermineEscaped();
         RespawnRoutine();
 
-        DecreaseDetectionLevel();
+        UpdateDetectionLevel();
         UpdateDetectionHUD();
     }
 
@@ -953,66 +947,45 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         totalSpeedBoost = originalSpeed * itemSpeedModifier * weaponSpeedModifier;
     }
 
-    public void IncreaseDetectionLevel() {
-        if (gameController.assaultMode) return;
+    public float GetDetectionRate() {
+        // TODO: Later this will need to be updated to account for armor and weapons carrying
+        return BASE_DETECTION_RATE;
+    }
 
-        bool somethingChanged = false;
-        float previousDetectionLevel = detectionLevel;
-        float previousDetectionCoolDownDelay = detectionCoolDownDelay;
-        float previousIncreaseDetectionDelay = increaseDetectionDelay;
-
-        if (increaseDetectionDelay > 0f) {
-            increaseDetectionDelay -= Time.deltaTime;
-            if (increaseDetectionDelay != previousIncreaseDetectionDelay) {
-                somethingChanged = true;
-            }
-        }
-
-        if (increaseDetectionDelay <= 0f) {
-            // TODO: Eventually update this to increase detection level gradually based on distance, time, equipment, weapons
-            detectionLevel = MAX_DETECTION_LEVEL;
-            detectionCoolDownDelay = 4f;
-            if ((previousDetectionLevel != detectionLevel) || (previousDetectionCoolDownDelay != detectionCoolDownDelay)) {
-                somethingChanged = true;
-            }
-
-            if (detectionLevel == MAX_DETECTION_LEVEL) {
-                increaseDetectionDelay = 6f;
-                if (previousIncreaseDetectionDelay != increaseDetectionDelay) {
-                    somethingChanged = true;
-                }
-            }
-        }
-
-        // Sync values to all other players
-        if (somethingChanged && !syncDetectionValuesSemiphore) {
-            StartCoroutine("SyncDetectionValuesProcessor");
-        }
+    public void SetEnemySeenBy(int enemyPViewId) {
+        if (enemySeenBy.pView.ViewID == enemyPViewId) return;
+        photonView.RPC("RpcSetEnemySeenBy", RpcTarget.All, enemyPViewId);
     }
 
     [PunRPC]
-    void RpcSyncDetectionValues(float detectionLevel, float increaseDetectionDelay, float detectionCoolDownDelay) {
+    void RpcSetEnemySeenBy(int enemyPViewId) {
         if (gameObject.layer == 0) return;
-        this.detectionLevel = detectionLevel;
-        this.increaseDetectionDelay = increaseDetectionDelay;
-        this.detectionCoolDownDelay = detectionCoolDownDelay;
+        GameObject enemyRef = gameController.enemyList[enemyPViewId];
+        BetaEnemyScript b = enemyRef.GetComponent<BetaEnemyScript>();
+        if (enemySeenBy == null || (b.suspicionMeter > detectionLevel)) {
+            enemySeenBy = enemyRef.GetComponent<BetaEnemyScript>();
+        }
     }
 
-    IEnumerator SyncDetectionValuesProcessor() {
-        syncDetectionValuesSemiphore = true;
-        yield return new WaitForSeconds(0.5f);
-        photonView.RPC("RpcSyncDetectionValues", RpcTarget.Others, detectionLevel, increaseDetectionDelay, detectionCoolDownDelay);
-        syncDetectionValuesSemiphore = false;
+    public void ClearEnemySeenBy() {
+        if (enemySeenBy == null) return;
+        photonView.RPC("RpcClearEnemySeenBy", RpcTarget.All);
     }
 
-    public void DecreaseDetectionLevel() {
-        if (detectionCoolDownDelay <= 0f) {
-            if (detectionLevel > 0f) {
-                float detectionDeduction = detectionLevel - (5 * Time.deltaTime);
-                detectionLevel = (detectionDeduction < 0f ? 0f : detectionDeduction);
-            }
+    [PunRPC]
+    void RpcClearEnemySeenBy() {
+        if (gameObject.layer == 0) return;
+        enemySeenBy = null;
+    }
+
+    void UpdateDetectionLevel() {
+        if (enemySeenBy == null) {
+            detectionLevel = 0f;
         } else {
-            detectionCoolDownDelay -= Time.deltaTime;
+            detectionLevel = enemySeenBy.suspicionMeter;
+            if (detectionLevel == 0f) {
+                ClearEnemySeenBy();
+            }
         }
     }
 
@@ -1031,31 +1004,18 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             }
             // Update the detection meter
             hud.SetDetectionMeter(detectionLevel / MAX_DETECTION_LEVEL);
-            if (detectionLevel == MAX_DETECTION_LEVEL) {
+            if (detectionLevel == 1f) {
                 // Display the detected text
                 if (!hud.container.detectionText.enabled) {
                     hud.ToggleDetectedText(true);
                 }
-                // Begin the detection HUD reset if one currently hasn't begun
-                if (!detectionResetUnderway) {
-                    audioController.PlayAlertSound();
-                    StartCoroutine("DetectionHUDReset");
-                }
             }
         } else {
             // Hide the detection HUD
-            //Debug.Log("hero");
             hud.ToggleDetectionHUD(false);
             // Reset its value to 0
             hud.SetDetectionMeter(0f);
         }
-    }
-
-    IEnumerator DetectionHUDReset() {
-        detectionResetUnderway = true;
-        yield return new WaitForSeconds(4f);
-        detectionLevel = 0f;
-        detectionResetUnderway = false;
     }
 
     public void DetermineFallDamage() {
