@@ -34,6 +34,8 @@ public class WeaponStats : MonoBehaviour
     public AudioSource weaponSoundSource;
     public AudioClip[] reloadSounds;
     public AudioClip supportActionSound;
+    public AudioClip meleeSwingSound;
+    public AudioClip meleeLungeSound;
     public GameObject gunSmoke;
     public GameObject weaponShell;
     public Transform weaponShellPoint;
