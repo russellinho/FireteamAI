@@ -23,6 +23,7 @@ public class WeaponScript : MonoBehaviour
     public string equippedPrimaryWeapon;
     public string equippedSecondaryWeapon;
     public string equippedSupportWeapon;
+    public string equippedMeleeWeapon;
     public string equippedWep;
     public int currentlyEquippedType;
     public int totalPrimaryAmmoLeft;
@@ -168,6 +169,7 @@ public class WeaponScript : MonoBehaviour
                 DrawSupport();
             }
         }
+        HideMeleeWeapon();
         HideWeaponParts();
     }
 
@@ -187,8 +189,25 @@ public class WeaponScript : MonoBehaviour
         return true;
     }
 
+    void HideMeleeWeapon() {
+        WeaponStats ws = weaponActionScript.meleeStats;
+        if (weaponActionScript.isMeleeing) {
+            if (!ws.weaponParts[0].enabled) {
+                for (int i = 0; i < ws.weaponParts.Length; i++) {
+                    ws.weaponParts[i].enabled = true;
+                }
+            }
+        } else {
+            if (ws.weaponParts[0].enabled) {
+                for (int i = 0; i < ws.weaponParts.Length; i++) {
+                    ws.weaponParts[i].enabled = false;
+                }
+            }
+        }
+    }
+
     void HideWeaponParts() {
-        WeaponStats ws = drawnWeaponReference.GetComponent<WeaponStats>();
+        WeaponStats ws = weaponActionScript.weaponStats;
         if (ws.warheadRenderer != null && currentAmmoSecondary == 0) {
             if (currentAmmoSecondary == 0) {
                 ws.warheadRenderer.enabled = false;
@@ -588,6 +607,8 @@ public class WeaponScript : MonoBehaviour
                     weaponActionScript.SetCurrentAimDownSightPos(sightName);
                     weaponActionScript.hudScript.EquipSightCrosshair(false);
                 }
+                break;
+            case "Knife":
                 break;
         }
         
