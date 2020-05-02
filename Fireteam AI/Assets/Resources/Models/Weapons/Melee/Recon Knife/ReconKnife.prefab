@@ -240,15 +240,15 @@ MonoBehaviour:
   weaponShootPoint: {fileID: 0}
   muzzleFlash: {fileID: 0}
   bulletTracer: {fileID: 0}
-  fpcPosMale: {x: 0.00057, y: 0.00137, z: -0.00062}
+  fpcPosMale: {x: 0.000557, y: 0.001424, z: -0.000482}
   fpcLeftHandPosMale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotMale: {x: 0, y: 0, z: 0}
-  fpcRotMale: {x: 6.345, y: -92.40301, z: 132.198}
+  fpcRotMale: {x: 6.182, y: -89.8, z: 104.339}
   fpcScaleMale: {x: 0.0000708569, y: 0.0000708569, z: 0.0000708569}
-  fpcPosFemale: {x: 0.00057, y: 0.00137, z: -0.00062}
+  fpcPosFemale: {x: 0.000557, y: 0.001424, z: -0.000482}
   fpcLeftHandPosFemale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
-  fpcRotFemale: {x: 6.345, y: -92.40301, z: 132.198}
+  fpcRotFemale: {x: 6.182, y: -89.8, z: 104.339}
   fpcScaleFemale: {x: 0.0000708569, y: 0.0000708569, z: 0.0000708569}
   fullPosMale: {x: -0.063, y: 0.13, z: 0.038}
   fullRotMale: {x: 180, y: -90, z: -90}
@@ -256,7 +256,7 @@ MonoBehaviour:
   fullPosFemale: {x: -0.063, y: 0.119, z: 0.035}
   fullRotFemale: {x: 180, y: -90, z: -90}
   fullScaleFemale: {x: 0.0065, y: 0.0065, z: 0.0065}
-  maleOverrideController: {fileID: 22100000, guid: c278715c98b2c3f4d8797d9af54d7d78,
+  maleOverrideController: {fileID: 22100000, guid: 3023be7757d79a14f9e5283721d88363,
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: debff1310c4ad2f43b1b399186b32042,
     type: 2}
@@ -266,6 +266,7 @@ MonoBehaviour:
   defaultWeaponCockingSpeed: 0
   defaultWeaponDrawSpeed: 2
   defaultFireSpeed: 0
+  defaultMeleeSpeed: 0.35
   reloadTransitionSpeed: 0
   reloadSound1Time: -1
   reloadSound2Time: -1

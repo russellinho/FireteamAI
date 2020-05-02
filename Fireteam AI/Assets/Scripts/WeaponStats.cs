@@ -66,6 +66,7 @@ public class WeaponStats : MonoBehaviour
     public float defaultWeaponCockingSpeed;
     public float defaultWeaponDrawSpeed;
     public float defaultFireSpeed;
+    public float defaultMeleeSpeed;
     public float reloadTransitionSpeed;
     public float reloadSound1Time;
     public float reloadSound2Time;

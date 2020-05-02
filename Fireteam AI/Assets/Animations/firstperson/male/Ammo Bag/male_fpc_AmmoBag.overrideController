@@ -7,7 +7,7 @@ AnimatorOverrideController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: male_fpc_AmmoBag
-  m_Controller: {fileID: 9100000, guid: adeb0f83edec9604dab552659bd9d07d, type: 2}
+  m_Controller: {fileID: 9100000, guid: 364992a41a2a48249882c4ced71fd6d2, type: 2}
   m_Clips:
   - m_OriginalClip: {fileID: 7400000, guid: d86c5d9204e625840b4099f3a7514307, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 5c3391508024c3f4c89bbc0a47e63851, type: 2}
@@ -15,8 +15,6 @@ AnimatorOverrideController:
     m_OverrideClip: {fileID: 7400000, guid: 7c1766a7683d3fb46abc50ab1c89f28e, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 520c7e23a33654545b8aefc3d4025f87, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 15e341df63443ef44957a830ac28eb24, type: 2}
-  - m_OriginalClip: {fileID: 7400000, guid: 29c6d90ad4204b940af5c98b1c1bc2ab, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 158aea67f1aa5c14da7a16474b62475c, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 561ed1b160bc0c34dbeccf4e2d48ccdb, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 8c8f317960e2659499795f3fdf023846, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: c0fd1bd323ab35248831865f0d6195a1, type: 2}
