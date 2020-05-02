@@ -27,6 +27,7 @@ public class WeaponActionScript : MonoBehaviour
     public Animator animator;
     public Animator animatorFpc;
     public WeaponStats weaponStats;
+    public WeaponStats meleeStats;
     private WeaponMods weaponMods;
 
     // Projectile spread constants
@@ -54,6 +55,7 @@ public class WeaponActionScript : MonoBehaviour
     public bool isReloading = false;
     public bool isCocking = false;
     public bool isFiring = false;
+    public bool isMeleeing = false;
     public bool isAiming = false;
     public bool isDrawing = false;
     public bool isWieldingThrowable = false;
@@ -77,6 +79,7 @@ public class WeaponActionScript : MonoBehaviour
     public FireMode firingMode;
     public ShotMode shotMode;
     private bool shootInput;
+    private bool meleeInput;
     public bool quickFiredRocket;
 
     // Once it equals fireRate, it will allow us to shoot
@@ -162,6 +165,8 @@ public class WeaponActionScript : MonoBehaviour
                 firingMode = FireMode.Semi;
         }
 
+        meleeInput = Input.GetKeyDown(KeyCode.V) || (Input.GetAxis("Mouse ScrollWheel") < 0f);
+
         switch (firingMode)
         {
             case FireMode.Auto:
@@ -195,7 +200,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     bool AutoReloadCheck() {
-        if (isDrawing || isFiring || isReloading || isCockingGrenade || isUsingBooster || isUsingDeployable || isCocking || fpc.m_IsRunning) {
+        if (isDrawing || isFiring || isMeleeing || isReloading || isCockingGrenade || isUsingBooster || isUsingDeployable || isCocking || fpc.m_IsRunning) {
             return false;
         }
         return true;
@@ -222,6 +227,12 @@ public class WeaponActionScript : MonoBehaviour
         //      isReloading = info.IsName("Reload") || info.IsName("ReloadCrouch");
         //  }
         // Shooting mechanics
+
+        if (meleeInput) {
+            Melee();
+            return;
+        }
+
         if (weaponStats.category.Equals("Explosive")) {
             FireGrenades();
             return;
@@ -235,7 +246,7 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
         
-        if (shootInput && !isDrawing && !isReloading && playerActionScript.canShoot && !hudScript.container.pauseMenuGUI.activeInHierarchy)
+        if (shootInput && !meleeInput && !isMeleeing && !isDrawing && !isReloading && playerActionScript.canShoot && !hudScript.container.pauseMenuGUI.activeInHierarchy)
         {
             if (currentAmmo > 0)
             {
@@ -442,10 +453,19 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
+    void Melee() {
+        RaycastHit hit;
+        if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, INTERACTION_DISTANCE, interactableMask)) {
+            activeInteractable = hit.transform.gameObject;
+        } else {
+            activeInteractable = null;
+        }
+    }
+
     // Comment
     public void Fire()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking || isDrawing)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking || isDrawing || isMeleeing)
         {
             return;
         }
@@ -531,7 +551,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     public void FireLauncher() {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking || isDrawing)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || isCocking || isDrawing || isMeleeing)
         {
             return;
         }
@@ -567,7 +587,7 @@ public class WeaponActionScript : MonoBehaviour
 
     public void FireShotgun ()
     {
-        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || (isCocking && isReloading) || isDrawing)
+        if (fireTimer < weaponStats.fireRate || currentAmmo <= 0 || isReloading || (isCocking && isReloading) || isDrawing || isMeleeing)
         {
             return;
         }
@@ -1156,7 +1176,7 @@ public class WeaponActionScript : MonoBehaviour
         }
         // Handle deployment time and initiating deployment
         if (isWieldingDeployable) {
-            if (shootInput && !isUsingDeployable) {
+            if (shootInput && !meleeInput && !isMeleeing && !isUsingDeployable) {
                 // Charge up deploy gauge
                 deployTimer += (Time.deltaTime / DEPLOY_BASE_TIME);
                 if (!deployInProgress) {
@@ -1315,6 +1335,7 @@ public class WeaponActionScript : MonoBehaviour
     public void ResetMyActionStates() {
         isDrawing = false;
         isFiring = false;
+        isMeleeing = false;
         isReloading = false;
         isCockingGrenade = false;
         isUsingBooster = false;

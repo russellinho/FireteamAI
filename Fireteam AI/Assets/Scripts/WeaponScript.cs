@@ -13,6 +13,8 @@ public class WeaponScript : MonoBehaviour
     public PlayerActionScript playerActionScript;
     public WeaponHandlerScript weaponHolder;
     public WeaponHandlerScript weaponHolderFpc;
+    public MeleeHandlerScript meleeHolder;
+    public MeleeHandlerScript meleeHolderFpc;
     public Animator animator;
     public TitleControllerScript ts;
     public Animation titleAnimFemale;
