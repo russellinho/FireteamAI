@@ -609,6 +609,15 @@ public class WeaponScript : MonoBehaviour
                 }
                 break;
             case "Knife":
+                if (!onTitle) {
+                    if (equipmentScript.isFirstPerson()) {
+                        wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                        SetWeaponCulling(wepEquipped);
+                    } else {
+                        
+                    }
+                }
+                HideMeleeWeapon();
                 break;
         }
         
@@ -650,6 +659,9 @@ public class WeaponScript : MonoBehaviour
             } else if (w.type.Equals("Support")) {
                 ts.equippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
                 ts.shopEquippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
+            } else if (w.type.Equals("Melee")) {
+                ts.equippedMeleeSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
+                ts.shopEquippedMeleeSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
             }
         } else {
             SetCurrentAmmo(currentlyEquippedType);

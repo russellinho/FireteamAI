@@ -101,6 +101,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button shopPrimaryWepBtn;
 	public Button shopSecondaryWepBtn;
 	public Button shopSupportWepBtn;
+	public Button shopMeleeWepBtn;
 	public Button shopAssaultRifleSubBtn;
 	public Button shopSmgSubBtn;
 	public Button shopLmgSubBtn;
@@ -111,12 +112,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button shopExplosivesSubBtn;
 	public Button shopBoostersSubBtn;
 	public Button shopDeployablesSubBtn;
+	public Button shopKnivesSubBtn;
 	public Button shopModsBtn;
 	public Button shopSuppressorsSubBtn;
 	public Button shopSightsSubBtn;
 	public GameObject shopEquippedPrimarySlot;
 	public GameObject shopEquippedSecondarySlot;
 	public GameObject shopEquippedSupportSlot;
+	public GameObject shopEquippedMeleeSlot;
 	public GameObject preparePurchasePopup;
 	public GameObject confirmPurchasePopup;
 	public Text confirmPurchaseTxt;
@@ -152,16 +155,19 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button primaryWepBtn;
 	public Button secondaryWepBtn;
 	public Button supportWepBtn;
+	public Button meleeWepBtn;
 	// Number of sub buttons for primary weapon dropdown in shop
 	private const uint PRIMARY_SUBBUTTON_COUNT = 5;
 	private const uint SECONDARY_SUBBUTTON_COUNT = 2;
 	private const uint SUPPORT_SUBBUTTON_COUNT = 3;
 	private const uint MOD_SUBBUTTON_COUNT = 1;
+	private const uint MELEE_SUBBUTTON_COUNT = 1;
 	private const float SHOP_BUTTON_SPACING = -30f;
 	private float primaryWepBtnYPos = -65f;
 	private float secondaryWepBtnYPos = -95f;
 	private float supportWepBtnYPos = -125f;
-	private float modWepBtnYPos = -155f;
+	private float meleeWepBtnYPos = -155f;
+	private float modWepBtnYPos = -185f;
 	public Button assaultRifleSubBtn;
 	public Button smgSubBtn;
 	public Button lmgSubBtn;
@@ -172,9 +178,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button explosivesSubBtn;
 	public Button boostersSubBtn;
 	public Button deployablesSubBtn;
+	public Button knivesSubBtn;
 	public GameObject equippedPrimarySlot;
 	public GameObject equippedSecondarySlot;
 	public GameObject equippedSupportSlot;
+	public GameObject equippedMeleeSlot;
 
 	// Mod menu
 	public GameObject currentlyEquippedModPrefab;
@@ -476,6 +484,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopEquippedPrimarySlot.SetActive(false);
 		shopEquippedSecondarySlot.SetActive(false);
 		shopEquippedSupportSlot.SetActive(false);
+		shopEquippedMeleeSlot.SetActive(false);
 		matchmakingMenu.SetActive (false);
         versusMenu.SetActive(false);
 		customizationMenu.SetActive(false);
@@ -590,6 +599,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -671,6 +681,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -752,6 +763,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -833,6 +845,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -914,6 +927,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -995,6 +1009,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -1078,11 +1093,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
 		rt = supportWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
+		rt = meleeWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
 
 		// Change all button colors
 		primaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Remove sub buttons
 		pistolSubBtn.gameObject.SetActive(false);
@@ -1217,12 +1235,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
 		rt = secondaryWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
 		rt = supportWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
+		rt = meleeWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
 
 		// Remove sub buttons
 		assaultRifleSubBtn.gameObject.SetActive(false);
@@ -1356,12 +1377,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		supportWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
 		rt = secondaryWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
 		rt = supportWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
+		rt = meleeWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, SUPPORT_SUBBUTTON_COUNT));
 
 		// Remove sub buttons
 		assaultRifleSubBtn.gameObject.SetActive(false);
@@ -2385,6 +2409,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -2467,6 +2492,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -2612,15 +2638,19 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.gameObject.SetActive(true);
 		secondaryWepBtn.gameObject.SetActive(true);
 		supportWepBtn.gameObject.SetActive(true);
+		meleeWepBtn.gameObject.SetActive(true);
 		RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
 		rt = secondaryWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
 		rt = supportWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
+		rt = meleeWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, 0));
 		equippedPrimarySlot.SetActive(true);
 		equippedSecondarySlot.SetActive(true);
 		equippedSupportSlot.SetActive(true);
+		equippedMeleeSlot.SetActive(true);
 	}
 
 	void SwitchToMarketplaceWeaponsScreen() {
@@ -2657,6 +2687,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopEquippedPrimarySlot.SetActive(true);
 		shopEquippedSecondarySlot.SetActive(true);
 		shopEquippedSupportSlot.SetActive(true);
+		shopEquippedMeleeSlot.SetActive(true);
 	}
 
 	void SwitchToEquipmentScreen() {
@@ -2681,6 +2712,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.gameObject.SetActive(false);
 		secondaryWepBtn.gameObject.SetActive(false);
 		supportWepBtn.gameObject.SetActive(false);
+		meleeWepBtn.gameObject.SetActive(false);
 		assaultRifleSubBtn.gameObject.SetActive(false);
 		smgSubBtn.gameObject.SetActive(false);
 		lmgSubBtn.gameObject.SetActive(false);
@@ -2691,9 +2723,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		explosivesSubBtn.gameObject.SetActive(false);
 		boostersSubBtn.gameObject.SetActive(false);
 		deployablesSubBtn.gameObject.SetActive(false);
+		knivesSubBtn.gameObject.SetActive(false);
 		equippedPrimarySlot.SetActive(false);
 		equippedSecondarySlot.SetActive(false);
 		equippedSupportSlot.SetActive(false);
+		equippedMeleeSlot.SetActive(false);
 	}
 
 	void SwitchToMarketplaceEquipmentScreen() {
@@ -2735,6 +2769,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopEquippedPrimarySlot.SetActive(false);
 		shopEquippedSecondarySlot.SetActive(false);
 		shopEquippedSupportSlot.SetActive(false);
+		shopEquippedMeleeSlot.SetActive(false);
 	}
 
 	public void OnRemoveArmorClicked() {
@@ -3344,6 +3379,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 	}
 
