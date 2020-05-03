@@ -13,6 +13,7 @@ public class WeaponStats : MonoBehaviour
     public float accuracy;
     public float recoil;
     public float range;
+    public float lungeRange;
     public int clipCapacity;
     public int maxAmmo;
     public bool steadyAim;

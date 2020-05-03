@@ -36922,7 +36922,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1615888902}
-        m_MethodName: OnMarketplaceSupportWepBtnClicked
+        m_MethodName: OnMarketplaceMeleeWepBtnClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -47307,7 +47307,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1615888902}
-        m_MethodName: OnMarketplaceExplosivesSubBtnClicked
+        m_MethodName: OnMarketplaceKnivesSubBtnClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -64481,6 +64481,7 @@ MonoBehaviour:
   shopPrimaryWepBtn: {fileID: 1267877136}
   shopSecondaryWepBtn: {fileID: 1081912936}
   shopSupportWepBtn: {fileID: 1777146357}
+  shopMeleeWepBtn: {fileID: 949380834}
   shopAssaultRifleSubBtn: {fileID: 1186172186}
   shopSmgSubBtn: {fileID: 1762129738}
   shopLmgSubBtn: {fileID: 2021588452}
@@ -64491,12 +64492,14 @@ MonoBehaviour:
   shopExplosivesSubBtn: {fileID: 1259378278}
   shopBoostersSubBtn: {fileID: 632161798}
   shopDeployablesSubBtn: {fileID: 73616711}
+  shopKnivesSubBtn: {fileID: 1193823362}
   shopModsBtn: {fileID: 660194805}
   shopSuppressorsSubBtn: {fileID: 1976262724}
   shopSightsSubBtn: {fileID: 378724753}
   shopEquippedPrimarySlot: {fileID: 995254284}
   shopEquippedSecondarySlot: {fileID: 164749772}
   shopEquippedSupportSlot: {fileID: 67780811}
+  shopEquippedMeleeSlot: {fileID: 94951725}
   preparePurchasePopup: {fileID: 521166230}
   confirmPurchasePopup: {fileID: 2063405104}
   confirmPurchaseTxt: {fileID: 844178171}
@@ -64531,6 +64534,7 @@ MonoBehaviour:
   primaryWepBtn: {fileID: 966080958}
   secondaryWepBtn: {fileID: 1723884538}
   supportWepBtn: {fileID: 1723253395}
+  meleeWepBtn: {fileID: 2010021820}
   assaultRifleSubBtn: {fileID: 1100222687}
   smgSubBtn: {fileID: 1954837617}
   lmgSubBtn: {fileID: 198564924}
@@ -64541,9 +64545,11 @@ MonoBehaviour:
   explosivesSubBtn: {fileID: 335894010}
   boostersSubBtn: {fileID: 569845246}
   deployablesSubBtn: {fileID: 298583865}
+  knivesSubBtn: {fileID: 1713329391}
   equippedPrimarySlot: {fileID: 938912593}
   equippedSecondarySlot: {fileID: 1008349817}
   equippedSupportSlot: {fileID: 2005418007}
+  equippedMeleeSlot: {fileID: 1073425812}
   currentlyEquippedModPrefab: {fileID: 0}
   weaponPreviewSlot: {fileID: 1819339682}
   weaponPreviewRef: {fileID: 0}
@@ -68933,7 +68939,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1615888902}
-        m_MethodName: OnExplosivesSubBtnClicked
+        m_MethodName: OnKnivesSubBtnClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -81094,7 +81100,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1615888902}
-        m_MethodName: OnSupportWepBtnClicked
+        m_MethodName: OnMeleeWepBtnClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

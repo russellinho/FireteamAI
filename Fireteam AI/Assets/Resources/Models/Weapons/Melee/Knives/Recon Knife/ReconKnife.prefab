@@ -206,11 +206,12 @@ MonoBehaviour:
   type: Melee
   category: Knife
   damage: 100
-  mobility: 100
+  mobility: 0
   fireRate: 0
   accuracy: 0
   recoil: 0
-  range: 0
+  range: 3
+  lungeRange: 7
   clipCapacity: 0
   maxAmmo: 0
   steadyAim: 0

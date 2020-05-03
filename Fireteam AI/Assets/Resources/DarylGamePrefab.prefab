@@ -44961,6 +44961,8 @@ MonoBehaviour:
   playerActionScript: {fileID: 9158664062041186689}
   weaponHolder: {fileID: 1666870497755650213}
   weaponHolderFpc: {fileID: 5461938729601218067}
+  meleeHolder: {fileID: 0}
+  meleeHolderFpc: {fileID: 0}
   animator: {fileID: 7370182251479305743}
   ts: {fileID: 0}
   titleAnimFemale: {fileID: 0}
@@ -44968,6 +44970,7 @@ MonoBehaviour:
   equippedPrimaryWeapon: 
   equippedSecondaryWeapon: 
   equippedSupportWeapon: 
+  equippedMeleeWeapon: 
   equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryAmmoLeft: 0
@@ -45280,14 +45283,18 @@ MonoBehaviour:
   animator: {fileID: 7370182251479305743}
   animatorFpc: {fileID: 597822533616146877}
   weaponStats: {fileID: 0}
+  meleeStats: {fileID: 0}
   spread: 0
   totalAmmoLeft: 0
   currentAmmo: 0
   shootPoint: {fileID: 2503460947070388586}
   fpcShootPoint: {fileID: 2503460947070388586}
+  meleeTargetPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  isLunging: 0
   isReloading: 0
   isCocking: 0
   isFiring: 0
+  isMeleeing: 0
   isAiming: 0
   isDrawing: 0
   isWieldingThrowable: 0
@@ -45493,7 +45500,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 9158664062041186698}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: 5
   isRuntimeInstantiated: 0
 --- !u!114 &9158664062041186698
 MonoBehaviour:

@@ -52,6 +52,9 @@ public class WeaponActionScript : MonoBehaviour
 
     public Transform shootPoint;
     public Transform fpcShootPoint;
+    public Vector3 meleeTargetPos = Vector3.negativeInfinity;
+    private Vector3 meleeStartingPos;
+    public bool isLunging = false;
     public bool isReloading = false;
     public bool isCocking = false;
     public bool isFiring = false;
@@ -453,12 +456,68 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
+    public void SetMouseDynamicsForMelee(bool b) {
+        fpc.SetMouseDynamicsForMelee(b);
+    }
+
+    bool CanMelee() {
+        if (isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || isUsingBooster || isUsingDeployable) {
+            return false;
+        }
+        return true;
+    }
+
+    // Updates player position if doing a melee lunge
+    public void UpdateMeleeDash(float t) {
+        transform.position = Vector3.Lerp(meleeStartingPos, meleeTargetPos, t);
+    }
+
+    // Initiates a melee attack
     void Melee() {
+        if (!CanMelee())
+        {
+            return;
+        }
+
+        isMeleeing = true;
+        int enemyMask = (1 << 13) & (1 << 14) & (1 << 17);
         RaycastHit hit;
-        if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, INTERACTION_DISTANCE, interactableMask)) {
-            activeInteractable = hit.transform.gameObject;
+        if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, meleeStats.lungeRange, enemyMask)) {
+            // Dash/warp to the enemyTarget position
+            meleeStartingPos = transform.position;
+            meleeTargetPos = hit.transform.GetComponentInParent<BetaEnemyScript>().gameObject.transform.position;
+            isLunging = true;
+            // Lunge
+            animatorFpc.SetBool("isLunge", true);
         } else {
-            activeInteractable = null;
+            // Slash
+            isLunging = false;
+            animatorFpc.SetBool("isLunge", false);
+        }
+        animatorFpc.SetTrigger("Melee");
+    }
+
+    // Scans for melee
+    public void DealMeleeDamage() {
+        RaycastHit hit;
+        if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, meleeStats.range)) {
+            if (hit.transform.tag.Equals("Human")) {
+                pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+                BetaEnemyScript b = hit.transform.gameObject.GetComponent<BetaEnemyScript>();
+                int beforeHp = b.health;
+                if (beforeHp > 0)
+                {
+                    hudScript.InstantiateHitmarker();
+                    audioController.PlayHitmarkerSound();
+                    b.TakeDamage((int)meleeStats.damage);
+                    b.PlayGruntSound();
+                    b.SetAlerted(true);
+                    if (b.health <= 0 && beforeHp > 0)
+                    {
+                        RewardKill(false);
+                    }
+                }
+            }
         }
     }
 
@@ -491,6 +550,7 @@ public class WeaponActionScript : MonoBehaviour
             if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().health > 0)
             {
                 hudScript.InstantiateHitmarker();
+                BetaEnemyScript b = hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>();
                 hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().TakeDamage(100);
                 RewardKill(true);
                 audioController.PlayHeadshotSound();

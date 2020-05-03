@@ -63,6 +63,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private int networkDelay = 5;
         private int networkDelayCount = 0;
+        private bool meleeSlowActive;
 
         // Use this for initialization
         private void Start()
@@ -440,8 +441,22 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 StopAllCoroutines();
                 StartCoroutine(!m_IsWalking ? m_FovKick.FOVKickUp() : m_FovKick.FOVKickDown());
             }
+            if (meleeSlowActive) {
+                speed = 0.5f;
+            }
 			if (!canMove)
 				speed = 0f;
+        }
+
+        public void SetMouseDynamicsForMelee(bool b) {
+            meleeSlowActive = b;
+            if (b) {
+                m_MouseLook.XSensitivity = 0.1f;
+                m_MouseLook.YSensitivity = 0.1f;
+            } else {
+                m_MouseLook.XSensitivity = m_MouseLook.originalXSensitivity;
+                m_MouseLook.YSensitivity = m_MouseLook.originalYSensitivity;
+            }
         }
 
         private void ClientRotateView() {
@@ -636,8 +651,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
             fpcAnimator.SetBool("isDead", false);
             fpcAnimator.SetBool("isWalking", false);
             fpcAnimator.SetBool("Jumping", false);
+            fpcAnimator.SetBool("isLunge", false);
             fpcAnimator.SetInteger("WeaponType", currentlyEquippedType);
             fpcAnimator.SetInteger("MovingDir", 0);
+            fpcAnimator.ResetTrigger("Melee");
             fpcAnimator.ResetTrigger("Reload");
             fpcAnimator.ResetTrigger("CockShotgun");
             fpcAnimator.ResetTrigger("CockBoltAction");

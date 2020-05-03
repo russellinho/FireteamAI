@@ -843,6 +843,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         escapeValueSent = false;
         canShoot = true;
         fpc.canMove = true;
+        fpc.SetMouseDynamicsForMelee(false);
         fraction = 0f;
         deathCameraLerpVar = 0f;
         rotationSaved = false;

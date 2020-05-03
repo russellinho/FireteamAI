@@ -1223,16 +1223,18 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void HandleMeleeEffectTriggers(Collider other) {
-		float dist = Vector3.Distance(transform.position, other.transform.position);
-		if (dist <= MELEE_DISTANCE) {
-			if (!alerted) {
-				SetAlerted(true);
-			}
+		if (!other.GetComponent<WeaponActionScript>().isMeleeing) {
+			float dist = Vector3.Distance(transform.position, other.transform.position);
+			if (dist <= MELEE_DISTANCE) {
+				if (!alerted) {
+					SetAlerted(true);
+				}
 
-			if (actionState != ActionStates.Melee) {
-				pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee, gameControllerScript.teamMap);
+				if (actionState != ActionStates.Melee) {
+					pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee, gameControllerScript.teamMap);
+				}
+				playerToHit = other.gameObject;
 			}
-			playerToHit = other.gameObject;
 		}
 	}
 
