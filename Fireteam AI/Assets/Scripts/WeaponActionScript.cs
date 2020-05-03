@@ -1044,45 +1044,49 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     public void SetWeaponStats(WeaponStats ws) {
-        weaponStats = ws;
-        weaponMods = ws.GetComponent<WeaponMods>();
-        fireTimer = ws.fireRate;
-        playerActionScript.weaponSpeedModifier = ws.mobility/100f;
-        if (playerActionScript.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
-            fpc.fpcAnimator.runtimeAnimatorController = ws.maleOverrideController as RuntimeAnimatorController;
+        if (ws.type.Equals("Melee")) {
+            meleeStats = ws;
         } else {
-            fpc.fpcAnimator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;
-        }
-        if (!ws.type.Equals("Support")) {
-            SetReloadSpeed();
-            SetFiringSpeed();
-        }
-        if (weaponStats.type.Equals("Support")) {
-            if (weaponStats.category.Equals("Explosive")) {
-                isWieldingThrowable = true;
-                isWieldingBooster = false;
-                isWieldingDeployable = false;
-            } else if (weaponStats.category.Equals("Booster")) {
-                isWieldingThrowable = false;
-                isWieldingBooster = true;
-                isWieldingDeployable = false;
-            } else if (weaponStats.category.Equals("Deployable")) {
-                isWieldingThrowable = false;
-                isWieldingBooster = false;
-                isWieldingDeployable = true;
+            weaponStats = ws;
+            weaponMods = ws.GetComponent<WeaponMods>();
+            fireTimer = ws.fireRate;
+            playerActionScript.weaponSpeedModifier = ws.mobility/100f;
+            if (playerActionScript.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
+                fpc.fpcAnimator.runtimeAnimatorController = ws.maleOverrideController as RuntimeAnimatorController;
+            } else {
+                fpc.fpcAnimator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;
             }
-            firingMode = FireMode.Semi;
-        } else {
-            isWieldingThrowable = false;
-            isWieldingBooster = false;
-            isWieldingDeployable = false;
-            if (weaponStats.category.Equals("Shotgun")) {
-                shotMode = ShotMode.Burst;
+            if (!ws.type.Equals("Support")) {
+                SetReloadSpeed();
+                SetFiringSpeed();
+            }
+            if (weaponStats.type.Equals("Support")) {
+                if (weaponStats.category.Equals("Explosive")) {
+                    isWieldingThrowable = true;
+                    isWieldingBooster = false;
+                    isWieldingDeployable = false;
+                } else if (weaponStats.category.Equals("Booster")) {
+                    isWieldingThrowable = false;
+                    isWieldingBooster = true;
+                    isWieldingDeployable = false;
+                } else if (weaponStats.category.Equals("Deployable")) {
+                    isWieldingThrowable = false;
+                    isWieldingBooster = false;
+                    isWieldingDeployable = true;
+                }
                 firingMode = FireMode.Semi;
             } else {
-                shotMode = ShotMode.Single;
-                if (weaponStats.category.Equals("Pistol") || weaponStats.category.Equals("Launcher")) {
+                isWieldingThrowable = false;
+                isWieldingBooster = false;
+                isWieldingDeployable = false;
+                if (weaponStats.category.Equals("Shotgun")) {
+                    shotMode = ShotMode.Burst;
                     firingMode = FireMode.Semi;
+                } else {
+                    shotMode = ShotMode.Single;
+                    if (weaponStats.category.Equals("Pistol") || weaponStats.category.Equals("Launcher")) {
+                        firingMode = FireMode.Semi;
+                    }
                 }
             }
         }

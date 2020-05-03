@@ -14,6 +14,7 @@ public class PlayerData : MonoBehaviour
     private const string DEFAULT_PRIMARY = "M4A1";
     private const string DEFAULT_SECONDARY = "Glock23";
     private const string DEFAULT_SUPPORT = "M67 Frag";
+    private const string DEFAULT_MELEE = "Recon Knife";
     private const string DEFAULT_FOOTWEAR_MALE = "Standard Boots (M)";
     private const string DEFAULT_FOOTWEAR_FEMALE = "Standard Boots (F)";
     public const uint MAX_EXP = 50000000;
@@ -207,12 +208,14 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.equippedPrimary = myWeps.equippedPrimaryWeapon;
         PlayerData.playerdata.info.equippedSecondary = myWeps.equippedSecondaryWeapon;
         PlayerData.playerdata.info.equippedSupport = myWeps.equippedSupportWeapon;
+        PlayerData.playerdata.info.equippedMelee = myWeps.equippedMeleeWeapon;
 
         string saveJson = "{" +
             "\"equippedCharacter\":\"" + PlayerData.playerdata.info.equippedCharacter + "\"," +
             "\"equippedPrimary\":\"" + PlayerData.playerdata.info.equippedPrimary + "\"," +
             "\"equippedSecondary\":\"" + PlayerData.playerdata.info.equippedSecondary + "\"," +
             "\"equippedSupport\":\"" + PlayerData.playerdata.info.equippedSupport + "\"," +
+            "\"equippedMelee\":\"" + PlayerData.playerdata.info.equippedMelee + "\"," +
             "\"equippedTop\":\"" + PlayerData.playerdata.info.equippedTop + "\"," +
             "\"equippedBottom\":\"" + PlayerData.playerdata.info.equippedBottom + "\"," +
             "\"equippedFootwear\":\"" + PlayerData.playerdata.info.equippedFootwear + "\"," +
@@ -254,6 +257,7 @@ public class PlayerData : MonoBehaviour
                         info.equippedPrimary = equipSnapshot.Child("equippedPrimary").Value.ToString();
                         info.equippedSecondary = equipSnapshot.Child("equippedSecondary").Value.ToString();
                         info.equippedSupport = equipSnapshot.Child("equippedSupport").Value.ToString();
+                        info.equippedMelee = equipSnapshot.Child("equippedMelee").Value.ToString();
                         info.equippedTop = equipSnapshot.Child("equippedTop").Value.ToString();
                         info.equippedBottom = equipSnapshot.Child("equippedBottom").Value.ToString();
                         info.equippedFootwear = equipSnapshot.Child("equippedFootwear").Value.ToString();
@@ -310,6 +314,7 @@ public class PlayerData : MonoBehaviour
                     info.equippedPrimary = DEFAULT_PRIMARY;
                     info.equippedSecondary = DEFAULT_SECONDARY;
                     info.equippedSupport = DEFAULT_SUPPORT;
+                    info.equippedMelee = DEFAULT_MELEE;
                     info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
                     info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
                     info.equippedFootwear = (g == 'M' ? DEFAULT_FOOTWEAR_MALE : DEFAULT_FOOTWEAR_FEMALE);
@@ -364,6 +369,7 @@ public class PlayerData : MonoBehaviour
         characterWeps.EquipWeapon(info.equippedPrimary, primaryModInfo.equippedSuppressor, primaryModInfo.equippedSight, null);
         characterWeps.EquipWeapon(info.equippedSecondary, secondaryModInfo.equippedSuppressor, secondaryModInfo.equippedSight, null);
         characterWeps.EquipWeapon(info.equippedSupport, supportModInfo.equippedSuppressor, supportModInfo.equippedSight, null);
+        characterWeps.EquipWeapon(info.equippedMelee, null, null, null);
         PhotonNetwork.NickName = playername;
     }
 
@@ -680,6 +686,7 @@ public class PlayerData : MonoBehaviour
             PlayerData.playerdata.info.equippedPrimary = weaponScrpt.equippedPrimaryWeapon;
             PlayerData.playerdata.info.equippedSecondary = weaponScrpt.equippedSecondaryWeapon;
             PlayerData.playerdata.info.equippedSupport = weaponScrpt.equippedSupportWeapon;
+            PlayerData.playerdata.info.equippedMelee = weaponScrpt.equippedMeleeWeapon;
         }
         characterEquips.EquipCharacter(character, null);
     }
@@ -1539,6 +1546,11 @@ public class PlayerData : MonoBehaviour
                             PlayerData.playerdata.info.equippedSupport = DEFAULT_SUPPORT;
                             //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
                             reloadPlayerFlag = true;
+                        } else if (PlayerData.playerdata.info.equippedMelee == itemName)
+                        {
+                            PlayerData.playerdata.info.equippedMelee = DEFAULT_MELEE;
+                            //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
+                            reloadPlayerFlag = true;
                         }
                     }
                 });
@@ -2103,6 +2115,7 @@ public class PlayerInfo
     public string equippedPrimary;
     public string equippedSecondary;
     public string equippedSupport;
+    public string equippedMelee;
     public uint exp;
     public uint gp;
     public uint kash;

@@ -89,6 +89,7 @@ public class WeaponScript : MonoBehaviour
             equippedPrimaryWeapon = PlayerData.playerdata.info.equippedPrimary;
             equippedSecondaryWeapon = PlayerData.playerdata.info.equippedSecondary;
             equippedSupportWeapon = PlayerData.playerdata.info.equippedSupport;
+            equippedMeleeWeapon = PlayerData.playerdata.info.equippedMelee;
             currentAmmoPrimary = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].clipCapacity;
             currentAmmoSecondary = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
             currentAmmoSupport = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].clipCapacity;
@@ -378,6 +379,17 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
+    void EquipKnife(string weaponName) {
+        equippedMeleeWeapon = weaponName;
+        if (!onTitle) {
+            if (equipmentScript.isFirstPerson()) {
+                meleeHolderFpc.SetWeaponPosition(true);
+            } else {
+                meleeHolder.SetWeaponPosition(false);
+            }
+        }
+    }
+
     public void SwitchWeaponToFullBody() {
         weaponHolder.SetWeapon(drawnWeaponReference.transform, false);
     }
@@ -387,7 +399,7 @@ public class WeaponScript : MonoBehaviour
     }
 
     public void EquipWeapon(string weaponName, string suppressorName, string sightName, GameObject shopItemRef) {
-        if (onTitle && (weaponName.Equals(equippedPrimaryWeapon) || weaponName.Equals(equippedSecondaryWeapon) || weaponName.Equals(equippedSupportWeapon))) return;
+        if (onTitle && (weaponName.Equals(equippedPrimaryWeapon) || weaponName.Equals(equippedSecondaryWeapon) || weaponName.Equals(equippedSupportWeapon) || weaponName.Equals(equippedMeleeWeapon))) return;
         // Get the weapon from the weapon catalog for its properties
         Weapon w = InventoryScript.itemData.weaponCatalog[weaponName];
         GameObject wepEquipped = null;
@@ -614,10 +626,15 @@ public class WeaponScript : MonoBehaviour
                         wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
                         SetWeaponCulling(wepEquipped);
                     } else {
-                        
+                        wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     }
                 }
+                EquipKnife(weaponName);
+                if (!onTitle) {
+                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                }
                 HideMeleeWeapon();
+                wepEquipped = null;
                 break;
         }
         
@@ -859,6 +876,7 @@ public class WeaponScript : MonoBehaviour
         equippedPrimaryWeapon = "AK-47";
         equippedSecondaryWeapon = "Glock23";
         equippedSupportWeapon = "M67 Frag";
+        equippedMeleeWeapon = "Recon Knife";
         EquipWeapon(equippedPrimaryWeapon, null, null, null);
         EquipWeapon(equippedSecondaryWeapon, null, null, null);
     }

@@ -469,6 +469,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		equippedPrimarySlot.SetActive(false);
 		equippedSecondarySlot.SetActive(false);
 		equippedSupportSlot.SetActive(false);
+		equippedMeleeSlot.SetActive(false);
 		matchmakingMenu.SetActive (false);
         versusMenu.SetActive(false);
 		marketplaceMenu.SetActive(false);
@@ -643,6 +644,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -725,6 +727,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -807,6 +810,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -889,6 +893,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -971,6 +976,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -1053,6 +1059,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -1113,6 +1120,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		boostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		deployablesSubBtn.gameObject.SetActive(false);
 		deployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		knivesSubBtn.gameObject.SetActive(false);
+		knivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		assaultRifleSubBtn.gameObject.SetActive(true);
@@ -1167,6 +1176,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
 		rt = shopSupportWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
+		rt = shopMeleeWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
 		rt = shopModsBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
 
@@ -1174,6 +1185,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Remove sub buttons
@@ -1187,6 +1199,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopBoostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopDeployablesSubBtn.gameObject.SetActive(false);
 		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopKnivesSubBtn.gameObject.SetActive(false);
+		shopKnivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSuppressorsSubBtn.gameObject.SetActive(false);
 		shopSuppressorsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSightsSubBtn.gameObject.SetActive(false);
@@ -1262,6 +1276,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		boostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		deployablesSubBtn.gameObject.SetActive(false);
 		deployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		knivesSubBtn.gameObject.SetActive(false);
+		knivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		pistolSubBtn.gameObject.SetActive(true);
@@ -1308,6 +1324,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
@@ -1315,6 +1332,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
 		rt = shopSupportWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
+		rt = shopMeleeWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
 		rt = shopModsBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
 
@@ -1335,6 +1354,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopBoostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopDeployablesSubBtn.gameObject.SetActive(false);
 		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopKnivesSubBtn.gameObject.SetActive(false);
+		shopKnivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSuppressorsSubBtn.gameObject.SetActive(false);
 		shopSuppressorsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSightsSubBtn.gameObject.SetActive(false);
@@ -1402,6 +1423,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		pistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		launcherSubBtn.gameObject.SetActive(false);
 		launcherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		knivesSubBtn.gameObject.SetActive(false);
+		knivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		explosivesSubBtn.gameObject.SetActive(true);
@@ -1448,14 +1471,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnMarketplaceSupportWepBtnClicked() {
 		// Change all button colors
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
 		rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
 		rt = shopSupportWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
+		rt = shopMeleeWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, SUPPORT_SUBBUTTON_COUNT));
 		rt = shopModsBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, SUPPORT_SUBBUTTON_COUNT));
 
@@ -1478,6 +1505,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSuppressorsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSightsSubBtn.gameObject.SetActive(false);
 		shopSightsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopKnivesSubBtn.gameObject.SetActive(false);
+		shopKnivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		shopExplosivesSubBtn.gameObject.SetActive(true);
@@ -1494,6 +1523,155 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
 			Weapon w = entry.Value;
 			if (!w.type.Equals("Support") || !w.purchasable) {
+				continue;
+			}
+			GameObject o = Instantiate(shopContentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
+			o.transform.SetParent(shopContentInventory.transform);
+		}
+	}
+
+	public void OnMeleeWepBtnClicked() {
+		// Change all button colors
+		meleeWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		rt = secondaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
+		rt = supportWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
+		rt = meleeWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, 0));
+
+		// Remove sub buttons
+		assaultRifleSubBtn.gameObject.SetActive(false);
+		assaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		smgSubBtn.gameObject.SetActive(false);
+		smgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		lmgSubBtn.gameObject.SetActive(false);
+		lmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shotgunSubBtn.gameObject.SetActive(false);
+		shotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		sniperRifleSubBtn.gameObject.SetActive(false);
+		sniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		pistolSubBtn.gameObject.SetActive(false);
+		pistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		launcherSubBtn.gameObject.SetActive(false);
+		launcherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		explosivesSubBtn.gameObject.SetActive(true);
+		explosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		boostersSubBtn.gameObject.SetActive(true);
+		boostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		deployablesSubBtn.gameObject.SetActive(true);
+		deployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Add sub buttons
+		knivesSubBtn.gameObject.SetActive(false);
+		knivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Delete any currently existing items in the grid
+		ClearCustomizationContent();
+
+        // Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = ed.name;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.type.Equals("Melee")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
+			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedMeleeWeapon)) {
+				s.ToggleEquippedIndicator(true);
+				currentlyEquippedItemPrefab = o;
+			}
+			o.transform.SetParent(contentInventory.transform);
+		}
+	}
+
+	public void OnMarketplaceMeleeWepBtnClicked() {
+		// Change all button colors
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
+		rt = shopSupportWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
+		rt = shopMeleeWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, 0));
+		rt = shopModsBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, MELEE_SUBBUTTON_COUNT));
+
+		// Remove sub buttons
+		shopAssaultRifleSubBtn.gameObject.SetActive(false);
+		shopAssaultRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSmgSubBtn.gameObject.SetActive(false);
+		shopSmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLmgSubBtn.gameObject.SetActive(false);
+		shopLmgSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopShotgunSubBtn.gameObject.SetActive(false);
+		shopShotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSniperRifleSubBtn.gameObject.SetActive(false);
+		shopSniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopPistolSubBtn.gameObject.SetActive(false);
+		shopPistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLauncherSubBtn.gameObject.SetActive(false);
+		shopLauncherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSuppressorsSubBtn.gameObject.SetActive(false);
+		shopSuppressorsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopSightsSubBtn.gameObject.SetActive(false);
+		shopSightsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopExplosivesSubBtn.gameObject.SetActive(true);
+		shopExplosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopBoostersSubBtn.gameObject.SetActive(true);
+		shopBoostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopDeployablesSubBtn.gameObject.SetActive(true);
+		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Add sub buttons
+		shopKnivesSubBtn.gameObject.SetActive(false);
+		shopKnivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Delete any currently existing items in the grid
+		ClearMarketplaceContent();
+
+		// Populate into grid layout
+		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
+			Weapon w = entry.Value;
+			if (!w.type.Equals("Melee") || !w.purchasable) {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
@@ -2269,11 +2447,82 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	public void OnKnivesSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		knivesSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		ClearCustomizationContent();
+
+        // Populate with pistols
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = ed.name;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.category.Equals("Knife")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.duration;
+			s.acquireDate = ed.acquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
+			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedMeleeWeapon)) {
+				s.ToggleEquippedIndicator(true);
+				currentlyEquippedItemPrefab = o;
+			}
+			o.transform.SetParent(contentInventory.transform);
+		}
+	}
+
+	public void OnMarketplaceKnivesSubBtnClicked() {
+		// Make tab orange and clear other tabs
+		shopKnivesSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+
+		// Clear items
+		ClearMarketplaceContent();
+
+		// Populate with pistols
+		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
+			Weapon w = entry.Value;
+			if (!w.category.Equals("Knife") || !w.purchasable) {
+				continue;
+			}
+			GameObject o = Instantiate(shopContentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = marketplaceItemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
+			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
+			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
+			o.transform.SetParent(shopContentInventory.transform);
+		}
+	}
+
 	public void OnMarketplaceModsBtnClicked() {
 		// Change all button colors
 		shopModsBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
@@ -2281,6 +2530,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
 		rt = shopSupportWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
+		rt = shopMeleeWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, 0));
 		rt = shopModsBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, 0));
 
@@ -2301,6 +2552,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopBoostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopDeployablesSubBtn.gameObject.SetActive(false);
 		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopKnivesSubBtn.gameObject.SetActive(false);
+		shopKnivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
 		shopSuppressorsSubBtn.gameObject.SetActive(true);
@@ -2453,6 +2706,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopCharacterBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -2520,6 +2775,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
@@ -2675,6 +2931,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.gameObject.SetActive(true);
 		shopSecondaryWepBtn.gameObject.SetActive(true);
 		shopSupportWepBtn.gameObject.SetActive(true);
+		shopMeleeWepBtn.gameObject.SetActive(true);
 		shopModsBtn.gameObject.SetActive(true);
 		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
@@ -2682,6 +2939,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
 		rt = shopSupportWepBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
+		rt = shopMeleeWepBtn.GetComponent<RectTransform>();
+		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, 0));
 		rt = shopModsBtn.GetComponent<RectTransform>();
 		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, 0));
 		shopEquippedPrimarySlot.SetActive(true);
@@ -2752,6 +3011,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.gameObject.SetActive(false);
 		shopSecondaryWepBtn.gameObject.SetActive(false);
 		shopSupportWepBtn.gameObject.SetActive(false);
+		shopMeleeWepBtn.gameObject.SetActive(false);
 		shopAssaultRifleSubBtn.gameObject.SetActive(false);
 		shopSmgSubBtn.gameObject.SetActive(false);
 		shopLmgSubBtn.gameObject.SetActive(false);
@@ -2762,6 +3022,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopExplosivesSubBtn.gameObject.SetActive(false);
 		shopBoostersSubBtn.gameObject.SetActive(false);
 		shopDeployablesSubBtn.gameObject.SetActive(false);
+		shopKnivesSubBtn.gameObject.SetActive(false);
 		shopModsBtn.gameObject.SetActive(false);
 		shopSuppressorsSubBtn.gameObject.SetActive(false);
 		shopSightsSubBtn.gameObject.SetActive(false);
@@ -3365,6 +3626,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 	}
@@ -3397,6 +3659,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.interactable = b;
 		shopSecondaryWepBtn.interactable = b;
 		shopSupportWepBtn.interactable = b;
+		shopMeleeWepBtn.interactable = b;
 		shopAssaultRifleSubBtn.interactable = b;
 		shopSmgSubBtn.interactable = b;
 		shopLmgSubBtn.interactable = b;
@@ -3407,6 +3670,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopExplosivesSubBtn.interactable = b;
 		shopBoostersSubBtn.interactable = b;
 		shopDeployablesSubBtn.interactable = b;
+		shopKnivesSubBtn.interactable = b;
 		shopModsBtn.interactable = b;
 		shopSuppressorsSubBtn.interactable = b;
 		shopSightsSubBtn.interactable = b;
