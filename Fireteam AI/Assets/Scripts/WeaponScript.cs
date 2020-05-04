@@ -211,9 +211,9 @@ public class WeaponScript : MonoBehaviour
         WeaponStats ws = weaponActionScript.weaponStats;
         if (ws.warheadRenderer != null && currentAmmoSecondary == 0) {
             if (currentAmmoSecondary == 0) {
-                ws.warheadRenderer.enabled = false;
+                ws.warheadRenderer.gameObject.SetActive(false);
             } else {
-                ws.warheadRenderer.enabled = true;
+                ws.warheadRenderer.gameObject.SetActive(true);
             }
         }
     }

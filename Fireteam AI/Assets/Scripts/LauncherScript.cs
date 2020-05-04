@@ -9,7 +9,7 @@ public class LauncherScript : MonoBehaviour
     private const float LAUNCH_FORCE_MULTIPLIER = 30f;
     public Rigidbody rBody;
     public CapsuleCollider col;
-    public MeshRenderer projectileRenderer;
+    public MeshRenderer[] projectileRenderer;
     public ParticleSystem explosionEffect;
     public ParticleSystem smokeTrail;
     public float blastRadius;
@@ -54,7 +54,9 @@ public class LauncherScript : MonoBehaviour
         // Create blast radius trigger collider - enemy will be affected if within this collider sphere during explosion
         EnableBlastCollider();
         // Make missile disappear
-        projectileRenderer.enabled = false;
+        foreach (MeshRenderer m in projectileRenderer) {
+            m.enabled = false;
+        }
         // Stop the projectile sound
         projectileSound.Stop();
         // Play the explosion sound
