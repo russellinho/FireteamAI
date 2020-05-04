@@ -1,34 +1,9 @@
 fileFormatVersion: 2
-guid: f88a8378af23a714c8afe947c99d7a8a
+guid: 3e3ea8fe6ede71d4a867f45e89a41742
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: 870_Shotgun
-    second: {fileID: 2100000, guid: a3125c95b1ce7d34a9403bc3aef92954, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: AK-47.001
-    second: {fileID: 2100000, guid: 7cb859cef5c8f1c4ba2992a8e6281a47, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M4_Carbine
-    second: {fileID: 2100000, guid: eb6498d5ce9078342bef666c2e4ec5a5, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: None
-    second: {fileID: 2100000, guid: 5bcd5626b329fe7489f33953c5192453, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Pistol.001
-    second: {fileID: 2100000, guid: 8fc0045dac655a94aa1fd57b81ac1034, type: 2}
+  externalObjects: {}
   materials:
     importMaterials: 1
     materialName: 0
