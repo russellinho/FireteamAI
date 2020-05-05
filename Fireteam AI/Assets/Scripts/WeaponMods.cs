@@ -11,6 +11,7 @@ public class WeaponMods : MonoBehaviour
     public Vector3 sightScaler;
     public Transform sightPos;
     public GameObject sightRef;
+    public GameObject sightMountRef;
     private Mod suppressorStats;
     private Mod sightStats;
     private string suppressorName;
@@ -76,6 +77,9 @@ public class WeaponMods : MonoBehaviour
         sightRef.transform.localPosition = Vector3.zero;
         sightRef.transform.localRotation = Quaternion.Euler(new Vector3(-3.166f, 89.6f, -1.5f));
         sightRef.transform.localScale = sightScaler;
+        if (sightMountRef != null) {
+            sightMountRef.SetActive(true);
+        }
     }
 
     public void UnequipSight() {
@@ -87,6 +91,9 @@ public class WeaponMods : MonoBehaviour
         }
         sightRef = null;
         sightStats = null;
+        if (sightMountRef != null) {
+            sightMountRef.SetActive(false);
+        }
     }
 
     public string GetEquippedSight() {

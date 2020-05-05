@@ -9,8 +9,8 @@ public class WeaponPartMover : MonoBehaviour
 
     public void TranslateParts() {
         for (int i = 0; i < parts.Length; i++) {
-            Vector3 oldPos = parts[i].position;
-            parts[i].position = new Vector3(oldPos.x + translation.x, oldPos.y + translation.y, oldPos.z + translation.z);
+            Vector3 oldPos = parts[i].localPosition;
+            parts[i].localPosition = new Vector3(oldPos.x + translation.x, oldPos.y + translation.y, oldPos.z + translation.z);
         }
     }
 }
