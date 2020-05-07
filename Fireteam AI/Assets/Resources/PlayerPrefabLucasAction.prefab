@@ -37747,6 +37747,8 @@ MonoBehaviour:
   playerActionScript: {fileID: 0}
   weaponHolder: {fileID: 8224291582588743710}
   weaponHolderFpc: {fileID: 0}
+  meleeHolder: {fileID: 0}
+  meleeHolderFpc: {fileID: 0}
   animator: {fileID: 6772054392549162816}
   ts: {fileID: 0}
   titleAnimFemale: {fileID: 0}
@@ -37754,6 +37756,7 @@ MonoBehaviour:
   equippedPrimaryWeapon: 
   equippedSecondaryWeapon: 
   equippedSupportWeapon: 
+  equippedMeleeWeapon: 
   equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryAmmoLeft: 0
@@ -38066,20 +38069,28 @@ MonoBehaviour:
   animator: {fileID: 6772054392549162816}
   animatorFpc: {fileID: 0}
   weaponStats: {fileID: 0}
+  meleeStats: {fileID: 0}
   spread: 0
   totalAmmoLeft: 0
   currentAmmo: 0
   shootPoint: {fileID: 7403946386076052789}
   fpcShootPoint: {fileID: 0}
+  meleeTargetPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  isLunging: 0
   isReloading: 0
   isCocking: 0
   isFiring: 0
+  isMeleeing: 0
   isAiming: 0
   isDrawing: 0
   isWieldingThrowable: 0
   isWieldingBooster: 0
+  isWieldingDeployable: 0
   isCockingGrenade: 0
   isUsingBooster: 0
+  isUsingDeployable: 0
+  currentAimDownSightPos: {x: 0, y: 0, z: 0}
+  currentAimStableHandPos: {x: 0, y: 0, z: 0}
   hitParticles: {fileID: 1617700753897852, guid: 2b61531c3d65e3f4e949e45eb6021b7b,
     type: 3}
   bulletImpact: {fileID: 1235035097298946, guid: 1abe832de1d01be48b12062549dcc9fb,
@@ -38088,12 +38099,16 @@ MonoBehaviour:
     type: 3}
   firingMode: 0
   shotMode: 0
+  quickFiredRocket: 0
   camTransform: {fileID: 8596336155875985275}
   pView: {fileID: 6989970583869892677}
   rightCollar: {fileID: 0}
   leftCollar: {fileID: 0}
   leftCollarCurrentPos: {x: 0, y: 0, z: 0}
   rightCollarCurrentPos: {x: 0, y: 0, z: 0}
+  deployPlanMesh: {fileID: 0}
+  deployTimer: 0
+  deployInProgress: 0
 --- !u!114 &7649428840762148136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38227,7 +38242,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 3491014420181445126}
   viewIdField: 0
-  InstantiationId: 2
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &3491014420181445126
 MonoBehaviour:

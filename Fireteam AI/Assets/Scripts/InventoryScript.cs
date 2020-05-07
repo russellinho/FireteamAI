@@ -83,8 +83,8 @@ public class InventoryScript : MonoBehaviour
         characterCatalog.Add("Rocko", new Character("Rocko", 'M', "Models/Characters/Rocko/PlayerPrefabRocko", "Models/FirstPersonPrefabs/Characters/Rocko/1/rocko_all_arms", "", "Models/Pics/rocko-thumb", "Nationality: Brazilian\nBefore committing his life to the fight against insurgency, Rocko was a gang member in one of Brazil's most notorious drug cartels. He is skilled in guerilla warfare and has a high tolerance for pain.", new string[]{"Models/Characters/Rocko/1/skinrocko1", "Models/Characters/Rocko/3/skinrocko3", "Models/Characters/Rocko/2/skinrocko2"}, 0, false, "Standard Fatigues Top (M)", "Standard Fatigues Bottom (M)"));
 
         // Mods
-        modCatalog.Add("Standard Suppressor", new Mod("Standard Suppressor", "Suppressor", "Models/Mods/Suppressors/Standard Suppressor/standardsuppressor", "Models/Pics/standardsuppressor-thumb", null, 0f, "A standard issue suppressor used to silence your weapon.", -3f, 2f, -4f, 0f, 0, 0, 100, true));
-        modCatalog.Add("GTF Red Dot A1", new Mod("GTF Red Dot A1", "Sight", "Models/Mods/Sights/GTF Red Dot A1/reddot", "Models/Pics/gtfreddota1-thumb", "HUD/Crosshairs/reddotmark", -0.000358f, "A first generation red dot sight designed by the Global Task Force that was intended for simplicity and accuracy.", 0f, 2f, 0f, 0f, 0, 0, 100, true));
+        modCatalog.Add("Standard Suppressor", new Mod("Standard Suppressor", "Suppressor", "Models/Mods/Suppressors/Standard Suppressor/standardsuppressor", "Models/Pics/standardsuppressor-thumb", 0, null, "A standard issue suppressor used to silence your weapon.", -3f, 2f, -4f, 0f, 0, 0, 100, true));
+        modCatalog.Add("GTF Red Dot A1", new Mod("GTF Red Dot A1", "Sight", "Models/Mods/Sights/GTF Red Dot A1/reddot", "Models/Pics/gtfreddota1-thumb", 0, "HUD/Crosshairs/reddotmark", "A first generation red dot sight designed by the Global Task Force that was intended for simplicity and accuracy.", 0f, 2f, 0f, 0f, 0, 0, 100, true));
     }
 
 }

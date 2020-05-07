@@ -99,7 +99,17 @@ public class WeaponScript : MonoBehaviour
             equippedWep = equippedPrimaryWeapon;
             //DrawWeapon(1);
             InitializeWeapon();
+            InitializeMelee();
         }
+    }
+
+    void InitializeMelee() {
+        pView.RPC("RpcInitializeMelee", RpcTarget.All, equippedMeleeWeapon);
+    }
+
+    [PunRPC]
+    void RpcInitializeMelee(string equippedMelee) {
+        EquipWeapon(equippedMelee, null, null, null);
     }
 
     // Use when spawning/respawning
@@ -191,29 +201,35 @@ public class WeaponScript : MonoBehaviour
     }
 
     void HideMeleeWeapon() {
-        WeaponStats ws = weaponActionScript.meleeStats;
-        if (weaponActionScript.isMeleeing) {
-            if (!ws.weaponParts[0].enabled) {
-                for (int i = 0; i < ws.weaponParts.Length; i++) {
-                    ws.weaponParts[i].enabled = true;
+        if (weaponActionScript != null) {
+            WeaponStats ws = weaponActionScript.meleeStats;
+            if (ws == null) return;
+            if (weaponActionScript.isMeleeing) {
+                if (!ws.weaponParts[0].enabled) {
+                    for (int i = 0; i < ws.weaponParts.Length; i++) {
+                        ws.weaponParts[i].enabled = true;
+                    }
                 }
-            }
-        } else {
-            if (ws.weaponParts[0].enabled) {
-                for (int i = 0; i < ws.weaponParts.Length; i++) {
-                    ws.weaponParts[i].enabled = false;
+            } else {
+                if (ws.weaponParts[0].enabled) {
+                    for (int i = 0; i < ws.weaponParts.Length; i++) {
+                        ws.weaponParts[i].enabled = false;
+                    }
                 }
             }
         }
     }
 
     void HideWeaponParts() {
-        WeaponStats ws = weaponActionScript.weaponStats;
-        if (ws.warheadRenderer != null && currentAmmoSecondary == 0) {
-            if (currentAmmoSecondary == 0) {
-                ws.warheadRenderer.gameObject.SetActive(false);
-            } else {
-                ws.warheadRenderer.gameObject.SetActive(true);
+        if (weaponActionScript != null) {
+            WeaponStats ws = weaponActionScript.weaponStats;
+            if (ws == null) return;
+            if (ws.warheadRenderer != null && currentAmmoSecondary == 0) {
+                if (currentAmmoSecondary == 0) {
+                    ws.warheadRenderer.gameObject.SetActive(false);
+                } else {
+                    ws.warheadRenderer.gameObject.SetActive(true);
+                }
             }
         }
     }
@@ -368,6 +384,18 @@ public class WeaponScript : MonoBehaviour
     }
 
     void EquipBooster(string weaponName) {
+        equippedSupportWeapon = weaponName;
+        if (!onTitle) {
+            if (equipmentScript.isFirstPerson()) {
+                weaponHolderFpc.SetWeaponPosition(true);
+            } else {
+                weaponHolder.SetWeaponPosition(false);
+                weaponHolder.ResetSteadyHand();
+            }
+        }
+    }
+
+    void EquipDeployable(string weaponName) {
         equippedSupportWeapon = weaponName;
         if (!onTitle) {
             if (equipmentScript.isFirstPerson()) {
@@ -620,13 +648,34 @@ public class WeaponScript : MonoBehaviour
                     weaponActionScript.hudScript.EquipSightCrosshair(false);
                 }
                 break;
-            case "Knife":
+            case "Deployable":
                 if (!onTitle) {
+                    currentlyEquippedType = 4;
                     if (equipmentScript.isFirstPerson()) {
                         wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                        weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
+                        weaponActionScript.animatorFpc.SetBool("isShotgun", false);
+                        weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
                         SetWeaponCulling(wepEquipped);
                     } else {
                         wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                    }
+                }
+                equippedWep = weaponName;
+                EquipDeployable(weaponName);
+                if (!onTitle) {
+                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
+                    weaponActionScript.hudScript.EquipSightCrosshair(false);
+                }
+                break;
+            case "Knife":
+                if (!onTitle) {
+                    if (equipmentScript.isFirstPerson()) {
+                        wepEquipped = meleeHolderFpc.LoadWeapon(w.prefabPath);
+                        SetWeaponCulling(wepEquipped);
+                    } else {
+                        wepEquipped = meleeHolder.LoadWeapon(w.prefabPath);
                     }
                 }
                 EquipKnife(weaponName);

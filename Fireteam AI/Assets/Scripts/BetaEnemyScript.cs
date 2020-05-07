@@ -1663,12 +1663,12 @@ public class BetaEnemyScript : MonoBehaviour {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					if (hit.transform.tag.Equals ("Player")) {
 						PlayerActionScript ps = hit.transform.GetComponent<PlayerActionScript> ();
-						ps.TakeDamage(CalculateDamageDealt(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height), true);
+						ps.TakeDamage(CalculateDamageDealt(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CharacterController>().height), true);
 						//ps.ResetHitTimer ();
 						ps.SetHitLocation (transform.position);
 					} else {
 						WeaponActionScript ws = hit.transform.GetComponent<WeaponActionScript>();
-						hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(ws.CalculateDamageDealt(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height, false));
+						hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(ws.CalculateDamageDealt(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CharacterController>().height, false));
 					}
 				} else {
 					pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name, gameControllerScript.teamMap);

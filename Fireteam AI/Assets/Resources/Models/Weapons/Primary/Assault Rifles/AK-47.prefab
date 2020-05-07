@@ -102,7 +102,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 716255167565559934}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.95, y: 5.968, z: -0.18}
+  m_LocalPosition: {x: -1.95, y: 5.97, z: -0.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4117480237854914641}
@@ -10476,6 +10476,8 @@ MonoBehaviour:
   isSticky: 0
   suppressorSlot: {fileID: 3090217328826816306}
   sightSlot: {fileID: 716255167565559934}
+  crosshairAimOffset:
+  - -0.00044
 --- !u!114 &4425799576184219595
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1864,6 +1864,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3668367632267572110}
+  - component: {fileID: 403348034124452148}
   m_Layer: 0
   m_Name: MeleeHolder
   m_TagString: Untagged
@@ -1885,6 +1886,20 @@ Transform:
   m_Father: {fileID: 5263032125116072545}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &403348034124452148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5538391076895858059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b207e75df4e3ea45bd6eab50b71b8bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 0}
+  fpc: {fileID: 5740449512303423505}
 --- !u!1 &5540112567705958020
 GameObject:
   m_ObjectHideFlags: 0
@@ -77406,8 +77421,8 @@ MonoBehaviour:
   playerActionScript: {fileID: 5740449512303423535}
   weaponHolder: {fileID: 318625654658084776}
   weaponHolderFpc: {fileID: 5740449512341948212}
-  meleeHolder: {fileID: 0}
-  meleeHolderFpc: {fileID: 0}
+  meleeHolder: {fileID: 403348034124452148}
+  meleeHolderFpc: {fileID: 3920751088718375137}
   animator: {fileID: 6211307834317732771}
   ts: {fileID: 0}
   titleAnimFemale: {fileID: 0}
@@ -77945,7 +77960,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 5740449512303423526}
   viewIdField: 0
-  InstantiationId: 5
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &5740449512303423526
 MonoBehaviour:
@@ -84269,6 +84284,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7789761908811335557}
+  - component: {fileID: 3920751088718375137}
   m_Layer: 0
   m_Name: MeleeHolder
   m_TagString: Untagged
@@ -84290,6 +84306,20 @@ Transform:
   m_Father: {fileID: 5740449511114285311}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3920751088718375137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7003835059919085997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b207e75df4e3ea45bd6eab50b71b8bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 0}
+  fpc: {fileID: 5740449512303423505}
 --- !u!1 &7077642089931131468
 GameObject:
   m_ObjectHideFlags: 0

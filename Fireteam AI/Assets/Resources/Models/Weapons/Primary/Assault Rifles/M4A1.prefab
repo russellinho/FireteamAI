@@ -617,6 +617,8 @@ MonoBehaviour:
   isSticky: 0
   suppressorSlot: {fileID: 5149717123467559727}
   sightSlot: {fileID: 5149717123024950540}
+  crosshairAimOffset:
+  - -0.000358
 --- !u!114 &560032853809100592
 MonoBehaviour:
   m_ObjectHideFlags: 0

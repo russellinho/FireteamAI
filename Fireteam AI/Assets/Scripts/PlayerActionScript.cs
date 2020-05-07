@@ -954,7 +954,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     public void SetEnemySeenBy(int enemyPViewId) {
-        if (enemySeenBy.pView.ViewID == enemyPViewId) return;
+        if (enemySeenBy != null && enemySeenBy.pView.ViewID == enemyPViewId) return;
         photonView.RPC("RpcSetEnemySeenBy", RpcTarget.All, enemyPViewId);
     }
 

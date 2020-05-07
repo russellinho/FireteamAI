@@ -191,13 +191,6 @@ public class SetupControllerScript : MonoBehaviour
                                             "\"equippedSight\":\"\"," +
                                             "\"equippedClip\":\"\""
                                         + "}," +
-                                        "\"AK-47\": {" +
-                                            "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            "\"duration\":\"-1\"," +
-                                            "\"equippedSuppressor\":\"\"," +
-                                            "\"equippedSight\":\"\"," +
-                                            "\"equippedClip\":\"\""
-                                        + "}," + 
                                         "\"Glock23\": {" +
                                             "\"acquireDate\":\"" + DateTime.Now + "\"," +
                                             "\"duration\":\"-1\"," +

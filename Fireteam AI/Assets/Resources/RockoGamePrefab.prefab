@@ -15545,6 +15545,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7931743956772690215}
+  - component: {fileID: 5741926992978944701}
   m_Layer: 0
   m_Name: MeleeHolder
   m_TagString: Untagged
@@ -15566,6 +15567,20 @@ Transform:
   m_Father: {fileID: 4391917949692346635}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5741926992978944701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090146099129897343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b207e75df4e3ea45bd6eab50b71b8bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 0}
+  fpc: {fileID: 5450131833376609927}
 --- !u!1 &1195406384233945485
 GameObject:
   m_ObjectHideFlags: 0
@@ -67743,6 +67758,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 287801938774683780}
+  - component: {fileID: 6480637734012992525}
   m_Layer: 0
   m_Name: MeleeHolder
   m_TagString: Untagged
@@ -67764,6 +67780,20 @@ Transform:
   m_Father: {fileID: 8744563713728537756}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6480637734012992525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5187651945496008329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b207e75df4e3ea45bd6eab50b71b8bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 0}
+  fpc: {fileID: 5450131833376609927}
 --- !u!1 &5282195460604462244
 GameObject:
   m_ObjectHideFlags: 0
@@ -67955,6 +67985,8 @@ MonoBehaviour:
   playerActionScript: {fileID: 5450131833376609925}
   weaponHolder: {fileID: 4164905208309185980}
   weaponHolderFpc: {fileID: 9184082227174818071}
+  meleeHolder: {fileID: 6480637734012992525}
+  meleeHolderFpc: {fileID: 5741926992978944701}
   animator: {fileID: 7377487831252852062}
   ts: {fileID: 0}
   titleAnimFemale: {fileID: 0}
@@ -67962,6 +67994,7 @@ MonoBehaviour:
   equippedPrimaryWeapon: 
   equippedSecondaryWeapon: 
   equippedSupportWeapon: 
+  equippedMeleeWeapon: 
   equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryAmmoLeft: 0
@@ -68274,14 +68307,18 @@ MonoBehaviour:
   animator: {fileID: 7377487831252852062}
   animatorFpc: {fileID: 4391917949699878585}
   weaponStats: {fileID: 0}
+  meleeStats: {fileID: 0}
   spread: 0
   totalAmmoLeft: 0
   currentAmmo: 0
   shootPoint: {fileID: 1587178028555730542}
   fpcShootPoint: {fileID: 1587178028555730542}
+  meleeTargetPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  isLunging: 0
   isReloading: 0
   isCocking: 0
   isFiring: 0
+  isMeleeing: 0
   isAiming: 0
   isDrawing: 0
   isWieldingThrowable: 0
@@ -68486,8 +68523,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 5450131833376609934}
-  viewIdField: 0
-  InstantiationId: 3
+  viewIdField: 1
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &5450131833376609934
 MonoBehaviour:

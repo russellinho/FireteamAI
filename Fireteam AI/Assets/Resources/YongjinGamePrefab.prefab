@@ -53021,6 +53021,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3630245128581019657}
+  - component: {fileID: 2409825598989644643}
   m_Layer: 0
   m_Name: MeleeHolder
   m_TagString: Untagged
@@ -53042,6 +53043,20 @@ Transform:
   m_Father: {fileID: 2819501846858407328}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2409825598989644643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4437481321895080199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b207e75df4e3ea45bd6eab50b71b8bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 0}
+  fpc: {fileID: 9157702028478079586}
 --- !u!1 &4446077611883919550
 GameObject:
   m_ObjectHideFlags: 0
@@ -83832,6 +83847,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8589053777486986817}
+  - component: {fileID: 592312717501376885}
   m_Layer: 0
   m_Name: MeleeHolder
   m_TagString: Untagged
@@ -83853,6 +83869,20 @@ Transform:
   m_Father: {fileID: 596526171494708718}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &592312717501376885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8571186219409389131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b207e75df4e3ea45bd6eab50b71b8bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 0}
+  fpc: {fileID: 9157702028478079586}
 --- !u!1 &8615018302284375852
 GameObject:
   m_ObjectHideFlags: 0
@@ -84293,7 +84323,7 @@ MonoBehaviour:
   myFpcSkinRenderer: {fileID: 596526171494934940}
   myFpcTopRenderer: {fileID: 596526171494934976}
   myFpcGlovesRenderer: {fileID: 596526171494934986}
-  renderHair: 0
+  renderHair: 1
   myBones: {fileID: 8229111522257773094}
   myFpcBones: {fileID: 596526171494934980}
   pView: {fileID: 9157702028478079594}
@@ -84318,6 +84348,8 @@ MonoBehaviour:
   playerActionScript: {fileID: 9157702028478079584}
   weaponHolder: {fileID: 5191979615494232491}
   weaponHolderFpc: {fileID: 5458390645251159538}
+  meleeHolder: {fileID: 2409825598989644643}
+  meleeHolderFpc: {fileID: 592312717501376885}
   animator: {fileID: 1979531056954930627}
   ts: {fileID: 0}
   titleAnimFemale: {fileID: 0}
@@ -84325,6 +84357,7 @@ MonoBehaviour:
   equippedPrimaryWeapon: 
   equippedSecondaryWeapon: 
   equippedSupportWeapon: 
+  equippedMeleeWeapon: 
   equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryAmmoLeft: 0
@@ -84637,14 +84670,18 @@ MonoBehaviour:
   animator: {fileID: 1979531056954930627}
   animatorFpc: {fileID: 596526171504286300}
   weaponStats: {fileID: 0}
+  meleeStats: {fileID: 0}
   spread: 0
   totalAmmoLeft: 0
   currentAmmo: 0
   shootPoint: {fileID: 2500264696484399755}
   fpcShootPoint: {fileID: 2500264696484399755}
+  meleeTargetPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  isLunging: 0
   isReloading: 0
   isCocking: 0
   isFiring: 0
+  isMeleeing: 0
   isAiming: 0
   isDrawing: 0
   isWieldingThrowable: 0
@@ -84850,7 +84887,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 9157702028478079595}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &9157702028478079595
 MonoBehaviour:

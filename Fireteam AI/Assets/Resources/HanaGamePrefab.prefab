@@ -335,6 +335,8 @@ MonoBehaviour:
   playerActionScript: {fileID: 580623507002314512}
   weaponHolder: {fileID: 2949754178070846948}
   weaponHolderFpc: {fileID: 2065312140489247075}
+  meleeHolder: {fileID: 6373146897359978198}
+  meleeHolderFpc: {fileID: 4984971651713030794}
   animator: {fileID: 7942259398579088921}
   ts: {fileID: 0}
   titleAnimFemale: {fileID: 0}
@@ -342,6 +344,7 @@ MonoBehaviour:
   equippedPrimaryWeapon: 
   equippedSecondaryWeapon: 
   equippedSupportWeapon: 
+  equippedMeleeWeapon: 
   equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryAmmoLeft: 0
@@ -654,14 +657,18 @@ MonoBehaviour:
   animator: {fileID: 7942259398579088921}
   animatorFpc: {fileID: 4166761373127457227}
   weaponStats: {fileID: 0}
+  meleeStats: {fileID: 0}
   spread: 0
   totalAmmoLeft: 0
   currentAmmo: 0
   shootPoint: {fileID: 507353808205619743}
   fpcShootPoint: {fileID: 507353808205619743}
+  meleeTargetPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  isLunging: 0
   isReloading: 0
   isCocking: 0
   isFiring: 0
+  isMeleeing: 0
   isAiming: 0
   isDrawing: 0
   isWieldingThrowable: 0
@@ -867,7 +874,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 580623507002314523}
   viewIdField: 0
-  InstantiationId: 3
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &580623507002314523
 MonoBehaviour:
@@ -973,6 +980,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5205226348163780574}
+  - component: {fileID: 6373146897359978198}
   m_Layer: 0
   m_Name: MeleeHolder
   m_TagString: Untagged
@@ -994,6 +1002,20 @@ Transform:
   m_Father: {fileID: 7942259398586827235}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6373146897359978198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895223955444375421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b207e75df4e3ea45bd6eab50b71b8bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 0}
+  fpc: {fileID: 580623507002314514}
 --- !u!1 &1215066601459330680
 GameObject:
   m_ObjectHideFlags: 0
@@ -1003,6 +1025,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7101364756363303312}
+  - component: {fileID: 4984971651713030794}
   m_Layer: 0
   m_Name: MeleeHolder
   m_TagString: Untagged
@@ -1024,6 +1047,20 @@ Transform:
   m_Father: {fileID: 4166761373134640767}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4984971651713030794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1215066601459330680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b207e75df4e3ea45bd6eab50b71b8bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 0}
+  fpc: {fileID: 580623507002314514}
 --- !u!1 &1315565876079285674
 GameObject:
   m_ObjectHideFlags: 0

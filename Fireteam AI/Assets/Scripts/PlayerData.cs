@@ -392,9 +392,12 @@ public class PlayerData : MonoBehaviour
                 w.name = key;
                 w.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
                 w.duration = thisSnapshot.Child("duration").Value.ToString();
-                w.equippedSuppressor = thisSnapshot.Child("equippedSuppressor").Value.ToString();
-                w.equippedClip = thisSnapshot.Child("equippedClip").Value.ToString();
-                w.equippedSight = thisSnapshot.Child("equippedSight").Value.ToString();
+                object equippedSuppressor = thisSnapshot.Child("equippedSuppressor").Value;
+                object equippedClip = thisSnapshot.Child("equippedClip").Value;
+                object equippedSight = thisSnapshot.Child("equippedSight").Value;
+                w.equippedSuppressor = (equippedSuppressor == null ? "" : equippedSuppressor.ToString());
+                w.equippedClip = (equippedClip == null ? "" : equippedClip.ToString());
+                w.equippedSight = (equippedSight == null ? "" : equippedSight.ToString());
                 // If item is expired, delete from database. Else, add it to inventory
                 float dur = float.Parse(w.duration);
                 if (dur >= 0f)
@@ -840,13 +843,20 @@ public class PlayerData : MonoBehaviour
                 w.equippedClip = "";
                 w.equippedSight = "";
                 w.equippedSuppressor = "";
-                json = "{" +
-                    "\"acquireDate\":\"" + w.acquireDate + "\"," +
-                    "\"duration\":\"" + duration + "\"," +
-                    "\"equippedSuppressor\":\"\"," +
-                    "\"equippedSight\":\"\"," +
-                    "\"equippedClip\":\"\"" +
-                "}";
+                if (type == "Melee") {
+                    json = "{" +
+                        "\"acquireDate\":\"" + w.acquireDate + "\"," +
+                        "\"duration\":\"" + duration + "\"" +
+                    "}";
+                } else {
+                    json = "{" +
+                        "\"acquireDate\":\"" + w.acquireDate + "\"," +
+                        "\"duration\":\"" + duration + "\"," +
+                        "\"equippedSuppressor\":\"\"," +
+                        "\"equippedSight\":\"\"," +
+                        "\"equippedClip\":\"\"" +
+                    "}";
+                }
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
                     .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task =>
                     {

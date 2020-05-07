@@ -83,5 +83,6 @@ public class WeaponStats : MonoBehaviour
     public bool isSticky;
     public GameObject suppressorSlot;
     public GameObject sightSlot;
+    public float[] crosshairAimOffset;
 
 }

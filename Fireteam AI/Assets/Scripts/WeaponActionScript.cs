@@ -1098,8 +1098,9 @@ public class WeaponActionScript : MonoBehaviour
             currentAimStableHandPos = weaponStats.stableHandPosFemale;
         }
         if (sightName != null) {
-            currentAimDownSightPos.y += InventoryScript.itemData.modCatalog[sightName].crosshairAimOffset;
-            currentAimStableHandPos.y += InventoryScript.itemData.modCatalog[sightName].crosshairAimOffset;
+            int index = InventoryScript.itemData.modCatalog[sightName].modIndex;
+            currentAimDownSightPos.y += weaponStats.crosshairAimOffset[index];
+            currentAimStableHandPos.y += weaponStats.crosshairAimOffset[index];
         }
     }
 
@@ -1261,7 +1262,9 @@ public class WeaponActionScript : MonoBehaviour
                     UseDeployable();
                     animatorFpc.SetTrigger("UseDeployable");
                 }
-                DestroyDeployPlanMesh();
+                if (deployPlanMesh != null) {
+                    DestroyDeployPlanMesh();
+                }
                 deployTimer = 0f;
                 if (deployInProgress) {
                     hudScript.ToggleActionBar(false, null);

@@ -649,6 +649,8 @@ MonoBehaviour:
   playerActionScript: {fileID: 0}
   weaponHolder: {fileID: 2083886839367407820}
   weaponHolderFpc: {fileID: 0}
+  meleeHolder: {fileID: 0}
+  meleeHolderFpc: {fileID: 0}
   animator: {fileID: 5670726558633446599}
   ts: {fileID: 0}
   titleAnimFemale: {fileID: 0}
@@ -656,6 +658,7 @@ MonoBehaviour:
   equippedPrimaryWeapon: 
   equippedSecondaryWeapon: 
   equippedSupportWeapon: 
+  equippedMeleeWeapon: 
   equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryAmmoLeft: 0

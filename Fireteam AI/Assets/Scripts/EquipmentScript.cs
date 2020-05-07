@@ -240,7 +240,7 @@ public class EquipmentScript : MonoBehaviour
         tws.EquipWeapon(PlayerData.playerdata.info.equippedPrimary, primaryModInfo.equippedSuppressor, primaryModInfo.equippedSight, null);
         tws.EquipWeapon(PlayerData.playerdata.info.equippedSecondary, secondaryModInfo.equippedSuppressor, secondaryModInfo.equippedSight, null);
         tws.EquipWeapon(PlayerData.playerdata.info.equippedSupport, null, null, null);
-
+        tws.EquipWeapon(PlayerData.playerdata.info.equippedMelee, null, null, null);
     }
 
     bool IsCharacterRestricted(Equipment e) {

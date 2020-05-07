@@ -1572,15 +1572,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		pistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		launcherSubBtn.gameObject.SetActive(false);
 		launcherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		explosivesSubBtn.gameObject.SetActive(true);
+		explosivesSubBtn.gameObject.SetActive(false);
 		explosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		boostersSubBtn.gameObject.SetActive(true);
+		boostersSubBtn.gameObject.SetActive(false);
 		boostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		deployablesSubBtn.gameObject.SetActive(true);
+		deployablesSubBtn.gameObject.SetActive(false);
 		deployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
-		knivesSubBtn.gameObject.SetActive(false);
+		knivesSubBtn.gameObject.SetActive(true);
 		knivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -1654,15 +1654,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSuppressorsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSightsSubBtn.gameObject.SetActive(false);
 		shopSightsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopExplosivesSubBtn.gameObject.SetActive(true);
+		shopExplosivesSubBtn.gameObject.SetActive(false);
 		shopExplosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopBoostersSubBtn.gameObject.SetActive(true);
+		shopBoostersSubBtn.gameObject.SetActive(false);
 		shopBoostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopDeployablesSubBtn.gameObject.SetActive(true);
+		shopDeployablesSubBtn.gameObject.SetActive(false);
 		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Add sub buttons
-		shopKnivesSubBtn.gameObject.SetActive(false);
+		shopKnivesSubBtn.gameObject.SetActive(true);
 		shopKnivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
@@ -2417,8 +2417,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnMarketplaceDeployablesSubBtnClicked() {
 		// Make tab orange and clear other tabs
 		shopBoostersSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopExplosivesSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
-		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
+		shopExplosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
@@ -2546,6 +2546,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopShotgunSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSniperRifleSubBtn.gameObject.SetActive(false);
 		shopSniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopPistolSubBtn.gameObject.SetActive(false);
+		shopPistolSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
+		shopLauncherSubBtn.gameObject.SetActive(false);
+		shopLauncherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopExplosivesSubBtn.gameObject.SetActive(false);
 		shopExplosivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopBoostersSubBtn.gameObject.SetActive(false);

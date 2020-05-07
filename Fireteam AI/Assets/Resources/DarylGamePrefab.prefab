@@ -26739,6 +26739,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 428754502828118145}
+  - component: {fileID: 6009211044614209200}
   m_Layer: 0
   m_Name: MeleeHolder
   m_TagString: Untagged
@@ -26760,6 +26761,20 @@ Transform:
   m_Father: {fileID: 7370182251487093239}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6009211044614209200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4831313391870516942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b207e75df4e3ea45bd6eab50b71b8bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 0}
+  fpc: {fileID: 9158664062041186691}
 --- !u!1 &5586924236429968885
 GameObject:
   m_ObjectHideFlags: 0
@@ -44547,6 +44562,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 476719042550975540}
+  - component: {fileID: 3592697640870585225}
   m_Layer: 0
   m_Name: MeleeHolder
   m_TagString: Untagged
@@ -44568,6 +44584,20 @@ Transform:
   m_Father: {fileID: 597822533608994319}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3592697640870585225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7670391472100057932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b207e75df4e3ea45bd6eab50b71b8bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 0}
+  fpc: {fileID: 9158664062041186691}
 --- !u!1 &8016540634566683845
 GameObject:
   m_ObjectHideFlags: 0
@@ -44961,8 +44991,8 @@ MonoBehaviour:
   playerActionScript: {fileID: 9158664062041186689}
   weaponHolder: {fileID: 1666870497755650213}
   weaponHolderFpc: {fileID: 5461938729601218067}
-  meleeHolder: {fileID: 0}
-  meleeHolderFpc: {fileID: 0}
+  meleeHolder: {fileID: 6009211044614209200}
+  meleeHolderFpc: {fileID: 3592697640870585225}
   animator: {fileID: 7370182251479305743}
   ts: {fileID: 0}
   titleAnimFemale: {fileID: 0}
@@ -45500,7 +45530,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 9158664062041186698}
   viewIdField: 0
-  InstantiationId: 5
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &9158664062041186698
 MonoBehaviour:

@@ -8,6 +8,7 @@ public class Mod
     public string prefabPath;
     public string category;
     public string thumbnailPath;
+    public int modIndex;
     public string crosshairPath;
     public string description;
     public float damageBoost;
@@ -18,15 +19,14 @@ public class Mod
     public int maxAmmoBoost;
     public bool purchasable;
     public int gpPrice;
-    public float crosshairAimOffset;
 
-    public Mod(string name, string category, string prefabPath, string thumbnailPath, string crosshairPath, float crosshairAimOffset, string description, float damageBoost, float accuracyBoost, float recoilBoost, float rangeBoost, int clipCapacityBoost, int maxAmmoBoost, int gpPrice, bool purchasable) {
+    public Mod(string name, string category, string prefabPath, string thumbnailPath, int modIndex, string crosshairPath, string description, float damageBoost, float accuracyBoost, float recoilBoost, float rangeBoost, int clipCapacityBoost, int maxAmmoBoost, int gpPrice, bool purchasable) {
         this.name = name;
         this.category = category;
         this.prefabPath = prefabPath;
         this.thumbnailPath = thumbnailPath;
+        this.modIndex = modIndex;
         this.crosshairPath = crosshairPath;
-        this.crosshairAimOffset = crosshairAimOffset;
         this.description = description;
         this.damageBoost = damageBoost;
         this.accuracyBoost = accuracyBoost;

@@ -2163,7 +2163,7 @@ MonoBehaviour:
   topPrefabSetupPath: Models/Clothing/Lucas/Tops/Standard Fatigues/lucasstandardfatiguestop
   bottomPrefabSetupPath: Models/Clothing/Lucas/Bottoms/Standard Fatigues/lucasstandardfatiguebottom
   footwearPrefabSetupPath: Models/Clothing/Lucas/Shoes/Standard Boots/lucasstandardboots
-  skinPrefabSetupPath: Models/Characters/Rocko/Extra Skins/Ankles Long Sleeves/lucasskinanklesonly
+  skinPrefabSetupPath: Models/Characters/Rocko/1/skinrocko1
 --- !u!114 &4177169700950929981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2181,6 +2181,8 @@ MonoBehaviour:
   playerActionScript: {fileID: 0}
   weaponHolder: {fileID: 5642859664113629068}
   weaponHolderFpc: {fileID: 0}
+  meleeHolder: {fileID: 0}
+  meleeHolderFpc: {fileID: 0}
   animator: {fileID: 1288552687020398446}
   ts: {fileID: 0}
   titleAnimFemale: {fileID: 0}
@@ -2188,6 +2190,7 @@ MonoBehaviour:
   equippedPrimaryWeapon: 
   equippedSecondaryWeapon: 
   equippedSupportWeapon: 
+  equippedMeleeWeapon: 
   equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryAmmoLeft: 0

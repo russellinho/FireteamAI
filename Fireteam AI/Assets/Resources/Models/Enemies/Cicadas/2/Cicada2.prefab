@@ -2102,7 +2102,7 @@ MonoBehaviour:
   muzzleFlash: {fileID: 4161679712428824771}
   fireRate: 0.4
   damage: 20
-  player: {fileID: 0}
+  playerTargeting: {fileID: 0}
   lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}
   navPoints:
   - {fileID: 0}
@@ -2111,6 +2111,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  suspicionMeter: 0
 --- !u!195 &2743381088716898449
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2152,8 +2153,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 1563783651166704757}
-  viewIdField: 3
-  InstantiationId: 3
+  viewIdField: 1
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &1563783651166704757
 MonoBehaviour:
