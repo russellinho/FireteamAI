@@ -3124,7 +3124,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Place the weapon template in the proper position
 		t.transform.SetParent(weaponPreviewSlot.transform);
-		t.transform.localPosition = Vector3.zero;
+		t.transform.localPosition = t.GetComponent<WeaponMods>().previewPos;
 		weaponPreviewRef = t;
 
 		// Set base stats

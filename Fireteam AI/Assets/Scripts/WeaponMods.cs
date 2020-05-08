@@ -16,6 +16,7 @@ public class WeaponMods : MonoBehaviour
     private Mod sightStats;
     private string suppressorName;
     private string sightName;
+    public Vector3 previewPos;
     // Size to scale the suppressor by for this weapon
 
     public void EquipSuppressor(string suppressorName) {
