@@ -494,7 +494,7 @@ Transform:
   m_GameObject: {fileID: 8949141913113564879}
   m_LocalRotation: {x: 0, y: -0.9396926, z: 0, w: 0.34202018}
   m_LocalPosition: {x: 0.022, y: 0.006, z: -0.0015}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalScale: {x: 0.0077, y: 0.0077, z: 0.0077}
   m_Children:
   - {fileID: 2574295660874962254}
   - {fileID: 765549473841823623}
@@ -520,3 +520,7 @@ MonoBehaviour:
   suppressorScaler: {x: 0, y: 0, z: 0}
   suppressorPos: {fileID: 0}
   suppressorRef: {fileID: 0}
+  sightScaler: {x: 0, y: 0, z: 0}
+  sightPos: {fileID: 0}
+  sightRef: {fileID: 0}
+  sightMountRef: {fileID: 0}

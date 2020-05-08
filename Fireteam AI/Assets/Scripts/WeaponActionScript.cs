@@ -1107,6 +1107,7 @@ public class WeaponActionScript : MonoBehaviour
     public void SetWeaponStats(WeaponStats ws) {
         if (ws.type.Equals("Melee")) {
             meleeStats = ws;
+            SetMeleeSpeed();
         } else {
             weaponStats = ws;
             weaponMods = ws.GetComponent<WeaponMods>();
@@ -1126,16 +1127,18 @@ public class WeaponActionScript : MonoBehaviour
                     isWieldingThrowable = true;
                     isWieldingBooster = false;
                     isWieldingDeployable = false;
+                    firingMode = FireMode.Semi;
                 } else if (weaponStats.category.Equals("Booster")) {
                     isWieldingThrowable = false;
                     isWieldingBooster = true;
                     isWieldingDeployable = false;
+                    firingMode = FireMode.Semi;
                 } else if (weaponStats.category.Equals("Deployable")) {
                     isWieldingThrowable = false;
                     isWieldingBooster = false;
                     isWieldingDeployable = true;
+                    firingMode = FireMode.Auto;
                 }
-                firingMode = FireMode.Semi;
             } else {
                 isWieldingThrowable = false;
                 isWieldingBooster = false;
@@ -1162,6 +1165,10 @@ public class WeaponActionScript : MonoBehaviour
 
     public void SetFiringSpeed(float multiplier = 1f) {
         animatorFpc.SetFloat("FireSpeed", weaponStats.defaultFireSpeed * multiplier);
+    }
+
+    public void SetMeleeSpeed(float multiplier = 1f) {
+        animatorFpc.SetFloat("MeleeSpeed", meleeStats.defaultMeleeSpeed * multiplier);
     }
 
     public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {

@@ -1659,17 +1659,21 @@ public class BetaEnemyScript : MonoBehaviour {
 			dir = new Vector3 (dir.x + xOffset, dir.y + yOffset, dir.z);
 			//Debug.DrawRay (shootPoint.position, dir * range, Color.red);
 			if (Physics.Raycast (shootPoint.position, dir, out hit)) {
-				if (hit.transform.tag.Equals ("Player") || hit.transform.tag.Equals ("Human")) {
+				if (hit.transform.tag.Equals ("Player")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
-					if (hit.transform.tag.Equals ("Player")) {
-						PlayerActionScript ps = hit.transform.GetComponent<PlayerActionScript> ();
-						ps.TakeDamage(CalculateDamageDealt(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CharacterController>().height), true);
-						//ps.ResetHitTimer ();
-						ps.SetHitLocation (transform.position);
-					} else {
-						WeaponActionScript ws = hit.transform.GetComponent<WeaponActionScript>();
-						hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(ws.CalculateDamageDealt(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CharacterController>().height, false));
-					}
+					PlayerActionScript ps = hit.transform.GetComponent<PlayerActionScript> ();
+					ps.TakeDamage(CalculateDamageDealt(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CharacterController>().height), true);
+					//ps.ResetHitTimer ();
+					ps.SetHitLocation (transform.position);
+				} else if (hit.transform.tag.Equals ("Human")) {
+					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
+					hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height, false));
+				} else if (hit.transform.tag.Equals ("EnemyArm")) {
+					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
+					hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, 0f, true));
+				} else if (hit.transform.tag.Equals ("EnemyHead")) {
+					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
+					hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(100);
 				} else {
 					pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name, gameControllerScript.teamMap);
 					pView.RPC ("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
@@ -2249,6 +2253,23 @@ public class BetaEnemyScript : MonoBehaviour {
 		} else if (bodyHeightHit < 0.8f) {
 			total *= bodyHeightHit;
 		}
+        return (int)total;
+    }
+
+	int CalculateDamageDealtAgainstEnemyAlly(float initialDamage, float baseY, float hitY, float height, bool armHit, int divisor = 1) {
+        float total = initialDamage / (float)divisor;
+        if (armHit) {
+            total /= 2f;
+        } else {
+            // Determine how high/low on the body was hit. The closer to 1, the closer to shoulders; closer to 0, closer to feet
+            float bodyHeightHit = Mathf.Abs(hitY - baseY) / height;
+            // Higher the height, the more damage dealt
+            if (bodyHeightHit <= 0.35f) {
+                total *= 0.35f;
+            } else if (bodyHeightHit < 0.8f) {
+                total *= bodyHeightHit;
+            }
+        }
         return (int)total;
     }
 

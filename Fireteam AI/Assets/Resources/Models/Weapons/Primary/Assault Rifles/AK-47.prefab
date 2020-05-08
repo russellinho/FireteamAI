@@ -10490,7 +10490,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32e91c2df4ddb4340aea227b3730de5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  suppressorScaler: {x: 10, y: 10, z: 8}
+  suppressorScaler: {x: 8, y: 8, z: 6}
   suppressorPos: {fileID: 3090217328826816307}
   suppressorRef: {fileID: 0}
   sightScaler: {x: 0.15, y: 0.15, z: 0.15}

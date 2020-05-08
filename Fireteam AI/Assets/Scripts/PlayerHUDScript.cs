@@ -613,11 +613,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         {
 			// Preemptive check
 			if (container.actionBarImgs[0].enabled) {
+				Debug.Log("oooo");
 				return;
 			}
 			container.actionBarText.text = actionText;
             for (int i = 0; i < c; i++)
             {
+				Debug.Log(i);
                 container.actionBarImgs[i].enabled = true;
             }
         }

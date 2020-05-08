@@ -295,7 +295,7 @@ Transform:
   m_GameObject: {fileID: 1859999209818623783}
   m_LocalRotation: {x: -0.7071068, y: 0.7071068, z: -0, w: 0}
   m_LocalPosition: {x: 0.164, y: 0.079, z: 0.004}
-  m_LocalScale: {x: 0.016, y: 0.016, z: 0.016}
+  m_LocalScale: {x: 0.0205, y: 0.0205, z: 0.0205}
   m_Children:
   - {fileID: 3183945540913311269}
   - {fileID: 7299669702070576252}
@@ -643,9 +643,9 @@ MonoBehaviour:
   defaultRightCollarPosMale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   defaultRightCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   aimDownSightSpeed: 6.5
-  aimDownSightClipping: 0.03
-  titleHandPositionsMale: {x: 0.0986, y: 0.2469, z: 0.024}
-  titleHandPositionsFemale: {x: 0.0986, y: 0.2469, z: 0.024}
+  aimDownSightClipping: 0.02
+  titleHandPositionsMale: {x: 0.1473236, y: 0.263719, z: 0.02197724}
+  titleHandPositionsFemale: {x: 0.1473236, y: 0.263719, z: 0.02197724}
   recoveryConstant: 3
   fireSound: {fileID: 134961559763851575}
   suppressedFireSound: {fileID: 5090137998641266065}
@@ -677,10 +677,10 @@ MonoBehaviour:
   fpcScaleFemale: {x: 0.00018, y: 0.00018, z: 0.00018}
   fullPosMale: {x: 0.108, y: 0.244, z: 0.028}
   fullRotMale: {x: 0, y: 180, z: -90}
-  fullScaleMale: {x: 0.016, y: 0.016, z: 0.016}
+  fullScaleMale: {x: 0.0205, y: 0.0205, z: 0.0205}
   fullPosFemale: {x: 0.1076, y: 0.22, z: 0.028}
   fullRotFemale: {x: 0, y: 180, z: -90}
-  fullScaleFemale: {x: 0.016, y: 0.016, z: 0.016}
+  fullScaleFemale: {x: 0.0205, y: 0.0205, z: 0.0205}
   maleOverrideController: {fileID: 22100000, guid: 6167079c71f8bf740b86126179c7d230,
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: 524b231cc3157bf449081cc33505e55e,
@@ -737,7 +737,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32e91c2df4ddb4340aea227b3730de5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  suppressorScaler: {x: 10, y: 10, z: 8}
+  suppressorScaler: {x: 7, y: 7, z: 5}
   suppressorPos: {fileID: 6810742633131497922}
   suppressorRef: {fileID: 0}
   sightScaler: {x: 0.15, y: 0.15, z: 0.15}
@@ -6234,7 +6234,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8678606153968345823
 Transform:
   m_ObjectHideFlags: 0

@@ -344,7 +344,7 @@ Transform:
   m_GameObject: {fileID: 3195845319259767637}
   m_LocalRotation: {x: -0.7071068, y: 0.7071068, z: -0, w: 0}
   m_LocalPosition: {x: 0.022, y: 0.006, z: -0.0015}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalScale: {x: 0.0077, y: 0.0077, z: 0.0077}
   m_Children:
   - {fileID: 5975928415449503521}
   - {fileID: 4964667291621588889}
@@ -749,6 +749,7 @@ MonoBehaviour:
   isSticky: 0
   suppressorSlot: {fileID: 0}
   sightSlot: {fileID: 0}
+  crosshairAimOffset: []
 --- !u!114 &3195845319259767635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -767,6 +768,7 @@ MonoBehaviour:
   sightScaler: {x: 0, y: 0, z: 0}
   sightPos: {fileID: 0}
   sightRef: {fileID: 0}
+  sightMountRef: {fileID: 0}
 --- !u!95 &3195845319259767634
 Animator:
   serializedVersion: 3

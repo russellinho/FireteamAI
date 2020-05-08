@@ -11,8 +11,6 @@ GameObject:
   - component: {fileID: 8398499195938589000}
   - component: {fileID: 8398499195938589004}
   - component: {fileID: 8398499195938589005}
-  - component: {fileID: 8398499195938589006}
-  - component: {fileID: 8398499195938589007}
   m_Layer: 0
   m_Name: BulletChain (5)
   m_TagString: Untagged
@@ -80,36 +78,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499195938589006
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499195938589001}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499195938589007
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499195938589001}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
 --- !u!1 &8398499195943746217
 GameObject:
   m_ObjectHideFlags: 0
@@ -121,8 +89,6 @@ GameObject:
   - component: {fileID: 8398499195943746216}
   - component: {fileID: 8398499195943746220}
   - component: {fileID: 8398499195943746221}
-  - component: {fileID: 8398499195943746222}
-  - component: {fileID: 8398499195943746223}
   m_Layer: 0
   m_Name: BulletChain (8)
   m_TagString: Untagged
@@ -190,36 +156,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499195943746222
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499195943746217}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499195943746223
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499195943746217}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
 --- !u!1 &8398499195992665224
 GameObject:
   m_ObjectHideFlags: 0
@@ -231,8 +167,6 @@ GameObject:
   - component: {fileID: 8398499195992665231}
   - component: {fileID: 8398499195992665235}
   - component: {fileID: 8398499195992665228}
-  - component: {fileID: 8398499195992665229}
-  - component: {fileID: 8398499195992665230}
   m_Layer: 0
   m_Name: BulletChain (2)
   m_TagString: Untagged
@@ -300,36 +234,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499195992665229
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499195992665224}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499195992665230
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499195992665224}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
 --- !u!1 &8398499196025805837
 GameObject:
   m_ObjectHideFlags: 0
@@ -341,8 +245,6 @@ GameObject:
   - component: {fileID: 8398499196025805836}
   - component: {fileID: 8398499196025805840}
   - component: {fileID: 8398499196025805841}
-  - component: {fileID: 8398499196025805842}
-  - component: {fileID: 8398499196025805843}
   m_Layer: 0
   m_Name: BulletChain (1)
   m_TagString: Untagged
@@ -410,36 +312,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499196025805842
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499196025805837}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499196025805843
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499196025805837}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
 --- !u!1 &8398499196078523991
 GameObject:
   m_ObjectHideFlags: 0
@@ -451,8 +323,6 @@ GameObject:
   - component: {fileID: 8398499196078523990}
   - component: {fileID: 8398499196078523994}
   - component: {fileID: 8398499196078523995}
-  - component: {fileID: 8398499196078523988}
-  - component: {fileID: 8398499196078523989}
   m_Layer: 0
   m_Name: BulletChain (6)
   m_TagString: Untagged
@@ -520,36 +390,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499196078523988
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499196078523991}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499196078523989
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499196078523991}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
 --- !u!1 &8398499196300652942
 GameObject:
   m_ObjectHideFlags: 0
@@ -561,8 +401,6 @@ GameObject:
   - component: {fileID: 8398499196300652941}
   - component: {fileID: 8398499196300652945}
   - component: {fileID: 8398499196300652946}
-  - component: {fileID: 8398499196300652947}
-  - component: {fileID: 8398499196300652940}
   m_Layer: 0
   m_Name: BulletChain (4)
   m_TagString: Untagged
@@ -630,36 +468,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499196300652947
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499196300652942}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499196300652940
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499196300652942}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
 --- !u!1 &8398499196525366921
 GameObject:
   m_ObjectHideFlags: 0
@@ -671,8 +479,6 @@ GameObject:
   - component: {fileID: 8398499196525366920}
   - component: {fileID: 8398499196525366924}
   - component: {fileID: 8398499196525366925}
-  - component: {fileID: 8398499196525366926}
-  - component: {fileID: 8398499196525366927}
   m_Layer: 0
   m_Name: BulletChain (10)
   m_TagString: Untagged
@@ -740,36 +546,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499196525366926
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499196525366921}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499196525366927
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499196525366921}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
 --- !u!1 &8398499196553453459
 GameObject:
   m_ObjectHideFlags: 0
@@ -781,9 +557,6 @@ GameObject:
   - component: {fileID: 8398499196553453458}
   - component: {fileID: 8398499196553453461}
   - component: {fileID: 8398499196553453462}
-  - component: {fileID: 8398499196553453463}
-  - component: {fileID: 8398499196553453456}
-  - component: {fileID: 8398499196553453457}
   m_Layer: 0
   m_Name: BulletChain
   m_TagString: Untagged
@@ -866,147 +639,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499196553453463
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499196553453459}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499196553453456
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499196553453459}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
---- !u!114 &8398499196553453457
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499196553453459}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c43498bce601e664389264ef87dea2cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  frameIndex: 52
-  framePositions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: -4.7795925, y: -8.2814045, z: -7.478851}
-  - {x: -5.1783934, y: -7.7324805, z: -7.8060665}
-  - {x: -6.5053787, y: -4.7077317, z: -9.675998}
-  - {x: -6.6582484, y: -0.48893335, z: -9.973205}
-  - {x: -6.342391, y: 0.043113444, z: -7.395163}
-  - {x: -6.267855, y: -0.7307125, z: -5.382306}
-  - {x: -6.2678723, y: -0.73070925, z: -5.382304}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  weaponTransform: {fileID: 0}
-  attachToTransform: {fileID: 0}
-  partTransform: {fileID: 8398499196553453458}
 --- !u!1 &8398499196712041648
 GameObject:
   m_ObjectHideFlags: 0
@@ -1018,8 +650,6 @@ GameObject:
   - component: {fileID: 8398499196712041655}
   - component: {fileID: 8398499196712041659}
   - component: {fileID: 8398499196712041652}
-  - component: {fileID: 8398499196712041653}
-  - component: {fileID: 8398499196712041654}
   m_Layer: 0
   m_Name: BulletChain (3)
   m_TagString: Untagged
@@ -1087,36 +717,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499196712041653
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499196712041648}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499196712041654
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499196712041648}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
 --- !u!1 &8398499197057109193
 GameObject:
   m_ObjectHideFlags: 0
@@ -1128,8 +728,6 @@ GameObject:
   - component: {fileID: 8398499197057109192}
   - component: {fileID: 8398499197057109196}
   - component: {fileID: 8398499197057109197}
-  - component: {fileID: 8398499197057109198}
-  - component: {fileID: 8398499197057109199}
   m_Layer: 0
   m_Name: BulletChain (9)
   m_TagString: Untagged
@@ -1197,36 +795,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499197057109198
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499197057109193}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499197057109199
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499197057109193}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
 --- !u!1 &8398499197143878800
 GameObject:
   m_ObjectHideFlags: 0
@@ -1238,8 +806,6 @@ GameObject:
   - component: {fileID: 8398499197143878807}
   - component: {fileID: 8398499197143878811}
   - component: {fileID: 8398499197143878804}
-  - component: {fileID: 8398499197143878805}
-  - component: {fileID: 8398499197143878806}
   m_Layer: 0
   m_Name: BulletChain (12)
   m_TagString: Untagged
@@ -1307,36 +873,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499197143878805
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499197143878800}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499197143878806
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499197143878800}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
 --- !u!1 &8398499197257686213
 GameObject:
   m_ObjectHideFlags: 0
@@ -1348,8 +884,6 @@ GameObject:
   - component: {fileID: 8398499197257686212}
   - component: {fileID: 8398499197257686216}
   - component: {fileID: 8398499197257686217}
-  - component: {fileID: 8398499197257686218}
-  - component: {fileID: 8398499197257686219}
   m_Layer: 0
   m_Name: BulletChain (15)
   m_TagString: Untagged
@@ -1417,36 +951,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499197257686218
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499197257686213}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499197257686219
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499197257686213}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
 --- !u!1 &8398499197329457899
 GameObject:
   m_ObjectHideFlags: 0
@@ -1458,8 +962,6 @@ GameObject:
   - component: {fileID: 8398499197329457898}
   - component: {fileID: 8398499197329457902}
   - component: {fileID: 8398499197329457903}
-  - component: {fileID: 8398499197329457896}
-  - component: {fileID: 8398499197329457897}
   m_Layer: 0
   m_Name: BulletChain (11)
   m_TagString: Untagged
@@ -1527,36 +1029,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499197329457896
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499197329457899}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499197329457897
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499197329457899}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
 --- !u!1 &8398499197504548415
 GameObject:
   m_ObjectHideFlags: 0
@@ -1568,8 +1040,6 @@ GameObject:
   - component: {fileID: 8398499197504548414}
   - component: {fileID: 8398499197504548418}
   - component: {fileID: 8398499197504548419}
-  - component: {fileID: 8398499197504548412}
-  - component: {fileID: 8398499197504548413}
   m_Layer: 0
   m_Name: BulletChain (14)
   m_TagString: Untagged
@@ -1637,36 +1107,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499197504548412
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499197504548415}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499197504548413
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499197504548415}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
 --- !u!1 &8398499197625755605
 GameObject:
   m_ObjectHideFlags: 0
@@ -1678,8 +1118,6 @@ GameObject:
   - component: {fileID: 8398499197625755604}
   - component: {fileID: 8398499197625755608}
   - component: {fileID: 8398499197625755609}
-  - component: {fileID: 8398499197625755610}
-  - component: {fileID: 8398499197625755611}
   m_Layer: 0
   m_Name: BulletChain (7)
   m_TagString: Untagged
@@ -1747,36 +1185,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499197625755610
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499197625755605}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499197625755611
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499197625755605}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}
 --- !u!1 &8398499197945083712
 GameObject:
   m_ObjectHideFlags: 0
@@ -1788,8 +1196,6 @@ GameObject:
   - component: {fileID: 8398499197945083719}
   - component: {fileID: 8398499197945083723}
   - component: {fileID: 8398499197945083716}
-  - component: {fileID: 8398499197945083717}
-  - component: {fileID: 8398499197945083718}
   m_Layer: 0
   m_Name: BulletChain (13)
   m_TagString: Untagged
@@ -1857,33 +1263,3 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &8398499197945083717
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499197945083712}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &8398499197945083718
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8398499197945083712}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.014
-  m_Height: 0.055
-  m_Direction: 2
-  m_Center: {x: -0.0000000023283064, y: -0.0000000037252896, z: -0.004555001}

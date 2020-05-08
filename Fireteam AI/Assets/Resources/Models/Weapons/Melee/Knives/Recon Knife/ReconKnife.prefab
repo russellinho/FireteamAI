@@ -267,7 +267,7 @@ MonoBehaviour:
   defaultWeaponCockingSpeed: 0
   defaultWeaponDrawSpeed: 2
   defaultFireSpeed: 0
-  defaultMeleeSpeed: 0.35
+  defaultMeleeSpeed: 1
   reloadTransitionSpeed: 0
   reloadSound1Time: -1
   reloadSound2Time: -1
@@ -284,6 +284,7 @@ MonoBehaviour:
   isSticky: 0
   suppressorSlot: {fileID: 0}
   sightSlot: {fileID: 0}
+  crosshairAimOffset: []
 --- !u!82 &1845820254158781790
 AudioSource:
   m_ObjectHideFlags: 0
