@@ -12,7 +12,7 @@ public class WeaponActionScript : MonoBehaviour
     private const float SHELL_SPEED = 3f;
     private const float SHELL_TUMBLE = 4f;
     private const float DEPLOY_BASE_TIME = 2f;
-    private const short DEPLOY_OFFSET = 4;
+    private const short DEPLOY_OFFSET = 1;
 
     public MouseLook mouseLook;
     public PlayerActionScript playerActionScript;
@@ -1257,7 +1257,6 @@ public class WeaponActionScript : MonoBehaviour
                 }
                 deployInProgress = true;
                 hudScript.SetActionBarSlider(deployTimer);
-            } else {
                 // Determine if the deploy position is valid or not. If it isn't valid,
                 // then skip deployment and reset. Else,
                 // Reset deploy time and set deploy position
@@ -1269,6 +1268,7 @@ public class WeaponActionScript : MonoBehaviour
                     UseDeployable();
                     animatorFpc.SetTrigger("UseDeployable");
                 }
+            } else {
                 if (deployPlanMesh != null) {
                     DestroyDeployPlanMesh();
                 }

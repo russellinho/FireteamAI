@@ -604,6 +604,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				return;
 			}
             // Disable all actionbar components
+			container.actionBarText.enabled = false;
             for (int i = 0; i < c; i++)
             {
                 container.actionBarImgs[i].enabled = false;
@@ -613,13 +614,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         {
 			// Preemptive check
 			if (container.actionBarImgs[0].enabled) {
-				Debug.Log("oooo");
 				return;
 			}
 			container.actionBarText.text = actionText;
+			container.actionBarText.enabled = true;
             for (int i = 0; i < c; i++)
             {
-				Debug.Log(i);
                 container.actionBarImgs[i].enabled = true;
             }
         }
