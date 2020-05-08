@@ -11,7 +11,7 @@ public class WeaponActionScript : MonoBehaviour
 
     private const float SHELL_SPEED = 3f;
     private const float SHELL_TUMBLE = 4f;
-    private const float DEPLOY_BASE_TIME = 3f;
+    private const float DEPLOY_BASE_TIME = 2f;
     private const short DEPLOY_OFFSET = 4;
 
     public MouseLook mouseLook;

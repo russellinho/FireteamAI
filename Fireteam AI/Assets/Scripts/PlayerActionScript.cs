@@ -502,8 +502,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             }
         } else {
             fpc.canMove = true;
-            hud.ToggleActionBar(false, null);
-            hud.ToggleChatText(true);
+            if (!wepActionScript.deployInProgress) {
+                hud.ToggleActionBar(false, null);
+                hud.ToggleChatText(true);
+            }
             interactionTimer = 0f;
         }
     }

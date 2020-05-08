@@ -5839,7 +5839,7 @@ MonoBehaviour:
   defaultRightCollarPosMale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   defaultRightCollarPosFemale: {x: -0.0005, y: 0.001242948, z: -2.449463e-12}
   aimDownSightSpeed: 5
-  aimDownSightClipping: 0.02
+  aimDownSightClipping: 0.01
   titleHandPositionsMale: {x: -0.06, y: 0.13, z: 0.011}
   titleHandPositionsFemale: {x: -0.06, y: 0.13, z: 0.011}
   recoveryConstant: 6
@@ -5883,8 +5883,8 @@ MonoBehaviour:
   femaleOverrideController: {fileID: 22100000, guid: 29d9bb6630d4a294fa97f265cf8765e1,
     type: 2}
   weaponAnimator: {fileID: 2551591207314833829}
-  defaultFpcReloadSpeed: 1.25
-  defaultWeaponReloadSpeed: 0.625
+  defaultFpcReloadSpeed: 0.625
+  defaultWeaponReloadSpeed: 0.3125
   defaultWeaponCockingSpeed: 0
   defaultWeaponDrawSpeed: 3.5
   defaultFireSpeed: 2
