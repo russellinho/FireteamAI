@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 1202125147765149687}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.5, y: 3.5, z: 3.5}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children:
   - {fileID: 3640507622431665294}
   m_Father: {fileID: 9074406007831952789}
@@ -4867,7 +4867,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1728903407301983184}
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0.7071068, w: 0}
-  m_LocalPosition: {x: -126, y: 0, z: 0}
+  m_LocalPosition: {x: -8403, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 9074406007831952789}
@@ -4881,14 +4881,14 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1728903407301983184}
   serializedVersion: 6
-  lengthInSec: 5
+  lengthInSec: 1.5
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 3
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   looping: 1
-  prewarm: 0
+  prewarm: 1
   playOnAwake: 1
   useUnscaledTime: 0
   autoRandomSeed: 1
@@ -4903,7 +4903,7 @@ ParticleSystem:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -4912,7 +4912,7 @@ ParticleSystem:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 1
-        value: 1
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -4956,7 +4956,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1.7
+      scalar: 1.5
       minScalar: 4
       maxCurve:
         serializedVersion: 2
@@ -4991,7 +4991,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 75
+      scalar: 25
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -14391,7 +14391,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9074406007831952789}
-  - component: {fileID: 5455440209890545541}
+  - component: {fileID: 3720301466067820181}
   - component: {fileID: 5455440209890545595}
   - component: {fileID: 5455440209890545540}
   - component: {fileID: 1329253752820116128}
@@ -14423,8 +14423,8 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &5455440209890545541
-CapsuleCollider:
+--- !u!135 &3720301466067820181
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -14433,10 +14433,9 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 7
-  m_Height: 100
-  m_Direction: 0
-  m_Center: {x: -5.6, y: 0, z: 0}
+  serializedVersion: 2
+  m_Radius: 15
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &5455440209890545595
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -14446,7 +14445,7 @@ Rigidbody:
   m_GameObject: {fileID: 5455440209890545542}
   serializedVersion: 2
   m_Mass: 6
-  m_Drag: 0.45
+  m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
@@ -14468,7 +14467,7 @@ MonoBehaviour:
   weaponName: RPG-7
   type: Secondary
   category: Launcher
-  damage: 90
+  damage: 110
   mobility: 73
   fireRate: 1
   accuracy: 0
@@ -14487,7 +14486,7 @@ MonoBehaviour:
   defaultRightCollarPosMale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   defaultRightCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   aimDownSightSpeed: 5
-  aimDownSightClipping: 0.02
+  aimDownSightClipping: 0.01
   titleHandPositionsMale: {x: -0.047, y: 0.145, z: 0.022}
   titleHandPositionsFemale: {x: -0.047, y: 0.145, z: 0.022}
   recoveryConstant: 13
@@ -14557,6 +14556,7 @@ MonoBehaviour:
   isSticky: 0
   suppressorSlot: {fileID: 0}
   sightSlot: {fileID: 0}
+  crosshairAimOffset: []
 --- !u!114 &1329253752820116128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14570,11 +14570,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rBody: {fileID: 5455440209890545595}
-  col: {fileID: 5455440209890545541}
-  projectileRenderer: []
+  col: {fileID: 3720301466067820181}
+  projectileRenderer:
+  - {fileID: 3099830616174074167}
+  - {fileID: 3099830616525984686}
   explosionEffect: {fileID: 5403858624999346439}
   smokeTrail: {fileID: 1728903407283856048}
-  blastRadius: 50
+  blastRadius: 1000
   explosionSound: {fileID: 7132720518896132096}
   projectileSound: {fileID: 3167151068738940115}
   fromPlayerId: 0
@@ -14599,8 +14601,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 2798807483350663826}
-  viewIdField: 0
-  InstantiationId: 3
+  viewIdField: 1
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &2798807483350663826
 MonoBehaviour:
@@ -14735,7 +14737,7 @@ AudioSource:
   Priority: 90
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 30
+  MaxDistance: 20
   Pan2D: 0
   rolloffMode: 2
   BypassEffects: 0
@@ -14772,8 +14774,8 @@ AudioSource:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.30579785
-      value: 0.17645264
+      time: 0.2914622
+      value: 0.09712219
       inSlope: -0.21260853
       outSlope: -0.21260853
       tangentMode: 0
@@ -14781,8 +14783,8 @@ AudioSource:
       inWeight: 0
       outWeight: 0.91193
     - serializedVersion: 3
-      time: 0.58550316
-      value: 0.15899658
+      time: 0.5747457
+      value: 0.053237915
       inSlope: -0.11723435
       outSlope: -0.11723435
       tangentMode: 0
@@ -14791,7 +14793,7 @@ AudioSource:
       outWeight: 0
     - serializedVersion: 3
       time: 1
-      value: 0.14911702
+      value: 0
       inSlope: -0.033346657
       outSlope: -0.033346657
       tangentMode: 0
@@ -14806,7 +14808,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0

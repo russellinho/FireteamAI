@@ -83,7 +83,6 @@ public class WeaponActionScript : MonoBehaviour
     public ShotMode shotMode;
     private bool shootInput;
     private bool meleeInput;
-    public bool quickFiredRocket;
 
     // Once it equals fireRate, it will allow us to shoot
     float fireTimer = 0.0f;
@@ -255,12 +254,7 @@ public class WeaponActionScript : MonoBehaviour
             {
                 if (shotMode == ShotMode.Single) {
                     if (weaponStats.category.Equals("Launcher")) {
-                        if (aimDownSightsTimer >= 1f) {
-                            FireLauncher();
-                        } else {
-                            quickFiredRocket = true;
-
-                        }
+                        FireLauncher();
                     } else {
                         Fire();
                     }
@@ -305,9 +299,6 @@ public class WeaponActionScript : MonoBehaviour
                 } else if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'F') {
                     leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, currentAimStableHandPos, aimDownSightsTimer);
                     rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, currentAimDownSightPos, aimDownSightsTimer);
-                }
-                if (quickFiredRocket && aimDownSightsTimer >= 1f) {
-                    FireLauncher();
                 }
             // If coming back to normal
             } else {
@@ -370,7 +361,7 @@ public class WeaponActionScript : MonoBehaviour
                 originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
             }*/
 
-            if ((Input.GetButton("Fire2") || quickFiredRocket) && !isReloading && IsPumpActionCocking() && !isDrawing)
+            if (Input.GetButton("Fire2") && !isReloading && IsPumpActionCocking() && !isDrawing)
             {
                 fpc.SetAiminginFPCAnimator(true);
                 if (!isAiming) {
@@ -432,8 +423,6 @@ public class WeaponActionScript : MonoBehaviour
                 hudScript.toggleSniperOverlay(false);
                 hudScript.ToggleSightCrosshair(false);
             }
-        } else {
-            quickFiredRocket = false;
         }
     }
 
@@ -623,7 +612,6 @@ public class WeaponActionScript : MonoBehaviour
         IncreaseRecoil();
         UpdateRecoil(true);
         pView.RPC("FireEffectsLauncher", RpcTarget.All);
-        quickFiredRocket = false;
     }
 
     public void SpawnShellCasing() {
@@ -864,7 +852,6 @@ public class WeaponActionScript : MonoBehaviour
         InstantiateGunSmokeEffect(3f);
         PlayShootSound();
         UseLauncherItem();
-        currentAmmo--;
         playerActionScript.weaponScript.SyncAmmoCounts();
         // Reset fire timer
         fireTimer = 0.0f;
@@ -1302,8 +1289,9 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     public void UseLauncherItem() {
-        GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.itemData.weaponCatalog[weaponStats.weaponName].prefabPath + "Projectile", weaponHolderFpc.transform.position, Quaternion.identity);
-        projectile.transform.right = -weaponHolderFpc.transform.forward;
+        GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.itemData.weaponCatalog[weaponStats.weaponName].prefabPath + "Projectile", camTransform.position + camTransform.forward, Quaternion.identity);
+        // projectile.transform.right = -weaponHolderFpc.transform.forward;
+        projectile.transform.right = -camTransform.forward;
         projectile.GetComponent<LauncherScript>().Launch(gameObject, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
         currentAmmo--;
         playerActionScript.weaponScript.SyncAmmoCounts();
@@ -1415,7 +1403,6 @@ public class WeaponActionScript : MonoBehaviour
         isUsingBooster = false;
         isUsingDeployable = false;
         isCocking = false;
-        quickFiredRocket = false;
     }
 
     public void UseFirstAidKit(int deployableId) {

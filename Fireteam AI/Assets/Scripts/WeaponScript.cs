@@ -170,13 +170,10 @@ public class WeaponScript : MonoBehaviour
         // Debug.Log("isUsingBooster: " + weaponActionScript.isUsingBooster);
         if (CheckCanSwitchWeapon()) {
             if (Input.GetKeyDown(KeyCode.Alpha1) || (currentlyEquippedType == 4 && weaponActionScript.totalAmmoLeft <= 0 && weaponActionScript.currentAmmo <= 0)) {
-                weaponActionScript.quickFiredRocket = false;
                 DrawPrimary();
             } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-                weaponActionScript.quickFiredRocket = false;
                 DrawSecondary();
             } else if (Input.GetKeyDown(KeyCode.Alpha4)) {
-                weaponActionScript.quickFiredRocket = false;
                 DrawSupport();
             }
         }
@@ -224,7 +221,7 @@ public class WeaponScript : MonoBehaviour
         if (weaponActionScript != null) {
             WeaponStats ws = weaponActionScript.weaponStats;
             if (ws == null) return;
-            if (ws.warheadRenderer != null && currentAmmoSecondary == 0) {
+            if (ws.warheadRenderer != null && !weaponActionScript.isReloading) {
                 if (currentAmmoSecondary == 0) {
                     ws.warheadRenderer.gameObject.SetActive(false);
                 } else {

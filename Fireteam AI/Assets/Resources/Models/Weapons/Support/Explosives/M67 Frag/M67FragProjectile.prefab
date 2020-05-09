@@ -405,6 +405,7 @@ MonoBehaviour:
   accuracy: 0
   recoil: 0
   range: 0
+  lungeRange: 0
   clipCapacity: 1
   maxAmmo: 3
   steadyAim: 0
@@ -426,6 +427,8 @@ MonoBehaviour:
   weaponSoundSource: {fileID: 0}
   reloadSounds: []
   supportActionSound: {fileID: 0}
+  meleeSwingSound: {fileID: 0}
+  meleeLungeSound: {fileID: 0}
   gunSmoke: {fileID: 0}
   weaponShell: {fileID: 0}
   weaponShellPoint: {fileID: 0}
@@ -456,15 +459,22 @@ MonoBehaviour:
   defaultWeaponCockingSpeed: 0
   defaultWeaponDrawSpeed: 0
   defaultFireSpeed: 0
+  defaultMeleeSpeed: 0
   reloadTransitionSpeed: 0
   reloadSound1Time: 0
   reloadSound2Time: 0
   reloadSound3Time: 0
   reloadSound4Time: 0
   supportSoundTime: 0
+  switchToLeftDuringReload: 0
+  switchToLeftTime: 0
   weaponParts: []
   warheadRenderer: {fileID: 0}
+  deployPlanMesh: {fileID: 0}
+  isSticky: 0
   suppressorSlot: {fileID: 0}
+  sightSlot: {fileID: 0}
+  crosshairAimOffset: []
 --- !u!114 &533506344782479917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -513,7 +523,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 4083596899743687192}
-  viewIdField: 0
+  viewIdField: 1
   InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &4083596899743687192

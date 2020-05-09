@@ -660,7 +660,7 @@ MonoBehaviour:
   weaponName: RPG-7
   type: Secondary
   category: Launcher
-  damage: 90
+  damage: 110
   mobility: 73
   fireRate: 1
   accuracy: 0
@@ -679,7 +679,7 @@ MonoBehaviour:
   defaultRightCollarPosMale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   defaultRightCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   aimDownSightSpeed: 5
-  aimDownSightClipping: 0.02
+  aimDownSightClipping: 0.005
   titleHandPositionsMale: {x: -0.047, y: 0.145, z: 0.022}
   titleHandPositionsFemale: {x: -0.047, y: 0.145, z: 0.022}
   recoveryConstant: 13
@@ -721,14 +721,14 @@ MonoBehaviour:
   femaleOverrideController: {fileID: 22100000, guid: f20be3bb56497d841a59287bf27af0f0,
     type: 2}
   weaponAnimator: {fileID: 3195845319259767634}
-  defaultFpcReloadSpeed: 0.75
-  defaultWeaponReloadSpeed: 0.375
+  defaultFpcReloadSpeed: 0.5
+  defaultWeaponReloadSpeed: 0.25
   defaultWeaponCockingSpeed: 0
   defaultWeaponDrawSpeed: 3.5
-  defaultFireSpeed: 2
+  defaultFireSpeed: 1.5
   defaultMeleeSpeed: 0
   reloadTransitionSpeed: 0.02
-  reloadSound1Time: 0.18
+  reloadSound1Time: 0.45
   reloadSound2Time: 0.5
   reloadSound3Time: 0.85
   reloadSound4Time: -1
@@ -769,6 +769,7 @@ MonoBehaviour:
   sightPos: {fileID: 0}
   sightRef: {fileID: 0}
   sightMountRef: {fileID: 0}
+  previewPos: {x: 0, y: 0, z: 0}
 --- !u!95 &3195845319259767634
 Animator:
   serializedVersion: 3

@@ -6,9 +6,12 @@ using Photon.Realtime;
 
 public class LauncherScript : MonoBehaviour
 {
-    private const float LAUNCH_FORCE_MULTIPLIER = 30f;
+    private const float LAUNCH_FORCE_MULTIPLIER = 45f;
+    // RPG cannot be active for more than 12 seconds
+    private const float MAX_ACTIVE_TIME = 12f;
+    private const float EXPLOSION_ACTIVE_DELAY = 1.5f;
     public Rigidbody rBody;
-    public CapsuleCollider col;
+    public SphereCollider col;
     public MeshRenderer[] projectileRenderer;
     public ParticleSystem explosionEffect;
     public ParticleSystem smokeTrail;
@@ -19,6 +22,8 @@ public class LauncherScript : MonoBehaviour
     public bool isLive;
     private ArrayList playersHit;
     public PhotonView pView;
+    private float explosionActiveDelay;
+    private float activeTime;
 
     // Start is called before the first frame update
     void Awake()
@@ -26,13 +31,23 @@ public class LauncherScript : MonoBehaviour
         playersHit = new ArrayList();
         explosionEffect.Stop();
         isLive = true;
+        explosionActiveDelay = EXPLOSION_ACTIVE_DELAY;
+        activeTime = 0f;
     }
 
-    void Update() {
+    void LateUpdate() {
         if (!isLive) {
             // Disable explosion collider
-            col.enabled = false;
-            if (!explosionEffect.IsAlive()) {
+            explosionActiveDelay -= Time.deltaTime;
+            if (explosionActiveDelay <= 0f) {
+                col.enabled = false;
+                if (!explosionEffect.IsAlive()) {
+                    DestroySelf();
+                }
+            }
+        } else {
+            activeTime += Time.deltaTime;
+            if (activeTime >= MAX_ACTIVE_TIME) {
                 DestroySelf();
             }
         }
@@ -40,7 +55,7 @@ public class LauncherScript : MonoBehaviour
 
     void OnCollisionEnter(Collision collision) {
         if (PhotonNetwork.IsMasterClient) {
-            if (collision.gameObject.layer != 4) {
+            if (isLive && collision.gameObject.layer != 4) {
                 Explode();
             }
         }
@@ -50,7 +65,9 @@ public class LauncherScript : MonoBehaviour
     void RpcExplode() {
         // Freeze the physics
         isLive = false;
+        rBody.velocity = Vector3.zero;
         rBody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+        rBody.isKinematic = true;
         // Create blast radius trigger collider - enemy will be affected if within this collider sphere during explosion
         EnableBlastCollider();
         // Make missile disappear
@@ -97,6 +114,7 @@ public class LauncherScript : MonoBehaviour
         // Apply a force to the throwable that's equal to the forward position of the weapon holder
         rBody.velocity = new Vector3(xForce * LAUNCH_FORCE_MULTIPLIER, yForce * LAUNCH_FORCE_MULTIPLIER, zForce * LAUNCH_FORCE_MULTIPLIER);
         isLive = true;
+        rBody.freezeRotation = true;
     }
 
     [PunRPC]

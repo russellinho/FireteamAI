@@ -8,10 +8,12 @@ public class ThrowableScript : MonoBehaviour
 {
     private const float THROW_FORCE_MULTIPLIER = 25f;
     public static float MAX_FLASHBANG_TIME = 9f; // 8 seconds max flashbang time
+    private const float EXPLOSION_ACTIVE_DELAY = 1.5f;
     public Rigidbody rBody;
     public SphereCollider col;
     public MeshRenderer[] renderers;
     public ParticleSystem explosionEffect;
+    private float explosionActiveDelay;
     public float fuseTimer;
     public bool explosionDelay;
     private float explosionDelayTimer;
@@ -29,7 +31,8 @@ public class ThrowableScript : MonoBehaviour
     {
         playersHit = new ArrayList();
         explosionEffect.Stop();
-        isLive = false;
+        isLive = true;
+        explosionActiveDelay = EXPLOSION_ACTIVE_DELAY;
     }
 
     public void AddHitPlayer(int vId)
@@ -56,7 +59,7 @@ public class ThrowableScript : MonoBehaviour
         fromPlayerId = playerViewId;
     }
 
-    void Update() {
+    void LateUpdate() {
         if (isLive) {
             fuseTimer -= Time.deltaTime;
             if (fuseTimer <= 0f) {
@@ -67,6 +70,7 @@ public class ThrowableScript : MonoBehaviour
                 }
             }
         } else {
+            explosionActiveDelay -= Time.deltaTime;
             if (explosionDelay) {
                 if (explosionDelayTimer > 0f) {
                     explosionDelayTimer -= Time.deltaTime;
@@ -77,17 +81,21 @@ public class ThrowableScript : MonoBehaviour
                 }
                 if (fuseTimer <= 0f && explosionDelayTimer <= 0f) {
                     // Disable explosion collider
-                    col.enabled = false;
-                    if (!explosionEffect.IsAlive()) {
-                        DestroySelf();
+                    if (explosionActiveDelay <= 0f) {
+                        col.enabled = false;
+                        if (!explosionEffect.IsAlive()) {
+                            DestroySelf();
+                        }
                     }
                 }
             } else {
                 if (fuseTimer <= 0f) {
                     // Disable explosion collider
-                    col.enabled = false;
-                    if (!explosionEffect.IsAlive()) {
-                        DestroySelf();
+                    if (explosionActiveDelay <= 0f) {
+                        col.enabled = false;
+                        if (!explosionEffect.IsAlive()) {
+                            DestroySelf();
+                        }
                     }
                 }
             }

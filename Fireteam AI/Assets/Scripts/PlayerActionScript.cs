@@ -683,6 +683,28 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 hud.FlashbangEffect(totalDisorientationTime);
                 audioController.PlayFlashbangEarRingSound(totalDisorientationTime);
             }
+        } else if (other.gameObject.name.Contains("RPG-7")) {
+            LauncherScript l = other.gameObject.GetComponent<LauncherScript>();
+            // If a ray casted from the enemy head to the grenade position is obscured, then the explosion is blocked
+            if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !l.isLive && !l.PlayerHasBeenAffected(photonView.ViewID))
+            {
+                // Determine how far from the explosion the enemy was
+                float distanceFromExplosion = Vector3.Distance(transform.position, other.gameObject.transform.position);
+                float blastRadius = other.gameObject.GetComponent<LauncherScript>().blastRadius;
+                distanceFromExplosion = Mathf.Min(distanceFromExplosion, blastRadius);
+                float scale = 1f - (distanceFromExplosion / blastRadius);
+
+                // Scale damage done to enemy by the distance from the explosion
+                WeaponStats launcherStats = other.gameObject.GetComponent<WeaponStats>();
+                int damageReceived = (int)(launcherStats.damage * scale);
+
+                // Validate that this enemy has already been affected
+                l.AddHitPlayer(photonView.ViewID);
+                // Deal damage to the player
+                TakeDamage(damageReceived, false);
+                //ResetHitTimer();
+                SetHitLocation(other.transform.position);
+            }
         }
     }
 
@@ -708,6 +730,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         o.GetComponent<PickupScript>().PlayPickupSound();
         o.GetComponent<PickupScript>().DestroyPickup();
         gameController.DestroyPickup(pickupId);
+    }
+
+    void OnControllerColliderHit(ControllerColliderHit hit) {
+        LauncherScript l = hit.collider.gameObject.GetComponent<LauncherScript>();
+        if (l != null) {
+            l.Explode();
+        }
     }
 
     void OnTriggerEnter(Collider other)
