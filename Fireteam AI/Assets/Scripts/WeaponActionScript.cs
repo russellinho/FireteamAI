@@ -12,7 +12,7 @@ public class WeaponActionScript : MonoBehaviour
     private const float SHELL_SPEED = 3f;
     private const float SHELL_TUMBLE = 4f;
     private const float DEPLOY_BASE_TIME = 2f;
-    private const short DEPLOY_OFFSET = 1;
+    private const short DEPLOY_OFFSET = 2;
 
     public MouseLook mouseLook;
     public PlayerActionScript playerActionScript;
@@ -1311,8 +1311,12 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     bool DeployPositionIsValid() {
+        // Nothing can ever be planted in mid-air.
         // If the deploy plan mesh is sticky, then it can be planted anywhere.
         // If it isn't, then it can only be planted if the up vector is above 45 degrees
+        if () {
+            
+        }
         if (weaponStats.isSticky) {
             return true;
         }
