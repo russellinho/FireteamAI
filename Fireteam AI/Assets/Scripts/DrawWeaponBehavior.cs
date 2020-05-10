@@ -10,6 +10,7 @@ public class DrawWeaponBehavior : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
        was = animator.GetComponentInParent<WeaponActionScript>();
+       was.deployInProgress = false;
        was.isDrawing = true;
        ws = was.playerActionScript.weaponScript;
        if (ws.currentlyEquippedType == 1) {

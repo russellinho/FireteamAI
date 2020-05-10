@@ -233,9 +233,19 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	bool CanPause() {
+		if (wepActionScript.isCocking || wepActionScript.isDrawing || wepActionScript.isMeleeing || wepActionScript.isFiring || wepActionScript.isAiming || wepActionScript.isCockingGrenade 
+			|| wepActionScript.deployInProgress || wepActionScript.isUsingBooster || wepActionScript.isUsingDeployable || wepActionScript.isReloading || wepActionScript.fpc.m_IsRunning
+			|| container.scoreboard.GetComponent<Canvas>().enabled) {
+				return false;
+			}
+		return true;
+	}
+
 	void UpdateCursorStatus() {
-		if (Input.GetKeyDown(KeyCode.Escape) && !wepActionScript.isCockingGrenade && !container.scoreboard.GetComponent<Canvas>().enabled)
+		if (Input.GetKeyDown(KeyCode.Escape) && CanPause()) {
 			Pause();
+		}
 
 		if (container.pauseMenuGUI.activeInHierarchy)
 		{

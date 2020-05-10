@@ -191,6 +191,8 @@ public class WeaponScript : MonoBehaviour
             return false;
         } else if (weaponActionScript.isUsingDeployable) {
             return false;
+        } else if (weaponActionScript.deployInProgress) {
+            return false;
         } else if (weaponActionScript.hudScript.container.pauseMenuGUI.activeInHierarchy) {
             return false;
         }
@@ -221,7 +223,7 @@ public class WeaponScript : MonoBehaviour
         if (weaponActionScript != null) {
             WeaponStats ws = weaponActionScript.weaponStats;
             if (ws == null) return;
-            if (ws.warheadRenderer != null && !weaponActionScript.isReloading) {
+            if (ws.warheadRenderer != null && !weaponActionScript.isReloading && !weaponActionScript.isFiring) {
                 if (currentAmmoSecondary == 0) {
                     ws.warheadRenderer.gameObject.SetActive(false);
                 } else {
@@ -988,6 +990,7 @@ public class WeaponScript : MonoBehaviour
         MaxRefillAmmoOnPrimary();
         MaxRefillAmmoOnSecondary();
         MaxRefillAmmoOnSupport();
+        RefreshAmmoCounts();
     }
 
     public void MaxRefillAmmoOnPrimary() {

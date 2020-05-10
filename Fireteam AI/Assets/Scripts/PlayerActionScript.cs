@@ -59,6 +59,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private string interactingWith;
     private GameObject activeInteractable;
     private float interactionTimer;
+    private bool interactionLock;
     private float enterSpectatorModeTimer;
     private bool unlimitedStamina;
     private float originalSpeed;
@@ -187,6 +188,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         {
             return;
         }
+
+        UnlockInteractionLock();
 
         updatePlayerSpeed();
         // Instant respawn hack
@@ -385,6 +388,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
+    void UnlockInteractionLock() {
+        if (Input.GetKeyUp(KeyCode.F)) {
+            interactionLock = false;
+        }
+    }
+
     public void HandleCrouch()
     {
         if (Input.GetKeyDown(KeyCode.LeftControl))
@@ -485,6 +494,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     photonView.RPC("RpcDefuseBomb", RpcTarget.All, b.bombId);
                     gameController.DecrementBombsRemaining();
                     activeInteractable = null;
+                    interactionLock = true;
                 }
             } else if (interactingWith == "Deploy") {
                 hud.ToggleActionBar(true, "USING...");
@@ -498,6 +508,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     } else if (d.deployableName == "First Aid Kit") {
                         wepActionScript.UseFirstAidKit(d.deployableId);
                     }
+                    interactionLock = true;
                 }
             }
         } else {
@@ -525,7 +536,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 if (b.defused) {
                     SetInteracting(false, null);
                 }
-                if (Input.GetKey(KeyCode.F)) {
+                if (Input.GetKey(KeyCode.F) && !interactionLock) {
                     // Use the deployable
                     SetInteracting(true, "Bomb");
                     hud.ToggleHintText(null);
@@ -538,6 +549,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         } else {
             // Stop using the deployable
             SetInteracting(false, null);
+            hud.ToggleHintText(null);
         }
     }
 
@@ -546,7 +558,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (activeInteractable != null && !hud.PauseIsActive()) {
             DeployableScript d = activeInteractable.GetComponent<DeployableScript>();
             if (d != null) {
-                if (Input.GetKey(KeyCode.F)) {
+                if (Input.GetKey(KeyCode.F) && !interactionLock) {
                     // Use the deployable
                     SetInteracting(true, "Deploy");
                     hud.ToggleHintText(null);
@@ -559,6 +571,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         } else {
             // Stop using the deployable
             SetInteracting(false, null);
+            hud.ToggleHintText(null);
         }
     }
 

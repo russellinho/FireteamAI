@@ -155,6 +155,10 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
 
+        if (!deployInProgress && deployPlanMesh != null) {
+            DestroyDeployPlanMesh();
+        }
+
         if (Input.GetKeyDown(KeyCode.Q))
         {
             if (firingMode == FireMode.Semi)
@@ -198,7 +202,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     bool AutoReloadCheck() {
-        if (isDrawing || isFiring || isMeleeing || isReloading || isCockingGrenade || isUsingBooster || isUsingDeployable || isCocking || fpc.m_IsRunning) {
+        if (isDrawing || isFiring || isMeleeing || isReloading || isCockingGrenade || isUsingBooster || isUsingDeployable || deployInProgress || isCocking || fpc.m_IsRunning) {
             return false;
         }
         return true;
@@ -449,7 +453,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     bool CanMelee() {
-        if (isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || isUsingBooster || isUsingDeployable) {
+        if (isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || deployInProgress || isUsingBooster || isUsingDeployable) {
             return false;
         }
         return true;
@@ -1246,13 +1250,20 @@ public class WeaponActionScript : MonoBehaviour
                 // Determine if the deploy position is valid or not. If it isn't valid,
                 // then skip deployment and reset. Else,
                 // Reset deploy time and set deploy position
-                if (deployTimer >= 1f && deployInProgress && DeployPositionIsValid()) {
-                    deployPos = deployPlanMesh.gameObject.transform.position;
-                    deployRot = deployPlanMesh.gameObject.transform.rotation;
-                    isUsingDeployable = true;
-                    pView.RPC("RpcUseDeployable", RpcTarget.All);
-                    UseDeployable();
-                    animatorFpc.SetTrigger("UseDeployable");
+                if (deployTimer >= 1f && deployInProgress) {
+                    // If deploy position was valid, then deploy the item
+                    if (DeployPositionIsValid()) {
+                        deployPos = deployPlanMesh.gameObject.transform.position;
+                        deployRot = deployPlanMesh.gameObject.transform.rotation;
+                        isUsingDeployable = true;
+                        deployInProgress = false;
+                        pView.RPC("RpcUseDeployable", RpcTarget.All);
+                        UseDeployable();
+                        animatorFpc.SetTrigger("UseDeployable");
+                    } else {
+                        // Else, reset the deploy timer
+                        deployTimer = 0f;
+                    }
                 }
             } else {
                 if (deployPlanMesh != null) {
@@ -1418,6 +1429,7 @@ public class WeaponActionScript : MonoBehaviour
         isCockingGrenade = false;
         isUsingBooster = false;
         isUsingDeployable = false;
+        deployInProgress = false;
         isCocking = false;
     }
 
