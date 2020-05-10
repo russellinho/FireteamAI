@@ -155,10 +155,6 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
 
-        if (deployPlanMesh != null) {
-            UpdateDeployPlanMesh();
-        }
-
         if (Input.GetKeyDown(KeyCode.Q))
         {
             if (firingMode == FireMode.Semi)
@@ -322,6 +318,9 @@ public class WeaponActionScript : MonoBehaviour
 
     void LateUpdate() {
         UpdateAimDownSightsArms();
+        if (deployPlanMesh != null) {
+            UpdateDeployPlanMesh();
+        }
     }
 
     void ToggleFpsWeapon(bool b) {
@@ -1302,14 +1301,18 @@ public class WeaponActionScript : MonoBehaviour
         // Nothing can ever be planted in mid-air.
         // If the deploy plan mesh is sticky, then it can be planted anywhere.
         // If it isn't, then it can only be planted if the up vector is above 45 degrees
-        if () {
-            
+        RaycastHit hit;
+        int validTerrainMask = (1 << 4) & (1 << 5) & (1 << 9) & (1 << 11) & (1 << 12) & (1 << 13) & (1 << 14) & (1 << 15) & (1 << 16) & (1 << 17) & (1 << 18);
+        validTerrainMask = ~validTerrainMask;
+        if (deployPlanMesh.collidingWithObject == null) {
+            return false;
         }
         if (weaponStats.isSticky) {
             return true;
-        }
-        if (deployPlanMesh.gameObject.transform.up.y >= 0.5f) {
-            return true;
+        } else {
+            if (deployPlanMesh.gameObject.transform.up.y >= 0.5f) {
+                return true;
+            }
         }
         return false;
     }
@@ -1324,11 +1327,20 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     void UpdateDeployPlanMesh() {
-        deployPlanMesh.gameObject.transform.position = CalculateDeployPlanMeshPos();
+        Rigidbody deployPlanMeshR = deployPlanMesh.gameObject.GetComponent<Rigidbody>();
+        // deployPlanMesh.gameObject.transform.position = CalculateDeployPlanMeshPos();
+        Vector3 destinationPos = CalculateDeployPlanMeshPos();
+        var toDestination = destinationPos - deployPlanMesh.gameObject.transform.position;
+        // Calculate force
+        var force = toDestination / Time.fixedDeltaTime * 0.5f;
+        // Remove any existing velocity and add force to move to final position
+        deployPlanMeshR.velocity = Vector3.zero;
+        deployPlanMeshR.AddForce(force, ForceMode.VelocityChange);
         if (deployPlanMesh.collidingWithObject == null) {
             deployPlanMesh.gameObject.transform.rotation = Quaternion.identity;
         } else {
-            deployPlanMesh.gameObject.transform.up = deployPlanMesh.collidingWithObject.transform.up;
+            deployPlanMesh.gameObject.transform.rotation = Quaternion.FromToRotation (Vector3.up, deployPlanMesh.contactNormal);
+            // deployPlanMesh.gameObject.transform.up = deployPlanMesh.collidingWithObject.transform.up;
         }
         if (!DeployPositionIsValid()) {
             hudScript.ToggleDeployInvalidText(true);
