@@ -468,6 +468,7 @@ public class WeaponActionScript : MonoBehaviour
     void Melee() {
         if (!CanMelee())
         {
+            Debug.Log("cannot melee");
             return;
         }
 
@@ -480,13 +481,12 @@ public class WeaponActionScript : MonoBehaviour
             meleeTargetPos = hit.transform.GetComponentInParent<BetaEnemyScript>().gameObject.transform.position;
             isLunging = true;
             // Lunge
-            animatorFpc.SetBool("isLunge", true);
+            animatorFpc.Play("MeleeLunge");
         } else {
             // Slash
             isLunging = false;
-            animatorFpc.SetBool("isLunge", false);
+            animatorFpc.Play("MeleeSwing");
         }
-        animatorFpc.SetTrigger("Melee");
     }
 
     // Scans for melee

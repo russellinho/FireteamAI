@@ -382,7 +382,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3860504239686838637}
   - component: {fileID: 3228278617422855584}
-  - component: {fileID: 533506344782479917}
   - component: {fileID: 5561465029240044045}
   m_Layer: 0
   m_Name: M67Frag
@@ -434,6 +433,7 @@ MonoBehaviour:
   accuracy: 0
   recoil: 0
   range: 0
+  lungeRange: 0
   clipCapacity: 1
   maxAmmo: 3
   steadyAim: 0
@@ -455,6 +455,8 @@ MonoBehaviour:
   weaponSoundSource: {fileID: 5561465029240044045}
   reloadSounds: []
   supportActionSound: {fileID: 8300000, guid: 1e8e2372dca8d3943ac529eadf06aa7e, type: 3}
+  meleeSwingSound: {fileID: 0}
+  meleeLungeSound: {fileID: 0}
   gunSmoke: {fileID: 0}
   weaponShell: {fileID: 0}
   weaponShellPoint: {fileID: 0}
@@ -487,12 +489,15 @@ MonoBehaviour:
   defaultWeaponCockingSpeed: 0
   defaultWeaponDrawSpeed: 3
   defaultFireSpeed: 0
+  defaultMeleeSpeed: 0
   reloadTransitionSpeed: 0
   reloadSound1Time: -1
   reloadSound2Time: -1
   reloadSound3Time: -1
   reloadSound4Time: -1
   supportSoundTime: 0.45
+  switchToLeftDuringReload: 0
+  switchToLeftTime: 0
   weaponParts:
   - {fileID: 3860504239684545413}
   - {fileID: 3860504239684545415}
@@ -500,36 +505,11 @@ MonoBehaviour:
   - {fileID: 3860504239684545411}
   - {fileID: 3860504239684545421}
   warheadRenderer: {fileID: 0}
+  deployPlanMesh: {fileID: 0}
+  isSticky: 0
   suppressorSlot: {fileID: 0}
---- !u!114 &533506344782479917
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3860504239686808909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6afd04f3b73b0542a6bd42f2bdc5e47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rBody: {fileID: 0}
-  col: {fileID: 0}
-  renderers:
-  - {fileID: 3860504239684545413}
-  - {fileID: 3860504239684545415}
-  - {fileID: 3860504239684545409}
-  - {fileID: 3860504239684545411}
-  - {fileID: 3860504239684545421}
-  explosionEffect: {fileID: 7142040739807068215}
-  fuseTimer: 3.5
-  explosionDelay: 0
-  blastRadius: 45
-  isLive: 0
-  explosionSound: {fileID: 0}
-  pinSound: {fileID: 5561465029240044045}
-  fromPlayerId: 0
-  pView: {fileID: 0}
+  sightSlot: {fileID: 0}
+  crosshairAimOffset: []
 --- !u!82 &5561465029240044045
 AudioSource:
   m_ObjectHideFlags: 0
