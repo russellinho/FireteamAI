@@ -10,7 +10,9 @@ public class MeleeBehavior : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         was = animator.GetComponentInParent<WeaponActionScript>();
-        was.SetMouseDynamicsForMelee(true);
+        if (was.isLunging) {
+            was.SetMouseDynamicsForMelee(true);
+        }
         was.isMeleeing = true;
         attackDealt = false;
     }
@@ -19,15 +21,12 @@ public class MeleeBehavior : StateMachineBehaviour
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if (was.isLunging) {
-            was.UpdateMeleeDash(stateInfo.normalizedTime);
-            if (!attackDealt && stateInfo.normalizedTime >= 0.8f) {
-                was.DealMeleeDamage();
-                attackDealt = true;
-            }
+            // was.UpdateMeleeDash(stateInfo.normalizedTime);
+            was.UpdateMeleeDash();
+            was.DealMeleeDamage();
         } else {
-            if (!attackDealt && stateInfo.normalizedTime >= 0.5f) {
+            if (stateInfo.normalizedTime <= 0.5f) {
                 was.DealMeleeDamage();
-                attackDealt = true;
             }
         }
     }
@@ -36,6 +35,7 @@ public class MeleeBehavior : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         was.isMeleeing = false;
+        was.EndMeleeDash();
         was.meleeTargetPos = Vector3.negativeInfinity;
         was.SetMouseDynamicsForMelee(false);
     }

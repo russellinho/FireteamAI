@@ -210,8 +210,8 @@ MonoBehaviour:
   fireRate: 0
   accuracy: 0
   recoil: 0
-  range: 3
-  lungeRange: 7
+  range: 0.5
+  lungeRange: 3
   clipCapacity: 0
   maxAmmo: 0
   steadyAim: 0

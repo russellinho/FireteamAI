@@ -36,6 +36,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_YRotation;
         public Vector2 m_Input;
         private Vector3 m_MoveDir = Vector3.zero;
+        private Vector3 m_DashDir = Vector3.zero;
         public CharacterController m_CharacterController;
         private CollisionFlags m_CollisionFlags;
         private bool m_PreviouslyGrounded;
@@ -264,9 +265,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
                                m_CharacterController.height/2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
             desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
 
-            m_MoveDir.x = desiredMove.x*speed;
-            m_MoveDir.z = desiredMove.z*speed;
-
+            if (m_DashDir.Equals(Vector3.zero)) {
+                m_MoveDir.x = desiredMove.x*speed;
+                m_MoveDir.z = desiredMove.z*speed;
+            } else {
+                m_MoveDir = m_DashDir;
+            }
 
             if (m_CharacterController.isGrounded)
             {
@@ -369,6 +373,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_Camera.transform.localPosition = newCameraPosition;
         }
 
+        public void DashMove(Vector3 dashDir) {
+            m_DashDir = dashDir;
+        }
+
+        public void EndDash() {
+            m_DashDir = Vector3.zero;
+        }
 
         private void GetInput(out float speed)
 		{
@@ -442,7 +453,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 StartCoroutine(!m_IsWalking ? m_FovKick.FOVKickUp() : m_FovKick.FOVKickDown());
             }
             if (meleeSlowActive) {
-                speed = 0.5f;
+                speed = 1f;
             }
 			if (!canMove)
 				speed = 0f;

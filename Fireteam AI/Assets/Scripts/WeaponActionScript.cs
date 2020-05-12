@@ -13,6 +13,7 @@ public class WeaponActionScript : MonoBehaviour
     private const float SHELL_TUMBLE = 4f;
     private const float DEPLOY_BASE_TIME = 2f;
     private const short DEPLOY_OFFSET = 2;
+    private const float LUNGE_SPEED = 20f;
 
     public MouseLook mouseLook;
     public PlayerActionScript playerActionScript;
@@ -453,27 +454,30 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     bool CanMelee() {
-        if (isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || deployInProgress || isUsingBooster || isUsingDeployable) {
+        if (!fpc.m_CharacterController.isGrounded || isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || deployInProgress || isUsingBooster || isUsingDeployable) {
             return false;
         }
         return true;
     }
 
-    // Updates player position if doing a melee lunge
-    public void UpdateMeleeDash(float t) {
-        transform.position = Vector3.Lerp(meleeStartingPos, meleeTargetPos, t);
+    public void UpdateMeleeDash() {
+        Vector3 dashDir = meleeTargetPos - transform.position;
+        fpc.DashMove(dashDir * LUNGE_SPEED);
+    }
+
+    public void EndMeleeDash() {
+        fpc.EndDash();
     }
 
     // Initiates a melee attack
     void Melee() {
         if (!CanMelee())
         {
-            Debug.Log("cannot melee");
             return;
         }
 
         isMeleeing = true;
-        int enemyMask = (1 << 13) & (1 << 14) & (1 << 17);
+        int enemyMask = 1 << 14;
         RaycastHit hit;
         if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, meleeStats.lungeRange, enemyMask)) {
             // Dash/warp to the enemyTarget position
@@ -494,11 +498,11 @@ public class WeaponActionScript : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, meleeStats.range)) {
             if (hit.transform.tag.Equals("Human")) {
-                pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                 BetaEnemyScript b = hit.transform.gameObject.GetComponent<BetaEnemyScript>();
                 int beforeHp = b.health;
                 if (beforeHp > 0)
                 {
+                    pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                     hudScript.InstantiateHitmarker();
                     audioController.PlayHitmarkerSound();
                     b.TakeDamage((int)meleeStats.damage);
@@ -1313,7 +1317,7 @@ public class WeaponActionScript : MonoBehaviour
         // If the deploy plan mesh is sticky, then it can be planted anywhere.
         // If it isn't, then it can only be planted if the up vector is above 45 degrees
         RaycastHit hit;
-        int validTerrainMask = (1 << 4) & (1 << 5) & (1 << 9) & (1 << 11) & (1 << 12) & (1 << 13) & (1 << 14) & (1 << 15) & (1 << 16) & (1 << 17) & (1 << 18);
+        int validTerrainMask = (1 << 4) | (1 << 5) | (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 16) | (1 << 17) | (1 << 18);
         validTerrainMask = ~validTerrainMask;
         if (deployPlanMesh.collidingWithObject == null) {
             return false;
