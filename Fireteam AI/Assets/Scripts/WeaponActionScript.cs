@@ -539,7 +539,6 @@ public class WeaponActionScript : MonoBehaviour
         float zSpread = Random.Range(-spread, spread);
         Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
         int headshotLayer = (1 << 13);
-        int armLayer = (1 << 17);
         if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer))
         {
             pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
@@ -551,29 +550,13 @@ public class WeaponActionScript : MonoBehaviour
                 RewardKill(true);
                 audioController.PlayHeadshotSound();
             }
-        } else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, armLayer)) {
-            pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
-            int beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript>().health;
-            int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height, true);
-            if (beforeHp > 0)
-            {
-                hudScript.InstantiateHitmarker();
-                audioController.PlayHitmarkerSound();
-                hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage(thisDamageDealt);
-                hit.transform.gameObject.GetComponent<BetaEnemyScript>().PlayGruntSound();
-                hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted(true);
-                if (hit.transform.gameObject.GetComponent<BetaEnemyScript>().health <= 0 && beforeHp > 0)
-                {
-                    RewardKill(false);
-                }
-            }
         } else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range))
         {
             if (hit.transform.tag.Equals("Human"))
             {
                 pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                 int beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript>().health;
-                int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height, false);
+                int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height);
                 if (beforeHp > 0)
                 {
                     hudScript.InstantiateHitmarker();
@@ -658,7 +641,6 @@ public class WeaponActionScript : MonoBehaviour
         bool headshotDetected = false;
         float totalDamageDealt = 0f;
         int headshotLayer = (1 << 13);
-        int armLayer = (1 << 17);
         for (int i = 0; i < 8; i++) {
             float xSpread = Random.Range(-0.07f, 0.07f);
             float ySpread = Random.Range(-0.07f, 0.07f);
@@ -675,34 +657,13 @@ public class WeaponActionScript : MonoBehaviour
                     audioController.PlayHeadshotSound();
                 }
                 headshotDetected = true;
-            } else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, armLayer)) {
-                int beforeHp = 0;
-                int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height, true, 8);
-                pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
-                beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript>().health;
-                if (totalDamageDealt == 0f) {
-                    if (beforeHp > 0)
-                    {
-                        hudScript.InstantiateHitmarker();
-                        audioController.PlayHitmarkerSound();
-                        //hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
-                        hit.transform.gameObject.GetComponent<BetaEnemyScript>().PlayGruntSound();
-                        hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted(true);
-                    }
-                }
-                hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage(thisDamageDealt);
-                if (hit.transform.gameObject.GetComponent<BetaEnemyScript>().health <= 0 && beforeHp > 0)
-                {
-                    RewardKill(false);
-                }
-                totalDamageDealt += thisDamageDealt;
             } else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range))
             {
                 Debug.DrawRay(fpcShootPoint.position, impactDir, Color.blue, 10f, false);
                 if (hit.transform.tag.Equals("Human"))
                 {
                     int beforeHp = 0;
-                    int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height, false, 8);
+                    int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height, 8);
                     pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
                     beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript>().health;
                     if (totalDamageDealt == 0f) {
@@ -796,19 +757,15 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
-    public int CalculateDamageDealt(float initialDamage, float baseY, float hitY, float height, bool armHit, int divisor = 1) {
+    public int CalculateDamageDealt(float initialDamage, float baseY, float hitY, float height, int divisor = 1) {
         float total = initialDamage / (float)divisor;
-        if (armHit) {
-            total /= 2f;
-        } else {
-            // Determine how high/low on the body was hit. The closer to 1, the closer to shoulders; closer to 0, closer to feet
-            float bodyHeightHit = Mathf.Abs(hitY - baseY) / height;
-            // Higher the height, the more damage dealt
-            if (bodyHeightHit <= 0.35f) {
-                total *= 0.35f;
-            } else if (bodyHeightHit < 0.8f) {
-                total *= bodyHeightHit;
-            }
+        // Determine how high/low on the body was hit. The closer to 1, the closer to shoulders; closer to 0, closer to feet
+        float bodyHeightHit = Mathf.Abs(hitY - baseY) / height;
+        // Higher the height, the more damage dealt
+        if (bodyHeightHit <= 0.35f) {
+            total *= 0.35f;
+        } else if (bodyHeightHit < 0.8f) {
+            total *= bodyHeightHit;
         }
         return (int)total;
     }

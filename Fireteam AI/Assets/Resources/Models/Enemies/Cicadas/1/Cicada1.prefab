@@ -556,10 +556,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6527639969203407398}
-  - component: {fileID: 8427418278186703179}
-  m_Layer: 17
+  m_Layer: 0
   m_Name: mixamorig:LeftArm
-  m_TagString: EnemyArm
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -579,20 +578,6 @@ Transform:
   m_Father: {fileID: 6527639969203407474}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &8427418278186703179
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6527639969203574278}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.06
-  m_Height: 0.73
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.4, z: 0.02}
 --- !u!1 &6527639969203574280
 GameObject:
   m_ObjectHideFlags: 0
@@ -827,7 +812,6 @@ GameObject:
   - component: {fileID: 2965390375756972196}
   - component: {fileID: 5569050124725493036}
   - component: {fileID: 7293948857185702030}
-  - component: {fileID: 3501738085876707798}
   - component: {fileID: 3824582766227978001}
   - component: {fileID: 8197734878590509653}
   m_Layer: 14
@@ -1166,19 +1150,6 @@ MonoBehaviour:
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
---- !u!65 &3501738085876707798
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6527639969203574290}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.15, y: 1.5, z: 1.15}
-  m_Center: {x: 0, y: 1.08, z: 0}
 --- !u!208 &3824582766227978001
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -1758,10 +1729,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6527639969203407460}
-  - component: {fileID: 7602029709965602846}
-  m_Layer: 17
+  m_Layer: 0
   m_Name: mixamorig:RightArm
-  m_TagString: EnemyArm
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1781,20 +1751,6 @@ Transform:
   m_Father: {fileID: 6527639969203407792}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &7602029709965602846
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6527639969203574340}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.06
-  m_Height: 0.73
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.4, z: 0.02}
 --- !u!1 &6527639969203574342
 GameObject:
   m_ObjectHideFlags: 0

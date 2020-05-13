@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 
 public class BetaEnemyScript : MonoBehaviour {
 
-	private const float MELEE_DISTANCE = 2.3f;
+	private const float MELEE_DISTANCE = 2.8f;
 	private const float PLAYER_HEIGHT_OFFSET = 1f;
 	private const float DETECTION_OUTLINE_MAX_TIME = 10f;
 	private const float MAX_SUSPICION_LEVEL = 100f;
@@ -41,7 +41,6 @@ public class BetaEnemyScript : MonoBehaviour {
 	public CapsuleCollider myCollider;
 	public CapsuleCollider headCollider;
 	public MeshRenderer gunRef;
-	public BoxCollider meleeTrigger;
 	private Vector3 prevNavDestination;
 	private bool prevWasStopped;
 
@@ -91,7 +90,6 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Target references
 	public GameObject playerTargeting;
-	private GameObject playerToHit;
 	public Vector3 lastSeenPlayerPos = Vector3.negativeInfinity;
 
 	// All patrol pathfinding points for an enemy
@@ -1034,8 +1032,12 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (playerTargeting != null) {
 				// Else, proceed with regular behavior
 				alertedTimer = 10f;
-				if (Vector3.Distance (playerTargeting.transform.position, transform.position) <= MELEE_DISTANCE) {
+				// Handle a melee attack
+				if (!playerTargeting.GetComponent<WeaponActionScript>().isMeleeing && TargetIsWithinMeleeDistance()) {
 					if (actionState != ActionStates.Melee) {
+						if (!alerted) {
+							SetAlerted(true);
+						}
 						pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee, gameControllerScript.teamMap);
 					}
 				} else {
@@ -1094,16 +1096,6 @@ public class BetaEnemyScript : MonoBehaviour {
 					DecreaseSuspicionLevel();
 				}
 			}
-		}
-	}
-
-	[PunRPC]
-	void RpcSetPlayerToHit(int id, string team) {
-        if (team != gameControllerScript.teamMap) return;
-        if (id == -1) {
-			playerToHit = null;
-		} else {
-			playerToHit = GameControllerScript.playerList [id].objRef;
 		}
 	}
 
@@ -1223,20 +1215,17 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
-	void HandleMeleeEffectTriggers(Collider other) {
-		if (!other.GetComponent<WeaponActionScript>().isMeleeing) {
-			float dist = Vector3.Distance(transform.position, other.transform.position);
-			if (dist <= MELEE_DISTANCE) {
-				if (!alerted) {
-					SetAlerted(true);
+	bool TargetIsWithinMeleeDistance() {
+		RaycastHit hit;
+		if (Physics.Linecast (headTransform.position, playerTargeting.transform.position, out hit)) {
+			if (hit.transform.gameObject.tag == "Human") {
+				if (hit.distance <= MELEE_DISTANCE) {
+					return true;
 				}
-
-				if (actionState != ActionStates.Melee) {
-					pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee, gameControllerScript.teamMap);
-				}
-				playerToHit = other.gameObject;
 			}
 		}
+		return false;
+		// return (Vector3.Distance (playerTargeting.transform.position, transform.position) <= MELEE_DISTANCE);
 	}
 
 	[PunRPC]
@@ -1262,50 +1251,12 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (PhotonNetwork.IsMasterClient) {
 			HandleExplosiveEffectTriggers(other);
 		}
-
-		/** Melee trigger functionality below */
-		if (!PhotonNetwork.LocalPlayer.IsLocal) {
-			return;
-		}
-
-		if (!other.gameObject.tag.Equals ("Player")) {
-			return;
-		}
-		// Don't consider dead players
-		if (other.gameObject.GetComponent<PlayerActionScript> ().health <= 0f) {
-			return;
-		}
-
-		// If the player enters the enemy's sight range, determine if the player is in the right angle. If he is and there is no current player to target, then
-		// assign the player and stop searching
-		if (actionState != ActionStates.Disoriented && health > 0f) {
-			HandleMeleeEffectTriggers(other);
-		}
 	}
 
 	void OnTriggerEnterForVersus(Collider other) {
 		/** Explosive trigger functionality below - only operate on master client/server to avoid duplicate effects */
 		if (gameControllerScript.isVersusHostForThisTeam()) {
 			HandleExplosiveEffectTriggers(other);
-		}
-
-		/** Melee trigger functionality below */
-		if (!PhotonNetwork.LocalPlayer.IsLocal) {
-			return;
-		}
-
-		if (!other.gameObject.tag.Equals ("Player")) {
-			return;
-		}
-		// Don't consider dead players
-		if (other.gameObject.GetComponent<PlayerActionScript> ().health <= 0f) {
-			return;
-		}
-
-		// If the player enters the enemy's sight range, determine if the player is in the right angle. If he is and there is no current player to target, then
-		// assign the player and stop searching
-		if (actionState != ActionStates.Disoriented && health > 0f) {
-			HandleMeleeEffectTriggers(other);
 		}
 	}
 
@@ -1392,22 +1343,31 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (alerted) {
 			if (playerTargeting != null) {
 				alertedTimer = 12f;
-				if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue && actionState != ActionStates.Reloading) {
-					int r = Random.Range (1, aggression - 2);
-					if (r <= 1) {
-						bool coverFound = DynamicTakeCover ();
-						if (coverFound) {
-							if (actionState != ActionStates.TakingCover) {
-								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.TakingCover, gameControllerScript.teamMap);
+				if (!playerTargeting.GetComponent<WeaponActionScript>().isMeleeing && TargetIsWithinMeleeDistance()) {
+					if (actionState != ActionStates.Melee) {
+						if (!alerted) {
+							SetAlerted(true);
+						}
+						pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee, gameControllerScript.teamMap);
+					}
+				} else {
+					if (actionState != ActionStates.Firing && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Pursue && actionState != ActionStates.Reloading) {
+						int r = Random.Range (1, aggression - 2);
+						if (r <= 1) {
+							bool coverFound = DynamicTakeCover ();
+							if (coverFound) {
+								if (actionState != ActionStates.TakingCover) {
+									pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.TakingCover, gameControllerScript.teamMap);
+								}
+							} else {
+								if (actionState != ActionStates.InCover) {
+									pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.InCover, gameControllerScript.teamMap);
+								}
 							}
 						} else {
-							if (actionState != ActionStates.InCover) {
-								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.InCover, gameControllerScript.teamMap);
+							if (actionState != ActionStates.Firing) {
+								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Firing, gameControllerScript.teamMap);
 							}
-						}
-					} else {
-						if (actionState != ActionStates.Firing) {
-							pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Firing, gameControllerScript.teamMap);
 						}
 					}
 				}
@@ -1668,10 +1628,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					ps.SetHitLocation (transform.position);
 				} else if (hit.transform.tag.Equals ("Human")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
-					hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height, false));
-				} else if (hit.transform.tag.Equals ("EnemyArm")) {
-					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
-					hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, 0f, true));
+					hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height));
 				} else if (hit.transform.tag.Equals ("EnemyHead")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(100);
@@ -1744,20 +1701,17 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	public void MeleeAttack() {
-		if (playerToHit != null) {
+		if (playerTargeting != null && actionState != ActionStates.Disoriented && health > 0f) {
 			int r = Random.Range (0, 2);
 			if (r == 0) {
 				PlayVoiceClip (5);
 			} else {
 				PlayVoiceClip (13);
 			}
-			PlayerActionScript ps = playerToHit.GetComponent<PlayerActionScript> ();
+			PlayerActionScript ps = playerTargeting.GetComponent<PlayerActionScript> ();
 			ps.TakeDamage (50, true);
 			//ps.ResetHitTimer();
 			ps.SetHitLocation (transform.position);
-			if (Vector3.Distance(transform.position, playerToHit.transform.position) > MELEE_DISTANCE) {
-				playerToHit = null;
-			}
 		}
 	}
 
@@ -1800,7 +1754,6 @@ public class BetaEnemyScript : MonoBehaviour {
 	void RemoveHitboxes() {
 		myCollider.height = 0f;
 		myCollider.center = new Vector3 (0f, 0f, 0f);
-		meleeTrigger.enabled = false;
 	}
 
 	// b is the mode the AI is in. 0 means override everything and take cover, 1 is override everything and leave cover
@@ -1946,28 +1899,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					Vector3 toPlayer = p.transform.position - transform.position;
 					float angleBetween = Vector3.Angle (transform.forward, toPlayer);
 					if (angleBetween <= 90f) {
-						// Cast a ray to make sure there's nothing in between the player and the enemy
-						Debug.DrawRay (headTransform.position, toPlayer, Color.blue);
-						Transform playerHead = p.GetComponent<FirstPersonController>().headTransform;
-						RaycastHit hit1;
-						RaycastHit hit2;
-						// Vector3 middleHalfCheck = new Vector3 (p.transform.position.x, p.transform.position.y + PLAYER_HEIGHT_OFFSET, p.transform.position.z);
-						Vector3 middleHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y - 0.1f, playerHead.position.z);
-						Vector3 topHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y, playerHead.position.z);
-						if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2))
-						{
-							continue;
-						}
-						if (!Physics.Linecast (headTransform.position, topHalfCheck, out hit1))
-						{
-							continue;
-						}
-						
-						if (hit1.transform.gameObject == null || hit2.transform.gameObject == null)
-						{
-							continue;
-						}
-						if (!hit1.transform.gameObject.tag.Equals("Player") && !hit2.transform.gameObject.tag.Equals("Player")) {
+						if (TargetIsObscured(p)) {
 							continue;
 						}
 						keysNearBy.Add (p.GetComponent<PhotonView>().OwnerActorNr);
@@ -1981,10 +1913,54 @@ public class BetaEnemyScript : MonoBehaviour {
 		} else {
 			// If we do, check if it's still in range
 			if (Vector3.Distance (transform.position, playerTargeting.transform.position) >= range + 20f) {
-				pView.RPC ("RpcSetLastSeenPlayerPos", RpcTarget.All, true, playerTargeting.transform.position.x, playerTargeting.transform.position.y, playerTargeting.transform.position.z, gameControllerScript.teamMap);
-				pView.RPC ("RpcSetTarget", RpcTarget.All, -1, gameControllerScript.teamMap);
+				UnseeTarget();
+			} else {
+				// If still in range, check if still in eye view
+				Vector3 toPlayer = playerTargeting.transform.position - transform.position;
+				float angleBetween = Vector3.Angle (transform.forward, toPlayer);
+				if (angleBetween <= 90f) {
+					// If still in eye view, check if there's something obscuring the player
+					if (TargetIsObscured(playerTargeting)) {
+						UnseeTarget();
+					}
+				} else {
+					UnseeTarget();
+				}
 			}
 		}
+	}
+
+	bool TargetIsObscured(GameObject targetRef) {
+		// Cast a ray to make sure there's nothing in between the player and the enemy
+		// Debug.DrawRay (headTransform.position, toPlayer, Color.blue);
+		Transform playerHead = targetRef.GetComponent<FirstPersonController>().headTransform;
+		RaycastHit hit1;
+		RaycastHit hit2;
+		// Vector3 middleHalfCheck = new Vector3 (p.transform.position.x, p.transform.position.y + PLAYER_HEIGHT_OFFSET, p.transform.position.z);
+		Vector3 middleHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y - 0.1f, playerHead.position.z);
+		Vector3 topHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y, playerHead.position.z);
+		if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2))
+		{
+			return true;
+		}
+		if (!Physics.Linecast (headTransform.position, topHalfCheck, out hit1))
+		{
+			return true;
+		}
+		
+		if (hit1.transform.gameObject == null || hit2.transform.gameObject == null)
+		{
+			return true;
+		}
+		if (!hit1.transform.gameObject.tag.Equals("Player") && !hit2.transform.gameObject.tag.Equals("Player")) {
+			return true;
+		}
+		return false;
+	}
+	
+	void UnseeTarget() {
+		pView.RPC ("RpcSetLastSeenPlayerPos", RpcTarget.All, true, playerTargeting.transform.position.x, playerTargeting.transform.position.y, playerTargeting.transform.position.z, gameControllerScript.teamMap);
+		pView.RPC ("RpcSetTarget", RpcTarget.All, -1, gameControllerScript.teamMap);
 	}
 
 	[PunRPC]
@@ -2092,7 +2068,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		isReloading = false;
 		fireTimer = 0.0f;
 
-		playerToHit = null;
 		lastSeenPlayerPos = Vector3.negativeInfinity;
 
 		actionState = ActionStates.Idle;
@@ -2105,7 +2080,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		crouchMode = 2;
 		coverScanRange = 50f;
 
-		meleeTrigger.enabled = true;
 		modeler.RespawnPlayer();
 		marker.enabled = true;
 		gunRef.enabled = true;
@@ -2257,20 +2231,16 @@ public class BetaEnemyScript : MonoBehaviour {
         return (int)total;
     }
 
-	int CalculateDamageDealtAgainstEnemyAlly(float initialDamage, float baseY, float hitY, float height, bool armHit, int divisor = 1) {
+	int CalculateDamageDealtAgainstEnemyAlly(float initialDamage, float baseY, float hitY, float height, int divisor = 1) {
         float total = initialDamage / (float)divisor;
-        if (armHit) {
-            total /= 2f;
-        } else {
-            // Determine how high/low on the body was hit. The closer to 1, the closer to shoulders; closer to 0, closer to feet
-            float bodyHeightHit = Mathf.Abs(hitY - baseY) / height;
-            // Higher the height, the more damage dealt
-            if (bodyHeightHit <= 0.35f) {
-                total *= 0.35f;
-            } else if (bodyHeightHit < 0.8f) {
-                total *= bodyHeightHit;
-            }
-        }
+		// Determine how high/low on the body was hit. The closer to 1, the closer to shoulders; closer to 0, closer to feet
+		float bodyHeightHit = Mathf.Abs(hitY - baseY) / height;
+		// Higher the height, the more damage dealt
+		if (bodyHeightHit <= 0.35f) {
+			total *= 0.35f;
+		} else if (bodyHeightHit < 0.8f) {
+			total *= bodyHeightHit;
+		}
         return (int)total;
     }
 

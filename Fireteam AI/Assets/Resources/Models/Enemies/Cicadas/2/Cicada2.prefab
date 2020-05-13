@@ -1027,10 +1027,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1942978092247655441}
-  - component: {fileID: 3929836360267189552}
-  m_Layer: 17
+  m_Layer: 0
   m_Name: mixamorig:RightArm
-  m_TagString: EnemyArm
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1050,20 +1049,6 @@ Transform:
   m_Father: {fileID: 1942978092247655901}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &3929836360267189552
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1942978092247955505}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.06
-  m_Height: 0.73
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.4, z: 0.02}
 --- !u!1 &1942978092247955507
 GameObject:
   m_ObjectHideFlags: 0
@@ -1508,10 +1493,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1942978092247655503}
-  - component: {fileID: 6145552229952866188}
-  m_Layer: 17
+  m_Layer: 0
   m_Name: mixamorig:LeftArm
-  m_TagString: EnemyArm
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1531,20 +1515,6 @@ Transform:
   m_Father: {fileID: 1942978092247655451}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &6145552229952866188
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1942978092247955567}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.06
-  m_Height: 0.73
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.4, z: 0.02}
 --- !u!1 &1942978092247955569
 GameObject:
   m_ObjectHideFlags: 0
@@ -1837,7 +1807,6 @@ GameObject:
   - component: {fileID: 2743381088716898449}
   - component: {fileID: 1015343565317755479}
   - component: {fileID: 1563783651166704757}
-  - component: {fileID: 2795322411328023688}
   - component: {fileID: 2219568387016488609}
   - component: {fileID: 7601635865629732844}
   m_Layer: 14
@@ -2175,19 +2144,6 @@ MonoBehaviour:
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
---- !u!65 &2795322411328023688
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1942978092247955579}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.15, y: 1.5, z: 1.15}
-  m_Center: {x: 0, y: 1.08, z: 0}
 --- !u!208 &2219568387016488609
 NavMeshObstacle:
   m_ObjectHideFlags: 0
