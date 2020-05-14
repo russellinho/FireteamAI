@@ -955,8 +955,29 @@ public class WeaponScript : MonoBehaviour
 
     void SetWeaponCulling(GameObject weapon) {
         WeaponStats ws = weapon.GetComponent<WeaponStats>();
+        WeaponMods wsm = weapon.GetComponent<WeaponMods>();
         foreach (MeshRenderer part in ws.weaponParts) {
             part.gameObject.layer = 16;
+        }
+        if (wsm != null) {
+            if (wsm.suppressorRef != null) {
+                MeshRenderer[] suppressorRenderers = wsm.suppressorRef.GetComponentsInChildren<MeshRenderer>();
+                foreach (MeshRenderer part in suppressorRenderers) {
+                    part.gameObject.layer = 16;
+                }
+            }
+            if (wsm.sightRef != null) {
+                MeshRenderer[] sightRenderers = wsm.sightRef.GetComponentsInChildren<MeshRenderer>();
+                foreach (MeshRenderer part in sightRenderers) {
+                    part.gameObject.layer = 16;
+                }
+            }
+            if (wsm.sightMountRef != null) {
+                MeshRenderer[] mountRenderers = wsm.sightMountRef.GetComponentsInChildren<MeshRenderer>();
+                foreach (MeshRenderer part in mountRenderers) {
+                    part.gameObject.layer = 16;
+                }
+            }
         }
     }
 
