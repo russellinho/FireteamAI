@@ -43,6 +43,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnJoinedLobby()  
 		{
+			ToggleLobbyLoadingScreen(false);
 			templateUIClass.BtnCreatRoom.interactable = true;
 			templateUIClass.ExitMatchmakingBtn.interactable = true;
 			templateUIVersusClass.BtnCreatRoom.interactable = true;
@@ -99,6 +100,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void OnCreateCampaignRoomButtonClicked()
 		{
+			ToggleLobbyLoadingScreen(true);
 			templateUIClass.BtnCreatRoom.interactable = false;
 			templateUIClass.ExitMatchmakingBtn.interactable = false;
 			string roomName = "Camp_"+ Random.Range(1000, 10000);
@@ -117,6 +119,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void OnCreateVersusRoomButtonClicked()
 		{
+			ToggleLobbyLoadingScreen(true);
 			templateUIVersusClass.BtnCreatRoom.interactable = false;
 			templateUIVersusClass.ExitMatchmakingBtn.interactable = false;
 			string roomName = "Vs_"+ Random.Range(1000, 10000);
@@ -142,10 +145,12 @@ namespace Photon.Pun.LobbySystemPhoton
 		
 		public void theJoinRoom(string roomName)
 		{
+			ToggleLobbyLoadingScreen(true);
 			PhotonNetwork.JoinRoom(roomName);
 		}
 
 		public override void OnJoinRoomFailed(short returnCode, string message) {
+			ToggleLobbyLoadingScreen(false);
 			PopupMessage ("Unable to join room.\nReason: " + message + "\nCode: " + returnCode);
 		}
 
@@ -181,6 +186,11 @@ namespace Photon.Pun.LobbySystemPhoton
                 templateUIVersusClass.popup.GetComponentInChildren<Text>().text = message;
                 templateUIVersusClass.popup.SetActive(true);
             }
+		}
+
+		public void ToggleLobbyLoadingScreen(bool b) {
+			templateUIClass.LoadingPanel.SetActive(b);
+			templateUIVersusClass.LoadingPanel.SetActive(b);
 		}
 	}
 }

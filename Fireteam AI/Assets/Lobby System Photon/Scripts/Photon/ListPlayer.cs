@@ -327,6 +327,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		public void goToNextMap() {
+			if (!PhotonNetwork.IsMasterClient) return;
 			mapIndex++;
 			if (mapIndex >= mapNames.Length) {
 				mapIndex = 0;
@@ -335,6 +336,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		public void goToPreviousMap() {
+			if (!PhotonNetwork.IsMasterClient) return;
 			mapIndex--;
 			if (mapIndex < 0) {
 				mapIndex = mapNames.Length - 1;
@@ -351,8 +353,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public override void OnJoinedRoom()
 		{
             // Disable any loading screens
-            templateUIClass.LoadingPanel.SetActive(false);
-            templateUIClassVs.LoadingPanel.SetActive(false);
+            connexion.ToggleLobbyLoadingScreen(false);
 			Hashtable h = new Hashtable();
 			h.Add("exp", (int)PlayerData.playerdata.info.exp);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
