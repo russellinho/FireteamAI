@@ -40,6 +40,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public GameObject fpcBodyRef;
     public GameObject[] objectsToDisable;
     private BetaEnemyScript enemySeenBy;
+    public AudioClip ammoPickupSound;
+    public AudioClip healthPickupSound;
 
     // Player variables
     public int health;
@@ -727,11 +729,15 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (other.gameObject.tag.Equals("AmmoBox"))
         {
+            aud.clip = ammoPickupSound;
+            aud.Play();
             wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo + (wepActionScript.GetWeaponStats().clipCapacity - wepActionScript.currentAmmo);
             photonView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId, gameController.teamMap);
         }
         else if (other.gameObject.tag.Equals("HealthBox"))
         {
+            aud.clip = healthPickupSound;
+            aud.Play();
             ResetHealTimer();
             photonView.RPC("RpcSetHealth", RpcTarget.All, 100);
             photonView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId, gameController.teamMap);
@@ -742,7 +748,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcDestroyPickup(int pickupId, string team) {
         if (gameObject.layer == 0) return;
         GameObject o = gameController.GetPickup(pickupId);
-        o.GetComponent<PickupScript>().PlayPickupSound();
         o.GetComponent<PickupScript>().DestroyPickup();
         gameController.DestroyPickup(pickupId);
     }

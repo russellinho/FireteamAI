@@ -77826,6 +77826,8 @@ MonoBehaviour:
   - {fileID: 5740449511829912686}
   - {fileID: 5740449511497917994}
   - {fileID: 5740449511164224065}
+  ammoPickupSound: {fileID: 8300000, guid: 2e0c337d7be1f394e90d1718f80fde8d, type: 3}
+  healthPickupSound: {fileID: 8300000, guid: 2abf41e9ece742d44b0da495397486fb, type: 3}
   health: 0
   sprintTime: 0
   godMode: 0
@@ -77958,8 +77960,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 5740449512303423526}
-  viewIdField: 34
-  InstantiationId: 34
+  viewIdField: 0
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &5740449512303423526
 MonoBehaviour:

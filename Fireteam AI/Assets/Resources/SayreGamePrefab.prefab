@@ -588,7 +588,6 @@ MonoBehaviour:
     type: 3}
   firingMode: 0
   shotMode: 0
-  quickFiredRocket: 0
   camTransform: {fileID: 8052262678076046597}
   pView: {fileID: 1029626021163347184}
   rightCollar: {fileID: 8725741272739199778}
@@ -642,6 +641,8 @@ MonoBehaviour:
   - {fileID: 5256282438039704239}
   - {fileID: 2966618018708469648}
   - {fileID: 5538587518649827452}
+  ammoPickupSound: {fileID: 8300000, guid: 2e0c337d7be1f394e90d1718f80fde8d, type: 3}
+  healthPickupSound: {fileID: 8300000, guid: 2abf41e9ece742d44b0da495397486fb, type: 3}
   health: 0
   sprintTime: 0
   godMode: 0
