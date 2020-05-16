@@ -473,7 +473,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         GameControllerScript.playerList[photonView.Owner.ActorNumber].deaths++;
         if (gameObject.layer == 0) return;
-        deaths++;
+        if (deaths != int.MaxValue) {
+            deaths++;
+        }
     }
 
     void HandleInteracting() {

@@ -104,4 +104,8 @@ public class LoginControllerScript : MonoBehaviour
         Application.OpenURL("https://www.koobando.com/forgotPassword");
     }
 
+    public void OnQuitClick() {
+        Application.Quit();
+    }
+
 }

@@ -435,8 +435,9 @@ public class WeaponActionScript : MonoBehaviour
     {
         GameControllerScript.playerList[pView.Owner.ActorNumber].kills++;
         if (gameObject.layer == 0) return;
-        playerActionScript.kills++;
-        //GameControllerScript.playerList[pView.Owner.ActorNumber].kills++;
+        if (playerActionScript.kills != int.MaxValue) {
+            playerActionScript.kills++;
+        }
     }
 
     // Increment kill count and display HUD popup for kill
