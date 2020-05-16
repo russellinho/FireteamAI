@@ -635,8 +635,13 @@ namespace Photon.Pun.LobbySystemPhoton
 		void RearrangePlayerSlots() {
 			lastSlotUsed = 0;
 			foreach (GameObject entry in playerListEntries.Values) {
-				entry.transform.SetParent(InsideRoomPanel[lastSlotUsed++].transform);
-				entry.transform.localPosition = Vector3.zero;
+				if (currentMode == 'C') {
+					entry.transform.SetParent(InsideRoomPanel[lastSlotUsed++].transform);
+					entry.transform.localPosition = Vector3.zero;
+				} else if (currentMode == 'V') {
+					entry.transform.SetParent(InsideRoomPanelVs[lastSlotUsed++].transform);
+					entry.transform.localPosition = Vector3.zero;
+				}
 			}
 		}
 
