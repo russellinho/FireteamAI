@@ -2669,6 +2669,7 @@ MonoBehaviour:
   accuracy: 0
   recoil: 0
   range: 0
+  lungeRange: 0
   clipCapacity: 1
   maxAmmo: 1
   steadyAim: 0
@@ -2681,7 +2682,7 @@ MonoBehaviour:
   defaultRightCollarPosMale: {x: 0, y: 0, z: 0}
   defaultRightCollarPosFemale: {x: 0, y: 0, z: 0}
   aimDownSightSpeed: 0
-  aimDownSightClipping: 0
+  aimDownSightClipping: 0.02
   titleHandPositionsMale: {x: 0, y: 0, z: 0}
   titleHandPositionsFemale: {x: 0, y: 0, z: 0}
   recoveryConstant: 0
@@ -2690,6 +2691,8 @@ MonoBehaviour:
   weaponSoundSource: {fileID: 6875200785155198492}
   reloadSounds: []
   supportActionSound: {fileID: 8300000, guid: 72d68ff3fbc1f23469f477122a08f10f, type: 3}
+  meleeSwingSound: {fileID: 0}
+  meleeLungeSound: {fileID: 0}
   gunSmoke: {fileID: 0}
   weaponShell: {fileID: 0}
   weaponShellPoint: {fileID: 0}
@@ -2722,6 +2725,7 @@ MonoBehaviour:
   defaultWeaponCockingSpeed: 0
   defaultWeaponDrawSpeed: 2
   defaultFireSpeed: 0
+  defaultMeleeSpeed: 0
   reloadTransitionSpeed: 0
   reloadSound1Time: -1
   reloadSound2Time: -1
@@ -2778,6 +2782,7 @@ MonoBehaviour:
   isSticky: 0
   suppressorSlot: {fileID: 0}
   sightSlot: {fileID: 0}
+  crosshairAimOffset: []
 --- !u!114 &3939207721979701647
 MonoBehaviour:
   m_ObjectHideFlags: 0

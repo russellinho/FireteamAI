@@ -14,6 +14,11 @@ public class HolsterBehavior : StateMachineBehaviour
         if (was.weaponStats.weaponAnimator != null) {
             was.weaponStats.weaponAnimator.Play("null");
         }
+        if (was.currentAmmo > 0) {
+            was.playerActionScript.weaponScript.ToggleWarhead(true);
+        } else {
+            was.playerActionScript.weaponScript.ToggleWarhead(false);
+        }
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

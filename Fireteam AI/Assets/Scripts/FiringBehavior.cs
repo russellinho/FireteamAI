@@ -9,6 +9,7 @@ public class FiringBehavior : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
        was = animator.GetComponentInParent<WeaponActionScript>();
+       was.playerActionScript.weaponScript.ToggleWarhead(false);
        was.isCocking = false;
        was.isReloading = false;
     }

@@ -12,6 +12,7 @@ public class WeaponMods : MonoBehaviour
     public Transform sightPos;
     public GameObject sightRef;
     public GameObject sightMountRef;
+    public GameObject sightMountReplacementRef;
     private Mod suppressorStats;
     private Mod sightStats;
     private string suppressorName;
@@ -80,6 +81,9 @@ public class WeaponMods : MonoBehaviour
         sightRef.transform.localScale = sightScaler;
         if (sightMountRef != null) {
             sightMountRef.SetActive(true);
+            if (sightMountReplacementRef != null) {
+                sightMountReplacementRef.SetActive(false);
+            }
         }
     }
 
@@ -94,6 +98,9 @@ public class WeaponMods : MonoBehaviour
         sightStats = null;
         if (sightMountRef != null) {
             sightMountRef.SetActive(false);
+            if (sightMountReplacementRef != null) {
+                sightMountReplacementRef.SetActive(true);
+            }
         }
     }
 

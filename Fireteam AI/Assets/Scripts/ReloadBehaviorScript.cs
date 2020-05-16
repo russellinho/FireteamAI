@@ -33,6 +33,9 @@ public class ReloadBehaviorScript : StateMachineBehaviour {
 	// }
 
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+		if (stateInfo.normalizedTime >= 0.15f) {
+			was.playerActionScript.weaponScript.ToggleWarhead(true);
+		}
 		if (!reload1Played && was.weaponStats.reloadSound1Time != -1f && stateInfo.normalizedTime >= was.weaponStats.reloadSound1Time) {
 			reload1Played = true;
 			was.PlayReloadSound(0);
@@ -72,6 +75,7 @@ public class ReloadBehaviorScript : StateMachineBehaviour {
 		if (inLeftHand) {
 			was.playerActionScript.weaponScript.weaponHolderFpc.SwitchWeaponToRightHand();
 		}
+		was.playerActionScript.weaponScript.ToggleWarhead(true);
 		was.isCocking = false;
 		was.isReloading = false;
 	}

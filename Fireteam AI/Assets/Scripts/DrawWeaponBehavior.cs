@@ -17,6 +17,11 @@ public class DrawWeaponBehavior : StateMachineBehaviour
           ws.EquipWeapon(ws.equippedPrimaryWeapon, PlayerData.playerdata.primaryModInfo.equippedSuppressor, PlayerData.playerdata.primaryModInfo.equippedSight, null);
        } else if (ws.currentlyEquippedType == 2) {
           ws.EquipWeapon(ws.equippedSecondaryWeapon, PlayerData.playerdata.secondaryModInfo.equippedSuppressor, PlayerData.playerdata.secondaryModInfo.equippedSight, null);
+         if (was.currentAmmo > 0) {
+            ws.ToggleWarhead(true);
+          } else {
+             ws.ToggleWarhead(false);
+          }
        } else if (ws.currentlyEquippedType == 4) {
           ws.EquipWeapon(ws.equippedSupportWeapon, PlayerData.playerdata.supportModInfo.equippedSuppressor, PlayerData.playerdata.supportModInfo.equippedSight, null);
        }

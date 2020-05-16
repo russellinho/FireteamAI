@@ -17,6 +17,8 @@ public class WeaponStats : MonoBehaviour
     public int clipCapacity;
     public int maxAmmo;
     public bool steadyAim;
+    // Uses the sniper overlay?
+    public bool isSniper;
     public Vector3 aimDownSightPosMale;
     public Vector3 aimDownSightPosFemale;
     public Vector3 stableHandPosMale;

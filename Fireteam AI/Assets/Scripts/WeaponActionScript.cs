@@ -90,6 +90,7 @@ public class WeaponActionScript : MonoBehaviour
 
     // Aiming down sights
     public Transform camTransform;
+    public Camera weaponCam;
     private Vector3 originalPosCam;
     private Vector3 originalPosCamSecondary;
     // Aiming speed
@@ -328,7 +329,9 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
-    void ToggleFpsWeapon(bool b) {
+    void ToggleSniper(bool b) {
+        if (!weaponStats.isSniper) return;
+        if (weaponStats.weaponParts[0].enabled == b) return;
         foreach (MeshRenderer weaponPart in weaponStats.weaponParts) {
             weaponPart.enabled = b;
         }
@@ -378,9 +381,9 @@ public class WeaponActionScript : MonoBehaviour
                 if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
                     if (aimDownSightsTimer >= 1f) {
-                        if (weaponStats.category == "Sniper Rifle") {
+                        if (weaponStats.isSniper) {
                             camTransform.GetComponent<Camera>().fieldOfView = zoom;
-                            ToggleFpsWeapon(false);
+                            ToggleSniper(false);
                             mouseLook.XSensitivity = 0.25f;
                             mouseLook.YSensitivity = 0.25f;
                             fpc.equipmentScript.ToggleFpcMesh(false);
@@ -392,9 +395,9 @@ public class WeaponActionScript : MonoBehaviour
                 } else {
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
                     if (aimDownSightsTimer >= 1f) {
-                        if (weaponStats.category == "Sniper Rifle") {
+                        if (weaponStats.isSniper) {
                             camTransform.GetComponent<Camera>().fieldOfView = zoom;
-                            ToggleFpsWeapon(false);
+                            ToggleSniper(false);
                             mouseLook.XSensitivity = 0.25f;
                             mouseLook.YSensitivity = 0.25f;
                             fpc.equipmentScript.ToggleFpcMesh(false);
@@ -419,7 +422,7 @@ public class WeaponActionScript : MonoBehaviour
                 // Sets everything back to default after zooming in with sniper rifle
                 camTransform.GetComponent<Camera>().fieldOfView = defaultFov;
                 // weaponHolderFpc.GetComponentInChildren<MeshRenderer>().enabled = true;
-                ToggleFpsWeapon(true);
+                ToggleSniper(true);
                 mouseLook.XSensitivity = mouseLook.originalXSensitivity;
                 mouseLook.YSensitivity = mouseLook.originalYSensitivity;
                 //camTransform.GetComponent<Camera>().nearClipPlane = 0.05f;
@@ -1063,6 +1066,7 @@ public class WeaponActionScript : MonoBehaviour
             weaponStats = ws;
             weaponMods = ws.GetComponent<WeaponMods>();
             fireTimer = ws.fireRate;
+            weaponCam.nearClipPlane = ws.aimDownSightClipping;
             playerActionScript.weaponSpeedModifier = ws.mobility/100f;
             if (playerActionScript.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
                 fpc.fpcAnimator.runtimeAnimatorController = ws.maleOverrideController as RuntimeAnimatorController;
@@ -1220,6 +1224,9 @@ public class WeaponActionScript : MonoBehaviour
                         deployInProgress = false;
                         pView.RPC("RpcUseDeployable", RpcTarget.All);
                         UseDeployable();
+                        if (currentAmmo <= 0) {
+                            playerActionScript.weaponScript.HideWeapon(true);
+                        }
                         animatorFpc.SetTrigger("UseDeployable");
                     } else {
                         // Else, reset the deploy timer
@@ -1372,7 +1379,7 @@ public class WeaponActionScript : MonoBehaviour
     void UseDeployable() {
         PlaySupportActionSound();
         UseSupportItem();
-		animator.ResetTrigger("UseDeployable");
+		// animatorFpc.ResetTrigger("UseDeployable");
     }
 
     bool CanInitiateReload() {

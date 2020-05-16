@@ -93,9 +93,9 @@ public class WeaponScript : MonoBehaviour
             currentAmmoPrimary = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].clipCapacity;
             currentAmmoSecondary = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
             currentAmmoSupport = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].clipCapacity;
-            totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo;
-            totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo;
-            totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo;
+            totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo - currentAmmoPrimary;
+            totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo - currentAmmoSecondary;
+            totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo - currentAmmoSupport;
             equippedWep = equippedPrimaryWeapon;
             //DrawWeapon(1);
             InitializeWeapon();
@@ -155,7 +155,7 @@ public class WeaponScript : MonoBehaviour
 
     void DrawSupport()
     {
-        if (currentlyEquippedType == 4 || totalSupportAmmoLeft <= 0) return;
+        if (currentlyEquippedType == 4 || (totalSupportAmmoLeft <= 0 && currentAmmoSupport <= 0)) return;
         DrawWeapon(4);
         currentlyEquippedType = 4;
     }
@@ -178,7 +178,6 @@ public class WeaponScript : MonoBehaviour
             }
         }
         HideMeleeWeapon();
-        HideWeaponParts();
     }
 
     // If the user has a grenade cocked or is currently loading a weapon, don't let him switch weapons
@@ -197,6 +196,26 @@ public class WeaponScript : MonoBehaviour
             return false;
         }
         return true;
+    }
+
+    public void HideWeapon(bool b) {
+        if (weaponActionScript != null) {
+            WeaponStats ws = weaponActionScript.weaponStats;
+            if (ws == null) return;
+            if (!b) {
+                if (!ws.weaponParts[0].enabled) {
+                    for (int i = 0; i < ws.weaponParts.Length; i++) {
+                        ws.weaponParts[i].enabled = true;
+                    }
+                }
+            } else {
+                if (ws.weaponParts[0].enabled) {
+                    for (int i = 0; i < ws.weaponParts.Length; i++) {
+                        ws.weaponParts[i].enabled = false;
+                    }
+                }
+            }
+        }
     }
 
     void HideMeleeWeapon() {
@@ -219,16 +238,12 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
-    void HideWeaponParts() {
+    public void ToggleWarhead(bool b) {
         if (weaponActionScript != null) {
             WeaponStats ws = weaponActionScript.weaponStats;
             if (ws == null) return;
-            if (ws.warheadRenderer != null && !weaponActionScript.isReloading && !weaponActionScript.isFiring) {
-                if (currentAmmoSecondary == 0) {
-                    ws.warheadRenderer.gameObject.SetActive(false);
-                } else {
-                    ws.warheadRenderer.gameObject.SetActive(true);
-                }
+            if (ws.warheadRenderer != null) {
+                ws.warheadRenderer.gameObject.SetActive(b);
             }
         }
     }
@@ -254,6 +269,7 @@ public class WeaponScript : MonoBehaviour
             if (InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].category.Equals("Explosive")) {
                 weaponActionScript.hudScript.ToggleCrosshair(true);
             }
+            HideWeapon(false);
             equippedWep = equippedSupportWeapon;
             modInfo = PlayerData.playerdata.supportModInfo;
         }
@@ -439,7 +455,6 @@ public class WeaponScript : MonoBehaviour
                     weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
                     weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                     weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
-                    SetWeaponCulling(wepEquipped);
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
@@ -456,6 +471,9 @@ public class WeaponScript : MonoBehaviour
                 if (w.sightCompatible) {
                     EquipMod("Sight", sightName, weaponName, null);
                 }
+                if (!onTitle && equipmentScript.isFirstPerson()) {
+                    SetWeaponCulling(wepEquipped);
+                }
                 break;
             case "SMG":
                 currentlyEquippedType = 1;
@@ -464,7 +482,6 @@ public class WeaponScript : MonoBehaviour
                     weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
                     weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                     weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
-                    SetWeaponCulling(wepEquipped);
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
@@ -481,6 +498,9 @@ public class WeaponScript : MonoBehaviour
                 if (w.sightCompatible) {
                     EquipMod("Sight", sightName, weaponName, null);
                 }
+                if (!onTitle && equipmentScript.isFirstPerson()) {
+                    SetWeaponCulling(wepEquipped);
+                }
                 break;
             case "LMG":
                 currentlyEquippedType = 1;
@@ -489,7 +509,6 @@ public class WeaponScript : MonoBehaviour
                     weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
                     weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                     weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
-                    SetWeaponCulling(wepEquipped);
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
@@ -506,6 +525,9 @@ public class WeaponScript : MonoBehaviour
                 if (w.sightCompatible) {
                     EquipMod("Sight", sightName, weaponName, null);
                 }
+                if (!onTitle && equipmentScript.isFirstPerson()) {
+                    SetWeaponCulling(wepEquipped);
+                }
                 break;
             case "Shotgun":
                 currentlyEquippedType = 1;
@@ -514,7 +536,6 @@ public class WeaponScript : MonoBehaviour
                     weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
                     weaponActionScript.animatorFpc.SetBool("isShotgun", true);
                     weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
-                    SetWeaponCulling(wepEquipped);
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
@@ -531,6 +552,9 @@ public class WeaponScript : MonoBehaviour
                 if (w.sightCompatible) {
                     EquipMod("Sight", sightName, weaponName, null);
                 }
+                if (!onTitle && equipmentScript.isFirstPerson()) {
+                    SetWeaponCulling(wepEquipped);
+                }
                 break;
             case "Sniper Rifle":
                 currentlyEquippedType = 1;
@@ -539,7 +563,6 @@ public class WeaponScript : MonoBehaviour
                     weaponActionScript.animatorFpc.SetInteger("WeaponType", 1);
                     weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                     weaponActionScript.animatorFpc.SetBool("isBoltAction", true);
-                    SetWeaponCulling(wepEquipped);
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
@@ -556,6 +579,9 @@ public class WeaponScript : MonoBehaviour
                 if (w.sightCompatible) {
                     EquipMod("Sight", sightName, weaponName, null);
                 }
+                if (!onTitle && equipmentScript.isFirstPerson()) {
+                    SetWeaponCulling(wepEquipped);
+                }
                 break;
             case "Pistol":
                 if (!onTitle) {
@@ -565,7 +591,6 @@ public class WeaponScript : MonoBehaviour
                         weaponActionScript.animatorFpc.SetInteger("WeaponType", 2);
                         weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                         weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
-                        SetWeaponCulling(wepEquipped);
                     } else {
                         wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     }
@@ -583,6 +608,9 @@ public class WeaponScript : MonoBehaviour
                 if (w.sightCompatible) {
                     EquipMod("Sight", sightName, weaponName, null);
                 }
+                if (!onTitle && equipmentScript.isFirstPerson()) {
+                    SetWeaponCulling(wepEquipped);
+                }
                 break;
             case "Launcher":
                 if (!onTitle) {
@@ -592,7 +620,6 @@ public class WeaponScript : MonoBehaviour
                         weaponActionScript.animatorFpc.SetInteger("WeaponType", 2);
                         weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                         weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
-                        SetWeaponCulling(wepEquipped);
                     } else {
                         wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     }
@@ -604,6 +631,9 @@ public class WeaponScript : MonoBehaviour
                     weaponActionScript.SetCurrentAimDownSightPos(sightName);
                     weaponActionScript.hudScript.EquipSightCrosshair(false);
                 }
+                if (!onTitle && equipmentScript.isFirstPerson()) {
+                    SetWeaponCulling(wepEquipped);
+                }
                 break;
             case "Explosive":
                 if (!onTitle) {
@@ -613,7 +643,6 @@ public class WeaponScript : MonoBehaviour
                         weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
                         weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                         weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
-                        SetWeaponCulling(wepEquipped);
                     } else {
                         wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     }
@@ -625,6 +654,9 @@ public class WeaponScript : MonoBehaviour
                     weaponActionScript.SetCurrentAimDownSightPos(sightName);
                     weaponActionScript.hudScript.EquipSightCrosshair(false);
                 }
+                if (!onTitle && equipmentScript.isFirstPerson()) {
+                    SetWeaponCulling(wepEquipped);
+                }
                 break;
             case "Booster":
                 if (!onTitle) {
@@ -634,7 +666,6 @@ public class WeaponScript : MonoBehaviour
                         weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
                         weaponActionScript.animatorFpc.SetBool("isShotgun", false);
                         weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
-                        SetWeaponCulling(wepEquipped);
                     } else {
                         wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                     }
@@ -645,6 +676,9 @@ public class WeaponScript : MonoBehaviour
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
                     weaponActionScript.SetCurrentAimDownSightPos(sightName);
                     weaponActionScript.hudScript.EquipSightCrosshair(false);
+                }
+                if (!onTitle && equipmentScript.isFirstPerson()) {
+                    SetWeaponCulling(wepEquipped);
                 }
                 break;
             case "Deployable":
@@ -664,8 +698,12 @@ public class WeaponScript : MonoBehaviour
                 EquipDeployable(weaponName);
                 if (!onTitle) {
                     weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                    HideWeapon(currentAmmoSupport == 0 && totalSupportAmmoLeft == 0);
                     weaponActionScript.SetCurrentAimDownSightPos(sightName);
                     weaponActionScript.hudScript.EquipSightCrosshair(false);
+                }
+                if (!onTitle && equipmentScript.isFirstPerson()) {
+                    SetWeaponCulling(wepEquipped);
                 }
                 break;
             case "Knife":

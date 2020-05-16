@@ -10097,7 +10097,7 @@ MonoBehaviour:
   defaultRightCollarPosMale: {x: 0, y: 0, z: 0}
   defaultRightCollarPosFemale: {x: 0, y: 0, z: 0}
   aimDownSightSpeed: 0
-  aimDownSightClipping: 0
+  aimDownSightClipping: 0.02
   titleHandPositionsMale: {x: 0, y: 0, z: 0}
   titleHandPositionsFemale: {x: 0, y: 0, z: 0}
   recoveryConstant: 0
