@@ -731,7 +731,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         {
             aud.clip = ammoPickupSound;
             aud.Play();
-            wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo + (wepActionScript.GetWeaponStats().clipCapacity - wepActionScript.currentAmmo);
+            if (weaponScript.currentlyEquippedType == 1) {
+                wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo + (wepActionScript.GetWeaponStats().clipCapacity - wepActionScript.currentAmmo);
+            } else {
+                weaponScript.MaxRefillAmmoOnPrimary();
+            }
             photonView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId, gameController.teamMap);
         }
         else if (other.gameObject.tag.Equals("HealthBox"))
