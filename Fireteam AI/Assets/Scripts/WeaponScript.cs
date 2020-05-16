@@ -1048,7 +1048,6 @@ public class WeaponScript : MonoBehaviour
     public void MaxRefillAllAmmo() {
         MaxRefillAmmoOnPrimary();
         MaxRefillAmmoOnSecondary();
-        MaxRefillAmmoOnSupport();
         RefreshAmmoCounts();
     }
 

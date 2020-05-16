@@ -358,6 +358,9 @@ namespace Photon.Pun.LobbySystemPhoton
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 			pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (int)PlayerData.playerdata.info.exp);
 			currentMode = (!templateUIClassVs.gameObject.activeInHierarchy ? 'C' : 'V');
+			if (!PhotonNetwork.IsMasterClient) {
+				ToggleMapChangeButtons(false);
+			}
 			if (currentMode == 'V') {
 				OnJoinedRoomVersus();
 			} else if (currentMode == 'C')
@@ -596,6 +599,16 @@ namespace Photon.Pun.LobbySystemPhoton
 			Destroy(playerListEntries[otherPlayer.ActorNumber].gameObject);
 			playerListEntries.Remove(otherPlayer.ActorNumber);
 			RearrangePlayerSlots ();
+			if (PhotonNetwork.IsMasterClient) {
+				ToggleMapChangeButtons(true);
+			}
+		}
+
+		void ToggleMapChangeButtons(bool b) {
+			mapNext.gameObject.SetActive(b);
+			mapPrev.gameObject.SetActive(b);
+			mapNextVs.gameObject.SetActive(b);
+			mapPrevVs.gameObject.SetActive(b);
 		}
 
 		public override void OnLeftRoom()
