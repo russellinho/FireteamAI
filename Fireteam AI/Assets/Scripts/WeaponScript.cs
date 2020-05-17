@@ -958,15 +958,6 @@ public class WeaponScript : MonoBehaviour
         // }
     }
 
-    public void EquipDefaultWeapons() {
-        equippedPrimaryWeapon = "AK-47";
-        equippedSecondaryWeapon = "Glock23";
-        equippedSupportWeapon = "M67 Frag";
-        equippedMeleeWeapon = "Recon Knife";
-        EquipWeapon(equippedPrimaryWeapon, null, null, null);
-        EquipWeapon(equippedSecondaryWeapon, null, null, null);
-    }
-
     public void DespawnPlayer()
     {
         ToggleWeaponVisible(false);

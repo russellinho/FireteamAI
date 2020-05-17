@@ -295,7 +295,7 @@ Transform:
   m_GameObject: {fileID: 1859999209818623783}
   m_LocalRotation: {x: -0.7071068, y: 0.7071068, z: -0, w: 0}
   m_LocalPosition: {x: 0.164, y: 0.079, z: 0.004}
-  m_LocalScale: {x: 0.0205, y: 0.0205, z: 0.0205}
+  m_LocalScale: {x: 0.016, y: 0.016, z: 0.016}
   m_Children:
   - {fileID: 3183945540913311269}
   - {fileID: 7299669702070576252}
@@ -635,6 +635,7 @@ MonoBehaviour:
   clipCapacity: 30
   maxAmmo: 120
   steadyAim: 0
+  isSniper: 0
   aimDownSightPosMale: {x: -0.00015, y: 0.0014, z: 0.00134}
   aimDownSightPosFemale: {x: -0.00015, y: 0.0014, z: 0.00134}
   stableHandPosMale: {x: -0.00016, y: 0.00106, z: 0.00155}
@@ -645,8 +646,8 @@ MonoBehaviour:
   defaultRightCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   aimDownSightSpeed: 6.5
   aimDownSightClipping: 0.01
-  titleHandPositionsMale: {x: 0.1473236, y: 0.263719, z: 0.02197724}
-  titleHandPositionsFemale: {x: 0.1473236, y: 0.263719, z: 0.02197724}
+  titleHandPositionsMale: {x: 0.09606443, y: 0.2172284, z: 0.01300057}
+  titleHandPositionsFemale: {x: 0.09606443, y: 0.2172284, z: 0.01300057}
   recoveryConstant: 3
   fireSound: {fileID: 134961559763851575}
   suppressedFireSound: {fileID: 5090137998641266065}
@@ -678,10 +679,10 @@ MonoBehaviour:
   fpcScaleFemale: {x: 0.00018, y: 0.00018, z: 0.00018}
   fullPosMale: {x: 0.108, y: 0.244, z: 0.028}
   fullRotMale: {x: 0, y: 180, z: -90}
-  fullScaleMale: {x: 0.0205, y: 0.0205, z: 0.0205}
+  fullScaleMale: {x: 0.016, y: 0.016, z: 0.016}
   fullPosFemale: {x: 0.1076, y: 0.22, z: 0.028}
   fullRotFemale: {x: 0, y: 180, z: -90}
-  fullScaleFemale: {x: 0.0205, y: 0.0205, z: 0.0205}
+  fullScaleFemale: {x: 0.016, y: 0.016, z: 0.016}
   maleOverrideController: {fileID: 22100000, guid: 6167079c71f8bf740b86126179c7d230,
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: 524b231cc3157bf449081cc33505e55e,
@@ -746,6 +747,7 @@ MonoBehaviour:
   sightPos: {fileID: 7658235399076709053}
   sightRef: {fileID: 0}
   sightMountRef: {fileID: 5632810748768653516}
+  sightMountReplacementRef: {fileID: 0}
   previewPos: {x: 0, y: 0, z: 0}
 --- !u!95 &2105729878731182303
 Animator:

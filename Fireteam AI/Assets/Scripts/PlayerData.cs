@@ -1525,45 +1525,68 @@ public class PlayerData : MonoBehaviour
             {
                 return;
             }
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).RunTransaction(task => {
+                // Get any mods that are attached to it and unattach those as well
+                object equippedSuppressorId = task.Child("weapons").Child(itemName).Child("equippedSuppressor").Value;
+                object equippedSightId = task.Child("weapons").Child(itemName).Child("equippedSight").Value;
+                // Deletes item in DB
+                task.Child("weapons").Child(itemName).Value = null;
+                // Delete item locally
+                // Unattach locally, and then save
+                if (equippedSuppressorId != null) {
+                    string equippedSuppressorIdText = equippedSuppressorId.ToString();
+                    try {
+                        myMods[equippedSuppressorIdText].equippedOn = "";
+                    } catch (KeyNotFoundException e) {
+                        Debug.Log("Mod " + equippedSuppressorIdText + " was not loaded locally yet... skipping");
+                    }
+                    // Save in DB
+                    Debug.Log("Deleting: " + equippedSuppressorIdText + " off of weapon " + itemName);
+                    task.Child("mods").Child(equippedSuppressorIdText).Child("equippedOn").Value = "";
+                    // Debug.Log("Suppressor removed.");
+                }
+                if (equippedSightId != null) {
+                    string equippedSightIdText = equippedSightId.ToString();
+                    try {
+                        myMods[equippedSightIdText].equippedOn = "";
+                    } catch (KeyNotFoundException e) {
+                        Debug.Log("Mod " + equippedSightIdText + " was not loaded locally yet... skipping");
+                    }
+                    // Save in DB
+                    Debug.Log("Deleting: " + equippedSightIdText + " off of weapon " + itemName);
+                    task.Child("mods").Child(equippedSightIdText).Child("equippedOn").Value = "";
+                    // Debug.Log("Sight removed.");
+                }
+                // Debug.Log("Mods handled.");
+                myWeapons.Remove(itemName);
+                if (expiring)
                 {
-                    if (task.IsCanceled || task.IsFaulted)
-                    {
-                        Debug.Log(itemName + " could not be deleted!");
-                    }
-                    else
-                    {
-                        // Delete item locally
-                        myWeapons.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        if (PlayerData.playerdata.info.equippedPrimary == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedPrimary = DEFAULT_PRIMARY;
-                            //PlayerData.playerdata.primaryModInfo = LoadModDataForWeapon(DEFAULT_PRIMARY);
-                            reloadPlayerFlag = true;
-                        } else if (PlayerData.playerdata.info.equippedSecondary == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedSecondary = DEFAULT_SECONDARY;
-                            //PlayerData.playerdata.secondaryModInfo = LoadModDataForWeapon(DEFAULT_SECONDARY);
-                            reloadPlayerFlag = true;
-                        } else if (PlayerData.playerdata.info.equippedSupport == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedSupport = DEFAULT_SUPPORT;
-                            //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
-                            reloadPlayerFlag = true;
-                        } else if (PlayerData.playerdata.info.equippedMelee == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedMelee = DEFAULT_MELEE;
-                            //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
-                            reloadPlayerFlag = true;
-                        }
-                    }
-                });
+                    itemsExpired.Add(itemName);
+                }
+                Debug.Log(itemName + " has been deleted!");
+                if (PlayerData.playerdata.info.equippedPrimary == itemName)
+                {
+                    PlayerData.playerdata.info.equippedPrimary = DEFAULT_PRIMARY;
+                    //PlayerData.playerdata.primaryModInfo = LoadModDataForWeapon(DEFAULT_PRIMARY);
+                    reloadPlayerFlag = true;
+                } else if (PlayerData.playerdata.info.equippedSecondary == itemName)
+                {
+                    PlayerData.playerdata.info.equippedSecondary = DEFAULT_SECONDARY;
+                    //PlayerData.playerdata.secondaryModInfo = LoadModDataForWeapon(DEFAULT_SECONDARY);
+                    reloadPlayerFlag = true;
+                } else if (PlayerData.playerdata.info.equippedSupport == itemName)
+                {
+                    PlayerData.playerdata.info.equippedSupport = DEFAULT_SUPPORT;
+                    //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
+                    reloadPlayerFlag = true;
+                } else if (PlayerData.playerdata.info.equippedMelee == itemName)
+                {
+                    PlayerData.playerdata.info.equippedMelee = DEFAULT_MELEE;
+                    //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
+                    reloadPlayerFlag = true;
+                }
+                return TransactionResult.Success(task);
+            });
         }
         else if (type.Equals("Character"))
         {

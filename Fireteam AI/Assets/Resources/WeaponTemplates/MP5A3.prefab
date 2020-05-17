@@ -290,7 +290,7 @@ Transform:
   m_GameObject: {fileID: 1859999209818623783}
   m_LocalRotation: {x: 0, y: -0.9396926, z: 0, w: 0.34202018}
   m_LocalPosition: {x: 0, y: -0.25, z: 0}
-  m_LocalScale: {x: 0.0205, y: 0.0205, z: 0.0205}
+  m_LocalScale: {x: 0.016, y: 0.016, z: 0.016}
   m_Children:
   - {fileID: 3183945540913311269}
   - {fileID: 7299669702070576252}
@@ -335,6 +335,7 @@ MonoBehaviour:
   sightPos: {fileID: 7658235399076709053}
   sightRef: {fileID: 0}
   sightMountRef: {fileID: 5632810748768653516}
+  sightMountReplacementRef: {fileID: 0}
   previewPos: {x: 0, y: -0.25, z: 0}
 --- !u!1 &2166096002394724052
 GameObject:
