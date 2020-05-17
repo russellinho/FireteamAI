@@ -7,10 +7,13 @@ using Photon.Pun;
 
 public class ScoreboardScript : MonoBehaviour {
 
+    private const float SCOREBOARD_UPDATE_DELAY = 0.25f;
 	private int index;
     private int redIndex;
     private int blueIndex;
     private char mode;
+    // Amount of time remaining before next scoreboard update
+    private float scoreboardUpdateTimer;
 
 	private IEnumerator playerIterator;
     public GameObject versusPanel;
@@ -29,6 +32,7 @@ public class ScoreboardScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
+        scoreboardUpdateTimer = SCOREBOARD_UPDATE_DELAY;
 		if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
             mode = 'V';
             campaignPanel.SetActive(false);
@@ -50,99 +54,109 @@ public class ScoreboardScript : MonoBehaviour {
 	}
 
     void UpdateScoreboardForCampaign() {
-        if (playerIterator == null) {
-            index = 0;
-			playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
-			return;
-		}
-        try
-        {
-            // This mean that is has reached the end
-            if (!playerIterator.MoveNext())
+        if (scoreboardUpdateTimer <= 0f) {
+            scoreboardUpdateTimer = SCOREBOARD_UPDATE_DELAY;
+            if (playerIterator == null) {
+                index = 0;
+                playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
+                return;
+            }
+            try
             {
-                if (index < 8)
+                // This mean that is has reached the end
+                if (!playerIterator.MoveNext())
                 {
-                    names[index].text = "";
-                    kills[index].text = "";
-                    deaths[index].text = "";
-                    index++;
+                    if (index < 8)
+                    {
+                        names[index].text = "";
+                        kills[index].text = "";
+                        deaths[index].text = "";
+                        index++;
+                    }
+                    else
+                    {
+                        index = 0;
+                        playerIterator.Reset();
+                    }
                 }
                 else
                 {
-                    index = 0;
-                    playerIterator.Reset();
+                    PlayerStat curr = (PlayerStat)playerIterator.Current;
+                    names[index].text = curr.name;
+                    kills[index].text = "" + curr.kills;
+                    deaths[index].text = "" + curr.deaths;
+                    index++;
                 }
-            }
-            else
+            } catch (InvalidOperationException e)
             {
-                PlayerStat curr = (PlayerStat)playerIterator.Current;
-                names[index].text = curr.name;
-                kills[index].text = "" + curr.kills;
-                deaths[index].text = "" + curr.deaths;
-                index++;
+                playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
+                index = 0;
+                playerIterator.Reset();
             }
-        } catch (InvalidOperationException e)
-        {
-            playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
-            index = 0;
-            playerIterator.Reset();
+        } else {
+            scoreboardUpdateTimer -= Time.deltaTime;
         }
     }
 
     void UpdateScoreboardForVersus() {
-        if (playerIterator == null) {
-            redIndex = 0;
-            blueIndex = 0;
-			playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
-			return;
-		}
-        try
-        {
-            // This mean that is has reached the end
-            if (!playerIterator.MoveNext())
+        if (scoreboardUpdateTimer <= 0f) {
+            scoreboardUpdateTimer = SCOREBOARD_UPDATE_DELAY;
+            if (playerIterator == null) {
+                redIndex = 0;
+                blueIndex = 0;
+                playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
+                return;
+            }
+            try
             {
-                if (redIndex < 8)
+                // This mean that is has reached the end
+                if (!playerIterator.MoveNext())
                 {
-                    redNames[redIndex].text = "";
-                    redKills[redIndex].text = "";
-                    redDeaths[redIndex].text = "";
-                    redIndex++;
-                }
+                    if (redIndex < 8)
+                    {
+                        redNames[redIndex].text = "";
+                        redKills[redIndex].text = "";
+                        redDeaths[redIndex].text = "";
+                        redIndex++;
+                    }
 
-                if (blueIndex < 8) {
-                    blueNames[blueIndex].text = "";
-                    blueKills[blueIndex].text = "";
-                    blueDeaths[blueIndex].text = "";
-                    blueIndex++;
-                }
+                    if (blueIndex < 8) {
+                        blueNames[blueIndex].text = "";
+                        blueKills[blueIndex].text = "";
+                        blueDeaths[blueIndex].text = "";
+                        blueIndex++;
+                    }
 
-                if (redIndex >= 8 && blueIndex >= 8) {
-                    redIndex = 0;
-                    blueIndex = 0;
-                    playerIterator.Reset();
+                    if (redIndex >= 8 && blueIndex >= 8) {
+                        redIndex = 0;
+                        blueIndex = 0;
+                        playerIterator.Reset();
+                    }
                 }
-            }
-            else
+                else
+                {
+                    PlayerStat curr = (PlayerStat)playerIterator.Current;
+                    if (curr.team == 'R') {
+                        redNames[redIndex].text = curr.name;
+                        redKills[redIndex].text = "" + curr.kills;
+                        redDeaths[redIndex].text = "" + curr.deaths;
+                        redIndex++;
+                    } else if (curr.team == 'B') {
+                        blueNames[blueIndex].text = curr.name;
+                        blueKills[blueIndex].text = "" + curr.kills;
+                        blueDeaths[blueIndex].text = "" + curr.deaths;
+                        blueIndex++;
+                    }
+                }
+            } catch (InvalidOperationException e)
             {
-                PlayerStat curr = (PlayerStat)playerIterator.Current;
-                if (curr.team == 'R') {
-                    redNames[redIndex].text = curr.name;
-                    redKills[redIndex].text = "" + curr.kills;
-                    redDeaths[redIndex].text = "" + curr.deaths;
-                    redIndex++;
-                } else if (curr.team == 'B') {
-                    blueNames[blueIndex].text = curr.name;
-                    blueKills[blueIndex].text = "" + curr.kills;
-                    blueDeaths[blueIndex].text = "" + curr.deaths;
-                    blueIndex++;
-                }
+                playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
+                redIndex = 0;
+                blueIndex = 0;
+                playerIterator.Reset();
             }
-        } catch (InvalidOperationException e)
-        {
-            playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
-            redIndex = 0;
-            blueIndex = 0;
-            playerIterator.Reset();
+        } else {
+            scoreboardUpdateTimer -= Time.deltaTime;
         }
     }
 }

@@ -14,6 +14,8 @@ public class BetaEnemyScript : MonoBehaviour {
 	private const float PLAYER_HEIGHT_OFFSET = 1f;
 	private const float DETECTION_OUTLINE_MAX_TIME = 10f;
 	private const float MAX_SUSPICION_LEVEL = 100f;
+	// Scan for players every 0.8 of a second instead of every frame
+	private const float PLAYER_SCAN_DELAY = 0.8f;
 
 	// Prefab references
 	public GameObject ammoBoxPickup;
@@ -96,6 +98,8 @@ public class BetaEnemyScript : MonoBehaviour {
 	public GameObject[] navPoints;
 
 	// Timers
+	// Amount of time remaining before next player scan check
+	private float playerScanTimer = 0f;
 	// Holds amount of time to remain alerted before going back into normal mode
 	private float alertedTimer;
 	// Time in cover
@@ -126,7 +130,6 @@ public class BetaEnemyScript : MonoBehaviour {
 	private float originalColliderHeight = 0f;
 	private float originalColliderRadius = 0f;
 	private Vector3 originalColliderCenter;
-	public LayerMask explosionIgnoreMask;
 
     // Testing mode - set in inspector
     //public bool testingMode;
@@ -144,6 +147,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
     // Use this for initialization
     void StartForCampaign () {
+		playerScanTimer = PLAYER_SCAN_DELAY;
 		alertDisplay = 0;
 		alertedTimer = -100f;
 		coverWaitTimer = Random.Range (2f, 7f);
@@ -207,6 +211,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
     void StartForVersus()
     {
+		playerScanTimer = PLAYER_SCAN_DELAY;
         alertDisplay = 0;
         alertedTimer = -100f;
         coverWaitTimer = Random.Range(2f, 7f);
@@ -1888,45 +1893,50 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void PlayerScan() {
-		// If we do not have a target player, try to find one
-		if (playerTargeting == null || playerTargeting.GetComponent<PlayerActionScript>().health <= 0) {
-			ArrayList keysNearBy = new ArrayList ();
-			foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
-				GameObject p = playerStat.objRef;
-				if (!p || p.GetComponent<PlayerActionScript>().health <= 0)
-					continue;
-				if (Vector3.Distance (transform.position, p.transform.position) < range + 20f) {
-					Vector3 toPlayer = p.transform.position - transform.position;
+		if (playerScanTimer <= 0f) {
+			playerScanTimer = PLAYER_SCAN_DELAY;
+			// If we do not have a target player, try to find one
+			if (playerTargeting == null || playerTargeting.GetComponent<PlayerActionScript>().health <= 0) {
+				ArrayList keysNearBy = new ArrayList ();
+				foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
+					GameObject p = playerStat.objRef;
+					if (!p || p.GetComponent<PlayerActionScript>().health <= 0)
+						continue;
+					if (Vector3.Distance (transform.position, p.transform.position) < range + 20f) {
+						Vector3 toPlayer = p.transform.position - transform.position;
+						float angleBetween = Vector3.Angle (transform.forward, toPlayer);
+						if (angleBetween <= 90f) {
+							if (TargetIsObscured(p)) {
+								continue;
+							}
+							keysNearBy.Add (p.GetComponent<PhotonView>().OwnerActorNr);
+						}
+					}
+				}
+
+				if (keysNearBy.Count != 0) {
+					pView.RPC ("RpcSetTarget", RpcTarget.All, (int)keysNearBy [Random.Range (0, keysNearBy.Count)], gameControllerScript.teamMap);
+				}
+			} else {
+				// If we do, check if it's still in range
+				if (Vector3.Distance (transform.position, playerTargeting.transform.position) >= range + 20f) {
+					UnseeTarget();
+				} else {
+					// If still in range, check if still in eye view
+					Vector3 toPlayer = playerTargeting.transform.position - transform.position;
 					float angleBetween = Vector3.Angle (transform.forward, toPlayer);
 					if (angleBetween <= 90f) {
-						if (TargetIsObscured(p)) {
-							continue;
+						// If still in eye view, check if there's something obscuring the player
+						if (TargetIsObscured(playerTargeting)) {
+							UnseeTarget();
 						}
-						keysNearBy.Add (p.GetComponent<PhotonView>().OwnerActorNr);
-					}
-				}
-			}
-
-			if (keysNearBy.Count != 0) {
-				pView.RPC ("RpcSetTarget", RpcTarget.All, (int)keysNearBy [Random.Range (0, keysNearBy.Count)], gameControllerScript.teamMap);
-			}
-		} else {
-			// If we do, check if it's still in range
-			if (Vector3.Distance (transform.position, playerTargeting.transform.position) >= range + 20f) {
-				UnseeTarget();
-			} else {
-				// If still in range, check if still in eye view
-				Vector3 toPlayer = playerTargeting.transform.position - transform.position;
-				float angleBetween = Vector3.Angle (transform.forward, toPlayer);
-				if (angleBetween <= 90f) {
-					// If still in eye view, check if there's something obscuring the player
-					if (TargetIsObscured(playerTargeting)) {
+					} else {
 						UnseeTarget();
 					}
-				} else {
-					UnseeTarget();
 				}
 			}
+		} else {
+			playerScanTimer -= Time.deltaTime;
 		}
 	}
 
