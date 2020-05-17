@@ -244,6 +244,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
         [PunRPC]
         void RpcStartVersusGame(string level) {
+			LoadingScreen();
             string myTeam = (myPlayerListEntry.GetComponent<PlayerEntryScript>().team == 'R' ? "Red" : "Blue");
             PhotonNetwork.LoadLevel (level + myTeam);
         }
@@ -290,7 +291,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			chatVs.sendChatOfMaster ("Game starting in 1");
 			yield return new WaitForSeconds (1f);
 
-			pView.RPC ("RpcLoadingScreen", RpcTarget.All);
+			// pView.RPC ("RpcLoadingScreen", RpcTarget.All);
 			if (PhotonNetwork.IsMasterClient) {
 				StartVersusGame (mapNames [mapIndex]);
 			}
@@ -298,6 +299,10 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		[PunRPC]
 		void RpcLoadingScreen() {
+			titleController.GetComponent<TitleControllerScript> ().InstantiateLoadingScreen (mapNames[mapIndex]);
+		}
+
+		void LoadingScreen() {
 			titleController.GetComponent<TitleControllerScript> ().InstantiateLoadingScreen (mapNames[mapIndex]);
 		}
 
