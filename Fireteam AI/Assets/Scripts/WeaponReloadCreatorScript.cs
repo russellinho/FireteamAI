@@ -6,6 +6,7 @@ public class WeaponReloadCreatorScript : MonoBehaviour
 {
     public int frameIndex;
     public Vector3[] framePositions;
+    public Vector3[] frameRotations;
     public Transform weaponTransform;
     public Transform attachToTransform;
     public Transform partTransform;
@@ -16,6 +17,7 @@ public class WeaponReloadCreatorScript : MonoBehaviour
 
         // Record the local transform
         framePositions[frameIndex] = partTransform.localPosition;
+        frameRotations[frameIndex] = partTransform.localRotation.eulerAngles;
 
         // Set back to body part transform
         partTransform.SetParent(attachToTransform);

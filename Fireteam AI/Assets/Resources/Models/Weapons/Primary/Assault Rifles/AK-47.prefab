@@ -10389,6 +10389,7 @@ MonoBehaviour:
   clipCapacity: 30
   maxAmmo: 120
   steadyAim: 1
+  isSniper: 0
   aimDownSightPosMale: {x: -0.000525, y: 0.00159, z: 0.001303}
   aimDownSightPosFemale: {x: -0.0005, y: 0.0016, z: 0.00131}
   stableHandPosMale: {x: -0.0003357553, y: 0.0013, z: 0.00155}
@@ -10398,7 +10399,7 @@ MonoBehaviour:
   defaultRightCollarPosMale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   defaultRightCollarPosFemale: {x: -3.758436e-10, y: 0.001242948, z: -2.449463e-12}
   aimDownSightSpeed: 6
-  aimDownSightClipping: 0.06
+  aimDownSightClipping: 0.01
   titleHandPositionsMale: {x: -0.047, y: 0.145, z: 0.022}
   titleHandPositionsFemale: {x: -0.047, y: 0.145, z: 0.022}
   recoveryConstant: 4
@@ -10448,9 +10449,9 @@ MonoBehaviour:
   defaultFireSpeed: 2
   defaultMeleeSpeed: 0
   reloadTransitionSpeed: 0.02
-  reloadSound1Time: 0.18
-  reloadSound2Time: 0.5
-  reloadSound3Time: 0.85
+  reloadSound1Time: 0.14
+  reloadSound2Time: 0.4
+  reloadSound3Time: 0.59
   reloadSound4Time: -1
   supportSoundTime: -1
   switchToLeftDuringReload: 0
@@ -10497,6 +10498,7 @@ MonoBehaviour:
   sightPos: {fileID: 716255167565559929}
   sightRef: {fileID: 0}
   sightMountRef: {fileID: 1116720835556444738}
+  sightMountReplacementRef: {fileID: 0}
   previewPos: {x: 0, y: 0, z: 0}
 --- !u!95 &4425799576184219594
 Animator:
