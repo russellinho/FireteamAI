@@ -130,19 +130,19 @@ public class WeaponActionScript : MonoBehaviour
 
         // Create animation event for shotgun reload
 
-        CreateAnimEvents();
+        // CreateAnimEvents();
     }
 
-    void CreateAnimEvents() {
-        foreach (AnimationClip a in animatorFpc.runtimeAnimatorController.animationClips) {
-            if (a.name.Equals("Loading_R870")) {
-                AnimationEvent ae = new AnimationEvent();
-                ae.time = 0.7f;
-                ae.functionName = "ReloadShotgun";
-                a.AddEvent(ae);
-            }
-        }
-    }
+    // void CreateAnimEvents() {
+    //     foreach (AnimationClip a in animatorFpc.runtimeAnimatorController.animationClips) {
+    //         if (a.name.Equals("Loading_R870")) {
+    //             AnimationEvent ae = new AnimationEvent();
+    //             ae.time = 0.7f;
+    //             ae.functionName = "ReloadShotgun";
+    //             a.AddEvent(ae);
+    //         }
+    //     }
+    // }
 
     // Update is called once per frame
     void Update()

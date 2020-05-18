@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class PumpActionReloadBehavior : StateMachineBehaviour
 {
+    private const float RELOAD_INTERVAL = 0.7f;
     private WeaponActionScript weaponActionScript;
     bool loadSoundPlayed;
     private bool done;
+    private float reloadTimer;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        reloadTimer = RELOAD_INTERVAL;
         animator.ResetTrigger("CockShotgun");
         done = false;
         weaponActionScript = animator.GetComponentInParent<WeaponActionScript>();
@@ -19,15 +22,23 @@ public class PumpActionReloadBehavior : StateMachineBehaviour
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         weaponActionScript.isReloading = true;
-        if (stateInfo.normalizedTime >= weaponActionScript.weaponStats.reloadSound1Time - 0.1f && stateInfo.normalizedTime <= weaponActionScript.weaponStats.reloadSound1Time + 0.1f) {
-            if (!loadSoundPlayed) {
-                weaponActionScript.PlayReloadSound(0);
-                loadSoundPlayed = true;
-            }
+        // if (stateInfo.normalizedTime >= weaponActionScript.weaponStats.reloadSound1Time - 0.1f && stateInfo.normalizedTime <= weaponActionScript.weaponStats.reloadSound1Time + 0.1f) {
+        //     if (!loadSoundPlayed) {
+        //         weaponActionScript.PlayReloadSound(0);
+        //         loadSoundPlayed = true;
+        //     }
+        // } else {
+        //     loadSoundPlayed = false;
+        // }
+        // Reload every 0.7 secs
+        if (reloadTimer <= 0f) {
+            reloadTimer = RELOAD_INTERVAL;
+            weaponActionScript.ReloadShotgun();
+            weaponActionScript.PlayReloadSound(0);
         } else {
-            loadSoundPlayed = false;
+            reloadTimer -= Time.deltaTime;
         }
-        if (!done && (weaponActionScript.currentAmmo >= weaponActionScript.weaponStats.clipCapacity || Input.GetButtonDown("Fire1"))) {
+        if (!done && weaponActionScript.currentAmmo > 0 && (weaponActionScript.currentAmmo >= weaponActionScript.weaponStats.clipCapacity || Input.GetButtonDown("Fire1") || weaponActionScript.totalAmmoLeft <= 0)) {
             animator.SetTrigger("CockShotgun");
             done = true;
         }
