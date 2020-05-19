@@ -8,13 +8,16 @@ public class SpectatorScript : MonoBehaviour {
 
 	private const float Y_ANGLE_MIN = 10f;
 	private const float Y_ANGLE_MAX = 50f;
+	private const float INITIAL_SPECTATE_DISTANCE = 6f;
+	private const float MAX_SPECTATE_DISTANCE = 8f;
+	private const float MIN_SPECTATE_DISTANCE = 3f;
 	private Vector3 gameOverCamPos = new Vector3(81f, 30f, 5f);
 	private Vector3 gameOverCamRot = new Vector3(0f, -40f, 0f);
 
 	public GameObject following;
 	public Camera cam;
 
-	private float distance = 8f;
+	private float distance;
 	private float currX = 0f;
 	private float currY = 0f;
 	private float sensitivityX = 4f;
@@ -26,6 +29,8 @@ public class SpectatorScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		distance = INITIAL_SPECTATE_DISTANCE;
+
 		foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
 			GameObject o = playerStat.objRef;
             if (o.GetComponent<PlayerActionScript> ().health > 0 && !o.GetComponent<PhotonView>().IsMine) {
@@ -54,8 +59,10 @@ public class SpectatorScript : MonoBehaviour {
 		if (!rotationLock) {
 			currX += Input.GetAxis ("Mouse X");
 			currY += Input.GetAxis ("Mouse Y");
-
 			currY = Mathf.Clamp (currY, Y_ANGLE_MIN, Y_ANGLE_MAX);
+
+			distance += Input.GetAxis("Mouse ScrollWheel");
+			distance = Mathf.Clamp(distance, MIN_SPECTATE_DISTANCE, MAX_SPECTATE_DISTANCE);
 		}
 	}
 
