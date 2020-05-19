@@ -18,7 +18,7 @@ public class InGameMessengerHUD : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if (container == null) {
-			GameObject c = GameObject.Find ("HUD");
+			GameObject c = GameObject.FindWithTag ("HUD");
 			if (c != null) {
 				container = c.GetComponent<HUDContainer> ();
 			}

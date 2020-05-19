@@ -44,6 +44,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     // Use this for initialization
     void Start () {
+		container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
         if (!GetComponent<PhotonView>().IsMine) {
 			myHudMarkerCam1.enabled = false;
 			myHudMarkerCam2.enabled = false;
@@ -56,7 +57,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		missionWaypoints = new ArrayList ();
 		objectiveFormatter = new ObjectivesTextScript();
 
-		container = GameObject.Find ("HUD").GetComponent<HUDContainer> ();
+		// container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
 		container.hitFlare.GetComponent<RawImage> ().enabled = false;
 		container.hitDir.GetComponent<RawImage> ().enabled = false;
 		container.hitMarker.GetComponent<RawImage> ().enabled = false;
@@ -642,9 +643,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void MessagePopup(string message)
     {
-		container.missionText.GetComponent<MissionTextAnimScript> ().Reset ();
-		container.missionText.GetComponent<Text> ().text = message;
-		container.missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();
+		if (container != null) {
+			container.missionText.GetComponent<MissionTextAnimScript> ().Reset ();
+			container.missionText.GetComponent<Text> ().text = message;
+			container.missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();
+		}
     }
 
 	public void SetActionBarSlider(float val) {

@@ -447,6 +447,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 //weaponScript.SwitchWeaponToFullBody();
                 fpc.SetIsDeadInAnimator(true);
                 SetInteracting(false, null);
+                TriggerPlayerDownAlert();
             }
             fpc.enabled = false;
             if (!rotationSaved)
@@ -1156,6 +1157,16 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void SetInteracting(bool b, string objectName) {
         isInteracting = b;
         interactingWith = objectName;
+    }
+
+    void TriggerPlayerDownAlert() {
+        photonView.RPC("RpcTriggerPlayerDownAlert", RpcTarget.Others, PhotonNetwork.NickName);
+    }
+
+    [PunRPC]
+    void RpcTriggerPlayerDownAlert(string playerDownName) {
+        if (gameObject.layer == 0) return;
+        hud.MessagePopup(playerDownName + " is down!");
     }
 
 }
