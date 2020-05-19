@@ -55,6 +55,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject customizationMenuPopup;
 	public GameObject marketplaceMenuPopup;
 	public GameObject modMenuPopup;
+	public GameObject emergencyPopup;
+	public Text emergencyPopupTxt;
 	private string itemBeingPurchased;
 	private string typeBeingPurchased;
 	private uint totalGpCostBeingPurchased;
@@ -3377,16 +3379,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		splashScreenPopup.text = message;
 	}
 
-	public void CloseGameOnError() {
-		ToggleSplashScreen(true, "Your data could not be loaded. Either your data is corrupted or the service is unavailable. Please check the webiste for further details. If this issue persists, please create a ticket at koobando.com/support.");
-		StartCoroutine(CloseGameOnErrorRoutine());
-	}
-
-	IEnumerator CloseGameOnErrorRoutine() {
-		yield return new WaitForSeconds(8f);
-		Application.Quit();
-	}
-
 	public void PreparePurchase(string itemName, string itemType, Texture thumb) {
 		PrepareDurationDropdown(itemType == "Mod");
 		durationSelectionDropdown.value = 0;
@@ -3471,7 +3463,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 					TriggerMarketplacePopup("You do not have enough GP to purchase this item.");
 				}
 			} else {
-				TriggerMarketplacePopup("Transaction could not be completed at this time. Please try again later.");
+				// TriggerMarketplacePopup("Transaction could not be completed at this time. Please try again later.");
+				PlayerData.playerdata.TriggerEmergencyExit("Transaction could not be completed at this time. Please try again later.");
 			}
 		});
 	}
@@ -3710,5 +3703,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		SetPlayerRankForTitle();
 		SetPlayerLevelProgressForTitle();
 	}
+
+	public void TriggerEmergencyPopup(string message) {
+        emergencyPopupTxt.text = message;
+        emergencyPopup.SetActive(true);
+    }
+
+    public void CloseEmergencyPopup() {
+        emergencyPopup.SetActive(false);
+    }
 		
 }

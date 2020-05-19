@@ -31,6 +31,8 @@ public class SetupControllerScript : MonoBehaviour
     private bool finishedFlag;
     private bool completeCharCreationFlag;
     private string popupMessage;
+    public GameObject emergencyPopup;
+    public Text emergencyPopupTxt;
     // Start is called before the first frame update
     void Start()
     {
@@ -142,7 +144,8 @@ public class SetupControllerScript : MonoBehaviour
         DAOScript.dao.dbRef.Child("fteam_ai_takenUsernames").GetValueAsync().ContinueWith(taskA => {
             if (taskA.IsFaulted) {
                 activatePopupFlag = true;
-                popupMessage = "Database is currently unavailable. Please try again later.";
+                // popupMessage = "Database is currently unavailable. Please try again later.";
+                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                 completeCharCreationFlag = false;
             } else if (taskA.IsCompleted) {
                 if (taskA.Result.HasChild(potentialNameLower)) {
@@ -159,7 +162,8 @@ public class SetupControllerScript : MonoBehaviour
                         DAOScript.dao.dbRef.Child("fteam_ai_takenUsernames").Child(potentialNameLower).SetValueAsync("true").ContinueWith(taskB => {
                             if (taskB.IsFaulted) {
                                 activatePopupFlag = true;
-                                popupMessage = "Database is currently unavailable. Please try again later.";
+                                // popupMessage = "Database is currently unavailable. Please try again later.";
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                                 characterNameInput.interactable = true;
                                 proceedBtn.interactable = true;
                                 checkBtn.interactable = true;
@@ -176,7 +180,8 @@ public class SetupControllerScript : MonoBehaviour
                                 DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).SetRawJsonValueAsync(json).ContinueWith(taskE => {
                                     if (taskE.IsFaulted) {
                                         activatePopupFlag = true;
-                                        popupMessage = "Database is currently unavailable. Please try again later.";
+                                        // popupMessage = "Database is currently unavailable. Please try again later.";
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                                         characterNameInput.interactable = true;
                                         proceedBtn.interactable = true;
                                         checkBtn.interactable = true;
@@ -320,7 +325,8 @@ public class SetupControllerScript : MonoBehaviour
                                         DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
                                             .SetRawJsonValueAsync(jsonA).ContinueWith(taskC => {
                                             if (taskC.IsFaulted) {
-                                                Debug.Log(taskC.Exception.Message);
+                                                // Debug.Log(taskC.Exception.Message);
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                                             } else {
                                                 string jsonTemp = "{" +
                                                     "\"name\":\"Standard Suppressor\"," +
@@ -330,9 +336,13 @@ public class SetupControllerScript : MonoBehaviour
                                                 "}";
                                                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
                                                     .Child("mods").Push().SetRawJsonValueAsync(jsonTemp).ContinueWith(taskD => {
+                                                        if (taskD.IsCompleted) {
                                                         // Continue to home screen
                                                         // Debug.Log("DONE!");
-                                                        finishedFlag = true;
+                                                            finishedFlag = true;
+                                                        } else {
+                                                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                        }
                                                 });
                                             }
                                         });
@@ -401,6 +411,32 @@ public class SetupControllerScript : MonoBehaviour
     void QueueConfirmPopup(string message) {
         activateConfirmFlag = true;
         popupMessage = message;
+    }
+
+    public void TriggerEmergencyPopup(string message) {
+        emergencyPopupTxt.text = message;
+        emergencyPopup.SetActive(true);
+    }
+
+    public void CloseEmergencyPopup() {
+        emergencyPopup.SetActive(false);
+    }
+
+        // Only called in an emergency situation when the game needs to exit immediately (ex: database failure or user gets banned).
+    public void TriggerEmergencyExit(string message) {
+        // Freeze user mouse input
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
+        // Display emergency popup
+        TriggerEmergencyPopup("A fatal error has occurred:\n" + message + "\nThe game will now close.");
+
+        StartCoroutine("EmergencyExitGame");
+    }
+
+    IEnumerator EmergencyExitGame() {
+        yield return new WaitForSeconds(5f);
+        Application.Quit();
     }
 
 }

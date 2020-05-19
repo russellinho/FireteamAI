@@ -44,6 +44,7 @@ public class PlayerData : MonoBehaviour
     public GameObject bodyReference;
     public GameObject inGamePlayerReference;
     public TitleControllerScript titleRef;
+    public GameOverController gameOverControllerRef;
     public Dictionary<string, EquipmentData> myHeadgear;
     public Dictionary<string, EquipmentData> myTops;
     public Dictionary<string, EquipmentData> myBottoms;
@@ -227,6 +228,8 @@ public class PlayerData : MonoBehaviour
             .SetRawJsonValueAsync(saveJson).ContinueWith(task => {
                 if (task.IsCompleted) {
                     Debug.Log("Player data saved successfully.");
+                } else {
+                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                 }
             });
     }
@@ -241,7 +244,7 @@ public class PlayerData : MonoBehaviour
         DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
             DataSnapshot snapshot = task.Result;
             if (task.IsFaulted || task.IsCanceled) {
-                titleRef.CloseGameOnError();
+                TriggerEmergencyExit("Your data could not be loaded. Either your data is corrupted, or the service is unavailable. Please check the website for further details. If this issue persists, please create a ticket at koobando.com/support.");
             } else {
                 info.defaultChar = snapshot.Child("defaultChar").Value.ToString();
                 info.playername = snapshot.Child("username").Value.ToString();
@@ -251,62 +254,66 @@ public class PlayerData : MonoBehaviour
                 // Equip previously equipped if available. Else, equip defaults and save it
                 if (snapshot.HasChild("equipment")) {
                     DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(taskA => {
-                        DataSnapshot inventorySnapshot = taskA.Result;
-                        DataSnapshot equipSnapshot = snapshot.Child("equipment");
-                        info.equippedCharacter = equipSnapshot.Child("equippedCharacter").Value.ToString();
-                        info.equippedPrimary = equipSnapshot.Child("equippedPrimary").Value.ToString();
-                        info.equippedSecondary = equipSnapshot.Child("equippedSecondary").Value.ToString();
-                        info.equippedSupport = equipSnapshot.Child("equippedSupport").Value.ToString();
-                        info.equippedMelee = equipSnapshot.Child("equippedMelee").Value.ToString();
-                        info.equippedTop = equipSnapshot.Child("equippedTop").Value.ToString();
-                        info.equippedBottom = equipSnapshot.Child("equippedBottom").Value.ToString();
-                        info.equippedFootwear = equipSnapshot.Child("equippedFootwear").Value.ToString();
-                        info.equippedFacewear = equipSnapshot.Child("equippedFacewear").Value.ToString();
-                        info.equippedHeadgear = equipSnapshot.Child("equippedHeadgear").Value.ToString();
-                        info.equippedArmor = equipSnapshot.Child("equippedArmor").Value.ToString();
+                        if (taskA.IsCompleted) {
+                            DataSnapshot inventorySnapshot = taskA.Result;
+                            DataSnapshot equipSnapshot = snapshot.Child("equipment");
+                            info.equippedCharacter = equipSnapshot.Child("equippedCharacter").Value.ToString();
+                            info.equippedPrimary = equipSnapshot.Child("equippedPrimary").Value.ToString();
+                            info.equippedSecondary = equipSnapshot.Child("equippedSecondary").Value.ToString();
+                            info.equippedSupport = equipSnapshot.Child("equippedSupport").Value.ToString();
+                            info.equippedMelee = equipSnapshot.Child("equippedMelee").Value.ToString();
+                            info.equippedTop = equipSnapshot.Child("equippedTop").Value.ToString();
+                            info.equippedBottom = equipSnapshot.Child("equippedBottom").Value.ToString();
+                            info.equippedFootwear = equipSnapshot.Child("equippedFootwear").Value.ToString();
+                            info.equippedFacewear = equipSnapshot.Child("equippedFacewear").Value.ToString();
+                            info.equippedHeadgear = equipSnapshot.Child("equippedHeadgear").Value.ToString();
+                            info.equippedArmor = equipSnapshot.Child("equippedArmor").Value.ToString();
 
-                        DataSnapshot modsInventory = inventorySnapshot.Child("mods");
+                            DataSnapshot modsInventory = inventorySnapshot.Child("mods");
 
-                        DataSnapshot modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedPrimary);
-                        string suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
-                        string sightModId = modSnapshot.Child("equippedSight").Value.ToString();
-                        primaryModInfo.weaponName = info.equippedPrimary;
-                        primaryModInfo.suppressorId = suppressorModId;
-                        primaryModInfo.sightId = sightModId;
-                        if (!"".Equals(suppressorModId)) {
-                            primaryModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
-                        }
-                        if (!"".Equals(sightModId)) {
-                            primaryModInfo.equippedSight = modsInventory.Child(sightModId).Child("name").Value.ToString();
-                        }
+                            DataSnapshot modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedPrimary);
+                            string suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                            string sightModId = modSnapshot.Child("equippedSight").Value.ToString();
+                            primaryModInfo.weaponName = info.equippedPrimary;
+                            primaryModInfo.suppressorId = suppressorModId;
+                            primaryModInfo.sightId = sightModId;
+                            if (!"".Equals(suppressorModId)) {
+                                primaryModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
+                            }
+                            if (!"".Equals(sightModId)) {
+                                primaryModInfo.equippedSight = modsInventory.Child(sightModId).Child("name").Value.ToString();
+                            }
 
-                        modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedSecondary);
-                        suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
-                        sightModId = modSnapshot.Child("equippedSight").Value.ToString();
-                        secondaryModInfo.weaponName = info.equippedSecondary;
-                        secondaryModInfo.suppressorId = suppressorModId;
-                        secondaryModInfo.sightId = sightModId;
-                        if (!"".Equals(suppressorModId)) {
-                            secondaryModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
-                        }
-                        if (!"".Equals(sightModId)) {
-                            secondaryModInfo.equippedSight = modsInventory.Child(sightModId).Child("name").Value.ToString();
-                        }
+                            modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedSecondary);
+                            suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                            sightModId = modSnapshot.Child("equippedSight").Value.ToString();
+                            secondaryModInfo.weaponName = info.equippedSecondary;
+                            secondaryModInfo.suppressorId = suppressorModId;
+                            secondaryModInfo.sightId = sightModId;
+                            if (!"".Equals(suppressorModId)) {
+                                secondaryModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
+                            }
+                            if (!"".Equals(sightModId)) {
+                                secondaryModInfo.equippedSight = modsInventory.Child(sightModId).Child("name").Value.ToString();
+                            }
 
-                        modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedSupport);
-                        suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
-                        sightModId = modSnapshot.Child("equippedSight").Value.ToString();
-                        supportModInfo.weaponName = info.equippedSupport;
-                        supportModInfo.suppressorId = suppressorModId;
-                        supportModInfo.sightId = sightModId;
-                        if (!"".Equals(suppressorModId)) {
-                            supportModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
+                            modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedSupport);
+                            suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                            sightModId = modSnapshot.Child("equippedSight").Value.ToString();
+                            supportModInfo.weaponName = info.equippedSupport;
+                            supportModInfo.suppressorId = suppressorModId;
+                            supportModInfo.sightId = sightModId;
+                            if (!"".Equals(suppressorModId)) {
+                                supportModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
+                            }
+                            if (!"".Equals(sightModId)) {
+                                supportModInfo.equippedSuppressor = modsInventory.Child(sightModId).Child("name").Value.ToString();
+                            }
+                            dataLoadedFlag = true;
+                            updateCurrencyFlag = true;
+                        } else {
+                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                         }
-                        if (!"".Equals(sightModId)) {
-                            supportModInfo.equippedSuppressor = modsInventory.Child(sightModId).Child("name").Value.ToString();
-                        }
-                        dataLoadedFlag = true;
-                        updateCurrencyFlag = true;
                     });
                 } else {
                     info.equippedCharacter = snapshot.Child("defaultChar").Value.ToString();
@@ -381,276 +388,280 @@ public class PlayerData : MonoBehaviour
 
     public void LoadInventory() {
         DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
-            DataSnapshot snapshot = task.Result;
-            DataSnapshot subSnapshot = snapshot.Child("weapons");
-            IEnumerator<DataSnapshot> dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load weapons
-            while (dataLoaded.MoveNext()) {
-                WeaponData w = new WeaponData();
-                string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current;
-                w.name = key;
-                w.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                w.duration = thisSnapshot.Child("duration").Value.ToString();
-                object equippedSuppressor = thisSnapshot.Child("equippedSuppressor").Value;
-                object equippedClip = thisSnapshot.Child("equippedClip").Value;
-                object equippedSight = thisSnapshot.Child("equippedSight").Value;
-                w.equippedSuppressor = (equippedSuppressor == null ? "" : equippedSuppressor.ToString());
-                w.equippedClip = (equippedClip == null ? "" : equippedClip.ToString());
-                w.equippedSight = (equippedSight == null ? "" : equippedSight.ToString());
-                // If item is expired, delete from database. Else, add it to inventory
-                float dur = float.Parse(w.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(w.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(w.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+            if (task.IsCompleted) {
+                DataSnapshot snapshot = task.Result;
+                DataSnapshot subSnapshot = snapshot.Child("weapons");
+                IEnumerator<DataSnapshot> dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load weapons
+                while (dataLoaded.MoveNext()) {
+                    WeaponData w = new WeaponData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    w.name = key;
+                    w.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                    w.duration = thisSnapshot.Child("duration").Value.ToString();
+                    object equippedSuppressor = thisSnapshot.Child("equippedSuppressor").Value;
+                    object equippedClip = thisSnapshot.Child("equippedClip").Value;
+                    object equippedSight = thisSnapshot.Child("equippedSight").Value;
+                    w.equippedSuppressor = (equippedSuppressor == null ? "" : equippedSuppressor.ToString());
+                    w.equippedClip = (equippedClip == null ? "" : equippedClip.ToString());
+                    w.equippedSight = (equippedSight == null ? "" : equippedSight.ToString());
+                    // If item is expired, delete from database. Else, add it to inventory
+                    float dur = float.Parse(w.duration);
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Weapon", null, true);
+                        DateTime acquireDate = DateTime.Parse(w.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(w.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Weapon", null, true);
+                        } else
+                        {
+                            myWeapons.Add(key, w);
+                        }
                     } else
                     {
                         myWeapons.Add(key, w);
                     }
-                } else
-                {
-                    myWeapons.Add(key, w);
                 }
-            }
-            
-            subSnapshot = snapshot.Child("characters");
-            dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load characters
-            while (dataLoaded.MoveNext()) {
-                CharacterData c = new CharacterData();
-                string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current;
-                c.name = key;
-                c.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                c.duration = thisSnapshot.Child("duration").Value.ToString();
-                // If item is expired, delete from database. Else, add it to inventory
-                float dur = float.Parse(c.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(c.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(c.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                
+                subSnapshot = snapshot.Child("characters");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load characters
+                while (dataLoaded.MoveNext()) {
+                    CharacterData c = new CharacterData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    c.name = key;
+                    c.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                    c.duration = thisSnapshot.Child("duration").Value.ToString();
+                    // If item is expired, delete from database. Else, add it to inventory
+                    float dur = float.Parse(c.duration);
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Character", null, true);
+                        DateTime acquireDate = DateTime.Parse(c.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(c.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Character", null, true);
+                        }
+                        else
+                        {
+                            myCharacters.Add(key, c);
+                        }
                     }
                     else
                     {
                         myCharacters.Add(key, c);
                     }
                 }
-                else
-                {
-                    myCharacters.Add(key, c);
-                }
-            }
 
-            subSnapshot = snapshot.Child("armor");
-            dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load armor
-            while (dataLoaded.MoveNext()) {
-                ArmorData a = new ArmorData();
-                string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current;
-                a.name = key;
-                a.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                a.duration = thisSnapshot.Child("duration").Value.ToString();
-                // If item is expired, delete from database. Else, add it to inventory
-                float dur = float.Parse(a.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(a.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(a.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                subSnapshot = snapshot.Child("armor");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load armor
+                while (dataLoaded.MoveNext()) {
+                    ArmorData a = new ArmorData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    a.name = key;
+                    a.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                    a.duration = thisSnapshot.Child("duration").Value.ToString();
+                    // If item is expired, delete from database. Else, add it to inventory
+                    float dur = float.Parse(a.duration);
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Armor", null, true);
+                        DateTime acquireDate = DateTime.Parse(a.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(a.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Armor", null, true);
+                        }
+                        else
+                        {
+                            myArmor.Add(key, a);
+                        }
                     }
                     else
                     {
                         myArmor.Add(key, a);
                     }
                 }
-                else
-                {
-                    myArmor.Add(key, a);
-                }
-            }
 
-            subSnapshot = snapshot.Child("tops");
-            dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load tops
-            while (dataLoaded.MoveNext()) {
-                EquipmentData d = new EquipmentData();
-                string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current;
-                d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                d.duration = thisSnapshot.Child("duration").Value.ToString();
-                // If item is expired, delete from database. Else, add it to inventory
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                subSnapshot = snapshot.Child("tops");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load tops
+                while (dataLoaded.MoveNext()) {
+                    EquipmentData d = new EquipmentData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    d.name = key;
+                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                    d.duration = thisSnapshot.Child("duration").Value.ToString();
+                    // If item is expired, delete from database. Else, add it to inventory
+                    float dur = float.Parse(d.duration);
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Top", null, true);
+                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Top", null, true);
+                        }
+                        else
+                        {
+                            myTops.Add(key, d);
+                        }
                     }
                     else
                     {
                         myTops.Add(key, d);
                     }
                 }
-                else
-                {
-                    myTops.Add(key, d);
-                }
-            }
 
-            subSnapshot = snapshot.Child("bottoms");
-            dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load bottoms
-            while (dataLoaded.MoveNext()) {
-                EquipmentData d = new EquipmentData();
-                string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current;
-                d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                d.duration = thisSnapshot.Child("duration").Value.ToString();
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                subSnapshot = snapshot.Child("bottoms");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load bottoms
+                while (dataLoaded.MoveNext()) {
+                    EquipmentData d = new EquipmentData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    d.name = key;
+                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                    d.duration = thisSnapshot.Child("duration").Value.ToString();
+                    float dur = float.Parse(d.duration);
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Bottom", null, true);
+                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Bottom", null, true);
+                        }
+                        else
+                        {
+                            myBottoms.Add(key, d);
+                        }
                     }
                     else
                     {
                         myBottoms.Add(key, d);
                     }
                 }
-                else
-                {
-                    myBottoms.Add(key, d);
-                }
-            }
 
-            subSnapshot = snapshot.Child("footwear");
-            dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load footwear
-            while (dataLoaded.MoveNext()) {
-                EquipmentData d = new EquipmentData();
-                string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current;
-                d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                d.duration = thisSnapshot.Child("duration").Value.ToString();
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                subSnapshot = snapshot.Child("footwear");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load footwear
+                while (dataLoaded.MoveNext()) {
+                    EquipmentData d = new EquipmentData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    d.name = key;
+                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                    d.duration = thisSnapshot.Child("duration").Value.ToString();
+                    float dur = float.Parse(d.duration);
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Footwear", null, true);
+                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Footwear", null, true);
+                        }
+                        else
+                        {
+                            myFootwear.Add(key, d);
+                        }
                     }
                     else
                     {
                         myFootwear.Add(key, d);
                     }
                 }
-                else
-                {
-                    myFootwear.Add(key, d);
-                }
-            }
 
-            subSnapshot = snapshot.Child("headgear");
-            dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load headgear
-            while (dataLoaded.MoveNext()) {
-                EquipmentData d = new EquipmentData();
-                string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current;
-                d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                d.duration = thisSnapshot.Child("duration").Value.ToString();
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                subSnapshot = snapshot.Child("headgear");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load headgear
+                while (dataLoaded.MoveNext()) {
+                    EquipmentData d = new EquipmentData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    d.name = key;
+                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                    d.duration = thisSnapshot.Child("duration").Value.ToString();
+                    float dur = float.Parse(d.duration);
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Headgear", null, true);
+                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Headgear", null, true);
+                        }
+                        else
+                        {
+                            myHeadgear.Add(key, d);
+                        }
                     }
                     else
                     {
                         myHeadgear.Add(key, d);
                     }
                 }
-                else
-                {
-                    myHeadgear.Add(key, d);
-                }
-            }
 
-            subSnapshot = snapshot.Child("facewear");
-            dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load facewear
-            while (dataLoaded.MoveNext()) {
-                EquipmentData d = new EquipmentData();
-                string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current;
-                d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                d.duration = thisSnapshot.Child("duration").Value.ToString();
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                subSnapshot = snapshot.Child("facewear");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load facewear
+                while (dataLoaded.MoveNext()) {
+                    EquipmentData d = new EquipmentData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    d.name = key;
+                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                    d.duration = thisSnapshot.Child("duration").Value.ToString();
+                    float dur = float.Parse(d.duration);
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Facewear", null, true);
+                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Facewear", null, true);
+                        }
+                        else
+                        {
+                            myFacewear.Add(key, d);
+                        }
                     }
                     else
                     {
                         myFacewear.Add(key, d);
                     }
                 }
-                else
-                {
-                    myFacewear.Add(key, d);
-                }
-            }
 
-            subSnapshot = snapshot.Child("mods");
-            dataLoaded = subSnapshot.Children.GetEnumerator();
-            // Load mods
-            while (dataLoaded.MoveNext()) {
-                ModData m = new ModData();
-                string key = dataLoaded.Current.Key;
-                DataSnapshot thisSnapshot = dataLoaded.Current;
-                m.id = key;
-                m.name = thisSnapshot.Child("name").Value.ToString();
-                m.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                m.duration = thisSnapshot.Child("duration").Value.ToString();
-                m.equippedOn = thisSnapshot.Child("equippedOn").Value.ToString();
-                myMods.Add(key, m);
+                subSnapshot = snapshot.Child("mods");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load mods
+                while (dataLoaded.MoveNext()) {
+                    ModData m = new ModData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    m.id = key;
+                    m.name = thisSnapshot.Child("name").Value.ToString();
+                    m.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                    m.duration = thisSnapshot.Child("duration").Value.ToString();
+                    m.equippedOn = thisSnapshot.Child("equippedOn").Value.ToString();
+                    myMods.Add(key, m);
+                }
+            } else {
+                TriggerEmergencyExit("Your data could not be loaded. Either your data is corrupted, or the service is unavailable. Please check the website for further details. If this issue persists, please create a ticket at koobando.com/support.");
             }
         });
     }
@@ -716,9 +727,17 @@ public class PlayerData : MonoBehaviour
                 newModInfo.weaponName = weaponName;
                 newModInfo.suppressorId = "";
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                    .Child("mods").Child(suppressorId).Child("equippedOn").SetValueAsync("");
+                    .Child("mods").Child(suppressorId).Child("equippedOn").SetValueAsync("").ContinueWith(task => {
+                        if (!task.IsCompleted) {
+                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        }
+                    });
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                    .Child(weaponName).Child("equippedSuppressor").SetValueAsync("");
+                    .Child(weaponName).Child("equippedSuppressor").SetValueAsync("").ContinueWith(task => {
+                        if (!task.IsCompleted) {
+                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        }
+                    });
                 myMods[suppressorId].equippedOn = "";
             }
             else
@@ -728,9 +747,17 @@ public class PlayerData : MonoBehaviour
                 newModInfo.weaponName = weaponName;
                 newModInfo.suppressorId = suppressorId;
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                    .Child("mods").Child(suppressorId).Child("equippedOn").SetValueAsync(weaponName);
+                    .Child("mods").Child(suppressorId).Child("equippedOn").SetValueAsync(weaponName).ContinueWith(task => {
+                        if (!task.IsCompleted) {
+                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        }
+                    });
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                    .Child(weaponName).Child("equippedSuppressor").SetValueAsync(suppressorId);
+                    .Child(weaponName).Child("equippedSuppressor").SetValueAsync(suppressorId).ContinueWith(task => {
+                        if (!task.IsCompleted) {
+                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        }
+                    });
                 myMods[suppressorId].equippedOn = weaponName;
             }
 
@@ -760,9 +787,17 @@ public class PlayerData : MonoBehaviour
                 newModInfo.weaponName = weaponName;
                 newModInfo.sightId = "";
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                    .Child("mods").Child(sightId).Child("equippedOn").SetValueAsync("");
+                    .Child("mods").Child(sightId).Child("equippedOn").SetValueAsync("").ContinueWith(task => {
+                        if (!task.IsCompleted) {
+                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        }
+                    });
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                    .Child(weaponName).Child("equippedSight").SetValueAsync("");
+                    .Child(weaponName).Child("equippedSight").SetValueAsync("").ContinueWith(task => {
+                        if (!task.IsCompleted) {
+                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        }
+                    });
                 myMods[sightId].equippedOn = "";
             }
             else
@@ -772,9 +807,17 @@ public class PlayerData : MonoBehaviour
                 newModInfo.weaponName = weaponName;
                 newModInfo.sightId = sightId;
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                    .Child("mods").Child(sightId).Child("equippedOn").SetValueAsync(weaponName);
+                    .Child("mods").Child(sightId).Child("equippedOn").SetValueAsync(weaponName).ContinueWith(task => {
+                        if (!task.IsCompleted) {
+                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        }
+                    });
                 DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                    .Child(weaponName).Child("equippedSight").SetValueAsync(sightId);
+                    .Child(weaponName).Child("equippedSight").SetValueAsync(sightId).ContinueWith(task => {
+                        if (!task.IsCompleted) {
+                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        }
+                    });
                 myMods[sightId].equippedOn = weaponName;
             }
 
@@ -864,7 +907,8 @@ public class PlayerData : MonoBehaviour
                         {
                             if (task.IsFaulted || task.IsCanceled)
                             {
-                                purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -872,13 +916,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        myWeapons.Add(itemName, w);
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                myWeapons.Add(itemName, w);
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         } else
@@ -886,6 +940,9 @@ public class PlayerData : MonoBehaviour
                             if (!task.IsCanceled && !task.IsFaulted)
                             {
                                 myWeapons.Add(itemName, w);
+                            } else {
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                         }
                     });
@@ -900,6 +957,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -907,13 +966,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        w.duration = ""+duration;
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                w.duration = ""+duration;
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         }
@@ -943,6 +1012,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -950,14 +1021,24 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        myCharacters.Add(itemName, c);
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                        addDefaultClothingFlag = itemName;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                myCharacters.Add(itemName, c);
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                                addDefaultClothingFlag = itemName;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         } else
@@ -979,6 +1060,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -986,13 +1069,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        c.duration = ""+duration;
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                c.duration = ""+duration;
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         }
@@ -1022,6 +1115,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -1029,13 +1124,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        myTops.Add(itemName, e);
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                myTops.Add(itemName, e);
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         } else
@@ -1058,6 +1163,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -1065,13 +1172,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        e.duration = ""+duration;
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                e.duration = ""+duration;
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         }
@@ -1101,6 +1218,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -1108,13 +1227,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        myBottoms.Add(itemName, e);
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                myBottoms.Add(itemName, e);
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         } else
@@ -1137,6 +1266,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -1144,13 +1275,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        e.duration = ""+duration;
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                e.duration = ""+duration;
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         }
@@ -1180,6 +1321,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -1187,13 +1330,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        myArmor.Add(itemName, e);
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                myArmor.Add(itemName, e);
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         } else
@@ -1216,6 +1369,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -1223,13 +1378,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        a.duration = ""+duration;
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                a.duration = ""+duration;
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         }
@@ -1259,6 +1424,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -1266,13 +1433,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        myFootwear.Add(itemName, e);
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                myFootwear.Add(itemName, e);
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         } else
@@ -1295,6 +1472,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -1302,13 +1481,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        e.duration = ""+duration;
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                e.duration = ""+duration;
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         }
@@ -1338,6 +1527,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -1345,13 +1536,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        myHeadgear.Add(itemName, e);
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                myHeadgear.Add(itemName, e);
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         } else
@@ -1374,6 +1575,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -1381,13 +1584,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        e.duration = ""+duration;
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                e.duration = ""+duration;
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         }
@@ -1417,6 +1630,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -1424,13 +1639,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        myFacewear.Add(itemName, e);
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                myFacewear.Add(itemName, e);
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         } else
@@ -1453,6 +1678,8 @@ public class PlayerData : MonoBehaviour
                             if (task.IsFaulted || task.IsCanceled)
                             {
                                 purchaseFailFlag = true;
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                return;
                             }
                             else
                             {
@@ -1460,13 +1687,23 @@ public class PlayerData : MonoBehaviour
                                 DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
                                 userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
                                 {
-                                    userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                    {
-                                        e.duration = ""+duration;
-                                        PlayerData.playerdata.info.gp = gpDiff;
-                                        updateCurrencyFlag = true;
-                                        purchaseSuccessfulFlag = true;
-                                    });
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
+                                        {
+                                            if (taskB.IsCompleted) {
+                                                e.duration = ""+duration;
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
                             }
                         }
@@ -1485,32 +1722,50 @@ public class PlayerData : MonoBehaviour
                 "\"duration\":\"-1\"" +
             "}";
             DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Push();
+            if (d == null) {
+                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                return;
+            }
             string pushKey = d.Key;
             m.id = pushKey;
             d.SetRawJsonValueAsync(json).ContinueWith(task => {
-                if (purchased) {
-                    if (task.IsFaulted || task.IsCanceled) {
-                        purchaseFailFlag = true;
-                    } else {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                            userInfoRef.Child("gp").SetValueAsync(""+gpDiff).ContinueWith(taskA => {
-                                userInfoRef.Child("kash").SetValueAsync(""+(PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB => {
-                                    myMods.Add(pushKey, m);
-                                    PlayerData.playerdata.info.gp = gpDiff;
-                                    updateCurrencyFlag = true;
-                                    purchaseSuccessfulFlag = true;
+                if (task.IsCompleted) {
+                    if (purchased) {
+                        if (task.IsFaulted || task.IsCanceled) {
+                            purchaseFailFlag = true;
+                        } else {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+                                userInfoRef.Child("gp").SetValueAsync(""+gpDiff).ContinueWith(taskA => {
+                                    if (taskA.IsCompleted) {
+                                        userInfoRef.Child("kash").SetValueAsync(""+(PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB => {
+                                            if (taskB.IsCompleted) {
+                                                myMods.Add(pushKey, m);
+                                                PlayerData.playerdata.info.gp = gpDiff;
+                                                updateCurrencyFlag = true;
+                                                purchaseSuccessfulFlag = true;
+                                            } else {
+                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                return;
+                                            }
+                                        });
+                                    } else {
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
+                                    }
                                 });
-                            });
-                    }
-                } else
-                {
-                    if (!task.IsCanceled && !task.IsFaulted)
+                        }
+                    } else
                     {
-                        myMods.Add(pushKey, m);
+                        if (!task.IsCanceled && !task.IsFaulted)
+                        {
+                            myMods.Add(pushKey, m);
+                        }
                     }
+                } else {
+                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                    return;
                 }
-                
             });
         }
     }
@@ -1596,6 +1851,8 @@ public class PlayerData : MonoBehaviour
                     if (task.IsCanceled || task.IsFaulted)
                     {
                         Debug.Log(itemName + " could not be deleted!");
+                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        return;
                     } else
                     {
                         // Delete item locally
@@ -1630,6 +1887,8 @@ public class PlayerData : MonoBehaviour
                     if (task.IsCanceled || task.IsFaulted)
                     {
                         Debug.Log(itemName + " could not be deleted!");
+                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        return;
                     }
                     else
                     {
@@ -1662,6 +1921,8 @@ public class PlayerData : MonoBehaviour
                     if (task.IsCanceled || task.IsFaulted)
                     {
                         Debug.Log(itemName + " could not be deleted!");
+                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        return;
                     }
                     else
                     {
@@ -1689,6 +1950,8 @@ public class PlayerData : MonoBehaviour
                     if (task.IsCanceled || task.IsFaulted)
                     {
                         Debug.Log(itemName + " could not be deleted!");
+                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        return;
                     }
                     else
                     {
@@ -1722,6 +1985,8 @@ public class PlayerData : MonoBehaviour
                     if (task.IsCanceled || task.IsFaulted)
                     {
                         Debug.Log(itemName + " could not be deleted!");
+                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        return;
                     }
                     else
                     {
@@ -1755,6 +2020,8 @@ public class PlayerData : MonoBehaviour
                     if (task.IsCanceled || task.IsFaulted)
                     {
                         Debug.Log(itemName + " could not be deleted!");
+                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        return;
                     }
                     else
                     {
@@ -1788,6 +2055,8 @@ public class PlayerData : MonoBehaviour
                     if (task.IsCanceled || task.IsFaulted)
                     {
                         Debug.Log(itemName + " could not be deleted!");
+                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        return;
                     }
                     else
                     {
@@ -1816,6 +2085,8 @@ public class PlayerData : MonoBehaviour
                     if (task.IsCanceled || task.IsFaulted)
                     {
                         Debug.Log(itemName + " could not be deleted!");
+                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        return;
                     }
                     else
                     {
@@ -1847,6 +2118,8 @@ public class PlayerData : MonoBehaviour
                                     if (taskA.IsFaulted || taskA.IsCanceled)
                                     {
                                         Debug.Log(itemName + " could not be deleted when removing from weapon " + weaponName + "!");
+                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        return;
                                     } else
                                     {
                                         Debug.Log(itemName + " was removed from " + weaponName + " since it was deleted from your inventory.");
@@ -1872,7 +2145,17 @@ public class PlayerData : MonoBehaviour
         DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
         userInfoRef.Child("exp").SetValueAsync("" + PlayerData.playerdata.info.exp).ContinueWith(task =>
         {
-            userInfoRef.Child("gp").SetValueAsync("" + PlayerData.playerdata.info.gp);
+            if (task.IsCompleted) {
+                userInfoRef.Child("gp").SetValueAsync("" + PlayerData.playerdata.info.gp).ContinueWith(taskA => {
+                    if (!taskA.IsCompleted) {
+                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        return;
+                    }
+                });
+            } else {
+                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                return;
+            }
         });
     }
 
@@ -2130,6 +2413,28 @@ public class PlayerData : MonoBehaviour
             return new Rank("Commander in Chief V", 50000000, uint.MaxValue);
         }
         return new Rank("Trainee", 0, 1999);
+    }
+
+    // Only called in an emergency situation when the game needs to exit immediately (ex: database failure or user gets banned).
+    public void TriggerEmergencyExit(string message) {
+        // Freeze user mouse input
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
+        // Display emergency popup depending on which screen you're on
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (currentScene.Equals("GameOverSuccess") || currentScene.Equals("GameOverFail")) {
+            gameOverControllerRef.TriggerEmergencyPopup("A fatal error has occurred:\n" + message + "\nThe game will now close.");
+        } else if (currentScene.Equals("Title")) {
+            titleRef.TriggerEmergencyPopup("A fatal error has occurred:\n" + message + "\nThe game will now close.");
+        }
+
+        StartCoroutine("EmergencyExitGame");
+    }
+
+    IEnumerator EmergencyExitGame() {
+        yield return new WaitForSeconds(5f);
+        Application.Quit();
     }
 
 }

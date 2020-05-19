@@ -12,6 +12,8 @@ public class GameOverController : MonoBehaviourPunCallbacks {
     public Slider newExpSlider;
     public Text expGainedTxt;
     public GameObject levelUpPopup;
+    public GameObject emergencyPopup;
+    public Text emergencyPopupTxt;
 
 	public GameObject namesCol;
 	public GameObject killsCol;
@@ -65,6 +67,7 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 
     void Start()
     {
+        PlayerData.playerdata.gameOverControllerRef = this;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -245,6 +248,15 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 
     public void CloseLevelUpPopup() {
         levelUpPopup.SetActive(false);
+    }
+
+    public void TriggerEmergencyPopup(string message) {
+        emergencyPopupTxt.text = message;
+        emergencyPopup.SetActive(true);
+    }
+
+    public void CloseEmergencyPopup() {
+        emergencyPopup.SetActive(false);
     }
 
 }
