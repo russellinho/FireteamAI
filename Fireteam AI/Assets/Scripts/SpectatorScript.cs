@@ -14,7 +14,10 @@ public class SpectatorScript : MonoBehaviour {
 	private Vector3 gameOverCamPos = new Vector3(81f, 30f, 5f);
 	private Vector3 gameOverCamRot = new Vector3(0f, -40f, 0f);
 
+	// Reference to the player we're currently following
 	public GameObject following;
+	// Reference to the head of the player we're currently following. We focus on the head instead of body
+	public Transform followingHead;
 	public Camera cam;
 
 	private float distance;
@@ -33,8 +36,10 @@ public class SpectatorScript : MonoBehaviour {
 
 		foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
 			GameObject o = playerStat.objRef;
-            if (o.GetComponent<PlayerActionScript> ().health > 0 && !o.GetComponent<PhotonView>().IsMine) {
+			PlayerActionScript p = o.GetComponent<PlayerActionScript> ();
+            if (p.health > 0 && !o.GetComponent<PhotonView>().IsMine) {
 				following = o;
+				followingHead = p.headTransform;
 				playerListKey = o.GetComponent<PhotonView> ().OwnerActorNr;
 				break;
 			}
@@ -51,6 +56,7 @@ public class SpectatorScript : MonoBehaviour {
 				SwitchFollowing ();
 			}
 			if (!following) {
+				followingHead = null;
 				rotationLock = true;
 				transform.position = new Vector3 (0f, 10f, 0f);
 				transform.rotation = Quaternion.Euler (new Vector3 (0f, 45f, 0f));
@@ -70,8 +76,8 @@ public class SpectatorScript : MonoBehaviour {
 		if (following) {
 			Vector3 dir = new Vector3 (0f, 0f, -distance);
 			Quaternion rot = Quaternion.Euler (currY, currX, 0f);
-			transform.position = following.transform.position + rot * dir;
-			transform.LookAt (following.transform.position);
+			transform.position = followingHead.position + rot * dir;
+			transform.LookAt (followingHead.position);
 		}
 	}
 
@@ -98,8 +104,10 @@ public class SpectatorScript : MonoBehaviour {
 		}
 		following = first;
 		if (following) {
+			followingHead = following.GetComponent<PlayerActionScript>().headTransform;
 			playerListKey = following.GetComponent<PhotonView> ().OwnerActorNr;
 		} else {
+			followingHead = null;
 			playerListKey = -1;
 		}
 	}

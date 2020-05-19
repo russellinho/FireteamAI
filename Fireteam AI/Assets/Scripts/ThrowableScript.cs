@@ -159,7 +159,9 @@ public class ThrowableScript : MonoBehaviour
     }
 
     void DestroySelf() {
-        PhotonNetwork.Destroy(gameObject);
+        if (PhotonNetwork.IsMasterClient) {
+            PhotonNetwork.Destroy(gameObject);
+        }
     }
 
     public void PlayPinSound() {
