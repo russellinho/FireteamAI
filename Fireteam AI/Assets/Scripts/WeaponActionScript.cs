@@ -766,8 +766,8 @@ public class WeaponActionScript : MonoBehaviour
         // Determine how high/low on the body was hit. The closer to 1, the closer to shoulders; closer to 0, closer to feet
         float bodyHeightHit = Mathf.Abs(hitY - baseY) / height;
         // Higher the height, the more damage dealt
-        if (bodyHeightHit <= 0.35f) {
-            total *= 0.35f;
+        if (bodyHeightHit <= 0.7f) {
+            total *= 0.7f;
         } else if (bodyHeightHit < 0.8f) {
             total *= bodyHeightHit;
         }

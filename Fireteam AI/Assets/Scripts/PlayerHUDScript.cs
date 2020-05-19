@@ -495,7 +495,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 			// Enable hit flare
 			container.hitFlare.GetComponent<RawImage> ().enabled = true;
-			float a = -Vector3.Angle (transform.forward, playerActionScript.hitLocation);
+			Vector3 hitDirectionVector = transform.position - playerActionScript.hitLocation;
+			// float a = -Vector3.Angle (playerActionScript.viewCam.gameObject.transform.forward, playerActionScript.hitLocation);
+			float a = Vector3.Angle (playerActionScript.viewCam.gameObject.transform.forward, hitDirectionVector);
 			Vector3 temp = container.hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
 			container.hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(temp.x,temp.y,a));
 			container.hitDir.GetComponent<RawImage> ().enabled = true;
