@@ -827,7 +827,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	[PunRPC]
 	void RpcSetMyExpAndGpGained(int actorId, int expGained, int gpGained) {
 		playerList[actorId].expGained = (uint)expGained;
-		playerList[actorId].gpGained = (uint)expGained;
+		playerList[actorId].gpGained = (uint)gpGained;
 	}
 
 }

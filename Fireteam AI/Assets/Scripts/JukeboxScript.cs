@@ -28,25 +28,22 @@ public class JukeboxScript : MonoBehaviour
         }
     }
 
+    void Start() {
+        StartJukebox();
+    }
+
     public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
         string levelName = SceneManager.GetActiveScene().name;
         if (!levelName.Equals("Title") && !levelName.Equals("Login"))
         {
-            Destroy(gameObject);
+            StopJukebox();
+            jukebox.gameObject.SetActive(false);
+        } else {
+            if (!jukebox.gameObject.activeInHierarchy) {
+                jukebox.gameObject.SetActive(true);
+                StartJukebox();
+            }
         }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        audio1FadeTime = 0f;
-        audio2FadeTime = 0f;
-        int r = Random.Range(0, trackList.Length);
-        audio1Index = r;
-        audioSource1.clip = trackList[r];
-        audioSource1.volume = 0f;
-        audioSource1.Play();
-        StartCoroutine(QueueNextSong(2));
     }
 
     // Update is called once per frame
@@ -127,6 +124,22 @@ public class JukeboxScript : MonoBehaviour
         }
 
         StartCoroutine(QueueNextSong(nextSource));
+    }
+
+    void StopJukebox() {
+        audioSource1.Stop();
+        audioSource2.Stop();
+    }
+
+    void StartJukebox() {
+        audio1FadeTime = 0f;
+        audio2FadeTime = 0f;
+        int r = Random.Range(0, trackList.Length);
+        audio1Index = r;
+        audioSource1.clip = trackList[r];
+        audioSource1.volume = 0f;
+        audioSource1.Play();
+        StartCoroutine(QueueNextSong(2));
     }
 
 }
