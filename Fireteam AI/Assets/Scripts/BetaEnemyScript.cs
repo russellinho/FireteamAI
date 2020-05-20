@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 
 public class BetaEnemyScript : MonoBehaviour {
 
-	private const float MELEE_DISTANCE = 2.8f;
+	private const float MELEE_DISTANCE = 1.7f;
 	private const float PLAYER_HEIGHT_OFFSET = 1f;
 	private const float DETECTION_OUTLINE_MAX_TIME = 10f;
 	private const float MAX_SUSPICION_LEVEL = 100f;
@@ -1222,8 +1222,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	bool TargetIsWithinMeleeDistance() {
 		RaycastHit hit;
-		if (Physics.Linecast (headTransform.position, playerTargeting.transform.position, out hit)) {
-			if (hit.transform.gameObject.tag == "Human") {
+		if (Physics.Linecast (headTransform.position, playerTargeting.GetComponent<PlayerActionScript>().headTransform.position, out hit)) {
+			if (hit.transform.gameObject.tag == "Player") {
 				if (hit.distance <= MELEE_DISTANCE) {
 					return true;
 				}

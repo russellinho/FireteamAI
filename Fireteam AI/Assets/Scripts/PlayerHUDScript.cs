@@ -484,6 +484,19 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	int GetAngleSide(Vector3 fwd, Vector3 targetDir, Vector3 up) {
+		Vector3 perp = Vector3.Cross(fwd, targetDir);
+		float dir = Vector3.Dot(perp, up);
+		
+		if (dir > 0f) {
+			return 1;
+		} else if (dir < 0f) {
+			return -1;
+		}
+
+		return 0;
+	}
+
 	void UpdateHitFlare() {
 		// Hit timer is set to 0 every time the player is hit, if player has been hit recently, make sure the hit flare and dir is set
 		if (playerActionScript.hitTimer < 1f) {
@@ -495,11 +508,16 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 			// Enable hit flare
 			container.hitFlare.GetComponent<RawImage> ().enabled = true;
-			Vector3 hitDirectionVector = transform.position - playerActionScript.hitLocation;
-			// float a = -Vector3.Angle (playerActionScript.viewCam.gameObject.transform.forward, playerActionScript.hitLocation);
+			// Vector3 hitDirectionVector = transform.position - playerActionScript.hitLocation;
+			Vector3 hitDirectionVector = playerActionScript.hitLocation - transform.position;
 			float a = Vector3.Angle (playerActionScript.viewCam.gameObject.transform.forward, hitDirectionVector);
+			float dir = GetAngleSide(playerActionScript.viewCam.gameObject.transform.forward, hitDirectionVector, playerActionScript.viewCam.gameObject.transform.up);
+			if (dir == 1) {
+				a = 360f - a;
+			}
+			// Debug.Log(a);
 			Vector3 temp = container.hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
-			container.hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(temp.x,temp.y,a));
+			container.hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(0f,0f,a));
 			container.hitDir.GetComponent<RawImage> ().enabled = true;
 			playerActionScript.hitTimer += Time.deltaTime;
 		} else {
@@ -594,7 +612,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     IEnumerator ShowMissionText()
     {
         yield return new WaitForSeconds(5f);
-		container.missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();
+		MessagePopup("Collaborate with allies and carry out the mission!");
     }
 
 	IEnumerator ShowComBox(float t, string s) {
