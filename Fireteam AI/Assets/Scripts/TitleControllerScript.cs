@@ -50,7 +50,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject modMenu;
 	public GameObject keyBindingsPopup;
 	public GameObject loadingScreen;
-	public GameObject jukebox;
 	public GameObject mainMenuPopup;
 	public GameObject customizationMenuPopup;
 	public GameObject marketplaceMenuPopup;
@@ -256,7 +255,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void InstantiateLoadingScreen(string mapName) {
-		jukebox.GetComponent<AudioSource> ().Stop ();
+		JukeboxScript.jukebox.audioSource1.Stop ();
+		JukeboxScript.jukebox.audioSource2.Stop ();
 		if (mapName.Equals ("Badlands: Act I")) {
 			screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands1_load");
 		}

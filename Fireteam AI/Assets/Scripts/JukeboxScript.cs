@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class JukeboxScript : MonoBehaviour
 {
+    public static JukeboxScript jukebox;
     public AudioSource audioSource1;
     public AudioSource audioSource2;
     private int audio1Index;
@@ -12,6 +14,28 @@ public class JukeboxScript : MonoBehaviour
     private float audio2FadeTime;
     public AudioClip[] trackList;
     private const float SONG_FADE_DELAY = 4f;
+
+    void Awake() {
+        if (jukebox == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            jukebox = this;
+            SceneManager.sceneLoaded += OnSceneFinishedLoading;
+        }
+        else if (jukebox != this)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
+        string levelName = SceneManager.GetActiveScene().name;
+        if (!levelName.Equals("Title") && !levelName.Equals("Login"))
+        {
+            Destroy(gameObject);
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
