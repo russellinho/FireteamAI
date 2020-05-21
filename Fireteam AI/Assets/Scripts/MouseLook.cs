@@ -21,7 +21,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public bool smooth;
         public float smoothTime = 5f;
         public bool lockCursor = true;
-
+        public float recoilInput;
+        public float swayInput;
 
         private Quaternion m_CharacterTargetRot;
         public Quaternion m_SpineTargetRot;
@@ -58,10 +59,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
             float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
 
+            // Debug.Log("added: " + Quaternion.Euler(0f, yRot + recoilInput, 0f) + ", " + Quaternion.Euler(xRot + swayInput, 0f, 0f));
+            // Debug.Log("multiplied: " + (Quaternion.Euler(0f, yRot, 0f) * Quaternion.Euler(0f, recoilInput, 0f)) + ", " + (Quaternion.Euler(xRot, 0f, 0f) * Quaternion.Euler(swayInput, 0f, 0f)));
+
             if (isPaused) {
                 xRot = 0f;
                 yRot = 0f;
             }
+
+            yRot += swayInput;
+            xRot += recoilInput;
+
+            ResetRecoilInputs();
 
             float angleX = 2.0f * Mathf.Rad2Deg * Mathf.Atan (m_SpineTargetRot.x);
 
@@ -201,7 +210,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
         }*/
 
-        Quaternion ClampRotationAroundXAxis(Quaternion q)
+        public Quaternion ClampRotationAroundXAxis(Quaternion q)
         {
             q.x /= q.w;
             q.y /= q.w;
@@ -231,6 +240,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
             q.x = Mathf.Tan (0.5f * Mathf.Deg2Rad * angleX);
 
             return q;
+        }
+
+        public void SetRecoilInputs(float recoil, float sway) {
+            recoilInput = recoil;
+            swayInput = sway;
+        }
+
+        void ResetRecoilInputs() {
+            recoilInput = 0f;
+            swayInput = 0f;
         }
     }
 

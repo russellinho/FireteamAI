@@ -1038,17 +1038,16 @@ public class WeaponActionScript : MonoBehaviour
     {
         if (increase)
         {
-            if (recoilTime < MAX_RECOIL_TIME)
-            {
-                mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(weaponStats.recoil, 0f, 0f);
-                mouseLook.m_FpcCharacterHorizontalTargetRot *= Quaternion.Euler(0f, (Random.Range(0, 2) == 0 ? 1f : -1f) * swayGauge, 0f);
-            }
+            // mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(weaponStats.recoil, 0f, 0f);
+            // mouseLook.m_FpcCharacterHorizontalTargetRot *= Quaternion.Euler(0f, (Random.Range(0, 2) == 0 ? 1f : -1f) * swayGauge, 0f);
+            mouseLook.SetRecoilInputs(weaponStats.recoil, (Random.Range(0, 2) == 0 ? 1f : -1f) * swayGauge);
         }
         else
         {
             if (recoilTime > 0f)
             {
-                mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(-weaponStats.recoil / weaponStats.recoveryConstant, 0f, 0f);
+                // mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(-weaponStats.recoil / weaponStats.recoveryConstant, 0f, 0f);
+                mouseLook.SetRecoilInputs(-weaponStats.recoil / weaponStats.recoveryConstant, 0f);
             }
         }
     }
