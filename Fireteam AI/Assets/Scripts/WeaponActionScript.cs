@@ -40,10 +40,12 @@ public class WeaponActionScript : MonoBehaviour
     public const float MAX_RECOIL_TIME = 1.4f;
     public const float RECOIL_ACCELERATION = 4.2f;
     public const float RECOIL_DECELERATION = 4.2f;
+    private const float SWAY_ACCELERATION = 1.5f;
 
     // Projectile variables
     public float spread = 0f;
     private float recoilTime = 0f;
+    private float swayGauge = 0f;
     private bool voidRecoilRecover = true;
     private bool throwGrenade;
     //private float recoilSlerp = 0f;
@@ -1014,7 +1016,12 @@ public class WeaponActionScript : MonoBehaviour
         {
             recoilTime += RECOIL_ACCELERATION * Time.deltaTime;
         }
-
+        if (swayGauge < weaponStats.sway) {
+            swayGauge += SWAY_ACCELERATION * Time.deltaTime;
+        }
+        if (swayGauge > weaponStats.sway) {
+            swayGauge = weaponStats.sway;
+        }
     }
 
     private void DecreaseRecoil()
@@ -1024,6 +1031,7 @@ public class WeaponActionScript : MonoBehaviour
         {
             recoilTime -= (RECOIL_ACCELERATION / weaponStats.recoveryConstant) * Time.deltaTime;
         }
+        swayGauge = 0f;
     }
 
     void UpdateRecoil(bool increase)
@@ -1033,6 +1041,7 @@ public class WeaponActionScript : MonoBehaviour
             if (recoilTime < MAX_RECOIL_TIME)
             {
                 mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(weaponStats.recoil, 0f, 0f);
+                mouseLook.m_FpcCharacterHorizontalTargetRot *= Quaternion.Euler(0f, (Random.Range(0, 2) == 0 ? 1f : -1f) * swayGauge, 0f);
             }
         }
         else

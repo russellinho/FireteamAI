@@ -12,6 +12,7 @@ public class WeaponStats : MonoBehaviour
     public float fireRate;
     public float accuracy;
     public float recoil;
+    public float sway;
     public float range;
     public float lungeRange;
     public int clipCapacity;

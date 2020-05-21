@@ -5825,11 +5825,13 @@ MonoBehaviour:
   fireRate: 0.11
   accuracy: 0
   recoil: 2.5
+  sway: 0.85
   range: 110
   lungeRange: 0
   clipCapacity: 100
   maxAmmo: 300
   steadyAim: 1
+  isSniper: 0
   aimDownSightPosMale: {x: -0.0001, y: 0.0015, z: 0.00127}
   aimDownSightPosFemale: {x: -0.0001, y: 0.0015, z: 0.00127}
   stableHandPosMale: {x: -0.00045, y: 0.00102, z: 0.0015}
@@ -5956,6 +5958,7 @@ MonoBehaviour:
   sightPos: {fileID: 0}
   sightRef: {fileID: 0}
   sightMountRef: {fileID: 0}
+  sightMountReplacementRef: {fileID: 0}
   previewPos: {x: 0, y: 0, z: 0}
 --- !u!95 &2551591207314833829
 Animator:

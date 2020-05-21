@@ -523,11 +523,13 @@ MonoBehaviour:
   fireRate: 0.095
   accuracy: 0
   recoil: 1.7
+  sway: 0.5
   range: 100
   lungeRange: 0
   clipCapacity: 30
   maxAmmo: 120
   steadyAim: 1
+  isSniper: 0
   aimDownSightPosMale: {x: -0.001, y: 0.0011, z: 0.0013}
   aimDownSightPosFemale: {x: -0.001, y: 0.0011, z: 0.0013}
   stableHandPosMale: {x: -0.000844755, y: 0.0007977759, z: 0.001511174}
