@@ -20,32 +20,32 @@ public class Stats
         this.health = 0;
     }
 
-    public void updateSpeed(float value)
+    public void setSpeed(float value)
     {
-        this.speed += value;
+        this.speed = 1f + value;
     }
 
-    public void updateStamina(float value)
+    public void setStamina(float value)
     {
-        this.stamina += value;
+        this.stamina = 1f + value;
     }
 
-    public void updateArmor(float value)
+    public void setArmor(float value)
     {
-        this.armor += value;
+        this.armor = 1f + value;
     }
 
-    public void updateHealth(int value)
+    public void setHealth(int value)
     {
-        this.health += value;
+        this.health = value;
     }
 
-    public void updateStats(float speed, float stamina, float armor, int health)
+    public void setStats(float speed, float stamina, float armor, int health)
     {
-        updateSpeed(speed);
-        updateStamina(stamina);
-        updateArmor(armor);
-        updateHealth(health);
+        setSpeed(speed);
+        setStamina(stamina);
+        setArmor(armor);
+        setHealth(health);
 
     }
 }

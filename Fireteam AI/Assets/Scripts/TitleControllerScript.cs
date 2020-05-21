@@ -3055,12 +3055,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (armor == 0) {
 			armorBoostPercent.color = Color.white;
 			armorBoostPercent.text = "+" + armor + "%";
+			shopArmorBoostPercent.color = Color.white;
+			shopArmorBoostPercent.text = "+" + armor + "%";
 		} else if (armor > 0) {
 			armorBoostPercent.color = Color.green;
 			armorBoostPercent.text = "+" + armor + "%";
+			shopArmorBoostPercent.color = Color.green;
+			shopArmorBoostPercent.text = "+" + armor + "%";
 		} else {
 			armorBoostPercent.color = Color.red;
 			armorBoostPercent.text = armor + "%";
+			shopArmorBoostPercent.color = Color.red;
+			shopArmorBoostPercent.text = armor + "%";
 		}
 	}
 
@@ -3068,12 +3074,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (speed == 0) {
 			speedBoostPercent.color = Color.white;
 			speedBoostPercent.text = "+" + speed + "%";
+			shopSpeedBoostPercent.color = Color.white;
+			shopSpeedBoostPercent.text = "+" + speed + "%";
 		} else if (speed > 0) {
 			speedBoostPercent.color = Color.green;
 			speedBoostPercent.text = "+" + speed + "%";
+			shopSpeedBoostPercent.color = Color.green;
+			shopSpeedBoostPercent.text = "+" + speed + "%";
 		} else {
 			speedBoostPercent.color = Color.red;
 			speedBoostPercent.text = speed + "%";
+			shopSpeedBoostPercent.color = Color.red;
+			shopSpeedBoostPercent.text = speed + "%";
 		}
 	}
 
@@ -3081,12 +3093,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (stamina == 0) {
 			staminaBoostPercent.color = Color.white;
 			staminaBoostPercent.text = "+" + stamina + "%";
+			shopStaminaBoostPercent.color = Color.white;
+			shopStaminaBoostPercent.text = "+" + stamina + "%";
 		} else if (stamina > 0) {
 			staminaBoostPercent.color = Color.green;
 			staminaBoostPercent.text = "+" + stamina + "%";
+			shopStaminaBoostPercent.color = Color.green;
+			shopStaminaBoostPercent.text = "+" + stamina + "%";
 		} else {
 			staminaBoostPercent.color = Color.red;
 			staminaBoostPercent.text = stamina + "%";
+			shopStaminaBoostPercent.color = Color.red;
+			shopStaminaBoostPercent.text = stamina + "%";
 		}
 	}
 

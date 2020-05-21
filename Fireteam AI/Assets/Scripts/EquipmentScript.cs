@@ -500,8 +500,9 @@ public class EquipmentScript : MonoBehaviour
         ts.equippedFaceSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
         ts.shopEquippedFaceSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
         
-
-        playerScript.stats.updateStats(e.speed, e.stamina, e.armor, 0);
+        // Add new facewear stats to stat boosts
+        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
         playerScript.updateStats();
         ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
     }
@@ -551,7 +552,8 @@ public class EquipmentScript : MonoBehaviour
         
 
         // Adds headgear stat to player
-        playerScript.stats.updateStats(e.speed, e.stamina, e.armor, 0);
+        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
         playerScript.updateStats();
         ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
     }
@@ -601,7 +603,8 @@ public class EquipmentScript : MonoBehaviour
         ts.equippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(true, a.thumbnailPath);
         ts.shopEquippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(true, a.thumbnailPath);
 
-        playerScript.stats.updateStats(a.speed, a.stamina, a.armor, 0);
+        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
         playerScript.updateStats();
         ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
     }
@@ -619,6 +622,7 @@ public class EquipmentScript : MonoBehaviour
         if (string.IsNullOrEmpty(equippedHeadgear)) {
             return;
         }
+        equippedHeadgear = "";
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null) {
             ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();
@@ -627,12 +631,11 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = null;
             }
         }
-        Equipment e = InventoryScript.itemData.equipmentCatalog[equippedHeadgear];
-        playerScript.stats.updateStats(-e.speed, -e.stamina, -e.armor, 0);
+        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
         playerScript.updateStats();
         ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
 
-        equippedHeadgear = "";
     }
 
     public void RemoveFacewear() {
@@ -649,6 +652,7 @@ public class EquipmentScript : MonoBehaviour
         {
             return;
         }
+        equippedFacewear = "";
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null) {
             ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();
@@ -658,12 +662,11 @@ public class EquipmentScript : MonoBehaviour
             }
         }
 
-        Equipment e = InventoryScript.itemData.equipmentCatalog[equippedFacewear];
-        playerScript.stats.updateStats(-e.speed, -e.stamina, -e.armor, 0);
+        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
         playerScript.updateStats();
         ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
 
-        equippedFacewear = "";
     }
 
     public void RemoveArmor() {
@@ -681,6 +684,7 @@ public class EquipmentScript : MonoBehaviour
         {
             return;
         }
+        equippedArmor = "";
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null) {
             ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();
@@ -689,12 +693,11 @@ public class EquipmentScript : MonoBehaviour
                 ts.currentlyEquippedItemPrefab = null;
             }
         }
-        Armor e = InventoryScript.itemData.armorCatalog[equippedArmor];
-        playerScript.stats.updateStats(-e.speed, -e.stamina, -e.armor, 0);
+        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
         playerScript.updateStats();
         ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
 
-        equippedArmor = "";
     }
 
     [PunRPC]
@@ -801,7 +804,8 @@ public class EquipmentScript : MonoBehaviour
         m.rootBone = myBones.transform;
         m.AdaptMesh();
 
-        playerScript.stats.updateStats(e.speed, e.stamina, e.armor, 0);
+        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
         playerScript.updateStats();
     }
 
@@ -820,7 +824,8 @@ public class EquipmentScript : MonoBehaviour
         m.rootBone = myBones.transform;
         m.AdaptMesh();
 
-        playerScript.stats.updateStats(e.speed, e.stamina, e.armor, 0);
+        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
         playerScript.updateStats();
     }
 
@@ -847,7 +852,8 @@ public class EquipmentScript : MonoBehaviour
         m.rootBone = myBones.transform;
         m.AdaptMesh();
 
-        playerScript.stats.updateStats(a.speed, a.stamina, a.armor, 0);
+        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
         playerScript.updateStats();
     }
 
@@ -978,5 +984,41 @@ public class EquipmentScript : MonoBehaviour
     // public void DespawnPlayer() {
     //     pView.RPC("RpcDespawnPlayer", RpcTarget.All);
     // }
+
+    StatBoosts CalculateStatBoostsWithCurrentEquips() {
+        float totalArmorBoost = 0f;
+        float totalSpeedBoost = 0f;
+        float totalStaminaBoost = 0f;
+
+        if (equippedArmor != null && equippedArmor != "") {
+            totalArmorBoost += InventoryScript.itemData.armorCatalog[equippedArmor].armor;
+            totalSpeedBoost += InventoryScript.itemData.armorCatalog[equippedArmor].speed;
+            totalStaminaBoost += InventoryScript.itemData.armorCatalog[equippedArmor].stamina;
+        }
+        if (equippedHeadgear != null && equippedHeadgear != "") {
+            totalArmorBoost += InventoryScript.itemData.equipmentCatalog[equippedHeadgear].armor;
+            totalSpeedBoost += InventoryScript.itemData.equipmentCatalog[equippedHeadgear].speed;
+            totalStaminaBoost += InventoryScript.itemData.equipmentCatalog[equippedHeadgear].stamina;
+        }
+        if (equippedFacewear != null && equippedFacewear != "") {
+            totalArmorBoost += InventoryScript.itemData.equipmentCatalog[equippedFacewear].armor;
+            totalSpeedBoost += InventoryScript.itemData.equipmentCatalog[equippedFacewear].speed;
+            totalStaminaBoost += InventoryScript.itemData.equipmentCatalog[equippedFacewear].stamina;
+        }
+
+        return new StatBoosts(totalArmorBoost, totalSpeedBoost, totalStaminaBoost);
+    }
+
+    public class StatBoosts {
+        public float armorBoost;
+        public float speedBoost;
+        public float staminaBoost;
+
+        public StatBoosts(float armorBoost, float speedBoost, float staminaBoost) {
+            this.armorBoost = armorBoost;
+            this.speedBoost = speedBoost;
+            this.staminaBoost = staminaBoost;
+        }
+    }
 
 }
