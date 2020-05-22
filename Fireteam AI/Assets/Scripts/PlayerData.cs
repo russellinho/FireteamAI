@@ -11,7 +11,6 @@ using Firebase.Database;
 
 public class PlayerData : MonoBehaviour
 {
-    private const string DEFAULT_PRIMARY = "M4A1";
     private const string DEFAULT_SECONDARY = "Glock23";
     private const string DEFAULT_SUPPORT = "M67 Frag";
     private const string DEFAULT_MELEE = "Recon Knife";
@@ -247,6 +246,7 @@ public class PlayerData : MonoBehaviour
                 TriggerEmergencyExit("Your data could not be loaded. Either your data is corrupted, or the service is unavailable. Please check the website for further details. If this issue persists, please create a ticket at koobando.com/support.");
             } else {
                 info.defaultChar = snapshot.Child("defaultChar").Value.ToString();
+                info.defaultWeapon = snapshot.Child("defaultWeapon").Value.ToString();
                 info.playername = snapshot.Child("username").Value.ToString();
                 info.exp = uint.Parse(snapshot.Child("exp").Value.ToString());
                 info.gp = uint.Parse(snapshot.Child("gp").Value.ToString());
@@ -318,7 +318,7 @@ public class PlayerData : MonoBehaviour
                 } else {
                     info.equippedCharacter = snapshot.Child("defaultChar").Value.ToString();
                     char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
-                    info.equippedPrimary = DEFAULT_PRIMARY;
+                    info.equippedPrimary = snapshot.Child("defaultWeapon").Value.ToString();
                     info.equippedSecondary = DEFAULT_SECONDARY;
                     info.equippedSupport = DEFAULT_SUPPORT;
                     info.equippedMelee = DEFAULT_MELEE;
@@ -1821,7 +1821,7 @@ public class PlayerData : MonoBehaviour
                 Debug.Log(itemName + " has been deleted!");
                 if (PlayerData.playerdata.info.equippedPrimary == itemName)
                 {
-                    PlayerData.playerdata.info.equippedPrimary = DEFAULT_PRIMARY;
+                    PlayerData.playerdata.info.equippedPrimary = PlayerData.playerdata.info.defaultWeapon;
                     //PlayerData.playerdata.primaryModInfo = LoadModDataForWeapon(DEFAULT_PRIMARY);
                     reloadPlayerFlag = true;
                 } else if (PlayerData.playerdata.info.equippedSecondary == itemName)
@@ -2442,6 +2442,7 @@ public class PlayerData : MonoBehaviour
 public class PlayerInfo
 {
     public string defaultChar;
+    public string defaultWeapon;
 	public string playername;
     public string equippedCharacter;
     public string equippedHeadgear;

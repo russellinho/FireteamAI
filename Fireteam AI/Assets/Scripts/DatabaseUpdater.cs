@@ -83,4 +83,16 @@ public class DatabaseUpdater : MonoBehaviour
             }
         });
     }
+
+    public void AddDefaultWeaponFieldToAllAccounts() {
+        DAOScript.dao.dbRef.Child("fteam_ai_users").GetValueAsync().ContinueWith(taskA => {
+            IEnumerator<DataSnapshot> accountsSavedData = taskA.Result.Children.GetEnumerator();
+            while (accountsSavedData.MoveNext()) {
+                DataSnapshot account = accountsSavedData.Current;
+                string accountId = account.Key.ToString();
+                Debug.Log(accountId + " updated");
+                DAOScript.dao.dbRef.Child("fteam_ai_users").Child(accountId).Child("defaultWeapon").SetValueAsync("M4A1");
+            }
+        });
+    }
 }

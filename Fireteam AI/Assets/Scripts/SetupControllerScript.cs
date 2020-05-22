@@ -14,6 +14,7 @@ public class SetupControllerScript : MonoBehaviour
     public GameObject contentInventory;
     public InputField characterNameInput;
     private ArrayList starterCharacters = new ArrayList(){"Lucas", "Daryl", "Yongjin", "Rocko", "Hana", "Jade", "Dani"};
+    private ArrayList starterWeapons = new ArrayList(){"M4A1", "AK-47"};
     private string selectedCharacter;
     public GameObject selectedPrefab;
     public GameObject contentPrefab;
@@ -24,6 +25,11 @@ public class SetupControllerScript : MonoBehaviour
     public Button confirmAlertCancelBtn;
     public Button proceedBtn;
     public Button checkBtn;
+    public Button nextWepBtn;
+    public Button prevWepBtn;
+    public Image wepPnl;
+    public Text wepTxt;
+    private short wepSelectionIndex;
     public Text popupAlertTxt;
     public Text confirmAlertTxt;
     private bool activatePopupFlag;
@@ -36,6 +42,8 @@ public class SetupControllerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        wepSelectionIndex = 0;
+        SetSelectedWeaponText();
         selectedCharacter = "Lucas";
         SpawnSelectedCharacter();
         InitializeCharacterSelection();
@@ -78,6 +86,10 @@ public class SetupControllerScript : MonoBehaviour
 			o.transform.SetParent(contentInventory.transform);
             s.setupController = this;
 		}
+    }
+
+    void SetSelectedWeaponText() {
+        wepTxt.text = (string)starterWeapons[wepSelectionIndex];
     }
 
     private void DeselectCharacter() {
@@ -173,6 +185,7 @@ public class SetupControllerScript : MonoBehaviour
                                 string json = "{" +
                                     "\"username\":\"" + potentialName + "\"," +
                                     "\"defaultChar\":\"" + selectedCharacter + "\"," +
+                                    "\"defaultWeapon\":\"" + starterWeapons[wepSelectionIndex] + "\"," +
                                     "\"exp\":\"0\"," +
                                     "\"gp\":\"100000\"," +
                                     "\"kash\":\"0\"" +
@@ -189,7 +202,7 @@ public class SetupControllerScript : MonoBehaviour
                                         return;
                                     } else {
                                         string jsonA = "{\"weapons\":{" +
-                                        "\"M4A1\": {" +
+                                        "\"" + starterWeapons[wepSelectionIndex] + "\": {" +
                                             "\"acquireDate\":\"" + DateTime.Now + "\"," +
                                             "\"duration\":\"-1\"," +
                                             "\"equippedSuppressor\":\"\"," +
