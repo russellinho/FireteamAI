@@ -62,6 +62,10 @@ public class ItemPopupScript : MonoBehaviour
         thumbnail.texture = r.texture;
     }
 
+    public void SetThumbnail(Texture t) {
+        thumbnail.texture = t;
+    }
+
     public void SetDescription(string s) {
         description.text = s;
     }

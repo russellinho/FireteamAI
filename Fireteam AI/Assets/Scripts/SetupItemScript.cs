@@ -6,7 +6,9 @@ using UnityEngine.EventSystems;
 
 public class SetupItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    public GameObject itemDescriptionPopupRef;
+    public enum SetupItemType {Character, Weapon};
+    public SetupItemType setupItemType;
+    public ItemPopupScript itemDescriptionPopupRef;
     public RawImage thumbnailRef;
     public Character characterDetails;
     public string itemName;
@@ -47,18 +49,29 @@ public class SetupItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExit
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        if (itemDescriptionPopupRef.activeInHierarchy) {
+
+        if (itemDescriptionPopupRef.gameObject.activeInHierarchy) {
             return;
         }
-        itemDescriptionPopupRef.SetActive(true);
-        ItemPopupScript ips = itemDescriptionPopupRef.GetComponent<ItemPopupScript>();
-        ips.SetTitle(itemName);
-        ips.SetThumbnail(thumbnailRef);
-        ips.SetDescription(itemDescription);
+        itemDescriptionPopupRef.gameObject.SetActive(true);
+        if (setupItemType == SetupItemType.Character) {
+            itemDescriptionPopupRef.weaponStatDescriptor.SetActive(false);
+            itemDescriptionPopupRef.SetTitle(itemName);
+            itemDescriptionPopupRef.SetThumbnail(thumbnailRef);
+            itemDescriptionPopupRef.SetDescription(itemDescription);
+        } else if (setupItemType == SetupItemType.Weapon) {
+            Weapon w = InventoryScript.itemData.weaponCatalog[(string)setupController.starterWeapons[setupController.wepSelectionIndex]];
+            itemDescriptionPopupRef.SetTitle(w.name);
+            itemDescriptionPopupRef.SetThumbnail((Texture)Resources.Load(w.thumbnailPath));
+            itemDescriptionPopupRef.SetDescription(w.description);
+            itemDescriptionPopupRef.SetWeaponStats(w.damage, w.accuracy, w.recoil, w.fireRate, w.mobility, w.range, w.clipCapacity);
+            itemDescriptionPopupRef.weaponStatDescriptor.SetActive(true);
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        itemDescriptionPopupRef.SetActive(false);
+        itemDescriptionPopupRef.gameObject.SetActive(false);
+        itemDescriptionPopupRef.weaponStatDescriptor.SetActive(false);
     }
 
 }

@@ -14,11 +14,11 @@ public class SetupControllerScript : MonoBehaviour
     public GameObject contentInventory;
     public InputField characterNameInput;
     private ArrayList starterCharacters = new ArrayList(){"Lucas", "Daryl", "Yongjin", "Rocko", "Hana", "Jade", "Dani"};
-    private ArrayList starterWeapons = new ArrayList(){"M4A1", "AK-47"};
+    public ArrayList starterWeapons = new ArrayList(){"M4A1", "AK-47"};
     private string selectedCharacter;
     public GameObject selectedPrefab;
     public GameObject contentPrefab;
-    public GameObject characterDesc;
+    public GameObject selectionDesc;
     public GameObject popupAlert;
     public GameObject confirmAlert;
     public Button confirmAlertConfirmBtn;
@@ -29,7 +29,7 @@ public class SetupControllerScript : MonoBehaviour
     public Button prevWepBtn;
     public Image wepPnl;
     public Text wepTxt;
-    private short wepSelectionIndex;
+    public short wepSelectionIndex;
     public Text popupAlertTxt;
     public Text confirmAlertTxt;
     private bool activatePopupFlag;
@@ -46,6 +46,7 @@ public class SetupControllerScript : MonoBehaviour
         SetSelectedWeaponText();
         selectedCharacter = "Lucas";
         SpawnSelectedCharacter();
+        EquipSelectedWeapon();
         InitializeCharacterSelection();
     }
 
@@ -70,12 +71,13 @@ public class SetupControllerScript : MonoBehaviour
 			Character c = InventoryScript.itemData.characterCatalog[thisCharacterName];
 			GameObject o = Instantiate(contentPrefab);
             SetupItemScript s = o.GetComponent<SetupItemScript>();
-			s.itemDescriptionPopupRef = characterDesc;
+            s.setupItemType = SetupItemScript.SetupItemType.Character;
+			s.itemDescriptionPopupRef = selectionDesc.GetComponent<ItemPopupScript>();
 			s.characterDetails = c;
 			s.itemName = thisCharacterName;
 			s.itemDescription = c.description;
-			o.GetComponentInChildren<RawImage>().texture = (Texture)Resources.Load(c.thumbnailPath);
-			o.GetComponentInChildren<RawImage>().SetNativeSize();
+			s.thumbnailRef.texture = (Texture)Resources.Load(c.thumbnailPath);
+			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			if (i == 0) {
@@ -107,6 +109,7 @@ public class SetupControllerScript : MonoBehaviour
         setupItem.GetComponent<SetupItemScript>().equippedInd.enabled = true;
         selectedPrefab = setupItem;
         SpawnSelectedCharacter();
+        EquipSelectedWeapon();
     }
 
     void SpawnSelectedCharacter() {
@@ -176,9 +179,6 @@ public class SetupControllerScript : MonoBehaviour
                                 activatePopupFlag = true;
                                 // popupMessage = "Database is currently unavailable. Please try again later.";
                                 TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                characterNameInput.interactable = true;
-                                proceedBtn.interactable = true;
-                                checkBtn.interactable = true;
                                 completeCharCreationFlag = false;
                                 return;
                             } else if (taskB.IsCompleted) {
@@ -195,9 +195,6 @@ public class SetupControllerScript : MonoBehaviour
                                         activatePopupFlag = true;
                                         // popupMessage = "Database is currently unavailable. Please try again later.";
                                         TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        characterNameInput.interactable = true;
-                                        proceedBtn.interactable = true;
-                                        checkBtn.interactable = true;
                                         completeCharCreationFlag = false;
                                         return;
                                     } else {
@@ -384,11 +381,17 @@ public class SetupControllerScript : MonoBehaviour
 
         completeCharCreationFlag = true;
         string finalCharacterName = characterNameInput.text;
-        characterNameInput.interactable = false;
-        proceedBtn.interactable = false;
-        checkBtn.interactable = false;
+        ToggleInputs(false);
 
         QueueConfirmPopup("Are you sure you wish to proceed with this name and character? It cannot be changed later.");
+    }
+
+    void ToggleInputs(bool b) {
+        nextWepBtn.interactable = b;
+        prevWepBtn.interactable = b;
+        characterNameInput.interactable = b;
+        proceedBtn.interactable = b;
+        checkBtn.interactable = b;
     }
 
     public void CompleteCharacterCreation() {
@@ -401,6 +404,7 @@ public class SetupControllerScript : MonoBehaviour
         confirmAlert.SetActive(false);
         popupAlert.SetActive(false);
         popupMessage = "";
+        ToggleInputs(true);
     }
 
     public void OnConfirmButtonClicked() {
@@ -450,6 +454,29 @@ public class SetupControllerScript : MonoBehaviour
     IEnumerator EmergencyExitGame() {
         yield return new WaitForSeconds(5f);
         Application.Quit();
+    }
+
+    void EquipSelectedWeapon() {
+        WeaponScript ws = bodyRef.GetComponent<WeaponScript>();
+        ws.EquipWeaponForSetup((string)starterWeapons[wepSelectionIndex], selectedCharacter);
+    }
+
+    public void SelectNextWeapon() {
+        wepSelectionIndex++;
+        if (wepSelectionIndex >= starterWeapons.Count) {
+            wepSelectionIndex = 0;
+        }
+        SetSelectedWeaponText();
+        EquipSelectedWeapon();
+    }
+
+    public void SelectPreviousWeapon() {
+        wepSelectionIndex--;
+        if (wepSelectionIndex < 0) {
+            wepSelectionIndex = (short)(starterWeapons.Count - 1);
+        }
+        SetSelectedWeaponText();
+        EquipSelectedWeapon();
     }
 
 }

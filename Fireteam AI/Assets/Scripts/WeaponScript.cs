@@ -48,9 +48,10 @@ public class WeaponScript : MonoBehaviour
         // If the photon view is null, then the player is not in-game
         if (!equipmentScript.isFirstPerson()) {
             if (pView == null) {
-                if (SceneManager.GetActiveScene().name.Equals("Title")) {
+                string activeSceneName = SceneManager.GetActiveScene().name;
+                if (activeSceneName.Equals("Title")) {
                     onTitle = true;
-                } else {
+                } else if (activeSceneName.Equals("Setup")) {
                     onTitle = false;
                     onSetup = true;
                 }
@@ -76,30 +77,25 @@ public class WeaponScript : MonoBehaviour
             ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
             equipmentScript = GetComponent<EquipmentScript>();
             weaponReady = false;
-        } else if (onSetup) {
-            drawnWeaponReference = weaponHolder.LoadWeapon("Models/Weapons/Primary/Assault Rifles/M4A1");
-            if (setupGender == 'M') {
-                SetTitleWeaponPositions(drawnWeaponReference.GetComponent<WeaponStats>().titleHandPositionsMale);
-            } else {
-                SetTitleWeaponPositions(drawnWeaponReference.GetComponent<WeaponStats>().titleHandPositionsFemale);
-            }
         } else {
-            //EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
-            //EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);
-            equippedPrimaryWeapon = PlayerData.playerdata.info.equippedPrimary;
-            equippedSecondaryWeapon = PlayerData.playerdata.info.equippedSecondary;
-            equippedSupportWeapon = PlayerData.playerdata.info.equippedSupport;
-            equippedMeleeWeapon = PlayerData.playerdata.info.equippedMelee;
-            currentAmmoPrimary = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].clipCapacity;
-            currentAmmoSecondary = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
-            currentAmmoSupport = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].clipCapacity;
-            totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo - currentAmmoPrimary;
-            totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo - currentAmmoSecondary;
-            totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo - currentAmmoSupport;
-            equippedWep = equippedPrimaryWeapon;
-            //DrawWeapon(1);
-            InitializeWeapon();
-            InitializeMelee();
+            if (!onSetup) {
+                //EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
+                //EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);
+                equippedPrimaryWeapon = PlayerData.playerdata.info.equippedPrimary;
+                equippedSecondaryWeapon = PlayerData.playerdata.info.equippedSecondary;
+                equippedSupportWeapon = PlayerData.playerdata.info.equippedSupport;
+                equippedMeleeWeapon = PlayerData.playerdata.info.equippedMelee;
+                currentAmmoPrimary = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].clipCapacity;
+                currentAmmoSecondary = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
+                currentAmmoSupport = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].clipCapacity;
+                totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo - currentAmmoPrimary;
+                totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo - currentAmmoSecondary;
+                totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo - currentAmmoSupport;
+                equippedWep = equippedPrimaryWeapon;
+                //DrawWeapon(1);
+                InitializeWeapon();
+                InitializeMelee();
+            }
         }
     }
 
@@ -1052,6 +1048,19 @@ public class WeaponScript : MonoBehaviour
     public void MaxRefillAmmoOnSupport() {
         currentAmmoSupport = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].clipCapacity;
         totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo;
+    }
+
+    public void EquipWeaponForSetup(string weaponName, string characterSelected) {
+        // Get the weapon from the weapon catalog for its properties
+        char chararacterGender = InventoryScript.itemData.characterCatalog[characterSelected].gender;
+        Weapon w = InventoryScript.itemData.weaponCatalog[weaponName];
+        GameObject wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+
+        if (chararacterGender == 'M') {
+            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsMale);
+        } else {
+            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsFemale);
+        }
     }
 
 }

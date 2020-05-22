@@ -256,6 +256,7 @@ GameObject:
   - component: {fileID: 43710571}
   - component: {fileID: 43710573}
   - component: {fileID: 43710572}
+  - component: {fileID: 43710574}
   m_Layer: 5
   m_Name: WepSelection
   m_TagString: Untagged
@@ -321,6 +322,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 43710570}
   m_CullTransparentMesh: 0
+--- !u!114 &43710574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43710570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afa8ffaadaca3fb458ca5ccd6e0c086a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  setupItemType: 1
+  itemDescriptionPopupRef: {fileID: 878023218}
+  thumbnailRef: {fileID: 0}
+  itemName: 
+  itemDescription: 
+  equippedInd: {fileID: 0}
+  setupController: {fileID: 47785140}
 --- !u!1 &47785139
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,13 +376,18 @@ MonoBehaviour:
   selectedPrefab: {fileID: 0}
   contentPrefab: {fileID: 1375148354975599472, guid: 99d21b264645cb24cb5cc673fe03d7a9,
     type: 3}
-  characterDesc: {fileID: 878023217}
+  selectionDesc: {fileID: 878023217}
   popupAlert: {fileID: 498862128}
   confirmAlert: {fileID: 1698486475}
   confirmAlertConfirmBtn: {fileID: 1698486473}
   confirmAlertCancelBtn: {fileID: 2008403096}
   proceedBtn: {fileID: 410241169}
   checkBtn: {fileID: 298529240}
+  nextWepBtn: {fileID: 513774784}
+  prevWepBtn: {fileID: 1091586759}
+  wepPnl: {fileID: 43710572}
+  wepTxt: {fileID: 1745722234}
+  wepSelectionIndex: 0
   popupAlertTxt: {fileID: 498862127}
   confirmAlertTxt: {fileID: 1698486474}
   emergencyPopup: {fileID: 776600142}
@@ -1234,8 +1259,8 @@ RectTransform:
   m_Children:
   - {fileID: 488158060}
   - {fileID: 878023216}
-  - {fileID: 498862126}
   - {fileID: 1698486472}
+  - {fileID: 498862126}
   - {fileID: 776600140}
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -2809,7 +2834,7 @@ PrefabInstance:
     - target: {fileID: 508069579115334041, guid: 3168ce6bdc8420f4fa7bd30ab7671954,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 508069579115334041, guid: 3168ce6bdc8420f4fa7bd30ab7671954,
         type: 3}
@@ -2993,7 +3018,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 513774785}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 47785140}
+        m_MethodName: SelectNextWeapon
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &513774785
@@ -5470,6 +5506,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 878023215}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &878023218 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5543353794727392471, guid: 2cdd37d7f931ba14c8b2b958f167717d,
+    type: 3}
+  m_PrefabInstance: {fileID: 878023215}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 878023217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e7adc5edf9cf8b41a1f8244b6956c97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &886859351
 GameObject:
   m_ObjectHideFlags: 0
@@ -6751,7 +6799,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1091586760}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 47785140}
+        m_MethodName: SelectPreviousWeapon
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1091586760
@@ -10602,7 +10661,7 @@ PrefabInstance:
     - target: {fileID: 508069579115334041, guid: 3168ce6bdc8420f4fa7bd30ab7671954,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 508069579115334041, guid: 3168ce6bdc8420f4fa7bd30ab7671954,
         type: 3}
