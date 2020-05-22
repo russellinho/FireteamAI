@@ -9975,6 +9975,7 @@ MonoBehaviour:
   fireRate: 1.4
   accuracy: 0
   recoil: 13
+  sway: 0
   range: 3000
   lungeRange: 0
   clipCapacity: 5
@@ -10045,7 +10046,7 @@ MonoBehaviour:
   reloadSound3Time: 0.35
   reloadSound4Time: -1
   supportSoundTime: -1
-  switchToLeftDuringReload: 0
+  switchToLeftDuringReload: 1
   switchToLeftTime: 0
   weaponParts:
   - {fileID: 501512936197734720}

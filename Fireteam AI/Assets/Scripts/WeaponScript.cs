@@ -393,7 +393,6 @@ public class WeaponScript : MonoBehaviour
                 weaponHolderFpc.SetWeaponPosition(true);
             } else {
                 weaponHolder.SetWeaponPosition(false);
-                weaponHolder.ResetSteadyHand();
             }
         }
     }
@@ -405,7 +404,6 @@ public class WeaponScript : MonoBehaviour
                 weaponHolderFpc.SetWeaponPosition(true);
             } else {
                 weaponHolder.SetWeaponPosition(false);
-                weaponHolder.ResetSteadyHand();
             }
         }
     }
@@ -417,7 +415,6 @@ public class WeaponScript : MonoBehaviour
                 weaponHolderFpc.SetWeaponPosition(true);
             } else {
                 weaponHolder.SetWeaponPosition(false);
-                weaponHolder.ResetSteadyHand();
             }
         }
     }

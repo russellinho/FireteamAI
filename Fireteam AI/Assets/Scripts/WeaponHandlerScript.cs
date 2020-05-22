@@ -8,14 +8,7 @@ public class WeaponHandlerScript : MonoBehaviour
     public Transform weapon;
     public Transform leftShoulder;
     public Transform leftHand;
-    public Transform rightHand;
-    private Vector3 steadyHandPos;
-    private Vector3 originalShoulderPos;
     public FirstPersonController fpc;
-
-    void Awake() {
-        originalShoulderPos = new Vector3(leftShoulder.localPosition.x, leftShoulder.localPosition.y, leftShoulder.localPosition.z);
-    }
 
     // Update is called once per frame
     public GameObject LoadWeapon(string weaponPath) {
@@ -75,34 +68,20 @@ public class WeaponHandlerScript : MonoBehaviour
         weapon.localRotation = Quaternion.Euler(13.891f, 177.759f, -92.145f);
     }
 
-    public void SetSteadyHand(Vector3 shoulderPos) {
-        steadyHandPos = shoulderPos;
-    }
-
-    public void ResetSteadyHand() {
-        leftShoulder.localPosition = originalShoulderPos;
-    }
-
-    void LateUpdate() {
-        if (!Vector3.Equals(Vector3.zero, steadyHandPos) && !fpc.m_IsRunning) {
-            leftShoulder.localPosition = new Vector3(steadyHandPos.x, steadyHandPos.y, steadyHandPos.z);
-        }
-    }
-
     public void SwitchWeaponToLeftHand() {
         WeaponStats wepStats = weapon.GetComponent<WeaponStats>();
-        weapon.SetParent(leftHand, false);
-        if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
-            weapon.localPosition = wepStats.fpcLeftHandPosMale;
-            weapon.localRotation = Quaternion.Euler(wepStats.fpcLeftHandRotMale);            
-        } else if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'F') {
-            weapon.localPosition = wepStats.fpcLeftHandPosFemale;
-            weapon.localRotation = Quaternion.Euler(wepStats.fpcLeftHandRotFemale);
-        }
+        weapon.SetParent(leftHand);
+        // if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
+        //     weapon.localPosition = wepStats.fpcLeftHandPosMale;
+        //     weapon.localRotation = Quaternion.Euler(wepStats.fpcLeftHandRotMale);            
+        // } else if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'F') {
+        //     weapon.localPosition = wepStats.fpcLeftHandPosFemale;
+        //     weapon.localRotation = Quaternion.Euler(wepStats.fpcLeftHandRotFemale);
+        // }
     }
 
     public void SwitchWeaponToRightHand() {
-        weapon.SetParent(gameObject.transform, false);
+        weapon.SetParent(gameObject.transform);
         SetWeaponPosition(true);
     }
 
