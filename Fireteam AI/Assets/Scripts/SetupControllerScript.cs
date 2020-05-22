@@ -220,6 +220,10 @@ public class SetupControllerScript : MonoBehaviour
                                             "\"equippedSight\":\"\"," +
                                             "\"equippedClip\":\"\""
                                         + "}" + 
+                                        "\"Recon Knife\": {" +
+                                            "\"acquireDate\":\"" + DateTime.Now + "\"," +
+                                            "\"duration\":\"-1\""
+                                        + "}" + 
                                         "}," +
                                         "\"characters\":{" +
                                             "\"" + selectedCharacter + "\": {" +
