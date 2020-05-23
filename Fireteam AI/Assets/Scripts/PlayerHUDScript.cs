@@ -16,7 +16,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     // Player reference
     public PlayerActionScript playerActionScript;
-		public WeaponActionScript wepActionScript;
+	public WeaponActionScript wepActionScript;
     public WeaponScript wepScript;
 
     private GameControllerScript gameController;
@@ -27,7 +27,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private ArrayList missionWaypoints;
 	private Dictionary<int, GameObject> playerMarkers = new Dictionary<int, GameObject> ();
 	private Dictionary<int, GameObject> enemyMarkers = new Dictionary<int, GameObject> ();
-	private ArrayList enemyAlertMarkers;
 	private ObjectivesTextScript objectiveFormatter;
 
 	// Other vars

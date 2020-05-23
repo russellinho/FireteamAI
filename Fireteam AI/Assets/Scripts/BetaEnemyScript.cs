@@ -60,16 +60,13 @@ public class BetaEnemyScript : MonoBehaviour {
 	public float disorientationTime;
 	private Vector3 spawnPos;
 	private Vector3 spawnRot;
-	public bool alerted = false;
-	private bool suspicious = false;
+	// The alert state for the enemy. None = enemy is neutral; Suspicious = enemy is suspicious (?); alert = enemy is alerted (!)
+	private enum AlertStatus {Neutral, Suspicious, Alert};
+	private AlertStatus alertStatus;
 	private bool wasMasterClient;
 	public GameObject gameController;
 	public GameControllerScript gameControllerScript;
-	private ArrayList enemyAlertMarkers;
 	private bool isOutlined;
-	public int alertStatus;
-	// Responsible for displaying the correct alert symbol. If equals 0, then the alert display is inactive
-	public int alertDisplay;
 
 	// Finite state machine states
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Disoriented};
@@ -81,6 +78,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Gun/weapon stuff
 	public float range;
+	private float alertRange;
+	private float neutralRange;
 	public int bulletsPerMag = 30;
 	public int currentBullets;
 	public AudioClip shootSound;
@@ -100,8 +99,6 @@ public class BetaEnemyScript : MonoBehaviour {
 	// Timers
 	// Amount of time remaining before next player scan check
 	private float playerScanTimer = 0f;
-	// Holds amount of time to remain alerted before going back into normal mode
-	private float alertedTimer;
 	// Time in cover
 	private float coverTimer = 0f;
 	// Time to wait to be in cover again
@@ -123,7 +120,10 @@ public class BetaEnemyScript : MonoBehaviour {
 	private float wanderStallDelay = -1f;
 	private bool inCover;
 	private Transform coverPos;
-	private int crouchMode = 2;
+	// Crouching status of the enemy. Tells the enemy what to do in regard to crouching. 
+	// 0 means override everything and take cover; 1 is override everything and leave cover; 2 is use the natural timer to decide
+	private enum CrouchMode {ForceCover, ForceLeaveCover, Natural};
+	private CrouchMode crouchMode;
 	private float coverScanRange = 22f;
 
 	// Collision
@@ -148,8 +148,8 @@ public class BetaEnemyScript : MonoBehaviour {
     // Use this for initialization
     void StartForCampaign () {
 		playerScanTimer = PLAYER_SCAN_DELAY;
-		alertDisplay = 0;
-		alertedTimer = -100f;
+		alertStatus = AlertStatus.Neutral;
+		crouchMode = CrouchMode.Natural;
 		coverWaitTimer = Random.Range (2f, 7f);
 		coverSwitchPositionsTimer = Random.Range (12f, 18f);
 
@@ -196,6 +196,9 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 		}
 
+		alertRange = range * 2.5f;
+		neutralRange = range;
+
 		prevWasStopped = true;
 		prevNavDestination = Vector3.negativeInfinity;
 
@@ -212,8 +215,8 @@ public class BetaEnemyScript : MonoBehaviour {
     void StartForVersus()
     {
 		playerScanTimer = PLAYER_SCAN_DELAY;
-        alertDisplay = 0;
-        alertedTimer = -100f;
+        alertStatus = AlertStatus.Neutral;
+		crouchMode = CrouchMode.Natural;
         coverWaitTimer = Random.Range(2f, 7f);
         coverSwitchPositionsTimer = Random.Range(12f, 18f);
 
@@ -265,6 +268,9 @@ public class BetaEnemyScript : MonoBehaviour {
                 gunAudio.minDistance = 9f;
             }
         }
+
+		alertRange = range * 2.5f;
+		neutralRange = range;
 
         prevWasStopped = true;
         prevNavDestination = Vector3.negativeInfinity;
@@ -322,9 +328,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		UpdateDisorientationTime();
 		ReplenishFireRate ();
-		DecreaseAlertTime ();
 		UpdateFiringModeTimer ();
-		EnsureNotSuspiciousAndAlerted();
 		HandleEnemyAlerts();
 
 		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
@@ -334,7 +338,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			return;
 		}
 
-		CheckAlerted ();
+		CheckForGunfireSounds ();
 		CheckTargetDead ();
 
 		// If disoriented, don't have the ability to do anything else except die
@@ -393,9 +397,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		UpdateDisorientationTime();
 		ReplenishFireRate ();
-		DecreaseAlertTime ();
 		UpdateFiringModeTimer ();
-		EnsureNotSuspiciousAndAlerted();
 		HandleEnemyAlerts();
 
 		if (!gameControllerScript.isVersusHostForThisTeam() || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
@@ -405,7 +407,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			return;
 		}
 
-		CheckAlerted ();
+		CheckForGunfireSounds ();
 		CheckTargetDead ();
 
 		// If disoriented, don't have the ability to do anything else except die
@@ -435,7 +437,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Alert other enemy team members to sound the alarm if alerted and timer runs out
 	void CheckAlertTeamAfterAlerted() {
-		if (!gameControllerScript.assaultMode && alerted) {
+		if (!gameControllerScript.assaultMode && alertStatus == AlertStatus.Alert) {
 			if (actionState != ActionStates.Disoriented) {
 				alertTeamAfterAlertedTimer -= Time.deltaTime;
 				if (actionState != ActionStates.Dead && alertTeamAfterAlertedTimer <= 0f) {
@@ -567,12 +569,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
-	void DecreaseAlertTime() {
-		if (alertedTimer > 0f) {
-			alertedTimer -= Time.deltaTime;
-		}
-	}
-
 	void UpdateFiringModeTimer() {
 		if (firingModeTimer > 0f) {
 			firingModeTimer -= Time.deltaTime;
@@ -599,38 +595,32 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
-	void CheckAlerted() {
+	void CheckForGunfireSounds() {
 		if (!Vector3.Equals (GameControllerScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
-			if (!alerted) {
-				SetAlerted(true);
-				SetAlertedTimer (12f);
-			}
+			SetAlertStatus(AlertStatus.Alert);
 		}
 	}
 
-	public void SetAlerted(bool b) {
-		pView.RPC ("RpcSetAlerted", RpcTarget.All, b, gameControllerScript.teamMap);
-	}
-
-	public void SetAlertedTimer(float t) {
-		pView.RPC ("RpcSetAlertedTimer", RpcTarget.All, t, gameControllerScript.teamMap);
+	// Sets the alert status on the enemy (neutral, alert, suspicious)
+	// Number passed in can be 0 (AlertStatus.Neutral), 1 (AlertStatus.Suspicious), or 2 (AlertStatus.Alert) as in accordance with the AlertStatus enum
+	void SetAlertStatus(AlertStatus a) {
+		if (alertStatus != a) {
+			pView.RPC ("RpcSetAlertStatus", RpcTarget.All, (int)a, gameControllerScript.teamMap);
+		}
 	}
 
 	[PunRPC]
-	void RpcSetAlertedTimer(float t, string team) {
+	void RpcSetAlertStatus(int statusNumber, string team) {
         if (team != gameControllerScript.teamMap) return;
-		alertedTimer = t;
+		alertStatus = (AlertStatus)statusNumber;
+		AdjustRangeForAlertStatus();
 	}
 
-	// What happens when the enemy is alerted
-	[PunRPC]
-	void RpcSetAlerted(bool b, string team) {
-        if (team != gameControllerScript.teamMap) return;
-        alerted = b;
-		if (range == 10f) {
-			range *= 2.5f;
-		} else if ((range / 2.5f) == 10f) {
-			range = 10f;
+	void AdjustRangeForAlertStatus() {
+		if (alertStatus == AlertStatus.Alert) {
+			range = alertRange;
+		} else {
+			range = neutralRange;
 		}
 	}
 
@@ -993,7 +983,13 @@ public class BetaEnemyScript : MonoBehaviour {
 	[PunRPC]
 	void RpcSetCrouchMode(int n, string team) {
         if (team != gameControllerScript.teamMap) return;
-        crouchMode = n;
+        crouchMode = (CrouchMode)n;
+	}
+
+	void SetCrouchMode(CrouchMode c) {
+		if (crouchMode != c) {
+			pView.RPC("RpcSetCrouchMode", RpcTarget.All, (int)c, gameControllerScript.teamMap);
+		}
 	}
 
 	// Decision tree for scout type enemy
@@ -1032,17 +1028,14 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		// Continue with decision tree
 		PlayerScan();
-		if (alerted) {
+		if (alertStatus == AlertStatus.Alert) {
 			// Sees a player?
 			if (playerTargeting != null) {
 				// Else, proceed with regular behavior
-				alertedTimer = 10f;
 				// Handle a melee attack
 				if (!playerTargeting.GetComponent<WeaponActionScript>().isMeleeing && TargetIsWithinMeleeDistance()) {
 					if (actionState != ActionStates.Melee) {
-						if (!alerted) {
-							SetAlerted(true);
-						}
+						SetAlertStatus(AlertStatus.Alert);
 						pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee, gameControllerScript.teamMap);
 					}
 				} else {
@@ -1050,32 +1043,23 @@ public class BetaEnemyScript : MonoBehaviour {
 						if (actionState != ActionStates.Firing) {
 							pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Firing, gameControllerScript.teamMap);
 						}
-						if (crouchMode == 0) {
-							pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 1, gameControllerScript.teamMap);
-						} else if (crouchMode == 1) {
-							pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 2, gameControllerScript.teamMap);
+						if (crouchMode == CrouchMode.ForceCover) {
+							SetCrouchMode(CrouchMode.ForceLeaveCover);
+						} else if (crouchMode == CrouchMode.ForceLeaveCover) {
+							SetCrouchMode(CrouchMode.Natural);
 						}
 						TakeCoverScout ();
 					} else {
 						if (actionState != ActionStates.Reloading) {
 							pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Reloading, gameControllerScript.teamMap);
 						}
-						pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 0, gameControllerScript.teamMap);
+						SetCrouchMode(CrouchMode.ForceCover);
 						TakeCoverScout ();
 					}
 				}
 			} else {
-				if (alertedTimer > 0f) {
-					if (crouchMode != 0) {
-						pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 0, gameControllerScript.teamMap);
-					}
-					TakeCoverScout ();
-				} else {
-					if (crouchMode != 1) {
-						pView.RPC ("RpcSetCrouchMode", RpcTarget.All, 1, gameControllerScript.teamMap);
-					}
-					TakeCoverScout ();
-				}
+				SetCrouchMode(CrouchMode.ForceLeaveCover);
+				TakeCoverScout ();
 				if (actionState != ActionStates.Idle) {
 					pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Idle, gameControllerScript.teamMap);
 				}
@@ -1087,14 +1071,14 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 			if (playerTargeting != null) {
 				if (suspicionMeter < MAX_SUSPICION_LEVEL && !gameControllerScript.assaultMode) {
-					suspicious = true;
+					alertStatus = AlertStatus.Suspicious;
 					// Increase suspicion level
 					float suspicionIncrease = CalculateSuspicionLevelForPos(playerTargeting.transform.position);
 					IncreaseSuspicionLevel(suspicionIncrease);
 					// Alert the local player if he's the one being seen only if this enemy has the greatest suspicion level
 					playerTargeting.GetComponent<PlayerActionScript>().SetEnemySeenBy(pView.ViewID);
 				} else {
-					SetAlerted(true);
+					SetAlertStatus(AlertStatus.Alert);
 				}
 			} else {
 				if (suspicionMeter > 0f && !gameControllerScript.assaultMode) {
@@ -1179,8 +1163,8 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 
 			// Make enemy alerted by the explosion if he's not dead
-			if (!alerted && health > 0) {
-				SetAlerted(true);
+			if (health > 0) {
+				SetAlertStatus(AlertStatus.Alert);
 			}
 			return;
 		}
@@ -1212,8 +1196,8 @@ public class BetaEnemyScript : MonoBehaviour {
                 // Validate that this enemy has already been affected
                 t.AddHitPlayer(pView.ViewID);
                 // Make enemy alerted by the disorientation if he's not dead
-                if (!alerted && health > 0) {
-					SetAlerted(true);
+                if (health > 0) {
+					SetAlertStatus(AlertStatus.Alert);
 				}
 				return;
 			}
@@ -1345,14 +1329,11 @@ public class BetaEnemyScript : MonoBehaviour {
 		PlayerScan ();
 
 		// Root - is the enemy alerted by any type of player presence (gunshots, sight, getting shot, other enemies alerted nearby)
-		if (alerted) {
+		if (alertStatus == AlertStatus.Alert) {
 			if (playerTargeting != null) {
-				alertedTimer = 12f;
 				if (!playerTargeting.GetComponent<WeaponActionScript>().isMeleeing && TargetIsWithinMeleeDistance()) {
 					if (actionState != ActionStates.Melee) {
-						if (!alerted) {
-							SetAlerted(true);
-						}
+						SetAlertStatus(AlertStatus.Alert);
 						pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee, gameControllerScript.teamMap);
 					}
 				} else {
@@ -1378,9 +1359,6 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 			} else {
                 // If the enemy has not seen a player
-                // if (alertedTimer <= 0f && alertedTimer != -100f && alerted) {
-                // 	pView.RPC ("RpcUpdateAlertedStatus", RpcTarget.All, gameControllerScript.teamMap);
-                // }
                 if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Firing && actionState != ActionStates.Reloading) {
 					int r = Random.Range (1, aggression - 1);
 					if (r <= 4) {
@@ -1455,14 +1433,14 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 			if (playerTargeting != null) {
 				if (suspicionMeter < MAX_SUSPICION_LEVEL && !gameControllerScript.assaultMode) {
-					suspicious = true;
+					alertStatus = AlertStatus.Suspicious;
 					// Increase suspicion level
 					float suspicionIncrease = CalculateSuspicionLevelForPos(playerTargeting.transform.position);
 					IncreaseSuspicionLevel(suspicionIncrease);
 					// Alert the local player if he's the one being seen only if this enemy has the greatest suspicion level
 					playerTargeting.GetComponent<PlayerActionScript>().SetEnemySeenBy(pView.ViewID);
 				} else {
-					SetAlerted(true);
+					SetAlertStatus(AlertStatus.Alert);
 				}
 			} else {
 				if (suspicionMeter > 0f && !gameControllerScript.assaultMode) {
@@ -1489,9 +1467,9 @@ public class BetaEnemyScript : MonoBehaviour {
 				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
 					animator.Play ("Idle");
 			} else {
-				if (!alerted && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Walk")) {
+				if (alertStatus != AlertStatus.Alert && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Walk")) {
 					animator.Play ("Walk");
-				} else if (alerted && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Moving")) {
+				} else if (alertStatus == AlertStatus.Alert && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Moving")) {
 					animator.Play ("Moving");
 				}
 			}
@@ -1528,7 +1506,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		if (actionState == ActionStates.Idle) {
-			if (alerted) {
+			if (alertStatus == AlertStatus.Alert) {
 				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Firing")) {
 					animator.Play ("Firing");
 				}
@@ -1761,8 +1739,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		myCollider.center = new Vector3 (0f, 0f, 0f);
 	}
 
-	// b is the mode the AI is in. 0 means override everything and take cover, 1 is override everything and leave cover
-	// 2 is use the natural timer to decide
 	// Used for Scout AI
 	void TakeCoverScout() {
 		if (crouchMode == 0) {
@@ -1771,7 +1747,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				inCover = true;
                 //pView.RPC ("RpcSetInCover", RpcTarget.All, true, gameControllerScript.teamMap);
             }
-        } else if (crouchMode == 1) {
+        } else if (crouchMode == CrouchMode.ForceLeaveCover) {
 			if (coverWaitTimer <= 0f) {
 				coverWaitTimer = Random.Range (4f, 15f);
                 //pView.RPC ("RpcSetCoverWaitTimer", RpcTarget.Others, coverWaitTimer, gameControllerScript.teamMap);
@@ -2039,15 +2015,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
-	[PunRPC]
-	void RpcUpdateAlertedStatus(string team) {
-        if (team != gameControllerScript.teamMap) return;
-        alerted = false;
-		GameControllerScript.lastGunshotHeardPos = Vector3.negativeInfinity;
-		playerTargeting = null;
-		lastSeenPlayerPos = Vector3.negativeInfinity;
-	}
-
 	// Reset values to respawn
 	IEnumerator Respawn() {
 		yield return new WaitForSeconds (100f);
@@ -2087,7 +2054,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		wanderStallDelay = -1f;
 		coverPos = null;
-		crouchMode = 2;
+		crouchMode = CrouchMode.Natural;
 		coverScanRange = 50f;
 
 		modeler.RespawnPlayer();
@@ -2141,17 +2108,11 @@ public class BetaEnemyScript : MonoBehaviour {
 				break;
 			}
 		}
-		alertStatus = 0;
+		alertStatus = AlertStatus.Neutral;
 	}
 
 	void AddToMarkerRemovalQueue() {
 		gameControllerScript.enemyMarkerRemovalQueue.Enqueue(pView.ViewID);
-	}
-
-	void EnsureNotSuspiciousAndAlerted() {
-		if (alerted) {
-			suspicious = false;
-		}
 	}
 
 	// Draw a sphere to see effective range for stealth
