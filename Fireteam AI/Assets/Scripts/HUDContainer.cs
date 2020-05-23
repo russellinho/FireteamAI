@@ -64,6 +64,8 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject waypointMarkers;
 	public GameObject playerMarkers;
 	public GameObject enemyMarkers;
+	public Texture alertSymbol;
+	public Texture suspiciousSymbol;
 
     // Versus mode HUD
     public GameObject redScore;

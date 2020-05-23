@@ -113,9 +113,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		lastGunshotHeardPos = Vector3.negativeInfinity;
 		lastGunshotHeardPosClone = Vector3.negativeInfinity;
 
-    	enemyAlertMarkers = new ArrayList ();
-		enemyMarkerRemovalQueue = new Queue();
-
 	}
 
 	// Update is called once per frame
@@ -308,9 +305,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	IEnumerator UpdateAssaultModeTimer(float secs, bool assaultInProgress) {
 		yield return new WaitForSeconds (secs);
 		assaultMode = assaultInProgress;
-		if (assaultInProgress) {
-			ClearEnemyAlertMarkers();
-		}
 	}
 
 	bool CheckEscapeForCampaign() {
@@ -625,11 +619,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		} else {
 			PhotonNetwork.LoadLevel("GameOverSuccess");
 		}
-	}
-
-    void ClearEnemyAlertMarkers() {
-		enemyAlertMarkers.Clear();
-		enemyMarkerRemovalQueue.Clear();
 	}
 
 	public void AddCoverSpot(GameObject coverSpot) {

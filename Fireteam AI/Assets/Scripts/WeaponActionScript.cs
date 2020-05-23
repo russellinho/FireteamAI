@@ -516,7 +516,7 @@ public class WeaponActionScript : MonoBehaviour
                     audioController.PlayHitmarkerSound();
                     b.TakeDamage((int)meleeStats.damage);
                     b.PlayGruntSound();
-                    b.SetAlerted(true);
+                    b.SetAlerted();
                     if (b.health <= 0 && beforeHp > 0)
                     {
                         RewardKill(false);
@@ -572,7 +572,7 @@ public class WeaponActionScript : MonoBehaviour
                     audioController.PlayHitmarkerSound();
                     hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage(thisDamageDealt);
                     hit.transform.gameObject.GetComponent<BetaEnemyScript>().PlayGruntSound();
-                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted(true);
+                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted();
                     if (hit.transform.gameObject.GetComponent<BetaEnemyScript>().health <= 0 && beforeHp > 0)
                     {
                         RewardKill(false);
@@ -682,7 +682,7 @@ public class WeaponActionScript : MonoBehaviour
                             audioController.PlayHitmarkerSound();
                             //hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
                             hit.transform.gameObject.GetComponent<BetaEnemyScript>().PlayGruntSound();
-                            hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted(true);
+                            hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted();
                         }
                     }
                     hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage(thisDamageDealt);

@@ -1040,7 +1040,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             detectionLevel = 0f;
         } else {
             detectionLevel = enemySeenBy.suspicionMeter;
-            if (detectionLevel == 0f) {
+            if (detectionLevel <= 0f) {
                 ClearEnemySeenBy();
             }
         }
@@ -1061,7 +1061,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             }
             // Update the detection meter
             hud.SetDetectionMeter(detectionLevel / MAX_DETECTION_LEVEL);
-            if (detectionLevel == 1f) {
+            if (detectionLevel >= 1f) {
                 // Display the detected text
                 if (!hud.container.detectionText.enabled) {
                     hud.ToggleDetectedText(true);

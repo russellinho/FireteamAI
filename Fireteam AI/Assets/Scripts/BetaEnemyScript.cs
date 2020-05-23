@@ -61,8 +61,8 @@ public class BetaEnemyScript : MonoBehaviour {
 	private Vector3 spawnPos;
 	private Vector3 spawnRot;
 	// The alert state for the enemy. None = enemy is neutral; Suspicious = enemy is suspicious (?); alert = enemy is alerted (!)
-	private enum AlertStatus {Neutral, Suspicious, Alert};
-	private AlertStatus alertStatus;
+	public enum AlertStatus {Neutral, Suspicious, Alert};
+	public AlertStatus alertStatus;
 	private bool wasMasterClient;
 	public GameObject gameController;
 	public GameControllerScript gameControllerScript;
@@ -171,7 +171,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		originalColliderRadius = myCollider.radius;
 		originalColliderCenter = new Vector3 (myCollider.center.x, myCollider.center.y, myCollider.center.z);
 		gameControllerScript.enemyList.Add(pView.ViewID, gameObject);
-		enemyAlertMarkers = gameControllerScript.enemyAlertMarkers;
 
 		if (enemyType == EnemyType.Patrol) {
 			range = 20f;
@@ -238,7 +237,6 @@ public class BetaEnemyScript : MonoBehaviour {
         originalColliderRadius = myCollider.radius;
         originalColliderCenter = new Vector3(myCollider.center.x, myCollider.center.y, myCollider.center.z);
         gameControllerScript.enemyList.Add(pView.ViewID, gameObject);
-        enemyAlertMarkers = gameControllerScript.enemyAlertMarkers;
 
         if (enemyType == EnemyType.Patrol)
         {
@@ -329,7 +327,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		UpdateDisorientationTime();
 		ReplenishFireRate ();
 		UpdateFiringModeTimer ();
-		HandleEnemyAlerts();
 
 		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
 			if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
@@ -398,7 +395,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		UpdateDisorientationTime();
 		ReplenishFireRate ();
 		UpdateFiringModeTimer ();
-		HandleEnemyAlerts();
 
 		if (!gameControllerScript.isVersusHostForThisTeam() || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
 			if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
@@ -599,6 +595,10 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (!Vector3.Equals (GameControllerScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
 			SetAlertStatus(AlertStatus.Alert);
 		}
+	}
+
+	public void SetAlerted() {
+		SetAlertStatus(AlertStatus.Alert);
 	}
 
 	// Sets the alert status on the enemy (neutral, alert, suspicious)
@@ -1013,6 +1013,8 @@ public class BetaEnemyScript : MonoBehaviour {
 				playerTargeting = null;
 			}
 
+			SetSuspicionLevel(0f, 0f, 0f);
+
 			pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead, gameControllerScript.teamMap);
 
 			pView.RPC ("StartDespawn", RpcTarget.All, gameControllerScript.teamMap);
@@ -1070,19 +1072,30 @@ public class BetaEnemyScript : MonoBehaviour {
 				pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Idle, gameControllerScript.teamMap);
 			}
 			if (playerTargeting != null) {
-				if (suspicionMeter < MAX_SUSPICION_LEVEL && !gameControllerScript.assaultMode) {
-					alertStatus = AlertStatus.Suspicious;
-					// Increase suspicion level
-					float suspicionIncrease = CalculateSuspicionLevelForPos(playerTargeting.transform.position);
-					IncreaseSuspicionLevel(suspicionIncrease);
-					// Alert the local player if he's the one being seen only if this enemy has the greatest suspicion level
-					playerTargeting.GetComponent<PlayerActionScript>().SetEnemySeenBy(pView.ViewID);
+				if (!gameControllerScript.assaultMode) {
+					if (suspicionMeter < MAX_SUSPICION_LEVEL) {
+						SetAlertStatus(AlertStatus.Suspicious);
+						// Increase suspicion level
+						float suspicionIncrease = CalculateSuspicionLevelForPos(playerTargeting.transform.position);
+						IncreaseSuspicionLevel(suspicionIncrease);
+						// Alert the local player if he's the one being seen only if this enemy has the greatest suspicion level
+						playerTargeting.GetComponent<PlayerActionScript>().SetEnemySeenBy(pView.ViewID);
+					} else {
+						SetAlertStatus(AlertStatus.Alert);
+					}
 				} else {
 					SetAlertStatus(AlertStatus.Alert);
 				}
 			} else {
-				if (suspicionMeter > 0f && !gameControllerScript.assaultMode) {
-					DecreaseSuspicionLevel();
+				if (!gameControllerScript.assaultMode) {
+					if (suspicionMeter > 0f) {
+						DecreaseSuspicionLevel();
+						SetAlertStatus(AlertStatus.Suspicious);
+					} else {
+						SetAlertStatus(AlertStatus.Neutral);
+					}
+				} else {
+					SetAlertStatus(AlertStatus.Alert);
 				}
 			}
 		}
@@ -1312,6 +1325,8 @@ public class BetaEnemyScript : MonoBehaviour {
 				playerTargeting = null;
 			}
 
+			SetSuspicionLevel(0f, 0f, 0f);
+
 			pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
 			pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead, gameControllerScript.teamMap);
 
@@ -1432,19 +1447,30 @@ public class BetaEnemyScript : MonoBehaviour {
 				pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander, gameControllerScript.teamMap);
 			}
 			if (playerTargeting != null) {
-				if (suspicionMeter < MAX_SUSPICION_LEVEL && !gameControllerScript.assaultMode) {
-					alertStatus = AlertStatus.Suspicious;
-					// Increase suspicion level
-					float suspicionIncrease = CalculateSuspicionLevelForPos(playerTargeting.transform.position);
-					IncreaseSuspicionLevel(suspicionIncrease);
-					// Alert the local player if he's the one being seen only if this enemy has the greatest suspicion level
-					playerTargeting.GetComponent<PlayerActionScript>().SetEnemySeenBy(pView.ViewID);
+				if (!gameControllerScript.assaultMode) {
+					if (suspicionMeter < MAX_SUSPICION_LEVEL) {
+						SetAlertStatus(AlertStatus.Suspicious);
+						// Increase suspicion level
+						float suspicionIncrease = CalculateSuspicionLevelForPos(playerTargeting.transform.position);
+						IncreaseSuspicionLevel(suspicionIncrease);
+						// Alert the local player if he's the one being seen only if this enemy has the greatest suspicion level
+						playerTargeting.GetComponent<PlayerActionScript>().SetEnemySeenBy(pView.ViewID);
+					} else {
+						SetAlertStatus(AlertStatus.Alert);
+					}
 				} else {
 					SetAlertStatus(AlertStatus.Alert);
 				}
 			} else {
-				if (suspicionMeter > 0f && !gameControllerScript.assaultMode) {
-					DecreaseSuspicionLevel();
+				if (!gameControllerScript.assaultMode) {
+					if (suspicionMeter > 0f) {
+						DecreaseSuspicionLevel();
+						SetAlertStatus(AlertStatus.Suspicious);
+					} else {
+						SetAlertStatus(AlertStatus.Neutral);
+					}
+				} else {
+					SetAlertStatus(AlertStatus.Alert);
 				}
 			}
 		}
@@ -1984,8 +2010,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Play grunt when enemy dies or hit by flashbang
 		if (action == ActionStates.Dead) {
 			PlayGruntSound();
-			removeFromMarkerList();
-			AddToMarkerRemovalQueue();
 		}
 		if (action == ActionStates.Disoriented) {
 			PlayGruntSound();
@@ -2073,53 +2097,6 @@ public class BetaEnemyScript : MonoBehaviour {
 	void StopVoices() {
 		audioSource.Stop();
 	}
-
-	void HandleEnemyAlerts() {
-		if (health <= 0 || gameControllerScript.assaultMode) {
-            if (alertStatus != 0)
-            {
-                alertStatus = 0;
-                removeFromMarkerList();
-                AddToMarkerRemovalQueue();
-            }
-			return;
-		}
-
-		// Activate exclamation sign, and disable question mark
-		if (alerted && alertStatus != 2) {
-			gameControllerScript.enemyAlertMarkers.Add(pView.ViewID);
-			alertStatus = 2;
-		} else if (suspicious && alertStatus != 1) {
-			gameControllerScript.enemyAlertMarkers.Add(pView.ViewID);
-			alertStatus = 1;
-		} else {
-			removeFromMarkerList();
-		}
-
-	}
-
-	void removeFromMarkerList() {
-		if (enemyAlertMarkers == null || alertStatus == 0) {
-			return;
-		}
-		foreach (int item in enemyAlertMarkers) {
-			if ((int)item == pView.ViewID) {
-				enemyAlertMarkers.Remove(item);
-				break;
-			}
-		}
-		alertStatus = AlertStatus.Neutral;
-	}
-
-	void AddToMarkerRemovalQueue() {
-		gameControllerScript.enemyMarkerRemovalQueue.Enqueue(pView.ViewID);
-	}
-
-	// Draw a sphere to see effective range for stealth
-	// void OnDrawGizmos() {
-	// 		Gizmos.color = Color.yellow;
-	// 		Gizmos.DrawSphere(headTransform.position, 8f);
-	// }
 	
 	void ToggleDetectionOutline(bool b) {
 		modeler.ToggleDetectionOutline(b);
@@ -2230,6 +2207,9 @@ public class BetaEnemyScript : MonoBehaviour {
             }
         } else {
             suspicionMeter += amount;
+			if (suspicionMeter > MAX_SUSPICION_LEVEL) {
+				suspicionMeter = MAX_SUSPICION_LEVEL;
+			}
             suspicionCoolDownDelay = 4f;
 			// Determine if suspicion amount or suspicion cool down has changed to sync over the network
             if ((previousSuspicionMeter != suspicionMeter) || (previousSuspicionCoolDownDelay != suspicionCoolDownDelay)) {
@@ -2268,6 +2248,10 @@ public class BetaEnemyScript : MonoBehaviour {
             StartCoroutine("SyncSuspicionValuesProcessor");
         }
     }
+
+	void SetSuspicionLevel(float suspicionMeter, float increaseSuspicionDelay, float suspicionCoolDownDelay) {
+		pView.RPC("RpcSyncSuspicionValues", RpcTarget.All, gameControllerScript.teamMap, suspicionMeter, increaseSuspicionDelay, suspicionCoolDownDelay);
+	}
 
 	[PunRPC]
     void RpcSyncSuspicionValues(string team, float suspicionMeter, float increaseSuspicionDelay, float suspicionCoolDownDelay) {

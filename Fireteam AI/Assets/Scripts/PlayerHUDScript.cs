@@ -7,9 +7,9 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using TMPro;
+using AlertStatus = BetaEnemyScript.AlertStatus;
 
 public class PlayerHUDScript : MonoBehaviourPunCallbacks {
-
 	// HUD object reference
 	public HUDContainer container;
 	private PauseMenuScript pauseMenuScript;
@@ -26,7 +26,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	private ArrayList missionWaypoints;
 	private Dictionary<int, GameObject> playerMarkers = new Dictionary<int, GameObject> ();
-	private Dictionary<int, GameObject> enemyMarkers = new Dictionary<int, GameObject> ();
+	private Dictionary<int, AlertMarker> enemyMarkers = new Dictionary<int, AlertMarker> ();
 	private ObjectivesTextScript objectiveFormatter;
 
 	// Other vars
@@ -62,6 +62,14 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.hitMarker.GetComponent<RawImage> ().enabled = false;
 		pauseMenuScript = container.pauseMenuGUI.GetComponent<PauseMenuScript>();
 
+		foreach (int actorId in gameController.enemyList.Keys) {
+			GameObject marker = GameObject.Instantiate(container.enemyAlerted);
+			marker.GetComponent<RectTransform>().SetParent(container.enemyMarkers.transform);
+			marker.SetActive(false);
+			AlertMarker m = new AlertMarker(marker, AlertStatus.Neutral);
+			enemyMarkers.Add(actorId, m);
+		}
+
 		container.pauseMenuGUI.SetActive (false);
 		ToggleActionBar(false, null);
 		container.actionBarText.enabled = false;
@@ -71,7 +79,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		ToggleDetectionHUD(false);
 
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
-		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
 		if (gameController.matchType == 'C') {
 			ToggleVersusHUD(false);
 		} else if (gameController.matchType == 'V') {
@@ -86,6 +93,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		LoadHUDForMission ();
 		StartMatchCameraFade ();
+		StartCoroutine("UpdatePlayerMarkers");
+		StartCoroutine("UpdateEnemyMarkers");
+		StartCoroutine("UpdateWaypoints");
 	}
 
 	public void StartMatchCameraFade() {
@@ -165,9 +175,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		//container.weaponLabelTxt.text = playerActionScript.currWep;
 		container.weaponLabelTxt.text = wepScript.equippedWep;
 		container.ammoTxt.text = "" + wepActionScript.currentAmmo + '/' + wepActionScript.totalAmmoLeft;
-		UpdatePlayerMarkers ();
-		UpdateEnemyMarkers();
-		UpdateWaypoints ();
+		
 		UpdateCursorStatus ();
 		if (gameController.matchType == 'V') {
 			UpdateRedTeamScore(Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redScore"]));
@@ -259,7 +267,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	void UpdateWaypoints() {
+	IEnumerator UpdateWaypoints() {
 		for (int i = 0; i < missionWaypoints.Count; i++)
 		{
 			if (i == missionWaypoints.Count - 1)
@@ -325,9 +333,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		}
+		yield return new WaitForSeconds(0.2f);
 	}
 
-	void UpdatePlayerMarkers() {
+	IEnumerator UpdatePlayerMarkers() {
 		foreach (PlayerStat stat in GameControllerScript.playerList.Values) {
 			GameObject p = stat.objRef;
 			if (!p)
@@ -386,22 +395,16 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		}
+		yield return new WaitForSeconds(0.2f);
 	}
 
-	void UpdateEnemyMarkers() {
+	IEnumerator UpdateEnemyMarkers() {
 		if (gameController.assaultMode && !enemyMarkersCleared) {
 			ClearEnemyMarkers();
-			return;
+			yield return null;
 		}
-		enemyAlertMarkers = gameController.GetComponent<GameControllerScript>().enemyAlertMarkers;
-		foreach (int actorNo in enemyAlertMarkers) {
-			if (!enemyMarkers.ContainsKey (actorNo)) {
-				GameObject marker = GameObject.Instantiate(container.enemyAlerted);
-				marker.GetComponent<RectTransform>().SetParent(container.enemyMarkers.transform);
-				marker.SetActive(false);
-				enemyMarkers.Add(actorNo, marker);
-			}
-
+		foreach (KeyValuePair<int, AlertMarker> marker in enemyMarkers) {
+			int actorNo = marker.Key;
 			GameObject e = gameController.enemyList[actorNo];
 			BetaEnemyScript en = e.GetComponent<BetaEnemyScript>();
 			// Check if it can be rendered to the screen
@@ -410,64 +413,64 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				if (renderCheck <= 0)
 					continue;
 
-				if (en.alertStatus == 2) {
+				if (en.alertStatus == AlertStatus.Alert) {
 					// if enemy is alerted, display the alert symbol
-					if (en.alertDisplay != 2) {
-						enemyMarkers[actorNo].SetActive(true);
-						en.alertDisplay = 2;
-						enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("alert");
+					if (enemyMarkers[actorNo].alertStatus != AlertStatus.Alert) {
+						enemyMarkers[actorNo].markerRef.SetActive(true);
+						enemyMarkers[actorNo].markerRef.GetComponent<RawImage>().texture = container.alertSymbol;
+						enemyMarkers[actorNo].alertStatus = AlertStatus.Alert;
 					}
-					// Debug.Log(enemyMarkers[actorNo]);
-				}
-				else if (en.alertStatus == 1) {
-					// if enemy is close to player, display the caution symbol
-					if (en.alertDisplay != 1) {
-						enemyMarkers[actorNo].SetActive(true);
-						en.alertDisplay = 1;
-						enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("caution");
+				} else if (en.alertStatus == AlertStatus.Suspicious) {
+					// if enemy is suspicious, display the suspicious symbol
+					if (enemyMarkers[actorNo].alertStatus != AlertStatus.Suspicious) {
+						enemyMarkers[actorNo].markerRef.SetActive(true);
+						enemyMarkers[actorNo].markerRef.GetComponent<RawImage>().texture = container.suspiciousSymbol;
+						enemyMarkers[actorNo].alertStatus = AlertStatus.Suspicious;
 					}
-				}
-				else {
-					enemyMarkers[actorNo].SetActive(false);
+				} else {
+					enemyMarkers[actorNo].markerRef.SetActive(false);
 				}
 
-				Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + (HEIGHT_OFFSET * 1.5f), e.transform.position.z);
-				RectTransform enemyMarkerTrans = enemyMarkers[actorNo].GetComponent<RectTransform>();
-				Vector3 destPoint = playerActionScript.viewCam.WorldToScreenPoint(o);
-				Vector3 startPoint = enemyMarkerTrans.position;
-				enemyMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
-
+				if (enemyMarkers[actorNo].markerRef.activeInHierarchy) {
+					Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + (HEIGHT_OFFSET * 1.5f), e.transform.position.z);
+					RectTransform enemyMarkerTrans = enemyMarkers[actorNo].markerRef.GetComponent<RectTransform>();
+					Vector3 destPoint = playerActionScript.viewCam.WorldToScreenPoint(o);
+					Vector3 startPoint = enemyMarkerTrans.position;
+					enemyMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
+				}
 			} else if (playerActionScript.thisSpectatorCam != null) {
 				float renderCheck = Vector3.Dot((e.transform.position - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
 				if (renderCheck <= 0)
 					continue;
-				if (en.alertStatus == 2) {
+
+				if (en.alertStatus == AlertStatus.Alert) {
 					// if enemy is alerted, display the alert symbol
-					if (en.alertDisplay != 2) {
-						enemyMarkers[actorNo].SetActive(true);
-						en.alertDisplay = 2;
-						enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("alert");
+					if (enemyMarkers[actorNo].alertStatus != AlertStatus.Alert) {
+						enemyMarkers[actorNo].markerRef.SetActive(true);
+						enemyMarkers[actorNo].markerRef.GetComponent<RawImage>().texture = container.alertSymbol;
+						enemyMarkers[actorNo].alertStatus = AlertStatus.Alert;
 					}
-				}
-				else if (en.alertStatus == 1) {
-					// if enemy is close to player, display the caution symbol
-					if (en.alertDisplay != 1) {
-						enemyMarkers[actorNo].SetActive(true);
-						en.alertDisplay = 1;
-						enemyMarkers[actorNo].GetComponent<RawImage>().texture = (Texture)Resources.Load("caution");
+				} else if (en.alertStatus == AlertStatus.Suspicious) {
+					// if enemy is suspicious, display the suspicious symbol
+					if (enemyMarkers[actorNo].alertStatus != AlertStatus.Suspicious) {
+						enemyMarkers[actorNo].markerRef.SetActive(true);
+						enemyMarkers[actorNo].markerRef.GetComponent<RawImage>().texture = container.suspiciousSymbol;
+						enemyMarkers[actorNo].alertStatus = AlertStatus.Suspicious;
 					}
+				} else {
+					enemyMarkers[actorNo].markerRef.SetActive(false);
 				}
-				else {
-					enemyMarkers[actorNo].SetActive(false);
+
+				if (enemyMarkers[actorNo].markerRef.activeInHierarchy) {
+					Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + (HEIGHT_OFFSET * 1.5f), e.transform.position.z);
+					RectTransform enemyMarkerTrans = enemyMarkers[actorNo].markerRef.GetComponent<RectTransform>();
+					Vector3 destPoint = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
+					Vector3 startPoint = enemyMarkerTrans.position;
+					enemyMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
 				}
-				Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + (HEIGHT_OFFSET * 1.5f), e.transform.position.z);
-				RectTransform enemyMarkerTrans = enemyMarkers[actorNo].GetComponent<RectTransform>();
-				Vector3 destPoint = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
-				Vector3 startPoint = enemyMarkerTrans.position;
-				enemyMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
 			}
 		}
-		HandleMarkerRemoval();
+		yield return new WaitForSeconds(0.2f);
 	}
 
 	public void InstantiateHitmarker() {
@@ -872,22 +875,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void ClearEnemyMarkers() {
-		foreach(KeyValuePair<int, GameObject> entry in enemyMarkers)
+		foreach(KeyValuePair<int, AlertMarker> entry in enemyMarkers)
 		{
-			Destroy(entry.Value);
+			Destroy(entry.Value.markerRef);
 		}
 		enemyMarkers.Clear();
 		enemyMarkersCleared = true;
-	}
-
-	void HandleMarkerRemoval() {
-		if (gameController.enemyMarkerRemovalQueue.Count > 0) {
-			int enemyId = (int)gameController.enemyMarkerRemovalQueue.Dequeue();
-			if (enemyMarkers.ContainsKey(enemyId)) {
-				Destroy(enemyMarkers[enemyId]);
-			}
-			enemyMarkers.Remove(enemyId);
-		}
 	}
 
     public void ToggleVersusHUD(bool b)
@@ -954,4 +947,14 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		return container.pauseMenuGUI.activeInHierarchy;
 	}
 
+}
+
+public class AlertMarker {
+	public GameObject markerRef;
+	// Current alert symbol being displayed. Used to prevent script from setting the texture over and over again
+	public AlertStatus alertStatus;
+	public AlertMarker(GameObject markerRef, AlertStatus alertStatus) {
+		this.markerRef = markerRef;
+		this.alertStatus = alertStatus;
+	}
 }
