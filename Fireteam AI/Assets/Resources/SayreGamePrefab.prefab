@@ -153,7 +153,6 @@ Transform:
   - {fileID: 871338719418938219}
   - {fileID: 5986940081569558227}
   - {fileID: 5974843810512900778}
-  - {fileID: 8077170082699998039}
   - {fileID: 3712701964359891207}
   - {fileID: 4154137272479200933}
   - {fileID: 5179158535296232485}
@@ -420,6 +419,8 @@ MonoBehaviour:
     smooth: 0
     smoothTime: 5
     lockCursor: 1
+    recoilInput: 0
+    swayInput: 0
     m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_FpcCharacterVerticalTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_FpcCharacterHorizontalTargetRot: {x: 0, y: 0, z: 0, w: 0}
@@ -544,6 +545,8 @@ MonoBehaviour:
     smooth: 0
     smoothTime: 5
     lockCursor: 1
+    recoilInput: 0
+    swayInput: 0
     m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_FpcCharacterVerticalTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_FpcCharacterHorizontalTargetRot: {x: 0, y: 0, z: 0, w: 0}
@@ -598,6 +601,7 @@ MonoBehaviour:
   deployPlanMesh: {fileID: 0}
   deployTimer: 0
   deployInProgress: 0
+  switchWeaponBackToRight: 0
 --- !u!114 &1029626021163347194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -638,7 +642,7 @@ MonoBehaviour:
   - {fileID: 3435716883344575727}
   - {fileID: 6785912807016443812}
   - {fileID: 9156478106581586245}
-  - {fileID: 2606588895337435149}
+  - {fileID: 0}
   - {fileID: 5256282438039704239}
   - {fileID: 2966618018708469648}
   - {fileID: 5538587518649827452}
@@ -693,7 +697,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioMuffle: {fileID: 7548990337718321357}
   audioEcho: {fileID: 6585994898760364830}
-  bgm: {fileID: 7799777335675003057}
+  bgm: {fileID: 0}
   fxRef: {fileID: 5256282438039704239}
   stealthMusic: {fileID: 8300000, guid: 0d9941fe9ece306449145235b03e95cc, type: 3}
   assaultMusic: {fileID: 8300000, guid: 5a6a5d747652a6745b50a03b9c57da11, type: 3}
@@ -776,8 +780,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 1029626021163347185}
-  viewIdField: 1
-  InstantiationId: 1
+  viewIdField: 0
+  InstantiationId: 34
   isRuntimeInstantiated: 0
 --- !u!114 &1029626021163347185
 MonoBehaviour:
@@ -13520,133 +13524,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!1 &2606588895337435149
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8077170082699998039}
-  - component: {fileID: 7799777335675003057}
-  m_Layer: 0
-  m_Name: BGM
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8077170082699998039
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2606588895337435149}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1029626021163347186}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!82 &7799777335675003057
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2606588895337435149}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
-  m_Volume: 0.75
-  m_Pitch: 1
-  Loop: 1
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 250
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
 --- !u!1 &2966618018708469648
 GameObject:
   m_ObjectHideFlags: 0
@@ -13680,7 +13557,7 @@ Transform:
   - {fileID: 5757039571578680006}
   - {fileID: 6507422511817882003}
   m_Father: {fileID: 1029626021163347186}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &7317228370325602899
 ParticleSystem:
@@ -18417,7 +18294,6 @@ MonoBehaviour:
   weapon: {fileID: 0}
   leftShoulder: {fileID: 2450817521813132007}
   leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
   fpc: {fileID: 1029626021163347192}
 --- !u!1 &3435716883344575727
 GameObject:
@@ -23538,7 +23414,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1029626021163347186}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &4354853702629358268
 AudioSource:
@@ -24328,7 +24204,7 @@ Transform:
   - {fileID: 8063321273565112022}
   - {fileID: 3585681806977360558}
   m_Father: {fileID: 1029626021163347186}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &1533328321439888482
 ParticleSystem:
@@ -43591,7 +43467,6 @@ MonoBehaviour:
   weapon: {fileID: 0}
   leftShoulder: {fileID: 8725741272739199772}
   leftHand: {fileID: 8725741272739199860}
-  rightHand: {fileID: 8725741272739199858}
   fpc: {fileID: 1029626021163347192}
 --- !u!1 &7431124534492434356
 GameObject:

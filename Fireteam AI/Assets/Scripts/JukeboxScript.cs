@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class JukeboxScript : MonoBehaviour
 {
+    private enum MusicMode {Title, InGame, GameOver};
+    private MusicMode currentMode;
     public static JukeboxScript jukebox;
     public AudioSource audioSource1;
     public AudioSource audioSource2;
@@ -12,7 +14,7 @@ public class JukeboxScript : MonoBehaviour
     private int audio2Index;
     private float audio1FadeTime;
     private float audio2FadeTime;
-    public AudioClip[] trackList;
+    public AudioClip[] titleTrackList;
     private const float SONG_FADE_DELAY = 4f;
 
     void Awake() {
@@ -20,6 +22,7 @@ public class JukeboxScript : MonoBehaviour
         {
             DontDestroyOnLoad(gameObject);
             jukebox = this;
+            currentMode = MusicMode.Title;
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
         }
         else if (jukebox != this)
@@ -28,27 +31,28 @@ public class JukeboxScript : MonoBehaviour
         }
     }
 
-    void Start() {
-        StartJukebox();
-    }
-
     public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
         string levelName = SceneManager.GetActiveScene().name;
-        if (!levelName.Equals("Title") && !levelName.Equals("Login"))
-        {
-            StopJukebox();
-            jukebox.gameObject.SetActive(false);
+        if (levelName.Equals("GameOverFail") || levelName.Equals("GameOverSuccess")) {
+            StopMusic();
+        } else if (levelName.Equals("Login") || levelName.Equals("Title")) {
+            StartTitleMusic();
         } else {
-            if (!jukebox.gameObject.activeInHierarchy) {
-                jukebox.gameObject.SetActive(true);
-                StartJukebox();
-            }
+            StartInGameMusic(levelName);
         }
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (currentMode == MusicMode.Title) {
+            HandleUpdateForTitle();
+        } else if (currentMode == MusicMode.InGame) {
+            HandleUpdateInGame();
+        }
+    }
+
+    void HandleUpdateForTitle() {
         if (audioSource1.isPlaying) {
             if (audio1FadeTime < SONG_FADE_DELAY) {
                 audio1FadeTime += Time.deltaTime;
@@ -83,33 +87,52 @@ public class JukeboxScript : MonoBehaviour
         }
     }
 
-    IEnumerator QueueNextSong(int nextSource) {
-        int r = Random.Range(0, trackList.Length);
+    void HandleUpdateInGame() {
+        if (audioSource1.isPlaying) {
+            if (audio1FadeTime < SONG_FADE_DELAY) {
+                audio1FadeTime += Time.deltaTime;
+                audioSource1.volume = audio1FadeTime / SONG_FADE_DELAY;
+            }
+
+            if (audioSource1.time >= (audioSource1.clip.length - SONG_FADE_DELAY)) {
+                audio1FadeTime -= Time.deltaTime;
+                audioSource1.volume = audio1FadeTime / SONG_FADE_DELAY;
+            }
+
+            if (audio1FadeTime <= 0f) {
+                audioSource1.Stop();
+                audio1FadeTime = 0f;
+            }
+        }
+    }
+
+    IEnumerator QueueNextSongOnTitle(int nextSource) {
+        int r = Random.Range(0, titleTrackList.Length);
         float waitTime = 0f;
 
         if (nextSource == 2) {
             // Ensure same song isn't played
             if (audio1Index == r) {
-                if (r == (trackList.Length - 1)) {
+                if (r == (titleTrackList.Length - 1)) {
                     r = 0;
                 } else {
                     r++;
                 }
             }
 
-            audioSource2.clip = trackList[r];
+            audioSource2.clip = titleTrackList[r];
             waitTime = audioSource1.clip.length;
         } else if (nextSource == 1) {
             // Ensure same song isn't played
             if (audio2Index == r) {
-                if (r == (trackList.Length - 1)) {
+                if (r == (titleTrackList.Length - 1)) {
                     r = 0;
                 } else {
                     r++;
                 }
             }
 
-            audioSource1.clip = trackList[r];
+            audioSource1.clip = titleTrackList[r];
             waitTime = audioSource2.clip.length;
         }
 
@@ -123,23 +146,48 @@ public class JukeboxScript : MonoBehaviour
             nextSource = 2;
         }
 
-        StartCoroutine(QueueNextSong(nextSource));
+        StartCoroutine(QueueNextSongOnTitle(nextSource));
     }
 
-    void StopJukebox() {
+    void StopMusic() {
         audioSource1.Stop();
         audioSource2.Stop();
+        StopAllCoroutines();
     }
 
-    void StartJukebox() {
+    void StartTitleMusic() {
+        audioSource1.loop = false;
+        audioSource2.loop = false;
         audio1FadeTime = 0f;
         audio2FadeTime = 0f;
-        int r = Random.Range(0, trackList.Length);
+        int r = Random.Range(0, titleTrackList.Length);
         audio1Index = r;
-        audioSource1.clip = trackList[r];
+        audioSource1.clip = titleTrackList[r];
         audioSource1.volume = 0f;
         audioSource1.Play();
-        StartCoroutine(QueueNextSong(2));
+        StartCoroutine(QueueNextSongOnTitle(2));
+    }
+
+    void StartInGameMusic(string sceneName) {
+        audioSource1.loop = true;
+        audioSource2.loop = true;
+        audio1FadeTime = 0f;
+        audio2FadeTime = 0f;
+        LoadMusicForScene(sceneName);
+        audioSource1.volume = 0f;
+    }
+
+    void PlayStealthMusic() {
+        audioSource1.Play();
+    }
+
+    void PlayInGameMusic() {
+        audioSource2.Play();
+    }
+
+    void LoadMusicForScene(string sceneName) {
+        audioSource1.clip = (AudioClip)Resources.Load(sceneName + "Stealth");
+        audioSource2.clip = (AudioClip)Resources.Load(sceneName + "Assault");
     }
 
 }

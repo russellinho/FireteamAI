@@ -20,7 +20,6 @@ public class AudioControllerScript : MonoBehaviour {
 	// Audio stuff
 	public AudioLowPassFilter audioMuffle;
 	public AudioReverbFilter audioEcho;
-	public AudioSource bgm;
 	public GameObject fxRef;
 	private AudioSource fxSound1;
 	private AudioSource fxSound2;
