@@ -4751,7 +4751,7 @@ GameObject:
   - component: {fileID: 3747978999549937094}
   - component: {fileID: 1349628395274398008}
   m_Layer: 16
-  m_Name: Glock23
+  m_Name: Glock23older
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5081,16 +5081,26 @@ MonoBehaviour:
   weaponName: Glock23
   type: Secondary
   category: Pistol
-  damage: 18
+  damage: 48
   mobility: 100
   fireRate: 0.1
   accuracy: 0
   recoil: 2
+  sway: 0
   range: 100
+  lungeRange: 0
   clipCapacity: 12
   maxAmmo: 60
+  steadyAim: 0
+  isSniper: 0
   aimDownSightPosMale: {x: -0.00125, y: 0.00177, z: 0.00036}
   aimDownSightPosFemale: {x: -0.00125, y: 0.00177, z: 0.00036}
+  stableHandPosMale: {x: 0, y: 0, z: 0}
+  stableHandPosFemale: {x: 0, y: 0, z: 0}
+  defaultLeftCollarPosMale: {x: 0, y: 0, z: 0}
+  defaultLeftCollarPosFemale: {x: 0, y: 0, z: 0}
+  defaultRightCollarPosMale: {x: 0, y: 0, z: 0}
+  defaultRightCollarPosFemale: {x: 0, y: 0, z: 0}
   aimDownSightSpeed: 8
   aimDownSightClipping: 0.05
   titleHandPositionsMale: {x: 0, y: 0, z: 0}
@@ -5104,6 +5114,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a045c4a86598740428a74dd97255c1da, type: 3}
   - {fileID: 8300000, guid: 700c0ff8ad166104faf3e7013ba21c5e, type: 3}
   supportActionSound: {fileID: 0}
+  meleeSwingSound: {fileID: 0}
+  meleeLungeSound: {fileID: 0}
   gunSmoke: {fileID: 3013963004515157933, guid: 22f01094768fa2c4e8513fa10c2a4c94,
     type: 3}
   weaponShell: {fileID: 495810041075087592, guid: 01f2dbe1746c1dc46923a4d9bf972eb9,
@@ -5122,6 +5134,12 @@ MonoBehaviour:
   fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
   fpcRotFemale: {x: -0.241, y: 79.6, z: -82.8}
   fpcScaleFemale: {x: 0.003, y: 0.003, z: 0.003}
+  fullPosMale: {x: 0, y: 0, z: 0}
+  fullRotMale: {x: 0, y: 0, z: 0}
+  fullScaleMale: {x: 0, y: 0, z: 0}
+  fullPosFemale: {x: 0, y: 0, z: 0}
+  fullRotFemale: {x: 0, y: 0, z: 0}
+  fullScaleFemale: {x: 0, y: 0, z: 0}
   maleOverrideController: {fileID: 22100000, guid: 65faa7f2461b45c498a9a3d74702ecb4,
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: 176a06a46179094459627c57b56fdfb7,
@@ -5130,18 +5148,27 @@ MonoBehaviour:
   defaultFpcReloadSpeed: 1
   defaultWeaponReloadSpeed: 0.5
   defaultWeaponCockingSpeed: 0
+  defaultWeaponDrawSpeed: 0
   defaultFireSpeed: 1.75
+  defaultMeleeSpeed: 0
   reloadTransitionSpeed: 0.02
-  cockStartTime: 0.7
   reloadSound1Time: 0.1
   reloadSound2Time: 0.4
   reloadSound3Time: 0.8
+  reloadSound4Time: 0
   supportSoundTime: -1
+  switchToLeftDuringReload: 0
+  switchToLeftTime: 0
   weaponParts:
   - {fileID: 5383536960207155720}
   - {fileID: 5383536960207155722}
   - {fileID: 5383536960207155724}
+  warheadRenderer: {fileID: 0}
+  deployPlanMesh: {fileID: 0}
+  isSticky: 0
   suppressorSlot: {fileID: 1769380044830635559}
+  sightSlot: {fileID: 0}
+  crosshairAimOffset: []
 --- !u!114 &3747978999549937094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5157,6 +5184,12 @@ MonoBehaviour:
   suppressorScaler: {x: 6, y: 6, z: 6}
   suppressorPos: {fileID: 1441665165501073217}
   suppressorRef: {fileID: 0}
+  sightScaler: {x: 0, y: 0, z: 0}
+  sightPos: {fileID: 0}
+  sightRef: {fileID: 0}
+  sightMountRef: {fileID: 0}
+  sightMountReplacementRef: {fileID: 0}
+  previewPos: {x: 0, y: 0, z: 0}
 --- !u!95 &1349628395274398008
 Animator:
   serializedVersion: 3

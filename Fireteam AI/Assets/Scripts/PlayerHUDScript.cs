@@ -53,6 +53,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			return;
         }
 		// Find/load HUD components
+		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 		missionWaypoints = new ArrayList ();
 		objectiveFormatter = new ObjectivesTextScript();
 
@@ -78,7 +79,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.spectatorText.enabled = false;
 		ToggleDetectionHUD(false);
 
-		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 		if (gameController.matchType == 'C') {
 			ToggleVersusHUD(false);
 		} else if (gameController.matchType == 'V') {
@@ -333,7 +333,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		}
-		yield return new WaitForSeconds(0.2f);
+		yield return new WaitForSeconds(0.025f);
+		StartCoroutine("UpdateWaypoints");
 	}
 
 	IEnumerator UpdatePlayerMarkers() {
@@ -395,7 +396,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		}
-		yield return new WaitForSeconds(0.2f);
+		yield return new WaitForSeconds(0.025f);
+		StartCoroutine("UpdatePlayerMarkers");
 	}
 
 	IEnumerator UpdateEnemyMarkers() {
@@ -409,10 +411,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			BetaEnemyScript en = e.GetComponent<BetaEnemyScript>();
 			// Check if it can be rendered to the screen
 			if (playerActionScript.viewCam.enabled) {
-				float renderCheck = Vector3.Dot((e.transform.position - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
-				if (renderCheck <= 0)
-					continue;
-
 				if (en.alertStatus == AlertStatus.Alert) {
 					// if enemy is alerted, display the alert symbol
 					if (enemyMarkers[actorNo].alertStatus != AlertStatus.Alert) {
@@ -429,7 +427,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					}
 				} else {
 					enemyMarkers[actorNo].markerRef.SetActive(false);
+					enemyMarkers[actorNo].alertStatus = AlertStatus.Neutral;
+					continue;
 				}
+
+				float renderCheck = Vector3.Dot((e.transform.position - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
+				if (renderCheck <= 0)
+					continue;
 
 				if (enemyMarkers[actorNo].markerRef.activeInHierarchy) {
 					Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + (HEIGHT_OFFSET * 1.5f), e.transform.position.z);
@@ -439,10 +443,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					enemyMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
 				}
 			} else if (playerActionScript.thisSpectatorCam != null) {
-				float renderCheck = Vector3.Dot((e.transform.position - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
-				if (renderCheck <= 0)
-					continue;
-
 				if (en.alertStatus == AlertStatus.Alert) {
 					// if enemy is alerted, display the alert symbol
 					if (enemyMarkers[actorNo].alertStatus != AlertStatus.Alert) {
@@ -459,7 +459,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					}
 				} else {
 					enemyMarkers[actorNo].markerRef.SetActive(false);
+					enemyMarkers[actorNo].alertStatus = AlertStatus.Neutral;
+					continue;
 				}
+
+				float renderCheck = Vector3.Dot((e.transform.position - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
+				if (renderCheck <= 0)
+					continue;
 
 				if (enemyMarkers[actorNo].markerRef.activeInHierarchy) {
 					Vector3 o = new Vector3(e.transform.position.x, e.transform.position.y + (HEIGHT_OFFSET * 1.5f), e.transform.position.z);
@@ -470,7 +476,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		}
-		yield return new WaitForSeconds(0.2f);
+		yield return new WaitForSeconds(0.025f);
+		StartCoroutine("UpdateEnemyMarkers");
 	}
 
 	public void InstantiateHitmarker() {

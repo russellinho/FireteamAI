@@ -4993,16 +4993,18 @@ MonoBehaviour:
   weaponName: Glock23
   type: Secondary
   category: Pistol
-  damage: 25
+  damage: 48
   mobility: 100
   fireRate: 0.05
   accuracy: 0
   recoil: 2
+  sway: 0
   range: 100
   lungeRange: 0
   clipCapacity: 12
   maxAmmo: 60
   steadyAim: 0
+  isSniper: 0
   aimDownSightPosMale: {x: -0.00125, y: 0.00183, z: 0.000365}
   aimDownSightPosFemale: {x: -0.00125, y: 0.00183, z: 0.000365}
   stableHandPosMale: {x: -0.0007689242, y: 0.001638458, z: 0.0003511736}
@@ -5101,6 +5103,7 @@ MonoBehaviour:
   sightPos: {fileID: 0}
   sightRef: {fileID: 0}
   sightMountRef: {fileID: 0}
+  sightMountReplacementRef: {fileID: 0}
   previewPos: {x: 0, y: 0, z: 0}
 --- !u!95 &2183430773622466978
 Animator:

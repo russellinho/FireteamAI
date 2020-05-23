@@ -1060,8 +1060,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 audioController.PlayCautionSound();
             }
             // Update the detection meter
-            hud.SetDetectionMeter(detectionLevel / MAX_DETECTION_LEVEL);
-            if (detectionLevel >= 1f) {
+            float d = detectionLevel / MAX_DETECTION_LEVEL;
+            hud.SetDetectionMeter(d);
+            if (d >= 1f) {
                 // Display the detected text
                 if (!hud.container.detectionText.enabled) {
                     hud.ToggleDetectedText(true);

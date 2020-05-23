@@ -933,12 +933,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		float maxRange = range + 20f;
 		float distanceFromTarget = Vector3.Distance (transform.position, pos);
 		// How far away you are relative to max detection distance - the lower, the closer
-		float percentOfRange = distanceFromTarget / maxRange;
+		float percentOfRange = maxRange / distanceFromTarget;
 		// Calculate distance multiplier
-		float d = 1f;
-		if (percentOfRange < 0.5f) {
-			d += (1f - (0.5f * 2f));
-		}
+		float d = Mathf.Clamp(percentOfRange, 0.25f, 10f);
 		// Calculate rotation multiplier
 		Vector3 toPlayer = pos - transform.position;
 		float angleBetween = Vector3.Angle (transform.forward, toPlayer);
@@ -950,6 +947,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Get base detection rate for player
 		float total = playerTargeting.GetComponent<PlayerActionScript>().GetDetectionRate();
 		// Calculate total suspicion increase
+		// Debug.Log("dist: " + d + " rot: " + r);
 		return Time.deltaTime * total * d * r;
 	}
 
@@ -1014,6 +1012,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 
 			SetSuspicionLevel(0f, 0f, 0f);
+			SetAlertStatus(AlertStatus.Neutral);
 
 			pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead, gameControllerScript.teamMap);
 
@@ -1326,6 +1325,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 
 			SetSuspicionLevel(0f, 0f, 0f);
+			SetAlertStatus(AlertStatus.Neutral);
 
 			pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
 			pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead, gameControllerScript.teamMap);
