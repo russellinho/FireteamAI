@@ -538,7 +538,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             BombDefuseCheck();
         } else if (gameController.currentMap == 2) {
             // TODO: Fill this in with new objective
-            PedRescueCheck();
+            NpcRescueCheck();
         }
     }
 
@@ -556,6 +556,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (b != null) {
                 if (b.defused) {
                     SetInteracting(false, null);
+                    return;
                 }
                 if (Input.GetKey(KeyCode.F) && !interactionLock) {
                     // Use the deployable
@@ -574,7 +575,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    void PedRescueCheck() {
+    void NpcRescueCheck() {
 
     }
 

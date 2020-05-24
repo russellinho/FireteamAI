@@ -192,6 +192,7 @@ public class JukeboxScript : MonoBehaviour
     }
 
     void StartInGameMusic(string sceneName) {
+        StopAllCoroutines();
         currentMode = MusicMode.InGame;
         audioSource1.loop = true;
         audioSource2.loop = true;
