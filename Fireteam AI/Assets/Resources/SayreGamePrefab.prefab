@@ -697,7 +697,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioMuffle: {fileID: 7548990337718321357}
   audioEcho: {fileID: 6585994898760364830}
-  bgm: {fileID: 0}
   fxRef: {fileID: 5256282438039704239}
   stealthMusic: {fileID: 8300000, guid: 0d9941fe9ece306449145235b03e95cc, type: 3}
   assaultMusic: {fileID: 8300000, guid: 5a6a5d747652a6745b50a03b9c57da11, type: 3}
@@ -708,8 +707,8 @@ MonoBehaviour:
   hitmarkerSound: {fileID: 8300000, guid: f5f9c7f44fd0db94fb7457a968a1def7, type: 3}
   sirenSound: {fileID: 8300000, guid: e4fdcd319d7fc2f459e5894d9c267ee5, type: 3}
   missionStartSound: {fileID: 8300000, guid: c995c036e32e4f447bdaaa1124e4c370, type: 3}
-  alertSound: {fileID: 8300000, guid: 962c3e36eb6e3634599fc2846e2d38f9, type: 3}
   cautionSound: {fileID: 8300000, guid: e1f6f769003b1ce4db2348eab63c8679, type: 3}
+  detectedSound: {fileID: 8300000, guid: 54de29992fc5bf949bcb5eb7d52b8fcf, type: 3}
 --- !u!54 &1029626021163347173
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -781,7 +780,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 1029626021163347185}
   viewIdField: 0
-  InstantiationId: 34
+  InstantiationId: 5
   isRuntimeInstantiated: 0
 --- !u!114 &1029626021163347185
 MonoBehaviour:

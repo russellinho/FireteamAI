@@ -174,7 +174,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		if (enemyType == EnemyType.Patrol) {
 			range = 20f;
-			accuracyOffset = 0.5f;
+			accuracyOffset = 1f;
 			fireRate = 0.4f;
 			damage = 20f;
 			gunAudio.minDistance = 9f;
@@ -188,7 +188,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				gunAudio.minDistance = 18f;
 			} else {
 				range = 27f;
-				accuracyOffset = 0.5f;
+				accuracyOffset = 1f;
 				fireRate = 0.4f;
 				damage = 20f;
 				gunAudio.minDistance = 9f;
@@ -241,7 +241,7 @@ public class BetaEnemyScript : MonoBehaviour {
         if (enemyType == EnemyType.Patrol)
         {
             range = 20f;
-            accuracyOffset = 0.5f;
+            accuracyOffset = 1f;
             fireRate = 0.4f;
             damage = 20f;
             gunAudio.minDistance = 9f;
@@ -260,7 +260,7 @@ public class BetaEnemyScript : MonoBehaviour {
             else
             {
                 range = 27f;
-                accuracyOffset = 0.5f;
+                accuracyOffset = 1f;
                 fireRate = 0.4f;
                 damage = 20f;
                 gunAudio.minDistance = 9f;
@@ -329,9 +329,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		UpdateFiringModeTimer ();
 
 		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
-			if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
-				StopVoices();
-			}
+			// if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
+			// 	StopVoices();
+			// }
 			return;
 		}
 
@@ -340,7 +340,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		// If disoriented, don't have the ability to do anything else except die
 		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
-			StopVoices();
+			// StopVoices();
 			return;
 		}
 
@@ -398,7 +398,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		if (!gameControllerScript.isVersusHostForThisTeam() || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
 			if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
-				StopVoices();
+				// StopVoices();
 			}
 			return;
 		}
@@ -408,7 +408,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		// If disoriented, don't have the ability to do anything else except die
 		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
-			StopVoices();
+			// StopVoices();
 			return;
 		}
 
@@ -951,12 +951,12 @@ public class BetaEnemyScript : MonoBehaviour {
 		return Time.deltaTime * total * d * r;
 	}
 
-	void PlayVoiceClip(int n) {
-		if (!audioSource.isPlaying && health > 0 && disorientationTime <= 0f) {
-			audioSource.clip = voiceClips [n - 1];
-			audioSource.Play ();
-		}
-	}
+	// void PlayVoiceClip(int n) {
+	// 	if (!audioSource.isPlaying && health > 0 && disorientationTime <= 0f) {
+	// 		audioSource.clip = voiceClips [n - 1];
+	// 		audioSource.Play ();
+	// 	}
+	// }
 
 	public void PlayGruntSound() {
 		if (gruntSounds.Length == 0) return;
@@ -965,12 +965,12 @@ public class BetaEnemyScript : MonoBehaviour {
 		audioSource.Play ();
 	}
 
-	IEnumerator PlayVoiceClipDelayed(int n, float t) {
-		yield return new WaitForSeconds (t);
-		if (actionState != ActionStates.Dead) {
-			PlayVoiceClip (n);
-		}
-	}
+	// IEnumerator PlayVoiceClipDelayed(int n, float t) {
+	// 	yield return new WaitForSeconds (t);
+	// 	if (actionState != ActionStates.Dead) {
+	// 		PlayVoiceClip (n);
+	// 	}
+	// }
 
 	[PunRPC]
 	void RpcDie(string team) {
@@ -1711,12 +1711,12 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	public void MeleeAttack() {
 		if (playerTargeting != null && actionState != ActionStates.Disoriented && health > 0f) {
-			int r = Random.Range (0, 2);
-			if (r == 0) {
-				PlayVoiceClip (5);
-			} else {
-				PlayVoiceClip (13);
-			}
+			// int r = Random.Range (0, 2);
+			// if (r == 0) {
+			// 	PlayVoiceClip (5);
+			// } else {
+			// 	PlayVoiceClip (13);
+			// }
 			PlayerActionScript ps = playerTargeting.GetComponent<PlayerActionScript> ();
 			ps.TakeDamage (50, true);
 			//ps.ResetHitTimer();
@@ -1999,14 +1999,14 @@ public class BetaEnemyScript : MonoBehaviour {
 	private void RpcUpdateActionState(ActionStates action, string team) {
         if (team != gameControllerScript.teamMap) return;
         //{Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking}
-        if (action == ActionStates.Firing || action == ActionStates.Moving || action == ActionStates.Reloading || action == ActionStates.Pursue || action == ActionStates.TakingCover || action == ActionStates.InCover) {
-			int r = Random.Range (0, 3);
-			if (r == 1) {
-				StartCoroutine (PlayVoiceClipDelayed(Random.Range (1, 5), Random.Range(2f, 50f)));
-			} else if (r != 0) {
-				StartCoroutine (PlayVoiceClipDelayed(Random.Range (6, 13), Random.Range(2f, 50f)));
-			}
-		}
+        // if (action == ActionStates.Firing || action == ActionStates.Moving || action == ActionStates.Reloading || action == ActionStates.Pursue || action == ActionStates.TakingCover || action == ActionStates.InCover) {
+		// 	int r = Random.Range (0, 3);
+		// 	if (r == 1) {
+		// 		StartCoroutine (PlayVoiceClipDelayed(Random.Range (1, 5), Random.Range(2f, 50f)));
+		// 	} else if (r != 0) {
+		// 		StartCoroutine (PlayVoiceClipDelayed(Random.Range (6, 13), Random.Range(2f, 50f)));
+		// 	}
+		// }
 		// Play grunt when enemy dies or hit by flashbang
 		if (action == ActionStates.Dead) {
 			PlayGruntSound();

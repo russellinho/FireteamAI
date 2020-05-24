@@ -60,25 +60,25 @@ public class ReloadBehaviorScript : StateMachineBehaviour {
 			inLeftHand = true;
 			was.playerActionScript.weaponScript.weaponHolderFpc.SwitchWeaponToLeftHand();
 		}
-		// if (stateInfo.normalizedTime >= 0.9f && !hasReloaded) {
-		// 	was.Reload ();
-		// 	hasReloaded = true;
-		// 	if (inLeftHand) {
-		// 		was.switchWeaponBackToRight = true;
-		// 	}
-		// 	//was.isCocking = false;
-		// 	was.isReloading = false;
-		// }
+		if (stateInfo.normalizedTime >= 0.95f && !hasReloaded) {
+			was.Reload ();
+			hasReloaded = true;
+			if (inLeftHand) {
+				was.switchWeaponBackToRight = true;
+			}
+			//was.isCocking = false;
+			was.isReloading = false;
+		}
 	}
 
 	//OnStateExit is called when a transition ends and the state machine finishes evaluating this state
 	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-		was.Reload ();
-		hasReloaded = true;
+		// was.Reload ();
+		// hasReloaded = true;
 		if (inLeftHand) {
 			was.switchWeaponBackToRight = true;
 		}
-		was.isReloading = false;
+		// was.isReloading = false;
 		was.playerActionScript.weaponScript.ToggleWarhead(true);
 		was.isCocking = false;
 		was.isReloading = false;

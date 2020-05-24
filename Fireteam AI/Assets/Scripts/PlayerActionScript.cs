@@ -1088,6 +1088,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 // Display the detected text
                 if (!hud.container.detectionText.enabled) {
                     hud.ToggleDetectedText(true);
+                    audioController.PlayDetectedSound();
                 }
             }
         } else {

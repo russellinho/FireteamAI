@@ -413,6 +413,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			int actorNo = marker.Key;
 			GameObject e = gameController.enemyList[actorNo];
 			BetaEnemyScript en = e.GetComponent<BetaEnemyScript>();
+			if (en.health <= 0) {
+				enemyMarkers[actorNo].markerRef.SetActive(false);
+				continue;
+			}
 			// Check if it can be rendered to the screen
 			if (playerActionScript.viewCam.enabled) {
 				if (en.alertStatus == AlertStatus.Alert) {
