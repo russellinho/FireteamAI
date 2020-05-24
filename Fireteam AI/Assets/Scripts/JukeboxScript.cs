@@ -14,6 +14,7 @@ public class JukeboxScript : MonoBehaviour
     private int audio2Index;
     private float audio1FadeTime;
     private float audio2FadeTime;
+    private bool assaultMode;
     public AudioClip[] titleTrackList;
     private const float SONG_FADE_DELAY = 4f;
 
@@ -22,7 +23,7 @@ public class JukeboxScript : MonoBehaviour
         {
             DontDestroyOnLoad(gameObject);
             jukebox = this;
-            currentMode = MusicMode.Title;
+            StartTitleMusic();
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
         }
         else if (jukebox != this)
@@ -34,11 +35,16 @@ public class JukeboxScript : MonoBehaviour
     public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
         string levelName = SceneManager.GetActiveScene().name;
         if (levelName.Equals("GameOverFail") || levelName.Equals("GameOverSuccess")) {
+            currentMode = MusicMode.GameOver;
             StopMusic();
         } else if (levelName.Equals("Login") || levelName.Equals("Title")) {
-            StartTitleMusic();
+            if (currentMode != MusicMode.Title) {
+                StartTitleMusic();
+            }
         } else {
-            StartInGameMusic(levelName);
+            if (currentMode != MusicMode.InGame) {
+                StartInGameMusic(levelName);
+            }
         }
     }
 
@@ -89,19 +95,35 @@ public class JukeboxScript : MonoBehaviour
 
     void HandleUpdateInGame() {
         if (audioSource1.isPlaying) {
-            if (audio1FadeTime < SONG_FADE_DELAY) {
-                audio1FadeTime += Time.deltaTime;
-                audioSource1.volume = audio1FadeTime / SONG_FADE_DELAY;
-            }
-
-            if (audioSource1.time >= (audioSource1.clip.length - SONG_FADE_DELAY)) {
+            if (assaultMode) {
                 audio1FadeTime -= Time.deltaTime;
                 audioSource1.volume = audio1FadeTime / SONG_FADE_DELAY;
+            } else {
+                if (audio1FadeTime < SONG_FADE_DELAY) {
+                    audio1FadeTime += Time.deltaTime;
+                    audioSource1.volume = audio1FadeTime / SONG_FADE_DELAY;
+                }
             }
 
             if (audio1FadeTime <= 0f) {
                 audioSource1.Stop();
                 audio1FadeTime = 0f;
+            }
+        }
+        if (audioSource2.isPlaying) {
+            if (!assaultMode) {
+                audio2FadeTime -= Time.deltaTime;
+                audioSource2.volume = audio2FadeTime / SONG_FADE_DELAY;
+            } else {
+                if (audio2FadeTime < SONG_FADE_DELAY) {
+                    audio2FadeTime += Time.deltaTime;
+                    audioSource2.volume = audio2FadeTime / SONG_FADE_DELAY;
+                }
+            }
+
+            if (audio2FadeTime <= 0f) {
+                audioSource2.Stop();
+                audio2FadeTime = 0f;
             }
         }
     }
@@ -156,6 +178,7 @@ public class JukeboxScript : MonoBehaviour
     }
 
     void StartTitleMusic() {
+        currentMode = MusicMode.Title;
         audioSource1.loop = false;
         audioSource2.loop = false;
         audio1FadeTime = 0f;
@@ -169,6 +192,7 @@ public class JukeboxScript : MonoBehaviour
     }
 
     void StartInGameMusic(string sceneName) {
+        currentMode = MusicMode.InGame;
         audioSource1.loop = true;
         audioSource2.loop = true;
         audio1FadeTime = 0f;
@@ -177,17 +201,23 @@ public class JukeboxScript : MonoBehaviour
         audioSource1.volume = 0f;
     }
 
-    void PlayStealthMusic() {
-        audioSource1.Play();
+    public void PlayStealthMusic() {
+        assaultMode = false;
+        if (!audioSource1.isPlaying) {
+            audioSource1.Play();
+        }
     }
 
-    void PlayInGameMusic() {
-        audioSource2.Play();
+    public void PlayAssaultMusic() {
+        assaultMode = true;
+        if (!audioSource2.isPlaying) {
+            audioSource2.Play();
+        }
     }
 
     void LoadMusicForScene(string sceneName) {
-        audioSource1.clip = (AudioClip)Resources.Load(sceneName + "Stealth");
-        audioSource2.clip = (AudioClip)Resources.Load(sceneName + "Assault");
+        audioSource1.clip = (AudioClip)Resources.Load("Audio/BGM/" + sceneName + "_Stealth");
+        audioSource2.clip = (AudioClip)Resources.Load("Audio/BGM/" + sceneName + "_Assault");
     }
 
 }

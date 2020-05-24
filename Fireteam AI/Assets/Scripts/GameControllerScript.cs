@@ -14,6 +14,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public static float MAX_MISSION_TIME = 1800f;
     private static float FORFEIT_CHECK_DELAY = 10f;
 
+	// A number value to the maps/missions starting with 1. The number correlates with the time it was released, so the lower the number, the earlier it was released.
+	// 1 = The Badlands: Act 1; 2 = The Badlands: Act 2
 	public int currentMap;
     public string teamMap;
 
@@ -30,19 +32,18 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private Dictionary<int, GameObject> deployableList = new Dictionary<int, GameObject>();
 
     // Bomb defusal mission variables
-	public GameObject[] bombs;
-    public int bombsRemaining;
+	public Objectives objectives;
+	public bool updateObjectivesFlag;
+	public GameObject[] items;
 	public bool gameOver;
     public bool exitLevelLoaded;
 	private float exitLevelLoadedTimer;
-    public bool escapeAvailable;
 	public short sectorsCleared;
 
 	public GameObject exitPoint;
 	public Transform spawnLocation;
 
 	public int deadCount;
-	public int escaperCount;
 	// TODO: These numbers need to be instantiated and networked
 	public int redTeamPlayerCount;
 	public int blueTeamPlayerCount;
@@ -78,6 +79,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         objectiveCount = 0;
         objectiveCompleted = 0;
         forfeitDelay = FORFEIT_CHECK_DELAY;
+		DetermineObjectivesForMission(SceneManager.GetActiveScene().name);
 	}
 
     void Start () {
@@ -95,8 +97,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		assaultMode = false;
 		gameOver = false;
 		deadCount = 0;
-		escaperCount = 0;
-		escapeAvailable = false;
+		objectives.escaperCount = 0;
+		objectives.escapeAvailable = false;
 		pView = GetComponent<PhotonView> ();
 
 		Cursor.lockState = CursorLockMode.Locked;
@@ -113,6 +115,20 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		lastGunshotHeardPos = Vector3.negativeInfinity;
 		lastGunshotHeardPosClone = Vector3.negativeInfinity;
 
+	}
+
+	public void UpdateObjectives() {
+		objectives.UpdateObjectives(currentMap);
+		updateObjectivesFlag = true;
+	}
+
+	void DetermineObjectivesForMission(string sceneName) {
+		// TODO: Add new mission details here
+		objectives = new Objectives();
+		if (sceneName.StartsWith("BetaLevelNetwork")) {
+			currentMap = 1;
+		}
+		objectives.LoadObjectives(currentMap);
 	}
 
 	// Update is called once per frame
@@ -134,8 +150,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             // 	pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
             // }
             objectiveCount = 5;
-			if (bombsRemaining == 0) {
-				escapeAvailable = true;
+			if (objectives.itemsRemaining == 0) {
+				objectives.escapeAvailable = true;
 			}
             if (!gameOver)
             {
@@ -157,7 +173,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 					}
 				}
-				else if (bombsRemaining == 0)
+				else if (objectives.itemsRemaining == 0)
 				{
 					if (!gameOver && CheckEscapeForCampaign())
 					{
@@ -187,8 +203,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             // 	pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
             // }
             objectiveCount = 5;
-			if (bombsRemaining == 0) {
-				escapeAvailable = true;
+			if (objectives.itemsRemaining == 0) {
+				objectives.escapeAvailable = true;
 			}
             if (!gameOver)
             {
@@ -213,7 +229,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					if (!gameOver) {
 						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, "T", false, false);
 					}
-				} else if (bombsRemaining == 0)
+				} else if (objectives.itemsRemaining == 0)
 				{
 					if (!gameOver && CheckEscapeForVersus())
 					{
@@ -308,7 +324,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	bool CheckEscapeForCampaign() {
-		if (deadCount + escaperCount == PhotonNetwork.CurrentRoom.PlayerCount) {
+		if (deadCount + objectives.escaperCount == PhotonNetwork.CurrentRoom.PlayerCount) {
 			return true;
 		}
 		return false;
@@ -316,11 +332,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	bool CheckEscapeForVersus() {
 		if (teamMap == "R") {
-			if (deadCount + escaperCount == redTeamPlayerCount) {
+			if (deadCount + objectives.escaperCount == redTeamPlayerCount) {
 				return true;
 			}
 		} else if (teamMap == "B") {
-			if (deadCount + escaperCount == blueTeamPlayerCount) {
+			if (deadCount + objectives.escaperCount == blueTeamPlayerCount) {
 				return true;
 			}
 		}
@@ -402,7 +418,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void RpcConvertCounts(int dead, int escape, string team) {
         if (team != teamMap) return;
 		deadCount += dead;
-		escaperCount += escape;
+		objectives.escaperCount += escape;
 	}
 
 	public void IncrementEscapeCount() {
@@ -412,7 +428,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	[PunRPC]
 	void RpcIncrementEscapeCount(string team) {
         if (team != teamMap) return;
-        escaperCount++;
+        objectives.escaperCount++;
 	}
 
     void UpdateMissionTime() {
@@ -445,7 +461,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     // When someone leaves the game in the middle of an escape, reset the values to recount
     void ResetEscapeValues() {
 		deadCount = 0;
-		escaperCount = 0;
+		objectives.escaperCount = 0;
 	}
 
     bool CheckOutOfTime() {
@@ -523,17 +539,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void RpcUpdateEndGameTimer(float t, string team) {
         if (team != teamMap) return;
         endGameTimer = t;
-	}
-
-	public void DecrementBombsRemaining() {
-		pView.RPC ("RpcDecrementBombsRemaining", RpcTarget.All, teamMap);
-	}
-
-	[PunRPC]
-	void RpcDecrementBombsRemaining(string team) {
-        if (team != teamMap) return;
-        bombsRemaining--;
-        UpdateMyTeamScore(true);
 	}
 
 	[PunRPC]

@@ -115,19 +115,9 @@ public class AudioControllerScript : MonoBehaviour {
 		{
 			// Control BGM
 			if (gameControllerRef.assaultMode) {
-				if (!bgm.isPlaying || !bgm.clip.name.Equals(assaultMusic.name)) {
-					bgm.clip = assaultMusic;
-					bgm.Play ();
-					fxSound5.clip = sirenSound;
-					fxSound5.loop = true;
-					fxSound5.Play ();
-					StartCoroutine (RestartBgmTimer(assaultMusic.length - bgm.time));
-				}
+				JukeboxScript.jukebox.PlayAssaultMusic();
 			} else {
-				if (!bgm.isPlaying || !bgm.clip.name.Equals (stealthMusic.name)) {
-					bgm.clip = stealthMusic;
-					bgm.Play ();
-				}
+				JukeboxScript.jukebox.PlayStealthMusic();
 			}
 
 		}
@@ -137,14 +127,6 @@ public class AudioControllerScript : MonoBehaviour {
 				fxSound6.Play ();
 			}
 		}
-	}
-
-	IEnumerator RestartBgmTimer(float secs) {
-		yield return new WaitForSeconds (secs);
-		bgm.Stop ();
-		bgm.time = 1.09f;
-		bgm.Play ();
-		StartCoroutine (RestartBgmTimer(assaultMusic.length - bgm.time));
 	}
 
 	public void PlayHeadshotSound() {

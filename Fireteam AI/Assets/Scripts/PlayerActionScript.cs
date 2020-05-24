@@ -199,9 +199,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         //     BeginRespawn ();
         // }
         // Physics sky drop test hack
-        if (Input.GetKeyDown(KeyCode.O)) {
-            transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
-        }
+        // if (Input.GetKeyDown(KeyCode.O)) {
+        //     transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
+        // }
 
          if (enterSpectatorModeTimer > 0f)
          {
@@ -212,37 +212,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
              }
          }
 
-        if (gameController.sectorsCleared == 0 && gameController.bombsRemaining == 2)
-        {
-            gameController.sectorsCleared++;
-            hud.OnScreenEffect("SECTOR CLEARED!", false);
-            BeginRespawn();
-        }
-
-        if (gameController.bombsRemaining == 0 && !escapeAvailablePopup)
-        {
-            escapeAvailablePopup = true;
-            hud.MessagePopup("Escape available! Head to the waypoint!");
-            hud.ComBoxPopup(2f, "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.");
-        }
-
-        // Update assault mode
-        hud.UpdateAssaultModeIndHud(gameController.assaultMode);
-
-        // On assault mode changed
-        bool h = gameController.assaultMode;
-        if (h != assaultModeChangedIndicator)
-        {
-            assaultModeChangedIndicator = h;
-            hud.MessagePopup("Your cover is blown!");
-            hud.ComBoxPopup(2f, "They know you're here! Slot the bastards!");
-            hud.ComBoxPopup(20f, "Cicadas on the rooftops! Watch the rooftops!");
-        }
-
-        if (gameController.versusAlertMessage != null) {
-            hud.MessagePopup(gameController.versusAlertMessage);
-            gameController.versusAlertMessage = null;
-        }
+        HandleMissionEvents();
 
         if (health > 0 && fpc.enabled && fpc.m_IsRunning)
         {
@@ -296,7 +266,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         else
         {
             CheckForInteractables();
-            BombDefuseCheck();
+            InteractCheck();
             DeployUseCheck();
         }
 
@@ -323,6 +293,44 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         if (!fpc.m_CharacterController.isGrounded) {
             UpdateVerticalVelocityBeforeLanding();
+        }
+    }
+
+    void HandleMissionEvents() {
+        if (gameController.currentMap == 1) {
+            if (gameController.sectorsCleared == 0 && gameController.objectives.itemsRemaining == 2)
+            {
+                gameController.sectorsCleared++;
+                hud.OnScreenEffect("SECTOR CLEARED!", false);
+                BeginRespawn();
+            }
+
+            if (gameController.objectives.itemsRemaining == 0 && !escapeAvailablePopup)
+            {
+                escapeAvailablePopup = true;
+                hud.MessagePopup("Escape available! Head to the waypoint!");
+                hud.ComBoxPopup(2f, "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.");
+            }
+
+            // Update assault mode
+            hud.UpdateAssaultModeIndHud(gameController.assaultMode);
+
+            // On assault mode changed
+            bool h = gameController.assaultMode;
+            if (h != assaultModeChangedIndicator)
+            {
+                assaultModeChangedIndicator = h;
+                hud.MessagePopup("Your cover is blown!");
+                hud.ComBoxPopup(2f, "They know you're here! Slot the bastards!");
+                hud.ComBoxPopup(20f, "Cicadas on the rooftops! Watch the rooftops!");
+            }
+
+            if (gameController.versusAlertMessage != null) {
+                hud.MessagePopup(gameController.versusAlertMessage);
+                gameController.versusAlertMessage = null;
+            }
+        } else if (gameController.currentMap == 2) {
+            // TODO: Fill in mission events for new mission
         }
     }
 
@@ -497,7 +505,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     BombScript b = activeInteractable.GetComponent<BombScript>();
                     interactionTimer = 0f;
                     photonView.RPC("RpcDefuseBomb", RpcTarget.All, b.bombId);
-                    gameController.DecrementBombsRemaining();
                     activeInteractable = null;
                     interactionLock = true;
                 }
@@ -526,10 +533,19 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
+    void InteractCheck() {
+        if (gameController.currentMap == 1) {
+            BombDefuseCheck();
+        } else if (gameController.currentMap == 2) {
+            // TODO: Fill this in with new objective
+            PedRescueCheck();
+        }
+    }
+
     // If map objective is defusing bombs, this method checks if the player is near any bombs
     void BombDefuseCheck()
     {
-        if (gameController == null || gameController.bombs == null)
+        if (gameController == null || gameController.items == null)
         {
             return;
         }
@@ -556,6 +572,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             SetInteracting(false, null);
             hud.ToggleHintText(null);
         }
+    }
+
+    void PedRescueCheck() {
+
     }
 
     void DeployUseCheck() {
@@ -618,7 +638,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void DetermineEscaped()
     {
-        if (gameController.escapeAvailable)
+        if (gameController.objectives.escapeAvailable)
         {
             if (!escapeValueSent)
             {
@@ -935,10 +955,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcDefuseBomb(int index)
     {
         if (gameObject.layer == 0) return;
-        for (int i = 0; i < gameController.bombs.Length; i++) {
-            BombScript b = gameController.bombs[i].GetComponent<BombScript>();
+        for (int i = 0; i < gameController.items.Length; i++) {
+            BombScript b = gameController.items[i].GetComponent<BombScript>();
             if (b.bombId == index) {
                 b.Defuse();
+                gameController.UpdateObjectives();
                 break;
             }
         }
