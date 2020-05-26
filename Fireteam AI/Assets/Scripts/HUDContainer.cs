@@ -18,6 +18,8 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject crosshair;
 	public RawImage sightCrosshair;
 	public GameObject SniperOverlay;
+	public GameObject itemCarryingPnl;
+	public Text itemCarryingText;
 
 	// Pause/in-game menu HUD
 	public GameObject pauseMenuGUI;

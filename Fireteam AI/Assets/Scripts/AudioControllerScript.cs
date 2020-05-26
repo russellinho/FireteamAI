@@ -111,16 +111,13 @@ public class AudioControllerScript : MonoBehaviour {
 			audioEcho.enabled = false;
 		}
 
-		if (gameControllerRef.currentMap == 1)
-		{
-			// Control BGM
-			if (gameControllerRef.assaultMode) {
-				JukeboxScript.jukebox.PlayAssaultMusic();
-			} else {
-				JukeboxScript.jukebox.PlayStealthMusic();
-			}
-
+		// Control BGM
+		if (gameControllerRef.assaultMode) {
+			JukeboxScript.jukebox.PlayAssaultMusic();
+		} else {
+			JukeboxScript.jukebox.PlayStealthMusic();
 		}
+
 
 		if (!fxSound2.isPlaying && wasRunning) {
 			if (!fxSound6.isPlaying) {

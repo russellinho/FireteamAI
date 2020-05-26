@@ -103,11 +103,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void LoadHUDForMission() {
-		// TODO: Add new level info here
+		container.screenColor.color = new Color (0f, 0f, 0f, 1f);
+		container.objectivesText.text = gameController.objectives.GetObjectivesString();
         if (gameController.currentMap == 1) {
-			container.screenColor.color = new Color (0f, 0f, 0f, 1f);
-			container.objectivesText.text = gameController.objectives.GetObjectivesString();
-
 			GameObject m1 = GameObject.Instantiate (container.hudWaypoint);
 			m1.GetComponent<RawImage>().enabled = false;
 			m1.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
@@ -129,10 +127,31 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			missionWaypoints.Add (m3);
 			missionWaypoints.Add (m4);
 			missionWaypoints.Add (m5);
+		} else if (gameController.currentMap == 2) {
+			GameObject m1 = GameObject.Instantiate (container.hudWaypoint);
+			m1.GetComponent<RawImage>().enabled = false;
+			m1.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
+			GameObject m2 = GameObject.Instantiate (container.hudWaypoint);
+			m2.GetComponent<RawImage>().enabled = false;
+			m2.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
+			GameObject m3 = GameObject.Instantiate (container.hudWaypoint);
+			m3.GetComponent<RawImage>().enabled = false;
+			m3.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
+			GameObject m4 = GameObject.Instantiate (container.hudWaypoint);
+			m4.GetComponent<RawImage>().enabled = false;
+			m4.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
+			GameObject m5 = GameObject.Instantiate (container.hudWaypoint);
+			m5.GetComponent<RawImage>().enabled = false;
+			m5.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
 
-			StartCoroutine(ShowMissionText());
-			ComBoxPopup(7f, "The local Cicada cannibal gang has planted gas bombs to turn the townspeople into minced meat. Let's take care of 'em.");
+			missionWaypoints.Add (m1);
+			missionWaypoints.Add (m2);
+			missionWaypoints.Add (m3);
+			missionWaypoints.Add (m4);
+			missionWaypoints.Add (m5);
 		}
+		StartCoroutine(ShowMissionText(gameController.currentMap));
+		InitialComBoxRoutineForMission(gameController.currentMap);
 	}
 
 	void OnStartScreenFade() {
@@ -191,6 +210,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		UpdateObjectives ();
 		FlashbangUpdate();
 		UpdateDetectedText();
+		UpdateCarryingText();
     }
 
 	void FixedUpdate() {
@@ -269,7 +289,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void HandleWaypointsForMission() {
-		// TODO: Handle waypoints for new mission
 		if (gameController.currentMap == 1) {
 			for (int i = 0; i < missionWaypoints.Count; i++)
 			{
@@ -281,11 +300,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 							continue;
 						if (gameController.objectives.itemsRemaining == 0)
 						{
-							((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled = true;
-							RectTransform missionWaypointTrans = ((GameObject)missionWaypoints[i]).GetComponent<RectTransform>();
-							Vector3 destPoint = playerActionScript.viewCam.WorldToScreenPoint(gameController.exitPoint.transform.position);
-							Vector3 startPoint = missionWaypointTrans.position;
-							missionWaypointTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
+							HandleWaypointRender(i, true, gameController.exitPoint.transform.position);
 						}
 					} else if (playerActionScript.thisSpectatorCam != null) {
 						float renderCheck = Vector3.Dot((gameController.exitPoint.transform.position - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
@@ -293,11 +308,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 							continue;
 						if (gameController.objectives.itemsRemaining == 0)
 						{
-							((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled = true;
-							RectTransform missionWaypointTrans = ((GameObject)missionWaypoints[i]).GetComponent<RectTransform>();
-							Vector3 destPoint = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(gameController.exitPoint.transform.position);
-							Vector3 startPoint = missionWaypointTrans.position;
-							missionWaypointTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
+							HandleWaypointRender(i, false, gameController.exitPoint.transform.position);
 						}
 					}
 				}
@@ -308,14 +319,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 						if (renderCheck <= 0)
 							continue;
 						if (!gameController.items [i].GetComponent<BombScript> ().defused) {
-							((GameObject)missionWaypoints [i]).GetComponent<RawImage>().enabled = true;
-							Vector3 p = new Vector3 (gameController.items [i].transform.position.x, gameController.items [i].transform.position.y + gameController.items [i].transform.lossyScale.y, gameController.items [i].transform.position.z);
-							RectTransform missionWaypointTrans = ((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ();
-							Vector3 destPoint = playerActionScript.viewCam.WorldToScreenPoint (p);
-							Vector3 startPoint = missionWaypointTrans.position;
-							missionWaypointTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
+							HandleWaypointRender(i, true, new Vector3 (gameController.items [i].transform.position.x, gameController.items [i].transform.position.y + gameController.items [i].transform.lossyScale.y, gameController.items [i].transform.position.z));
 						}
-						if (((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled && gameController.items [i].GetComponent<BombScript> ().defused) {
+						if (gameController.items [i].GetComponent<BombScript> ().defused) {
 							((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled = false;
 						}
 					} else if (playerActionScript.thisSpectatorCam != null) {
@@ -323,21 +329,102 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 						if (renderCheck <= 0)
 							continue;
 						if (!gameController.items [i].GetComponent<BombScript> ().defused) {
-							((GameObject)missionWaypoints [i]).GetComponent<RawImage>().enabled = true;
-							Vector3 p = new Vector3 (gameController.items [i].transform.position.x, gameController.items [i].transform.position.y + gameController.items [i].transform.lossyScale.y, gameController.items [i].transform.position.z);
-							RectTransform missionWaypointTrans = ((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ();
-							Vector3 destPoint = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint (p);
-							Vector3 startPoint = missionWaypointTrans.position;
-							missionWaypointTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
+							HandleWaypointRender(i, false, new Vector3 (gameController.items [i].transform.position.x, gameController.items [i].transform.position.y + gameController.items [i].transform.lossyScale.y, gameController.items [i].transform.position.z));
 						}
-						if (((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled && gameController.items [i].GetComponent<BombScript> ().defused) {
+						if (gameController.items [i].GetComponent<BombScript> ().defused) {
 							((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled = false;
 						}
 					}
 				}
 			}
 		} else if (gameController.currentMap == 2) {
+			if (gameController.objectives.stepsLeftToCompletion <= 4) {
+				// Render marker over pilot
+				Vector3 a = new Vector3(gameController.objectives.vipRef.transform.position.x, gameController.objectives.vipRef.transform.position.y + 5f, gameController.objectives.vipRef.transform.position.z);
+				if (playerActionScript.viewCam.enabled) {
+					float renderCheck = Vector3.Dot((a - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
+					if (renderCheck > 0) {
+						HandleWaypointRender(0, true, a);
+					}
+				} else if (playerActionScript.thisSpectatorCam != null) {
+					float renderCheck = Vector3.Dot((a - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
+					if (renderCheck > 0) {
+						HandleWaypointRender(0, false, a);
+					}
+				}
+			}
+			if (gameController.objectives.stepsLeftToCompletion == 3) {
+				// Render marker over town
+				Vector3 a = new Vector3(gameController.objectives.checkpointRef.transform.position.x, gameController.objectives.checkpointRef.transform.position.y + 5f, gameController.objectives.checkpointRef.transform.position.z);
+				if (playerActionScript.viewCam.enabled) {
+					float renderCheck = Vector3.Dot((a - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
+					if (renderCheck > 0) {
+						HandleWaypointRender(1, true, a);
+					}
+				} else if (playerActionScript.thisSpectatorCam != null) {
+					float renderCheck = Vector3.Dot((a - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
+					if (renderCheck > 0) {
+						HandleWaypointRender(1, false, a);
+					}
+				}
+			} else if (gameController.objectives.stepsLeftToCompletion == 2) {
+				// Render over all possible evac spots
+				for (int i = 2; i < 5; i++) {
+					GameObject w = (GameObject)missionWaypoints[i];
+					Vector3 a = new Vector3(w.transform.position.x, w.transform.position.y + 5f, w.transform.position.z);
+					if (playerActionScript.viewCam.enabled) {
+						float renderCheck = Vector3.Dot((a - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
+						if (renderCheck > 0) {
+							HandleWaypointRender(i, true, a);
+						}
+					} else if (playerActionScript.thisSpectatorCam != null) {
+						float renderCheck = Vector3.Dot((a - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
+						if (renderCheck > 0) {
+							HandleWaypointRender(i, false, a);
+						}
+					}
+				}
+			} else if (gameController.objectives.stepsLeftToCompletion == 1) {
+				// Render marker over selected evac spot
+				for (int i = 2; i < 5; i++) {
+					if (i != gameController.objectives.selectedEvacIndex) {
+						((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled = false;
+					} else {
+						if (gameController.exitPoint == null || gameController.objectives.missionTimer3 > 0f) {
+							((GameObject)missionWaypoints [gameController.objectives.selectedEvacIndex]).GetComponent<RawImage> ().enabled = false;
+							continue;
+						}
+						Vector3 a = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 5f, gameController.exitPoint.transform.position.z);
+						if (playerActionScript.viewCam.enabled) {
+							float renderCheck = Vector3.Dot((a - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
+							if (renderCheck > 0) {
+								HandleWaypointRender(gameController.objectives.selectedEvacIndex, true, a);
+							}
+						} else if (playerActionScript.thisSpectatorCam != null) {
+							float renderCheck = Vector3.Dot((a - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
+							if (renderCheck > 0) {
+								HandleWaypointRender(gameController.objectives.selectedEvacIndex, false, a);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
+	void HandleWaypointRender(int i, bool useSpectatorCam, Vector3 target) {
+		if (!useSpectatorCam) {
+			((GameObject)missionWaypoints [i]).GetComponent<RawImage>().enabled = true;
+			RectTransform missionWaypointTrans = ((GameObject)missionWaypoints [i]).GetComponent<RectTransform> ();
+			Vector3 destPoint = playerActionScript.viewCam.WorldToScreenPoint (target);
+			Vector3 startPoint = missionWaypointTrans.position;
+			missionWaypointTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
+		} else {
+			((GameObject)missionWaypoints[i]).GetComponent<RawImage>().enabled = true;
+			RectTransform missionWaypointTrans = ((GameObject)missionWaypoints[i]).GetComponent<RectTransform>();
+			Vector3 destPoint = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(target);
+			Vector3 startPoint = missionWaypointTrans.position;
+			missionWaypointTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
 		}
 	}
 
@@ -626,20 +713,39 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         }
     }
 
-    IEnumerator ShowMissionText()
+    IEnumerator ShowMissionText(int mission)
     {
         yield return new WaitForSeconds(5f);
-		MessagePopup("Collaborate with allies and carry out the mission!");
+		if (mission == 1) {
+			MessagePopup("Collaborate with allies and carry out the mission!");
+		} else if (mission == 2) {
+			MessagePopup("Check the cockpit for survivors!");
+		}
     }
 
-	IEnumerator ShowComBox(float t, string s) {
-		yield return new WaitForSeconds (t);
-		container.comBox.SetActive (true);
-		container.comBoxText.GetComponent<ComboxTextEffect> ().SetText (s);
+	void InitialComBoxRoutineForMission(int mission) {
+		if (mission == 1) {
+			ComBoxPopup(7f, "Democko", "The local Cicada cannibal gang has planted gas bombs to turn the townspeople into minced meat. Let's take care of 'em.");
+		} else if (mission == 2) {
+			ComBoxPopup(4f, "Democko", "Alpha team! What the hell just happened?! Give me a sitrep!");
+			ComBoxPopup(7f, "Red Ruby", "Tail rotor got shot out with an RPG!");
+			ComBoxPopup(9f, "Democko", "Damn it! Give me a status report!");
+			ComBoxPopup(12f, "Red Ruby", "I’m alive; leg is fractured! I’m stuck in the pilot seat! Franklin’s gone! The rest of the team seems to be okay! This chopper’s combusting pretty fast!");
+			ComBoxPopup(19f, "Democko", "Okay, just stay calm! Alpha team, get her out of there to safety! I’m dispatching another chopper to get you guys out of there ASAP!");
+			ComBoxPopup(27f, "Red Ruby", "Double time it, please! We’re sitting ducks out here!");
+			ComBoxPopup(31f, "Democko", "Roger that, it’s on the way! Just sit tight!");
+			ComBoxPopup(35f, "Democko", "You guys won’t get far on foot. I recommend you set up a perimeter in the nearby buildings and defend yourselves until the chopper arrives. ETA is approximately 15 minutes!");
+		}
 	}
 
-	public void ComBoxPopup(float t, string s) {
-		StartCoroutine (ShowComBox(t, s));
+	IEnumerator ShowComBox(float t, string speaker, string s) {
+		yield return new WaitForSeconds (t);
+		container.comBox.SetActive (true);
+		container.comBoxText.GetComponent<ComboxTextEffect> ().SetText (s, speaker);
+	}
+
+	public void ComBoxPopup(float t, string speaker, string s) {
+		StartCoroutine (ShowComBox(t, speaker, s));
 	}
 
     public void ToggleActionBar(bool enable, string actionText)
@@ -886,6 +992,18 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			scaleAmount = (scaleAmount > 1f ? 1f : scaleAmount);
 			container.detectionText.rectTransform.localScale = new Vector3(scaleAmount, scaleAmount, scaleAmount);
 		}
+	}
+
+	void UpdateCarryingText() {
+		if (container.itemCarryingText.text != null) {
+			container.itemCarryingPnl.SetActive(true);
+		} else {
+			container.itemCarryingPnl.SetActive(false);
+		}
+	}
+
+	public void SetCarryingText(string t) {
+		container.itemCarryingText.text = t;
 	}
 
 	public void SetDetectionMeter(float detection) {

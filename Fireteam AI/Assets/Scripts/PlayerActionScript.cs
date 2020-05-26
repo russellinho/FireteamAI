@@ -7,6 +7,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityStandardAssets.Characters.FirstPerson;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using SpawnMode = GameControllerScript.SpawnMode;
 
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
@@ -15,6 +16,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     const float INTERACTION_DISTANCE = 4.5f;
     const float BOMB_DEFUSE_TIME = 8f;
     const float DEPLOY_USE_TIME = 3f;
+    const float NPC_INTERACT_TIME = 5f;
+    const float DROP_CARRYING_TIME = 2f;
 
     // Object references
     public GameControllerScript gameController;
@@ -60,6 +63,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private bool isInteracting;
     private string interactingWith;
     private GameObject activeInteractable;
+    private float dropCarryingTimer;
     private float interactionTimer;
     private bool interactionLock;
     private float enterSpectatorModeTimer;
@@ -72,6 +76,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public float verticalVelocityBeforeLanding;
     private Rigidbody rBody;
     private bool onMyMap;
+    public GameObject objectCarrying;
 
     // Game logic helper variables
     public FirstPersonController fpc;
@@ -309,7 +314,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             {
                 escapeAvailablePopup = true;
                 hud.MessagePopup("Escape available! Head to the waypoint!");
-                hud.ComBoxPopup(2f, "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.");
+                hud.ComBoxPopup(2f, "Democko", "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.");
             }
 
             // Update assault mode
@@ -321,8 +326,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             {
                 assaultModeChangedIndicator = h;
                 hud.MessagePopup("Your cover is blown!");
-                hud.ComBoxPopup(2f, "They know you're here! Slot the bastards!");
-                hud.ComBoxPopup(20f, "Cicadas on the rooftops! Watch the rooftops!");
+                hud.ComBoxPopup(2f, "Democko", "They know you're here! Slot the bastards!");
+                hud.ComBoxPopup(20f, "Democko", "Cicadas on the rooftops! Watch the rooftops!");
             }
 
             if (gameController.versusAlertMessage != null) {
@@ -330,8 +335,82 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 gameController.versusAlertMessage = null;
             }
         } else if (gameController.currentMap == 2) {
-            // TODO: Fill in mission events for new mission
+            if (gameController.gameOver) return;
+            // When the initial timer runs out, start the Cicada spawn
+            if (gameController.objectives.missionTimer1 <= 0f) {
+                if (gameController.spawnMode != SpawnMode.Routine) {
+                    gameController.spawnMode = SpawnMode.Routine;
+                    hud.MessagePopup("Survive until evac arrives!");
+                    hud.ComBoxPopup(3f, "Democko", "You guys have trouble inbound! My NAV scans show Cicadas closing in on you from all over the place!");
+                    hud.ComBoxPopup(240f, "Democko", "Guys, avoid going outside! This is their territory and they know it well!");
+                    gameController.objectives.missionTimer2 = 720f;
+                }
+            } else {
+                gameController.objectives.missionTimer1 -= Time.deltaTime; // TODO: Need to sync this value periodically
+                return;
+            }
+
+            // Halfway through waiting period, trigger a checkpoint to respawn/recover everyone
+            if (gameController.sectorsCleared == 0 && gameController.objectives.missionTimer2 <= 360f) {
+                gameController.sectorsCleared++;
+                hud.OnScreenEffect("SECTOR CLEARED!", false);
+                BeginRespawn();
+                hud.ComBoxPopup(1f, "Red Ruby", "There are Cicadas all over the damn place!");
+                hud.ComBoxPopup(4f, "Democko", "We’re about half way there; just hang in there!");
+            }
+
+            // When two minutes left, have player go select evac point if one isn't chosen yet
+            if (gameController.objectives.selectedEvacIndex == 0 && gameController.objectives.missionTimer2 <= 120f) {
+                gameController.objectives.selectedEvacIndex = -1;
+                if (gameController.objectives.stepsLeftToCompletion != 2) {
+                    hud.ComBoxPopup(2f, "Democko", "The chopper’s about two minutes out! These landing zones aren’t clear; you guys need to go out there and mark one with a flare so we can know where to land!");
+                    hud.MessagePopup("Designate a landing zone for the evac team!");
+                    gameController.UpdateObjectives();
+                }
+            }
+
+            // When the wait time for evac runs out, choose a random evac spot and make the chopper land there
+            if (gameController.objectives.missionTimer2 <= 0f) {
+                // If the player hasn't chosen an evac spot yet, reset the timer
+                if (gameController.objectives.selectedEvacIndex == -1) {
+                    gameController.objectives.selectedEvacIndex = 0;
+                    gameController.objectives.missionTimer2 = 120f;
+                    hud.ComBoxPopup(0f, "Democko", "You guys didn’t plant the flare down! We’re circling back around!");
+                    return;
+                } else {
+                    // Land chopper in chosen evac spot and alert the team
+                    if (gameController.objectives.stepsLeftToCompletion == 1) {
+                        // TODO: Add code for landing the chopper
+                        hud.ComBoxPopup(2f, "Democko", "The chopper is here! There’s a lot of heat out here so we can’t stay long, so move quick!");
+                        hud.MessagePopup("Escape available! Head to the waypoint with the pilot!");
+                        gameController.objectives.missionTimer3 = 90f;
+                    }
+                }
+            } else {
+                gameController.objectives.missionTimer2 -= Time.deltaTime;
+                return;
+            }
+
+            // Run another timer for everyone being able to escape
+            if (gameController.objectives.missionTimer3 <= 0f) {
+                gameController.objectives.missionTimer2 = 90f;
+                hud.ComBoxPopup(1f, "Democko", "We had to wave off! We'll circle around and come back!");
+                hud.MessagePopup("Survive until evac returns!");
+            } else {
+                gameController.objectives.missionTimer3 -= Time.deltaTime;
+                return;
+            }
+
+            if (gameController.gameOver && gameController.objectives.stepsLeftToCompletion == 1) {
+                gameController.UpdateObjectives();
+                hud.ComBoxPopup(1f, "Democko", "Alright, let's get the hell out of here!");
+            }
         }
+    }
+
+    [PunRPC]
+    void RpcUpdateObjectives() {
+        gameController.UpdateObjectives();
     }
 
     void AddMyselfToPlayerList()
@@ -522,6 +601,30 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     }
                     interactionLock = true;
                 }
+            } else if (interactingWith == "Flare") {
+                hud.ToggleActionBar(true, "POPPING FLARE...");
+                interactionTimer += (Time.deltaTime / DEPLOY_USE_TIME);
+                hud.SetActionBarSlider(interactionTimer);
+                if (interactionTimer >= 1f)
+                {
+                    FlareScript f = activeInteractable.GetComponent<FlareScript>();
+                    interactionTimer = 0f;
+                    photonView.RPC("RpcPopFlare", RpcTarget.All, f.flareId);
+                    activeInteractable = null;
+                    interactionLock = true;
+                }
+            } else if (interactingWith == "Npc") {
+                hud.ToggleActionBar(true, "INTERACTING...");
+                interactionTimer += (Time.deltaTime / NPC_INTERACT_TIME);
+                hud.SetActionBarSlider(interactionTimer);
+                if (interactionTimer >= 1f)
+                {
+                    NpcScript n = activeInteractable.GetComponent<NpcScript>();
+                    interactionTimer = 0f;
+                    photonView.RPC("RpcEscortNpc", RpcTarget.All, photonView.ViewID);
+                    activeInteractable = null;
+                    interactionLock = true;
+                }
             }
         } else {
             fpc.canMove = true;
@@ -537,8 +640,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (gameController.currentMap == 1) {
             BombDefuseCheck();
         } else if (gameController.currentMap == 2) {
-            // TODO: Fill this in with new objective
-            NpcRescueCheck();
+            EscortNpcCheck();
+            DropOffNpcCheck();
+            PopFlareCheck();
         }
     }
 
@@ -575,8 +679,86 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    void NpcRescueCheck() {
+    void PopFlareCheck() {
+        if (gameController == null || gameController.objectives.selectedEvacIndex > 0) {
+            return;
+        }
 
+        // Is near and looking at a flare
+        if (activeInteractable != null && !hud.PauseIsActive()) {
+            FlareScript f = activeInteractable.GetComponent<FlareScript>();
+            if (f != null) {
+                if (gameController.objectives.selectedEvacIndex > 0) {
+                    SetInteracting(false, null);
+                    return;
+                }
+                if (Input.GetKey(KeyCode.F) && !interactionLock) {
+                    // Use the deployable
+                    SetInteracting(true, "Flare");
+                    hud.ToggleHintText(null);
+                } else {
+                    // Stop using the deployable
+                    SetInteracting(false, null);
+                    hud.ToggleHintText("HOLD [F] TO POP FLARE");
+                }
+            }
+        } else {
+            // Stop using the deployable
+            SetInteracting(false, null);
+            hud.ToggleHintText(null);
+        }
+    }
+
+    void EscortNpcCheck() {
+        if (gameController == null || gameController.objectives.vipRef == null)
+        {
+            return;
+        }
+
+        if (activeInteractable != null && !hud.PauseIsActive()) {
+            NpcScript n = activeInteractable.GetComponent<NpcScript>();
+            if (n != null) {
+                if (n.isEscorting) {
+                    SetInteracting(false, null);
+                    return;
+                }
+                if (Input.GetKey(KeyCode.F) && !interactionLock) {
+                    // Use the deployable
+                    SetInteracting(true, "Npc");
+                    hud.ToggleHintText(null);
+                } else {
+                    // Stop using the deployable
+                    SetInteracting(false, null);
+                    hud.ToggleHintText("HOLD [F] TO INTERACT");
+                }
+            }
+        } else {
+            SetInteracting(false, null);
+            hud.ToggleHintText(null);
+        }
+    }
+
+    void DropOffNpcCheck() {
+        if (gameController == null || gameController.objectives.vipRef == null)
+        {
+            return;
+        }
+
+        if (objectCarrying != null && gameController.objectives.vipRef.GetComponent<NpcScript>().escortedByPlayerId == photonView.ViewID && !hud.PauseIsActive()) {
+            NpcScript n = objectCarrying.GetComponent<NpcScript>();
+            if (n != null) {
+                if (Input.GetKey(KeyCode.G) && !interactionLock) {
+                    // Drop off the NPC
+                    DropCarrying(true);
+                } else {
+                    // Stop dropping off the NPC
+                    DropCarrying(false);
+                }
+            }
+        } else {
+            DropCarrying(false);
+            hud.SetCarryingText(null);
+        }
     }
 
     void DeployUseCheck() {
@@ -953,6 +1135,51 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
+    void RpcPopFlare(int index) {
+        if (gameObject.layer == 0) return;
+        for (int i = 0; i < gameController.items.Length; i++) {
+            FlareScript f = gameController.items[i].GetComponent<FlareScript>();
+            if (f.flareId == index) {
+                f.PopFlare();
+                gameController.UpdateObjectives();
+                HandlePopFlareForMission(gameController.currentMap);
+                break;
+            }
+        }
+    }
+
+    [PunRPC]
+    void RpcEscortNpc(int playerId) {
+        if (gameObject.layer == 0) return;
+        NpcScript n = gameController.objectives.vipRef.GetComponent<NpcScript>();
+        n.ToggleIsEscorting(true, GameControllerScript.playerList[playerId].objRef.transform, playerId);
+        // If is local player, set to is carrying
+        if (playerId == photonView.ViewID) {
+            objectCarrying = gameController.objectives.vipRef;
+            hud.SetCarryingText("PERSON");
+        }
+    }
+
+    [PunRPC]
+    void RpcDropOffNpc() {
+        if (gameObject.layer == 0) return;
+        NpcScript n = gameController.objectives.vipRef.GetComponent<NpcScript>();
+        int droppedOffBy = n.escortedByPlayerId;
+        n.ToggleIsEscorting(false, null, -1);
+        // TODO: Drop the NPC to right in front of the player
+        if (droppedOffBy == photonView.ViewID) {
+
+        }
+    }
+
+    void HandlePopFlareForMission(int mission) {
+        if (mission == 2) {
+            gameController.UpdateObjectives();
+            hud.ComBoxPopup(1f, "Democko", "We see you! We’re incoming!");
+        }
+    }
+
+    [PunRPC]
     void RpcDefuseBomb(int index)
     {
         if (gameObject.layer == 0) return;
@@ -1181,6 +1408,17 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void SetInteracting(bool b, string objectName) {
         isInteracting = b;
         interactingWith = objectName;
+    }
+
+    void DropCarrying(bool b) {
+        if (b) {
+            dropCarryingTimer += Time.deltaTime;
+            if (dropCarryingTimer >= DROP_CARRYING_TIME) {
+                photonView.RPC("RpcDropOffNpc", RpcTarget.All);
+            }
+        } else {
+            dropCarryingTimer = 0f;
+        }
     }
 
     void TriggerPlayerDownAlert() {

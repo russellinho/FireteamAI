@@ -26,9 +26,10 @@ public class ComboxTextEffect : MonoBehaviour {
 		Reset ();
 	}
 
-	public void SetText(string s) {
+	public void SetText(string message, string speaker) {
 		Reset ();
-		m_text = s;
+		m_text = message;
+		m_label.text = speaker;
 		parentRef.GetComponent<AudioSource> ().Play ();
 	}
 

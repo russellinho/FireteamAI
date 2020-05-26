@@ -10,6 +10,18 @@ public class Objectives {
 	public int stepsLeftToCompletion;
 	public int escaperCount;
 	public bool escapeAvailable;
+	public float missionTimer1;
+	public float missionTimer2;
+	public float missionTimer3;
+	public bool checkpoint1Passed;
+	public bool checkpoint2Passed;
+	public GameObject vipRef;
+	public GameObject checkpointRef;
+	public Transform evacSpot1Ref;
+	public Transform evacSpot2Ref;
+	public Transform evacSpot3Ref;
+	public Transform evacSpot4Ref;
+	public int selectedEvacIndex;
 
     public void LoadObjectives(int map)
     {
@@ -21,11 +33,14 @@ public class Objectives {
 			objectivesText[0] = "Defuse bombs around the city. (4)";
 			objectivesText[1] = "Escape.";
         } else if (map == 2) {
-			stepsLeftToCompletion = 3;
+			stepsLeftToCompletion = 4;
 			objectivesText = new string[3];
 			objectivesText[0] = "Retrieve the pilot from the cockpit of the crashed helicopter.";
 			objectivesText[1] = "Secure a perimeter and defend yourselves until evac arrives.";
-			objectivesText[2] = "Escape with the pilot.";
+			objectivesText[2] = "Designate a landing zone for evac.";
+			objectivesText[3] = "Escape with the pilot.";
+			// Set the time before Cicadas start arriving - 1 min and 30 secs
+			missionTimer1 = 90f;
 		}
     }
 
@@ -51,12 +66,14 @@ public class Objectives {
 				RemoveObjective(1);
 			}
 		} else if (map == 2) {
-			if (stepsLeftToCompletion == 2) {
+			if (stepsLeftToCompletion == 3) {
 				RemoveObjective(0);
-			} else if (stepsLeftToCompletion == 1) {
+			} else if (stepsLeftToCompletion == 2) {
 				RemoveObjective(1);
-			} else if (stepsLeftToCompletion == 0) {
+			} else if (stepsLeftToCompletion == 1) {
 				RemoveObjective(2);
+			} else if (stepsLeftToCompletion == 0) {
+				RemoveObjective(3);
 			}
 		}
 
