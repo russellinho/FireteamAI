@@ -15,12 +15,6 @@ public class Objectives {
 	public float missionTimer3;
 	public bool checkpoint1Passed;
 	public bool checkpoint2Passed;
-	public GameObject vipRef;
-	public GameObject checkpointRef;
-	public Transform evacSpot1Ref;
-	public Transform evacSpot2Ref;
-	public Transform evacSpot3Ref;
-	public Transform evacSpot4Ref;
 	public int selectedEvacIndex;
 
     public void LoadObjectives(int map)
@@ -33,6 +27,7 @@ public class Objectives {
 			objectivesText[0] = "Defuse bombs around the city. (4)";
 			objectivesText[1] = "Escape.";
         } else if (map == 2) {
+			selectedEvacIndex = -2;
 			stepsLeftToCompletion = 4;
 			objectivesText = new string[3];
 			objectivesText[0] = "Retrieve the pilot from the cockpit of the crashed helicopter.";

@@ -945,7 +945,10 @@ public class BetaEnemyScript : MonoBehaviour {
 			r = Mathf.Clamp(Mathf.Deg2Rad * ang, 0.5f, 1f);
 		}
 		// Get base detection rate for player
-		float total = playerTargeting.GetComponent<PlayerActionScript>().GetDetectionRate();
+		float total = 10f;
+		if (playerTargeting.GetComponent<PlayerActionScript>() != null) {
+			total = playerTargeting.GetComponent<PlayerActionScript>().GetDetectionRate();
+		}
 		// Calculate total suspicion increase
 		// Debug.Log("dist: " + d + " rot: " + r);
 		return Time.deltaTime * total * d * r;
@@ -1007,7 +1010,10 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 
 			if (playerTargeting != null) {
-				playerTargeting.GetComponent<PlayerActionScript>().ClearEnemySeenBy();
+				PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript>();
+				if (a != null) {
+					playerTargeting.GetComponent<PlayerActionScript>().ClearEnemySeenBy();
+				}
 				playerTargeting = null;
 			}
 
@@ -1034,7 +1040,9 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (playerTargeting != null) {
 				// Else, proceed with regular behavior
 				// Handle a melee attack
-				if (!playerTargeting.GetComponent<WeaponActionScript>().isMeleeing && TargetIsWithinMeleeDistance()) {
+				WeaponActionScript was = playerTargeting.GetComponent<WeaponActionScript>();
+				NpcScript n = playerTargeting.GetComponent<NpcScript>();
+				if (((was != null && playerTargeting.GetComponent<WeaponActionScript>().isMeleeing) || n != null) && TargetIsWithinMeleeDistance()) {
 					if (actionState != ActionStates.Melee) {
 						SetAlertStatus(AlertStatus.Alert);
 						pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee, gameControllerScript.teamMap);
@@ -1078,7 +1086,9 @@ public class BetaEnemyScript : MonoBehaviour {
 						float suspicionIncrease = CalculateSuspicionLevelForPos(playerTargeting.transform.position);
 						IncreaseSuspicionLevel(suspicionIncrease);
 						// Alert the local player if he's the one being seen only if this enemy has the greatest suspicion level
-						playerTargeting.GetComponent<PlayerActionScript>().SetEnemySeenBy(pView.ViewID);
+						if (playerTargeting.GetComponent<PlayerActionScript>() != null) {
+							playerTargeting.GetComponent<PlayerActionScript>().SetEnemySeenBy(pView.ViewID);
+						}
 					} else {
 						SetAlertStatus(AlertStatus.Alert);
 					}
@@ -1218,7 +1228,13 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	bool TargetIsWithinMeleeDistance() {
 		RaycastHit hit;
-		if (Physics.Linecast (headTransform.position, playerTargeting.GetComponent<PlayerActionScript>().headTransform.position, out hit)) {
+		Vector3 meleeTargetPos = Vector3.zero;
+		if (playerTargeting.GetComponent<PlayerActionScript>() != null) {
+			meleeTargetPos = playerTargeting.GetComponent<PlayerActionScript>().headTransform.position;
+		} else {
+			meleeTargetPos = new Vector3(playerTargeting.transform.position.x, playerTargeting.transform.position.y + 0.5f, playerTargeting.transform.position.z);
+		}
+		if (Physics.Linecast (headTransform.position, meleeTargetPos, out hit)) {
 			if (hit.transform.gameObject.tag == "Player") {
 				if (hit.distance <= MELEE_DISTANCE) {
 					return true;
@@ -1320,7 +1336,10 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 			
 			if (playerTargeting != null) {
-				playerTargeting.GetComponent<PlayerActionScript>().ClearEnemySeenBy();
+				PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript>();
+				if (a != null) {
+					playerTargeting.GetComponent<PlayerActionScript>().ClearEnemySeenBy();
+				}
 				playerTargeting = null;
 			}
 
@@ -1346,7 +1365,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Root - is the enemy alerted by any type of player presence (gunshots, sight, getting shot, other enemies alerted nearby)
 		if (alertStatus == AlertStatus.Alert) {
 			if (playerTargeting != null) {
-				if (!playerTargeting.GetComponent<WeaponActionScript>().isMeleeing && TargetIsWithinMeleeDistance()) {
+				WeaponActionScript was = playerTargeting.GetComponent<WeaponActionScript>();
+				NpcScript n = playerTargeting.GetComponent<NpcScript>();
+				if (((was != null && playerTargeting.GetComponent<WeaponActionScript>().isMeleeing) || n != null) && TargetIsWithinMeleeDistance()) {
 					if (actionState != ActionStates.Melee) {
 						SetAlertStatus(AlertStatus.Alert);
 						pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Melee, gameControllerScript.teamMap);
@@ -1454,7 +1475,9 @@ public class BetaEnemyScript : MonoBehaviour {
 						float suspicionIncrease = CalculateSuspicionLevelForPos(playerTargeting.transform.position);
 						IncreaseSuspicionLevel(suspicionIncrease);
 						// Alert the local player if he's the one being seen only if this enemy has the greatest suspicion level
-						playerTargeting.GetComponent<PlayerActionScript>().SetEnemySeenBy(pView.ViewID);
+						if (playerTargeting.GetComponent<PlayerActionScript>() != null) {
+							playerTargeting.GetComponent<PlayerActionScript>().SetEnemySeenBy(pView.ViewID);
+						}
 					} else {
 						SetAlertStatus(AlertStatus.Alert);
 					}
@@ -1617,8 +1640,16 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (playerTargeting != null) {
 			RaycastHit hit;
 			// Locks onto the player and shoots at him
-			Vector3 playerPos = playerTargeting.GetComponent<FirstPersonController>().fpcTransformSpine.position;
-			playerPos = new Vector3(playerPos.x, playerPos.y - 0.1f, playerPos.z);
+			FirstPersonController targetingFpc = playerTargeting.GetComponent<FirstPersonController>();
+			Vector3 playerPos = Vector3.negativeInfinity;
+			if (targetingFpc == null) {
+				playerPos = playerTargeting.GetComponent<FirstPersonController>().fpcTransformSpine.position;
+				playerPos = new Vector3(playerPos.x, playerPos.y - 0.1f, playerPos.z);
+			} else {
+				playerPos = playerTargeting.transform.position;
+				playerPos = new Vector3(playerPos.x, playerPos.y + 0.5f, playerPos.z);
+			}
+			
 			Vector3 dir = playerPos - shootPoint.position;
 
 			// Adding artificial stupidity - ensures that the player isn't hit every time by offsetting
@@ -1637,7 +1668,14 @@ public class BetaEnemyScript : MonoBehaviour {
 					ps.SetHitLocation (transform.position);
 				} else if (hit.transform.tag.Equals ("Human")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
-					hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height));
+					BetaEnemyScript b = hit.transform.GetComponent<BetaEnemyScript>();
+					NpcScript n = hit.transform.GetComponent<NpcScript>();
+					if (n != null) {
+						n.TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height));
+					}
+					if (b != null) {
+						b.TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height));
+					}
 				} else if (hit.transform.tag.Equals ("EnemyHead")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(100);
@@ -1718,9 +1756,15 @@ public class BetaEnemyScript : MonoBehaviour {
 			// 	PlayVoiceClip (13);
 			// }
 			PlayerActionScript ps = playerTargeting.GetComponent<PlayerActionScript> ();
-			ps.TakeDamage (50, true);
-			//ps.ResetHitTimer();
-			ps.SetHitLocation (transform.position);
+			NpcScript n = playerTargeting.GetComponent<NpcScript> ();
+			if (n != null) {
+				n.TakeDamage(50);
+			}
+			if (ps != null) {
+				ps.TakeDamage (50, true);
+				//ps.ResetHitTimer();
+				ps.SetHitLocation (transform.position);
+			}
 		}
 	}
 
@@ -1898,7 +1942,10 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (playerScanTimer <= 0f) {
 			playerScanTimer = PLAYER_SCAN_DELAY;
 			// If we do not have a target player, try to find one
-			if (playerTargeting == null || playerTargeting.GetComponent<PlayerActionScript>().health <= 0) {
+			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript>();
+			NpcScript n = playerTargeting.GetComponent<NpcScript>();
+			int entityTargetingHealth = (a != null ? a.health : n.health);
+			if (playerTargeting == null || entityTargetingHealth <= 0) {
 				ArrayList keysNearBy = new ArrayList ();
 				foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
 					GameObject p = playerStat.objRef;
@@ -1912,6 +1959,21 @@ public class BetaEnemyScript : MonoBehaviour {
 								continue;
 							}
 							keysNearBy.Add (p.GetComponent<PhotonView>().OwnerActorNr);
+						}
+					}
+				}
+
+				// Scan for friendly NPCs/VIPs too
+				// TODO: Fill in here once NPC allies are released
+				GameObject npcP = gameControllerScript.vipRef;
+				if (npcP != null && npcP.GetComponent<NpcScript>().health > 0) {
+					if (Vector3.Distance (transform.position, npcP.transform.position) < range + 20f) {
+						Vector3 toNpc = npcP.transform.position - transform.position;
+						float angleBetween = Vector3.Angle (transform.forward, toNpc);
+						if (angleBetween <= 90f) {
+							if (!TargetIsObscured(npcP)) {
+								keysNearBy.Add (-2);
+							}
 						}
 					}
 				}
@@ -2024,8 +2086,15 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void CheckTargetDead() {
-		if (playerTargeting != null && playerTargeting.GetComponent<PlayerActionScript> ().health <= 0f) {
-			pView.RPC ("RpcSetTarget", RpcTarget.All, -1, gameControllerScript.teamMap);
+		if (playerTargeting != null) {
+			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript> ();
+			NpcScript n = playerTargeting.GetComponent<NpcScript> ();
+			if (a != null && a.health <= 0f) {
+				pView.RPC ("RpcSetTarget", RpcTarget.All, -1, gameControllerScript.teamMap);
+			}
+			if (n != null && n.health <= 0f) {
+				pView.RPC ("RpcSetTarget", RpcTarget.All, -1, gameControllerScript.teamMap);
+			}
 		}
 	}
 
@@ -2034,6 +2103,8 @@ public class BetaEnemyScript : MonoBehaviour {
         if (team != gameControllerScript.teamMap) return;
         if (id == -1) {
 			playerTargeting = null;
+		} else if (id == -2) {
+			playerTargeting = gameControllerScript.vipRef;
 		} else {
 			playerTargeting = (GameObject)GameControllerScript.playerList [id].objRef;
 		}

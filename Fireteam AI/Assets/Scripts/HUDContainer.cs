@@ -11,6 +11,7 @@ public class HUDContainer : MonoBehaviour {
 	public Slider staminaBar;
 	public Image flashbangOverlay;
 	public RawImage flashbangScreenCap;
+	public Slider vipHealthBar;
 
 	// Weapon HUD
 	public Text weaponLabelTxt;

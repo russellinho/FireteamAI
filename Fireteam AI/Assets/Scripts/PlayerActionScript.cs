@@ -360,7 +360,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             }
 
             // When two minutes left, have player go select evac point if one isn't chosen yet
-            if (gameController.objectives.selectedEvacIndex == 0 && gameController.objectives.missionTimer2 <= 120f) {
+            if (gameController.objectives.selectedEvacIndex == -2 && gameController.objectives.missionTimer2 <= 120f) {
                 gameController.objectives.selectedEvacIndex = -1;
                 if (gameController.objectives.stepsLeftToCompletion != 2) {
                     hud.ComBoxPopup(2f, "Democko", "The chopper’s about two minutes out! These landing zones aren’t clear; you guys need to go out there and mark one with a flare so we can know where to land!");
@@ -373,7 +373,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (gameController.objectives.missionTimer2 <= 0f) {
                 // If the player hasn't chosen an evac spot yet, reset the timer
                 if (gameController.objectives.selectedEvacIndex == -1) {
-                    gameController.objectives.selectedEvacIndex = 0;
+                    gameController.objectives.selectedEvacIndex = -2;
                     gameController.objectives.missionTimer2 = 120f;
                     hud.ComBoxPopup(0f, "Democko", "You guys didn’t plant the flare down! We’re circling back around!");
                     return;
@@ -680,7 +680,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     void PopFlareCheck() {
-        if (gameController == null || gameController.objectives.selectedEvacIndex > 0) {
+        if (gameController == null || gameController.objectives.selectedEvacIndex >= 0) {
             return;
         }
 
@@ -688,7 +688,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (activeInteractable != null && !hud.PauseIsActive()) {
             FlareScript f = activeInteractable.GetComponent<FlareScript>();
             if (f != null) {
-                if (gameController.objectives.selectedEvacIndex > 0) {
+                if (gameController.objectives.selectedEvacIndex >= 0) {
                     SetInteracting(false, null);
                     return;
                 }
@@ -710,7 +710,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     void EscortNpcCheck() {
-        if (gameController == null || gameController.objectives.vipRef == null)
+        if (gameController == null || gameController.vipRef == null)
         {
             return;
         }
@@ -739,12 +739,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     void DropOffNpcCheck() {
-        if (gameController == null || gameController.objectives.vipRef == null)
+        if (gameController == null || gameController.vipRef == null)
         {
             return;
         }
 
-        if (objectCarrying != null && gameController.objectives.vipRef.GetComponent<NpcScript>().escortedByPlayerId == photonView.ViewID && !hud.PauseIsActive()) {
+        if (objectCarrying != null && gameController.vipRef.GetComponent<NpcScript>().escortedByPlayerId == photonView.ViewID && !hud.PauseIsActive()) {
             NpcScript n = objectCarrying.GetComponent<NpcScript>();
             if (n != null) {
                 if (Input.GetKey(KeyCode.G) && !interactionLock) {
@@ -1142,7 +1142,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (f.flareId == index) {
                 f.PopFlare();
                 gameController.UpdateObjectives();
-                HandlePopFlareForMission(gameController.currentMap);
+                HandlePopFlareForMission(gameController.currentMap, i);
                 break;
             }
         }
@@ -1151,11 +1151,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcEscortNpc(int playerId) {
         if (gameObject.layer == 0) return;
-        NpcScript n = gameController.objectives.vipRef.GetComponent<NpcScript>();
+        NpcScript n = gameController.vipRef.GetComponent<NpcScript>();
         n.ToggleIsEscorting(true, GameControllerScript.playerList[playerId].objRef.transform, playerId);
         // If is local player, set to is carrying
         if (playerId == photonView.ViewID) {
-            objectCarrying = gameController.objectives.vipRef;
+            objectCarrying = gameController.vipRef;
             hud.SetCarryingText("PERSON");
         }
     }
@@ -1163,7 +1163,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcDropOffNpc() {
         if (gameObject.layer == 0) return;
-        NpcScript n = gameController.objectives.vipRef.GetComponent<NpcScript>();
+        NpcScript n = gameController.vipRef.GetComponent<NpcScript>();
         int droppedOffBy = n.escortedByPlayerId;
         n.ToggleIsEscorting(false, null, -1);
         // TODO: Drop the NPC to right in front of the player
@@ -1172,9 +1172,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    void HandlePopFlareForMission(int mission) {
+    void HandlePopFlareForMission(int mission, int i) {
         if (mission == 2) {
             gameController.UpdateObjectives();
+            gameController.objectives.selectedEvacIndex = i;
             hud.ComBoxPopup(1f, "Democko", "We see you! We’re incoming!");
         }
     }
@@ -1356,7 +1357,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             RaycastHit hit;
             if (Physics.Raycast(wepActionScript.fpcShootPoint.position, wepActionScript.fpcShootPoint.transform.forward, out hit, 300f)) {
                 if (hit.transform.tag.Equals("Human")) {
-                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().MarkEnemyOutline();
+                    BetaEnemyScript b = hit.transform.gameObject.GetComponent<BetaEnemyScript>();
+                    if (b != null) {
+                        b.MarkEnemyOutline();
+                    }
                 }
             }
         }

@@ -507,19 +507,31 @@ public class WeaponActionScript : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, meleeStats.range)) {
             if (hit.transform.tag.Equals("Human")) {
+                // Determine whether you hit an NPC or enemy
+                NpcScript n = hit.transform.gameObject.GetComponent<NpcScript>();
                 BetaEnemyScript b = hit.transform.gameObject.GetComponent<BetaEnemyScript>();
-                int beforeHp = b.health;
-                if (beforeHp > 0)
-                {
-                    pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
-                    hudScript.InstantiateHitmarker();
-                    audioController.PlayHitmarkerSound();
-                    b.TakeDamage((int)meleeStats.damage);
-                    b.PlayGruntSound();
-                    b.SetAlerted();
-                    if (b.health <= 0 && beforeHp > 0)
+                if (n != null) {
+                    int beforeHp = n.health;
+                    if (beforeHp > 0) {
+                        pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+                        n.TakeDamage((int)meleeStats.damage);
+                        n.PlayGruntSound();
+                    }
+                }
+                if (b != null) {
+                    int beforeHp = b.health;
+                    if (beforeHp > 0)
                     {
-                        RewardKill(false);
+                        pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
+                        hudScript.InstantiateHitmarker();
+                        audioController.PlayHitmarkerSound();
+                        b.TakeDamage((int)meleeStats.damage);
+                        b.PlayGruntSound();
+                        b.SetAlerted();
+                        if (b.health <= 0 && beforeHp > 0)
+                        {
+                            RewardKill(false);
+                        }
                     }
                 }
             }
@@ -564,18 +576,31 @@ public class WeaponActionScript : MonoBehaviour
             if (hit.transform.tag.Equals("Human"))
             {
                 pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
-                int beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript>().health;
-                int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height);
-                if (beforeHp > 0)
-                {
-                    hudScript.InstantiateHitmarker();
-                    audioController.PlayHitmarkerSound();
-                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage(thisDamageDealt);
-                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().PlayGruntSound();
-                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted();
-                    if (hit.transform.gameObject.GetComponent<BetaEnemyScript>().health <= 0 && beforeHp > 0)
+                NpcScript n = hit.transform.gameObject.GetComponent<NpcScript>();
+                BetaEnemyScript b = hit.transform.gameObject.GetComponent<BetaEnemyScript>();
+                if (n != null) {
+                    int beforeHp = n.health;
+                    int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height);
+                    if (beforeHp > 0)
                     {
-                        RewardKill(false);
+                        n.TakeDamage(thisDamageDealt);
+                        n.PlayGruntSound();
+                    }
+                }
+                if (b != null) {
+                    int beforeHp = b.health;
+                    int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height);
+                    if (beforeHp > 0)
+                    {
+                        hudScript.InstantiateHitmarker();
+                        audioController.PlayHitmarkerSound();
+                        b.TakeDamage(thisDamageDealt);
+                        b.PlayGruntSound();
+                        b.SetAlerted();
+                        if (b.health <= 0 && beforeHp > 0)
+                        {
+                            RewardKill(false);
+                        }
                     }
                 }
             } else if (hit.transform.tag.Equals("Player")) {
@@ -668,29 +693,47 @@ public class WeaponActionScript : MonoBehaviour
                 headshotDetected = true;
             } else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range))
             {
-                Debug.DrawRay(fpcShootPoint.position, impactDir, Color.blue, 10f, false);
+                // Debug.DrawRay(fpcShootPoint.position, impactDir, Color.blue, 10f, false);
                 if (hit.transform.tag.Equals("Human"))
                 {
-                    int beforeHp = 0;
-                    int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height, 8);
-                    pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
-                    beforeHp = hit.transform.gameObject.GetComponent<BetaEnemyScript>().health;
-                    if (totalDamageDealt == 0f) {
-                        if (beforeHp > 0)
-                        {
-                            hudScript.InstantiateHitmarker();
-                            audioController.PlayHitmarkerSound();
-                            //hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
-                            hit.transform.gameObject.GetComponent<BetaEnemyScript>().PlayGruntSound();
-                            hit.transform.gameObject.GetComponent<BetaEnemyScript>().SetAlerted();
+                    BetaEnemyScript b = hit.transform.gameObject.GetComponent<BetaEnemyScript>();
+                    NpcScript n = hit.transform.gameObject.GetComponent<NpcScript>();
+                    if (n != null) {
+                        int beforeHp = 0;
+                        int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height, 8);
+                        pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
+                        beforeHp = n.health;
+                        if (totalDamageDealt == 0f) {
+                            if (beforeHp > 0)
+                            {
+                                n.PlayGruntSound();
+                            }
                         }
+                        n.TakeDamage(thisDamageDealt);
+                        totalDamageDealt += thisDamageDealt;
                     }
-                    hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage(thisDamageDealt);
-                    if (hit.transform.gameObject.GetComponent<BetaEnemyScript>().health <= 0 && beforeHp > 0)
-                    {
-                        RewardKill(false);
+                    if (b != null) {
+                        int beforeHp = 0;
+                        int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height, 8);
+                        pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
+                        beforeHp = b.health;
+                        if (totalDamageDealt == 0f) {
+                            if (beforeHp > 0)
+                            {
+                                hudScript.InstantiateHitmarker();
+                                audioController.PlayHitmarkerSound();
+                                //hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
+                                b.PlayGruntSound();
+                                b.SetAlerted();
+                            }
+                        }
+                        b.TakeDamage(thisDamageDealt);
+                        if (b.health <= 0 && beforeHp > 0)
+                        {
+                            RewardKill(false);
+                        }
+                        totalDamageDealt += thisDamageDealt;
                     }
-                    totalDamageDealt += thisDamageDealt;
                 } else if (hit.transform.tag.Equals("Player")) {
                     if (hit.transform != gameObject.transform) {
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);

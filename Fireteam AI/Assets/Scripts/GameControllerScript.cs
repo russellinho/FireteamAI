@@ -65,6 +65,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public bool enemyTeamNearingVictoryTrigger;
 	public string versusAlertMessage;
 	private bool endingGainsCalculated;
+	public GameObject vipRef;
+	public GameObject checkpointRef;
 
 	// Use this for initialization
 	void Awake() {
@@ -96,7 +98,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		Physics.IgnoreLayerCollision (15, 12);
 		Physics.IgnoreLayerCollision (14, 15);
 
-		assaultMode = false;
 		gameOver = false;
 		deadCount = 0;
 		objectives.escaperCount = 0;
@@ -126,13 +127,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	void DetermineObjectivesForMission(string sceneName) {
 		objectives = new Objectives();
-		if (sceneName.StartsWith("BetaLevelNetwork")) {
-			currentMap = 1;
-			spawnMode = SpawnMode.Random;
-		} else if (sceneName.StartsWith("Badlands2")) {
-			currentMap = 2;
-			spawnMode = SpawnMode.Paused;
-		}
 		objectives.LoadObjectives(currentMap);
 	}
 
@@ -422,7 +416,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				return true;
 			}
 		} else if (currentMap == 2) {
-			if (deadCount + objectives.escaperCount == PhotonNetwork.CurrentRoom.PlayerCount && Vector3.Distance(objectives.vipRef.transform.position, exitPoint.transform.position) <= 3f) {
+			if (deadCount + objectives.escaperCount == PhotonNetwork.CurrentRoom.PlayerCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 3f) {
 				return true;
 			}
 		}
@@ -442,11 +436,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			}
 		} else if (currentMap == 2) {
 			if (teamMap == "R") {
-				if (deadCount + objectives.escaperCount == redTeamPlayerCount && Vector3.Distance(objectives.vipRef.transform.position, exitPoint.transform.position) <= 3f) {
+				if (deadCount + objectives.escaperCount == redTeamPlayerCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 3f) {
 					return true;
 				}
 			} else if (teamMap == "B") {
-				if (deadCount + objectives.escaperCount == blueTeamPlayerCount && Vector3.Distance(objectives.vipRef.transform.position, exitPoint.transform.position) <= 3f) {
+				if (deadCount + objectives.escaperCount == blueTeamPlayerCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 3f) {
 					return true;
 				}
 			}
