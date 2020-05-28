@@ -648,6 +648,7 @@ MonoBehaviour:
   - {fileID: 5538587518649827452}
   ammoPickupSound: {fileID: 8300000, guid: 2e0c337d7be1f394e90d1718f80fde8d, type: 3}
   healthPickupSound: {fileID: 8300000, guid: 2abf41e9ece742d44b0da495397486fb, type: 3}
+  carryingSlot: {fileID: 3209832110116673946}
   health: 0
   sprintTime: 0
   godMode: 0
@@ -659,6 +660,7 @@ MonoBehaviour:
   totalSpeedBoost: 0
   weaponSpeedModifier: 0
   verticalVelocityBeforeLanding: 0
+  objectCarrying: {fileID: 0}
   fpc: {fileID: 1029626021163347192}
   isNotOnTeamMap: 0
   hitTimer: 0
@@ -780,7 +782,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 1029626021163347185}
   viewIdField: 0
-  InstantiationId: 5
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &1029626021163347185
 MonoBehaviour:
@@ -7795,6 +7797,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2450817521813132079}
+  - {fileID: 3209832110116673946}
   m_Father: {fileID: 2450817521813131949}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -43573,6 +43576,36 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.000023335218, y: -0.107913196, z: -0.017866097}
     m_Extent: {x: 0.7633982, y: 0.9040325, z: 0.16134185}
   m_DirtyAABB: 0
+--- !u!1 &8384621231803304440
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3209832110116673946}
+  m_Layer: 0
+  m_Name: CarrySlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3209832110116673946
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384621231803304440}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2450817521813132073}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8725741272738965248
 GameObject:
   m_ObjectHideFlags: 0

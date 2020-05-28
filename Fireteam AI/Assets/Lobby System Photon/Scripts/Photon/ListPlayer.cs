@@ -53,9 +53,9 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		// Map options
 		private int mapIndex = 0;
-		private string[] mapNames = new string[]{"Badlands: Act I"};
-		private string[] mapStrings = new string[]{"MapImages/badlands1"};
-		public static Vector3[] mapSpawnPoints = new Vector3[]{ new Vector3(-2f,1f,1f)};
+		private string[] mapNames = new string[]{"Badlands: Act I", "Badlands: Act II"};
+		private string[] mapStrings = new string[]{"MapImages/badlands1", "MapImages/test"};
+		public static Vector3[] mapSpawnPoints = new Vector3[]{ new Vector3(-2f,1f,1f), new Vector3(0f, 0f, 0f) };
 
 		// Ready status
 		private GameObject myPlayerListEntry;
@@ -229,6 +229,8 @@ namespace Photon.Pun.LobbySystemPhoton
 			// Photon switch scene from lobby to loading screen to actual game. automaticallySyncScene should load map on clients.
 			if (level.Equals ("Badlands: Act I")) {
 				PhotonNetwork.LoadLevel ("BetaLevelNetwork");
+			} else if (level.Equals("Badlands: Act II")) {
+				PhotonNetwork.LoadLevel ("Badlands2");
 			} else {
 				PhotonNetwork.LoadLevel (level);
 			}
@@ -237,6 +239,8 @@ namespace Photon.Pun.LobbySystemPhoton
         void StartVersusGame(string level) {
             if (level.Equals ("Badlands: Act I")) {
                 pView.RPC("RpcStartVersusGame", RpcTarget.All, "BetaLevelNetwork");
+			} else if (level.Equals ("Badlands: Act II")) {
+				pView.RPC("RpcStartVersusGame", RpcTarget.All, "Badlands2");
 			} else {
                 pView.RPC("RpcStartVersusGame", RpcTarget.All, level);
 			}

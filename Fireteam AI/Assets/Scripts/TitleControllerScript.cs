@@ -259,6 +259,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		JukeboxScript.jukebox.audioSource2.Stop ();
 		if (mapName.Equals ("Badlands: Act I")) {
 			screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands1_load");
+		} else if (mapName.Equals("Badlands: Act II")) {
+			screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/test");
 		}
         proTipText.text = proTips[Random.Range(0, 2)];
 		mapTitleText.text = mapName;

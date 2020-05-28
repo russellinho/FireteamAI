@@ -4766,13 +4766,17 @@ MonoBehaviour:
   gameController: {fileID: 114034241899580255}
   pView: {fileID: 6193941029151316281}
   health: 100
-  escortedByPlayerId: 0
-  isEscorting: 0
+  carriedByPlayerId: 0
+  isCarrying: 0
+  fullyMobileWhileCarrying: 0
+  weightSpeedReduction: 0
   npcType: 1
   gruntSounds:
   - {fileID: 8300000, guid: e98db1f95cd932f42ba9e89ae577a739, type: 3}
   - {fileID: 8300000, guid: 7bf77d1793f49ed4f9b9dd0049dd96c0, type: 3}
   audioSource: {fileID: 6193941029151316282}
+  rends: []
+  col: {fileID: 0}
 --- !u!114 &6193941029151316280
 MonoBehaviour:
   m_ObjectHideFlags: 0

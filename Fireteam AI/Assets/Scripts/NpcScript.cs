@@ -4,28 +4,60 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class NpcScript : MonoBehaviour {
+public class NpcScript : MonoBehaviourPunCallbacks {
 
 	public enum NpcType {Neutral, Friendly};
 	public GameControllerScript gameController;
 	public PhotonView pView;
 	public int health;
-	public int escortedByPlayerId;
-	public bool isEscorting;
+	public int carriedByPlayerId;
+	public bool isCarrying;
+	// If true, the player can sprint, crouch, jump, walk while carrying
+	public bool fullyMobileWhileCarrying;
+	// Amount of speed to reduce while carrying
+	public float weightSpeedReduction;
 	public NpcType npcType;
 	public AudioClip[] gruntSounds;
 	public AudioSource audioSource;
+	private Transform carriedByTransform;
+	public SkinnedMeshRenderer[] rends;
+	public MeshCollider col;
 
 	// Use this for initialization
 	void Awake() {
-		escortedByPlayerId = -1;
+		carriedByPlayerId = -1;
 	}
+
+	public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+		if (otherPlayer.ActorNumber == carriedByPlayerId) {
+			ToggleIsCarrying(false, -1);
+		}
+    }
 		
-	public void ToggleIsEscorting(bool b, Transform escorter, int escortedByPlayerId) {
-		isEscorting = b;
-		gameObject.transform.SetParent(escorter);
-		this.escortedByPlayerId = escortedByPlayerId;
-		// TODO: Change animation to escorting or relaxing animation depending on state here
+	public void ToggleIsCarrying(bool b, int carriedByPlayerId) {
+		isCarrying = b;
+		this.carriedByPlayerId = carriedByPlayerId;
+		if (carriedByPlayerId == -1) {
+			carriedByTransform = null;
+			ToggleRenderers(true);
+			ToggleCollider(true);
+		} else {
+			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].carryingSlotRef;
+			ToggleCollider(false);
+			if (carriedByPlayerId == PhotonNetwork.LocalPlayer.ActorNumber) {
+				ToggleRenderers(false);
+			}
+		}
+		// TODO: Change animation to carrying or relaxing animation depending on state here
+	}
+	
+	void LateUpdate() {
+		if (isCarrying) {
+			if (carriedByTransform != null) {
+				transform.position = carriedByTransform.position;
+			}
+		}
 	}
 
 	public void TakeDamage(int d) {
@@ -48,6 +80,16 @@ public class NpcScript : MonoBehaviour {
 		int r = Random.Range(0, gruntSounds.Length);
 		audioSource.clip = gruntSounds [r];
 		audioSource.Play ();
+	}
+
+	void ToggleCollider(bool b) {
+		col.enabled = b;
+	}
+
+	void ToggleRenderers(bool b) {
+		foreach (SkinnedMeshRenderer m in rends) {
+			m.enabled = b;
+		}
 	}
 
 }

@@ -45,6 +45,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private BetaEnemyScript enemySeenBy;
     public AudioClip ammoPickupSound;
     public AudioClip healthPickupSound;
+    public Transform carryingSlot;
 
     // Player variables
     public int health;
@@ -426,7 +427,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             gameController.blueTeamPlayerCount++;
             Debug.Log(photonView.Owner.NickName + " joined blue team.");
         }
-        PlayerStat p = new PlayerStat(gameObject, photonView.Owner.ActorNumber, photonView.Owner.NickName, team, exp);
+        PlayerStat p = new PlayerStat(gameObject, carryingSlot, photonView.Owner.ActorNumber, photonView.Owner.NickName, team, exp);
         GameControllerScript.playerList.Add(photonView.OwnerActorNr, p);
     }
 
@@ -488,6 +489,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             fpc.m_IsCrouching = !fpc.m_IsCrouching;
+            if (!fpc.IsFullyMobile()) {
+                fpc.m_IsCrouching = false;
+            }
         }
 
         FpcCrouch(fpc.m_IsCrouching);
@@ -621,7 +625,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 {
                     NpcScript n = activeInteractable.GetComponent<NpcScript>();
                     interactionTimer = 0f;
-                    photonView.RPC("RpcEscortNpc", RpcTarget.All, photonView.ViewID);
+                    photonView.RPC("RpcCarryNpc", RpcTarget.All, photonView.OwnerActorNr);
                     activeInteractable = null;
                     interactionLock = true;
                 }
@@ -640,7 +644,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (gameController.currentMap == 1) {
             BombDefuseCheck();
         } else if (gameController.currentMap == 2) {
-            EscortNpcCheck();
+            CarryNpcCheck();
             DropOffNpcCheck();
             PopFlareCheck();
         }
@@ -709,7 +713,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    void EscortNpcCheck() {
+    void CarryNpcCheck() {
         if (gameController == null || gameController.vipRef == null)
         {
             return;
@@ -718,7 +722,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (activeInteractable != null && !hud.PauseIsActive()) {
             NpcScript n = activeInteractable.GetComponent<NpcScript>();
             if (n != null) {
-                if (n.isEscorting) {
+                if (n.isCarrying) {
                     SetInteracting(false, null);
                     return;
                 }
@@ -744,7 +748,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (objectCarrying != null && gameController.vipRef.GetComponent<NpcScript>().escortedByPlayerId == photonView.ViewID && !hud.PauseIsActive()) {
+        if (objectCarrying != null && gameController.vipRef.GetComponent<NpcScript>().carriedByPlayerId == photonView.OwnerActorNr && !hud.PauseIsActive()) {
             NpcScript n = objectCarrying.GetComponent<NpcScript>();
             if (n != null) {
                 if (Input.GetKey(KeyCode.G) && !interactionLock) {
@@ -1141,6 +1145,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             FlareScript f = gameController.items[i].GetComponent<FlareScript>();
             if (f.flareId == index) {
                 f.PopFlare();
+                gameController.exitPoint = f.gameObject;
                 gameController.UpdateObjectives();
                 HandlePopFlareForMission(gameController.currentMap, i);
                 break;
@@ -1149,12 +1154,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void RpcEscortNpc(int playerId) {
+    void RpcCarryNpc(int playerId) {
         if (gameObject.layer == 0) return;
         NpcScript n = gameController.vipRef.GetComponent<NpcScript>();
-        n.ToggleIsEscorting(true, GameControllerScript.playerList[playerId].objRef.transform, playerId);
+        n.ToggleIsCarrying(true, playerId);
         // If is local player, set to is carrying
-        if (playerId == photonView.ViewID) {
+        if (playerId == photonView.OwnerActorNr) {
             objectCarrying = gameController.vipRef;
             hud.SetCarryingText("PERSON");
         }
@@ -1164,11 +1169,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcDropOffNpc() {
         if (gameObject.layer == 0) return;
         NpcScript n = gameController.vipRef.GetComponent<NpcScript>();
-        int droppedOffBy = n.escortedByPlayerId;
-        n.ToggleIsEscorting(false, null, -1);
-        // TODO: Drop the NPC to right in front of the player
-        if (droppedOffBy == photonView.ViewID) {
-
+        int droppedOffBy = n.carriedByPlayerId;
+        n.ToggleIsCarrying(false, -1);
+        if (droppedOffBy == PhotonNetwork.LocalPlayer.ActorNumber) {
+            gameController.vipRef.transform.position = new Vector3(gameController.vipRef.transform.position.x, gameController.vipRef.transform.position.y, gameController.vipRef.transform.position.z + 1f);
+            objectCarrying = null;
         }
     }
 

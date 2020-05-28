@@ -540,27 +540,41 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         missionTime += Time.deltaTime;
 
         // Query server for sync time if not master client every 30 seconds
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            syncMissionTimeTimer -= Time.deltaTime;
-            if (syncMissionTimeTimer <= 0f)
-            {
-                syncMissionTimeTimer = 30f;
-                pView.RPC("RpcSendMissionTimeToClients", RpcTarget.MasterClient);
-            }
-        }
+		if (matchType == 'C') {
+			if (!PhotonNetwork.IsMasterClient)
+			{
+				syncMissionTimeTimer -= Time.deltaTime;
+				if (syncMissionTimeTimer <= 0f)
+				{
+					syncMissionTimeTimer = 30f;
+					pView.RPC("RpcSendMissionTimeToClients", RpcTarget.MasterClient);
+				}
+			}
+		} else if (matchType == 'V') {
+			if (!isVersusHostForThisTeam()) {
+				syncMissionTimeTimer -= Time.deltaTime;
+				if (syncMissionTimeTimer <= 0f)
+				{
+					syncMissionTimeTimer = 30f;
+					pView.RPC("RpcSendMissionTimeToClients", RpcTarget.MasterClient);
+				}
+			}
+		}
     }
 
     [PunRPC]
-    void RpcUpdateMissionTime(float t, string team) {
+    void RpcUpdateMissionTime(float mTime, float mTimer1, float mTimer2, float mTimer3, string team) {
         if (team != teamMap) return;
-        missionTime = t;
+        missionTime = mTime;
+		objectives.missionTimer1 = mTimer1;
+		objectives.missionTimer2 = mTimer2;
+		objectives.missionTimer3 = mTimer3;
     }
 
     [PunRPC]
     void RpcSendMissionTimeToClients()
     {
-        pView.RPC("RpcUpdateMissionTime", RpcTarget.Others, missionTime, teamMap);
+        pView.RPC("RpcUpdateMissionTime", RpcTarget.Others, missionTime, objectives.missionTimer1, objectives.missionTimer2, objectives.missionTimer3, teamMap);
     }
 
     // When someone leaves the game in the middle of an escape, reset the values to recount
@@ -878,6 +892,19 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				}
 			}
 			return 'D';
+		} else if (map == "Badlands2") {
+			if (deadCount == playerList.Count || CheckOutOfTime()) {
+				return 'F';
+			} else {
+				if (missionTime <= 900f) {
+					return 'A';
+				} else if (missionTime <= 1200f) {
+					return 'B';
+				} else if (missionTime <= 1800f) {
+					return 'C';
+				}
+			}
+			return 'D';
 		}
 		return 'C';
 	}
@@ -892,6 +919,19 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				} else if (missionTime <= 300f) {
 					return 'B';
 				} else if (missionTime <= 900f) {
+					return 'C';
+				}
+			}
+			return 'D';
+		} else if (map == "Badlands2Red" || map == "Badlands2Blue") {
+			if (deadCount == playerList.Count || CheckOutOfTime()) {
+				return 'F';
+			} else {
+				if (missionTime <= 900f) {
+					return 'A';
+				} else if (missionTime <= 1200f) {
+					return 'B';
+				} else if (missionTime <= 1800f) {
 					return 'C';
 				}
 			}
@@ -939,6 +979,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 public class PlayerStat {
 	public GameObject objRef;
+	public Transform carryingSlotRef;
 	public int actorId;
 	public string name;
 	public char team;
@@ -948,8 +989,9 @@ public class PlayerStat {
 	public uint expGained;
 	public uint gpGained;
 
-	public PlayerStat(GameObject objRef, int actorId, string name, char team, uint exp) {
+	public PlayerStat(GameObject objRef, Transform carryingSlotRef, int actorId, string name, char team, uint exp) {
 		this.objRef = objRef;
+		this.carryingSlotRef = carryingSlotRef;
 		this.actorId = actorId;
 		this.name = name;
 		this.team = team;

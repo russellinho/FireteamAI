@@ -100,7 +100,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             //RotateView();
             // the jump state needs to read here to make sure it is not missed
-			if (!m_Jump && canMove && !playerActionScript.hud.container.pauseMenuGUI.activeInHierarchy)
+			if (!m_Jump && canMove && !playerActionScript.hud.container.pauseMenuGUI.activeInHierarchy && IsFullyMobile())
             {
                 m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
             }
@@ -381,8 +381,20 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_DashDir = Vector3.zero;
         }
 
+        public bool IsFullyMobile() {
+            NpcScript n = null;
+            if (playerActionScript.objectCarrying != null) {
+                n = playerActionScript.objectCarrying.GetComponent<NpcScript>();
+                if (n != null) {
+                    return n.fullyMobileWhileCarrying;
+                }
+            }
+            return true;
+        }
+
         private void GetInput(out float speed)
 		{
+            bool enableRunFlag = IsFullyMobile();
 
 			// Read input
 			float horizontal = CrossPlatformInputManager.GetAxis ("Horizontal");
@@ -415,7 +427,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 					if (Input.GetKey(KeyCode.C)) {
 						m_IsWalking = true;
 						m_IsRunning = false;
-					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f && playerActionScript.sprintTime > 0f && !sprintLock) {
+					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f && playerActionScript.sprintTime > 0f && !sprintLock && enableRunFlag) {
 						m_IsWalking = false;
 						m_IsRunning = true;
                         // if (weaponActionScript.isReloading || weaponActionScript.isCocking) {
@@ -457,6 +469,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
 			if (!canMove)
 				speed = 0f;
+
+            if (!enableRunFlag) {
+                NpcScript n = playerActionScript.objectCarrying.GetComponent<NpcScript>();
+                if (n != null) {
+                    speed *= n.weightSpeedReduction;
+                }
+            }
         }
 
         public void SetMouseDynamicsForMelee(bool b) {

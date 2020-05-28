@@ -12130,6 +12130,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3648173952107678876}
+  - {fileID: 4213746805053114759}
   m_Father: {fileID: 8078198234959112065}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -47061,6 +47062,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7532578639212270708}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3850316620486347371
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4213746805053114759}
+  m_Layer: 0
+  m_Name: CarrySlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4213746805053114759
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3850316620486347371}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4774670150449915589}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3893598160906372249
 GameObject:
@@ -84503,6 +84534,7 @@ MonoBehaviour:
   - {fileID: 4432177621689093862}
   ammoPickupSound: {fileID: 8300000, guid: 2e0c337d7be1f394e90d1718f80fde8d, type: 3}
   healthPickupSound: {fileID: 8300000, guid: 2abf41e9ece742d44b0da495397486fb, type: 3}
+  carryingSlot: {fileID: 4213746805053114759}
   health: 0
   sprintTime: 0
   godMode: 0
@@ -84514,6 +84546,7 @@ MonoBehaviour:
   totalSpeedBoost: 0
   weaponSpeedModifier: 0
   verticalVelocityBeforeLanding: 0
+  objectCarrying: {fileID: 0}
   fpc: {fileID: 9157702028478079586}
   isNotOnTeamMap: 0
   hitTimer: 0
@@ -84635,7 +84668,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 9157702028478079595}
   viewIdField: 0
-  InstantiationId: 5
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &9157702028478079595
 MonoBehaviour:

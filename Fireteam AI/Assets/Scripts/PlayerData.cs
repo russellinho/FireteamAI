@@ -169,6 +169,12 @@ public class PlayerData : MonoBehaviour
                 characterPrefabName,
                 Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
                 Quaternion.Euler(Vector3.zero));
+        } else if (levelName.Equals("Badlands2") || levelName.Equals("Badlands2Red") || levelName.Equals("Badlands2Blue")) {
+            string characterPrefabName = GetCharacterPrefabName();
+            PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
+                characterPrefabName,
+                Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
+                Quaternion.Euler(Vector3.zero));
         } else if (levelName.Equals("Test")) {
             string characterPrefabName = GetCharacterPrefabName();
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(

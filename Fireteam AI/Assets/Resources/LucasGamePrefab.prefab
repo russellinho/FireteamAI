@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &431434759054406619
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5404450859438118148}
+  m_Layer: 0
+  m_Name: CarrySlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5404450859438118148
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 431434759054406619}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4260894050300091701}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &720653860272823626
 GameObject:
   m_ObjectHideFlags: 0
@@ -542,6 +572,7 @@ MonoBehaviour:
   - {fileID: 5230004869161218518}
   ammoPickupSound: {fileID: 8300000, guid: 2e0c337d7be1f394e90d1718f80fde8d, type: 3}
   healthPickupSound: {fileID: 8300000, guid: 2abf41e9ece742d44b0da495397486fb, type: 3}
+  carryingSlot: {fileID: 5404450859438118148}
   health: 0
   sprintTime: 0
   godMode: 0
@@ -553,6 +584,7 @@ MonoBehaviour:
   totalSpeedBoost: 0
   weaponSpeedModifier: 0
   verticalVelocityBeforeLanding: 0
+  objectCarrying: {fileID: 0}
   fpc: {fileID: 720653860272823634}
   isNotOnTeamMap: 0
   hitTimer: 0
@@ -674,7 +706,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 720653860272823643}
   viewIdField: 0
-  InstantiationId: 5
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &720653860272823643
 MonoBehaviour:
@@ -17595,6 +17627,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4260894050300091703}
+  - {fileID: 5404450859438118148}
   m_Father: {fileID: 4260894050300091569}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

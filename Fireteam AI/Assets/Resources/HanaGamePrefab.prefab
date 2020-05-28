@@ -746,6 +746,7 @@ MonoBehaviour:
   - {fileID: 5375672228478509974}
   ammoPickupSound: {fileID: 8300000, guid: 2e0c337d7be1f394e90d1718f80fde8d, type: 3}
   healthPickupSound: {fileID: 8300000, guid: 2abf41e9ece742d44b0da495397486fb, type: 3}
+  carryingSlot: {fileID: 5657355362085595493}
   health: 0
   sprintTime: 0
   godMode: 0
@@ -757,6 +758,7 @@ MonoBehaviour:
   totalSpeedBoost: 0
   weaponSpeedModifier: 0
   verticalVelocityBeforeLanding: 0
+  objectCarrying: {fileID: 0}
   fpc: {fileID: 580623507002314514}
   isNotOnTeamMap: 0
   hitTimer: 0
@@ -878,7 +880,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 580623507002314523}
   viewIdField: 0
-  InstantiationId: 5
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &580623507002314523
 MonoBehaviour:
@@ -42331,6 +42333,36 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!1 &7226971616617416580
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5657355362085595493}
+  m_Layer: 0
+  m_Name: CarrySlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5657355362085595493
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7226971616617416580}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7942259398586826869}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7278522359874781446
 GameObject:
   m_ObjectHideFlags: 0
@@ -42816,6 +42848,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7942259398586826871}
+  - {fileID: 5657355362085595493}
   m_Father: {fileID: 7942259398586827241}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
