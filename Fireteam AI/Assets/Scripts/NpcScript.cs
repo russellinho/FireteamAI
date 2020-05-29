@@ -22,6 +22,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	private Transform carriedByTransform;
 	public SkinnedMeshRenderer[] rends;
 	public CapsuleCollider col;
+	public Rigidbody rBody;
 
 	// Use this for initialization
 	void Awake() {
@@ -84,6 +85,13 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 
 	void ToggleCollider(bool b) {
 		col.enabled = b;
+		if (b) {
+			rBody.isKinematic = true;
+			rBody.useGravity = false;
+		} else {
+			rBody.isKinematic = false;
+			rBody.useGravity = true;
+		}
 	}
 
 	void ToggleRenderers(bool b) {

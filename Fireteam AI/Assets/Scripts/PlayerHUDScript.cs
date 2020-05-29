@@ -128,6 +128,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			missionWaypoints.Add (m4);
 			missionWaypoints.Add (m5);
 		} else if (gameController.currentMap == 2) {
+			UpdateAssaultModeIndHud(true);
 			container.vipHealthBar.gameObject.SetActive(true);
 			GameObject m1 = GameObject.Instantiate (container.hudWaypoint);
 			m1.GetComponent<RawImage>().enabled = false;
