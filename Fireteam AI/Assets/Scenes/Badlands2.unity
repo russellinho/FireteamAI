@@ -2659,10 +2659,11 @@ MonoBehaviour:
   deadCount: 0
   redTeamPlayerCount: 0
   blueTeamPlayerCount: 0
-  assaultMode: 0
+  assaultMode: 1
   matchType: 0
   enemyTeamNearingVictoryTrigger: 0
-  versusAlertMessage: 
+  campaignAlertMessage: 
+  alertMessage: 
   vipRef: {fileID: 6193941029151316276}
   checkpointRef: {fileID: 1524268998}
 --- !u!114 &114769893195814381
@@ -4714,7 +4715,7 @@ GameObject:
   - component: {fileID: 6193941029151316279}
   - component: {fileID: 6193941029151316281}
   - component: {fileID: 6193941029151316280}
-  m_Layer: 0
+  m_Layer: 18
   m_Name: VIP
   m_TagString: Human
   m_Icon: {fileID: 0}
@@ -4768,15 +4769,23 @@ MonoBehaviour:
   health: 100
   carriedByPlayerId: 0
   isCarrying: 0
-  fullyMobileWhileCarrying: 0
-  weightSpeedReduction: 0
+  immobileWhileCarrying: 1
+  weightSpeedReduction: 0.6
   npcType: 1
   gruntSounds:
   - {fileID: 8300000, guid: e98db1f95cd932f42ba9e89ae577a739, type: 3}
   - {fileID: 8300000, guid: 7bf77d1793f49ed4f9b9dd0049dd96c0, type: 3}
   audioSource: {fileID: 6193941029151316282}
-  rends: []
-  col: {fileID: 0}
+  rends:
+  - {fileID: 3476042116591606411}
+  - {fileID: 5000796830158754811}
+  - {fileID: 5435102230394341701}
+  - {fileID: 3356129142468704846}
+  - {fileID: 698201161649307069}
+  - {fileID: 8621350666700217920}
+  - {fileID: 917104491792434625}
+  - {fileID: 2204364301701572687}
+  col: {fileID: 6193941029151316278}
 --- !u!114 &6193941029151316280
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5707,7 +5716,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6620201061047749350}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7182701908335717159}

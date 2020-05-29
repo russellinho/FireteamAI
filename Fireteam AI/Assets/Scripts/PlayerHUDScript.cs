@@ -312,7 +312,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 							continue;
 						if (gameController.objectives.itemsRemaining == 0)
 						{
-							HandleWaypointRender(i, true, gameController.exitPoint.transform.position);
+							HandleWaypointRender(i, false, gameController.exitPoint.transform.position);
 						}
 					} else if (playerActionScript.thisSpectatorCam != null) {
 						float renderCheck = Vector3.Dot((gameController.exitPoint.transform.position - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
@@ -320,7 +320,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 							continue;
 						if (gameController.objectives.itemsRemaining == 0)
 						{
-							HandleWaypointRender(i, false, gameController.exitPoint.transform.position);
+							HandleWaypointRender(i, true, gameController.exitPoint.transform.position);
 						}
 					}
 				}
@@ -331,7 +331,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 						if (renderCheck <= 0)
 							continue;
 						if (!gameController.items [i].GetComponent<BombScript> ().defused) {
-							HandleWaypointRender(i, true, new Vector3 (gameController.items [i].transform.position.x, gameController.items [i].transform.position.y + gameController.items [i].transform.lossyScale.y, gameController.items [i].transform.position.z));
+							HandleWaypointRender(i, false, new Vector3 (gameController.items [i].transform.position.x, gameController.items [i].transform.position.y + gameController.items [i].transform.lossyScale.y, gameController.items [i].transform.position.z));
 						}
 						if (gameController.items [i].GetComponent<BombScript> ().defused) {
 							((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled = false;
@@ -341,7 +341,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 						if (renderCheck <= 0)
 							continue;
 						if (!gameController.items [i].GetComponent<BombScript> ().defused) {
-							HandleWaypointRender(i, false, new Vector3 (gameController.items [i].transform.position.x, gameController.items [i].transform.position.y + gameController.items [i].transform.lossyScale.y, gameController.items [i].transform.position.z));
+							HandleWaypointRender(i, true, new Vector3 (gameController.items [i].transform.position.x, gameController.items [i].transform.position.y + gameController.items [i].transform.lossyScale.y, gameController.items [i].transform.position.z));
 						}
 						if (gameController.items [i].GetComponent<BombScript> ().defused) {
 							((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled = false;
@@ -356,12 +356,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				if (playerActionScript.viewCam.enabled) {
 					float renderCheck = Vector3.Dot((a - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
 					if (renderCheck > 0) {
-						HandleWaypointRender(0, true, a);
+						HandleWaypointRender(0, false, a);
 					}
 				} else if (playerActionScript.thisSpectatorCam != null) {
 					float renderCheck = Vector3.Dot((a - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
 					if (renderCheck > 0) {
-						HandleWaypointRender(0, false, a);
+						HandleWaypointRender(0, true, a);
 					}
 				}
 			}
@@ -371,12 +371,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				if (playerActionScript.viewCam.enabled) {
 					float renderCheck = Vector3.Dot((a - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
 					if (renderCheck > 0) {
-						HandleWaypointRender(1, true, a);
+						HandleWaypointRender(1, false, a);
 					}
 				} else if (playerActionScript.thisSpectatorCam != null) {
 					float renderCheck = Vector3.Dot((a - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
 					if (renderCheck > 0) {
-						HandleWaypointRender(1, false, a);
+						HandleWaypointRender(1, true, a);
 					}
 				}
 			} else if (gameController.objectives.stepsLeftToCompletion == 2) {
@@ -387,12 +387,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					if (playerActionScript.viewCam.enabled) {
 						float renderCheck = Vector3.Dot((a - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
 						if (renderCheck > 0) {
-							HandleWaypointRender(i, true, a);
+							HandleWaypointRender(i, false, a);
 						}
 					} else if (playerActionScript.thisSpectatorCam != null) {
 						float renderCheck = Vector3.Dot((a - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
 						if (renderCheck > 0) {
-							HandleWaypointRender(i, false, a);
+							HandleWaypointRender(i, true, a);
 						}
 					}
 				}
@@ -410,12 +410,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 						if (playerActionScript.viewCam.enabled) {
 							float renderCheck = Vector3.Dot((a - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
 							if (renderCheck > 0) {
-								HandleWaypointRender(gameController.objectives.selectedEvacIndex, true, a);
+								HandleWaypointRender(gameController.objectives.selectedEvacIndex, false, a);
 							}
 						} else if (playerActionScript.thisSpectatorCam != null) {
 							float renderCheck = Vector3.Dot((a - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
 							if (renderCheck > 0) {
-								HandleWaypointRender(gameController.objectives.selectedEvacIndex, false, a);
+								HandleWaypointRender(gameController.objectives.selectedEvacIndex, true, a);
 							}
 						}
 					}
@@ -1020,7 +1020,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void UpdateCarryingText() {
-		if (container.itemCarryingText.text != null) {
+		if (container.itemCarryingText.text != null && container.itemCarryingText.text != "") {
 			container.itemCarryingPnl.SetActive(true);
 		} else {
 			container.itemCarryingPnl.SetActive(false);

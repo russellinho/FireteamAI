@@ -29,7 +29,7 @@ public class Objectives {
         } else if (map == 2) {
 			selectedEvacIndex = -2;
 			stepsLeftToCompletion = 4;
-			objectivesText = new string[3];
+			objectivesText = new string[4];
 			objectivesText[0] = "Retrieve the pilot from the cockpit of the crashed helicopter.";
 			objectivesText[1] = "Secure a perimeter and defend yourselves until evac arrives.";
 			objectivesText[2] = "Designate a landing zone for evac.";

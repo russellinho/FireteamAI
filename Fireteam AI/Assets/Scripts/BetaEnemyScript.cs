@@ -1642,8 +1642,8 @@ public class BetaEnemyScript : MonoBehaviour {
 			// Locks onto the player and shoots at him
 			FirstPersonController targetingFpc = playerTargeting.GetComponent<FirstPersonController>();
 			Vector3 playerPos = Vector3.negativeInfinity;
-			if (targetingFpc == null) {
-				playerPos = playerTargeting.GetComponent<FirstPersonController>().fpcTransformSpine.position;
+			if (targetingFpc != null) {
+				playerPos = targetingFpc.fpcTransformSpine.position;
 				playerPos = new Vector3(playerPos.x, playerPos.y - 0.1f, playerPos.z);
 			} else {
 				playerPos = playerTargeting.transform.position;
@@ -1671,7 +1671,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					BetaEnemyScript b = hit.transform.GetComponent<BetaEnemyScript>();
 					NpcScript n = hit.transform.GetComponent<NpcScript>();
 					if (n != null) {
-						n.TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height));
+						n.TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, n.col.height));
 					}
 					if (b != null) {
 						b.TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height));
@@ -1938,13 +1938,21 @@ public class BetaEnemyScript : MonoBehaviour {
 		return false;
 	}
 
+	int GetHealthOfCurrentTarget() {
+		if (playerTargeting != null) {
+			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript>();
+			NpcScript n = playerTargeting.GetComponent<NpcScript>();
+			return (a != null ? a.health : n.health);
+		}
+
+		return 0;
+	}
+
 	void PlayerScan() {
 		if (playerScanTimer <= 0f) {
 			playerScanTimer = PLAYER_SCAN_DELAY;
 			// If we do not have a target player, try to find one
-			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript>();
-			NpcScript n = playerTargeting.GetComponent<NpcScript>();
-			int entityTargetingHealth = (a != null ? a.health : n.health);
+			int entityTargetingHealth = GetHealthOfCurrentTarget();
 			if (playerTargeting == null || entityTargetingHealth <= 0) {
 				ArrayList keysNearBy = new ArrayList ();
 				foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {

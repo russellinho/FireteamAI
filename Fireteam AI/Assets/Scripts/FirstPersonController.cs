@@ -386,7 +386,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             if (playerActionScript.objectCarrying != null) {
                 n = playerActionScript.objectCarrying.GetComponent<NpcScript>();
                 if (n != null) {
-                    return n.fullyMobileWhileCarrying;
+                    return !n.immobileWhileCarrying;
                 }
             }
             return true;

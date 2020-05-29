@@ -13,7 +13,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	public int carriedByPlayerId;
 	public bool isCarrying;
 	// If true, the player can sprint, crouch, jump, walk while carrying
-	public bool fullyMobileWhileCarrying;
+	public bool immobileWhileCarrying;
 	// Amount of speed to reduce while carrying
 	public float weightSpeedReduction;
 	public NpcType npcType;
@@ -21,7 +21,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	public AudioSource audioSource;
 	private Transform carriedByTransform;
 	public SkinnedMeshRenderer[] rends;
-	public MeshCollider col;
+	public CapsuleCollider col;
 
 	// Use this for initialization
 	void Awake() {

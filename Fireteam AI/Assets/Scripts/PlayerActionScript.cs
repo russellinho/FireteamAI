@@ -17,7 +17,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     const float BOMB_DEFUSE_TIME = 8f;
     const float DEPLOY_USE_TIME = 3f;
     const float NPC_INTERACT_TIME = 5f;
-    const float DROP_CARRYING_TIME = 2f;
 
     // Object references
     public GameControllerScript gameController;
@@ -64,7 +63,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private bool isInteracting;
     private string interactingWith;
     private GameObject activeInteractable;
-    private float dropCarryingTimer;
     private float interactionTimer;
     private bool interactionLock;
     private float enterSpectatorModeTimer;
@@ -330,11 +328,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 hud.ComBoxPopup(2f, "Democko", "They know you're here! Slot the bastards!");
                 hud.ComBoxPopup(20f, "Democko", "Cicadas on the rooftops! Watch the rooftops!");
             }
-
-            if (gameController.versusAlertMessage != null) {
-                hud.MessagePopup(gameController.versusAlertMessage);
-                gameController.versusAlertMessage = null;
-            }
         } else if (gameController.currentMap == 2) {
             if (gameController.gameOver) return;
             // When the initial timer runs out, start the Cicada spawn
@@ -406,6 +399,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 gameController.UpdateObjectives();
                 hud.ComBoxPopup(1f, "Democko", "Alright, let's get the hell out of here!");
             }
+        }
+
+        if (gameController.alertMessage != null) {
+            hud.MessagePopup(gameController.alertMessage);
+            gameController.alertMessage = null;
         }
     }
 
@@ -748,20 +746,15 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (objectCarrying != null && gameController.vipRef.GetComponent<NpcScript>().carriedByPlayerId == photonView.OwnerActorNr && !hud.PauseIsActive()) {
+        if (objectCarrying != null && objectCarrying.GetComponent<NpcScript>().carriedByPlayerId == photonView.OwnerActorNr && !hud.PauseIsActive()) {
             NpcScript n = objectCarrying.GetComponent<NpcScript>();
             if (n != null) {
-                if (Input.GetKey(KeyCode.G) && !interactionLock) {
+                if (Input.GetKeyDown(KeyCode.G) && !interactionLock) {
                     // Drop off the NPC
-                    DropCarrying(true);
-                } else {
-                    // Stop dropping off the NPC
-                    DropCarrying(false);
+                    DropCarrying();
+                    hud.SetCarryingText(null);
                 }
             }
-        } else {
-            DropCarrying(false);
-            hud.SetCarryingText(null);
         }
     }
 
@@ -1419,15 +1412,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         interactingWith = objectName;
     }
 
-    void DropCarrying(bool b) {
-        if (b) {
-            dropCarryingTimer += Time.deltaTime;
-            if (dropCarryingTimer >= DROP_CARRYING_TIME) {
-                photonView.RPC("RpcDropOffNpc", RpcTarget.All);
-            }
-        } else {
-            dropCarryingTimer = 0f;
-        }
+    void DropCarrying() {
+        photonView.RPC("RpcDropOffNpc", RpcTarget.All);
     }
 
     void TriggerPlayerDownAlert() {

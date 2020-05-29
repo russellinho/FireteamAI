@@ -14,13 +14,11 @@ public class ComboxTextEffect : MonoBehaviour {
 	private float m_cumulativeDeltaTime;
 	private float disappearTime;
 
-	private Text m_label;
+	public Text m_label;
+	public Text m_heading;
+	public RawImage m_photo;
 
 	public GameObject parentRef;
-
-	void Awake () {
-		m_label = GetComponent<Text> ();
-	}
 
 	void OnEnable() {
 		Reset ();
@@ -29,7 +27,7 @@ public class ComboxTextEffect : MonoBehaviour {
 	public void SetText(string message, string speaker) {
 		Reset ();
 		m_text = message;
-		m_label.text = speaker;
+		m_heading.text = speaker;
 		parentRef.GetComponent<AudioSource> ().Play ();
 	}
 

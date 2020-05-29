@@ -580,7 +580,7 @@ public class WeaponActionScript : MonoBehaviour
                 BetaEnemyScript b = hit.transform.gameObject.GetComponent<BetaEnemyScript>();
                 if (n != null) {
                     int beforeHp = n.health;
-                    int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height);
+                    int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, n.col.height);
                     if (beforeHp > 0)
                     {
                         n.TakeDamage(thisDamageDealt);
@@ -700,7 +700,7 @@ public class WeaponActionScript : MonoBehaviour
                     NpcScript n = hit.transform.gameObject.GetComponent<NpcScript>();
                     if (n != null) {
                         int beforeHp = 0;
-                        int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height, 8);
+                        int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, hit.transform.position.y, hit.point.y, n.col.height, 8);
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
                         beforeHp = n.health;
                         if (totalDamageDealt == 0f) {
