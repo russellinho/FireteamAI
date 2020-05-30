@@ -805,6 +805,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	public void MessagePopup(string message)
     {
 		if (container != null) {
+			Debug.Log("message was: " + message);
 			container.missionText.GetComponent<MissionTextAnimScript> ().Reset ();
 			container.missionText.GetComponent<Text> ().text = message;
 			container.missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();

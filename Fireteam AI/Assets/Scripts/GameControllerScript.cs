@@ -68,6 +68,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private bool endingGainsCalculated;
 	public GameObject vipRef;
 	public GameObject checkpointRef;
+	private bool endGameWithWin;
 
 	// Use this for initialization
 	void Awake() {
@@ -170,7 +171,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				{
 					if (!gameOver)
 					{
-						pView.RPC("RpcEndGame", RpcTarget.All, 9f, null);
+						pView.RPC("RpcEndGame", RpcTarget.All, 9f, null, false);
 
 					}
 				}
@@ -179,7 +180,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					if (!gameOver && CheckEscapeForCampaign())
 					{
 						// If they can escape, end the game and bring up the stat board
-						pView.RPC("RpcEndGame", RpcTarget.All, 3f, null);
+						pView.RPC("RpcEndGame", RpcTarget.All, 2f, null, true);
 					}
 				}
 
@@ -218,20 +219,20 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				{
 					if (!gameOver)
 					{
-						pView.RPC("RpcEndGame", RpcTarget.All, 9f, null);
+						pView.RPC("RpcEndGame", RpcTarget.All, 9f, null, false);
 
 					}
 				} else if (vipRef.GetComponent<NpcScript>().health <= 0) {
 					if (!gameOver)
 					{
-						pView.RPC("RpcEndGame", RpcTarget.All, 9f, "The VIP has been killed!");
+						pView.RPC("RpcEndGame", RpcTarget.All, 1.5f, "The VIP has been killed!", false);
 					}
 				} else if (objectives.stepsLeftToCompletion == 1 && objectives.escapeAvailable)
 				{
 					if (!gameOver && CheckEscapeForCampaign())
 					{
 						// If they can escape, end the game and bring up the stat board
-						pView.RPC("RpcEndGame", RpcTarget.All, 3f, null);
+						pView.RPC("RpcEndGame", RpcTarget.All, 2f, null, true);
 					}
 				}
 
@@ -281,7 +282,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 						// Set completion to 100%
 						SetMyTeamScore(100);
 						// If they can escape, end the game and bring up the stat board
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, teamMap, null);
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 2f, teamMap, null);
 					}
 				}
 				// Check to see if either team has forfeited
@@ -327,7 +328,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				} else if (vipRef.GetComponent<NpcScript>().health <= 0) {
 					if (!gameOver) {
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, (teamMap == "R" ? "B" : "R"), "The VIP has been killed!");
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 2f, (teamMap == "R" ? "B" : "R"), "The VIP has been killed!");
 					} 
 				} else if (CheckOutOfTime()) {
 					if (!gameOver) {
@@ -340,7 +341,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 						// Set completion to 100%
 						SetMyTeamScore(100);
 						// If they can escape, end the game and bring up the stat board
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, teamMap, null);
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 2f, teamMap, null);
 					}
 				}
 				// Check to see if either team has forfeited
@@ -356,9 +357,10 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	[PunRPC]
-	void RpcEndGame(float f, string eventMessage) {
+	void RpcEndGame(float f, string eventMessage, bool win) {
 		endGameTimer = f;
 		gameOver = true;
+		endGameWithWin = win;
 		if (eventMessage != null) {
 			alertMessage = eventMessage;
 		}
@@ -706,14 +708,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                         loadExitCalled = true;
                         if (matchType == 'C')
                         {
-                            if (deadCount == PhotonNetwork.CurrentRoom.Players.Count)
-                            {
-                                SwitchToGameOverScene(false);
-                            }
-                            else
-                            {
-                                SwitchToGameOverScene(true);
-                            }
+                            SwitchToGameOverScene();
                         } else if (matchType == 'V')
                         {
                             string teamStatus = (string)PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Status"];
@@ -746,6 +741,14 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			PhotonNetwork.LoadLevel("GameOverFail");
 		} else {
 			PhotonNetwork.LoadLevel("GameOverSuccess");
+		}
+	}
+
+	void SwitchToGameOverScene() {
+		if (endGameWithWin) {
+			PhotonNetwork.LoadLevel("GameOverSuccess");
+		} else {
+			PhotonNetwork.LoadLevel("GameOverFail");
 		}
 	}
 

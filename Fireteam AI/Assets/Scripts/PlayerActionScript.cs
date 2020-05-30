@@ -217,6 +217,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
          }
 
         HandleMissionEvents();
+        HandleAlertMessages();
 
         if (health > 0 && fpc.enabled && fpc.m_IsRunning)
         {
@@ -297,6 +298,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         if (!fpc.m_CharacterController.isGrounded) {
             UpdateVerticalVelocityBeforeLanding();
+        }
+    }
+
+    void HandleAlertMessages() {
+        if (gameController.alertMessage != null) {
+            hud.MessagePopup(gameController.alertMessage);
+            gameController.alertMessage = null;
         }
     }
 
@@ -405,11 +413,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 gameController.UpdateObjectives();
                 hud.ComBoxPopup(1f, "Democko", "Alright, let's get the hell out of here!");
             }
-        }
-
-        if (gameController.alertMessage != null) {
-            hud.MessagePopup(gameController.alertMessage);
-            gameController.alertMessage = null;
         }
     }
 
@@ -1170,7 +1173,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         int droppedOffBy = n.carriedByPlayerId;
         n.ToggleIsCarrying(false, -1);
         if (droppedOffBy == PhotonNetwork.LocalPlayer.ActorNumber) {
-            gameController.vipRef.transform.position = new Vector3(gameController.vipRef.transform.position.x, gameController.vipRef.transform.position.y, gameController.vipRef.transform.position.z + 1f);
+            Vector3 dest = viewCam.transform.position + (viewCam.transform.forward);
+            dest.y = gameObject.transform.position.y;
+            gameController.vipRef.transform.position = dest;
             objectCarrying = null;
         }
     }

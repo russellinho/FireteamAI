@@ -86,11 +86,11 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	void ToggleCollider(bool b) {
 		col.enabled = b;
 		if (b) {
-			rBody.isKinematic = true;
-			rBody.useGravity = false;
-		} else {
 			rBody.isKinematic = false;
 			rBody.useGravity = true;
+		} else {
+			rBody.isKinematic = true;
+			rBody.useGravity = false;
 		}
 	}
 
