@@ -11,6 +11,7 @@ public class FlareScript : MonoBehaviour {
 		
 	public void PopFlare() {
 		popped = true;
+		gameObject.layer = 0;
 		// TODO: Start flare particle effect here
 	}
 

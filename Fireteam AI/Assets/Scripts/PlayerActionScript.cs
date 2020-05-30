@@ -337,21 +337,22 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     hud.MessagePopup("Survive until evac arrives!");
                     hud.ComBoxPopup(3f, "Democko", "You guys have trouble inbound! My NAV scans show Cicadas closing in on you from all over the place!");
                     hud.ComBoxPopup(240f, "Democko", "Guys, avoid going outside! This is their territory and they know it well!");
-                    gameController.objectives.missionTimer2 = 720f;
+                    // gameController.objectives.missionTimer2 = 720f;
+                    gameController.objectives.missionTimer2 = 130f;
                 }
             } else {
-                gameController.objectives.missionTimer1 -= Time.deltaTime; // TODO: Need to sync this value periodically
+                gameController.objectives.missionTimer1 -= Time.deltaTime;
                 return;
             }
 
             // Halfway through waiting period, trigger a checkpoint to respawn/recover everyone
-            if (gameController.sectorsCleared == 0 && gameController.objectives.missionTimer2 <= 360f) {
-                gameController.sectorsCleared++;
-                hud.OnScreenEffect("SECTOR CLEARED!", false);
-                BeginRespawn();
-                hud.ComBoxPopup(1f, "Red Ruby", "There are Cicadas all over the damn place!");
-                hud.ComBoxPopup(4f, "Democko", "We’re about half way there; just hang in there!");
-            }
+            // if (gameController.sectorsCleared == 0 && gameController.objectives.missionTimer2 <= 360f) {
+            //     gameController.sectorsCleared++;
+            //     hud.OnScreenEffect("SECTOR CLEARED!", false);
+            //     BeginRespawn();
+            //     hud.ComBoxPopup(1f, "Red Ruby", "There are Cicadas all over the damn place!");
+            //     hud.ComBoxPopup(4f, "Democko", "We’re about half way there; just hang in there!");
+            // }
 
             // When two minutes left, have player go select evac point if one isn't chosen yet
             if (gameController.objectives.selectedEvacIndex == -2 && gameController.objectives.missionTimer2 <= 120f) {
@@ -360,6 +361,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     hud.ComBoxPopup(2f, "Democko", "The chopper’s about two minutes out! These landing zones aren’t clear; you guys need to go out there and mark one with a flare so we can know where to land!");
                     hud.MessagePopup("Designate a landing zone for the evac team!");
                     gameController.UpdateObjectives();
+                    foreach (GameObject o in gameController.items) {
+                        o.SetActive(true);
+                    }
                 }
             }
 
@@ -370,10 +374,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     gameController.objectives.selectedEvacIndex = -2;
                     gameController.objectives.missionTimer2 = 120f;
                     hud.ComBoxPopup(0f, "Democko", "You guys didn’t plant the flare down! We’re circling back around!");
+                    hud.MessagePopup("Designate a landing zone for the evac team!");
                     return;
                 } else {
                     // Land chopper in chosen evac spot and alert the team
-                    if (gameController.objectives.stepsLeftToCompletion == 1) {
+                    if (gameController.objectives.stepsLeftToCompletion == 1 && gameController.objectives.missionTimer3 <= 0f) {
                         // TODO: Add code for landing the chopper
                         hud.ComBoxPopup(2f, "Democko", "The chopper is here! There’s a lot of heat out here so we can’t stay long, so move quick!");
                         hud.MessagePopup("Escape available! Head to the waypoint with the pilot!");
@@ -385,14 +390,15 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 return;
             }
 
+            if (gameController.objectives.missionTimer3 > 0f) {
+                gameController.objectives.missionTimer3 -= Time.deltaTime;
+            }
+
             // Run another timer for everyone being able to escape
             if (gameController.objectives.missionTimer3 <= 0f) {
                 gameController.objectives.missionTimer2 = 90f;
                 hud.ComBoxPopup(1f, "Democko", "We had to wave off! We'll circle around and come back!");
                 hud.MessagePopup("Survive until evac returns!");
-            } else {
-                gameController.objectives.missionTimer3 -= Time.deltaTime;
-                return;
             }
 
             if (gameController.gameOver && gameController.objectives.stepsLeftToCompletion == 1) {
@@ -1139,7 +1145,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (f.flareId == index) {
                 f.PopFlare();
                 gameController.exitPoint = f.gameObject;
-                gameController.UpdateObjectives();
                 HandlePopFlareForMission(gameController.currentMap, i);
                 break;
             }
@@ -1174,6 +1179,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (mission == 2) {
             gameController.UpdateObjectives();
             gameController.objectives.selectedEvacIndex = i;
+            foreach (GameObject o in gameController.items) {
+                FlareScript s = o.GetComponent<FlareScript>();
+                if (s.flareId != i) {
+                    o.SetActive(false);
+                }
+            }
             hud.ComBoxPopup(1f, "Democko", "We see you! We’re incoming!");
         }
     }

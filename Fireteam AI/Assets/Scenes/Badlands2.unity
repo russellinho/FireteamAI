@@ -470,13 +470,13 @@ GameObject:
   - component: {fileID: 377785780}
   - component: {fileID: 377785779}
   - component: {fileID: 377785778}
-  m_Layer: 0
+  m_Layer: 18
   m_Name: EvacPoint3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &377785777
 Transform:
   m_ObjectHideFlags: 0
@@ -485,7 +485,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 377785776}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -368, y: 1.329834, z: 268}
+  m_LocalPosition: {x: -17, y: 1.329834, z: 98}
   m_LocalScale: {x: 5, y: 1, z: 5}
   m_Children: []
   m_Father: {fileID: 0}
@@ -887,13 +887,13 @@ GameObject:
   - component: {fileID: 834264618}
   - component: {fileID: 834264617}
   - component: {fileID: 834264616}
-  m_Layer: 0
+  m_Layer: 18
   m_Name: EvacPoint1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &834264615
 Transform:
   m_ObjectHideFlags: 0
@@ -902,7 +902,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 834264614}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 196, y: 1.329834, z: -304}
+  m_LocalPosition: {x: 93, y: 1.329834, z: -91}
   m_LocalScale: {x: 5, y: 1, z: 5}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1086,13 +1086,13 @@ GameObject:
   - component: {fileID: 1086810933}
   - component: {fileID: 1086810932}
   - component: {fileID: 1086810931}
-  m_Layer: 0
+  m_Layer: 18
   m_Name: EvacPoint2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1086810930
 Transform:
   m_ObjectHideFlags: 0
@@ -1101,7 +1101,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1086810929}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -368, y: 1.329834, z: -304}
+  m_LocalPosition: {x: -84, y: 1.329834, z: -82}
   m_LocalScale: {x: 5, y: 1, z: 5}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1617,7 +1617,7 @@ Transform:
   m_GameObject: {fileID: 1595255278}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1000, y: 1, z: 1000}
+  m_LocalScale: {x: 250, y: 1, z: 250}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 8

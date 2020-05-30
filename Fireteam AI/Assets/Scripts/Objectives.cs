@@ -28,12 +28,11 @@ public class Objectives {
 			objectivesText[1] = "Escape.";
         } else if (map == 2) {
 			selectedEvacIndex = -2;
-			stepsLeftToCompletion = 4;
-			objectivesText = new string[4];
-			objectivesText[0] = "Retrieve the pilot from the cockpit of the crashed helicopter.";
-			objectivesText[1] = "Secure a perimeter and defend yourselves until evac arrives.";
-			objectivesText[2] = "Designate a landing zone for evac.";
-			objectivesText[3] = "Escape with the pilot.";
+			stepsLeftToCompletion = 3;
+			objectivesText = new string[3];
+			objectivesText[0] = "Retrieve the pilot and secure a perimeter and defend yourselves until evac arrives.";
+			objectivesText[1] = "Designate a landing zone for evac.";
+			objectivesText[2] = "Escape with the pilot.";
 			// Set the time before Cicadas start arriving - 1 min and 30 secs
 			missionTimer1 = 90f;
 		}
@@ -61,14 +60,12 @@ public class Objectives {
 				RemoveObjective(1);
 			}
 		} else if (map == 2) {
-			if (stepsLeftToCompletion == 3) {
+			if (stepsLeftToCompletion == 2) {
 				RemoveObjective(0);
-			} else if (stepsLeftToCompletion == 2) {
-				RemoveObjective(1);
 			} else if (stepsLeftToCompletion == 1) {
-				RemoveObjective(2);
+				RemoveObjective(1);
 			} else if (stepsLeftToCompletion == 0) {
-				RemoveObjective(3);
+				RemoveObjective(2);
 			}
 		}
 
@@ -87,6 +84,10 @@ public class Objectives {
 	}
 
 	public void RemoveObjective(int index) {
-		objectivesText [index] += '\u0336';
+		string temp = "";
+		for (int i = 0; i < objectivesText [index].Length; i++) {
+			temp = temp + objectivesText[index][i] + '\u0336';
+		}
+		objectivesText [index] = temp;
 	}
 }

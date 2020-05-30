@@ -420,7 +420,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				return true;
 			}
 		} else if (currentMap == 2) {
-			if (deadCount + objectives.escaperCount == PhotonNetwork.CurrentRoom.PlayerCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 3f) {
+			if (deadCount + objectives.escaperCount == PhotonNetwork.CurrentRoom.PlayerCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 6f) {
 				return true;
 			}
 		}
@@ -440,11 +440,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			}
 		} else if (currentMap == 2) {
 			if (teamMap == "R") {
-				if (deadCount + objectives.escaperCount == redTeamPlayerCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 3f) {
+				if (deadCount + objectives.escaperCount == redTeamPlayerCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 6f) {
 					return true;
 				}
 			} else if (teamMap == "B") {
-				if (deadCount + objectives.escaperCount == blueTeamPlayerCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 3f) {
+				if (deadCount + objectives.escaperCount == blueTeamPlayerCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 6f) {
 					return true;
 				}
 			}

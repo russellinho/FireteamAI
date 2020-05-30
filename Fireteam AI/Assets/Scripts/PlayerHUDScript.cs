@@ -353,7 +353,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		} else if (gameController.currentMap == 2) {
 			if (gameController.objectives.stepsLeftToCompletion <= 4) {
 				// Render marker over pilot
-				Vector3 a = new Vector3(gameController.vipRef.transform.position.x, gameController.vipRef.transform.position.y + 5f, gameController.vipRef.transform.position.z);
+				Vector3 a = new Vector3(gameController.vipRef.transform.position.x, gameController.vipRef.transform.position.y + 3f, gameController.vipRef.transform.position.z);
 				if (playerActionScript.viewCam.enabled) {
 					float renderCheck = Vector3.Dot((a - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
 					if (renderCheck > 0) {
@@ -368,7 +368,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			}
 			if (gameController.objectives.stepsLeftToCompletion == 3) {
 				// Render marker over town
-				Vector3 a = new Vector3(gameController.checkpointRef.transform.position.x, gameController.checkpointRef.transform.position.y + 5f, gameController.checkpointRef.transform.position.z);
+				Vector3 a = new Vector3(gameController.checkpointRef.transform.position.x, gameController.checkpointRef.transform.position.y + 8f, gameController.checkpointRef.transform.position.z);
 				if (playerActionScript.viewCam.enabled) {
 					float renderCheck = Vector3.Dot((a - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
 					if (renderCheck > 0) {
@@ -382,9 +382,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				}
 			} else if (gameController.objectives.stepsLeftToCompletion == 2) {
 				// Render over all possible evac spots
-				for (int i = 0; i < 3; i++) {
-					GameObject w = gameController.items[i];
-					Vector3 a = new Vector3(w.transform.position.x, w.transform.position.y + 5f, w.transform.position.z);
+				((GameObject)missionWaypoints [1]).GetComponent<RawImage> ().enabled = false;
+				for (int i = 2; i < 5; i++) {
+					GameObject w = gameController.items[i - 2];
+					Vector3 a = new Vector3(w.transform.position.x, w.transform.position.y + 3f, w.transform.position.z);
 					if (playerActionScript.viewCam.enabled) {
 						float renderCheck = Vector3.Dot((a - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
 						if (renderCheck > 0) {
@@ -399,24 +400,25 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				}
 			} else if (gameController.objectives.stepsLeftToCompletion == 1) {
 				// Render marker over selected evac spot
-				for (int i = 0; i < 3; i++) {
-					if (i != gameController.objectives.selectedEvacIndex) {
+				((GameObject)missionWaypoints [1]).GetComponent<RawImage> ().enabled = false;
+				for (int i = 2; i < 5; i++) {
+					if ((i - 2) != gameController.objectives.selectedEvacIndex) {
 						((GameObject)missionWaypoints [i]).GetComponent<RawImage> ().enabled = false;
 					} else {
-						if (gameController.exitPoint == null || gameController.objectives.missionTimer3 > 0f) {
-							((GameObject)missionWaypoints [gameController.objectives.selectedEvacIndex]).GetComponent<RawImage> ().enabled = false;
-							continue;
-						}
-						Vector3 a = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 5f, gameController.exitPoint.transform.position.z);
+						// if (gameController.exitPoint == null || gameController.objectives.missionTimer3 > 0f) {
+						// 	((GameObject)missionWaypoints [gameController.objectives.selectedEvacIndex]).GetComponent<RawImage> ().enabled = false;
+						// 	continue;
+						// }
+						Vector3 a = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 3f, gameController.exitPoint.transform.position.z);
 						if (playerActionScript.viewCam.enabled) {
 							float renderCheck = Vector3.Dot((a - playerActionScript.viewCam.transform.position).normalized, playerActionScript.viewCam.transform.forward);
 							if (renderCheck > 0) {
-								HandleWaypointRender(gameController.objectives.selectedEvacIndex, false, a);
+								HandleWaypointRender(i, false, a);
 							}
 						} else if (playerActionScript.thisSpectatorCam != null) {
 							float renderCheck = Vector3.Dot((a - playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.position).normalized, playerActionScript.thisSpectatorCam.GetComponent<Camera>().transform.forward);
 							if (renderCheck > 0) {
-								HandleWaypointRender(gameController.objectives.selectedEvacIndex, true, a);
+								HandleWaypointRender(i, true, a);
 							}
 						}
 					}
