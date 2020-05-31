@@ -131,6 +131,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	private float originalColliderHeight = 0f;
 	private float originalColliderRadius = 0f;
 	private Vector3 originalColliderCenter;
+	// public Transform pNav;
 
     // Testing mode - set in inspector
     //public bool testingMode;
@@ -2389,5 +2390,13 @@ public class BetaEnemyScript : MonoBehaviour {
 		DespawnAction ();
 		
 	}
+
+	// public void EditorAssignNavPts() {
+	// 	Transform[] navChilds = pNav.GetComponentsInChildren<Transform>();
+
+	// 	for (int i = 1; i < navChilds.Length; i++) {
+	// 		navPoints[i - 1] = navChilds[i].gameObject;
+	// 	}
+	// }
 
 }

@@ -14,5 +14,9 @@ public class AIEditor : Editor
         {
             myScript.EditorKillAi();
         }
+        // if(GUILayout.Button("Assign all nav points"))
+        // {
+        //     myScript.EditorAssignNavPts();
+        // }
     }
 }
