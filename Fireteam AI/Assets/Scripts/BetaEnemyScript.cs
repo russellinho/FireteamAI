@@ -711,8 +711,14 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Handle movement for wandering
 		if (actionState == ActionStates.Wander) {
 			if (isMaster) {
-				if (navMesh.speed != 1.5f) {
-					pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 1.5f, gameControllerScript.teamMap);
+				if (alertStatus == AlertStatus.Alert) {
+					if (navMesh.speed != 4.5f) {
+						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 4.5f, gameControllerScript.teamMap);
+					}
+				} else {
+					if (navMesh.speed != 1.5f) {
+						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 1.5f, gameControllerScript.teamMap);
+					}
 				}
 				// Only server should be updating the delays and they should sync across the network
 				// Initial spawn value
@@ -731,7 +737,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					}
 				}
 				// If the stall delay is done, the enemy needs to move to a wander point
-				if (wanderStallDelay < 0f && navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
+				if (wanderStallDelay <= 0f && navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
 					int r = Random.Range (0, navPoints.Length);
 					RotateTowards (navPoints [r].transform.position);
 					pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, navPoints [r].transform.position.x, navPoints [r].transform.position.y, navPoints [r].transform.position.z, gameControllerScript.teamMap);
@@ -1419,8 +1425,14 @@ public class BetaEnemyScript : MonoBehaviour {
 							}
 						}
 					} else {
-						if (actionState != ActionStates.Seeking) {
-							pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Seeking, gameControllerScript.teamMap);
+						if (GameControllerScript.lastGunshotHeardPos != Vector3.negativeInfinity) {
+							if (actionState != ActionStates.Seeking) {
+								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Seeking, gameControllerScript.teamMap);
+							}
+						} else {
+							if (actionState != ActionStates.Wander) {
+								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander, gameControllerScript.teamMap);
+							}
 						}
 					}
 				}
