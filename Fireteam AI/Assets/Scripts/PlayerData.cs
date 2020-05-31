@@ -162,14 +162,14 @@ public class PlayerData : MonoBehaviour
     public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
     {
         string levelName = SceneManager.GetActiveScene().name;
-        if (levelName.Equals("BetaLevelNetwork") || levelName.Equals("BetaLevelNetworkRed") || levelName.Equals("BetaLevelNetworkBlue"))
+        if (levelName.Equals("Badlands1") || levelName.Equals("Badlands1_Red") || levelName.Equals("Badlands1_Blue"))
         {
             string characterPrefabName = GetCharacterPrefabName();
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
                 characterPrefabName,
                 Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
                 Quaternion.Euler(Vector3.zero));
-        } else if (levelName.Equals("Badlands2") || levelName.Equals("Badlands2Red") || levelName.Equals("Badlands2Blue")) {
+        } else if (levelName.Equals("Badlands2") || levelName.Equals("Badlands2_Red") || levelName.Equals("Badlands2_Blue")) {
             string characterPrefabName = GetCharacterPrefabName();
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
                 characterPrefabName,

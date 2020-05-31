@@ -17,7 +17,7 @@ public class AIControllerScript : MonoBehaviour
     private int spreadConstant;
     public int[] maxGroupSizePerSpawn;
     public GameControllerScript gameController;
-    Transform[] spawnPoints;
+    public Transform[] spawnPoints;
     // Indices align with each other on each array (ex: spawnPoint at index 0 has the priority of spawnPriorities at index 0)
     // The lower the number, the more preferred of a spawn place this is 
     private Queue aiReadyToRespawn;

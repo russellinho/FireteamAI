@@ -43,6 +43,11 @@ public class JukeboxScript : MonoBehaviour
             }
         } else {
             if (currentMode != MusicMode.InGame) {
+                if (levelName.EndsWith("_Red")) {
+                    levelName = levelName.Substring(0, levelName.Length - 4);
+                } else if (levelName.EndsWith("_Blue")) {
+                    levelName = levelName.Substring(0, levelName.Length - 5);
+                }
                 StartInGameMusic(levelName);
             }
         }

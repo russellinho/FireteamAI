@@ -470,11 +470,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcDisablePlayerForVersus(string myTeam) {
         int isRedMap = 0;
-        if (SceneManager.GetActiveScene().name.EndsWith("Red"))
+        if (SceneManager.GetActiveScene().name.EndsWith("_Red"))
         {
             isRedMap = 1;
         }
-        else if (SceneManager.GetActiveScene().name.EndsWith("Blue"))
+        else if (SceneManager.GetActiveScene().name.EndsWith("_Blue"))
         {
             isRedMap = -1;
         }

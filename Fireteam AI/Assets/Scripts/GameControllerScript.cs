@@ -76,13 +76,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		coverSpots = new Dictionary<short, GameObject>();
         myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
         opposingTeam = (myTeam == "red" ? "blue" : "red");
-        if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp")
-        {
-            matchType = 'C';
-        } else if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus")
-        {
-            matchType = 'V';
-        }
         objectiveCount = 0;
         objectiveCompleted = 0;
         forfeitDelay = FORFEIT_CHECK_DELAY;
@@ -904,7 +897,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// View the Leveling system documentation on drive to determine how these thresholds were determined
 	char GetCompletionGradeForMapCampaign(string map) {
-		if (map == "BetaLevelNetwork") {
+		if (map == "Badlands1") {
 			if (deadCount == playerList.Count || CheckOutOfTime()) {
 				return 'F';
 			} else {
@@ -935,7 +928,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	char GetCompletionGradeForMapVersus(string map) {
-		if (map == "BetaLevelNetworkRed" || map == "BetaLevelNetworkBlue") {
+		if (map == "Badlands1_Red" || map == "Badlands1_Blue") {
 			if (CheckOutOfTime() || (teamMap == "R" && deadCount == redTeamPlayerCount) || (teamMap == "B" && deadCount == blueTeamPlayerCount)) {
 				return 'F';
 			} else {
@@ -948,7 +941,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				}
 			}
 			return 'D';
-		} else if (map == "Badlands2Red" || map == "Badlands2Blue") {
+		} else if (map == "Badlands2_Red" || map == "Badlands2_Blue") {
 			if (deadCount == playerList.Count || CheckOutOfTime()) {
 				return 'F';
 			} else {

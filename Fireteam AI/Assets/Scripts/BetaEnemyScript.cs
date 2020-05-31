@@ -67,6 +67,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	public GameObject gameController;
 	public GameControllerScript gameControllerScript;
 	private bool isOutlined;
+	public float initialSpawnTime;
 
 	// Finite state machine states
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Disoriented};
@@ -208,6 +209,10 @@ public class BetaEnemyScript : MonoBehaviour {
 			wasMasterClient = true;
 		}
 
+		if (gameControllerScript.spawnMode == SpawnMode.Paused) {
+			StartCoroutine (Respawn(initialSpawnTime));
+		}
+
 	}
 
     void StartForVersus()
@@ -281,6 +286,10 @@ public class BetaEnemyScript : MonoBehaviour {
         {
             wasMasterClient = true;
         }
+
+		if (gameControllerScript.spawnMode == SpawnMode.Paused) {
+			StartCoroutine (Respawn(initialSpawnTime));
+		}
     }
 
     void Update()
@@ -1020,7 +1029,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 			pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead, gameControllerScript.teamMap);
 
-			pView.RPC ("StartDespawn", RpcTarget.All, gameControllerScript.teamMap);
+			float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
+			pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
 			return;
 		}
 
@@ -1312,9 +1322,9 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	[PunRPC]
-	void StartDespawn(string team) {
+	void StartDespawn(float respawnTime, string team) {
         if (team != gameControllerScript.teamMap) return;
-        StartCoroutine(Despawn());
+        StartCoroutine(Despawn(respawnTime));
 	}
 
 	// Decision tree for patrol type enemy
@@ -1347,7 +1357,8 @@ public class BetaEnemyScript : MonoBehaviour {
 			pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
 			pView.RPC ("RpcUpdateActionState", RpcTarget.All, ActionStates.Dead, gameControllerScript.teamMap);
 
-			pView.RPC ("StartDespawn", RpcTarget.All, gameControllerScript.teamMap);
+			float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
+			pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
 			return;
 		}
 
@@ -1775,14 +1786,15 @@ public class BetaEnemyScript : MonoBehaviour {
 		transform.rotation = Quaternion.Euler(tempRot);
 	}
 
-	IEnumerator Despawn() {
+	IEnumerator Despawn(float respawnTime) {
+		if (actionState != ActionStates.Dead) yield return null;
 		gameObject.layer = 12;
 		headCollider.gameObject.layer = 15;
 		RemoveHitboxes ();
 		yield return new WaitForSeconds(5f);
 		DespawnAction ();
 		if (!sniper) {
-			StartCoroutine ("Respawn");
+			StartCoroutine (Respawn(respawnTime));
 		}
 	}
 
@@ -2117,12 +2129,13 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	// Reset values to respawn
-	IEnumerator Respawn() {
-		yield return new WaitForSeconds (Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs));
+	IEnumerator Respawn(float respawnTime) {
+		if (actionState != ActionStates.Dead) yield return null;
+		yield return new WaitForSeconds (respawnTime);
 		if (gameControllerScript.assaultMode && gameControllerScript.spawnMode != SpawnMode.Paused) {
 			RespawnAction ();
 		} else {
-			StartCoroutine ("Respawn");
+			StartCoroutine (Respawn(respawnTime));
 		}
 	}
 
@@ -2352,5 +2365,29 @@ public class BetaEnemyScript : MonoBehaviour {
         pView.RPC("RpcSyncSuspicionValues", RpcTarget.Others, gameControllerScript.teamMap, suspicionMeter, increaseSuspicionDelay, suspicionCoolDownDelay);
         syncSuspicionValuesSemiphore = false;
     }
+
+	public void EditorKillAi() {
+		if (playerTargeting != null) {
+			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript>();
+			if (a != null) {
+				playerTargeting.GetComponent<PlayerActionScript>().ClearEnemySeenBy();
+			}
+			playerTargeting = null;
+		}
+
+		suspicionMeter = 0f;
+        increaseSuspicionDelay = 0f;
+        suspicionCoolDownDelay = 0f;
+		alertStatus = AlertStatus.Neutral;
+		actionState = ActionStates.Dead;
+
+		// TODO: Start this at the beginning
+		gameObject.layer = 12;
+		headCollider.gameObject.layer = 15;
+
+		RemoveHitboxes ();
+		DespawnAction ();
+		
+	}
 
 }

@@ -5755,23 +5755,22 @@ MonoBehaviour:
     type: 3}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 3}
-  audioSource: {fileID: 0}
-  gunAudio: {fileID: 0}
-  pView: {fileID: 0}
+  audioSource: {fileID: 393207969202640462}
+  gunAudio: {fileID: 8448835359217829014}
+  pView: {fileID: 2359349457904820835}
   headTransform: {fileID: 7271996880874543261}
   shootPoint: {fileID: 3940422534523389917}
   sniperTracer: {fileID: 120618447016034370, guid: d2f76ff8a9655024c83a8ede7a1b4bcf,
     type: 3}
-  animator: {fileID: 0}
-  rigid: {fileID: 0}
-  marker: {fileID: 0}
+  animator: {fileID: 7271996880883578743}
+  rigid: {fileID: 4053756235761332788}
+  marker: {fileID: 3710210029094699484}
   modeler: {fileID: 6796253373759659883}
   navMesh: {fileID: 828927375671589308}
   navMeshObstacle: {fileID: 6669402545296423026}
-  myCollider: {fileID: 0}
-  headCollider: {fileID: 0}
-  gunRef: {fileID: 0}
-  meleeTrigger: {fileID: 0}
+  myCollider: {fileID: 7614824049741425382}
+  headCollider: {fileID: 1402898682601551811}
+  gunRef: {fileID: 4459157404024924376}
   enemyType: 0
   actionState: 0
   aggression: 5
@@ -5780,11 +5779,10 @@ MonoBehaviour:
   health: 0
   deathBy: 0
   disorientationTime: 0
-  alerted: 0
+  alertStatus: 0
   gameController: {fileID: 0}
   gameControllerScript: {fileID: 0}
-  alertStatus: 0
-  alertDisplay: 0
+  initialSpawnTime: 0
   range: 27
   bulletsPerMag: 30
   currentBullets: 0
@@ -5802,9 +5800,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   suspicionMeter: 0
-  explosionIgnoreMask:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!195 &828927375671589308
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -5847,7 +5842,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 8608421893283418589}
   viewIdField: 0
-  InstantiationId: 1
+  InstantiationId: 34
   isRuntimeInstantiated: 0
 --- !u!114 &8608421893283418589
 MonoBehaviour:

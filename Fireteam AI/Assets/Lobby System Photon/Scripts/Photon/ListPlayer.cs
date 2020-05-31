@@ -228,7 +228,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		void StartGame(string level) {
 			// Photon switch scene from lobby to loading screen to actual game. automaticallySyncScene should load map on clients.
 			if (level.Equals ("Badlands: Act I")) {
-				PhotonNetwork.LoadLevel ("BetaLevelNetwork");
+				PhotonNetwork.LoadLevel ("Badlands1");
 			} else if (level.Equals("Badlands: Act II")) {
 				PhotonNetwork.LoadLevel ("Badlands2");
 			} else {
@@ -238,7 +238,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
         void StartVersusGame(string level) {
             if (level.Equals ("Badlands: Act I")) {
-                pView.RPC("RpcStartVersusGame", RpcTarget.All, "BetaLevelNetwork");
+                pView.RPC("RpcStartVersusGame", RpcTarget.All, "Badlands1");
 			} else if (level.Equals ("Badlands: Act II")) {
 				pView.RPC("RpcStartVersusGame", RpcTarget.All, "Badlands2");
 			} else {
@@ -249,7 +249,7 @@ namespace Photon.Pun.LobbySystemPhoton
         [PunRPC]
         void RpcStartVersusGame(string level) {
 			LoadingScreen();
-            string myTeam = (myPlayerListEntry.GetComponent<PlayerEntryScript>().team == 'R' ? "Red" : "Blue");
+            string myTeam = (myPlayerListEntry.GetComponent<PlayerEntryScript>().team == 'R' ? "_Red" : "_Blue");
             PhotonNetwork.LoadLevel (level + myTeam);
         }
 
