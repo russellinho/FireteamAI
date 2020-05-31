@@ -32,7 +32,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private Dictionary<int, GameObject> deployableList = new Dictionary<int, GameObject>();
 
     // Mission variables
-	public enum SpawnMode {Paused, Random, Routine};
+	public AIControllerScript aIController;
+	public enum SpawnMode {Paused, Fixed, Routine};
 	public SpawnMode spawnMode;
 	public Objectives objectives;
 	public bool updateObjectivesFlag;
@@ -142,7 +143,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		} else if (matchType == 'V') {
 			GameOverCheckForVersus();
 		}
-		HandleSpawnRoutines();
 	}
 
 	void GameOverCheckForCampaign() {
@@ -836,6 +836,24 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		return deployableList[deployableId];
 	}
 
+	public void MarkAIReadyForRespawn(int pViewId) {
+		pView.RPC("RpcMarkAIReadyForRespawn", RpcTarget.All, pViewId);
+	}
+
+	public void ClearAIRespawns() {
+		pView.RPC("RpcClearAIRespawns", RpcTarget.All);
+	}
+
+	[PunRPC]
+	void RpcMarkAIReadyForRespawn(int pViewId) {
+		aIController.AddToRespawnQueue(pViewId);
+	}
+
+	[PunRPC]
+	void RpcClearAIRespawns() {
+		aIController.ClearRespawnQueue();
+	}
+
 	public void SetEnemyTeamNearingVictoryMessage() {
 		enemyTeamNearingVictoryTrigger = true;
 		alertMessage = "Enemy team is nearing victory!";
@@ -972,14 +990,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void RpcSetMyExpAndGpGained(int actorId, int expGained, int gpGained) {
 		playerList[actorId].expGained = (uint)expGained;
 		playerList[actorId].gpGained = (uint)gpGained;
-	}
-
-	void HandleSpawnRoutines() {
-		if (spawnMode == SpawnMode.Routine) {
-			if (currentMap == 2) {
-
-			}
-		}
 	}
 
 }

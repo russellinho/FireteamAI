@@ -7,6 +7,7 @@ using Photon.Realtime;
 using UnityEngine.AI;
 using UnityStandardAssets.Characters.FirstPerson;
 using Random = UnityEngine.Random;
+using SpawnMode = GameControllerScript.SpawnMode;
 
 public class BetaEnemyScript : MonoBehaviour {
 
@@ -59,7 +60,6 @@ public class BetaEnemyScript : MonoBehaviour {
 	public int deathBy;
 	public float disorientationTime;
 	private Vector3 spawnPos;
-	private Vector3 spawnRot;
 	// The alert state for the enemy. None = enemy is neutral; Suspicious = enemy is suspicious (?); alert = enemy is alerted (!)
 	public enum AlertStatus {Neutral, Suspicious, Alert};
 	public AlertStatus alertStatus;
@@ -155,7 +155,6 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		playerTargeting = null;
 		spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-		spawnRot = new Vector3 (transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
 		health = 100;
 		disorientationTime = 0f;
 		currentBullets = bulletsPerMag;
@@ -221,7 +220,6 @@ public class BetaEnemyScript : MonoBehaviour {
 
         playerTargeting = null;
         spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        spawnRot = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
         health = 100;
         disorientationTime = 0f;
         currentBullets = bulletsPerMag;
@@ -2120,8 +2118,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	// Reset values to respawn
 	IEnumerator Respawn() {
-		yield return new WaitForSeconds (100f);
-		if (gameControllerScript.assaultMode) {
+		yield return new WaitForSeconds (Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs));
+		if (gameControllerScript.assaultMode && gameControllerScript.spawnMode != SpawnMode.Paused) {
 			RespawnAction ();
 		} else {
 			StartCoroutine ("Respawn");
@@ -2129,14 +2127,22 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	void RespawnAction () {
+		if (gameControllerScript.spawnMode == SpawnMode.Routine) {
+			gameControllerScript.MarkAIReadyForRespawn(pView.ViewID);
+		} else if (gameControllerScript.spawnMode == SpawnMode.Fixed) {
+			RespawnAtPosition(spawnPos);
+		}
+	}
+
+	public void RespawnAtPosition(Vector3 pos) {
 		myCollider.height = originalColliderHeight;
 		myCollider.center = new Vector3 (originalColliderCenter.x, originalColliderCenter.y, originalColliderCenter.z);
 		myCollider.enabled = true;
 		gameObject.layer = 14;
 		headCollider.gameObject.layer = 13;
 		health = 100;
-		transform.position = new Vector3 (spawnPos.x, spawnPos.y, spawnPos.z);
-		transform.rotation = Quaternion.Euler (spawnRot.x, spawnRot.y, spawnRot.z);
+		transform.position = pos;
+		transform.rotation = Quaternion.identity;
 		coverWaitTimer = Random.Range (2f, 7f);
 		coverSwitchPositionsTimer = Random.Range (6f, 10f);
 		playerTargeting = null;

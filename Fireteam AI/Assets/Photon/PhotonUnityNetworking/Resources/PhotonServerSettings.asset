@@ -162,4 +162,6 @@ MonoBehaviour:
   - RpcUpdateObjectives
   - RpcPlayGruntSound
   - RpcCarryNpc
+  - RpcClearAIRespawns
+  - RpcMarkAIReadyForRespawn
   DisableAutoOpenWizard: 1
