@@ -48,6 +48,7 @@ public class WeaponHandlerScript : MonoBehaviour
                 weapon.localScale = wepStats.fpcScaleFemale;
             }
         } else {
+            Debug.Log(fpc.gameObject.name);
             if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
                 // Set the weapon position for males, get from stats
                 weapon.localPosition = wepStats.fullPosMale;

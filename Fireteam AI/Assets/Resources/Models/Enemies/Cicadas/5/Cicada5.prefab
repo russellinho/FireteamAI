@@ -6974,7 +6974,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 3005426380081173462}
   viewIdField: 0
-  InstantiationId: 4
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &3005426380081173462
 MonoBehaviour:
@@ -7043,6 +7043,7 @@ MonoBehaviour:
   myBones: {fileID: 7526729005399895676}
   pView: {fileID: 1797082000122076369}
   detectionOutline: {fileID: 2100000, guid: 86c473c32ea30644e8494426949a59cb, type: 2}
+  enemyScript: {fileID: 8259100197312525872}
 --- !u!1 &7526729005399895672
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using SpawnMode = GameControllerScript.SpawnMode;
+using ActionStates = BetaEnemyScript.ActionStates;
 
 public class EnemyModelCreator : MonoBehaviourPunCallbacks
 {
@@ -44,6 +46,7 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     public Material detectionOutline;
     private bool modelCreated;
     private static bool createModelSemaphore;
+    public BetaEnemyScript enemyScript;
 
     public override void OnEnable() {
         if (PhotonNetwork.IsMasterClient) {
@@ -51,6 +54,9 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
             modelCreated = true;
         } else {
             modelCreated = false;
+        }
+        if (enemyScript.gameControllerScript.spawnMode == SpawnMode.Paused && enemyScript.actionState == ActionStates.Dead) {
+            DespawnPlayer();
         }
     }
 

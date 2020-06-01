@@ -211,10 +211,6 @@ public class BetaEnemyScript : MonoBehaviour {
 			StartCoroutine (Respawn(initialSpawnTime));
 		}
 
-		if (actionState == ActionStates.Dead) {
-			modeler.DespawnPlayer();
-		}
-
 	}
 
     void StartForVersus()
@@ -290,9 +286,6 @@ public class BetaEnemyScript : MonoBehaviour {
 			StartCoroutine (Respawn(initialSpawnTime));
 		}
 
-		if (actionState == ActionStates.Dead) {
-			modeler.DespawnPlayer();
-		}
     }
 
     void Update()
