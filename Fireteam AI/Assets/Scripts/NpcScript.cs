@@ -10,6 +10,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	public GameControllerScript gameController;
 	public PhotonView pView;
 	public int health;
+	public bool godMode;
 	public int carriedByPlayerId;
 	public bool isCarrying;
 	// If true, the player can sprint, crouch, jump, walk while carrying
@@ -62,6 +63,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void TakeDamage(int d) {
+		if (godMode) return;
 		pView.RPC ("RpcTakeDamage", RpcTarget.All, d, gameController.teamMap);
 	}
 

@@ -6926,7 +6926,12 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  coverSwitchPositionsTimer: 0
   suspicionMeter: 0
+  wanderStallDelay: -1
+  originalColliderHeight: 1.47
+  originalColliderRadius: 0.22
+  originalColliderCenter: {x: 0, y: 0.73, z: 0}
 --- !u!195 &7952819226061588541
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -6969,7 +6974,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 3005426380081173462}
   viewIdField: 0
-  InstantiationId: 34
+  InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &3005426380081173462
 MonoBehaviour:

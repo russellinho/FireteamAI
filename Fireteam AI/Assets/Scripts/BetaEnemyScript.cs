@@ -105,7 +105,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	// Time to wait to be in cover again
 	private float coverWaitTimer = 0f;
 	// Time to wait to maneuver to another cover position
-	private float coverSwitchPositionsTimer = 0f;
+	public float coverSwitchPositionsTimer = 0f;
 	// Time to change firing positions
 	private float firingModeTimer = 0f;
 	private float detectionOutlineTimer = 0f;
@@ -118,7 +118,7 @@ public class BetaEnemyScript : MonoBehaviour {
     private float alertTeamAfterAlertedTimer = 6f;
 	private bool syncSuspicionValuesSemiphore = false;
 
-	private float wanderStallDelay = -1f;
+	public float wanderStallDelay = -1f;
 	private bool inCover;
 	private Transform coverPos;
 	// Crouching status of the enemy. Tells the enemy what to do in regard to crouching. 
@@ -128,9 +128,9 @@ public class BetaEnemyScript : MonoBehaviour {
 	private float coverScanRange = 22f;
 
 	// Collision
-	private float originalColliderHeight = 0f;
-	private float originalColliderRadius = 0f;
-	private Vector3 originalColliderCenter;
+	public float originalColliderHeight;
+	public float originalColliderRadius;
+	public Vector3 originalColliderCenter;
 	// public Transform pNav;
 
     // Testing mode - set in inspector
@@ -168,28 +168,25 @@ public class BetaEnemyScript : MonoBehaviour {
 		coverTimer = 0f;
 		inCover = false;
 
-		originalColliderHeight = myCollider.height;
-		originalColliderRadius = myCollider.radius;
-		originalColliderCenter = new Vector3 (myCollider.center.x, myCollider.center.y, myCollider.center.z);
 		gameControllerScript.enemyList.Add(pView.ViewID, gameObject);
 
 		if (enemyType == EnemyType.Patrol) {
 			range = 20f;
-			accuracyOffset = 1f;
+			accuracyOffset = 1.05f;
 			fireRate = 0.4f;
 			damage = 20f;
 			gunAudio.minDistance = 9f;
-			aggression = 7;
+			aggression = 14;
 		} else {
 			if (sniper) {
 				range = 35f;
-				accuracyOffset = 1.5f;
+				accuracyOffset = 1.25f;
 				fireRate = 20f;
 				damage = 35f;
 				gunAudio.minDistance = 18f;
 			} else {
 				range = 27f;
-				accuracyOffset = 1f;
+				accuracyOffset = 1.05f;
 				fireRate = 0.4f;
 				damage = 20f;
 				gunAudio.minDistance = 9f;
@@ -212,6 +209,10 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		if (gameControllerScript.spawnMode == SpawnMode.Paused) {
 			StartCoroutine (Respawn(initialSpawnTime));
+		}
+
+		if (actionState == ActionStates.Dead) {
+			modeler.DespawnPlayer();
 		}
 
 	}
@@ -237,26 +238,23 @@ public class BetaEnemyScript : MonoBehaviour {
         coverTimer = 0f;
         inCover = false;
 
-        originalColliderHeight = myCollider.height;
-        originalColliderRadius = myCollider.radius;
-        originalColliderCenter = new Vector3(myCollider.center.x, myCollider.center.y, myCollider.center.z);
         gameControllerScript.enemyList.Add(pView.ViewID, gameObject);
 
         if (enemyType == EnemyType.Patrol)
         {
             range = 20f;
-            accuracyOffset = 1f;
+            accuracyOffset = 1.05f;
             fireRate = 0.4f;
             damage = 20f;
             gunAudio.minDistance = 9f;
-            aggression = 7;
+            aggression = 14;
         }
         else
         {
             if (sniper)
             {
                 range = 35f;
-                accuracyOffset = 1.5f;
+                accuracyOffset = 1.25f;
                 fireRate = 20f;
                 damage = 35f;
                 gunAudio.minDistance = 18f;
@@ -264,7 +262,7 @@ public class BetaEnemyScript : MonoBehaviour {
             else
             {
                 range = 27f;
-                accuracyOffset = 1f;
+                accuracyOffset = 1.05f;
                 fireRate = 0.4f;
                 damage = 20f;
                 gunAudio.minDistance = 9f;
@@ -291,6 +289,10 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (gameControllerScript.spawnMode == SpawnMode.Paused) {
 			StartCoroutine (Respawn(initialSpawnTime));
 		}
+
+		if (actionState == ActionStates.Dead) {
+			modeler.DespawnPlayer();
+		}
     }
 
     void Update()
@@ -302,6 +304,7 @@ public class BetaEnemyScript : MonoBehaviour {
         {
             UpdateForVersus();
         }
+		// PrintNavMeshAgentStats();
     }
 
     // Update is called once per frame
@@ -594,7 +597,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			} else {
 				myCollider.height = originalColliderHeight;
 				myCollider.radius = originalColliderRadius;
-				myCollider.center = new Vector3 (originalColliderCenter.x, originalColliderCenter.y, originalColliderCenter.z);
+				myCollider.center = originalColliderCenter;
 			}
 		}
 	}
@@ -761,12 +764,11 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		if (actionState == ActionStates.Pursue && !lastSeenPlayerPos.Equals(Vector3.negativeInfinity)) {
-			if (navMesh.speed != 6f) {
+			if (!Vector3.Equals(navMesh.destination, lastSeenPlayerPos)) {
 				pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 6f, gameControllerScript.teamMap);
 				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z, gameControllerScript.teamMap);
 				pView.RPC ("RpcSetLastSeenPlayerPos", RpcTarget.All, false, 0f, 0f, 0f, gameControllerScript.teamMap);
 			}
-			return;
 		}
 
 		if (actionState == ActionStates.Seeking) {
@@ -774,7 +776,9 @@ public class BetaEnemyScript : MonoBehaviour {
 			// and there's nobody there, go back to wandering the area
 
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
-				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, GameControllerScript.lastGunshotHeardPos.x, GameControllerScript.lastGunshotHeardPos.y, GameControllerScript.lastGunshotHeardPos.z, gameControllerScript.teamMap);
+				if (!Vector3.Equals(navMesh.destination, GameControllerScript.lastGunshotHeardPos)) {
+					pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, GameControllerScript.lastGunshotHeardPos.x, GameControllerScript.lastGunshotHeardPos.y, GameControllerScript.lastGunshotHeardPos.z, gameControllerScript.teamMap);
+				}
 				if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint")) {
 					if (navMesh.speed != 6f) {
 						pView.RPC ("RpcUpdateNavMeshSpeed", RpcTarget.All, 6f, gameControllerScript.teamMap);
@@ -913,13 +917,12 @@ public class BetaEnemyScript : MonoBehaviour {
 	// Action Decision while in combat
 	void DecideActionPatrolInCombat() {
 		if (actionState == ActionStates.InCover || actionState == ActionStates.Firing) {
-			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
-				coverWaitTimer -= Time.deltaTime;
-                //pView.RPC ("RpcSetCoverWaitTimer", 	RpcTarget.Others, coverWaitTimer, gameControllerScript.teamMap);
-            }
-
             // Three modes in cover - defensive, offensive, maneuvering; only used when engaging a player
             if (playerTargeting != null) {
+				if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
+					coverWaitTimer -= Time.deltaTime;
+					//pView.RPC ("RpcSetCoverWaitTimer", 	RpcTarget.Others, coverWaitTimer, gameControllerScript.teamMap);
+				}
 				// If the cover wait timer has ran out, switch from defensive to offensive and vice versa
 				if (coverWaitTimer <= 0f && !isReloading) {
 					pView.RPC ("RpcSetIsCrouching", RpcTarget.All, !isCrouching, gameControllerScript.teamMap);
@@ -1411,7 +1414,7 @@ public class BetaEnemyScript : MonoBehaviour {
 				}
 			} else {
                 // If the enemy has not seen a player
-                if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Firing && actionState != ActionStates.Reloading) {
+                if (actionState != ActionStates.Seeking && actionState != ActionStates.TakingCover && actionState != ActionStates.InCover && actionState != ActionStates.Firing && actionState != ActionStates.Reloading && actionState != ActionStates.Wander) {
 					int r = Random.Range (1, aggression - 1);
 					if (r <= 4) {
 						bool coverFound = DynamicTakeCover ();
@@ -1425,7 +1428,7 @@ public class BetaEnemyScript : MonoBehaviour {
 							}
 						}
 					} else {
-						if (GameControllerScript.lastGunshotHeardPos != Vector3.negativeInfinity) {
+						if (!Vector3.Equals(GameControllerScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
 							if (actionState != ActionStates.Seeking) {
 								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Seeking, gameControllerScript.teamMap);
 							}
@@ -1433,6 +1436,14 @@ public class BetaEnemyScript : MonoBehaviour {
 							if (actionState != ActionStates.Wander) {
 								pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander, gameControllerScript.teamMap);
 							}
+						}
+					}
+				}
+
+				if (actionState == ActionStates.Wander) {
+					if (!Vector3.Equals(GameControllerScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
+						if (actionState != ActionStates.Seeking) {
+							pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Seeking, gameControllerScript.teamMap);
 						}
 					}
 				}
@@ -1476,7 +1487,7 @@ public class BetaEnemyScript : MonoBehaviour {
 					if (coverSwitchPositionsTimer <= 0f) {
 						coverSwitchPositionsTimer = Random.Range (6f, 10f);
 						//pView.RPC ("RpcSetCoverSwitchPositionsTimer", RpcTarget.Others, coverSwitchPositionsTimer);
-						if (GameControllerScript.lastGunshotHeardPos != Vector3.negativeInfinity) {
+						if (!Vector3.Equals(GameControllerScript.lastGunshotHeardPos, Vector3.negativeInfinity)) {
 							pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Seeking, gameControllerScript.teamMap);
 						} else {
 							pView.RPC("RpcUpdateActionState", RpcTarget.All, ActionStates.Wander, gameControllerScript.teamMap);
@@ -1825,6 +1836,8 @@ public class BetaEnemyScript : MonoBehaviour {
 		marker.enabled = false;
 		gunRef.enabled = false;
 		myCollider.enabled = false;
+		rigid.useGravity = false;
+		rigid.isKinematic = true;
 	}
 
 	void RemoveHitboxes() {
@@ -2038,12 +2051,21 @@ public class BetaEnemyScript : MonoBehaviour {
 	bool TargetIsObscured(GameObject targetRef) {
 		// Cast a ray to make sure there's nothing in between the player and the enemy
 		// Debug.DrawRay (headTransform.position, toPlayer, Color.blue);
-		Transform playerHead = targetRef.GetComponent<FirstPersonController>().headTransform;
+		FirstPersonController targetPlayerCheck = targetRef.GetComponent<FirstPersonController>();
+		Transform playerHead = null;
+		Vector3 middleHalfCheck = Vector3.zero;
+		Vector3 topHalfCheck = Vector3.zero;
+		if (targetPlayerCheck != null) {
+			playerHead = targetPlayerCheck.headTransform;
+			middleHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y - 0.1f, playerHead.position.z);
+			topHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y, playerHead.position.z);
+		} else {
+			middleHalfCheck = new Vector3(targetRef.transform.position.x, targetRef.transform.position.y + 0.1f, targetRef.transform.position.z);
+			topHalfCheck = new Vector3(targetRef.transform.position.x, targetRef.transform.position.y + 0.2f, targetRef.transform.position.z);
+		}
 		RaycastHit hit1;
 		RaycastHit hit2;
-		// Vector3 middleHalfCheck = new Vector3 (p.transform.position.x, p.transform.position.y + PLAYER_HEIGHT_OFFSET, p.transform.position.z);
-		Vector3 middleHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y - 0.1f, playerHead.position.z);
-		Vector3 topHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y, playerHead.position.z);
+
 		if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2))
 		{
 			return true;
@@ -2057,8 +2079,14 @@ public class BetaEnemyScript : MonoBehaviour {
 		{
 			return true;
 		}
-		if (!hit1.transform.gameObject.tag.Equals("Player") && !hit2.transform.gameObject.tag.Equals("Player")) {
-			return true;
+		if (targetPlayerCheck != null) {
+			if (!hit1.transform.gameObject.tag.Equals("Player") && !hit2.transform.gameObject.tag.Equals("Player")) {
+				return true;
+			}
+		} else {
+			if (!hit1.transform.gameObject.tag.Equals("Human") && !hit2.transform.gameObject.tag.Equals("Human")) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -2162,7 +2190,8 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	public void RespawnAtPosition(Vector3 pos) {
 		myCollider.height = originalColliderHeight;
-		myCollider.center = new Vector3 (originalColliderCenter.x, originalColliderCenter.y, originalColliderCenter.z);
+		myCollider.radius = originalColliderRadius;
+		myCollider.center = originalColliderCenter;
 		myCollider.enabled = true;
 		gameObject.layer = 14;
 		headCollider.gameObject.layer = 13;
@@ -2195,6 +2224,8 @@ public class BetaEnemyScript : MonoBehaviour {
 		modeler.RespawnPlayer();
 		marker.enabled = true;
 		gunRef.enabled = true;
+		rigid.useGravity = true;
+		rigid.isKinematic = false;
 
 		if (enemyType == EnemyType.Patrol) {
 			navMesh.enabled = true;
@@ -2394,13 +2425,23 @@ public class BetaEnemyScript : MonoBehaviour {
 		alertStatus = AlertStatus.Neutral;
 		actionState = ActionStates.Dead;
 
-		// TODO: Start this at the beginning
 		gameObject.layer = 12;
 		headCollider.gameObject.layer = 15;
 
 		RemoveHitboxes ();
 		DespawnAction ();
 		
+	}
+
+	void PrintNavMeshAgentStats() {
+		if (Input.GetKeyDown(KeyCode.L)) {
+			Debug.Log("AI Name: " + gameObject.name);
+			Debug.Log("isActiveAndEnabled: " + navMesh.isActiveAndEnabled);
+			Debug.Log("isPathStale: " + navMesh.isPathStale);
+			Debug.Log("isOnNavMesh" + navMesh.isOnNavMesh);
+			Debug.Log("isStopped: " + navMesh.isStopped);
+			Debug.Log("---------------------------------------------------------------------");
+		}
 	}
 
 	// public void EditorAssignNavPts() {

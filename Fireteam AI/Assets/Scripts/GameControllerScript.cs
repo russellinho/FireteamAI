@@ -218,7 +218,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				} else if (vipRef.GetComponent<NpcScript>().health <= 0) {
 					if (!gameOver)
 					{
-						pView.RPC("RpcEndGame", RpcTarget.All, 1.5f, "The VIP has been killed!", false);
+						pView.RPC("RpcEndGame", RpcTarget.All, 4f, "The VIP has been killed!", false);
 					}
 				} else if (objectives.stepsLeftToCompletion == 1 && objectives.escapeAvailable)
 				{
@@ -321,7 +321,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				} else if (vipRef.GetComponent<NpcScript>().health <= 0) {
 					if (!gameOver) {
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 2f, (teamMap == "R" ? "B" : "R"), "The VIP has been killed!");
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 4f, (teamMap == "R" ? "B" : "R"), "The VIP has been killed!");
 					} 
 				} else if (CheckOutOfTime()) {
 					if (!gameOver) {
@@ -467,7 +467,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void SetLastGunshotHeardPos(float x, float y, float z) {
-		pView.RPC ("RpcSetLastGunshotHeardPos", RpcTarget.All, true, x, y, z, teamMap);
+		if (spawnMode != SpawnMode.Paused) {
+			pView.RPC ("RpcSetLastGunshotHeardPos", RpcTarget.All, true, x, y, z, teamMap);
+		}
 	}
 
 	[PunRPC]

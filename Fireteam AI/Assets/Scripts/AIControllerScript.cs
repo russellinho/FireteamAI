@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using ActionStates = BetaEnemyScript.ActionStates;
 using Photon.Pun;
+using Random = UnityEngine.Random;
 
 public class AIControllerScript : MonoBehaviour
 {
     // Respawn all in queue after this amount of secs
-    private const float RESPAWN_JOB_DELAY = 2f;
+    private const float RESPAWN_JOB_DELAY = 10f;
     // Respawn the enemy after this amount of seconds
     public float enemyRespawnSecs;
     // spreadConstant determines how spread out enemies spawn from each other. The closer to 0, the more grouped together AI will be when they respawn.
@@ -24,8 +25,10 @@ public class AIControllerScript : MonoBehaviour
     
     void Awake() {
         aiReadyToRespawn = new Queue();
-        if (spawnPoints.Length > 0 && spreadConstant >= spawnPoints.Length) {
-            spreadConstant = spawnPoints.Length - 1;
+        if (spawnPoints != null) {
+            if (spawnPoints.Length > 0 && spreadConstant >= spawnPoints.Length) {
+                spreadConstant = spawnPoints.Length - 1;
+            }
         }
     }
 
@@ -63,7 +66,8 @@ public class AIControllerScript : MonoBehaviour
 
         while (true) {
             try {
-                GameObject nextAi = (GameObject)aiReadyToRespawn.Dequeue();
+                int nextAiId = (int)aiReadyToRespawn.Dequeue();
+                GameObject nextAi = gameController.enemyList[nextAiId];
                 BetaEnemyScript b = nextAi.GetComponent<BetaEnemyScript>();
                 if (b.actionState != ActionStates.Dead) {
                     // If for some reason the enemy is already alive, just skip it
@@ -73,7 +77,8 @@ public class AIControllerScript : MonoBehaviour
                 if (spreadConstant > 0) {
                     // Spawn the enemy at the current spawn point
                     int i = farthestSpawnPoints[altSpawnPointIterator].index;
-                    b.RespawnAtPosition(spawnPoints[i].position);
+                    Vector3 newSpawnPos = new Vector3(spawnPoints[i].position.x + Random.Range(0f, 5f), spawnPoints[i].position.y + Random.Range(0f, 5f), spawnPoints[i].position.z + Random.Range(0f, 5f));
+                    b.RespawnAtPosition(newSpawnPos);
                     spawnCounts[i]++;
                     altSpawnTracker++;
                     // Round-robin style spawn tracker - if we've evenly distribute the spawn for spreadConstant, then reset
@@ -102,7 +107,8 @@ public class AIControllerScript : MonoBehaviour
                     // Handle spawning routine with no spread constant
                     // Spawn the enemy at the current spawn point
                     int i = farthestSpawnPoints[spawnPointIterator].index;
-                    b.RespawnAtPosition(spawnPoints[i].position);
+                    Vector3 newSpawnPos = new Vector3(spawnPoints[i].position.x + Random.Range(0f, 5f), spawnPoints[i].position.y + Random.Range(0f, 5f), spawnPoints[i].position.z + Random.Range(0f, 5f));
+                    b.RespawnAtPosition(newSpawnPos);
                     spawnCounts[i]++;
                     // If reached the max spawn group size for this point, go to the next one
                     if (spawnCounts[i] >= maxGroupSizePerSpawn[i]) {
