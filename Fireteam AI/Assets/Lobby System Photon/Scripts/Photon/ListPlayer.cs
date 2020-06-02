@@ -204,11 +204,17 @@ namespace Photon.Pun.LobbySystemPhoton
 		void RpcToggleButtons(bool status, bool gameIsStarting) {
 			gameStarting = gameIsStarting;
 			mapNext.interactable = status;
+			mapNextVs.interactable = status;
 			mapPrev.interactable = status;
+			mapPrevVs.interactable = status;
 			readyButton.GetComponent<Button> ().interactable = status;
+			readyButtonVs.GetComponent<Button> ().interactable = status;
 			sendMsgBtn.interactable = status;
+			sendMsgBtnVs.interactable = status;
 			emojiBtn.interactable = status;
+			emojiBtnVs.interactable = status;
 			leaveGameBtn.interactable = status;
+			leaveGameBtnVs.interactable = status;
 		}
 
 		void ChangeReadyStatus() {
