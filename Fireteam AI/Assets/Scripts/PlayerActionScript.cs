@@ -942,7 +942,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             aud.clip = ammoPickupSound;
             aud.Play();
             if (weaponScript.currentlyEquippedType == 1) {
-                wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo + (wepActionScript.GetWeaponStats().clipCapacity - wepActionScript.currentAmmo);
+                wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo - wepActionScript.currentAmmo;
             } else {
                 weaponScript.MaxRefillAmmoOnPrimary();
             }

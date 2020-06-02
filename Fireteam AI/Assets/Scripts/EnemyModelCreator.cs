@@ -98,15 +98,15 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         if (r == 0) {
             // Camo tank
             equippedTop = "Camo Tank";
-            equippedSkin = 2;
+            equippedSkin = 1;
         } else if (r == 1) {
             // Camo shirt/short sleeve shirt
             equippedTop = "Camo Shirt";
-            equippedSkin = 1;
+            equippedSkin = 0;
         } else {
             // Camo top/long sleeve shirt
             equippedTop = "Camo Top";
-            equippedSkin = 3;
+            equippedSkin = 2;
         }
 
         r = Random.Range(0, 3);
@@ -168,17 +168,17 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         }
         // First equip the correct skin
         UnequipSkin();
-        EquipSkin("Models/Enemies/Cicadas/" + modelNumber + "/Skin" + equippedSkin + "/cicada" + modelNumber + "skin" + equippedSkin);
+        EquipSkin(skinSelection[equippedSkin]);
 
         // Second, equip the correct top
         UnequipTop();
         if (equippedTop != null) {
             if (equippedTop.Equals("Camo Tank")) {
-                EquipTop("Models/Enemies/Cicadas/Clothing/Tops/1/camotank");
+                EquipTop(topsSelection[0]);
             } else if (equippedTop.Equals("Camo Shirt")) {
-                EquipTop("Models/Enemies/Cicadas/Clothing/Tops/2/camotop");
+                EquipTop(topsSelection[2]);
             } else if (equippedTop.Equals("Camo Top")) {
-                EquipTop("Models/Enemies/Cicadas/Clothing/Tops/3/camoshirt");
+                EquipTop(topsSelection[1]);
             }
         }
 
@@ -186,11 +186,11 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         UnequipBottom();
         if (equippedBottom != null) {
             if (equippedBottom.Equals("Cargo Pants")) {
-                EquipBottom("Models/Enemies/Cicadas/Clothing/Bottoms/1/cargos");
+                EquipBottom(bottomsSelection[0]);
             } else if (equippedBottom.Equals("Cargo Shorts")) {
-                EquipBottom("Models/Enemies/Cicadas/Clothing/Bottoms/3/cargoshorts");
+                EquipBottom(bottomsSelection[1]);
             } else if (equippedBottom.Equals("Cargo Jeans")) {
-                EquipBottom("Models/Enemies/Cicadas/Clothing/Bottoms/2/cargojeans");
+                EquipBottom(bottomsSelection[2]);
             }
         }
 
@@ -198,9 +198,9 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         UnequipFootwear();
         if (equippedFootwear != null) {
             if (equippedFootwear.Equals("Combat Boots")) {
-                EquipFootwear("Models/Enemies/Cicadas/Clothing/Shoes/1/combatboots");
+                EquipFootwear(footwearSelection[0]);
             } else if (equippedFootwear.Equals("Combat Shoes")) {
-                EquipFootwear("Models/Enemies/Cicadas/Clothing/Shoes/2/combatshoes");
+                EquipFootwear(footwearSelection[1]);
             }
         }
 
@@ -216,7 +216,7 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
                     myHairRenderer.GetComponent<SkinnedMeshRenderer>().enabled = false;
                     renderHair = false;
                 }
-                EquipFacewear("Models/Enemies/Cicadas/Clothing/Face/1/shroud");
+                EquipFacewear(facewearSelection[0]);
             }
         }
         
@@ -224,7 +224,7 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         UnequipEyewear();
         if (equippedEyewear != null) {
             if (equippedEyewear.Equals("Sport Glasses")) {
-                EquipEyewear("Models/Enemies/Cicadas/Clothing/Eyes/1/sportsglasses");
+                EquipEyewear(eyewearSelection[0]);
             }
         }
 
@@ -236,13 +236,13 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
                     myHairRenderer.GetComponent<SkinnedMeshRenderer>().enabled = false;
                     renderHair = false;
                 }
-                EquipHeadgear("Models/Enemies/Cicadas/Clothing/Hats/1/baseballhat");
+                EquipHeadgear(headgearSelection[0]);
             }
         }
     }
 
-    void EquipTop(string prefabPath) {
-        equippedTopRef = (GameObject)Instantiate((GameObject)Resources.Load(prefabPath));
+    void EquipTop(GameObject o) {
+        equippedTopRef = (GameObject)Instantiate(o);
         equippedTopRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedTopRef.GetComponentInChildren<MeshFixer>();
         m.target = myTopRenderer.gameObject;
@@ -250,8 +250,8 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         m.AdaptMesh();
     }
 
-    void EquipBottom(string prefabPath) {
-        equippedBottomRef = (GameObject)Instantiate((GameObject)Resources.Load(prefabPath));
+    void EquipBottom(GameObject o) {
+        equippedBottomRef = (GameObject)Instantiate(o);
         equippedBottomRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedBottomRef.GetComponentInChildren<MeshFixer>();
         m.target = myBottomRenderer.gameObject;
@@ -259,8 +259,8 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         m.AdaptMesh();
     }
 
-    void EquipEyewear(string prefabPath) {
-        equippedEyewearRef = (GameObject)Instantiate((GameObject)Resources.Load(prefabPath));
+    void EquipEyewear(GameObject o) {
+        equippedEyewearRef = (GameObject)Instantiate(o);
         equippedEyewearRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedEyewearRef.GetComponentInChildren<MeshFixer>();
         m.target = myEyewearRenderer.gameObject;
@@ -268,8 +268,8 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         m.AdaptMesh();
     }
 
-    void EquipFacewear(string prefabPath) {
-        equippedFacewearRef = (GameObject)Instantiate((GameObject)Resources.Load(prefabPath));
+    void EquipFacewear(GameObject o) {
+        equippedFacewearRef = (GameObject)Instantiate(o);
         equippedFacewearRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedFacewearRef.GetComponentInChildren<MeshFixer>();
         m.target = myFacewearRenderer.gameObject;
@@ -277,8 +277,8 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         m.AdaptMesh();
     }
 
-    void EquipFootwear(string prefabPath) {
-        equippedFootwearRef = (GameObject)Instantiate((GameObject)Resources.Load(prefabPath));
+    void EquipFootwear(GameObject o) {
+        equippedFootwearRef = (GameObject)Instantiate(o);
         equippedFootwearRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedFootwearRef.GetComponentInChildren<MeshFixer>();
         m.target = myFootwearRenderer.gameObject;
@@ -286,8 +286,8 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         m.AdaptMesh();
     }
 
-    void EquipSkin(string prefabPath) {
-        equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(prefabPath));
+    void EquipSkin(GameObject o) {
+        equippedSkinRef = (GameObject)Instantiate(o);
         equippedSkinRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
         m.target = mySkinRenderer.gameObject;
@@ -295,8 +295,8 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         m.AdaptMesh();
     }
 
-    void EquipHeadgear(string prefabPath) {
-        equippedHeadgearRef = (GameObject)Instantiate((GameObject)Resources.Load(prefabPath));
+    void EquipHeadgear(GameObject o) {
+        equippedHeadgearRef = (GameObject)Instantiate(o);
         equippedHeadgearRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedHeadgearRef.GetComponentInChildren<MeshFixer>();
         m.target = myHeadgearRenderer.gameObject;
