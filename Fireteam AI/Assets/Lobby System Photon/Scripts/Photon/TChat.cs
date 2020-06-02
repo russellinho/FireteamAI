@@ -14,7 +14,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		public TMP_Text TextChat;
 		public GameObject TextSendObj;
 		public GameObject FrameSmiley;
-		public string[] ShortcutSmileys;
+		[SerializeField]
+		public string[] emojis;
 		public bool isSelect = false;
 		public PhotonView photonView;
 
@@ -22,6 +23,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		{
 			photonView = GetComponent<PhotonView>();
 		}
+
 		// Update is called once per frame
 		void Update()
 		{
@@ -96,7 +98,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void AddSmiley(int idSmiley)
 		{
-			TextSend.text += " "+ShortcutSmileys[idSmiley];
+			TextSend.text += " "+emojis[idSmiley];
 			FrameSmiley.SetActive(false);
 		}
 
@@ -113,9 +115,9 @@ namespace Photon.Pun.LobbySystemPhoton
 		[PunRPC]
 		public void SendMsg(bool master, string msg, string pse)
 		{
-			for (int i = 0; i < ShortcutSmileys.Length; i++)
+			for (int i = 0; i < emojis.Length; i++)
 			{
-				msg = msg.Replace(ShortcutSmileys[i], " <size=150%><sprite="+i+"><size=100%>");
+				msg = msg.Replace(emojis[i], " <size=150%><sprite="+i+"><size=100%>");
 			}
 
 			if (master)
