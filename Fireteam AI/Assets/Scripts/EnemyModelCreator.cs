@@ -47,6 +47,13 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     private bool modelCreated;
     private static bool createModelSemaphore;
     public BetaEnemyScript enemyScript;
+    public GameObject[] topsSelection;
+    public GameObject[] bottomsSelection;
+    public GameObject[] eyewearSelection;
+    public GameObject[] facewearSelection;
+    public GameObject[] footwearSelection;
+    public GameObject[] headgearSelection;
+    public GameObject[] skinSelection;
 
     public override void OnEnable() {
         if (PhotonNetwork.IsMasterClient) {

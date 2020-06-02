@@ -6721,7 +6721,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 7658744305337577552}
-  viewIdField: 0
+  viewIdField: 1
   InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &7658744305337577552
@@ -6792,6 +6792,27 @@ MonoBehaviour:
   pView: {fileID: 1547763192778326438}
   detectionOutline: {fileID: 2100000, guid: 86c473c32ea30644e8494426949a59cb, type: 2}
   enemyScript: {fileID: 624624113271357771}
+  topsSelection:
+  - {fileID: 1896283900672985363, guid: bc42b3f80094c8b40b698c31c2d4fb24, type: 3}
+  - {fileID: 4752678194269107585, guid: e3df6cc738fde02479f69eeb6f729c7f, type: 3}
+  - {fileID: 5949284485895142461, guid: 7657cc5cc448d574c8da7d8332290c1f, type: 3}
+  bottomsSelection:
+  - {fileID: 5602598845289011990, guid: 61efcf28a3ea09e4bbb62963180db1ad, type: 3}
+  - {fileID: 7964284608583874529, guid: e5f401865f283c64fa2cb85d307e4221, type: 3}
+  - {fileID: 3659431188026920232, guid: f193fd256e8b0fb439cecf83ddf86b8b, type: 3}
+  eyewearSelection:
+  - {fileID: 6417896263557161930, guid: 36b0abc8375432b40abbe1634d7be5fa, type: 3}
+  facewearSelection:
+  - {fileID: 686770296378727791, guid: 32662546954d3a2409153226743a5e1a, type: 3}
+  footwearSelection:
+  - {fileID: 7601516814493521330, guid: 75bce5b1008140e4582c6cc31bf0221e, type: 3}
+  - {fileID: 5255623885639159340, guid: aebc0462e51580a4db85e05df3104b09, type: 3}
+  headgearSelection:
+  - {fileID: 9090441698573926148, guid: 76a2941e2a6864c4396031fbf3205f68, type: 3}
+  skinSelection:
+  - {fileID: 8745907913043419332, guid: 7e4bcd0779119234d917e7a430527e7d, type: 3}
+  - {fileID: 7996858819316988844, guid: 0142b3ea1c258f84e8c6b38696f77df1, type: 3}
+  - {fileID: 1082840528973483707, guid: a4d1ad4e999f9554680188638ae96ba9, type: 3}
 --- !u!1 &8502661351813044427
 GameObject:
   m_ObjectHideFlags: 0
