@@ -56,6 +56,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1402,6 +1403,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1483,6 +1485,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1564,6 +1567,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1652,6 +1656,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1854,6 +1859,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2460,6 +2466,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2585,8 +2592,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ts: {fileID: 0}
   playerScript: {fileID: 218755859189559228}
+  playerActionScript: {fileID: 0}
   tws: {fileID: 8241961466619712412}
+  fullBodyRef: {fileID: 0}
+  firstPersonRef: {fileID: 0}
   equippedCharacter: Codename Sayre
+  characterGender: M
   equippedHeadgear: 
   equippedFacewear: 
   equippedTop: 
@@ -2602,6 +2613,8 @@ MonoBehaviour:
   equippedFootwearRef: {fileID: 0}
   equippedArmorTopRef: {fileID: 0}
   equippedArmorBottomRef: {fileID: 0}
+  equippedFpcSkinRef: {fileID: 0}
+  equippedFpcTopRef: {fileID: 0}
   myHeadgearRenderer: {fileID: 557530568583533505}
   myFacewearRenderer: {fileID: 5611227314814411072}
   myTopRenderer: {fileID: 2464462323615951203}
@@ -2614,7 +2627,17 @@ MonoBehaviour:
   myEyesRenderer: {fileID: 2464462323615951089}
   myEyelashRenderer: {fileID: 2464462323615951091}
   myHairRenderer: {fileID: 7426473737837668800}
+  myFpcSkinRenderer: {fileID: 0}
+  myFpcTopRenderer: {fileID: 0}
+  myFpcGlovesRenderer: {fileID: 0}
+  renderHair: 0
   myBones: {fileID: 2464462323615951097}
+  myFpcBones: {fileID: 0}
+  pView: {fileID: 0}
+  topPrefabSetupPath: 
+  bottomPrefabSetupPath: 
+  footwearPrefabSetupPath: 
+  skinPrefabSetupPath: 
 --- !u!114 &8241961466619712412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2628,15 +2651,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equipmentScript: {fileID: 384782906892189734}
+  weaponActionScript: {fileID: 0}
+  playerActionScript: {fileID: 0}
   weaponHolder: {fileID: 8153228017515657656}
+  weaponHolderFpc: {fileID: 0}
+  meleeHolder: {fileID: 0}
+  meleeHolderFpc: {fileID: 0}
   animator: {fileID: 2464462323623336759}
   ts: {fileID: 0}
+  titleAnimFemale: {fileID: 0}
+  titleAnimMale: {fileID: 0}
   equippedPrimaryWeapon: 
-  equippedPrimaryType: 
   equippedSecondaryWeapon: 
-  equippedSecondaryType: 
+  equippedSupportWeapon: 
+  equippedMeleeWeapon: 
+  equippedWep: 
   currentlyEquippedType: 0
+  totalPrimaryAmmoLeft: 0
+  totalSecondaryAmmoLeft: 0
+  totalSupportAmmoLeft: 0
+  currentAmmoPrimary: 0
+  currentAmmoSecondary: 0
+  currentAmmoSupport: 0
   weaponReady: 0
+  pView: {fileID: 0}
+  setupGender: 0
 --- !u!114 &218755859189559228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2652,6 +2691,7 @@ MonoBehaviour:
   speed: 0
   stamina: 0
   armor: 0
+  health: 0
 --- !u!1 &2464462323615951207
 GameObject:
   m_ObjectHideFlags: 0
@@ -2708,6 +2748,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -3030,9 +3071,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef467fedef6ed24d8dbd8d62cb74c13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handle: {fileID: 0}
   weapon: {fileID: 0}
   leftShoulder: {fileID: 2464462323615659155}
+  leftHand: {fileID: 2464462323615659215}
+  fpc: {fileID: 0}
 --- !u!1 &5611227314814411072
 GameObject:
   m_ObjectHideFlags: 0
@@ -3089,6 +3131,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -3194,6 +3237,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0

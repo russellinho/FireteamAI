@@ -36,7 +36,7 @@ public class WeaponHandlerScript : MonoBehaviour
     {
         WeaponStats wepStats = weapon.GetComponent<WeaponStats>();
         if (firstPersonMode) {
-            if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
+            if (fpc.equipmentScript.GetGender() == 'M') {
                 // Set the weapon position for males, get from stats
                 weapon.localPosition = wepStats.fpcPosMale;
                 weapon.localRotation = Quaternion.Euler(wepStats.fpcRotMale);
@@ -48,8 +48,7 @@ public class WeaponHandlerScript : MonoBehaviour
                 weapon.localScale = wepStats.fpcScaleFemale;
             }
         } else {
-            Debug.Log(fpc.gameObject.name);
-            if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
+            if (fpc.equipmentScript.GetGender() == 'M') {
                 // Set the weapon position for males, get from stats
                 weapon.localPosition = wepStats.fullPosMale;
                 weapon.localRotation = Quaternion.Euler(wepStats.fullRotMale);

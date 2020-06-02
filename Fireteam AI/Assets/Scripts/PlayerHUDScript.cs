@@ -40,9 +40,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	public bool screenGrab;
 	private const float HEIGHT_OFFSET = 1.9f;
 
+	void Awake() {
+		container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
+	}
+
     // Use this for initialization
     void Start () {
-		container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
+		// container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
         if (!GetComponent<PhotonView>().IsMine) {
 			myHudMarkerCam1.enabled = false;
 			myHudMarkerCam2.enabled = false;

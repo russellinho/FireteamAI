@@ -43,11 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef467fedef6ed24d8dbd8d62cb74c13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handle: {fileID: 0}
   weapon: {fileID: 0}
   leftShoulder: {fileID: 6772054392541728994}
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
+  leftHand: {fileID: 6772054392541728950}
   fpc: {fileID: 0}
 --- !u!1 &1303291754686142051
 GameObject:
@@ -2741,10 +2739,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ts: {fileID: 0}
   playerScript: {fileID: 1241241058576032324}
+  playerActionScript: {fileID: 0}
   tws: {fileID: 6571647462379323641}
   fullBodyRef: {fileID: 0}
   firstPersonRef: {fileID: 0}
   equippedCharacter: Lucas
+  characterGender: M
   equippedHeadgear: 
   equippedFacewear: 
   equippedTop: 
@@ -2752,7 +2752,6 @@ MonoBehaviour:
   equippedFootwear: 
   equippedArmor: 
   equippedSkin: 0
-  gender: 0
   equippedSkinRef: {fileID: 0}
   equippedHeadgearRef: {fileID: 0}
   equippedFacewearRef: {fileID: 0}
@@ -2800,18 +2799,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equipmentScript: {fileID: 6910827063722677838}
   weaponActionScript: {fileID: 0}
+  playerActionScript: {fileID: 0}
   weaponHolder: {fileID: 8224291582588743710}
   weaponHolderFpc: {fileID: 0}
+  meleeHolder: {fileID: 0}
+  meleeHolderFpc: {fileID: 0}
   animator: {fileID: 6772054392549162816}
   ts: {fileID: 0}
   titleAnimFemale: {fileID: 0}
   titleAnimMale: {fileID: 0}
   equippedPrimaryWeapon: 
-  equippedPrimaryType: 
   equippedSecondaryWeapon: 
-  equippedSecondaryType: 
   equippedSupportWeapon: 
-  equippedSupportType: 
+  equippedMeleeWeapon: 
   equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryAmmoLeft: 0

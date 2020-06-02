@@ -1252,8 +1252,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weapon: {fileID: 0}
   leftShoulder: {fileID: 2982832993220404209}
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
+  leftHand: {fileID: 1069938691597758124}
   fpc: {fileID: 0}
 --- !u!1 &2579827114977971173
 GameObject:
@@ -2124,6 +2123,7 @@ MonoBehaviour:
   fullBodyRef: {fileID: 0}
   firstPersonRef: {fileID: 0}
   equippedCharacter: Rocko
+  characterGender: M
   equippedHeadgear: 
   equippedFacewear: 
   equippedTop: 

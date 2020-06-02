@@ -303,23 +303,23 @@ public class WeaponActionScript : MonoBehaviour
             }
             // If going to center
             if (isAiming) {
-                if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
+                if (fpc.equipmentScript.GetGender() == 'M') {
                     leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, currentAimStableHandPos, aimDownSightsTimer);
                     rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, currentAimDownSightPos, aimDownSightsTimer);
-                } else if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'F') {
+                } else if (fpc.equipmentScript.GetGender() == 'F') {
                     leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, currentAimStableHandPos, aimDownSightsTimer);
                     rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, currentAimDownSightPos, aimDownSightsTimer);
                 }
             // If coming back to normal
             } else {
                 // If the player is back in the normal position, then disable the lock
-                if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
+                if (fpc.equipmentScript.GetGender() == 'M') {
                     leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponStats.defaultLeftCollarPosMale, aimDownSightsTimer);
                     rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponStats.defaultRightCollarPosMale, aimDownSightsTimer);
                     if (aimDownSightsLock && aimDownSightsTimer >= 1f) {
                         aimDownSightsLock = false;
                     }
-                } else if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'F') {
+                } else if (fpc.equipmentScript.GetGender() == 'F') {
                     leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponStats.defaultLeftCollarPosFemale, aimDownSightsTimer);
                     rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponStats.defaultRightCollarPosFemale, aimDownSightsTimer);
                     if (aimDownSightsLock && aimDownSightsTimer >= 1f) {
@@ -383,7 +383,7 @@ public class WeaponActionScript : MonoBehaviour
                     aimDownSightsTimer = 0f;
                 }
                 aimDownSightsLock = true;
-                if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
+                if (fpc.equipmentScript.GetGender() == 'M') {
                     // Conditional to display sniper reticle, zoom in, disable the rifle mesh, and lower sensitivity
                     if (aimDownSightsTimer >= 1f) {
                         if (weaponStats.isSniper) {
@@ -1099,10 +1099,10 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     public void SetCurrentAimDownSightPos(string sightName) {
-        if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
+        if (fpc.equipmentScript.GetGender() == 'M') {
             currentAimDownSightPos = weaponStats.aimDownSightPosMale;
             currentAimStableHandPos = weaponStats.stableHandPosMale;
-        } else if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'F') {
+        } else if (fpc.equipmentScript.GetGender() == 'F') {
             currentAimDownSightPos = weaponStats.aimDownSightPosFemale;
             currentAimStableHandPos = weaponStats.stableHandPosFemale;
         }
@@ -1123,7 +1123,7 @@ public class WeaponActionScript : MonoBehaviour
             fireTimer = ws.fireRate;
             weaponCam.nearClipPlane = ws.aimDownSightClipping;
             playerActionScript.weaponSpeedModifier = ws.mobility/100f;
-            if (playerActionScript.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
+            if (playerActionScript.equipmentScript.GetGender() == 'M') {
                 fpc.fpcAnimator.runtimeAnimatorController = ws.maleOverrideController as RuntimeAnimatorController;
             } else {
                 fpc.fpcAnimator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;

@@ -43,11 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef467fedef6ed24d8dbd8d62cb74c13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handle: {fileID: 0}
   weapon: {fileID: 0}
   leftShoulder: {fileID: 3999816085970153230}
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
+  leftHand: {fileID: 3999816085970153298}
   fpc: {fileID: 0}
 --- !u!1 &3204773140212058034
 GameObject:
@@ -1080,10 +1078,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ts: {fileID: 0}
   playerScript: {fileID: 3007310823573728124}
+  playerActionScript: {fileID: 0}
   tws: {fileID: 4803882290888310498}
   fullBodyRef: {fileID: 0}
   firstPersonRef: {fileID: 0}
   equippedCharacter: Daryl
+  characterGender: M
   equippedHeadgear: 
   equippedFacewear: 
   equippedTop: 
@@ -1091,7 +1091,6 @@ MonoBehaviour:
   equippedFootwear: 
   equippedArmor: 
   equippedSkin: 0
-  gender: 0
   equippedSkinRef: {fileID: 0}
   equippedHeadgearRef: {fileID: 0}
   equippedFacewearRef: {fileID: 0}
@@ -1139,18 +1138,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equipmentScript: {fileID: 517835709440268875}
   weaponActionScript: {fileID: 0}
+  playerActionScript: {fileID: 0}
   weaponHolder: {fileID: 5110459532735141376}
   weaponHolderFpc: {fileID: 0}
+  meleeHolder: {fileID: 0}
+  meleeHolderFpc: {fileID: 0}
   animator: {fileID: 3999816085979398314}
   ts: {fileID: 0}
   titleAnimFemale: {fileID: 0}
   titleAnimMale: {fileID: 0}
   equippedPrimaryWeapon: 
-  equippedPrimaryType: 
   equippedSecondaryWeapon: 
-  equippedSecondaryType: 
   equippedSupportWeapon: 
-  equippedSupportType: 
+  equippedMeleeWeapon: 
   equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryAmmoLeft: 0

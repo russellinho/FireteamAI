@@ -413,6 +413,7 @@ MonoBehaviour:
   fullBodyRef: {fileID: 0}
   firstPersonRef: {fileID: 0}
   equippedCharacter: Yongjin
+  characterGender: M
   equippedHeadgear: 
   equippedFacewear: 
   equippedTop: 
@@ -470,6 +471,8 @@ MonoBehaviour:
   playerActionScript: {fileID: 0}
   weaponHolder: {fileID: 6982317094958596741}
   weaponHolderFpc: {fileID: 0}
+  meleeHolder: {fileID: 0}
+  meleeHolderFpc: {fileID: 0}
   animator: {fileID: 3716319163075636973}
   ts: {fileID: 0}
   titleAnimFemale: {fileID: 0}
@@ -477,6 +480,7 @@ MonoBehaviour:
   equippedPrimaryWeapon: 
   equippedSecondaryWeapon: 
   equippedSupportWeapon: 
+  equippedMeleeWeapon: 
   equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryAmmoLeft: 0
@@ -2753,8 +2757,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weapon: {fileID: 0}
   leftShoulder: {fileID: 223791588871528240}
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
+  leftHand: {fileID: 1138091743098619534}
   fpc: {fileID: 0}
 --- !u!1 &7812520505311845073
 GameObject:

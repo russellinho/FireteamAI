@@ -57851,7 +57851,7 @@ MonoBehaviour:
   weapon: {fileID: 0}
   leftShoulder: {fileID: 3166207385246565406}
   leftHand: {fileID: 0}
-  fpc: {fileID: 0}
+  fpc: {fileID: 9157702028478079586}
 --- !u!1 &4935971120637411839
 GameObject:
   m_ObjectHideFlags: 0
@@ -84064,6 +84064,7 @@ MonoBehaviour:
   fullBodyRef: {fileID: 4429596541689750881}
   firstPersonRef: {fileID: 5585608091933296148}
   equippedCharacter: Yongjin
+  characterGender: M
   equippedHeadgear: 
   equippedFacewear: 
   equippedTop: 

@@ -1191,7 +1191,7 @@ MonoBehaviour:
   weapon: {fileID: 0}
   leftShoulder: {fileID: 7977566584985456444}
   leftHand: {fileID: 0}
-  fpc: {fileID: 0}
+  fpc: {fileID: 5740449512303423505}
 --- !u!1 &3361758842742245579
 GameObject:
   m_ObjectHideFlags: 0
@@ -77108,6 +77108,7 @@ MonoBehaviour:
   fullBodyRef: {fileID: 1072883147271152842}
   firstPersonRef: {fileID: 5740449511319056765}
   equippedCharacter: Dani
+  characterGender: F
   equippedHeadgear: 
   equippedFacewear: 
   equippedTop: 

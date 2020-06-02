@@ -797,10 +797,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ts: {fileID: 0}
   playerScript: {fileID: 2377182879810501776}
+  playerActionScript: {fileID: 0}
   tws: {fileID: 2282748257884432631}
   fullBodyRef: {fileID: 0}
   firstPersonRef: {fileID: 0}
   equippedCharacter: Hana
+  characterGender: F
   equippedHeadgear: 
   equippedFacewear: 
   equippedTop: 
@@ -808,7 +810,6 @@ MonoBehaviour:
   equippedFootwear: 
   equippedArmor: 
   equippedSkin: 0
-  gender: 0
   equippedSkinRef: {fileID: 0}
   equippedHeadgearRef: {fileID: 0}
   equippedFacewearRef: {fileID: 0}
@@ -856,18 +857,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equipmentScript: {fileID: 5377080248621935676}
   weaponActionScript: {fileID: 0}
+  playerActionScript: {fileID: 0}
   weaponHolder: {fileID: 6533164353316158212}
   weaponHolderFpc: {fileID: 0}
+  meleeHolder: {fileID: 0}
+  meleeHolderFpc: {fileID: 0}
   animator: {fileID: 2052873151873026297}
   ts: {fileID: 0}
   titleAnimFemale: {fileID: 0}
   titleAnimMale: {fileID: 0}
   equippedPrimaryWeapon: 
-  equippedPrimaryType: 
   equippedSecondaryWeapon: 
-  equippedSecondaryType: 
   equippedSupportWeapon: 
-  equippedSupportType: 
+  equippedMeleeWeapon: 
   equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryAmmoLeft: 0
@@ -3272,9 +3274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef467fedef6ed24d8dbd8d62cb74c13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handle: {fileID: 0}
   weapon: {fileID: 0}
   leftShoulder: {fileID: 2052873151880292191}
-  leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
+  leftHand: {fileID: 2052873151880292099}
   fpc: {fileID: 0}
