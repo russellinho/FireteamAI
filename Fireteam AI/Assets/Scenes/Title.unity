@@ -64467,6 +64467,15 @@ MonoBehaviour:
   modMaxAmmoTxt: {fileID: 1060249908}
   removeSuppressorBtn: {fileID: 144582023}
   removeSightBtn: {fileID: 1855896913}
+  characterRefs:
+  - {fileID: 6772054392541891854, guid: 781bbba828026460994a58e5dd3ae9b6, type: 3}
+  - {fileID: 3999816085970055928, guid: 514d1e03b6669654ca515e15fbac4993, type: 3}
+  - {fileID: 1554488444955672143, guid: 80f5a70121e37664aa628bb4abd77b4d, type: 3}
+  - {fileID: 5273857888664389639, guid: 56552edf23beb7d4eae46cd2eaa3c01f, type: 3}
+  - {fileID: 2052873151880460973, guid: 3e3a64fc3f1b2cd4ea215aab2dcc4113, type: 3}
+  - {fileID: 3166084420118613657, guid: d9c40a50321138c4da282a5343d95680, type: 3}
+  - {fileID: 1613183513911759790, guid: 2824b1b9976602143a3a6d3560400659, type: 3}
+  - {fileID: 2464462323615951205, guid: 5cbb4ca1f651c7f4596426ae4f661491, type: 3}
 --- !u!4 &1615888903
 Transform:
   m_ObjectHideFlags: 0

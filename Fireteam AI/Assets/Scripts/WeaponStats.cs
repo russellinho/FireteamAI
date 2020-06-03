@@ -87,5 +87,6 @@ public class WeaponStats : MonoBehaviour
     public GameObject suppressorSlot;
     public GameObject sightSlot;
     public float[] crosshairAimOffset;
+    public GameObject deployRef;
 
 }

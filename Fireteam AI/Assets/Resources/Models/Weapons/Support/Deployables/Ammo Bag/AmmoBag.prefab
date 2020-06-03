@@ -54,6 +54,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -133,11 +134,13 @@ MonoBehaviour:
   fireRate: 1.5
   accuracy: 0
   recoil: 0
+  sway: 0
   range: 0
   lungeRange: 0
   clipCapacity: 1
   maxAmmo: 1
   steadyAim: 0
+  isSniper: 0
   aimDownSightPosMale: {x: 0, y: 0, z: 0}
   aimDownSightPosFemale: {x: 0, y: 0, z: 0}
   stableHandPosMale: {x: 0, y: 0, z: 0}
@@ -209,6 +212,8 @@ MonoBehaviour:
   suppressorSlot: {fileID: 0}
   sightSlot: {fileID: 0}
   crosshairAimOffset: []
+  deployRef: {fileID: 6525966089271743202, guid: 82bad88b620b6524b88c129d8e668f2b,
+    type: 3}
 --- !u!114 &5404662118788147085
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373,6 +378,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

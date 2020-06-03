@@ -13,7 +13,7 @@ public class SetupControllerScript : MonoBehaviour
     public GameObject bodyRef;
     public GameObject contentInventory;
     public InputField characterNameInput;
-    private ArrayList starterCharacters = new ArrayList(){"Lucas", "Daryl", "Yongjin", "Rocko", "Hana", "Jade", "Dani"};
+    private Dictionary<string, int> starterCharacters = new Dictionary<string, int>(){["Lucas"] = 0, ["Daryl"] = 1, ["Yongjin"] = 2, ["Rocko"] = 3, ["Hana"] = 4, ["Jade"] = 5, ["Dani"] = 6};
     public ArrayList starterWeapons = new ArrayList(){"M4A1", "AK-47"};
     private string selectedCharacter;
     public GameObject selectedPrefab;
@@ -39,6 +39,7 @@ public class SetupControllerScript : MonoBehaviour
     private string popupMessage;
     public GameObject emergencyPopup;
     public Text emergencyPopupTxt;
+    public GameObject[] starterCharacterRefs;
     // Start is called before the first frame update
     void Start()
     {
@@ -66,8 +67,8 @@ public class SetupControllerScript : MonoBehaviour
 
     void InitializeCharacterSelection() {
         // Populate into grid layout
-		for (int i = 0; i < starterCharacters.Count; i++) {
-			string thisCharacterName = (string)starterCharacters[i];
+		foreach (KeyValuePair<string, int> qq in starterCharacters) {
+			string thisCharacterName = qq.Key;
 			Character c = InventoryScript.itemData.characterCatalog[thisCharacterName];
 			GameObject o = Instantiate(contentPrefab);
             SetupItemScript s = o.GetComponent<SetupItemScript>();
@@ -80,7 +81,7 @@ public class SetupControllerScript : MonoBehaviour
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
-			if (i == 0) {
+			if (qq.Value == 0) {
 				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
 				s.equippedInd.enabled = true;
 				selectedPrefab = o;
@@ -113,7 +114,7 @@ public class SetupControllerScript : MonoBehaviour
     }
 
     void SpawnSelectedCharacter() {
-        bodyRef = Instantiate((GameObject)Resources.Load(InventoryScript.itemData.characterCatalog[selectedCharacter].prefabPath), bodyPos, Quaternion.Euler(new Vector3(0f, 327f, 0f)));
+        bodyRef = Instantiate(starterCharacterRefs[starterCharacters[selectedCharacter]], bodyPos, Quaternion.Euler(new Vector3(0f, 327f, 0f)));
     }
 
     void DespawnSelectedCharacter() {

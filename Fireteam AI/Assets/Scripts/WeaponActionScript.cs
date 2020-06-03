@@ -30,6 +30,8 @@ public class WeaponActionScript : MonoBehaviour
     public WeaponStats weaponStats;
     public WeaponStats meleeStats;
     private WeaponMods weaponMods;
+    public GameObject BloodEffect;
+    public GameObject BloodEffectHeadshot;
 
     // Projectile spread constants
     public const float MAX_SPREAD = 0.15f;
@@ -78,7 +80,7 @@ public class WeaponActionScript : MonoBehaviour
     
     public GameObject hitParticles;
     public GameObject bulletImpact;
-    public GameObject bloodEffect;
+    private GameObject bloodEffect;
 
     public enum FireMode { Auto, Semi }
     public enum ShotMode { Single, Burst }
@@ -756,11 +758,11 @@ public class WeaponActionScript : MonoBehaviour
         GameObject bloodSpill;
         if (headshot)
         {
-            bloodEffect = (GameObject)Resources.Load("BloodEffectHeadshot");
+            bloodEffect = BloodEffectHeadshot;
         }
         else
         {
-            bloodEffect = (GameObject)Resources.Load("BloodEffect");
+            bloodEffect = BloodEffect;
         }
         bloodSpill = Instantiate(bloodEffect, point, Quaternion.FromToRotation(Vector3.forward, normal));
         bloodSpill.transform.Rotate(180f, 0f, 0f);
@@ -1314,7 +1316,7 @@ public class WeaponActionScript : MonoBehaviour
             BoosterScript boosterScript = weaponStats.GetComponentInChildren<BoosterScript>();
             boosterScript.UseBoosterItem(weaponStats.weaponName);
         } else if (weaponStats.category.Equals("Deployable")) {
-            DeployDeployable(weaponStats.weaponName, deployPos, deployRot);
+            DeployDeployable(deployPos, deployRot);
         }
         currentAmmo--;
         playerActionScript.weaponScript.SyncAmmoCounts();
@@ -1484,18 +1486,18 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
-    public void DeployDeployable(string deployable, Vector3 pos, Quaternion rot) {
-        GameObject o = GameObject.Instantiate((GameObject)Resources.Load(InventoryScript.itemData.weaponCatalog[deployable].prefabPath + "Deploy"), pos, rot);
+    public void DeployDeployable(Vector3 pos, Quaternion rot) {
+        GameObject o = GameObject.Instantiate(weaponStats.deployRef, pos, rot);
         DeployableScript d = o.GetComponent<DeployableScript>();
         int dId = d.InstantiateDeployable();
 		playerActionScript.gameController.DeployDeployable(dId, o);
-		pView.RPC("RpcDeployDeployable", RpcTarget.Others, dId, deployable, playerActionScript.gameController.teamMap, pos.x, pos.y, pos.z, rot.eulerAngles.x, rot.eulerAngles.y, rot.eulerAngles.z);
+		pView.RPC("RpcDeployDeployable", RpcTarget.Others, dId, playerActionScript.gameController.teamMap, pos.x, pos.y, pos.z, rot.eulerAngles.x, rot.eulerAngles.y, rot.eulerAngles.z);
     }
 
     [PunRPC]
-    public void RpcDeployDeployable(int deployableId, string deployableName, string team, float posX, float posY, float posZ, float rotX, float rotY, float rotZ) {
+    public void RpcDeployDeployable(int deployableId, string team, float posX, float posY, float posZ, float rotX, float rotY, float rotZ) {
         if (team != playerActionScript.gameController.teamMap) return;
-		GameObject o = GameObject.Instantiate((GameObject)Resources.Load(InventoryScript.itemData.weaponCatalog[deployableName].prefabPath + "Deploy"), new Vector3(posX, posY, posZ), Quaternion.Euler(rotX, rotY, rotZ));
+		GameObject o = GameObject.Instantiate(weaponStats.deployRef, new Vector3(posX, posY, posZ), Quaternion.Euler(rotX, rotY, rotZ));
 		o.GetComponent<DeployableScript>().deployableId = deployableId;
 		playerActionScript.gameController.DeployDeployable(deployableId, o);
     }

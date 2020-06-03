@@ -137,6 +137,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -312,6 +313,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -524,6 +526,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1131,7 +1134,6 @@ GameObject:
   - component: {fileID: 3230113516037711405}
   - component: {fileID: 3230113516037711408}
   - component: {fileID: 3230113516037711406}
-  - component: {fileID: 3230113516037711407}
   m_Layer: 0
   m_Name: Camera2
   m_TagString: Untagged
@@ -1197,14 +1199,6 @@ Camera:
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!124 &3230113516037711406
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3230113516037711409}
-  m_Enabled: 1
---- !u!92 &3230113516037711407
 Behaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5888,6 +5882,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -10765,6 +10760,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -15468,6 +15464,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -20354,6 +20351,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -20561,7 +20559,6 @@ GameObject:
   - component: {fileID: 3230113517052063450}
   - component: {fileID: 3230113517052063453}
   - component: {fileID: 3230113517052063451}
-  - component: {fileID: 3230113517052063452}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -20627,14 +20624,6 @@ Camera:
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!124 &3230113517052063451
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3230113517052063454}
-  m_Enabled: 1
---- !u!92 &3230113517052063452
 Behaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -25318,6 +25307,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -30322,6 +30312,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -35917,6 +35908,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -36010,6 +36002,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -40700,6 +40693,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -41224,6 +41218,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -41523,6 +41518,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -41728,7 +41724,6 @@ MonoBehaviour:
   weapon: {fileID: 0}
   leftShoulder: {fileID: 1047023884083999531}
   leftHand: {fileID: 0}
-  rightHand: {fileID: 0}
   fpc: {fileID: 7985552496256948435}
 --- !u!1 &5662882894278210780
 GameObject:
@@ -41775,6 +41770,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -41949,6 +41945,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -42157,6 +42154,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -42427,6 +42425,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -42628,6 +42627,7 @@ MonoBehaviour:
   fullBodyRef: {fileID: 0}
   firstPersonRef: {fileID: 0}
   equippedCharacter: Dani
+  characterGender: 
   equippedHeadgear: 
   equippedFacewear: 
   equippedTop: 
@@ -42685,6 +42685,8 @@ MonoBehaviour:
   playerActionScript: {fileID: 0}
   weaponHolder: {fileID: 7231154267090850751}
   weaponHolderFpc: {fileID: 0}
+  meleeHolder: {fileID: 0}
+  meleeHolderFpc: {fileID: 0}
   animator: {fileID: 3892020159659067316}
   ts: {fileID: 0}
   titleAnimFemale: {fileID: 0}
@@ -42692,6 +42694,7 @@ MonoBehaviour:
   equippedPrimaryWeapon: 
   equippedSecondaryWeapon: 
   equippedSupportWeapon: 
+  equippedMeleeWeapon: 
   equippedWep: 
   currentlyEquippedType: 0
   totalPrimaryAmmoLeft: 0
@@ -42866,6 +42869,8 @@ MonoBehaviour:
     smooth: 0
     smoothTime: 5
     lockCursor: 1
+    recoilInput: 0
+    swayInput: 0
     m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_FpcCharacterVerticalTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_FpcCharacterHorizontalTargetRot: {x: 0, y: 0, z: 0, w: 0}
@@ -42990,6 +42995,8 @@ MonoBehaviour:
     smooth: 0
     smoothTime: 5
     lockCursor: 1
+    recoilInput: 0
+    swayInput: 0
     m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_FpcCharacterVerticalTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_FpcCharacterHorizontalTargetRot: {x: 0, y: 0, z: 0, w: 0}
@@ -43004,20 +43011,28 @@ MonoBehaviour:
   animator: {fileID: 3892020159659067316}
   animatorFpc: {fileID: 0}
   weaponStats: {fileID: 0}
+  meleeStats: {fileID: 0}
   spread: 0
   totalAmmoLeft: 0
   currentAmmo: 0
   shootPoint: {fileID: 3230113516022606830}
   fpcShootPoint: {fileID: 0}
+  meleeTargetPos: {x: -Infinity, y: -Infinity, z: -Infinity}
+  isLunging: 0
   isReloading: 0
   isCocking: 0
   isFiring: 0
+  isMeleeing: 0
   isAiming: 0
   isDrawing: 0
   isWieldingThrowable: 0
   isWieldingBooster: 0
+  isWieldingDeployable: 0
   isCockingGrenade: 0
   isUsingBooster: 0
+  isUsingDeployable: 0
+  currentAimDownSightPos: {x: 0, y: 0, z: 0}
+  currentAimStableHandPos: {x: 0, y: 0, z: 0}
   hitParticles: {fileID: 1617700753897852, guid: 2b61531c3d65e3f4e949e45eb6021b7b,
     type: 3}
   bulletImpact: {fileID: 1235035097298946, guid: 1abe832de1d01be48b12062549dcc9fb,
@@ -43027,11 +43042,16 @@ MonoBehaviour:
   firingMode: 0
   shotMode: 0
   camTransform: {fileID: 3230113516704617303}
+  weaponCam: {fileID: 0}
   pView: {fileID: 7985552496256948441}
   rightCollar: {fileID: 0}
   leftCollar: {fileID: 0}
   leftCollarCurrentPos: {x: 0, y: 0, z: 0}
   rightCollarCurrentPos: {x: 0, y: 0, z: 0}
+  deployPlanMesh: {fileID: 0}
+  deployTimer: 0
+  deployInProgress: 0
+  switchWeaponBackToRight: 0
 --- !u!114 &7985552496256948437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43067,6 +43087,9 @@ MonoBehaviour:
   hudMarker: {fileID: 3230113518092198407}
   fpcBodyRef: {fileID: 0}
   objectsToDisable: []
+  ammoPickupSound: {fileID: 0}
+  healthPickupSound: {fileID: 0}
+  carryingSlot: {fileID: 0}
   health: 0
   sprintTime: 0
   godMode: 0
@@ -43078,6 +43101,7 @@ MonoBehaviour:
   totalSpeedBoost: 0
   weaponSpeedModifier: 0
   verticalVelocityBeforeLanding: 0
+  objectCarrying: {fileID: 0}
   fpc: {fileID: 7985552496256948435}
   isNotOnTeamMap: 0
   hitTimer: 0
@@ -43116,7 +43140,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioMuffle: {fileID: 3230113516704617302}
   audioEcho: {fileID: 3230113516704617307}
-  bgm: {fileID: 3230113517399156959}
   fxRef: {fileID: 3230113517949399804}
   stealthMusic: {fileID: 8300000, guid: 845c1df058bb4244391e15b273edc166, type: 3}
   assaultMusic: {fileID: 8300000, guid: d0211a83da423754ba0d4c5435e2c149, type: 3}
@@ -43127,8 +43150,8 @@ MonoBehaviour:
   hitmarkerSound: {fileID: 8300000, guid: f5f9c7f44fd0db94fb7457a968a1def7, type: 3}
   sirenSound: {fileID: 8300000, guid: e4fdcd319d7fc2f459e5894d9c267ee5, type: 3}
   missionStartSound: {fileID: 8300000, guid: c995c036e32e4f447bdaaa1124e4c370, type: 3}
-  alertSound: {fileID: 0}
   cautionSound: {fileID: 0}
+  detectedSound: {fileID: 0}
 --- !u!54 &7985552496256948440
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -43165,7 +43188,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 7985552496256948442}
   viewIdField: 0
-  InstantiationId: 2
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &7985552496256948442
 MonoBehaviour:
@@ -43386,6 +43409,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

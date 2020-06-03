@@ -676,7 +676,7 @@ public class PlayerData : MonoBehaviour
     {
         if (bodyReference == null)
         {
-            bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.itemData.characterCatalog[character].prefabPath));
+            bodyReference = Instantiate(titleRef.characterRefs[titleRef.charactersRefsIndices[character]]);
         }
         // else
         // {
@@ -696,7 +696,7 @@ public class PlayerData : MonoBehaviour
         WeaponScript weaponScrpt = bodyReference.GetComponent<WeaponScript>();
         Destroy(bodyReference);
         bodyReference = null;
-        bodyReference = Instantiate((GameObject)Resources.Load(InventoryScript.itemData.characterCatalog[character].prefabPath));
+        bodyReference = Instantiate(titleRef.characterRefs[titleRef.charactersRefsIndices[character]]);
         EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
         WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
         characterEquips.ts = titleRef;
