@@ -9,15 +9,15 @@ public class Character
     public char gender;
     public string thumbnailPath;
     public string description;
-    public string[] skins;
-    public string fpcFullSkinPath;
-    public string fpcNoSkinPath;
+    public int[] skins;
+    public int fpcFullSkinPath;
+    public int fpcNoSkinPath;
     public bool purchasable;
     public int gpPrice;
     public string defaultTop;
     public string defaultBottom;
 
-    public Character(string name, char gender, string prefabPath, string fpcFullSkinPath, string fpcNoSkinPath, string thumbnailPath, string description, string[] skins, int gpPrice, bool purchasable, string defaultTop, string defaultBottom) {
+    public Character(string name, char gender, string prefabPath, int fpcFullSkinPath, int fpcNoSkinPath, string thumbnailPath, string description, int[] skins, int gpPrice, bool purchasable, string defaultTop, string defaultBottom) {
         this.skins = skins;
         this.name = name;
         this.gender = gender;

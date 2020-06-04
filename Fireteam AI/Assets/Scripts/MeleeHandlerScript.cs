@@ -9,12 +9,12 @@ public class MeleeHandlerScript : MonoBehaviour
     public FirstPersonController fpc;
 
     // Update is called once per frame
-    public GameObject LoadWeapon(string weaponPath) {
+    public GameObject LoadWeapon(int weaponPath) {
         if (weapon != null) {
             Destroy(weapon.gameObject);
             weapon = null;
         }
-        GameObject o = Instantiate((GameObject)Resources.Load(weaponPath));
+        GameObject o = Instantiate(InventoryScript.itemData.itemReferences[weaponPath]);
         weapon = o.transform;
         weapon.SetParent(gameObject.transform);
         return o;

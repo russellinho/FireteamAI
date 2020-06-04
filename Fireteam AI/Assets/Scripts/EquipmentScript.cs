@@ -285,8 +285,8 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedTopRef);
             equippedTopRef = null;
         }
-        string absPrefabPath = (charGender == 'M' ? e.malePrefabPath : e.femalePrefabPath);
-        equippedTopRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+        GameObject p = (charGender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedTopRef = (GameObject)Instantiate(p);
         equippedTopRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedTopRef.GetComponentInChildren<MeshFixer>();
         m.target = myTopRenderer.gameObject;
@@ -329,7 +329,7 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedSkinRef);
             equippedSkinRef = null;
         }
-        equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(InventoryScript.itemData.characterCatalog[equippedCharacter].skins[skinType]));
+        equippedSkinRef = (GameObject)Instantiate(InventoryScript.itemData.itemReferences[InventoryScript.itemData.characterCatalog[equippedCharacter].skins[skinType]]);
         equippedSkinRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
         m.target = mySkinRenderer.gameObject;
@@ -374,8 +374,8 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedBottomRef);
             equippedBottomRef = null;
         }
-        string absPrefabPath = (charGender == 'M' ? e.malePrefabPath : e.femalePrefabPath);
-        equippedBottomRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+        GameObject p = (charGender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedBottomRef = (GameObject)Instantiate(p);
         equippedBottomRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedBottomRef.GetComponentInChildren<MeshFixer>();
         m.target = myBottomRenderer.gameObject;
@@ -434,8 +434,8 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedFootwearRef);
             equippedFootwearRef = null;
         }
-        string absPrefabPath = (charGender == 'M' ? e.malePrefabPath : e.femalePrefabPath);
-        equippedFootwearRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+        GameObject p = (charGender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedFootwearRef = (GameObject)Instantiate(p);
         equippedFootwearRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedFootwearRef.GetComponentInChildren<MeshFixer>();
         m.target = myFootwearRenderer.gameObject;
@@ -478,8 +478,8 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedFacewearRef);
             equippedFacewearRef = null;
         }
-        string absPrefabPath = (GetGender() == 'M' ? e.malePrefabPath : e.femalePrefabPath);
-        equippedFacewearRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+        GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedFacewearRef = (GameObject)Instantiate(p);
         equippedFacewearRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedFacewearRef.GetComponentInChildren<MeshFixer>();
         m.target = myFacewearRenderer.gameObject;
@@ -529,8 +529,8 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedHeadgearRef);
             equippedHeadgearRef = null;
         }
-        string absPrefabPath = (GetGender() == 'M' ? e.malePrefabPath : e.femalePrefabPath);
-        equippedHeadgearRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+        GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedHeadgearRef = (GameObject)Instantiate(p);
         equippedHeadgearRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedHeadgearRef.GetComponentInChildren<MeshFixer>();
         m.target = myHeadgearRenderer.gameObject;
@@ -574,11 +574,11 @@ public class EquipmentScript : MonoBehaviour
             Destroy(equippedArmorBottomRef);
             equippedArmorBottomRef = null;
         }
-        string absPrefabPath = (GetGender() == 'M' ? a.malePrefabPathTop : a.femalePrefabPathTop);
-        equippedArmorTopRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+        GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathTop] : InventoryScript.itemData.itemReferences[a.femalePrefabPathTop]);
+        equippedArmorTopRef = (GameObject)Instantiate(p);
         equippedArmorTopRef.transform.SetParent(gameObject.transform);
-        absPrefabPath = (GetGender() == 'M' ? a.malePrefabPathBottom : a.femalePrefabPathBottom);
-        equippedArmorBottomRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+        p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathBottom] : InventoryScript.itemData.itemReferences[a.femalePrefabPathBottom]);
+        equippedArmorBottomRef = (GameObject)Instantiate(p);
         equippedArmorBottomRef.transform.SetParent(gameObject.transform);
         MeshFixer m = equippedArmorTopRef.GetComponentInChildren<MeshFixer>();
         m.target = myArmorTopRenderer.gameObject;
@@ -710,8 +710,8 @@ public class EquipmentScript : MonoBehaviour
     private void RpcEquipTopInGame(string top) {
         equippedTop = top;
         Equipment e = InventoryScript.itemData.equipmentCatalog[top];
-        string absPrefabPath = (GetGender() == 'M' ? e.malePrefabPath : e.femalePrefabPath);
-        equippedTopRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+        GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedTopRef = (GameObject)Instantiate(p);
         equippedTopRef.transform.SetParent(fullBodyRef.transform);
         MeshFixer m = equippedTopRef.GetComponentInChildren<MeshFixer>();
         m.target = myTopRenderer.gameObject;
@@ -720,8 +720,8 @@ public class EquipmentScript : MonoBehaviour
 
         // Equip shirt on FPC model as well if it's the local player
         if (isFirstPerson()) {
-            absPrefabPath = (GetGender() == 'M' ? e.maleFpcPrefabPath : e.femaleFpcPrefabPath);
-            equippedFpcTopRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+            p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.maleFpcPrefabPath] : InventoryScript.itemData.itemReferences[e.femaleFpcPrefabPath]);
+            equippedFpcTopRef = (GameObject)Instantiate(p);
             equippedFpcTopRef.transform.SetParent(firstPersonRef.transform);
             m = equippedFpcTopRef.GetComponentInChildren<MeshFixer>();
             m.target = myFpcTopRenderer.gameObject;
@@ -746,7 +746,7 @@ public class EquipmentScript : MonoBehaviour
 
     private void EquipSkinInGame(int skin) {
         equippedSkin = skin;
-        equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(InventoryScript.itemData.characterCatalog[equippedCharacter].skins[skin]));
+        equippedSkinRef = (GameObject)Instantiate(InventoryScript.itemData.itemReferences[InventoryScript.itemData.characterCatalog[equippedCharacter].skins[skin]]);
         equippedSkinRef.transform.SetParent(fullBodyRef.transform);
         MeshFixer m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
         m.target = mySkinRenderer.gameObject;
@@ -755,9 +755,9 @@ public class EquipmentScript : MonoBehaviour
 
         // Equips skin on FPC if is local player
         if (isFirstPerson()) {
-            string skinPath = (skin != 0) ? InventoryScript.itemData.characterCatalog[equippedCharacter].fpcFullSkinPath : InventoryScript.itemData.characterCatalog[equippedCharacter].fpcNoSkinPath;
-            if (!"".Equals(skinPath)) {
-                equippedFpcSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(skinPath));
+            int skinPath = (skin != 0) ? InventoryScript.itemData.characterCatalog[equippedCharacter].fpcFullSkinPath : InventoryScript.itemData.characterCatalog[equippedCharacter].fpcNoSkinPath;
+            if (skinPath != -1) {
+                equippedFpcSkinRef = (GameObject)Instantiate(InventoryScript.itemData.itemReferences[skinPath]);
                 equippedFpcSkinRef.transform.SetParent(firstPersonRef.transform);
                 m = equippedFpcSkinRef.GetComponentInChildren<MeshFixer>();
                 m.target = myFpcSkinRenderer.gameObject;
@@ -771,8 +771,8 @@ public class EquipmentScript : MonoBehaviour
     private void RpcEquipBottomInGame(string bottom) {
         equippedBottom = bottom;
         Equipment e = InventoryScript.itemData.equipmentCatalog[bottom];
-        string absPrefabPath = (GetGender() == 'M' ? e.malePrefabPath : e.femalePrefabPath);
-        equippedBottomRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+        GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedBottomRef = (GameObject)Instantiate(p);
         equippedBottomRef.transform.SetParent(fullBodyRef.transform);
         MeshFixer m = equippedBottomRef.GetComponentInChildren<MeshFixer>();
         m.target = myBottomRenderer.gameObject;
@@ -797,8 +797,8 @@ public class EquipmentScript : MonoBehaviour
                 myHairRenderer.SetActive(true);
             }
         }
-        string absPrefabPath = (GetGender() == 'M' ? e.malePrefabPath : e.femalePrefabPath);
-        equippedHeadgearRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+        GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedHeadgearRef = (GameObject)Instantiate(p);
         equippedHeadgearRef.transform.SetParent(fullBodyRef.transform);
         MeshFixer m = equippedHeadgearRef.GetComponentInChildren<MeshFixer>();
         m.target = myHeadgearRenderer.gameObject;
@@ -817,8 +817,8 @@ public class EquipmentScript : MonoBehaviour
         }
         equippedFacewear = facewear;
         Equipment e = InventoryScript.itemData.equipmentCatalog[facewear];
-        string absPrefabPath = (GetGender() == 'M' ? e.malePrefabPath : e.femalePrefabPath);
-        equippedFacewearRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+        GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedFacewearRef = (GameObject)Instantiate(p);
         equippedFacewearRef.transform.SetParent(fullBodyRef.transform);
         MeshFixer m = equippedFacewearRef.GetComponentInChildren<MeshFixer>();
         m.target = myFacewearRenderer.gameObject;
@@ -837,16 +837,16 @@ public class EquipmentScript : MonoBehaviour
         }
         equippedArmor = armor;
         Armor a = InventoryScript.itemData.armorCatalog[armor];
-        string absPrefabPath = (GetGender() == 'M' ? a.malePrefabPathTop : a.femalePrefabPathTop);
-        equippedArmorTopRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+        GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathTop] : InventoryScript.itemData.itemReferences[a.femalePrefabPathTop]);
+        equippedArmorTopRef = (GameObject)Instantiate(p);
         equippedArmorTopRef.transform.SetParent(fullBodyRef.transform);
         MeshFixer m = equippedArmorTopRef.GetComponentInChildren<MeshFixer>();
         m.target = myArmorTopRenderer.gameObject;
         m.rootBone = myBones.transform;
         m.AdaptMesh();
 
-        absPrefabPath = (GetGender() == 'M' ? a.malePrefabPathBottom : a.femalePrefabPathBottom);
-        equippedArmorBottomRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+        p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathBottom] : InventoryScript.itemData.itemReferences[a.femalePrefabPathBottom]);
+        equippedArmorBottomRef = (GameObject)Instantiate(p);
         equippedArmorBottomRef.transform.SetParent(fullBodyRef.transform);
         m = equippedArmorBottomRef.GetComponentInChildren<MeshFixer>();
         m.target = myArmorBottomRenderer.gameObject;
@@ -862,8 +862,8 @@ public class EquipmentScript : MonoBehaviour
     private void RpcEquipFootwearInGame(string footwear) {
         equippedFootwear = footwear;
         Equipment e = InventoryScript.itemData.equipmentCatalog[footwear];
-        string absPrefabPath = (GetGender() == 'M' ? e.malePrefabPath : e.femalePrefabPath);
-        equippedFootwearRef = (GameObject)Instantiate((GameObject)Resources.Load(absPrefabPath));
+        GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedFootwearRef = (GameObject)Instantiate(p);
         equippedFootwearRef.transform.SetParent(fullBodyRef.transform);
         MeshFixer m = equippedFootwearRef.GetComponentInChildren<MeshFixer>();
         m.target = myFootwearRenderer.gameObject;

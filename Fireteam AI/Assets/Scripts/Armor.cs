@@ -5,10 +5,10 @@ using UnityEngine;
 public class Armor
 {
     public string name;
-    public string malePrefabPathTop;
-    public string malePrefabPathBottom;
-    public string femalePrefabPathTop;
-    public string femalePrefabPathBottom;
+    public int malePrefabPathTop;
+    public int malePrefabPathBottom;
+    public int femalePrefabPathTop;
+    public int femalePrefabPathBottom;
     public string category;
     public string thumbnailPath;
     public string description;
@@ -18,7 +18,7 @@ public class Armor
     public bool purchasable;
     public int gpPrice;
 
-    public Armor(string name, string malePrefabPathTop, string malePrefabPathBottom, string femalePrefabPathTop, string femalePrefabPathBottom, string thumbnailPath, string description, float speed, float stamina, float armor, int gpPrice, bool purchasable) {
+    public Armor(string name, int malePrefabPathTop, int malePrefabPathBottom, int femalePrefabPathTop, int femalePrefabPathBottom, string thumbnailPath, string description, float speed, float stamina, float armor, int gpPrice, bool purchasable) {
         this.name = name;
         this.category = "Armor";
         this.malePrefabPathTop = malePrefabPathTop;

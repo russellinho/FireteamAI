@@ -5,7 +5,7 @@ using UnityEngine;
 public class Mod
 {
     public string name;
-    public string prefabPath;
+    public int prefabPath;
     public string category;
     public string thumbnailPath;
     public int modIndex;
@@ -20,7 +20,7 @@ public class Mod
     public bool purchasable;
     public int gpPrice;
 
-    public Mod(string name, string category, string prefabPath, string thumbnailPath, int modIndex, string crosshairPath, string description, float damageBoost, float accuracyBoost, float recoilBoost, float rangeBoost, int clipCapacityBoost, int maxAmmoBoost, int gpPrice, bool purchasable) {
+    public Mod(string name, string category, int prefabPath, string thumbnailPath, int modIndex, string crosshairPath, string description, float damageBoost, float accuracyBoost, float recoilBoost, float rangeBoost, int clipCapacityBoost, int maxAmmoBoost, int gpPrice, bool purchasable) {
         this.name = name;
         this.category = category;
         this.prefabPath = prefabPath;

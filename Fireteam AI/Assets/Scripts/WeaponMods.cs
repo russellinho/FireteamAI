@@ -33,7 +33,7 @@ public class WeaponMods : MonoBehaviour
         // Set the suppressor name
         this.suppressorName = suppressorName;
         suppressorStats = newSuppressorStats;
-        suppressorRef = (GameObject)Instantiate(Resources.Load(suppressorStats.prefabPath));
+        suppressorRef = (GameObject)Instantiate(InventoryScript.itemData.itemReferences[suppressorStats.prefabPath]);
         // Equip it and place it in the correct position
         suppressorRef.transform.SetParent(suppressorPos);
         suppressorRef.transform.localPosition = Vector3.zero;
@@ -73,7 +73,7 @@ public class WeaponMods : MonoBehaviour
         // Set the suppressor name
         this.sightName = sightName;
         sightStats = newSightStats;
-        sightRef = (GameObject)Instantiate(Resources.Load(sightStats.prefabPath));
+        sightRef = (GameObject)Instantiate(InventoryScript.itemData.itemReferences[sightStats.prefabPath]);
         // Equip it and place it in the correct position
         sightRef.transform.SetParent(sightPos);
         sightRef.transform.localPosition = Vector3.zero;
