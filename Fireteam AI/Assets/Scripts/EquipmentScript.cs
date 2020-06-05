@@ -710,6 +710,7 @@ public class EquipmentScript : MonoBehaviour
     private void RpcEquipTopInGame(string top) {
         equippedTop = top;
         Equipment e = InventoryScript.itemData.equipmentCatalog[top];
+        
         GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         equippedTopRef = (GameObject)Instantiate(p);
         equippedTopRef.transform.SetParent(fullBodyRef.transform);
