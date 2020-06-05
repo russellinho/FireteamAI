@@ -772,7 +772,6 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcInstantiateBulletHole(Vector3 point, Vector3 normal, string parentName)
     {
-        Debug.Log("87");
         if (gameObject.layer == 0) return;
         GameObject bulletHoleEffect = Instantiate(bulletImpact, point, Quaternion.FromToRotation(Vector3.forward, normal));
         bulletHoleEffect.transform.SetParent(GameObject.Find(parentName).transform);
@@ -789,7 +788,6 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcInstantiateHitParticleEffect(Vector3 point, Vector3 normal)
     {
-        Debug.Log("88");
         if (gameObject.layer == 0) return;
         GameObject hitParticleEffect = Instantiate(hitParticles, point, Quaternion.FromToRotation(Vector3.up, normal));
         Destroy(hitParticleEffect, 1f);
@@ -835,7 +833,6 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void FireEffects()
     {
-        Debug.Log("89");
         if (gameObject.layer == 0) return;
         PlayMuzzleFlash();
         InstantiateGunSmokeEffect(1.5f);

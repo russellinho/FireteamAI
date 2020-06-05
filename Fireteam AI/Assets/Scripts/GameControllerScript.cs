@@ -177,14 +177,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				}
 
-				// Cbeck if mode has been changed to assault or not
-				if (!assaultMode) {
-					if (!lastGunshotHeardPos.Equals (Vector3.negativeInfinity)) {
-						UpdateAssaultMode();
-					}
-				}
-
-
 				ResetLastGunshotPos ();
 				UpdateEndGameTimer();
 			}
@@ -280,14 +272,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				}
 				// Check to see if either team has forfeited
 				DetermineEnemyTeamForfeited();
-
-				// Cbeck if mode has been changed to assault or not
-				if (!assaultMode) {
-					if (!lastGunshotHeardPos.Equals (Vector3.negativeInfinity)) {
-						UpdateAssaultMode();
-					}
-				}
-
 
 				ResetLastGunshotPos ();
 				UpdateEndGameTimer();
@@ -400,7 +384,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     [PunRPC]
 	public void RpcUpdateAssaultMode(bool assaultInProgress, string team) {
-		Debug.Log("53");
         if (team != teamMap) return;
 		StartCoroutine (UpdateAssaultModeTimer(5f, assaultInProgress));
 	}
