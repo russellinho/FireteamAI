@@ -772,6 +772,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcInstantiateBulletHole(Vector3 point, Vector3 normal, string parentName)
     {
+        Debug.Log("87");
         if (gameObject.layer == 0) return;
         GameObject bulletHoleEffect = Instantiate(bulletImpact, point, Quaternion.FromToRotation(Vector3.forward, normal));
         bulletHoleEffect.transform.SetParent(GameObject.Find(parentName).transform);
@@ -788,6 +789,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void RpcInstantiateHitParticleEffect(Vector3 point, Vector3 normal)
     {
+        Debug.Log("88");
         if (gameObject.layer == 0) return;
         GameObject hitParticleEffect = Instantiate(hitParticles, point, Quaternion.FromToRotation(Vector3.up, normal));
         Destroy(hitParticleEffect, 1f);
@@ -833,6 +835,7 @@ public class WeaponActionScript : MonoBehaviour
     [PunRPC]
     void FireEffects()
     {
+        Debug.Log("89");
         if (gameObject.layer == 0) return;
         PlayMuzzleFlash();
         InstantiateGunSmokeEffect(1.5f);
@@ -1307,7 +1310,7 @@ public class WeaponActionScript : MonoBehaviour
     public void UseSupportItem() {
         // If the item is a grenade, instantiate and launch the grenade
         if (weaponStats.category.Equals("Explosive")) {
-            GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.itemData.weaponCatalog[weaponStats.weaponName].prefabPath + "Projectile", weaponHolderFpc.transform.position, Quaternion.identity);
+            GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.itemData.weaponCatalog[weaponStats.weaponName].projectilePath, weaponHolderFpc.transform.position, Quaternion.identity);
             projectile.transform.forward = weaponHolderFpc.transform.forward;
             projectile.GetComponent<ThrowableScript>().Launch(gameObject, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
             // Reset fire timer and subtract ammo used
@@ -1324,7 +1327,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     public void UseLauncherItem() {
-        GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.itemData.weaponCatalog[weaponStats.weaponName].prefabPath + "Projectile", camTransform.position + camTransform.forward, Quaternion.identity);
+        GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.itemData.weaponCatalog[weaponStats.weaponName].projectilePath, camTransform.position + camTransform.forward, Quaternion.identity);
         // projectile.transform.right = -weaponHolderFpc.transform.forward;
         projectile.transform.right = -camTransform.forward;
         projectile.GetComponent<LauncherScript>().Launch(gameObject, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);

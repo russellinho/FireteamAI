@@ -5,6 +5,7 @@ public class Weapon
 {
     public string name;
     public int prefabPath;
+    public string projectilePath;
     public string type;
     public string category;
     public string thumbnailPath;
@@ -24,11 +25,12 @@ public class Weapon
     public bool deleteable;
     public int gpPrice;
 
-    public Weapon(string name, string type, string category, int prefabPath, string thumbnailPath, string description, float damage, float mobility, float fireRate, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo, bool canBeModded, bool suppressorCompatible, bool sightCompatible, int gpPrice, bool purchasable, bool deleteable) {
+    public Weapon(string name, string type, string category, int prefabPath, string projectilePath, string thumbnailPath, string description, float damage, float mobility, float fireRate, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo, bool canBeModded, bool suppressorCompatible, bool sightCompatible, int gpPrice, bool purchasable, bool deleteable) {
         this.name = name;
         this.type = type;
         this.category = category;
         this.prefabPath = prefabPath;
+        this.projectilePath = projectilePath;
         this.thumbnailPath = thumbnailPath;
         this.description = description;
         this.damage = damage;

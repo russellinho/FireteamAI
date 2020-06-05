@@ -400,6 +400,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     [PunRPC]
 	public void RpcUpdateAssaultMode(bool assaultInProgress, string team) {
+		Debug.Log("53");
         if (team != teamMap) return;
 		StartCoroutine (UpdateAssaultModeTimer(5f, assaultInProgress));
 	}
@@ -462,6 +463,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	[PunRPC]
 	void RpcSetLastGunshotHeardTimer(float t, string team) {
+		Debug.Log("54");
         if (team != teamMap) return;
 		lastGunshotTimer = t;
 	}
@@ -474,6 +476,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	[PunRPC]
 	void RpcSetLastGunshotHeardPos(bool b, float x, float y, float z, string team) {
+		Debug.Log("55");
         if (team != teamMap) return;
 		if (!b) {
 			lastGunshotHeardPos = Vector3.negativeInfinity;
@@ -484,6 +487,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	[PunRPC]
 	void RpcSetLastGunshotHeardPosClone(bool b, float x, float y, float z, string team) {
+		Debug.Log("56");
         if (team != teamMap) return;
 		if (!b) {
 			lastGunshotHeardPosClone = Vector3.negativeInfinity;

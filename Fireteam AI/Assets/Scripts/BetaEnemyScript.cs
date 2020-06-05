@@ -615,6 +615,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcSetAlertStatus(int statusNumber, string team) {
+		Debug.Log("one");
         if (team != gameControllerScript.teamMap) return;
 		alertStatus = (AlertStatus)statusNumber;
 		AdjustRangeForAlertStatus();
@@ -651,6 +652,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcSetNavMeshDestination(float x, float y, float z, string team) {
+		Debug.Log("four");
         if (team != gameControllerScript.teamMap) return;
 		if (gameControllerScript.matchType == 'V') {
 			SetNavMeshDestinationForVersus(x, y, z);
@@ -993,6 +995,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcSetCrouchMode(int n, string team) {
+		Debug.Log("ten");
         if (team != gameControllerScript.teamMap) return;
         crouchMode = (CrouchMode)n;
 	}
@@ -1290,6 +1293,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcUpdateNavMesh(bool stopped, string team) {
+		Debug.Log("12");
         if (team != gameControllerScript.teamMap) return;
         if (gameControllerScript.matchType == 'V') {
 			UpdateNavMeshForVersus(stopped);
@@ -1320,6 +1324,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcUpdateNavMeshSpeed(float speed, string team) {
+		Debug.Log("13");
         if (team != gameControllerScript.teamMap) return;
         navMesh.speed = speed;
 	}
@@ -2111,6 +2116,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	private void RpcUpdateActionState(ActionStates action, string team) {
+		Debug.Log("24");
         if (team != gameControllerScript.teamMap) return;
         //{Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking}
         // if (action == ActionStates.Firing || action == ActionStates.Moving || action == ActionStates.Reloading || action == ActionStates.Pursue || action == ActionStates.TakingCover || action == ActionStates.InCover) {
