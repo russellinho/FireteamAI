@@ -616,7 +616,7 @@ public class WeaponActionScript : MonoBehaviour
         }
         if (weaponMods.suppressorRef == null)
         {
-            playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+            playerActionScript.gameController.SetLastGunshotHeardPos(false, transform.position);
             pView.RPC("FireEffects", RpcTarget.All);
         }
         else
@@ -747,7 +747,7 @@ public class WeaponActionScript : MonoBehaviour
             }
         }
 
-        playerActionScript.gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+        playerActionScript.gameController.SetLastGunshotHeardPos(false, transform.position);
         pView.RPC("FireEffects", RpcTarget.All);
     }
 

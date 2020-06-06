@@ -21,7 +21,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     // variable for last gunshot position
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
-	private Vector3 lastGunshotHeardPosClone = Vector3.negativeInfinity;
 	private float lastGunshotTimer = 0f;
     public float endGameTimer = 0f;
 	private bool loadExitCalled;
@@ -112,7 +111,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         syncMissionTimeTimer = 0f;
 
 		lastGunshotHeardPos = Vector3.negativeInfinity;
-		lastGunshotHeardPosClone = Vector3.negativeInfinity;
 
 	}
 
@@ -225,6 +223,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				UpdateEndGameTimer();
 			}
 		}
+		DecrementLastGunshotTimer();
 	}
 
 	void GameOverCheckForVersus() {
@@ -331,6 +330,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		if (forfeitDelay > 0f) {
             forfeitDelay -= Time.deltaTime;
         }
+		DecrementLastGunshotTimer();
 	}
 
 	[PunRPC]
@@ -444,52 +444,33 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         }
     }
 
-	[PunRPC]
-	void RpcSetLastGunshotHeardTimer(float t, string team) {
-		Debug.Log("54");
-        if (team != teamMap) return;
-		lastGunshotTimer = t;
-	}
-
-	public void SetLastGunshotHeardPos(float x, float y, float z) {
+	public void SetLastGunshotHeardPos(bool clear, Vector3 pos) {
+		if (Vector3.Equals(pos, lastGunshotHeardPos) || lastGunshotTimer > 0f) return;
 		if (spawnMode != SpawnMode.Paused) {
-			pView.RPC ("RpcSetLastGunshotHeardPos", RpcTarget.All, true, x, y, z, teamMap);
+			pView.RPC ("RpcSetLastGunshotHeardPos", RpcTarget.All, clear, pos.x, pos.y, pos.z, teamMap);
 		}
 	}
 
 	[PunRPC]
 	void RpcSetLastGunshotHeardPos(bool b, float x, float y, float z, string team) {
-		Debug.Log("55");
         if (team != teamMap) return;
-		if (!b) {
+		if (b) {
 			lastGunshotHeardPos = Vector3.negativeInfinity;
 		} else {
 			lastGunshotHeardPos = new Vector3 (x, y, z);
 		}
-	}
-
-	[PunRPC]
-	void RpcSetLastGunshotHeardPosClone(bool b, float x, float y, float z, string team) {
-		Debug.Log("56");
-        if (team != teamMap) return;
-		if (!b) {
-			lastGunshotHeardPosClone = Vector3.negativeInfinity;
-		} else {
-			lastGunshotHeardPosClone = new Vector3 (x, y, z);
-		}
+		lastGunshotTimer = 10f;
 	}
 
 	void ResetLastGunshotPos() {
-		if (!Vector3.Equals (lastGunshotHeardPos, lastGunshotHeardPosClone)) {
-			pView.RPC ("RpcSetLastGunshotHeardTimer", RpcTarget.All, 10f, teamMap);
-			pView.RPC ("RpcSetLastGunshotHeardPosClone", RpcTarget.All, true, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, teamMap);
-		} else {
+		if (lastGunshotTimer <= 0f) {
+			SetLastGunshotHeardPos(true, Vector3.zero);
+		}
+	}
+
+	void DecrementLastGunshotTimer() {
+		if (lastGunshotTimer > 0f) {
 			lastGunshotTimer -= Time.deltaTime;
-			if (lastGunshotTimer <= 0f) {
-				pView.RPC ("RpcSetLastGunshotHeardTimer", RpcTarget.All, 10f, teamMap);
-				pView.RPC ("RpcSetLastGunshotHeardPos", RpcTarget.All, false, 0f, 0f, 0f, teamMap);
-				pView.RPC ("RpcSetLastGunshotHeardPosClone", RpcTarget.All, false, 0f, 0f, 0f, teamMap);
-			}
 		}
 	}
 

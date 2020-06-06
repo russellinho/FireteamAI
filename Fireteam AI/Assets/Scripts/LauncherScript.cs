@@ -82,7 +82,7 @@ public class LauncherScript : MonoBehaviour
         explosionEffect.Play();
         // Set nearby enemies on alert from explosion sound
         GameControllerScript gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameControllerScript>();
-        gameController.SetLastGunshotHeardPos(transform.position.x, transform.position.y, transform.position.z);
+        gameController.SetLastGunshotHeardPos(false, transform.position);
     }
 
     public void Explode() {

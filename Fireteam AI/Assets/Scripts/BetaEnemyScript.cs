@@ -477,7 +477,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
 			if (PhotonNetwork.IsMasterClient && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
-				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
+				SetNavMeshStopped(true);
 			}
 			return;
 		}
@@ -486,7 +486,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		HandleDetectionOutline();
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Disoriented")) {
 			if (PhotonNetwork.IsMasterClient && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
-				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
+				SetNavMeshStopped(true);
 			}
 			return;
 		}
@@ -514,7 +514,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
 			if (gameControllerScript.isVersusHostForThisTeam() && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
-				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
+				SetNavMeshStopped(true);
 			}
 			return;
 		}
@@ -523,7 +523,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		HandleDetectionOutline();
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Disoriented")) {
 			if (gameControllerScript.isVersusHostForThisTeam() && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
-				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
+				SetNavMeshStopped(true);
 			}
 			return;
 		}
@@ -651,9 +651,14 @@ public class BetaEnemyScript : MonoBehaviour {
         wanderStallDelay = f;
 	}
 
+	void SetNavMeshDestination(Vector3 dest) {
+		if (!Vector3.Equals(navMesh.destination, dest)) {
+			pView.RPC("RpcSetNavMeshDestination", RpcTarget.All, dest.x, dest.y, dest.z, gameControllerScript.teamMap);
+		}
+	}
+
 	[PunRPC]
 	void RpcSetNavMeshDestination(float x, float y, float z, string team) {
-		Debug.Log("four");
         if (team != gameControllerScript.teamMap) return;
 		if (gameControllerScript.matchType == 'V') {
 			SetNavMeshDestinationForVersus(x, y, z);
@@ -703,7 +708,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		// Melee attack trumps all
 		if (actionState == ActionStates.Melee || actionState == ActionStates.Dead || actionState == ActionStates.Disoriented) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
-				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
+				SetNavMeshStopped(true);
 			}
 			return;
 		}
@@ -728,14 +733,14 @@ public class BetaEnemyScript : MonoBehaviour {
 				} else {
 					// Else, check if the enemy has reached its destination
 					if (navMeshReachedDestination (2f)) {
-						pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
+						SetNavMeshStopped(true);
 					}
 				}
 				// If the stall delay is done, the enemy needs to move to a wander point
 				if (wanderStallDelay <= 0f && navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
 					int r = Random.Range (0, navPoints.Length);
 					RotateTowards (navPoints [r].transform.position);
-					pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, navPoints [r].transform.position.x, navPoints [r].transform.position.y, navPoints [r].transform.position.z, gameControllerScript.teamMap);
+					SetNavMeshDestination(navPoints [r].transform.position);
 					wanderStallDelay = Random.Range (0f, 7f);
                     //pView.RPC ("RpcSetWanderStallDelay", RpcTarget.Others, wanderStallDelay, gameControllerScript.teamMap);
                 }
@@ -744,21 +749,21 @@ public class BetaEnemyScript : MonoBehaviour {
 
 		if (actionState == ActionStates.Idle) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
-				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
+				SetNavMeshStopped(true);
 				pView.RPC ("RpcSetWanderStallDelay", RpcTarget.All, -1f, gameControllerScript.teamMap);
 			}
 		}
 
 		if (actionState == ActionStates.Dead || actionState == ActionStates.InCover) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
-				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
+				SetNavMeshStopped(true);
 			}
 		}
 
 		if (actionState == ActionStates.Pursue && !lastSeenPlayerPos.Equals(Vector3.negativeInfinity)) {
 			if (!Vector3.Equals(navMesh.destination, lastSeenPlayerPos)) {
 				UpdateNavMeshSpeed(6f);
-				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z, gameControllerScript.teamMap);
+				SetNavMeshDestination(lastSeenPlayerPos);
 				pView.RPC ("RpcSetLastSeenPlayerPos", RpcTarget.All, false, 0f, 0f, 0f, gameControllerScript.teamMap);
 			}
 		}
@@ -768,9 +773,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			// and there's nobody there, go back to wandering the area
 
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
-				if (!Vector3.Equals(navMesh.destination, GameControllerScript.lastGunshotHeardPos)) {
-					pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, GameControllerScript.lastGunshotHeardPos.x, GameControllerScript.lastGunshotHeardPos.y, GameControllerScript.lastGunshotHeardPos.z, gameControllerScript.teamMap);
-				}
+				SetNavMeshDestination(GameControllerScript.lastGunshotHeardPos);
 				if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint")) {
 					UpdateNavMeshSpeed(6f);
 				} else {
@@ -783,13 +786,13 @@ public class BetaEnemyScript : MonoBehaviour {
 			// If the enemy is not near the cover spot, run towards it
 			if (coverPos != null) {
 				UpdateNavMeshSpeed(6f);
-				pView.RPC ("RpcSetNavMeshDestination", RpcTarget.All, coverPos.position.x, coverPos.position.y, coverPos.position.z, gameControllerScript.teamMap);
+				SetNavMeshDestination(coverPos.position);
 				pView.RPC ("RpcSetCoverPos", RpcTarget.All, coverPos.GetComponent<CoverSpotScript>().coverId, false, 0f, 0f, 0f, gameControllerScript.teamMap);
 			} else {
 				// If the enemy has finally reached cover, then he will get into cover mode
 				if (navMeshReachedDestination(1.5f)) {
 					// Done
-					pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
+					SetNavMeshStopped(true);
 					UpdateActionState(ActionStates.InCover);
 				}
 			}
@@ -837,7 +840,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			}
 
 			if (firingState == FiringStates.StandingStill) {
-				pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
+				SetNavMeshStopped(true);
 			}
 
 			if (playerTargeting != null && navMesh.isOnNavMesh) {
@@ -976,7 +979,6 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
 	void RpcSetCrouchMode(int n, string team) {
-		Debug.Log("ten");
         if (team != gameControllerScript.teamMap) return;
         crouchMode = (CrouchMode)n;
 	}
@@ -1262,9 +1264,14 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
+	void SetNavMeshStopped(bool stopped) {
+		if (navMesh.isStopped != stopped) {
+			pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, stopped, gameControllerScript.teamMap);
+		}
+	}
+
 	[PunRPC]
 	void RpcUpdateNavMesh(bool stopped, string team) {
-		Debug.Log("12");
         if (team != gameControllerScript.teamMap) return;
         if (gameControllerScript.matchType == 'V') {
 			UpdateNavMeshForVersus(stopped);
@@ -1278,8 +1285,10 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
 				navMesh.isStopped = stopped;
 			}
-		} else {
-			prevWasStopped = stopped;
+		}
+		prevWasStopped = stopped;
+		if (prevWasStopped) {
+			prevNavDestination = Vector3.negativeInfinity;
 		}
 	}
 
@@ -1288,8 +1297,10 @@ public class BetaEnemyScript : MonoBehaviour {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
 				navMesh.isStopped = stopped;
 			}
-		} else {
-			prevWasStopped = stopped;
+		}
+		prevWasStopped = stopped;
+		if (prevWasStopped) {
+			prevNavDestination = Vector3.negativeInfinity;
 		}
 	}
 
@@ -1338,7 +1349,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			SetSuspicionLevel(0f, 0f, 0f);
 			SetAlertStatus(AlertStatus.Neutral);
 
-			pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
+			SetNavMeshStopped(true);
 			UpdateActionState(ActionStates.Dead);
 
 			float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
@@ -1579,7 +1590,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			} else if (currentBullets <= 0) {
 				if (enemyType != EnemyType.Scout) {
 					if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
-						pView.RPC ("RpcUpdateNavMesh", RpcTarget.All, true, gameControllerScript.teamMap);
+						SetNavMeshStopped(true);
 					}
 				}
 				if (isCrouching) {
