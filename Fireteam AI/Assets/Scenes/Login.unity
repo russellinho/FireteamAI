@@ -2634,6 +2634,7 @@ GameObject:
   - component: {fileID: 1820121351}
   - component: {fileID: 1820121350}
   - component: {fileID: 1820121353}
+  - component: {fileID: 1820121354}
   m_Layer: 0
   m_Name: Firebase
   m_TagString: Untagged
@@ -2782,6 +2783,22 @@ MonoBehaviour:
   - {fileID: 3860504239686808909, guid: 26dbe834c31440e4aa4fbdd9abb76414, type: 3}
   - {fileID: 6406873327239066714, guid: 106e9f4f6429efd47a983c9e8865ccea, type: 3}
   - {fileID: 8485904087546327385, guid: 98822d48cb260f24cad8ee66a9eba868, type: 3}
+--- !u!114 &1820121354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1820121349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ec60f446acd249c6a0bb223b365a1b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  preferenceData:
+    rememberLogin: 0
+    rememberUserId: 
+    musicVolume: 0
 --- !u!1 &1863107390
 GameObject:
   m_ObjectHideFlags: 0

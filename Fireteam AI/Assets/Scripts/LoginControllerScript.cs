@@ -25,8 +25,9 @@ public class LoginControllerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        LoadLoginPreferences();
         copyrightTxt.text = DateTime.Now.Year + " ©";
+        emailField.text = PlayerPreferences.playerPreferences.preferenceData.rememberUserId;
+        rememberLoginToggle.isOn = PlayerPreferences.playerPreferences.preferenceData.rememberLogin;
     }
 
     // Update is called once per frame
@@ -39,14 +40,26 @@ public class LoginControllerScript : MonoBehaviour
         }
         if (signInFlag == 1) {
             if (saveLoginPrefsFlag) {
-                SaveLoginPreferences();
+                PlayerPreferences.playerPreferences.preferenceData.rememberLogin = rememberLoginToggle.isOn;
+                if (rememberLoginToggle.isOn) {
+                    PlayerPreferences.playerPreferences.preferenceData.rememberUserId = emailField.text;
+                } else {
+                    PlayerPreferences.playerPreferences.preferenceData.rememberUserId = null;
+                }
+                PlayerPreferences.playerPreferences.SavePreferences();
                 saveLoginPrefsFlag = false;
             }
             SceneManager.LoadScene("Setup");
             signInFlag = 0;
         } else if (signInFlag == 2) {
             if (saveLoginPrefsFlag) {
-                SaveLoginPreferences();
+                PlayerPreferences.playerPreferences.preferenceData.rememberLogin = rememberLoginToggle.isOn;
+                if (rememberLoginToggle.isOn) {
+                    PlayerPreferences.playerPreferences.preferenceData.rememberUserId = emailField.text;
+                } else {
+                    PlayerPreferences.playerPreferences.preferenceData.rememberUserId = null;
+                }
+                PlayerPreferences.playerPreferences.SavePreferences();
                 saveLoginPrefsFlag = false;
             }
             SceneManager.LoadScene("Title");
@@ -119,60 +132,6 @@ public class LoginControllerScript : MonoBehaviour
 
     public void OnQuitClick() {
         Application.Quit();
-    }
-
-    void LoadLoginPreferences() {
-        // Load login prefs file. If file is corrupt or missing, then reset everything to default.
-        string filePath = Application.persistentDataPath + "/loginPrefs.dat";
-        FileStream file = null;
-        if(File.Exists(filePath)) {
-            try {
-                BinaryFormatter bf = new BinaryFormatter();
-                file = File.Open(Application.persistentDataPath + "/loginPrefs.dat", FileMode.Open);
-                LoginPreferences info = (LoginPreferences) bf.Deserialize(file);
-                rememberLoginToggle.isOn = info.rememberLogin;
-                emailField.text = info.rememberUserId;
-                Debug.Log("Login prefs loaded successfully!");
-            } catch (Exception e) {
-                Debug.Log("Login prefs file was corrupted. Setting login prefs to default.");
-                File.Delete(filePath);
-                SetDefaultLoginPreferences();
-            } finally {
-                if (file != null) {
-                    file.Close();
-                }
-            }
-        } else {
-            Debug.Log("Login prefs file not found. Setting defaults.");
-            SetDefaultLoginPreferences();
-        }
-    }
-
-    void SaveLoginPreferences() {
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(Application.persistentDataPath + "/loginPrefs.dat");
-        LoginPreferences info = new LoginPreferences();
-        info.rememberLogin = rememberLoginToggle.isOn;
-        if (rememberLoginToggle.isOn) {
-            info.rememberUserId = emailField.text;
-        } else {
-            info.rememberUserId = "";
-        }
-        bf.Serialize(file, info);
-        file.Close();
-        Debug.Log("Login prefs saved.");
-    }
-
-    void SetDefaultLoginPreferences() {
-        rememberLoginToggle.isOn = false;
-        emailField.text = "";
-    }
-
-    [Serializable]
-    class LoginPreferences
-    {
-        public bool rememberLogin;
-        public string rememberUserId;
     }
 
 }

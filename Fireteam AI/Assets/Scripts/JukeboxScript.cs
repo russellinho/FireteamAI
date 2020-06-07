@@ -17,6 +17,7 @@ public class JukeboxScript : MonoBehaviour
     private bool assaultMode;
     public AudioClip[] titleTrackList;
     private const float SONG_FADE_DELAY = 4f;
+    public const int DEFAULT_MUSIC_VOLUME = 70;
 
     void Awake() {
         if (jukebox == null)
@@ -67,12 +68,12 @@ public class JukeboxScript : MonoBehaviour
         if (audioSource1.isPlaying) {
             if (audio1FadeTime < SONG_FADE_DELAY) {
                 audio1FadeTime += Time.deltaTime;
-                audioSource1.volume = audio1FadeTime / SONG_FADE_DELAY;
+                audioSource1.volume = (audio1FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
             }
 
             if (audioSource1.time >= (audioSource1.clip.length - SONG_FADE_DELAY)) {
                 audio1FadeTime -= Time.deltaTime;
-                audioSource1.volume = audio1FadeTime / SONG_FADE_DELAY;
+                audioSource1.volume = (audio1FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
             }
 
             if (audio1FadeTime <= 0f) {
@@ -83,12 +84,12 @@ public class JukeboxScript : MonoBehaviour
         if (audioSource2.isPlaying) {
             if (audio2FadeTime < SONG_FADE_DELAY) {
                 audio2FadeTime += Time.deltaTime;
-                audioSource2.volume = audio2FadeTime / SONG_FADE_DELAY;
+                audioSource2.volume = (audio2FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
             }
 
             if (audioSource2.time >= (audioSource2.clip.length - SONG_FADE_DELAY)) {
                 audio2FadeTime -= Time.deltaTime;
-                audioSource2.volume = audio2FadeTime / SONG_FADE_DELAY;
+                audioSource2.volume = (audio2FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
             }
 
             if (audio2FadeTime <= 0f) {
@@ -102,11 +103,11 @@ public class JukeboxScript : MonoBehaviour
         if (audioSource1.isPlaying) {
             if (assaultMode) {
                 audio1FadeTime -= Time.deltaTime;
-                audioSource1.volume = audio1FadeTime / SONG_FADE_DELAY;
+                audioSource1.volume = (audio1FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
             } else {
                 if (audio1FadeTime < SONG_FADE_DELAY) {
                     audio1FadeTime += Time.deltaTime;
-                    audioSource1.volume = audio1FadeTime / SONG_FADE_DELAY;
+                    audioSource1.volume = (audio1FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
                 }
             }
 
@@ -118,11 +119,11 @@ public class JukeboxScript : MonoBehaviour
         if (audioSource2.isPlaying) {
             if (!assaultMode) {
                 audio2FadeTime -= Time.deltaTime;
-                audioSource2.volume = audio2FadeTime / SONG_FADE_DELAY;
+                audioSource2.volume = (audio2FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
             } else {
                 if (audio2FadeTime < SONG_FADE_DELAY) {
                     audio2FadeTime += Time.deltaTime;
-                    audioSource2.volume = audio2FadeTime / SONG_FADE_DELAY;
+                    audioSource2.volume = (audio2FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
                 }
             }
 
@@ -224,6 +225,11 @@ public class JukeboxScript : MonoBehaviour
     void LoadMusicForScene(string sceneName) {
         audioSource1.clip = (AudioClip)Resources.Load("Audio/BGM/" + sceneName + "_Stealth");
         audioSource2.clip = (AudioClip)Resources.Load("Audio/BGM/" + sceneName + "_Assault");
+    }
+
+    public void SetMusicVolume(float v) {
+        audioSource1.volume = v;
+        audioSource2.volume = v;
     }
 
 }

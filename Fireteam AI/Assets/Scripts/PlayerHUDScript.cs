@@ -723,8 +723,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         if (!container.pauseMenuGUI.activeInHierarchy)
         {
             container.pauseMenuGUI.SetActive(true);
-			pauseMenuScript.CloseKeyMappings();
-			pauseMenuScript.CloseOptionsMenu();
         }
         else
         {

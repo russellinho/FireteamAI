@@ -42,7 +42,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Text mainExpTxt;
 	public Camera mainCam;
 	public Text titleText;
+	public Slider musicVolumeSlider;
+	public InputField musicVolumeField;
 	//public GameObject networkMan;
+	public Button keyBindingsBtn;
+	public Button audioSettingsBtn;
+	public GameObject settingsMenu;
+	public GameObject audioSettingsMenu;
 	public GameObject matchmakingMenu;
 	public GameObject customizationMenu;
     public GameObject versusMenu;
@@ -53,6 +59,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject mainMenuPopup;
 	public GameObject customizationMenuPopup;
 	public GameObject marketplaceMenuPopup;
+	public GameObject settingsMenuPopup;
 	public GameObject modMenuPopup;
 	public GameObject emergencyPopup;
 	public Text emergencyPopupTxt;
@@ -214,6 +221,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (PlayerData.playerdata == null) {
 			ToggleSplashScreen(true, "Loading player details...");
 		}
+		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
+		musicVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.musicVolume;
 	}
 
 	void Start () {
@@ -308,7 +317,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		} else {
-			if (!matchmakingMenu.activeInHierarchy && !versusMenu.activeInHierarchy) {
+			if (!matchmakingMenu.activeInHierarchy && !versusMenu.activeInHierarchy && !SettingsIsOpen()) {
 				// If going to main menu screen
 				if (camPos == 0) {
 					mainCam.transform.position = Vector3.Lerp(customizationCameraPos, defaultCameraPos, camMoveTimer);
@@ -399,6 +408,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		
 	public void ReturnToMainMenu() {
 		// Save settings if the settings are active
+		settingsMenu.SetActive(false);
 		customizationMenu.SetActive (false);
 		matchmakingMenu.SetActive (false);
         versusMenu.SetActive(false);
@@ -410,7 +420,58 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void GoToKeyBindings() {
 		keyBindingsPopup.SetActive(true);
 		titleText.enabled = false;
+		ToggleSettingsMainButtons(false);
+	}
+
+	bool SettingsIsOpen() {
+		return settingsMenu.activeInHierarchy;
+	}
+
+	public void GoToSettings() {
+		settingsMenu.SetActive(true);
+		titleText.enabled = false;
 		mainMenu.SetActive (false);
+	}
+
+	public void GoToAudioSettings() {
+		ToggleSettingsMainButtons(false);
+		audioSettingsMenu.SetActive(true);
+	}
+
+	public void OnMusicVolumeSliderChanged() {
+		SetMusicVolume(musicVolumeSlider.value);
+	}
+
+	void SetMusicVolume(float v) {
+		musicVolumeField.text = ""+(int)(v * 100f);
+		JukeboxScript.jukebox.SetMusicVolume(v);
+	}
+
+	void ToggleSettingsMainButtons(bool b) {
+		audioSettingsBtn.gameObject.SetActive(b);
+		keyBindingsBtn.gameObject.SetActive(b);
+	}
+
+	void SaveAudioSettings() {
+		PlayerPreferences.playerPreferences.preferenceData.musicVolume = (int)(musicVolumeSlider.value * 100f);
+		PlayerPreferences.playerPreferences.SavePreferences();
+	}
+
+	public void SetDefaultAudioSettings() {
+		musicVolumeSlider.value = (float)JukeboxScript.DEFAULT_MUSIC_VOLUME / 100f;
+		SetMusicVolume(musicVolumeSlider.value);
+	}
+
+	public void ReturnToMainMenuFromSettings() {
+		if (keyBindingsPopup.activeInHierarchy) {
+			keyBindingsPopup.SetActive(false);
+		} else if (audioSettingsMenu.activeInHierarchy) {
+			SaveAudioSettings();
+			audioSettingsMenu.SetActive(false);
+		} else {
+			ReturnToMainMenu();
+		}
+		ToggleSettingsMainButtons(true);
 	}
 
 	public void ReturnToMainMenuFromCustomization() {
@@ -548,6 +609,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		marketplaceMenuPopup.SetActive (false);
 		modMenuPopup.SetActive(false);
 		customizationMenuPopup.SetActive(false);
+		settingsMenuPopup.SetActive(false);
 	}
 
     public void TriggerExpirationPopup(ArrayList expiredItems)
