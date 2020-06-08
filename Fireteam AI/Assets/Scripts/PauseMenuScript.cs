@@ -61,6 +61,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void CloseKeyMappings() {
+		SaveKeyBindings();
 		keyMappingsPanel.SetActive(false);
 		ToggleSettingsMainButtons(true);
 	}
@@ -99,6 +100,10 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	void SaveAudioSettings() {
 		PlayerPreferences.playerPreferences.preferenceData.musicVolume = (int)(musicVolumeSlider.value * 100f);
 		PlayerPreferences.playerPreferences.SavePreferences();
+	}
+
+	void SaveKeyBindings() {
+		PlayerPreferences.playerPreferences.SaveKeyMappings();
 	}
 
 	void ToggleSettingsMainButtons(bool b) {

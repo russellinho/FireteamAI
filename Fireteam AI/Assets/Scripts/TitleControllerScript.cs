@@ -459,6 +459,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		PlayerPreferences.playerPreferences.SavePreferences();
 	}
 
+	void SaveKeyBindings() {
+		PlayerPreferences.playerPreferences.SaveKeyMappings();
+	}
+
 	public void SetDefaultAudioSettings() {
 		musicVolumeSlider.value = (float)JukeboxScript.DEFAULT_MUSIC_VOLUME / 100f;
 		SetMusicVolume(musicVolumeSlider.value);
@@ -466,6 +470,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void ReturnToMainMenuFromSettings() {
 		if (keyBindingsPopup.activeInHierarchy) {
+			SaveKeyBindings();
 			keyBindingsPopup.SetActive(false);
 		} else if (audioSettingsMenu.activeInHierarchy) {
 			SaveAudioSettings();
