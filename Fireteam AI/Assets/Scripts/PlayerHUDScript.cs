@@ -189,7 +189,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		
 		HandleVipHealthBar();
 
-		ToggleScoreboard (Input.GetKey(KeyCode.Tab));
+		ToggleScoreboard (PlayerPreferences.playerPreferences.KeyWasPressed("Scoreboard", true));
 
 		UpdateHitmarker ();
 
@@ -283,7 +283,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void UpdateCursorStatus() {
-		if (Input.GetKeyDown(KeyCode.Escape) && CanPause()) {
+		if (PlayerPreferences.playerPreferences.KeyWasPressed("Pause") && CanPause()) {
 			Pause();
 		}
 

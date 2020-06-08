@@ -31,7 +31,7 @@ public class InGameMessengerHUD : MonoBehaviour {
 
 	void HandleChat() {
 		// Handle activating the input box
-		if (Input.GetKeyDown (KeyCode.T)) {
+		if (PlayerPreferences.playerPreferences.KeyWasPressed("AllChat")) {
 			if (!container.inGameMessenger.inputText.enabled) {
 				// Enable
 				container.inGameMessenger.inputText.enabled = true;

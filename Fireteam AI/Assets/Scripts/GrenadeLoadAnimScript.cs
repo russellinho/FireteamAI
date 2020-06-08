@@ -20,7 +20,7 @@ public class GrenadeLoadAnimScript : StateMachineBehaviour
 			cockSoundPlayed = true;
 			was.PlaySupportActionSound();
 		}
-        if (was.isWieldingThrowable && Input.GetButtonUp("Fire1")) {
+        if (was.isWieldingThrowable && PlayerPreferences.playerPreferences.KeyWasPressed("Fire", false, true)) {
             was.ConfirmGrenadeThrow();
         }
     }

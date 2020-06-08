@@ -102,7 +102,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // the jump state needs to read here to make sure it is not missed
 			if (!m_Jump && canMove && !playerActionScript.hud.container.pauseMenuGUI.activeInHierarchy && IsFullyMobile())
             {
-                m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
+                m_Jump = PlayerPreferences.playerPreferences.KeyWasPressed("Jump");
             }
 
             // Handle character landing
@@ -397,8 +397,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
             bool enableRunFlag = IsFullyMobile();
 
 			// Read input
-			float horizontal = CrossPlatformInputManager.GetAxis ("Horizontal");
-			float vertical = CrossPlatformInputManager.GetAxis ("Vertical");
+			float horizontal = PlayerPreferences.playerPreferences.KeyWasPressed("Left", true) ? -1f : 0f;
+            horizontal = PlayerPreferences.playerPreferences.KeyWasPressed("Right", true) ? 1f : 0f;
+			float vertical = PlayerPreferences.playerPreferences.KeyWasPressed("Backward", true) ? -1f : 0f;
+            vertical = PlayerPreferences.playerPreferences.KeyWasPressed("Forward", true) ? 1f : 0f;
 
             // Nullify movement if the user is paused
             if (playerActionScript.hud.container.pauseMenuGUI.activeInHierarchy) {
@@ -424,10 +426,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				}
 			} else {
 				if (!m_IsCrouching && m_CharacterController.isGrounded) {
-					if (Input.GetKey(KeyCode.C)) {
+					if (PlayerPreferences.playerPreferences.KeyWasPressed("Walk", true)) {
 						m_IsWalking = true;
 						m_IsRunning = false;
-					} else if (Input.GetKey(KeyCode.LeftShift) && vertical > 0f && playerActionScript.sprintTime > 0f && !sprintLock && enableRunFlag) {
+					} else if (PlayerPreferences.playerPreferences.KeyWasPressed("Sprint", true) && vertical > 0f && playerActionScript.sprintTime > 0f && !sprintLock && enableRunFlag) {
 						m_IsWalking = false;
 						m_IsRunning = true;
                         // if (weaponActionScript.isReloading || weaponActionScript.isCocking) {

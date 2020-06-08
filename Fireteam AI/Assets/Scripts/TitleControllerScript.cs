@@ -215,6 +215,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button removeSightBtn;
 	public Dictionary<string, int> charactersRefsIndices = new Dictionary<string, int>(){["Lucas"] = 0, ["Daryl"] = 1, ["Yongjin"] = 2, ["Rocko"] = 3, ["Hana"] = 4, ["Jade"] = 5, ["Dani"] = 6, ["Codename Sayre"] = 7};
 	public GameObject[] characterRefs;
+	public Text changingKeyMappingText;
+	private bool isChangingKeyMapping;
 
 	// Use this for initialization
 	void Awake() {
@@ -3796,5 +3798,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     public void CloseEmergencyPopup() {
         emergencyPopup.SetActive(false);
     }
+
+	public void ToggleIsChangingKeyMapping(bool b, string keyChanging) {
+		if (b) {
+			isChangingKeyMapping = true;
+			changingKeyMappingText.text = "Press a button to set a key for [" + keyChanging + "]";
+			changingKeyMappingText.enabled = true;
+		} else {
+			isChangingKeyMapping = false;
+			changingKeyMappingText.enabled = false;
+		}
+	}
 		
 }

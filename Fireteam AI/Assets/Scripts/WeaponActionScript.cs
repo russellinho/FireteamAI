@@ -166,7 +166,7 @@ public class WeaponActionScript : MonoBehaviour
             DestroyDeployPlanMesh();
         }
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (PlayerPreferences.playerPreferences.KeyWasPressed("FireMode"))
         {
             if (firingMode == FireMode.Semi)
                 firingMode = FireMode.Auto;
@@ -174,15 +174,15 @@ public class WeaponActionScript : MonoBehaviour
                 firingMode = FireMode.Semi;
         }
 
-        meleeInput = Input.GetKeyDown(KeyCode.V) || (Input.GetAxis("Mouse ScrollWheel") < 0f);
+        meleeInput = PlayerPreferences.playerPreferences.KeyWasPressed("Melee");
 
         switch (firingMode)
         {
             case FireMode.Auto:
-                shootInput = Input.GetButton("Fire1");
+                shootInput = PlayerPreferences.playerPreferences.KeyWasPressed("Fire", true);
                 break;
             case FireMode.Semi:
-                shootInput = Input.GetButtonDown("Fire1");
+                shootInput = PlayerPreferences.playerPreferences.KeyWasPressed("Fire");
                 break;
         }
 
@@ -191,7 +191,7 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
         
-        if (Input.GetKeyDown(KeyCode.R)) {
+        if (PlayerPreferences.playerPreferences.KeyWasPressed("Reload")) {
             if (CanInitiateReload())
             {
                 ReloadAction();
@@ -367,7 +367,7 @@ public class WeaponActionScript : MonoBehaviour
         if (!playerActionScript.fpc.m_IsRunning)
         {
             // Logic for toggle aim rather than hold down aim
-            /**if (Input.GetButtonDown ("Fire2") && !isReloading) {
+            /**if (PlayerPreferences.playerPreferences.KeyWasPressed("Aim") && !isReloading) {
                 isAiming = !isAiming;
             }
             if (isAiming && !isReloading) {
@@ -375,7 +375,7 @@ public class WeaponActionScript : MonoBehaviour
             } else {
                 originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
             }*/
-            if (Input.GetButton("Fire2") && !isReloading && !IsPumpActionCocking() && !isDrawing)
+            if (PlayerPreferences.playerPreferences.KeyWasPressed("Aim", true) && !isReloading && !IsPumpActionCocking() && !isDrawing)
             {
                 fpc.SetAiminginFPCAnimator(true);
                 if (!isAiming) {
@@ -1238,7 +1238,7 @@ public class WeaponActionScript : MonoBehaviour
         if (weaponStats.weaponName.Equals("Medkit") && playerActionScript.health == playerActionScript.playerScript.health) {
             return;
         }
-        if (isWieldingBooster && Input.GetButtonDown("Fire1")) {
+        if (isWieldingBooster && PlayerPreferences.playerPreferences.KeyWasPressed("Fire")) {
             pView.RPC("RpcUseBooster", RpcTarget.All);
             animatorFpc.SetTrigger("UseBooster");
             isUsingBooster = true;

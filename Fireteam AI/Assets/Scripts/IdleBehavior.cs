@@ -27,10 +27,10 @@ public class IdleBehavior : StateMachineBehaviour
             //was.isReloading = false;
             was.isFiring = false;
         }
-        if (was.isWieldingThrowable && (Input.GetButtonDown("Fire1") || Input.GetButton("Fire1"))) {
+        if (was.isWieldingThrowable && (PlayerPreferences.playerPreferences.KeyWasPressed("Fire") || PlayerPreferences.playerPreferences.KeyWasPressed("Fire", true))) {
             was.isCockingGrenade = true;
         }
-        if (was.isWieldingThrowable && (Input.GetButtonUp("Fire1"))) {
+        if (was.isWieldingThrowable && (PlayerPreferences.playerPreferences.KeyWasPressed("Fire", false, true))) {
             was.ConfirmGrenadeThrow();
         }
     }

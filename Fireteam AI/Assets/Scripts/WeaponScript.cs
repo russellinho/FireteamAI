@@ -165,11 +165,11 @@ public class WeaponScript : MonoBehaviour
         // Debug.Log("isCocking: " + weaponActionScript.isCocking);
         // Debug.Log("isUsingBooster: " + weaponActionScript.isUsingBooster);
         if (CheckCanSwitchWeapon()) {
-            if (Input.GetKeyDown(KeyCode.Alpha1) || (currentlyEquippedType == 4 && weaponActionScript.totalAmmoLeft <= 0 && weaponActionScript.currentAmmo <= 0)) {
+            if (PlayerPreferences.playerPreferences.KeyWasPressed("Primary") || (currentlyEquippedType == 4 && weaponActionScript.totalAmmoLeft <= 0 && weaponActionScript.currentAmmo <= 0)) {
                 DrawPrimary();
-            } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+            } else if (PlayerPreferences.playerPreferences.KeyWasPressed("Secondary")) {
                 DrawSecondary();
-            } else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+            } else if (PlayerPreferences.playerPreferences.KeyWasPressed("Support")) {
                 DrawSupport();
             }
         }

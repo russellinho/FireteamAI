@@ -253,7 +253,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             }
         }
 
-        if (!Input.GetKey(KeyCode.LeftShift) && fpc.sprintLock)
+        if (!PlayerPreferences.playerPreferences.KeyWasPressed("Sprint", true) && fpc.sprintLock)
         {
             fpc.sprintLock = false;
         }
@@ -280,7 +280,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (fpc.enabled && fpc.canMove && !hud.container.pauseMenuGUI.activeInHierarchy)
         {
             HandleCrouch();
-            if (Input.GetKeyDown(KeyCode.F)) {
+            if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact")) {
                 MarkEnemy();
             }
         }
@@ -486,14 +486,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     void UnlockInteractionLock() {
-        if (Input.GetKeyUp(KeyCode.F)) {
+        if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact", false, true)) {
             interactionLock = false;
         }
     }
 
     public void HandleCrouch()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl))
+        if (PlayerPreferences.playerPreferences.KeyWasPressed("Crouch"))
         {
             fpc.m_IsCrouching = !fpc.m_IsCrouching;
             if (!fpc.IsFullyMobile()) {
@@ -673,7 +673,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     SetInteracting(false, null);
                     return;
                 }
-                if (Input.GetKey(KeyCode.F) && !interactionLock) {
+                if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact", true) && !interactionLock) {
                     // Use the deployable
                     SetInteracting(true, "Bomb");
                     hud.ToggleHintText(null);
@@ -703,7 +703,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     SetInteracting(false, null);
                     return;
                 }
-                if (Input.GetKey(KeyCode.F) && !interactionLock) {
+                if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact", true) && !interactionLock) {
                     // Use the deployable
                     SetInteracting(true, "Flare");
                     hud.ToggleHintText(null);
@@ -733,7 +733,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     SetInteracting(false, null);
                     return;
                 }
-                if (Input.GetKey(KeyCode.F) && !interactionLock) {
+                if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact", true) && !interactionLock) {
                     // Use the deployable
                     SetInteracting(true, "Npc");
                     hud.ToggleHintText(null);
@@ -758,7 +758,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (objectCarrying != null && objectCarrying.GetComponent<NpcScript>().carriedByPlayerId == photonView.OwnerActorNr && !hud.PauseIsActive()) {
             NpcScript n = objectCarrying.GetComponent<NpcScript>();
             if (n != null) {
-                if (Input.GetKeyDown(KeyCode.G) && !interactionLock) {
+                if (PlayerPreferences.playerPreferences.KeyWasPressed("Drop") && !interactionLock) {
                     // Drop off the NPC
                     DropCarrying();
                     hud.SetCarryingText(null);
@@ -772,7 +772,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (activeInteractable != null && !hud.PauseIsActive()) {
             DeployableScript d = activeInteractable.GetComponent<DeployableScript>();
             if (d != null) {
-                if (Input.GetKey(KeyCode.F) && !interactionLock) {
+                if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact", true) && !interactionLock) {
                     // Use the deployable
                     SetInteracting(true, "Deploy");
                     hud.ToggleHintText(null);

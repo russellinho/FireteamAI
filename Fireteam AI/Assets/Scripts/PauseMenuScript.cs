@@ -18,6 +18,8 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public Button optionsAudioSettingsBtn;
 	public Button optionsBackBtn;
 	public Text optionsTitle;
+	private bool isChangingKeyMapping;
+	public Text changingKeyMappingText;
 
 	void Awake() {
 		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
@@ -104,6 +106,17 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		optionsAudioSettingsBtn.gameObject.SetActive(b);
 		optionsBackBtn.gameObject.SetActive(b);
 		optionsTitle.gameObject.SetActive(b);
+	}
+
+	public void ToggleIsChangingKeyMapping(bool b, string keyChanging) {
+		if (b) {
+			isChangingKeyMapping = true;
+			changingKeyMappingText.text = "Press a button to set a key for [" + keyChanging + "]";
+			changingKeyMappingText.enabled = true;
+		} else {
+			isChangingKeyMapping = false;
+			changingKeyMappingText.enabled = false;
+		}
 	}
 
 }

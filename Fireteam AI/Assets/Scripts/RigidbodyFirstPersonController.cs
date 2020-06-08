@@ -132,7 +132,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private void Update()
         {
 
-            if (CrossPlatformInputManager.GetButtonDown("Jump") && !m_Jump)
+            if (PlayerPreferences.playerPreferences.KeyWasPressed("Jump") && !m_Jump)
             {
                 m_Jump = true;
             }

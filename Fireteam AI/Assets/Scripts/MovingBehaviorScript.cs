@@ -15,10 +15,10 @@ public class MovingBehaviorScript : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (was.isWieldingThrowable && (Input.GetButtonDown("Fire1") || Input.GetButton("Fire1"))) {
+        if (was.isWieldingThrowable && (PlayerPreferences.playerPreferences.KeyWasPressed("Fire") || PlayerPreferences.playerPreferences.KeyWasPressed("Fire", true))) {
             was.isCockingGrenade = true;
         }
-        if (was.isWieldingThrowable && (Input.GetButtonUp("Fire1"))) {
+        if (was.isWieldingThrowable && (PlayerPreferences.playerPreferences.KeyWasPressed("Fire", false, true))) {
             was.ConfirmGrenadeThrow();
         }
     }

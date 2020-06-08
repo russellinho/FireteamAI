@@ -38,7 +38,7 @@ public class PumpActionReloadBehavior : StateMachineBehaviour
         } else {
             reloadTimer -= Time.deltaTime;
         }
-        if (!done && weaponActionScript.currentAmmo > 0 && (weaponActionScript.currentAmmo >= weaponActionScript.weaponStats.clipCapacity || Input.GetButtonDown("Fire1") || weaponActionScript.totalAmmoLeft <= 0)) {
+        if (!done && weaponActionScript.currentAmmo > 0 && (weaponActionScript.currentAmmo >= weaponActionScript.weaponStats.clipCapacity || PlayerPreferences.playerPreferences.KeyWasPressed("Fire") || weaponActionScript.totalAmmoLeft <= 0)) {
             animator.SetTrigger("CockShotgun");
             done = true;
         }
