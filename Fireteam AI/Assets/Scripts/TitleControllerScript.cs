@@ -217,6 +217,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject[] characterRefs;
 	public Text changingKeyMappingText;
 	private bool isChangingKeyMapping;
+	public KeyMappingInput[] keyMappingInputs;
 
 	// Use this for initialization
 	void Awake() {
@@ -469,6 +470,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void ReturnToMainMenuFromSettings() {
+		if (isChangingKeyMapping) return;
 		if (keyBindingsPopup.activeInHierarchy) {
 			SaveKeyBindings();
 			keyBindingsPopup.SetActive(false);

@@ -105,27 +105,27 @@ public class PlayerPreferences : MonoBehaviour
 
     void SetDefaultKeyMappings() {
         keyMappings = new Dictionary<string, KeyMapping>();
-        keyMappings.Add("Forward", new KeyMapping(KeyCode.W));
-        keyMappings.Add("Backward", new KeyMapping(KeyCode.S));
-        keyMappings.Add("Left", new KeyMapping(KeyCode.A));
-        keyMappings.Add("Right", new KeyMapping(KeyCode.D));
-        keyMappings.Add("Sprint", new KeyMapping(KeyCode.LeftShift));
-        keyMappings.Add("Crouch", new KeyMapping(KeyCode.LeftControl));
-        keyMappings.Add("Jump", new KeyMapping(KeyCode.Space));
-        keyMappings.Add("Walk", new KeyMapping(KeyCode.C));
-        keyMappings.Add("Interact", new KeyMapping(KeyCode.F));
-        keyMappings.Add("Drop", new KeyMapping(KeyCode.G));
-        keyMappings.Add("FireMode", new KeyMapping(KeyCode.Q));
-        keyMappings.Add("Reload", new KeyMapping(KeyCode.R));
-        keyMappings.Add("Melee", new KeyMapping(KeyCode.None, -1));
-        keyMappings.Add("AllChat", new KeyMapping(KeyCode.T));
-        keyMappings.Add("Primary", new KeyMapping(KeyCode.Alpha1));
-        keyMappings.Add("Secondary", new KeyMapping(KeyCode.Alpha2));
-        keyMappings.Add("Support", new KeyMapping(KeyCode.Alpha4));
-        keyMappings.Add("Scoreboard", new KeyMapping(KeyCode.Tab));
-        keyMappings.Add("Pause", new KeyMapping(KeyCode.Escape));
-        keyMappings.Add("Fire", new KeyMapping(KeyCode.Mouse0));
-        keyMappings.Add("Aim", new KeyMapping(KeyCode.Mouse1));
+        keyMappings.Add("Forward", new KeyMapping(KeyCode.W, 0));
+        keyMappings.Add("Backward", new KeyMapping(KeyCode.S, 1));
+        keyMappings.Add("Left", new KeyMapping(KeyCode.A, 2));
+        keyMappings.Add("Right", new KeyMapping(KeyCode.D, 3));
+        keyMappings.Add("Sprint", new KeyMapping(KeyCode.LeftShift, 5));
+        keyMappings.Add("Crouch", new KeyMapping(KeyCode.LeftControl, 7));
+        keyMappings.Add("Jump", new KeyMapping(KeyCode.Space, 4));
+        keyMappings.Add("Walk", new KeyMapping(KeyCode.C, 6));
+        keyMappings.Add("Interact", new KeyMapping(KeyCode.F, 8));
+        keyMappings.Add("Drop", new KeyMapping(KeyCode.G, 9));
+        keyMappings.Add("FireMode", new KeyMapping(KeyCode.Q, 12));
+        keyMappings.Add("Reload", new KeyMapping(KeyCode.R, 14));
+        keyMappings.Add("Melee", new KeyMapping(KeyCode.None, 13, -1));
+        keyMappings.Add("AllChat", new KeyMapping(KeyCode.T, 18));
+        keyMappings.Add("Primary", new KeyMapping(KeyCode.Alpha1, 15));
+        keyMappings.Add("Secondary", new KeyMapping(KeyCode.Alpha2, 16));
+        keyMappings.Add("Support", new KeyMapping(KeyCode.Alpha4, 17));
+        keyMappings.Add("Scoreboard", new KeyMapping(KeyCode.Tab, 20));
+        keyMappings.Add("Pause", new KeyMapping(KeyCode.Escape, 19));
+        keyMappings.Add("Fire", new KeyMapping(KeyCode.Mouse0, 10));
+        keyMappings.Add("Aim", new KeyMapping(KeyCode.Mouse1, 11));
     }
 
     public bool KeyWasPressed(string key, bool hold = false, bool up = false) {
@@ -156,6 +156,22 @@ public class PlayerPreferences : MonoBehaviour
         return false;
     }
 
+    public string KeyIsMappedOn(KeyCode key, int scrollWheelFlag) {
+        foreach (KeyValuePair<string, KeyMapping> k in keyMappings) {
+            if (scrollWheelFlag != 0) {
+                if (k.Value.scrollWheelFlag == scrollWheelFlag) {
+                    return k.Key;
+                } else {
+                    if (k.Value.key == key) {
+                        return k.Key;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
     [Serializable]
     public class PreferenceData
     {
@@ -168,9 +184,11 @@ public class PlayerPreferences : MonoBehaviour
     public class KeyMapping {
         public KeyCode key;
         public int scrollWheelFlag;
+        public int keyDescriptionIndex;
 
-        public KeyMapping(KeyCode key, int scrollWheelFlag = 0) {
+        public KeyMapping(KeyCode key, int keyDescriptionIndex, int scrollWheelFlag = 0) {
             this.key = key;
+            this.keyDescriptionIndex = keyDescriptionIndex;
             this.scrollWheelFlag = scrollWheelFlag;
         }
     }

@@ -20,6 +20,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public Text optionsTitle;
 	private bool isChangingKeyMapping;
 	public Text changingKeyMappingText;
+	public KeyMappingInput[] keyMappingInputs;
 
 	void Awake() {
 		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
@@ -27,6 +28,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void HandleEscPress() {
+		if (isChangingKeyMapping) return;
 		// If the key binding menu is up and you press escape, then return to options menu
 		if (audioSettingsGroup.activeInHierarchy) {
 			CloseAudioSettings();
@@ -61,6 +63,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void CloseKeyMappings() {
+		if (isChangingKeyMapping) return;
 		SaveKeyBindings();
 		keyMappingsPanel.SetActive(false);
 		ToggleSettingsMainButtons(true);
