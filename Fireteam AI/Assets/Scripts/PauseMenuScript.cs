@@ -18,7 +18,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public Button optionsAudioSettingsBtn;
 	public Button optionsBackBtn;
 	public Text optionsTitle;
-	private bool isChangingKeyMapping;
+	public bool isChangingKeyMapping;
 	public Text changingKeyMappingText;
 	public KeyMappingInput[] keyMappingInputs;
 

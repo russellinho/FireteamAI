@@ -25,6 +25,7 @@ public class KeyMappingInput : MonoBehaviour
     }
 
     public void OnClick() {
+        if ((titleController != null && titleController.isChangingKeyMapping) || (pauseMenuScript != null && pauseMenuScript.isChangingKeyMapping)) return;
         // Go into changing key mapping mode
         currentlyChanging = true;
         if (titleController != null) {

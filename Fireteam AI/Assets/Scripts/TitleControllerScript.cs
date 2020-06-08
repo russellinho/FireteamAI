@@ -216,7 +216,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Dictionary<string, int> charactersRefsIndices = new Dictionary<string, int>(){["Lucas"] = 0, ["Daryl"] = 1, ["Yongjin"] = 2, ["Rocko"] = 3, ["Hana"] = 4, ["Jade"] = 5, ["Dani"] = 6, ["Codename Sayre"] = 7};
 	public GameObject[] characterRefs;
 	public Text changingKeyMappingText;
-	private bool isChangingKeyMapping;
+	public bool isChangingKeyMapping;
 	public KeyMappingInput[] keyMappingInputs;
 
 	// Use this for initialization
