@@ -143,7 +143,7 @@ public class PlayerPreferences : MonoBehaviour
                 if (Input.GetKey(k.key)) {
                     return true;
                 }
-            } else if (Input.GetKeyUp(k.key)) {
+            } else if (up) {
                 if (Input.GetKeyUp(k.key)) {
                     return true;
                 }

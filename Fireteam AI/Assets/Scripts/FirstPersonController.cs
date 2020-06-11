@@ -397,10 +397,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
             bool enableRunFlag = IsFullyMobile();
 
 			// Read input
-			float horizontal = PlayerPreferences.playerPreferences.KeyWasPressed("Left", true) ? -1f : 0f;
-            horizontal = PlayerPreferences.playerPreferences.KeyWasPressed("Right", true) ? 1f : 0f;
-			float vertical = PlayerPreferences.playerPreferences.KeyWasPressed("Backward", true) ? -1f : 0f;
-            vertical = PlayerPreferences.playerPreferences.KeyWasPressed("Forward", true) ? 1f : 0f;
+            float horizontal = 0f;
+            if (PlayerPreferences.playerPreferences.KeyWasPressed("Left", true)) {
+                horizontal = -1f;
+            } else if (PlayerPreferences.playerPreferences.KeyWasPressed("Right", true)) {
+                horizontal = 1f;
+            }
+            float vertical = 0f;
+            if (PlayerPreferences.playerPreferences.KeyWasPressed("Backward", true)) {
+                vertical = -1f;
+            } else if (PlayerPreferences.playerPreferences.KeyWasPressed("Forward", true)) {
+                vertical = 1f;
+            }
 
             // Nullify movement if the user is paused
             if (playerActionScript.hud.container.pauseMenuGUI.activeInHierarchy) {
