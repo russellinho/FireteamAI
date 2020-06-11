@@ -24,11 +24,12 @@ public class ComboxTextEffect : MonoBehaviour {
 		Reset ();
 	}
 
-	public void SetText(string message, string speaker) {
+	public void SetText(string message, string speaker, string picPath) {
 		Reset ();
 		m_text = message;
 		m_heading.text = speaker;
 		parentRef.GetComponent<AudioSource> ().Play ();
+		m_photo.texture = (Texture)Resources.Load(picPath);
 	}
 
 	void Reset() {

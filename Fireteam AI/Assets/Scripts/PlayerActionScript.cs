@@ -321,7 +321,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             {
                 escapeAvailablePopup = true;
                 hud.MessagePopup("Escape available! Head to the waypoint!");
-                hud.ComBoxPopup(2f, "Democko", "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.");
+                hud.ComBoxPopup(2f, "Democko", "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.", "democko");
             }
 
             // Update assault mode
@@ -333,8 +333,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             {
                 assaultModeChangedIndicator = h;
                 hud.MessagePopup("Your cover is blown!");
-                hud.ComBoxPopup(2f, "Democko", "They know you're here! Slot the bastards!");
-                hud.ComBoxPopup(20f, "Democko", "Cicadas on the rooftops! Watch the rooftops!");
+                hud.ComBoxPopup(2f, "Democko", "They know you're here! Slot the bastards!", "democko");
+                hud.ComBoxPopup(20f, "Democko", "Cicadas on the rooftops! Watch the rooftops!", "democko");
             }
         } else if (gameController.currentMap == 2) {
             if (gameController.gameOver) return;
@@ -343,8 +343,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 if (gameController.spawnMode != SpawnMode.Routine) {
                     gameController.spawnMode = SpawnMode.Routine;
                     hud.MessagePopup("Survive until evac arrives!");
-                    hud.ComBoxPopup(3f, "Democko", "You guys have trouble inbound! My NAV scans show Cicadas closing in on you from all over the place!");
-                    hud.ComBoxPopup(240f, "Democko", "Guys, avoid going outside! This is their territory and they know it well!");
+                    hud.ComBoxPopup(3f, "Democko", "You guys have trouble inbound! My NAV scans show Cicadas closing in on you from all over the place!", "democko");
+                    hud.ComBoxPopup(240f, "Democko", "Guys, avoid going outside! This is their territory and they know it well!", "democko");
                     // gameController.objectives.missionTimer2 = 720f;
                     gameController.objectives.missionTimer2 = 130f;
                 }
@@ -366,7 +366,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (gameController.objectives.selectedEvacIndex == -2 && gameController.objectives.missionTimer2 <= 120f) {
                 gameController.objectives.selectedEvacIndex = -1;
                 if (gameController.objectives.stepsLeftToCompletion != 2) {
-                    hud.ComBoxPopup(2f, "Democko", "The chopper’s about two minutes out! These landing zones aren’t clear; you guys need to go out there and mark one with a flare so we can know where to land!");
+                    hud.ComBoxPopup(2f, "Democko", "The chopper’s about two minutes out! These landing zones aren’t clear; you guys need to go out there and mark one with a flare so we can know where to land!", "democko");
                     hud.MessagePopup("Designate a landing zone for the evac team!");
                     gameController.UpdateObjectives();
                     foreach (GameObject o in gameController.items) {
@@ -381,14 +381,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 if (gameController.objectives.selectedEvacIndex == -1) {
                     gameController.objectives.selectedEvacIndex = -2;
                     gameController.objectives.missionTimer2 = 120f;
-                    hud.ComBoxPopup(0f, "Democko", "You guys didn’t plant the flare down! We’re circling back around!");
+                    hud.ComBoxPopup(0f, "Democko", "You guys didn’t plant the flare down! We’re circling back around!", "democko");
                     hud.MessagePopup("Designate a landing zone for the evac team!");
                     return;
                 } else {
                     // Land chopper in chosen evac spot and alert the team
                     if (gameController.objectives.stepsLeftToCompletion == 1 && gameController.objectives.missionTimer3 <= 0f) {
                         // TODO: Add code for landing the chopper
-                        hud.ComBoxPopup(2f, "Democko", "The chopper is here! There’s a lot of heat out here so we can’t stay long, so move quick!");
+                        hud.ComBoxPopup(2f, "Democko", "The chopper is here! There’s a lot of heat out here so we can’t stay long, so move quick!", "democko");
                         hud.MessagePopup("Escape available! Head to the waypoint with the pilot!");
                         gameController.objectives.missionTimer3 = 90f;
                     }
@@ -405,13 +405,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             // Run another timer for everyone being able to escape
             if (gameController.objectives.missionTimer3 <= 0f) {
                 gameController.objectives.missionTimer2 = 90f;
-                hud.ComBoxPopup(1f, "Democko", "We had to wave off! We'll circle around and come back!");
+                hud.ComBoxPopup(1f, "Democko", "We had to wave off! We'll circle around and come back!", "democko");
                 hud.MessagePopup("Survive until evac returns!");
             }
 
             if (gameController.gameOver && gameController.objectives.stepsLeftToCompletion == 1) {
                 gameController.UpdateObjectives();
-                hud.ComBoxPopup(1f, "Democko", "Alright, let's get the hell out of here!");
+                hud.ComBoxPopup(1f, "Democko", "Alright, let's get the hell out of here!", "democko");
             }
         }
     }
@@ -1190,7 +1190,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     o.SetActive(false);
                 }
             }
-            hud.ComBoxPopup(1f, "Democko", "We see you! We’re incoming!");
+            hud.ComBoxPopup(1f, "Democko", "We see you! We’re incoming!", "democko");
         }
     }
 
