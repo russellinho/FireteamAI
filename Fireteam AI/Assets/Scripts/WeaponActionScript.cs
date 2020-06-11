@@ -465,7 +465,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     bool CanMelee() {
-        if (!fpc.m_CharacterController.isGrounded || isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || deployInProgress || isUsingBooster || isUsingDeployable) {
+        if (!fpc.m_CharacterController.isGrounded || isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || deployInProgress || isUsingBooster || isUsingDeployable || hudScript.container.pauseMenuGUI.activeInHierarchy) {
             return false;
         }
         return true;
