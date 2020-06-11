@@ -161,10 +161,10 @@ public class PlayerPreferences : MonoBehaviour
             if (scrollWheelFlag != 0) {
                 if (k.Value.scrollWheelFlag == scrollWheelFlag) {
                     return k.Key;
-                } else {
-                    if (k.Value.key == key) {
-                        return k.Key;
-                    }
+                }
+            } else {
+                if (k.Value.key == key) {
+                    return k.Key;
                 }
             }
         }
