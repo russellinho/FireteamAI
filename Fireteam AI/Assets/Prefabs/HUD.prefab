@@ -13087,7 +13087,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -65}
-  m_SizeDelta: {x: -240, y: -170}
+  m_SizeDelta: {x: -10, y: -170}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8293738623405052316
 CanvasRenderer:
@@ -13267,6 +13267,7 @@ MonoBehaviour:
   optionsAudioSettingsBtn: {fileID: 2522495389138528753}
   optionsBackBtn: {fileID: 45122283510750404}
   optionsTitle: {fileID: 7573633819267475943}
+  isChangingKeyMapping: 0
   changingKeyMappingText: {fileID: 3577145243380894212}
   keyMappingInputs:
   - {fileID: 6334882797881637958}
