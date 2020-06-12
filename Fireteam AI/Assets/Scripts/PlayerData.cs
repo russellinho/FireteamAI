@@ -31,6 +31,7 @@ public class PlayerData : MonoBehaviour
     private bool purchaseFailFlag;
     private bool updateCurrencyFlag;
     private bool reloadPlayerFlag;
+    private bool reinstantiatePlayerFlag;
     private bool skipReloadCharacterFlag;
     private string addDefaultClothingFlag;
     private string deleteDefaultClothingFlag;
@@ -118,6 +119,7 @@ public class PlayerData : MonoBehaviour
             ReinstantiatePlayer();
             skipReloadCharacterFlag = false;
             reloadPlayerFlag = false;
+            reinstantiatePlayerFlag = false;
         }
         if (addDefaultClothingFlag != null)
         {
@@ -674,6 +676,10 @@ public class PlayerData : MonoBehaviour
 
     public void FindBodyRef(string character)
     {
+        if (reinstantiatePlayerFlag) {
+            Destroy(bodyReference);
+            bodyReference = null;
+        }
         if (bodyReference == null)
         {
             bodyReference = Instantiate(titleRef.characterRefs[titleRef.charactersRefsIndices[character]]);
@@ -1874,6 +1880,7 @@ public class PlayerData : MonoBehaviour
                             PlayerData.playerdata.info.equippedCharacter = PlayerData.playerdata.info.defaultChar;
                             PlayerData.playerdata.info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
                             PlayerData.playerdata.info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
+                            reinstantiatePlayerFlag = true;
                             reloadPlayerFlag = true;
                         }
                         deleteDefaultClothingFlag = itemName;
