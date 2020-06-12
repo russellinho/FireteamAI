@@ -385,7 +385,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     [PunRPC]
 	public void RpcUpdateAssaultMode(bool assaultInProgress, string team) {
         if (team != teamMap) return;
-		StartCoroutine (UpdateAssaultModeTimer(5f, assaultInProgress));
+		// StartCoroutine (UpdateAssaultModeTimer(5f, assaultInProgress));
+		assaultMode = assaultInProgress;
 	}
 
 	IEnumerator UpdateAssaultModeTimer(float secs, bool assaultInProgress) {
@@ -445,7 +446,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     }
 
 	public void SetLastGunshotHeardPos(bool clear, Vector3 pos) {
-		if (Vector3.Equals(pos, lastGunshotHeardPos) || lastGunshotTimer > 0f) return;
+		if ((clear && Vector3.Equals(lastGunshotHeardPos, Vector3.negativeInfinity)) || lastGunshotTimer > 0f) return;
 		if (spawnMode != SpawnMode.Paused) {
 			pView.RPC ("RpcSetLastGunshotHeardPos", RpcTarget.All, clear, pos.x, pos.y, pos.z, teamMap);
 		}

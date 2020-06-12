@@ -2362,7 +2362,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	[PunRPC]
     void RpcSyncSuspicionValues(string team, float suspicionMeter, float increaseSuspicionDelay, float suspicionCoolDownDelay) {
-        if (team != gameControllerScript.teamMap) return;
+		if (team != gameControllerScript.teamMap) return;
         this.suspicionMeter = suspicionMeter;
         this.increaseSuspicionDelay = increaseSuspicionDelay;
         this.suspicionCoolDownDelay = suspicionCoolDownDelay;
