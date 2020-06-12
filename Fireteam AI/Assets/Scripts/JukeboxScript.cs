@@ -16,8 +16,10 @@ public class JukeboxScript : MonoBehaviour
     private float audio2FadeTime;
     private bool assaultMode;
     public AudioClip[] titleTrackList;
-    private const float SONG_FADE_DELAY = 4f;
+    private const float SONG_FADE_DELAY = 3f;
     public const int DEFAULT_MUSIC_VOLUME = 70;
+    private bool audioSource1FullyQueued;
+    private bool audioSource2FullyQueued;
 
     void Awake() {
         if (jukebox == null)
@@ -66,8 +68,11 @@ public class JukeboxScript : MonoBehaviour
 
     void HandleUpdateForTitle() {
         if (audioSource1.isPlaying) {
-            if (audio1FadeTime < SONG_FADE_DELAY) {
+            if (!audioSource1FullyQueued && audio1FadeTime < SONG_FADE_DELAY) {
                 audio1FadeTime += Time.deltaTime;
+                if (audio1FadeTime >= SONG_FADE_DELAY) {
+                    audioSource1FullyQueued = true;
+                }
                 audioSource1.volume = (audio1FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
             }
 
@@ -79,11 +84,15 @@ public class JukeboxScript : MonoBehaviour
             if (audio1FadeTime <= 0f) {
                 audioSource1.Stop();
                 audio1FadeTime = 0f;
+                audioSource1FullyQueued = false;
             }
         }
         if (audioSource2.isPlaying) {
-            if (audio2FadeTime < SONG_FADE_DELAY) {
+            if (!audioSource2FullyQueued && audio2FadeTime < SONG_FADE_DELAY) {
                 audio2FadeTime += Time.deltaTime;
+                if (audio2FadeTime >= SONG_FADE_DELAY) {
+                    audioSource2FullyQueued = true;
+                }
                 audioSource2.volume = (audio2FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
             }
 
@@ -95,6 +104,7 @@ public class JukeboxScript : MonoBehaviour
             if (audio2FadeTime <= 0f) {
                 audioSource2.Stop();
                 audio2FadeTime = 0f;
+                audioSource2FullyQueued = false;
             }
         }
     }
