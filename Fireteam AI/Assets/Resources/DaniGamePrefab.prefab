@@ -71982,6 +71982,7 @@ GameObject:
   - component: {fileID: 5740449512111123666}
   - component: {fileID: 5740449512111123665}
   - component: {fileID: 5740449512111123667}
+  - component: {fileID: 4647296963576829065}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -72054,6 +72055,19 @@ Behaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5740449512111123694}
   m_Enabled: 1
+--- !u!114 &4647296963576829065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5740449512111123694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e77c2c9fbd9c462689949defa65c197, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCamTrans: {fileID: 5740449511238426492}
 --- !u!1 &5740449512157930990
 GameObject:
   m_ObjectHideFlags: 0
@@ -78149,6 +78163,7 @@ GameObject:
   - component: {fileID: 5740449512726100017}
   - component: {fileID: 5740449512726100428}
   - component: {fileID: 5740449512726100430}
+  - component: {fileID: 117678099919618459}
   m_Layer: 0
   m_Name: Camera2
   m_TagString: Untagged
@@ -78221,6 +78236,19 @@ Behaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5740449512726100429}
   m_Enabled: 1
+--- !u!114 &117678099919618459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5740449512726100429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e77c2c9fbd9c462689949defa65c197, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCamTrans: {fileID: 5740449511238426492}
 --- !u!1 &5740449512751851306
 GameObject:
   m_ObjectHideFlags: 0
@@ -83567,8 +83595,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6172793881152011615}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.20000005, z: 1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.20000005, z: 2.5}
+  m_LocalScale: {x: 5, y: 2.3, z: 1}
   m_Children: []
   m_Father: {fileID: 5740449512303423511}
   m_RootOrder: 5
