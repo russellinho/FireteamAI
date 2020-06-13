@@ -303,8 +303,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114336108925888890}
-  viewIdField: 0
-  InstantiationId: 3
+  viewIdField: 1
+  InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &114336108925888890
 MonoBehaviour:
@@ -318,6 +318,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_GameController: {fileID: 0}
   m_SynchronizePosition: 0
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
@@ -428,6 +429,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -598,9 +600,13 @@ MonoBehaviour:
     clampVerticalRotation: 1
     MinimumX: -90
     MaximumX: 90
+    SpineMaxX: 0
+    SpineMinX: 0
     smooth: 0
     smoothTime: 5
     lockCursor: 1
+    recoilInput: 0
+    swayInput: 0
     m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_FpcCharacterVerticalTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_FpcCharacterHorizontalTargetRot: {x: 0, y: 0, z: 0, w: 0}
@@ -702,6 +708,8 @@ MonoBehaviour:
   m_JumpSound: {fileID: 8300000, guid: 5897aeed9b676024fbb8c694b421a861, type: 3}
   m_LandSound: {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
   m_Input: {x: 0, y: 0}
+  m_CharacterController: {fileID: 0}
+  m_AudioSource: {fileID: 0}
   sprintLock: 0
   canMove: 0
   weaponActionScript: {fileID: 0}
@@ -847,8 +855,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114766418645260732}
-  viewIdField: 0
-  InstantiationId: 4
+  viewIdField: 2
+  InstantiationId: 2
   isRuntimeInstantiated: 0
 --- !u!114 &114766418645260732
 MonoBehaviour:
@@ -862,6 +870,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_GameController: {fileID: 0}
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 1
@@ -915,7 +924,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioMuffle: {fileID: 0}
   audioEcho: {fileID: 0}
-  bgm: {fileID: 82761204027676720}
   fxRef: {fileID: 1954104364471650}
   stealthMusic: {fileID: 8300000, guid: 845c1df058bb4244391e15b273edc166, type: 3}
   assaultMusic: {fileID: 8300000, guid: d0211a83da423754ba0d4c5435e2c149, type: 3}
@@ -926,6 +934,8 @@ MonoBehaviour:
   hitmarkerSound: {fileID: 8300000, guid: f5f9c7f44fd0db94fb7457a968a1def7, type: 3}
   sirenSound: {fileID: 8300000, guid: e4fdcd319d7fc2f459e5894d9c267ee5, type: 3}
   missionStartSound: {fileID: 8300000, guid: c995c036e32e4f447bdaaa1124e4c370, type: 3}
+  cautionSound: {fileID: 0}
+  detectedSound: {fileID: 0}
 --- !u!114 &114182331687483920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1229,7 +1239,6 @@ GameObject:
   - component: {fileID: 4175296473579756}
   - component: {fileID: 20950834022866008}
   - component: {fileID: 124339098377941120}
-  - component: {fileID: 92688638272089082}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -1295,14 +1304,6 @@ Camera:
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!124 &124339098377941120
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1366690501967364}
-  m_Enabled: 1
---- !u!92 &92688638272089082
 Behaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1417,6 +1418,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -6171,6 +6173,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -6671,7 +6674,6 @@ GameObject:
   - component: {fileID: 4862634267466018}
   - component: {fileID: 20158866327786524}
   - component: {fileID: 124918267554394608}
-  - component: {fileID: 92558863717146974}
   m_Layer: 0
   m_Name: Camera2
   m_TagString: Untagged
@@ -6737,14 +6739,6 @@ Camera:
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!124 &124918267554394608
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1632063243006468}
-  m_Enabled: 1
---- !u!92 &92558863717146974
 Behaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12041,6 +12035,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -12143,6 +12138,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -12407,6 +12403,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:

@@ -39,6 +39,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public ParticleSystem healParticleEffect;
     public ParticleSystem boostParticleEffect;
     public SpriteRenderer hudMarker;
+    public SpriteRenderer hudMarker2;
     public GameObject fpcBodyRef;
     public GameObject[] objectsToDisable;
     private BetaEnemyScript enemySeenBy;

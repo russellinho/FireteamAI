@@ -12143,6 +12143,87 @@ Transform:
   m_Father: {fileID: 8078198234959112065}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2682869003667283857
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6625288614013546265}
+  - component: {fileID: 1894738893359276083}
+  m_Layer: 11
+  m_Name: Marker (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6625288614013546265
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2682869003667283857}
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.20000005, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 9157702028478079592}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!212 &1894738893359276083
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2682869003667283857}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RenderingLayerMask: 4294967295
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 21300000, guid: f890ac75d23aac24ba077b4f88b495a6, type: 3}
+  m_Color: {r: 0.003, g: 0.965, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.2, y: 0.2}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &2716317356359053222
 GameObject:
   m_ObjectHideFlags: 0
@@ -47272,7 +47353,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 9157702028478079592}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &5562167976406004774
 AudioSource:
@@ -48224,7 +48305,7 @@ Transform:
   - {fileID: 2214062283390003276}
   - {fileID: 4656054111228701748}
   m_Father: {fileID: 9157702028478079592}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &7212585088625130232
 ParticleSystem:
@@ -68091,7 +68172,7 @@ Transform:
   - {fileID: 4520025147447426140}
   - {fileID: 3103055302517798665}
   m_Father: {fileID: 9157702028478079592}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &1500616216976608457
 ParticleSystem:
@@ -84034,6 +84115,7 @@ Transform:
   - {fileID: 9027707218765397489}
   - {fileID: 2470968043988033609}
   - {fileID: 2573155016503188528}
+  - {fileID: 6625288614013546265}
   - {fileID: 4817000936825108381}
   - {fileID: 5258290967289198655}
   - {fileID: 3944967661455958719}
@@ -84519,6 +84601,7 @@ MonoBehaviour:
   healParticleEffect: {fileID: 1500616216976608457}
   boostParticleEffect: {fileID: 7212585088625130232}
   hudMarker: {fileID: 6102210156180247276}
+  hudMarker2: {fileID: 1894738893359276083}
   fpcBodyRef: {fileID: 5585608091933296148}
   objectsToDisable:
   - {fileID: 4429596541689750881}
@@ -84529,6 +84612,7 @@ MonoBehaviour:
   - {fileID: 4156073790964816949}
   - {fileID: 6373945108900608266}
   - {fileID: 4432177621689093862}
+  - {fileID: 2682869003667283857}
   ammoPickupSound: {fileID: 8300000, guid: 2e0c337d7be1f394e90d1718f80fde8d, type: 3}
   healthPickupSound: {fileID: 8300000, guid: 2abf41e9ece742d44b0da495397486fb, type: 3}
   carryingSlot: {fileID: 4213746805053114759}
@@ -84644,6 +84728,7 @@ MonoBehaviour:
   myHudMarkerCam1: {fileID: 1382218053300711738}
   myHudMarkerCam2: {fileID: 2775102089185296421}
   myHudMarker: {fileID: 1030513166017109983}
+  myHudMarker2: {fileID: 2682869003667283857}
   screenGrab: 0
 --- !u!114 &9157702028478079594
 MonoBehaviour:

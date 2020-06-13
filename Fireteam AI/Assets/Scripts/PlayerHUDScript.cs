@@ -23,6 +23,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     public Camera myHudMarkerCam1;
     public Camera myHudMarkerCam2;
     public GameObject myHudMarker;
+	public GameObject myHudMarker2;
 
 	private ArrayList missionWaypoints;
 	private Dictionary<int, GameObject> playerMarkers = new Dictionary<int, GameObject> ();
