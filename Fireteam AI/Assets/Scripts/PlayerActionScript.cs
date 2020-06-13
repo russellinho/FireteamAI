@@ -1027,6 +1027,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             weaponScript.DespawnPlayer();
         }
         hudMarker.enabled = status;
+        hudMarker2.enabled = status;
         charController.enabled = status;
         if (photonView.IsMine)
         {
