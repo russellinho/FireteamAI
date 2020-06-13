@@ -35,7 +35,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4997301263046971773}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &8610741965789742899
 AudioSource:
@@ -742,7 +742,7 @@ Transform:
   - {fileID: 2663500495506955097}
   - {fileID: 8850394567250370337}
   m_Father: {fileID: 4997301263046971773}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &6798031426593638893
 ParticleSystem:
@@ -24747,6 +24747,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1872059998946078501}
   - component: {fileID: 7989435983264113145}
+  - component: {fileID: 8473683791378269586}
   m_Layer: 11
   m_Name: Marker
   m_TagString: Untagged
@@ -24764,7 +24765,8 @@ Transform:
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0.20000005, z: 0}
   m_LocalScale: {x: 9.5, y: 9.500017, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 6922716236671105283}
   m_Father: {fileID: 4997301263046971773}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
@@ -24818,6 +24820,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8473683791378269586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3747650471785524426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6fc3c47b40ec4147894ee75b2acdd7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  overheadCam: {fileID: 5118219610452414180}
 --- !u!1 &4100624659251562195
 GameObject:
   m_ObjectHideFlags: 0
@@ -24842,12 +24857,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4100624659251562195}
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.20000005, z: 2.5}
-  m_LocalScale: {x: 5, y: 2.3, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.26315743, z: 0}
+  m_LocalScale: {x: 0.52631575, y: 0.24210483, z: 1}
   m_Children: []
-  m_Father: {fileID: 4997301263046971773}
-  m_RootOrder: 5
+  m_Father: {fileID: 1872059998946078501}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!212 &5570245745203325082
 SpriteRenderer:
@@ -25256,7 +25271,6 @@ Transform:
   - {fileID: 5118219610452414180}
   - {fileID: 1731051470531744604}
   - {fileID: 1872059998946078501}
-  - {fileID: 6922716236671105283}
   - {fileID: 8689175037005448328}
   - {fileID: 8265928007385025322}
   - {fileID: 932277369391387050}
@@ -33910,7 +33924,7 @@ Transform:
   - {fileID: 357209957661560649}
   - {fileID: 1251734783528977436}
   m_Father: {fileID: 4997301263046971773}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &3358568233654108124
 ParticleSystem:

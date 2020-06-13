@@ -14,12 +14,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Badlands1.unity
     guid: 05ac9e8024b848640b3b0f8f56a7f5ac
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/Versus/Badlands1_Blue.unity
+    guid: f4b9c8fadfdba11478e472215083f4a9
+  - enabled: 1
+    path: Assets/Scenes/Versus/Badlands1_Red.unity
+    guid: c96f948875e5cdb499adba5d8cbd5f37
   - enabled: 1
     path: Assets/Scenes/Badlands2.unity
     guid: 59bc56e1b46331142bf0628f454e1953
