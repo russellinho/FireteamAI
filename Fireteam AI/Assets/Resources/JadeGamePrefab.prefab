@@ -15036,6 +15036,7 @@ GameObject:
   - component: {fileID: 1731051470531744604}
   - component: {fileID: 2981899187732808239}
   - component: {fileID: 5519059875422463787}
+  - component: {fileID: 7004071067339239208}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -15108,6 +15109,19 @@ Behaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1530216523145876011}
   m_Enabled: 1
+--- !u!114 &7004071067339239208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1530216523145876011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e77c2c9fbd9c462689949defa65c197, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCamTrans: {fileID: 4997301262654219526}
 --- !u!1 &1638062793882008923
 GameObject:
   m_ObjectHideFlags: 0
@@ -25128,7 +25142,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.03
-  far clip plane: 1000
+  far clip plane: 3000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -25905,7 +25919,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 4997301263046971774}
   viewIdField: 0
-  InstantiationId: 1
+  InstantiationId: 33
   isRuntimeInstantiated: 0
 --- !u!114 &4997301263046971774
 MonoBehaviour:
@@ -38627,6 +38641,7 @@ GameObject:
   - component: {fileID: 5118219610452414180}
   - component: {fileID: 2075155409091195696}
   - component: {fileID: 2661511055015570882}
+  - component: {fileID: 6535126221424675037}
   m_Layer: 0
   m_Name: Camera2
   m_TagString: Untagged
@@ -38699,6 +38714,19 @@ Behaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7259259586570809696}
   m_Enabled: 1
+--- !u!114 &6535126221424675037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7259259586570809696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e77c2c9fbd9c462689949defa65c197, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCamTrans: {fileID: 4997301262654219526}
 --- !u!1 &8004196130166160531
 GameObject:
   m_ObjectHideFlags: 0
@@ -43642,7 +43670,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.03
-  far clip plane: 1000
+  far clip plane: 3000
   field of view: 60
   orthographic: 0
   orthographic size: 5

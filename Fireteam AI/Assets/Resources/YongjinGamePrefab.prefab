@@ -27604,6 +27604,7 @@ GameObject:
   - component: {fileID: 2470968043988033609}
   - component: {fileID: 1382218053300711738}
   - component: {fileID: 8563851750025663550}
+  - component: {fileID: 7427456715296431373}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -27676,6 +27677,19 @@ Behaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3419113574222717246}
   m_Enabled: 1
+--- !u!114 &7427456715296431373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3419113574222717246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e77c2c9fbd9c462689949defa65c197, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCamTrans: {fileID: 2224817998599058335}
 --- !u!1 &3443993834971555409
 GameObject:
   m_ObjectHideFlags: 0
@@ -47245,7 +47259,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.03
-  far clip plane: 1000
+  far clip plane: 3000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -72982,6 +72996,7 @@ GameObject:
   - component: {fileID: 9027707218765397489}
   - component: {fileID: 2775102089185296421}
   - component: {fileID: 2207006020049542871}
+  - component: {fileID: 3771694625744488123}
   m_Layer: 0
   m_Name: Camera2
   m_TagString: Untagged
@@ -73054,6 +73069,19 @@ Behaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6841346468766220917}
   m_Enabled: 1
+--- !u!114 &3771694625744488123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6841346468766220917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e77c2c9fbd9c462689949defa65c197, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCamTrans: {fileID: 2224817998599058335}
 --- !u!1 &6848084999452299952
 GameObject:
   m_ObjectHideFlags: 0
@@ -78488,7 +78516,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.03
-  far clip plane: 1000
+  far clip plane: 3000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -84764,7 +84792,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 9157702028478079595}
   viewIdField: 0
-  InstantiationId: 1
+  InstantiationId: 33
   isRuntimeInstantiated: 0
 --- !u!114 &9157702028478079595
 MonoBehaviour:

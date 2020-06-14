@@ -46257,7 +46257,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.03
-  far clip plane: 1000
+  far clip plane: 3000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -71629,7 +71629,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.03
-  far clip plane: 1000
+  far clip plane: 3000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -77729,7 +77729,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 5740449512303423526}
   viewIdField: 0
-  InstantiationId: 1
+  InstantiationId: 33
   isRuntimeInstantiated: 0
 --- !u!114 &5740449512303423526
 MonoBehaviour:
