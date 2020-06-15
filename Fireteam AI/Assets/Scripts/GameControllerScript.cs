@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using NpcActionState = NpcScript.ActionStates;
 
 public class GameControllerScript : MonoBehaviourPunCallbacks {
 
@@ -205,7 +206,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 						pView.RPC("RpcEndGame", RpcTarget.All, 9f, null, false);
 
 					}
-				} else if (vipRef.GetComponent<NpcScript>().health <= 0) {
+				} else if (vipRef.GetComponent<NpcScript>().actionState == NpcActionState.Dead) {
 					if (!gameOver)
 					{
 						pView.RPC("RpcEndGame", RpcTarget.All, 4f, "The VIP has been killed!", false);
@@ -302,7 +303,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					{
 						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!");
 					}
-				} else if (vipRef.GetComponent<NpcScript>().health <= 0) {
+				} else if (vipRef.GetComponent<NpcScript>().actionState == NpcActionState.Dead) {
 					if (!gameOver) {
 						pView.RPC("RpcEndVersusGame", RpcTarget.All, 4f, (teamMap == "R" ? "B" : "R"), "The VIP has been killed!");
 					} 

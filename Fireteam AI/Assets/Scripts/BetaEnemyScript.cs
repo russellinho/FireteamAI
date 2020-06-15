@@ -1690,6 +1690,9 @@ public class BetaEnemyScript : MonoBehaviour {
 				} else if (hit.transform.tag.Equals ("EnemyHead")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(100);
+				} else if (hit.transform.tag.Equals("NpcHead")) {
+					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
+					hit.transform.GetComponent<NpcScript>().TakeDamage(100);
 				} else {
 					pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name, gameControllerScript.teamMap);
 					pView.RPC ("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);

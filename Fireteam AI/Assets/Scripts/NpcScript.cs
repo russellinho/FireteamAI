@@ -22,7 +22,6 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	public bool immobileWhileCarrying;
 	// Amount of speed to reduce while carrying
 	public float weightSpeedReduction;
-	public bool fuckbsalls;
 	private int deathBy;
 	public NpcType npcType;
 	public AudioClip[] gruntSounds;
@@ -42,9 +41,63 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 		carriedByPlayerId = -1;
 	}
 
-	void Update() {
-		DecideAnimation();
+	void Update()
+    {
+        if (gameController.matchType == 'C')
+        {
+            UpdateForCampaign();
+        } else if (gameController.matchType == 'V')
+        {
+            UpdateForVersus();
+        }
+    }
+
+	void UpdateForCampaign() {
 		UpdateEnvDamageTimer();
+
+		if (!PhotonNetwork.IsMasterClient) {
+			return;
+		}
+
+		// If disoriented, don't have the ability to do anything else except die
+		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
+			// StopVoices();
+			return;
+		}
+
+		DecideAction();
+	}
+
+	void UpdateForVersus() {
+		UpdateEnvDamageTimer();
+
+		if (!gameController.isVersusHostForThisTeam()) {
+			return;
+		}
+
+		// If disoriented, don't have the ability to do anything else except die
+		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
+			// StopVoices();
+			return;
+		}
+
+		DecideAction();
+	}
+
+	void FixedUpdate() {
+		if (gameController.matchType == 'C') {
+			FixedUpdateForCampaign();
+		} else if (gameController.matchType == 'V') {
+			FixedUpdateForVersus();
+		}
+	}
+
+	void FixedUpdateForCampaign() {
+		DecideAnimation();
+	}
+
+	void FixedUpdateForVersus() {
+		DecideAnimation();
 	}
 
 	public override void OnPlayerLeftRoom(Player otherPlayer)
@@ -329,11 +382,23 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 		// Play grunt when enemy dies or hit by flashbang
 		if (action == ActionStates.Dead) {
 			PlayGruntSound();
+			headTransform.gameObject.layer = 15;
 		}
 		if (action == ActionStates.Disoriented) {
 			PlayGruntSound();
 		}
 		actionState = action;
+	}
+
+	void DecideAction() {
+		// Check for death first
+		if (health <= 0 && actionState != ActionStates.Dead)
+		{	
+			UpdateActionState(ActionStates.Dead);
+
+			// float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
+			// pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
+		}
 	}
 
 }

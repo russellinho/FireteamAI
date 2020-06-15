@@ -18,6 +18,7 @@ TagManager:
   - Flashbang
   - EnemyArm
   - HUD
+  - NpcHead
   layers:
   - Default
   - TransparentFX
@@ -32,7 +33,7 @@ TagManager:
   - Environment
   - Marker
   - Dead
-  - EnemyHead
+  - HumanHead
   - Enemy
   - DeadHead
   - Weapon

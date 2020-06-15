@@ -566,13 +566,22 @@ public class WeaponActionScript : MonoBehaviour
         if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer))
         {
             pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
-            if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().health > 0)
-            {
-                hudScript.InstantiateHitmarker();
-                BetaEnemyScript b = hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>();
-                hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().TakeDamage(100);
-                RewardKill(true);
-                audioController.PlayHeadshotSound();
+            NpcScript n = hit.transform.gameObject.GetComponentInParent<NpcScript>();
+            BetaEnemyScript b = hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>();
+            if (n != null) {
+                if (n.health > 0)
+                {
+                    n.TakeDamage(100);
+                }
+            }
+            if (b != null) {
+                if (b.health > 0)
+                {
+                    hudScript.InstantiateHitmarker();
+                    b.TakeDamage(100);
+                    RewardKill(true);
+                    audioController.PlayHeadshotSound();
+                }
             }
         } else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range))
         {
@@ -686,12 +695,22 @@ public class WeaponActionScript : MonoBehaviour
             if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer) && !headshotDetected)
             {
                 pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
-                if (hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().health > 0)
-                {
-                    hudScript.InstantiateHitmarker();
-                    hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>().TakeDamage(100);
-                    RewardKill(true);
-                    audioController.PlayHeadshotSound();
+                NpcScript n = hit.transform.gameObject.GetComponentInParent<NpcScript>();
+                BetaEnemyScript b = hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>();
+                if (n != null) {
+                    if (n.health > 0)
+                    {
+                        n.TakeDamage(100);
+                    }
+                }
+                if (b != null) {
+                    if (b.health > 0)
+                    {
+                        hudScript.InstantiateHitmarker();
+                        b.TakeDamage(100);
+                        RewardKill(true);
+                        audioController.PlayHeadshotSound();
+                    }
                 }
                 headshotDetected = true;
             } else if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range))

@@ -733,7 +733,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (activeInteractable != null && !hud.PauseIsActive()) {
             NpcScript n = activeInteractable.GetComponent<NpcScript>();
             if (n != null) {
-                if (n.actionState == NpcActionState.Carried) {
+                if (n.actionState == NpcActionState.Carried || n.actionState == NpcActionState.Dead) {
                     SetInteracting(false, null);
                     return;
                 }
@@ -949,6 +949,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 			int damageReceived = (int)(f.damage);
 			TakeDamage(damageReceived, false);
 			ResetEnvDamageTimer();
+            SetHitLocation(other.transform.position);
 		}
 	}
 
