@@ -17,6 +17,7 @@ public class BetaEnemyScript : MonoBehaviour {
 	private const float MAX_SUSPICION_LEVEL = 100f;
 	// Scan for players every 0.8 of a second instead of every frame
 	private const float PLAYER_SCAN_DELAY = 0.8f;
+	private const float ENV_DAMAGE_DELAY = 0.5f;
 
 	// Prefab references
 	public GameObject ammoBoxPickup;
@@ -116,6 +117,8 @@ public class BetaEnemyScript : MonoBehaviour {
 	// Time to wait before the enemy can start becoming suspicious again
     private float increaseSuspicionDelay = 0f;
     private float alertTeamAfterAlertedTimer = 6f;
+	// Responsible for putting a delay between damage done by the environment like fire, gas, etc.
+	private float envDamageTimer;
 	private bool syncSuspicionValuesSemiphore = false;
 
 	public float wanderStallDelay = -1f;
@@ -328,6 +331,7 @@ public class BetaEnemyScript : MonoBehaviour {
 			navMeshObstacle.enabled = false;
 		}
 
+		UpdateEnvDamageTimer();
 		UpdateDisorientationTime();
 		ReplenishFireRate ();
 		UpdateFiringModeTimer ();
@@ -1119,6 +1123,19 @@ public class BetaEnemyScript : MonoBehaviour {
 		pView.RPC("RpcRegisterGrenadeKill", RpcTarget.All, killedByViewId, gameControllerScript.teamMap);
 	}
 
+	void HandleEnvironmentEffectTriggers(Collider other) {
+		if (health <= 0 || envDamageTimer < ENV_DAMAGE_DELAY) {
+			return;
+		}
+
+		if (other.gameObject.tag.Equals("Fire")) {
+			FireScript f = other.gameObject.GetComponent<FireScript>();
+			int damageReceived = (int)(f.damage);
+			TakeDamage(damageReceived);
+			ResetEnvDamageTimer();
+		}
+	}
+
 	void HandleExplosiveEffectTriggers(Collider other) {
 		// First priority is to handle possible explosion damage
 		if (health <= 0) {
@@ -1254,6 +1271,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		/** Explosive trigger functionality below - only operate on master client/server to avoid duplicate effects */
 		if (PhotonNetwork.IsMasterClient) {
 			HandleExplosiveEffectTriggers(other);
+			HandleEnvironmentEffectTriggers(other);
 		}
 	}
 
@@ -1261,6 +1279,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		/** Explosive trigger functionality below - only operate on master client/server to avoid duplicate effects */
 		if (gameControllerScript.isVersusHostForThisTeam()) {
 			HandleExplosiveEffectTriggers(other);
+			HandleEnvironmentEffectTriggers(other);
 		}
 	}
 
@@ -2416,5 +2435,15 @@ public class BetaEnemyScript : MonoBehaviour {
 	// 		navPoints[i - 1] = navChilds[i].gameObject;
 	// 	}
 	// }
+
+	void ResetEnvDamageTimer() {
+		envDamageTimer = 0f;
+	}
+
+	void UpdateEnvDamageTimer() {
+		if (envDamageTimer < ENV_DAMAGE_DELAY) {
+			envDamageTimer += Time.deltaTime;
+		}
+	}
 
 }

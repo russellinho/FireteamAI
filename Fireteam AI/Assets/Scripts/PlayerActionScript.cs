@@ -8,6 +8,7 @@ using Photon.Realtime;
 using UnityStandardAssets.Characters.FirstPerson;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using SpawnMode = GameControllerScript.SpawnMode;
+using NpcActionState = NpcScript.ActionStates;
 
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
@@ -17,6 +18,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     const float BOMB_DEFUSE_TIME = 8f;
     const float DEPLOY_USE_TIME = 3f;
     const float NPC_INTERACT_TIME = 5f;
+    private const float ENV_DAMAGE_DELAY = 0.5f;
 
     // Object references
     public GameControllerScript gameController;
@@ -96,6 +98,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public float hitTimer;
     public float healTimer;
     public float boostTimer;
+    private float envDamageTimer;
     public Vector3 hitLocation;
     public Transform headTransform;
     public Transform cameraParent;
@@ -197,7 +200,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 
         UnlockInteractionLock();
-
+        UpdateEnvDamageTimer();
         updatePlayerSpeed();
         // Instant respawn hack
         // if (Input.GetKeyDown (KeyCode.P)) {
@@ -730,7 +733,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (activeInteractable != null && !hud.PauseIsActive()) {
             NpcScript n = activeInteractable.GetComponent<NpcScript>();
             if (n != null) {
-                if (n.isCarrying) {
+                if (n.actionState == NpcActionState.Carried) {
                     SetInteracting(false, null);
                     return;
                 }
@@ -936,6 +939,19 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
+    void HandleEnvironmentEffects(Collider other) {
+		if (health <= 0 || envDamageTimer < ENV_DAMAGE_DELAY) {
+			return;
+		}
+
+		if (other.gameObject.tag.Equals("Fire")) {
+			FireScript f = other.gameObject.GetComponent<FireScript>();
+			int damageReceived = (int)(f.damage);
+			TakeDamage(damageReceived, false);
+			ResetEnvDamageTimer();
+		}
+	}
+
     void HandlePickups(Collider other)
     {
         if (other.gameObject.tag.Equals("AmmoBox"))
@@ -982,6 +998,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 return;
             }
             HandleExplosiveEffects(other);
+            HandleEnvironmentEffects(other);
             HandlePickups(other);
         }
         // else
@@ -1443,5 +1460,15 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (gameObject.layer == 0) return;
         hud.MessagePopup(playerDownName + " is down!");
     }
+
+    void ResetEnvDamageTimer() {
+		envDamageTimer = 0f;
+	}
+
+    void UpdateEnvDamageTimer() {
+		if (envDamageTimer < ENV_DAMAGE_DELAY) {
+			envDamageTimer += Time.deltaTime;
+		}
+	}
 
 }

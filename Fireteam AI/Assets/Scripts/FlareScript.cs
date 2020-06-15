@@ -6,13 +6,15 @@ public class FlareScript : MonoBehaviour {
 
 	public bool popped;
 	public int flareId;
+	public ParticleSystem flareEffect;
 
 	// Use this for initialization
 		
 	public void PopFlare() {
 		popped = true;
 		gameObject.layer = 0;
-		// TODO: Start flare particle effect here
+		flareEffect.gameObject.SetActive(true);
+		flareEffect.Play();
 	}
 
 }
