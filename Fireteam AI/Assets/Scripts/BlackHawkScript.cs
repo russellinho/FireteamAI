@@ -180,4 +180,14 @@ public class BlackHawkScript : MonoBehaviour
             this.flightMode = flightMode;
         }
     }
+
+    public void ToggleEnabled(bool b) {
+        pView.RPC("RpcToggleEnabled", RpcTarget.All, b, gameController.teamMap);
+    }
+
+    [PunRPC]
+    void RpcToggleEnabled(bool b, string team) {
+        if (team != gameController.teamMap) return;
+        gameObject.SetActive(b);
+    }
 }

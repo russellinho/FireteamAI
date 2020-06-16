@@ -1959,6 +1959,7 @@ GameObject:
   - component: {fileID: 4958379708163309192}
   - component: {fileID: 5910447551387833246}
   - component: {fileID: 921120453930860319}
+  - component: {fileID: 1795257658789388488}
   m_Layer: 0
   m_Name: FriendlyBlackHawk
   m_TagString: Untagged
@@ -2080,6 +2081,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c2fc704ebd043378d2d4440e4aadb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameController: {fileID: 0}
+  actionState: 0
+  flightMode: 0
+  animator: {fileID: 0}
+  pView: {fileID: 0}
 --- !u!64 &921120453930860319
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2094,6 +2100,22 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 2959467708922500008, guid: 8be4706e7ca62b44ebbcd5febed6a1de, type: 3}
+--- !u!54 &1795257658789388488
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4958379708163309193}
+  serializedVersion: 2
+  m_Mass: 100
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &5139399164605087789
 GameObject:
   m_ObjectHideFlags: 0

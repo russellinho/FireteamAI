@@ -166,4 +166,5 @@ MonoBehaviour:
   - RpcMarkAIReadyForRespawn
   - RpcSetDestination
   - RpcProcessFlightInstruction
+  - RpcToggleEnabled
   DisableAutoOpenWizard: 1

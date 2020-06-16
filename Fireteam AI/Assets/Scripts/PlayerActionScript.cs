@@ -1218,6 +1218,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             }
             hud.ComBoxPopup(1f, "Democko", "We see you! We’re incoming!", "democko");
+            gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().ToggleEnabled(true);
             Vector3 n = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 30f, gameController.exitPoint.transform.position.z - 1f);
             Vector3 n2 = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y, gameController.exitPoint.transform.position.z - 1f);
             gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().SetDestination(n, false, 110f, FlightMode.Travel);
