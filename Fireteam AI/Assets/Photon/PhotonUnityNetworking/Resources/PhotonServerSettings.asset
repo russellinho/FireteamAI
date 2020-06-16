@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: 759c3bf2-4dac-4abc-8645-adefe6e264a1
+    AppIdRealtime: 
     AppIdChat: 
     AppIdVoice: 
-    AppVersion: 0.03
+    AppVersion: 
     UseNameServer: 1
-    FixedRegion: us
+    FixedRegion: 
     Server: 
     Port: 0
     Protocol: 0
@@ -33,21 +33,31 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - FireEffects
+  - FireEffectsLauncher
   - FireEffectsSuppressed
   - RespawnSpaceship
   - RpcAddToTotalDeaths
   - RpcAddToTotalKills
+  - RpcCarryNpc
   - RpcChangePlayerDisableStatus
   - RpcChangeReadyStatus
+  - RpcClearAIRespawns
+  - RpcClearEnemySeenBy
   - RpcCockGrenade
   - RpcCockingAnim
   - RpcConvertCounts
   - RpcCrouch
-  - RpcDecrementBombsRemaining
   - RpcDefuseBomb
+  - RpcDeployDeployable
+  - RpcDestroyPickup
   - RpcDie
+  - RpcDisablePlayerForVersus
   - RpcDrawWeapon
+  - RpcDropAmmoPickup
+  - RpcDropHealthPickup
+  - RpcDropOffNpc
   - RpcEndGame
+  - RpcEndVersusGame
   - RpcEquipArmorInGame
   - RpcEquipBottomInGame
   - RpcEquipCharacterInGame
@@ -59,14 +69,20 @@ MonoBehaviour:
   - RpcExplodeDelay
   - RpcIncrementDeathCount
   - RpcIncrementEscapeCount
+  - RpcInitializeMelee
   - RpcInitializeWeapon
   - RpcInstantiateBloodSpill
   - RpcInstantiateBulletHole
   - RpcInstantiateHitParticleEffect
   - RpcLoadingScreen
+  - RpcMarkAIReadyForRespawn
+  - RpcMarkEnemyOutline
   - RpcPingServerForEquipment
+  - RpcPlayGruntSound
   - RpcPlayReloadSound
   - RpcPlaySupportActionSound
+  - RpcPopFlare
+  - RpcProcessFlightInstruction
   - RpcRegisterGrenadeKill
   - RpcReload
   - RpcReloadAnim
@@ -74,14 +90,15 @@ MonoBehaviour:
   - RpcRespawnPlayer
   - RpcSendChatMessage
   - RpcSendMissionTimeToClients
-  - RpcSetAlerted
-  - RpcSetAlertTimer
+  - RpcSetAlertStatus
   - RpcSetCoverPos
   - RpcSetCoverSwitchPositionsTimer
   - RpcSetCoverTimer
   - RpcSetCoverWaitTimer
   - RpcSetCrouchingInAnimator
   - RpcSetCrouchMode
+  - RpcSetDestination
+  - RpcSetEnemySeenBy
   - RpcSetEquippedItems
   - RpcSetExitLevelLoaded
   - RpcSetFiringModeTimer
@@ -90,81 +107,50 @@ MonoBehaviour:
   - RpcSetIsCrouching
   - RpcSetIsDeadInAnimator
   - RpcSetLastGunshotHeardPos
-  - RpcSetLastGunshotHeardPosClone
-  - RpcSetLastGunshotHeardTimer
   - RpcSetLastSeenPlayerPos
   - RpcSetMovingInAnimator
+  - RpcSetMyExpAndGpGained
   - RpcSetNavMeshDestination
+  - RpcSetPlayerLaunchedByReference
   - RpcSetPlayerThrownByReference
-  - RpcSetPlayerToHit
+  - RpcSetRank
   - RpcSetSprintingInAnimator
   - RpcSetTarget
+  - RpcSetTeamCounts
   - RpcSetWalkingInAnimator
   - RpcSetWanderStallDelay
   - RpcSetWeaponReadyInAnimator
   - RpcSetWeaponTypeInAnimator
   - RpcShootAction
   - RpcSpawnShellCasing
+  - RpcStartVersusGame
+  - RpcSwitchTeams
   - RpcSyncAnimatorValues
   - RpcSyncCoverSpot
-  - RpcSyncDetectionValues
+  - RpcSyncSuspicionValues
   - RpcTakeDamage
   - RpcToggleButtons
+  - RpcToggleEnabled
   - RpcToggleWeaponVisible
   - RpcTriggerJumpInAnimator
+  - RpcTriggerPlayerDownAlert
   - RpcTriggerReloadingInAnimator
   - RpcUpdateActionState
-  - RpcUpdateAlertedStatus
+  - RpcUpdateAssaultMode
   - RpcUpdateEndGameTimer
   - RpcUpdateFiringState
   - RpcUpdateMissionTime
   - RpcUpdateNavMesh
   - RpcUpdateNavMeshSpeed
+  - RpcUpdateObjectives
   - RpcUpdateSpineRotation
+  - RpcUseAmmoBag
   - RpcUseBooster
+  - RpcUseDeployable
+  - RpcUseFirstAidKit
   - sendChatMaster
   - SendMsg
   - SendMsgConnectionAll
   - SendMsgConnectionMaster
   - StartDespawn
-  - UpdateAssaultMode
-  - RpcMarkEnemyOutline
-  - RpcSendBlueTeamToPreplanning
-  - RpcSendRedTeamToPreplanning
-  - RpcEndVersusGame
-  - RpcSwitchTeams
-  - RpcSendTeamsToPreplanning
-  - RpcStartVersusGame
-  - RpcDisablePlayerForVersus
-  - RpcDestroyPickup
-  - RpcDropAmmoPickup
-  - RpcDropHealthPickup
-  - RpcSetTeamCounts
-  - RpcSetRank
-  - RpcSetMyExpAndGpGained
-  - RpcSetPlayerLaunchedByReference
-  - FireEffectsLauncher
-  - RpcDeployDeployable
-  - RpcUseAmmoBag
-  - RpcUseDeployable
-  - RpcUseFirstAidKit
-  - RpcClearEnemySeenBy
-  - RpcSetAlertedTimer
-  - RpcSetEnemySeenBy
-  - RpcSyncSuspicionValues
-  - RpcUpdateAssaultMode
-  - RpcInitializeMelee
-  - RpcTriggerPlayerDownAlert
-  - RpcSetAlertStatus
-  - RpcPopFlare
-  - RpcDropOffNpc
-  - RpcEscortNpc
-  - RpcUpdateObjectives
-  - RpcPlayGruntSound
-  - RpcCarryNpc
-  - RpcClearAIRespawns
-  - RpcMarkAIReadyForRespawn
-  - RpcSetDestination
-  - RpcProcessFlightInstruction
-  - RpcToggleEnabled
   DisableAutoOpenWizard: 1
