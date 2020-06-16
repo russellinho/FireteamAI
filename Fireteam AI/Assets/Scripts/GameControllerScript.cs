@@ -69,6 +69,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private bool endingGainsCalculated;
 	public GameObject vipRef;
 	public GameObject checkpointRef;
+	public GameObject escapeVehicleRef;
 	private bool endGameWithWin;
 
 	// Use this for initialization

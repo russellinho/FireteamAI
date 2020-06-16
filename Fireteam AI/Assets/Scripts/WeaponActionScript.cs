@@ -518,7 +518,7 @@ public class WeaponActionScript : MonoBehaviour
                     if (beforeHp > 0) {
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                         n.TakeDamage((int)meleeStats.damage);
-                        n.PlayGruntSound();
+                        n.PlayGruntSound(playerActionScript.gameController.teamMap);
                     }
                 }
                 if (b != null) {
@@ -596,7 +596,7 @@ public class WeaponActionScript : MonoBehaviour
                     if (beforeHp > 0)
                     {
                         n.TakeDamage(thisDamageDealt);
-                        n.PlayGruntSound();
+                        n.PlayGruntSound(playerActionScript.gameController.teamMap);
                     }
                 }
                 if (b != null) {
@@ -728,7 +728,7 @@ public class WeaponActionScript : MonoBehaviour
                         if (totalDamageDealt == 0f) {
                             if (beforeHp > 0)
                             {
-                                n.PlayGruntSound();
+                                n.PlayGruntSound(playerActionScript.gameController.teamMap);
                             }
                         }
                         n.TakeDamage(thisDamageDealt);

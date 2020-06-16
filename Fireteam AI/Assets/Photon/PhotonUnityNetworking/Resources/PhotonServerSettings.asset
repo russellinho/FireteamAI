@@ -164,4 +164,6 @@ MonoBehaviour:
   - RpcCarryNpc
   - RpcClearAIRespawns
   - RpcMarkAIReadyForRespawn
+  - RpcSetDestination
+  - RpcProcessFlightInstruction
   DisableAutoOpenWizard: 1

@@ -143,12 +143,13 @@ public class NpcScript : MonoBehaviourPunCallbacks {
         health -= d;
 	}
 
-	public void PlayGruntSound() {
-		pView.RPC("RpcPlayGruntSound", RpcTarget.All);
+	public void PlayGruntSound(string team) {
+		pView.RPC("RpcPlayGruntSound", RpcTarget.All, team);
 	}
 
 	[PunRPC]
-	public void RpcPlayGruntSound() {
+	public void RpcPlayGruntSound(string team) {
+		if (team != gameController.teamMap) return;
 		if (gruntSounds.Length == 0) return;
 		int r = Random.Range(0, gruntSounds.Length);
 		audioSource.clip = gruntSounds [r];
@@ -381,11 +382,11 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 		// }
 		// Play grunt when enemy dies or hit by flashbang
 		if (action == ActionStates.Dead) {
-			PlayGruntSound();
+			PlayGruntSound(gameController.teamMap);
 			headTransform.gameObject.layer = 15;
 		}
 		if (action == ActionStates.Disoriented) {
-			PlayGruntSound();
+			PlayGruntSound(gameController.teamMap);
 		}
 		actionState = action;
 	}

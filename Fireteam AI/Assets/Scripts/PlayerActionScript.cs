@@ -9,6 +9,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using SpawnMode = GameControllerScript.SpawnMode;
 using NpcActionState = NpcScript.ActionStates;
+using FlightMode = BlackHawkScript.FlightMode;
 
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
@@ -349,8 +350,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     hud.MessagePopup("Survive until evac arrives!");
                     hud.ComBoxPopup(3f, "Democko", "You guys have trouble inbound! My NAV scans show Cicadas closing in on you from all over the place!", "democko");
                     hud.ComBoxPopup(240f, "Democko", "Guys, avoid going outside! This is their territory and they know it well!", "democko");
-                    // gameController.objectives.missionTimer2 = 720f;
-                    gameController.objectives.missionTimer2 = 130f;
+                    gameController.objectives.missionTimer2 = 720f;
+                    // gameController.objectives.missionTimer2 = 130f;
                 }
             } else {
                 gameController.objectives.missionTimer1 -= Time.deltaTime;
@@ -391,7 +392,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 } else {
                     // Land chopper in chosen evac spot and alert the team
                     if (gameController.objectives.stepsLeftToCompletion == 1 && gameController.objectives.missionTimer3 <= 0f) {
-                        // TODO: Add code for landing the chopper
                         hud.ComBoxPopup(2f, "Democko", "The chopper is here! There’s a lot of heat out here so we can’t stay long, so move quick!", "democko");
                         hud.MessagePopup("Escape available! Head to the waypoint with the pilot!");
                         gameController.objectives.missionTimer3 = 90f;
@@ -411,6 +411,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 gameController.objectives.missionTimer2 = 90f;
                 hud.ComBoxPopup(1f, "Democko", "We had to wave off! We'll circle around and come back!", "democko");
                 hud.MessagePopup("Survive until evac returns!");
+                Vector3 n = new Vector3(120f, 150f, -1340f);
+                Vector3 n2 = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 30f, gameController.exitPoint.transform.position.z - 1f);
+                Vector3 n3 = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y, gameController.exitPoint.transform.position.z - 1f);
+                gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().SetDestination(n, false, 30f, FlightMode.Travel);
+                gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().SetDestination(n2, false, 50f, FlightMode.Travel);
+                gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().SetDestination(n3, false, 5f, FlightMode.Descend);
             }
 
             if (gameController.gameOver && gameController.objectives.stepsLeftToCompletion == 1) {
@@ -1203,6 +1209,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void HandlePopFlareForMission(int mission, int i) {
         if (mission == 2) {
             gameController.UpdateObjectives();
+            gameController.objectives.missionTimer2 = 120f;
             gameController.objectives.selectedEvacIndex = i;
             foreach (GameObject o in gameController.items) {
                 FlareScript s = o.GetComponent<FlareScript>();
@@ -1211,6 +1218,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             }
             hud.ComBoxPopup(1f, "Democko", "We see you! We’re incoming!", "democko");
+            Vector3 n = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 30f, gameController.exitPoint.transform.position.z - 1f);
+            Vector3 n2 = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y, gameController.exitPoint.transform.position.z - 1f);
+            gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().SetDestination(n, false, 110f, FlightMode.Travel);
+            gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().SetDestination(n2, false, 5f, FlightMode.Descend);
         }
     }
 
