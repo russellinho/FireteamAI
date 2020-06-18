@@ -1077,14 +1077,18 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     }
 
 	public void SetSightCrosshairForSight(string sightName) {
-		container.sightCrosshair.texture = (Texture)Resources.Load(InventoryScript.itemData.modCatalog[sightName].crosshairPath);
+		if (GetComponent<PhotonView>().IsMine) {
+			container.sightCrosshair.texture = (Texture)Resources.Load(InventoryScript.itemData.modCatalog[sightName].crosshairPath);
+		}
 	}
 
 	public void EquipSightCrosshair(bool on) {
-		if (on) {
-			container.sightCrosshair.gameObject.SetActive(true);
-		} else {
-			container.sightCrosshair.gameObject.SetActive(false);
+		if (GetComponent<PhotonView>().IsMine) {
+			if (on) {
+				container.sightCrosshair.gameObject.SetActive(true);
+			} else {
+				container.sightCrosshair.gameObject.SetActive(false);
+			}
 		}
 	}
 

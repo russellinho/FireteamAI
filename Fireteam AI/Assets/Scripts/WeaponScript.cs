@@ -962,6 +962,7 @@ public class WeaponScript : MonoBehaviour
         weaponHolderFpc.SwitchWeaponToRightHand();
         //drawnSuppressorRenderer.enabled = true;
         // DrawPrimary();
+        MaxRefillAllAmmo(true);
         InitializeWeapon();
     }
 
@@ -1029,9 +1030,12 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
-    public void MaxRefillAllAmmo() {
+    public void MaxRefillAllAmmo(bool includeSupport = false) {
         MaxRefillAmmoOnPrimary();
         MaxRefillAmmoOnSecondary();
+        if (includeSupport) {
+            MaxRefillAmmoOnSupport();
+        }
         RefreshAmmoCounts();
     }
 

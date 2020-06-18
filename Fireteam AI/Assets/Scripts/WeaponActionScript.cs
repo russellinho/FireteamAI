@@ -169,10 +169,12 @@ public class WeaponActionScript : MonoBehaviour
 
         if (PlayerPreferences.playerPreferences.KeyWasPressed("FireMode"))
         {
-            if (firingMode == FireMode.Semi)
-                firingMode = FireMode.Auto;
-            else
-                firingMode = FireMode.Semi;
+            if (weaponStats.category == "Assault Rifle") {
+                if (firingMode == FireMode.Semi)
+                    firingMode = FireMode.Auto;
+                else
+                    firingMode = FireMode.Semi;
+            }
         }
 
         meleeInput = PlayerPreferences.playerPreferences.KeyWasPressed("Melee");
