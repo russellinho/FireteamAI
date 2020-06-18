@@ -6,6 +6,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Firebase.Database;
 
 public class LoginControllerScript : MonoBehaviour
 {
@@ -102,22 +103,17 @@ public class LoginControllerScript : MonoBehaviour
             AuthScript.authHandler.user = task.Result;
             //QueuePopup("User signed in successfully: {" + newUser.DisplayName + "} ({" + newUser.UserId + "})");
             // Query DB to see if the user is set up yet. If not, go to setup. Else, go to title page.
-            DAOScript.dao.dbRef.Child("fteam_ai_users").GetValueAsync().ContinueWith(taskA => {
-                if (taskA.IsFaulted) {
-                    popupMessage = ""+taskA.Exception;
-                    activatePopupFlag = true;
-                    loginBtn.interactable = true;
-                    return;
-                } else if (taskA.IsCompleted) {
-                    saveLoginPrefsFlag = true;
-                    if (!taskA.Result.HasChild(AuthScript.authHandler.user.UserId)) {
-                        Debug.Log("Success going to setup!");
-                        signInFlag = 1;
-                    } else {
-                        Debug.Log("Success going to title!");
-                        signInFlag = 2;
-                    }
+            DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_users");
+            d.RunTransaction(task => {
+                saveLoginPrefsFlag = true;
+                if (!task.HasChild(AuthScript.authHandler.user.UserId)) {
+                    Debug.Log("Success going to setup!");
+                    signInFlag = 1;
+                } else {
+                    Debug.Log("Success going to title!");
+                    signInFlag = 2;
                 }
+                return TransactionResult.Success(task);
             });
         });
     }

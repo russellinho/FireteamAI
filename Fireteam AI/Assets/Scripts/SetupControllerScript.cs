@@ -157,217 +157,81 @@ public class SetupControllerScript : MonoBehaviour
         }
 
         // Check if username is taken
-        DAOScript.dao.dbRef.Child("fteam_ai_takenUsernames").GetValueAsync().ContinueWith(taskA => {
-            if (taskA.IsFaulted) {
+        DatabaseReference d = DAOScript.dao.dbRef;
+        d.RunTransaction(task => {
+            if (task.Child("fteam_ai_takenUsernames").HasChild(potentialNameLower)) {
                 activatePopupFlag = true;
-                // popupMessage = "Database is currently unavailable. Please try again later.";
-                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                popupMessage = "This username is taken! Please try another.";
                 completeCharCreationFlag = false;
-            } else if (taskA.IsCompleted) {
-                if (taskA.Result.HasChild(potentialNameLower)) {
+            } else {
+                if (!completeCharCreationFlag) {
                     activatePopupFlag = true;
-                    popupMessage = "This username is taken! Please try another.";
+                    popupMessage = "This name is available! You may use this name if you wish.";
                     completeCharCreationFlag = false;
                 } else {
-                    if (!completeCharCreationFlag) {
-                        activatePopupFlag = true;
-                        popupMessage = "This name is available! You may use this name if you wish.";
-                        completeCharCreationFlag = false;
-                    } else {
-                        // Everything is passed, create player data and mark username as taken
-                        DAOScript.dao.dbRef.Child("fteam_ai_takenUsernames").Child(potentialNameLower).SetValueAsync("true").ContinueWith(taskB => {
-                            if (taskB.IsFaulted) {
-                                activatePopupFlag = true;
-                                // popupMessage = "Database is currently unavailable. Please try again later.";
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                completeCharCreationFlag = false;
-                                return;
-                            } else if (taskB.IsCompleted) {
-                                string json = "{" +
-                                    "\"username\":\"" + potentialName + "\"," +
-                                    "\"defaultChar\":\"" + selectedCharacter + "\"," +
-                                    "\"defaultWeapon\":\"" + starterWeapons[wepSelectionIndex] + "\"," +
-                                    "\"exp\":\"0\"," +
-                                    "\"gp\":\"100000\"," +
-                                    "\"kash\":\"0\"" +
-                                "}";
-                                DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).SetRawJsonValueAsync(json).ContinueWith(taskE => {
-                                    if (taskE.IsFaulted) {
-                                        activatePopupFlag = true;
-                                        // popupMessage = "Database is currently unavailable. Please try again later.";
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        completeCharCreationFlag = false;
-                                        return;
-                                    } else {
-                                        string jsonA = "{\"weapons\":{" +
-                                        "\"" + starterWeapons[wepSelectionIndex] + "\": {" +
-                                            "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            "\"duration\":\"-1\"," +
-                                            "\"equippedSuppressor\":\"\"," +
-                                            "\"equippedSight\":\"\"," +
-                                            "\"equippedClip\":\"\""
-                                        + "}," +
-                                        "\"Glock23\": {" +
-                                            "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            "\"duration\":\"-1\"," +
-                                            "\"equippedSuppressor\":\"\"," +
-                                            "\"equippedSight\":\"\"," +
-                                            "\"equippedClip\":\"\""
-                                        + "}," + 
-                                        "\"M67 Frag\": {" +
-                                            "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            "\"duration\":\"-1\"," +
-                                            "\"equippedSuppressor\":\"\"," +
-                                            "\"equippedSight\":\"\"," +
-                                            "\"equippedClip\":\"\""
-                                        + "}" + 
-                                        "\"Recon Knife\": {" +
-                                            "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            "\"duration\":\"-1\""
-                                        + "}" + 
-                                        "}," +
-                                        "\"characters\":{" +
-                                            "\"" + selectedCharacter + "\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}" +
-                                        "}," +
-                                        // "\"armor\":{" +
-                                        //     "\"Standard Vest\": {" +
-                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                        //         "\"duration\":\"-1\""
-                                        //     + "}" +
-                                        // "}," +
-                                        "\"tops\":{" +
-                                            // "\"Casual T-Shirt (M)\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            // "\"Casual T-Shirt (F)\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            // "\"Casual Shirt\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            // "\"Casual Tank Top\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            "\"Standard Fatigues Top (M)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Standard Fatigues Top (F)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}" +
-                                        "}," +
-                                        "\"bottoms\":{" +
-                                            // "\"Dark Wash Denim Jeans (M)\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            // "\"Dark Wash Denim Jeans (F)\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            // "\"Light Wash Denim Jeans (M)\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            // "\"Light Wash Denim Jeans (F)\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            "\"Standard Fatigues Bottom (M)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Standard Fatigues Bottom (F)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}" +
-                                        "}," +
-                                        "\"footwear\":{" +
-                                            // "\"White Chucks\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            // "\"Red Chucks\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            "\"Standard Boots (M)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Standard Boots (F)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}" +
-                                        "}," +
-                                        // "\"headgear\":{" +
-                                        //     "\"COM Hat\": {" +
-                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                        //         "\"duration\":\"-1\""
-                                        //     + "}," +
-                                        //     "\"MICH\": {" +
-                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                        //         "\"duration\":\"-1\""
-                                        //     + "}," +
-                                        //     "\"Combat Beanie\": {" +
-                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                        //         "\"duration\":\"-1\""
-                                        //     + "}" +
-                                        // "}," +
-                                        // "\"facewear\":{" +
-                                        //     "\"Standard Goggles\": {" +
-                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                        //         "\"duration\":\"-1\""
-                                        //     + "}," +
-                                        //     "\"Sport Shades\": {" +
-                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                        //         "\"duration\":\"-1\""
-                                        //     + "}," +
-                                        //     "\"Aviators\": {" +
-                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                        //         "\"duration\":\"-1\""
-                                        //     + "}" +
-                                        // "}" +
-                                        "}";
-                                        DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                                            .SetRawJsonValueAsync(jsonA).ContinueWith(taskC => {
-                                            if (taskC.IsFaulted) {
-                                                // Debug.Log(taskC.Exception.Message);
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                            } else {
-                                                string jsonTemp = "{" +
-                                                    "\"name\":\"Standard Suppressor\"," +
-                                                    "\"equippedOn\":\"\"," +
-                                                    "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                    "\"duration\":\"-1\"" +
-                                                "}";
-                                                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                                                    .Child("mods").Push().SetRawJsonValueAsync(jsonTemp).ContinueWith(taskD => {
-                                                        if (taskD.IsCompleted) {
-                                                        // Continue to home screen
-                                                        // Debug.Log("DONE!");
-                                                            finishedFlag = true;
-                                                        } else {
-                                                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                        }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
+                    // Everything is passed, create player data and mark username as taken
+                    task.Child("fteam_ai_takenUsernames").Child(potentialNameLower).Value = "true";
+                    task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("username").Value = potentialName;
+                    task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("defaultChar").Value = selectedCharacter;
+                    task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("defaultWeapon").Value = ""+starterWeapons[wepSelectionIndex];
+                    task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("exp").Value = "0";
+                    task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "100000";
+                    task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "0";
+                    string iPrimary = ""+starterWeapons[wepSelectionIndex];
+                    string iSecondary = "Glock23";
+                    string iSupport = "M67 Frag";
+                    string iMelee = "Recon Knife";
+                    // Add primary
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iPrimary).Child("acquireDate").Value = ""+DateTime.Now;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iPrimary).Child("duration").Value = "-1";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iPrimary).Child("equippedSuppressor").Value = "";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iPrimary).Child("equippedSight").Value = "";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iPrimary).Child("equippedClip").Value = "";
+                    // Add secondary
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iSecondary).Child("acquireDate").Value = ""+DateTime.Now;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iSecondary).Child("duration").Value = "-1";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iSecondary).Child("equippedSuppressor").Value = "";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iSecondary).Child("equippedSight").Value = "";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iSecondary).Child("equippedClip").Value = "";
+                    // Add support
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iSupport).Child("acquireDate").Value = ""+DateTime.Now;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iSupport).Child("duration").Value = "-1";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iSupport).Child("equippedSuppressor").Value = "";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iSupport).Child("equippedSight").Value = "";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iSupport).Child("equippedClip").Value = "";
+                    // Add melee
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iMelee).Child("acquireDate").Value = ""+DateTime.Now;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(iMelee).Child("duration").Value = "-1";
+                    // Add characters
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters").Child(selectedCharacter).Child("acquireDate").Value = ""+DateTime.Now;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters").Child(selectedCharacter).Child("duration").Value = "-1";
+                    // Add tops
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops").Child("Standard Fatigues Top (M)").Child("acquireDate").Value = ""+DateTime.Now;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops").Child("Standard Fatigues Top (M)").Child("duration").Value = "-1";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops").Child("Standard Fatigues Top (F)").Child("acquireDate").Value = ""+DateTime.Now;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops").Child("Standard Fatigues Top (F)").Child("duration").Value = "-1";
+                    // Add bottoms
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child("Standard Fatigues Bottom (M)").Child("acquireDate").Value = ""+DateTime.Now;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child("Standard Fatigues Bottom (M)").Child("duration").Value = "-1";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child("Standard Fatigues Bottom (F)").Child("acquireDate").Value = ""+DateTime.Now;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child("Standard Fatigues Bottom (F)").Child("duration").Value = "-1";
+                    // Add footwear
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child("Standard Boots (M)").Child("acquireDate").Value = ""+DateTime.Now;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child("Standard Boots (M)").Child("duration").Value = "-1";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child("Standard Boots (F)").Child("acquireDate").Value = ""+DateTime.Now;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child("Standard Boots (F)").Child("duration").Value = "-1";
+                    // Add mods
+                    string pushKey = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Push().Key;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(pushKey).Child("name").Value = "Standard Suppressor";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(pushKey).Child("equippedOn").Value = "";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(pushKey).Child("acquireDate").Value = ""+DateTime.Now;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(pushKey).Child("duration").Value = "-1";
+                    // Continue
+                    finishedFlag = true;
                 }
             }
+
+            return TransactionResult.Success(task);
         });
     }
 

@@ -7,6 +7,7 @@ using Photon.Realtime;
 using Photon.Pun;
 using UnityEngine.Networking;
 using TMPro;
+using Firebase.Database;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private const float NINETY_DAYS_MINS = 129600f;
@@ -3546,19 +3547,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         float totalNewDuration = ConvertDurationInput(durationSelectionDropdown.value);
         totalNewDuration = (Mathf.Approximately(totalNewDuration, -1f) ? totalNewDuration : totalNewDuration + hasDuplicateCheck);
         // Reach out to DB to verify player's GP and KASH before purchase
-        DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
-			if (task.IsCompleted) {
-				PlayerData.playerdata.info.gp = uint.Parse(task.Result.Child("gp").Value.ToString());
-				// PlayerData.playerdata.info.kash = uint.Parse(task.Result.Child("kash").Value.ToString());
-				if (PlayerData.playerdata.info.gp >= totalGpCostBeingPurchased) {
-					PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, isStacking, totalGpCostBeingPurchased, 0);
-				} else {
-					TriggerMarketplacePopup("You do not have enough GP to purchase this item.");
-				}
+		DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+		d.RunTransaction(task => {
+			PlayerData.playerdata.info.gp = uint.Parse(task.Child("gp").Value.ToString());
+			// PlayerData.playerdata.info.kash = uint.Parse(task.Child("kash").Value.ToString());
+			if (PlayerData.playerdata.info.gp >= totalGpCostBeingPurchased) {
+				PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, isStacking, totalGpCostBeingPurchased, 0);
 			} else {
-				// TriggerMarketplacePopup("Transaction could not be completed at this time. Please try again later.");
-				PlayerData.playerdata.TriggerEmergencyExit("Transaction could not be completed at this time. Please try again later.");
+				TriggerMarketplacePopup("You do not have enough GP to purchase this item.");
 			}
+			return TransactionResult.Success(task);
 		});
 	}
 

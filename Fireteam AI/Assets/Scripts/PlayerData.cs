@@ -231,14 +231,21 @@ public class PlayerData : MonoBehaviour
             "\"equippedHeadgear\":\"" + PlayerData.playerdata.info.equippedHeadgear + "\"," +
             "\"equippedArmor\":\"" + PlayerData.playerdata.info.equippedArmor + "\"" +
         "}";
-        DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("equipment")
-            .SetRawJsonValueAsync(saveJson).ContinueWith(task => {
-                if (task.IsCompleted) {
-                    Debug.Log("Player data saved successfully.");
-                } else {
-                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                }
-            });
+        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("equipment");
+        d.RunTransaction(task => {
+            task.Child("equippedCharacter").Value = PlayerData.playerdata.info.equippedCharacter;
+            task.Child("equippedPrimary").Value = PlayerData.playerdata.info.equippedPrimary;
+            task.Child("equippedSecondary").Value = PlayerData.playerdata.info.equippedSecondary;
+            task.Child("equippedSupport").Value = PlayerData.playerdata.info.equippedSupport;
+            task.Child("equippedMelee").Value = PlayerData.playerdata.info.equippedMelee;
+            task.Child("equippedTop").Value = PlayerData.playerdata.info.equippedTop;
+            task.Child("equippedBottom").Value = PlayerData.playerdata.info.equippedBottom;
+            task.Child("equippedFootwear").Value = PlayerData.playerdata.info.equippedFootwear;
+            task.Child("equippedFacewear").Value = PlayerData.playerdata.info.equippedFacewear;
+            task.Child("equippedHeadgear").Value = PlayerData.playerdata.info.equippedHeadgear;
+            task.Child("equippedArmor").Value = PlayerData.playerdata.info.equippedArmor;
+            return TransactionResult.Success(task);
+        });
     }
 
     public void LoadPlayerData()
@@ -248,117 +255,103 @@ public class PlayerData : MonoBehaviour
         }
         // Check if the DB has equipped data for the player. If not, then set default char and equips.
         // If error occurs, show error message on splash and quit the application
-        DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
-            DataSnapshot snapshot = task.Result;
-            if (task.IsFaulted || task.IsCanceled) {
-                TriggerEmergencyExit("Your data could not be loaded. Either your data is corrupted, or the service is unavailable. Please check the website for further details. If this issue persists, please create a ticket at koobando.com/support.");
-            } else {
-                info.defaultChar = snapshot.Child("defaultChar").Value.ToString();
-                info.defaultWeapon = snapshot.Child("defaultWeapon").Value.ToString();
-                info.playername = snapshot.Child("username").Value.ToString();
-                info.exp = uint.Parse(snapshot.Child("exp").Value.ToString());
-                info.gp = uint.Parse(snapshot.Child("gp").Value.ToString());
-                info.kash = uint.Parse(snapshot.Child("kash").Value.ToString());
-                // Equip previously equipped if available. Else, equip defaults and save it
-                if (snapshot.HasChild("equipment")) {
-                    DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(taskA => {
-                        if (taskA.IsCompleted) {
-                            DataSnapshot inventorySnapshot = taskA.Result;
-                            DataSnapshot equipSnapshot = snapshot.Child("equipment");
-                            info.equippedCharacter = equipSnapshot.Child("equippedCharacter").Value.ToString();
-                            info.equippedPrimary = equipSnapshot.Child("equippedPrimary").Value.ToString();
-                            info.equippedSecondary = equipSnapshot.Child("equippedSecondary").Value.ToString();
-                            info.equippedSupport = equipSnapshot.Child("equippedSupport").Value.ToString();
-                            info.equippedMelee = equipSnapshot.Child("equippedMelee").Value.ToString();
-                            info.equippedTop = equipSnapshot.Child("equippedTop").Value.ToString();
-                            info.equippedBottom = equipSnapshot.Child("equippedBottom").Value.ToString();
-                            info.equippedFootwear = equipSnapshot.Child("equippedFootwear").Value.ToString();
-                            info.equippedFacewear = equipSnapshot.Child("equippedFacewear").Value.ToString();
-                            info.equippedHeadgear = equipSnapshot.Child("equippedHeadgear").Value.ToString();
-                            info.equippedArmor = equipSnapshot.Child("equippedArmor").Value.ToString();
+        DatabaseReference d = DAOScript.dao.dbRef;
+        d.RunTransaction(task => {
+            MutableData userSnapshot = task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+            MutableData inventorySnapshot = task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId);
+            info.defaultChar = userSnapshot.Child("defaultChar").Value.ToString();
+            info.defaultWeapon = userSnapshot.Child("defaultWeapon").Value.ToString();
+            info.playername = userSnapshot.Child("username").Value.ToString();
+            info.exp = uint.Parse(userSnapshot.Child("exp").Value.ToString());
+            info.gp = uint.Parse(userSnapshot.Child("gp").Value.ToString());
+            info.kash = uint.Parse(userSnapshot.Child("kash").Value.ToString());
+            // Equip previously equipped if available. Else, equip defaults and save it
+            if (task.HasChild("equipment")) {
+                info.equippedCharacter = userSnapshot.Child("equipment").Child("equippedCharacter").Value.ToString();
+                info.equippedPrimary = userSnapshot.Child("equipment").Child("equippedPrimary").Value.ToString();
+                info.equippedSecondary = userSnapshot.Child("equipment").Child("equippedSecondary").Value.ToString();
+                info.equippedSupport = userSnapshot.Child("equipment").Child("equippedSupport").Value.ToString();
+                info.equippedMelee = userSnapshot.Child("equipment").Child("equippedMelee").Value.ToString();
+                info.equippedTop = userSnapshot.Child("equipment").Child("equippedTop").Value.ToString();
+                info.equippedBottom = userSnapshot.Child("equipment").Child("equippedBottom").Value.ToString();
+                info.equippedFootwear = userSnapshot.Child("equipment").Child("equippedFootwear").Value.ToString();
+                info.equippedFacewear = userSnapshot.Child("equipment").Child("equippedFacewear").Value.ToString();
+                info.equippedHeadgear = userSnapshot.Child("equipment").Child("equippedHeadgear").Value.ToString();
+                info.equippedArmor = userSnapshot.Child("equipment").Child("equippedArmor").Value.ToString();
 
-                            DataSnapshot modsInventory = inventorySnapshot.Child("mods");
-
-                            DataSnapshot modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedPrimary);
-                            string suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
-                            string sightModId = modSnapshot.Child("equippedSight").Value.ToString();
-                            primaryModInfo.weaponName = info.equippedPrimary;
-                            primaryModInfo.suppressorId = suppressorModId;
-                            primaryModInfo.sightId = sightModId;
-                            if (!"".Equals(suppressorModId)) {
-                                primaryModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
-                            }
-                            if (!"".Equals(sightModId)) {
-                                primaryModInfo.equippedSight = modsInventory.Child(sightModId).Child("name").Value.ToString();
-                            }
-
-                            modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedSecondary);
-                            suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
-                            sightModId = modSnapshot.Child("equippedSight").Value.ToString();
-                            secondaryModInfo.weaponName = info.equippedSecondary;
-                            secondaryModInfo.suppressorId = suppressorModId;
-                            secondaryModInfo.sightId = sightModId;
-                            if (!"".Equals(suppressorModId)) {
-                                secondaryModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
-                            }
-                            if (!"".Equals(sightModId)) {
-                                secondaryModInfo.equippedSight = modsInventory.Child(sightModId).Child("name").Value.ToString();
-                            }
-
-                            modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedSupport);
-                            suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
-                            sightModId = modSnapshot.Child("equippedSight").Value.ToString();
-                            supportModInfo.weaponName = info.equippedSupport;
-                            supportModInfo.suppressorId = suppressorModId;
-                            supportModInfo.sightId = sightModId;
-                            if (!"".Equals(suppressorModId)) {
-                                supportModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
-                            }
-                            if (!"".Equals(sightModId)) {
-                                supportModInfo.equippedSuppressor = modsInventory.Child(sightModId).Child("name").Value.ToString();
-                            }
-                            dataLoadedFlag = true;
-                            updateCurrencyFlag = true;
-                        } else {
-                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        }
-                    });
-                } else {
-                    info.equippedCharacter = snapshot.Child("defaultChar").Value.ToString();
-                    char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
-                    info.equippedPrimary = snapshot.Child("defaultWeapon").Value.ToString();
-                    info.equippedSecondary = DEFAULT_SECONDARY;
-                    info.equippedSupport = DEFAULT_SUPPORT;
-                    info.equippedMelee = DEFAULT_MELEE;
-                    info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
-                    info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
-                    info.equippedFootwear = (g == 'M' ? DEFAULT_FOOTWEAR_MALE : DEFAULT_FOOTWEAR_FEMALE);
-                    info.equippedFacewear = "";
-                    info.equippedHeadgear = "";
-                    info.equippedArmor = "";
-
-                    primaryModInfo.equippedSuppressor = "";
-                    primaryModInfo.equippedSight = "";
-                    primaryModInfo.weaponName = "";
-                    primaryModInfo.suppressorId = "";
-                    primaryModInfo.sightId = "";
-
-                    secondaryModInfo.equippedSuppressor = "";
-                    secondaryModInfo.equippedSight = "";
-                    secondaryModInfo.weaponName = "";
-                    secondaryModInfo.suppressorId = "";
-                    secondaryModInfo.sightId = "";
-
-                    supportModInfo.equippedSuppressor = "";
-                    supportModInfo.equippedSight = "";
-                    supportModInfo.weaponName = "";
-                    supportModInfo.suppressorId = "";
-                    supportModInfo.sightId = "";
-                    dataLoadedFlag = true;
-                    saveDataFlag = true;
-                    updateCurrencyFlag = true;
+                string suppressorModId = inventorySnapshot.Child("weapons").Child(info.equippedPrimary).Child("equippedSuppressor").Value.ToString();
+                string sightModId = inventorySnapshot.Child("weapons").Child(info.equippedPrimary).Child("equippedSight").Value.ToString();
+                primaryModInfo.weaponName = info.equippedPrimary;
+                primaryModInfo.suppressorId = suppressorModId;
+                primaryModInfo.sightId = sightModId;
+                if (!"".Equals(suppressorModId)) {
+                    primaryModInfo.equippedSuppressor = inventorySnapshot.Child("mods").Child(suppressorModId).Child("name").Value.ToString();
                 }
+                if (!"".Equals(sightModId)) {
+                    primaryModInfo.equippedSight = inventorySnapshot.Child("mods").Child(sightModId).Child("name").Value.ToString();
+                }
+
+                suppressorModId = inventorySnapshot.Child("weapons").Child(info.equippedSecondary).Child("equippedSuppressor").Value.ToString();
+                sightModId = inventorySnapshot.Child("weapons").Child(info.equippedSecondary).Child("equippedSight").Value.ToString();
+                secondaryModInfo.weaponName = info.equippedSecondary;
+                secondaryModInfo.suppressorId = suppressorModId;
+                secondaryModInfo.sightId = sightModId;
+                if (!"".Equals(suppressorModId)) {
+                    secondaryModInfo.equippedSuppressor = inventorySnapshot.Child("mods").Child(suppressorModId).Child("name").Value.ToString();
+                }
+                if (!"".Equals(sightModId)) {
+                    secondaryModInfo.equippedSight = inventorySnapshot.Child("mods").Child(sightModId).Child("name").Value.ToString();
+                }
+
+                suppressorModId = inventorySnapshot.Child("weapons").Child(info.equippedSupport).Child("equippedSuppressor").Value.ToString();
+                sightModId = inventorySnapshot.Child("weapons").Child(info.equippedSupport).Child("equippedSight").Value.ToString();
+                supportModInfo.weaponName = info.equippedSupport;
+                supportModInfo.suppressorId = suppressorModId;
+                supportModInfo.sightId = sightModId;
+                if (!"".Equals(suppressorModId)) {
+                    supportModInfo.equippedSuppressor = inventorySnapshot.Child("mods").Child(suppressorModId).Child("name").Value.ToString();
+                }
+                if (!"".Equals(sightModId)) {
+                    supportModInfo.equippedSuppressor = inventorySnapshot.Child("mods").Child(sightModId).Child("name").Value.ToString();
+                }
+                dataLoadedFlag = true;
+                updateCurrencyFlag = true;
+            } else {
+                info.equippedCharacter = userSnapshot.Child("defaultChar").Value.ToString();
+                char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
+                info.equippedPrimary = userSnapshot.Child("defaultWeapon").Value.ToString();
+                info.equippedSecondary = DEFAULT_SECONDARY;
+                info.equippedSupport = DEFAULT_SUPPORT;
+                info.equippedMelee = DEFAULT_MELEE;
+                info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
+                info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
+                info.equippedFootwear = (g == 'M' ? DEFAULT_FOOTWEAR_MALE : DEFAULT_FOOTWEAR_FEMALE);
+                info.equippedFacewear = "";
+                info.equippedHeadgear = "";
+                info.equippedArmor = "";
+
+                primaryModInfo.equippedSuppressor = "";
+                primaryModInfo.equippedSight = "";
+                primaryModInfo.weaponName = "";
+                primaryModInfo.suppressorId = "";
+                primaryModInfo.sightId = "";
+
+                secondaryModInfo.equippedSuppressor = "";
+                secondaryModInfo.equippedSight = "";
+                secondaryModInfo.weaponName = "";
+                secondaryModInfo.suppressorId = "";
+                secondaryModInfo.sightId = "";
+
+                supportModInfo.equippedSuppressor = "";
+                supportModInfo.equippedSight = "";
+                supportModInfo.weaponName = "";
+                supportModInfo.suppressorId = "";
+                supportModInfo.sightId = "";
+                dataLoadedFlag = true;
+                saveDataFlag = true;
+                updateCurrencyFlag = true;
             }
+            return TransactionResult.Success(task);
         });
     }
 
@@ -395,282 +388,271 @@ public class PlayerData : MonoBehaviour
     }
 
     public void LoadInventory() {
-        DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
-            if (task.IsCompleted) {
-                DataSnapshot snapshot = task.Result;
-                DataSnapshot subSnapshot = snapshot.Child("weapons");
-                IEnumerator<DataSnapshot> dataLoaded = subSnapshot.Children.GetEnumerator();
-                // Load weapons
-                while (dataLoaded.MoveNext()) {
-                    WeaponData w = new WeaponData();
-                    string key = dataLoaded.Current.Key;
-                    DataSnapshot thisSnapshot = dataLoaded.Current;
-                    w.name = key;
-                    w.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                    w.duration = thisSnapshot.Child("duration").Value.ToString();
-                    object equippedSuppressor = thisSnapshot.Child("equippedSuppressor").Value;
-                    object equippedClip = thisSnapshot.Child("equippedClip").Value;
-                    object equippedSight = thisSnapshot.Child("equippedSight").Value;
-                    w.equippedSuppressor = (equippedSuppressor == null ? "" : equippedSuppressor.ToString());
-                    w.equippedClip = (equippedClip == null ? "" : equippedClip.ToString());
-                    w.equippedSight = (equippedSight == null ? "" : equippedSight.ToString());
-                    // If item is expired, delete from database. Else, add it to inventory
-                    float dur = float.Parse(w.duration);
-                    if (dur >= 0f)
+        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId);
+        d.RunTransaction(task => {
+            IEnumerator<MutableData> dataLoaded = task.Child("weapons").Children.GetEnumerator();
+            // Load weapons
+            while (dataLoaded.MoveNext()) {
+                WeaponData w = new WeaponData();
+                string key = dataLoaded.Current.Key;
+                MutableData thisSnapshot = dataLoaded.Current;
+                w.name = key;
+                w.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                w.duration = thisSnapshot.Child("duration").Value.ToString();
+                object equippedSuppressor = thisSnapshot.Child("equippedSuppressor").Value;
+                object equippedClip = thisSnapshot.Child("equippedClip").Value;
+                object equippedSight = thisSnapshot.Child("equippedSight").Value;
+                w.equippedSuppressor = (equippedSuppressor == null ? "" : equippedSuppressor.ToString());
+                w.equippedClip = (equippedClip == null ? "" : equippedClip.ToString());
+                w.equippedSight = (equippedSight == null ? "" : equippedSight.ToString());
+                // If item is expired, delete from database. Else, add it to inventory
+                float dur = float.Parse(w.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(w.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(w.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
                     {
-                        DateTime acquireDate = DateTime.Parse(w.acquireDate);
-                        acquireDate = acquireDate.AddMinutes((double)float.Parse(w.duration));
-                        int result = DateTime.Compare(DateTime.Now, acquireDate);
-                        if (result >= 0)
-                        {
-                            DeleteItemFromInventory(key, "Weapon", null, true);
-                        } else
-                        {
-                            myWeapons.Add(key, w);
-                        }
+                        DeleteItemFromInventory(key, "Weapon", null, true);
                     } else
                     {
                         myWeapons.Add(key, w);
                     }
+                } else
+                {
+                    myWeapons.Add(key, w);
                 }
-                
-                subSnapshot = snapshot.Child("characters");
-                dataLoaded = subSnapshot.Children.GetEnumerator();
-                // Load characters
-                while (dataLoaded.MoveNext()) {
-                    CharacterData c = new CharacterData();
-                    string key = dataLoaded.Current.Key;
-                    DataSnapshot thisSnapshot = dataLoaded.Current;
-                    c.name = key;
-                    c.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                    c.duration = thisSnapshot.Child("duration").Value.ToString();
-                    // If item is expired, delete from database. Else, add it to inventory
-                    float dur = float.Parse(c.duration);
-                    if (dur >= 0f)
+            }
+            
+            dataLoaded = task.Child("characters").Children.GetEnumerator();
+            // Load characters
+            while (dataLoaded.MoveNext()) {
+                CharacterData c = new CharacterData();
+                string key = dataLoaded.Current.Key;
+                MutableData thisSnapshot = dataLoaded.Current;
+                c.name = key;
+                c.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                c.duration = thisSnapshot.Child("duration").Value.ToString();
+                // If item is expired, delete from database. Else, add it to inventory
+                float dur = float.Parse(c.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(c.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(c.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
                     {
-                        DateTime acquireDate = DateTime.Parse(c.acquireDate);
-                        acquireDate = acquireDate.AddMinutes((double)float.Parse(c.duration));
-                        int result = DateTime.Compare(DateTime.Now, acquireDate);
-                        if (result >= 0)
-                        {
-                            DeleteItemFromInventory(key, "Character", null, true);
-                        }
-                        else
-                        {
-                            myCharacters.Add(key, c);
-                        }
+                        DeleteItemFromInventory(key, "Character", null, true);
                     }
                     else
                     {
                         myCharacters.Add(key, c);
                     }
                 }
+                else
+                {
+                    myCharacters.Add(key, c);
+                }
+            }
 
-                subSnapshot = snapshot.Child("armor");
-                dataLoaded = subSnapshot.Children.GetEnumerator();
-                // Load armor
-                while (dataLoaded.MoveNext()) {
-                    ArmorData a = new ArmorData();
-                    string key = dataLoaded.Current.Key;
-                    DataSnapshot thisSnapshot = dataLoaded.Current;
-                    a.name = key;
-                    a.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                    a.duration = thisSnapshot.Child("duration").Value.ToString();
-                    // If item is expired, delete from database. Else, add it to inventory
-                    float dur = float.Parse(a.duration);
-                    if (dur >= 0f)
+            dataLoaded = task.Child("armor").Children.GetEnumerator();
+            // Load armor
+            while (dataLoaded.MoveNext()) {
+                ArmorData a = new ArmorData();
+                string key = dataLoaded.Current.Key;
+                MutableData thisSnapshot = dataLoaded.Current;
+                a.name = key;
+                a.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                a.duration = thisSnapshot.Child("duration").Value.ToString();
+                // If item is expired, delete from database. Else, add it to inventory
+                float dur = float.Parse(a.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(a.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(a.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
                     {
-                        DateTime acquireDate = DateTime.Parse(a.acquireDate);
-                        acquireDate = acquireDate.AddMinutes((double)float.Parse(a.duration));
-                        int result = DateTime.Compare(DateTime.Now, acquireDate);
-                        if (result >= 0)
-                        {
-                            DeleteItemFromInventory(key, "Armor", null, true);
-                        }
-                        else
-                        {
-                            myArmor.Add(key, a);
-                        }
+                        DeleteItemFromInventory(key, "Armor", null, true);
                     }
                     else
                     {
                         myArmor.Add(key, a);
                     }
                 }
+                else
+                {
+                    myArmor.Add(key, a);
+                }
+            }
 
-                subSnapshot = snapshot.Child("tops");
-                dataLoaded = subSnapshot.Children.GetEnumerator();
-                // Load tops
-                while (dataLoaded.MoveNext()) {
-                    EquipmentData d = new EquipmentData();
-                    string key = dataLoaded.Current.Key;
-                    DataSnapshot thisSnapshot = dataLoaded.Current;
-                    d.name = key;
-                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                    d.duration = thisSnapshot.Child("duration").Value.ToString();
-                    // If item is expired, delete from database. Else, add it to inventory
-                    float dur = float.Parse(d.duration);
-                    if (dur >= 0f)
+            dataLoaded = task.Child("tops").Children.GetEnumerator();
+            // Load tops
+            while (dataLoaded.MoveNext()) {
+                EquipmentData d = new EquipmentData();
+                string key = dataLoaded.Current.Key;
+                MutableData thisSnapshot = dataLoaded.Current;
+                d.name = key;
+                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                d.duration = thisSnapshot.Child("duration").Value.ToString();
+                // If item is expired, delete from database. Else, add it to inventory
+                float dur = float.Parse(d.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
                     {
-                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                        int result = DateTime.Compare(DateTime.Now, acquireDate);
-                        if (result >= 0)
-                        {
-                            DeleteItemFromInventory(key, "Top", null, true);
-                        }
-                        else
-                        {
-                            myTops.Add(key, d);
-                        }
+                        DeleteItemFromInventory(key, "Top", null, true);
                     }
                     else
                     {
                         myTops.Add(key, d);
                     }
                 }
+                else
+                {
+                    myTops.Add(key, d);
+                }
+            }
 
-                subSnapshot = snapshot.Child("bottoms");
-                dataLoaded = subSnapshot.Children.GetEnumerator();
-                // Load bottoms
-                while (dataLoaded.MoveNext()) {
-                    EquipmentData d = new EquipmentData();
-                    string key = dataLoaded.Current.Key;
-                    DataSnapshot thisSnapshot = dataLoaded.Current;
-                    d.name = key;
-                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                    d.duration = thisSnapshot.Child("duration").Value.ToString();
-                    float dur = float.Parse(d.duration);
-                    if (dur >= 0f)
+            dataLoaded = task.Child("bottoms").Children.GetEnumerator();
+            // Load bottoms
+            while (dataLoaded.MoveNext()) {
+                EquipmentData d = new EquipmentData();
+                string key = dataLoaded.Current.Key;
+                MutableData thisSnapshot = dataLoaded.Current;
+                d.name = key;
+                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                d.duration = thisSnapshot.Child("duration").Value.ToString();
+                float dur = float.Parse(d.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
                     {
-                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                        int result = DateTime.Compare(DateTime.Now, acquireDate);
-                        if (result >= 0)
-                        {
-                            DeleteItemFromInventory(key, "Bottom", null, true);
-                        }
-                        else
-                        {
-                            myBottoms.Add(key, d);
-                        }
+                        DeleteItemFromInventory(key, "Bottom", null, true);
                     }
                     else
                     {
                         myBottoms.Add(key, d);
                     }
                 }
+                else
+                {
+                    myBottoms.Add(key, d);
+                }
+            }
 
-                subSnapshot = snapshot.Child("footwear");
-                dataLoaded = subSnapshot.Children.GetEnumerator();
-                // Load footwear
-                while (dataLoaded.MoveNext()) {
-                    EquipmentData d = new EquipmentData();
-                    string key = dataLoaded.Current.Key;
-                    DataSnapshot thisSnapshot = dataLoaded.Current;
-                    d.name = key;
-                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                    d.duration = thisSnapshot.Child("duration").Value.ToString();
-                    float dur = float.Parse(d.duration);
-                    if (dur >= 0f)
+            dataLoaded = task.Child("footwear").Children.GetEnumerator();
+            // Load footwear
+            while (dataLoaded.MoveNext()) {
+                EquipmentData d = new EquipmentData();
+                string key = dataLoaded.Current.Key;
+                MutableData thisSnapshot = dataLoaded.Current;
+                d.name = key;
+                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                d.duration = thisSnapshot.Child("duration").Value.ToString();
+                float dur = float.Parse(d.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
                     {
-                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                        int result = DateTime.Compare(DateTime.Now, acquireDate);
-                        if (result >= 0)
-                        {
-                            DeleteItemFromInventory(key, "Footwear", null, true);
-                        }
-                        else
-                        {
-                            myFootwear.Add(key, d);
-                        }
+                        DeleteItemFromInventory(key, "Footwear", null, true);
                     }
                     else
                     {
                         myFootwear.Add(key, d);
                     }
                 }
+                else
+                {
+                    myFootwear.Add(key, d);
+                }
+            }
 
-                subSnapshot = snapshot.Child("headgear");
-                dataLoaded = subSnapshot.Children.GetEnumerator();
-                // Load headgear
-                while (dataLoaded.MoveNext()) {
-                    EquipmentData d = new EquipmentData();
-                    string key = dataLoaded.Current.Key;
-                    DataSnapshot thisSnapshot = dataLoaded.Current;
-                    d.name = key;
-                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                    d.duration = thisSnapshot.Child("duration").Value.ToString();
-                    float dur = float.Parse(d.duration);
-                    if (dur >= 0f)
+            dataLoaded = task.Child("headgear").Children.GetEnumerator();
+            // Load headgear
+            while (dataLoaded.MoveNext()) {
+                EquipmentData d = new EquipmentData();
+                string key = dataLoaded.Current.Key;
+                MutableData thisSnapshot = dataLoaded.Current;
+                d.name = key;
+                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                d.duration = thisSnapshot.Child("duration").Value.ToString();
+                float dur = float.Parse(d.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
                     {
-                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                        int result = DateTime.Compare(DateTime.Now, acquireDate);
-                        if (result >= 0)
-                        {
-                            DeleteItemFromInventory(key, "Headgear", null, true);
-                        }
-                        else
-                        {
-                            myHeadgear.Add(key, d);
-                        }
+                        DeleteItemFromInventory(key, "Headgear", null, true);
                     }
                     else
                     {
                         myHeadgear.Add(key, d);
                     }
                 }
+                else
+                {
+                    myHeadgear.Add(key, d);
+                }
+            }
 
-                subSnapshot = snapshot.Child("facewear");
-                dataLoaded = subSnapshot.Children.GetEnumerator();
-                // Load facewear
-                while (dataLoaded.MoveNext()) {
-                    EquipmentData d = new EquipmentData();
-                    string key = dataLoaded.Current.Key;
-                    DataSnapshot thisSnapshot = dataLoaded.Current;
-                    d.name = key;
-                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                    d.duration = thisSnapshot.Child("duration").Value.ToString();
-                    float dur = float.Parse(d.duration);
-                    if (dur >= 0f)
+            dataLoaded = task.Child("facewear").Children.GetEnumerator();
+            // Load facewear
+            while (dataLoaded.MoveNext()) {
+                EquipmentData d = new EquipmentData();
+                string key = dataLoaded.Current.Key;
+                MutableData thisSnapshot = dataLoaded.Current;
+                d.name = key;
+                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                d.duration = thisSnapshot.Child("duration").Value.ToString();
+                float dur = float.Parse(d.duration);
+                if (dur >= 0f)
+                {
+                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                    int result = DateTime.Compare(DateTime.Now, acquireDate);
+                    if (result >= 0)
                     {
-                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                        int result = DateTime.Compare(DateTime.Now, acquireDate);
-                        if (result >= 0)
-                        {
-                            DeleteItemFromInventory(key, "Facewear", null, true);
-                        }
-                        else
-                        {
-                            myFacewear.Add(key, d);
-                        }
+                        DeleteItemFromInventory(key, "Facewear", null, true);
                     }
                     else
                     {
                         myFacewear.Add(key, d);
                     }
                 }
-
-                subSnapshot = snapshot.Child("mods");
-                dataLoaded = subSnapshot.Children.GetEnumerator();
-                // Load mods
-                while (dataLoaded.MoveNext()) {
-                    ModData m = new ModData();
-                    string key = dataLoaded.Current.Key;
-                    DataSnapshot thisSnapshot = dataLoaded.Current;
-                    m.id = key;
-                    m.name = thisSnapshot.Child("name").Value.ToString();
-                    m.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                    m.duration = thisSnapshot.Child("duration").Value.ToString();
-                    m.equippedOn = thisSnapshot.Child("equippedOn").Value.ToString();
-                    myMods.Add(key, m);
+                else
+                {
+                    myFacewear.Add(key, d);
                 }
-            } else {
-                TriggerEmergencyExit("Your data could not be loaded. Either your data is corrupted, or the service is unavailable. Please check the website for further details. If this issue persists, please create a ticket at koobando.com/support.");
             }
+
+            dataLoaded = task.Child("mods").Children.GetEnumerator();
+            // Load mods
+            while (dataLoaded.MoveNext()) {
+                ModData m = new ModData();
+                string key = dataLoaded.Current.Key;
+                MutableData thisSnapshot = dataLoaded.Current;
+                m.id = key;
+                m.name = thisSnapshot.Child("name").Value.ToString();
+                m.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                m.duration = thisSnapshot.Child("duration").Value.ToString();
+                m.equippedOn = thisSnapshot.Child("equippedOn").Value.ToString();
+                myMods.Add(key, m);
+            }
+            
+            return TransactionResult.Success(task);
         });
     }
 
@@ -731,127 +713,91 @@ public class PlayerData : MonoBehaviour
         ModInfo newModInfo = new ModInfo();
         WeaponScript myWeps = bodyReference.GetComponent<WeaponScript>();
 
-        if (!string.IsNullOrEmpty(suppressorId)) {
-        // Mod was removed
-            if (!string.IsNullOrEmpty(suppressorId) && string.IsNullOrEmpty(equippedSuppressor))
-            {
-                newModInfo.equippedSuppressor = "";
-                newModInfo.weaponName = weaponName;
-                newModInfo.suppressorId = "";
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                    .Child("mods").Child(suppressorId).Child("equippedOn").SetValueAsync("").ContinueWith(task => {
-                        if (!task.IsCompleted) {
-                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        }
-                    });
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                    .Child(weaponName).Child("equippedSuppressor").SetValueAsync("").ContinueWith(task => {
-                        if (!task.IsCompleted) {
-                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        }
-                    });
-                myMods[suppressorId].equippedOn = "";
-            }
-            else
-            {
-                // Mod was added/changed
-                newModInfo.equippedSuppressor = equippedSuppressor;
-                newModInfo.weaponName = weaponName;
-                newModInfo.suppressorId = suppressorId;
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                    .Child("mods").Child(suppressorId).Child("equippedOn").SetValueAsync(weaponName).ContinueWith(task => {
-                        if (!task.IsCompleted) {
-                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        }
-                    });
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                    .Child(weaponName).Child("equippedSuppressor").SetValueAsync(suppressorId).ContinueWith(task => {
-                        if (!task.IsCompleted) {
-                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        }
-                    });
-                myMods[suppressorId].equippedOn = weaponName;
+        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId);
+        d.RunTransaction(task => {
+            if (suppressorId != null && !"".Equals(suppressorId)) {
+                // Mod was removed
+                if (suppressorId != null && !"".Equals(suppressorId) && string.IsNullOrEmpty(equippedSuppressor))
+                {
+                    newModInfo.equippedSuppressor = "";
+                    newModInfo.weaponName = weaponName;
+                    newModInfo.suppressorId = "";
+                    task.Child("mods").Child(suppressorId).Child("equippedOn").Value = "";
+                    task.Child("weapons").Child(weaponName).Child("equippedSuppressor").Value = "";
+                    myMods[suppressorId].equippedOn = "";
+                }
+                else
+                {
+                    // Mod was added/changed
+                    newModInfo.equippedSuppressor = equippedSuppressor;
+                    newModInfo.weaponName = weaponName;
+                    newModInfo.suppressorId = suppressorId;
+                    task.Child("mods").Child(suppressorId).Child("equippedOn").Value = weaponName;
+                    task.Child("weapons").Child(weaponName).Child("equippedSuppressor").Value = suppressorId;
+                    myMods[suppressorId].equippedOn = weaponName;
+                }
+
+                // Set mod data that was just saved
+                if (weaponName == myWeps.equippedPrimaryWeapon)
+                {
+                    PlayerData.playerdata.primaryModInfo.equippedSuppressor = newModInfo.equippedSuppressor;
+                    PlayerData.playerdata.primaryModInfo.weaponName = newModInfo.weaponName;
+                    PlayerData.playerdata.primaryModInfo.suppressorId = newModInfo.suppressorId;
+                } else if (weaponName == myWeps.equippedSecondaryWeapon)
+                {
+                    PlayerData.playerdata.secondaryModInfo.equippedSuppressor = newModInfo.equippedSuppressor;
+                    PlayerData.playerdata.secondaryModInfo.weaponName = newModInfo.weaponName;
+                    PlayerData.playerdata.secondaryModInfo.suppressorId = newModInfo.suppressorId;
+                } else if (weaponName == myWeps.equippedSupportWeapon)
+                {
+                    PlayerData.playerdata.supportModInfo.equippedSuppressor = newModInfo.equippedSuppressor;
+                    PlayerData.playerdata.supportModInfo.weaponName = newModInfo.weaponName;
+                    PlayerData.playerdata.supportModInfo.suppressorId = newModInfo.suppressorId;
+                }
             }
 
-            // Set mod data that was just saved
-            if (weaponName == myWeps.equippedPrimaryWeapon)
-            {
-                PlayerData.playerdata.primaryModInfo.equippedSuppressor = newModInfo.equippedSuppressor;
-                PlayerData.playerdata.primaryModInfo.weaponName = newModInfo.weaponName;
-                PlayerData.playerdata.primaryModInfo.suppressorId = newModInfo.suppressorId;
-            } else if (weaponName == myWeps.equippedSecondaryWeapon)
-            {
-                PlayerData.playerdata.secondaryModInfo.equippedSuppressor = newModInfo.equippedSuppressor;
-                PlayerData.playerdata.secondaryModInfo.weaponName = newModInfo.weaponName;
-                PlayerData.playerdata.secondaryModInfo.suppressorId = newModInfo.suppressorId;
-            } else if (weaponName == myWeps.equippedSupportWeapon)
-            {
-                PlayerData.playerdata.supportModInfo.equippedSuppressor = newModInfo.equippedSuppressor;
-                PlayerData.playerdata.supportModInfo.weaponName = newModInfo.weaponName;
-                PlayerData.playerdata.supportModInfo.suppressorId = newModInfo.suppressorId;
-            }
-        }
+            if (sightId != null && !"".Equals(sightId)) {
+                if (sightId != null && !"".Equals(sightId) && string.IsNullOrEmpty(equippedSight))
+                {
+                    newModInfo.equippedSight = "";
+                    newModInfo.weaponName = weaponName;
+                    newModInfo.sightId = "";
+                    task.Child("mods").Child(sightId).Child("equippedOn").Value = "";
+                    task.Child("weapons").Child(weaponName).Child("equippedSight").Value = "";
+                    myMods[sightId].equippedOn = "";
+                }
+                else
+                {
+                    // Mod was added/changed
+                    newModInfo.equippedSight = equippedSight;
+                    newModInfo.weaponName = weaponName;
+                    newModInfo.sightId = sightId;
+                    task.Child("mods").Child(sightId).Child("equippedOn").Value = weaponName;
+                    task.Child("weapons").Child(weaponName).Child("equippedSight").Value = sightId;
+                    myMods[sightId].equippedOn = weaponName;
+                }
 
-        if (!string.IsNullOrEmpty(sightId)) {
-            if (!string.IsNullOrEmpty(sightId) && string.IsNullOrEmpty(equippedSight))
-            {
-                newModInfo.equippedSight = "";
-                newModInfo.weaponName = weaponName;
-                newModInfo.sightId = "";
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                    .Child("mods").Child(sightId).Child("equippedOn").SetValueAsync("").ContinueWith(task => {
-                        if (!task.IsCompleted) {
-                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        }
-                    });
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                    .Child(weaponName).Child("equippedSight").SetValueAsync("").ContinueWith(task => {
-                        if (!task.IsCompleted) {
-                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        }
-                    });
-                myMods[sightId].equippedOn = "";
-            }
-            else
-            {
-                // Mod was added/changed
-                newModInfo.equippedSight = equippedSight;
-                newModInfo.weaponName = weaponName;
-                newModInfo.sightId = sightId;
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId)
-                    .Child("mods").Child(sightId).Child("equippedOn").SetValueAsync(weaponName).ContinueWith(task => {
-                        if (!task.IsCompleted) {
-                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        }
-                    });
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                    .Child(weaponName).Child("equippedSight").SetValueAsync(sightId).ContinueWith(task => {
-                        if (!task.IsCompleted) {
-                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        }
-                    });
-                myMods[sightId].equippedOn = weaponName;
+                // Set mod data that was just saved
+                if (weaponName == myWeps.equippedPrimaryWeapon)
+                {
+                    PlayerData.playerdata.primaryModInfo.equippedSight = newModInfo.equippedSight;
+                    PlayerData.playerdata.primaryModInfo.weaponName = newModInfo.weaponName;
+                    PlayerData.playerdata.primaryModInfo.sightId = newModInfo.sightId;
+                } else if (weaponName == myWeps.equippedSecondaryWeapon)
+                {
+                    PlayerData.playerdata.secondaryModInfo.equippedSight = newModInfo.equippedSight;
+                    PlayerData.playerdata.secondaryModInfo.weaponName = newModInfo.weaponName;
+                    PlayerData.playerdata.secondaryModInfo.sightId = newModInfo.sightId;
+                } else if (weaponName == myWeps.equippedSupportWeapon)
+                {
+                    PlayerData.playerdata.supportModInfo.equippedSight = newModInfo.equippedSight;
+                    PlayerData.playerdata.supportModInfo.weaponName = newModInfo.weaponName;
+                    PlayerData.playerdata.supportModInfo.sightId = newModInfo.sightId;
+                }
             }
 
-            // Set mod data that was just saved
-            if (weaponName == myWeps.equippedPrimaryWeapon)
-            {
-                PlayerData.playerdata.primaryModInfo.equippedSight = newModInfo.equippedSight;
-                PlayerData.playerdata.primaryModInfo.weaponName = newModInfo.weaponName;
-                PlayerData.playerdata.primaryModInfo.sightId = newModInfo.sightId;
-            } else if (weaponName == myWeps.equippedSecondaryWeapon)
-            {
-                PlayerData.playerdata.secondaryModInfo.equippedSight = newModInfo.equippedSight;
-                PlayerData.playerdata.secondaryModInfo.weaponName = newModInfo.weaponName;
-                PlayerData.playerdata.secondaryModInfo.sightId = newModInfo.sightId;
-            } else if (weaponName == myWeps.equippedSupportWeapon)
-            {
-                PlayerData.playerdata.supportModInfo.equippedSight = newModInfo.equippedSight;
-                PlayerData.playerdata.supportModInfo.weaponName = newModInfo.weaponName;
-                PlayerData.playerdata.supportModInfo.sightId = newModInfo.sightId;
-            }
-        }
-
+            return TransactionResult.Success(task);
+        });
     }
 
     public ModInfo LoadModDataForWeapon(string weaponName) {
@@ -881,910 +827,392 @@ public class PlayerData : MonoBehaviour
     }
 
     public void AddItemToInventory(string itemName, string type, float duration, bool purchased, bool stacking, uint gpCost, uint kashCost) {
-        string json = "";
-        if (type.Equals("Weapon")) {
-            // Only update duration if purchasing the item again
-            if (!stacking)
-            {
-                // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                if (myWeapons.ContainsKey(itemName))
+        DatabaseReference d = DAOScript.dao.dbRef;
+        d.RunTransaction(task => {
+            if (type.Equals("Weapon")) {
+                // Only update duration if purchasing the item again
+                if (!stacking)
                 {
-                    return;
-                }
-                WeaponData w = new WeaponData();
-                w.name = itemName;
-                w.acquireDate = DateTime.Now.ToString();
-                w.duration = "" + duration;
-                w.equippedClip = "";
-                w.equippedSight = "";
-                w.equippedSuppressor = "";
-                if (type == "Melee") {
-                    json = "{" +
-                        "\"acquireDate\":\"" + w.acquireDate + "\"," +
-                        "\"duration\":\"" + duration + "\"" +
-                    "}";
-                } else {
-                    json = "{" +
-                        "\"acquireDate\":\"" + w.acquireDate + "\"," +
-                        "\"duration\":\"" + duration + "\"," +
-                        "\"equippedSuppressor\":\"\"," +
-                        "\"equippedSight\":\"\"," +
-                        "\"equippedClip\":\"\"" +
-                    "}";
-                }
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                    .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task =>
+                    // If user already has item, then don't do anything (if stacking extra time wasn't input, bought new)
+                    if (myWeapons.ContainsKey(itemName))
                     {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                myWeapons.Add(itemName, w);
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        } else
-                        {
-                            if (!task.IsCanceled && !task.IsFaulted)
-                            {
-                                myWeapons.Add(itemName, w);
-                            } else {
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                        }
-                    });
-            } else
-            {
-                WeaponData w = myWeapons[itemName];
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                    .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
+                        return TransactionResult.Success(task);
+                    }
+                    WeaponData w = new WeaponData();
+                    w.name = itemName;
+                    w.acquireDate = DateTime.Now.ToString();
+                    w.duration = "" + duration;
+                    w.equippedClip = "";
+                    w.equippedSight = "";
+                    w.equippedSuppressor = "";
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("acquireDate").Value = w.acquireDate;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("duration").Value = w.duration;
+                    if (type != "Melee") {
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("equippedSuppressor").Value = "";
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("equippedSight").Value = "";
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("equippedClip").Value = "";
+                    }
+                    if (purchased)
                     {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                w.duration = ""+duration;
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        }
-                    });
-            }
-        } else if (type.Equals("Character")) {
-            if (!stacking)
-            {
-                // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                if (myCharacters.ContainsKey(itemName))
-                {
-                    return;
-                }
-                CharacterData c = new CharacterData();
-                c.name = itemName;
-                c.acquireDate = DateTime.Now.ToString();
-                c.duration = "" + duration;
-                json = "{" +
-                    "\"acquireDate\":\"" + c.acquireDate + "\"," +
-                    "\"duration\":\"" + duration + "\"" +
-                "}";
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters")
-                    .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task =>
-                    {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                myCharacters.Add(itemName, c);
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                                addDefaultClothingFlag = itemName;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        } else
-                        {
-                            if (!task.IsCanceled && !task.IsFaulted)
-                            {
-                                myCharacters.Add(itemName, c);
-                            }
-                        }
-                    });
-            } else
-            {
-                CharacterData c = myCharacters[itemName];
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters")
-                    .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
-                    {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                c.duration = ""+duration;
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        }
-                    });
-            }
-        } else if (type.Equals("Top")) {
-            if (!stacking)
-            {
-                // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                if (myTops.ContainsKey(itemName))
-                {
-                    return;
-                }
-                EquipmentData e = new EquipmentData();
-                e.name = itemName;
-                e.acquireDate = DateTime.Now.ToString();
-                e.duration = "" + duration;
-                json = "{" +
-                    "\"acquireDate\":\"" + e.acquireDate + "\"," +
-                    "\"duration\":\"" + duration + "\"" +
-                "}";
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops")
-                    .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task =>
-                    {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                myTops.Add(itemName, e);
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        } else
-                        {
-                            if (!task.IsCanceled && !task.IsFaulted)
-                            {
-                                myTops.Add(itemName, e);
-                            }
-                        }
-                        
-                    });
-            } else
-            {
-                EquipmentData e = myTops[itemName];
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops")
-                    .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
-                    {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                e.duration = ""+duration;
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        }
-                    });
-            }
-        } else if (type.Equals("Bottom")) {
-            if (!stacking)
-            {
-                // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                if (myBottoms.ContainsKey(itemName))
-                {
-                    return;
-                }
-                EquipmentData e = new EquipmentData();
-                e.name = itemName;
-                e.acquireDate = DateTime.Now.ToString();
-                e.duration = "" + duration;
-                json = "{" +
-                    "\"acquireDate\":\"" + e.acquireDate + "\"," +
-                    "\"duration\":\"" + duration + "\"" +
-                "}";
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms")
-                    .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task =>
-                    {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                myBottoms.Add(itemName, e);
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        } else
-                        {
-                            if (!task.IsCanceled && !task.IsFaulted)
-                            {
-                                myBottoms.Add(itemName, e);
-                            }
-                        }
-                        
-                    });
-            } else
-            {
-                EquipmentData e = myBottoms[itemName];
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms")
-                    .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
-                    {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                e.duration = ""+duration;
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        }
-                    });
-            }
-        } else if (type.Equals("Armor")) {
-            if (!stacking)
-            {
-                // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                if (myArmor.ContainsKey(itemName))
-                {
-                    return;
-                }
-                ArmorData e = new ArmorData();
-                e.name = itemName;
-                e.acquireDate = DateTime.Now.ToString();
-                e.duration = "" + duration;
-                json = "{" +
-                    "\"acquireDate\":\"" + e.acquireDate + "\"," +
-                    "\"duration\":\"" + duration + "\"" +
-                "}";
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor")
-                    .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task =>
-                    {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                myArmor.Add(itemName, e);
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        } else
-                        {
-                            if (!task.IsCanceled && !task.IsFaulted)
-                            {
-                                myArmor.Add(itemName, e);
-                            }
-                        }
-                        
-                    });
-            } else
-            {
-                ArmorData a = myArmor[itemName];
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor")
-                    .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
-                    {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                a.duration = ""+duration;
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        }
-                    });
-            }
-        } else if (type.Equals("Footwear")) {
-            if (!stacking)
-            {
-                // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                if (myFootwear.ContainsKey(itemName))
-                {
-                    return;
-                }
-                EquipmentData e = new EquipmentData();
-                e.name = itemName;
-                e.acquireDate = DateTime.Now.ToString();
-                e.duration = "" + duration;
-                json = "{" +
-                    "\"acquireDate\":\"" + e.acquireDate + "\"," +
-                    "\"duration\":\"" + duration + "\"" +
-                "}";
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear")
-                    .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task =>
-                    {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                myFootwear.Add(itemName, e);
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        } else
-                        {
-                            if (!task.IsCanceled && !task.IsFaulted)
-                            {
-                                myFootwear.Add(itemName, e);
-                            }
-                        }
-                        
-                    });
-            } else
-            {
-                EquipmentData e = myFootwear[itemName];
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear")
-                    .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
-                    {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                e.duration = ""+duration;
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        }
-                    });
-            }
-        } else if (type.Equals("Headgear")) {
-            if (!stacking)
-            {
-                // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                if (myHeadgear.ContainsKey(itemName))
-                {
-                    return;
-                }
-                EquipmentData e = new EquipmentData();
-                e.name = itemName;
-                e.acquireDate = DateTime.Now.ToString();
-                e.duration = "" + duration;
-                json = "{" +
-                    "\"acquireDate\":\"" + e.acquireDate + "\"," +
-                    "\"duration\":\"" + duration + "\"" +
-                "}";
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear")
-                    .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task =>
-                    {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                myHeadgear.Add(itemName, e);
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        } else
-                        {
-                            if (!task.IsCanceled && !task.IsFaulted)
-                            {
-                                myHeadgear.Add(itemName, e);
-                            }
-                        }
-                        
-                    });
-            } else
-            {
-                EquipmentData e = myHeadgear[itemName];
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear")
-                    .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
-                    {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                e.duration = ""+duration;
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        }
-                    });
-            }
-        } else if (type.Equals("Facewear")) {
-            if (!stacking)
-            {
-                // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                if (myFacewear.ContainsKey(itemName))
-                {
-                    return;
-                }
-                EquipmentData e = new EquipmentData();
-                e.name = itemName;
-                e.acquireDate = DateTime.Now.ToString();
-                e.duration = "" + duration;
-                json = "{" +
-                    "\"acquireDate\":\"" + e.acquireDate + "\"," +
-                    "\"duration\":\"" + duration + "\"" +
-                "}";
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear")
-                    .Child(itemName).SetRawJsonValueAsync(json).ContinueWith(task =>
-                    {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                myFacewear.Add(itemName, e);
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        } else
-                        {
-                            if (!task.IsCanceled && !task.IsFaulted)
-                            {
-                                myFacewear.Add(itemName, e);
-                            }
-                        }
-                        
-                    });
-            } else
-            {
-                EquipmentData e = myFacewear[itemName];
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear")
-                    .Child(itemName).Child("duration").SetValueAsync(duration).ContinueWith(task =>
-                    {
-                        if (purchased)
-                        {
-                            if (task.IsFaulted || task.IsCanceled)
-                            {
-                                purchaseFailFlag = true;
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                return;
-                            }
-                            else
-                            {
-                                uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                                DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync("" + gpDiff).ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync("" + (PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB =>
-                                        {
-                                            if (taskB.IsCompleted) {
-                                                e.duration = ""+duration;
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                            }
-                        }
-                    });
-            }
-        } else if (type.Equals("Mod")) {
-            ModData m = new ModData();
-            m.name = itemName;
-            m.acquireDate = DateTime.Now.ToString();
-            m.duration = ""+duration;
-            m.equippedOn = "";
-            json = "{" +
-                "\"name\":\"" + itemName + "\"," +
-                "\"equippedOn\":\"\"," +
-                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                "\"duration\":\"-1\"" +
-            "}";
-            DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Push();
-            if (d == null) {
-                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                return;
-            }
-            string pushKey = d.Key;
-            m.id = pushKey;
-            d.SetRawJsonValueAsync(json).ContinueWith(task => {
-                if (task.IsCompleted) {
-                    if (purchased) {
-                        if (task.IsFaulted || task.IsCanceled) {
-                            purchaseFailFlag = true;
-                        } else {
-                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                            DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-                                userInfoRef.Child("gp").SetValueAsync(""+gpDiff).ContinueWith(taskA => {
-                                    if (taskA.IsCompleted) {
-                                        userInfoRef.Child("kash").SetValueAsync(""+(PlayerData.playerdata.info.kash - kashCost)).ContinueWith(taskB => {
-                                            if (taskB.IsCompleted) {
-                                                myMods.Add(pushKey, m);
-                                                PlayerData.playerdata.info.gp = gpDiff;
-                                                updateCurrencyFlag = true;
-                                                purchaseSuccessfulFlag = true;
-                                            } else {
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    }
-                                });
-                        }
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        myWeapons.Add(itemName, w);
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
                     } else
                     {
-                        if (!task.IsCanceled && !task.IsFaulted)
-                        {
-                            myMods.Add(pushKey, m);
-                        }
+                        myWeapons.Add(itemName, w);
                     }
                 } else {
-                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                    return;
+                    WeaponData w = myWeapons[itemName];
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("duration").Value = ""+duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        w.duration = ""+duration;
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                    }
                 }
-            });
-        }
+            } else if (type.Equals("Character")) {
+                if (!stacking)
+                {
+                    // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                    if (myCharacters.ContainsKey(itemName))
+                    {
+                        return TransactionResult.Success(task);
+                    }
+                    CharacterData c = new CharacterData();
+                    c.name = itemName;
+                    c.acquireDate = DateTime.Now.ToString();
+                    c.duration = "" + duration;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters").Child(itemName).Child("acquireDate").Value = c.acquireDate;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters").Child(itemName).Child("duration").Value = c.duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        myCharacters.Add(itemName, c);
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                        addDefaultClothingFlag = itemName;
+                    } else
+                    {
+                        myCharacters.Add(itemName, c);
+                    }
+                } else
+                {
+                    CharacterData c = myCharacters[itemName];
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters").Child(itemName).Child("duration").Value = ""+duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        c.duration = ""+duration;
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                    }
+                }
+            } else if (type.Equals("Top")) {
+                if (!stacking)
+                {
+                    // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                    if (myTops.ContainsKey(itemName))
+                    {
+                        return TransactionResult.Success(task);
+                    }
+                    EquipmentData e = new EquipmentData();
+                    e.name = itemName;
+                    e.acquireDate = DateTime.Now.ToString();
+                    e.duration = "" + duration;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops").Child(itemName).Child("acquireDate").Value = e.acquireDate;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops").Child(itemName).Child("duration").Value = e.duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        myTops.Add(itemName, e);
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                    } else
+                    {
+                        myTops.Add(itemName, e);
+                    }
+                } else
+                {
+                    EquipmentData e = myTops[itemName];
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops").Child(itemName).Child("duration").Value = ""+duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        e.duration = ""+duration;
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                    }
+                }
+            } else if (type.Equals("Bottom")) {
+                if (!stacking)
+                {
+                    // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                    if (myBottoms.ContainsKey(itemName))
+                    {
+                        return TransactionResult.Success(task);
+                    }
+                    EquipmentData e = new EquipmentData();
+                    e.name = itemName;
+                    e.acquireDate = DateTime.Now.ToString();
+                    e.duration = "" + duration;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child(itemName).Child("acquireDate").Value = e.acquireDate;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child(itemName).Child("duration").Value = e.duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        myBottoms.Add(itemName, e);
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                    } else
+                    {
+                        myBottoms.Add(itemName, e);
+                    }
+                } else
+                {
+                    EquipmentData e = myBottoms[itemName];
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child(itemName).Child("duration").Value = ""+duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        e.duration = ""+duration;
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                    }
+                }
+            } else if (type.Equals("Armor")) {
+                if (!stacking)
+                {
+                    // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                    if (myArmor.ContainsKey(itemName))
+                    {
+                        return TransactionResult.Success(task);
+                    }
+                    ArmorData e = new ArmorData();
+                    e.name = itemName;
+                    e.acquireDate = DateTime.Now.ToString();
+                    e.duration = "" + duration;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor").Child(itemName).Child("acquireDate").Value = e.acquireDate;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor").Child(itemName).Child("duration").Value = e.duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        myArmor.Add(itemName, e);
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                    } else
+                    {
+                        myArmor.Add(itemName, e);
+                    }
+                } else
+                {
+                    ArmorData a = myArmor[itemName];
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor").Child(itemName).Child("duration").Value = ""+duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        a.duration = ""+duration;
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                    }
+                }
+            } else if (type.Equals("Footwear")) {
+                if (!stacking)
+                {
+                    // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                    if (myFootwear.ContainsKey(itemName))
+                    {
+                        return TransactionResult.Success(task);
+                    }
+                    EquipmentData e = new EquipmentData();
+                    e.name = itemName;
+                    e.acquireDate = DateTime.Now.ToString();
+                    e.duration = "" + duration;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear").Child(itemName).Child("acquireDate").Value = e.acquireDate;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear").Child(itemName).Child("duration").Value = e.duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        myFootwear.Add(itemName, e);
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                    } else
+                    {
+                        myFootwear.Add(itemName, e);
+                    }
+                } else
+                {
+                    EquipmentData e = myFootwear[itemName];
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear").Child(itemName).Child("duration").Value = ""+duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        e.duration = ""+duration;
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                    }
+                }
+            } else if (type.Equals("Headgear")) {
+                if (!stacking)
+                {
+                    // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                    if (myHeadgear.ContainsKey(itemName))
+                    {
+                        return TransactionResult.Success(task);
+                    }
+                    EquipmentData e = new EquipmentData();
+                    e.name = itemName;
+                    e.acquireDate = DateTime.Now.ToString();
+                    e.duration = "" + duration;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear").Child(itemName).Child("acquireDate").Value = e.acquireDate;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear").Child(itemName).Child("duration").Value = e.duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        myHeadgear.Add(itemName, e);
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                    } else
+                    {
+                        myHeadgear.Add(itemName, e);
+                    }
+                } else
+                {
+                    EquipmentData e = myHeadgear[itemName];
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear").Child(itemName).Child("duration").Value = ""+duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        e.duration = ""+duration;
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                    }
+                }
+            } else if (type.Equals("Facewear")) {
+                if (!stacking)
+                {
+                    // If user already has item, then don't do anything (if stacking extra time wasn't input)
+                    if (myFacewear.ContainsKey(itemName))
+                    {
+                        return TransactionResult.Success(task);
+                    }
+                    EquipmentData e = new EquipmentData();
+                    e.name = itemName;
+                    e.acquireDate = DateTime.Now.ToString();
+                    e.duration = "" + duration;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear").Child(itemName).Child("acquireDate").Value = e.acquireDate;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear").Child(itemName).Child("duration").Value = e.duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        myFacewear.Add(itemName, e);
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                    } else
+                    {
+                        myFacewear.Add(itemName, e);
+                    }
+                } else
+                {
+                    EquipmentData e = myFacewear[itemName];
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear").Child(itemName).Child("duration").Value = ""+duration;
+                    if (purchased)
+                    {
+                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                        e.duration = ""+duration;
+                        PlayerData.playerdata.info.gp = gpDiff;
+                        updateCurrencyFlag = true;
+                        purchaseSuccessfulFlag = true;
+                    }
+                }
+            } else if (type.Equals("Mod")) {
+                ModData m = new ModData();
+                m.name = itemName;
+                m.acquireDate = DateTime.Now.ToString();
+                m.duration = ""+duration;
+                m.equippedOn = "";
+                DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Push();
+                if (d == null) {
+                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                    return TransactionResult.Success(task);
+                }
+                string pushKey = d.Key;
+                m.id = pushKey;
+                task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(pushKey).Child("name").Value = m.name;
+                task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(pushKey).Child("equippedOn").Value = m.equippedOn;
+                task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(pushKey).Child("acquireDate").Value = m.acquireDate;
+                task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(pushKey).Child("duration").Value = m.duration;
+                if (purchased) {
+                    uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
+                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
+                    myMods.Add(pushKey, m);
+                    PlayerData.playerdata.info.gp = gpDiff;
+                    updateCurrencyFlag = true;
+                    purchaseSuccessfulFlag = true;
+                } else
+                {
+                    myMods.Add(pushKey, m);
+                }
+            }
+
+            return TransactionResult.Success(task);
+        });
     }
 
     // Removes item from inventory in DB
     public void DeleteItemFromInventory(string itemName, string type, string modId, bool expiring)
     {
+        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId);
         if (type.Equals("Weapon"))
         {
             // If item cannot be deleted, then skip
@@ -1792,7 +1220,7 @@ public class PlayerData : MonoBehaviour
             {
                 return;
             }
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).RunTransaction(task => {
+            d.RunTransaction(task => {
                 // Get any mods that are attached to it and unattach those as well
                 object equippedSuppressorId = task.Child("weapons").Child(itemName).Child("equippedSuppressor").Value;
                 object equippedSightId = task.Child("weapons").Child(itemName).Child("equippedSight").Value;
@@ -1857,35 +1285,27 @@ public class PlayerData : MonoBehaviour
         }
         else if (type.Equals("Character"))
         {
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters")
-                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+            d.RunTransaction(task => {
+                task.Child("characters").Child(itemName).Value = null;
+                // Delete item locally
+                myCharacters.Remove(itemName);
+                if (expiring)
                 {
-                    if (task.IsCanceled || task.IsFaulted)
-                    {
-                        Debug.Log(itemName + " could not be deleted!");
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        return;
-                    } else
-                    {
-                        // Delete item locally
-                        myCharacters.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        // Equip default if item currently equipped
-                        if (PlayerData.playerdata.info.equippedCharacter == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedCharacter = PlayerData.playerdata.info.defaultChar;
-                            PlayerData.playerdata.info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
-                            PlayerData.playerdata.info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
-                            reinstantiatePlayerFlag = true;
-                            reloadPlayerFlag = true;
-                        }
-                        deleteDefaultClothingFlag = itemName;
-                    }
-                });
+                    itemsExpired.Add(itemName);
+                }
+                Debug.Log(itemName + " has been deleted!");
+                // Equip default if item currently equipped
+                if (PlayerData.playerdata.info.equippedCharacter == itemName)
+                {
+                    PlayerData.playerdata.info.equippedCharacter = PlayerData.playerdata.info.defaultChar;
+                    PlayerData.playerdata.info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
+                    PlayerData.playerdata.info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
+                    reinstantiatePlayerFlag = true;
+                    reloadPlayerFlag = true;
+                }
+                deleteDefaultClothingFlag = itemName;
+                return TransactionResult.Success(task);
+            });
         }
         else if (type.Equals("Top"))
         {
@@ -1894,32 +1314,23 @@ public class PlayerData : MonoBehaviour
             {
                 return;
             }
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops")
-                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+            d.RunTransaction(task => {
+                task.Child("tops").Child(itemName).Value = null;
+                // Delete item locally
+                myTops.Remove(itemName);
+                if (expiring)
                 {
-                    if (task.IsCanceled || task.IsFaulted)
-                    {
-                        Debug.Log(itemName + " could not be deleted!");
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        return;
-                    }
-                    else
-                    {
-                        // Delete item locally
-                        myTops.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        // Equip default if item currently equipped
-                        if (PlayerData.playerdata.info.equippedTop == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
-                            reloadPlayerFlag = true;
-                        }
-                    }
-                });
+                    itemsExpired.Add(itemName);
+                }
+                Debug.Log(itemName + " has been deleted!");
+                // Equip default if item currently equipped
+                if (PlayerData.playerdata.info.equippedTop == itemName)
+                {
+                    PlayerData.playerdata.info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
+                    reloadPlayerFlag = true;
+                }
+                return TransactionResult.Success(task);
+            });
         }
         else if (type.Equals("Bottom"))
         {
@@ -1928,62 +1339,44 @@ public class PlayerData : MonoBehaviour
             {
                 return;
             }
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms")
-                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+            d.RunTransaction(task => {
+                task.Child("bottoms").Child(itemName).Value = null;
+                // Delete item locally
+                myBottoms.Remove(itemName);
+                if (expiring)
                 {
-                    if (task.IsCanceled || task.IsFaulted)
-                    {
-                        Debug.Log(itemName + " could not be deleted!");
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        return;
-                    }
-                    else
-                    {
-                        // Delete item locally
-                        myBottoms.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        // Equip default if item currently equipped
-                        if (PlayerData.playerdata.info.equippedBottom == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
-                            reloadPlayerFlag = true;
-                        }
-                    }
-                });
+                    itemsExpired.Add(itemName);
+                }
+                Debug.Log(itemName + " has been deleted!");
+                // Equip default if item currently equipped
+                if (PlayerData.playerdata.info.equippedBottom == itemName)
+                {
+                    PlayerData.playerdata.info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
+                    reloadPlayerFlag = true;
+                }
+                return TransactionResult.Success(task);
+            });
         }
         else if (type.Equals("Armor"))
         {
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor")
-                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+            d.RunTransaction(task => {
+                task.Child("armor").Child(itemName).Value = null;
+                // Delete item locally
+                myArmor.Remove(itemName);
+                if (expiring)
                 {
-                    if (task.IsCanceled || task.IsFaulted)
-                    {
-                        Debug.Log(itemName + " could not be deleted!");
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        return;
-                    }
-                    else
-                    {
-                        // Delete item locally
-                        myArmor.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        // Equip default if item currently equipped
-                        if (PlayerData.playerdata.info.equippedArmor == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedArmor = "";
-                            reloadPlayerFlag = true;
-                            skipReloadCharacterFlag = true;
-                        }
-                    }
-                });
+                    itemsExpired.Add(itemName);
+                }
+                Debug.Log(itemName + " has been deleted!");
+                // Equip default if item currently equipped
+                if (PlayerData.playerdata.info.equippedArmor == itemName)
+                {
+                    PlayerData.playerdata.info.equippedArmor = "";
+                    reloadPlayerFlag = true;
+                    skipReloadCharacterFlag = true;
+                }
+                return TransactionResult.Success(task);
+            });
         }
         else if (type.Equals("Footwear"))
         {
@@ -1992,33 +1385,24 @@ public class PlayerData : MonoBehaviour
             {
                 return;
             }
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear")
-                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+            d.RunTransaction(task => {
+                task.Child("footwear").Child(itemName).Value = null;
+                // Delete item locally
+                myFootwear.Remove(itemName);
+                if (expiring)
                 {
-                    if (task.IsCanceled || task.IsFaulted)
-                    {
-                        Debug.Log(itemName + " could not be deleted!");
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        return;
-                    }
-                    else
-                    {
-                        // Delete item locally
-                        myFootwear.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        // Equip default if item currently equipped
-                        if (PlayerData.playerdata.info.equippedFootwear == itemName)
-                        {
-                            char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
-                            PlayerData.playerdata.info.equippedFootwear = (g == 'M' ? DEFAULT_FOOTWEAR_MALE : DEFAULT_FOOTWEAR_FEMALE); 
-                            reloadPlayerFlag = true;
-                        }
-                    }
-                });
+                    itemsExpired.Add(itemName);
+                }
+                Debug.Log(itemName + " has been deleted!");
+                // Equip default if item currently equipped
+                if (PlayerData.playerdata.info.equippedFootwear == itemName)
+                {
+                    char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
+                    PlayerData.playerdata.info.equippedFootwear = (g == 'M' ? DEFAULT_FOOTWEAR_MALE : DEFAULT_FOOTWEAR_FEMALE); 
+                    reloadPlayerFlag = true;
+                }
+                return TransactionResult.Success(task);
+            });
         }
         else if (type.Equals("Headgear"))
         {
@@ -2027,33 +1411,24 @@ public class PlayerData : MonoBehaviour
             {
                 return;
             }
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear")
-                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+            d.RunTransaction(task => {
+                task.Child("headgear").Child(itemName).Value = null;
+                // Delete item locally
+                myHeadgear.Remove(itemName);
+                if (expiring)
                 {
-                    if (task.IsCanceled || task.IsFaulted)
-                    {
-                        Debug.Log(itemName + " could not be deleted!");
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        return;
-                    }
-                    else
-                    {
-                        // Delete item locally
-                        myHeadgear.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        // Equip default if item currently equipped
-                        if (PlayerData.playerdata.info.equippedHeadgear == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedHeadgear = "";
-                            reloadPlayerFlag = true;
-                            skipReloadCharacterFlag = true;
-                        }
-                    }
-                });
+                    itemsExpired.Add(itemName);
+                }
+                Debug.Log(itemName + " has been deleted!");
+                // Equip default if item currently equipped
+                if (PlayerData.playerdata.info.equippedHeadgear == itemName)
+                {
+                    PlayerData.playerdata.info.equippedHeadgear = "";
+                    reloadPlayerFlag = true;
+                    skipReloadCharacterFlag = true;
+                }
+                return TransactionResult.Success(task);
+            });
         }
         else if (type.Equals("Facewear"))
         {
@@ -2062,91 +1437,59 @@ public class PlayerData : MonoBehaviour
             {
                 return;
             }
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear")
-                .Child(itemName).RemoveValueAsync().ContinueWith(task =>
+            d.RunTransaction(task => {
+                task.Child("facewear").Child(itemName).Value = null;
+                // Delete item locally
+                myFacewear.Remove(itemName);
+                if (expiring)
                 {
-                    if (task.IsCanceled || task.IsFaulted)
-                    {
-                        Debug.Log(itemName + " could not be deleted!");
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        return;
-                    }
-                    else
-                    {
-                        // Delete item locally
-                        myFacewear.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        // Equip default if item currently equipped
-                        if (PlayerData.playerdata.info.equippedFacewear == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedFacewear = "";
-                            reloadPlayerFlag = true;
-                            skipReloadCharacterFlag = true;
-                        }
-                    }
-                });
+                    itemsExpired.Add(itemName);
+                }
+                Debug.Log(itemName + " has been deleted!");
+                // Equip default if item currently equipped
+                if (PlayerData.playerdata.info.equippedFacewear == itemName)
+                {
+                    PlayerData.playerdata.info.equippedFacewear = "";
+                    reloadPlayerFlag = true;
+                    skipReloadCharacterFlag = true;
+                }
+                return TransactionResult.Success(task);
+            });
         }
         else if (type.Equals("Mod"))
         {
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods")
-                .Child(modId).RemoveValueAsync().ContinueWith(task =>
+            d.RunTransaction(task => {
+                task.Child("mods").Child(modId).Value = null;
+                // Get weapon that the mod was equipped on
+                ModData m = myMods[modId];
+                string weaponName = m.equippedOn;
+                // If the mod was equipped to a weapon, unequip it from that weapon first and save
+                if (weaponName != null && !"".Equals(weaponName))
                 {
-                    if (task.IsCanceled || task.IsFaulted)
+                    // Delete locally and in DB
+                    string childModType = "";
+                    if (InventoryScript.itemData.modCatalog[m.name].category == "Suppressor")
                     {
-                        Debug.Log(itemName + " could not be deleted!");
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        return;
-                    }
-                    else
+                        childModType = "equippedSuppressor";
+                        myWeapons[weaponName].equippedSuppressor = "";
+                    } else if (InventoryScript.itemData.modCatalog[m.name].category == "Sight")
                     {
-                        // Get weapon that the mod was equipped on
-                        ModData m = myMods[modId];
-                        string weaponName = m.equippedOn;
-                        // If the mod was equipped to a weapon, unequip it from that weapon first and save
-                        if (weaponName == null || !"".Equals(weaponName))
-                        {
-                            // Delete locally and in DB
-                            string childModType = "";
-                            if (InventoryScript.itemData.modCatalog[m.name].category == "Suppressor")
-                            {
-                                childModType = "equippedSuppressor";
-                                myWeapons[weaponName].equippedSuppressor = "";
-                            } else if (InventoryScript.itemData.modCatalog[m.name].category == "Sight")
-                            {
-                                childModType = "equippedSight";
-                                myWeapons[weaponName].equippedSight = "";
-                            } else if (InventoryScript.itemData.modCatalog[m.name].category == "Clip")
-                            {
-                                childModType = "equippedClip";
-                                myWeapons[weaponName].equippedClip = "";
-                            }
-                            // Remove attachment from weapon
-                            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons")
-                                .Child(weaponName).Child(childModType).SetValueAsync("").ContinueWith(taskA =>
-                                {
-                                    if (taskA.IsFaulted || taskA.IsCanceled)
-                                    {
-                                        Debug.Log(itemName + " could not be deleted when removing from weapon " + weaponName + "!");
-                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                        return;
-                                    } else
-                                    {
-                                        Debug.Log(itemName + " was removed from " + weaponName + " since it was deleted from your inventory.");
-                                        myMods.Remove(modId);
-                                    }
-                                });
-                        } else
-                        {
-                            // Delete item locally
-                            myMods.Remove(modId);
-                            Debug.Log(itemName + " has been deleted!");
-                        }
+                        childModType = "equippedSight";
+                        myWeapons[weaponName].equippedSight = "";
+                    } else if (InventoryScript.itemData.modCatalog[m.name].category == "Clip")
+                    {
+                        childModType = "equippedClip";
+                        myWeapons[weaponName].equippedClip = "";
                     }
-                });
+                    // Remove attachment from weapon
+                    task.Child("weapons").Child(weaponName).Child(childModType).Value = "";
+                    Debug.Log(itemName + " was removed from " + weaponName + " since it was deleted from your inventory.");
+                }
+                // Delete item locally
+                myMods.Remove(modId);
+                Debug.Log(itemName + " has been deleted!");
+                return TransactionResult.Success(task);
+            });
         }
     }
 
@@ -2155,20 +1498,11 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.exp = (uint)Mathf.Min(PlayerData.playerdata.info.exp + aExp, PlayerData.MAX_EXP);
         PlayerData.playerdata.info.gp = (uint)Mathf.Min(PlayerData.playerdata.info.gp + aGp, PlayerData.MAX_GP);
         // Save to DB
-        DatabaseReference userInfoRef = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-        userInfoRef.Child("exp").SetValueAsync("" + PlayerData.playerdata.info.exp).ContinueWith(task =>
-        {
-            if (task.IsCompleted) {
-                userInfoRef.Child("gp").SetValueAsync("" + PlayerData.playerdata.info.gp).ContinueWith(taskA => {
-                    if (!taskA.IsCompleted) {
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                        return;
-                    }
-                });
-            } else {
-                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                return;
-            }
+        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+        d.RunTransaction(task => {
+            task.Child("exp").Value = "" + PlayerData.playerdata.info.exp;
+            task.Child("gp").Value = "" + PlayerData.playerdata.info.gp;
+            return TransactionResult.Success(task);
         });
     }
 
