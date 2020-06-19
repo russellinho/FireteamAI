@@ -218,19 +218,6 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.equippedSupport = myWeps.equippedSupportWeapon;
         PlayerData.playerdata.info.equippedMelee = myWeps.equippedMeleeWeapon;
 
-        string saveJson = "{" +
-            "\"equippedCharacter\":\"" + PlayerData.playerdata.info.equippedCharacter + "\"," +
-            "\"equippedPrimary\":\"" + PlayerData.playerdata.info.equippedPrimary + "\"," +
-            "\"equippedSecondary\":\"" + PlayerData.playerdata.info.equippedSecondary + "\"," +
-            "\"equippedSupport\":\"" + PlayerData.playerdata.info.equippedSupport + "\"," +
-            "\"equippedMelee\":\"" + PlayerData.playerdata.info.equippedMelee + "\"," +
-            "\"equippedTop\":\"" + PlayerData.playerdata.info.equippedTop + "\"," +
-            "\"equippedBottom\":\"" + PlayerData.playerdata.info.equippedBottom + "\"," +
-            "\"equippedFootwear\":\"" + PlayerData.playerdata.info.equippedFootwear + "\"," +
-            "\"equippedFacewear\":\"" + PlayerData.playerdata.info.equippedFacewear + "\"," +
-            "\"equippedHeadgear\":\"" + PlayerData.playerdata.info.equippedHeadgear + "\"," +
-            "\"equippedArmor\":\"" + PlayerData.playerdata.info.equippedArmor + "\"" +
-        "}";
         DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("equipment");
         d.RunTransaction(task => {
             task.Child("equippedCharacter").Value = PlayerData.playerdata.info.equippedCharacter;
@@ -255,103 +242,117 @@ public class PlayerData : MonoBehaviour
         }
         // Check if the DB has equipped data for the player. If not, then set default char and equips.
         // If error occurs, show error message on splash and quit the application
-        DatabaseReference d = DAOScript.dao.dbRef;
-        d.RunTransaction(task => {
-            MutableData userSnapshot = task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-            MutableData inventorySnapshot = task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId);
-            info.defaultChar = userSnapshot.Child("defaultChar").Value.ToString();
-            info.defaultWeapon = userSnapshot.Child("defaultWeapon").Value.ToString();
-            info.playername = userSnapshot.Child("username").Value.ToString();
-            info.exp = uint.Parse(userSnapshot.Child("exp").Value.ToString());
-            info.gp = uint.Parse(userSnapshot.Child("gp").Value.ToString());
-            info.kash = uint.Parse(userSnapshot.Child("kash").Value.ToString());
-            // Equip previously equipped if available. Else, equip defaults and save it
-            if (task.HasChild("equipment")) {
-                info.equippedCharacter = userSnapshot.Child("equipment").Child("equippedCharacter").Value.ToString();
-                info.equippedPrimary = userSnapshot.Child("equipment").Child("equippedPrimary").Value.ToString();
-                info.equippedSecondary = userSnapshot.Child("equipment").Child("equippedSecondary").Value.ToString();
-                info.equippedSupport = userSnapshot.Child("equipment").Child("equippedSupport").Value.ToString();
-                info.equippedMelee = userSnapshot.Child("equipment").Child("equippedMelee").Value.ToString();
-                info.equippedTop = userSnapshot.Child("equipment").Child("equippedTop").Value.ToString();
-                info.equippedBottom = userSnapshot.Child("equipment").Child("equippedBottom").Value.ToString();
-                info.equippedFootwear = userSnapshot.Child("equipment").Child("equippedFootwear").Value.ToString();
-                info.equippedFacewear = userSnapshot.Child("equipment").Child("equippedFacewear").Value.ToString();
-                info.equippedHeadgear = userSnapshot.Child("equipment").Child("equippedHeadgear").Value.ToString();
-                info.equippedArmor = userSnapshot.Child("equipment").Child("equippedArmor").Value.ToString();
-
-                string suppressorModId = inventorySnapshot.Child("weapons").Child(info.equippedPrimary).Child("equippedSuppressor").Value.ToString();
-                string sightModId = inventorySnapshot.Child("weapons").Child(info.equippedPrimary).Child("equippedSight").Value.ToString();
-                primaryModInfo.weaponName = info.equippedPrimary;
-                primaryModInfo.suppressorId = suppressorModId;
-                primaryModInfo.sightId = sightModId;
-                if (!"".Equals(suppressorModId)) {
-                    primaryModInfo.equippedSuppressor = inventorySnapshot.Child("mods").Child(suppressorModId).Child("name").Value.ToString();
-                }
-                if (!"".Equals(sightModId)) {
-                    primaryModInfo.equippedSight = inventorySnapshot.Child("mods").Child(sightModId).Child("name").Value.ToString();
-                }
-
-                suppressorModId = inventorySnapshot.Child("weapons").Child(info.equippedSecondary).Child("equippedSuppressor").Value.ToString();
-                sightModId = inventorySnapshot.Child("weapons").Child(info.equippedSecondary).Child("equippedSight").Value.ToString();
-                secondaryModInfo.weaponName = info.equippedSecondary;
-                secondaryModInfo.suppressorId = suppressorModId;
-                secondaryModInfo.sightId = sightModId;
-                if (!"".Equals(suppressorModId)) {
-                    secondaryModInfo.equippedSuppressor = inventorySnapshot.Child("mods").Child(suppressorModId).Child("name").Value.ToString();
-                }
-                if (!"".Equals(sightModId)) {
-                    secondaryModInfo.equippedSight = inventorySnapshot.Child("mods").Child(sightModId).Child("name").Value.ToString();
-                }
-
-                suppressorModId = inventorySnapshot.Child("weapons").Child(info.equippedSupport).Child("equippedSuppressor").Value.ToString();
-                sightModId = inventorySnapshot.Child("weapons").Child(info.equippedSupport).Child("equippedSight").Value.ToString();
-                supportModInfo.weaponName = info.equippedSupport;
-                supportModInfo.suppressorId = suppressorModId;
-                supportModInfo.sightId = sightModId;
-                if (!"".Equals(suppressorModId)) {
-                    supportModInfo.equippedSuppressor = inventorySnapshot.Child("mods").Child(suppressorModId).Child("name").Value.ToString();
-                }
-                if (!"".Equals(sightModId)) {
-                    supportModInfo.equippedSuppressor = inventorySnapshot.Child("mods").Child(sightModId).Child("name").Value.ToString();
-                }
-                dataLoadedFlag = true;
-                updateCurrencyFlag = true;
+        DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
+            DataSnapshot snapshot = task.Result;
+            if (task.IsFaulted || task.IsCanceled) {
+                TriggerEmergencyExit("Your data could not be loaded. Either your data is corrupted, or the service is unavailable. Please check the website for further details. If this issue persists, please create a ticket at koobando.com/support.");
             } else {
-                info.equippedCharacter = userSnapshot.Child("defaultChar").Value.ToString();
-                char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
-                info.equippedPrimary = userSnapshot.Child("defaultWeapon").Value.ToString();
-                info.equippedSecondary = DEFAULT_SECONDARY;
-                info.equippedSupport = DEFAULT_SUPPORT;
-                info.equippedMelee = DEFAULT_MELEE;
-                info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
-                info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
-                info.equippedFootwear = (g == 'M' ? DEFAULT_FOOTWEAR_MALE : DEFAULT_FOOTWEAR_FEMALE);
-                info.equippedFacewear = "";
-                info.equippedHeadgear = "";
-                info.equippedArmor = "";
-
-                primaryModInfo.equippedSuppressor = "";
-                primaryModInfo.equippedSight = "";
-                primaryModInfo.weaponName = "";
-                primaryModInfo.suppressorId = "";
-                primaryModInfo.sightId = "";
-
-                secondaryModInfo.equippedSuppressor = "";
-                secondaryModInfo.equippedSight = "";
-                secondaryModInfo.weaponName = "";
-                secondaryModInfo.suppressorId = "";
-                secondaryModInfo.sightId = "";
-
-                supportModInfo.equippedSuppressor = "";
-                supportModInfo.equippedSight = "";
-                supportModInfo.weaponName = "";
-                supportModInfo.suppressorId = "";
-                supportModInfo.sightId = "";
-                dataLoadedFlag = true;
-                saveDataFlag = true;
-                updateCurrencyFlag = true;
+                info.defaultChar = snapshot.Child("defaultChar").Value.ToString();
+                info.defaultWeapon = snapshot.Child("defaultWeapon").Value.ToString();
+                info.playername = snapshot.Child("username").Value.ToString();
+                info.exp = uint.Parse(snapshot.Child("exp").Value.ToString());
+                info.gp = uint.Parse(snapshot.Child("gp").Value.ToString());
+                info.kash = uint.Parse(snapshot.Child("kash").Value.ToString());
+                // Equip previously equipped if available. Else, equip defaults and save it
+                if (snapshot.HasChild("equipment")) {
+                    DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(taskA => {
+                        if (taskA.IsCompleted) {
+                            DataSnapshot inventorySnapshot = taskA.Result;
+                            DataSnapshot equipSnapshot = snapshot.Child("equipment");
+                            info.equippedCharacter = equipSnapshot.Child("equippedCharacter").Value.ToString();
+                            info.equippedPrimary = equipSnapshot.Child("equippedPrimary").Value.ToString();
+                            info.equippedSecondary = equipSnapshot.Child("equippedSecondary").Value.ToString();
+                            info.equippedSupport = equipSnapshot.Child("equippedSupport").Value.ToString();
+                            info.equippedMelee = equipSnapshot.Child("equippedMelee").Value.ToString();
+                            info.equippedTop = equipSnapshot.Child("equippedTop").Value.ToString();
+                            info.equippedBottom = equipSnapshot.Child("equippedBottom").Value.ToString();
+                            info.equippedFootwear = equipSnapshot.Child("equippedFootwear").Value.ToString();
+                            info.equippedFacewear = equipSnapshot.Child("equippedFacewear").Value.ToString();
+                            info.equippedHeadgear = equipSnapshot.Child("equippedHeadgear").Value.ToString();
+                            info.equippedArmor = equipSnapshot.Child("equippedArmor").Value.ToString();
+    
+                            DataSnapshot modsInventory = inventorySnapshot.Child("mods");
+    
+                            DataSnapshot modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedPrimary);
+                            string suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                            string sightModId = modSnapshot.Child("equippedSight").Value.ToString();
+                            primaryModInfo.weaponName = info.equippedPrimary;
+                            primaryModInfo.suppressorId = suppressorModId;
+                            primaryModInfo.sightId = sightModId;
+                            if (!"".Equals(suppressorModId)) {
+                                primaryModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
+                            }
+                            if (!"".Equals(sightModId)) {
+                                primaryModInfo.equippedSight = modsInventory.Child(sightModId).Child("name").Value.ToString();
+                            }
+    
+                            modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedSecondary);
+                            suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                            sightModId = modSnapshot.Child("equippedSight").Value.ToString();
+                            secondaryModInfo.weaponName = info.equippedSecondary;
+                            secondaryModInfo.suppressorId = suppressorModId;
+                            secondaryModInfo.sightId = sightModId;
+                            if (!"".Equals(suppressorModId)) {
+                                secondaryModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
+                            }
+                            if (!"".Equals(sightModId)) {
+                                secondaryModInfo.equippedSight = modsInventory.Child(sightModId).Child("name").Value.ToString();
+                            }
+    
+                            modSnapshot = inventorySnapshot.Child("weapons").Child(info.equippedSupport);
+                            suppressorModId = modSnapshot.Child("equippedSuppressor").Value.ToString();
+                            sightModId = modSnapshot.Child("equippedSight").Value.ToString();
+                            supportModInfo.weaponName = info.equippedSupport;
+                            supportModInfo.suppressorId = suppressorModId;
+                            supportModInfo.sightId = sightModId;
+                            if (!"".Equals(suppressorModId)) {
+                                supportModInfo.equippedSuppressor = modsInventory.Child(suppressorModId).Child("name").Value.ToString();
+                            }
+                            if (!"".Equals(sightModId)) {
+                                supportModInfo.equippedSuppressor = modsInventory.Child(sightModId).Child("name").Value.ToString();
+                            }
+                            dataLoadedFlag = true;
+                            updateCurrencyFlag = true;
+                        } else {
+                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        }
+                    });
+                } else {
+                    info.equippedCharacter = snapshot.Child("defaultChar").Value.ToString();
+                    char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
+                    info.equippedPrimary = snapshot.Child("defaultWeapon").Value.ToString();
+                    info.equippedSecondary = DEFAULT_SECONDARY;
+                    info.equippedSupport = DEFAULT_SUPPORT;
+                    info.equippedMelee = DEFAULT_MELEE;
+                    info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
+                    info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
+                    info.equippedFootwear = (g == 'M' ? DEFAULT_FOOTWEAR_MALE : DEFAULT_FOOTWEAR_FEMALE);
+                    info.equippedFacewear = "";
+                    info.equippedHeadgear = "";
+                    info.equippedArmor = "";
+    
+                    primaryModInfo.equippedSuppressor = "";
+                    primaryModInfo.equippedSight = "";
+                    primaryModInfo.weaponName = "";
+                    primaryModInfo.suppressorId = "";
+                    primaryModInfo.sightId = "";
+    
+                    secondaryModInfo.equippedSuppressor = "";
+                    secondaryModInfo.equippedSight = "";
+                    secondaryModInfo.weaponName = "";
+                    secondaryModInfo.suppressorId = "";
+                    secondaryModInfo.sightId = "";
+    
+                    supportModInfo.equippedSuppressor = "";
+                    supportModInfo.equippedSight = "";
+                    supportModInfo.weaponName = "";
+                    supportModInfo.suppressorId = "";
+                    supportModInfo.sightId = "";
+                    dataLoadedFlag = true;
+                    saveDataFlag = true;
+                    updateCurrencyFlag = true;
+                }
             }
-            return TransactionResult.Success(task);
         });
     }
 
@@ -388,8 +389,8 @@ public class PlayerData : MonoBehaviour
     }
 
     public void LoadInventory() {
-        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId);
-        d.RunTransaction(task => {
+        DatabaseReference dr = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId);
+        dr.RunTransaction(task => {
             IEnumerator<MutableData> dataLoaded = task.Child("weapons").Children.GetEnumerator();
             // Load weapons
             while (dataLoaded.MoveNext()) {
@@ -397,8 +398,14 @@ public class PlayerData : MonoBehaviour
                 string key = dataLoaded.Current.Key;
                 MutableData thisSnapshot = dataLoaded.Current;
                 w.name = key;
-                w.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                w.duration = thisSnapshot.Child("duration").Value.ToString();
+                float dur = -10f;
+                if (thisSnapshot.Child("acquireDate").Value != null) {
+                    w.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                }
+                if (thisSnapshot.Child("duration").Value != null) {
+                    w.duration = thisSnapshot.Child("duration").Value.ToString();
+                    dur = float.Parse(w.duration);
+                }
                 object equippedSuppressor = thisSnapshot.Child("equippedSuppressor").Value;
                 object equippedClip = thisSnapshot.Child("equippedClip").Value;
                 object equippedSight = thisSnapshot.Child("equippedSight").Value;
@@ -406,22 +413,23 @@ public class PlayerData : MonoBehaviour
                 w.equippedClip = (equippedClip == null ? "" : equippedClip.ToString());
                 w.equippedSight = (equippedSight == null ? "" : equippedSight.ToString());
                 // If item is expired, delete from database. Else, add it to inventory
-                float dur = float.Parse(w.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(w.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(w.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                if (dur != -10f) {
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Weapon", null, true);
+                        DateTime acquireDate = DateTime.Parse(w.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(w.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Weapon", null, true);
+                        } else
+                        {
+                            myWeapons.Add(key, w);
+                        }
                     } else
                     {
                         myWeapons.Add(key, w);
                     }
-                } else
-                {
-                    myWeapons.Add(key, w);
                 }
             }
             
@@ -432,27 +440,34 @@ public class PlayerData : MonoBehaviour
                 string key = dataLoaded.Current.Key;
                 MutableData thisSnapshot = dataLoaded.Current;
                 c.name = key;
-                c.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                c.duration = thisSnapshot.Child("duration").Value.ToString();
+                float dur = -10f;
+                if (thisSnapshot.Child("acquireDate").Value != null) {
+                    c.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                }
+                if (thisSnapshot.Child("duration").Value != null) {
+                    c.duration = thisSnapshot.Child("duration").Value.ToString();
+                    dur = float.Parse(c.duration);
+                }
                 // If item is expired, delete from database. Else, add it to inventory
-                float dur = float.Parse(c.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(c.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(c.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                if (dur != -10f) {
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Character", null, true);
+                        DateTime acquireDate = DateTime.Parse(c.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(c.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Character", null, true);
+                        }
+                        else
+                        {
+                            myCharacters.Add(key, c);
+                        }
                     }
                     else
                     {
                         myCharacters.Add(key, c);
                     }
-                }
-                else
-                {
-                    myCharacters.Add(key, c);
                 }
             }
 
@@ -463,27 +478,34 @@ public class PlayerData : MonoBehaviour
                 string key = dataLoaded.Current.Key;
                 MutableData thisSnapshot = dataLoaded.Current;
                 a.name = key;
-                a.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                a.duration = thisSnapshot.Child("duration").Value.ToString();
+                float dur = -10f;
+                if (thisSnapshot.Child("acquireDate").Value != null) {
+                    a.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                }
+                if (thisSnapshot.Child("duration").Value != null) {
+                    a.duration = thisSnapshot.Child("duration").Value.ToString();
+                    dur = float.Parse(a.duration);
+                }
                 // If item is expired, delete from database. Else, add it to inventory
-                float dur = float.Parse(a.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(a.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(a.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                if (dur != -10f) {
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Armor", null, true);
+                        DateTime acquireDate = DateTime.Parse(a.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(a.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Armor", null, true);
+                        }
+                        else
+                        {
+                            myArmor.Add(key, a);
+                        }
                     }
                     else
                     {
                         myArmor.Add(key, a);
                     }
-                }
-                else
-                {
-                    myArmor.Add(key, a);
                 }
             }
 
@@ -494,27 +516,34 @@ public class PlayerData : MonoBehaviour
                 string key = dataLoaded.Current.Key;
                 MutableData thisSnapshot = dataLoaded.Current;
                 d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                d.duration = thisSnapshot.Child("duration").Value.ToString();
+                float dur = -10f;
+                if (thisSnapshot.Child("acquireDate").Value != null) {
+                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                }
+                if (thisSnapshot.Child("duration").Value != null) {
+                    d.duration = thisSnapshot.Child("duration").Value.ToString();
+                    dur = float.Parse(d.duration);
+                }
                 // If item is expired, delete from database. Else, add it to inventory
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                if (dur != -10f) {
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Top", null, true);
+                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Top", null, true);
+                        }
+                        else
+                        {
+                            myTops.Add(key, d);
+                        }
                     }
                     else
                     {
                         myTops.Add(key, d);
                     }
-                }
-                else
-                {
-                    myTops.Add(key, d);
                 }
             }
 
@@ -525,26 +554,33 @@ public class PlayerData : MonoBehaviour
                 string key = dataLoaded.Current.Key;
                 MutableData thisSnapshot = dataLoaded.Current;
                 d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                d.duration = thisSnapshot.Child("duration").Value.ToString();
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                float dur = -10f;
+                if (thisSnapshot.Child("acquireDate").Value != null) {
+                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                }
+                if (thisSnapshot.Child("duration").Value != null) {
+                    d.duration = thisSnapshot.Child("duration").Value.ToString();
+                    dur = float.Parse(d.duration);
+                }
+                if (dur != -10f) {
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Bottom", null, true);
+                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Bottom", null, true);
+                        }
+                        else
+                        {
+                            myBottoms.Add(key, d);
+                        }
                     }
                     else
                     {
                         myBottoms.Add(key, d);
                     }
-                }
-                else
-                {
-                    myBottoms.Add(key, d);
                 }
             }
 
@@ -555,26 +591,33 @@ public class PlayerData : MonoBehaviour
                 string key = dataLoaded.Current.Key;
                 MutableData thisSnapshot = dataLoaded.Current;
                 d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                d.duration = thisSnapshot.Child("duration").Value.ToString();
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                float dur = -10f;
+                if (thisSnapshot.Child("acquireDate").Value != null) {
+                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                }
+                if (thisSnapshot.Child("duration").Value != null) {
+                    d.duration = thisSnapshot.Child("duration").Value.ToString();
+                    dur = float.Parse(d.duration);
+                }
+                if (dur != -10f) {
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Footwear", null, true);
+                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Footwear", null, true);
+                        }
+                        else
+                        {
+                            myFootwear.Add(key, d);
+                        }
                     }
                     else
                     {
                         myFootwear.Add(key, d);
                     }
-                }
-                else
-                {
-                    myFootwear.Add(key, d);
                 }
             }
 
@@ -585,26 +628,33 @@ public class PlayerData : MonoBehaviour
                 string key = dataLoaded.Current.Key;
                 MutableData thisSnapshot = dataLoaded.Current;
                 d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                d.duration = thisSnapshot.Child("duration").Value.ToString();
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                float dur = -10f;
+                if (thisSnapshot.Child("acquireDate").Value != null) {
+                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                }
+                if (thisSnapshot.Child("duration").Value != null) {
+                    d.duration = thisSnapshot.Child("duration").Value.ToString();
+                    dur = float.Parse(d.duration);
+                }
+                if (dur != -10f) {
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Headgear", null, true);
+                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Headgear", null, true);
+                        }
+                        else
+                        {
+                            myHeadgear.Add(key, d);
+                        }
                     }
                     else
                     {
                         myHeadgear.Add(key, d);
                     }
-                }
-                else
-                {
-                    myHeadgear.Add(key, d);
                 }
             }
 
@@ -615,26 +665,33 @@ public class PlayerData : MonoBehaviour
                 string key = dataLoaded.Current.Key;
                 MutableData thisSnapshot = dataLoaded.Current;
                 d.name = key;
-                d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                d.duration = thisSnapshot.Child("duration").Value.ToString();
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
+                float dur = -10f;
+                if (thisSnapshot.Child("acquireDate").Value != null) {
+                    d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                }
+                if (thisSnapshot.Child("duration").Value != null) {
+                    d.duration = thisSnapshot.Child("duration").Value.ToString();
+                    dur = float.Parse(d.duration);
+                }
+                if (dur != -10f) {
+                    if (dur >= 0f)
                     {
-                        DeleteItemFromInventory(key, "Facewear", null, true);
+                        DateTime acquireDate = DateTime.Parse(d.acquireDate);
+                        acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
+                        int result = DateTime.Compare(DateTime.Now, acquireDate);
+                        if (result >= 0)
+                        {
+                            DeleteItemFromInventory(key, "Facewear", null, true);
+                        }
+                        else
+                        {
+                            myFacewear.Add(key, d);
+                        }
                     }
                     else
                     {
                         myFacewear.Add(key, d);
                     }
-                }
-                else
-                {
-                    myFacewear.Add(key, d);
                 }
             }
 
@@ -645,11 +702,20 @@ public class PlayerData : MonoBehaviour
                 string key = dataLoaded.Current.Key;
                 MutableData thisSnapshot = dataLoaded.Current;
                 m.id = key;
-                m.name = thisSnapshot.Child("name").Value.ToString();
-                m.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                m.duration = thisSnapshot.Child("duration").Value.ToString();
-                m.equippedOn = thisSnapshot.Child("equippedOn").Value.ToString();
-                myMods.Add(key, m);
+                if (thisSnapshot.Child("name").Value != null) {
+                    m.name = thisSnapshot.Child("name").Value.ToString();
+                }
+                if (thisSnapshot.Child("acquireDate").Value != null) {
+                    m.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
+                }
+                if (thisSnapshot.Child("duration").Value != null) {
+                    m.duration = thisSnapshot.Child("duration").Value.ToString();
+                }
+                if (thisSnapshot.Child("equippedOn").Value != null) {
+                    m.equippedOn = thisSnapshot.Child("equippedOn").Value.ToString();
+                    myMods.Add(key, m);
+                }
+                // myMods.Add(key, m);
             }
             
             return TransactionResult.Success(task);
@@ -1180,12 +1246,12 @@ public class PlayerData : MonoBehaviour
                 m.acquireDate = DateTime.Now.ToString();
                 m.duration = ""+duration;
                 m.equippedOn = "";
-                DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Push();
-                if (d == null) {
+                DatabaseReference de = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Push();
+                if (de == null) {
                     TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                     return TransactionResult.Success(task);
                 }
-                string pushKey = d.Key;
+                string pushKey = de.Key;
                 m.id = pushKey;
                 task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(pushKey).Child("name").Value = m.name;
                 task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(pushKey).Child("equippedOn").Value = m.equippedOn;
