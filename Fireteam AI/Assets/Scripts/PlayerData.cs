@@ -26,6 +26,7 @@ public class PlayerData : MonoBehaviour
     public string disconnectReason;
     public bool testMode;
     private bool dataLoadedFlag;
+    private bool inventoryLoadedFlag;
     private bool saveDataFlag;
     private bool purchaseSuccessfulFlag;
     private bool purchaseFailFlag;
@@ -75,8 +76,8 @@ public class PlayerData : MonoBehaviour
             this.myCharacters = new Dictionary<string, CharacterData>();
             this.myMods = new Dictionary<string, ModData>();
             playerdata = this;
-            LoadPlayerData();
-            LoadInventory();
+            // LoadPlayerData();
+            // LoadInventory();
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
         }
         else if (playerdata != this)
@@ -88,10 +89,11 @@ public class PlayerData : MonoBehaviour
 
     void Update() {
         // Handle async calls
-        if (dataLoadedFlag) {
+        if (dataLoadedFlag && inventoryLoadedFlag) {
             InstantiatePlayer();
             titleRef.SetPlayerStatsForTitle();
             dataLoadedFlag = false;
+            inventoryLoadedFlag = false;
         }
         if (saveDataFlag) {
             SavePlayerData();
@@ -195,6 +197,7 @@ public class PlayerData : MonoBehaviour
                 if (PlayerData.playerdata.bodyReference == null && !dataLoadedFlag)
                 {
                     LoadPlayerData();
+                    LoadInventory();
                 }
                 titleRef.SetPlayerStatsForTitle();
             }
@@ -389,31 +392,36 @@ public class PlayerData : MonoBehaviour
     }
 
     public void LoadInventory() {
-        DatabaseReference dr = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId);
-        dr.RunTransaction(task => {
-            IEnumerator<MutableData> dataLoaded = task.Child("weapons").Children.GetEnumerator();
-            // Load weapons
-            while (dataLoaded.MoveNext()) {
-                WeaponData w = new WeaponData();
-                string key = dataLoaded.Current.Key;
-                MutableData thisSnapshot = dataLoaded.Current;
-                w.name = key;
-                float dur = -10f;
-                if (thisSnapshot.Child("acquireDate").Value != null) {
+        this.myHeadgear.Clear();
+        this.myTops.Clear();
+        this.myBottoms.Clear();
+        this.myFacewear.Clear();
+        this.myFootwear.Clear();
+        this.myArmor.Clear();
+        this.myWeapons.Clear();
+        this.myCharacters.Clear();
+        this.myMods.Clear();
+        DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
+            if (task.IsCompleted) {
+                DataSnapshot snapshot = task.Result;
+                DataSnapshot subSnapshot = snapshot.Child("weapons");
+                IEnumerator<DataSnapshot> dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load weapons
+                while (dataLoaded.MoveNext()) {
+                    WeaponData w = new WeaponData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    w.name = key;
                     w.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                }
-                if (thisSnapshot.Child("duration").Value != null) {
                     w.duration = thisSnapshot.Child("duration").Value.ToString();
-                    dur = float.Parse(w.duration);
-                }
-                object equippedSuppressor = thisSnapshot.Child("equippedSuppressor").Value;
-                object equippedClip = thisSnapshot.Child("equippedClip").Value;
-                object equippedSight = thisSnapshot.Child("equippedSight").Value;
-                w.equippedSuppressor = (equippedSuppressor == null ? "" : equippedSuppressor.ToString());
-                w.equippedClip = (equippedClip == null ? "" : equippedClip.ToString());
-                w.equippedSight = (equippedSight == null ? "" : equippedSight.ToString());
-                // If item is expired, delete from database. Else, add it to inventory
-                if (dur != -10f) {
+                    object equippedSuppressor = thisSnapshot.Child("equippedSuppressor").Value;
+                    object equippedClip = thisSnapshot.Child("equippedClip").Value;
+                    object equippedSight = thisSnapshot.Child("equippedSight").Value;
+                    w.equippedSuppressor = (equippedSuppressor == null ? "" : equippedSuppressor.ToString());
+                    w.equippedClip = (equippedClip == null ? "" : equippedClip.ToString());
+                    w.equippedSight = (equippedSight == null ? "" : equippedSight.ToString());
+                    // If item is expired, delete from database. Else, add it to inventory
+                    float dur = float.Parse(w.duration);
                     if (dur >= 0f)
                     {
                         DateTime acquireDate = DateTime.Parse(w.acquireDate);
@@ -431,25 +439,19 @@ public class PlayerData : MonoBehaviour
                         myWeapons.Add(key, w);
                     }
                 }
-            }
-            
-            dataLoaded = task.Child("characters").Children.GetEnumerator();
-            // Load characters
-            while (dataLoaded.MoveNext()) {
-                CharacterData c = new CharacterData();
-                string key = dataLoaded.Current.Key;
-                MutableData thisSnapshot = dataLoaded.Current;
-                c.name = key;
-                float dur = -10f;
-                if (thisSnapshot.Child("acquireDate").Value != null) {
+                
+                subSnapshot = snapshot.Child("characters");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load characters
+                while (dataLoaded.MoveNext()) {
+                    CharacterData c = new CharacterData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    c.name = key;
                     c.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                }
-                if (thisSnapshot.Child("duration").Value != null) {
                     c.duration = thisSnapshot.Child("duration").Value.ToString();
-                    dur = float.Parse(c.duration);
-                }
-                // If item is expired, delete from database. Else, add it to inventory
-                if (dur != -10f) {
+                    // If item is expired, delete from database. Else, add it to inventory
+                    float dur = float.Parse(c.duration);
                     if (dur >= 0f)
                     {
                         DateTime acquireDate = DateTime.Parse(c.acquireDate);
@@ -469,25 +471,19 @@ public class PlayerData : MonoBehaviour
                         myCharacters.Add(key, c);
                     }
                 }
-            }
 
-            dataLoaded = task.Child("armor").Children.GetEnumerator();
-            // Load armor
-            while (dataLoaded.MoveNext()) {
-                ArmorData a = new ArmorData();
-                string key = dataLoaded.Current.Key;
-                MutableData thisSnapshot = dataLoaded.Current;
-                a.name = key;
-                float dur = -10f;
-                if (thisSnapshot.Child("acquireDate").Value != null) {
+                subSnapshot = snapshot.Child("armor");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load armor
+                while (dataLoaded.MoveNext()) {
+                    ArmorData a = new ArmorData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    a.name = key;
                     a.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                }
-                if (thisSnapshot.Child("duration").Value != null) {
                     a.duration = thisSnapshot.Child("duration").Value.ToString();
-                    dur = float.Parse(a.duration);
-                }
-                // If item is expired, delete from database. Else, add it to inventory
-                if (dur != -10f) {
+                    // If item is expired, delete from database. Else, add it to inventory
+                    float dur = float.Parse(a.duration);
                     if (dur >= 0f)
                     {
                         DateTime acquireDate = DateTime.Parse(a.acquireDate);
@@ -507,25 +503,19 @@ public class PlayerData : MonoBehaviour
                         myArmor.Add(key, a);
                     }
                 }
-            }
 
-            dataLoaded = task.Child("tops").Children.GetEnumerator();
-            // Load tops
-            while (dataLoaded.MoveNext()) {
-                EquipmentData d = new EquipmentData();
-                string key = dataLoaded.Current.Key;
-                MutableData thisSnapshot = dataLoaded.Current;
-                d.name = key;
-                float dur = -10f;
-                if (thisSnapshot.Child("acquireDate").Value != null) {
+                subSnapshot = snapshot.Child("tops");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load tops
+                while (dataLoaded.MoveNext()) {
+                    EquipmentData d = new EquipmentData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    d.name = key;
                     d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                }
-                if (thisSnapshot.Child("duration").Value != null) {
                     d.duration = thisSnapshot.Child("duration").Value.ToString();
-                    dur = float.Parse(d.duration);
-                }
-                // If item is expired, delete from database. Else, add it to inventory
-                if (dur != -10f) {
+                    // If item is expired, delete from database. Else, add it to inventory
+                    float dur = float.Parse(d.duration);
                     if (dur >= 0f)
                     {
                         DateTime acquireDate = DateTime.Parse(d.acquireDate);
@@ -545,24 +535,18 @@ public class PlayerData : MonoBehaviour
                         myTops.Add(key, d);
                     }
                 }
-            }
 
-            dataLoaded = task.Child("bottoms").Children.GetEnumerator();
-            // Load bottoms
-            while (dataLoaded.MoveNext()) {
-                EquipmentData d = new EquipmentData();
-                string key = dataLoaded.Current.Key;
-                MutableData thisSnapshot = dataLoaded.Current;
-                d.name = key;
-                float dur = -10f;
-                if (thisSnapshot.Child("acquireDate").Value != null) {
+                subSnapshot = snapshot.Child("bottoms");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load bottoms
+                while (dataLoaded.MoveNext()) {
+                    EquipmentData d = new EquipmentData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    d.name = key;
                     d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                }
-                if (thisSnapshot.Child("duration").Value != null) {
                     d.duration = thisSnapshot.Child("duration").Value.ToString();
-                    dur = float.Parse(d.duration);
-                }
-                if (dur != -10f) {
+                    float dur = float.Parse(d.duration);
                     if (dur >= 0f)
                     {
                         DateTime acquireDate = DateTime.Parse(d.acquireDate);
@@ -582,24 +566,18 @@ public class PlayerData : MonoBehaviour
                         myBottoms.Add(key, d);
                     }
                 }
-            }
 
-            dataLoaded = task.Child("footwear").Children.GetEnumerator();
-            // Load footwear
-            while (dataLoaded.MoveNext()) {
-                EquipmentData d = new EquipmentData();
-                string key = dataLoaded.Current.Key;
-                MutableData thisSnapshot = dataLoaded.Current;
-                d.name = key;
-                float dur = -10f;
-                if (thisSnapshot.Child("acquireDate").Value != null) {
+                subSnapshot = snapshot.Child("footwear");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load footwear
+                while (dataLoaded.MoveNext()) {
+                    EquipmentData d = new EquipmentData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    d.name = key;
                     d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                }
-                if (thisSnapshot.Child("duration").Value != null) {
                     d.duration = thisSnapshot.Child("duration").Value.ToString();
-                    dur = float.Parse(d.duration);
-                }
-                if (dur != -10f) {
+                    float dur = float.Parse(d.duration);
                     if (dur >= 0f)
                     {
                         DateTime acquireDate = DateTime.Parse(d.acquireDate);
@@ -619,24 +597,18 @@ public class PlayerData : MonoBehaviour
                         myFootwear.Add(key, d);
                     }
                 }
-            }
 
-            dataLoaded = task.Child("headgear").Children.GetEnumerator();
-            // Load headgear
-            while (dataLoaded.MoveNext()) {
-                EquipmentData d = new EquipmentData();
-                string key = dataLoaded.Current.Key;
-                MutableData thisSnapshot = dataLoaded.Current;
-                d.name = key;
-                float dur = -10f;
-                if (thisSnapshot.Child("acquireDate").Value != null) {
+                subSnapshot = snapshot.Child("headgear");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load headgear
+                while (dataLoaded.MoveNext()) {
+                    EquipmentData d = new EquipmentData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    d.name = key;
                     d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                }
-                if (thisSnapshot.Child("duration").Value != null) {
                     d.duration = thisSnapshot.Child("duration").Value.ToString();
-                    dur = float.Parse(d.duration);
-                }
-                if (dur != -10f) {
+                    float dur = float.Parse(d.duration);
                     if (dur >= 0f)
                     {
                         DateTime acquireDate = DateTime.Parse(d.acquireDate);
@@ -656,24 +628,18 @@ public class PlayerData : MonoBehaviour
                         myHeadgear.Add(key, d);
                     }
                 }
-            }
 
-            dataLoaded = task.Child("facewear").Children.GetEnumerator();
-            // Load facewear
-            while (dataLoaded.MoveNext()) {
-                EquipmentData d = new EquipmentData();
-                string key = dataLoaded.Current.Key;
-                MutableData thisSnapshot = dataLoaded.Current;
-                d.name = key;
-                float dur = -10f;
-                if (thisSnapshot.Child("acquireDate").Value != null) {
+                subSnapshot = snapshot.Child("facewear");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load facewear
+                while (dataLoaded.MoveNext()) {
+                    EquipmentData d = new EquipmentData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    d.name = key;
                     d.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                }
-                if (thisSnapshot.Child("duration").Value != null) {
                     d.duration = thisSnapshot.Child("duration").Value.ToString();
-                    dur = float.Parse(d.duration);
-                }
-                if (dur != -10f) {
+                    float dur = float.Parse(d.duration);
                     if (dur >= 0f)
                     {
                         DateTime acquireDate = DateTime.Parse(d.acquireDate);
@@ -693,32 +659,26 @@ public class PlayerData : MonoBehaviour
                         myFacewear.Add(key, d);
                     }
                 }
-            }
 
-            dataLoaded = task.Child("mods").Children.GetEnumerator();
-            // Load mods
-            while (dataLoaded.MoveNext()) {
-                ModData m = new ModData();
-                string key = dataLoaded.Current.Key;
-                MutableData thisSnapshot = dataLoaded.Current;
-                m.id = key;
-                if (thisSnapshot.Child("name").Value != null) {
+                subSnapshot = snapshot.Child("mods");
+                dataLoaded = subSnapshot.Children.GetEnumerator();
+                // Load mods
+                while (dataLoaded.MoveNext()) {
+                    ModData m = new ModData();
+                    string key = dataLoaded.Current.Key;
+                    DataSnapshot thisSnapshot = dataLoaded.Current;
+                    m.id = key;
                     m.name = thisSnapshot.Child("name").Value.ToString();
-                }
-                if (thisSnapshot.Child("acquireDate").Value != null) {
                     m.acquireDate = thisSnapshot.Child("acquireDate").Value.ToString();
-                }
-                if (thisSnapshot.Child("duration").Value != null) {
                     m.duration = thisSnapshot.Child("duration").Value.ToString();
-                }
-                if (thisSnapshot.Child("equippedOn").Value != null) {
                     m.equippedOn = thisSnapshot.Child("equippedOn").Value.ToString();
                     myMods.Add(key, m);
                 }
-                // myMods.Add(key, m);
+
+                inventoryLoadedFlag = true;
+            } else {
+                TriggerEmergencyExit("Your data could not be loaded. Either your data is corrupted, or the service is unavailable. Please check the website for further details. If this issue persists, please create a ticket at koobando.com/support.");
             }
-            
-            return TransactionResult.Success(task);
         });
     }
 
@@ -939,11 +899,11 @@ public class PlayerData : MonoBehaviour
                         uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        w.duration = ""+duration;
                         PlayerData.playerdata.info.gp = gpDiff;
                         updateCurrencyFlag = true;
                         purchaseSuccessfulFlag = true;
                     }
+                    w.duration = ""+duration;
                 }
             } else if (type.Equals("Character")) {
                 if (!stacking)
@@ -982,11 +942,11 @@ public class PlayerData : MonoBehaviour
                         uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        c.duration = ""+duration;
                         PlayerData.playerdata.info.gp = gpDiff;
                         updateCurrencyFlag = true;
                         purchaseSuccessfulFlag = true;
                     }
+                    c.duration = ""+duration;
                 }
             } else if (type.Equals("Top")) {
                 if (!stacking)
@@ -1024,11 +984,11 @@ public class PlayerData : MonoBehaviour
                         uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        e.duration = ""+duration;
                         PlayerData.playerdata.info.gp = gpDiff;
                         updateCurrencyFlag = true;
                         purchaseSuccessfulFlag = true;
                     }
+                    e.duration = ""+duration;
                 }
             } else if (type.Equals("Bottom")) {
                 if (!stacking)
@@ -1066,11 +1026,11 @@ public class PlayerData : MonoBehaviour
                         uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        e.duration = ""+duration;
                         PlayerData.playerdata.info.gp = gpDiff;
                         updateCurrencyFlag = true;
                         purchaseSuccessfulFlag = true;
                     }
+                    e.duration = ""+duration;
                 }
             } else if (type.Equals("Armor")) {
                 if (!stacking)
@@ -1084,6 +1044,7 @@ public class PlayerData : MonoBehaviour
                     e.name = itemName;
                     e.acquireDate = DateTime.Now.ToString();
                     e.duration = "" + duration;
+                    Debug.Log(itemName + "FUCK");
                     task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor").Child(itemName).Child("acquireDate").Value = e.acquireDate;
                     task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor").Child(itemName).Child("duration").Value = e.duration;
                     if (purchased)
@@ -1108,11 +1069,11 @@ public class PlayerData : MonoBehaviour
                         uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        a.duration = ""+duration;
                         PlayerData.playerdata.info.gp = gpDiff;
                         updateCurrencyFlag = true;
                         purchaseSuccessfulFlag = true;
                     }
+                    a.duration = ""+duration;
                 }
             } else if (type.Equals("Footwear")) {
                 if (!stacking)
@@ -1150,11 +1111,11 @@ public class PlayerData : MonoBehaviour
                         uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        e.duration = ""+duration;
                         PlayerData.playerdata.info.gp = gpDiff;
                         updateCurrencyFlag = true;
                         purchaseSuccessfulFlag = true;
                     }
+                    e.duration = ""+duration;
                 }
             } else if (type.Equals("Headgear")) {
                 if (!stacking)
@@ -1192,11 +1153,11 @@ public class PlayerData : MonoBehaviour
                         uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        e.duration = ""+duration;
                         PlayerData.playerdata.info.gp = gpDiff;
                         updateCurrencyFlag = true;
                         purchaseSuccessfulFlag = true;
                     }
+                    e.duration = ""+duration;
                 }
             } else if (type.Equals("Facewear")) {
                 if (!stacking)
@@ -1234,11 +1195,11 @@ public class PlayerData : MonoBehaviour
                         uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
                         task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        e.duration = ""+duration;
                         PlayerData.playerdata.info.gp = gpDiff;
                         updateCurrencyFlag = true;
                         purchaseSuccessfulFlag = true;
                     }
+                    e.duration = ""+duration;
                 }
             } else if (type.Equals("Mod")) {
                 ModData m = new ModData();
@@ -1286,67 +1247,69 @@ public class PlayerData : MonoBehaviour
             {
                 return;
             }
-            d.RunTransaction(task => {
+            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(taskA => {
                 // Get any mods that are attached to it and unattach those as well
-                object equippedSuppressorId = task.Child("weapons").Child(itemName).Child("equippedSuppressor").Value;
-                object equippedSightId = task.Child("weapons").Child(itemName).Child("equippedSight").Value;
-                // Deletes item in DB
-                task.Child("weapons").Child(itemName).Value = null;
-                // Delete item locally
-                // Unattach locally, and then save
-                if (equippedSuppressorId != null) {
-                    string equippedSuppressorIdText = equippedSuppressorId.ToString();
-                    try {
-                        myMods[equippedSuppressorIdText].equippedOn = "";
-                    } catch (KeyNotFoundException e) {
-                        Debug.Log("Mod " + equippedSuppressorIdText + " was not loaded locally yet... skipping");
+                object equippedSuppressorId = taskA.Result.Child("weapons").Child(itemName).Child("equippedSuppressor").Value;
+                object equippedSightId = taskA.Result.Child("weapons").Child(itemName).Child("equippedSight").Value;
+                d.RunTransaction(task => {
+                    // Deletes item in DB
+                    task.Child("weapons").Child(itemName).Value = null;
+                    // Delete item locally
+                    // Unattach locally, and then save
+                    if (equippedSuppressorId != null) {
+                        string equippedSuppressorIdText = equippedSuppressorId.ToString();
+                        try {
+                            myMods[equippedSuppressorIdText].equippedOn = "";
+                        } catch (KeyNotFoundException e) {
+                            Debug.Log("Mod " + equippedSuppressorIdText + " was not loaded locally yet... skipping");
+                        }
+                        // Save in DB
+                        Debug.Log("Deleting: " + equippedSuppressorIdText + " off of weapon " + itemName);
+                        task.Child("mods").Child(equippedSuppressorIdText).Child("equippedOn").Value = "";
+                        // Debug.Log("Suppressor removed.");
                     }
-                    // Save in DB
-                    Debug.Log("Deleting: " + equippedSuppressorIdText + " off of weapon " + itemName);
-                    task.Child("mods").Child(equippedSuppressorIdText).Child("equippedOn").Value = "";
-                    // Debug.Log("Suppressor removed.");
-                }
-                if (equippedSightId != null) {
-                    string equippedSightIdText = equippedSightId.ToString();
-                    try {
-                        myMods[equippedSightIdText].equippedOn = "";
-                    } catch (KeyNotFoundException e) {
-                        Debug.Log("Mod " + equippedSightIdText + " was not loaded locally yet... skipping");
+                    if (equippedSightId != null) {
+                        string equippedSightIdText = equippedSightId.ToString();
+                        try {
+                            myMods[equippedSightIdText].equippedOn = "";
+                        } catch (KeyNotFoundException e) {
+                            Debug.Log("Mod " + equippedSightIdText + " was not loaded locally yet... skipping");
+                        }
+                        // Save in DB
+                        Debug.Log("Deleting: " + equippedSightIdText + " off of weapon " + itemName);
+                        task.Child("mods").Child(equippedSightIdText).Child("equippedOn").Value = "";
+                        // Debug.Log("Sight removed.");
                     }
-                    // Save in DB
-                    Debug.Log("Deleting: " + equippedSightIdText + " off of weapon " + itemName);
-                    task.Child("mods").Child(equippedSightIdText).Child("equippedOn").Value = "";
-                    // Debug.Log("Sight removed.");
-                }
-                // Debug.Log("Mods handled.");
-                myWeapons.Remove(itemName);
-                if (expiring)
-                {
-                    itemsExpired.Add(itemName);
-                }
-                Debug.Log(itemName + " has been deleted!");
-                if (PlayerData.playerdata.info.equippedPrimary == itemName)
-                {
-                    PlayerData.playerdata.info.equippedPrimary = PlayerData.playerdata.info.defaultWeapon;
-                    //PlayerData.playerdata.primaryModInfo = LoadModDataForWeapon(DEFAULT_PRIMARY);
-                    reloadPlayerFlag = true;
-                } else if (PlayerData.playerdata.info.equippedSecondary == itemName)
-                {
-                    PlayerData.playerdata.info.equippedSecondary = DEFAULT_SECONDARY;
-                    //PlayerData.playerdata.secondaryModInfo = LoadModDataForWeapon(DEFAULT_SECONDARY);
-                    reloadPlayerFlag = true;
-                } else if (PlayerData.playerdata.info.equippedSupport == itemName)
-                {
-                    PlayerData.playerdata.info.equippedSupport = DEFAULT_SUPPORT;
-                    //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
-                    reloadPlayerFlag = true;
-                } else if (PlayerData.playerdata.info.equippedMelee == itemName)
-                {
-                    PlayerData.playerdata.info.equippedMelee = DEFAULT_MELEE;
-                    //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
-                    reloadPlayerFlag = true;
-                }
-                return TransactionResult.Success(task);
+                    // Debug.Log("Mods handled.");
+                    myWeapons.Remove(itemName);
+                    if (expiring)
+                    {
+                        itemsExpired.Add(itemName);
+                    }
+                    Debug.Log(itemName + " has been deleted!");
+                    if (PlayerData.playerdata.info.equippedPrimary == itemName)
+                    {
+                        PlayerData.playerdata.info.equippedPrimary = PlayerData.playerdata.info.defaultWeapon;
+                        //PlayerData.playerdata.primaryModInfo = LoadModDataForWeapon(DEFAULT_PRIMARY);
+                        reloadPlayerFlag = true;
+                    } else if (PlayerData.playerdata.info.equippedSecondary == itemName)
+                    {
+                        PlayerData.playerdata.info.equippedSecondary = DEFAULT_SECONDARY;
+                        //PlayerData.playerdata.secondaryModInfo = LoadModDataForWeapon(DEFAULT_SECONDARY);
+                        reloadPlayerFlag = true;
+                    } else if (PlayerData.playerdata.info.equippedSupport == itemName)
+                    {
+                        PlayerData.playerdata.info.equippedSupport = DEFAULT_SUPPORT;
+                        //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
+                        reloadPlayerFlag = true;
+                    } else if (PlayerData.playerdata.info.equippedMelee == itemName)
+                    {
+                        PlayerData.playerdata.info.equippedMelee = DEFAULT_MELEE;
+                        //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
+                        reloadPlayerFlag = true;
+                    }
+                    return TransactionResult.Success(task);
+                });
             });
         }
         else if (type.Equals("Character"))
