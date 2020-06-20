@@ -89,7 +89,15 @@ public class PlayerData : MonoBehaviour
 
     void Update() {
         // Handle async calls
+        if (dataLoadedFlag && !inventoryLoadedFlag) {
+            LoadInventory();
+        }
         if (dataLoadedFlag && inventoryLoadedFlag) {
+            if (itemsExpired.Count > 0)
+            {
+                titleRef.TriggerExpirationPopup(itemsExpired);
+                itemsExpired.Clear();
+            }
             InstantiatePlayer();
             titleRef.SetPlayerStatsForTitle();
             dataLoadedFlag = false;
@@ -110,11 +118,6 @@ public class PlayerData : MonoBehaviour
         if (updateCurrencyFlag) {
             titleRef.UpdateCurrency();
             updateCurrencyFlag = false;
-        }
-        if (itemsExpired.Count > 0)
-        {
-            titleRef.TriggerExpirationPopup(itemsExpired);
-            itemsExpired.Clear();
         }
         if (reloadPlayerFlag)
         {
@@ -197,7 +200,7 @@ public class PlayerData : MonoBehaviour
                 if (PlayerData.playerdata.bodyReference == null && !dataLoadedFlag)
                 {
                     LoadPlayerData();
-                    LoadInventory();
+                    // LoadInventory();
                 }
                 titleRef.SetPlayerStatsForTitle();
             }
@@ -221,20 +224,20 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.equippedSupport = myWeps.equippedSupportWeapon;
         PlayerData.playerdata.info.equippedMelee = myWeps.equippedMeleeWeapon;
 
-        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("equipment");
-        d.RunTransaction(task => {
-            task.Child("equippedCharacter").Value = PlayerData.playerdata.info.equippedCharacter;
-            task.Child("equippedPrimary").Value = PlayerData.playerdata.info.equippedPrimary;
-            task.Child("equippedSecondary").Value = PlayerData.playerdata.info.equippedSecondary;
-            task.Child("equippedSupport").Value = PlayerData.playerdata.info.equippedSupport;
-            task.Child("equippedMelee").Value = PlayerData.playerdata.info.equippedMelee;
-            task.Child("equippedTop").Value = PlayerData.playerdata.info.equippedTop;
-            task.Child("equippedBottom").Value = PlayerData.playerdata.info.equippedBottom;
-            task.Child("equippedFootwear").Value = PlayerData.playerdata.info.equippedFootwear;
-            task.Child("equippedFacewear").Value = PlayerData.playerdata.info.equippedFacewear;
-            task.Child("equippedHeadgear").Value = PlayerData.playerdata.info.equippedHeadgear;
-            task.Child("equippedArmor").Value = PlayerData.playerdata.info.equippedArmor;
-            return TransactionResult.Success(task);
+        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("equipment");
+        d.RunTransaction(mutableData => {
+            mutableData.Child("equippedCharacter").Value = PlayerData.playerdata.info.equippedCharacter;
+            mutableData.Child("equippedPrimary").Value = PlayerData.playerdata.info.equippedPrimary;
+            mutableData.Child("equippedSecondary").Value = PlayerData.playerdata.info.equippedSecondary;
+            mutableData.Child("equippedSupport").Value = PlayerData.playerdata.info.equippedSupport;
+            mutableData.Child("equippedMelee").Value = PlayerData.playerdata.info.equippedMelee;
+            mutableData.Child("equippedTop").Value = PlayerData.playerdata.info.equippedTop;
+            mutableData.Child("equippedBottom").Value = PlayerData.playerdata.info.equippedBottom;
+            mutableData.Child("equippedFootwear").Value = PlayerData.playerdata.info.equippedFootwear;
+            mutableData.Child("equippedFacewear").Value = PlayerData.playerdata.info.equippedFacewear;
+            mutableData.Child("equippedHeadgear").Value = PlayerData.playerdata.info.equippedHeadgear;
+            mutableData.Child("equippedArmor").Value = PlayerData.playerdata.info.equippedArmor;
+            return TransactionResult.Success(mutableData);
         });
     }
 
@@ -245,7 +248,7 @@ public class PlayerData : MonoBehaviour
         }
         // Check if the DB has equipped data for the player. If not, then set default char and equips.
         // If error occurs, show error message on splash and quit the application
-        DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
+        DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
             DataSnapshot snapshot = task.Result;
             if (task.IsFaulted || task.IsCanceled) {
                 TriggerEmergencyExit("Your data could not be loaded. Either your data is corrupted, or the service is unavailable. Please check the website for further details. If this issue persists, please create a ticket at koobando.com/support.");
@@ -258,7 +261,7 @@ public class PlayerData : MonoBehaviour
                 info.kash = uint.Parse(snapshot.Child("kash").Value.ToString());
                 // Equip previously equipped if available. Else, equip defaults and save it
                 if (snapshot.HasChild("equipment")) {
-                    DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(taskA => {
+                    DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(taskA => {
                         if (taskA.IsCompleted) {
                             DataSnapshot inventorySnapshot = taskA.Result;
                             DataSnapshot equipSnapshot = snapshot.Child("equipment");
@@ -401,7 +404,7 @@ public class PlayerData : MonoBehaviour
         this.myWeapons.Clear();
         this.myCharacters.Clear();
         this.myMods.Clear();
-        DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
+        DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
             if (task.IsCompleted) {
                 DataSnapshot snapshot = task.Result;
                 DataSnapshot subSnapshot = snapshot.Child("weapons");
@@ -739,8 +742,8 @@ public class PlayerData : MonoBehaviour
         ModInfo newModInfo = new ModInfo();
         WeaponScript myWeps = bodyReference.GetComponent<WeaponScript>();
 
-        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId);
-        d.RunTransaction(task => {
+        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId);
+        d.RunTransaction(mutableData => {
             if (suppressorId != null && !"".Equals(suppressorId)) {
                 // Mod was removed
                 if (suppressorId != null && !"".Equals(suppressorId) && string.IsNullOrEmpty(equippedSuppressor))
@@ -748,8 +751,8 @@ public class PlayerData : MonoBehaviour
                     newModInfo.equippedSuppressor = "";
                     newModInfo.weaponName = weaponName;
                     newModInfo.suppressorId = "";
-                    task.Child("mods").Child(suppressorId).Child("equippedOn").Value = "";
-                    task.Child("weapons").Child(weaponName).Child("equippedSuppressor").Value = "";
+                    mutableData.Child("mods").Child(suppressorId).Child("equippedOn").Value = "";
+                    mutableData.Child("weapons").Child(weaponName).Child("equippedSuppressor").Value = "";
                     myMods[suppressorId].equippedOn = "";
                 }
                 else
@@ -758,8 +761,8 @@ public class PlayerData : MonoBehaviour
                     newModInfo.equippedSuppressor = equippedSuppressor;
                     newModInfo.weaponName = weaponName;
                     newModInfo.suppressorId = suppressorId;
-                    task.Child("mods").Child(suppressorId).Child("equippedOn").Value = weaponName;
-                    task.Child("weapons").Child(weaponName).Child("equippedSuppressor").Value = suppressorId;
+                    mutableData.Child("mods").Child(suppressorId).Child("equippedOn").Value = weaponName;
+                    mutableData.Child("weapons").Child(weaponName).Child("equippedSuppressor").Value = suppressorId;
                     myMods[suppressorId].equippedOn = weaponName;
                 }
 
@@ -788,8 +791,8 @@ public class PlayerData : MonoBehaviour
                     newModInfo.equippedSight = "";
                     newModInfo.weaponName = weaponName;
                     newModInfo.sightId = "";
-                    task.Child("mods").Child(sightId).Child("equippedOn").Value = "";
-                    task.Child("weapons").Child(weaponName).Child("equippedSight").Value = "";
+                    mutableData.Child("mods").Child(sightId).Child("equippedOn").Value = "";
+                    mutableData.Child("weapons").Child(weaponName).Child("equippedSight").Value = "";
                     myMods[sightId].equippedOn = "";
                 }
                 else
@@ -798,8 +801,8 @@ public class PlayerData : MonoBehaviour
                     newModInfo.equippedSight = equippedSight;
                     newModInfo.weaponName = weaponName;
                     newModInfo.sightId = sightId;
-                    task.Child("mods").Child(sightId).Child("equippedOn").Value = weaponName;
-                    task.Child("weapons").Child(weaponName).Child("equippedSight").Value = sightId;
+                    mutableData.Child("mods").Child(sightId).Child("equippedOn").Value = weaponName;
+                    mutableData.Child("weapons").Child(weaponName).Child("equippedSight").Value = sightId;
                     myMods[sightId].equippedOn = weaponName;
                 }
 
@@ -822,7 +825,7 @@ public class PlayerData : MonoBehaviour
                 }
             }
 
-            return TransactionResult.Success(task);
+            return TransactionResult.Success(mutableData);
         });
     }
 
@@ -853,393 +856,446 @@ public class PlayerData : MonoBehaviour
     }
 
     public void AddItemToInventory(string itemName, string type, float duration, bool purchased, bool stacking, uint gpCost, uint kashCost) {
-        DatabaseReference d = DAOScript.dao.dbRef;
-        d.RunTransaction(task => {
+        bool firstPass = true;
+        string modPushKey = "";
+        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai");
+        d.RunTransaction(mutableData => {
             if (type.Equals("Weapon")) {
                 // Only update duration if purchasing the item again
                 if (!stacking)
                 {
                     // If user already has item, then don't do anything (if stacking extra time wasn't input, bought new)
-                    if (myWeapons.ContainsKey(itemName))
+                    if (firstPass && myWeapons.ContainsKey(itemName))
                     {
-                        return TransactionResult.Success(task);
+                        return TransactionResult.Abort();
                     }
-                    WeaponData w = new WeaponData();
-                    w.name = itemName;
-                    w.acquireDate = DateTime.Now.ToString();
-                    w.duration = "" + duration;
-                    w.equippedClip = "";
-                    w.equippedSight = "";
-                    w.equippedSuppressor = "";
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("acquireDate").Value = w.acquireDate;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("duration").Value = w.duration;
+                    if (firstPass) {
+                        WeaponData w = new WeaponData();
+                        w.name = itemName;
+                        w.acquireDate = DateTime.Now.ToString();
+                        w.duration = "" + duration;
+                        w.equippedClip = "";
+                        w.equippedSight = "";
+                        w.equippedSuppressor = "";
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            myWeapons.Add(itemName, w);
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        } else
+                        {
+                            myWeapons.Add(itemName, w);
+                        }
+                    }
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("acquireDate").Value = myWeapons[itemName].acquireDate;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("duration").Value = myWeapons[itemName].duration;
                     if (type != "Melee") {
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("equippedSuppressor").Value = "";
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("equippedSight").Value = "";
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("equippedClip").Value = "";
+                        mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("equippedSuppressor").Value = "";
+                        mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("equippedSight").Value = "";
+                        mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("equippedClip").Value = "";
                     }
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        myWeapons.Add(itemName, w);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
-                    } else
-                    {
-                        myWeapons.Add(itemName, w);
-                    }
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + PlayerData.playerdata.info.kash;
                 } else {
                     WeaponData w = myWeapons[itemName];
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("duration").Value = ""+duration;
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
+                    if (firstPass) {
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        }
+                        w.duration = ""+(float.Parse(w.duration) + duration);
                     }
-                    w.duration = ""+duration;
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("weapons").Child(itemName).Child("duration").Value = w.duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + PlayerData.playerdata.info.kash;
                 }
             } else if (type.Equals("Character")) {
                 if (!stacking)
                 {
                     // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                    if (myCharacters.ContainsKey(itemName))
+                    if (firstPass && myCharacters.ContainsKey(itemName))
                     {
-                        return TransactionResult.Success(task);
+                        return TransactionResult.Abort();
                     }
-                    CharacterData c = new CharacterData();
-                    c.name = itemName;
-                    c.acquireDate = DateTime.Now.ToString();
-                    c.duration = "" + duration;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters").Child(itemName).Child("acquireDate").Value = c.acquireDate;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters").Child(itemName).Child("duration").Value = c.duration;
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        myCharacters.Add(itemName, c);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
-                        addDefaultClothingFlag = itemName;
-                    } else
-                    {
-                        myCharacters.Add(itemName, c);
+                    if (firstPass) {
+                        CharacterData c = new CharacterData();
+                        c.name = itemName;
+                        c.acquireDate = DateTime.Now.ToString();
+                        c.duration = "" + duration;
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            myCharacters.Add(itemName, c);
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                            addDefaultClothingFlag = itemName;
+                        } else
+                        {
+                            myCharacters.Add(itemName, c);
+                        }
                     }
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters").Child(itemName).Child("acquireDate").Value = myCharacters[itemName].acquireDate;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters").Child(itemName).Child("duration").Value = myCharacters[itemName].duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + PlayerData.playerdata.info.kash;
                 } else
                 {
                     CharacterData c = myCharacters[itemName];
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters").Child(itemName).Child("duration").Value = ""+duration;
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
+                    if (firstPass) {
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        }
+                        c.duration = ""+(float.Parse(c.duration) + duration);
                     }
-                    c.duration = ""+duration;
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("characters").Child(itemName).Child("duration").Value = c.duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + PlayerData.playerdata.info.kash;
                 }
             } else if (type.Equals("Top")) {
                 if (!stacking)
                 {
                     // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                    if (myTops.ContainsKey(itemName))
+                    if (firstPass && myTops.ContainsKey(itemName))
                     {
-                        return TransactionResult.Success(task);
+                        return TransactionResult.Abort();
                     }
-                    EquipmentData e = new EquipmentData();
-                    e.name = itemName;
-                    e.acquireDate = DateTime.Now.ToString();
-                    e.duration = "" + duration;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops").Child(itemName).Child("acquireDate").Value = e.acquireDate;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops").Child(itemName).Child("duration").Value = e.duration;
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        myTops.Add(itemName, e);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
-                    } else
-                    {
-                        myTops.Add(itemName, e);
+                    if (firstPass) {
+                        EquipmentData e = new EquipmentData();
+                        e.name = itemName;
+                        e.acquireDate = DateTime.Now.ToString();
+                        e.duration = "" + duration;
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            myTops.Add(itemName, e);
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        } else
+                        {
+                            myTops.Add(itemName, e);
+                        }
                     }
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops").Child(itemName).Child("acquireDate").Value = myTops[itemName].acquireDate;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops").Child(itemName).Child("duration").Value = myTops[itemName].duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + PlayerData.playerdata.info.kash;
                 } else
                 {
                     EquipmentData e = myTops[itemName];
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops").Child(itemName).Child("duration").Value = ""+duration;
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
+                    if (firstPass) {
+                        mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops").Child(itemName).Child("duration").Value = ""+duration;
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        }
+                        e.duration = ""+(float.Parse(e.duration) + duration);
                     }
-                    e.duration = ""+duration;
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("tops").Child(itemName).Child("duration").Value = e.duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + PlayerData.playerdata.info.kash;
                 }
             } else if (type.Equals("Bottom")) {
                 if (!stacking)
                 {
                     // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                    if (myBottoms.ContainsKey(itemName))
+                    if (firstPass && myBottoms.ContainsKey(itemName))
                     {
-                        return TransactionResult.Success(task);
+                        return TransactionResult.Abort();
                     }
-                    EquipmentData e = new EquipmentData();
-                    e.name = itemName;
-                    e.acquireDate = DateTime.Now.ToString();
-                    e.duration = "" + duration;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child(itemName).Child("acquireDate").Value = e.acquireDate;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child(itemName).Child("duration").Value = e.duration;
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        myBottoms.Add(itemName, e);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
-                    } else
-                    {
-                        myBottoms.Add(itemName, e);
+                    if (firstPass) {
+                        EquipmentData e = new EquipmentData();
+                        e.name = itemName;
+                        e.acquireDate = DateTime.Now.ToString();
+                        e.duration = "" + duration;
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            myBottoms.Add(itemName, e);
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        } else
+                        {
+                            myBottoms.Add(itemName, e);
+                        }
                     }
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child(itemName).Child("acquireDate").Value = myBottoms[itemName].acquireDate;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child(itemName).Child("duration").Value = myBottoms[itemName].duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = ""+PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = PlayerData.playerdata.info.kash;
                 } else
                 {
                     EquipmentData e = myBottoms[itemName];
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child(itemName).Child("duration").Value = ""+duration;
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
+                    if (firstPass) {
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        }
+                        e.duration = ""+(float.Parse(e.duration) + duration);
                     }
-                    e.duration = ""+duration;
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("bottoms").Child(itemName).Child("duration").Value = e.duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = ""+PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = ""+PlayerData.playerdata.info.kash;
                 }
             } else if (type.Equals("Armor")) {
                 if (!stacking)
                 {
                     // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                    if (myArmor.ContainsKey(itemName))
+                    if (firstPass && myArmor.ContainsKey(itemName))
                     {
-                        return TransactionResult.Success(task);
+                        return TransactionResult.Abort();
                     }
-                    ArmorData e = new ArmorData();
-                    e.name = itemName;
-                    e.acquireDate = DateTime.Now.ToString();
-                    e.duration = "" + duration;
-                    Debug.Log(itemName + "FUCK");
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor").Child(itemName).Child("acquireDate").Value = e.acquireDate;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor").Child(itemName).Child("duration").Value = e.duration;
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        myArmor.Add(itemName, e);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
-                    } else
-                    {
-                        myArmor.Add(itemName, e);
+                    if (firstPass) {
+                        ArmorData e = new ArmorData();
+                        e.name = itemName;
+                        e.acquireDate = DateTime.Now.ToString();
+                        e.duration = "" + duration;
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            myArmor.Add(itemName, e);
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        } else
+                        {
+                            myArmor.Add(itemName, e);
+                        }
                     }
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor").Child(itemName).Child("acquireDate").Value = myArmor[itemName].acquireDate;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor").Child(itemName).Child("duration").Value = myArmor[itemName].duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = ""+PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = ""+PlayerData.playerdata.info.kash;
                 } else
                 {
                     ArmorData a = myArmor[itemName];
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor").Child(itemName).Child("duration").Value = ""+duration;
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
+                    if (firstPass) {
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        }
+                        a.duration = ""+(float.Parse(a.duration) + duration);
                     }
-                    a.duration = ""+duration;
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("armor").Child(itemName).Child("duration").Value = a.duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = ""+PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = ""+PlayerData.playerdata.info.kash;
                 }
             } else if (type.Equals("Footwear")) {
                 if (!stacking)
                 {
                     // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                    if (myFootwear.ContainsKey(itemName))
+                    if (firstPass && myFootwear.ContainsKey(itemName))
                     {
-                        return TransactionResult.Success(task);
+                        return TransactionResult.Abort();
                     }
-                    EquipmentData e = new EquipmentData();
-                    e.name = itemName;
-                    e.acquireDate = DateTime.Now.ToString();
-                    e.duration = "" + duration;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear").Child(itemName).Child("acquireDate").Value = e.acquireDate;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear").Child(itemName).Child("duration").Value = e.duration;
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        myFootwear.Add(itemName, e);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
-                    } else
-                    {
-                        myFootwear.Add(itemName, e);
+                    if (firstPass) {
+                        EquipmentData e = new EquipmentData();
+                        e.name = itemName;
+                        e.acquireDate = DateTime.Now.ToString();
+                        e.duration = "" + duration;
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            myFootwear.Add(itemName, e);
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        } else
+                        {
+                            myFootwear.Add(itemName, e);
+                        }
                     }
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear").Child(itemName).Child("acquireDate").Value = myFootwear[itemName].acquireDate;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear").Child(itemName).Child("duration").Value = myFootwear[itemName].duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = ""+PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = ""+PlayerData.playerdata.info.kash;
                 } else
                 {
                     EquipmentData e = myFootwear[itemName];
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear").Child(itemName).Child("duration").Value = ""+duration;
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
+                    if (firstPass) {
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        }
+                        e.duration = ""+(float.Parse(e.duration) + duration);
                     }
-                    e.duration = ""+duration;
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("footwear").Child(itemName).Child("duration").Value = e.duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = ""+PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = ""+PlayerData.playerdata.info.kash;
                 }
             } else if (type.Equals("Headgear")) {
                 if (!stacking)
                 {
                     // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                    if (myHeadgear.ContainsKey(itemName))
+                    if (firstPass && myHeadgear.ContainsKey(itemName))
                     {
-                        return TransactionResult.Success(task);
+                        return TransactionResult.Abort();
                     }
-                    EquipmentData e = new EquipmentData();
-                    e.name = itemName;
-                    e.acquireDate = DateTime.Now.ToString();
-                    e.duration = "" + duration;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear").Child(itemName).Child("acquireDate").Value = e.acquireDate;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear").Child(itemName).Child("duration").Value = e.duration;
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        myHeadgear.Add(itemName, e);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
-                    } else
-                    {
-                        myHeadgear.Add(itemName, e);
+                    if (firstPass) {
+                        EquipmentData e = new EquipmentData();
+                        e.name = itemName;
+                        e.acquireDate = DateTime.Now.ToString();
+                        e.duration = "" + duration;
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            myHeadgear.Add(itemName, e);
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        } else
+                        {
+                            myHeadgear.Add(itemName, e);
+                        }
                     }
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear").Child(itemName).Child("acquireDate").Value = myHeadgear[itemName].acquireDate;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear").Child(itemName).Child("duration").Value = myHeadgear[itemName].duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = ""+PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = ""+PlayerData.playerdata.info.kash;
                 } else
                 {
                     EquipmentData e = myHeadgear[itemName];
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear").Child(itemName).Child("duration").Value = ""+duration;
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
+                    if (firstPass) {
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        }
+                        e.duration = ""+(float.Parse(e.duration) + duration);
                     }
-                    e.duration = ""+duration;
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("headgear").Child(itemName).Child("duration").Value = e.duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = ""+PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = ""+PlayerData.playerdata.info.kash;
                 }
             } else if (type.Equals("Facewear")) {
                 if (!stacking)
                 {
                     // If user already has item, then don't do anything (if stacking extra time wasn't input)
-                    if (myFacewear.ContainsKey(itemName))
+                    if (firstPass && myFacewear.ContainsKey(itemName))
                     {
-                        return TransactionResult.Success(task);
+                        return TransactionResult.Abort();
                     }
-                    EquipmentData e = new EquipmentData();
-                    e.name = itemName;
-                    e.acquireDate = DateTime.Now.ToString();
-                    e.duration = "" + duration;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear").Child(itemName).Child("acquireDate").Value = e.acquireDate;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear").Child(itemName).Child("duration").Value = e.duration;
-                    if (purchased)
-                    {
+                    if (firstPass) {
+                        EquipmentData e = new EquipmentData();
+                        e.name = itemName;
+                        e.acquireDate = DateTime.Now.ToString();
+                        e.duration = "" + duration;
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            myFacewear.Add(itemName, e);
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        } else
+                        {
+                            myFacewear.Add(itemName, e);
+                        }
+                    }
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear").Child(itemName).Child("acquireDate").Value = myFacewear[itemName].acquireDate;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear").Child(itemName).Child("duration").Value = myFacewear[itemName].duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + PlayerData.playerdata.info.kash;
+                } else
+                {
+                    EquipmentData e = myFacewear[itemName];
+                    if (firstPass) {
+                        if (purchased)
+                        {
+                            uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
+                            PlayerData.playerdata.info.gp = gpDiff;
+                            updateCurrencyFlag = true;
+                            purchaseSuccessfulFlag = true;
+                        }
+                        e.duration = ""+(float.Parse(e.duration) + duration);
+                    }
+                    firstPass = false;
+                    mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear").Child(itemName).Child("duration").Value = e.duration;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + PlayerData.playerdata.info.gp;
+                    mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + PlayerData.playerdata.info.kash;
+                }
+            } else if (type.Equals("Mod")) {
+                if (firstPass) {
+                    ModData m = new ModData();
+                    m.name = itemName;
+                    m.acquireDate = DateTime.Now.ToString();
+                    m.duration = ""+duration;
+                    m.equippedOn = "";
+                    DatabaseReference de = DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Push();
+                    if (de == null) {
+                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        return TransactionResult.Success(mutableData);
+                    }
+                    modPushKey = de.Key;
+                    m.id = modPushKey;
+                    if (purchased) {
                         uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        myFacewear.Add(itemName, e);
+                        myMods.Add(modPushKey, m);
                         PlayerData.playerdata.info.gp = gpDiff;
                         updateCurrencyFlag = true;
                         purchaseSuccessfulFlag = true;
                     } else
                     {
-                        myFacewear.Add(itemName, e);
+                        myMods.Add(modPushKey, m);
                     }
-                } else
-                {
-                    EquipmentData e = myFacewear[itemName];
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("facewear").Child(itemName).Child("duration").Value = ""+duration;
-                    if (purchased)
-                    {
-                        uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                        task.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                        PlayerData.playerdata.info.gp = gpDiff;
-                        updateCurrencyFlag = true;
-                        purchaseSuccessfulFlag = true;
-                    }
-                    e.duration = ""+duration;
                 }
-            } else if (type.Equals("Mod")) {
-                ModData m = new ModData();
-                m.name = itemName;
-                m.acquireDate = DateTime.Now.ToString();
-                m.duration = ""+duration;
-                m.equippedOn = "";
-                DatabaseReference de = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Push();
-                if (de == null) {
-                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                    return TransactionResult.Success(task);
-                }
-                string pushKey = de.Key;
-                m.id = pushKey;
-                task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(pushKey).Child("name").Value = m.name;
-                task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(pushKey).Child("equippedOn").Value = m.equippedOn;
-                task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(pushKey).Child("acquireDate").Value = m.acquireDate;
-                task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(pushKey).Child("duration").Value = m.duration;
-                if (purchased) {
-                    uint gpDiff = PlayerData.playerdata.info.gp - gpCost;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + gpDiff;
-                    task.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + (PlayerData.playerdata.info.kash - kashCost);
-                    myMods.Add(pushKey, m);
-                    PlayerData.playerdata.info.gp = gpDiff;
-                    updateCurrencyFlag = true;
-                    purchaseSuccessfulFlag = true;
-                } else
-                {
-                    myMods.Add(pushKey, m);
-                }
+                firstPass = false;
+                mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(modPushKey).Child("name").Value = myMods[modPushKey].name;
+                mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(modPushKey).Child("equippedOn").Value = myMods[modPushKey].equippedOn;
+                mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(modPushKey).Child("acquireDate").Value = myMods[modPushKey].acquireDate;
+                mutableData.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Child(modPushKey).Child("duration").Value = myMods[modPushKey].duration;
+                mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").Value = "" + PlayerData.playerdata.info.gp;
+                mutableData.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").Value = "" + PlayerData.playerdata.info.kash;
             }
 
-            return TransactionResult.Success(task);
+            return TransactionResult.Success(mutableData);
         });
     }
 
     // Removes item from inventory in DB
     public void DeleteItemFromInventory(string itemName, string type, string modId, bool expiring)
     {
-        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId);
+        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId);
         if (type.Equals("Weapon"))
         {
             // If item cannot be deleted, then skip
@@ -1247,93 +1303,124 @@ public class PlayerData : MonoBehaviour
             {
                 return;
             }
-            DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(taskA => {
+            DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(taskA => {
                 // Get any mods that are attached to it and unattach those as well
                 object equippedSuppressorId = taskA.Result.Child("weapons").Child(itemName).Child("equippedSuppressor").Value;
                 object equippedSightId = taskA.Result.Child("weapons").Child(itemName).Child("equippedSight").Value;
-                d.RunTransaction(task => {
+                bool firstPass = true;
+                d.RunTransaction(mutableData => {
+                    if (firstPass) {
+                        // Delete item locally
+                        // Unattach locally, and then save
+                        if (equippedSuppressorId != null) {
+                            string equippedSuppressorIdText = equippedSuppressorId.ToString();
+                            try {
+                                myMods[equippedSuppressorIdText].equippedOn = "";
+                            } catch (KeyNotFoundException e) {
+                                Debug.Log("Mod " + equippedSuppressorIdText + " was not loaded locally yet... skipping");
+                            }
+                            // Save in DB
+                            Debug.Log("Deleting: " + equippedSuppressorIdText + " off of weapon " + itemName);
+                            // mutableData.Child("mods").Child(equippedSuppressorIdText).Child("equippedOn").Value = "";
+                            // Debug.Log("Suppressor removed.");
+                        }
+                        if (equippedSightId != null) {
+                            string equippedSightIdText = equippedSightId.ToString();
+                            try {
+                                myMods[equippedSightIdText].equippedOn = "";
+                            } catch (KeyNotFoundException e) {
+                                Debug.Log("Mod " + equippedSightIdText + " was not loaded locally yet... skipping");
+                            }
+                            // Save in DB
+                            Debug.Log("Deleting: " + equippedSightIdText + " off of weapon " + itemName);
+                            // mutableData.Child("mods").Child(equippedSightIdText).Child("equippedOn").Value = "";
+                            // Debug.Log("Sight removed.");
+                        }
+                        // Debug.Log("Mods handled.");
+                        myWeapons.Remove(itemName);
+                        if (expiring)
+                        {
+                            itemsExpired.Add(itemName);
+                        }
+                        Debug.Log(itemName + " has been deleted!");
+                        if (PlayerData.playerdata.info.equippedPrimary == itemName)
+                        {
+                            Debug.Log(itemName + " was deleted and now equipping def " + PlayerData.playerdata.info.defaultWeapon);
+                            PlayerData.playerdata.info.equippedPrimary = PlayerData.playerdata.info.defaultWeapon;
+                            Debug.Log(PlayerData.playerdata.info.equippedPrimary + " woo");
+                            //PlayerData.playerdata.primaryModInfo = LoadModDataForWeapon(DEFAULT_PRIMARY);
+                            reloadPlayerFlag = true;
+                        } else if (PlayerData.playerdata.info.equippedSecondary == itemName)
+                        {
+                            PlayerData.playerdata.info.equippedSecondary = DEFAULT_SECONDARY;
+                            //PlayerData.playerdata.secondaryModInfo = LoadModDataForWeapon(DEFAULT_SECONDARY);
+                            reloadPlayerFlag = true;
+                        } else if (PlayerData.playerdata.info.equippedSupport == itemName)
+                        {
+                            PlayerData.playerdata.info.equippedSupport = DEFAULT_SUPPORT;
+                            //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
+                            reloadPlayerFlag = true;
+                        } else if (PlayerData.playerdata.info.equippedMelee == itemName)
+                        {
+                            PlayerData.playerdata.info.equippedMelee = DEFAULT_MELEE;
+                            //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
+                            reloadPlayerFlag = true;
+                        }
+                    }
+                    firstPass = false;
                     // Deletes item in DB
-                    task.Child("weapons").Child(itemName).Value = null;
-                    // Delete item locally
-                    // Unattach locally, and then save
-                    if (equippedSuppressorId != null) {
-                        string equippedSuppressorIdText = equippedSuppressorId.ToString();
-                        try {
-                            myMods[equippedSuppressorIdText].equippedOn = "";
-                        } catch (KeyNotFoundException e) {
-                            Debug.Log("Mod " + equippedSuppressorIdText + " was not loaded locally yet... skipping");
+                    if (mutableData.Child("weapons/" + itemName).Value != null) {
+                        Dictionary<string, object> da = mutableData.Child("weapons/" + itemName).Value as Dictionary<string, object>;
+                        da["acquireDate"] = null;
+                        da["duration"] = null;
+                        if (InventoryScript.itemData.weaponCatalog[itemName].type != "Melee") {
+                            da["equippedClip"] = null;
+                            da["equippedSight"] = null;
+                            da["equippedSuppressor"] = null;
                         }
-                        // Save in DB
-                        Debug.Log("Deleting: " + equippedSuppressorIdText + " off of weapon " + itemName);
-                        task.Child("mods").Child(equippedSuppressorIdText).Child("equippedOn").Value = "";
-                        // Debug.Log("Suppressor removed.");
+                        mutableData.Child("weapons/" + itemName).Value = da;
                     }
-                    if (equippedSightId != null) {
-                        string equippedSightIdText = equippedSightId.ToString();
-                        try {
-                            myMods[equippedSightIdText].equippedOn = "";
-                        } catch (KeyNotFoundException e) {
-                            Debug.Log("Mod " + equippedSightIdText + " was not loaded locally yet... skipping");
-                        }
-                        // Save in DB
-                        Debug.Log("Deleting: " + equippedSightIdText + " off of weapon " + itemName);
-                        task.Child("mods").Child(equippedSightIdText).Child("equippedOn").Value = "";
-                        // Debug.Log("Sight removed.");
+                    if (equippedSuppressorId != null && !"".Equals(equippedSuppressorId)) {
+                        mutableData.Child("mods").Child(equippedSuppressorId.ToString()).Child("equippedOn").Value = "";
                     }
-                    // Debug.Log("Mods handled.");
-                    myWeapons.Remove(itemName);
-                    if (expiring)
-                    {
-                        itemsExpired.Add(itemName);
+                    if (equippedSightId != null && !"".Equals(equippedSightId)) {
+                        mutableData.Child("mods").Child(equippedSightId.ToString()).Child("equippedOn").Value = "";
                     }
-                    Debug.Log(itemName + " has been deleted!");
-                    if (PlayerData.playerdata.info.equippedPrimary == itemName)
-                    {
-                        PlayerData.playerdata.info.equippedPrimary = PlayerData.playerdata.info.defaultWeapon;
-                        //PlayerData.playerdata.primaryModInfo = LoadModDataForWeapon(DEFAULT_PRIMARY);
-                        reloadPlayerFlag = true;
-                    } else if (PlayerData.playerdata.info.equippedSecondary == itemName)
-                    {
-                        PlayerData.playerdata.info.equippedSecondary = DEFAULT_SECONDARY;
-                        //PlayerData.playerdata.secondaryModInfo = LoadModDataForWeapon(DEFAULT_SECONDARY);
-                        reloadPlayerFlag = true;
-                    } else if (PlayerData.playerdata.info.equippedSupport == itemName)
-                    {
-                        PlayerData.playerdata.info.equippedSupport = DEFAULT_SUPPORT;
-                        //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
-                        reloadPlayerFlag = true;
-                    } else if (PlayerData.playerdata.info.equippedMelee == itemName)
-                    {
-                        PlayerData.playerdata.info.equippedMelee = DEFAULT_MELEE;
-                        //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
-                        reloadPlayerFlag = true;
-                    }
-                    return TransactionResult.Success(task);
+                    return TransactionResult.Success(mutableData);
                 });
             });
         }
         else if (type.Equals("Character"))
         {
-            d.RunTransaction(task => {
-                task.Child("characters").Child(itemName).Value = null;
-                // Delete item locally
-                myCharacters.Remove(itemName);
-                if (expiring)
-                {
-                    itemsExpired.Add(itemName);
+            bool firstPass = true;
+            d.RunTransaction(mutableData => {
+                if (mutableData.Child("characters/" + itemName).Value != null) {
+                    Dictionary<string, object> da = mutableData.Child("characters/" + itemName).Value as Dictionary<string, object>;
+                    da["acquireDate"] = null;
+                    da["duration"] = null;
+                    mutableData.Child("characters/" + itemName).Value = da;
                 }
-                Debug.Log(itemName + " has been deleted!");
-                // Equip default if item currently equipped
-                if (PlayerData.playerdata.info.equippedCharacter == itemName)
-                {
-                    PlayerData.playerdata.info.equippedCharacter = PlayerData.playerdata.info.defaultChar;
-                    PlayerData.playerdata.info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
-                    PlayerData.playerdata.info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
-                    reinstantiatePlayerFlag = true;
-                    reloadPlayerFlag = true;
+                if (firstPass) {
+                    // Delete item locally
+                    myCharacters.Remove(itemName);
+                    if (expiring)
+                    {
+                        itemsExpired.Add(itemName);
+                    }
+                    Debug.Log(itemName + " has been deleted!");
+                    // Equip default if item currently equipped
+                    if (PlayerData.playerdata.info.equippedCharacter == itemName)
+                    {
+                        PlayerData.playerdata.info.equippedCharacter = PlayerData.playerdata.info.defaultChar;
+                        PlayerData.playerdata.info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
+                        PlayerData.playerdata.info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
+                        reinstantiatePlayerFlag = true;
+                        reloadPlayerFlag = true;
+                    }
+                    deleteDefaultClothingFlag = itemName;
                 }
-                deleteDefaultClothingFlag = itemName;
-                return TransactionResult.Success(task);
+                firstPass = false;
+                return TransactionResult.Success(mutableData);
             });
         }
         else if (type.Equals("Top"))
@@ -1343,22 +1430,31 @@ public class PlayerData : MonoBehaviour
             {
                 return;
             }
-            d.RunTransaction(task => {
-                task.Child("tops").Child(itemName).Value = null;
-                // Delete item locally
-                myTops.Remove(itemName);
-                if (expiring)
-                {
-                    itemsExpired.Add(itemName);
+            bool firstPass = true;
+            d.RunTransaction(mutableData => {
+                if (mutableData.Child("tops/" + itemName).Value != null) {
+                    Dictionary<string, object> da = mutableData.Child("tops/" + itemName).Value as Dictionary<string, object>;
+                    da["acquireDate"] = null;
+                    da["duration"] = null;
+                    mutableData.Child("tops/" + itemName).Value = da;
                 }
-                Debug.Log(itemName + " has been deleted!");
-                // Equip default if item currently equipped
-                if (PlayerData.playerdata.info.equippedTop == itemName)
-                {
-                    PlayerData.playerdata.info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
-                    reloadPlayerFlag = true;
+                if (firstPass) {
+                    // Delete item locally
+                    myTops.Remove(itemName);
+                    if (expiring)
+                    {
+                        itemsExpired.Add(itemName);
+                    }
+                    Debug.Log(itemName + " has been deleted!");
+                    // Equip default if item currently equipped
+                    if (PlayerData.playerdata.info.equippedTop == itemName)
+                    {
+                        PlayerData.playerdata.info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
+                        reloadPlayerFlag = true;
+                    }
                 }
-                return TransactionResult.Success(task);
+                firstPass = false;
+                return TransactionResult.Success(mutableData);
             });
         }
         else if (type.Equals("Bottom"))
@@ -1368,43 +1464,61 @@ public class PlayerData : MonoBehaviour
             {
                 return;
             }
-            d.RunTransaction(task => {
-                task.Child("bottoms").Child(itemName).Value = null;
-                // Delete item locally
-                myBottoms.Remove(itemName);
-                if (expiring)
-                {
-                    itemsExpired.Add(itemName);
+            bool firstPass = true;
+            d.RunTransaction(mutableData => {
+                if (mutableData.Child("bottoms/" + itemName).Value != null) {
+                    Dictionary<string, object> da = mutableData.Child("bottoms/" + itemName).Value as Dictionary<string, object>;
+                    da["acquireDate"] = null;
+                    da["duration"] = null;
+                    mutableData.Child("bottoms/" + itemName).Value = da;
                 }
-                Debug.Log(itemName + " has been deleted!");
-                // Equip default if item currently equipped
-                if (PlayerData.playerdata.info.equippedBottom == itemName)
-                {
-                    PlayerData.playerdata.info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
-                    reloadPlayerFlag = true;
+                if (firstPass) {
+                    // Delete item locally
+                    myBottoms.Remove(itemName);
+                    if (expiring)
+                    {
+                        itemsExpired.Add(itemName);
+                    }
+                    Debug.Log(itemName + " has been deleted!");
+                    // Equip default if item currently equipped
+                    if (PlayerData.playerdata.info.equippedBottom == itemName)
+                    {
+                        PlayerData.playerdata.info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
+                        reloadPlayerFlag = true;
+                    }
                 }
-                return TransactionResult.Success(task);
+                firstPass = false;
+                return TransactionResult.Success(mutableData);
             });
         }
         else if (type.Equals("Armor"))
         {
-            d.RunTransaction(task => {
-                task.Child("armor").Child(itemName).Value = null;
-                // Delete item locally
-                myArmor.Remove(itemName);
-                if (expiring)
-                {
-                    itemsExpired.Add(itemName);
+            bool firstPass = true;
+            d.RunTransaction(mutableData => {
+                if (mutableData.Child("armor/" + itemName).Value != null) {
+                    Dictionary<string, object> da = mutableData.Child("armor/" + itemName).Value as Dictionary<string, object>;
+                    da["acquireDate"] = null;
+                    da["duration"] = null;
+                    mutableData.Child("armor/" + itemName).Value = da;
                 }
-                Debug.Log(itemName + " has been deleted!");
-                // Equip default if item currently equipped
-                if (PlayerData.playerdata.info.equippedArmor == itemName)
-                {
-                    PlayerData.playerdata.info.equippedArmor = "";
-                    reloadPlayerFlag = true;
-                    skipReloadCharacterFlag = true;
+                if (firstPass) {
+                    // Delete item locally
+                    myArmor.Remove(itemName);
+                    if (expiring)
+                    {
+                        itemsExpired.Add(itemName);
+                    }
+                    Debug.Log(itemName + " has been deleted!");
+                    // Equip default if item currently equipped
+                    if (PlayerData.playerdata.info.equippedArmor == itemName)
+                    {
+                        PlayerData.playerdata.info.equippedArmor = "";
+                        reloadPlayerFlag = true;
+                        skipReloadCharacterFlag = true;
+                    }
                 }
-                return TransactionResult.Success(task);
+                firstPass = false;
+                return TransactionResult.Success(mutableData);
             });
         }
         else if (type.Equals("Footwear"))
@@ -1414,23 +1528,32 @@ public class PlayerData : MonoBehaviour
             {
                 return;
             }
-            d.RunTransaction(task => {
-                task.Child("footwear").Child(itemName).Value = null;
-                // Delete item locally
-                myFootwear.Remove(itemName);
-                if (expiring)
-                {
-                    itemsExpired.Add(itemName);
+            bool firstPass = true;
+            d.RunTransaction(mutableData => {
+                if (mutableData.Child("footwear/" + itemName).Value != null) {
+                    Dictionary<string, object> da = mutableData.Child("footwear/" + itemName).Value as Dictionary<string, object>;
+                    da["acquireDate"] = null;
+                    da["duration"] = null;
+                    mutableData.Child("footwear/" + itemName).Value = da;
                 }
-                Debug.Log(itemName + " has been deleted!");
-                // Equip default if item currently equipped
-                if (PlayerData.playerdata.info.equippedFootwear == itemName)
-                {
-                    char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
-                    PlayerData.playerdata.info.equippedFootwear = (g == 'M' ? DEFAULT_FOOTWEAR_MALE : DEFAULT_FOOTWEAR_FEMALE); 
-                    reloadPlayerFlag = true;
+                if (firstPass) {
+                    // Delete item locally
+                    myFootwear.Remove(itemName);
+                    if (expiring)
+                    {
+                        itemsExpired.Add(itemName);
+                    }
+                    Debug.Log(itemName + " has been deleted!");
+                    // Equip default if item currently equipped
+                    if (PlayerData.playerdata.info.equippedFootwear == itemName)
+                    {
+                        char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
+                        PlayerData.playerdata.info.equippedFootwear = (g == 'M' ? DEFAULT_FOOTWEAR_MALE : DEFAULT_FOOTWEAR_FEMALE); 
+                        reloadPlayerFlag = true;
+                    }
                 }
-                return TransactionResult.Success(task);
+                firstPass = false;
+                return TransactionResult.Success(mutableData);
             });
         }
         else if (type.Equals("Headgear"))
@@ -1440,23 +1563,32 @@ public class PlayerData : MonoBehaviour
             {
                 return;
             }
-            d.RunTransaction(task => {
-                task.Child("headgear").Child(itemName).Value = null;
-                // Delete item locally
-                myHeadgear.Remove(itemName);
-                if (expiring)
-                {
-                    itemsExpired.Add(itemName);
+            bool firstPass = true;
+            d.RunTransaction(mutableData => {
+                if (mutableData.Child("headgear/" + itemName).Value != null) {
+                    Dictionary<string, object> da = mutableData.Child("headgear/" + itemName).Value as Dictionary<string, object>;
+                    da["acquireDate"] = null;
+                    da["duration"] = null;
+                    mutableData.Child("headgear/" + itemName).Value = da;
                 }
-                Debug.Log(itemName + " has been deleted!");
-                // Equip default if item currently equipped
-                if (PlayerData.playerdata.info.equippedHeadgear == itemName)
-                {
-                    PlayerData.playerdata.info.equippedHeadgear = "";
-                    reloadPlayerFlag = true;
-                    skipReloadCharacterFlag = true;
+                if (firstPass) {
+                    // Delete item locally
+                    myHeadgear.Remove(itemName);
+                    if (expiring)
+                    {
+                        itemsExpired.Add(itemName);
+                    }
+                    Debug.Log(itemName + " has been deleted!");
+                    // Equip default if item currently equipped
+                    if (PlayerData.playerdata.info.equippedHeadgear == itemName)
+                    {
+                        PlayerData.playerdata.info.equippedHeadgear = "";
+                        reloadPlayerFlag = true;
+                        skipReloadCharacterFlag = true;
+                    }
                 }
-                return TransactionResult.Success(task);
+                firstPass = false;
+                return TransactionResult.Success(mutableData);
             });
         }
         else if (type.Equals("Facewear"))
@@ -1466,58 +1598,81 @@ public class PlayerData : MonoBehaviour
             {
                 return;
             }
-            d.RunTransaction(task => {
-                task.Child("facewear").Child(itemName).Value = null;
-                // Delete item locally
-                myFacewear.Remove(itemName);
-                if (expiring)
-                {
-                    itemsExpired.Add(itemName);
+            bool firstPass = true;
+            d.RunTransaction(mutableData => {
+                if (mutableData.Child("facewear/" + itemName).Value != null) {
+                    Dictionary<string, object> da = mutableData.Child("facewear/" + itemName).Value as Dictionary<string, object>;
+                    da["acquireDate"] = null;
+                    da["duration"] = null;
+                    mutableData.Child("facewear/" + itemName).Value = da;
                 }
-                Debug.Log(itemName + " has been deleted!");
-                // Equip default if item currently equipped
-                if (PlayerData.playerdata.info.equippedFacewear == itemName)
-                {
-                    PlayerData.playerdata.info.equippedFacewear = "";
-                    reloadPlayerFlag = true;
-                    skipReloadCharacterFlag = true;
+                if (firstPass) {
+                    // Delete item locally
+                    myFacewear.Remove(itemName);
+                    if (expiring)
+                    {
+                        itemsExpired.Add(itemName);
+                    }
+                    Debug.Log(itemName + " has been deleted!");
+                    // Equip default if item currently equipped
+                    if (PlayerData.playerdata.info.equippedFacewear == itemName)
+                    {
+                        PlayerData.playerdata.info.equippedFacewear = "";
+                        reloadPlayerFlag = true;
+                        skipReloadCharacterFlag = true;
+                    }
                 }
-                return TransactionResult.Success(task);
+                firstPass = false;
+                return TransactionResult.Success(mutableData);
             });
         }
         else if (type.Equals("Mod"))
         {
-            d.RunTransaction(task => {
-                task.Child("mods").Child(modId).Value = null;
-                // Get weapon that the mod was equipped on
-                ModData m = myMods[modId];
-                string weaponName = m.equippedOn;
-                // If the mod was equipped to a weapon, unequip it from that weapon first and save
-                if (weaponName != null && !"".Equals(weaponName))
-                {
-                    // Delete locally and in DB
-                    string childModType = "";
-                    if (InventoryScript.itemData.modCatalog[m.name].category == "Suppressor")
-                    {
-                        childModType = "equippedSuppressor";
-                        myWeapons[weaponName].equippedSuppressor = "";
-                    } else if (InventoryScript.itemData.modCatalog[m.name].category == "Sight")
-                    {
-                        childModType = "equippedSight";
-                        myWeapons[weaponName].equippedSight = "";
-                    } else if (InventoryScript.itemData.modCatalog[m.name].category == "Clip")
-                    {
-                        childModType = "equippedClip";
-                        myWeapons[weaponName].equippedClip = "";
-                    }
-                    // Remove attachment from weapon
-                    task.Child("weapons").Child(weaponName).Child(childModType).Value = "";
-                    Debug.Log(itemName + " was removed from " + weaponName + " since it was deleted from your inventory.");
+            bool firstPass = true;
+            string weaponName = null;
+            string childModType = null;
+            d.RunTransaction(mutableData => {
+                if (mutableData.Child("mods/" + modId).Value != null) {
+                    Dictionary<string, object> da = mutableData.Child("mods/" + modId).Value as Dictionary<string, object>;
+                    da["acquireDate"] = null;
+                    da["duration"] = null;
+                    da["equippedOn"] = null;
+                    da["name"] = null;
+                    mutableData.Child("mods/" + modId).Value = da;
                 }
-                // Delete item locally
-                myMods.Remove(modId);
-                Debug.Log(itemName + " has been deleted!");
-                return TransactionResult.Success(task);
+                if (firstPass) {
+                    // Get weapon that the mod was equipped on
+                    ModData m = myMods[modId];
+                    weaponName = m.equippedOn;
+                    // If the mod was equipped to a weapon, unequip it from that weapon first and save
+                    if (weaponName != null && !"".Equals(weaponName))
+                    {
+                        // Delete locally and in DB
+                        if (InventoryScript.itemData.modCatalog[m.name].category == "Suppressor")
+                        {
+                            childModType = "equippedSuppressor";
+                            myWeapons[weaponName].equippedSuppressor = "";
+                        } else if (InventoryScript.itemData.modCatalog[m.name].category == "Sight")
+                        {
+                            childModType = "equippedSight";
+                            myWeapons[weaponName].equippedSight = "";
+                        } else if (InventoryScript.itemData.modCatalog[m.name].category == "Clip")
+                        {
+                            childModType = "equippedClip";
+                            myWeapons[weaponName].equippedClip = "";
+                        }
+                        // Remove attachment from weapon
+                        Debug.Log(itemName + " was removed from " + weaponName + " since it was deleted from your inventory.");
+                    }
+                    // Delete item locally
+                    myMods.Remove(modId);
+                    Debug.Log(itemName + " has been deleted!");
+                }
+                firstPass = false;
+                if (weaponName != null && weaponName != "" && childModType != null && childModType != "") {
+                    mutableData.Child("weapons").Child(weaponName).Child(childModType).Value = "";
+                }
+                return TransactionResult.Success(mutableData);
             });
         }
     }
@@ -1527,11 +1682,11 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.exp = (uint)Mathf.Min(PlayerData.playerdata.info.exp + aExp, PlayerData.MAX_EXP);
         PlayerData.playerdata.info.gp = (uint)Mathf.Min(PlayerData.playerdata.info.gp + aGp, PlayerData.MAX_GP);
         // Save to DB
-        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
-        d.RunTransaction(task => {
-            task.Child("exp").Value = "" + PlayerData.playerdata.info.exp;
-            task.Child("gp").Value = "" + PlayerData.playerdata.info.gp;
-            return TransactionResult.Success(task);
+        DatabaseReference d = DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId);
+        d.RunTransaction(mutableData => {
+            mutableData.Child("exp").Value = "" + PlayerData.playerdata.info.exp;
+            mutableData.Child("gp").Value = "" + PlayerData.playerdata.info.gp;
+            return TransactionResult.Success(mutableData);
         });
     }
 

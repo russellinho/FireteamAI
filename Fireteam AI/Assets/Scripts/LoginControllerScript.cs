@@ -102,7 +102,7 @@ public class LoginControllerScript : MonoBehaviour
             AuthScript.authHandler.user = task.Result;
             //QueuePopup("User signed in successfully: {" + newUser.DisplayName + "} ({" + newUser.UserId + "})");
             // Query DB to see if the user is set up yet. If not, go to setup. Else, go to title page.
-            DAOScript.dao.dbRef.Child("fteam_ai_users").GetValueAsync().ContinueWith(taskA => {
+            DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").GetValueAsync().ContinueWith(taskA => {
                 if (taskA.IsFaulted) {
                     popupMessage = ""+taskA.Exception;
                     activatePopupFlag = true;

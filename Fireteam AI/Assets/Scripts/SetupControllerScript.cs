@@ -157,7 +157,7 @@ public class SetupControllerScript : MonoBehaviour
         }
 
         // Check if username is taken
-        DAOScript.dao.dbRef.Child("fteam_ai_takenUsernames").GetValueAsync().ContinueWith(taskA => {
+        DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_takenUsernames").GetValueAsync().ContinueWith(taskA => {
             if (taskA.IsFaulted) {
                 activatePopupFlag = true;
                 popupMessage = "Database is currently unavailable. Please try again later.";
@@ -174,7 +174,7 @@ public class SetupControllerScript : MonoBehaviour
                         completeCharCreationFlag = false;
                     } else {
                         // Everything is passed, create player data and mark username as taken
-                        DAOScript.dao.dbRef.Child("fteam_ai_takenUsernames").Child(potentialNameLower).SetValueAsync("true").ContinueWith(taskB => {
+                        DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_takenUsernames").Child(potentialNameLower).SetValueAsync("true").ContinueWith(taskB => {
                             if (taskB.IsFaulted) {
                                 activatePopupFlag = true;
                                 // popupMessage = "Database is currently unavailable. Please try again later.";
@@ -190,7 +190,7 @@ public class SetupControllerScript : MonoBehaviour
                                     "\"gp\":\"100000\"," +
                                     "\"kash\":\"0\"" +
                                 "}";
-                                DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).SetRawJsonValueAsync(json).ContinueWith(taskE => {
+                                DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).SetRawJsonValueAsync(json).ContinueWith(taskE => {
                                     if (taskE.IsFaulted) {
                                         activatePopupFlag = true;
                                         // popupMessage = "Database is currently unavailable. Please try again later.";
@@ -336,7 +336,7 @@ public class SetupControllerScript : MonoBehaviour
                                         //     + "}" +
                                         // "}" +
                                         "}";
-                                        DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).SetRawJsonValueAsync(jsonA).ContinueWith(taskC => {
+                                        DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).SetRawJsonValueAsync(jsonA).ContinueWith(taskC => {
                                             if (taskC.IsFaulted) {
                                                 // Debug.Log(taskC.Exception.Message);
                                                 TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
@@ -347,7 +347,7 @@ public class SetupControllerScript : MonoBehaviour
                                                     "\"acquireDate\":\"" + DateTime.Now + "\"," +
                                                     "\"duration\":\"-1\"" +
                                                 "}";
-                                                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Push().SetRawJsonValueAsync(jsonTemp).ContinueWith(taskD => {
+                                                DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Push().SetRawJsonValueAsync(jsonTemp).ContinueWith(taskD => {
                                                     if (taskD.IsFaulted) {
                                                         TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                                                     } else if (taskD.IsCompleted) {

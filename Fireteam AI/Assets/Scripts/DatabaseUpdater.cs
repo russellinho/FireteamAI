@@ -59,39 +59,39 @@ public class DatabaseUpdater : MonoBehaviour
             return;
         }
 
-        DAOScript.dao.dbRef.Child("fteam_ai_inventory").GetValueAsync().ContinueWith(taskA => {
+        DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_inventory").GetValueAsync().ContinueWith(taskA => {
             Debug.Log("updated");
             IEnumerator<DataSnapshot> accountInventories = taskA.Result.Children.GetEnumerator();
             while (accountInventories.MoveNext()) {
                 DataSnapshot account = accountInventories.Current;
                 string accountId = account.Key.ToString();
                 Debug.Log(accountId + " updated");
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(accountId).Child(category).Child(itemToAdd).Child("acquireDate").SetValueAsync(DateTime.Now.ToString());
-                DAOScript.dao.dbRef.Child("fteam_ai_inventory").Child(accountId).Child(category).Child(itemToAdd).Child("duration").SetValueAsync(""+totalMins);
+                DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_inventory").Child(accountId).Child(category).Child(itemToAdd).Child("acquireDate").SetValueAsync(DateTime.Now.ToString());
+                DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_inventory").Child(accountId).Child(category).Child(itemToAdd).Child("duration").SetValueAsync(""+totalMins);
             }
         });
     }
 
     public void AddEquippedMeleeFieldToAllAccounts() {
-        DAOScript.dao.dbRef.Child("fteam_ai_users").GetValueAsync().ContinueWith(taskA => {
+        DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").GetValueAsync().ContinueWith(taskA => {
             IEnumerator<DataSnapshot> accountsSavedData = taskA.Result.Children.GetEnumerator();
             while (accountsSavedData.MoveNext()) {
                 DataSnapshot account = accountsSavedData.Current;
                 string accountId = account.Key.ToString();
                 Debug.Log(accountId + " updated");
-                DAOScript.dao.dbRef.Child("fteam_ai_users").Child(accountId).Child("equipment").Child("equippedMelee").SetValueAsync("Recon Knife");
+                DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(accountId).Child("equipment").Child("equippedMelee").SetValueAsync("Recon Knife");
             }
         });
     }
 
     public void AddDefaultWeaponFieldToAllAccounts() {
-        DAOScript.dao.dbRef.Child("fteam_ai_users").GetValueAsync().ContinueWith(taskA => {
+        DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").GetValueAsync().ContinueWith(taskA => {
             IEnumerator<DataSnapshot> accountsSavedData = taskA.Result.Children.GetEnumerator();
             while (accountsSavedData.MoveNext()) {
                 DataSnapshot account = accountsSavedData.Current;
                 string accountId = account.Key.ToString();
                 Debug.Log(accountId + " updated");
-                DAOScript.dao.dbRef.Child("fteam_ai_users").Child(accountId).Child("defaultWeapon").SetValueAsync("M4A1");
+                DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(accountId).Child("defaultWeapon").SetValueAsync("M4A1");
             }
         });
     }

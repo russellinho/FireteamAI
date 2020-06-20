@@ -3547,7 +3547,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         float totalNewDuration = ConvertDurationInput(durationSelectionDropdown.value);
         totalNewDuration = (Mathf.Approximately(totalNewDuration, -1f) ? totalNewDuration : totalNewDuration + hasDuplicateCheck);
         // Reach out to DB to verify player's GP and KASH before purchase
-		DAOScript.dao.dbRef.Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
+		DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
 			if (task.IsCompleted) {
 				PlayerData.playerdata.info.gp = uint.Parse(task.Result.Child("gp").Value.ToString());
 				// PlayerData.playerdata.info.kash = uint.Parse(task.Result.Child("kash").Value.ToString());
