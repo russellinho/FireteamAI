@@ -103,7 +103,7 @@ public class PlayerData : MonoBehaviour
             dataLoadedFlag = false;
             inventoryLoadedFlag = false;
         }
-        if (saveDataFlag) {
+        if (saveDataFlag && bodyReference != null) {
             SavePlayerData();
             saveDataFlag = false;
         }
