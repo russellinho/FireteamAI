@@ -15,7 +15,7 @@ namespace Photon.Pun.LobbySystemPhoton
 {
 	public class ListPlayer : MonoBehaviourPunCallbacks
 	{
-		private PhotonView pView;
+		public PhotonView pView;
 
 		[Header("Inside Room Panel")]
 		public GameObject[] InsideRoomPanel;
@@ -69,7 +69,7 @@ namespace Photon.Pun.LobbySystemPhoton
         private Queue loadPlayerQueue = new Queue();
 
 		void Start() {
-			SetMapInfo ();
+			SetMapInfo (true);
 			pView = GetComponent<PhotonView> ();
 			redTeam = new ArrayList();
 			blueTeam = new ArrayList();
@@ -333,8 +333,18 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		}
 
-		void SetMapInfo() {
-            pView.RPC("RpcSetMapInfo", RpcTarget.All, mapIndex);
+		void SetMapInfo(bool offline = false) {
+			if (offline) {
+				Texture mapTexture = (Texture)Resources.Load(mapStrings[mapIndex]);
+				mapPreviewThumb.texture = mapTexture;
+				mapPreviewTxt.text = mapNames [mapIndex];
+				mapPreviewVsThumb.texture = mapTexture;
+				mapPreviewVsTxt.text = mapNames[mapIndex];
+			} else {
+				if (PhotonNetwork.IsMasterClient) {
+            		pView.RPC("RpcSetMapInfo", RpcTarget.All, mapIndex);
+				}
+			}
 		}
 
 		[PunRPC]
@@ -373,6 +383,10 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnJoinedRoom()
 		{
+			if (PhotonNetwork.IsMasterClient) {
+				mapIndex = 0;
+				SetMapInfo(true);
+			}
             // Disable any loading screens
             connexion.ToggleLobbyLoadingScreen(false);
 			Hashtable h = new Hashtable();
@@ -382,6 +396,8 @@ namespace Photon.Pun.LobbySystemPhoton
 			currentMode = (!templateUIClassVs.gameObject.activeInHierarchy ? 'C' : 'V');
 			if (!PhotonNetwork.IsMasterClient) {
 				ToggleMapChangeButtons(false);
+			} else {
+				ToggleMapChangeButtons(true);
 			}
 			if (currentMode == 'V') {
 				OnJoinedRoomVersus();
@@ -614,6 +630,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 			playerListEntries.Add(newPlayer.ActorNumber, entry);
             loadPlayerQueue.Enqueue(newPlayer);
+			SetMapInfo();
 		}
 
 		public override void OnPlayerLeftRoom(Player otherPlayer)
@@ -635,6 +652,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnLeftRoom()
 		{
+			mapIndex = 0;
 			templateUIClass.RoomPanel.SetActive(false);
             templateUIClassVs.RoomPanel.SetActive(false);
 			templateUIClass.ListRoomPanel.SetActive(true);

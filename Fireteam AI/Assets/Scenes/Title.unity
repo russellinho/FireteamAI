@@ -69652,6 +69652,11 @@ PrefabInstance:
       propertyPath: InsideRoomPanelVs.Array.data[15]
       value: 
       objectReference: {fileID: 1196318176}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: pView
+      value: 
+      objectReference: {fileID: 722466562}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5abdf14a6d1684959a3511f4a2bcf083, type: 3}
 --- !u!1 &1584868364
