@@ -503,7 +503,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void HandleCrouch()
     {
-        if (PlayerPreferences.playerPreferences.KeyWasPressed("Crouch"))
+        if (PlayerPreferences.playerPreferences.KeyWasPressed("Crouch") && !fpc.m_IsRunning)
         {
             fpc.m_IsCrouching = !fpc.m_IsCrouching;
             if (!fpc.IsFullyMobile()) {
