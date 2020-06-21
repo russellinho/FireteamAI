@@ -334,7 +334,13 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		void SetMapInfo() {
-            Texture mapTexture = (Texture)Resources.Load(mapStrings[mapIndex]);
+            pView.RPC("RpcSetMapInfo", RpcTarget.All, mapIndex);
+		}
+
+		[PunRPC]
+		void RpcSetMapInfo(int i) {
+			mapIndex = i;
+			Texture mapTexture = (Texture)Resources.Load(mapStrings[mapIndex]);
             mapPreviewThumb.texture = mapTexture;
 			mapPreviewTxt.text = mapNames [mapIndex];
             mapPreviewVsThumb.texture = mapTexture;
