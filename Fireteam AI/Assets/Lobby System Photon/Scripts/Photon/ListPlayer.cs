@@ -234,11 +234,11 @@ namespace Photon.Pun.LobbySystemPhoton
 		void StartGame(string level) {
 			// Photon switch scene from lobby to loading screen to actual game. automaticallySyncScene should load map on clients.
 			if (level.Equals ("Badlands: Act I")) {
-				PhotonNetwork.LoadLevel ("Badlands1");
+				pView.RPC("RpcStartCampaignGame", RpcTarget.All, "Badlands1");
 			} else if (level.Equals("Badlands: Act II")) {
-				PhotonNetwork.LoadLevel ("Badlands2");
+				pView.RPC("RpcStartCampaignGame", RpcTarget.All, "Badlands2");
 			} else {
-				PhotonNetwork.LoadLevel (level);
+				pView.RPC("RpcStartCampaignGame", RpcTarget.All, level);
 			}
 		}
 
@@ -251,6 +251,12 @@ namespace Photon.Pun.LobbySystemPhoton
                 pView.RPC("RpcStartVersusGame", RpcTarget.All, level);
 			}
         }
+
+		[PunRPC]
+		void RpcStartCampaignGame(string level) {
+			LoadingScreen();
+			PhotonNetwork.LoadLevel(level);
+		}
 
         [PunRPC]
         void RpcStartVersusGame(string level) {
@@ -277,7 +283,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			chat.sendChatOfMaster ("Game starting in 1");
 			yield return new WaitForSeconds (1f);
 
-			pView.RPC ("RpcLoadingScreen", RpcTarget.All);
+			// pView.RPC ("RpcLoadingScreen", RpcTarget.All);
 			if (PhotonNetwork.IsMasterClient) {
 				StartGame (mapNames [mapIndex]);
 			}
