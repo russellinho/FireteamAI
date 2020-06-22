@@ -37,6 +37,7 @@ namespace Photon.Pun.Demo.Asteroids
         public Button StartGameButton;
         public GameObject PlayerListEntryPrefab;
 
+        private Dictionary<string, RoomInfo> cachedRoomList;
         private Dictionary<string, GameObject> roomListEntries;
         private Dictionary<int, GameObject> playerListEntries;
 
@@ -46,8 +47,9 @@ namespace Photon.Pun.Demo.Asteroids
         {
             PhotonNetwork.AutomaticallySyncScene = true;
 
+            cachedRoomList = new Dictionary<string, RoomInfo>();
             roomListEntries = new Dictionary<string, GameObject>();
-
+            
             PlayerNameInput.text = "Player " + Random.Range(1000, 10000);
         }
 
@@ -63,11 +65,15 @@ namespace Photon.Pun.Demo.Asteroids
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
             ClearRoomListView();
-            ApplyRoomListUpdateToView(roomList);
+
+            UpdateCachedRoomList(roomList);
+            UpdateRoomListView();
         }
 
         public override void OnLeftLobby()
         {
+            cachedRoomList.Clear();
+
             ClearRoomListView();
         }
 
@@ -191,6 +197,11 @@ namespace Photon.Pun.Demo.Asteroids
 
         public void OnBackButtonClicked()
         {
+            if (PhotonNetwork.InLobby)
+            {
+                PhotonNetwork.LeaveLobby();
+            }
+
             SetActivePanel(SelectionPanel.name);
         }
 
@@ -241,8 +252,8 @@ namespace Photon.Pun.Demo.Asteroids
             {
                 PhotonNetwork.JoinLobby();
             }
-            SetActivePanel(RoomListPanel.name);
 
+            SetActivePanel(RoomListPanel.name);
         }
 
         public void OnStartGameButtonClicked()
@@ -254,24 +265,6 @@ namespace Photon.Pun.Demo.Asteroids
         }
 
         #endregion
-
-        private void ApplyRoomListUpdateToView(List<RoomInfo> roomList)
-        {
-            foreach (RoomInfo info in roomList)
-            {
-                if (!info.IsOpen || !info.IsVisible || info.removedFromList)
-                {
-                    continue;
-                }
-
-                GameObject entry = Instantiate(RoomListEntryPrefab);
-                entry.transform.SetParent(RoomListContent.transform);
-                entry.transform.localScale = Vector3.one;
-                entry.GetComponent<RoomListEntry>().Initialize(info.Name, (byte) info.PlayerCount, info.MaxPlayers);
-
-                roomListEntries.Add(info.Name, entry);
-            }
-        }
 
         private bool CheckPlayersReady()
         {
@@ -298,7 +291,7 @@ namespace Photon.Pun.Demo.Asteroids
 
             return true;
         }
-
+        
         private void ClearRoomListView()
         {
             foreach (GameObject entry in roomListEntries.Values)
@@ -322,6 +315,47 @@ namespace Photon.Pun.Demo.Asteroids
             JoinRandomRoomPanel.SetActive(activePanel.Equals(JoinRandomRoomPanel.name));
             RoomListPanel.SetActive(activePanel.Equals(RoomListPanel.name));    // UI should call OnRoomListButtonClicked() to activate this
             InsideRoomPanel.SetActive(activePanel.Equals(InsideRoomPanel.name));
+        }
+
+        private void UpdateCachedRoomList(List<RoomInfo> roomList)
+        {
+            foreach (RoomInfo info in roomList)
+            {
+                // Remove room from cached room list if it got closed, became invisible or was marked as removed
+                if (!info.IsOpen || !info.IsVisible || info.RemovedFromList)
+                {
+                    if (cachedRoomList.ContainsKey(info.Name))
+                    {
+                        cachedRoomList.Remove(info.Name);
+                    }
+
+                    continue;
+                }
+
+                // Update cached room info
+                if (cachedRoomList.ContainsKey(info.Name))
+                {
+                    cachedRoomList[info.Name] = info;
+                }
+                // Add new room info to cache
+                else
+                {
+                    cachedRoomList.Add(info.Name, info);
+                }
+            }
+        }
+
+        private void UpdateRoomListView()
+        {
+            foreach (RoomInfo info in cachedRoomList.Values)
+            {
+                GameObject entry = Instantiate(RoomListEntryPrefab);
+                entry.transform.SetParent(RoomListContent.transform);
+                entry.transform.localScale = Vector3.one;
+                entry.GetComponent<RoomListEntry>().Initialize(info.Name, (byte)info.PlayerCount, info.MaxPlayers);
+
+                roomListEntries.Add(info.Name, entry);
+            }
         }
     }
 }

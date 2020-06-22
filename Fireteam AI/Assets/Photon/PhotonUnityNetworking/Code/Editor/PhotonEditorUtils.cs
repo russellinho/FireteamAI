@@ -9,45 +9,55 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using UnityEditor;
 using UnityEngine;
 
 using System.IO;
+using System.Text;
+using UnityEngine.Networking;
 
-namespace ExitGames.Client.Photon
+
+namespace Photon.Pun
 {
     [InitializeOnLoad]
-    public class PhotonEditorUtils
+    public static class PhotonEditorUtils
     {
         /// <summary>True if the ChatClient of the Photon Chat API is available. If so, the editor may (e.g.) show additional options in settings.</summary>
         public static bool HasChat;
+
         /// <summary>True if the VoiceClient of the Photon Voice API is available. If so, the editor may (e.g.) show additional options in settings.</summary>
         public static bool HasVoice;
+
+        public static bool HasPun;
+
         /// <summary>True if the PhotonEditorUtils checked the available products / APIs. If so, the editor may (e.g.) show additional options in settings.</summary>
         public static bool HasCheckedProducts;
 
         static PhotonEditorUtils()
         {
-            HasVoice = Type.GetType("ExitGames.Client.Photon.Voice.VoiceClient, Assembly-CSharp") != null || Type.GetType("ExitGames.Client.Photon.Voice.VoiceClient, Assembly-CSharp-firstpass") != null;
-            HasChat = Type.GetType("ExitGames.Client.Photon.Chat.ChatClient, Assembly-CSharp") != null || Type.GetType("ExitGames.Client.Photon.Chat.ChatClient, Assembly-CSharp-firstpass") != null;
+            HasVoice = Type.GetType("Photon.Voice.VoiceClient, Assembly-CSharp") != null || Type.GetType("Photon.Voice.VoiceClient, Assembly-CSharp-firstpass") != null || Type.GetType("Photon.Voice.VoiceClient, PhotonVoice.API") != null;
+            HasChat = Type.GetType("Photon.Chat.ChatClient, Assembly-CSharp") != null || Type.GetType("Photon.Chat.ChatClient, Assembly-CSharp-firstpass") != null || Type.GetType("Photon.Chat.ChatClient, PhotonChat") != null;
+            HasPun = Type.GetType("Photon.Pun.PhotonNetwork, Assembly-CSharp") != null || Type.GetType("Photon.Pun.PhotonNetwork, Assembly-CSharp-firstpass") != null || Type.GetType("Photon.Pun.PhotonNetwork, PhotonUnityNetworking") != null;
             PhotonEditorUtils.HasCheckedProducts = true;
 
-
-            // MOUNTING SYMBOLS
-            #if !PHOTON_UNITY_NETWORKING
+            if (HasPun)
+            {
+                // MOUNTING SYMBOLS
+                #if !PHOTON_UNITY_NETWORKING
                 AddScriptingDefineSymbolToAllBuildTargetGroups("PHOTON_UNITY_NETWORKING");
-            #endif
+                #endif
 
-            #if !PUN_2_0_OR_NEWER
+                #if !PUN_2_0_OR_NEWER
                 AddScriptingDefineSymbolToAllBuildTargetGroups("PUN_2_0_OR_NEWER");
-            #endif
+                #endif
 
-            #if !PUN_2_OR_NEWER
+                #if !PUN_2_OR_NEWER
                 AddScriptingDefineSymbolToAllBuildTargetGroups("PUN_2_OR_NEWER");
-            #endif
-
+                #endif
+            }
         }
 
         /// <summary>
@@ -59,7 +69,7 @@ namespace ExitGames.Client.Photon
         {
             foreach (BuildTarget target in Enum.GetValues(typeof(BuildTarget)))
             {
-                BuildTargetGroup group = BuildPipeline.GetBuildTargetGroup (target);
+                BuildTargetGroup group = BuildPipeline.GetBuildTargetGroup(target);
 
                 if (group == BuildTargetGroup.Unknown)
                 {
@@ -78,8 +88,50 @@ namespace ExitGames.Client.Photon
                     }
                     catch (Exception e)
                     {
-                        Debug.Log("Could not set Photon "+defineSymbol+" defines for build target: "+ target+ " group: "+ group+" "+e );
+                        Debug.Log("Could not set Photon " + defineSymbol + " defines for build target: " + target + " group: " + group + " " + e);
                     }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Removes PUN2's Script Define Symbols from project
+        /// </summary>
+        public static void CleanUpPunDefineSymbols()
+        {
+            foreach (BuildTarget target in Enum.GetValues(typeof(BuildTarget)))
+            {
+                BuildTargetGroup group = BuildPipeline.GetBuildTargetGroup(target);
+
+                if (group == BuildTargetGroup.Unknown)
+                {
+                    continue;
+                }
+
+                var defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(group)
+                    .Split(';')
+                    .Select(d => d.Trim())
+                    .ToList();
+
+                List<string> newDefineSymbols = new List<string>();
+                foreach (var symbol in defineSymbols)
+                {
+                    if ("PHOTON_UNITY_NETWORKING".Equals(symbol) || symbol.StartsWith("PUN_2_"))
+                    {
+                        continue;
+                    }
+
+                    newDefineSymbols.Add(symbol);
+                }
+
+                try
+                {
+                    PlayerSettings.SetScriptingDefineSymbolsForGroup(group, string.Join(";", newDefineSymbols.ToArray()));
+                }
+                catch (Exception e)
+                {
+                    Debug.LogErrorFormat("Could not set clean up PUN2's define symbols for build target: {0} group: {1}, {2}", target, group, e);
                 }
             }
         }
@@ -102,7 +154,7 @@ namespace ExitGames.Client.Photon
 
             if (string.IsNullOrEmpty(parentName))
             {
-                return  dir.Parent.FullName;
+                return dir.Parent.FullName;
             }
 
             if (dir.Parent.Name == parentName)
@@ -111,6 +163,137 @@ namespace ExitGames.Client.Photon
             }
 
             return GetParent(dir.Parent.FullName, parentName);
+        }
+
+		/// <summary>
+		/// Check if a GameObject is a prefab asset or part of a prefab asset, as opposed to an instance in the scene hierarchy
+		/// </summary>
+		/// <returns><c>true</c>, if a prefab asset or part of it, <c>false</c> otherwise.</returns>
+		/// <param name="go">The GameObject to check</param>
+		public static bool IsPrefab(GameObject go)
+		{
+            #if UNITY_2018_3_OR_NEWER
+            return UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetPrefabStage(go) != null || EditorUtility.IsPersistent(go);
+            #else
+            return EditorUtility.IsPersistent(go);
+			#endif
+		}
+
+        //https://forum.unity.com/threads/using-unitywebrequest-in-editor-tools.397466/#post-4485181
+        public static void StartCoroutine(System.Collections.IEnumerator update)
+        {
+            EditorApplication.CallbackFunction closureCallback = null;
+
+            closureCallback = () =>
+            {
+                try
+                {
+                    if (update.MoveNext() == false)
+                    {
+                        EditorApplication.update -= closureCallback;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex);
+                    EditorApplication.update -= closureCallback;
+                }
+            };
+
+            EditorApplication.update += closureCallback;
+        }
+        
+        public static System.Collections.IEnumerator HttpPost(string url, Dictionary<string, string> headers, byte[] payload, Action<string> successCallback, Action<string> errorCallback)
+        {
+            using (UnityWebRequest w = new UnityWebRequest(url, "POST"))
+            {
+                if (payload != null)
+                {
+                    w.uploadHandler = new UploadHandlerRaw(payload);
+                }
+                w.downloadHandler = new DownloadHandlerBuffer();
+                if (headers != null)
+                {
+                    foreach (var header in headers)
+                    {
+                        w.SetRequestHeader(header.Key, header.Value);
+                    }
+                }
+
+                #if UNITY_2017_2_OR_NEWER
+                yield return w.SendWebRequest();
+                #else
+                yield return w.Send();
+                #endif
+
+                while (w.isDone == false)
+                    yield return null;
+
+                #if UNITY_2017_1_OR_NEWER
+                if (w.isNetworkError || w.isHttpError)
+                #else
+                if (w.isError)
+                #endif
+                {
+                    if (errorCallback != null)
+                    {
+                        errorCallback(w.error);
+                    }
+                }
+                else
+                {
+                    if (successCallback != null)
+                    {
+                        successCallback(w.downloadHandler.text);
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Creates a Foldout using a toggle with (GUIStyle)"Foldout") and a separate label. This is a workaround for 2019.3 foldout arrows not working.
+        /// </summary>
+        /// <param name="isExpanded"></param>
+        /// <param name="label"></param>
+        /// <returns>Returns the new isExpanded value.</returns>
+        public static bool Foldout(this SerializedProperty isExpanded, GUIContent label)
+        {
+            var rect = EditorGUILayout.GetControlRect();
+            bool newvalue = EditorGUI.Toggle(new Rect(rect) { xMin = rect.xMin + 2 }, GUIContent.none, isExpanded.boolValue, (GUIStyle)"Foldout");
+            EditorGUI.LabelField(new Rect(rect) { xMin = rect.xMin + 15 }, label);
+            if (newvalue != isExpanded.boolValue)
+            {
+                isExpanded.boolValue = newvalue;
+                isExpanded.serializedObject.ApplyModifiedProperties();
+            }
+            return newvalue;
+        }
+
+        /// <summary>
+        /// Creates a Foldout using a toggle with (GUIStyle)"Foldout") and a separate label. This is a workaround for 2019.3 foldout arrows not working.
+        /// </summary>
+        /// <param name="isExpanded"></param>
+        /// <param name="label"></param>
+        /// <returns>Returns the new isExpanded value.</returns>
+        public static bool Foldout(this bool isExpanded, GUIContent label)
+        {
+            var rect = EditorGUILayout.GetControlRect();
+            bool newvalue = EditorGUI.Toggle(new Rect(rect) { xMin = rect.xMin + 2 }, GUIContent.none, isExpanded, (GUIStyle)"Foldout");
+            EditorGUI.LabelField(new Rect(rect) { xMin = rect.xMin + 15 }, label);
+            return newvalue;
+        }
+    }
+
+
+    public class CleanUpDefinesOnPunDelete : UnityEditor.AssetModificationProcessor
+    {
+        public static AssetDeleteResult OnWillDeleteAsset(string assetPath, RemoveAssetOptions rao)
+        {
+            if ("Assets/Photon/PhotonUnityNetworking".Equals(assetPath))
+            {
+                PhotonEditorUtils.CleanUpPunDefineSymbols();
+            }
+
+            return AssetDeleteResult.DidNotDelete;
         }
     }
 }

@@ -27,14 +27,14 @@ namespace Photon.Pun
     /// A PhotonView identifies an object across the network (viewID) and configures how the controlling client updates remote instances.
     /// </summary>
     /// \ingroup publicApi
-    [AddComponentMenu("Photon Networking/Photon View &v")]
+    [AddComponentMenu("Photon Networking/Photon View")]
     public class PhotonView : MonoBehaviour
     {
         #if UNITY_EDITOR
         [ContextMenu("Open PUN Wizard")]
         void OpenPunWizard()
         {
-            EditorApplication.ExecuteMenuItem("Window/Photon Unity Networking");
+            EditorApplication.ExecuteMenuItem("Window/Photon Unity Networking/PUN Wizard");
         }
         #endif
 
@@ -94,7 +94,8 @@ namespace Photon.Pun
                 if (!this.didAwake)
                 {
                     // even though viewID and instantiationID are setup before the GO goes live, this data can't be set. as workaround: fetch it if needed
-                    this.instantiationDataField = PhotonNetwork.FetchInstantiationData(this.InstantiationId);
+                    //this.instantiationDataField = PhotonNetwork.FetchInstantiationData(this.InstantiationId);
+                    Debug.LogError("PhotonNetwork.FetchInstantiationData() was removed. Can only return this.instantiationDataField.");
                 }
                 return this.instantiationDataField;
             }
@@ -106,7 +107,8 @@ namespace Photon.Pun
         /// <summary>
         /// For internal use only, don't use
         /// </summary>
-        protected internal object[] lastOnSerializeDataSent = null;
+        protected internal List<object> lastOnSerializeDataSent = null;
+        protected internal List<object> syncValues;
 
         /// <summary>
         /// For internal use only, don't use
@@ -141,21 +143,21 @@ namespace Photon.Pun
             set
             {
                 // if ID was 0 for an awakened PhotonView, the view should add itself into the NetworkingClient.photonViewList after setup
-                bool viewMustRegister = this.didAwake && this.viewIdField == 0;
+                bool viewMustRegister = this.didAwake && this.viewIdField == 0 && value != 0;
+                //int oldValue = this.viewIdField;
 
                 // TODO: decide if a viewID can be changed once it wasn't 0. most likely that is not a good idea
                 // check if this view is in NetworkingClient.photonViewList and UPDATE said list (so we don't keep the old viewID with a reference to this object)
                 // PhotonNetwork.NetworkingClient.RemovePhotonView(this, true);
-
-                this.ownerId = value / PhotonNetwork.MAX_VIEW_IDS;
-
+                
                 this.viewIdField = value;
+                this.ownerId = value / PhotonNetwork.MAX_VIEW_IDS;
 
                 if (viewMustRegister)
                 {
                     PhotonNetwork.RegisterPhotonView(this);
                 }
-                //Debug.Log("Set viewID: " + value + " ->  owner: " + this.ownerId + " subId: " + this.subId);
+                //Debug.Log("Set ViewID: " + value + " ->  owner: " + this.ownerId + " was: "+ oldValue);
             }
         }
 
@@ -237,16 +239,16 @@ namespace Photon.Pun
         {
             get
             {
-                return (
-                    // using this.OwnerActorNr instead of this.ownerId so that it's the right value during awake.
-                    this.OwnerActorNr == PhotonNetwork.LocalPlayer.ActorNumber) || (!this.IsOwnerActive && PhotonNetwork.IsMasterClient);
+                // using this.OwnerActorNr instead of this.ownerId so that it's the right value during awake.
+                return (this.OwnerActorNr == PhotonNetwork.LocalPlayer.ActorNumber) || (PhotonNetwork.IsMasterClient && !this.IsOwnerActive);
              }
         }
 
         protected internal bool didAwake;
 
         [SerializeField]
-        protected internal bool isRuntimeInstantiated;
+        [HideInInspector]
+        public bool isRuntimeInstantiated;
 
         protected internal bool removedFromLocalViewList;
 
@@ -258,10 +260,10 @@ namespace Photon.Pun
         {
             if (this.ViewID != 0)
             {
+                this.ownerId = this.ViewID / PhotonNetwork.MAX_VIEW_IDS;
+                
                 // registration might be too late when some script (on this GO) searches this view BUT GetPhotonView() can search ALL in that case
                 PhotonNetwork.RegisterPhotonView(this);
-                this.instantiationDataField = PhotonNetwork.FetchInstantiationData(this.InstantiationId);
-                this.ownerId = this.ViewID / PhotonNetwork.MAX_VIEW_IDS;
             }
 
             this.didAwake = true;
@@ -273,14 +275,8 @@ namespace Photon.Pun
             if (!this.removedFromLocalViewList)
             {
                 bool wasInList = PhotonNetwork.LocalCleanPhotonView(this);
-                bool loading = false;
-
-                // TODO: clean up! PUN2 is unity5.3 and higher
-                #if (!UNITY_5 || UNITY_5_0 || UNITY_5_1) && !UNITY_5_3_OR_NEWER
-                loading = Application.isLoadingLevel;
-                #endif
-
-                if (wasInList && !loading && this.InstantiationId > 0 && !PhotonHandler.AppQuits && PhotonNetwork.LogLevel >= PunLogLevel.Informational)
+                
+                if (wasInList && this.InstantiationId > 0 && !PhotonHandler.AppQuits && PhotonNetwork.LogLevel >= PunLogLevel.Informational)
                 {
                     Debug.Log("PUN-instantiated '" + this.gameObject.name + "' got destroyed by engine. This is OK when loading levels. Otherwise use: PhotonNetwork.Destroy().");
                 }
@@ -391,7 +387,7 @@ namespace Photon.Pun
 
 
         /// <summary>
-        /// Call a RPC method of this GameObject on remote clients of this room (or on all, inclunding this client).
+        /// Call a RPC method of this GameObject on remote clients of this room (or on all, including this client).
         /// </summary>
         /// <remarks>
         /// [Remote Procedure Calls](@ref rpcManual) are an essential tool in making multiplayer games with PUN.
@@ -442,7 +438,7 @@ namespace Photon.Pun
         }
 
         /// <summary>
-        /// Call a RPC method of this GameObject on remote clients of this room (or on all, inclunding this client).
+        /// Call a RPC method of this GameObject on remote clients of this room (or on all, including this client).
         /// </summary>
         /// <remarks>
         /// [Remote Procedure Calls](@ref rpcManual) are an essential tool in making multiplayer games with PUN.
@@ -505,7 +501,7 @@ namespace Photon.Pun
 
         public override string ToString()
         {
-            return string.Format("View ({3}){0} on {1} {2}", this.ViewID, (this.gameObject != null) ? this.gameObject.name : "GO==null", (this.IsSceneView) ? "(scene)" : string.Empty, this.Prefix);
+            return string.Format("View {0}{3} on {1} {2}", this.ViewID, (this.gameObject != null) ? this.gameObject.name : "GO==null", (this.IsSceneView) ? "(scene)" : string.Empty, this.Prefix > 0 ? "lvl"+this.Prefix : "");
         }
     }
 }

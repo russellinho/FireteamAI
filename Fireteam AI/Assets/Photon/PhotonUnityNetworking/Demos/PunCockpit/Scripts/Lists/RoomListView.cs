@@ -69,7 +69,7 @@ namespace Photon.Pun.Demo.Cockpit
             {
                 if (roomCellList.ContainsKey(entry.Name))
                 {
-                    if (entry.removedFromList)
+                    if (entry.RemovedFromList)
                     {
                         // we delete the cell
                         roomCellList[entry.Name].RemoveFromList();
@@ -84,7 +84,7 @@ namespace Photon.Pun.Demo.Cockpit
                 }
                 else
                 {
-                    if (!entry.removedFromList)
+                    if (!entry.RemovedFromList)
                     {
                         // we create the cell
                         roomCellList[entry.Name] = Instantiate(CellPrototype);

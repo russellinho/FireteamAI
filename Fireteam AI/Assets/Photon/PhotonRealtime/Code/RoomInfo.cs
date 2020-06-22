@@ -36,7 +36,7 @@ namespace Photon.Realtime
     public class RoomInfo
     {
         /// <summary>Used in lobby, to mark rooms that are no longer listed (for being full, closed or hidden).</summary>
-        public bool removedFromList;
+        public bool RemovedFromList;
 
         /// <summary>Backing field for property.</summary>
         private Hashtable customProperties = new Hashtable();
@@ -66,7 +66,7 @@ namespace Photon.Realtime
         protected string name;
 
         /// <summary>Backing field for master client id (actorNumber). defined by server in room props and ev leave.</summary>
-        protected internal int masterClientId;
+        public int masterClientId;
 
         /// <summary>Backing field for property.</summary>
         protected string[] propertiesListedInLobby;
@@ -208,8 +208,8 @@ namespace Photon.Realtime
             // list updates will remove this game from the game listing
             if (propertiesToCache.ContainsKey(GamePropertyKey.Removed))
             {
-                this.removedFromList = (bool)propertiesToCache[GamePropertyKey.Removed];
-                if (this.removedFromList)
+                this.RemovedFromList = (bool)propertiesToCache[GamePropertyKey.Removed];
+                if (this.RemovedFromList)
                 {
                     return;
                 }

@@ -8,10 +8,12 @@
 // <author>developer@exitgames.com</author>
 // ----------------------------------------------------------------------------
 
-using UnityEngine;
 
 namespace Photon.Pun
 {
+    using UnityEngine;
+
+
     [RequireComponent(typeof(PhotonView))]
     [RequireComponent(typeof(Rigidbody))]
     [AddComponentMenu("Photon Networking/Photon Rigidbody View")]
@@ -84,7 +86,7 @@ namespace Photon.Pun
                 
                 if (this.m_SynchronizeVelocity || this.m_SynchronizeAngularVelocity)
                 {
-                    float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.timestamp));
+                    float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
 
                     if (this.m_SynchronizeVelocity)
                     {

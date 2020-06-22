@@ -27,7 +27,7 @@ namespace Photon.Pun.Demo.Hub
 		public GameObject OpenTutorialLinkButton;
 		public GameObject OpenDocLinkButton;
 
-        string MainDemoWebLink = "http://bit.ly/2f8OFu8";
+        string MainDemoWebLink = "https://doc.photonengine.com/en-us/pun/v2/getting-started/pun-intro";
 
 		struct DemoData
 		{
@@ -105,8 +105,8 @@ namespace Photon.Pun.Demo.Hub
 						"New Unity UI all around, for Menus and player health HUD.\n" +
 						"Full step by step tutorial available online.",
 				Scene = "PunBasics-Launcher" ,
-				TutorialLink = "http://j.mp/2dibZIM"
-				}
+				TutorialLink = "https://doc.photonengine.com/en-us/pun/v2/demos-and-tutorials/pun-basics-tutorial/intro"
+                }
 			);
 			
 			_data.Add(
@@ -140,13 +140,13 @@ namespace Photon.Pun.Demo.Hub
 				new DemoData()
 				{
 				Title = "Chat",
-				Description = "Uses the Chat API (now part of PUN).\n" +
+				Description = "Uses the Chat API.\n" +
 					"Simple UI.\n" +
 					"You can enter any User ID.\n" +
 					"Automatically subscribes some channels.\n" +
 					"Allows simple commands via text.\n" +
 					"\n" +
-					"Requires configuration of Chat App ID in scene.",
+					"Requires configuration of Chat App ID in ServerSettings.",
 						Scene = "DemoChat-Scene",
 						DocLink = "http://j.mp/2iwQkPJ" 
 				}

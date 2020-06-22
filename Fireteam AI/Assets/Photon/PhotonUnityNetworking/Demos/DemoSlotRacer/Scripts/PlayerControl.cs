@@ -199,24 +199,31 @@ namespace Photon.Pun.Demo.SlotRacer
             }
             else
             {
-                if (this.m_input == 0f)
-                {
-                    this.CurrentSpeed -= Time.deltaTime * this.Drag;
-                }
-                this.CurrentSpeed = Mathf.Clamp(this.CurrentSpeed, 0f, this.MaximumSpeed);
-                this.SplineWalker.Speed = this.CurrentSpeed;
+				if (this.m_input == 0f)
+				{
+					this.CurrentSpeed -= Time.deltaTime * this.Drag;
+				}
 
-                if (this.CurrentDistance != 0 && this.SplineWalker.currentDistance != this.CurrentDistance)
-                {
-                    //Debug.Log ("SplineWalker.currentDistance=" + SplineWalker.currentDistance + " CurrentDistance=" + CurrentDistance);
-                    this.SplineWalker.Speed += (this.CurrentDistance - this.SplineWalker.currentDistance) * Time.deltaTime * 50f;
-                }
+				this.CurrentSpeed = Mathf.Clamp (this.CurrentSpeed, 0f, this.MaximumSpeed);
+				this.SplineWalker.Speed = this.CurrentSpeed;
+
+
+
+				if (this.CurrentDistance != 0 && this.SplineWalker.currentDistance != this.CurrentDistance)
+				{
+					//Debug.Log ("SplineWalker.currentDistance=" + SplineWalker.currentDistance + " CurrentDistance=" + CurrentDistance);
+					this.SplineWalker.Speed += (this.CurrentDistance - this.SplineWalker.currentDistance) * Time.deltaTime * 50f;
+				}
+
             }
 
             // Only activate the car if we are sure we have the proper positioning, else it will glitch visually during the initialisation process.
             if (!this.m_firstTake && !this.CarInstance.activeSelf)
             {
                 this.CarInstance.SetActive(true);
+				this.SplineWalker.Speed = this.CurrentSpeed;
+				this.SplineWalker.SetPositionOnSpline (this.CurrentDistance);
+
             }
         }
 

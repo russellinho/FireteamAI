@@ -13,6 +13,8 @@ using UnityEngine.UI;
 
 namespace Photon.Pun.Demo.PunBasics
 {
+	#pragma warning disable 649
+
 	/// <summary>
 	/// Player UI. Constraint the UI to follow a PlayerManager GameObject in the world,
 	/// Affect a slider and text to display Player's name and health
@@ -41,6 +43,8 @@ namespace Photon.Pun.Demo.PunBasics
 
 		Renderer targetRenderer;
 
+	    CanvasGroup _canvasGroup;
+	    
 		Vector3 targetPosition;
 
 		#endregion
@@ -50,8 +54,11 @@ namespace Photon.Pun.Demo.PunBasics
 		/// <summary>
 		/// MonoBehaviour method called on GameObject by Unity during early initialization phase
 		/// </summary>
-		void Awake(){
+		void Awake()
+		{
 
+			_canvasGroup = this.GetComponent<CanvasGroup>();
+			
 			this.transform.SetParent(GameObject.Find("Canvas").GetComponent<Transform>(), false);
 		}
 
@@ -81,8 +88,9 @@ namespace Photon.Pun.Demo.PunBasics
 		void LateUpdate () {
 
 			// Do not show the UI if we are not visible to the camera, thus avoid potential bugs with seeing the UI, but not the player itself.
-			if (targetRenderer!=null) {
-				this.gameObject.SetActive(targetRenderer.isVisible);
+			if (targetRenderer!=null)
+			{
+				this._canvasGroup.alpha = targetRenderer.isVisible ? 1f : 0f;
 			}
 			
 			// #Critical
@@ -118,7 +126,7 @@ namespace Photon.Pun.Demo.PunBasics
 			// Cache references for efficiency because we are going to reuse them.
 			this.target = _target;
             targetTransform = this.target.GetComponent<Transform>();
-            targetRenderer = this.target.GetComponent<Renderer>();
+            targetRenderer = this.target.GetComponentInChildren<Renderer>();
 
 
             CharacterController _characterController = this.target.GetComponent<CharacterController> ();

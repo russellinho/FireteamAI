@@ -96,52 +96,56 @@ public class PunStartup : MonoBehaviour
 
 		_thisPath = Application.dataPath + _thisPath.Substring (6); // remove "Assets/"
 
-		_PunPath = PhotonEditorUtils.GetParent(_thisPath,"PhotonUnityNetworking");
+		//_PunPath = PhotonEditorUtils.GetParent(_thisPath,"Photon");
 
-		if (_PunPath == null)
+		if (string.IsNullOrEmpty(_PunPath))
 		{
-			_PunPath = Application.dataPath+"PhotonUnityNetworking";
+			_PunPath = Application.dataPath+"/Photon";
 		}
 
 		// find path of pun guide
-		string[] tempPaths = Directory.GetDirectories(_PunPath, "Demos", SearchOption.AllDirectories);
-		if (tempPaths == null || tempPaths.Length != 1)
+
+		string[] tempPaths = Directory.GetDirectories(_PunPath, "Demos*", SearchOption.AllDirectories);
+		if (tempPaths == null)
 		{
 			return;
 		}
 
+		List<EditorBuildSettingsScene> sceneAr = new List<EditorBuildSettingsScene> ();
+
         // find scenes of guide
-        string guidePath = tempPaths[0];
-        tempPaths = Directory.GetFiles(guidePath, "*.unity", SearchOption.AllDirectories);
+		foreach (string guidePath in tempPaths)
+		{
+			tempPaths = Directory.GetFiles (guidePath, "*.unity", SearchOption.AllDirectories);
 
-        if (tempPaths == null || tempPaths.Length == 0)
-        {
-            return;
-        }
+			if (tempPaths == null || tempPaths.Length == 0)
+			{
+				return;
+			}
 
-        // add found guide scenes to build settings
-        List<EditorBuildSettingsScene> sceneAr = new List<EditorBuildSettingsScene>();
-        for (int i = 0; i < tempPaths.Length; i++)
-        {
-            //Debug.Log(tempPaths[i]);
-            string path = tempPaths[i].Substring(Application.dataPath.Length - "Assets".Length);
-            path = path.Replace('\\', '/');
-            //Debug.Log(path);
+			// add found guide scenes to build settings
+			for (int i = 0; i < tempPaths.Length; i++)
+			{
+				//Debug.Log(tempPaths[i]);
+				string path = tempPaths [i].Substring (Application.dataPath.Length - "Assets".Length);
+				path = path.Replace ('\\', '/');
+				//Debug.Log(path);
 
-            if (path.Contains("PUNGuide_M2H"))
-            {
-                continue;
-            }
+				if (path.Contains ("PUNGuide_M2H"))
+				{
+					continue;
+				}
 
-			// edited to avoid old scene to be included.
-			if (path.Contains("DemoHub-Scene"))
-            {
-                sceneAr.Insert(0, new EditorBuildSettingsScene(path, true));
-                continue;
-            }
+				// edited to avoid old scene to be included.
+				if (path.Contains ("DemoHub-Scene"))
+				{
+					sceneAr.Insert (0, new EditorBuildSettingsScene (path, true));
+					continue;
+				}
 
-            sceneAr.Add(new EditorBuildSettingsScene(path, true));
-        }
+				sceneAr.Add (new EditorBuildSettingsScene (path, true));
+			}
+		}
 
         EditorBuildSettings.scenes = sceneAr.ToArray();
         EditorSceneManager.OpenScene(sceneAr[0].path);

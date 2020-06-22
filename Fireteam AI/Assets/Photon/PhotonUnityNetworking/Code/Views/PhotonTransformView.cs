@@ -15,6 +15,7 @@ namespace Photon.Pun
 
 
     [AddComponentMenu("Photon Networking/Photon Transform View")]
+    [HelpURL("https://doc.photonengine.com/en-us/pun/v2/gameplay/synchronization-and-state")]
     [RequireComponent(typeof(PhotonView))]
     public class PhotonTransformView : MonoBehaviour, IPunObservable
     {
@@ -35,6 +36,8 @@ namespace Photon.Pun
         public bool m_SynchronizeRotation = true;
         public bool m_SynchronizeScale = false;
 
+        bool m_firstTake = false;
+
         public void Awake()
         {
             m_PhotonView = GetComponent<PhotonView>();
@@ -43,6 +46,11 @@ namespace Photon.Pun
             m_NetworkPosition = Vector3.zero;
 
             m_NetworkRotation = Quaternion.identity;
+        }
+
+        void OnEnable()
+        {
+            m_firstTake = true;
         }
 
         public void Update()
@@ -87,27 +95,51 @@ namespace Photon.Pun
             }
             else
             {
+
+
                 if (this.m_SynchronizePosition)
                 {
                     this.m_NetworkPosition = (Vector3)stream.ReceiveNext();
                     this.m_Direction = (Vector3)stream.ReceiveNext();
 
-                    float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.timestamp));
-                    this.m_NetworkPosition += this.m_Direction * lag;
+                    if (m_firstTake)
+                    {
+                        transform.position = this.m_NetworkPosition;
+                        this.m_Distance = 0f;
+                    }
+                    else
+                    {
+                        float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
+                        this.m_NetworkPosition += this.m_Direction * lag;
+                        this.m_Distance = Vector3.Distance(transform.position, this.m_NetworkPosition);
+                    }
 
-                    this.m_Distance = Vector3.Distance(transform.position, this.m_NetworkPosition);
+                   
                 }
 
                 if (this.m_SynchronizeRotation)
                 {
                     this.m_NetworkRotation = (Quaternion)stream.ReceiveNext();
 
-                    this.m_Angle = Quaternion.Angle(transform.rotation, this.m_NetworkRotation);
+                    if (m_firstTake)
+                    {
+                        this.m_Angle = 0f;
+                        transform.rotation = this.m_NetworkRotation;
+                    }
+                    else
+                    {
+                        this.m_Angle = Quaternion.Angle(transform.rotation, this.m_NetworkRotation);
+                    }
                 }
 
                 if (this.m_SynchronizeScale)
                 {
                     transform.localScale = (Vector3)stream.ReceiveNext();
+                }
+
+                if (m_firstTake)
+                {
+                    m_firstTake = false;
                 }
             }
         }
@@ -147,22 +179,44 @@ namespace Photon.Pun
                     this.m_NetworkPosition = (Vector3)stream.ReceiveNext();
                     this.m_Direction = (Vector3)stream.ReceiveNext();
 
-                    float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.timestamp));
-                    this.m_NetworkPosition += this.m_Direction * lag;
+                    if (m_firstTake)
+                    {
+                        transform.position = this.m_NetworkPosition;
+                        this.m_Distance = 0f;
+                    }
+                    else
+                    {
+                        float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
+                        this.m_NetworkPosition += this.m_Direction * lag;
+                        this.m_Distance = Vector3.Distance(transform.position, this.m_NetworkPosition);
+                    }
 
-                    this.m_Distance = Vector3.Distance(transform.position, this.m_NetworkPosition);
+                   
                 }
 
                 if (this.m_SynchronizeRotation)
                 {
                     this.m_NetworkRotation = (Quaternion)stream.ReceiveNext();
 
-                    this.m_Angle = Quaternion.Angle(transform.rotation, this.m_NetworkRotation);
+                    if (m_firstTake)
+                    {
+                        this.m_Angle = 0f;
+                        transform.rotation = this.m_NetworkRotation;
+                    }
+                    else
+                    {
+                        this.m_Angle = Quaternion.Angle(transform.rotation, this.m_NetworkRotation);
+                    }
                 }
 
                 if (this.m_SynchronizeScale)
                 {
                     transform.localScale = (Vector3)stream.ReceiveNext();
+                }
+
+                if (m_firstTake)
+                {
+                    m_firstTake = false;
                 }
             }
         }
