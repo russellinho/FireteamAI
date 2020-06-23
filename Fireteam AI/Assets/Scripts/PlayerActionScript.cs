@@ -22,6 +22,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private const float ENV_DAMAGE_DELAY = 0.5f;
 
     // Object references
+    public PhotonView pView;
     public GameControllerScript gameController;
     public AudioControllerScript audioController;
     public CharacterController charController;
@@ -112,10 +113,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
         DontDestroyOnLoad(gameObject);
         AddMyselfToPlayerList();
-        if (photonView.IsMine) {
+        if (pView.IsMine) {
             if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
                 string myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
-                photonView.RPC("RpcDisablePlayerForVersus", RpcTarget.AllBuffered, myTeam);
+                pView.RPC("RpcDisablePlayerForVersus", RpcTarget.AllBuffered, myTeam);
                 SetTeamHost();
             }
         }
@@ -145,7 +146,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         rBody = GetComponent<Rigidbody>();
 
         // // If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
-         if (!GetComponent<PhotonView>().IsMine)
+         if (!pView.IsMine)
          {
              Destroy(viewCam.GetComponent<AudioReverbFilter>());
              Destroy(viewCam.GetComponent<AudioLowPassFilter>());
@@ -195,7 +196,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             gameController = gc.GetComponent<GameControllerScript>();
         }
 
-        if (!photonView.IsMine)
+        if (!pView.IsMine)
         {
             return;
         }
@@ -298,7 +299,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     void FixedUpdate() {
-        if (!photonView.IsMine) {
+        if (!pView.IsMine) {
             return;
         }
         if (!fpc.m_CharacterController.isGrounded) {
@@ -434,18 +435,18 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void AddMyselfToPlayerList()
     {
         char team = 'N';
-        uint exp = Convert.ToUInt32(photonView.Owner.CustomProperties["exp"]);
-        if ((string)photonView.Owner.CustomProperties["team"] == "red") {
+        uint exp = Convert.ToUInt32(pView.Owner.CustomProperties["exp"]);
+        if ((string)pView.Owner.CustomProperties["team"] == "red") {
             team = 'R';
             gameController.redTeamPlayerCount++;
-            Debug.Log(photonView.Owner.NickName + " joined red team.");
-        } else if ((string)photonView.Owner.CustomProperties["team"] == "blue") {
+            Debug.Log(pView.Owner.NickName + " joined red team.");
+        } else if ((string)pView.Owner.CustomProperties["team"] == "blue") {
             team = 'B';
             gameController.blueTeamPlayerCount++;
-            Debug.Log(photonView.Owner.NickName + " joined blue team.");
+            Debug.Log(pView.Owner.NickName + " joined blue team.");
         }
-        PlayerStat p = new PlayerStat(gameObject, carryingSlot, photonView.Owner.ActorNumber, photonView.Owner.NickName, team, exp);
-        GameControllerScript.playerList.Add(photonView.Owner.ActorNumber, p);
+        PlayerStat p = new PlayerStat(gameObject, carryingSlot, pView.Owner.ActorNumber, pView.Owner.NickName, team, exp);
+        GameControllerScript.playerList.Add(pView.Owner.ActorNumber, p);
     }
 
     public void TakeDamage(int d, bool useArmor)
@@ -458,7 +459,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 
         // Send over network
-        photonView.RPC("RpcTakeDamage", RpcTarget.All, d);
+        pView.RPC("RpcTakeDamage", RpcTarget.All, d);
     }
 
     [PunRPC]
@@ -467,7 +468,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (gameObject.layer == 0) return;
         ResetHitTimer();
         audioController.PlayGruntSound();
-        if (photonView.IsMine)
+        if (pView.IsMine)
         {
             audioController.PlayHitSound();
         }
@@ -519,12 +520,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             charController.height = 1f;
             charController.center = new Vector3(0f, 0.54f, 0f);
             // Network it
-            photonView.RPC("RpcCrouch", RpcTarget.Others, 1f, 0.54f);
+            pView.RPC("RpcCrouch", RpcTarget.Others, 1f, 0.54f);
         } else {
             charController.height = charHeightOriginal;
             charController.center = new Vector3(0f, charCenterYOriginal, 0f);
             // Network it
-            photonView.RPC("RpcCrouch", RpcTarget.Others, charHeightOriginal, charCenterYOriginal);
+            pView.RPC("RpcCrouch", RpcTarget.Others, charHeightOriginal, charCenterYOriginal);
         }
     }
 
@@ -571,7 +572,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 viewCam.transform.SetParent(transform);
                 viewCam.fieldOfView = 60;
                 rotationSaved = true;
-                photonView.RPC("RpcAddToTotalDeaths", RpcTarget.All);
+                pView.RPC("RpcAddToTotalDeaths", RpcTarget.All);
             }
 
             deathCameraLerpPos = new Vector3(headTransform.localPosition.x, headTransform.localPosition.y + 2.5f, headTransform.localPosition.z - 4.5f);
@@ -582,7 +583,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcAddToTotalDeaths()
     {
-        GameControllerScript.playerList[photonView.Owner.ActorNumber].deaths++;
+        GameControllerScript.playerList[pView.Owner.ActorNumber].deaths++;
         if (gameObject.layer == 0) return;
         if (deaths != int.MaxValue) {
             deaths++;
@@ -604,7 +605,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 {
                     BombScript b = activeInteractable.GetComponent<BombScript>();
                     interactionTimer = 0f;
-                    photonView.RPC("RpcDefuseBomb", RpcTarget.All, b.bombId);
+                    pView.RPC("RpcDefuseBomb", RpcTarget.All, b.bombId);
                     activeInteractable = null;
                     interactionLock = true;
                 }
@@ -630,7 +631,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 {
                     FlareScript f = activeInteractable.GetComponent<FlareScript>();
                     interactionTimer = 0f;
-                    photonView.RPC("RpcPopFlare", RpcTarget.All, f.flareId);
+                    pView.RPC("RpcPopFlare", RpcTarget.All, f.flareId);
                     activeInteractable = null;
                     interactionLock = true;
                 }
@@ -642,7 +643,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 {
                     NpcScript n = activeInteractable.GetComponent<NpcScript>();
                     interactionTimer = 0f;
-                    photonView.RPC("RpcCarryNpc", RpcTarget.All, photonView.Owner.ActorNumber);
+                    pView.RPC("RpcCarryNpc", RpcTarget.All, pView.Owner.ActorNumber);
                     activeInteractable = null;
                     interactionLock = true;
                 }
@@ -765,7 +766,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (objectCarrying != null && objectCarrying.GetComponent<NpcScript>().carriedByPlayerId == photonView.Owner.ActorNumber && !hud.PauseIsActive()) {
+        if (objectCarrying != null && objectCarrying.GetComponent<NpcScript>().carriedByPlayerId == pView.Owner.ActorNumber && !hud.PauseIsActive()) {
             NpcScript n = objectCarrying.GetComponent<NpcScript>();
             if (n != null) {
                 if (PlayerPreferences.playerPreferences.KeyWasPressed("Drop") && !interactionLock) {
@@ -874,7 +875,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         {
             ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
             // If a ray casted from the enemy head to the grenade position is obscured, then the explosion is blocked
-            if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !t.isLive && !t.PlayerHasBeenAffected(photonView.ViewID))
+            if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !t.isLive && !t.PlayerHasBeenAffected(pView.ViewID))
             {
                 // Determine how far from the explosion the enemy was
                 float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
@@ -887,7 +888,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 int damageReceived = (int)(grenadeStats.damage * scale);
 
                 // Validate that this enemy has already been affected
-                t.AddHitPlayer(photonView.ViewID);
+                t.AddHitPlayer(pView.ViewID);
                 // Deal damage to the player
                 TakeDamage(damageReceived, false);
                 //ResetHitTimer();
@@ -897,7 +898,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         else if (other.gameObject.name.Contains("XM84"))
         {
             ThrowableScript t = other.gameObject.GetComponent<ThrowableScript>();
-            if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !t.isLive && !t.PlayerHasBeenAffected(photonView.ViewID))
+            if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !t.isLive && !t.PlayerHasBeenAffected(pView.ViewID))
             {
                 float totalDisorientationTime = ThrowableScript.MAX_FLASHBANG_TIME;
 
@@ -914,7 +915,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 float rotationMultiplier = Mathf.Clamp(1f - (angleToPosition / 180f) + 0.1f, 0f, 1f);
 
                 // Validate that this enemy has already been affected
-                t.AddHitPlayer(photonView.ViewID);
+                t.AddHitPlayer(pView.ViewID);
 
                 totalDisorientationTime *= distanceMultiplier * rotationMultiplier;
                 hud.FlashbangEffect(totalDisorientationTime);
@@ -923,7 +924,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         } else if (other.gameObject.name.Contains("RPG-7")) {
             LauncherScript l = other.gameObject.GetComponent<LauncherScript>();
             // If a ray casted from the enemy head to the grenade position is obscured, then the explosion is blocked
-            if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !l.isLive && !l.PlayerHasBeenAffected(photonView.ViewID))
+            if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !l.isLive && !l.PlayerHasBeenAffected(pView.ViewID))
             {
                 // Determine how far from the explosion the enemy was
                 float distanceFromExplosion = Vector3.Distance(transform.position, other.gameObject.transform.position);
@@ -936,7 +937,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 int damageReceived = (int)(launcherStats.damage * scale);
 
                 // Validate that this enemy has already been affected
-                l.AddHitPlayer(photonView.ViewID);
+                l.AddHitPlayer(pView.ViewID);
                 // Deal damage to the player
                 TakeDamage(damageReceived, false);
                 //ResetHitTimer();
@@ -970,15 +971,15 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             } else {
                 weaponScript.MaxRefillAmmoOnPrimary();
             }
-            photonView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId, gameController.teamMap);
+            pView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId, gameController.teamMap);
         }
         else if (other.gameObject.tag.Equals("HealthBox"))
         {
             aud.clip = healthPickupSound;
             aud.Play();
             ResetHealTimer();
-            photonView.RPC("RpcSetHealth", RpcTarget.All, 100);
-            photonView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId, gameController.teamMap);
+            pView.RPC("RpcSetHealth", RpcTarget.All, 100);
+            pView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId, gameController.teamMap);
         }
     }
 
@@ -999,7 +1000,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void OnTriggerEnter(Collider other)
     {
-        if (photonView.IsMine)
+        if (pView.IsMine)
         {
             if (health <= 0) {
                 return;
@@ -1030,7 +1031,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void EnterSpectatorMode()
     {
-        photonView.RPC("RpcChangePlayerDisableStatus", RpcTarget.All, false);
+        pView.RPC("RpcChangePlayerDisableStatus", RpcTarget.All, false);
         thisSpectatorCam = Instantiate(spectatorCam, Vector3.zero, Quaternion.Euler(Vector3.zero));
         thisSpectatorCam.transform.SetParent(null);
     }
@@ -1039,7 +1040,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         Destroy(thisSpectatorCam);
         thisSpectatorCam = null;
-        photonView.RPC("RpcChangePlayerDisableStatus", RpcTarget.All, true);
+        pView.RPC("RpcChangePlayerDisableStatus", RpcTarget.All, true);
     }
 
     [PunRPC]
@@ -1053,7 +1054,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hudMarker.enabled = status;
         hudMarker2.enabled = status;
         charController.enabled = status;
-        if (photonView.IsMine)
+        if (pView.IsMine)
         {
             fpc.enabled = status;
             fpc.m_MouseLook.ResetRot();
@@ -1123,7 +1124,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void Respawn()
     {
         health = 100;
-        photonView.RPC("RpcSetHealth", RpcTarget.Others, 100);
+        pView.RPC("RpcSetHealth", RpcTarget.Others, 100);
         viewCam.transform.SetParent(cameraParent);
         viewCam.transform.GetComponent<Camera>().fieldOfView = 60;
         hud.ToggleHUD(true);
@@ -1186,7 +1187,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         NpcScript n = gameController.vipRef.GetComponent<NpcScript>();
         n.ToggleIsCarrying(true, playerId);
         // If is local player, set to is carrying
-        if (playerId == photonView.Owner.ActorNumber) {
+        if (playerId == pView.Owner.ActorNumber) {
             objectCarrying = gameController.vipRef;
             hud.SetCarryingText("PERSON");
         }
@@ -1307,7 +1308,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void SetEnemySeenBy(int enemyPViewId) {
         if (enemySeenBy != null && enemySeenBy.pView.ViewID == enemyPViewId) return;
-        photonView.RPC("RpcSetEnemySeenBy", RpcTarget.All, enemyPViewId);
+        pView.RPC("RpcSetEnemySeenBy", RpcTarget.All, enemyPViewId);
     }
 
     [PunRPC]
@@ -1322,7 +1323,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void ClearEnemySeenBy() {
         if (enemySeenBy == null) return;
-        photonView.RPC("RpcClearEnemySeenBy", RpcTarget.All);
+        pView.RPC("RpcClearEnemySeenBy", RpcTarget.All);
     }
 
     [PunRPC]
@@ -1461,11 +1462,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     void DropCarrying() {
-        photonView.RPC("RpcDropOffNpc", RpcTarget.All);
+        pView.RPC("RpcDropOffNpc", RpcTarget.All);
     }
 
     void TriggerPlayerDownAlert() {
-        photonView.RPC("RpcTriggerPlayerDownAlert", RpcTarget.Others, PhotonNetwork.NickName);
+        pView.RPC("RpcTriggerPlayerDownAlert", RpcTarget.Others, PhotonNetwork.NickName);
     }
 
     [PunRPC]
