@@ -319,6 +319,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		void LoadingScreen() {
+			Debug.Log("Opened loading screen...");
 			titleController.GetComponent<TitleControllerScript> ().InstantiateLoadingScreen (mapNames[mapIndex]);
 		}
 
