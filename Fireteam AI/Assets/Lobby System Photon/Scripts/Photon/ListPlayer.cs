@@ -440,9 +440,11 @@ namespace Photon.Pun.LobbySystemPhoton
 				ToggleMapChangeButtons(true);
 			}
 			if (currentMode == 'V') {
+				PhotonNetwork.AutomaticallySyncScene = false;
 				OnJoinedRoomVersus();
 			} else if (currentMode == 'C')
             {
+				PhotonNetwork.AutomaticallySyncScene = true;
                 OnJoinedRoomCampaign();
             }
 		}
