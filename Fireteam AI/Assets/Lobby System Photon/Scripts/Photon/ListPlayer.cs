@@ -107,7 +107,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				// Testing - comment in release
 				if (PlayerData.playerdata.testMode == true) {
 					pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
-					StartCoroutine ("StartGameCountdown");
+					pView.RPC("RpcStartGameCountdown", RpcTarget.All);
 					return;
 				}
 
@@ -127,7 +127,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 				if (readyCount >= 2) {
 					pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
-					StartCoroutine ("StartGameCountdown");
+					pView.RPC("RpcStartGameCountdown", RpcTarget.All);
 				} else {
 					DisplayPopup ("There must be at least two ready players to start the game!");
 				}
@@ -148,7 +148,7 @@ namespace Photon.Pun.LobbySystemPhoton
                     Debug.Log("red: " + redTeam.Count + " blue: " + blueTeam.Count);
 					if (redTeam.Count >= 1 && blueTeam.Count >= 1) {
 						pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
-						StartCoroutine ("StartVersusGameCountdown");
+						pView.RPC("RpcStartVersusGameCountdown", RpcTarget.All);
 						return;
 					} else {
                         // If there's only 1 player, they cannot start the game
@@ -176,7 +176,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 				if (readyCount >= 2) {
 					pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
-					StartCoroutine ("StartVersusGameCountdown");
+					pView.RPC("RpcStartVersusGameCountdown", RpcTarget.All);
 				} else {
 					DisplayPopup ("There must be at least two ready players to start the game!");
 				}
@@ -255,7 +255,9 @@ namespace Photon.Pun.LobbySystemPhoton
 		[PunRPC]
 		void RpcStartCampaignGame(string level) {
 			LoadingScreen();
-			PhotonNetwork.LoadLevel(level);
+			if (PhotonNetwork.IsMasterClient) {
+				PhotonNetwork.LoadLevel(level);
+			}
 		}
 
         [PunRPC]
@@ -265,22 +267,37 @@ namespace Photon.Pun.LobbySystemPhoton
             PhotonNetwork.LoadLevel (level + myTeam);
         }
 
+		[PunRPC]
+		void RpcStartGameCountdown() {
+			StartCoroutine("StartGameCountdown");
+		}
+
 		private IEnumerator StartGameCountdown() {
 			titleController.GetComponent<AudioSource> ().clip = countdownSfx;
 			titleController.GetComponent<AudioSource> ().Play ();
-			chat.sendChatOfMaster ("Game starting in 5");
+			if (PhotonNetwork.IsMasterClient) {
+				chat.sendChatOfMaster ("Game starting in 5");
+			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
-			chat.sendChatOfMaster ("Game starting in 4");
+			if (PhotonNetwork.IsMasterClient) {
+				chat.sendChatOfMaster ("Game starting in 4");
+			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
-			chat.sendChatOfMaster ("Game starting in 3");
+			if (PhotonNetwork.IsMasterClient) {
+				chat.sendChatOfMaster ("Game starting in 3");
+			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
-			chat.sendChatOfMaster ("Game starting in 2");
+			if (PhotonNetwork.IsMasterClient) {
+				chat.sendChatOfMaster ("Game starting in 2");
+			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
-			chat.sendChatOfMaster ("Game starting in 1");
+			if (PhotonNetwork.IsMasterClient) {
+				chat.sendChatOfMaster ("Game starting in 1");
+			}
 			yield return new WaitForSeconds (1f);
 
 			// pView.RPC ("RpcLoadingScreen", RpcTarget.All);
@@ -289,22 +306,38 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 		}
 
+		[PunRPC]
+		void RpcStartVersusGameCountdown() {
+			StartCoroutine("StartVersusGameCountdown");
+		}
+
         private IEnumerator StartVersusGameCountdown() {
 			titleController.GetComponent<AudioSource> ().clip = countdownSfx;
+
 			titleController.GetComponent<AudioSource> ().Play ();
-			chatVs.sendChatOfMaster ("Game starting in 5");
+			if (PhotonNetwork.IsMasterClient) {
+				chatVs.sendChatOfMaster ("Game starting in 5");
+			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
-			chatVs.sendChatOfMaster ("Game starting in 4");
+			if (PhotonNetwork.IsMasterClient) {
+				chatVs.sendChatOfMaster ("Game starting in 4");
+			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
-			chatVs.sendChatOfMaster ("Game starting in 3");
+			if (PhotonNetwork.IsMasterClient) {
+				chatVs.sendChatOfMaster ("Game starting in 3");
+			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
-			chatVs.sendChatOfMaster ("Game starting in 2");
+			if (PhotonNetwork.IsMasterClient) {
+				chatVs.sendChatOfMaster ("Game starting in 2");
+			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
-			chatVs.sendChatOfMaster ("Game starting in 1");
+			if (PhotonNetwork.IsMasterClient) {
+				chatVs.sendChatOfMaster ("Game starting in 1");
+			}
 			yield return new WaitForSeconds (1f);
 
 			// pView.RPC ("RpcLoadingScreen", RpcTarget.All);
