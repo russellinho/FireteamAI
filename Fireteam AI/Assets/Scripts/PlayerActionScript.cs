@@ -445,7 +445,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             Debug.Log(photonView.Owner.NickName + " joined blue team.");
         }
         PlayerStat p = new PlayerStat(gameObject, carryingSlot, photonView.Owner.ActorNumber, photonView.Owner.NickName, team, exp);
-        GameControllerScript.playerList.Add(photonView.OwnerActorNr, p);
+        GameControllerScript.playerList.Add(photonView.Owner.ActorNumber, p);
     }
 
     public void TakeDamage(int d, bool useArmor)
@@ -642,7 +642,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 {
                     NpcScript n = activeInteractable.GetComponent<NpcScript>();
                     interactionTimer = 0f;
-                    photonView.RPC("RpcCarryNpc", RpcTarget.All, photonView.OwnerActorNr);
+                    photonView.RPC("RpcCarryNpc", RpcTarget.All, photonView.Owner.ActorNumber);
                     activeInteractable = null;
                     interactionLock = true;
                 }
@@ -765,7 +765,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (objectCarrying != null && objectCarrying.GetComponent<NpcScript>().carriedByPlayerId == photonView.OwnerActorNr && !hud.PauseIsActive()) {
+        if (objectCarrying != null && objectCarrying.GetComponent<NpcScript>().carriedByPlayerId == photonView.Owner.ActorNumber && !hud.PauseIsActive()) {
             NpcScript n = objectCarrying.GetComponent<NpcScript>();
             if (n != null) {
                 if (PlayerPreferences.playerPreferences.KeyWasPressed("Drop") && !interactionLock) {
@@ -1186,7 +1186,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         NpcScript n = gameController.vipRef.GetComponent<NpcScript>();
         n.ToggleIsCarrying(true, playerId);
         // If is local player, set to is carrying
-        if (playerId == photonView.OwnerActorNr) {
+        if (playerId == photonView.Owner.ActorNumber) {
             objectCarrying = gameController.vipRef;
             hud.SetCarryingText("PERSON");
         }

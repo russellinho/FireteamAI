@@ -40,7 +40,7 @@ public class SpectatorScript : MonoBehaviour {
             if (p.health > 0 && !o.GetComponent<PhotonView>().IsMine) {
 				following = o;
 				followingHead = p.headTransform;
-				playerListKey = o.GetComponent<PhotonView> ().OwnerActorNr;
+				playerListKey = o.GetComponent<PhotonView> ().Owner.ActorNumber;
 				break;
 			}
 		}
@@ -97,7 +97,7 @@ public class SpectatorScript : MonoBehaviour {
 					first = o;
 					break;
 				}
-				if (o.GetComponent<PhotonView>().OwnerActorNr == playerListKey) {
+				if (o.GetComponent<PhotonView>().Owner.ActorNumber == playerListKey) {
 					currentIdFound = true;
 				}
 			}
@@ -105,7 +105,7 @@ public class SpectatorScript : MonoBehaviour {
 		following = first;
 		if (following) {
 			followingHead = following.GetComponent<PlayerActionScript>().headTransform;
-			playerListKey = following.GetComponent<PhotonView> ().OwnerActorNr;
+			playerListKey = following.GetComponent<PhotonView> ().Owner.ActorNumber;
 		} else {
 			followingHead = null;
 			playerListKey = -1;

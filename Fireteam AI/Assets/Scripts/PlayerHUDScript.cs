@@ -453,7 +453,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			GameObject p = stat.objRef;
 			if (!p)
 				continue;
-			int actorNo = p.GetComponent<PhotonView> ().OwnerActorNr;
+			int actorNo = p.GetComponent<PhotonView> ().Owner.ActorNumber;
 			if (actorNo == PhotonNetwork.LocalPlayer.ActorNumber) {
 				continue;
 			}

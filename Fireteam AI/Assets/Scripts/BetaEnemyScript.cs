@@ -1983,7 +1983,7 @@ public class BetaEnemyScript : MonoBehaviour {
 							if (TargetIsObscured(p)) {
 								continue;
 							}
-							keysNearBy.Add (p.GetComponent<PhotonView>().OwnerActorNr);
+							keysNearBy.Add (p.GetComponent<PhotonView>().Owner.ActorNumber);
 						}
 					}
 				}
