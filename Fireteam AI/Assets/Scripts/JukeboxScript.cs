@@ -42,10 +42,12 @@ public class JukeboxScript : MonoBehaviour
             StopMusic();
         } else if (levelName.Equals("Login") || levelName.Equals("Title")) {
             if (currentMode != MusicMode.Title) {
+                StopMusic();
                 StartTitleMusic();
             }
         } else {
             if (currentMode != MusicMode.InGame) {
+                StopMusic();
                 if (levelName.EndsWith("_Red")) {
                     levelName = levelName.Substring(0, levelName.Length - 4);
                 } else if (levelName.EndsWith("_Blue")) {
@@ -68,43 +70,13 @@ public class JukeboxScript : MonoBehaviour
 
     void HandleUpdateForTitle() {
         if (audioSource1.isPlaying) {
-            if (!audioSource1FullyQueued && audio1FadeTime < SONG_FADE_DELAY) {
-                audio1FadeTime += Time.deltaTime;
-                if (audio1FadeTime >= SONG_FADE_DELAY) {
-                    audioSource1FullyQueued = true;
-                }
-                audioSource1.volume = (audio1FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
-            }
-
-            if (audioSource1.time >= (audioSource1.clip.length - SONG_FADE_DELAY)) {
-                audio1FadeTime -= Time.deltaTime;
-                audioSource1.volume = (audio1FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
-            }
-
-            if (audio1FadeTime <= 0f) {
+            if (audioSource1.time >= audioSource1.clip.length) {
                 audioSource1.Stop();
-                audio1FadeTime = 0f;
-                audioSource1FullyQueued = false;
             }
         }
         if (audioSource2.isPlaying) {
-            if (!audioSource2FullyQueued && audio2FadeTime < SONG_FADE_DELAY) {
-                audio2FadeTime += Time.deltaTime;
-                if (audio2FadeTime >= SONG_FADE_DELAY) {
-                    audioSource2FullyQueued = true;
-                }
-                audioSource2.volume = (audio2FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
-            }
-
-            if (audioSource2.time >= (audioSource2.clip.length - SONG_FADE_DELAY)) {
-                audio2FadeTime -= Time.deltaTime;
-                audioSource2.volume = (audio2FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
-            }
-
-            if (audio2FadeTime <= 0f) {
+            if (audioSource2.time >= audioSource2.clip.length) {
                 audioSource2.Stop();
-                audio2FadeTime = 0f;
-                audioSource2FullyQueued = false;
             }
         }
     }
@@ -112,37 +84,93 @@ public class JukeboxScript : MonoBehaviour
     void HandleUpdateInGame() {
         if (audioSource1.isPlaying) {
             if (assaultMode) {
-                audio1FadeTime -= Time.deltaTime;
-                audioSource1.volume = (audio1FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
-            } else {
-                if (audio1FadeTime < SONG_FADE_DELAY) {
-                    audio1FadeTime += Time.deltaTime;
-                    audioSource1.volume = (audio1FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
-                }
-            }
-
-            if (audio1FadeTime <= 0f) {
                 audioSource1.Stop();
-                audio1FadeTime = 0f;
             }
         }
         if (audioSource2.isPlaying) {
             if (!assaultMode) {
-                audio2FadeTime -= Time.deltaTime;
-                audioSource2.volume = (audio2FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
-            } else {
-                if (audio2FadeTime < SONG_FADE_DELAY) {
-                    audio2FadeTime += Time.deltaTime;
-                    audioSource2.volume = (audio2FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
-                }
-            }
-
-            if (audio2FadeTime <= 0f) {
                 audioSource2.Stop();
-                audio2FadeTime = 0f;
             }
         }
     }
+
+    // void HandleUpdateForTitle() {
+    //     if (audioSource1.isPlaying) {
+    //         if (!audioSource1FullyQueued && audio1FadeTime < SONG_FADE_DELAY) {
+    //             audio1FadeTime += Time.deltaTime;
+    //             if (audio1FadeTime >= SONG_FADE_DELAY) {
+    //                 audioSource1FullyQueued = true;
+    //             }
+    //             audioSource1.volume = (audio1FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
+    //         }
+
+    //         if (audioSource1.time >= (audioSource1.clip.length - SONG_FADE_DELAY)) {
+    //             audio1FadeTime -= Time.deltaTime;
+    //             audioSource1.volume = (audio1FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
+    //         }
+
+    //         if (audio1FadeTime <= 0f) {
+    //             audioSource1.Stop();
+    //             audio1FadeTime = 0f;
+    //             audioSource1FullyQueued = false;
+    //         }
+    //     }
+    //     if (audioSource2.isPlaying) {
+    //         if (!audioSource2FullyQueued && audio2FadeTime < SONG_FADE_DELAY) {
+    //             audio2FadeTime += Time.deltaTime;
+    //             if (audio2FadeTime >= SONG_FADE_DELAY) {
+    //                 audioSource2FullyQueued = true;
+    //             }
+    //             audioSource2.volume = (audio2FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
+    //         }
+
+    //         if (audioSource2.time >= (audioSource2.clip.length - SONG_FADE_DELAY)) {
+    //             audio2FadeTime -= Time.deltaTime;
+    //             audioSource2.volume = (audio2FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
+    //         }
+
+    //         if (audio2FadeTime <= 0f) {
+    //             audioSource2.Stop();
+    //             audio2FadeTime = 0f;
+    //             audioSource2FullyQueued = false;
+    //         }
+    //     }
+    // }
+
+    // void HandleUpdateInGame() {
+    //     if (audioSource1.isPlaying) {
+    //         if (assaultMode) {
+    //             audio1FadeTime -= Time.deltaTime;
+    //             audioSource1.volume = (audio1FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
+    //         } else {
+    //             if (audio1FadeTime < SONG_FADE_DELAY) {
+    //                 audio1FadeTime += Time.deltaTime;
+    //                 audioSource1.volume = (audio1FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
+    //             }
+    //         }
+
+    //         if (audio1FadeTime <= 0f) {
+    //             audioSource1.Stop();
+    //             audio1FadeTime = 0f;
+    //         }
+    //     }
+    //     if (audioSource2.isPlaying) {
+    //         if (!assaultMode) {
+    //             audio2FadeTime -= Time.deltaTime;
+    //             audioSource2.volume = (audio2FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
+    //         } else {
+    //             if (audio2FadeTime < SONG_FADE_DELAY) {
+    //                 audio2FadeTime += Time.deltaTime;
+    //                 audioSource2.volume = (audio2FadeTime / SONG_FADE_DELAY) * ((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
+    //             }
+    //         }
+
+    //         if (audio2FadeTime <= 0f) {
+    //             audioSource2.Stop();
+    //             audio2FadeTime = 0f;
+    //         }
+    //     }
+    // }
 
     IEnumerator QueueNextSongOnTitle(int nextSource) {
         int r = Random.Range(0, titleTrackList.Length);
@@ -158,6 +186,7 @@ public class JukeboxScript : MonoBehaviour
                 }
             }
 
+            audio2Index = r;
             audioSource2.clip = titleTrackList[r];
             waitTime = audioSource1.clip.length;
         } else if (nextSource == 1) {
@@ -170,11 +199,13 @@ public class JukeboxScript : MonoBehaviour
                 }
             }
 
+            audio1Index = r;
             audioSource1.clip = titleTrackList[r];
             waitTime = audioSource2.clip.length;
         }
 
-        yield return new WaitForSeconds(Mathf.Max(0f, waitTime - SONG_FADE_DELAY));
+        // yield return new WaitForSeconds(Mathf.Max(0f, waitTime - SONG_FADE_DELAY));
+        yield return new WaitForSeconds(Mathf.Max(0f, waitTime));
 
         if (nextSource == 2) {
             audioSource2.Play();
@@ -202,7 +233,7 @@ public class JukeboxScript : MonoBehaviour
         int r = Random.Range(0, titleTrackList.Length);
         audio1Index = r;
         audioSource1.clip = titleTrackList[r];
-        audioSource1.volume = 0f;
+        // audioSource1.volume = 0f;
         audioSource1.Play();
         StartCoroutine(QueueNextSongOnTitle(2));
     }
@@ -215,7 +246,7 @@ public class JukeboxScript : MonoBehaviour
         audio1FadeTime = 0f;
         audio2FadeTime = 0f;
         LoadMusicForScene(sceneName);
-        audioSource1.volume = 0f;
+        // audioSource1.volume = 0f;
     }
 
     public void PlayStealthMusic() {

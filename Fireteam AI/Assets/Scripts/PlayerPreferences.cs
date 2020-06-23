@@ -36,6 +36,7 @@ public class PlayerPreferences : MonoBehaviour
                 playerPreferences.preferenceData.rememberLogin = info.rememberLogin;
                 playerPreferences.preferenceData.rememberUserId = info.rememberUserId;
                 playerPreferences.preferenceData.musicVolume = info.musicVolume;
+                JukeboxScript.jukebox.SetMusicVolume((float)playerPreferences.preferenceData.musicVolume / 100f);
                 Debug.Log("Login prefs loaded successfully!");
             } catch (Exception e) {
                 Debug.Log("Login prefs file was corrupted. Setting login prefs to default.");
@@ -101,6 +102,7 @@ public class PlayerPreferences : MonoBehaviour
         playerPreferences.preferenceData.rememberLogin = false;
         playerPreferences.preferenceData.rememberUserId = null;
         playerPreferences.preferenceData.musicVolume = JukeboxScript.DEFAULT_MUSIC_VOLUME;
+        JukeboxScript.jukebox.SetMusicVolume((float)JukeboxScript.DEFAULT_MUSIC_VOLUME / 100f);
     }
 
     void SetDefaultKeyMappings() {
