@@ -205,7 +205,6 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 		/** Explosive trigger functionality below - only operate on master client/server to avoid duplicate effects */
 		if (PhotonNetwork.IsMasterClient) {
 			HandleExplosiveEffectTriggers(other);
-			HandleEnvironmentEffectTriggers(other);
 		}
 	}
 
@@ -213,6 +212,25 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 		/** Explosive trigger functionality below - only operate on master client/server to avoid duplicate effects */
 		if (gameController.isVersusHostForThisTeam()) {
 			HandleExplosiveEffectTriggers(other);
+		}
+	}
+
+	void OnTriggerStay(Collider other) {
+		if (gameController.matchType == 'V') {
+			OnTriggerStayForVersus(other);
+		} else {
+			OnTriggerStayForCampaign(other);
+		}
+	}
+
+	void OnTriggerStayForCampaign(Collider other) {
+		if (PhotonNetwork.IsMasterClient) {
+			HandleEnvironmentEffectTriggers(other);
+		}
+	}
+
+	void OnTriggerStayForVersus(Collider other) {
+		if (gameController.isVersusHostForThisTeam()) {
 			HandleEnvironmentEffectTriggers(other);
 		}
 	}

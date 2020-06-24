@@ -365,6 +365,15 @@ public class WeaponActionScript : MonoBehaviour
         return false;
     }
 
+    bool IsBoltActionCocking() {
+        if (isCocking) {
+            if (fpc.fpcAnimator.GetBool("isBoltAction")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void AimDownSights()
     {
         if (!playerActionScript.fpc.m_IsRunning)
@@ -378,7 +387,7 @@ public class WeaponActionScript : MonoBehaviour
             } else {
                 originalTrans.localPosition = Vector3.Lerp (originalTrans.localPosition, originalPos, Time.deltaTime * aodSpeed);
             }*/
-            if (PlayerPreferences.playerPreferences.KeyWasPressed("Aim", true) && !isReloading && !IsPumpActionCocking() && !isDrawing)
+            if (PlayerPreferences.playerPreferences.KeyWasPressed("Aim", true) && !isReloading && !IsPumpActionCocking() && !IsBoltActionCocking() && !isDrawing)
             {
                 fpc.SetAiminginFPCAnimator(true);
                 if (!isAiming) {
@@ -1462,7 +1471,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     bool CanInitiateReload() {
-        if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && !IsPumpActionCocking() && !isDrawing && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
+        if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && !IsPumpActionCocking() && !IsBoltActionCocking() && !isDrawing && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
             return true;
         }
         return false;

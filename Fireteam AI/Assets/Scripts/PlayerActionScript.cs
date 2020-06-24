@@ -1006,7 +1006,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 return;
             }
             HandleExplosiveEffects(other);
-            HandleEnvironmentEffects(other);
             HandlePickups(other);
         }
         // else
@@ -1020,6 +1019,16 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         //         other.gameObject.GetComponent<PickupScript>().DestroyPickup();
         //     }
         // }
+    }
+
+    void OnTriggerStay(Collider other) {
+        if (pView.IsMine)
+        {
+            if (health <= 0) {
+                return;
+            }
+            HandleEnvironmentEffects(other);
+        }
     }
 
     void DeathCameraEffect()
