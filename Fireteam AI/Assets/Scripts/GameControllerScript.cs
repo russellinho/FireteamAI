@@ -821,8 +821,12 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		return deployableList[deployableId];
 	}
 
-	public void MarkAIReadyForRespawn(int pViewId) {
-		pView.RPC("RpcMarkAIReadyForRespawn", RpcTarget.All, pViewId);
+	public void MarkAIReadyForRespawn(int pViewId, bool syncWithClientsAgain) {
+		if (syncWithClientsAgain) {
+			pView.RPC("RpcMarkAIReadyForRespawn", RpcTarget.All, pViewId);
+		} else {
+			aIController.AddToRespawnQueue(pViewId);
+		}
 	}
 
 	public void ClearAIRespawns() {

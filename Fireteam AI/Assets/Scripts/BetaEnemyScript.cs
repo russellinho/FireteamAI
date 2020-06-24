@@ -225,7 +225,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
 		if (gameControllerScript.spawnMode == SpawnMode.Paused) {
-			StartCoroutine (Respawn(initialSpawnTime));
+			StartCoroutine (Respawn(initialSpawnTime, false));
 		}
 
 	}
@@ -300,7 +300,7 @@ public class BetaEnemyScript : MonoBehaviour {
         }
 
 		if (gameControllerScript.spawnMode == SpawnMode.Paused) {
-			StartCoroutine (Respawn(initialSpawnTime));
+			StartCoroutine (Respawn(initialSpawnTime, false));
 		}
 
     }
@@ -1831,7 +1831,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		yield return new WaitForSeconds(5f);
 		DespawnAction ();
 		if (!sniper) {
-			StartCoroutine (Respawn(respawnTime));
+			StartCoroutine (Respawn(respawnTime, false));
 		}
 	}
 
@@ -2189,25 +2189,77 @@ public class BetaEnemyScript : MonoBehaviour {
 	}
 
 	// Reset values to respawn
-	IEnumerator Respawn(float respawnTime) {
+	IEnumerator Respawn(float respawnTime, bool syncWithClientsAgain) {
 		if (actionState != ActionStates.Dead) yield return null;
 		yield return new WaitForSeconds (respawnTime);
 		if (gameControllerScript.assaultMode && gameControllerScript.spawnMode != SpawnMode.Paused) {
-			RespawnAction ();
+			RespawnAction (syncWithClientsAgain);
 		} else {
-			StartCoroutine (Respawn(respawnTime));
+			StartCoroutine (Respawn(respawnTime, syncWithClientsAgain));
 		}
 	}
 
-	void RespawnAction () {
+	void RespawnAction (bool syncWithClientsAgain) {
 		if (gameControllerScript.spawnMode == SpawnMode.Routine) {
-			gameControllerScript.MarkAIReadyForRespawn(pView.ViewID);
+			gameControllerScript.MarkAIReadyForRespawn(pView.ViewID, syncWithClientsAgain);
 		} else if (gameControllerScript.spawnMode == SpawnMode.Fixed) {
-			RespawnAtPosition(spawnPos);
+			RespawnAtPosition(spawnPos, syncWithClientsAgain);
 		}
 	}
 
-	public void RespawnAtPosition(Vector3 pos) {
+	public void RespawnAtPosition(Vector3 pos, bool syncWithClientsAgain) {
+		if (syncWithClientsAgain) {
+			pView.RPC("RpcRespawnAtPosition", RpcTarget.All, pos.x, pos.y, pos.z);
+		} else {
+			myCollider.height = originalColliderHeight;
+			myCollider.radius = originalColliderRadius;
+			myCollider.center = originalColliderCenter;
+			myCollider.enabled = true;
+			gameObject.layer = 14;
+			headCollider.gameObject.layer = 13;
+			health = 100;
+			transform.position = pos;
+			transform.rotation = Quaternion.identity;
+			coverWaitTimer = Random.Range (2f, 7f);
+			coverSwitchPositionsTimer = Random.Range (6f, 10f);
+			playerTargeting = null;
+			currentBullets = bulletsPerMag;
+			isCrouching = false;
+
+			coverTimer = 0f;
+			inCover = false;
+			isReloading = false;
+			fireTimer = 0.0f;
+
+			lastSeenPlayerPos = Vector3.negativeInfinity;
+
+			actionState = ActionStates.Idle;
+			animator.Play ("Idle");
+			firingState = FiringStates.StandingStill;
+			firingModeTimer = 0f;
+
+			wanderStallDelay = -1f;
+			coverPos = null;
+			crouchMode = CrouchMode.Natural;
+			coverScanRange = 50f;
+
+			modeler.RespawnPlayer();
+			marker.enabled = true;
+			gunRef.enabled = true;
+			rigid.useGravity = true;
+			rigid.isKinematic = false;
+
+			if (enemyType == EnemyType.Patrol) {
+				navMesh.enabled = true;
+				navMeshObstacle.enabled = false;
+			} else {
+				navMesh.enabled = false;
+				navMeshObstacle.enabled = true;
+			}
+		}
+	}
+
+	void RpcRespawnAtPosition(float respawnPosX, float respawnPosY, float respawnPosZ) {
 		myCollider.height = originalColliderHeight;
 		myCollider.radius = originalColliderRadius;
 		myCollider.center = originalColliderCenter;
@@ -2215,7 +2267,7 @@ public class BetaEnemyScript : MonoBehaviour {
 		gameObject.layer = 14;
 		headCollider.gameObject.layer = 13;
 		health = 100;
-		transform.position = pos;
+		transform.position = new Vector3(respawnPosX, respawnPosY, respawnPosZ);
 		transform.rotation = Quaternion.identity;
 		coverWaitTimer = Random.Range (2f, 7f);
 		coverSwitchPositionsTimer = Random.Range (6f, 10f);
