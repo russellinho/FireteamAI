@@ -644,6 +644,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     NpcScript n = activeInteractable.GetComponent<NpcScript>();
                     interactionTimer = 0f;
                     pView.RPC("RpcCarryNpc", RpcTarget.All, pView.Owner.ActorNumber);
+                    fpc.m_IsCrouching = false;
                     activeInteractable = null;
                     interactionLock = true;
                 }
@@ -1196,7 +1197,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         NpcScript n = gameController.vipRef.GetComponent<NpcScript>();
         n.ToggleIsCarrying(true, playerId);
         // If is local player, set to is carrying
-        if (playerId == pView.Owner.ActorNumber) {
+        if (playerId == PhotonNetwork.LocalPlayer.ActorNumber) {
             objectCarrying = gameController.vipRef;
             hud.SetCarryingText("PERSON");
         }

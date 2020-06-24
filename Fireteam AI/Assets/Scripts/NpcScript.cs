@@ -13,7 +13,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	public int health;
 	public bool godMode;
 	public int carriedByPlayerId;
-	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Disoriented, Carried, Escorted, Injured, FatallyInjured};
+	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Disoriented, Carried, Escorted, Injured, Incapacitated};
 	// FSM used for determining movement while attacking and not in cover
 	enum FiringStates {StandingStill, StrafeLeft, StrafeRight, Backpedal, Forward};
 	public ActionStates actionState;
@@ -110,21 +110,25 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	public void ToggleIsCarrying(bool b, int carriedByPlayerId) {
 		this.carriedByPlayerId = carriedByPlayerId;
 		if (carriedByPlayerId == -1) {
-			actionState = ActionStates.Carried;
+			actionState = ActionStates.Incapacitated;
 			carriedByTransform = null;
-			ToggleRenderers(true);
+			// ToggleRenderers(true);
 			ToggleCollider(true);
 		} else {
-			actionState = ActionStates.FatallyInjured;
+			actionState = ActionStates.Carried;
 			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].carryingSlotRef;
 			ToggleCollider(false);
-			if (carriedByPlayerId == PhotonNetwork.LocalPlayer.ActorNumber) {
-				ToggleRenderers(false);
-			}
+			// if (carriedByPlayerId == PhotonNetwork.LocalPlayer.ActorNumber) {
+			// 	ToggleRenderers(false);
+			// }
 		}
 	}
 	
 	void LateUpdate() {
+		UpdatePositionWhileCarried();
+	}
+
+	void UpdatePositionWhileCarried() {
 		if (actionState == ActionStates.Carried) {
 			if (carriedByTransform != null) {
 				transform.position = carriedByTransform.position;
@@ -158,13 +162,13 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 
 	void ToggleCollider(bool b) {
 		col.enabled = b;
-		if (b) {
-			rBody.isKinematic = false;
-			rBody.useGravity = true;
-		} else {
-			rBody.isKinematic = true;
-			rBody.useGravity = false;
-		}
+		// if (b) {
+		// 	rBody.isKinematic = false;
+		// 	rBody.useGravity = true;
+		// } else {
+		// 	rBody.isKinematic = true;
+		// 	rBody.useGravity = false;
+		// }
 	}
 
 	void ToggleRenderers(bool b) {
@@ -186,7 +190,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			animator.SetBool("isBeingCarried", false);
 		}
 
-		if (actionState == ActionStates.FatallyInjured) {
+		if (actionState == ActionStates.Incapacitated) {
 			animator.SetBool("isFatallyInjured", true);
 		} else {
 			animator.SetBool("isFatallyInjured", false);

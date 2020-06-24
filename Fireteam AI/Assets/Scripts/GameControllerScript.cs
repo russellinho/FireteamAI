@@ -273,11 +273,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				{
 					if (!gameOver)
 					{
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!");
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!", "Your team has been eliminated!");
 					}
 				} else if (CheckOutOfTime()) {
 					if (!gameOver) {
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, "T", null);
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, "T", null, null);
 					}
 				} else if (objectives.itemsRemaining == 0)
 				{
@@ -286,7 +286,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 						// Set completion to 100%
 						SetMyTeamScore(100);
 						// If they can escape, end the game and bring up the stat board
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 2f, teamMap, null);
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 2f, teamMap, null, "The enemy team has reached victory!");
 					}
 				}
 				// Check to see if either team has forfeited
@@ -320,15 +320,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				{
 					if (!gameOver)
 					{
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!");
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!", "Your team has been eliminated!");
 					}
 				} else if (vipRef.GetComponent<NpcScript>().actionState == NpcActionState.Dead) {
 					if (!gameOver) {
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 4f, (teamMap == "R" ? "B" : "R"), "The VIP has been killed!");
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 4f, (teamMap == "R" ? "B" : "R"), "The enemy team's VIP has been killed!", "The VIP has been killed!");
 					} 
 				} else if (CheckOutOfTime()) {
 					if (!gameOver) {
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, "T", null);
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, "T", null, null);
 					}
 				} else if (objectives.stepsLeftToCompletion == 1 && objectives.escapeAvailable)
 				{
@@ -337,7 +337,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 						// Set completion to 100%
 						SetMyTeamScore(100);
 						// If they can escape, end the game and bring up the stat board
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 2f, teamMap, null);
+						pView.RPC("RpcEndVersusGame", RpcTarget.All, 2f, teamMap, null, "The enemy team has reached victory!");
 					}
 				}
 				// Check to see if either team has forfeited
@@ -364,7 +364,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
     [PunRPC]
-    void RpcEndVersusGame(float f, string winner, string eventMessage)
+    void RpcEndVersusGame(float f, string winner, string winnerEventMessage, string loserEventMessage)
     {
 		if (gameOver) return;
 
@@ -373,21 +373,21 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         
 		Hashtable h = new Hashtable();
 
-		if (eventMessage != null) {
-			alertMessage = eventMessage;
-		}
-
 		if (winner == "R") {
 			h.Add("redStatus", "win");
 			h.Add("blueStatus", "lose");
-			if (teamMap != winner) {
-				alertMessage = "The enemy team has won!";
+			if (teamMap == "R") {
+				alertMessage = winnerEventMessage;
+			} else if (teamMap == "B") {
+				alertMessage = loserEventMessage;
 			}
 		} else if (winner == "B") {
 			h.Add("redStatus", "lose");
 			h.Add("blueStatus", "win");
-			if (teamMap != winner) {
-				alertMessage = "The enemy team has won!";
+			if (teamMap == "B") {
+				alertMessage = winnerEventMessage;
+			} else if (teamMap == "R") {
+				alertMessage = loserEventMessage;
 			}
 		} else if (winner == "T") {
 			h.Add("redStatus", "lose");
@@ -460,7 +460,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         if (forfeitDelay <= 0f) {
             if ((teamMap == "R" && blueTeamPlayerCount == 0) || (teamMap == "B" && redTeamPlayerCount == 0)) {
 				// Couldn't find another player on the other team. This means that they forfeit
-            	pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, teamMap, "The enemy team has forfeited!");
+            	pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, teamMap, "The enemy team has forfeited!", null);
 			}
         }
     }

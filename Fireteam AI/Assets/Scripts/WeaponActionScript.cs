@@ -214,6 +214,7 @@ public class WeaponActionScript : MonoBehaviour
         }
 
         AimDownSights();
+        HandleAttack();
     }
 
     bool AutoReloadCheck() {
@@ -231,7 +232,7 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    void HandleAttack()
     {
          if (!pView.IsMine || playerActionScript.health <= 0)
          {
