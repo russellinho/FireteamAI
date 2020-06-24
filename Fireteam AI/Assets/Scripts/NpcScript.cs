@@ -13,7 +13,6 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	public int health;
 	public bool godMode;
 	public int carriedByPlayerId;
-	public Vector3 carryRotation;
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Disoriented, Carried, Escorted, Injured, Incapacitated};
 	// FSM used for determining movement while attacking and not in cover
 	enum FiringStates {StandingStill, StrafeLeft, StrafeRight, Backpedal, Forward};
@@ -121,7 +120,8 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].carryingSlotRef;
 			ToggleCollider(false);
 			gameObject.transform.SetParent(carriedByTransform);
-			transform.localRotation = Quaternion.Euler(carryRotation);
+			transform.localPosition = Vector3.zero;
+			transform.localRotation = Quaternion.identity;
 			// if (carriedByPlayerId == PhotonNetwork.LocalPlayer.ActorNumber) {
 			// 	ToggleRenderers(false);
 			// }
