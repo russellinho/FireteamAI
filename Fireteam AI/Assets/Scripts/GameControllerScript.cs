@@ -45,6 +45,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public GameObject exitPoint;
 	public Transform spawnLocation;
+	public Transform outOfBoundsPoint;
 
 	public int deadCount;
 	// TODO: These numbers need to be instantiated and networked

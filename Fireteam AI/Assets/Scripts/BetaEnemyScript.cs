@@ -8,6 +8,7 @@ using UnityEngine.AI;
 using UnityStandardAssets.Characters.FirstPerson;
 using Random = UnityEngine.Random;
 using SpawnMode = GameControllerScript.SpawnMode;
+using UnityEngine.SceneManagement;
 
 public class BetaEnemyScript : MonoBehaviour {
 
@@ -138,6 +139,19 @@ public class BetaEnemyScript : MonoBehaviour {
 
     // Testing mode - set in inspector
     //public bool testingMode;
+
+	void Awake() {
+		SceneManager.sceneLoaded += OnSceneFinishedLoading;
+	}
+
+	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+        string levelName = SceneManager.GetActiveScene().name;
+		if (levelName == "Title") {
+			Destroy(gameObject);
+			PhotonNetwork.Destroy(gameObject);
+		}
+	}
 
     void Start()
     {

@@ -267,6 +267,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         DeathCheck();
         if (health <= 0)
         {
+            hud.ToggleHintText(null);
             SetInteracting(false, null);
             if (!escapeValueSent)
             {
@@ -296,6 +297,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         UpdateDetectionLevel();
         UpdateDetectionHUD();
+        
+        FallOffMapProtection();
     }
 
     void FixedUpdate() {
@@ -556,6 +559,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 //weaponScript.SwitchWeaponToFullBody();
                 fpc.SetIsDeadInAnimator(true);
                 SetInteracting(false, null);
+                DropCarrying();
+                hud.SetCarryingText(null);
                 TriggerPlayerDownAlert();
             }
             fpc.enabled = false;
@@ -678,7 +683,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 
         // Is near and looking at a bomb that can be defused
-        if (activeInteractable != null && !hud.PauseIsActive()) {
+        if (activeInteractable != null && !hud.PauseIsActive() && health > 0) {
             BombScript b = activeInteractable.GetComponent<BombScript>();
             if (b != null) {
                 if (b.defused) {
@@ -692,7 +697,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 } else {
                     // Stop using the deployable
                     SetInteracting(false, null);
-                    hud.ToggleHintText("HOLD [F] TO DEFUSE");
+                    hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO DEFUSE");
                 }
             }
         } else {
@@ -708,7 +713,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 
         // Is near and looking at a flare
-        if (activeInteractable != null && !hud.PauseIsActive()) {
+        if (activeInteractable != null && !hud.PauseIsActive() && health > 0) {
             FlareScript f = activeInteractable.GetComponent<FlareScript>();
             if (f != null) {
                 if (gameController.objectives.selectedEvacIndex >= 0) {
@@ -722,7 +727,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 } else {
                     // Stop using the deployable
                     SetInteracting(false, null);
-                    hud.ToggleHintText("HOLD [F] TO POP FLARE");
+                    hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO POP FLARE");
                 }
             }
         } else {
@@ -738,7 +743,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (activeInteractable != null && !hud.PauseIsActive()) {
+        if (activeInteractable != null && !hud.PauseIsActive() && health > 0) {
             NpcScript n = activeInteractable.GetComponent<NpcScript>();
             if (n != null) {
                 if (n.actionState == NpcActionState.Carried || n.actionState == NpcActionState.Dead) {
@@ -752,7 +757,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 } else {
                     // Stop using the deployable
                     SetInteracting(false, null);
-                    hud.ToggleHintText("HOLD [F] TO INTERACT");
+                    hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO INTERACT");
                 }
             }
         } else {
@@ -781,7 +786,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void DeployUseCheck() {
         // If we are looking at the deploy item and near it, we can use it
-        if (activeInteractable != null && !hud.PauseIsActive()) {
+        if (activeInteractable != null && !hud.PauseIsActive() && health > 0) {
             DeployableScript d = activeInteractable.GetComponent<DeployableScript>();
             if (d != null) {
                 if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact", true) && !interactionLock) {
@@ -791,7 +796,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 } else {
                     // Stop using the deployable
                     SetInteracting(false, null);
-                    hud.ToggleHintText("HOLD [F] TO USE [" + d.deployableName + "]");
+                    hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO USE [" + d.deployableName + "]");
                 }
             }
         } else {
@@ -1170,7 +1175,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         // Send player back to spawn position, reset rotation, leave spectator mode
         //transform.rotation = Quaternion.Euler(Vector3.zero);
-        transform.position = new Vector3(gameController.spawnLocation.position.x, gameController.spawnLocation.position.y, gameController.spawnLocation.position.z);
+        transform.position = gameController.spawnLocation.position;
         fpc.m_MouseLook.Init(fpc.charTransform, fpc.spineTransform, fpc.fpcTransformSpine, fpc.fpcTransformBody);
         LeaveSpectatorMode();
         //weaponScript.DrawWeapon(1);
@@ -1472,7 +1477,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     void DropCarrying() {
-        pView.RPC("RpcDropOffNpc", RpcTarget.All);
+        if (objectCarrying != null) {
+            pView.RPC("RpcDropOffNpc", RpcTarget.All);
+        }
     }
 
     void TriggerPlayerDownAlert() {
@@ -1494,5 +1501,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 			envDamageTimer += Time.deltaTime;
 		}
 	}
+
+    void FallOffMapProtection() {
+        if (transform.position.y <= gameController.outOfBoundsPoint.position.y) {
+            transform.position = gameController.spawnLocation.position;
+        }
+    }
 
 }

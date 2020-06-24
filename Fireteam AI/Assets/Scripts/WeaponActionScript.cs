@@ -189,6 +189,8 @@ public class WeaponActionScript : MonoBehaviour
                 break;
         }
 
+        HandleAttack();
+
         if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster || isWieldingDeployable || hudScript.container.pauseMenuGUI.activeInHierarchy)
         {
             return;
@@ -214,7 +216,6 @@ public class WeaponActionScript : MonoBehaviour
         }
 
         AimDownSights();
-        HandleAttack();
     }
 
     bool AutoReloadCheck() {

@@ -180,8 +180,8 @@ public class PlayerData : MonoBehaviour
             string characterPrefabName = GetCharacterPrefabName();
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
                 characterPrefabName,
-                Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
-                Quaternion.Euler(Vector3.zero));
+                Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
+                Quaternion.Euler(0f, 180f, 0f));
         } else if (levelName.Equals("Test")) {
             string characterPrefabName = GetCharacterPrefabName();
             PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
