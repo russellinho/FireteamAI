@@ -303,7 +303,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114336108925888890}
-  viewIdField: 1
+  viewIdField: 0
   InstantiationId: 1
   isRuntimeInstantiated: 0
 --- !u!114 &114336108925888890
@@ -855,7 +855,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 114766418645260732}
-  viewIdField: 2
+  viewIdField: 0
   InstantiationId: 2
   isRuntimeInstantiated: 0
 --- !u!114 &114766418645260732
@@ -893,6 +893,7 @@ MonoBehaviour:
   myHudMarkerCam1: {fileID: 0}
   myHudMarkerCam2: {fileID: 0}
   myHudMarker: {fileID: 0}
+  myHudMarker2: {fileID: 0}
   screenGrab: 0
 --- !u!114 &114745308866780578
 MonoBehaviour:
