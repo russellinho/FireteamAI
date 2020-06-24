@@ -115,26 +115,16 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			carriedByTransform = null;
 			// ToggleRenderers(true);
 			ToggleCollider(true);
+			gameObject.transform.SetParent(null);
 		} else {
 			actionState = ActionStates.Carried;
 			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].carryingSlotRef;
 			ToggleCollider(false);
+			gameObject.transform.SetParent(carriedByTransform);
 			transform.localRotation = Quaternion.Euler(carryRotation);
 			// if (carriedByPlayerId == PhotonNetwork.LocalPlayer.ActorNumber) {
 			// 	ToggleRenderers(false);
 			// }
-		}
-	}
-	
-	void LateUpdate() {
-		UpdatePositionWhileCarried();
-	}
-
-	void UpdatePositionWhileCarried() {
-		if (actionState == ActionStates.Carried) {
-			if (carriedByTransform != null) {
-				transform.position = carriedByTransform.position;
-			}
 		}
 	}
 
