@@ -49,6 +49,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     void Start () {
 		// container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
         if (!GetComponent<PhotonView>().IsMine) {
+			Debug.Log("not my cam");
+			myHudMarkerCam1.targetTexture = null;
+			myHudMarkerCam2.targetTexture = null;
 			myHudMarkerCam1.enabled = false;
 			myHudMarkerCam2.enabled = false;
 			myHudMarkerCam1.gameObject.SetActive(false);
