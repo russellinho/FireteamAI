@@ -49,20 +49,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     void Start () {
 		// container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
         if (!GetComponent<PhotonView>().IsMine) {
-			myHudMarkerCam1.transform.parent = null;
-			myHudMarkerCam2.transform.parent = null;
-			// myHudMarkerCam1.targetTexture = null;
-			// myHudMarkerCam2.targetTexture = null;
-			// myHudMarkerCam1.enabled = false;
-			// myHudMarkerCam2.enabled = false;
-			// myHudMarkerCam1.gameObject.SetActive(false);
-			// myHudMarkerCam2.gameObject.SetActive(false);
-			Destroy(myHudMarkerCam1.gameObject.GetComponent<FlareLayer>());
-			Destroy(myHudMarkerCam2.gameObject.GetComponent<FlareLayer>());
-			Destroy(myHudMarkerCam1.gameObject.GetComponent<OverheadCameraScript>());
-			Destroy(myHudMarkerCam2.gameObject.GetComponent<OverheadCameraScript>());
-			Destroy(myHudMarkerCam1.gameObject.GetComponent<Camera>());
-			Destroy(myHudMarkerCam2.gameObject.GetComponent<Camera>());
+			myHudMarkerCam1.targetTexture = null;
+			myHudMarkerCam2.targetTexture = null;
+			myHudMarkerCam1.enabled = false;
+			myHudMarkerCam2.enabled = false;
+			myHudMarkerCam1.gameObject.SetActive(false);
+			myHudMarkerCam2.gameObject.SetActive(false);
             this.enabled = false;
 			return;
         }
