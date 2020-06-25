@@ -115,6 +115,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
     {
 		if (otherPlayer.ActorNumber == carriedByPlayerId) {
 			ToggleIsCarrying(false, -1);
+			SceneManager.MoveGameObjectToScene(gameObject, SceneManager.GetActiveScene());
 		}
     }
 		

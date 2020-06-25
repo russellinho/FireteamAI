@@ -140,18 +140,18 @@ public class BetaEnemyScript : MonoBehaviour {
     // Testing mode - set in inspector
     //public bool testingMode;
 
-	void Awake() {
-		SceneManager.sceneLoaded += OnSceneFinishedLoading;
-	}
+	// void Awake() {
+	// 	SceneManager.sceneLoaded += OnSceneFinishedLoading;
+	// }
 
-	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
-    {
-        string levelName = SceneManager.GetActiveScene().name;
-		if (levelName == "Title") {
-			Destroy(gameObject);
-			PhotonNetwork.Destroy(gameObject);
-		}
-	}
+	// public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
+    // {
+    //     string levelName = SceneManager.GetActiveScene().name;
+	// 	if (levelName == "Title") {
+	// 		Destroy(gameObject);
+	// 		PhotonNetwork.Destroy(gameObject);
+	// 	}
+	// }
 
     void Start()
     {
