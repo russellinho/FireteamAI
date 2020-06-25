@@ -11071,6 +11071,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e77c2c9fbd9c462689949defa65c197, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pView: {fileID: 580623507002314522}
+  spineTransform: {fileID: 7942259398586826869}
   mainCamTrans: {fileID: 580623506623331171}
 --- !u!1 &3417306565219832954
 GameObject:
@@ -32859,6 +32861,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e77c2c9fbd9c462689949defa65c197, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pView: {fileID: 580623507002314522}
+  spineTransform: {fileID: 7942259398586826869}
   mainCamTrans: {fileID: 580623506623331171}
 --- !u!1 &6497694966943681377
 GameObject:
