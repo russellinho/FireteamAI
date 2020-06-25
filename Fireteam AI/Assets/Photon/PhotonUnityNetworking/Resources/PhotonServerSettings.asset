@@ -160,6 +160,7 @@ MonoBehaviour:
   - RespawnSpaceship
   - RpcStartGameCountdown
   - RpcStartVersusGameCountdown
+  - RpcRespawnAtPosition
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

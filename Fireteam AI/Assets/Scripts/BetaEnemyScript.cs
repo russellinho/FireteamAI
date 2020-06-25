@@ -2209,7 +2209,7 @@ public class BetaEnemyScript : MonoBehaviour {
 
 	public void RespawnAtPosition(Vector3 pos, bool syncWithClientsAgain) {
 		if (syncWithClientsAgain) {
-			pView.RPC("RpcRespawnAtPosition", RpcTarget.All, pos.x, pos.y, pos.z);
+			pView.RPC("RpcRespawnAtPosition", RpcTarget.All, gameControllerScript.teamMap, pos.x, pos.y, pos.z);
 		} else {
 			myCollider.height = originalColliderHeight;
 			myCollider.radius = originalColliderRadius;
@@ -2259,7 +2259,9 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 	}
 
-	void RpcRespawnAtPosition(float respawnPosX, float respawnPosY, float respawnPosZ) {
+	[PunRPC]
+	void RpcRespawnAtPosition(string team, float respawnPosX, float respawnPosY, float respawnPosZ) {
+		if (team != gameControllerScript.teamMap) return;
 		myCollider.height = originalColliderHeight;
 		myCollider.radius = originalColliderRadius;
 		myCollider.center = originalColliderCenter;

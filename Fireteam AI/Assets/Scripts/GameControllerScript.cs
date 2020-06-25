@@ -823,23 +823,25 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public void MarkAIReadyForRespawn(int pViewId, bool syncWithClientsAgain) {
 		if (syncWithClientsAgain) {
-			pView.RPC("RpcMarkAIReadyForRespawn", RpcTarget.All, pViewId);
+			pView.RPC("RpcMarkAIReadyForRespawn", RpcTarget.All, teamMap, pViewId);
 		} else {
 			aIController.AddToRespawnQueue(pViewId);
 		}
 	}
 
 	public void ClearAIRespawns() {
-		pView.RPC("RpcClearAIRespawns", RpcTarget.All);
+		pView.RPC("RpcClearAIRespawns", RpcTarget.All, teamMap);
 	}
 
 	[PunRPC]
-	void RpcMarkAIReadyForRespawn(int pViewId) {
+	void RpcMarkAIReadyForRespawn(string team, int pViewId) {
+		if (team != teamMap) return;
 		aIController.AddToRespawnQueue(pViewId);
 	}
 
 	[PunRPC]
-	void RpcClearAIRespawns() {
+	void RpcClearAIRespawns(string team) {
+		if (team != teamMap) return;
 		aIController.ClearRespawnQueue();
 	}
 

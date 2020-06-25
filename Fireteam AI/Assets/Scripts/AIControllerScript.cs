@@ -33,17 +33,31 @@ public class AIControllerScript : MonoBehaviour
     }
 
     void Start() {
-        StartCoroutine("RespawnJob");
+        if (gameController.matchType == 'C') {
+            StartCoroutine("RespawnJobCampaign");
+        } else if (gameController.matchType == 'V') {
+            StartCoroutine("RespawnJobVersus");
+        }
     }
 
-    IEnumerator RespawnJob() {
+    IEnumerator RespawnJobCampaign() {
         yield return new WaitForSeconds(RESPAWN_JOB_DELAY);
         
         if (PhotonNetwork.IsMasterClient) {
             SpawnNextWaveOfEnemies();
         }
 
-        StartCoroutine("RespawnJob");
+        StartCoroutine("RespawnJobCampaign");
+    }
+
+    IEnumerator RespawnJobVersus() {
+        yield return new WaitForSeconds(RESPAWN_JOB_DELAY);
+        
+        if (gameController.isVersusHostForThisTeam()) {
+            SpawnNextWaveOfEnemies();
+        }
+
+        StartCoroutine("RespawnJobVersus");
     }
 
     public void AddToRespawnQueue(int pViewId) {
