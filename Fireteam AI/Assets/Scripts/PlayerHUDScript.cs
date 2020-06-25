@@ -20,10 +20,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     public WeaponScript wepScript;
 
     private GameControllerScript gameController;
-	public Camera hudMarkerCam1Template;
-	public Camera hudMarkerCam2Template;
-    public GameObject myHudMarkerCam1;
-    public GameObject myHudMarkerCam2;
+    public Camera myHudMarkerCam1;
+    public Camera myHudMarkerCam2;
     public GameObject myHudMarker;
 	public GameObject myHudMarker2;
 
@@ -45,34 +43,18 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void Awake() {
 		container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
-		if (GetComponent<PhotonView>().IsMine) {
-			myHudMarkerCam1.AddComponent<Camera>().CopyFrom(hudMarkerCam1Template);
-			myHudMarkerCam2.AddComponent<Camera>().CopyFrom(hudMarkerCam2Template);
-			myHudMarkerCam1.AddComponent<FlareLayer>();
-			myHudMarkerCam2.AddComponent<FlareLayer>();
-			myHudMarkerCam1.AddComponent<OverheadCameraScript>();
-			myHudMarkerCam2.AddComponent<OverheadCameraScript>();
-			myHudMarkerCam1.GetComponent<Camera>().targetTexture = container.hudMapTargetTexture;
-			myHudMarkerCam2.GetComponent<Camera>().targetTexture = container.hudMapTargetTexture2;
-			myHudMarkerCam1.GetComponent<OverheadCameraScript>().mainCamTrans = playerActionScript.viewCam.transform;
-			myHudMarkerCam2.GetComponent<OverheadCameraScript>().mainCamTrans = playerActionScript.viewCam.transform;
-			myHudMarkerCam1.transform.localPosition = new Vector3(0f, 25f, 0f);
-			myHudMarkerCam2.transform.localPosition = new Vector3(0f, 25f, 0f);
-		}
 	}
 
     // Use this for initialization
     void Start () {
 		// container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
         if (!GetComponent<PhotonView>().IsMine) {
-			// myHudMarkerCam1.depth = 2f;
-			// myHudMarkerCam2.depth = 2f;
-			// myHudMarkerCam1.targetTexture = null;
-			// myHudMarkerCam2.targetTexture = null;
-			// myHudMarkerCam1.enabled = false;
-			// myHudMarkerCam2.enabled = false;
-			// myHudMarkerCam1.gameObject.SetActive(false);
-			// myHudMarkerCam2.gameObject.SetActive(false);
+			myHudMarkerCam1.targetTexture = null;
+			myHudMarkerCam2.targetTexture = null;
+			myHudMarkerCam1.enabled = false;
+			myHudMarkerCam2.enabled = false;
+			myHudMarkerCam1.gameObject.SetActive(false);
+			myHudMarkerCam2.gameObject.SetActive(false);
             this.enabled = false;
 			return;
         }
@@ -84,6 +66,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.hitFlare.GetComponent<RawImage> ().enabled = false;
 		container.hitDir.GetComponent<RawImage> ().enabled = false;
 		container.hitMarker.GetComponent<RawImage> ().enabled = false;
+		myHudMarkerCam1.targetTexture = container.hudMapTargetTexture;
+		myHudMarkerCam2.targetTexture = container.hudMapTargetTexture2;
 		pauseMenuScript = container.pauseMenuGUI.GetComponent<PauseMenuScript>();
 
 		foreach (int actorId in gameController.enemyList.Keys) {
