@@ -7,8 +7,8 @@ public class OverheadCameraScript : MonoBehaviour
     public Transform mainCamTrans;
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        transform.localRotation = Quaternion.Euler(90f, 0f, -mainCamTrans.rotation.eulerAngles.y);
+        transform.rotation = Quaternion.Euler(90f, 0f, -mainCamTrans.rotation.eulerAngles.y);
     }
 }

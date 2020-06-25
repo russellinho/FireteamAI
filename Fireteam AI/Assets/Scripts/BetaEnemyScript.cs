@@ -8,7 +8,6 @@ using UnityEngine.AI;
 using UnityStandardAssets.Characters.FirstPerson;
 using Random = UnityEngine.Random;
 using SpawnMode = GameControllerScript.SpawnMode;
-using UnityEngine.SceneManagement;
 
 public class BetaEnemyScript : MonoBehaviour {
 

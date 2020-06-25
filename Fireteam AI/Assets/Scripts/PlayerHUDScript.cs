@@ -49,7 +49,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     void Start () {
 		// container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
         if (!GetComponent<PhotonView>().IsMine) {
-			Debug.Log("not my cam");
 			myHudMarkerCam1.targetTexture = null;
 			myHudMarkerCam2.targetTexture = null;
 			myHudMarkerCam1.enabled = false;
@@ -67,6 +66,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.hitFlare.GetComponent<RawImage> ().enabled = false;
 		container.hitDir.GetComponent<RawImage> ().enabled = false;
 		container.hitMarker.GetComponent<RawImage> ().enabled = false;
+		myHudMarkerCam1.targetTexture = container.hudMapTargetTexture;
+		myHudMarkerCam2.targetTexture = container.hudMapTargetTexture2;
 		pauseMenuScript = container.pauseMenuGUI.GetComponent<PauseMenuScript>();
 
 		foreach (int actorId in gameController.enemyList.Keys) {

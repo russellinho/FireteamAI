@@ -40,17 +40,17 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	// Use this for initialization
 	void Awake() {
 		carriedByPlayerId = -1;
-		SceneManager.sceneLoaded += OnSceneFinishedLoading;
+		// SceneManager.sceneLoaded += OnSceneFinishedLoading;
 	}
 
-	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
-    {
-        string levelName = SceneManager.GetActiveScene().name;
-		if (levelName == "Title") {
-			Destroy(gameObject);
-			PhotonNetwork.Destroy(gameObject);
-		}
-	}
+	// public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
+    // {
+    //     string levelName = SceneManager.GetActiveScene().name;
+	// 	if (levelName == "Title") {
+	// 		Destroy(gameObject);
+	// 		PhotonNetwork.Destroy(gameObject);
+	// 	}
+	// }
 
 	void Update()
     {

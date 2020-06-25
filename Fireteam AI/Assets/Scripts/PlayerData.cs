@@ -395,15 +395,33 @@ public class PlayerData : MonoBehaviour
     }
 
     public void LoadInventory() {
-        this.myHeadgear.Clear();
-        this.myTops.Clear();
-        this.myBottoms.Clear();
-        this.myFacewear.Clear();
-        this.myFootwear.Clear();
-        this.myArmor.Clear();
-        this.myWeapons.Clear();
-        this.myCharacters.Clear();
-        this.myMods.Clear();
+        if (this.myHeadgear.Count != 0) {
+            this.myHeadgear.Clear();
+        }
+        if (this.myTops.Count != 0) {
+            this.myTops.Clear();
+        }
+        if (this.myBottoms.Count != 0) {
+            this.myBottoms.Clear();
+        }
+        if (this.myFacewear.Count != 0) {
+            this.myFacewear.Clear();
+        }
+        if (this.myFootwear.Count != 0) {
+            this.myFootwear.Clear();
+        }
+        if (this.myArmor.Count != 0) {
+            this.myArmor.Clear();
+        }
+        if (this.myWeapons.Count != 0) {
+            this.myWeapons.Clear();
+        }
+        if (this.myCharacters.Count != 0) {
+            this.myCharacters.Clear();
+        }
+        if (this.myMods.Count != 0) {
+            this.myMods.Clear();
+        }
         DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
             if (task.IsCompleted) {
                 DataSnapshot snapshot = task.Result;

@@ -38,6 +38,8 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject hitMarker;
 
 	// Map HUD
+	public RenderTexture hudMapTargetTexture;
+	public RenderTexture hudMapTargetTexture2;
 	public RawImage hudMap;
 	public RawImage hudMap2;
 	public GameObject hudWaypoint;
