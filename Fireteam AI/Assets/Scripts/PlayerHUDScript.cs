@@ -53,8 +53,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			myHudMarkerCam2.targetTexture = null;
 			myHudMarkerCam1.enabled = false;
 			myHudMarkerCam2.enabled = false;
-			myHudMarkerCam1.gameObject.SetActive(false);
-			myHudMarkerCam2.gameObject.SetActive(false);
+			// myHudMarkerCam1.gameObject.SetActive(false);
+			// myHudMarkerCam2.gameObject.SetActive(false);
             this.enabled = false;
 			return;
         }
