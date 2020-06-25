@@ -66,8 +66,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.hitFlare.GetComponent<RawImage> ().enabled = false;
 		container.hitDir.GetComponent<RawImage> ().enabled = false;
 		container.hitMarker.GetComponent<RawImage> ().enabled = false;
-		myHudMarkerCam1.targetTexture = container.hudMapTargetTexture;
-		myHudMarkerCam2.targetTexture = container.hudMapTargetTexture2;
 		pauseMenuScript = container.pauseMenuGUI.GetComponent<PauseMenuScript>();
 
 		foreach (int actorId in gameController.enemyList.Keys) {
