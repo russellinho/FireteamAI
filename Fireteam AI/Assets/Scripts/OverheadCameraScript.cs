@@ -16,7 +16,7 @@ public class OverheadCameraScript : MonoBehaviour
         if (pView.IsMine) {
             transform.rotation = Quaternion.Euler(90f, 0f, -mainCamTrans.rotation.eulerAngles.y);
         } else {
-            transform.rotation = Quaternion.Euler(90f, 0f, spineTransform.rotation.eulerAngles.y);
+            transform.rotation = Quaternion.Euler(90f, 0f, -spineTransform.rotation.eulerAngles.y + 32f);
         }
     }
 }
