@@ -450,6 +450,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         PlayerStat p = new PlayerStat(gameObject, carryingSlot, pView.Owner.ActorNumber, pView.Owner.NickName, team, exp);
         GameControllerScript.playerList.Add(pView.Owner.ActorNumber, p);
+        if (GameControllerScript.playerList.Count == 1) {
+            PhotonNetwork.SetMasterClient(pView.Owner);
+        }
     }
 
     public void TakeDamage(int d, bool useArmor)

@@ -25,7 +25,7 @@ public class MeleeBehavior : StateMachineBehaviour
             was.UpdateMeleeDash();
             was.DealMeleeDamage();
         } else {
-            if (stateInfo.normalizedTime <= 0.5f) {
+            if (stateInfo.normalizedTime <= 0.8f) {
                 was.DealMeleeDamage();
             }
         }
