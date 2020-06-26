@@ -133,7 +133,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public void UpdateObjectives() {
 		objectives.UpdateObjectives(currentMap);
-		SetMyTeamScore((short)(objectives.GetMissionProgress() * 100f));
+		if (matchType == 'V') {
+			SetMyTeamScore((short)(objectives.GetMissionProgress() * 100f));
+		}
 		updateObjectivesFlag = true;
 	}
 

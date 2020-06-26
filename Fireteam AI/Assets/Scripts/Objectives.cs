@@ -95,6 +95,6 @@ public class Objectives {
 	}
 
 	public float GetMissionProgress() {
-		return (float)stepsLeftToCompletion / (float)totalStepsToCompletion;
+		return 1f - (float)stepsLeftToCompletion / (float)totalStepsToCompletion;
 	}
 }
