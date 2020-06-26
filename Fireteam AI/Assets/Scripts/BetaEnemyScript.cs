@@ -2210,6 +2210,10 @@ public class BetaEnemyScript : MonoBehaviour {
 		if (syncWithClientsAgain) {
 			pView.RPC("RpcRespawnAtPosition", RpcTarget.All, gameControllerScript.teamMap, pos.x, pos.y, pos.z);
 		} else {
+			navMesh.enabled = false;
+			navMeshObstacle.enabled = false;
+			transform.position = pos;
+			transform.rotation = Quaternion.identity;
 			myCollider.height = originalColliderHeight;
 			myCollider.radius = originalColliderRadius;
 			myCollider.center = originalColliderCenter;
@@ -2217,8 +2221,6 @@ public class BetaEnemyScript : MonoBehaviour {
 			gameObject.layer = 14;
 			headCollider.gameObject.layer = 13;
 			health = 100;
-			transform.position = pos;
-			transform.rotation = Quaternion.identity;
 			coverWaitTimer = Random.Range (2f, 7f);
 			coverSwitchPositionsTimer = Random.Range (6f, 10f);
 			playerTargeting = null;
@@ -2261,6 +2263,10 @@ public class BetaEnemyScript : MonoBehaviour {
 	[PunRPC]
 	void RpcRespawnAtPosition(string team, float respawnPosX, float respawnPosY, float respawnPosZ) {
 		if (team != gameControllerScript.teamMap) return;
+		navMesh.enabled = false;
+		navMeshObstacle.enabled = false;
+		transform.position = new Vector3(respawnPosX, respawnPosY, respawnPosZ);
+		transform.rotation = Quaternion.identity;
 		myCollider.height = originalColliderHeight;
 		myCollider.radius = originalColliderRadius;
 		myCollider.center = originalColliderCenter;
@@ -2268,8 +2274,6 @@ public class BetaEnemyScript : MonoBehaviour {
 		gameObject.layer = 14;
 		headCollider.gameObject.layer = 13;
 		health = 100;
-		transform.position = new Vector3(respawnPosX, respawnPosY, respawnPosZ);
-		transform.rotation = Quaternion.identity;
 		coverWaitTimer = Random.Range (2f, 7f);
 		coverSwitchPositionsTimer = Random.Range (6f, 10f);
 		playerTargeting = null;
