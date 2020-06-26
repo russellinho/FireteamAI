@@ -69657,6 +69657,11 @@ PrefabInstance:
       propertyPath: pView
       value: 
       objectReference: {fileID: 722466562}
+    - target: {fileID: 114373645945833814, guid: 5abdf14a6d1684959a3511f4a2bcf083,
+        type: 3}
+      propertyPath: switchTeamsBtnVs
+      value: 
+      objectReference: {fileID: 963878276}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5abdf14a6d1684959a3511f4a2bcf083, type: 3}
 --- !u!1 &1584868364

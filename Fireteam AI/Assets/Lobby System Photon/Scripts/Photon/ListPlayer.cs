@@ -48,6 +48,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public Button emojiBtnVs;
 		public Button leaveGameBtn;
 		public Button leaveGameBtnVs;
+		public Button switchTeamsBtnVs;
 		public GameObject titleController;
 		public AudioClip countdownSfx;
 
@@ -198,6 +199,7 @@ namespace Photon.Pun.LobbySystemPhoton
             emojiBtnVs.interactable = status;
 			leaveGameBtn.interactable = status;
             leaveGameBtnVs.interactable = status;
+			switchTeamsBtnVs.interactable = status;
 		}
 
 		[PunRPC]
@@ -215,6 +217,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			emojiBtnVs.interactable = status;
 			leaveGameBtn.interactable = status;
 			leaveGameBtnVs.interactable = status;
+			switchTeamsBtnVs.interactable = status;
 		}
 
 		void ChangeReadyStatus() {
