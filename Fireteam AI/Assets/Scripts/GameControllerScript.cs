@@ -61,8 +61,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public char matchType;
     private string myTeam;
     private string opposingTeam;
-    private short objectiveCount;
-    private short objectiveCompleted;
     private float forfeitDelay;
 	public bool enemyTeamNearingVictoryTrigger;
 	public string campaignAlertMessage;
@@ -78,8 +76,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		coverSpots = new Dictionary<short, GameObject>();
         myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
         opposingTeam = (myTeam == "red" ? "blue" : "red");
-        objectiveCount = 0;
-        objectiveCompleted = 0;
         forfeitDelay = FORFEIT_CHECK_DELAY;
 		DetermineObjectivesForMission(SceneManager.GetActiveScene().name);
 	}
@@ -137,6 +133,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public void UpdateObjectives() {
 		objectives.UpdateObjectives(currentMap);
+		SetMyTeamScore((short)(objectives.GetMissionProgress() * 100f));
 		updateObjectivesFlag = true;
 	}
 
@@ -163,7 +160,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             // if (Input.GetKeyDown(KeyCode.B)) {
             // 	pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
             // }
-            objectiveCount = 5;
 			if (objectives.itemsRemaining == 0) {
 				objectives.escapeAvailable = true;
 			}
@@ -253,7 +249,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             // if (Input.GetKeyDown(KeyCode.B)) {
             // 	pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
             // }
-            objectiveCount = 5;
 			if (objectives.itemsRemaining == 0) {
 				objectives.escapeAvailable = true;
 			}
@@ -657,18 +652,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         exitLevelLoaded = true;
 		exitLevelLoadedTimer = 4f;
 	}
-
-    void UpdateMyTeamScore(bool increase)
-    {
-        if (increase)
-        {
-            objectiveCompleted++;
-        } else
-        {
-            objectiveCompleted--;
-        }
-        SetMyTeamScore((short)(((float)objectiveCompleted / (float)objectiveCount) * 100f));
-    }
 
     void SetMyTeamScore(short score)
     {

@@ -8,6 +8,7 @@ public class Objectives {
 	public string[] objectivesText;
 	public int itemsRemaining;
 	public int stepsLeftToCompletion;
+	public int totalStepsToCompletion;
 	public int escaperCount;
 	public bool escapeAvailable;
 	public float missionTimer1;
@@ -22,12 +23,14 @@ public class Objectives {
         if (map == 1)
         {
 			itemsRemaining = 4;
+			totalStepsToCompletion = 5;
 			stepsLeftToCompletion = 5;
 			objectivesText = new string[2];
 			objectivesText[0] = "Defuse bombs around the city. (4)";
 			objectivesText[1] = "Escape.";
         } else if (map == 2) {
 			selectedEvacIndex = -2;
+			totalStepsToCompletion = 3;
 			stepsLeftToCompletion = 3;
 			objectivesText = new string[3];
 			objectivesText[0] = "Retrieve the pilot and secure a perimeter and defend yourselves until evac arrives.";
@@ -89,5 +92,9 @@ public class Objectives {
 			temp = temp + objectivesText[index][i] + '\u0336';
 		}
 		objectivesText [index] = temp;
+	}
+
+	public float GetMissionProgress() {
+		return (float)stepsLeftToCompletion / (float)totalStepsToCompletion;
 	}
 }
