@@ -9,7 +9,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 using Random = UnityEngine.Random;
 using SpawnMode = GameControllerScript.SpawnMode;
 
-public class BetaEnemyScript : MonoBehaviour {
+public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	private const float MELEE_DISTANCE = 1.7f;
 	private const float PLAYER_HEIGHT_OFFSET = 1f;
@@ -303,6 +303,41 @@ public class BetaEnemyScript : MonoBehaviour {
 		}
 
     }
+
+	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
+		if (gameControllerScript != null && gameControllerScript.matchType == 'V') {
+			SerializeViewVersus(stream, info);
+		} else {
+			SerializeViewCampaign(stream, info);
+		}
+	}
+
+	void SerializeViewCampaign(PhotonStream stream, PhotonMessageInfo info) {
+		if (stream.IsWriting)
+		{
+			stream.SendNext(this.suspicionMeter);
+		}
+		else
+		{
+			this.suspicionMeter = (float)stream.ReceiveNext();
+		}
+	}
+
+	void SerializeViewVersus(PhotonStream stream, PhotonMessageInfo info) {
+		if (stream.IsWriting)
+		{
+			stream.SendNext(gameControllerScript.teamMap);
+			stream.SendNext(this.suspicionMeter);
+		}
+		else
+		{
+			string team = (string)stream.ReceiveNext();
+
+            if (team != gameControllerScript.teamMap) return;
+
+			this.suspicionMeter = (float)stream.ReceiveNext();
+		}
+	}
 
     void Update()
     {
