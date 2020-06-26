@@ -1057,6 +1057,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     {
         container.blueScore.SetActive(b);
         container.redScore.SetActive(b);
+		if (gameController.teamMap == "R") {
+			container.redTeamHighlight.SetActive(true);
+		} else if (gameController.teamMap == "B") {
+			container.blueTeamHighlight.SetActive(true);
+		}
     }
 
     public void UpdateRedTeamScore(int score)

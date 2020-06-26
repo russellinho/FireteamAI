@@ -75,5 +75,7 @@ public class HUDContainer : MonoBehaviour {
     public GameObject blueScore;
     public Text redScoreTxt;
     public Text blueScoreTxt;
+	public GameObject redTeamHighlight;
+	public GameObject blueTeamHighlight;
 
 }
