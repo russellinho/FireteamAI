@@ -56,11 +56,16 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     public GameObject[] skinSelection;
 
     public override void OnEnable() {
-        if (PhotonNetwork.IsMasterClient) {
+        // if (PhotonNetwork.IsMasterClient) {
+        //     EquipRandomOutfitForEnemy();
+        //     modelCreated = true;
+        // } else {
+        //     modelCreated = false;
+        // }
+        if (!modelCreated) {
             EquipRandomOutfitForEnemy();
-            modelCreated = true;
-        } else {
-            modelCreated = false;
+            pView.RPC("RpcSetModelCreated", RpcTarget.AllBuffered);
+            SendEquippedItemsToClients();
         }
         if (enemyScript.gameControllerScript.spawnMode == SpawnMode.Paused && enemyScript.actionState == ActionStates.Dead) {
             DespawnPlayer();
@@ -75,14 +80,19 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     // }
 
     void Update() {
-        if (!modelCreated && !PhotonNetwork.IsMasterClient) {
-            if (!createModelSemaphore) {
-                createModelSemaphore = true;
-                PingServerForEquipment();
-                createModelSemaphore = false;
-                modelCreated = true;
-            }
-        }
+        // if (!modelCreated && !PhotonNetwork.IsMasterClient) {
+        //     if (!createModelSemaphore) {
+        //         createModelSemaphore = true;
+        //         PingServerForEquipment();
+        //         createModelSemaphore = false;
+        //         modelCreated = true;
+        //     }
+        // }
+    }
+
+    [PunRPC]
+    void RpcSetModelCreated() {
+        modelCreated = true;
     }
 
     void EquipRandomOutfitForEnemy() {
@@ -367,7 +377,7 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
 
     void SendEquippedItemsToClients() {
         if (pView != null) {
-            pView.RPC("RpcSetEquippedItems", RpcTarget.Others, this.equippedHeadgear, this.equippedFacewear, this.equippedEyewear, this.equippedTop, this.equippedBottom, this.equippedFootwear, this.equippedSkin);
+            pView.RPC("RpcSetEquippedItems", RpcTarget.OthersBuffered, this.equippedHeadgear, this.equippedFacewear, this.equippedEyewear, this.equippedTop, this.equippedBottom, this.equippedFootwear, this.equippedSkin);
         }
     }
 

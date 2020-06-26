@@ -44,6 +44,7 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject hudPlayerMarker;
 
 	// On-screen indication HUD
+	public Text objectivesTextParent;
 	public Text objectivesText;
 	public GameObject missionText;
 	public Text deployInvalidText;

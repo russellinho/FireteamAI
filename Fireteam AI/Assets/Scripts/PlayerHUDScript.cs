@@ -713,6 +713,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.missionTimeRemainingText.enabled = !b;
 		container.assaultModeIndText.enabled = !b;
 		container.objectivesText.enabled = !b;
+		container.objectivesTextParent.enabled = !b;
         container.scoreboard.GetComponent<Canvas>().enabled = b;
     }
 

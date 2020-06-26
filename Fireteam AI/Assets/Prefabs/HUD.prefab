@@ -3928,6 +3928,7 @@ MonoBehaviour:
     type: 3}
   hudPlayerMarker: {fileID: 1931414385125120, guid: 238c389c896f5034b9b809d54b544a9e,
     type: 3}
+  objectivesTextParent: {fileID: 8458731018520207068}
   objectivesText: {fileID: 114822407909264430}
   missionText: {fileID: 1715253450219478}
   deployInvalidText: {fileID: 6556431910967173739}
@@ -7245,7 +7246,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 495c9e2a934bcc640a8d7427b13cb680, type: 3}
-    m_FontSize: 13
+    m_FontSize: 12
     m_FontStyle: 2
     m_BestFit: 0
     m_MinSize: 1
