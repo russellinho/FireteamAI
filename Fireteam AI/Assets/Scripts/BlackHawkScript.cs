@@ -181,8 +181,12 @@ public class BlackHawkScript : MonoBehaviour
         }
     }
 
-    public void ToggleEnabled(bool b) {
-        pView.RPC("RpcToggleEnabled", RpcTarget.All, b, gameController.teamMap);
+    public void ToggleEnabled(bool b, bool resyncWithClients) {
+        if (resyncWithClients) {
+            pView.RPC("RpcToggleEnabled", RpcTarget.All, b, gameController.teamMap);
+        } else {
+            gameObject.SetActive(b);
+        }
     }
 
     [PunRPC]
