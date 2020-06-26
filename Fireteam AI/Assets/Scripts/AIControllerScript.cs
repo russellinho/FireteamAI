@@ -122,7 +122,6 @@ public class AIControllerScript : MonoBehaviour
                     // Spawn the enemy at the current spawn point
                     int i = farthestSpawnPoints[spawnPointIterator].index;
                     Vector3 newSpawnPos = new Vector3(spawnPoints[i].position.x + Random.Range(0f, 5f), spawnPoints[i].position.y + Random.Range(0f, 5f), spawnPoints[i].position.z + Random.Range(0f, 5f));
-                    Debug.Log(i + ": new spawn point is " + newSpawnPos);
                     b.RespawnAtPosition(newSpawnPos, true);
                     spawnCounts[i]++;
                     // If reached the max spawn group size for this point, go to the next one
