@@ -1217,10 +1217,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         NpcScript n = gameController.vipRef.GetComponent<NpcScript>();
         int droppedOffBy = n.carriedByPlayerId;
         n.ToggleIsCarrying(false, -1);
-        if (droppedOffBy == PhotonNetwork.LocalPlayer.ActorNumber) {
-            Vector3 dest = viewCam.transform.position + (viewCam.transform.forward);
-            dest.y = gameObject.transform.position.y;
-            gameController.vipRef.transform.position = dest;
+        if (droppedOffBy == pView.Owner.ActorNumber) {
             objectCarrying = null;
         }
     }

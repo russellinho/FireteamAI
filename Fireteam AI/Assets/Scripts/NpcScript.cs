@@ -36,12 +36,10 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	// Timers
 	private float envDamageTimer;
 	private float disorientationTime;
-	private Vector3 droppedAtPosition;
 
 	// Use this for initialization
 	void Awake() {
 		carriedByPlayerId = -1;
-		droppedAtPosition = Vector3.negativeInfinity;
 		// SceneManager.sceneLoaded += OnSceneFinishedLoading;
 	}
 
@@ -63,9 +61,6 @@ public class NpcScript : MonoBehaviourPunCallbacks {
         {
             UpdateForVersus();
         }
-		if (!Vector3.Equals(droppedAtPosition, Vector3.negativeInfinity)) {
-
-		}
     }
 
 	void UpdateForCampaign() {
@@ -138,8 +133,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 				ignoreLayer = ~ignoreLayer;
 				// Snap NPC to ground
 				if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
-					// transform.position = hitInfo.transform.position;
-					droppedAtPosition = hitInfo.transform.position;
+					transform.position = hitInfo.transform.position;
 				}
 			}
 			ToggleCollider(true);
@@ -182,13 +176,13 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 
 	void ToggleCollider(bool b) {
 		col.enabled = b;
-		// if (b) {
-		// 	rBody.isKinematic = false;
-		// 	rBody.useGravity = true;
-		// } else {
-		// 	rBody.isKinematic = true;
-		// 	rBody.useGravity = false;
-		// }
+		if (b) {
+			rBody.isKinematic = false;
+			rBody.useGravity = true;
+		} else {
+			rBody.isKinematic = true;
+			rBody.useGravity = false;
+		}
 	}
 
 	void ToggleRenderers(bool b) {
