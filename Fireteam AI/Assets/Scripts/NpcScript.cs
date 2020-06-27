@@ -127,7 +127,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			// ToggleRenderers(true);
 			gameObject.transform.SetParent(null);
 			transform.rotation = Quaternion.identity;
-			if (!PhotonNetwork.IsMasterClient) {
+			if (PhotonNetwork.LocalPlayer.ActorNumber == carriedByPlayerId) {
 				RaycastHit hitInfo;
 				int ignoreLayer = (1 << 5) | (1 << 9) | (1 << 11) | (1 << 12)| (1 << 13)| (1 << 14)| (1 << 15)| (1 << 16);
 				ignoreLayer = ~ignoreLayer;
@@ -176,13 +176,13 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 
 	void ToggleCollider(bool b) {
 		col.enabled = b;
-		if (b) {
-			rBody.isKinematic = false;
-			rBody.useGravity = true;
-		} else {
-			rBody.isKinematic = true;
-			rBody.useGravity = false;
-		}
+		// if (b) {
+		// 	rBody.isKinematic = false;
+		// 	rBody.useGravity = true;
+		// } else {
+		// 	rBody.isKinematic = true;
+		// 	rBody.useGravity = false;
+		// }
 	}
 
 	void ToggleRenderers(bool b) {
