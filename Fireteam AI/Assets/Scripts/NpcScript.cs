@@ -127,6 +127,9 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			// ToggleRenderers(true);
 			ToggleCollider(true);
 			gameObject.transform.SetParent(null);
+			// Snap NPC to ground
+			
+			transform.localRotation = Quaternion.identity;
 		} else {
 			actionState = ActionStates.Carried;
 			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].carryingSlotRef;
@@ -166,13 +169,13 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 
 	void ToggleCollider(bool b) {
 		col.enabled = b;
-		if (b) {
-			rBody.isKinematic = false;
-			rBody.useGravity = true;
-		} else {
-			rBody.isKinematic = true;
-			rBody.useGravity = false;
-		}
+		// if (b) {
+		// 	rBody.isKinematic = false;
+		// 	rBody.useGravity = true;
+		// } else {
+		// 	rBody.isKinematic = true;
+		// 	rBody.useGravity = false;
+		// }
 	}
 
 	void ToggleRenderers(bool b) {
