@@ -63,6 +63,9 @@ public class NpcScript : MonoBehaviourPunCallbacks {
         {
             UpdateForVersus();
         }
+		if (!Vector3.Equals(droppedAtPosition, Vector3.negativeInfinity)) {
+
+		}
     }
 
 	void UpdateForCampaign() {
@@ -135,7 +138,8 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 				ignoreLayer = ~ignoreLayer;
 				// Snap NPC to ground
 				if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
-					transform.position = hitInfo.transform.position;
+					// transform.position = hitInfo.transform.position;
+					droppedAtPosition = hitInfo.transform.position;
 				}
 			}
 			ToggleCollider(true);
