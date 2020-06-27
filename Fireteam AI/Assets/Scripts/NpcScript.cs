@@ -63,10 +63,6 @@ public class NpcScript : MonoBehaviourPunCallbacks {
         {
             UpdateForVersus();
         }
-		if (!Vector3.Equals(droppedAtPosition, Vector3.negativeInfinity)) {
-			transform.position = droppedAtPosition;
-			droppedAtPosition = Vector3.negativeInfinity;
-		}
     }
 
 	void UpdateForCampaign() {
@@ -132,15 +128,16 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			carriedByTransform = null;
 			// ToggleRenderers(true);
 			gameObject.transform.SetParent(null);
-			RaycastHit hitInfo;
-			// Snap NPC to ground
-			if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
-				// transform.position = hitInfo.transform.position;
-				if (PhotonNetwork.IsMasterClient) {
-					droppedAtPosition = hitInfo.transform.position;
+			if (PhotonNetwork.IsMasterClient) {
+				transform.rotation = Quaternion.identity;
+				RaycastHit hitInfo;
+				int ignoreLayer = (1 << 5) | (1 << 9) | (1 << 11) | (1 << 12)| (1 << 13)| (1 << 14)| (1 << 15)| (1 << 16);
+				ignoreLayer = ~ignoreLayer;
+				// Snap NPC to ground
+				if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
+					transform.position = hitInfo.transform.position;
 				}
 			}
-			transform.rotation = Quaternion.identity;
 			ToggleCollider(true);
 		} else {
 			actionState = ActionStates.Carried;
