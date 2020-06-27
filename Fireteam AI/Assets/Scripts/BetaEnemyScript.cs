@@ -640,7 +640,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			if (isCrouching) {
 				myCollider.height = 0.97f;
 				myCollider.radius = 0.32f;
-				myCollider.center = new Vector3 (-0.05f, 0.43f, -0.03f);
+				// myCollider.center = new Vector3 (-0.05f, 0.43f, -0.03f);
 			} else {
 				myCollider.height = originalColliderHeight;
 				myCollider.radius = originalColliderRadius;

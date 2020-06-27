@@ -1188,7 +1188,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcPopFlare(int index) {
         if (gameObject.layer == 0) return;
         for (int i = 0; i < gameController.items.Length; i++) {
-            FlareScript f = gameController.items[i].GetComponent<FlareScript>();
+            FlareScript f = gameController.items[i].GetComponentInChildren<FlareScript>();
             if (f.flareId == index) {
                 f.PopFlare();
                 gameController.exitPoint = f.gameObject;
@@ -1230,7 +1230,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             gameController.objectives.missionTimer2 = 120f;
             gameController.objectives.selectedEvacIndex = i;
             foreach (GameObject o in gameController.items) {
-                FlareScript s = o.GetComponent<FlareScript>();
+                FlareScript s = o.GetComponentInChildren<FlareScript>();
                 if (s.flareId != i) {
                     o.SetActive(false);
                 }
