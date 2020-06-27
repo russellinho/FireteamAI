@@ -125,7 +125,6 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			actionState = ActionStates.Incapacitated;
 			carriedByTransform = null;
 			// ToggleRenderers(true);
-			ToggleCollider(true);
 			gameObject.transform.SetParent(null);
 			RaycastHit hitInfo;
 			// Snap NPC to ground
@@ -133,6 +132,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 				transform.position = hitInfo.transform.position;
 			}
 			transform.rotation = Quaternion.identity;
+			ToggleCollider(true);
 		} else {
 			actionState = ActionStates.Carried;
 			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].carryingSlotRef;
