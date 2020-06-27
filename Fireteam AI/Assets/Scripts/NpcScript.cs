@@ -131,16 +131,14 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			carriedByTransform = null;
 			// ToggleRenderers(true);
 			gameObject.transform.SetParent(null);
-			if (PhotonNetwork.IsMasterClient) {
-				transform.rotation = Quaternion.identity;
-				RaycastHit hitInfo;
-				int ignoreLayer = (1 << 5) | (1 << 9) | (1 << 11) | (1 << 12)| (1 << 13)| (1 << 14)| (1 << 15)| (1 << 16);
-				ignoreLayer = ~ignoreLayer;
-				// Snap NPC to ground
-				if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
-					transform.position = hitInfo.transform.position;
-					lastDroppedOffPosition = hitInfo.transform.position;
-				}
+			transform.rotation = Quaternion.identity;
+			RaycastHit hitInfo;
+			int ignoreLayer = (1 << 5) | (1 << 9) | (1 << 11) | (1 << 12)| (1 << 13)| (1 << 14)| (1 << 15)| (1 << 16);
+			ignoreLayer = ~ignoreLayer;
+			// Snap NPC to ground
+			if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
+				transform.position = hitInfo.transform.position;
+				lastDroppedOffPosition = hitInfo.transform.position;
 			}
 			ToggleCollider(true);
 		} else {
