@@ -139,6 +139,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 				// Snap NPC to ground
 				if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
 					transform.position = hitInfo.transform.position;
+					lastDroppedOffPosition = hitInfo.transform.position;
 				}
 			}
 			ToggleCollider(true);
