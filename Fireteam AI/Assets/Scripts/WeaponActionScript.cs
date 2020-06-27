@@ -661,6 +661,7 @@ public class WeaponActionScript : MonoBehaviour
         IncreaseRecoil();
         UpdateRecoil(true);
         pView.RPC("FireEffectsLauncher", RpcTarget.All);
+        UseLauncherItem();
     }
 
     public void SpawnShellCasing() {
@@ -902,7 +903,7 @@ public class WeaponActionScript : MonoBehaviour
         if (gameObject.layer == 0) return;
         InstantiateGunSmokeEffect(3f);
         PlayShootSound();
-        UseLauncherItem();
+        // UseLauncherItem();
         playerActionScript.weaponScript.SyncAmmoCounts();
         // Reset fire timer
         fireTimer = 0.0f;

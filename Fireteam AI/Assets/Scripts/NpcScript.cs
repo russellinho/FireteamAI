@@ -126,8 +126,8 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			carriedByTransform = null;
 			// ToggleRenderers(true);
 			gameObject.transform.SetParent(null);
+			transform.rotation = Quaternion.identity;
 			if (!PhotonNetwork.IsMasterClient) {
-				transform.rotation = Quaternion.identity;
 				RaycastHit hitInfo;
 				int ignoreLayer = (1 << 5) | (1 << 9) | (1 << 11) | (1 << 12)| (1 << 13)| (1 << 14)| (1 << 15)| (1 << 16);
 				ignoreLayer = ~ignoreLayer;
