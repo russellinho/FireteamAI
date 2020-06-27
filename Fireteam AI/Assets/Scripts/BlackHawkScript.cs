@@ -15,6 +15,7 @@ public class BlackHawkScript : MonoBehaviour
     public Animator animator;
     public PhotonView pView;
     private Vector3 currentDestination;
+    private float currentDestinationTimeElapsed;
     private float currentTimeLimit;
     private Vector3 originalPosBeforeTimeLimitSet;
     private Queue flightInstructions = new Queue();
@@ -91,6 +92,7 @@ public class BlackHawkScript : MonoBehaviour
         flightMode = f.flightMode;
         currentTimeLimit = f.timeLimit;
         currentDestination = f.destination;
+        currentDestinationTimeElapsed = 0f;
         if (f.timeLimit != -1f) {
             originalPosBeforeTimeLimitSet = transform.position;
         }
@@ -137,11 +139,6 @@ public class BlackHawkScript : MonoBehaviour
     }
 
     void PursueDestination() {
-        Vector3 prevForward = transform.forward;
-        transform.LookAt(currentDestination);
-        Vector3 nextForward = transform.forward;
-        transform.forward = prevForward;
-        transform.forward = Vector3.Lerp(transform.forward, nextForward, Time.deltaTime * 2f);
         if (flightMode == FlightMode.Ascend) {
             Quaternion targetRot = Quaternion.Euler(8f, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, Time.deltaTime);
@@ -149,13 +146,19 @@ public class BlackHawkScript : MonoBehaviour
             Quaternion targetRot = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, Time.deltaTime);
         } else if (flightMode == FlightMode.Travel) {
+            Vector3 prevForward = transform.forward;
+            transform.LookAt(currentDestination);
+            Vector3 nextForward = transform.forward;
+            transform.forward = prevForward;
+            transform.forward = Vector3.Lerp(transform.forward, nextForward, Time.deltaTime * 2f);
             Quaternion targetRot = Quaternion.Euler(8f, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, Time.deltaTime);
         }
         if (currentTimeLimit == -1f) {
-            transform.position = Vector3.Lerp(transform.position, currentDestination, Time.deltaTime * 5f);
+            transform.position = Vector3.Lerp(transform.position, currentDestination, Time.deltaTime / 0.75f);
         } else {
-            transform.position = Vector3.Lerp(originalPosBeforeTimeLimitSet, currentDestination, Time.deltaTime / currentTimeLimit);
+            currentDestinationTimeElapsed += Time.deltaTime;
+            transform.position = Vector3.Lerp(originalPosBeforeTimeLimitSet, currentDestination, currentDestinationTimeElapsed / currentTimeLimit);
         }
 
         if (HasReachedDestination()) {

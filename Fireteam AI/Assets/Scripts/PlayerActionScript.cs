@@ -424,8 +424,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 hud.ComBoxPopup(1f, "Democko", "We had to wave off! We'll circle around and come back!", "democko");
                 hud.MessagePopup("Survive until evac returns!");
                 Vector3 n = new Vector3(120f, 150f, -1340f);
-                Vector3 n2 = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 30f, gameController.exitPoint.transform.position.z - 1f);
-                Vector3 n3 = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y, gameController.exitPoint.transform.position.z - 1f);
+                Vector3 n2 = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 30f, gameController.exitPoint.transform.position.z - 8f);
+                Vector3 n3 = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 1.35f, gameController.exitPoint.transform.position.z - 8f);
                 gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().SetDestination(n, false, 30f, FlightMode.Travel);
                 gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().SetDestination(n2, false, 50f, FlightMode.Travel);
                 gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().SetDestination(n3, false, 5f, FlightMode.Descend);
@@ -1238,8 +1238,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             }
             hud.ComBoxPopup(1f, "Democko", "We see you! We’re incoming!", "democko");
             gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().ToggleEnabled(true, false);
-            Vector3 n = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 30f, gameController.exitPoint.transform.position.z - 1f);
-            Vector3 n2 = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y, gameController.exitPoint.transform.position.z - 1f);
+            Vector3 n = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 30f, gameController.exitPoint.transform.position.z - 8f);
+            Vector3 n2 = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 1.35f, gameController.exitPoint.transform.position.z - 8f);
             gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().SetDestination(n, false, 110f, FlightMode.Travel);
             gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().SetDestination(n2, false, 5f, FlightMode.Descend);
         }
