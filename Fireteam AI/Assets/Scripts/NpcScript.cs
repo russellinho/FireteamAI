@@ -36,10 +36,12 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	// Timers
 	private float envDamageTimer;
 	private float disorientationTime;
+	private Vector3 droppedAtPosition;
 
 	// Use this for initialization
 	void Awake() {
 		carriedByPlayerId = -1;
+		droppedAtPosition = Vector3.negativeInfinity;
 		// SceneManager.sceneLoaded += OnSceneFinishedLoading;
 	}
 
@@ -61,6 +63,10 @@ public class NpcScript : MonoBehaviourPunCallbacks {
         {
             UpdateForVersus();
         }
+		if (!Vector3.Equals(droppedAtPosition, Vector3.negativeInfinity)) {
+			transform.position = droppedAtPosition;
+			droppedAtPosition = Vector3.negativeInfinity;
+		}
     }
 
 	void UpdateForCampaign() {
@@ -129,7 +135,10 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			RaycastHit hitInfo;
 			// Snap NPC to ground
 			if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
-				transform.position = hitInfo.transform.position;
+				// transform.position = hitInfo.transform.position;
+				if (PhotonNetwork.IsMasterClient) {
+					droppedAtPosition = hitInfo.transform.position;
+				}
 			}
 			transform.rotation = Quaternion.identity;
 			ToggleCollider(true);
