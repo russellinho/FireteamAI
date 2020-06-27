@@ -36,12 +36,10 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	// Timers
 	private float envDamageTimer;
 	private float disorientationTime;
-	private Vector3 lastDroppedOffPosition;
 
 	// Use this for initialization
 	void Awake() {
 		carriedByPlayerId = -1;
-		lastDroppedOffPosition = Vector3.negativeInfinity;
 		// SceneManager.sceneLoaded += OnSceneFinishedLoading;
 	}
 
@@ -63,9 +61,6 @@ public class NpcScript : MonoBehaviourPunCallbacks {
         {
             UpdateForVersus();
         }
-		if (!Vector3.Equals(lastDroppedOffPosition, Vector3.negativeInfinity) && !Vector3.Equals(lastDroppedOffPosition, transform.position)) {
-			transform.position = lastDroppedOffPosition;
-		}
     }
 
 	void UpdateForCampaign() {
@@ -131,14 +126,15 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			carriedByTransform = null;
 			// ToggleRenderers(true);
 			gameObject.transform.SetParent(null);
-			transform.rotation = Quaternion.identity;
-			RaycastHit hitInfo;
-			int ignoreLayer = (1 << 5) | (1 << 9) | (1 << 11) | (1 << 12)| (1 << 13)| (1 << 14)| (1 << 15)| (1 << 16);
-			ignoreLayer = ~ignoreLayer;
-			// Snap NPC to ground
-			if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
-				transform.position = hitInfo.transform.position;
-				lastDroppedOffPosition = hitInfo.transform.position;
+			if (!PhotonNetwork.IsMasterClient) {
+				transform.rotation = Quaternion.identity;
+				RaycastHit hitInfo;
+				int ignoreLayer = (1 << 5) | (1 << 9) | (1 << 11) | (1 << 12)| (1 << 13)| (1 << 14)| (1 << 15)| (1 << 16);
+				ignoreLayer = ~ignoreLayer;
+				// Snap NPC to ground
+				if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
+					transform.position = hitInfo.transform.position;
+				}
 			}
 			ToggleCollider(true);
 		} else {
