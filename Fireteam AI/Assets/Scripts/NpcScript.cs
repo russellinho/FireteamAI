@@ -125,18 +125,13 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			actionState = ActionStates.Incapacitated;
 			carriedByTransform = null;
 			// ToggleRenderers(true);
+			ToggleCollider(true);
 			gameObject.transform.SetParent(null);
 			transform.rotation = Quaternion.identity;
-			if (PhotonNetwork.LocalPlayer.ActorNumber == carriedByPlayerId) {
-				RaycastHit hitInfo;
-				int ignoreLayer = (1 << 5) | (1 << 9) | (1 << 11) | (1 << 12)| (1 << 13)| (1 << 14)| (1 << 15)| (1 << 16);
-				ignoreLayer = ~ignoreLayer;
-				// Snap NPC to ground
-				if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
-					transform.position = hitInfo.transform.position;
-				}
+			// TODO: Temporary hack
+			if (!PhotonNetwork.IsMasterClient) {
+				transform.position = new Vector3(transform.position.x, transform.position.y - 0.4f, transform.position.z);
 			}
-			ToggleCollider(true);
 		} else {
 			actionState = ActionStates.Carried;
 			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].carryingSlotRef;
@@ -176,13 +171,13 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 
 	void ToggleCollider(bool b) {
 		col.enabled = b;
-		// if (b) {
-		// 	rBody.isKinematic = false;
-		// 	rBody.useGravity = true;
-		// } else {
-		// 	rBody.isKinematic = true;
-		// 	rBody.useGravity = false;
-		// }
+		if (b) {
+			rBody.isKinematic = false;
+			rBody.useGravity = true;
+		} else {
+			rBody.isKinematic = true;
+			rBody.useGravity = false;
+		}
 	}
 
 	void ToggleRenderers(bool b) {
