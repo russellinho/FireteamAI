@@ -125,15 +125,14 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			actionState = ActionStates.Incapacitated;
 			carriedByTransform = null;
 			// ToggleRenderers(true);
+			gameObject.transform.SetParent(null);
+			RaycastHit hitInfo;
 			// Snap NPC to ground
-			if (PhotonNetwork.IsMasterClient) {
-				gameObject.transform.SetParent(null);
-				RaycastHit hitInfo;
-				if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
-					transform.position = hitInfo.transform.position;
-				}
-				transform.rotation = Quaternion.identity;
+			if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
+				transform.position = hitInfo.transform.position;
 			}
+			transform.rotation = Quaternion.identity;
+			ToggleCollider(true);
 		} else {
 			actionState = ActionStates.Carried;
 			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].carryingSlotRef;
