@@ -988,8 +988,10 @@ public class WeaponActionScript : MonoBehaviour
             } else if (weaponStats.type.Equals("Support")) {
                 animatorFpc.Play("DrawWeapon");
             } else {
-                animatorFpc.CrossFadeInFixedTime("Reload", weaponStats.reloadTransitionSpeed);
-                FpcChangeMagazine(weaponStats.reloadTransitionSpeed);
+                if (!animatorFpc.GetCurrentAnimatorStateInfo(0).IsName("Reload")) {
+                    animatorFpc.CrossFadeInFixedTime("Reload", weaponStats.reloadTransitionSpeed);
+                    FpcChangeMagazine(weaponStats.reloadTransitionSpeed);
+                }
             }
             // animatorFpc.SetTrigger("Reload");
             // FpcChangeMagazine();
