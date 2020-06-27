@@ -129,10 +129,12 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			gameObject.transform.SetParent(null);
 			RaycastHit hitInfo;
 			// Snap NPC to ground
-			if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
-				transform.position = hitInfo.transform.position;
+			if (PhotonNetwork.IsMasterClient) {
+				if (Physics.Raycast(transform.position, -transform.up, out hitInfo)) {
+					transform.position = hitInfo.transform.position;
+				}
+				transform.rotation = Quaternion.identity;
 			}
-			transform.rotation = Quaternion.identity;
 		} else {
 			actionState = ActionStates.Carried;
 			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].carryingSlotRef;
