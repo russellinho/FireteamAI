@@ -9,6 +9,8 @@ using Random = UnityEngine.Random;
 public class AIControllerScript : MonoBehaviour
 {
     // Respawn all in queue after this amount of secs
+    public enum GroupSpawnMode {Random, Farthest};
+    public GroupSpawnMode groupSpawnMode;
     private const float RESPAWN_JOB_DELAY = 10f;
     // Respawn the enemy after this amount of seconds
     public float enemyRespawnSecs;
@@ -72,6 +74,17 @@ public class AIControllerScript : MonoBehaviour
         // Remove everything from the spawn queue and spawn them in
         if (aiReadyToRespawn.Count == 0) return;
 
+        if (groupSpawnMode == GroupSpawnMode.Farthest) {
+            SpawnNextWaveFarthest();
+        } else if (groupSpawnMode == GroupSpawnMode.Random) {
+            SpawnNextWaveRandom();
+        }
+
+        // Clear the queue afterwards
+        gameController.ClearAIRespawns();
+    }
+
+    void SpawnNextWaveFarthest() {
         SpawnOrganizer[] farthestSpawnPoints = GetFarthestSpawnPoints();
         int[] spawnCounts = new int[spawnPoints.Length];
         int spawnPointIterator = 0;
@@ -95,7 +108,7 @@ public class AIControllerScript : MonoBehaviour
                     b.RespawnAtPosition(newSpawnPos, true);
                     spawnCounts[i]++;
                     altSpawnTracker++;
-                    // Round-robin style spawn tracker - if we've evenly distribute the spawn for spreadConstant, then reset
+                    // Farthest style spawn tracker - if we've evenly distribute the spawn for spreadConstant, then reset
                     if (altSpawnTracker >= spreadConstant) {
                         altSpawnTracker = 0;
                         altSpawnPointIterator = spawnPointIterator;
@@ -141,9 +154,38 @@ public class AIControllerScript : MonoBehaviour
                 break;
             }
         }
+    }
 
-        // Clear the queue afterwards
-        gameController.ClearAIRespawns();
+    void SpawnNextWaveRandom() {
+        int[] spawnCounts = new int[spawnPoints.Length];
+
+        while (true) {
+            try {
+                int nextAiId = (int)aiReadyToRespawn.Dequeue();
+                GameObject nextAi = gameController.enemyList[nextAiId];
+                BetaEnemyScript b = nextAi.GetComponent<BetaEnemyScript>();
+                if (b.actionState != ActionStates.Dead) {
+                    // If for some reason the enemy is already alive, just skip it
+                    continue;
+                }
+                // Handle spawning routine with no spread constant
+                // Spawn the enemy at the current spawn point
+                int i = Random.Range(0, spawnPoints.Length);
+                // If reached the max spawn group size for this point, go to the next one
+                if (spawnCounts[i] >= maxGroupSizePerSpawn[i]) {
+                    i++;
+                    if (i >= spawnPoints.Length) {
+                        i = 0;
+                    }
+                }
+                Vector3 newSpawnPos = new Vector3(spawnPoints[i].position.x + Random.Range(0f, 5f), spawnPoints[i].position.y + Random.Range(0f, 5f), spawnPoints[i].position.z + Random.Range(0f, 5f));
+                b.RespawnAtPosition(newSpawnPos, true);
+                spawnCounts[i]++;
+            } catch (InvalidOperationException e) {
+                // Exits when the queue is empty
+                break;
+            }
+        }
     }
 
     // Gets x number of farthest spawn points from all players

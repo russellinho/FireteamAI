@@ -110,12 +110,12 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
             equippedTop = "Camo Tank";
             equippedSkin = 1;
         } else if (r == 1) {
-            // Camo shirt/short sleeve shirt
-            equippedTop = "Camo Shirt";
+            // Camo top/short sleeve shirt
+            equippedTop = "Camo Top";
             equippedSkin = 0;
         } else {
-            // Camo top/long sleeve shirt
-            equippedTop = "Camo Top";
+            // Camo shirt/long sleeve shirt
+            equippedTop = "Camo Shirt";
             equippedSkin = 2;
         }
 

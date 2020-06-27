@@ -363,13 +363,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             }
 
             // Halfway through waiting period, trigger a checkpoint to respawn/recover everyone
-            // if (gameController.sectorsCleared == 0 && gameController.objectives.missionTimer2 <= 360f) {
-            //     gameController.sectorsCleared++;
-            //     hud.OnScreenEffect("SECTOR CLEARED!", false);
-            //     BeginRespawn();
-            //     hud.ComBoxPopup(1f, "Red Ruby", "There are Cicadas all over the damn place!");
-            //     hud.ComBoxPopup(4f, "Democko", "We’re about half way there; just hang in there!");
-            // }
+            if (gameController.sectorsCleared == 0 && gameController.objectives.missionTimer2 <= 360f) {
+                gameController.sectorsCleared++;
+                hud.OnScreenEffect("SECTOR CLEARED!", false);
+                BeginRespawn();
+                hud.ComBoxPopup(1f, "Red Ruby", "There are Cicadas all over the damn place!", "redruby");
+                hud.ComBoxPopup(4f, "Democko", "We’re about half way there; just hang in there!", "democko");
+            }
 
             // When two minutes left, have player go select evac point if one isn't chosen yet
             if (gameController.objectives.selectedEvacIndex == -2 && gameController.objectives.missionTimer2 <= 120f) {
@@ -379,7 +379,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     hud.MessagePopup("Designate a landing zone for the evac team!");
                     gameController.UpdateObjectives();
                     foreach (GameObject o in gameController.items) {
-                        o.SetActive(true);
+                        FlareScript f = o.GetComponentInChildren<FlareScript>(true);
+                        f.ToggleFlareTemplate(true);
+                        f.gameObject.SetActive(true);
                     }
                 }
             }

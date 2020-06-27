@@ -1091,7 +1091,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				// Handle a melee attack
 				WeaponActionScript was = playerTargeting.GetComponent<WeaponActionScript>();
 				NpcScript n = playerTargeting.GetComponent<NpcScript>();
-				if (((was != null && playerTargeting.GetComponent<WeaponActionScript>().isMeleeing) || n != null) && TargetIsWithinMeleeDistance()) {
+				if ((was != null || n != null) && TargetIsWithinMeleeDistance()) {
 					SetAlertStatus(AlertStatus.Alert);
 					UpdateActionState(ActionStates.Melee);
 				} else {
@@ -1456,7 +1456,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			if (playerTargeting != null) {
 				WeaponActionScript was = playerTargeting.GetComponent<WeaponActionScript>();
 				NpcScript n = playerTargeting.GetComponent<NpcScript>();
-				if (((was != null && playerTargeting.GetComponent<WeaponActionScript>().isMeleeing) || n != null) && TargetIsWithinMeleeDistance()) {
+				if ((was != null || n != null) && TargetIsWithinMeleeDistance()) {
 					SetAlertStatus(AlertStatus.Alert);
 					UpdateActionState(ActionStates.Melee);
 				} else {
