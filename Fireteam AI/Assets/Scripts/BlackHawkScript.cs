@@ -132,6 +132,7 @@ public class BlackHawkScript : MonoBehaviour
             currentDestination = Vector3.negativeInfinity;
         } else {
             FlightInstruction newFlightIns = new FlightInstruction(new Vector3(x, y, z), timeLimit, f);
+            flightInstructions.Enqueue(newFlightIns);
         }
     }
 

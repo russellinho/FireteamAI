@@ -346,7 +346,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 hud.ComBoxPopup(20f, "Democko", "Cicadas on the rooftops! Watch the rooftops!", "democko");
             }
         } else if (gameController.currentMap == 2) {
-            if (gameController.gameOver) return;
+            if (gameController.gameOver) {
+                if (gameController.objectives.stepsLeftToCompletion == 1) {
+                    gameController.UpdateObjectives();
+                    hud.ComBoxPopup(1f, "Democko", "Alright, let's get the hell out of here!", "democko");
+                }
+                return;
+            }
             // When the initial timer runs out, start the Cicada spawn
             if (gameController.objectives.missionTimer1 <= 0f) {
                 if (gameController.spawnMode != SpawnMode.Routine) {
@@ -423,11 +429,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().SetDestination(n, false, 30f, FlightMode.Travel);
                 gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().SetDestination(n2, false, 50f, FlightMode.Travel);
                 gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().SetDestination(n3, false, 5f, FlightMode.Descend);
-            }
-
-            if (gameController.gameOver && gameController.objectives.stepsLeftToCompletion == 1) {
-                gameController.UpdateObjectives();
-                hud.ComBoxPopup(1f, "Democko", "Alright, let's get the hell out of here!", "democko");
             }
         }
     }
