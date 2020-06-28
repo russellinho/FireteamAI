@@ -1990,8 +1990,12 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-        if (args.Snapshot.Value.ToString() == "0") {
-            Application.Quit();
+        if (args.Snapshot.Key.ToString().Equals("loggedIn")) {
+            if (args.Snapshot.Value != null) {
+                if (args.Snapshot.Value.ToString() == "0") {
+                    Application.Quit();
+                }
+            }
         }
     }
 
@@ -2001,7 +2005,12 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-        PlayerData.playerdata.info.gp = uint.Parse(args.Snapshot.Value.ToString());
+        if (args.Snapshot.Value != null) {
+            PlayerData.playerdata.info.gp = uint.Parse(args.Snapshot.Value.ToString());
+            if (titleRef != null) {
+                titleRef.myGpTxt.text = ""+PlayerData.playerdata.info.gp;
+            }
+        }
     }
 
     void HandleKashChangeEvent(object sender, ValueChangedEventArgs args) {
@@ -2010,7 +2019,12 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-        PlayerData.playerdata.info.kash = uint.Parse(args.Snapshot.Value.ToString());
+        if (args.Snapshot.Value != null) {
+            PlayerData.playerdata.info.kash = uint.Parse(args.Snapshot.Value.ToString());
+            if (titleRef != null) {
+                titleRef.myKashTxt.text = ""+PlayerData.playerdata.info.kash;
+            }
+        }
     }
 
     IEnumerator EmergencyExitGame() {

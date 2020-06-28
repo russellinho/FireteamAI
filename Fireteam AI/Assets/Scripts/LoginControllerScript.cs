@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 
 public class LoginControllerScript : MonoBehaviour
 {
+    public bool developmentMode;
     public Text copyrightTxt;
     public RawImage titleLogoImg;
     public GameObject popupAlert;
@@ -68,7 +69,13 @@ public class LoginControllerScript : MonoBehaviour
     }
 
     void ConvertPopupMessage() {
-        popupMessage = (popupMessage.Contains("password") ? "The password is invalid. Please try again." : "Couldn't establish connection to server. Please try again later.");
+        if (popupMessage.Contains("password")) {
+            popupMessage = "The password is invalid. Please try again.";
+        } else if (popupMessage.Contains("logged")) {
+            popupMessage = "This account is already logged in on another device! Please check again. If this issue is of error, please log out through the account dashboard on our website by clicking \"Log Out Of All Games\".";
+        } else {
+            popupMessage = "Couldn't establish connection to server. Please try again later.";
+        }
     }
 
     public void ClosePopup() {
@@ -114,7 +121,7 @@ public class LoginControllerScript : MonoBehaviour
                         Debug.Log("Success going to setup!");
                         signInFlag = 1;
                     } else {
-                        if (taskA.Result.Child(AuthScript.authHandler.user.UserId).Child("loggedIn").Value.ToString() == "0") {
+                        if (developmentMode) {
                             DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").SetValueAsync("1").ContinueWith(taskB => {
                                 if (taskB.IsFaulted) {
                                     popupMessage = ""+taskB.Exception;
@@ -127,10 +134,24 @@ public class LoginControllerScript : MonoBehaviour
                                 }
                             });
                         } else {
-                            popupMessage = "This account is already logged in on another device! Please check again. If this issue is of error, please log out through the account dashboard on our website by clicking \"Log Out Of All Games\".";
-                            activatePopupFlag = true;
-                            loginBtn.interactable = true;
-                            return;
+                            if (taskA.Result.Child(AuthScript.authHandler.user.UserId).Child("loggedIn").Value.ToString() == "0") {
+                                DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").SetValueAsync("1").ContinueWith(taskB => {
+                                    if (taskB.IsFaulted) {
+                                        popupMessage = ""+taskB.Exception;
+                                        activatePopupFlag = true;
+                                        loginBtn.interactable = true;
+                                        return;
+                                    } else if (taskB.IsCompleted) {
+                                        Debug.Log("Success going to title!");
+                                        signInFlag = 2;
+                                    }
+                                });
+                            } else {
+                                popupMessage = "logged";
+                                activatePopupFlag = true;
+                                loginBtn.interactable = true;
+                                return;
+                            }
                         }
                     }
                 }
