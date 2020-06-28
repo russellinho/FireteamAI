@@ -603,7 +603,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void quitGame() {
-		Application.Quit ();
+		DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").SetValueAsync("0").ContinueWith(task => {
+			if (task.IsCanceled) {
+				PlayerData.playerdata.TriggerEmergencyExit("Error occurred while exiting.");
+			} else if (task.IsCompleted) {
+				Application.Quit (); 
+			}
+		});
 	}
 
 	public void savePlayerData()

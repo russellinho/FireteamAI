@@ -78,6 +78,9 @@ public class PlayerData : MonoBehaviour
             playerdata = this;
             // LoadPlayerData();
             // LoadInventory();
+            DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").ValueChanged += HandleForceLogoutEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").ValueChanged += HandleGpChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").ValueChanged += HandleKashChangeEvent;
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
         }
         else if (playerdata != this)
@@ -197,7 +200,7 @@ public class PlayerData : MonoBehaviour
             }
             if (levelName.Equals("Title"))
             {
-                if (PlayerData.playerdata.bodyReference == null && !dataLoadedFlag)
+                if (PlayerData.playerdata.bodyReference == null)
                 {
                     LoadPlayerData();
                     // LoadInventory();
@@ -1981,9 +1984,40 @@ public class PlayerData : MonoBehaviour
         StartCoroutine("EmergencyExitGame");
     }
 
+    void HandleForceLogoutEvent(object sender, ValueChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        if (args.Snapshot.Value.ToString() == "0") {
+            Application.Quit();
+        }
+    }
+
+    void HandleGpChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        PlayerData.playerdata.info.gp = uint.Parse(args.Snapshot.Value.ToString());
+    }
+
+    void HandleKashChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        PlayerData.playerdata.info.kash = uint.Parse(args.Snapshot.Value.ToString());
+    }
+
     IEnumerator EmergencyExitGame() {
         yield return new WaitForSeconds(5f);
-        Application.Quit();
+        DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").SetValueAsync("0").ContinueWith(task => {
+            Application.Quit();
+        });
     }
 
 }

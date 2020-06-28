@@ -40,7 +40,7 @@ public class JukeboxScript : MonoBehaviour
         if (levelName.Equals("GameOverFail") || levelName.Equals("GameOverSuccess")) {
             currentMode = MusicMode.GameOver;
             StopMusic();
-        } else if (levelName.Equals("Login") || levelName.Equals("Title")) {
+        } else if (levelName.Equals("Login") || levelName.Equals("Title") || levelName.Equals("Setup")) {
             if (currentMode != MusicMode.Title) {
                 StopMusic();
                 StartTitleMusic();

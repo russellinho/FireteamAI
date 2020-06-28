@@ -114,8 +114,24 @@ public class LoginControllerScript : MonoBehaviour
                         Debug.Log("Success going to setup!");
                         signInFlag = 1;
                     } else {
-                        Debug.Log("Success going to title!");
-                        signInFlag = 2;
+                        if (taskA.Result.Child(AuthScript.authHandler.user.UserId).Child("loggedIn").Value.ToString() == "0") {
+                            DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").SetValueAsync("1").ContinueWith(taskB => {
+                                if (taskB.IsFaulted) {
+                                    popupMessage = ""+taskB.Exception;
+                                    activatePopupFlag = true;
+                                    loginBtn.interactable = true;
+                                    return;
+                                } else if (taskB.IsCompleted) {
+                                    Debug.Log("Success going to title!");
+                                    signInFlag = 2;
+                                }
+                            });
+                        } else {
+                            popupMessage = "This account is already logged in on another device! Please check again. If this issue is of error, please log out through the account dashboard on our website by clicking \"Log Out Of All Games\".";
+                            activatePopupFlag = true;
+                            loginBtn.interactable = true;
+                            return;
+                        }
                     }
                 }
             });

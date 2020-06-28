@@ -17,8 +17,11 @@ public class DatabaseUpdaterEditor : Editor
         // if (GUILayout.Button("Add Melee Category To All Accounts")) {
         //     myScript.AddEquippedMeleeFieldToAllAccounts();
         // }
-        if (GUILayout.Button("Add Default Wep Category To All Accounts")) {
-            myScript.AddDefaultWeaponFieldToAllAccounts();
+        // if (GUILayout.Button("Add Default Wep Category To All Accounts")) {
+        //     myScript.AddDefaultWeaponFieldToAllAccounts();
+        // }
+        if (GUILayout.Button("Add Logged In Field to all accounts")) {
+            myScript.AddLoggedInFieldToAllAccounts();
         }
     }
 }

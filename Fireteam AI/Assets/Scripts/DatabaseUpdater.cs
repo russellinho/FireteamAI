@@ -95,4 +95,16 @@ public class DatabaseUpdater : MonoBehaviour
             }
         });
     }
+
+    public void AddLoggedInFieldToAllAccounts() {
+        DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").GetValueAsync().ContinueWith(taskA => {
+            IEnumerator<DataSnapshot> accountsSavedData = taskA.Result.Children.GetEnumerator();
+            while (accountsSavedData.MoveNext()) {
+                DataSnapshot account = accountsSavedData.Current;
+                string accountId = account.Key.ToString();
+                Debug.Log(accountId + " updated");
+                DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(accountId).Child("loggedIn").SetValueAsync("0");
+            }
+        });
+    }
 }
