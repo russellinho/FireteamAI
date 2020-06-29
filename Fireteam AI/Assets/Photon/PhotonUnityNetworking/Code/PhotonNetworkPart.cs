@@ -760,6 +760,11 @@ namespace Photon.Pun
         /// <param name="localOnly">For localOnly, tests of control are skipped and the server is not updated.</param>
         internal static void RemoveInstantiatedGO(GameObject go, bool localOnly)
         {
+            // Avoid cleanup if we are quitting.
+            if (ConnectionHandler.AppQuits)
+                return;
+
+
             if (go == null)
             {
                 Debug.LogError("Failed to 'network-remove' GameObject because it's null.");
@@ -845,7 +850,8 @@ namespace Photon.Pun
             }
 
             go.SetActive(false);            // PUN 2 disables objects before the return to the pool
-            prefabPool.Destroy(go);         // PUN 2 always uses a PrefabPool (even for the default implementation)
+
+            prefabPool.Destroy(go);     // PUN 2 always uses a PrefabPool (even for the default implementation)
         }
 
         private static readonly ExitGames.Client.Photon.Hashtable removeFilter = new ExitGames.Client.Photon.Hashtable();

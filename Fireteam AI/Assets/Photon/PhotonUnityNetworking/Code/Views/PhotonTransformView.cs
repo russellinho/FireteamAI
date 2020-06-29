@@ -30,8 +30,6 @@ namespace Photon.Pun
 
         private Quaternion m_NetworkRotation;
 
-        [SerializeField]
-        public GameControllerScript m_GameController;
         public bool m_SynchronizePosition = true;
         public bool m_SynchronizeRotation = true;
         public bool m_SynchronizeScale = false;
@@ -64,15 +62,6 @@ namespace Photon.Pun
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
-            if (m_GameController != null && m_GameController.matchType == 'V') {
-                SerializeViewVersus(stream, info);
-            } else {
-                SerializeViewCampaign(stream, info);
-            }
-        }
-
-        public void SerializeViewCampaign(PhotonStream stream, PhotonMessageInfo info)
-        {
             if (stream.IsWriting)
             {
                 if (this.m_SynchronizePosition)
@@ -97,83 +86,6 @@ namespace Photon.Pun
             else
             {
 
-
-                if (this.m_SynchronizePosition)
-                {
-                    this.m_NetworkPosition = (Vector3)stream.ReceiveNext();
-                    this.m_Direction = (Vector3)stream.ReceiveNext();
-
-                    if (m_firstTake)
-                    {
-                        transform.position = this.m_NetworkPosition;
-                        this.m_Distance = 0f;
-                    }
-                    else
-                    {
-                        float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
-                        this.m_NetworkPosition += this.m_Direction * lag;
-                        this.m_Distance = Vector3.Distance(transform.position, this.m_NetworkPosition);
-                    }
-
-                   
-                }
-
-                if (this.m_SynchronizeRotation)
-                {
-                    this.m_NetworkRotation = (Quaternion)stream.ReceiveNext();
-
-                    if (m_firstTake)
-                    {
-                        this.m_Angle = 0f;
-                        transform.rotation = this.m_NetworkRotation;
-                    }
-                    else
-                    {
-                        this.m_Angle = Quaternion.Angle(transform.rotation, this.m_NetworkRotation);
-                    }
-                }
-
-                if (this.m_SynchronizeScale)
-                {
-                    transform.localScale = (Vector3)stream.ReceiveNext();
-                }
-
-                if (m_firstTake)
-                {
-                    m_firstTake = false;
-                }
-            }
-        }
-
-        public void SerializeViewVersus(PhotonStream stream, PhotonMessageInfo info) {
-            if (stream.IsWriting)
-            {
-                stream.SendNext(m_GameController.teamMap);
-
-                if (this.m_SynchronizePosition)
-                {
-                    this.m_Direction = transform.position - this.m_StoredPosition;
-                    this.m_StoredPosition = transform.position;
-
-                    stream.SendNext(transform.position);
-                    stream.SendNext(this.m_Direction);
-                }
-
-                if (this.m_SynchronizeRotation)
-                {
-                    stream.SendNext(transform.rotation);
-                }
-
-                if (this.m_SynchronizeScale)
-                {
-                    stream.SendNext(transform.localScale);
-                }
-            }
-            else
-            {
-                string team = (string)stream.ReceiveNext();
-
-                if (team != m_GameController.teamMap) return;
 
                 if (this.m_SynchronizePosition)
                 {

@@ -53,7 +53,7 @@ GameObject:
   - component: {fileID: 720653860272823628}
   - component: {fileID: 720653860272823629}
   - component: {fileID: 720653860272823642}
-  - component: {fileID: 720653860272823643}
+  - component: {fileID: 2837577666361455843}
   m_Layer: 9
   m_Name: LucasGamePrefab
   m_TagString: Player
@@ -547,7 +547,7 @@ MonoBehaviour:
   charController: {fileID: 720653860272823636}
   wepActionScript: {fileID: 720653860272823635}
   cameraShakeScript: {fileID: 720653860272823633}
-  photonTransformView: {fileID: 720653860272823643}
+  photonTransformView: {fileID: 2837577666361455843}
   aud: {fileID: 720653860272823637}
   viewCam: {fileID: 7400966728101635636}
   spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
@@ -710,11 +710,11 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 720653860272823643}
+  - {fileID: 2837577666361455843}
   viewIdField: 0
   InstantiationId: 33
   isRuntimeInstantiated: 0
---- !u!114 &720653860272823643
+--- !u!114 &2837577666361455843
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -723,7 +723,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 720653860272823626}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Script: {fileID: 11500000, guid: fd0957fcd359d4a4eb28641da36af64b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_GameController: {fileID: 0}

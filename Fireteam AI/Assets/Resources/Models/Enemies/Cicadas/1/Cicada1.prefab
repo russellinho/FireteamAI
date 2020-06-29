@@ -816,7 +816,7 @@ GameObject:
   - component: {fileID: 5417910215186016291}
   - component: {fileID: 2965390375756972196}
   - component: {fileID: 5569050124725493036}
-  - component: {fileID: 7293948857185702030}
+  - component: {fileID: 5908639569506047862}
   - component: {fileID: 3824582766227978001}
   - component: {fileID: 8197734878590509653}
   m_Layer: 14
@@ -1135,12 +1135,12 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 7293948857185702030}
+  - {fileID: 5908639569506047862}
   - {fileID: 5417910215186016291}
   viewIdField: 0
   InstantiationId: 4
   isRuntimeInstantiated: 0
---- !u!114 &7293948857185702030
+--- !u!114 &5908639569506047862
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1149,7 +1149,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6527639969203574290}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Script: {fileID: 11500000, guid: fd0957fcd359d4a4eb28641da36af64b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_GameController: {fileID: 0}

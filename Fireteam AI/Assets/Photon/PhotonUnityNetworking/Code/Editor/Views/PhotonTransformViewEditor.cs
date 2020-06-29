@@ -30,10 +30,6 @@ namespace Photon.Pun
 
             PhotonTransformView view = (PhotonTransformView)target;
 
-            // view.m_GameController = PhotonGUI.ContainerHeaderGameControllerScript("Game Controller", view.m_GameController);
-            SerializedProperty offsetProperty = serializedObject.FindProperty("m_GameController");
-            EditorGUILayout.ObjectField(offsetProperty);
-            serializedObject.ApplyModifiedProperties();
 
             EditorGUILayout.LabelField("Synchronize Options");
 

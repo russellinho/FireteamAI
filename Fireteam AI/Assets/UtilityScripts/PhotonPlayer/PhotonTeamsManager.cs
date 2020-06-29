@@ -488,7 +488,7 @@ namespace Photon.Pun.UtilityScripts
         #endregion
     }
 
-    /// <summary>Extension used for PunTeams and Player class. Wraps access to the player's custom property.</summary>
+    /// <summary>Extension methods for the Player class that make use of PhotonTeamsManager.</summary>
     public static class PhotonTeamExtensions
     {
         /// <summary>Gets the team the player is currently joined to. Null if none.</summary>

@@ -67609,7 +67609,7 @@ GameObject:
   - component: {fileID: 5450131833376609945}
   - component: {fileID: 5450131833376609944}
   - component: {fileID: 5450131833376609935}
-  - component: {fileID: 5450131833376609934}
+  - component: {fileID: 1659864617218757742}
   m_Layer: 9
   m_Name: RockoGamePrefab
   m_TagString: Player
@@ -68103,7 +68103,7 @@ MonoBehaviour:
   charController: {fileID: 5450131833376609921}
   wepActionScript: {fileID: 5450131833376609926}
   cameraShakeScript: {fileID: 5450131833376609924}
-  photonTransformView: {fileID: 5450131833376609934}
+  photonTransformView: {fileID: 1659864617218757742}
   aud: {fileID: 5450131833376609920}
   viewCam: {fileID: 2816721045797400033}
   spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
@@ -68266,11 +68266,11 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 5450131833376609934}
+  - {fileID: 1659864617218757742}
   viewIdField: 0
   InstantiationId: 33
   isRuntimeInstantiated: 0
---- !u!114 &5450131833376609934
+--- !u!114 &1659864617218757742
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -68279,7 +68279,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5450131833376609951}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Script: {fileID: 11500000, guid: fd0957fcd359d4a4eb28641da36af64b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_GameController: {fileID: 0}
