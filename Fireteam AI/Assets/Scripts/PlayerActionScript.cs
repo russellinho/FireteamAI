@@ -28,7 +28,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public CharacterController charController;
     public WeaponActionScript wepActionScript;
     public CameraShakeScript cameraShakeScript;
-    public PhotonTransformView photonTransformView;
+    public PhotonTransformViewKoobando photonTransformView;
     public AudioSource aud;
     public Camera viewCam;
     public GameObject spectatorCam;

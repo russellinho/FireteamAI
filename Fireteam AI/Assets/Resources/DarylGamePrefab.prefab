@@ -44918,7 +44918,7 @@ GameObject:
   - component: {fileID: 9158664062041186717}
   - component: {fileID: 9158664062041186716}
   - component: {fileID: 9158664062041186699}
-  - component: {fileID: 9158664062041186698}
+  - component: {fileID: 6966216837115666800}
   m_Layer: 9
   m_Name: DarylGamePrefab
   m_TagString: Player
@@ -45412,7 +45412,7 @@ MonoBehaviour:
   charController: {fileID: 9158664062041186693}
   wepActionScript: {fileID: 9158664062041186690}
   cameraShakeScript: {fileID: 9158664062041186688}
-  photonTransformView: {fileID: 9158664062041186698}
+  photonTransformView: {fileID: 6966216837115666800}
   aud: {fileID: 9158664062041186692}
   viewCam: {fileID: 1418597221962685157}
   spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
@@ -45575,11 +45575,11 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 9158664062041186698}
+  - {fileID: 6966216837115666800}
   viewIdField: 0
   InstantiationId: 10
   isRuntimeInstantiated: 0
---- !u!114 &9158664062041186698
+--- !u!114 &6966216837115666800
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45588,7 +45588,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9158664062041186715}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Script: {fileID: 11500000, guid: fd0957fcd359d4a4eb28641da36af64b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_GameController: {fileID: 0}
