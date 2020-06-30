@@ -275,7 +275,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (mapName.Equals ("Badlands: Act I")) {
 			screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands1_load");
 		} else if (mapName.Equals("Badlands: Act II")) {
-			screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/test");
+			screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands2_load");
 		}
         proTipText.text = proTips[Random.Range(0, 2)];
 		mapTitleText.text = mapName;

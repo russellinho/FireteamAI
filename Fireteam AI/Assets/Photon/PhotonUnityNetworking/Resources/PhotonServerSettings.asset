@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: 
+    AppIdRealtime: 759c3bf2-4dac-4abc-8645-adefe6e264a1
     AppIdChat: 
     AppIdVoice: 
-    AppVersion: 
+    AppVersion: 0.04
     UseNameServer: 1
-    FixedRegion: 
+    FixedRegion: us
     Server: 
     Port: 0
     ProxyServer: 
@@ -37,10 +37,10 @@ MonoBehaviour:
   - DestroyRpc
   - DestroySpaceship
   - Fire
-  - RespawnSpaceship
   - FireEffects
   - FireEffectsLauncher
   - FireEffectsSuppressed
+  - RespawnSpaceship
   - RpcAddToTotalDeaths
   - RpcAddToTotalKills
   - RpcCarryNpc
@@ -165,5 +165,5 @@ MonoBehaviour:
   - SendMsgConnectionMaster
   - StartDespawn
   DisableAutoOpenWizard: 1
-  ShowSettings: 0
+  ShowSettings: 1
   DevRegionSetOnce: 0
