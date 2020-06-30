@@ -331,7 +331,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 		else
 		{
-			string team = (string)stream.ReceiveNext();
+			string team = stream.ReceiveNext().ToString();
 
             if (team != gameControllerScript.teamMap) return;
 
