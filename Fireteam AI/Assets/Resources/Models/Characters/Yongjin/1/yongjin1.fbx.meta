@@ -1,0 +1,279 @@
+fileFormatVersion: 2
+guid: c7bc7403b54f66a48947c82fc8389446
+ModelImporter:
+  serializedVersion: 19300
+  internalIDToNameTable:
+  - first:
+      74: -203655887218126122
+    second: mixamo.com
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bodymat
+    second: {fileID: 2100000, guid: ff343dc39a150414193a5d5b44b79056, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bottommat
+    second: {fileID: 2100000, guid: 7180d5adb0f5fb54097d6afd7152b0fa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glovemat
+    second: {fileID: 2100000, guid: 8cee0dae39f03cc4eb8aadd794a65ca6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Hairmat
+    second: {fileID: 2100000, guid: 1065f57097eccd14da939509af478215, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Shoesmat
+    second: {fileID: 2100000, guid: 715e13ca4b721964894861f380186da5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Topmat
+    second: {fileID: 2100000, guid: a1b4ad6f40bcba741b508f9795808818, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Body_Diffuse
+    second: {fileID: 2800000, guid: ea127474530666d4d9f44f891477121b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Body_Gloss
+    second: {fileID: 2800000, guid: aadd937cf97c7a54fa1c696b4b37a1aa, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Body_Normal
+    second: {fileID: 2800000, guid: ed74a78d692362943b263db40afd6c7b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Body_Opacity
+    second: {fileID: 2800000, guid: be769a5f377280548904623fb36e5202, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Body_Specular
+    second: {fileID: 2800000, guid: 6d0616223bdd284449263a30c3a5debb, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Bottom_Diffuse
+    second: {fileID: 2800000, guid: 198173ec917ad55459750381d733c967, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Bottom_Gloss
+    second: {fileID: 2800000, guid: 7decd07cc46108d41b4cb8a7b0f78030, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Bottom_Normal
+    second: {fileID: 2800000, guid: 1b0e09838ed2f814299a82ff9f6bb62d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Bottom_Opacity
+    second: {fileID: 2800000, guid: 06c9856a3f68fc743b28fd70184b2d22, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Bottom_Specular
+    second: {fileID: 2800000, guid: 03b9c3bcc1e62c448963fd86e862a22e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Glove_Diffuse
+    second: {fileID: 2800000, guid: 746714dc250f566499ad1d2d45217e59, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Glove_Gloss
+    second: {fileID: 2800000, guid: 22816479a78622b469198fa9d3fdfd31, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Glove_Normal
+    second: {fileID: 2800000, guid: f28178c0f8f0f8341a4702142df997eb, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Glove_Opacity
+    second: {fileID: 2800000, guid: 4ae62707069ad9d48aa4d836d8e12205, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Glove_Specular
+    second: {fileID: 2800000, guid: 4f6f81cf519f4e847bf0eaed1e96ea2a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Hair_Diffuse
+    second: {fileID: 2800000, guid: c367f2987d93c86428bc8d6721be9f69, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Hair_Gloss
+    second: {fileID: 2800000, guid: a6952c660bb889143b9f52bd8bfe3f10, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Hair_Normal
+    second: {fileID: 2800000, guid: 2473e81ed0538ce4e8b5233af93b865a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Hair_Opacity
+    second: {fileID: 2800000, guid: 22d3230da387a68488d98f82e904225c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Hair_Specular
+    second: {fileID: 2800000, guid: 6ddf4d0795b486147ae774a121b75f20, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Shoes_Diffuse
+    second: {fileID: 2800000, guid: efbb2e49f97a8984cb567adf7946091d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Shoes_Gloss
+    second: {fileID: 2800000, guid: df05997f090bbcc478b5a8704c51f94e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Shoes_Normal
+    second: {fileID: 2800000, guid: 6b54d29d954e7f14792e559e40a32115, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Shoes_Opacity
+    second: {fileID: 2800000, guid: 256bb30c0608a444d9522f60fd47a156, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Shoes_Specular
+    second: {fileID: 2800000, guid: c21fe9b09c11bbc468b4302a4482d161, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Top_Diffuse
+    second: {fileID: 2800000, guid: 52fb2d26ea1ae124498489deab738780, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Top_Gloss
+    second: {fileID: 2800000, guid: 5c0e92d8cefdd5449a8b4543fbc4e3bf, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Top_Normal
+    second: {fileID: 2800000, guid: 5de9aa3fc7a60be408b90e3495415c47, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Top_Opacity
+    second: {fileID: 2800000, guid: 88f3c546405d17d43aef90f24bb999c3, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yongjin1_Top_Specular
+    second: {fileID: 2800000, guid: bc25e36f20b913f4eabbd4ce9ff516e9, type: 3}
+  materials:
+    materialImportMode: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

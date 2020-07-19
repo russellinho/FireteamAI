@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: bf23c5d453a56ec40a6986c6a2afab75
 ModelImporter:
-  serializedVersion: 26
+  serializedVersion: 19300
   internalIDToNameTable:
   - first:
       74: -203655887218126122
@@ -11,124 +11,154 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Bodymat
-    second: {fileID: 2100000, guid: 36091fd2dc87b874398dfd4b9da5b1fb, type: 2}
+    second: {fileID: 2100000, guid: a9d85a91c1c341e44b623b87274a76bc, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Bottommat
-    second: {fileID: 2100000, guid: cdb00a73fa9666043b1de3b396343b0b, type: 2}
+    second: {fileID: 2100000, guid: de8782d2cac2b7940afdf6d200720355, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glovemat
+    second: {fileID: 2100000, guid: 2d48fea9737c00e41bc4a9fd89023bf8, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Shoesmat
-    second: {fileID: 2100000, guid: d0436787a401045419c1e28078ca0428, type: 2}
+    second: {fileID: 2100000, guid: 7254c8aca8058e949bb59c5cf3f30a11, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Topmat
-    second: {fileID: 2100000, guid: 9f8452d578abb7f45804012875269668, type: 2}
+    second: {fileID: 2100000, guid: babbf1d2cdbfcb84da12dccf9213bd63, type: 2}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Body_Diffuse
-    second: {fileID: 2800000, guid: 3b2bfa1f4d3932f48a745017011be8ca, type: 3}
+      name: rocko1_Body_Diffuse
+    second: {fileID: 2800000, guid: 62847bbcc4d1d764a95ff8547db5ae46, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Body_Gloss
-    second: {fileID: 2800000, guid: c6254e177e074814ca2375b66fdd0407, type: 3}
+      name: rocko1_Body_Gloss
+    second: {fileID: 2800000, guid: a4f6df888fe373742af2352aa7b37f2e, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Body_Normal
-    second: {fileID: 2800000, guid: 9e052e40d2ef0ab4fb02a06d3df93ea6, type: 3}
+      name: rocko1_Body_Normal
+    second: {fileID: 2800000, guid: 7104789815bedec4a87f8e14bdf38a5d, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Body_Opacity
-    second: {fileID: 2800000, guid: ce70d5005fbdcd94fb0ae16ec593a7c8, type: 3}
+      name: rocko1_Body_Opacity
+    second: {fileID: 2800000, guid: 5bcdab67e71be484fa5d907eabb111f3, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Body_Specular
-    second: {fileID: 2800000, guid: cdace677bba54284994168f203ccec1a, type: 3}
+      name: rocko1_Body_Specular
+    second: {fileID: 2800000, guid: 6e6262bdce2a01043a1d591c2b2baa8a, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Bottom_Diffuse
-    second: {fileID: 2800000, guid: a1917ac77fdb85e44b82f50ec0c1abaf, type: 3}
+      name: rocko1_Bottom_Diffuse
+    second: {fileID: 2800000, guid: eb27daaac6fc606408fe9770e61e038f, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Bottom_Gloss
-    second: {fileID: 2800000, guid: 3b72bfe488de82148b0cc4337ca5c5b6, type: 3}
+      name: rocko1_Bottom_Gloss
+    second: {fileID: 2800000, guid: 5ed70f79f3e8acb48a2a23db99d1500e, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Bottom_Normal
-    second: {fileID: 2800000, guid: 8e554bad04806ec48a84cc32f1f80a34, type: 3}
+      name: rocko1_Bottom_Normal
+    second: {fileID: 2800000, guid: a76aced5947acbe4d9b6c9571ed1cb11, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Bottom_Opacity
-    second: {fileID: 2800000, guid: e3a07d4d0f6c5654e87f1d73ee859f4f, type: 3}
+      name: rocko1_Bottom_Opacity
+    second: {fileID: 2800000, guid: 3356f3432d5e6b74d82ba05fe47f6e66, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Bottom_Specular
-    second: {fileID: 2800000, guid: 1175fb36dffefac49bc6d583b3c226ee, type: 3}
+      name: rocko1_Bottom_Specular
+    second: {fileID: 2800000, guid: b16df579ad555cd4f85dc1b0b06d6371, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Shoes_Diffuse
-    second: {fileID: 2800000, guid: da92f4ebe05dd064488060ba6a9a553b, type: 3}
+      name: rocko1_Glove_Diffuse
+    second: {fileID: 2800000, guid: e6f0f6a090e93504ab665fb5e58e72c8, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Shoes_Gloss
-    second: {fileID: 2800000, guid: 1f2f16db740c5fc42892ee351f75276d, type: 3}
+      name: rocko1_Glove_Gloss
+    second: {fileID: 2800000, guid: 063180efb68f7ed4da7bee82202d2520, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Shoes_Normal
-    second: {fileID: 2800000, guid: ea7b11a95aa8de543870af53f70d9664, type: 3}
+      name: rocko1_Glove_Normal
+    second: {fileID: 2800000, guid: 6d246513816d254468a415cf17ca4450, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Shoes_Opacity
-    second: {fileID: 2800000, guid: a65b5ff1748fdde4ca0eddcdcbbbca39, type: 3}
+      name: rocko1_Glove_Opacity
+    second: {fileID: 2800000, guid: c9390269bb0110f4ca325af4ab3a1726, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Shoes_Specular
-    second: {fileID: 2800000, guid: 526735cd93a7f3149a0e6a196d668538, type: 3}
+      name: rocko1_Glove_Specular
+    second: {fileID: 2800000, guid: 24947339747ff4a41a6c54296cfb05bb, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Top_Diffuse
-    second: {fileID: 2800000, guid: 403440414c2cd44429f5402537c83d1e, type: 3}
+      name: rocko1_Shoes_Diffuse
+    second: {fileID: 2800000, guid: 68166eab12ae3764292810df9c894972, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Top_Gloss
-    second: {fileID: 2800000, guid: 0f6337a69a46a1647ac88dbf7ecc402d, type: 3}
+      name: rocko1_Shoes_Gloss
+    second: {fileID: 2800000, guid: 4e8f5c5f790f03344a05c855c2c2fcae, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Top_Normal
-    second: {fileID: 2800000, guid: 6f274470a084cd14a919d35f4e36ba48, type: 3}
+      name: rocko1_Shoes_Normal
+    second: {fileID: 2800000, guid: ea3a5fc220fe01b4ab1b11837c326613, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Top_Opacity
-    second: {fileID: 2800000, guid: b246c54173da1f845ba098ba2bd7ae05, type: 3}
+      name: rocko1_Shoes_Opacity
+    second: {fileID: 2800000, guid: a2ee220f9d066fc47bd57c570390f52c, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: rocko3_Top_Specular
-    second: {fileID: 2800000, guid: c61ed2d2cc8dbe544a58e949dd05f706, type: 3}
+      name: rocko1_Shoes_Specular
+    second: {fileID: 2800000, guid: 4144eb765bea0b745ad3bb71cfd58b94, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: rocko1_Top_Diffuse
+    second: {fileID: 2800000, guid: 86f9076118d6dfa4a981392b8f706b52, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: rocko1_Top_Gloss
+    second: {fileID: 2800000, guid: 08bbd95817a8bd94cbf1c829a821c362, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: rocko1_Top_Normal
+    second: {fileID: 2800000, guid: 9738f62ec64261541a269762a54aafef, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: rocko1_Top_Opacity
+    second: {fileID: 2800000, guid: b3ab6ad91a2c4dd4a980db6f78567a0b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: rocko1_Top_Specular
+    second: {fileID: 2800000, guid: 5bc9e430e0e16db4ab286db01a3f4a9e, type: 3}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -153,36 +183,7 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations:
-    - serializedVersion: 16
-      name: mixamo.com
-      takeName: mixamo.com
-      internalID: -203655887218126122
-      firstFrame: 0
-      lastFrame: 1
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+    clipAnimations: []
     isReadable: 0
   meshes:
     lODScreenPercentages: []
@@ -221,7 +222,6 @@ ModelImporter:
     normalSmoothingSource: 0
   referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
     serializedVersion: 3
     human: []
@@ -239,8 +239,10 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
+  avatarSetup: 0
   additionalBone: 0
   userData: 
   assetBundleName: 

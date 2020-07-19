@@ -55,7 +55,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		// Map options
 		private int mapIndex = 0;
 		private string[] mapNames = new string[]{"Badlands: Act I", "Badlands: Act II"};
-		private string[] mapStrings = new string[]{"MapImages/badlands1", "MapImages/badlands2"};
+		private string[] mapStrings = new string[]{"Resources/MapImages/badlands1", "Resources/MapImages/badlands2"};
 		public static Vector3[] mapSpawnPoints = new Vector3[]{ new Vector3(-2f,1f,1f), new Vector3(119f, -5.19f, 116f) };
 
 		// Ready status
