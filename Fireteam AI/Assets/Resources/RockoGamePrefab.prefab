@@ -5136,7 +5136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapon: {fileID: 0}
-  fpc: {fileID: 0}
+  fpc: {fileID: 5544096537164796722}
 --- !u!1 &673252241720212328
 GameObject:
   m_ObjectHideFlags: 0
@@ -15694,7 +15694,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapon: {fileID: 0}
-  fpc: {fileID: 0}
+  fpc: {fileID: 5544096537164796722}
 --- !u!1 &1570557908237531018
 GameObject:
   m_ObjectHideFlags: 0
@@ -25526,8 +25526,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e77c2c9fbd9c462689949defa65c197, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pView: {fileID: 0}
-  spineTransform: {fileID: 0}
+  pView: {fileID: 4473539868782388180}
+  spineTransform: {fileID: 640250652613832734}
   mainCamTrans: {fileID: 3041540971459593745}
 --- !u!1 &2293171316844200647
 GameObject:
@@ -25780,9 +25780,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapon: {fileID: 0}
-  leftShoulder: {fileID: 0}
-  leftHand: {fileID: 0}
-  fpc: {fileID: 0}
+  leftShoulder: {fileID: 6353672516605191175}
+  leftHand: {fileID: 6353672516605191279}
+  fpc: {fileID: 5544096537164796722}
 --- !u!1 &3101321727565671355
 GameObject:
   m_ObjectHideFlags: 0
@@ -33506,7 +33506,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6353672516605191275}
   - component: {fileID: 6353672516610635039}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Gloves
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34130,7 +34130,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6353672516605191181}
   m_Layer: 0
-  m_Name: DEFORM_Ring1_R.002
+  m_Name: DEFORM_RIng1_R.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34646,7 +34646,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31aec6efb1df6344091734678c951904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fpc: {fileID: 0}
+  fpc: {fileID: 5544096537164796722}
 --- !u!1 &6824508705996049641
 GameObject:
   m_ObjectHideFlags: 0
@@ -39851,8 +39851,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weapon: {fileID: 0}
   leftShoulder: {fileID: 6430715280892776155}
-  leftHand: {fileID: 9115976300234572678}
-  fpc: {fileID: 0}
+  leftHand: {fileID: 0}
+  fpc: {fileID: 5544096537164796722}
 --- !u!1 &7532059509071371295
 GameObject:
   m_ObjectHideFlags: 0
@@ -40125,8 +40125,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e77c2c9fbd9c462689949defa65c197, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pView: {fileID: 0}
-  spineTransform: {fileID: 0}
+  pView: {fileID: 4473539868782388180}
+  spineTransform: {fileID: 640250652613832734}
   mainCamTrans: {fileID: 3041540971459593745}
 --- !u!1 &7752845973969071704
 GameObject:
