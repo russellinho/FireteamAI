@@ -6,6 +6,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 
 public class LoginControllerScript : MonoBehaviour
 {
@@ -109,50 +110,86 @@ public class LoginControllerScript : MonoBehaviour
             AuthScript.authHandler.user = task.Result;
             //QueuePopup("User signed in successfully: {" + newUser.DisplayName + "} ({" + newUser.UserId + "})");
             // Query DB to see if the user is set up yet. If not, go to setup. Else, go to title page.
-            DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").GetValueAsync().ContinueWith(taskA => {
+            Dictionary<string, object> inputData = new Dictionary<string, object>();
+            inputData["callHash"] = DAOScript.functionsCallHash;
+            inputData["uid"] = AuthScript.authHandler.user.UserId;
+            HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("checkUserIsSetup");
+            func.CallAsync(inputData).ContinueWith((taskA) => {
                 if (taskA.IsFaulted) {
                     popupMessage = ""+taskA.Exception;
                     activatePopupFlag = true;
                     loginBtn.interactable = true;
                     return;
-                } else if (taskA.IsCompleted) {
+                } else {
                     saveLoginPrefsFlag = true;
-                    if (!taskA.Result.HasChild(AuthScript.authHandler.user.UserId)) {
+                    Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                    if (results["status"].ToString() == "401") {
+                        // Go to setup
                         Debug.Log("Success going to setup!");
                         signInFlag = 1;
-                    } else {
+                    } else if (results["status"].ToString() == "200") {
+                        inputData.Clear();
+                        inputData["callHash"] = DAOScript.functionsCallHash;
+                        inputData["uid"] = AuthScript.authHandler.user.UserId;
+                        inputData["loggedIn"] = "1";
+                        func = DAOScript.dao.functions.GetHttpsCallable("setUserIsLoggedIn");
+                        // Go to login
                         if (developmentMode) {
-                            DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").SetValueAsync("1").ContinueWith(taskB => {
+                            func.CallAsync(inputData).ContinueWith((taskB) => {
                                 if (taskB.IsFaulted) {
                                     popupMessage = ""+taskB.Exception;
                                     activatePopupFlag = true;
                                     loginBtn.interactable = true;
                                     return;
-                                } else if (taskB.IsCompleted) {
-                                    Debug.Log("Success going to title!");
-                                    signInFlag = 2;
-                                }
-                            });
-                        } else {
-                            if (taskA.Result.Child(AuthScript.authHandler.user.UserId).Child("loggedIn").Value.ToString() == "0") {
-                                DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").SetValueAsync("1").ContinueWith(taskB => {
-                                    if (taskB.IsFaulted) {
-                                        popupMessage = ""+taskB.Exception;
+                                } else {
+                                    Dictionary<object, object> results2 = (Dictionary<object, object>)taskB.Result.Data;
+                                    if (results2["status"].ToString() == "200") {
+                                        Debug.Log("Success going to title!");
+                                        signInFlag = 2;
+                                    } else {
+                                        popupMessage = "Database is currently unavailable. Please try again later.";
                                         activatePopupFlag = true;
                                         loginBtn.interactable = true;
                                         return;
-                                    } else if (taskB.IsCompleted) {
-                                        Debug.Log("Success going to title!");
-                                        signInFlag = 2;
                                     }
-                                });
-                            } else {
-                                popupMessage = "logged";
-                                activatePopupFlag = true;
-                                loginBtn.interactable = true;
-                                return;
-                            }
+                                }
+                            });
+                        } else {
+                            DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").GetValueAsync().ContinueWith(taskC => {
+                                if (taskC.Result.Child(AuthScript.authHandler.user.UserId).Child("loggedIn").Value.ToString() == "0") {
+                                    func.CallAsync(inputData).ContinueWith((taskB) => {
+                                        if (taskB.IsFaulted) {
+                                            popupMessage = ""+taskB.Exception;
+                                            activatePopupFlag = true;
+                                            loginBtn.interactable = true;
+                                            return;
+                                        } else {
+                                            Dictionary<object, object> results2 = (Dictionary<object, object>)taskB.Result.Data;
+                                            if (results2["status"].ToString() == "200") {
+                                                Debug.Log("Success going to title!");
+                                                signInFlag = 2;
+                                            } else {
+                                                popupMessage = "Database is currently unavailable. Please try again later.";
+                                                activatePopupFlag = true;
+                                                loginBtn.interactable = true;
+                                                return;
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    popupMessage = "logged";
+                                    activatePopupFlag = true;
+                                    loginBtn.interactable = true;
+                                    return;
+                                }
+                            });
                         }
+                    } else {
+                        // Error
+                        popupMessage = "Database is currently unavailable. Please try again later.";
+                        activatePopupFlag = true;
+                        loginBtn.interactable = true;
+                        return;
                     }
                 }
             });

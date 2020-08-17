@@ -8,6 +8,7 @@ using Photon.Pun;
 using UnityEngine.Networking;
 using TMPro;
 using Firebase.Database;
+using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private const float NINETY_DAYS_MINS = 129600f;
@@ -488,7 +489,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         // Save settings if the settings are active
 		 if (customizationMenu.activeInHierarchy) {
 			if (equipsModifiedFlag) {
-				savePlayerData ();
+				savePlayerEquipment ();
 				equipsModifiedFlag = false;
 			}
 			ClearCustomizationContent();
@@ -603,18 +604,20 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void quitGame() {
-		DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").SetValueAsync("0").ContinueWith(task => {
-			if (task.IsCanceled) {
-				PlayerData.playerdata.TriggerEmergencyExit("Error occurred while exiting.");
-			} else if (task.IsCompleted) {
-				Application.Quit (); 
-			}
+		Dictionary<string, object> inputData = new Dictionary<string, object>();
+		inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+		inputData["loggedIn"] = "0";
+
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("setUserIsLoggedIn");
+		func.CallAsync(inputData).ContinueWith((task) => {
+			Application.Quit ();
 		});
 	}
 
-	public void savePlayerData()
+	public void savePlayerEquipment()
 	{
-		PlayerData.playerdata.SavePlayerData();
+		PlayerData.playerdata.SavePlayerEquipment();
 	}
 
 	public void ClosePopup() {
