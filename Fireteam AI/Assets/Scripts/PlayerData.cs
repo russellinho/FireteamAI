@@ -1877,6 +1877,24 @@ public class PlayerData : MonoBehaviour
         }
     }
 
+    void HandleEquipmentChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        
+    }
+
+    void HandleInventoryChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+
+    }
+
     IEnumerator EmergencyExitGame() {
         yield return new WaitForSeconds(5f);
         Dictionary<string, object> inputData = new Dictionary<string, object>();
