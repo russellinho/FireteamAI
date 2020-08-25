@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
+using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 
 public class EquipmentScript : MonoBehaviour
 {
@@ -159,17 +160,6 @@ public class EquipmentScript : MonoBehaviour
         return (firstPersonRef != null && firstPersonRef.activeInHierarchy);
     }
 
-    public void EquipDefaults() {
-        equippedSkin = -1;
-        RemoveFacewear();
-        RemoveArmor();
-        RemoveHeadgear();
-        Character c = InventoryScript.itemData.characterCatalog[equippedCharacter];
-        EquipTop(c.defaultTop, null);
-        EquipBottom(c.defaultBottom, null);
-        EquipFootwear((c.gender == 'M' ? "Standard Boots (M)" : "Standard Boots (F)"), null);
-    }
-
     public char GetGender() {
         return characterGender[0];
     }
@@ -193,9 +183,6 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void EquipCharacter(string name, GameObject shopItemRef) {
-        equippedCharacter = name;
-        Character c = InventoryScript.itemData.characterCatalog[name];
-
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null && !ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemName.Equals(name)) {
             ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
@@ -207,35 +194,27 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        ts.equippedCharacterSlot.GetComponent<SlotScript>().ToggleThumbnail(true, c.thumbnailPath);
-        ts.shopEquippedCharacterSlot.GetComponent<SlotScript>().ToggleThumbnail(true, c.thumbnailPath);
-        ts.currentCharGender = InventoryScript.itemData.characterCatalog[name].gender;
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["equippedCharacter"] = name;
+        
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() == "200") {
+                    Debug.Log("Save successful.");
+                } else {
+                    PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                }
+            }
+        });
+    }
 
-        //if (name.Equals("Lucas") || name.Equals("Daryl") || name.Equals("Codename Sayre")) {
-        //    ts.currentCharGender = 'M';
-        //} else {
-        //    ts.currentCharGender = 'F';
-        //}
-
-        // Clear all equipment stats
-        playerScript.stats.SetDefaults();
-        playerScript.updateStats();
-        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
-
-        // Change equipment back to default and re-equip weapons that were equipped beforehand
-        EquipDefaults();
-        if (PlayerData.playerdata.info.equippedPrimary == null)
-        {
-            PlayerData.playerdata.info.equippedPrimary = "AK-47";
-        }
-        if (PlayerData.playerdata.info.equippedSecondary == null)
-        {
-            PlayerData.playerdata.info.equippedSecondary = "Glock23";
-        }
-        if (PlayerData.playerdata.info.equippedSupport == null)
-        {
-            PlayerData.playerdata.info.equippedSupport = "M67 Frag";
-        }
+    public void ReequipWeapons() {
         ModInfo primaryModInfo = PlayerData.playerdata.LoadModDataForWeapon(PlayerData.playerdata.info.equippedPrimary);
         ModInfo secondaryModInfo = PlayerData.playerdata.LoadModDataForWeapon(PlayerData.playerdata.info.equippedSecondary);
         tws.EquipWeapon(PlayerData.playerdata.info.equippedPrimary, primaryModInfo.equippedSuppressor, primaryModInfo.equippedSight, null);
@@ -280,20 +259,6 @@ public class EquipmentScript : MonoBehaviour
         if (name.Equals(equippedTop)) {
             return;
         }
-        equippedTop = name;
-        if (equippedTopRef != null) {
-            Destroy(equippedTopRef);
-            equippedTopRef = null;
-        }
-        GameObject p = (charGender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
-        equippedTopRef = (GameObject)Instantiate(p);
-        equippedTopRef.transform.SetParent(gameObject.transform);
-        MeshFixer m = equippedTopRef.GetComponentInChildren<MeshFixer>();
-        m.target = myTopRenderer.gameObject;
-        m.rootBone = myBones.transform;
-        m.AdaptMesh();
-
-        EquipSkin(e.skinType);
 
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Top")) {
@@ -306,8 +271,24 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        ts.equippedTopSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
-        ts.shopEquippedTopSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["equippedTop"] = name;
+        
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() == "200") {
+                    Debug.Log("Save successful.");
+                } else {
+                    PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                }
+            }
+        });
     }
 
     void EquipTopForSetup() {
@@ -319,7 +300,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
     }
 
-    private void EquipSkin(int skinType) {
+    public void EquipSkin(int skinType) {
         if (equippedSkin == skinType) {
             return;
         }
@@ -366,21 +347,10 @@ public class EquipmentScript : MonoBehaviour
             }
             return;
         }
+
         if (name.Equals(equippedBottom)) {
             return;
         }
-        equippedBottom = name;
-        if (equippedBottomRef != null) {
-            Destroy(equippedBottomRef);
-            equippedBottomRef = null;
-        }
-        GameObject p = (charGender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
-        equippedBottomRef = (GameObject)Instantiate(p);
-        equippedBottomRef.transform.SetParent(gameObject.transform);
-        MeshFixer m = equippedBottomRef.GetComponentInChildren<MeshFixer>();
-        m.target = myBottomRenderer.gameObject;
-        m.rootBone = myBones.transform;
-        m.AdaptMesh();
 
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Bottom")) {
@@ -393,8 +363,24 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        ts.equippedBottomSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
-        ts.shopEquippedBottomSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["equippedBottom"] = name;
+        
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() == "200") {
+                    Debug.Log("Save successful.");
+                } else {
+                    PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                }
+            }
+        });
     }
 
     void EquipBottomForSetup() {
@@ -426,21 +412,10 @@ public class EquipmentScript : MonoBehaviour
             }
             return;
         }
+
         if (name.Equals(equippedFootwear)) {
             return;
         }
-        equippedFootwear = name;
-        if (equippedFootwearRef != null) {
-            Destroy(equippedFootwearRef);
-            equippedFootwearRef = null;
-        }
-        GameObject p = (charGender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
-        equippedFootwearRef = (GameObject)Instantiate(p);
-        equippedFootwearRef.transform.SetParent(gameObject.transform);
-        MeshFixer m = equippedFootwearRef.GetComponentInChildren<MeshFixer>();
-        m.target = myFootwearRenderer.gameObject;
-        m.rootBone = myBones.transform;
-        m.AdaptMesh();
 
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Footwear")) {
@@ -453,9 +428,24 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        ts.equippedFootSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
-        ts.shopEquippedFootSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["equippedFootwear"] = name;
         
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() == "200") {
+                    Debug.Log("Save successful.");
+                } else {
+                    PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                }
+            }
+        });
     }
 
     void EquipFootwearForSetup() {
@@ -468,23 +458,9 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void EquipFacewear(string name, GameObject shopItemRef) {
-        RemoveFacewear();
         if (name.Equals(equippedFacewear)) {
             return;
         }
-        Equipment e = InventoryScript.itemData.equipmentCatalog[name];
-        equippedFacewear = name;
-        if (equippedFacewearRef != null) {
-            Destroy(equippedFacewearRef);
-            equippedFacewearRef = null;
-        }
-        GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
-        equippedFacewearRef = (GameObject)Instantiate(p);
-        equippedFacewearRef.transform.SetParent(gameObject.transform);
-        MeshFixer m = equippedFacewearRef.GetComponentInChildren<MeshFixer>();
-        m.target = myFacewearRenderer.gameObject;
-        m.rootBone = myBones.transform;
-        m.AdaptMesh();
 
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Facewear")) {
@@ -498,47 +474,34 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        ts.equippedFaceSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
-        ts.shopEquippedFaceSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["equippedFacewear"] = name;
         
-        // Add new facewear stats to stat boosts
-        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
-        playerScript.updateStats();
-        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() == "200") {
+                    Debug.Log("Save successful.");
+                } else {
+                    PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                }
+            }
+        });
     }
 
     public void EquipHeadgear(string name, GameObject shopItemRef) {
-        RemoveHeadgear();
         if (name.Equals(equippedHeadgear)) {
             return;
         }
-        Equipment e = InventoryScript.itemData.equipmentCatalog[name];
-        // Hide hair if has hair
-        if (e.hideHairFlag) {
-            if (myHairRenderer != null) {
-                myHairRenderer.SetActive(false);
-            }
-        } else {
-            if (myHairRenderer != null) {
-                myHairRenderer.SetActive(true);
-            }
-        }
-        equippedHeadgear = name;
-        if (equippedHeadgearRef != null) {
-            Destroy(equippedHeadgearRef);
-            equippedHeadgearRef = null;
-        }
-        GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
-        equippedHeadgearRef = (GameObject)Instantiate(p);
-        equippedHeadgearRef.transform.SetParent(gameObject.transform);
-        MeshFixer m = equippedHeadgearRef.GetComponentInChildren<MeshFixer>();
-        m.target = myHeadgearRenderer.gameObject;
-        m.rootBone = myBones.transform;
-        m.AdaptMesh();
 
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Headgear")) {
+            ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
             ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
         }
 
@@ -548,47 +511,30 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        ts.equippedHeadSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
-        ts.shopEquippedHeadSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["equippedHeadgear"] = name;
         
-
-        // Adds headgear stat to player
-        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
-        playerScript.updateStats();
-        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() == "200") {
+                    Debug.Log("Save successful.");
+                } else {
+                    PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                }
+            }
+        });
     }
 
     public void EquipArmor(string name, GameObject shopItemRef) {
-        RemoveArmor();
         if (name.Equals(equippedArmor)) {
             return;
         }
-        Armor a = InventoryScript.itemData.armorCatalog[name];
-        equippedArmor = name;
-        if (equippedArmorTopRef != null) {
-            Destroy(equippedArmorTopRef);
-            equippedArmorTopRef = null;
-        }
-        if (equippedArmorBottomRef != null) {
-            Destroy(equippedArmorBottomRef);
-            equippedArmorBottomRef = null;
-        }
-        GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathTop] : InventoryScript.itemData.itemReferences[a.femalePrefabPathTop]);
-        equippedArmorTopRef = (GameObject)Instantiate(p);
-        equippedArmorTopRef.transform.SetParent(gameObject.transform);
-        p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathBottom] : InventoryScript.itemData.itemReferences[a.femalePrefabPathBottom]);
-        equippedArmorBottomRef = (GameObject)Instantiate(p);
-        equippedArmorBottomRef.transform.SetParent(gameObject.transform);
-        MeshFixer m = equippedArmorTopRef.GetComponentInChildren<MeshFixer>();
-        m.target = myArmorTopRenderer.gameObject;
-        m.rootBone = myBones.transform;
-        m.AdaptMesh();
-
-        m = equippedArmorBottomRef.GetComponentInChildren<MeshFixer>();
-        m.target = myArmorBottomRenderer.gameObject;
-        m.rootBone = myBones.transform;
-        m.AdaptMesh();
 
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Armor")) {
@@ -601,104 +547,50 @@ public class EquipmentScript : MonoBehaviour
             ts.currentlyEquippedItemPrefab = shopItemRef;
         }
 
-        ts.equippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(true, a.thumbnailPath);
-        ts.shopEquippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(true, a.thumbnailPath);
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["equippedArmor"] = name;
+        
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() == "200") {
+                    Debug.Log("Save successful.");
+                } else {
+                    PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                }
+            }
+        });
+    }
 
+    public void UpdateStats() {
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
         playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
+        playerScript.updateStats();
+        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
+    }
+
+    public void ResetStats() {
+        // Clear all equipment stats
+        playerScript.stats.SetDefaults();
         playerScript.updateStats();
         ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
     }
 
     public void RemoveHeadgear() {
-        if (equippedHeadgearRef != null) {
-            Destroy(equippedHeadgearRef);
-            equippedHeadgearRef = null;
-        }
-        if (myHairRenderer != null) {
-            myHairRenderer.SetActive(true);
-        }
-        ts.equippedHeadSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-        ts.shopEquippedHeadSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-        if (string.IsNullOrEmpty(equippedHeadgear)) {
-            return;
-        }
-        equippedHeadgear = "";
-        // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null) {
-            ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();
-            if (s.itemType.Equals("Headgear")) {
-                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
-                ts.currentlyEquippedItemPrefab = null;
-            }
-        }
-        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
-        playerScript.updateStats();
-        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
-
+        EquipHeadgear("", null);
     }
 
     public void RemoveFacewear() {
-        if (equippedFacewearRef != null)
-        {
-            Destroy(equippedFacewearRef);
-            equippedFacewearRef = null;
-        }
-        ts.equippedFaceSlot.GetComponentInChildren<RawImage>().texture = null;
-        ts.equippedFaceSlot.GetComponentInChildren<RawImage>().enabled = false;
-        ts.shopEquippedFaceSlot.GetComponentInChildren<RawImage>().texture = null;
-        ts.shopEquippedFaceSlot.GetComponentInChildren<RawImage>().enabled = false;
-        if (string.IsNullOrEmpty(equippedFacewear))
-        {
-            return;
-        }
-        equippedFacewear = "";
-        // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null) {
-            ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();
-            if (s.itemType.Equals("Facewear")) {
-                s.ToggleEquippedIndicator(false);
-                ts.currentlyEquippedItemPrefab = null;
-            }
-        }
-
-        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
-        playerScript.updateStats();
-        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
-
+        EquipFacewear("", null);
     }
 
     public void RemoveArmor() {
-        if (equippedArmorTopRef != null) {
-            Destroy(equippedArmorTopRef);
-            equippedArmorTopRef = null;
-        }
-        if (equippedArmorBottomRef != null) {
-            Destroy(equippedArmorBottomRef);
-            equippedArmorBottomRef = null;
-        }
-        ts.equippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-        ts.shopEquippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-        if (string.IsNullOrEmpty(equippedArmor))
-        {
-            return;
-        }
-        equippedArmor = "";
-        // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null) {
-            ShopItemScript s = ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>();
-            if (s.itemType.Equals("Armor")) {
-                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
-                ts.currentlyEquippedItemPrefab = null;
-            }
-        }
-        StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
-        playerScript.updateStats();
-        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
-
+        EquipArmor("", null);
     }
 
     [PunRPC]

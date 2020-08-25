@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 
 public class WeaponScript : MonoBehaviour
 {
@@ -24,7 +25,7 @@ public class WeaponScript : MonoBehaviour
     public string equippedSecondaryWeapon;
     public string equippedSupportWeapon;
     public string equippedMeleeWeapon;
-    public string equippedWep;
+    public string equippedWepInGame;
     public int currentlyEquippedType;
     public int totalPrimaryAmmoLeft;
     public int totalSecondaryAmmoLeft;
@@ -91,7 +92,7 @@ public class WeaponScript : MonoBehaviour
                 totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo - currentAmmoPrimary;
                 totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo - currentAmmoSecondary;
                 totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo - currentAmmoSupport;
-                equippedWep = equippedPrimaryWeapon;
+                equippedWepInGame = equippedPrimaryWeapon;
                 //DrawWeapon(1);
                 InitializeWeapon();
                 InitializeMelee();
@@ -303,126 +304,91 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
-    void EquipAssaultRifle(string weaponName) {
-        // Set animation and hand positions
-        equippedPrimaryWeapon = weaponName;
-        if (!animator.GetBool("onTitle")) {
-            if (equipmentScript.isFirstPerson()) {
-                weaponHolderFpc.SetWeaponPosition(true);
-            } else {
-                weaponHolder.SetWeaponPosition(false);
-            }
+    void EquipAssaultRifleInGame() {
+        if (equipmentScript.isFirstPerson()) {
+            weaponHolderFpc.SetWeaponPosition(true);
+        } else {
+            weaponHolder.SetWeaponPosition(false);
         }
     }
 
-    void EquipSmg(string weaponName) {
-        equippedPrimaryWeapon = weaponName;
-        if (!animator.GetBool("onTitle")) {
-            if (equipmentScript.isFirstPerson()) {
-                weaponHolderFpc.SetWeaponPosition(true);
-            } else {
-                weaponHolder.SetWeaponPosition(false);
-            }
+    void EquipSmgInGame() {
+        if (equipmentScript.isFirstPerson()) {
+            weaponHolderFpc.SetWeaponPosition(true);
+        } else {
+            weaponHolder.SetWeaponPosition(false);
         }
     }
 
-    void EquipLmg(string weaponName) {
-        equippedPrimaryWeapon = weaponName;
-        if (!animator.GetBool("onTitle")) {
-            if (equipmentScript.isFirstPerson()) {
-                weaponHolderFpc.SetWeaponPosition(true);
-            } else {
-                weaponHolder.SetWeaponPosition(false);
-            }
+    void EquipLmgInGame() {
+        if (equipmentScript.isFirstPerson()) {
+            weaponHolderFpc.SetWeaponPosition(true);
+        } else {
+            weaponHolder.SetWeaponPosition(false);
         }
     }
 
-    void EquipShotgun(string weaponName) {
-        equippedPrimaryWeapon = weaponName;
-        if (!animator.GetBool("onTitle")) {
-            if (equipmentScript.isFirstPerson()) {
-                weaponHolderFpc.SetWeaponPosition(true);
-            } else {
-                weaponHolder.SetWeaponPosition(false);
-            }
+    void EquipShotgunInGame() {
+        if (equipmentScript.isFirstPerson()) {
+            weaponHolderFpc.SetWeaponPosition(true);
+        } else {
+            weaponHolder.SetWeaponPosition(false);
         }
     }
 
-    void EquipPistol(string weaponName) {
-        // Set animation and hand positions
-        equippedSecondaryWeapon = weaponName;
-        if (!onTitle) {
-            if (equipmentScript.isFirstPerson()) {
-                weaponHolderFpc.SetWeaponPosition(true);
-            } else {
-                weaponHolder.SetWeaponPosition(false);
-            }
+    void EquipPistolInGame() {
+        if (equipmentScript.isFirstPerson()) {
+            weaponHolderFpc.SetWeaponPosition(true);
+        } else {
+            weaponHolder.SetWeaponPosition(false);
         }
     }
 
-    void EquipLauncher(string weaponName) {
-        equippedSecondaryWeapon = weaponName;
-        if (!onTitle) {
-            if (equipmentScript.isFirstPerson()) {
-                weaponHolderFpc.SetWeaponPosition(true);
-            } else {
-                weaponHolder.SetWeaponPosition(false);
-            }
+    void EquipLauncherInGame() {
+        if (equipmentScript.isFirstPerson()) {
+            weaponHolderFpc.SetWeaponPosition(true);
+        } else {
+            weaponHolder.SetWeaponPosition(false);
         }
     }
 
-    void EquipSniperRifle(string weaponName) {
-        equippedPrimaryWeapon = weaponName;
-        if (!animator.GetBool("onTitle")) {
-            if (equipmentScript.isFirstPerson()) {
-                weaponHolderFpc.SetWeaponPosition(true);
-            } else {
-                weaponHolder.SetWeaponPosition(false);
-            }
+    void EquipSniperRifleInGame() {
+        if (equipmentScript.isFirstPerson()) {
+            weaponHolderFpc.SetWeaponPosition(true);
+        } else {
+            weaponHolder.SetWeaponPosition(false);
         }
     }
 
-    void EquipExplosive(string weaponName) {
-        equippedSupportWeapon = weaponName;
-        if (!onTitle) {
-            if (equipmentScript.isFirstPerson()) {
-                weaponHolderFpc.SetWeaponPosition(true);
-            } else {
-                weaponHolder.SetWeaponPosition(false);
-            }
+    void EquipExplosiveInGame() {
+        if (equipmentScript.isFirstPerson()) {
+            weaponHolderFpc.SetWeaponPosition(true);
+        } else {
+            weaponHolder.SetWeaponPosition(false);
         }
     }
 
-    void EquipBooster(string weaponName) {
-        equippedSupportWeapon = weaponName;
-        if (!onTitle) {
-            if (equipmentScript.isFirstPerson()) {
-                weaponHolderFpc.SetWeaponPosition(true);
-            } else {
-                weaponHolder.SetWeaponPosition(false);
-            }
+    void EquipBoosterInGame() {
+        if (equipmentScript.isFirstPerson()) {
+            weaponHolderFpc.SetWeaponPosition(true);
+        } else {
+            weaponHolder.SetWeaponPosition(false);
         }
     }
 
-    void EquipDeployable(string weaponName) {
-        equippedSupportWeapon = weaponName;
-        if (!onTitle) {
-            if (equipmentScript.isFirstPerson()) {
-                weaponHolderFpc.SetWeaponPosition(true);
-            } else {
-                weaponHolder.SetWeaponPosition(false);
-            }
+    void EquipDeployableInGame() {
+        if (equipmentScript.isFirstPerson()) {
+            weaponHolderFpc.SetWeaponPosition(true);
+        } else {
+            weaponHolder.SetWeaponPosition(false);
         }
     }
 
-    void EquipKnife(string weaponName) {
-        equippedMeleeWeapon = weaponName;
-        if (!onTitle) {
-            if (equipmentScript.isFirstPerson()) {
-                meleeHolderFpc.SetWeaponPosition(true);
-            } else {
-                meleeHolder.SetWeaponPosition(false);
-            }
+    void EquipKnifeInGame() {
+        if (equipmentScript.isFirstPerson()) {
+            meleeHolderFpc.SetWeaponPosition(true);
+        } else {
+            meleeHolder.SetWeaponPosition(false);
         }
     }
 
@@ -435,13 +401,20 @@ public class WeaponScript : MonoBehaviour
     }
 
     public void EquipWeapon(string weaponName, string suppressorName, string sightName, GameObject shopItemRef) {
-        if (onTitle && (weaponName.Equals(equippedPrimaryWeapon) || weaponName.Equals(equippedSecondaryWeapon) || weaponName.Equals(equippedSupportWeapon) || weaponName.Equals(equippedMeleeWeapon))) return;
-        // Get the weapon from the weapon catalog for its properties
+        if (onTitle) {
+            EquipWeaponOnTitle(weaponName, suppressorName, sightName, shopItemRef);
+        } else {
+            EquipWeaponInGame(weaponName);
+        }
+    }
+
+    void EquipWeaponInGame(string weaponName) {
         Weapon w = InventoryScript.itemData.weaponCatalog[weaponName];
         GameObject wepEquipped = null;
         string weaponType = InventoryScript.itemData.weaponCatalog[weaponName].category;
         switch (weaponType) {
             case "Assault Rifle":
+                ModInfo m = PlayerData.playerdata.primaryModInfo;
                 currentlyEquippedType = 1;
                 if (equipmentScript.isFirstPerson()) {
                     wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
@@ -451,24 +424,23 @@ public class WeaponScript : MonoBehaviour
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
-                equippedWep = weaponName;
-                EquipAssaultRifle(weaponName);
-                if (!onTitle) {
-                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
-                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
-                    weaponActionScript.hudScript.EquipSightCrosshair(false);
-                }
+                equippedWepInGame = weaponName;
+                EquipAssaultRifleInGame();
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", suppressorName, weaponName, null);
+                    EquipMod("Suppressor", m.equippedSuppressor, weaponName, null);
                 }
                 if (w.sightCompatible) {
-                    EquipMod("Sight", sightName, weaponName, null);
+                    EquipMod("Sight", m.equippedSight, weaponName, null);
                 }
-                if (!onTitle && equipmentScript.isFirstPerson()) {
+                if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
                 }
                 break;
             case "SMG":
+                m = PlayerData.playerdata.primaryModInfo;
                 currentlyEquippedType = 1;
                 if (equipmentScript.isFirstPerson()) {
                     wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
@@ -478,24 +450,23 @@ public class WeaponScript : MonoBehaviour
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
-                equippedWep = weaponName;
-                EquipSmg(weaponName);
-                if (!onTitle) {
-                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
-                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
-                    weaponActionScript.hudScript.EquipSightCrosshair(false);
-                }
+                equippedWepInGame = weaponName;
+                EquipSmgInGame();
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", suppressorName, weaponName, null);
+                    EquipMod("Suppressor", m.equippedSuppressor, weaponName, null);
                 }
                 if (w.sightCompatible) {
-                    EquipMod("Sight", sightName, weaponName, null);
+                    EquipMod("Sight", m.equippedSight, weaponName, null);
                 }
-                if (!onTitle && equipmentScript.isFirstPerson()) {
+                if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
                 }
                 break;
             case "LMG":
+                m = PlayerData.playerdata.primaryModInfo;
                 currentlyEquippedType = 1;
                 if (equipmentScript.isFirstPerson()) {
                     wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
@@ -505,24 +476,23 @@ public class WeaponScript : MonoBehaviour
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
-                equippedWep = weaponName;
-                EquipLmg(weaponName);
-                if (!onTitle) {
-                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
-                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
-                    weaponActionScript.hudScript.EquipSightCrosshair(false);
-                }
+                equippedWepInGame = weaponName;
+                EquipLmgInGame();
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", suppressorName, weaponName, null);
+                    EquipMod("Suppressor", m.equippedSuppressor, weaponName, null);
                 }
                 if (w.sightCompatible) {
-                    EquipMod("Sight", sightName, weaponName, null);
+                    EquipMod("Sight", m.equippedSight, weaponName, null);
                 }
-                if (!onTitle && equipmentScript.isFirstPerson()) {
+                if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
                 }
                 break;
             case "Shotgun":
+                m = PlayerData.playerdata.primaryModInfo;
                 currentlyEquippedType = 1;
                 if (equipmentScript.isFirstPerson()) {
                     wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
@@ -532,24 +502,23 @@ public class WeaponScript : MonoBehaviour
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
-                equippedWep = weaponName;
-                EquipShotgun(weaponName);
-                if (!onTitle) {
-                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
-                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
-                    weaponActionScript.hudScript.EquipSightCrosshair(false);
-                }
+                equippedWepInGame = weaponName;
+                EquipShotgunInGame();
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", suppressorName, weaponName, null);
+                    EquipMod("Suppressor", m.equippedSuppressor, weaponName, null);
                 }
                 if (w.sightCompatible) {
-                    EquipMod("Sight", sightName, weaponName, null);
+                    EquipMod("Sight", m.equippedSight, weaponName, null);
                 }
-                if (!onTitle && equipmentScript.isFirstPerson()) {
+                if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
                 }
                 break;
             case "Sniper Rifle":
+                m = PlayerData.playerdata.primaryModInfo;
                 currentlyEquippedType = 1;
                 if (equipmentScript.isFirstPerson()) {
                     wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
@@ -559,266 +528,285 @@ public class WeaponScript : MonoBehaviour
                 } else {
                     wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
-                equippedWep = weaponName;
-                EquipSniperRifle(weaponName);
-                if (!onTitle) {
-                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
-                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
-                    weaponActionScript.hudScript.EquipSightCrosshair(false);
-                }
+                equippedWepInGame = weaponName;
+                EquipSniperRifleInGame();
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", suppressorName, weaponName, null);
+                    EquipMod("Suppressor", m.equippedSuppressor, weaponName, null);
                 }
                 if (w.sightCompatible) {
-                    EquipMod("Sight", sightName, weaponName, null);
+                    EquipMod("Sight", m.equippedSight, weaponName, null);
                 }
-                if (!onTitle && equipmentScript.isFirstPerson()) {
+                if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
                 }
                 break;
             case "Pistol":
-                if (!onTitle) {
-                    currentlyEquippedType = 2;
-                    if (equipmentScript.isFirstPerson()) {
-                        wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
-                        weaponActionScript.animatorFpc.SetInteger("WeaponType", 2);
-                        weaponActionScript.animatorFpc.SetBool("isShotgun", false);
-                        weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
-                    } else {
-                        wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
-                    }
+                m = PlayerData.playerdata.secondaryModInfo;
+                currentlyEquippedType = 2;
+                if (equipmentScript.isFirstPerson()) {
+                    wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    weaponActionScript.animatorFpc.SetInteger("WeaponType", 2);
+                    weaponActionScript.animatorFpc.SetBool("isShotgun", false);
+                    weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                } else {
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
-                equippedWep = weaponName;
-                EquipPistol(weaponName);
-                if (!onTitle) {
-                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
-                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
-                    weaponActionScript.hudScript.EquipSightCrosshair(false);
-                }
+                equippedWepInGame = weaponName;
+                EquipPistolInGame();
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", suppressorName, weaponName, null);
+                    EquipMod("Suppressor", m.equippedSuppressor, weaponName, null);
                 }
                 if (w.sightCompatible) {
-                    EquipMod("Sight", sightName, weaponName, null);
+                    EquipMod("Sight", m.equippedSight, weaponName, null);
                 }
-                if (!onTitle && equipmentScript.isFirstPerson()) {
+                if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
                 }
                 break;
             case "Launcher":
-                if (!onTitle) {
-                    currentlyEquippedType = 2;
-                    if (equipmentScript.isFirstPerson()) {
-                        wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
-                        weaponActionScript.animatorFpc.SetInteger("WeaponType", 2);
-                        weaponActionScript.animatorFpc.SetBool("isShotgun", false);
-                        weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
-                    } else {
-                        wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
-                    }
+                m = PlayerData.playerdata.secondaryModInfo;
+                currentlyEquippedType = 2;
+                if (equipmentScript.isFirstPerson()) {
+                    wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    weaponActionScript.animatorFpc.SetInteger("WeaponType", 2);
+                    weaponActionScript.animatorFpc.SetBool("isShotgun", false);
+                    weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                } else {
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
-                equippedWep = weaponName;
-                EquipLauncher(weaponName);
-                if (!onTitle) {
-                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
-                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
-                    weaponActionScript.hudScript.EquipSightCrosshair(false);
-                }
-                if (!onTitle && equipmentScript.isFirstPerson()) {
+                equippedWepInGame = weaponName;
+                EquipLauncherInGame();
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.hudScript.EquipSightCrosshair(false);
+                if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
                 }
                 break;
             case "Explosive":
-                if (!onTitle) {
-                    currentlyEquippedType = 4;
-                    if (equipmentScript.isFirstPerson()) {
-                        wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
-                        weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
-                        weaponActionScript.animatorFpc.SetBool("isShotgun", false);
-                        weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
-                    } else {
-                        wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
-                    }
+                m = PlayerData.playerdata.supportModInfo;
+                currentlyEquippedType = 4;
+                if (equipmentScript.isFirstPerson()) {
+                    wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
+                    weaponActionScript.animatorFpc.SetBool("isShotgun", false);
+                    weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                } else {
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
-                equippedWep = weaponName;
-                EquipExplosive(weaponName);
-                if (!onTitle) {
-                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
-                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
-                    weaponActionScript.hudScript.EquipSightCrosshair(false);
-                }
-                if (!onTitle && equipmentScript.isFirstPerson()) {
+                equippedWepInGame = weaponName;
+                EquipExplosiveInGame();
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.hudScript.EquipSightCrosshair(false);
+                if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
                 }
                 break;
             case "Booster":
-                if (!onTitle) {
-                    currentlyEquippedType = 4;
-                    if (equipmentScript.isFirstPerson()) {
-                        wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
-                        weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
-                        weaponActionScript.animatorFpc.SetBool("isShotgun", false);
-                        weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
-                    } else {
-                        wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
-                    }
+                m = PlayerData.playerdata.supportModInfo;
+                currentlyEquippedType = 4;
+                if (equipmentScript.isFirstPerson()) {
+                    wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
+                    weaponActionScript.animatorFpc.SetBool("isShotgun", false);
+                    weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                } else {
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
-                equippedWep = weaponName;
-                EquipBooster(weaponName);
-                if (!onTitle) {
-                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
-                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
-                    weaponActionScript.hudScript.EquipSightCrosshair(false);
-                }
-                if (!onTitle && equipmentScript.isFirstPerson()) {
+                equippedWepInGame = weaponName;
+                EquipBoosterInGame();
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.hudScript.EquipSightCrosshair(false);
+                if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
                 }
                 break;
             case "Deployable":
-                if (!onTitle) {
-                    currentlyEquippedType = 4;
-                    if (equipmentScript.isFirstPerson()) {
-                        wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
-                        weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
-                        weaponActionScript.animatorFpc.SetBool("isShotgun", false);
-                        weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
-                        SetWeaponCulling(wepEquipped);
-                    } else {
-                        wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
-                    }
+                m = PlayerData.playerdata.supportModInfo;
+                currentlyEquippedType = 4;
+                if (equipmentScript.isFirstPerson()) {
+                    wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
+                    weaponActionScript.animatorFpc.SetBool("isShotgun", false);
+                    weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                    SetWeaponCulling(wepEquipped);
+                } else {
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
                 }
-                equippedWep = weaponName;
-                EquipDeployable(weaponName);
-                if (!onTitle) {
-                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
-                    HideWeapon(currentAmmoSupport == 0 && totalSupportAmmoLeft == 0);
-                    weaponActionScript.SetCurrentAimDownSightPos(sightName);
-                    weaponActionScript.hudScript.EquipSightCrosshair(false);
-                }
-                if (!onTitle && equipmentScript.isFirstPerson()) {
+                equippedWepInGame = weaponName;
+                EquipDeployableInGame();
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                HideWeapon(currentAmmoSupport == 0 && totalSupportAmmoLeft == 0);
+                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.hudScript.EquipSightCrosshair(false);
+                if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
                 }
                 break;
             case "Knife":
-                if (!onTitle) {
-                    if (equipmentScript.isFirstPerson()) {
-                        wepEquipped = meleeHolderFpc.LoadWeapon(w.prefabPath);
-                        SetWeaponCulling(wepEquipped);
-                    } else {
-                        wepEquipped = meleeHolder.LoadWeapon(w.prefabPath);
-                    }
+                if (equipmentScript.isFirstPerson()) {
+                    wepEquipped = meleeHolderFpc.LoadWeapon(w.prefabPath);
+                    SetWeaponCulling(wepEquipped);
+                } else {
+                    wepEquipped = meleeHolder.LoadWeapon(w.prefabPath);
                 }
-                EquipKnife(weaponName);
-                if (!onTitle) {
-                    weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
-                }
+                EquipKnifeInGame();
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
                 HideMeleeWeapon();
                 wepEquipped = null;
                 break;
         }
-        
+
         if (wepEquipped != null)
         {
             drawnWeaponReference = wepEquipped;
         }
-        
-        if (onTitle) {
-            // Shop GUI stuff
+
+        SetCurrentAmmo(currentlyEquippedType);
+    }
+
+    void EquipWeaponOnTitle(string weaponName, string suppressorName, string sightName, GameObject shopItemRef) {
+        if (weaponName.Equals(equippedPrimaryWeapon) || weaponName.Equals(equippedSecondaryWeapon) || weaponName.Equals(equippedSupportWeapon) || weaponName.Equals(equippedMeleeWeapon)) return;
+        // Shop GUI stuff
+        if (shopItemRef != null) {
+            // Sets item that you unequipped to white
+            if (ts.currentlyEquippedItemPrefab != null) {
+                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+            }
+
+            // Sets item that you just equipped to orange in the shop
             if (shopItemRef != null) {
-                // Sets item that you unequipped to white
-                if (ts.currentlyEquippedItemPrefab != null) {
-                    ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
-                }
-
-                // Sets item that you just equipped to orange in the shop
-                if (shopItemRef != null) {
-                    shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
-                    ts.currentlyEquippedItemPrefab = shopItemRef;
-                }
+                shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
+                ts.currentlyEquippedItemPrefab = shopItemRef;
             }
-
-            if (wepEquipped != null) {
-                if (ts.currentCharGender == 'M') {
-                    SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsMale);
-                } else {
-                    SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsFemale);
-                }
-            }
-
-            // Puts the item that you just equipped in its proper slot
-            if (w.type.Equals("Primary")) {
-                ts.equippedPrimarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
-                ts.shopEquippedPrimarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
-            } else if (w.type.Equals("Secondary")) {
-                ts.equippedSecondarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
-                ts.shopEquippedSecondarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
-            } else if (w.type.Equals("Support")) {
-                ts.equippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
-                ts.shopEquippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
-            } else if (w.type.Equals("Melee")) {
-                ts.equippedMeleeSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
-                ts.shopEquippedMeleeSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
-            }
-        } else {
-            SetCurrentAmmo(currentlyEquippedType);
         }
+
+        string type = InventoryScript.itemData.weaponCatalog[weaponName].type;
+
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["equipped" + type] = name;
+        
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() == "200") {
+                    Debug.Log("Save successful.");
+                } else {
+                    PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                }
+            }
+        });
     }
 
     public void EquipMod(string modType, string modName, string equipOnWeapon, GameObject shopItemRef) {
         // If no mod equipped, don't equip anything
         if (modName == null || modName.Equals("") || equipOnWeapon == null) return;
-        // Load mod from catalog
-        Mod m = InventoryScript.itemData.modCatalog[modName];
+        if (onTitle) {
+            EquipModOnTitle(modType, modName, equipOnWeapon, shopItemRef);
+        } else {
+            EquipModInGame(modType, modName, equipOnWeapon);
+        }
+    }
+
+    void EquipModOnTitle(string modType, string modName, string equipOnWeapon, GameObject shopItemRef) {
         switch (modType) {
             case "Suppressor":
-                EquipSuppressor(modName, equipOnWeapon);
+                EquipSuppressorOnTitle(modName, equipOnWeapon);
                 break;
             case "Sight":
-                EquipSight(modName, equipOnWeapon);
+                EquipSightOnTitle(modName, equipOnWeapon);
                 break;
         }
-        // Change shop item highlight if in the mod area
-        if (onTitle) {
-            if (shopItemRef != null) {
-                // Sets item that you unequipped to white
-                if (ts.currentlyEquippedModPrefab != null) {
-                    ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
-                }
+        if (shopItemRef != null) {
+            // Sets item that you unequipped to white
+            if (ts.currentlyEquippedModPrefab != null) {
+                ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+            }
 
-                // Sets item that you just equipped to orange in the shop
-                if (shopItemRef != null) {
-                    shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
-                    ts.currentlyEquippedModPrefab = shopItemRef;
-                }
+            // Sets item that you just equipped to orange in the shop
+            if (shopItemRef != null) {
+                shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
+                ts.currentlyEquippedModPrefab = shopItemRef;
             }
         }
     }
 
+    void EquipModInGame(string modType, string modName, string equipOnWeapon) {
+        switch (modType) {
+            case "Suppressor":
+                EquipSuppressorInGame(modName, equipOnWeapon);
+                break;
+            case "Sight":
+                EquipSightInGame(modName, equipOnWeapon);
+                break;
+        }
+    }
+
     public void UnequipMod(string modType, string unequipFromWeapon) {
+        if (onTitle) {
+            UnequipModOnTitle(modType, unequipFromWeapon);
+        } else {
+            UnequipModInGame(modType, unequipFromWeapon);
+        }
+    }
+
+    void UnequipModOnTitle(string modType, string unequipFromWeapon) {
         // Remove the mod from the active gun
         switch(modType) {
             case "Suppressor":
                 string equippedSuppressor = weaponHolder.GetComponentInChildren<WeaponMods>().GetEquippedSuppressor();
                 if (equippedSuppressor == null || equippedSuppressor.Equals("")) return;
-                UnequipSuppressor(unequipFromWeapon);
+                UnequipSuppressorOnTitle(unequipFromWeapon);
                 break;
             case "Sight":
                 string equippedSight = weaponHolder.GetComponentInChildren<WeaponMods>().GetEquippedSight();
                 if (equippedSight == null || equippedSight.Equals("")) return;
-                UnequipSight(unequipFromWeapon);
+                UnequipSightOnTitle(unequipFromWeapon);
                 break;
         }
-        // Change shop item highlight if in the mod area
-        if (onTitle) {
-            // Sets item that you unequipped to white
-            if (ts.currentlyEquippedModPrefab != null) {
-                ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
-            }
+        // Sets item that you unequipped to white
+        if (ts.currentlyEquippedModPrefab != null) {
+            ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
         }
     }
-    // Assuming recoil = 3 is 100, and 0 is min, multiply by .03 to get recoil modifier
-    // If in-game, attach to weapon and affect weapon stats
-    private void EquipSuppressor(string modName, string equipOnWeapon) {
+
+    void UnequipModInGame(string modType, string unequipFromWeapon) {
+        // Remove the mod from the active gun
+        switch(modType) {
+            case "Suppressor":
+                string equippedSuppressor = weaponHolder.GetComponentInChildren<WeaponMods>().GetEquippedSuppressor();
+                if (equippedSuppressor == null || equippedSuppressor.Equals("")) return;
+                UnequipSuppressorInGame(unequipFromWeapon);
+                break;
+            case "Sight":
+                string equippedSight = weaponHolder.GetComponentInChildren<WeaponMods>().GetEquippedSight();
+                if (equippedSight == null || equippedSight.Equals("")) return;
+                UnequipSightInGame(unequipFromWeapon);
+                break;
+        }
+    }
+
+    void EquipSuppressorOnTitle(string modName, string equipOnWeapon) {
+        if (equipOnWeapon.Equals(equippedPrimaryWeapon)) {
+            WeaponMods wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
+            wm.EquipSuppressor(modName);
+        }
+    }
+
+    void EquipSuppressorInGame(string modName, string equipOnWeapon) {
         // If primary, attach to weapon on title screen and in-game
         if (equipOnWeapon.Equals(equippedPrimaryWeapon)) {
             WeaponMods wm = null;
@@ -829,27 +817,30 @@ public class WeaponScript : MonoBehaviour
             }
             wm.EquipSuppressor(modName);
             // drawnSuppressorReference = wm.suppressorRef;
-            if (!onTitle) {
-                Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-                weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
-            }
+            Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
+            weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
         } else if (equipOnWeapon.Equals(equippedSecondaryWeapon)) {
             // If secondary, only attach to weapon if in-game
-            if (!onTitle) {
-                WeaponMods wm = null;
-                if (equipmentScript.isFirstPerson()) {
-                    wm = weaponHolderFpc.weapon.GetComponentInChildren<WeaponMods>();
-                } else {
-                    wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
-                }
-                wm.EquipSuppressor(modName);
-                Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-                weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
+            WeaponMods wm = null;
+            if (equipmentScript.isFirstPerson()) {
+                wm = weaponHolderFpc.weapon.GetComponentInChildren<WeaponMods>();
+            } else {
+                wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
             }
+            wm.EquipSuppressor(modName);
+            Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
+            weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
         }
     }
 
-    private void UnequipSuppressor(string unequipFromWeapon) {
+    void UnequipSuppressorOnTitle(string unequipFromWeapon) {
+        if (unequipFromWeapon.Equals(equippedPrimaryWeapon)) {
+            WeaponMods wm = weaponHolder.GetComponentInChildren<WeaponMods>();
+            wm.UnequipSuppressor();
+        }
+    }
+
+    void UnequipSuppressorInGame(string unequipFromWeapon) {
         if (unequipFromWeapon.Equals(equippedPrimaryWeapon)) {
             WeaponMods wm = null;
             if (equipmentScript.isFirstPerson()) {
@@ -857,28 +848,30 @@ public class WeaponScript : MonoBehaviour
             } else {
                 wm = weaponHolder.GetComponentInChildren<WeaponMods>();
             }
-            if (!onTitle) {
-                Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-                weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost*.03f, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost, -suppressorBoosts.maxAmmoBoost);
-            }
+            Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
+            weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost*.03f, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost, -suppressorBoosts.maxAmmoBoost);
             wm.UnequipSuppressor();
         } else if (unequipFromWeapon.Equals(equippedSecondaryWeapon)) {
-            if (!onTitle) {
-                WeaponMods wm = null;
-                if (equipmentScript.isFirstPerson()) {
-                    wm = weaponHolderFpc.GetComponentInChildren<WeaponMods>();
-                } else {
-                    wm = weaponHolder.GetComponentInChildren<WeaponMods>();
-                }
-                Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-                weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost*.03f, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost, -suppressorBoosts.maxAmmoBoost);
-                wm.UnequipSuppressor();
+            WeaponMods wm = null;
+            if (equipmentScript.isFirstPerson()) {
+                wm = weaponHolderFpc.GetComponentInChildren<WeaponMods>();
+            } else {
+                wm = weaponHolder.GetComponentInChildren<WeaponMods>();
             }
+            Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
+            weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost*.03f, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost, -suppressorBoosts.maxAmmoBoost);
+            wm.UnequipSuppressor();
         }
     }
 
-    void EquipSight(string modName, string equipOnWeapon) {
-        // If primary, attach to weapon on title screen and in-game
+    void EquipSightOnTitle(string modName, string equipOnWeapon) {
+        if (equipOnWeapon.Equals(equippedPrimaryWeapon)) {
+            WeaponMods wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
+            wm.EquipSight(modName);
+        }
+    }
+
+    void EquipSightInGame(string modName, string equipOnWeapon) {
         if (equipOnWeapon.Equals(equippedPrimaryWeapon)) {
             WeaponMods wm = null;
             if (equipmentScript.isFirstPerson()) {
@@ -887,32 +880,34 @@ public class WeaponScript : MonoBehaviour
                 wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
             }
             wm.EquipSight(modName);
-            // drawnSuppressorReference = wm.suppressorRef;
-            if (!onTitle) {
-                Mod sightBoosts = wm.GetEquippedSightStats();
-                weaponActionScript.ModifyWeaponStats(sightBoosts.damageBoost, sightBoosts.accuracyBoost, sightBoosts.recoilBoost, sightBoosts.rangeBoost, sightBoosts.clipCapacityBoost, sightBoosts.maxAmmoBoost);
-                weaponActionScript.hudScript.EquipSightCrosshair(true);
-                weaponActionScript.hudScript.SetSightCrosshairForSight(modName);
-            }
+            Mod sightBoosts = wm.GetEquippedSightStats();
+            weaponActionScript.ModifyWeaponStats(sightBoosts.damageBoost, sightBoosts.accuracyBoost, sightBoosts.recoilBoost, sightBoosts.rangeBoost, sightBoosts.clipCapacityBoost, sightBoosts.maxAmmoBoost);
+            weaponActionScript.hudScript.EquipSightCrosshair(true);
+            weaponActionScript.hudScript.SetSightCrosshairForSight(modName);
         } else if (equipOnWeapon.Equals(equippedSecondaryWeapon)) {
             // If secondary, only attach to weapon if in-game
-            if (!onTitle) {
-                WeaponMods wm = null;
-                if (equipmentScript.isFirstPerson()) {
-                    wm = weaponHolderFpc.weapon.GetComponentInChildren<WeaponMods>();
-                } else {
-                    wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
-                }
-                wm.EquipSight(modName);
-                Mod sightBoosts = wm.GetEquippedSightStats();
-                weaponActionScript.ModifyWeaponStats(sightBoosts.damageBoost, sightBoosts.accuracyBoost, sightBoosts.recoilBoost*.03f, sightBoosts.rangeBoost, sightBoosts.clipCapacityBoost, sightBoosts.maxAmmoBoost);
-                weaponActionScript.hudScript.EquipSightCrosshair(true);
-                weaponActionScript.hudScript.SetSightCrosshairForSight(modName);
+            WeaponMods wm = null;
+            if (equipmentScript.isFirstPerson()) {
+                wm = weaponHolderFpc.weapon.GetComponentInChildren<WeaponMods>();
+            } else {
+                wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
             }
+            wm.EquipSight(modName);
+            Mod sightBoosts = wm.GetEquippedSightStats();
+            weaponActionScript.ModifyWeaponStats(sightBoosts.damageBoost, sightBoosts.accuracyBoost, sightBoosts.recoilBoost*.03f, sightBoosts.rangeBoost, sightBoosts.clipCapacityBoost, sightBoosts.maxAmmoBoost);
+            weaponActionScript.hudScript.EquipSightCrosshair(true);
+            weaponActionScript.hudScript.SetSightCrosshairForSight(modName);
         }
     }
 
-    void UnequipSight(string unequipFromWeapon) {
+    void UnequipSightOnTitle(string unequipFromWeapon) {
+        if (unequipFromWeapon.Equals(equippedPrimaryWeapon)) {
+            WeaponMods wm = weaponHolder.GetComponentInChildren<WeaponMods>();
+            wm.UnequipSight();
+        }
+    }
+
+    void UnequipSightInGame(string unequipFromWeapon) {
         if (unequipFromWeapon.Equals(equippedPrimaryWeapon)) {
             WeaponMods wm = null;
             if (equipmentScript.isFirstPerson()) {
@@ -920,23 +915,19 @@ public class WeaponScript : MonoBehaviour
             } else {
                 wm = weaponHolder.GetComponentInChildren<WeaponMods>();
             }
-            if (!onTitle) {
-                Mod sightBoosts = wm.GetEquippedSightStats();
-                weaponActionScript.ModifyWeaponStats(-sightBoosts.damageBoost, -sightBoosts.accuracyBoost, -sightBoosts.recoilBoost*.03f, -sightBoosts.rangeBoost, -sightBoosts.clipCapacityBoost, -sightBoosts.maxAmmoBoost);
-            }
+            Mod sightBoosts = wm.GetEquippedSightStats();
+            weaponActionScript.ModifyWeaponStats(-sightBoosts.damageBoost, -sightBoosts.accuracyBoost, -sightBoosts.recoilBoost*.03f, -sightBoosts.rangeBoost, -sightBoosts.clipCapacityBoost, -sightBoosts.maxAmmoBoost);
             wm.UnequipSight();
         } else if (unequipFromWeapon.Equals(equippedSecondaryWeapon)) {
-            if (!onTitle) {
-                WeaponMods wm = null;
-                if (equipmentScript.isFirstPerson()) {
-                    wm = weaponHolderFpc.GetComponentInChildren<WeaponMods>();
-                } else {
-                    wm = weaponHolder.GetComponentInChildren<WeaponMods>();
-                }
-                Mod sightBoosts = wm.GetEquippedSightStats();
-                weaponActionScript.ModifyWeaponStats(-sightBoosts.damageBoost, -sightBoosts.accuracyBoost, -sightBoosts.recoilBoost*.03f, -sightBoosts.rangeBoost, -sightBoosts.clipCapacityBoost, -sightBoosts.maxAmmoBoost);
-                wm.UnequipSight();
+            WeaponMods wm = null;
+            if (equipmentScript.isFirstPerson()) {
+                wm = weaponHolderFpc.GetComponentInChildren<WeaponMods>();
+            } else {
+                wm = weaponHolder.GetComponentInChildren<WeaponMods>();
             }
+            Mod sightBoosts = wm.GetEquippedSightStats();
+            weaponActionScript.ModifyWeaponStats(-sightBoosts.damageBoost, -sightBoosts.accuracyBoost, -sightBoosts.recoilBoost*.03f, -sightBoosts.rangeBoost, -sightBoosts.clipCapacityBoost, -sightBoosts.maxAmmoBoost);
+            wm.UnequipSight();
         }
     }
 

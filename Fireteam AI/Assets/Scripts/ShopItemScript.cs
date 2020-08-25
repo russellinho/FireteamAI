@@ -118,9 +118,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipArmor(itemName, null);
                 break;
             case "Weapon":
-                ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemName);
-                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, modInfo.equippedSuppressor, modInfo.equippedSight, null);
-                SetModInfo(modInfo);
+                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, null, null, null);
                 break;
         }
     }
@@ -152,9 +150,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipArmor(itemName, gameObject);
                 break;
             case "Weapon":
-                ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemName);
-                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, modInfo.equippedSuppressor, modInfo.equippedSight, gameObject);
-                SetModInfo(modInfo);
+                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, null, null, gameObject);
                 break;
         }
     }
@@ -267,18 +263,6 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             modDescriptionPopupRef.SetActive(false);
         } else {
             itemDescriptionPopupRef.SetActive(false);
-        }
-    }
-
-    void SetModInfo(ModInfo modInfo) {
-        if (weaponDetails.type.Equals("Primary")) {
-            PlayerData.playerdata.primaryModInfo = modInfo;
-        }
-        if (weaponDetails.type.Equals("Secondary")) {
-            PlayerData.playerdata.secondaryModInfo = modInfo;
-        }
-        if (weaponDetails.type.Equals("Support")) {
-            PlayerData.playerdata.supportModInfo = modInfo;
         }
     }
 

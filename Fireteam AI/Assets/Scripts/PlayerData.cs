@@ -77,9 +77,20 @@ public class PlayerData : MonoBehaviour
             playerdata = this;
             // LoadPlayerData();
             // LoadInventory();
-            DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").ValueChanged += HandleForceLogoutEvent;
-            DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("gp").ValueChanged += HandleGpChangeEvent;
-            DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("kash").ValueChanged += HandleKashChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "loggedIn").ValueChanged += HandleForceLogoutEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "gp").ValueChanged += HandleGpChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "kash").ValueChanged += HandleKashChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedArmor").ValueChanged += HandleArmorChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedBottom").ValueChanged += HandleBottomChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedCharacter").ValueChanged += HandleCharacterChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedFacewear").ValueChanged += HandleFacewearChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedFootwear").ValueChanged += HandleFootwearChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedHeadgear").ValueChanged += HandleHeadgearChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedMelee").ValueChanged += HandleMeleeChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedPrimary").ValueChanged += HandlePrimaryChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedSecondary").ValueChanged += HandleSecondaryChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedSupport").ValueChanged += HandleSupportChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedTop").ValueChanged += HandleTopChangeEvent;
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
         }
         else if (playerdata != this)
@@ -1877,22 +1888,379 @@ public class PlayerData : MonoBehaviour
         }
     }
 
-    void HandleEquipmentChangeEvent(object sender, ValueChangedEventArgs args) {
+    void HandleArmorChangeEvent(object sender, ValueChangedEventArgs args) {
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
         
+        // When the armor is changed, equip it
+        string itemEquipped = args.Snapshot.Value.ToString();
+        PlayerData.playerdata.info.equippedArmor = itemEquipped;
+        EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
+        
+        if (thisEquipScript != null) {
+            thisEquipScript.equippedArmor = PlayerData.playerdata.info.equippedArmor;
+            if (thisEquipScript.equippedArmorTopRef != null) {
+                Destroy(thisEquipScript.equippedArmorTopRef);
+                thisEquipScript.equippedArmorTopRef = null;
+            }
+            if (thisEquipScript.equippedArmorBottomRef != null) {
+                Destroy(thisEquipScript.equippedArmorBottomRef);
+                thisEquipScript.equippedArmorBottomRef = null;
+            }
+        }
+
+        if (itemEquipped != "") {
+            Armor a = InventoryScript.itemData.armorCatalog[itemEquipped];
+            GameObject p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathTop] : InventoryScript.itemData.itemReferences[a.femalePrefabPathTop]);
+            thisEquipScript.equippedArmorTopRef = (GameObject)Instantiate(p);
+            thisEquipScript.equippedArmorTopRef.transform.SetParent(bodyReference.transform);
+
+            p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathBottom] : InventoryScript.itemData.itemReferences[a.femalePrefabPathBottom]);
+            thisEquipScript.equippedArmorBottomRef = (GameObject)Instantiate(p);
+            thisEquipScript.equippedArmorBottomRef.transform.SetParent(bodyReference.transform);
+            
+            MeshFixer m = thisEquipScript.equippedArmorTopRef.GetComponentInChildren<MeshFixer>();
+            m.target = thisEquipScript.myArmorTopRenderer.gameObject;
+            m.rootBone = thisEquipScript.myBones.transform;
+            m.AdaptMesh();
+
+            m = thisEquipScript.equippedArmorBottomRef.GetComponentInChildren<MeshFixer>();
+            m.target = thisEquipScript.myArmorBottomRenderer.gameObject;
+            m.rootBone = thisEquipScript.myBones.transform;
+            m.AdaptMesh();
+
+            titleRef.equippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(true, a.thumbnailPath);
+            titleRef.shopEquippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(true, a.thumbnailPath);
+        } else {
+            titleRef.equippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
+            titleRef.shopEquippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
+        }
+
+        thisEquipScript.UpdateStats();
     }
 
-    void HandleInventoryChangeEvent(object sender, ValueChangedEventArgs args) {
+    void HandleTopChangeEvent(object sender, ValueChangedEventArgs args) {
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
+        
+        // When the top is changed, equip it
+        string itemEquipped = args.Snapshot.Value.ToString();
+        PlayerData.playerdata.info.equippedTop = itemEquipped;
+        EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
+        
+        if (thisEquipScript != null) {
+            thisEquipScript.equippedTop = PlayerData.playerdata.info.equippedTop;
+            if (thisEquipScript.equippedTopRef != null) {
+                Destroy(thisEquipScript.equippedTopRef);
+                thisEquipScript.equippedTopRef = null;
+            }
+        }
+        
+        Equipment e = InventoryScript.itemData.equipmentCatalog[itemEquipped];
+        GameObject p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        thisEquipScript.equippedTopRef = (GameObject)Instantiate(p);
+        thisEquipScript.equippedTopRef.transform.SetParent(bodyReference.transform);
+        MeshFixer m = thisEquipScript.equippedTopRef.GetComponentInChildren<MeshFixer>();
+        m.target = thisEquipScript.myTopRenderer.gameObject;
+        m.rootBone = thisEquipScript.myBones.transform;
+        m.AdaptMesh();
 
+        if (titleRef != null) {
+            titleRef.equippedTopSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+            titleRef.shopEquippedTopSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+        }
+
+        thisEquipScript.EquipSkin(e.skinType);
+    }
+
+    void HandleBottomChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        
+        // When the bottom is changed, equip it
+        string itemEquipped = args.Snapshot.Value.ToString();
+        PlayerData.playerdata.info.equippedBottom = itemEquipped;
+        EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
+        
+        if (thisEquipScript != null) {
+            thisEquipScript.equippedBottom = PlayerData.playerdata.info.equippedBottom;
+            if (thisEquipScript.equippedBottomRef != null) {
+                Destroy(thisEquipScript.equippedBottomRef);
+                thisEquipScript.equippedBottomRef = null;
+            }
+        }
+
+        Equipment e = InventoryScript.itemData.equipmentCatalog[itemEquipped];
+        GameObject p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        thisEquipScript.equippedBottomRef = (GameObject)Instantiate(p);
+        thisEquipScript.equippedBottomRef.transform.SetParent(bodyReference.transform);
+        MeshFixer m = thisEquipScript.equippedBottomRef.GetComponentInChildren<MeshFixer>();
+        m.target = thisEquipScript.myBottomRenderer.gameObject;
+        m.rootBone = thisEquipScript.myBones.transform;
+        m.AdaptMesh();
+
+        if (titleRef != null) {
+            titleRef.equippedBottomSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+            titleRef.shopEquippedBottomSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+        }
+    }
+
+    void HandleCharacterChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        
+        // When the character is changed, equip it
+        string itemEquipped = args.Snapshot.Value.ToString();
+        PlayerData.playerdata.info.equippedCharacter = itemEquipped;
+        EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
+
+        if (thisEquipScript != null) {
+            thisEquipScript.equippedCharacter = PlayerData.playerdata.info.equippedCharacter;
+            if (thisEquipScript.equippedSkinRef != null) {
+                Destroy(thisEquipScript.equippedSkinRef);
+                thisEquipScript.equippedSkinRef = null;
+            }
+        }
+
+        Character c = InventoryScript.itemData.characterCatalog[itemEquipped];
+        if (titleRef != null) {
+            titleRef.equippedCharacterSlot.GetComponent<SlotScript>().ToggleThumbnail(true, c.thumbnailPath);
+            titleRef.shopEquippedCharacterSlot.GetComponent<SlotScript>().ToggleThumbnail(true, c.thumbnailPath);
+            titleRef.currentCharGender = InventoryScript.itemData.characterCatalog[name].gender;
+            thisEquipScript.ResetStats();
+        }
+
+        thisEquipScript.EquipTop(c.defaultTop, null);
+        thisEquipScript.EquipBottom(c.defaultBottom, null);
+        thisEquipScript.EquipFootwear((c.gender == 'M' ? "Standard Boots (M)" : "Standard Boots (F)"), null);
+
+        thisEquipScript.ReequipWeapons();
+    }
+
+    void HandleFacewearChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        
+        string itemEquipped = args.Snapshot.Value.ToString();
+        PlayerData.playerdata.info.equippedFacewear = itemEquipped;
+        EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
+
+        if (thisEquipScript != null) {
+            thisEquipScript.equippedFacewear = itemEquipped;
+            if (thisEquipScript.equippedFacewearRef != null) {
+                Destroy(thisEquipScript.equippedFacewearRef);
+                thisEquipScript.equippedFacewearRef = null;
+            }
+        }
+
+        if (itemEquipped != "") {
+            Equipment e = InventoryScript.itemData.equipmentCatalog[name];
+            GameObject p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+            thisEquipScript.equippedFacewearRef = (GameObject)Instantiate(p);
+            thisEquipScript.equippedFacewearRef.transform.SetParent(gameObject.transform);
+            MeshFixer m = thisEquipScript.equippedFacewearRef.GetComponentInChildren<MeshFixer>();
+            m.target = thisEquipScript.myFacewearRenderer.gameObject;
+            m.rootBone = thisEquipScript.myBones.transform;
+            m.AdaptMesh();
+            titleRef.equippedFaceSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+            titleRef.shopEquippedFaceSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+        } else {
+            titleRef.equippedFaceSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
+            titleRef.shopEquippedFaceSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
+        }
+
+        thisEquipScript.UpdateStats();
+    }
+
+    void HandleFootwearChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        
+        // When the footwear is changed, equip it
+        string itemEquipped = args.Snapshot.Value.ToString();
+        PlayerData.playerdata.info.equippedFootwear = itemEquipped;
+        EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
+        
+        if (thisEquipScript != null) {
+            thisEquipScript.equippedFootwear = PlayerData.playerdata.info.equippedFootwear;
+            if (thisEquipScript.equippedFootwearRef != null) {
+                Destroy(thisEquipScript.equippedFootwearRef);
+                thisEquipScript.equippedFootwearRef = null;
+            }
+        }
+
+        Equipment e = InventoryScript.itemData.equipmentCatalog[itemEquipped];
+        GameObject p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        thisEquipScript.equippedFootwearRef = (GameObject)Instantiate(p);
+        thisEquipScript.equippedFootwearRef.transform.SetParent(bodyReference.transform);
+        MeshFixer m = thisEquipScript.equippedFootwearRef.GetComponentInChildren<MeshFixer>();
+        m.target = thisEquipScript.myFootwearRenderer.gameObject;
+        m.rootBone = thisEquipScript.myBones.transform;
+        m.AdaptMesh();
+
+        if (titleRef != null) {
+            titleRef.equippedFootSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+            titleRef.shopEquippedFootSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+        }
+    }
+
+    void HandleHeadgearChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        
+        string itemEquipped = args.Snapshot.Value.ToString();
+        PlayerData.playerdata.info.equippedHeadgear = itemEquipped;
+        EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
+
+        if (thisEquipScript != null) {
+            thisEquipScript.equippedHeadgear = itemEquipped;
+            if (thisEquipScript.equippedHeadgearRef != null) {
+                Destroy(thisEquipScript.equippedHeadgearRef);
+                thisEquipScript.equippedHeadgearRef = null;
+            }
+        }
+
+        if (itemEquipped != "") {
+            Equipment e = InventoryScript.itemData.equipmentCatalog[name];
+            GameObject p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+            thisEquipScript.equippedHeadgearRef = (GameObject)Instantiate(p);
+            thisEquipScript.equippedHeadgearRef.transform.SetParent(gameObject.transform);
+            MeshFixer m = thisEquipScript.equippedHeadgearRef.GetComponentInChildren<MeshFixer>();
+            m.target = thisEquipScript.myHeadgearRenderer.gameObject;
+            m.rootBone = thisEquipScript.myBones.transform;
+            m.AdaptMesh();
+            titleRef.equippedHeadSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+            titleRef.shopEquippedHeadSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+        } else {
+            titleRef.equippedHeadSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
+            titleRef.shopEquippedHeadSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
+        }
+
+        thisEquipScript.UpdateStats();
+    }
+
+    void HandleMeleeChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        
+        string itemEquipped = args.Snapshot.Value.ToString();
+        PlayerData.playerdata.info.equippedMelee = itemEquipped;
+        WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
+        thisWepScript.equippedMeleeWeapon = itemEquipped;
+        // Get the weapon from the weapon catalog for its properties
+        Weapon w = InventoryScript.itemData.weaponCatalog[itemEquipped];
+        titleRef.equippedMeleeSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
+        titleRef.shopEquippedMeleeSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
+    }
+
+    void HandlePrimaryChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        
+        string itemEquipped = args.Snapshot.Value.ToString();
+        PlayerData.playerdata.info.equippedPrimary = itemEquipped;
+        WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
+        thisWepScript.equippedPrimaryWeapon = itemEquipped;
+        // Get the weapon from the weapon catalog for its properties
+        Weapon w = InventoryScript.itemData.weaponCatalog[itemEquipped];
+        string weaponType = w.category;
+        ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemEquipped);
+        PlayerData.playerdata.primaryModInfo = modInfo;
+        GameObject wepEquipped = thisWepScript.weaponHolder.LoadWeapon(w.prefabPath);
+        
+        if (w.suppressorCompatible) {
+            thisWepScript.EquipMod("Suppressor", modInfo.equippedSuppressor, itemEquipped, null);
+        }
+        if (w.sightCompatible) {
+            thisWepScript.EquipMod("Sight", modInfo.equippedSight, itemEquipped, null);
+        }
+
+        if (titleRef.currentCharGender == 'M') {
+            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsMale);
+        } else {
+            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsFemale);
+        }
+
+        // Puts the item that you just equipped in its proper slot
+        titleRef.equippedPrimarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
+        titleRef.shopEquippedPrimarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
+    }
+
+    void HandleSecondaryChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        
+        string itemEquipped = args.Snapshot.Value.ToString();
+        PlayerData.playerdata.info.equippedPrimary = itemEquipped;
+        WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
+        thisWepScript.equippedSecondaryWeapon = itemEquipped;
+        // Get the weapon from the weapon catalog for its properties
+        Weapon w = InventoryScript.itemData.weaponCatalog[itemEquipped];
+        string weaponType = w.category;
+        ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemEquipped);
+        PlayerData.playerdata.secondaryModInfo = modInfo;
+
+        if (w.suppressorCompatible) {
+            thisWepScript.EquipMod("Suppressor", modInfo.equippedSuppressor, itemEquipped, null);
+        }
+        if (w.sightCompatible) {
+            thisWepScript.EquipMod("Sight", modInfo.equippedSight, itemEquipped, null);
+        }
+
+        titleRef.equippedSecondarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
+        titleRef.shopEquippedSecondarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
+    }
+
+    void HandleSupportChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        
+        string itemEquipped = args.Snapshot.Value.ToString();
+        PlayerData.playerdata.info.equippedSupport = itemEquipped;
+        WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
+        thisWepScript.equippedSupportWeapon = itemEquipped;
+        // Get the weapon from the weapon catalog for its properties
+        Weapon w = InventoryScript.itemData.weaponCatalog[itemEquipped];
+        string weaponType = w.category;
+        ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemEquipped);
+        PlayerData.playerdata.supportModInfo = modInfo;
+        GameObject wepEquipped = thisWepScript.weaponHolder.LoadWeapon(w.prefabPath);
+
+        titleRef.equippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
+        titleRef.shopEquippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
     }
 
     IEnumerator EmergencyExitGame() {
