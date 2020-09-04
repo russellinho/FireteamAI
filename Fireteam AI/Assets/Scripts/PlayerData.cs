@@ -27,16 +27,10 @@ public class PlayerData : MonoBehaviour
     public string disconnectReason;
     public bool testMode;
     private bool dataLoadedFlag;
-    private bool saveEquipmentFlag;
-    private bool purchaseSuccessfulFlag;
-    private bool purchaseFailFlag;
-    private bool reloadPlayerFlag;
-    private bool reinstantiatePlayerFlag;
-    private bool skipReloadCharacterFlag;
-    private string addDefaultClothingFlag;
-    private string deleteDefaultClothingFlag;
-    private ArrayList itemsExpired;
+    private bool playerDataModifyLegalFlag;
+    private bool inventoryDataModifyLegalFlag;
     public PlayerInfo info;
+    public PlayerInventory inventory;
     public ModInfo primaryModInfo;
     public ModInfo secondaryModInfo;
     public ModInfo supportModInfo;
@@ -45,15 +39,6 @@ public class PlayerData : MonoBehaviour
     public GameObject inGamePlayerReference;
     public TitleControllerScript titleRef;
     public GameOverController gameOverControllerRef;
-    public Dictionary<string, EquipmentData> myHeadgear;
-    public Dictionary<string, EquipmentData> myTops;
-    public Dictionary<string, EquipmentData> myBottoms;
-    public Dictionary<string, EquipmentData> myFacewear;
-    public Dictionary<string, EquipmentData> myFootwear;
-    public Dictionary<string, ArmorData> myArmor;
-    public Dictionary<string, WeaponData> myWeapons;
-    public Dictionary<string, CharacterData> myCharacters;
-    public Dictionary<string, ModData> myMods;
     public Texture[] rankInsignias;
 
     void Awake()
@@ -62,21 +47,12 @@ public class PlayerData : MonoBehaviour
         {
             DontDestroyOnLoad(gameObject);
             this.info = new PlayerInfo();
+            this.inventory = new PlayerInventory();
             this.primaryModInfo = new ModInfo();
             this.secondaryModInfo = new ModInfo();
             this.supportModInfo = new ModInfo();
-            this.myHeadgear = new Dictionary<string, EquipmentData>();
-            this.myTops = new Dictionary<string, EquipmentData>();
-            this.myBottoms = new Dictionary<string, EquipmentData>();
-            this.myFacewear = new Dictionary<string, EquipmentData>();
-            this.myFootwear = new Dictionary<string, EquipmentData>();
-            this.myArmor = new Dictionary<string, ArmorData>();
-            this.myWeapons = new Dictionary<string, WeaponData>();
-            this.myCharacters = new Dictionary<string, CharacterData>();
-            this.myMods = new Dictionary<string, ModData>();
             playerdata = this;
-            // LoadPlayerData();
-            // LoadInventory();
+
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "loggedIn").ValueChanged += HandleForceLogoutEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "gp").ValueChanged += HandleGpChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "kash").ValueChanged += HandleKashChangeEvent;
@@ -91,61 +67,26 @@ public class PlayerData : MonoBehaviour
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedSecondary").ValueChanged += HandleSecondaryChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedSupport").ValueChanged += HandleSupportChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedTop").ValueChanged += HandleTopChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildAdded += HandleBanEvent;
+
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId).ChildAdded += HandleInventoryAdded;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId).ChildRemoved += HandleInventoryRemoved;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId).ChildChanged += HandleInventoryChanged;
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
+            PlayerData.playerdata.info.OnPlayerInfoChange += PlayerInfoChangeHandler;
+            PlayerData.playerdata.inventory.OnInventoryChange += InventoryChangeHandler;
         }
         else if (playerdata != this)
         {
             Destroy(gameObject);
         }
-        itemsExpired = new ArrayList();
     }
 
     void Update() {
-        // Handle async calls
         if (dataLoadedFlag) {
-            if (itemsExpired.Count > 0)
-            {
-                titleRef.TriggerExpirationPopup(itemsExpired);
-                itemsExpired.Clear();
-            }
             InstantiatePlayer();
             titleRef.SetPlayerStatsForTitle();
             dataLoadedFlag = false;
-        }
-        if (saveEquipmentFlag && bodyReference != null) {
-            SavePlayerEquipment();
-            saveEquipmentFlag = false;
-        }
-        if (purchaseSuccessfulFlag) {
-            titleRef.TriggerMarketplacePopup("Purchase successful! The item has been added to your inventory.");
-            purchaseSuccessfulFlag = false;
-        }
-        if (purchaseFailFlag) {
-            titleRef.TriggerMarketplacePopup("Purchase failed. Please try again later.");
-            purchaseFailFlag = false;
-        }
-        if (reloadPlayerFlag)
-        {
-            ReinstantiatePlayer();
-            skipReloadCharacterFlag = false;
-            reloadPlayerFlag = false;
-            reinstantiatePlayerFlag = false;
-        }
-        if (addDefaultClothingFlag != null)
-        {
-            string dTop = InventoryScript.itemData.characterCatalog[addDefaultClothingFlag].defaultTop;
-            string dBottom = InventoryScript.itemData.characterCatalog[addDefaultClothingFlag].defaultBottom;
-            AddItemToInventory(dTop, "Top", -1f, false, false, 0, 0);
-            AddItemToInventory(dBottom, "Bottom", -1f, false, false, 0, 0);
-            addDefaultClothingFlag = null;
-        }
-        if (deleteDefaultClothingFlag != null)
-        {
-            string dTop = InventoryScript.itemData.characterCatalog[deleteDefaultClothingFlag].defaultTop;
-            string dBottom = InventoryScript.itemData.characterCatalog[deleteDefaultClothingFlag].defaultBottom;
-            DeleteItemFromInventory(dTop, "Top", null, false);
-            DeleteItemFromInventory(dBottom, "Bottom", null, false);
-            deleteDefaultClothingFlag = null;
         }
     }
 
@@ -169,6 +110,40 @@ public class PlayerData : MonoBehaviour
             characterPrefabName = "DaniGamePrefab";
         }
         return characterPrefabName;
+    }
+
+    void PlayerInfoChangeHandler() {
+        // This should never be triggered unless called from the listeners. Therefore if it is, we need to ban the player
+        if (!playerDataModifyLegalFlag) {
+            // Ban player here
+            Dictionary<string, object> inputData = new Dictionary<string, object>();
+            inputData["callHash"] = DAOScript.functionsCallHash;
+            inputData["uid"] = AuthScript.authHandler.user.UserId;
+            inputData["duration"] = "-1";
+            inputData["reason"] = "Illegal modification of user data.";
+
+            HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("banPlayer");
+            func.CallAsync(inputData).ContinueWith((task) => {
+                TriggerEmergencyExit("You've been banned for the following reason:\nIllegal modification of user data.\nIf you feel this was done in error, you can dispute it by opening a ticket at \"www.koobando.com/support\".");
+            });
+        }
+    }
+
+    void InventoryChangeHandler() {
+        // This should never be triggered unless called from the listeners. Therefore if it is, we need to ban the player
+        if (!inventoryDataModifyLegalFlag) {
+            // Ban player here
+            Dictionary<string, object> inputData = new Dictionary<string, object>();
+            inputData["callHash"] = DAOScript.functionsCallHash;
+            inputData["uid"] = AuthScript.authHandler.user.UserId;
+            inputData["duration"] = "-1";
+            inputData["reason"] = "Illegal modification of user data.";
+
+            HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("banPlayer");
+            func.CallAsync(inputData).ContinueWith((task) => {
+                TriggerEmergencyExit("You've been banned for the following reason:\nIllegal modification of user data.\nIf you feel this was done in error, you can dispute it by opening a ticket at \"www.koobando.com/support\".");
+            });
+        }
     }
 
     public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
@@ -213,57 +188,12 @@ public class PlayerData : MonoBehaviour
 
     }
 
-    public void SavePlayerEquipment()
-    {
-        EquipmentScript myEquips = bodyReference.GetComponent<EquipmentScript>();
-        WeaponScript myWeps = bodyReference.GetComponent<WeaponScript>();
-        PlayerData.playerdata.info.equippedCharacter = myEquips.equippedCharacter;
-        PlayerData.playerdata.info.equippedHeadgear = myEquips.equippedHeadgear;
-        PlayerData.playerdata.info.equippedFacewear = myEquips.equippedFacewear;
-        PlayerData.playerdata.info.equippedTop = myEquips.equippedTop;
-        PlayerData.playerdata.info.equippedBottom = myEquips.equippedBottom;
-        PlayerData.playerdata.info.equippedFootwear = myEquips.equippedFootwear;
-        PlayerData.playerdata.info.equippedArmor = myEquips.equippedArmor;
-        PlayerData.playerdata.info.equippedPrimary = myWeps.equippedPrimaryWeapon;
-        PlayerData.playerdata.info.equippedSecondary = myWeps.equippedSecondaryWeapon;
-        PlayerData.playerdata.info.equippedSupport = myWeps.equippedSupportWeapon;
-        PlayerData.playerdata.info.equippedMelee = myWeps.equippedMeleeWeapon;
-
-        Dictionary<string, object> inputData = new Dictionary<string, object>();
-        inputData["callHash"] = DAOScript.functionsCallHash;
-		inputData["uid"] = AuthScript.authHandler.user.UserId;
-        inputData["equippedCharacter"] = PlayerData.playerdata.info.equippedCharacter;
-        inputData["equippedPrimary"] = PlayerData.playerdata.info.equippedPrimary;
-        inputData["equippedSecondary"] = PlayerData.playerdata.info.equippedSecondary;
-        inputData["equippedSupport"] = PlayerData.playerdata.info.equippedSupport;
-        inputData["equippedMelee"] = PlayerData.playerdata.info.equippedMelee;
-        inputData["equippedTop"] = PlayerData.playerdata.info.equippedTop;
-        inputData["equippedBottom"] = PlayerData.playerdata.info.equippedBottom;
-        inputData["equippedFootwear"] = PlayerData.playerdata.info.equippedFootwear;
-        inputData["equippedFacewear"] = PlayerData.playerdata.info.equippedFacewear;
-        inputData["equippedHeadgear"] = PlayerData.playerdata.info.equippedHeadgear;
-        inputData["equippedArmor"] = PlayerData.playerdata.info.equippedArmor;
-        
-		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
-		func.CallAsync(inputData).ContinueWith((taskA) => {
-            if (taskA.IsFaulted) {
-                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-            } else {
-                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                if (results["status"].ToString() == "200") {
-                    Debug.Log("Save successful.");
-                } else {
-                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                }
-            }
-        });
-    }
-
     public void LoadPlayerData()
     {
         if (titleRef == null) {
             titleRef = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
         }
+        playerDataModifyLegalFlag = true;
         // Check if the DB has equipped data for the player. If not, then set default char and equips.
         // If error occurs, show error message on splash and quit the application
         Dictionary<string, object> inputData = new Dictionary<string, object>();
@@ -377,10 +307,14 @@ public class PlayerData : MonoBehaviour
                         supportModInfo.weaponName = "";
                         supportModInfo.suppressorId = "";
                         supportModInfo.sightId = "";
-                        saveEquipmentFlag = true;
                     }
                     LoadInventory(inventorySnap);
+                    string[] itemsExpired = (string[])results["itemsExpired"];
+                    if (itemsExpired.Length > 0) {
+                        titleRef.TriggerExpirationPopup(itemsExpired);
+                    }
                     dataLoadedFlag = true;
+                    playerDataModifyLegalFlag = false;
                 } else {
                     TriggerEmergencyExit("Your data could not be loaded. Either your data is corrupted, or the service is unavailable. Please check the website for further details. If this issue persists, please create a ticket at koobando.com/support.");
                 }
@@ -397,57 +331,287 @@ public class PlayerData : MonoBehaviour
         this.supportModInfo = LoadModDataForWeapon(info.equippedSupport);
         characterEquips.ts = titleRef;
         characterWeps.ts = titleRef;
-        if (!skipReloadCharacterFlag)
-        {
-            characterEquips.EquipCharacter(info.equippedCharacter, null);
-        }
-        characterEquips.EquipHeadgear(info.equippedHeadgear, null);
-        characterEquips.EquipFacewear(info.equippedFacewear, null);
-        characterEquips.EquipTop(info.equippedTop, null);
-        characterEquips.EquipBottom(info.equippedBottom, null);
-        characterEquips.EquipFootwear(info.equippedFootwear, null);
-        characterEquips.EquipArmor(info.equippedArmor, null);
-        characterWeps.EquipWeapon(info.equippedPrimary, primaryModInfo.equippedSuppressor, primaryModInfo.equippedSight, null);
-        characterWeps.EquipWeapon(info.equippedSecondary, secondaryModInfo.equippedSuppressor, secondaryModInfo.equippedSight, null);
-        characterWeps.EquipWeapon(info.equippedSupport, supportModInfo.equippedSuppressor, supportModInfo.equippedSight, null);
-        characterWeps.EquipWeapon(info.equippedMelee, null, null, null);
+        OnCharacterChange(info.equippedCharacter);
+        OnHeadgearChange(info.equippedHeadgear);
+        OnFacewearChange(info.equippedFacewear);
+        OnTopChange(info.equippedTop);
+        OnBottomChange(info.equippedBottom);
+        OnFootwearChange(info.equippedFootwear);
+        OnArmorChange(info.equippedArmor);
+        OnPrimaryChange(info.equippedPrimary);
+        OnSecondaryChange(info.equippedSecondary);
+        OnSupportChange(info.equippedSupport);
+        OnMeleeChange(info.equippedMelee);
         PhotonNetwork.NickName = playername;
     }
 
-    public void ReinstantiatePlayer()
-    {
-        InstantiatePlayer();
-        saveEquipmentFlag = true;
+    void RefreshInventory(DataSnapshot snapshot) {
+        DataSnapshot headgearSnapshot = snapshot.Child("headgear");
+        DataSnapshot topsSnapshot = snapshot.Child("tops");
+        DataSnapshot bottomsSnapshot = snapshot.Child("bottoms");
+        DataSnapshot facewearSnapshot = snapshot.Child("facewear");
+        DataSnapshot footwearSnapshot = snapshot.Child("footwear");
+        DataSnapshot armorSnapshot = snapshot.Child("armor");
+        DataSnapshot weaponsSnapshot = snapshot.Child("weapons");
+        DataSnapshot charactersSnapshot = snapshot.Child("characters");
+        DataSnapshot modsSnapshot = snapshot.Child("mods");
+        Dictionary<string, string> itemsModified = new Dictionary<string, string>();
+        WeaponScript wepScript = bodyReference.GetComponent<WeaponScript>();
+
+        IEnumerator<DataSnapshot> iter = headgearSnapshot.Children.GetEnumerator();
+        while (iter.MoveNext()) {
+            DataSnapshot curr = iter.Current;
+            string key = curr.Key.ToString();
+            EquipmentData e = null;
+            if (!inventory.myHeadgear.ContainsKey(key)) {
+                e = new EquipmentData();
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+                inventory.myHeadgear.Add(key, e);
+            } else {
+                e = inventory.myHeadgear[key];
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+            }
+            itemsModified.Add(key, null);
+        }
+
+        iter = topsSnapshot.Children.GetEnumerator();
+        while (iter.MoveNext()) {
+            DataSnapshot curr = iter.Current;
+            string key = curr.Key.ToString();
+            EquipmentData e = null;
+            if (!inventory.myTops.ContainsKey(key)) {
+                e = new EquipmentData();
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+                inventory.myTops.Add(key, e);
+            } else {
+                e = inventory.myTops[key];
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+            }
+            itemsModified.Add(key, null);
+        }
+
+        iter = bottomsSnapshot.Children.GetEnumerator();
+        while (iter.MoveNext()) {
+            DataSnapshot curr = iter.Current;
+            string key = curr.Key.ToString();
+            EquipmentData e = null;
+            if (!inventory.myBottoms.ContainsKey(key)) {
+                e = new EquipmentData();
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+                inventory.myBottoms.Add(key, e);
+            } else {
+                e = inventory.myBottoms[key];
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+            }
+            itemsModified.Add(key, null);
+        }
+
+        iter = facewearSnapshot.Children.GetEnumerator();
+        while (iter.MoveNext()) {
+            DataSnapshot curr = iter.Current;
+            string key = curr.Key.ToString();
+            EquipmentData e = null;
+            if (!inventory.myFacewear.ContainsKey(key)) {
+                e = new EquipmentData();
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+                inventory.myFacewear.Add(key, e);
+            } else {
+                e = inventory.myFacewear[key];
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+            }
+            itemsModified.Add(key, null);
+        }
+
+        iter = footwearSnapshot.Children.GetEnumerator();
+        while (iter.MoveNext()) {
+            DataSnapshot curr = iter.Current;
+            string key = curr.Key.ToString();
+            EquipmentData e = null;
+            if (!inventory.myFootwear.ContainsKey(key)) {
+                e = new EquipmentData();
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+                inventory.myFootwear.Add(key, e);
+            } else {
+                e = inventory.myFootwear[key];
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+            }
+            itemsModified.Add(key, null);
+        }
+
+        iter = armorSnapshot.Children.GetEnumerator();
+        while (iter.MoveNext()) {
+            DataSnapshot curr = iter.Current;
+            string key = curr.Key.ToString();
+            ArmorData e = null;
+            if (!inventory.myArmor.ContainsKey(key)) {
+                e = new ArmorData();
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+                inventory.myArmor.Add(key, e);
+            } else {
+                e = inventory.myArmor[key];
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+            }
+            itemsModified.Add(key, null);
+        }
+
+        iter = weaponsSnapshot.Children.GetEnumerator();
+        while (iter.MoveNext()) {
+            DataSnapshot curr = iter.Current;
+            string key = curr.Key.ToString();
+            WeaponData e = null;
+            if (!inventory.myWeapons.ContainsKey(key)) {
+                e = new WeaponData();
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+                e.equippedSuppressor = curr.Child("equippedSuppressor").Value.ToString();
+                e.equippedSight = curr.Child("equippedSight").Value.ToString();
+                e.equippedClip = curr.Child("equippedClip").Value.ToString();
+                inventory.myWeapons.Add(key, e);
+            } else {
+                e = inventory.myWeapons[key];
+                string prevSuppId = e.equippedSuppressor;
+                string prevSightId = e.equippedSight;
+                string prevClipId = e.equippedClip;
+                string newSuppId = curr.Child("equippedSuppressor").Value.ToString();
+                string newSightId = curr.Child("equippedSight").Value.ToString();
+                string newClipId = curr.Child("equippedClip").Value.ToString();
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+                e.equippedSuppressor = curr.Child("equippedSuppressor").Value.ToString();
+                e.equippedSight = curr.Child("equippedSight").Value.ToString();
+                e.equippedClip = curr.Child("equippedClip").Value.ToString();
+                if (prevSuppId != newSuppId) {
+                    wepScript.UnequipMod("Suppressor", key);
+                    if (newSuppId != "") {
+                        wepScript.EquipMod("Suppressor", newSuppId, key, null);
+                    }
+                }
+                if (prevSightId != newSightId) {
+                    wepScript.UnequipMod("Sight", key);
+                    if (newSightId != "") {
+                        wepScript.EquipMod("Sight", newSightId, key, null);
+                    }
+                }
+                if (prevClipId != newClipId) {
+                    wepScript.UnequipMod("Clip", key);
+                    if (newClipId != "") {
+                        wepScript.EquipMod("Clip", newClipId, key, null);
+                    }
+                }
+            }
+            itemsModified.Add(key, null);
+        }
+
+        iter = charactersSnapshot.Children.GetEnumerator();
+        while (iter.MoveNext()) {
+            DataSnapshot curr = iter.Current;
+            string key = curr.Key.ToString();
+            CharacterData e = null;
+            if (!inventory.myCharacters.ContainsKey(key)) {
+                e = new CharacterData();
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+                inventory.myCharacters.Add(key, e);
+            } else {
+                e = inventory.myCharacters[key];
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+            }
+            itemsModified.Add(key, null);
+        }
+
+        iter = modsSnapshot.Children.GetEnumerator();
+        while (iter.MoveNext()) {
+            DataSnapshot curr = iter.Current;
+            string key = curr.Key.ToString();
+            ModData e = null;
+            if (!inventory.myMods.ContainsKey(key)) {
+                e = new ModData();
+                e.id = key;
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+                e.equippedOn = curr.Child("equippedOn").Value.ToString();
+                inventory.myMods.Add(key, e);
+            } else {
+                e = inventory.myMods[key];
+                e.duration = curr.Child("duration").Value.ToString();
+                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+                e.equippedOn = curr.Child("equippedOn").Value.ToString();
+            }
+            itemsModified.Add(key, null);
+        }
+
+        // Delete items that weren't found in the update
+        foreach(KeyValuePair<string, EquipmentData> entry in inventory.myHeadgear) {
+            string key = entry.Key;
+            if (!itemsModified.ContainsKey(key)) {
+                inventory.myHeadgear.Remove(key);
+            }
+        }
+        foreach(KeyValuePair<string, EquipmentData> entry in inventory.myTops) {
+            string key = entry.Key;
+            if (!itemsModified.ContainsKey(key)) {
+                inventory.myTops.Remove(key);
+            }
+        }
+        foreach(KeyValuePair<string, EquipmentData> entry in inventory.myBottoms) {
+            string key = entry.Key;
+            if (!itemsModified.ContainsKey(key)) {
+                inventory.myBottoms.Remove(key);
+            }
+        }
+        foreach(KeyValuePair<string, EquipmentData> entry in inventory.myFacewear) {
+            string key = entry.Key;
+            if (!itemsModified.ContainsKey(key)) {
+                inventory.myFacewear.Remove(key);
+            }
+        }
+        foreach(KeyValuePair<string, EquipmentData> entry in inventory.myFootwear) {
+            string key = entry.Key;
+            if (!itemsModified.ContainsKey(key)) {
+                inventory.myFootwear.Remove(key);
+            }
+        }
+        foreach(KeyValuePair<string, ArmorData> entry in inventory.myArmor) {
+            string key = entry.Key;
+            if (!itemsModified.ContainsKey(key)) {
+                inventory.myArmor.Remove(key);
+            }
+        }
+        foreach(KeyValuePair<string, WeaponData> entry in inventory.myWeapons) {
+            string key = entry.Key;
+            if (!itemsModified.ContainsKey(key)) {
+                inventory.myWeapons.Remove(key);
+            }
+        }
+        foreach(KeyValuePair<string, CharacterData> entry in inventory.myCharacters) {
+            string key = entry.Key;
+            if (!itemsModified.ContainsKey(key)) {
+                inventory.myCharacters.Remove(key);
+            }
+        }
+        foreach(KeyValuePair<string, ModData> entry in inventory.myMods) {
+            string key = entry.Key;
+            if (!itemsModified.ContainsKey(key)) {
+                wepScript.UnequipMod(InventoryScript.itemData.modCatalog[key].category, inventory.myMods[key].equippedOn);
+                inventory.myMods.Remove(key);
+            }
+        }
     }
 
     public void LoadInventory(Dictionary<object, object> snapshot) {
-        if (this.myHeadgear.Count != 0) {
-            this.myHeadgear.Clear();
-        }
-        if (this.myTops.Count != 0) {
-            this.myTops.Clear();
-        }
-        if (this.myBottoms.Count != 0) {
-            this.myBottoms.Clear();
-        }
-        if (this.myFacewear.Count != 0) {
-            this.myFacewear.Clear();
-        }
-        if (this.myFootwear.Count != 0) {
-            this.myFootwear.Clear();
-        }
-        if (this.myArmor.Count != 0) {
-            this.myArmor.Clear();
-        }
-        if (this.myWeapons.Count != 0) {
-            this.myWeapons.Clear();
-        }
-        if (this.myCharacters.Count != 0) {
-            this.myCharacters.Clear();
-        }
-        if (this.myMods.Count != 0) {
-            this.myMods.Clear();
-        }
         Dictionary<object, object> subSnapshot = (Dictionary<object, object>)snapshot["weapons"];
         IEnumerator dataLoaded = subSnapshot.GetEnumerator();
         // Load weapons
@@ -473,24 +637,7 @@ public class PlayerData : MonoBehaviour
             w.equippedSuppressor = (equippedSuppressor == null ? "" : equippedSuppressor.ToString());
             w.equippedClip = (equippedClip == null ? "" : equippedClip.ToString());
             w.equippedSight = (equippedSight == null ? "" : equippedSight.ToString());
-            // If item is expired, delete from database. Else, add it to inventory
-            float dur = float.Parse(w.duration);
-            if (dur >= 0f)
-            {
-                DateTime acquireDate = DateTime.Parse(w.acquireDate);
-                acquireDate = acquireDate.AddMinutes((double)float.Parse(w.duration));
-                int result = DateTime.Compare(DateTime.Now, acquireDate);
-                if (result >= 0)
-                {
-                    DeleteItemFromInventory(key, "Weapon", null, true);
-                } else
-                {
-                    myWeapons.Add(key, w);
-                }
-            } else
-            {
-                myWeapons.Add(key, w);
-            }
+            inventory.myWeapons.Add(key, w);
         }
         subSnapshot = (Dictionary<object, object>)snapshot["characters"];
         dataLoaded = subSnapshot.GetEnumerator();
@@ -503,25 +650,7 @@ public class PlayerData : MonoBehaviour
             c.acquireDate = thisSnapshot["acquireDate"].ToString();
             c.duration = thisSnapshot["duration"].ToString();
             // If item is expired, delete from database. Else, add it to inventory
-            float dur = float.Parse(c.duration);
-            if (dur >= 0f)
-            {
-                DateTime acquireDate = DateTime.Parse(c.acquireDate);
-                acquireDate = acquireDate.AddMinutes((double)float.Parse(c.duration));
-                int result = DateTime.Compare(DateTime.Now, acquireDate);
-                if (result >= 0)
-                {
-                    DeleteItemFromInventory(key, "Character", null, true);
-                }
-                else
-                {
-                    myCharacters.Add(key, c);
-                }
-            }
-            else
-            {
-                myCharacters.Add(key, c);
-            }
+            inventory.myCharacters.Add(key, c);
         }
         if (snapshot.ContainsKey("armor")) {
             subSnapshot = (Dictionary<object, object>)snapshot["armor"];
@@ -534,26 +663,7 @@ public class PlayerData : MonoBehaviour
                 a.name = key;
                 a.acquireDate = thisSnapshot["acquireDate"].ToString();
                 a.duration = thisSnapshot["duration"].ToString();
-                // If item is expired, delete from database. Else, add it to inventory
-                float dur = float.Parse(a.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(a.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(a.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
-                    {
-                        DeleteItemFromInventory(key, "Armor", null, true);
-                    }
-                    else
-                    {
-                        myArmor.Add(key, a);
-                    }
-                }
-                else
-                {
-                    myArmor.Add(key, a);
-                }
+                inventory.myArmor.Add(key, a);
             }
         }
         if (snapshot.ContainsKey("tops")) {
@@ -567,26 +677,7 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot["acquireDate"].ToString();
                 d.duration = thisSnapshot["duration"].ToString();
-                // If item is expired, delete from database. Else, add it to inventory
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
-                    {
-                        DeleteItemFromInventory(key, "Top", null, true);
-                    }
-                    else
-                    {
-                        myTops.Add(key, d);
-                    }
-                }
-                else
-                {
-                    myTops.Add(key, d);
-                }
+                inventory.myTops.Add(key, d);
             }
         }
         if (snapshot.ContainsKey("bottoms")) {
@@ -600,25 +691,7 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot["acquireDate"].ToString();
                 d.duration = thisSnapshot["duration"].ToString();
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
-                    {
-                        DeleteItemFromInventory(key, "Bottom", null, true);
-                    }
-                    else
-                    {
-                        myBottoms.Add(key, d);
-                    }
-                }
-                else
-                {
-                    myBottoms.Add(key, d);
-                }
+                inventory.myBottoms.Add(key, d);
             }
         }
         if (snapshot.ContainsKey("footwear")) {
@@ -632,25 +705,7 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot["acquireDate"].ToString();
                 d.duration = thisSnapshot["duration"].ToString();
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
-                    {
-                        DeleteItemFromInventory(key, "Footwear", null, true);
-                    }
-                    else
-                    {
-                        myFootwear.Add(key, d);
-                    }
-                }
-                else
-                {
-                    myFootwear.Add(key, d);
-                }
+                inventory.myFootwear.Add(key, d);
             }
         }
         if (snapshot.ContainsKey("headgear")) {
@@ -664,25 +719,7 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot["acquireDate"].ToString();
                 d.duration = thisSnapshot["duration"].ToString();
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
-                    {
-                        DeleteItemFromInventory(key, "Headgear", null, true);
-                    }
-                    else
-                    {
-                        myHeadgear.Add(key, d);
-                    }
-                }
-                else
-                {
-                    myHeadgear.Add(key, d);
-                }
+                inventory.myHeadgear.Add(key, d);
             }
         }
         if (snapshot.ContainsKey("facewear")) {
@@ -696,25 +733,7 @@ public class PlayerData : MonoBehaviour
                 d.name = key;
                 d.acquireDate = thisSnapshot["acquireDate"].ToString();
                 d.duration = thisSnapshot["duration"].ToString();
-                float dur = float.Parse(d.duration);
-                if (dur >= 0f)
-                {
-                    DateTime acquireDate = DateTime.Parse(d.acquireDate);
-                    acquireDate = acquireDate.AddMinutes((double)float.Parse(d.duration));
-                    int result = DateTime.Compare(DateTime.Now, acquireDate);
-                    if (result >= 0)
-                    {
-                        DeleteItemFromInventory(key, "Facewear", null, true);
-                    }
-                    else
-                    {
-                        myFacewear.Add(key, d);
-                    }
-                }
-                else
-                {
-                    myFacewear.Add(key, d);
-                }
+                inventory.myFacewear.Add(key, d);
             }
         }
         if (snapshot.ContainsKey("mods")) {
@@ -730,17 +749,13 @@ public class PlayerData : MonoBehaviour
                 m.acquireDate = thisSnapshot["acquireDate"].ToString();
                 m.duration = thisSnapshot["duration"].ToString();
                 m.equippedOn = thisSnapshot["equippedOn"].ToString();
-                myMods.Add(key, m);
+                inventory.myMods.Add(key, m);
             }
         }
     }
 
     public void FindBodyRef(string character)
     {
-        if (reinstantiatePlayerFlag) {
-            Destroy(bodyReference);
-            bodyReference = null;
-        }
         if (bodyReference == null)
         {
             bodyReference = Instantiate(titleRef.characterRefs[titleRef.charactersRefsIndices[character]]);
@@ -751,31 +766,24 @@ public class PlayerData : MonoBehaviour
         // }
     }
 
-    public void ChangeBodyRef(string character, GameObject shopItem, bool previewFlag)
+    // Ensure that character changed listener re-equips weapons and sets equipment to defautl too
+    public void UpdateBodyRef()
     {
         if (titleRef == null) {
             titleRef = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
         }
-        if (bodyReference.GetComponent<EquipmentScript>().equippedCharacter == character)
+        if (bodyReference.GetComponent<EquipmentScript>().equippedCharacter == PlayerData.playerdata.info.equippedCharacter)
         {
             return;
         }
         WeaponScript weaponScrpt = bodyReference.GetComponent<WeaponScript>();
         Destroy(bodyReference);
         bodyReference = null;
-        bodyReference = Instantiate(titleRef.characterRefs[titleRef.charactersRefsIndices[character]]);
+        bodyReference = Instantiate(titleRef.characterRefs[titleRef.charactersRefsIndices[PlayerData.playerdata.info.equippedCharacter]]);
         EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
         WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
         characterEquips.ts = titleRef;
         characterWeps.ts = titleRef;
-        if (!previewFlag) {
-            bodyReference.GetComponent<EquipmentScript>().HighlightItemPrefab(shopItem);
-            PlayerData.playerdata.info.equippedPrimary = weaponScrpt.equippedPrimaryWeapon;
-            PlayerData.playerdata.info.equippedSecondary = weaponScrpt.equippedSecondaryWeapon;
-            PlayerData.playerdata.info.equippedSupport = weaponScrpt.equippedSupportWeapon;
-            PlayerData.playerdata.info.equippedMelee = weaponScrpt.equippedMeleeWeapon;
-        }
-        characterEquips.EquipCharacter(character, null);
     }
 
     // Saves mod data for given weapon. If ID is null, then that means there was no mod on that weapon to begin with when it was saved.
@@ -798,12 +806,6 @@ public class PlayerData : MonoBehaviour
         if (suppressorId != null && !"".Equals(suppressorId)) {
             if (suppressorId != null && !"".Equals(suppressorId) && string.IsNullOrEmpty(equippedSuppressor))
             {
-                // Mod was removed
-                newModInfo.equippedSuppressor = "";
-                newModInfo.weaponName = weaponName;
-                newModInfo.suppressorId = "";
-                myMods[suppressorId].equippedOn = "";
-
                 inputData["weaponName"] = weaponName;
                 inputData["suppressorId"] = suppressorId;
                 inputData["equippedSuppressor"] = "";
@@ -811,45 +813,16 @@ public class PlayerData : MonoBehaviour
             }
             else
             {
-                // Mod was added/changed
-                newModInfo.equippedSuppressor = equippedSuppressor;
-                newModInfo.weaponName = weaponName;
-                newModInfo.suppressorId = suppressorId;
-                myMods[suppressorId].equippedOn = weaponName;
-                
                 inputData["weaponName"] = weaponName;
                 inputData["suppressorId"] = suppressorId;
                 inputData["equippedSuppressor"] = suppressorId;
                 inputData["suppressorEquippedOn"] = weaponName;
-            }
-
-            // Set mod data that was just saved
-            if (weaponName == myWeps.equippedPrimaryWeapon)
-            {
-                PlayerData.playerdata.primaryModInfo.equippedSuppressor = newModInfo.equippedSuppressor;
-                PlayerData.playerdata.primaryModInfo.weaponName = newModInfo.weaponName;
-                PlayerData.playerdata.primaryModInfo.suppressorId = newModInfo.suppressorId;
-            } else if (weaponName == myWeps.equippedSecondaryWeapon)
-            {
-                PlayerData.playerdata.secondaryModInfo.equippedSuppressor = newModInfo.equippedSuppressor;
-                PlayerData.playerdata.secondaryModInfo.weaponName = newModInfo.weaponName;
-                PlayerData.playerdata.secondaryModInfo.suppressorId = newModInfo.suppressorId;
-            } else if (weaponName == myWeps.equippedSupportWeapon)
-            {
-                PlayerData.playerdata.supportModInfo.equippedSuppressor = newModInfo.equippedSuppressor;
-                PlayerData.playerdata.supportModInfo.weaponName = newModInfo.weaponName;
-                PlayerData.playerdata.supportModInfo.suppressorId = newModInfo.suppressorId;
             }
         }
 
         if (sightId != null && !"".Equals(sightId)) {
             if (sightId != null && !"".Equals(sightId) && string.IsNullOrEmpty(equippedSight))
             {
-                newModInfo.equippedSight = "";
-                newModInfo.weaponName = weaponName;
-                newModInfo.sightId = "";
-                myMods[sightId].equippedOn = "";
-                
                 inputData["weaponName"] = weaponName;
                 inputData["sightId"] = sightId;
                 inputData["equippedSight"] = "";
@@ -858,33 +831,10 @@ public class PlayerData : MonoBehaviour
             else
             {
                 // Mod was added/changed
-                newModInfo.equippedSight = equippedSight;
-                newModInfo.weaponName = weaponName;
-                newModInfo.sightId = sightId;
-                myMods[sightId].equippedOn = weaponName;
-                
                 inputData["weaponName"] = weaponName;
                 inputData["sightId"] = sightId;
                 inputData["equippedSight"] = sightId;
                 inputData["sightEquippedOn"] = weaponName;
-            }
-
-            // Set mod data that was just saved
-            if (weaponName == myWeps.equippedPrimaryWeapon)
-            {
-                PlayerData.playerdata.primaryModInfo.equippedSight = newModInfo.equippedSight;
-                PlayerData.playerdata.primaryModInfo.weaponName = newModInfo.weaponName;
-                PlayerData.playerdata.primaryModInfo.sightId = newModInfo.sightId;
-            } else if (weaponName == myWeps.equippedSecondaryWeapon)
-            {
-                PlayerData.playerdata.secondaryModInfo.equippedSight = newModInfo.equippedSight;
-                PlayerData.playerdata.secondaryModInfo.weaponName = newModInfo.weaponName;
-                PlayerData.playerdata.secondaryModInfo.sightId = newModInfo.sightId;
-            } else if (weaponName == myWeps.equippedSupportWeapon)
-            {
-                PlayerData.playerdata.supportModInfo.equippedSight = newModInfo.equippedSight;
-                PlayerData.playerdata.supportModInfo.weaponName = newModInfo.weaponName;
-                PlayerData.playerdata.supportModInfo.sightId = newModInfo.sightId;
             }
         }
 
@@ -907,7 +857,7 @@ public class PlayerData : MonoBehaviour
         ModInfo modInfo = new ModInfo();
         modInfo.weaponName = weaponName;
 
-        foreach (KeyValuePair<string, ModData> entry in PlayerData.playerdata.myMods)
+        foreach (KeyValuePair<string, ModData> entry in PlayerData.playerdata.inventory.myMods)
         {
             // If the mod is equipped on the given weapon, load it into the requested mod info
             ModData m = entry.Value;
@@ -929,7 +879,7 @@ public class PlayerData : MonoBehaviour
         return modInfo;
     }
 
-    public void AddItemToInventory(string itemName, string type, float duration, bool purchased, bool stacking, uint gpCost, uint kashCost) {
+    public void AddItemToInventory(string itemName, string type, float duration, bool purchased) {
         Dictionary<string, object> inputData = new Dictionary<string, object>();
         inputData["callHash"] = DAOScript.functionsCallHash;
         inputData["uid"] = AuthScript.authHandler.user.UserId;
@@ -937,8 +887,6 @@ public class PlayerData : MonoBehaviour
         inputData["duration"] = duration;
         inputData["category"] = ConvertTypeToFirebaseType(type);
         if (purchased) {
-            inputData["gpCost"] = gpCost;
-            inputData["kashCost"] = kashCost;
             HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("transactItem");
             func.CallAsync(inputData).ContinueWith((taskA) => {
                 if (taskA.IsFaulted) {
@@ -946,124 +894,7 @@ public class PlayerData : MonoBehaviour
                 } else {
                     Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
                     if (results["status"].ToString() == "200") {
-                        if (type.Equals("Weapon")) {
-                            if (!stacking) {
-                                WeaponData w = new WeaponData();
-                                w.name = itemName;
-                                w.acquireDate = DateTime.Now.ToString();
-                                w.duration = "" + duration;
-                                w.equippedClip = "";
-                                w.equippedSight = "";
-                                w.equippedSuppressor = "";
-                                myWeapons.Add(itemName, w);
-                                purchaseSuccessfulFlag = true;
-                            } else {
-                                WeaponData w = myWeapons[itemName];
-                                purchaseSuccessfulFlag = true;
-                                w.duration = ""+(float.Parse(w.duration) + duration);
-                            }
-                        } else if (type.Equals("Character")) {
-                            if (!stacking) {
-                                CharacterData c = new CharacterData();
-                                c.name = itemName;
-                                c.acquireDate = DateTime.Now.ToString();
-                                c.duration = "" + duration;
-                                myCharacters.Add(itemName, c);
-                                purchaseSuccessfulFlag = true;
-                                addDefaultClothingFlag = itemName;
-                            } else {
-                                CharacterData c = myCharacters[itemName];
-                                purchaseSuccessfulFlag = true;
-                                c.duration = ""+(float.Parse(c.duration) + duration);
-                            }
-                        } else if (type.Equals("Top")) {
-                            if (!stacking) {
-                                EquipmentData e = new EquipmentData();
-                                e.name = itemName;
-                                e.acquireDate = DateTime.Now.ToString();
-                                e.duration = "" + duration;
-                                myTops.Add(itemName, e);
-                                purchaseSuccessfulFlag = true;
-                            } else {
-                                EquipmentData e = myTops[itemName];
-                                purchaseSuccessfulFlag = true;
-                                e.duration = ""+(float.Parse(e.duration) + duration);
-                            }
-                        } else if (type.Equals("Bottom")) {
-                            if (!stacking) {
-                                EquipmentData e = new EquipmentData();
-                                e.name = itemName;
-                                e.acquireDate = DateTime.Now.ToString();
-                                e.duration = "" + duration;
-                                myBottoms.Add(itemName, e);
-                                purchaseSuccessfulFlag = true;
-                            } else {
-                                EquipmentData e = myBottoms[itemName];
-                                purchaseSuccessfulFlag = true;
-                                e.duration = ""+(float.Parse(e.duration) + duration);
-                            }
-                        } else if (type.Equals("Armor")) {
-                            if (!stacking) {
-                                ArmorData e = new ArmorData();
-                                e.name = itemName;
-                                e.acquireDate = DateTime.Now.ToString();
-                                e.duration = "" + duration;
-                                myArmor.Add(itemName, e);
-                                purchaseSuccessfulFlag = true;
-                            } else {
-                                ArmorData a = myArmor[itemName];
-                                purchaseSuccessfulFlag = true;
-                                a.duration = ""+(float.Parse(a.duration) + duration);
-                            }
-                        } else if (type.Equals("Footwear")) {
-                            if (!stacking) {
-                                EquipmentData e = new EquipmentData();
-                                e.name = itemName;
-                                e.acquireDate = DateTime.Now.ToString();
-                                e.duration = "" + duration;
-                                myFootwear.Add(itemName, e);
-                                purchaseSuccessfulFlag = true;
-                            } else {
-                                EquipmentData e = myFootwear[itemName];
-                                purchaseSuccessfulFlag = true;
-                                e.duration = ""+(float.Parse(e.duration) + duration);
-                            }
-                        } else if (type.Equals("Headgear")) {
-                            if (!stacking) {
-                                EquipmentData e = new EquipmentData();
-                                e.name = itemName;
-                                e.acquireDate = DateTime.Now.ToString();
-                                e.duration = "" + duration;
-                                myHeadgear.Add(itemName, e);
-                                purchaseSuccessfulFlag = true;
-                            } else {
-                                EquipmentData e = myHeadgear[itemName];
-                                purchaseSuccessfulFlag = true;
-                                e.duration = ""+(float.Parse(e.duration) + duration);
-                            }
-                        } else if (type.Equals("Facewear")) {
-                            if (!stacking) {
-                                EquipmentData e = new EquipmentData();
-                                e.name = itemName;
-                                e.acquireDate = DateTime.Now.ToString();
-                                e.duration = "" + duration;
-                                myFacewear.Add(itemName, e);
-                                purchaseSuccessfulFlag = true;
-                            } else {
-                                EquipmentData e = myFacewear[itemName];
-                                purchaseSuccessfulFlag = true;
-                                e.duration = ""+(float.Parse(e.duration) + duration);
-                            }
-                        } else if (type.Equals("Mod")) {
-                            ModData m = new ModData();
-                            m.name = itemName;
-                            m.acquireDate = DateTime.Now.ToString();
-                            m.duration = ""+duration;
-                            m.equippedOn = "";
-                            m.id = results["modKey"].ToString();
-                            myMods.Add(results["modKey"].ToString(), m);
-                            purchaseSuccessfulFlag = true;
-                        }
+                        titleRef.TriggerMarketplacePopup("Purchase successful! The item has been added to your inventory.");
                     } else {
                         TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                     }
@@ -1076,108 +907,7 @@ public class PlayerData : MonoBehaviour
                     TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                 } else {
                     Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                    if (results["status"].ToString() == "200") {
-                        if (type.Equals("Weapon")) {
-                            if (!stacking) {
-                                WeaponData w = new WeaponData();
-                                w.name = itemName;
-                                w.acquireDate = DateTime.Now.ToString();
-                                w.duration = "" + duration;
-                                w.equippedClip = "";
-                                w.equippedSight = "";
-                                w.equippedSuppressor = "";
-                                myWeapons.Add(itemName, w);
-                            } else {
-                                WeaponData w = myWeapons[itemName];
-                                w.duration = ""+(float.Parse(w.duration) + duration);
-                            }
-                        } else if (type.Equals("Character")) {
-                            if (!stacking) {
-                                CharacterData c = new CharacterData();
-                                c.name = itemName;
-                                c.acquireDate = DateTime.Now.ToString();
-                                c.duration = "" + duration;
-                                myCharacters.Add(itemName, c);
-                            } else {
-                                CharacterData c = myCharacters[itemName];
-                                c.duration = ""+(float.Parse(c.duration) + duration);
-                            }
-                        } else if (type.Equals("Top")) {
-                            if (!stacking) {
-                                EquipmentData e = new EquipmentData();
-                                e.name = itemName;
-                                e.acquireDate = DateTime.Now.ToString();
-                                e.duration = "" + duration;
-                                myTops.Add(itemName, e);
-                            } else {
-                                EquipmentData e = myTops[itemName];
-                                e.duration = ""+(float.Parse(e.duration) + duration);
-                            }
-                        } else if (type.Equals("Bottom")) {
-                            if (!stacking) {
-                                EquipmentData e = new EquipmentData();
-                                e.name = itemName;
-                                e.acquireDate = DateTime.Now.ToString();
-                                e.duration = "" + duration;
-                                myBottoms.Add(itemName, e);
-                            } else {
-                                EquipmentData e = myBottoms[itemName];
-                                e.duration = ""+(float.Parse(e.duration) + duration);
-                            }
-                        } else if (type.Equals("Armor")) {
-                            if (!stacking) {
-                                ArmorData e = new ArmorData();
-                                e.name = itemName;
-                                e.acquireDate = DateTime.Now.ToString();
-                                e.duration = "" + duration;
-                                myArmor.Add(itemName, e);
-                            } else {
-                                ArmorData a = myArmor[itemName];
-                                a.duration = ""+(float.Parse(a.duration) + duration);
-                            }
-                        } else if (type.Equals("Footwear")) {
-                            if (!stacking) {
-                                EquipmentData e = new EquipmentData();
-                                e.name = itemName;
-                                e.acquireDate = DateTime.Now.ToString();
-                                e.duration = "" + duration;
-                                myFootwear.Add(itemName, e);
-                            } else {
-                                EquipmentData e = myFootwear[itemName];
-                                e.duration = ""+(float.Parse(e.duration) + duration);
-                            }
-                        } else if (type.Equals("Headgear")) {
-                            if (!stacking) {
-                                EquipmentData e = new EquipmentData();
-                                e.name = itemName;
-                                e.acquireDate = DateTime.Now.ToString();
-                                e.duration = "" + duration;
-                                myHeadgear.Add(itemName, e);
-                            } else {
-                                EquipmentData e = myHeadgear[itemName];
-                                e.duration = ""+(float.Parse(e.duration) + duration);
-                            }
-                        } else if (type.Equals("Facewear")) {
-                            if (!stacking) {
-                                EquipmentData e = new EquipmentData();
-                                e.name = itemName;
-                                e.acquireDate = DateTime.Now.ToString();
-                                e.duration = "" + duration;
-                                myFacewear.Add(itemName, e);
-                            } else {
-                                EquipmentData e = myFacewear[itemName];
-                                e.duration = ""+(float.Parse(e.duration) + duration);
-                            }
-                        } else if (type.Equals("Mod")) {
-                            ModData m = new ModData();
-                            m.name = itemName;
-                            m.acquireDate = DateTime.Now.ToString();
-                            m.duration = ""+duration;
-                            m.equippedOn = "";
-                            m.id = results["modKey"].ToString();
-                            myMods.Add(results["modKey"].ToString(), m);
-                        }
-                    } else {
+                    if (results["status"].ToString() != "200") {
                         TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                     }
                 }
@@ -1185,377 +915,67 @@ public class PlayerData : MonoBehaviour
         }
     }
 
+    bool ItemIsDeletable(string itemName, string type) {
+        if (type == "Armor") {
+            if (!InventoryScript.itemData.armorCatalog[itemName].deleteable) {
+                return false;
+            }
+        } else if (type == "Character") {
+            if (!InventoryScript.itemData.characterCatalog[itemName].deleteable) {
+                return false;
+            }
+        } else if (type == "Weapon") {
+            if (!InventoryScript.itemData.weaponCatalog[itemName].deleteable) {
+                return false;
+            }
+        } else if (type == "Mod") {
+            if (!InventoryScript.itemData.modCatalog[itemName].deleteable) {
+                return false;
+            }
+        } else {
+            if (!InventoryScript.itemData.equipmentCatalog[itemName].deleteable) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // Removes item from inventory in DB
-    public void DeleteItemFromInventory(string itemName, string type, string modId, bool expiring)
+    public void DeleteItemFromInventory(string itemName, string type, string modId)
     {
+        // If item cannot be deleted, then skip
+        if (!ItemIsDeletable(itemName, type))
+        {
+            return;
+        }
         Dictionary<string, object> inputData = new Dictionary<string, object>();
         inputData["callHash"] = DAOScript.functionsCallHash;
         inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["itemId"] = itemName;
+        inputData["category"] = ConvertTypeToFirebaseType(type);
         HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("deleteItemFromUser");
-        if (type.Equals("Weapon"))
-        {
-            // If item cannot be deleted, then skip
-            if (!InventoryScript.itemData.weaponCatalog[itemName].deleteable)
-            {
-                return;
+        func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() != "200") {
+                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                }
             }
-            inputData["category"] = "weapons";
-            inputData["itemId"] = itemName;
-            func.CallAsync(inputData).ContinueWith((taskA) => {
-                if (taskA.IsFaulted) {
-                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                } else {
-                    Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                    if (results["status"].ToString() == "200") {
-                        // Delete item locally
-                        string equippedSuppressorId = results["equippedSuppressor"].ToString();
-                        string equippedSightId = results["equippedSight"].ToString();
-                        // Unattach locally, and then save
-                        if (equippedSuppressorId != null) {
-                            string equippedSuppressorIdText = equippedSuppressorId.ToString();
-                            try {
-                                myMods[equippedSuppressorIdText].equippedOn = "";
-                            } catch (KeyNotFoundException e) {
-                                Debug.Log("Mod " + equippedSuppressorIdText + " was not loaded locally yet... skipping");
-                            }
-                            Debug.Log("Deleting: " + equippedSuppressorIdText + " off of weapon " + itemName);
-                        }
-                        if (equippedSightId != null) {
-                            string equippedSightIdText = equippedSightId.ToString();
-                            try {
-                                myMods[equippedSightIdText].equippedOn = "";
-                            } catch (KeyNotFoundException e) {
-                                Debug.Log("Mod " + equippedSightIdText + " was not loaded locally yet... skipping");
-                            }
-                            Debug.Log("Deleting: " + equippedSightIdText + " off of weapon " + itemName);
-                        }
-                        myWeapons.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        if (PlayerData.playerdata.info.equippedPrimary == itemName)
-                        {
-                            Debug.Log(itemName + " was deleted and now equipping def " + PlayerData.playerdata.info.defaultWeapon);
-                            PlayerData.playerdata.info.equippedPrimary = PlayerData.playerdata.info.defaultWeapon;
-                            Debug.Log(PlayerData.playerdata.info.equippedPrimary + " woo");
-                            //PlayerData.playerdata.primaryModInfo = LoadModDataForWeapon(DEFAULT_PRIMARY);
-                            reloadPlayerFlag = true;
-                        } else if (PlayerData.playerdata.info.equippedSecondary == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedSecondary = DEFAULT_SECONDARY;
-                            //PlayerData.playerdata.secondaryModInfo = LoadModDataForWeapon(DEFAULT_SECONDARY);
-                            reloadPlayerFlag = true;
-                        } else if (PlayerData.playerdata.info.equippedSupport == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedSupport = DEFAULT_SUPPORT;
-                            //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
-                            reloadPlayerFlag = true;
-                        } else if (PlayerData.playerdata.info.equippedMelee == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedMelee = DEFAULT_MELEE;
-                            //PlayerData.playerdata.supportModInfo = LoadModDataForWeapon(DEFAULT_SUPPORT);
-                            reloadPlayerFlag = true;
-                        }
-                    } else {
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                    }
-                }
-            });
-        }
-        else if (type.Equals("Character"))
-        {
-            // If item cannot be deleted, then skip
-            if (!InventoryScript.itemData.equipmentCatalog[itemName].deleteable)
-            {
-                return;
-            }
-            inputData["category"] = "characters";
-            inputData["itemId"] = itemName;
-            func.CallAsync(inputData).ContinueWith((taskA) => {
-                if (taskA.IsFaulted) {
-                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                } else {
-                    Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                    if (results["status"].ToString() == "200") {
-                        // Delete item locally
-                        myCharacters.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        // Equip default if item currently equipped
-                        if (PlayerData.playerdata.info.equippedCharacter == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedCharacter = PlayerData.playerdata.info.defaultChar;
-                            PlayerData.playerdata.info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
-                            PlayerData.playerdata.info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
-                            reinstantiatePlayerFlag = true;
-                            reloadPlayerFlag = true;
-                        }
-                        deleteDefaultClothingFlag = itemName;
-                    } else {
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                    }
-                }
-            });
-        }
-        else if (type.Equals("Top"))
-        {
-            // If item cannot be deleted, then skip
-            if (!InventoryScript.itemData.equipmentCatalog[itemName].deleteable)
-            {
-                return;
-            }
-            inputData["category"] = "tops";
-            inputData["itemId"] = itemName;
-            func.CallAsync(inputData).ContinueWith((taskA) => {
-                if (taskA.IsFaulted) {
-                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                } else {
-                    Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                    if (results["status"].ToString() == "200") {
-                        // Delete item locally
-                        myTops.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        // Equip default if item currently equipped
-                        if (PlayerData.playerdata.info.equippedTop == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
-                            reloadPlayerFlag = true;
-                        }
-                    } else {
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                    }
-                }
-            });
-        }
-        else if (type.Equals("Bottom"))
-        {
-            // If item cannot be deleted, then skip
-            if (!InventoryScript.itemData.equipmentCatalog[itemName].deleteable)
-            {
-                return;
-            }
-            inputData["category"] = "bottoms";
-            inputData["itemId"] = itemName;
-            func.CallAsync(inputData).ContinueWith((taskA) => {
-                if (taskA.IsFaulted) {
-                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                } else {
-                    Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                    if (results["status"].ToString() == "200") {
-                        // Delete item locally
-                        myBottoms.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        // Equip default if item currently equipped
-                        if (PlayerData.playerdata.info.equippedBottom == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
-                            reloadPlayerFlag = true;
-                        }
-                    } else {
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                    }
-                }
-            });
-        }
-        else if (type.Equals("Armor"))
-        {
-            inputData["category"] = "armor";
-            inputData["itemId"] = itemName;
-            func.CallAsync(inputData).ContinueWith((taskA) => {
-                if (taskA.IsFaulted) {
-                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                } else {
-                    Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                    if (results["status"].ToString() == "200") {
-                        // Delete item locally
-                        myArmor.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        // Equip default if item currently equipped
-                        if (PlayerData.playerdata.info.equippedArmor == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedArmor = "";
-                            reloadPlayerFlag = true;
-                            skipReloadCharacterFlag = true;
-                        }
-                    } else {
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                    }
-                }
-            });
-        }
-        else if (type.Equals("Footwear"))
-        {
-            // If item cannot be deleted, then skip
-            if (!InventoryScript.itemData.equipmentCatalog[itemName].deleteable)
-            {
-                return;
-            }
-            inputData["category"] = "footwear";
-            inputData["itemId"] = itemName;
-            func.CallAsync(inputData).ContinueWith((taskA) => {
-                if (taskA.IsFaulted) {
-                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                } else {
-                    Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                    if (results["status"].ToString() == "200") {
-                        // Delete item locally
-                        myFootwear.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        // Equip default if item currently equipped
-                        if (PlayerData.playerdata.info.equippedFootwear == itemName)
-                        {
-                            char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
-                            PlayerData.playerdata.info.equippedFootwear = (g == 'M' ? DEFAULT_FOOTWEAR_MALE : DEFAULT_FOOTWEAR_FEMALE); 
-                            reloadPlayerFlag = true;
-                        }
-                    } else {
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                    }
-                }
-            });
-        }
-        else if (type.Equals("Headgear"))
-        {
-            // If item cannot be deleted, then skip
-            if (!InventoryScript.itemData.equipmentCatalog[itemName].deleteable)
-            {
-                return;
-            }
-            inputData["category"] = "headgear";
-            inputData["itemId"] = itemName;
-            func.CallAsync(inputData).ContinueWith((taskA) => {
-                if (taskA.IsFaulted) {
-                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                } else {
-                    Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                    if (results["status"].ToString() == "200") {
-                        // Delete item locally
-                        myHeadgear.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        // Equip default if item currently equipped
-                        if (PlayerData.playerdata.info.equippedHeadgear == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedHeadgear = "";
-                            reloadPlayerFlag = true;
-                            skipReloadCharacterFlag = true;
-                        }
-                    } else {
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                    }
-                }
-            });
-        }
-        else if (type.Equals("Facewear"))
-        {
-            // If item cannot be deleted, then skip
-            if (!InventoryScript.itemData.equipmentCatalog[itemName].deleteable)
-            {
-                return;
-            }
-            inputData["category"] = "facewear";
-            inputData["itemId"] = itemName;
-            func.CallAsync(inputData).ContinueWith((taskA) => {
-                if (taskA.IsFaulted) {
-                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                } else {
-                    Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                    if (results["status"].ToString() == "200") {
-                        // Delete item locally
-                        myFacewear.Remove(itemName);
-                        if (expiring)
-                        {
-                            itemsExpired.Add(itemName);
-                        }
-                        Debug.Log(itemName + " has been deleted!");
-                        // Equip default if item currently equipped
-                        if (PlayerData.playerdata.info.equippedFacewear == itemName)
-                        {
-                            PlayerData.playerdata.info.equippedFacewear = "";
-                            reloadPlayerFlag = true;
-                            skipReloadCharacterFlag = true;
-                        }
-                    } else {
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                    }
-                }
-            });
-        }
-        else if (type.Equals("Mod"))
-        {
-            inputData["category"] = "mods";
-            inputData["itemId"] = modId;
-            func.CallAsync(inputData).ContinueWith((taskA) => {
-                if (taskA.IsFaulted) {
-                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                } else {
-                    Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                    if (results["status"].ToString() == "200") {
-                        // Get weapon that the mod was equipped on
-                        ModData m = myMods[modId];
-                        string weaponName = m.equippedOn;
-                        // If the mod was equipped to a weapon, unequip it from that weapon first and save
-                        if (weaponName != null && !"".Equals(weaponName))
-                        {
-                            // Delete locally and in DB
-                            if (InventoryScript.itemData.modCatalog[m.name].category == "Suppressor")
-                            {
-                                myWeapons[weaponName].equippedSuppressor = "";
-                            } else if (InventoryScript.itemData.modCatalog[m.name].category == "Sight")
-                            {
-                                myWeapons[weaponName].equippedSight = "";
-                            } else if (InventoryScript.itemData.modCatalog[m.name].category == "Clip")
-                            {
-                                myWeapons[weaponName].equippedClip = "";
-                            }
-                            // Remove attachment from weapon
-                            Debug.Log(itemName + " was removed from " + weaponName + " since it was deleted from your inventory.");
-                        }
-                        // Delete item locally
-                        myMods.Remove(modId);
-                        Debug.Log(itemName + " has been deleted!");
-                    } else {
-                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                    }
-                }
-            });
-        }
+        });
     }
 
     public void AddExpAndGpToPlayer(uint aExp, uint aGp) {
         // Save locally
-        PlayerData.playerdata.info.exp = (uint)Mathf.Min(PlayerData.playerdata.info.exp + aExp, PlayerData.MAX_EXP);
-        PlayerData.playerdata.info.gp = (uint)Mathf.Min(PlayerData.playerdata.info.gp + aGp, PlayerData.MAX_GP);
+        uint newExp = (uint)Mathf.Min(PlayerData.playerdata.info.exp + aExp, PlayerData.MAX_EXP);
+        uint newGp = (uint)Mathf.Min(PlayerData.playerdata.info.gp + aGp, PlayerData.MAX_GP);
         // Save to DB
         Dictionary<string, object> inputData = new Dictionary<string, object>();
         inputData["callHash"] = DAOScript.functionsCallHash;
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
-        inputData["exp"] = PlayerData.playerdata.info.exp;
-        inputData["gp"] = PlayerData.playerdata.info.gp;
+        inputData["exp"] = newExp;
+        inputData["gp"] = newGp;
 
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
@@ -1867,10 +1287,12 @@ public class PlayerData : MonoBehaviour
             return;
         }
         if (args.Snapshot.Value != null) {
+            playerDataModifyLegalFlag = true;
             PlayerData.playerdata.info.gp = uint.Parse(args.Snapshot.Value.ToString());
             if (titleRef != null) {
                 titleRef.myGpTxt.text = ""+PlayerData.playerdata.info.gp;
             }
+            playerDataModifyLegalFlag = false;
         }
     }
 
@@ -1881,10 +1303,12 @@ public class PlayerData : MonoBehaviour
             return;
         }
         if (args.Snapshot.Value != null) {
+            playerDataModifyLegalFlag = true;
             PlayerData.playerdata.info.kash = uint.Parse(args.Snapshot.Value.ToString());
             if (titleRef != null) {
                 titleRef.myKashTxt.text = ""+PlayerData.playerdata.info.kash;
             }
+            playerDataModifyLegalFlag = false;
         }
     }
 
@@ -1894,10 +1318,15 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-        
+        playerDataModifyLegalFlag = true;
         // When the armor is changed, equip it
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.equippedArmor = itemEquipped;
+        OnArmorChange(itemEquipped);
+        playerDataModifyLegalFlag = false;
+    }
+
+    void OnArmorChange(string itemEquipped) {
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
@@ -1948,10 +1377,15 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-        
+        playerDataModifyLegalFlag = true;
         // When the top is changed, equip it
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.equippedTop = itemEquipped;
+        OnTopChange(itemEquipped);
+        playerDataModifyLegalFlag = false;
+    }
+
+    void OnTopChange(string itemEquipped) {
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
@@ -1985,10 +1419,15 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-        
+        playerDataModifyLegalFlag = true;
         // When the bottom is changed, equip it
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.equippedBottom = itemEquipped;
+        OnBottomChange(itemEquipped);
+        playerDataModifyLegalFlag = false;
+    }
+
+    void OnBottomChange(string itemEquipped) {
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
@@ -2020,10 +1459,16 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-        
+        playerDataModifyLegalFlag = true;
         // When the character is changed, equip it
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.equippedCharacter = itemEquipped;
+        UpdateBodyRef();
+        OnCharacterChange(itemEquipped);
+        playerDataModifyLegalFlag = false;
+    }
+
+    void OnCharacterChange(string itemEquipped) {
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
 
         if (thisEquipScript != null) {
@@ -2042,11 +1487,53 @@ public class PlayerData : MonoBehaviour
             thisEquipScript.ResetStats();
         }
 
-        thisEquipScript.EquipTop(c.defaultTop, null);
-        thisEquipScript.EquipBottom(c.defaultBottom, null);
-        thisEquipScript.EquipFootwear((c.gender == 'M' ? "Standard Boots (M)" : "Standard Boots (F)"), null);
+        // thisEquipScript.EquipTop(c.defaultTop, null);        
+        Equipment e = InventoryScript.itemData.equipmentCatalog[c.defaultTop];
+        GameObject p = (c.gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        thisEquipScript.equippedTopRef = (GameObject)Instantiate(p);
+        thisEquipScript.equippedTopRef.transform.SetParent(bodyReference.transform);
+        MeshFixer m = thisEquipScript.equippedTopRef.GetComponentInChildren<MeshFixer>();
+        m.target = thisEquipScript.myTopRenderer.gameObject;
+        m.rootBone = thisEquipScript.myBones.transform;
+        m.AdaptMesh();
+        thisEquipScript.EquipSkin(e.skinType);
+        // thisEquipScript.EquipBottom(c.defaultBottom, null);
+        e = InventoryScript.itemData.equipmentCatalog[c.defaultBottom];
+        p = (c.gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        thisEquipScript.equippedBottomRef = (GameObject)Instantiate(p);
+        thisEquipScript.equippedBottomRef.transform.SetParent(bodyReference.transform);
+        m = thisEquipScript.equippedBottomRef.GetComponentInChildren<MeshFixer>();
+        m.target = thisEquipScript.myBottomRenderer.gameObject;
+        m.rootBone = thisEquipScript.myBones.transform;
+        m.AdaptMesh();
+        // thisEquipScript.EquipFootwear((c.gender == 'M' ? "Standard Boots (M)" : "Standard Boots (F)"), null);
+        e = InventoryScript.itemData.equipmentCatalog[c.gender == 'M' ? "Standard Boots (M)" : "Standard Boots (F)"];
+        p = (c.gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        thisEquipScript.equippedFootwearRef = (GameObject)Instantiate(p);
+        thisEquipScript.equippedFootwearRef.transform.SetParent(bodyReference.transform);
+        m = thisEquipScript.equippedFootwearRef.GetComponentInChildren<MeshFixer>();
+        m.target = thisEquipScript.myFootwearRenderer.gameObject;
+        m.rootBone = thisEquipScript.myBones.transform;
+        m.AdaptMesh();
 
-        thisEquipScript.ReequipWeapons();
+        WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
+        // Reequip primary
+        Weapon w = InventoryScript.itemData.weaponCatalog[info.equippedPrimary];
+        string weaponType = w.category;
+        GameObject wepEquipped = thisWepScript.weaponHolder.LoadWeapon(w.prefabPath);
+        
+        if (w.suppressorCompatible) {
+            thisWepScript.EquipMod("Suppressor", primaryModInfo.equippedSuppressor, info.equippedPrimary, null);
+        }
+        if (w.sightCompatible) {
+            thisWepScript.EquipMod("Sight", primaryModInfo.equippedSight, info.equippedPrimary, null);
+        }
+
+        if (titleRef.currentCharGender == 'M') {
+            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsMale);
+        } else {
+            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsFemale);
+        }
     }
 
     void HandleFacewearChangeEvent(object sender, ValueChangedEventArgs args) {
@@ -2055,9 +1542,14 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-        
+        playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.equippedFacewear = itemEquipped;
+        OnFacewearChange(itemEquipped);
+        playerDataModifyLegalFlag = false;
+    }
+
+    void OnFacewearChange(string itemEquipped) {
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
 
         if (thisEquipScript != null) {
@@ -2093,10 +1585,15 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-        
+        playerDataModifyLegalFlag = true;
         // When the footwear is changed, equip it
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.equippedFootwear = itemEquipped;
+        OnFootwearChange(itemEquipped);
+        playerDataModifyLegalFlag = false;
+    }
+
+    void OnFootwearChange(string itemEquipped) {
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
@@ -2128,9 +1625,14 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-        
+        playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.equippedHeadgear = itemEquipped;
+        OnHeadgearChange(itemEquipped);
+        playerDataModifyLegalFlag = false;
+    }
+
+    void OnHeadgearChange(string itemEquipped) {
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
 
         if (thisEquipScript != null) {
@@ -2166,9 +1668,14 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-        
+        playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.equippedMelee = itemEquipped;
+        OnMeleeChange(itemEquipped);
+        playerDataModifyLegalFlag = false;
+    }
+
+    void OnMeleeChange(string itemEquipped) {
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         thisWepScript.equippedMeleeWeapon = itemEquipped;
         // Get the weapon from the weapon catalog for its properties
@@ -2183,9 +1690,14 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-        
+        playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.equippedPrimary = itemEquipped;
+        OnPrimaryChange(itemEquipped);
+        playerDataModifyLegalFlag = false;
+    }
+
+    void OnPrimaryChange(string itemEquipped) {
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         thisWepScript.equippedPrimaryWeapon = itemEquipped;
         // Get the weapon from the weapon catalog for its properties
@@ -2219,9 +1731,14 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-        
+        playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.equippedPrimary = itemEquipped;
+        OnSecondaryChange(itemEquipped);
+        playerDataModifyLegalFlag = false;
+    }
+
+    void OnSecondaryChange(string itemEquipped) {
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         thisWepScript.equippedSecondaryWeapon = itemEquipped;
         // Get the weapon from the weapon catalog for its properties
@@ -2247,9 +1764,14 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-        
+        playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.equippedSupport = itemEquipped;
+        OnSupportChange(itemEquipped);
+        playerDataModifyLegalFlag = false;
+    }
+
+    void OnSupportChange(string itemEquipped) {
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         thisWepScript.equippedSupportWeapon = itemEquipped;
         // Get the weapon from the weapon catalog for its properties
@@ -2261,6 +1783,65 @@ public class PlayerData : MonoBehaviour
 
         titleRef.equippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
         titleRef.shopEquippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
+    }
+
+    void HandleBanEvent(object sender, ChildChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+
+        if (args.Snapshot.Child("ban").Value != null) {
+            Dictionary<object, object> banValues = (Dictionary<object, object>)args.Snapshot.Value;
+            string reason = banValues["reason"].ToString();
+            TriggerEmergencyExit("You've been banned for the following reason:\n" + reason + "\nIf you feel this was done in error, you can dispute it by opening a ticket at \"www.koobando.com/support\".");
+        }
+    }
+
+    void HandleInventoryChanged(object sender, ChildChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+
+        // When inventory item has been updated, find the item that has been updated and update it
+        if (args.Snapshot.Value != null) {
+            inventoryDataModifyLegalFlag = true;
+            RefreshInventory(args.Snapshot);
+            inventoryDataModifyLegalFlag = false;
+        }
+    }
+
+    void HandleInventoryAdded(object sender, ChildChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+
+        // When inventory item has been added, also add that item to this game session
+        if (args.Snapshot.Value != null) {
+            inventoryDataModifyLegalFlag = true;
+            RefreshInventory(args.Snapshot);
+            inventoryDataModifyLegalFlag = false;
+        }
+    }
+
+    void HandleInventoryRemoved(object sender, ChildChangedEventArgs args) {
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+
+        // When inventory item has been removed, also remove that item from this game session
+        if (args.Snapshot.Value != null) {
+            inventoryDataModifyLegalFlag = true;
+            RefreshInventory(args.Snapshot);
+            inventoryDataModifyLegalFlag = false;
+        }
     }
 
     IEnumerator EmergencyExitGame() {
@@ -2319,6 +1900,36 @@ public class PlayerInfo
     public uint exp;
     public uint gp;
     public uint kash;
+
+    public delegate void OnPlayerInfoChangeDelegate();
+    public event OnPlayerInfoChangeDelegate OnPlayerInfoChange;
+}
+
+public class PlayerInventory {
+    public PlayerInventory() {
+        this.myHeadgear = new Dictionary<string, EquipmentData>();
+        this.myTops = new Dictionary<string, EquipmentData>();
+        this.myBottoms = new Dictionary<string, EquipmentData>();
+        this.myFacewear = new Dictionary<string, EquipmentData>();
+        this.myFootwear = new Dictionary<string, EquipmentData>();
+        this.myArmor = new Dictionary<string, ArmorData>();
+        this.myWeapons = new Dictionary<string, WeaponData>();
+        this.myCharacters = new Dictionary<string, CharacterData>();
+        this.myMods = new Dictionary<string, ModData>();
+    }
+
+    public Dictionary<string, EquipmentData> myHeadgear;
+    public Dictionary<string, EquipmentData> myTops;
+    public Dictionary<string, EquipmentData> myBottoms;
+    public Dictionary<string, EquipmentData> myFacewear;
+    public Dictionary<string, EquipmentData> myFootwear;
+    public Dictionary<string, ArmorData> myArmor;
+    public Dictionary<string, WeaponData> myWeapons;
+    public Dictionary<string, CharacterData> myCharacters;
+    public Dictionary<string, ModData> myMods;
+
+    public delegate void OnInventoryChangeDelegate();
+    public event OnInventoryChangeDelegate OnInventoryChange;
 }
 
 public class ModInfo

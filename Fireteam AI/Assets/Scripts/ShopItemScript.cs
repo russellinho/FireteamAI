@@ -97,7 +97,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         switch (itemType)
         {
             case "Character":
-                PlayerData.playerdata.ChangeBodyRef(itemName, null, true);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipCharacter(itemName, null);
                 break;
             case "Top":
                 PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipTop(itemName, null);
@@ -125,11 +125,10 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     private void EquipItem()
     {
-        ts.equipsModifiedFlag = true;
         switch (itemType)
         {
             case "Character":
-                PlayerData.playerdata.ChangeBodyRef(itemName, gameObject, false);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipCharacter(itemName, gameObject);
                 break;
             case "Top":
                 PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipTop(itemName, gameObject);

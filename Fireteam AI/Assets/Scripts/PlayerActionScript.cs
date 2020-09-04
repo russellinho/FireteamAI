@@ -54,7 +54,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     // Player variables
     public int health;
     public float sprintTime;
-    public bool godMode;
+    private bool spawnInvincibilityActive;
+    // public bool godMode;
     public bool canShoot;
     private float charHeightOriginal;
     private float charCenterYOriginal;
@@ -478,10 +479,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         {
             audioController.PlayHitSound();
         }
-        if (!godMode)
-        {
-            health -= d;
-        }
+        // if (!godMode)
+        // {
+        //     health -= d;
+        // }
+        health -= d;
     }
 
     [PunRPC]
@@ -1390,9 +1392,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     public void DetermineFallDamage() {
-        if (godMode) {
-            return;
-        }
+        // if (godMode) {
+        //     return;
+        // }
         float totalFallDamage = 0f;
         //Debug.Log("Vert velocity was: " + verticalVelocityBeforeLanding);
         if (verticalVelocityBeforeLanding <= -25f) {
@@ -1429,9 +1431,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     IEnumerator SpawnInvincibilityRoutine() {
-        godMode = true;
-        yield return new WaitForSeconds(3f);
-        godMode = false;
+        spawnInvincibilityActive = true;
+        yield return new WaitForSeconds(5f);
+        spawnInvincibilityActive = false;
     }
 
     // Disables player in current scene since they shouldn't exist in this scene
