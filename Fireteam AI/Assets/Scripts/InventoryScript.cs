@@ -239,7 +239,13 @@ public class InventoryScript : MonoBehaviour
                     bool sightCompatible = d.Child("sightCompatible").Value.ToString() == "1";
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    weaponCatalog.Add(itemName, new Weapon(itemName, d.Child("type").Value.ToString(), d.Child("category").Value.ToString(), int.Parse(d.Child("category").Value.ToString()), projectilePathString, d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), float.Parse(damage.ToString()), float.Parse(mobility.ToString()), float.Parse(fireRate.ToString()), float.Parse(accuracy.ToString()), float.Parse(recoil.ToString()), float.Parse(range.ToString()), int.Parse(clipCapacity.ToString()), int.Parse(maxAmmo.ToString()), canBeModded, suppressorCompatible, sightCompatible, int.Parse(d.Child("gpPrice").Value.ToString()), purchasable, deleteable));
+                    object sway = d.Child("sway").Value;
+                    object lungeRange = d.Child("lungeRange").Value;
+                    object isSniper = d.Child("isSniper").Value;
+                    float swayFloat = (sway == null ? -1f : float.Parse(sway.ToString()));
+                    float lungeRangeFloat = (lungeRange == null ? -1f : float.Parse(lungeRange.ToString()));
+                    bool isSniperBool = (isSniper == null ? false : (int.Parse(isSniper.ToString()) == 1));
+                    weaponCatalog.Add(itemName, new Weapon(itemName, d.Child("type").Value.ToString(), d.Child("category").Value.ToString(), int.Parse(d.Child("category").Value.ToString()), projectilePathString, d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), float.Parse(damage.ToString()), float.Parse(mobility.ToString()), float.Parse(fireRate.ToString()), float.Parse(accuracy.ToString()), float.Parse(recoil.ToString()), float.Parse(range.ToString()), int.Parse(clipCapacity.ToString()), int.Parse(maxAmmo.ToString()), swayFloat, lungeRangeFloat, isSniperBool, canBeModded, suppressorCompatible, sightCompatible, int.Parse(d.Child("gpPrice").Value.ToString()), purchasable, deleteable));
                 }
 
                 // Get mods

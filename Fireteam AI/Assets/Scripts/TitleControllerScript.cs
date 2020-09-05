@@ -3546,7 +3546,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         float totalNewDuration = ConvertDurationInput(durationSelectionDropdown.value);
         totalNewDuration = (Mathf.Approximately(totalNewDuration, -1f) ? totalNewDuration : totalNewDuration + hasDuplicateCheck);
 		if (PlayerData.playerdata.info.gp >= totalGpCostBeingPurchased) {
-			PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, totalGpCostBeingPurchased, 0);
+			PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true);
 		} else {	
 			TriggerMarketplacePopup("You do not have enough GP to purchase this item.");	
 		}	

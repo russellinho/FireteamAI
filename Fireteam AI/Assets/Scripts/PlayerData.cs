@@ -1530,9 +1530,9 @@ public class PlayerData : MonoBehaviour
         }
 
         if (titleRef.currentCharGender == 'M') {
-            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsMale);
+            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
         } else {
-            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsFemale);
+            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
         }
     }
 
@@ -1715,9 +1715,9 @@ public class PlayerData : MonoBehaviour
         }
 
         if (titleRef.currentCharGender == 'M') {
-            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsMale);
+            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
         } else {
-            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsFemale);
+            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
         }
 
         // Puts the item that you just equipped in its proper slot

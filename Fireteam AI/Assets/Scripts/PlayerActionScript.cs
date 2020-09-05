@@ -895,7 +895,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 float scale = 1f - (distanceFromGrenade / blastRadius);
 
                 // Scale damage done to enemy by the distance from the explosion
-                WeaponStats grenadeStats = other.gameObject.GetComponent<WeaponStats>();
+                Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
                 int damageReceived = (int)(grenadeStats.damage * scale);
 
                 // Validate that this enemy has already been affected
@@ -944,7 +944,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 float scale = 1f - (distanceFromExplosion / blastRadius);
 
                 // Scale damage done to enemy by the distance from the explosion
-                WeaponStats launcherStats = other.gameObject.GetComponent<WeaponStats>();
+                Weapon launcherStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
                 int damageReceived = (int)(launcherStats.damage * scale);
 
                 // Validate that this enemy has already been affected
@@ -978,7 +978,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             aud.clip = ammoPickupSound;
             aud.Play();
             if (weaponScript.currentlyEquippedType == 1) {
-                wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo - wepActionScript.currentAmmo;
+                wepActionScript.totalAmmoLeft = wepActionScript.weaponStats.maxAmmo - wepActionScript.currentAmmo;
             } else {
                 weaponScript.MaxRefillAmmoOnPrimary();
             }
@@ -1166,8 +1166,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         interactionTimer = 0f;
         wepActionScript.deployInProgress = false;
         wepActionScript.deployTimer = 0f;
-        wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo;
-        wepActionScript.currentAmmo = wepActionScript.GetWeaponStats().clipCapacity;
+        wepActionScript.totalAmmoLeft = wepActionScript.weaponStats.maxAmmo;
+        wepActionScript.currentAmmo = wepActionScript.weaponStats.clipCapacity;
         equipmentScript.ToggleFullBody(false);
         equipmentScript.ToggleFirstPersonBody(true);
         equipmentScript.ToggleFpcMesh(true);
@@ -1432,7 +1432,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     IEnumerator SpawnInvincibilityRoutine() {
         spawnInvincibilityActive = true;
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(8f);
         spawnInvincibilityActive = false;
     }
 

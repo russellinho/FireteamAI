@@ -22,11 +22,11 @@ public class BoltActionReloadBehavior : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-		if (!reload1Played && was.weaponStats.reloadSound1Time != -1f && stateInfo.normalizedTime >= was.weaponStats.reloadSound1Time) {
+		if (!reload1Played && was.weaponMetaData.reloadSound1Time != -1f && stateInfo.normalizedTime >= was.weaponMetaData.reloadSound1Time) {
 			reload1Played = true;
 			was.PlayReloadSound(0);
 		}
-		if (!reload2Played && was.weaponStats.reloadSound2Time != -1f && stateInfo.normalizedTime >= was.weaponStats.reloadSound2Time) {
+		if (!reload2Played && was.weaponMetaData.reloadSound2Time != -1f && stateInfo.normalizedTime >= was.weaponMetaData.reloadSound2Time) {
 			reload2Played = true;
 			was.PlayReloadSound(1);
 		}

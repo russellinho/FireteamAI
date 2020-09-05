@@ -1202,7 +1202,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					float scale = 1f - (distanceFromGrenade / blastRadius);
 
 					// Scale damage done to enemy by the distance from the explosion
-					WeaponStats grenadeStats = other.gameObject.GetComponent<WeaponStats>();
+					Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
 					int damageReceived = (int)(grenadeStats.damage * scale);
 					// Deal damage to the enemy
 					TakeDamage(damageReceived);
@@ -1223,7 +1223,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					float scale = 1f - (distanceFromProjectile / blastRadius);
 
 					// Scale damage done to enemy by the distance from the explosion
-					WeaponStats projectileStats = other.gameObject.GetComponent<WeaponStats>();
+					Weapon projectileStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
 					int damageReceived = (int)(projectileStats.damage * scale);
 					// Deal damage to the enemy
 					TakeDamage(damageReceived);

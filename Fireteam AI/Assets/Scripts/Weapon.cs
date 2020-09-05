@@ -18,6 +18,9 @@ public class Weapon
     public float range;
     public int clipCapacity;
     public int maxAmmo;
+    public float sway; // M
+    public float lungeRange; // M
+    public bool isSniper; // M
     public bool canBeModded;
     public bool suppressorCompatible;
     public bool sightCompatible;
@@ -25,7 +28,7 @@ public class Weapon
     public bool deleteable;
     public int gpPrice;
 
-    public Weapon(string name, string type, string category, int prefabPath, string projectilePath, string thumbnailPath, string description, float damage, float mobility, float fireRate, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo, bool canBeModded, bool suppressorCompatible, bool sightCompatible, int gpPrice, bool purchasable, bool deleteable) {
+    public Weapon(string name, string type, string category, int prefabPath, string projectilePath, string thumbnailPath, string description, float damage, float mobility, float fireRate, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo, float sway, float lungeRange, bool isSniper, bool canBeModded, bool suppressorCompatible, bool sightCompatible, int gpPrice, bool purchasable, bool deleteable) {
         this.name = name;
         this.type = type;
         this.category = category;
@@ -41,6 +44,9 @@ public class Weapon
         this.range = range;
         this.clipCapacity = clipCapacity;
         this.maxAmmo = maxAmmo;
+        this.sway = sway;
+        this.lungeRange = lungeRange;
+        this.isSniper = isSniper;
         this.suppressorCompatible = suppressorCompatible;
         this.sightCompatible = sightCompatible;
         this.canBeModded = canBeModded;

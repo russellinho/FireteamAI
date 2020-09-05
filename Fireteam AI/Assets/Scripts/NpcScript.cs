@@ -12,7 +12,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	public GameControllerScript gameController;
 	public PhotonView pView;
 	public int health;
-	public bool godMode;
+	// public bool godMode;
 	public int carriedByPlayerId;
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Disoriented, Carried, Escorted, Injured, Incapacitated};
 	// FSM used for determining movement while attacking and not in cover
@@ -146,7 +146,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void TakeDamage(int d) {
-		if (godMode) return;
+		// if (godMode) return;
 		pView.RPC ("RpcTakeDamage", RpcTarget.All, d, gameController.teamMap);
 	}
 
@@ -279,7 +279,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 					float scale = 1f - (distanceFromGrenade / blastRadius);
 
 					// Scale damage done to enemy by the distance from the explosion
-					WeaponStats grenadeStats = other.gameObject.GetComponent<WeaponStats>();
+					Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
 					int damageReceived = (int)(grenadeStats.damage * scale);
 					// Deal damage to the enemy
 					TakeDamage(damageReceived);
@@ -300,7 +300,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 					float scale = 1f - (distanceFromProjectile / blastRadius);
 
 					// Scale damage done to enemy by the distance from the explosion
-					WeaponStats projectileStats = other.gameObject.GetComponent<WeaponStats>();
+					Weapon projectileStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
 					int damageReceived = (int)(projectileStats.damage * scale);
 					// Deal damage to the enemy
 					TakeDamage(damageReceived);

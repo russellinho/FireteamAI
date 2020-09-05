@@ -423,7 +423,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // if (weaponActionScript == null) {
             //     weaponActionScript = GetComponent<WeaponActionScript>();
             // }
-			if (weaponActionScript != null && (weaponActionScript.isAiming && weaponActionScript.weaponStats.steadyAim)) {
+			if (weaponActionScript != null && (weaponActionScript.isAiming && weaponActionScript.weaponMetaData.steadyAim)) {
 				if (!m_IsCrouching) {
 					m_IsWalking = true;
 					m_IsRunning = false;

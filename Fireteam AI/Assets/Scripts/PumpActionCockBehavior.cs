@@ -22,7 +22,7 @@ public class PumpActionCockBehavior : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (!cockSoundPlayed && was.weaponStats.reloadSound2Time != -1f && stateInfo.normalizedTime >= was.weaponStats.reloadSound2Time) {
+        if (!cockSoundPlayed && was.weaponMetaData.reloadSound2Time != -1f && stateInfo.normalizedTime >= was.weaponMetaData.reloadSound2Time) {
             cockSoundPlayed = true;
             was.PlayReloadSound(1);
         }

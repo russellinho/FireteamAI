@@ -197,7 +197,7 @@ public class WeaponScript : MonoBehaviour
 
     public void HideWeapon(bool b) {
         if (weaponActionScript != null) {
-            WeaponStats ws = weaponActionScript.weaponStats;
+            WeaponMeta ws = weaponActionScript.weaponMetaData;
             if (ws == null) return;
             if (!b) {
                 if (!ws.weaponParts[0].enabled) {
@@ -217,7 +217,7 @@ public class WeaponScript : MonoBehaviour
 
     void HideMeleeWeapon() {
         if (weaponActionScript != null) {
-            WeaponStats ws = weaponActionScript.meleeStats;
+            WeaponMeta ws = weaponActionScript.meleeMetaData;
             if (ws == null) return;
             if (weaponActionScript.isMeleeing) {
                 if (!ws.weaponParts[0].enabled) {
@@ -237,7 +237,7 @@ public class WeaponScript : MonoBehaviour
 
     public void ToggleWarhead(bool b) {
         if (weaponActionScript != null) {
-            WeaponStats ws = weaponActionScript.weaponStats;
+            WeaponMeta ws = weaponActionScript.weaponMetaData;
             if (ws == null) return;
             if (ws.warheadRenderer != null) {
                 ws.warheadRenderer.gameObject.SetActive(b);
@@ -426,7 +426,7 @@ public class WeaponScript : MonoBehaviour
                 }
                 equippedWepInGame = weaponName;
                 EquipAssaultRifleInGame();
-                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
                 weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
@@ -452,7 +452,7 @@ public class WeaponScript : MonoBehaviour
                 }
                 equippedWepInGame = weaponName;
                 EquipSmgInGame();
-                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
                 weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
@@ -478,7 +478,7 @@ public class WeaponScript : MonoBehaviour
                 }
                 equippedWepInGame = weaponName;
                 EquipLmgInGame();
-                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
                 weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
@@ -504,7 +504,7 @@ public class WeaponScript : MonoBehaviour
                 }
                 equippedWepInGame = weaponName;
                 EquipShotgunInGame();
-                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
                 weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
@@ -530,7 +530,7 @@ public class WeaponScript : MonoBehaviour
                 }
                 equippedWepInGame = weaponName;
                 EquipSniperRifleInGame();
-                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
                 weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
@@ -556,7 +556,7 @@ public class WeaponScript : MonoBehaviour
                 }
                 equippedWepInGame = weaponName;
                 EquipPistolInGame();
-                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
                 weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
@@ -582,7 +582,7 @@ public class WeaponScript : MonoBehaviour
                 }
                 equippedWepInGame = weaponName;
                 EquipLauncherInGame();
-                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
                 weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
@@ -602,7 +602,7 @@ public class WeaponScript : MonoBehaviour
                 }
                 equippedWepInGame = weaponName;
                 EquipExplosiveInGame();
-                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
                 weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
@@ -622,7 +622,7 @@ public class WeaponScript : MonoBehaviour
                 }
                 equippedWepInGame = weaponName;
                 EquipBoosterInGame();
-                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
                 weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
@@ -643,7 +643,7 @@ public class WeaponScript : MonoBehaviour
                 }
                 equippedWepInGame = weaponName;
                 EquipDeployableInGame();
-                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
                 HideWeapon(currentAmmoSupport == 0 && totalSupportAmmoLeft == 0);
                 weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
@@ -659,7 +659,7 @@ public class WeaponScript : MonoBehaviour
                     wepEquipped = meleeHolder.LoadWeapon(w.prefabPath);
                 }
                 EquipKnifeInGame();
-                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponStats>());
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
                 HideMeleeWeapon();
                 wepEquipped = null;
                 break;
@@ -968,7 +968,7 @@ public class WeaponScript : MonoBehaviour
     }
 
     void SetWeaponCulling(GameObject weapon) {
-        WeaponStats ws = weapon.GetComponent<WeaponStats>();
+        WeaponMeta ws = weapon.GetComponent<WeaponMeta>();
         WeaponMods wsm = weapon.GetComponent<WeaponMods>();
         foreach (MeshRenderer part in ws.weaponParts) {
             part.gameObject.layer = 16;
@@ -1049,9 +1049,9 @@ public class WeaponScript : MonoBehaviour
         GameObject wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
 
         if (chararacterGender == 'M') {
-            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsMale);
+            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
         } else {
-            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponStats>().titleHandPositionsFemale);
+            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
         }
     }
 
