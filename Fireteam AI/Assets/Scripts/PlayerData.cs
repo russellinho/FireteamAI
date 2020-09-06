@@ -879,7 +879,7 @@ public class PlayerData : MonoBehaviour
         return modInfo;
     }
 
-    public void AddItemToInventory(string itemName, string type, float duration, bool purchased) {
+    public void AddItemToInventory(string itemName, string type, float duration, bool purchased, string purchaseWithCurrency) {
         Dictionary<string, object> inputData = new Dictionary<string, object>();
         inputData["callHash"] = DAOScript.functionsCallHash;
         inputData["uid"] = AuthScript.authHandler.user.UserId;
@@ -887,6 +887,7 @@ public class PlayerData : MonoBehaviour
         inputData["duration"] = duration;
         inputData["category"] = ConvertTypeToFirebaseType(type);
         if (purchased) {
+            inputData["currency"] = purchaseWithCurrency;
             HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("transactItem");
             func.CallAsync(inputData).ContinueWith((taskA) => {
                 if (taskA.IsFaulted) {
