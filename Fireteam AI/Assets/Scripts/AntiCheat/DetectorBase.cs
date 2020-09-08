@@ -55,7 +55,6 @@
 		}
 		#endregion
 
-		// TODO: Ban player here
 		internal virtual void OnCheatingDetected() {
 			IsCheatDetected = true;
 

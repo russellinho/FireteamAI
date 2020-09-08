@@ -1,7 +1,9 @@
 ﻿namespace Koobando.AntiCheat
 {
 	using System;
+	using System.Collections.Generic;
 	using UnityEngine;
+	using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 
 	[DisallowMultipleComponent]
 	public class EncryptedCheatingDetector : DetectorBase<EncryptedCheatingDetector>
@@ -15,6 +17,29 @@
 		public float vector2Epsilon = 0.1f;
 		public float vector3Epsilon = 0.1f;
 		public float quaternionEpsilon = 0.1f;
+
+		protected override void Start() {
+			base.Start();
+			StartDetection(BanPlayerOnEncryptedCheating);
+		}
+
+		protected void BanPlayerOnEncryptedCheating() {
+			if (PlayerData.playerdata == null) {
+            	Application.Quit();
+			} else {
+				// Ban player here for modifying memory
+				Dictionary<string, object> inputData = new Dictionary<string, object>();
+				inputData["callHash"] = DAOScript.functionsCallHash;
+				inputData["uid"] = AuthScript.authHandler.user.UserId;
+				inputData["duration"] = "-1";
+				inputData["reason"] = "Illegal modification of memory.";
+
+				HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("banPlayer");
+				func.CallAsync(inputData).ContinueWith((task) => {
+					PlayerData.playerdata.TriggerEmergencyExit("You've been banned for the following reason:\nIllegal modification of game data.\nIf you feel this was done in error, you can dispute it by opening a ticket at \"www.koobando.com/support\".");
+				});
+			}
+		}
 
 		public static EncryptedCheatingDetector AddToSceneOrGetExisting()
 		{
