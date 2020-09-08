@@ -1,19 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Koobando.AntiCheat;
 
 public class PlayerScript : MonoBehaviour
 {
 
     // Stats
     // Movement speed of player
-    public float speed;
+    public EncryptedFloat speed;
     // Stamina allows you to run longer
-    public float stamina;
+    public EncryptedFloat stamina;
     // Armor allows you to take less damage all around
-    public float armor;
+    public EncryptedFloat armor;
     // Health modifier
-    public int health;
+    public EncryptedInt health;
     // Stat multipliers
     public Stats stats;
 

@@ -10,6 +10,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 using SpawnMode = GameControllerScript.SpawnMode;
 using NpcActionState = NpcScript.ActionStates;
 using FlightMode = BlackHawkScript.FlightMode;
+using Koobando.AntiCheat;
 
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
@@ -52,9 +53,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public Transform carryingSlot;
 
     // Player variables
-    public int health;
+    public EncryptedInt health;
     public float sprintTime;
-    private bool spawnInvincibilityActive;
+    private EncryptedBool spawnInvincibilityActive;
     // public bool godMode;
     public bool canShoot;
     private float charHeightOriginal;
@@ -73,8 +74,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private bool interactionLock;
     private float enterSpectatorModeTimer;
     private bool unlimitedStamina;
-    private float originalSpeed;
-    public float totalSpeedBoost;
+    private EncryptedFloat originalSpeed;
+    public EncryptedFloat totalSpeedBoost;
     private float itemSpeedModifier;
     public float weaponSpeedModifier;
     private float originalFpcBodyPosY;

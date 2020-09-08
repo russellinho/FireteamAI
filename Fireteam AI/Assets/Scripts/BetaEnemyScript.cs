@@ -2025,7 +2025,11 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (playerTargeting != null) {
 			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript>();
 			NpcScript n = playerTargeting.GetComponent<NpcScript>();
-			return (a != null ? a.health : n.health);
+			if (a != null) {
+				return a.health;
+			} else {
+				return n.health;
+			}
 		}
 
 		return 0;

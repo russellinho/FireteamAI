@@ -9,6 +9,7 @@ using UnityEngine.Networking;
 using TMPro;
 using Firebase.Database;
 using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
+using Koobando.AntiCheat;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private const float NINETY_DAYS_MINS = 129600f;
@@ -27,9 +28,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private Vector3 defaultCameraRot = new Vector3(10f, 36.2f, 0f);
 	private Vector3 modCameraRot = new Vector3(3.5f, 43.5f, 0f);
 	private Vector3 modCameraPos = new Vector3(2f, 4.5f, 26.7f);
-	private int camPos;
-	private int previousCamPos;
-	private float camMoveTimer;
+	private EncryptedInt camPos;
+	private EncryptedInt previousCamPos;
+	private EncryptedFloat camMoveTimer;
 	public GameObject itemDescriptionPopupRef;
 	public GameObject modDescriptionPopupRef;
 	public GameObject marketplaceItemDescriptionPopupRef;
@@ -204,8 +205,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Text modWeaponLbl;
 	public Text equippedSuppressorTxt;
 	public Text equippedSightTxt;
-	public string equippedSuppressorId;
-	public string equippedSightId;
+	public EncryptedString equippedSuppressorId;
+	public EncryptedString equippedSightId;
 	public Text modDamageTxt;
 	public Text modAccuracyTxt;
 	public Text modRecoilTxt;
@@ -217,7 +218,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Dictionary<string, int> charactersRefsIndices = new Dictionary<string, int>(){["Lucas"] = 0, ["Daryl"] = 1, ["Yongjin"] = 2, ["Rocko"] = 3, ["Hana"] = 4, ["Jade"] = 5, ["Dani"] = 6, ["Codename Sayre"] = 7};
 	public GameObject[] characterRefs;
 	public Text changingKeyMappingText;
-	public bool isChangingKeyMapping;
+	public EncryptedBool isChangingKeyMapping;
 	public KeyMappingInput[] keyMappingInputs;
 
 	// Use this for initialization

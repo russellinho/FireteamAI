@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
+using Koobando.AntiCheat;
 
 public class WeaponScript : MonoBehaviour
 {
@@ -27,12 +28,12 @@ public class WeaponScript : MonoBehaviour
     public string equippedMeleeWeapon;
     public string equippedWepInGame;
     public int currentlyEquippedType;
-    public int totalPrimaryAmmoLeft;
-    public int totalSecondaryAmmoLeft;
-    public int totalSupportAmmoLeft;
-    public int currentAmmoPrimary;
-    public int currentAmmoSecondary;
-    public int currentAmmoSupport;
+    public EncryptedInt totalPrimaryAmmoLeft;
+    public EncryptedInt totalSecondaryAmmoLeft;
+    public EncryptedInt totalSupportAmmoLeft;
+    public EncryptedInt currentAmmoPrimary;
+    public EncryptedInt currentAmmoSecondary;
+    public EncryptedInt currentAmmoSupport;
 
     private GameObject drawnWeaponReference;
     // private GameObject drawnSuppressorReference;

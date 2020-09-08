@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Koobando.AntiCheat;
 
 public class WeaponMeta : MonoBehaviour
 {
-    public string weaponName;
+    public EncryptedString weaponName;
     public bool steadyAim;
     public Vector3 aimDownSightPosMale;
     public Vector3 aimDownSightPosFemale;
@@ -14,7 +15,7 @@ public class WeaponMeta : MonoBehaviour
     public Vector3 defaultLeftCollarPosFemale;
     public Vector3 defaultRightCollarPosMale;
     public Vector3 defaultRightCollarPosFemale;
-    public float aimDownSightSpeed;
+    public EncryptedFloat aimDownSightSpeed;
     public float aimDownSightClipping;
     public Vector3 titleHandPositionsMale;
     public Vector3 titleHandPositionsFemale;
@@ -51,13 +52,13 @@ public class WeaponMeta : MonoBehaviour
     public AnimatorOverrideController maleOverrideController;
     public AnimatorOverrideController femaleOverrideController;
     public Animator weaponAnimator;
-    public float defaultFpcReloadSpeed;
-    public float defaultWeaponReloadSpeed;
-    public float defaultWeaponCockingSpeed;
-    public float defaultWeaponDrawSpeed;
-    public float defaultFireSpeed;
-    public float defaultMeleeSpeed;
-    public float reloadTransitionSpeed;
+    public EncryptedFloat defaultFpcReloadSpeed;
+    public EncryptedFloat defaultWeaponReloadSpeed;
+    public EncryptedFloat defaultWeaponCockingSpeed;
+    public EncryptedFloat defaultWeaponDrawSpeed;
+    public EncryptedFloat defaultFireSpeed;
+    public EncryptedFloat defaultMeleeSpeed;
+    public EncryptedFloat reloadTransitionSpeed;
     public float reloadSound1Time;
     public float reloadSound2Time;
     public float reloadSound3Time;

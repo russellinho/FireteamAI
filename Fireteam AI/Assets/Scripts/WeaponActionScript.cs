@@ -5,6 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Characters.FirstPerson;
+using Koobando.AntiCheat;
 
 public class WeaponActionScript : MonoBehaviour
 {
@@ -47,15 +48,15 @@ public class WeaponActionScript : MonoBehaviour
     private const float SWAY_ACCELERATION = 1.5f;
 
     // Projectile variables
-    public float spread = 0f;
-    private float recoilTime = 0f;
-    private float swayGauge = 0f;
+    public EncryptedFloat spread = 0f;
+    private EncryptedFloat recoilTime = 0f;
+    private EncryptedFloat swayGauge = 0f;
     private bool voidRecoilRecover = true;
     private bool throwGrenade;
     //private float recoilSlerp = 0f;
 
-    public int totalAmmoLeft;
-    public int currentAmmo;
+    public EncryptedInt totalAmmoLeft;
+    public EncryptedInt currentAmmo;
 
     public Transform shootPoint;
     public Transform fpcShootPoint;
@@ -75,8 +76,8 @@ public class WeaponActionScript : MonoBehaviour
     public bool isUsingBooster = false;
     public bool isUsingDeployable = false;
     // Used for allowing arms to move during aim down sight movement
-    private bool aimDownSightsLock;
-    private float aimDownSightsTimer;
+    private EncryptedBool aimDownSightsLock;
+    private EncryptedFloat aimDownSightsTimer;
     public Vector3 currentAimDownSightPos;
     public Vector3 currentAimStableHandPos;
     
@@ -918,9 +919,11 @@ public class WeaponActionScript : MonoBehaviour
             if (totalAmmoLeft <= 0)
                 return;
 
+            int totalAmmoLeftDecrypt = totalAmmoLeft;
             int bulletsToLoad = weaponStats.clipCapacity - currentAmmo;
-            int bulletsToDeduct = (totalAmmoLeft >= bulletsToLoad) ? bulletsToLoad : totalAmmoLeft;
-            totalAmmoLeft -= bulletsToDeduct;
+            int bulletsToDeduct = (totalAmmoLeftDecrypt >= bulletsToLoad) ? bulletsToLoad : totalAmmoLeftDecrypt;
+            totalAmmoLeftDecrypt -= bulletsToDeduct;
+            totalAmmoLeft = totalAmmoLeftDecrypt;
             currentAmmo += bulletsToDeduct;
             playerActionScript.weaponScript.SyncAmmoCounts();
         }
