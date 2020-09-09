@@ -77,6 +77,10 @@ public class LoginControllerScript : MonoBehaviour
         if (popupAlert.activeInHierarchy) {
             return;
         }
+        if (DAOScript.functionsCallHash == null) {
+            TriggerPopup("Database is currently unavailable. Please try again later.");
+            return;
+        }
         loginBtn.interactable = false;
         AuthScript.authHandler.auth.SignInWithEmailAndPasswordAsync(emailField.text, passwordField.text).ContinueWith(task => {
             if (task.IsCanceled) {

@@ -11,7 +11,7 @@ public class DAOScript : MonoBehaviour
     public static DAOScript dao;
     public DatabaseReference dbRef;
     public FirebaseFunctions functions;
-    public static string functionsCallHash = ".7^D{(7~=7ygT{9a";
+    public static string functionsCallHash;
 
     void Awake() {
         if (dao == null)
@@ -30,6 +30,16 @@ public class DAOScript : MonoBehaviour
         FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://koobando-web.firebaseio.com/");
         dbRef = FirebaseDatabase.DefaultInstance.RootReference;
         functions = Firebase.Functions.FirebaseFunctions.DefaultInstance;
+        HttpsCallableReference func = functions.GetHttpsCallable("getFunctionsCallHash");
+		func.CallAsync().ContinueWith((task) => {
+            Dictionary<object, object> results = (Dictionary<object, object>)task.Result.Data;
+            if (results["status"].ToString() == "200") {
+                Debug.Log("Functions call hash retrieved successfully.");
+                functionsCallHash = results["message"].ToString();
+            } else {
+                Debug.LogWarning("Functions call hash failed to load.");
+            }
+        });
     }
 
 }
