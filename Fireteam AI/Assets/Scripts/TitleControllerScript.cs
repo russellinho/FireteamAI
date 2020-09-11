@@ -622,9 +622,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		settingsMenuPopup.SetActive(false);
 	}
 
-    public void TriggerExpirationPopup(string[] expiredItems)
+    public void TriggerExpirationPopup(List<object> expiredItems)
     {
-        TriggerMainPopup("The following items have expired and have been deleted from your inventory:\n" + string.Join(", ", expiredItems));
+        TriggerMainPopup("The following items have expired and have been deleted from your inventory:\n" + string.Join(", ", expiredItems.ToArray()));
     }
 
 	public void TriggerMainPopup(string message) {

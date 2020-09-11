@@ -29,8 +29,10 @@ public class InventoryScript : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
 
-        DAOScript.dao.dbRef.Child("fteam_ai/items").GetValueAsync().ContinueWith(task => {
+    void Start() {
+        DAOScript.dao.dbRef.Child("fteam_ai/shop").GetValueAsync().ContinueWith(task => {
             if (task.IsFaulted) {
                 PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
             } else {
@@ -38,7 +40,7 @@ public class InventoryScript : MonoBehaviour
                 IEnumerator<DataSnapshot> subSnap = null;
                 // Get characters
                 itemsLoaded = task.Result.Child("characters");
-                subSnap = task.Result.Children.GetEnumerator();
+                subSnap = itemsLoaded.Children.GetEnumerator();
                 while (subSnap.MoveNext()) {
                     DataSnapshot d = subSnap.Current;
                     string itemName = d.Key.ToString();
@@ -54,7 +56,7 @@ public class InventoryScript : MonoBehaviour
 
                 // Get tops
                 itemsLoaded = task.Result.Child("tops");
-                subSnap = task.Result.Children.GetEnumerator();
+                subSnap = itemsLoaded.Children.GetEnumerator();
                 while (subSnap.MoveNext()) {
                     DataSnapshot d = subSnap.Current;
                     string itemName = d.Key.ToString();
@@ -78,12 +80,12 @@ public class InventoryScript : MonoBehaviour
                     string[] characterRestrictionsString = (characterRestrictions == null ? new string[0]{} : characterRestrictions.ToString().Split(','));
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Top", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), purchasable, deleteable));
+                    equipmentCatalog.Add(itemName, null);
                 }
 
                 // Get bottoms
                 itemsLoaded = task.Result.Child("bottoms");
-                subSnap = task.Result.Children.GetEnumerator();
+                subSnap = itemsLoaded.Children.GetEnumerator();
                 while (subSnap.MoveNext()) {
                     DataSnapshot d = subSnap.Current;
                     string itemName = d.Key.ToString();
@@ -112,7 +114,7 @@ public class InventoryScript : MonoBehaviour
 
                 // Get footwear
                 itemsLoaded = task.Result.Child("footwear");
-                subSnap = task.Result.Children.GetEnumerator();
+                subSnap = itemsLoaded.Children.GetEnumerator();
                 while (subSnap.MoveNext()) {
                     DataSnapshot d = subSnap.Current;
                     string itemName = d.Key.ToString();
@@ -141,7 +143,7 @@ public class InventoryScript : MonoBehaviour
 
                 // Get facewear
                 itemsLoaded = task.Result.Child("facewear");
-                subSnap = task.Result.Children.GetEnumerator();
+                subSnap = itemsLoaded.Children.GetEnumerator();
                 while (subSnap.MoveNext()) {
                     DataSnapshot d = subSnap.Current;
                     string itemName = d.Key.ToString();
@@ -170,7 +172,7 @@ public class InventoryScript : MonoBehaviour
 
                 // Get headgear
                 itemsLoaded = task.Result.Child("headgear");
-                subSnap = task.Result.Children.GetEnumerator();
+                subSnap = itemsLoaded.Children.GetEnumerator();
                 while (subSnap.MoveNext()) {
                     DataSnapshot d = subSnap.Current;
                     string itemName = d.Key.ToString();
@@ -199,7 +201,7 @@ public class InventoryScript : MonoBehaviour
 
                 // Get armor
                 itemsLoaded = task.Result.Child("armor");
-                subSnap = task.Result.Children.GetEnumerator();
+                subSnap = itemsLoaded.Children.GetEnumerator();
                 while (subSnap.MoveNext()) {
                     DataSnapshot d = subSnap.Current;
                     string itemName = d.Key.ToString();
@@ -220,11 +222,11 @@ public class InventoryScript : MonoBehaviour
 
                 // Get weapons
                 itemsLoaded = task.Result.Child("weapons");
-                subSnap = task.Result.Children.GetEnumerator();
+                subSnap = itemsLoaded.Children.GetEnumerator();
                 while (subSnap.MoveNext()) {
                     DataSnapshot d = subSnap.Current;
                     string itemName = d.Key.ToString();
-                    object projectilePath = d.Child("projectilePath").Value.ToString();
+                    object projectilePath = d.Child("projectilePath").Value;
                     string projectilePathString = (projectilePath == null ? null : projectilePath.ToString());
                     object damage = d.Child("damage").Value;
                     object mobility = d.Child("mobility").Value;
@@ -234,23 +236,28 @@ public class InventoryScript : MonoBehaviour
                     object range = d.Child("range").Value;
                     object clipCapacity = d.Child("clipCapacity").Value;
                     object maxAmmo = d.Child("maxAmmo").Value;
-                    bool canBeModded = d.Child("canBeModded").Value.ToString() == "1";
-                    bool suppressorCompatible = d.Child("suppressorCompatible").Value.ToString() == "1";
-                    bool sightCompatible = d.Child("sightCompatible").Value.ToString() == "1";
-                    bool purchasable = d.Child("purchasable").Value.ToString() == "1";
-                    bool deleteable = d.Child("deleteable").Value.ToString() == "1";
+                    object canBeModded = d.Child("canBeModded").Value;
+                    object suppressorCompatible = d.Child("suppressorCompatible").Value;
+                    object sightCompatible = d.Child("sightCompatible").Value;
+                    object purchasable = d.Child("purchasable").Value;
+                    object deleteable = d.Child("deleteable").Value;
+                    bool canBeModdedBool = canBeModded == null ? false : d.Child("canBeModded").Value.ToString() == "1";
+                    bool suppressorCompatibleBool = suppressorCompatible == null ? false : d.Child("suppressorCompatible").Value.ToString() == "1";
+                    bool sightCompatibleBool = sightCompatible == null ? false : d.Child("sightCompatible").Value.ToString() == "1";
+                    bool purchasableBool = purchasable == null ? false : d.Child("purchasable").Value.ToString() == "1";
+                    bool deleteableBool = deleteable == null ? false : d.Child("deleteable").Value.ToString() == "1";
                     object sway = d.Child("sway").Value;
                     object lungeRange = d.Child("lungeRange").Value;
                     object isSniper = d.Child("isSniper").Value;
                     float swayFloat = (sway == null ? -1f : float.Parse(sway.ToString()));
                     float lungeRangeFloat = (lungeRange == null ? -1f : float.Parse(lungeRange.ToString()));
                     bool isSniperBool = (isSniper == null ? false : (int.Parse(isSniper.ToString()) == 1));
-                    weaponCatalog.Add(itemName, new Weapon(itemName, d.Child("type").Value.ToString(), d.Child("category").Value.ToString(), int.Parse(d.Child("prefabPath").Value.ToString()), projectilePathString, d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), float.Parse(damage.ToString()), float.Parse(mobility.ToString()), float.Parse(fireRate.ToString()), float.Parse(accuracy.ToString()), float.Parse(recoil.ToString()), float.Parse(range.ToString()), int.Parse(clipCapacity.ToString()), int.Parse(maxAmmo.ToString()), swayFloat, lungeRangeFloat, isSniperBool, canBeModded, suppressorCompatible, sightCompatible, int.Parse(d.Child("gpPrice").Value.ToString()), purchasable, deleteable));
+                    weaponCatalog.Add(itemName, new Weapon(itemName, d.Child("type").Value.ToString(), d.Child("category").Value.ToString(), int.Parse(d.Child("prefabPath").Value.ToString()), projectilePathString, d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), damage == null ? -1f : float.Parse(damage.ToString()), mobility == null ? -1f : float.Parse(mobility.ToString()), fireRate == null ? -1f : float.Parse(fireRate.ToString()), accuracy == null ? -1f : float.Parse(accuracy.ToString()), recoil == null ? -1f : float.Parse(recoil.ToString()), range == null ? -1f : float.Parse(range.ToString()), clipCapacity == null ? -1 : int.Parse(clipCapacity.ToString()), maxAmmo == null ? -1 : int.Parse(maxAmmo.ToString()), swayFloat, lungeRangeFloat, isSniperBool, canBeModdedBool, suppressorCompatibleBool, sightCompatibleBool, int.Parse(d.Child("gpPrice").Value.ToString()), purchasableBool, deleteableBool));
                 }
 
                 // Get mods
                 itemsLoaded = task.Result.Child("mods");
-                subSnap = task.Result.Children.GetEnumerator();
+                subSnap = itemsLoaded.Children.GetEnumerator();
                 while (subSnap.MoveNext()) {
                     DataSnapshot d = subSnap.Current;
                     string itemName = d.Key.ToString();
@@ -267,10 +274,18 @@ public class InventoryScript : MonoBehaviour
                     modCatalog.Add(itemName, new Mod(itemName, d.Child("category").Value.ToString(), int.Parse(d.Child("prefabPath").Value.ToString()), d.Child("thumbnailPath").Value.ToString(), int.Parse(d.Child("modIndex").Value.ToString()), crosshairPathString, d.Child("description").Value.ToString(), float.Parse(damageBoost.ToString()), float.Parse(accuracyBoost.ToString()), float.Parse(recoilBoost.ToString()), float.Parse(rangeBoost.ToString()), int.Parse(clipCapacityBoost.ToString()), int.Parse(maxAmmoBoost.ToString()), int.Parse(d.Child("gpPrice").Value.ToString()), purchasable, deleteable));
                 }
             }
-        });
 
-        equipmentCatalog.CollectionChanged += OnCollectionChanged;
-        equipmentCatalog.PropertyChanged += OnPropertyChanged;
+            equipmentCatalog.CollectionChanged += OnCollectionChanged;
+            equipmentCatalog.PropertyChanged += OnPropertyChanged;
+            armorCatalog.CollectionChanged += OnCollectionChanged;
+            armorCatalog.PropertyChanged += OnPropertyChanged;
+            weaponCatalog.CollectionChanged += OnCollectionChanged;
+            weaponCatalog.PropertyChanged += OnPropertyChanged;
+            characterCatalog.CollectionChanged += OnCollectionChanged;
+            characterCatalog.PropertyChanged += OnPropertyChanged;
+            modCatalog.CollectionChanged += OnCollectionChanged;
+            modCatalog.PropertyChanged += OnPropertyChanged;
+        });
     }
 
     protected virtual void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {

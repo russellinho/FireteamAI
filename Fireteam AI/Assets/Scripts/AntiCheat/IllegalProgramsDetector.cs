@@ -33,7 +33,7 @@
                             Application.Quit();
                     }
                 } catch (Exception e) {
-                    Debug.LogWarning("An error occurred while trying to read one of the client's background processes.");
+                    // Debug.LogWarning("An error occurred while trying to read one of the client's background processes: " + e.Message);
                 }
             }
             yield return new WaitForSeconds(45f);

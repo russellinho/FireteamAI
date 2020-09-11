@@ -53,9 +53,9 @@ public class PlayerData : MonoBehaviour
             this.supportModInfo = new ModInfo();
             playerdata = this;
 
-            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "loggedIn").ValueChanged += HandleForceLogoutEvent;
-            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "gp").ValueChanged += HandleGpChangeEvent;
-            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "kash").ValueChanged += HandleKashChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/loggedIn").ValueChanged += HandleForceLogoutEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/gp").ValueChanged += HandleGpChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/kash").ValueChanged += HandleKashChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedArmor").ValueChanged += HandleArmorChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedBottom").ValueChanged += HandleBottomChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedCharacter").ValueChanged += HandleCharacterChangeEvent;
@@ -206,6 +206,7 @@ public class PlayerData : MonoBehaviour
                 TriggerEmergencyExit("Your data could not be loaded. Either your data is corrupted, or the service is unavailable. Please check the website for further details. If this issue persists, please create a ticket at koobando.com/support.");
             } else {
                 Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                Debug.Log(results["status"].ToString());
                 if (results["status"].ToString() == "200") {
                     Dictionary<object, object> playerDataSnap = (Dictionary<object, object>)results["playerData"];
                     Dictionary<object, object> inventorySnap = (Dictionary<object, object>)results["inventory"];
@@ -309,8 +310,8 @@ public class PlayerData : MonoBehaviour
                         supportModInfo.sightId = "";
                     }
                     LoadInventory(inventorySnap);
-                    string[] itemsExpired = (string[])results["itemsExpired"];
-                    if (itemsExpired.Length > 0) {
+                    List<object> itemsExpired = (List<object>)results["itemsExpired"];
+                    if (itemsExpired.Count > 0) {
                         titleRef.TriggerExpirationPopup(itemsExpired);
                     }
                     dataLoadedFlag = true;
@@ -1282,6 +1283,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleGpChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1298,6 +1302,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleKashChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1314,6 +1321,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleArmorChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1373,6 +1383,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleTopChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1415,6 +1428,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleBottomChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1455,6 +1471,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleCharacterChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1538,6 +1557,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleFacewearChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1581,6 +1603,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleFootwearChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1621,6 +1646,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleHeadgearChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1664,6 +1692,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleMeleeChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1686,6 +1717,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandlePrimaryChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1727,6 +1761,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleSecondaryChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1760,6 +1797,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleSupportChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1801,6 +1841,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleInventoryChanged(object sender, ChildChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1816,6 +1859,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleInventoryAdded(object sender, ChildChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1831,6 +1877,9 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleInventoryRemoved(object sender, ChildChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
