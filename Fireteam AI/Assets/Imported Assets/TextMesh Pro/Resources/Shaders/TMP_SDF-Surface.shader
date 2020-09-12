@@ -140,7 +140,7 @@ SubShader {
 
 		uniform sampler2D _MainTex;
 
-		float4 frag(v2f i) : COLOR
+		float4 (v2f i) : COLOR
 		{
 			fixed4 texcol = tex2D(_MainTex, i.uv).a;
 			clip(texcol.a - i.alphaClip);

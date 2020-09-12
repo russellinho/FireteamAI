@@ -4851,6 +4851,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -9662,6 +9663,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -9764,6 +9766,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -9842,6 +9845,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -9920,6 +9924,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -9998,6 +10003,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -10072,21 +10078,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 6406873327239066714}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be4f3b19e65670e489fc3c06bce0e96f, type: 3}
+  m_Script: {fileID: 11500000, guid: 11e070146f72647ff8647ed3aac3e56a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName: XM84 Flashbang
-  type: Support
-  category: Explosive
-  damage: 0
-  mobility: 100
-  fireRate: 1
-  accuracy: 0
-  recoil: 0
-  range: 0
-  lungeRange: 0
-  clipCapacity: 1
-  maxAmmo: 3
+  weaponName:
+    cryptoKey: 
+    hiddenChars: 
+    initialized: 0
+    fakeValue: 
+    fakeValueActive: 0
   steadyAim: 0
   aimDownSightPosMale: {x: 0, y: 0, z: 0}
   aimDownSightPosFemale: {x: 0, y: 0, z: 0}
@@ -10096,16 +10096,26 @@ MonoBehaviour:
   defaultLeftCollarPosFemale: {x: 0, y: 0, z: 0}
   defaultRightCollarPosMale: {x: 0, y: 0, z: 0}
   defaultRightCollarPosFemale: {x: 0, y: 0, z: 0}
-  aimDownSightSpeed: 0
-  aimDownSightClipping: 0.02
+  aimDownSightSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  aimDownSightClipping: 0
   titleHandPositionsMale: {x: 0, y: 0, z: 0}
   titleHandPositionsFemale: {x: 0, y: 0, z: 0}
   recoveryConstant: 0
   fireSound: {fileID: 0}
   suppressedFireSound: {fileID: 0}
-  weaponSoundSource: {fileID: 6689340121689838720}
+  weaponSoundSource: {fileID: 0}
   reloadSounds: []
-  supportActionSound: {fileID: 8300000, guid: 1e8e2372dca8d3943ac529eadf06aa7e, type: 3}
+  supportActionSound: {fileID: 0}
   meleeSwingSound: {fileID: 0}
   meleeLungeSound: {fileID: 0}
   gunSmoke: {fileID: 0}
@@ -10114,54 +10124,117 @@ MonoBehaviour:
   weaponShootPoint: {fileID: 0}
   muzzleFlash: {fileID: 0}
   bulletTracer: {fileID: 0}
-  fpcPosMale: {x: -0.000492, y: 0.001428, z: -0.000114}
+  fpcPosMale: {x: 0, y: 0, z: 0}
   fpcLeftHandPosMale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotMale: {x: 0, y: 0, z: 0}
-  fpcRotMale: {x: 11.859, y: -106.004, z: 74.01601}
-  fpcScaleMale: {x: 0.001183675, y: 0.001183675, z: 0.001183675}
-  fpcPosFemale: {x: -0.000492, y: 0.001428, z: -0.000114}
+  fpcRotMale: {x: 0, y: 0, z: 0}
+  fpcScaleMale: {x: 0, y: 0, z: 0}
+  fpcPosFemale: {x: 0, y: 0, z: 0}
   fpcLeftHandPosFemale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
-  fpcRotFemale: {x: 11.859, y: -106.004, z: 74.01601}
-  fpcScaleFemale: {x: 0.001183675, y: 0.001183675, z: 0.001183675}
-  fullPosMale: {x: -0.004, y: 0.104, z: 0.037}
-  fullRotMale: {x: -2.095, y: 0, z: 90}
-  fullScaleMale: {x: 0.13, y: 0.13, z: 0.13}
-  fullPosFemale: {x: -0.004, y: 0.104, z: 0.037}
-  fullRotFemale: {x: -2.095, y: 0, z: 90}
-  fullScaleFemale: {x: 0.13, y: 0.13, z: 0.13}
-  maleOverrideController: {fileID: 22100000, guid: 3155f753841c2bb4381f22cfb26107b9,
-    type: 2}
-  femaleOverrideController: {fileID: 22100000, guid: d36b07c5dae04c44b9e5de9528ba09cd,
-    type: 2}
+  fpcRotFemale: {x: 0, y: 0, z: 0}
+  fpcScaleFemale: {x: 0, y: 0, z: 0}
+  fullPosMale: {x: 0, y: 0, z: 0}
+  fullRotMale: {x: 0, y: 0, z: 0}
+  fullScaleMale: {x: 0, y: 0, z: 0}
+  fullPosFemale: {x: 0, y: 0, z: 0}
+  fullRotFemale: {x: 0, y: 0, z: 0}
+  fullScaleFemale: {x: 0, y: 0, z: 0}
+  maleOverrideController: {fileID: 0}
+  femaleOverrideController: {fileID: 0}
   weaponAnimator: {fileID: 0}
-  defaultFpcReloadSpeed: 0
-  defaultWeaponReloadSpeed: 0
-  defaultWeaponCockingSpeed: 0
-  defaultWeaponDrawSpeed: 3
-  defaultFireSpeed: 0
-  defaultMeleeSpeed: 0
-  reloadTransitionSpeed: 0
-  reloadSound1Time: -1
-  reloadSound2Time: -1
-  reloadSound3Time: -1
-  reloadSound4Time: -1
-  supportSoundTime: 0.45
+  defaultFpcReloadSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  defaultWeaponReloadSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  defaultWeaponCockingSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  defaultWeaponDrawSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  defaultFireSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  defaultMeleeSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  reloadTransitionSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  reloadSound1Time: 0
+  reloadSound2Time: 0
+  reloadSound3Time: 0
+  reloadSound4Time: 0
+  supportSoundTime: 0
   switchToLeftDuringReload: 0
   switchToLeftTime: 0
-  weaponParts:
-  - {fileID: 6406873327241063062}
-  - {fileID: 6406873327241063060}
-  - {fileID: 6406873327241063058}
-  - {fileID: 6406873327241063056}
-  - {fileID: 6406873327241063070}
-  - {fileID: 6406873327241063068}
+  weaponParts: []
   warheadRenderer: {fileID: 0}
   deployPlanMesh: {fileID: 0}
   isSticky: 0
   suppressorSlot: {fileID: 0}
   sightSlot: {fileID: 0}
   crosshairAimOffset: []
+  deployRef: {fileID: 0}
 --- !u!82 &6689340121689838720
 AudioSource:
   m_ObjectHideFlags: 0
@@ -10312,6 +10385,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -10390,6 +10464,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

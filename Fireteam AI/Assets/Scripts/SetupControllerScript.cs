@@ -15,7 +15,7 @@ public class SetupControllerScript : MonoBehaviour
     public GameObject contentInventory;
     public InputField characterNameInput;
     private Dictionary<string, int> starterCharacters = new Dictionary<string, int>(){["Lucas"] = 0, ["Daryl"] = 1, ["Yongjin"] = 2, ["Rocko"] = 3, ["Hana"] = 4, ["Jade"] = 5, ["Dani"] = 6};
-    public ArrayList starterWeapons = new ArrayList(){"M4A1", "AK-47"};
+    public ArrayList starterWeapons = new ArrayList(){"N4A1", "KA-74"};
     private string selectedCharacter;
     public GameObject selectedPrefab;
     public GameObject contentPrefab;
@@ -221,12 +221,12 @@ public class SetupControllerScript : MonoBehaviour
                                             item1.Add("duration", "-1");
                                             starterItems[0] = item1;
                                             Dictionary<string, string> item2 = new Dictionary<string, string>();
-                                            item2.Add("itemName", "Glock23");
+                                            item2.Add("itemName", "I23");
                                             item2.Add("category", "weapons");
                                             item2.Add("duration", "-1");
                                             starterItems[1] = item2;
                                             Dictionary<string, string> item3 = new Dictionary<string, string>();
-                                            item3.Add("itemName", "M67 Frag");
+                                            item3.Add("itemName", "N76 Fragmentation");
                                             item3.Add("category", "weapons");
                                             item3.Add("duration", "-1");
                                             starterItems[2] = item3;

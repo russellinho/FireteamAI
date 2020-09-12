@@ -12,8 +12,8 @@ using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 
 public class PlayerData : MonoBehaviour
 {
-    private const string DEFAULT_SECONDARY = "Glock23";
-    private const string DEFAULT_SUPPORT = "M67 Frag";
+    private const string DEFAULT_SECONDARY = "I32";
+    private const string DEFAULT_SUPPORT = "N76 Fragmentation";
     private const string DEFAULT_MELEE = "Recon Knife";
     private const string DEFAULT_FOOTWEAR_MALE = "Standard Boots (M)";
     private const string DEFAULT_FOOTWEAR_FEMALE = "Standard Boots (F)";
@@ -1503,7 +1503,7 @@ public class PlayerData : MonoBehaviour
         if (titleRef != null) {
             titleRef.equippedCharacterSlot.GetComponent<SlotScript>().ToggleThumbnail(true, c.thumbnailPath);
             titleRef.shopEquippedCharacterSlot.GetComponent<SlotScript>().ToggleThumbnail(true, c.thumbnailPath);
-            titleRef.currentCharGender = InventoryScript.itemData.characterCatalog[name].gender;
+            titleRef.currentCharGender = c.gender;
             thisEquipScript.ResetStats();
         }
 
@@ -1538,6 +1538,7 @@ public class PlayerData : MonoBehaviour
 
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         // Reequip primary
+        Debug.Log(info.equippedPrimary);
         Weapon w = InventoryScript.itemData.weaponCatalog[info.equippedPrimary];
         string weaponType = w.category;
         GameObject wepEquipped = thisWepScript.weaponHolder.LoadWeapon(w.prefabPath);
@@ -1584,7 +1585,7 @@ public class PlayerData : MonoBehaviour
         }
 
         if (itemEquipped != "") {
-            Equipment e = InventoryScript.itemData.equipmentCatalog[name];
+            Equipment e = InventoryScript.itemData.equipmentCatalog[itemEquipped];
             GameObject p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
             thisEquipScript.equippedFacewearRef = (GameObject)Instantiate(p);
             thisEquipScript.equippedFacewearRef.transform.SetParent(gameObject.transform);
@@ -1673,7 +1674,7 @@ public class PlayerData : MonoBehaviour
         }
 
         if (itemEquipped != "") {
-            Equipment e = InventoryScript.itemData.equipmentCatalog[name];
+            Equipment e = InventoryScript.itemData.equipmentCatalog[itemEquipped];
             GameObject p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
             thisEquipScript.equippedHeadgearRef = (GameObject)Instantiate(p);
             thisEquipScript.equippedHeadgearRef.transform.SetParent(gameObject.transform);

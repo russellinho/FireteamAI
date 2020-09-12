@@ -99,43 +99,47 @@ public class LoginControllerScript : MonoBehaviour
             AuthScript.authHandler.user = task.Result;
             //QueuePopup("User signed in successfully: {" + newUser.DisplayName + "} ({" + newUser.UserId + "})");
             // Query DB to see if the user is set up yet. If not, go to setup. Else, go to title page.
+            // Not banned, proceed
             Dictionary<string, object> inputData = new Dictionary<string, object>();
             inputData["callHash"] = DAOScript.functionsCallHash;
             inputData["uid"] = AuthScript.authHandler.user.UserId;
-            HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("playerIsBanned");
-            func.CallAsync(inputData).ContinueWith((taskS) => {
-                Dictionary<object, object> resultsS = (Dictionary<object, object>)taskS.Result.Data;
-                if (taskS.IsFaulted) {
-                    popupAlertMessage = ""+taskS.Exception;
+            HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("checkUserIsSetup");
+            func.CallAsync(inputData).ContinueWith((taskA) => {
+                if (taskA.IsFaulted) {
+                    popupAlertMessage = ""+taskA.Exception;
                     return;
-                } else if (resultsS["status"].ToString() == "201") {
-                    string duration = resultsS["duration"].ToString();
-                    string dateBanned = resultsS["dateBanned"].ToString();
-                    string reason = resultsS["reason"].ToString();
-                    string banString = "You have been banned for the following reason:\n" + reason + "\n";
-                    if (duration == "-1") {
-                        banString += "This ban is permanent, so you will no longer be able to use this account.\n";
-                    } else {
-                        banString += "Date the ban will be lifted:" + CalculateBannedUntilDate(float.Parse(duration), DateTime.Parse(dateBanned)) + "\n";
-                    }
-                    banString += "If you think this is a mistake, please open a support ticket at \"www.koobando.com/support\"";
-                    popupAlertMessage = banString;
-                    return;
-                } else if (resultsS["status"].ToString() == "200") {
-                    // Not banned, proceed
-                    func = DAOScript.dao.functions.GetHttpsCallable("checkUserIsSetup");
-                    func.CallAsync(inputData).ContinueWith((taskA) => {
-                        if (taskA.IsFaulted) {
-                            popupAlertMessage = ""+taskA.Exception;
-                            return;
-                        } else {
-                            saveLoginPrefsFlag = true;
-                            Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                            // Debug.Log(results["status"].ToString());
-                            if (results["status"].ToString() == "401") {
-                                // Go to setup
-                                signInFlag = 1;
-                            } else if (results["status"].ToString() == "200") {
+                } else {
+                    saveLoginPrefsFlag = true;
+                    Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                    Debug.Log(results["status"].ToString());
+                    if (results["status"].ToString() == "401") {
+                        // Go to setup
+                        signInFlag = 1;
+                    } else if (results["status"].ToString() == "200") {
+                        // Check if banned
+                        func = DAOScript.dao.functions.GetHttpsCallable("playerIsBanned");
+                        func.CallAsync(inputData).ContinueWith((taskS) => {
+                            Dictionary<object, object> resultsS = (Dictionary<object, object>)taskS.Result.Data;
+                            Debug.Log(resultsS["status"].ToString());
+                            if (taskS.IsFaulted) {
+                                popupAlertMessage = ""+taskS.Exception;
+                                return;
+                            } else if (resultsS["status"].ToString() == "201") {
+                                // Is banned
+                                string duration = resultsS["duration"].ToString();
+                                string dateBanned = resultsS["dateBanned"].ToString();
+                                string reason = resultsS["reason"].ToString();
+                                string banString = "You have been banned for the following reason:\n" + reason + "\n";
+                                if (duration == "-1") {
+                                    banString += "This ban is permanent, so you will no longer be able to use this account.\n";
+                                } else {
+                                    banString += "Date the ban will be lifted:" + CalculateBannedUntilDate(float.Parse(duration), DateTime.Parse(dateBanned)) + "\n";
+                                }
+                                banString += "If you think this is a mistake, please open a support ticket at \"www.koobando.com/support\"";
+                                popupAlertMessage = banString;
+                                return;
+                            } else if (resultsS["status"].ToString() == "200") {
+                                // Not banned, proceed
                                 inputData.Clear();
                                 inputData["callHash"] = DAOScript.functionsCallHash;
                                 inputData["uid"] = AuthScript.authHandler.user.UserId;
@@ -181,12 +185,15 @@ public class LoginControllerScript : MonoBehaviour
                                     });
                                 }
                             } else {
-                                // Error
                                 popupAlertMessage = "Database is currently unavailable. Please try again later.";
                                 return;
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        // Error
+                        popupAlertMessage = "Database is currently unavailable. Please try again later.";
+                        return;
+                    }
                 }
             });
         });

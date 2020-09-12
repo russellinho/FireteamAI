@@ -201,24 +201,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1959315762895043422}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be4f3b19e65670e489fc3c06bce0e96f, type: 3}
+  m_Script: {fileID: 11500000, guid: 11e070146f72647ff8647ed3aac3e56a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName: Recon Knife
-  type: Melee
-  category: Knife
-  damage: 100
-  mobility: 0
-  fireRate: 0
-  accuracy: 0
-  recoil: 0
-  sway: 0
-  range: 1.5
-  lungeRange: 3
-  clipCapacity: 0
-  maxAmmo: 0
+  weaponName:
+    cryptoKey: 
+    hiddenChars: 
+    initialized: 0
+    fakeValue: 
+    fakeValueActive: 0
   steadyAim: 0
-  isSniper: 0
   aimDownSightPosMale: {x: 0, y: 0, z: 0}
   aimDownSightPosFemale: {x: 0, y: 0, z: 0}
   stableHandPosMale: {x: 0, y: 0, z: 0}
@@ -227,7 +219,17 @@ MonoBehaviour:
   defaultLeftCollarPosFemale: {x: 0, y: 0, z: 0}
   defaultRightCollarPosMale: {x: 0, y: 0, z: 0}
   defaultRightCollarPosFemale: {x: 0, y: 0, z: 0}
-  aimDownSightSpeed: 0
+  aimDownSightSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
   aimDownSightClipping: 0
   titleHandPositionsMale: {x: 0, y: 0, z: 0}
   titleHandPositionsFemale: {x: 0, y: 0, z: 0}
@@ -237,52 +239,118 @@ MonoBehaviour:
   weaponSoundSource: {fileID: 0}
   reloadSounds: []
   supportActionSound: {fileID: 0}
-  meleeSwingSound: {fileID: 8300000, guid: 56e0d8ea8b6a127498016e5b444f159a, type: 3}
-  meleeLungeSound: {fileID: 8300000, guid: 51c54f4a52590e042b5bd1fd4c8700d1, type: 3}
+  meleeSwingSound: {fileID: 0}
+  meleeLungeSound: {fileID: 0}
   gunSmoke: {fileID: 0}
   weaponShell: {fileID: 0}
   weaponShellPoint: {fileID: 0}
   weaponShootPoint: {fileID: 0}
   muzzleFlash: {fileID: 0}
   bulletTracer: {fileID: 0}
-  fpcPosMale: {x: 0.000557, y: 0.001424, z: -0.000482}
+  fpcPosMale: {x: 0, y: 0, z: 0}
   fpcLeftHandPosMale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotMale: {x: 0, y: 0, z: 0}
-  fpcRotMale: {x: 6.182, y: -89.8, z: 104.339}
-  fpcScaleMale: {x: 0.0000708569, y: 0.0000708569, z: 0.0000708569}
-  fpcPosFemale: {x: 0.000557, y: 0.001424, z: -0.000482}
+  fpcRotMale: {x: 0, y: 0, z: 0}
+  fpcScaleMale: {x: 0, y: 0, z: 0}
+  fpcPosFemale: {x: 0, y: 0, z: 0}
   fpcLeftHandPosFemale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
-  fpcRotFemale: {x: 6.182, y: -89.8, z: 104.339}
-  fpcScaleFemale: {x: 0.0000708569, y: 0.0000708569, z: 0.0000708569}
-  fullPosMale: {x: -0.063, y: 0.13, z: 0.038}
-  fullRotMale: {x: 180, y: -90, z: -90}
-  fullScaleMale: {x: 0.0065, y: 0.0065, z: 0.0065}
-  fullPosFemale: {x: -0.063, y: 0.119, z: 0.035}
-  fullRotFemale: {x: 180, y: -90, z: -90}
-  fullScaleFemale: {x: 0.0065, y: 0.0065, z: 0.0065}
-  maleOverrideController: {fileID: 22100000, guid: 3023be7757d79a14f9e5283721d88363,
-    type: 2}
-  femaleOverrideController: {fileID: 22100000, guid: debff1310c4ad2f43b1b399186b32042,
-    type: 2}
+  fpcRotFemale: {x: 0, y: 0, z: 0}
+  fpcScaleFemale: {x: 0, y: 0, z: 0}
+  fullPosMale: {x: 0, y: 0, z: 0}
+  fullRotMale: {x: 0, y: 0, z: 0}
+  fullScaleMale: {x: 0, y: 0, z: 0}
+  fullPosFemale: {x: 0, y: 0, z: 0}
+  fullRotFemale: {x: 0, y: 0, z: 0}
+  fullScaleFemale: {x: 0, y: 0, z: 0}
+  maleOverrideController: {fileID: 0}
+  femaleOverrideController: {fileID: 0}
   weaponAnimator: {fileID: 0}
-  defaultFpcReloadSpeed: 0
-  defaultWeaponReloadSpeed: 0
-  defaultWeaponCockingSpeed: 0
-  defaultWeaponDrawSpeed: 2
-  defaultFireSpeed: 0
-  defaultMeleeSpeed: 4.5
-  reloadTransitionSpeed: 0
-  reloadSound1Time: -1
-  reloadSound2Time: -1
-  reloadSound3Time: -1
-  reloadSound4Time: -1
+  defaultFpcReloadSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  defaultWeaponReloadSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  defaultWeaponCockingSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  defaultWeaponDrawSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  defaultFireSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  defaultMeleeSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  reloadTransitionSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  reloadSound1Time: 0
+  reloadSound2Time: 0
+  reloadSound3Time: 0
+  reloadSound4Time: 0
   supportSoundTime: 0
   switchToLeftDuringReload: 0
   switchToLeftTime: 0
-  weaponParts:
-  - {fileID: 1958681254847163538}
-  - {fileID: 4698494122395624634}
+  weaponParts: []
   warheadRenderer: {fileID: 0}
   deployPlanMesh: {fileID: 0}
   isSticky: 0

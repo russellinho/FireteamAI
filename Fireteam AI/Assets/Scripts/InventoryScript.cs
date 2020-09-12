@@ -80,7 +80,7 @@ public class InventoryScript : MonoBehaviour
                     string[] characterRestrictionsString = (characterRestrictions == null ? new string[0]{} : characterRestrictions.ToString().Split(','));
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    equipmentCatalog.Add(itemName, null);
+                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Top", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), purchasable, deleteable));
                 }
 
                 // Get bottoms
