@@ -304,7 +304,6 @@ public class EquipmentScript : MonoBehaviour
         if (equippedSkin == skinType) {
             return;
         }
-
         equippedSkin = skinType;
         if (equippedSkinRef != null) {
             Destroy(equippedSkinRef);

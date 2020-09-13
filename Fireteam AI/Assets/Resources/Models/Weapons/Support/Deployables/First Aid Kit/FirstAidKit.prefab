@@ -2693,12 +2693,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11e070146f72647ff8647ed3aac3e56a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName:
-    cryptoKey: 
-    hiddenChars: 
-    initialized: 0
-    fakeValue: 
-    fakeValueActive: 0
+  weaponName: First Aid Kit
   steadyAim: 0
   aimDownSightPosMale: {x: 0, y: 0, z: 0}
   aimDownSightPosFemale: {x: 0, y: 0, z: 0}
@@ -2708,26 +2703,16 @@ MonoBehaviour:
   defaultLeftCollarPosFemale: {x: 0, y: 0, z: 0}
   defaultRightCollarPosMale: {x: 0, y: 0, z: 0}
   defaultRightCollarPosFemale: {x: 0, y: 0, z: 0}
-  aimDownSightSpeed:
-    currentCryptoKey: 0
-    hiddenValue: 0
-    hiddenValueOldByte4:
-      b1: 0
-      b2: 0
-      b3: 0
-      b4: 0
-    initialized: 0
-    fakeValue: 0
-    fakeValueActive: 0
-  aimDownSightClipping: 0
+  aimDownSightSpeed: 0
+  aimDownSightClipping: 0.02
   titleHandPositionsMale: {x: 0, y: 0, z: 0}
   titleHandPositionsFemale: {x: 0, y: 0, z: 0}
   recoveryConstant: 0
   fireSound: {fileID: 0}
   suppressedFireSound: {fileID: 0}
-  weaponSoundSource: {fileID: 0}
+  weaponSoundSource: {fileID: 6875200785155198492}
   reloadSounds: []
-  supportActionSound: {fileID: 0}
+  supportActionSound: {fileID: 8300000, guid: 72d68ff3fbc1f23469f477122a08f10f, type: 3}
   meleeSwingSound: {fileID: 0}
   meleeLungeSound: {fileID: 0}
   gunSmoke: {fileID: 0}
@@ -2736,117 +2721,92 @@ MonoBehaviour:
   weaponShootPoint: {fileID: 0}
   muzzleFlash: {fileID: 0}
   bulletTracer: {fileID: 0}
-  fpcPosMale: {x: 0, y: 0, z: 0}
+  fpcPosMale: {x: -0.002, y: 0.0013, z: 0}
   fpcLeftHandPosMale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotMale: {x: 0, y: 0, z: 0}
-  fpcRotMale: {x: 0, y: 0, z: 0}
-  fpcScaleMale: {x: 0, y: 0, z: 0}
-  fpcPosFemale: {x: 0, y: 0, z: 0}
+  fpcRotMale: {x: 0, y: 0, z: -20.737}
+  fpcScaleMale: {x: 0.0001100151, y: 0.0001100151, z: 0.0001100151}
+  fpcPosFemale: {x: -0.002, y: 0.0013, z: 0}
   fpcLeftHandPosFemale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
   fpcRotFemale: {x: 0, y: 0, z: 0}
-  fpcScaleFemale: {x: 0, y: 0, z: 0}
-  fullPosMale: {x: 0, y: 0, z: 0}
-  fullRotMale: {x: 0, y: 0, z: 0}
-  fullScaleMale: {x: 0, y: 0, z: 0}
-  fullPosFemale: {x: 0, y: 0, z: 0}
-  fullRotFemale: {x: 0, y: 0, z: 0}
-  fullScaleFemale: {x: 0, y: 0, z: 0}
-  maleOverrideController: {fileID: 0}
-  femaleOverrideController: {fileID: 0}
+  fpcScaleFemale: {x: 0.0001100151, y: 0.0001100151, z: 0.0001100151}
+  fullPosMale: {x: 0.1, y: 0.157, z: 0.236}
+  fullRotMale: {x: -0.44, y: 91.39201, z: 177.6}
+  fullScaleMale: {x: 0.013, y: 0.013, z: 0.013}
+  fullPosFemale: {x: 0.101, y: 0.124, z: 0.259}
+  fullRotFemale: {x: -0.44, y: 91.39201, z: 193.797}
+  fullScaleFemale: {x: 0.013, y: 0.013, z: 0.013}
+  maleOverrideController: {fileID: 22100000, guid: c278715c98b2c3f4d8797d9af54d7d78,
+    type: 2}
+  femaleOverrideController: {fileID: 22100000, guid: 262f050b2c2b6104cac47d1cdffdc18c,
+    type: 2}
   weaponAnimator: {fileID: 0}
-  defaultFpcReloadSpeed:
-    currentCryptoKey: 0
-    hiddenValue: 0
-    hiddenValueOldByte4:
-      b1: 0
-      b2: 0
-      b3: 0
-      b4: 0
-    initialized: 0
-    fakeValue: 0
-    fakeValueActive: 0
-  defaultWeaponReloadSpeed:
-    currentCryptoKey: 0
-    hiddenValue: 0
-    hiddenValueOldByte4:
-      b1: 0
-      b2: 0
-      b3: 0
-      b4: 0
-    initialized: 0
-    fakeValue: 0
-    fakeValueActive: 0
-  defaultWeaponCockingSpeed:
-    currentCryptoKey: 0
-    hiddenValue: 0
-    hiddenValueOldByte4:
-      b1: 0
-      b2: 0
-      b3: 0
-      b4: 0
-    initialized: 0
-    fakeValue: 0
-    fakeValueActive: 0
-  defaultWeaponDrawSpeed:
-    currentCryptoKey: 0
-    hiddenValue: 0
-    hiddenValueOldByte4:
-      b1: 0
-      b2: 0
-      b3: 0
-      b4: 0
-    initialized: 0
-    fakeValue: 0
-    fakeValueActive: 0
-  defaultFireSpeed:
-    currentCryptoKey: 0
-    hiddenValue: 0
-    hiddenValueOldByte4:
-      b1: 0
-      b2: 0
-      b3: 0
-      b4: 0
-    initialized: 0
-    fakeValue: 0
-    fakeValueActive: 0
-  defaultMeleeSpeed:
-    currentCryptoKey: 0
-    hiddenValue: 0
-    hiddenValueOldByte4:
-      b1: 0
-      b2: 0
-      b3: 0
-      b4: 0
-    initialized: 0
-    fakeValue: 0
-    fakeValueActive: 0
-  reloadTransitionSpeed:
-    currentCryptoKey: 0
-    hiddenValue: 0
-    hiddenValueOldByte4:
-      b1: 0
-      b2: 0
-      b3: 0
-      b4: 0
-    initialized: 0
-    fakeValue: 0
-    fakeValueActive: 0
-  reloadSound1Time: 0
-  reloadSound2Time: 0
-  reloadSound3Time: 0
-  reloadSound4Time: 0
+  defaultFpcReloadSpeed: 0
+  defaultWeaponReloadSpeed: 0
+  defaultWeaponCockingSpeed: 0
+  defaultWeaponDrawSpeed: 2
+  defaultFireSpeed: 0
+  defaultMeleeSpeed: 0
+  reloadTransitionSpeed: 0
+  reloadSound1Time: -1
+  reloadSound2Time: -1
+  reloadSound3Time: -1
+  reloadSound4Time: -1
   supportSoundTime: 0
   switchToLeftDuringReload: 0
   switchToLeftTime: 0
-  weaponParts: []
+  weaponParts:
+  - {fileID: 2299244187092755893}
+  - {fileID: 22946987140380572}
+  - {fileID: 3632810110674156940}
+  - {fileID: 8395302498818943306}
+  - {fileID: 2932013051676410733}
+  - {fileID: 733521854682324440}
+  - {fileID: 7879044677990628953}
+  - {fileID: 7252588863313382942}
+  - {fileID: 1852695914774903516}
+  - {fileID: 7815029752086598404}
+  - {fileID: 6212962756817101463}
+  - {fileID: 50162210540390977}
+  - {fileID: 3921235864489243716}
+  - {fileID: 358213824036117269}
+  - {fileID: 8984889278031026612}
+  - {fileID: 7982751449277121234}
+  - {fileID: 9056724403841146166}
+  - {fileID: 8491093946224915449}
+  - {fileID: 7963411690276778090}
+  - {fileID: 2729402166507869627}
+  - {fileID: 5100945733815934885}
+  - {fileID: 166315455686783782}
+  - {fileID: 1856588322177983616}
+  - {fileID: 8091083662639011152}
+  - {fileID: 1082330628703539037}
+  - {fileID: 1972514574861635387}
+  - {fileID: 2784791881824271018}
+  - {fileID: 5339433817861311946}
+  - {fileID: 5937570319929037464}
+  - {fileID: 847358576593181248}
+  - {fileID: 9071500029014594342}
+  - {fileID: 6305397999720302807}
+  - {fileID: 1192188067295437555}
+  - {fileID: 7022499413703234847}
+  - {fileID: 856415631290144658}
+  - {fileID: 8239308200190281518}
+  - {fileID: 2813028112378043205}
+  - {fileID: 6316622571203092064}
+  - {fileID: 5284667864874520072}
+  - {fileID: 7912903006521663754}
+  - {fileID: 8463544199352371928}
   warheadRenderer: {fileID: 0}
-  deployPlanMesh: {fileID: 0}
+  deployPlanMesh: {fileID: 5601643822912764087, guid: 04094e3c8836d2c4d8450027394d1335,
+    type: 3}
   isSticky: 0
   suppressorSlot: {fileID: 0}
   sightSlot: {fileID: 0}
   crosshairAimOffset: []
-  deployRef: {fileID: 0}
+  deployRef: {fileID: 5601643822912764087, guid: 940b4677a81b8124b9fe7231dd241ca2,
+    type: 3}
 --- !u!114 &3939207721979701647
 MonoBehaviour:
   m_ObjectHideFlags: 0

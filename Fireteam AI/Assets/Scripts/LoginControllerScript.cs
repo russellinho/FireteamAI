@@ -111,7 +111,6 @@ public class LoginControllerScript : MonoBehaviour
                 } else {
                     saveLoginPrefsFlag = true;
                     Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                    Debug.Log(results["status"].ToString());
                     if (results["status"].ToString() == "401") {
                         // Go to setup
                         signInFlag = 1;
@@ -120,7 +119,6 @@ public class LoginControllerScript : MonoBehaviour
                         func = DAOScript.dao.functions.GetHttpsCallable("playerIsBanned");
                         func.CallAsync(inputData).ContinueWith((taskS) => {
                             Dictionary<object, object> resultsS = (Dictionary<object, object>)taskS.Result.Data;
-                            Debug.Log(resultsS["status"].ToString());
                             if (taskS.IsFaulted) {
                                 popupAlertMessage = ""+taskS.Exception;
                                 return;

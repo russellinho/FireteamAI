@@ -220,6 +220,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Text changingKeyMappingText;
 	public EncryptedBool isChangingKeyMapping;
 	public KeyMappingInput[] keyMappingInputs;
+	private bool triggerMarketplacePopupFlag;
+	private string marketplacePopupMessage;
+	private bool triggerMainPopupFlag;
+	private string mainPopupMessage;
 
 	// Use this for initialization
 	void Awake() {
@@ -322,6 +326,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		} else {
+			if (triggerMarketplacePopupFlag) {
+				DoMarketplacePopup();
+				triggerMarketplacePopupFlag = false;
+			}
+			if (triggerMainPopupFlag) {
+				DoMainPopup();
+				triggerMainPopupFlag = false;
+			}
 			if (!matchmakingMenu.activeInHierarchy && !versusMenu.activeInHierarchy && !SettingsIsOpen()) {
 				// If going to main menu screen
 				if (camPos == 0) {
@@ -628,7 +640,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     }
 
 	public void TriggerMainPopup(string message) {
-		mainMenuPopup.GetComponentInChildren<Text> ().text = message;
+		triggerMainPopupFlag = true;
+		mainPopupMessage = message;
+	}
+
+	public void DoMainPopup() {
+		mainMenuPopup.GetComponentInChildren<Text> ().text = mainPopupMessage;
 		mainMenuPopup.SetActive (true);
 	}
 
@@ -638,7 +655,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void TriggerMarketplacePopup(string message) {
-		marketplaceMenuPopup.GetComponentInChildren<Text>().text = message;
+		triggerMarketplacePopupFlag = true;
+		marketplacePopupMessage = message;
+	}
+
+	void DoMarketplacePopup() {
+		marketplaceMenuPopup.GetComponentInChildren<Text>().text = marketplacePopupMessage;
 		marketplaceMenuPopup.SetActive(true);
 	}
 
@@ -688,7 +710,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myHeadgear)
         {
             EquipmentData ed = entry.Value;
-			string thisItemName = ed.name;
+			string thisItemName = entry.Key;
 			Equipment thisHeadgear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
@@ -771,7 +793,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myFacewear)
         {
             EquipmentData ed = entry.Value;
-			string thisItemName = ed.name;
+			string thisItemName = entry.Key;
 			Equipment thisFacewear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
@@ -854,7 +876,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, ArmorData> entry in PlayerData.playerdata.inventory.myArmor)
         {
             ArmorData ed = entry.Value;
-			string thisItemName = ed.name;
+			string thisItemName = entry.Key;
 			Armor thisArmor = InventoryScript.itemData.armorCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
@@ -937,7 +959,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myTops)
         {
             EquipmentData ed = entry.Value;
-			string thisItemName = ed.name;
+			string thisItemName = entry.Key;
 			Equipment thisTop = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
@@ -1020,7 +1042,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myBottoms)
         {
             EquipmentData ed = entry.Value;
-			string thisItemName = ed.name;
+			string thisItemName = entry.Key;
 			Equipment thisBottom = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
@@ -1103,7 +1125,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myFootwear)
         {
             EquipmentData ed = entry.Value;
-			string thisItemName = ed.name;
+			string thisItemName = entry.Key;
 			Equipment thisFootwear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
@@ -1219,7 +1241,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         // Populate into grid layout
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Primary")) {
 				continue;
@@ -1370,7 +1392,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Secondary")) {
 				continue;
@@ -1519,7 +1541,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Support")) {
 				continue;
@@ -1668,7 +1690,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Melee")) {
 				continue;
@@ -1785,7 +1807,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Assault Rifle")) {
 				continue;
@@ -1863,7 +1885,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("SMG")) {
 				continue;
@@ -1941,7 +1963,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("LMG")) {
 				continue;
@@ -2019,7 +2041,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Shotgun")) {
 				continue;
@@ -2097,7 +2119,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Sniper Rifle")) {
 				continue;
@@ -2172,7 +2194,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Pistol")) {
 				continue;
@@ -2244,7 +2266,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Launcher")) {
 				continue;
@@ -2317,7 +2339,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Explosive")) {
 				continue;
@@ -2391,7 +2413,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Booster")) {
 				continue;
@@ -2465,7 +2487,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Deployable")) {
 				continue;
@@ -2537,7 +2559,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Knife")) {
 				continue;
@@ -2754,7 +2776,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, CharacterData> entry in PlayerData.playerdata.inventory.myCharacters)
         {
             CharacterData ed = entry.Value;
-			string thisCharacterName = ed.name;
+			string thisCharacterName = entry.Key;
 			Character c = InventoryScript.itemData.characterCatalog[thisCharacterName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
@@ -2896,7 +2918,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
 			s.modDescriptionPopupRef = modDescriptionPopupRef;
 			s.modDetails = m;
-			s.id = modData.id;
+			s.id = entry.Key;
 			s.equippedOn = modData.equippedOn;
 			s.itemName = m.name;
             s.itemType = "Mod";
@@ -2936,7 +2958,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
 			s.modDescriptionPopupRef = modDescriptionPopupRef;
 			s.modDetails = m;
-			s.id = modData.id;
+			s.id = entry.Key;
 			s.equippedOn = modData.equippedOn;
 			s.itemName = m.name;
             s.itemType = "Mod";
@@ -3626,7 +3648,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
             {
                 WeaponData item = entry.Value;
-				if (item.name.Equals(itemName)) {
+				if (entry.Key.Equals(itemName)) {
 					float duration = float.Parse(item.duration);
 					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
 						return -1f;
@@ -3639,7 +3661,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             foreach (KeyValuePair<string, CharacterData> entry in PlayerData.playerdata.inventory.myCharacters)
             {
                 CharacterData item = entry.Value;
-				if (item.name.Equals(itemName)) {
+				if (entry.Key.Equals(itemName)) {
 					float duration = float.Parse(item.duration);
 					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
 						return -1f;
@@ -3652,7 +3674,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             foreach (KeyValuePair<string, ArmorData> entry in PlayerData.playerdata.inventory.myArmor)
             {
                 ArmorData item = entry.Value;
-				if (item.name.Equals(itemName)) {
+				if (entry.Key.Equals(itemName)) {
 					float duration = float.Parse(item.duration);
 					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
 						return -1f;
@@ -3663,7 +3685,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 		} else {
 			string itemCategory = InventoryScript.itemData.equipmentCatalog[itemName].category;
-			Dictionary<string, EquipmentData> inventoryRefForCat = null;
+			ObservableDict<string, EquipmentData> inventoryRefForCat = null;
 			switch (itemCategory) {
 				case "Top":
 					inventoryRefForCat = PlayerData.playerdata.inventory.myTops;
@@ -3684,7 +3706,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             foreach (KeyValuePair<string, EquipmentData> entry in inventoryRefForCat)
             {
                 EquipmentData item = entry.Value;
-				if (item.name.Equals(itemName)) {
+				if (entry.Key.Equals(itemName)) {
 					float duration = float.Parse(item.duration);
 					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
 						return -1f;
@@ -3782,10 +3804,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		mainExpTxt.text = currExp + " / " + toExp;
 	}
 
+	void SetPlayerCurrency() {
+		myGpTxt.text = ""+PlayerData.playerdata.info.gp;
+		myKashTxt.text = ""+PlayerData.playerdata.info.kash;
+	}
+
 	public void SetPlayerStatsForTitle() {
 		SetPlayerNameForTitle();
 		SetPlayerRankForTitle();
 		SetPlayerLevelProgressForTitle();
+		SetPlayerCurrency();
 	}
 
 	public void TriggerEmergencyPopup(string message) {

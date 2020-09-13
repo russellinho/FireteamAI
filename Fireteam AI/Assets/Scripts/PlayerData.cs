@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using UnityEngine;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -27,8 +29,10 @@ public class PlayerData : MonoBehaviour
     public string disconnectReason;
     public bool testMode;
     private bool dataLoadedFlag;
+    private bool triggerEmergencyExitFlag;
+    private string emergencyExitMessage;
     private bool playerDataModifyLegalFlag;
-    private bool inventoryDataModifyLegalFlag;
+    public bool inventoryDataModifyLegalFlag;
     public PlayerInfo info;
     public PlayerInventory inventory;
     public ModInfo primaryModInfo;
@@ -69,9 +73,37 @@ public class PlayerData : MonoBehaviour
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedTop").ValueChanged += HandleTopChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildAdded += HandleBanEvent;
 
-            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId).ChildAdded += HandleInventoryAdded;
-            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId).ChildRemoved += HandleInventoryRemoved;
-            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId).ChildChanged += HandleInventoryChanged;
+            // TODO: Add the rest of the categories for added, removed, and changed
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/facewear").ChildAdded += HandleInventoryAdded;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/headgear").ChildAdded += HandleInventoryAdded;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/footwear").ChildAdded += HandleInventoryAdded;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/tops").ChildAdded += HandleInventoryAdded;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/bottoms").ChildAdded += HandleInventoryAdded;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/characters").ChildAdded += HandleInventoryAdded;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/weapons").ChildAdded += HandleInventoryAdded;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/mods").ChildAdded += HandleInventoryAdded;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/armor").ChildAdded += HandleInventoryAdded;
+
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/facewear").ChildRemoved += HandleInventoryRemoved;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/headgear").ChildRemoved += HandleInventoryRemoved;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/footwear").ChildRemoved += HandleInventoryRemoved;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/tops").ChildRemoved += HandleInventoryRemoved;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/bottoms").ChildRemoved += HandleInventoryRemoved;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/characters").ChildRemoved += HandleInventoryRemoved;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/weapons").ChildRemoved += HandleInventoryRemoved;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/mods").ChildRemoved += HandleInventoryRemoved;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/armor").ChildRemoved += HandleInventoryRemoved;
+
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/facewear").ChildChanged += HandleInventoryChanged;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/headgear").ChildChanged += HandleInventoryChanged;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/footwear").ChildChanged += HandleInventoryChanged;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/tops").ChildChanged += HandleInventoryChanged;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/bottoms").ChildChanged += HandleInventoryChanged;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/characters").ChildChanged += HandleInventoryChanged;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/weapons").ChildChanged += HandleInventoryChanged;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/mods").ChildChanged += HandleInventoryChanged;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/armor").ChildChanged += HandleInventoryChanged;
+
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
             PlayerData.playerdata.info.OnPlayerInfoChange += PlayerInfoChangeHandler;
             PlayerData.playerdata.inventory.OnInventoryChange += InventoryChangeHandler;
@@ -87,6 +119,10 @@ public class PlayerData : MonoBehaviour
             InstantiatePlayer();
             titleRef.SetPlayerStatsForTitle();
             dataLoadedFlag = false;
+        }
+        if (triggerEmergencyExitFlag) {
+            DoEmergencyExit();
+            triggerEmergencyExitFlag = false;
         }
     }
 
@@ -206,7 +242,6 @@ public class PlayerData : MonoBehaviour
                 TriggerEmergencyExit("Your data could not be loaded. Either your data is corrupted, or the service is unavailable. Please check the website for further details. If this issue persists, please create a ticket at koobando.com/support.");
             } else {
                 Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                Debug.Log(results["status"].ToString());
                 if (results["status"].ToString() == "200") {
                     Dictionary<object, object> playerDataSnap = (Dictionary<object, object>)results["playerData"];
                     Dictionary<object, object> inventorySnap = (Dictionary<object, object>)results["inventory"];
@@ -313,6 +348,7 @@ public class PlayerData : MonoBehaviour
                     List<object> itemsExpired = (List<object>)results["itemsExpired"];
                     if (itemsExpired.Count > 0) {
                         titleRef.TriggerExpirationPopup(itemsExpired);
+                        Debug.Log("B");
                     }
                     dataLoadedFlag = true;
                     playerDataModifyLegalFlag = false;
@@ -326,6 +362,7 @@ public class PlayerData : MonoBehaviour
     public void InstantiatePlayer() {
         FindBodyRef(info.equippedCharacter);
         EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
+        characterEquips.equippedSkin = -1;
         WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
         this.primaryModInfo = LoadModDataForWeapon(info.equippedPrimary);
         this.secondaryModInfo = LoadModDataForWeapon(info.equippedSecondary);
@@ -346,273 +383,153 @@ public class PlayerData : MonoBehaviour
         PhotonNetwork.NickName = playername;
     }
 
-    void RefreshInventory(DataSnapshot snapshot) {
-        DataSnapshot headgearSnapshot = snapshot.Child("headgear");
-        DataSnapshot topsSnapshot = snapshot.Child("tops");
-        DataSnapshot bottomsSnapshot = snapshot.Child("bottoms");
-        DataSnapshot facewearSnapshot = snapshot.Child("facewear");
-        DataSnapshot footwearSnapshot = snapshot.Child("footwear");
-        DataSnapshot armorSnapshot = snapshot.Child("armor");
-        DataSnapshot weaponsSnapshot = snapshot.Child("weapons");
-        DataSnapshot charactersSnapshot = snapshot.Child("characters");
-        DataSnapshot modsSnapshot = snapshot.Child("mods");
-        Dictionary<string, string> itemsModified = new Dictionary<string, string>();
-        WeaponScript wepScript = bodyReference.GetComponent<WeaponScript>();
-
-        IEnumerator<DataSnapshot> iter = headgearSnapshot.Children.GetEnumerator();
-        while (iter.MoveNext()) {
-            DataSnapshot curr = iter.Current;
-            string key = curr.Key.ToString();
-            EquipmentData e = null;
-            if (!inventory.myHeadgear.ContainsKey(key)) {
-                e = new EquipmentData();
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-                inventory.myHeadgear.Add(key, e);
-            } else {
-                e = inventory.myHeadgear[key];
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+    void RefreshInventory(DataSnapshot snapshot, char transactionType) {
+        if (transactionType == 'a') {
+            string itemName = snapshot.Key;
+            if (InventoryScript.itemData.characterCatalog.ContainsKey(itemName)) {
+                CharacterData c = new CharacterData();
+                c.duration = snapshot.Child("duration").Value.ToString();
+                c.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                inventory.myCharacters.Add(itemName, c);
+            } else if (InventoryScript.itemData.equipmentCatalog.ContainsKey(itemName)) {
+                string category = InventoryScript.itemData.equipmentCatalog[itemName].category;
+                EquipmentData e = new EquipmentData();
+                e.duration = snapshot.Child("duration").Value.ToString();
+                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                if (category == "Top") {
+                    inventory.myTops.Add(itemName, e);
+                } else if (category == "Bottom") {
+                    inventory.myBottoms.Add(itemName, e);
+                } else if (category == "Footwear") {
+                    inventory.myFootwear.Add(itemName, e);
+                } else if (category == "Facewear") {
+                    inventory.myFacewear.Add(itemName, e);
+                } else if (category == "Headgear") {
+                    inventory.myHeadgear.Add(itemName, e);
+                }
+            } else if (InventoryScript.itemData.armorCatalog.ContainsKey(itemName)) {
+                ArmorData a = new ArmorData();
+                a.duration = snapshot.Child("duration").Value.ToString();
+                a.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                inventory.myArmor.Add(itemName, a);
+            } else if (InventoryScript.itemData.weaponCatalog.ContainsKey(itemName)) {
+                WeaponData w = new WeaponData();
+                w.duration = snapshot.Child("duration").Value.ToString();
+                w.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                w.equippedSuppressor = "";
+                w.equippedSight = "";
+                w.equippedClip = "";
+                inventory.myWeapons.Add(itemName, w);
+            } else if (InventoryScript.itemData.modCatalog.ContainsKey(itemName)) {
+                ModData m = new ModData();
+                m.name = snapshot.Child("name").Value.ToString();
+                m.duration = snapshot.Child("duration").Value.ToString();
+                m.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                m.equippedOn = snapshot.Child("equippedOn").Value.ToString();
+                inventory.myMods.Add(itemName, m);
             }
-            itemsModified.Add(key, null);
-        }
-
-        iter = topsSnapshot.Children.GetEnumerator();
-        while (iter.MoveNext()) {
-            DataSnapshot curr = iter.Current;
-            string key = curr.Key.ToString();
-            EquipmentData e = null;
-            if (!inventory.myTops.ContainsKey(key)) {
-                e = new EquipmentData();
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-                inventory.myTops.Add(key, e);
-            } else {
-                e = inventory.myTops[key];
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
+        } else if (transactionType == 'd') {
+            string itemName = snapshot.Key;
+            if (inventory.myTops.ContainsKey(itemName)) {
+                inventory.myTops.Remove(itemName);
+            } else if (inventory.myBottoms.ContainsKey(itemName)) {
+                inventory.myBottoms.Remove(itemName);
+            } else if (inventory.myArmor.ContainsKey(itemName)) {
+                inventory.myArmor.Remove(itemName);
+            } else if (inventory.myCharacters.ContainsKey(itemName)) {
+                inventory.myCharacters.Remove(itemName);
+            } else if (inventory.myFacewear.ContainsKey(itemName)) {
+                inventory.myFacewear.Remove(itemName);
+            } else if (inventory.myFootwear.ContainsKey(itemName)) {
+                inventory.myFootwear.Remove(itemName);
+            } else if (inventory.myHeadgear.ContainsKey(itemName)) {
+                inventory.myHeadgear.Remove(itemName);
+            } else if (inventory.myWeapons.ContainsKey(itemName)) {
+                inventory.myWeapons.Remove(itemName);
+            } else if (inventory.myMods.ContainsKey(itemName)) {
+                inventory.myMods.Remove(itemName);
             }
-            itemsModified.Add(key, null);
-        }
-
-        iter = bottomsSnapshot.Children.GetEnumerator();
-        while (iter.MoveNext()) {
-            DataSnapshot curr = iter.Current;
-            string key = curr.Key.ToString();
-            EquipmentData e = null;
-            if (!inventory.myBottoms.ContainsKey(key)) {
-                e = new EquipmentData();
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-                inventory.myBottoms.Add(key, e);
-            } else {
-                e = inventory.myBottoms[key];
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-            }
-            itemsModified.Add(key, null);
-        }
-
-        iter = facewearSnapshot.Children.GetEnumerator();
-        while (iter.MoveNext()) {
-            DataSnapshot curr = iter.Current;
-            string key = curr.Key.ToString();
-            EquipmentData e = null;
-            if (!inventory.myFacewear.ContainsKey(key)) {
-                e = new EquipmentData();
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-                inventory.myFacewear.Add(key, e);
-            } else {
-                e = inventory.myFacewear[key];
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-            }
-            itemsModified.Add(key, null);
-        }
-
-        iter = footwearSnapshot.Children.GetEnumerator();
-        while (iter.MoveNext()) {
-            DataSnapshot curr = iter.Current;
-            string key = curr.Key.ToString();
-            EquipmentData e = null;
-            if (!inventory.myFootwear.ContainsKey(key)) {
-                e = new EquipmentData();
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-                inventory.myFootwear.Add(key, e);
-            } else {
-                e = inventory.myFootwear[key];
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-            }
-            itemsModified.Add(key, null);
-        }
-
-        iter = armorSnapshot.Children.GetEnumerator();
-        while (iter.MoveNext()) {
-            DataSnapshot curr = iter.Current;
-            string key = curr.Key.ToString();
-            ArmorData e = null;
-            if (!inventory.myArmor.ContainsKey(key)) {
-                e = new ArmorData();
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-                inventory.myArmor.Add(key, e);
-            } else {
-                e = inventory.myArmor[key];
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-            }
-            itemsModified.Add(key, null);
-        }
-
-        iter = weaponsSnapshot.Children.GetEnumerator();
-        while (iter.MoveNext()) {
-            DataSnapshot curr = iter.Current;
-            string key = curr.Key.ToString();
-            WeaponData e = null;
-            if (!inventory.myWeapons.ContainsKey(key)) {
-                e = new WeaponData();
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-                e.equippedSuppressor = curr.Child("equippedSuppressor").Value.ToString();
-                e.equippedSight = curr.Child("equippedSight").Value.ToString();
-                e.equippedClip = curr.Child("equippedClip").Value.ToString();
-                inventory.myWeapons.Add(key, e);
-            } else {
-                e = inventory.myWeapons[key];
+        } else if (transactionType == 'm') {
+            string itemName = snapshot.Key;
+            if (inventory.myTops.ContainsKey(itemName)) {
+                EquipmentData e = null;
+                e = inventory.myTops[itemName];
+                e.duration = snapshot.Child("duration").Value.ToString();
+                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+            } else if (inventory.myBottoms.ContainsKey(itemName)) {
+                EquipmentData e = null;
+                e = inventory.myBottoms[itemName];
+                e.duration = snapshot.Child("duration").Value.ToString();
+                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+            } else if (inventory.myArmor.ContainsKey(itemName)) {
+                ArmorData e = null;
+                e = inventory.myArmor[itemName];
+                e.duration = snapshot.Child("duration").Value.ToString();
+                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+            } else if (inventory.myCharacters.ContainsKey(itemName)) {
+                CharacterData e = null;
+                e = inventory.myCharacters[itemName];
+                e.duration = snapshot.Child("duration").Value.ToString();
+                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+            } else if (inventory.myFacewear.ContainsKey(itemName)) {
+                EquipmentData e = null;
+                e = inventory.myFacewear[itemName];
+                e.duration = snapshot.Child("duration").Value.ToString();
+                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+            } else if (inventory.myFootwear.ContainsKey(itemName)) {
+                EquipmentData e = null;
+                e = inventory.myFootwear[itemName];
+                e.duration = snapshot.Child("duration").Value.ToString();
+                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+            } else if (inventory.myHeadgear.ContainsKey(itemName)) {
+                EquipmentData e = null;
+                e = inventory.myHeadgear[itemName];
+                e.duration = snapshot.Child("duration").Value.ToString();
+                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+            } else if (inventory.myWeapons.ContainsKey(itemName)) {
+                WeaponScript wepScript = bodyReference.GetComponent<WeaponScript>();
+                WeaponData e = null;
+                e = inventory.myWeapons[itemName];
                 string prevSuppId = e.equippedSuppressor;
                 string prevSightId = e.equippedSight;
                 string prevClipId = e.equippedClip;
-                string newSuppId = curr.Child("equippedSuppressor").Value.ToString();
-                string newSightId = curr.Child("equippedSight").Value.ToString();
-                string newClipId = curr.Child("equippedClip").Value.ToString();
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-                e.equippedSuppressor = curr.Child("equippedSuppressor").Value.ToString();
-                e.equippedSight = curr.Child("equippedSight").Value.ToString();
-                e.equippedClip = curr.Child("equippedClip").Value.ToString();
+                string newSuppId = snapshot.Child("equippedSuppressor").Value.ToString();
+                string newSightId = snapshot.Child("equippedSight").Value.ToString();
+                string newClipId = snapshot.Child("equippedClip").Value.ToString();
+                e.duration = snapshot.Child("duration").Value.ToString();
+                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                e.equippedSuppressor = snapshot.Child("equippedSuppressor").Value.ToString();
+                e.equippedSight = snapshot.Child("equippedSight").Value.ToString();
+                e.equippedClip = snapshot.Child("equippedClip").Value.ToString();
                 if (prevSuppId != newSuppId) {
-                    wepScript.UnequipMod("Suppressor", key);
+                    wepScript.UnequipMod("Suppressor", itemName);
                     if (newSuppId != "") {
-                        wepScript.EquipMod("Suppressor", newSuppId, key, null);
+                        wepScript.EquipMod("Suppressor", newSuppId, itemName, null);
                     }
                 }
                 if (prevSightId != newSightId) {
-                    wepScript.UnequipMod("Sight", key);
+                    wepScript.UnequipMod("Sight", itemName);
                     if (newSightId != "") {
-                        wepScript.EquipMod("Sight", newSightId, key, null);
+                        wepScript.EquipMod("Sight", newSightId, itemName, null);
                     }
                 }
                 if (prevClipId != newClipId) {
-                    wepScript.UnequipMod("Clip", key);
+                    wepScript.UnequipMod("Clip", itemName);
                     if (newClipId != "") {
-                        wepScript.EquipMod("Clip", newClipId, key, null);
+                        wepScript.EquipMod("Clip", newClipId, itemName, null);
                     }
                 }
-            }
-            itemsModified.Add(key, null);
-        }
-
-        iter = charactersSnapshot.Children.GetEnumerator();
-        while (iter.MoveNext()) {
-            DataSnapshot curr = iter.Current;
-            string key = curr.Key.ToString();
-            CharacterData e = null;
-            if (!inventory.myCharacters.ContainsKey(key)) {
-                e = new CharacterData();
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-                inventory.myCharacters.Add(key, e);
-            } else {
-                e = inventory.myCharacters[key];
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-            }
-            itemsModified.Add(key, null);
-        }
-
-        iter = modsSnapshot.Children.GetEnumerator();
-        while (iter.MoveNext()) {
-            DataSnapshot curr = iter.Current;
-            string key = curr.Key.ToString();
-            ModData e = null;
-            if (!inventory.myMods.ContainsKey(key)) {
-                e = new ModData();
-                e.id = key;
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-                e.equippedOn = curr.Child("equippedOn").Value.ToString();
-                inventory.myMods.Add(key, e);
-            } else {
-                e = inventory.myMods[key];
-                e.duration = curr.Child("duration").Value.ToString();
-                e.acquireDate = curr.Child("acquireDate").Value.ToString();
-                e.equippedOn = curr.Child("equippedOn").Value.ToString();
-            }
-            itemsModified.Add(key, null);
-        }
-
-        // Delete items that weren't found in the update
-        foreach(KeyValuePair<string, EquipmentData> entry in inventory.myHeadgear) {
-            string key = entry.Key;
-            if (!itemsModified.ContainsKey(key)) {
-                inventory.myHeadgear.Remove(key);
-            }
-        }
-        foreach(KeyValuePair<string, EquipmentData> entry in inventory.myTops) {
-            string key = entry.Key;
-            if (!itemsModified.ContainsKey(key)) {
-                inventory.myTops.Remove(key);
-            }
-        }
-        foreach(KeyValuePair<string, EquipmentData> entry in inventory.myBottoms) {
-            string key = entry.Key;
-            if (!itemsModified.ContainsKey(key)) {
-                inventory.myBottoms.Remove(key);
-            }
-        }
-        foreach(KeyValuePair<string, EquipmentData> entry in inventory.myFacewear) {
-            string key = entry.Key;
-            if (!itemsModified.ContainsKey(key)) {
-                inventory.myFacewear.Remove(key);
-            }
-        }
-        foreach(KeyValuePair<string, EquipmentData> entry in inventory.myFootwear) {
-            string key = entry.Key;
-            if (!itemsModified.ContainsKey(key)) {
-                inventory.myFootwear.Remove(key);
-            }
-        }
-        foreach(KeyValuePair<string, ArmorData> entry in inventory.myArmor) {
-            string key = entry.Key;
-            if (!itemsModified.ContainsKey(key)) {
-                inventory.myArmor.Remove(key);
-            }
-        }
-        foreach(KeyValuePair<string, WeaponData> entry in inventory.myWeapons) {
-            string key = entry.Key;
-            if (!itemsModified.ContainsKey(key)) {
-                inventory.myWeapons.Remove(key);
-            }
-        }
-        foreach(KeyValuePair<string, CharacterData> entry in inventory.myCharacters) {
-            string key = entry.Key;
-            if (!itemsModified.ContainsKey(key)) {
-                inventory.myCharacters.Remove(key);
-            }
-        }
-        foreach(KeyValuePair<string, ModData> entry in inventory.myMods) {
-            string key = entry.Key;
-            if (!itemsModified.ContainsKey(key)) {
-                wepScript.UnequipMod(InventoryScript.itemData.modCatalog[key].category, inventory.myMods[key].equippedOn);
-                inventory.myMods.Remove(key);
+            } else if (inventory.myMods.ContainsKey(itemName)) {
+                ModData e = inventory.myMods[itemName];
+                e.duration = snapshot.Child("duration").Value.ToString();
+                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                e.equippedOn = snapshot.Child("equippedOn").Value.ToString();
             }
         }
     }
 
     public void LoadInventory(Dictionary<object, object> snapshot) {
+        inventoryDataModifyLegalFlag = true;
         Dictionary<object, object> subSnapshot = (Dictionary<object, object>)snapshot["weapons"];
         IEnumerator dataLoaded = subSnapshot.GetEnumerator();
         // Load weapons
@@ -620,7 +537,6 @@ public class PlayerData : MonoBehaviour
             WeaponData w = new WeaponData();
             Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
             string key = entry.Key.ToString();
-            w.name = key;
             w.acquireDate = thisSnapshot["acquireDate"].ToString();
             w.duration = thisSnapshot["duration"].ToString();
             object equippedSuppressor = null;
@@ -647,7 +563,6 @@ public class PlayerData : MonoBehaviour
             CharacterData c = new CharacterData();
             Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
             string key = entry.Key.ToString();
-            c.name = key;
             c.acquireDate = thisSnapshot["acquireDate"].ToString();
             c.duration = thisSnapshot["duration"].ToString();
             // If item is expired, delete from database. Else, add it to inventory
@@ -661,7 +576,6 @@ public class PlayerData : MonoBehaviour
                 ArmorData a = new ArmorData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
-                a.name = key;
                 a.acquireDate = thisSnapshot["acquireDate"].ToString();
                 a.duration = thisSnapshot["duration"].ToString();
                 inventory.myArmor.Add(key, a);
@@ -675,7 +589,6 @@ public class PlayerData : MonoBehaviour
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
-                d.name = key;
                 d.acquireDate = thisSnapshot["acquireDate"].ToString();
                 d.duration = thisSnapshot["duration"].ToString();
                 inventory.myTops.Add(key, d);
@@ -689,7 +602,6 @@ public class PlayerData : MonoBehaviour
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
-                d.name = key;
                 d.acquireDate = thisSnapshot["acquireDate"].ToString();
                 d.duration = thisSnapshot["duration"].ToString();
                 inventory.myBottoms.Add(key, d);
@@ -703,7 +615,6 @@ public class PlayerData : MonoBehaviour
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
-                d.name = key;
                 d.acquireDate = thisSnapshot["acquireDate"].ToString();
                 d.duration = thisSnapshot["duration"].ToString();
                 inventory.myFootwear.Add(key, d);
@@ -717,7 +628,6 @@ public class PlayerData : MonoBehaviour
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
-                d.name = key;
                 d.acquireDate = thisSnapshot["acquireDate"].ToString();
                 d.duration = thisSnapshot["duration"].ToString();
                 inventory.myHeadgear.Add(key, d);
@@ -731,7 +641,6 @@ public class PlayerData : MonoBehaviour
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
-                d.name = key;
                 d.acquireDate = thisSnapshot["acquireDate"].ToString();
                 d.duration = thisSnapshot["duration"].ToString();
                 inventory.myFacewear.Add(key, d);
@@ -745,7 +654,6 @@ public class PlayerData : MonoBehaviour
                 ModData m = new ModData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
-                m.id = key;
                 m.name = thisSnapshot["name"].ToString();
                 m.acquireDate = thisSnapshot["acquireDate"].ToString();
                 m.duration = thisSnapshot["duration"].ToString();
@@ -753,6 +661,7 @@ public class PlayerData : MonoBehaviour
                 inventory.myMods.Add(key, m);
             }
         }
+        inventoryDataModifyLegalFlag = false;
     }
 
     public void FindBodyRef(string character)
@@ -865,10 +774,10 @@ public class PlayerData : MonoBehaviour
             if (m.equippedOn.Equals(weaponName)) {
                 Mod modDetails = InventoryScript.itemData.modCatalog[m.name];
                 if (modDetails.category.Equals("Suppressor")) {
-                    modInfo.suppressorId = m.id;
+                    modInfo.suppressorId = entry.Key;
                     modInfo.equippedSuppressor = m.name;
                 } else if (modDetails.category.Equals("Sight")) {
-                    modInfo.sightId = m.id;
+                    modInfo.sightId = entry.Key;
                     modInfo.equippedSight = m.name;
                 } else if (modDetails.category.Equals("Clip")) {
                     // modInfo.clipId = m.id;
@@ -1250,8 +1159,13 @@ public class PlayerData : MonoBehaviour
         return new Rank("Trainee", 0, 1999);
     }
 
-    // Only called in an emergency situation when the game needs to exit immediately (ex: database failure or user gets banned).
     public void TriggerEmergencyExit(string message) {
+        emergencyExitMessage = message;
+        triggerEmergencyExitFlag = true;
+    }
+
+    // Only called in an emergency situation when the game needs to exit immediately (ex: database failure or user gets banned).
+    public void DoEmergencyExit() {
         // Freeze user mouse input
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -1259,11 +1173,10 @@ public class PlayerData : MonoBehaviour
         // Display emergency popup depending on which screen you're on
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene.Equals("GameOverSuccess") || currentScene.Equals("GameOverFail")) {
-            gameOverControllerRef.TriggerEmergencyPopup("A fatal error has occurred:\n" + message + "\nThe game will now close.");
+            gameOverControllerRef.TriggerEmergencyPopup("A fatal error has occurred:\n" + emergencyExitMessage + "\nThe game will now close.");
         } else if (currentScene.Equals("Title")) {
-            titleRef.TriggerEmergencyPopup("A fatal error has occurred:\n" + message + "\nThe game will now close.");
+            titleRef.TriggerEmergencyPopup("A fatal error has occurred:\n" + emergencyExitMessage + "\nThe game will now close.");
         }
-
         StartCoroutine("EmergencyExitGame");
     }
 
@@ -1538,7 +1451,6 @@ public class PlayerData : MonoBehaviour
 
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         // Reequip primary
-        Debug.Log(info.equippedPrimary);
         Weapon w = InventoryScript.itemData.weaponCatalog[info.equippedPrimary];
         string weaponType = w.category;
         GameObject wepEquipped = thisWepScript.weaponHolder.LoadWeapon(w.prefabPath);
@@ -1821,7 +1733,6 @@ public class PlayerData : MonoBehaviour
         string weaponType = w.category;
         ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemEquipped);
         PlayerData.playerdata.supportModInfo = modInfo;
-        GameObject wepEquipped = thisWepScript.weaponHolder.LoadWeapon(w.prefabPath);
 
         titleRef.equippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
         titleRef.shopEquippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
@@ -1854,7 +1765,7 @@ public class PlayerData : MonoBehaviour
         // When inventory item has been updated, find the item that has been updated and update it
         if (args.Snapshot.Value != null) {
             inventoryDataModifyLegalFlag = true;
-            RefreshInventory(args.Snapshot);
+            RefreshInventory(args.Snapshot, 'm');
             inventoryDataModifyLegalFlag = false;
         }
     }
@@ -1872,7 +1783,7 @@ public class PlayerData : MonoBehaviour
         // When inventory item has been added, also add that item to this game session
         if (args.Snapshot.Value != null) {
             inventoryDataModifyLegalFlag = true;
-            RefreshInventory(args.Snapshot);
+            RefreshInventory(args.Snapshot, 'a');
             inventoryDataModifyLegalFlag = false;
         }
     }
@@ -1890,7 +1801,7 @@ public class PlayerData : MonoBehaviour
         // When inventory item has been removed, also remove that item from this game session
         if (args.Snapshot.Value != null) {
             inventoryDataModifyLegalFlag = true;
-            RefreshInventory(args.Snapshot);
+            RefreshInventory(args.Snapshot, 'd');
             inventoryDataModifyLegalFlag = false;
         }
     }
@@ -1901,7 +1812,6 @@ public class PlayerData : MonoBehaviour
 		inputData["callHash"] = DAOScript.functionsCallHash;
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
 		inputData["loggedIn"] = "0";
-
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("setUserIsLoggedIn");
 		func.CallAsync(inputData).ContinueWith((task) => {
             Application.Quit();
@@ -1958,29 +1868,87 @@ public class PlayerInfo
 
 public class PlayerInventory {
     public PlayerInventory() {
-        this.myHeadgear = new Dictionary<string, EquipmentData>();
-        this.myTops = new Dictionary<string, EquipmentData>();
-        this.myBottoms = new Dictionary<string, EquipmentData>();
-        this.myFacewear = new Dictionary<string, EquipmentData>();
-        this.myFootwear = new Dictionary<string, EquipmentData>();
-        this.myArmor = new Dictionary<string, ArmorData>();
-        this.myWeapons = new Dictionary<string, WeaponData>();
-        this.myCharacters = new Dictionary<string, CharacterData>();
-        this.myMods = new Dictionary<string, ModData>();
+        this.myHeadgear = new ObservableDict<string, EquipmentData>();
+        this.myTops = new ObservableDict<string, EquipmentData>();
+        this.myBottoms = new ObservableDict<string, EquipmentData>();
+        this.myFacewear = new ObservableDict<string, EquipmentData>();
+        this.myFootwear = new ObservableDict<string, EquipmentData>();
+        this.myArmor = new ObservableDict<string, ArmorData>();
+        this.myWeapons = new ObservableDict<string, WeaponData>();
+        this.myCharacters = new ObservableDict<string, CharacterData>();
+        this.myMods = new ObservableDict<string, ModData>();
+        myHeadgear.CollectionChanged += OnCollectionChanged;
+        myHeadgear.PropertyChanged += OnPropertyChanged;
+        myTops.CollectionChanged += OnCollectionChanged;
+        myTops.PropertyChanged += OnPropertyChanged;
+        myBottoms.CollectionChanged += OnCollectionChanged;
+        myBottoms.PropertyChanged += OnPropertyChanged;
+        myFacewear.CollectionChanged += OnCollectionChanged;
+        myFacewear.PropertyChanged += OnPropertyChanged;
+        myFootwear.CollectionChanged += OnCollectionChanged;
+        myFootwear.PropertyChanged += OnPropertyChanged;
+        myArmor.CollectionChanged += OnCollectionChanged;
+        myArmor.PropertyChanged += OnPropertyChanged;
+        myWeapons.CollectionChanged += OnCollectionChanged;
+        myWeapons.PropertyChanged += OnPropertyChanged;
+        myCharacters.CollectionChanged += OnCollectionChanged;
+        myCharacters.PropertyChanged += OnPropertyChanged;
+        myMods.CollectionChanged += OnCollectionChanged;
+        myMods.PropertyChanged += OnPropertyChanged;
     }
 
-    public Dictionary<string, EquipmentData> myHeadgear;
-    public Dictionary<string, EquipmentData> myTops;
-    public Dictionary<string, EquipmentData> myBottoms;
-    public Dictionary<string, EquipmentData> myFacewear;
-    public Dictionary<string, EquipmentData> myFootwear;
-    public Dictionary<string, ArmorData> myArmor;
-    public Dictionary<string, WeaponData> myWeapons;
-    public Dictionary<string, CharacterData> myCharacters;
-    public Dictionary<string, ModData> myMods;
+    public ObservableDict<string, EquipmentData> myHeadgear;
+    public ObservableDict<string, EquipmentData> myTops;
+    public ObservableDict<string, EquipmentData> myBottoms;
+    public ObservableDict<string, EquipmentData> myFacewear;
+    public ObservableDict<string, EquipmentData> myFootwear;
+    public ObservableDict<string, ArmorData> myArmor;
+    public ObservableDict<string, WeaponData> myWeapons;
+    public ObservableDict<string, CharacterData> myCharacters;
+    public ObservableDict<string, ModData> myMods;
 
     public delegate void OnInventoryChangeDelegate();
     public event OnInventoryChangeDelegate OnInventoryChange;
+
+    protected virtual void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+        if (!PlayerData.playerdata.inventoryDataModifyLegalFlag) {
+            if (PlayerData.playerdata == null) {
+                Application.Quit();
+            } else {
+                // Ban player here for modifying item data
+                Dictionary<string, object> inputData = new Dictionary<string, object>();
+                inputData["callHash"] = DAOScript.functionsCallHash;
+                inputData["uid"] = AuthScript.authHandler.user.UserId;
+                inputData["duration"] = "-1";
+                inputData["reason"] = "Illegal modification of user data.";
+
+                HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("banPlayer");
+                func.CallAsync(inputData).ContinueWith((task) => {
+                    PlayerData.playerdata.TriggerEmergencyExit("You've been banned for the following reason:\nIllegal modification of game data.\nIf you feel this was done in error, you can dispute it by opening a ticket at \"www.koobando.com/support\".");
+                });
+            }
+        }
+    }
+
+    protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+        if (!PlayerData.playerdata.inventoryDataModifyLegalFlag) {
+            if (PlayerData.playerdata == null) {
+                Application.Quit();
+            } else {
+                // Ban player here for modifying item data
+                Dictionary<string, object> inputData = new Dictionary<string, object>();
+                inputData["callHash"] = DAOScript.functionsCallHash;
+                inputData["uid"] = AuthScript.authHandler.user.UserId;
+                inputData["duration"] = "-1";
+                inputData["reason"] = "Illegal modification of user data.";
+
+                HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("banPlayer");
+                func.CallAsync(inputData).ContinueWith((task) => {
+                    PlayerData.playerdata.TriggerEmergencyExit("You've been banned for the following reason:\nIllegal modification of game data.\nIf you feel this was done in error, you can dispute it by opening a ticket at \"www.koobando.com/support\".");
+                });
+            }
+        }
+    }
 }
 
 public class ModInfo
@@ -1994,7 +1962,6 @@ public class ModInfo
 }
 
 public class WeaponData {
-    public string name;
     public string acquireDate;
     public string duration;
     public string equippedSuppressor;
@@ -2003,13 +1970,11 @@ public class WeaponData {
 }
 
 public class EquipmentData {
-    public string name;
     public string acquireDate;
     public string duration;
 }
 
 public class ModData {
-    public string id;
     public string name;
     public string equippedOn;
     public string acquireDate;
@@ -2017,13 +1982,11 @@ public class ModData {
 }
 
 public class ArmorData {
-    public string name;
     public string acquireDate;
     public string duration;
 }
 
 public class CharacterData {
-    public string name;
     public string acquireDate;
     public string duration;
 }
