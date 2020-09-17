@@ -87,7 +87,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnConnectedToMaster()
 		{
-            PhotonNetwork.NickName = PlayerData.playerdata.info.playername;
+            PhotonNetwork.NickName = PlayerData.playerdata.info.Playername;
 			templateUIClass.ListRoomPanel.SetActive(true);
 			templateUIVersusClass.ListRoomPanel.SetActive(true);
             if (!PhotonNetwork.InLobby) {

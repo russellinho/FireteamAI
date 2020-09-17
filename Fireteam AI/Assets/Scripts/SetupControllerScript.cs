@@ -221,7 +221,7 @@ public class SetupControllerScript : MonoBehaviour
                                             item1.Add("duration", "-1");
                                             starterItems[0] = item1;
                                             Dictionary<string, string> item2 = new Dictionary<string, string>();
-                                            item2.Add("itemName", "I23");
+                                            item2.Add("itemName", "I32");
                                             item2.Add("category", "weapons");
                                             item2.Add("duration", "-1");
                                             starterItems[1] = item2;

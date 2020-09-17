@@ -718,8 +718,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.equipmentDetails = thisHeadgear;
 			s.itemName = thisItemName;
             s.itemType = "Headgear";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = thisHeadgear.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisHeadgear.thumbnailPath);
 			s.thumbnailRef.SetNativeSize();
@@ -801,8 +801,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.equipmentDetails = thisFacewear;
 			s.itemName = thisItemName;
             s.itemType = "Facewear";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = thisFacewear.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisFacewear.thumbnailPath);
 			s.thumbnailRef.SetNativeSize();
@@ -884,8 +884,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.armorDetails = thisArmor;
 			s.itemName = thisItemName;
             s.itemType = "Armor";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = thisArmor.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisArmor.thumbnailPath);
 			s.thumbnailRef.SetNativeSize();
@@ -970,8 +970,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = thisTop.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
 			s.thumbnailRef.SetNativeSize();
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 4f, t.sizeDelta.y / 4f);
 			if (thisItemName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedTop)) {
@@ -1050,8 +1050,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.equipmentDetails = thisBottom;
 			s.itemName = thisItemName;
             s.itemType = "Bottom";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = thisBottom.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
 			s.thumbnailRef.SetNativeSize();
@@ -1133,8 +1133,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.equipmentDetails = thisFootwear;
 			s.itemName = thisItemName;
             s.itemType = "Footwear";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = thisFootwear.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
 			s.thumbnailRef.SetNativeSize();
@@ -1252,8 +1252,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -1403,8 +1403,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -1552,8 +1552,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -1701,8 +1701,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -1818,8 +1818,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -1896,8 +1896,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -1974,8 +1974,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2052,8 +2052,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2130,8 +2130,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2205,8 +2205,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2277,8 +2277,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2350,8 +2350,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2424,8 +2424,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2498,8 +2498,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2570,8 +2570,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2784,8 +2784,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.characterDetails = c;
 			s.itemName = thisCharacterName;
             s.itemType = "Character";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = c.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(c.thumbnailPath);
 			s.thumbnailRef.SetNativeSize();
@@ -2909,7 +2909,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, ModData> entry in PlayerData.playerdata.inventory.myMods)
         {
             ModData modData = entry.Value;
-			string thisModName = modData.name;
+			string thisModName = modData.Name;
 			Mod m = InventoryScript.itemData.modCatalog[thisModName];
 			if (!m.category.Equals("Suppressor")) {
 				continue;
@@ -2919,7 +2919,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.modDescriptionPopupRef = modDescriptionPopupRef;
 			s.modDetails = m;
 			s.id = entry.Key;
-			s.equippedOn = modData.equippedOn;
+			s.equippedOn = modData.EquippedOn;
 			s.itemName = m.name;
             s.itemType = "Mod";
 			s.itemDescription = m.description;
@@ -2928,7 +2928,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			if (modWeaponLbl.text.Equals(modData.equippedOn)) {
+			if (modWeaponLbl.text.Equals(modData.EquippedOn)) {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedModPrefab = o;
 			}
@@ -2949,7 +2949,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         foreach (KeyValuePair<string, ModData> entry in PlayerData.playerdata.inventory.myMods)
         {
             ModData modData = entry.Value;
-			string thisModName = modData.name;
+			string thisModName = modData.Name;
 			Mod m = InventoryScript.itemData.modCatalog[thisModName];
 			if (!m.category.Equals("Sight")) {
 				continue;
@@ -2959,7 +2959,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.modDescriptionPopupRef = modDescriptionPopupRef;
 			s.modDetails = m;
 			s.id = entry.Key;
-			s.equippedOn = modData.equippedOn;
+			s.equippedOn = modData.EquippedOn;
 			s.itemName = m.name;
             s.itemType = "Mod";
 			s.itemDescription = m.description;
@@ -2968,7 +2968,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			if (modWeaponLbl.text.Equals(modData.equippedOn)) {
+			if (modWeaponLbl.text.Equals(modData.EquippedOn)) {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedModPrefab = o;
 			}
@@ -3250,9 +3250,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Place the saved mods for that weapon back on the weapon template
 		ModInfo savedModInfo = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
-		SetWeaponModValues(modWeaponLbl.text, true, null, savedModInfo.suppressorId, true, null, savedModInfo.sightId);
-		EquipModOnWeaponTemplate(savedModInfo.equippedSuppressor, "Suppressor", savedModInfo.suppressorId);
-		EquipModOnWeaponTemplate(savedModInfo.equippedSight, "Sight", savedModInfo.sightId);
+		SetWeaponModValues(modWeaponLbl.text, true, null, savedModInfo.SuppressorId, true, null, savedModInfo.SightId);
+		EquipModOnWeaponTemplate(savedModInfo.EquippedSuppressor, "Suppressor", savedModInfo.SuppressorId);
+		EquipModOnWeaponTemplate(savedModInfo.EquippedSight, "Sight", savedModInfo.SightId);
 
 		// Update shop items with the mods that are equipped
 		// If the suppressors menu was selected, update the shop items with what's equipped on the current weapon
@@ -3568,7 +3568,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         bool isStacking = (hasDuplicateCheck >= 0f && !Mathf.Approximately(0f, hasDuplicateCheck));
         float totalNewDuration = ConvertDurationInput(durationSelectionDropdown.value);
         totalNewDuration = (Mathf.Approximately(totalNewDuration, -1f) ? totalNewDuration : totalNewDuration + hasDuplicateCheck);
-		if (PlayerData.playerdata.info.gp >= totalGpCostBeingPurchased) {
+		if (PlayerData.playerdata.info.Gp >= totalGpCostBeingPurchased) {
 			PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, "gp");
 		} else {	
 			TriggerMarketplacePopup("You do not have enough GP to purchase this item.");	
@@ -3635,8 +3635,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void UpdateCurrency() {
-		myGpTxt.text = ""+PlayerData.playerdata.info.gp;
-		myKashTxt.text = ""+PlayerData.playerdata.info.kash;
+		myGpTxt.text = ""+PlayerData.playerdata.info.Gp;
+		myKashTxt.text = ""+PlayerData.playerdata.info.Kash;
 	}
 
 	// Players cannot own multiple of the same item unless they're mods.
@@ -3649,7 +3649,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             {
                 WeaponData item = entry.Value;
 				if (entry.Key.Equals(itemName)) {
-					float duration = float.Parse(item.duration);
+					float duration = float.Parse(item.Duration);
 					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
 						return -1f;
 					} else {
@@ -3662,7 +3662,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             {
                 CharacterData item = entry.Value;
 				if (entry.Key.Equals(itemName)) {
-					float duration = float.Parse(item.duration);
+					float duration = float.Parse(item.Duration);
 					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
 						return -1f;
 					} else {
@@ -3675,7 +3675,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             {
                 ArmorData item = entry.Value;
 				if (entry.Key.Equals(itemName)) {
-					float duration = float.Parse(item.duration);
+					float duration = float.Parse(item.Duration);
 					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
 						return -1f;
 					} else {
@@ -3707,7 +3707,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             {
                 EquipmentData item = entry.Value;
 				if (entry.Key.Equals(itemName)) {
-					float duration = float.Parse(item.duration);
+					float duration = float.Parse(item.Duration);
 					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
 						return -1f;
 					} else {
@@ -3784,17 +3784,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void SetPlayerNameForTitle() {
-		mainNametagTxt.text = PlayerData.playerdata.info.playername;
+		mainNametagTxt.text = PlayerData.playerdata.info.Playername;
 	}
 
 	void SetPlayerRankForTitle() {
-		Rank rank = PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.exp);
+		Rank rank = PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.Exp);
 		mainRankTxt.text = rank.name;
 		mainRankImg.texture = PlayerData.playerdata.GetRankInsigniaForRank(rank.name);
 	}
 
 	void SetPlayerLevelProgressForTitle() {
-		uint myExp = PlayerData.playerdata.info.exp;
+		uint myExp = PlayerData.playerdata.info.Exp;
 		Rank rank = PlayerData.playerdata.GetRankFromExp(myExp);
 		uint currExp = myExp - rank.minExp;
 		uint toExp = rank.maxExp - rank.minExp;
@@ -3805,8 +3805,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void SetPlayerCurrency() {
-		myGpTxt.text = ""+PlayerData.playerdata.info.gp;
-		myKashTxt.text = ""+PlayerData.playerdata.info.kash;
+		myGpTxt.text = ""+PlayerData.playerdata.info.Gp;
+		myKashTxt.text = ""+PlayerData.playerdata.info.Kash;
 	}
 
 	public void SetPlayerStatsForTitle() {

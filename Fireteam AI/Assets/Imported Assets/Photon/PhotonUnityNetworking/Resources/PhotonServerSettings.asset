@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: 
+    AppIdRealtime: 759c3bf2-4dac-4abc-8645-adefe6e264a1
     AppIdChat: 
     AppIdVoice: 
-    AppVersion: 
+    AppVersion: 0.04
     UseNameServer: 1
-    FixedRegion: 
+    FixedRegion: us
     Server: 
     Port: 0
     ProxyServer: 
@@ -37,7 +37,133 @@ MonoBehaviour:
   - DestroyRpc
   - DestroySpaceship
   - Fire
+  - FireEffects
+  - FireEffectsLauncher
+  - FireEffectsSuppressed
   - RespawnSpaceship
+  - RpcAddToTotalDeaths
+  - RpcAddToTotalKills
+  - RpcCarryNpc
+  - RpcChangePlayerDisableStatus
+  - RpcChangeReadyStatus
+  - RpcClearAIRespawns
+  - RpcClearEnemySeenBy
+  - RpcCockGrenade
+  - RpcCockingAnim
+  - RpcConvertCounts
+  - RpcCrouch
+  - RpcDefuseBomb
+  - RpcDeployDeployable
+  - RpcDestroyPickup
+  - RpcDie
+  - RpcDisablePlayerForVersus
+  - RpcDrawWeapon
+  - RpcDropAmmoPickup
+  - RpcDropHealthPickup
+  - RpcDropOffNpc
+  - RpcEndGame
+  - RpcEndVersusGame
+  - RpcEquipArmorInGame
+  - RpcEquipBottomInGame
+  - RpcEquipCharacterInGame
+  - RpcEquipFacewearInGame
+  - RpcEquipFootwearInGame
+  - RpcEquipHeadgearInGame
+  - RpcEquipTopInGame
+  - RpcExplode
+  - RpcExplodeDelay
+  - RpcIncrementDeathCount
+  - RpcIncrementEscapeCount
+  - RpcInitializeMelee
+  - RpcInitializeWeapon
+  - RpcInstantiateBloodSpill
+  - RpcInstantiateBulletHole
+  - RpcInstantiateHitParticleEffect
+  - RpcLoadingScreen
+  - RpcMarkAIReadyForRespawn
+  - RpcMarkEnemyOutline
+  - RpcPingServerForEquipment
+  - RpcPlayGruntSound
+  - RpcPlayReloadSound
+  - RpcPlaySupportActionSound
+  - RpcPopFlare
+  - RpcProcessFlightInstruction
+  - RpcRegisterGrenadeKill
+  - RpcReload
+  - RpcReloadAnim
+  - RpcResetAnimationState
+  - RpcRespawnAtPosition
+  - RpcRespawnPlayer
+  - RpcSendChatMessage
+  - RpcSendMissionTimeToClients
+  - RpcSetAlertStatus
+  - RpcSetCoverPos
+  - RpcSetCoverSwitchPositionsTimer
+  - RpcSetCoverTimer
+  - RpcSetCoverWaitTimer
+  - RpcSetCrouchingInAnimator
+  - RpcSetCrouchMode
+  - RpcSetDestination
+  - RpcSetEnemySeenBy
+  - RpcSetEquippedItems
+  - RpcSetExitLevelLoaded
+  - RpcSetFiringModeTimer
+  - RpcSetHealth
+  - RpcSetInCover
+  - RpcSetIsCrouching
+  - RpcSetIsDeadInAnimator
+  - RpcSetLastGunshotHeardPos
+  - RpcSetLastSeenPlayerPos
+  - RpcSetMapInfo
+  - RpcSetModelCreated
+  - RpcSetMovingInAnimator
+  - RpcSetMyExpAndGpGained
+  - RpcSetNavMeshDestination
+  - RpcSetPlayerLaunchedByReference
+  - RpcSetPlayerThrownByReference
+  - RpcSetRank
+  - RpcSetSprintingInAnimator
+  - RpcSetTarget
+  - RpcSetTeamCounts
+  - RpcSetWalkingInAnimator
+  - RpcSetWanderStallDelay
+  - RpcSetWeaponReadyInAnimator
+  - RpcSetWeaponTypeInAnimator
+  - RpcShootAction
+  - RpcSpawnShellCasing
+  - RpcStartCampaignGame
+  - RpcStartGameCountdown
+  - RpcStartVersusGame
+  - RpcStartVersusGameCountdown
+  - RpcSwitchTeams
+  - RpcSyncAnimatorValues
+  - RpcSyncCoverSpot
+  - RpcSyncSuspicionValues
+  - RpcTakeDamage
+  - RpcToggleButtons
+  - RpcToggleEnabled
+  - RpcToggleWeaponVisible
+  - RpcTriggerJumpInAnimator
+  - RpcTriggerPlayerDownAlert
+  - RpcTriggerReloadingInAnimator
+  - RpcUpdateActionState
+  - RpcUpdateAssaultMode
+  - RpcUpdateEndGameTimer
+  - RpcUpdateFiringState
+  - RpcUpdateMissionTime
+  - RpcUpdateNavMesh
+  - RpcUpdateNavMeshSpeed
+  - RpcUpdateObjectives
+  - RpcUpdateSpineRotation
+  - RpcUseAmmoBag
+  - RpcUseBooster
+  - RpcUseDeployable
+  - RpcUseFirstAidKit
+  - sendChatMaster
+  - SendMsg
+  - SendMsgConnectionAll
+  - SendMsgConnectionMaster
+  - StartDespawn
   DisableAutoOpenWizard: 1
-  ShowSettings: 0
+  ShowSettings: 1
   DevRegionSetOnce: 0

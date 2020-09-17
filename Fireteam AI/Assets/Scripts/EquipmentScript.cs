@@ -105,13 +105,13 @@ public class EquipmentScript : MonoBehaviour
         } else if (onSetup) {
             EquipDefaultsForSetup();
         } else {
-            pView.RPC("RpcEquipCharacterInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedCharacter);
-            pView.RPC("RpcEquipHeadgearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedHeadgear);
-            pView.RPC("RpcEquipFacewearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedFacewear);
-            pView.RPC("RpcEquipTopInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedTop);
-            pView.RPC("RpcEquipBottomInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedBottom);
-            pView.RPC("RpcEquipFootwearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedFootwear);
-            pView.RPC("RpcEquipArmorInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.equippedArmor);
+            pView.RPC("RpcEquipCharacterInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedCharacter);
+            pView.RPC("RpcEquipHeadgearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedHeadgear);
+            pView.RPC("RpcEquipFacewearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedFacewear);
+            pView.RPC("RpcEquipTopInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedTop);
+            pView.RPC("RpcEquipBottomInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedBottom);
+            pView.RPC("RpcEquipFootwearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedFootwear);
+            pView.RPC("RpcEquipArmorInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedArmor);
         }
     }
 
@@ -215,12 +215,12 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void ReequipWeapons() {
-        ModInfo primaryModInfo = PlayerData.playerdata.LoadModDataForWeapon(PlayerData.playerdata.info.equippedPrimary);
-        ModInfo secondaryModInfo = PlayerData.playerdata.LoadModDataForWeapon(PlayerData.playerdata.info.equippedSecondary);
-        tws.EquipWeapon(PlayerData.playerdata.info.equippedPrimary, primaryModInfo.equippedSuppressor, primaryModInfo.equippedSight, null);
-        tws.EquipWeapon(PlayerData.playerdata.info.equippedSecondary, secondaryModInfo.equippedSuppressor, secondaryModInfo.equippedSight, null);
-        tws.EquipWeapon(PlayerData.playerdata.info.equippedSupport, null, null, null);
-        tws.EquipWeapon(PlayerData.playerdata.info.equippedMelee, null, null, null);
+        ModInfo primaryModInfo = PlayerData.playerdata.LoadModDataForWeapon(PlayerData.playerdata.info.EquippedPrimary);
+        ModInfo secondaryModInfo = PlayerData.playerdata.LoadModDataForWeapon(PlayerData.playerdata.info.EquippedSecondary);
+        tws.EquipWeapon(PlayerData.playerdata.info.EquippedPrimary, primaryModInfo.EquippedSuppressor, primaryModInfo.EquippedSight, null);
+        tws.EquipWeapon(PlayerData.playerdata.info.EquippedSecondary, secondaryModInfo.EquippedSuppressor, secondaryModInfo.EquippedSight, null);
+        tws.EquipWeapon(PlayerData.playerdata.info.EquippedSupport, null, null, null);
+        tws.EquipWeapon(PlayerData.playerdata.info.EquippedMelee, null, null, null);
     }
 
     bool IsCharacterRestricted(Equipment e) {

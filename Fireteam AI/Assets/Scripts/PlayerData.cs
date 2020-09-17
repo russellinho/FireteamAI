@@ -105,8 +105,7 @@ public class PlayerData : MonoBehaviour
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/armor").ChildChanged += HandleInventoryChanged;
 
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
-            PlayerData.playerdata.info.OnPlayerInfoChange += PlayerInfoChangeHandler;
-            PlayerData.playerdata.inventory.OnInventoryChange += InventoryChangeHandler;
+            PlayerData.playerdata.info.PropertyChanged += OnPlayerInfoChange;
         }
         else if (playerdata != this)
         {
@@ -128,46 +127,29 @@ public class PlayerData : MonoBehaviour
 
     string GetCharacterPrefabName() {
         string characterPrefabName = "";
-        if (PlayerData.playerdata.info.equippedCharacter.Equals("Lucas")) {
+        if (PlayerData.playerdata.info.EquippedCharacter.Equals("Lucas")) {
             characterPrefabName = "LucasGamePrefab";
-        } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Daryl")) {
+        } else if (PlayerData.playerdata.info.EquippedCharacter.Equals("Daryl")) {
             characterPrefabName = "DarylGamePrefab";
-        } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Yongjin")) {
+        } else if (PlayerData.playerdata.info.EquippedCharacter.Equals("Yongjin")) {
             characterPrefabName = "YongjinGamePrefab";
-        } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Rocko")) {
+        } else if (PlayerData.playerdata.info.EquippedCharacter.Equals("Rocko")) {
             characterPrefabName = "RockoGamePrefab";
-        } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Codename Sayre")) {
+        } else if (PlayerData.playerdata.info.EquippedCharacter.Equals("Codename Sayre")) {
             characterPrefabName = "SayreGamePrefab";
-        } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Hana")) {
+        } else if (PlayerData.playerdata.info.EquippedCharacter.Equals("Hana")) {
             characterPrefabName = "HanaGamePrefab";
-        } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Jade")) {
+        } else if (PlayerData.playerdata.info.EquippedCharacter.Equals("Jade")) {
             characterPrefabName = "JadeGamePrefab";
-        } else if (PlayerData.playerdata.info.equippedCharacter.Equals("Dani")) {
+        } else if (PlayerData.playerdata.info.EquippedCharacter.Equals("Dani")) {
             characterPrefabName = "DaniGamePrefab";
         }
         return characterPrefabName;
     }
 
-    void PlayerInfoChangeHandler() {
+    protected virtual void OnPlayerInfoChange(object sender, PropertyChangedEventArgs e) {
         // This should never be triggered unless called from the listeners. Therefore if it is, we need to ban the player
         if (!playerDataModifyLegalFlag) {
-            // Ban player here
-            Dictionary<string, object> inputData = new Dictionary<string, object>();
-            inputData["callHash"] = DAOScript.functionsCallHash;
-            inputData["uid"] = AuthScript.authHandler.user.UserId;
-            inputData["duration"] = "-1";
-            inputData["reason"] = "Illegal modification of user data.";
-
-            HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("banPlayer");
-            func.CallAsync(inputData).ContinueWith((task) => {
-                TriggerEmergencyExit("You've been banned for the following reason:\nIllegal modification of user data.\nIf you feel this was done in error, you can dispute it by opening a ticket at \"www.koobando.com/support\".");
-            });
-        }
-    }
-
-    void InventoryChangeHandler() {
-        // This should never be triggered unless called from the listeners. Therefore if it is, we need to ban the player
-        if (!inventoryDataModifyLegalFlag) {
             // Ban player here
             Dictionary<string, object> inputData = new Dictionary<string, object>();
             inputData["callHash"] = DAOScript.functionsCallHash;
@@ -245,110 +227,109 @@ public class PlayerData : MonoBehaviour
                 if (results["status"].ToString() == "200") {
                     Dictionary<object, object> playerDataSnap = (Dictionary<object, object>)results["playerData"];
                     Dictionary<object, object> inventorySnap = (Dictionary<object, object>)results["inventory"];
-                    info.defaultChar = playerDataSnap["defaultChar"].ToString();
-                    info.defaultWeapon = playerDataSnap["defaultWeapon"].ToString();
-                    info.playername = playerDataSnap["username"].ToString();
-                    info.exp = uint.Parse(playerDataSnap["exp"].ToString());
-                    info.gp = uint.Parse(playerDataSnap["gp"].ToString());
-                    info.kash = uint.Parse(playerDataSnap["kash"].ToString());
+                    info.DefaultChar = playerDataSnap["defaultChar"].ToString();
+                    info.DefaultWeapon = playerDataSnap["defaultWeapon"].ToString();
+                    info.Playername = playerDataSnap["username"].ToString();
+                    info.Exp = uint.Parse(playerDataSnap["exp"].ToString());
+                    info.Gp = uint.Parse(playerDataSnap["gp"].ToString());
+                    info.Kash = uint.Parse(playerDataSnap["kash"].ToString());
                     if (playerDataSnap.ContainsKey("equipment")) {
                         Dictionary<object, object> equipmentSnap = (Dictionary<object, object>)playerDataSnap["equipment"];
-                        info.equippedCharacter = equipmentSnap["equippedCharacter"].ToString();
-                        info.equippedPrimary = equipmentSnap["equippedPrimary"].ToString();
-                        info.equippedSecondary = equipmentSnap["equippedSecondary"].ToString();
-                        info.equippedSupport = equipmentSnap["equippedSupport"].ToString();
-                        info.equippedMelee = equipmentSnap["equippedMelee"].ToString();
-                        info.equippedTop = equipmentSnap["equippedTop"].ToString();
-                        info.equippedBottom = equipmentSnap["equippedBottom"].ToString();
-                        info.equippedFootwear = equipmentSnap["equippedFootwear"].ToString();
-                        info.equippedFacewear = equipmentSnap["equippedFacewear"].ToString();
-                        info.equippedHeadgear = equipmentSnap["equippedHeadgear"].ToString();
-                        info.equippedArmor = equipmentSnap["equippedArmor"].ToString();
+                        info.EquippedCharacter = equipmentSnap["equippedCharacter"].ToString();
+                        info.EquippedPrimary = equipmentSnap["equippedPrimary"].ToString();
+                        info.EquippedSecondary = equipmentSnap["equippedSecondary"].ToString();
+                        info.EquippedSupport = equipmentSnap["equippedSupport"].ToString();
+                        info.EquippedMelee = equipmentSnap["equippedMelee"].ToString();
+                        info.EquippedTop = equipmentSnap["equippedTop"].ToString();
+                        info.EquippedBottom = equipmentSnap["equippedBottom"].ToString();
+                        info.EquippedFootwear = equipmentSnap["equippedFootwear"].ToString();
+                        info.EquippedFacewear = equipmentSnap["equippedFacewear"].ToString();
+                        info.EquippedHeadgear = equipmentSnap["equippedHeadgear"].ToString();
+                        info.EquippedArmor = equipmentSnap["equippedArmor"].ToString();
                         Dictionary<object, object> weaponsInventorySnap = (Dictionary<object, object>)inventorySnap["weapons"];
-                        Dictionary<object, object> thisWeaponInventorySnap = (Dictionary<object, object>)weaponsInventorySnap[info.equippedPrimary];
+                        Dictionary<object, object> thisWeaponInventorySnap = (Dictionary<object, object>)weaponsInventorySnap[info.EquippedPrimary];
                         Dictionary<object, object> modsInventorySnap = (Dictionary<object, object>)inventorySnap["mods"];
                         Dictionary<object, object> suppressorModSnap = null;
                         Dictionary<object, object> sightModSnap = null;
                         string suppressorModId = thisWeaponInventorySnap["equippedSuppressor"].ToString();
                         string sightModId = thisWeaponInventorySnap["equippedSight"].ToString();
-                        primaryModInfo.weaponName = info.equippedPrimary;
-                        primaryModInfo.suppressorId = suppressorModId;
-                        primaryModInfo.sightId = sightModId;
+                        primaryModInfo.WeaponName = info.EquippedPrimary;
+                        primaryModInfo.SuppressorId = suppressorModId;
+                        primaryModInfo.SightId = sightModId;
                         Debug.Log(suppressorModId);
                         Debug.Log(sightModId);
                         if (!"".Equals(suppressorModId)) {
                             suppressorModSnap = (Dictionary<object, object>)modsInventorySnap[suppressorModId];
-                            primaryModInfo.equippedSuppressor = suppressorModSnap["name"].ToString();
+                            primaryModInfo.EquippedSuppressor = suppressorModSnap["name"].ToString();
                         }
                         if (!"".Equals(sightModId)) {
                             sightModSnap = (Dictionary<object, object>)modsInventorySnap[sightModId];
-                            primaryModInfo.equippedSight = sightModSnap["name"].ToString();
+                            primaryModInfo.EquippedSight = sightModSnap["name"].ToString();
                         }
-                        thisWeaponInventorySnap = (Dictionary<object, object>)weaponsInventorySnap[info.equippedSecondary];
+                        thisWeaponInventorySnap = (Dictionary<object, object>)weaponsInventorySnap[info.EquippedSecondary];
                         suppressorModId = thisWeaponInventorySnap["equippedSuppressor"].ToString();
                         sightModId = thisWeaponInventorySnap["equippedSight"].ToString();
-                        secondaryModInfo.weaponName = info.equippedSecondary;
-                        secondaryModInfo.suppressorId = suppressorModId;
-                        secondaryModInfo.sightId = sightModId;
+                        secondaryModInfo.WeaponName = info.EquippedSecondary;
+                        secondaryModInfo.SuppressorId = suppressorModId;
+                        secondaryModInfo.SightId = sightModId;
                         if (!"".Equals(suppressorModId)) {
                             suppressorModSnap = (Dictionary<object, object>)modsInventorySnap[suppressorModId];
-                            secondaryModInfo.equippedSuppressor = suppressorModSnap["name"].ToString();
+                            secondaryModInfo.EquippedSuppressor = suppressorModSnap["name"].ToString();
                         }
                         if (!"".Equals(sightModId)) {
                             sightModSnap = (Dictionary<object, object>)modsInventorySnap[sightModId];
-                            secondaryModInfo.equippedSight = sightModSnap["name"].ToString();
+                            secondaryModInfo.EquippedSight = sightModSnap["name"].ToString();
                         }
-                        thisWeaponInventorySnap = (Dictionary<object, object>)weaponsInventorySnap[info.equippedSupport];
+                        thisWeaponInventorySnap = (Dictionary<object, object>)weaponsInventorySnap[info.EquippedSupport];
                         suppressorModId = thisWeaponInventorySnap["equippedSuppressor"].ToString();
                         sightModId = thisWeaponInventorySnap["equippedSight"].ToString();
-                        supportModInfo.weaponName = info.equippedSupport;
-                        supportModInfo.suppressorId = suppressorModId;
-                        supportModInfo.sightId = sightModId;
+                        supportModInfo.WeaponName = info.EquippedSupport;
+                        supportModInfo.SuppressorId = suppressorModId;
+                        supportModInfo.SightId = sightModId;
                         if (!"".Equals(suppressorModId)) {
                             suppressorModSnap = (Dictionary<object, object>)modsInventorySnap[suppressorModId];
-                            supportModInfo.equippedSuppressor = suppressorModSnap["name"].ToString();
+                            supportModInfo.EquippedSuppressor = suppressorModSnap["name"].ToString();
                         }
                         if (!"".Equals(sightModId)) {
                             sightModSnap = (Dictionary<object, object>)modsInventorySnap[sightModId];
-                            supportModInfo.equippedSuppressor = sightModSnap["name"].ToString();
+                            supportModInfo.EquippedSuppressor = sightModSnap["name"].ToString();
                         }
                     } else {
-                        info.equippedCharacter = playerDataSnap["defaultChar"].ToString();
-                        char g = InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender;
-                        info.equippedPrimary = playerDataSnap["defaultWeapon"].ToString();
-                        info.equippedSecondary = DEFAULT_SECONDARY;
-                        info.equippedSupport = DEFAULT_SUPPORT;
-                        info.equippedMelee = DEFAULT_MELEE;
-                        info.equippedTop = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultTop;
-                        info.equippedBottom = InventoryScript.itemData.characterCatalog[info.equippedCharacter].defaultBottom;
-                        info.equippedFootwear = (g == 'M' ? DEFAULT_FOOTWEAR_MALE : DEFAULT_FOOTWEAR_FEMALE);
-                        info.equippedFacewear = "";
-                        info.equippedHeadgear = "";
-                        info.equippedArmor = "";
+                        info.EquippedCharacter = playerDataSnap["defaultChar"].ToString();
+                        char g = InventoryScript.itemData.characterCatalog[info.EquippedCharacter].gender;
+                        info.EquippedPrimary = playerDataSnap["defaultWeapon"].ToString();
+                        info.EquippedSecondary = DEFAULT_SECONDARY;
+                        info.EquippedSupport = DEFAULT_SUPPORT;
+                        info.EquippedMelee = DEFAULT_MELEE;
+                        info.EquippedTop = InventoryScript.itemData.characterCatalog[info.EquippedCharacter].defaultTop;
+                        info.EquippedBottom = InventoryScript.itemData.characterCatalog[info.EquippedCharacter].defaultBottom;
+                        info.EquippedFootwear = (g == 'M' ? DEFAULT_FOOTWEAR_MALE : DEFAULT_FOOTWEAR_FEMALE);
+                        info.EquippedFacewear = "";
+                        info.EquippedHeadgear = "";
+                        info.EquippedArmor = "";
         
-                        primaryModInfo.equippedSuppressor = "";
-                        primaryModInfo.equippedSight = "";
-                        primaryModInfo.weaponName = "";
-                        primaryModInfo.suppressorId = "";
-                        primaryModInfo.sightId = "";
+                        primaryModInfo.EquippedSuppressor = "";
+                        primaryModInfo.EquippedSight = "";
+                        primaryModInfo.WeaponName = "";
+                        primaryModInfo.SuppressorId = "";
+                        primaryModInfo.SightId = "";
         
-                        secondaryModInfo.equippedSuppressor = "";
-                        secondaryModInfo.equippedSight = "";
-                        secondaryModInfo.weaponName = "";
-                        secondaryModInfo.suppressorId = "";
-                        secondaryModInfo.sightId = "";
+                        secondaryModInfo.EquippedSuppressor = "";
+                        secondaryModInfo.EquippedSight = "";
+                        secondaryModInfo.WeaponName = "";
+                        secondaryModInfo.SuppressorId = "";
+                        secondaryModInfo.SightId = "";
         
-                        supportModInfo.equippedSuppressor = "";
-                        supportModInfo.equippedSight = "";
-                        supportModInfo.weaponName = "";
-                        supportModInfo.suppressorId = "";
-                        supportModInfo.sightId = "";
+                        supportModInfo.EquippedSuppressor = "";
+                        supportModInfo.EquippedSight = "";
+                        supportModInfo.WeaponName = "";
+                        supportModInfo.SuppressorId = "";
+                        supportModInfo.SightId = "";
                     }
                     LoadInventory(inventorySnap);
                     List<object> itemsExpired = (List<object>)results["itemsExpired"];
                     if (itemsExpired.Count > 0) {
                         titleRef.TriggerExpirationPopup(itemsExpired);
-                        Debug.Log("B");
                     }
                     dataLoadedFlag = true;
                     playerDataModifyLegalFlag = false;
@@ -360,26 +341,26 @@ public class PlayerData : MonoBehaviour
     }
 
     public void InstantiatePlayer() {
-        FindBodyRef(info.equippedCharacter);
+        FindBodyRef(info.EquippedCharacter);
         EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
         characterEquips.equippedSkin = -1;
         WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
-        this.primaryModInfo = LoadModDataForWeapon(info.equippedPrimary);
-        this.secondaryModInfo = LoadModDataForWeapon(info.equippedSecondary);
-        this.supportModInfo = LoadModDataForWeapon(info.equippedSupport);
+        this.primaryModInfo = LoadModDataForWeapon(info.EquippedPrimary);
+        this.secondaryModInfo = LoadModDataForWeapon(info.EquippedSecondary);
+        this.supportModInfo = LoadModDataForWeapon(info.EquippedSupport);
         characterEquips.ts = titleRef;
         characterWeps.ts = titleRef;
-        OnCharacterChange(info.equippedCharacter);
-        OnHeadgearChange(info.equippedHeadgear);
-        OnFacewearChange(info.equippedFacewear);
-        OnTopChange(info.equippedTop);
-        OnBottomChange(info.equippedBottom);
-        OnFootwearChange(info.equippedFootwear);
-        OnArmorChange(info.equippedArmor);
-        OnPrimaryChange(info.equippedPrimary);
-        OnSecondaryChange(info.equippedSecondary);
-        OnSupportChange(info.equippedSupport);
-        OnMeleeChange(info.equippedMelee);
+        OnCharacterChange(info.EquippedCharacter);
+        OnHeadgearChange(info.EquippedHeadgear);
+        OnFacewearChange(info.EquippedFacewear);
+        // OnTopChange(info.equippedTop);
+        // OnBottomChange(info.equippedBottom);
+        // OnFootwearChange(info.equippedFootwear);
+        OnArmorChange(info.EquippedArmor);
+        OnPrimaryChange(info.EquippedPrimary);
+        OnSecondaryChange(info.EquippedSecondary);
+        OnSupportChange(info.EquippedSupport);
+        OnMeleeChange(info.EquippedMelee);
         PhotonNetwork.NickName = playername;
     }
 
@@ -388,14 +369,16 @@ public class PlayerData : MonoBehaviour
             string itemName = snapshot.Key;
             if (InventoryScript.itemData.characterCatalog.ContainsKey(itemName)) {
                 CharacterData c = new CharacterData();
-                c.duration = snapshot.Child("duration").Value.ToString();
-                c.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                c.Duration = snapshot.Child("duration").Value.ToString();
+                c.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
+                c.PropertyChanged += OnPlayerInfoChange;
                 inventory.myCharacters.Add(itemName, c);
             } else if (InventoryScript.itemData.equipmentCatalog.ContainsKey(itemName)) {
                 string category = InventoryScript.itemData.equipmentCatalog[itemName].category;
                 EquipmentData e = new EquipmentData();
-                e.duration = snapshot.Child("duration").Value.ToString();
-                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                e.PropertyChanged += OnPlayerInfoChange;
+                e.Duration = snapshot.Child("duration").Value.ToString();
+                e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
                 if (category == "Top") {
                     inventory.myTops.Add(itemName, e);
                 } else if (category == "Bottom") {
@@ -409,44 +392,56 @@ public class PlayerData : MonoBehaviour
                 }
             } else if (InventoryScript.itemData.armorCatalog.ContainsKey(itemName)) {
                 ArmorData a = new ArmorData();
-                a.duration = snapshot.Child("duration").Value.ToString();
-                a.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                a.PropertyChanged += OnPlayerInfoChange;
+                a.Duration = snapshot.Child("duration").Value.ToString();
+                a.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
                 inventory.myArmor.Add(itemName, a);
             } else if (InventoryScript.itemData.weaponCatalog.ContainsKey(itemName)) {
                 WeaponData w = new WeaponData();
-                w.duration = snapshot.Child("duration").Value.ToString();
-                w.acquireDate = snapshot.Child("acquireDate").Value.ToString();
-                w.equippedSuppressor = "";
-                w.equippedSight = "";
-                w.equippedClip = "";
+                w.PropertyChanged += OnPlayerInfoChange;
+                w.Duration = snapshot.Child("duration").Value.ToString();
+                w.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
+                w.EquippedSuppressor = "";
+                w.EquippedSight = "";
+                w.EquippedClip = "";
                 inventory.myWeapons.Add(itemName, w);
             } else if (InventoryScript.itemData.modCatalog.ContainsKey(itemName)) {
                 ModData m = new ModData();
-                m.name = snapshot.Child("name").Value.ToString();
-                m.duration = snapshot.Child("duration").Value.ToString();
-                m.acquireDate = snapshot.Child("acquireDate").Value.ToString();
-                m.equippedOn = snapshot.Child("equippedOn").Value.ToString();
+                m.PropertyChanged += OnPlayerInfoChange;
+                m.Name = snapshot.Child("name").Value.ToString();
+                m.Duration = snapshot.Child("duration").Value.ToString();
+                m.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
+                m.EquippedOn = snapshot.Child("equippedOn").Value.ToString();
                 inventory.myMods.Add(itemName, m);
             }
         } else if (transactionType == 'd') {
             string itemName = snapshot.Key;
             if (inventory.myTops.ContainsKey(itemName)) {
+                inventory.myTops[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myTops.Remove(itemName);
             } else if (inventory.myBottoms.ContainsKey(itemName)) {
+                inventory.myBottoms[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myBottoms.Remove(itemName);
             } else if (inventory.myArmor.ContainsKey(itemName)) {
+                inventory.myArmor[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myArmor.Remove(itemName);
             } else if (inventory.myCharacters.ContainsKey(itemName)) {
+                inventory.myCharacters[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myCharacters.Remove(itemName);
             } else if (inventory.myFacewear.ContainsKey(itemName)) {
+                inventory.myFacewear[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myFacewear.Remove(itemName);
             } else if (inventory.myFootwear.ContainsKey(itemName)) {
+                inventory.myFootwear[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myFootwear.Remove(itemName);
             } else if (inventory.myHeadgear.ContainsKey(itemName)) {
+                inventory.myHeadgear[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myHeadgear.Remove(itemName);
             } else if (inventory.myWeapons.ContainsKey(itemName)) {
+                inventory.myWeapons[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myWeapons.Remove(itemName);
             } else if (inventory.myMods.ContainsKey(itemName)) {
+                inventory.myMods[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myMods.Remove(itemName);
             }
         } else if (transactionType == 'm') {
@@ -454,53 +449,53 @@ public class PlayerData : MonoBehaviour
             if (inventory.myTops.ContainsKey(itemName)) {
                 EquipmentData e = null;
                 e = inventory.myTops[itemName];
-                e.duration = snapshot.Child("duration").Value.ToString();
-                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                e.Duration = snapshot.Child("duration").Value.ToString();
+                e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
             } else if (inventory.myBottoms.ContainsKey(itemName)) {
                 EquipmentData e = null;
                 e = inventory.myBottoms[itemName];
-                e.duration = snapshot.Child("duration").Value.ToString();
-                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                e.Duration = snapshot.Child("duration").Value.ToString();
+                e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
             } else if (inventory.myArmor.ContainsKey(itemName)) {
                 ArmorData e = null;
                 e = inventory.myArmor[itemName];
-                e.duration = snapshot.Child("duration").Value.ToString();
-                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                e.Duration = snapshot.Child("duration").Value.ToString();
+                e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
             } else if (inventory.myCharacters.ContainsKey(itemName)) {
                 CharacterData e = null;
                 e = inventory.myCharacters[itemName];
-                e.duration = snapshot.Child("duration").Value.ToString();
-                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                e.Duration = snapshot.Child("duration").Value.ToString();
+                e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
             } else if (inventory.myFacewear.ContainsKey(itemName)) {
                 EquipmentData e = null;
                 e = inventory.myFacewear[itemName];
-                e.duration = snapshot.Child("duration").Value.ToString();
-                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                e.Duration = snapshot.Child("duration").Value.ToString();
+                e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
             } else if (inventory.myFootwear.ContainsKey(itemName)) {
                 EquipmentData e = null;
                 e = inventory.myFootwear[itemName];
-                e.duration = snapshot.Child("duration").Value.ToString();
-                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                e.Duration = snapshot.Child("duration").Value.ToString();
+                e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
             } else if (inventory.myHeadgear.ContainsKey(itemName)) {
                 EquipmentData e = null;
                 e = inventory.myHeadgear[itemName];
-                e.duration = snapshot.Child("duration").Value.ToString();
-                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
+                e.Duration = snapshot.Child("duration").Value.ToString();
+                e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
             } else if (inventory.myWeapons.ContainsKey(itemName)) {
                 WeaponScript wepScript = bodyReference.GetComponent<WeaponScript>();
                 WeaponData e = null;
                 e = inventory.myWeapons[itemName];
-                string prevSuppId = e.equippedSuppressor;
-                string prevSightId = e.equippedSight;
-                string prevClipId = e.equippedClip;
+                string prevSuppId = e.EquippedSuppressor;
+                string prevSightId = e.EquippedSight;
+                string prevClipId = e.EquippedClip;
                 string newSuppId = snapshot.Child("equippedSuppressor").Value.ToString();
                 string newSightId = snapshot.Child("equippedSight").Value.ToString();
                 string newClipId = snapshot.Child("equippedClip").Value.ToString();
-                e.duration = snapshot.Child("duration").Value.ToString();
-                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
-                e.equippedSuppressor = snapshot.Child("equippedSuppressor").Value.ToString();
-                e.equippedSight = snapshot.Child("equippedSight").Value.ToString();
-                e.equippedClip = snapshot.Child("equippedClip").Value.ToString();
+                e.Duration = snapshot.Child("duration").Value.ToString();
+                e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
+                e.EquippedSuppressor = snapshot.Child("equippedSuppressor").Value.ToString();
+                e.EquippedSight = snapshot.Child("equippedSight").Value.ToString();
+                e.EquippedClip = snapshot.Child("equippedClip").Value.ToString();
                 if (prevSuppId != newSuppId) {
                     wepScript.UnequipMod("Suppressor", itemName);
                     if (newSuppId != "") {
@@ -521,15 +516,16 @@ public class PlayerData : MonoBehaviour
                 }
             } else if (inventory.myMods.ContainsKey(itemName)) {
                 ModData e = inventory.myMods[itemName];
-                e.duration = snapshot.Child("duration").Value.ToString();
-                e.acquireDate = snapshot.Child("acquireDate").Value.ToString();
-                e.equippedOn = snapshot.Child("equippedOn").Value.ToString();
+                e.Duration = snapshot.Child("duration").Value.ToString();
+                e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
+                e.EquippedOn = snapshot.Child("equippedOn").Value.ToString();
             }
         }
     }
 
     public void LoadInventory(Dictionary<object, object> snapshot) {
         inventoryDataModifyLegalFlag = true;
+        playerDataModifyLegalFlag = true;
         Dictionary<object, object> subSnapshot = (Dictionary<object, object>)snapshot["weapons"];
         IEnumerator dataLoaded = subSnapshot.GetEnumerator();
         // Load weapons
@@ -537,8 +533,8 @@ public class PlayerData : MonoBehaviour
             WeaponData w = new WeaponData();
             Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
             string key = entry.Key.ToString();
-            w.acquireDate = thisSnapshot["acquireDate"].ToString();
-            w.duration = thisSnapshot["duration"].ToString();
+            w.AcquireDate = thisSnapshot["acquireDate"].ToString();
+            w.Duration = thisSnapshot["duration"].ToString();
             object equippedSuppressor = null;
             if (thisSnapshot.ContainsKey("equippedSuppressor")) {
                 equippedSuppressor = thisSnapshot["equippedSuppressor"];
@@ -551,9 +547,10 @@ public class PlayerData : MonoBehaviour
             if (thisSnapshot.ContainsKey("equippedSight")) {
                 equippedSight = thisSnapshot["equippedSight"];
             }
-            w.equippedSuppressor = (equippedSuppressor == null ? "" : equippedSuppressor.ToString());
-            w.equippedClip = (equippedClip == null ? "" : equippedClip.ToString());
-            w.equippedSight = (equippedSight == null ? "" : equippedSight.ToString());
+            w.EquippedSuppressor = (equippedSuppressor == null ? "" : equippedSuppressor.ToString());
+            w.EquippedClip = (equippedClip == null ? "" : equippedClip.ToString());
+            w.EquippedSight = (equippedSight == null ? "" : equippedSight.ToString());
+            w.PropertyChanged += OnPlayerInfoChange;
             inventory.myWeapons.Add(key, w);
         }
         subSnapshot = (Dictionary<object, object>)snapshot["characters"];
@@ -563,9 +560,11 @@ public class PlayerData : MonoBehaviour
             CharacterData c = new CharacterData();
             Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
             string key = entry.Key.ToString();
-            c.acquireDate = thisSnapshot["acquireDate"].ToString();
-            c.duration = thisSnapshot["duration"].ToString();
+            c.AcquireDate = thisSnapshot["acquireDate"].ToString();
+            c.Duration = thisSnapshot["duration"].ToString();
+            c.PropertyChanged += OnPlayerInfoChange;
             // If item is expired, delete from database. Else, add it to inventory
+            c.PropertyChanged += OnPlayerInfoChange;
             inventory.myCharacters.Add(key, c);
         }
         if (snapshot.ContainsKey("armor")) {
@@ -576,8 +575,9 @@ public class PlayerData : MonoBehaviour
                 ArmorData a = new ArmorData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
-                a.acquireDate = thisSnapshot["acquireDate"].ToString();
-                a.duration = thisSnapshot["duration"].ToString();
+                a.AcquireDate = thisSnapshot["acquireDate"].ToString();
+                a.Duration = thisSnapshot["duration"].ToString();
+                a.PropertyChanged += OnPlayerInfoChange;
                 inventory.myArmor.Add(key, a);
             }
         }
@@ -589,8 +589,9 @@ public class PlayerData : MonoBehaviour
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
-                d.acquireDate = thisSnapshot["acquireDate"].ToString();
-                d.duration = thisSnapshot["duration"].ToString();
+                d.AcquireDate = thisSnapshot["acquireDate"].ToString();
+                d.Duration = thisSnapshot["duration"].ToString();
+                d.PropertyChanged += OnPlayerInfoChange;
                 inventory.myTops.Add(key, d);
             }
         }
@@ -602,8 +603,9 @@ public class PlayerData : MonoBehaviour
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
-                d.acquireDate = thisSnapshot["acquireDate"].ToString();
-                d.duration = thisSnapshot["duration"].ToString();
+                d.AcquireDate = thisSnapshot["acquireDate"].ToString();
+                d.Duration = thisSnapshot["duration"].ToString();
+                d.PropertyChanged += OnPlayerInfoChange;
                 inventory.myBottoms.Add(key, d);
             }
         }
@@ -615,8 +617,9 @@ public class PlayerData : MonoBehaviour
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
-                d.acquireDate = thisSnapshot["acquireDate"].ToString();
-                d.duration = thisSnapshot["duration"].ToString();
+                d.AcquireDate = thisSnapshot["acquireDate"].ToString();
+                d.Duration = thisSnapshot["duration"].ToString();
+                d.PropertyChanged += OnPlayerInfoChange;
                 inventory.myFootwear.Add(key, d);
             }
         }
@@ -628,8 +631,9 @@ public class PlayerData : MonoBehaviour
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
-                d.acquireDate = thisSnapshot["acquireDate"].ToString();
-                d.duration = thisSnapshot["duration"].ToString();
+                d.AcquireDate = thisSnapshot["acquireDate"].ToString();
+                d.Duration = thisSnapshot["duration"].ToString();
+                d.PropertyChanged += OnPlayerInfoChange;
                 inventory.myHeadgear.Add(key, d);
             }
         }
@@ -641,8 +645,9 @@ public class PlayerData : MonoBehaviour
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
-                d.acquireDate = thisSnapshot["acquireDate"].ToString();
-                d.duration = thisSnapshot["duration"].ToString();
+                d.AcquireDate = thisSnapshot["acquireDate"].ToString();
+                d.Duration = thisSnapshot["duration"].ToString();
+                d.PropertyChanged += OnPlayerInfoChange;
                 inventory.myFacewear.Add(key, d);
             }
         }
@@ -654,14 +659,16 @@ public class PlayerData : MonoBehaviour
                 ModData m = new ModData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
-                m.name = thisSnapshot["name"].ToString();
-                m.acquireDate = thisSnapshot["acquireDate"].ToString();
-                m.duration = thisSnapshot["duration"].ToString();
-                m.equippedOn = thisSnapshot["equippedOn"].ToString();
+                m.Name = thisSnapshot["name"].ToString();
+                m.AcquireDate = thisSnapshot["acquireDate"].ToString();
+                m.Duration = thisSnapshot["duration"].ToString();
+                m.EquippedOn = thisSnapshot["equippedOn"].ToString();
+                m.PropertyChanged += OnPlayerInfoChange;
                 inventory.myMods.Add(key, m);
             }
         }
         inventoryDataModifyLegalFlag = false;
+        playerDataModifyLegalFlag = false;
     }
 
     public void FindBodyRef(string character)
@@ -682,14 +689,14 @@ public class PlayerData : MonoBehaviour
         if (titleRef == null) {
             titleRef = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
         }
-        if (bodyReference.GetComponent<EquipmentScript>().equippedCharacter == PlayerData.playerdata.info.equippedCharacter)
+        if (bodyReference.GetComponent<EquipmentScript>().equippedCharacter == PlayerData.playerdata.info.EquippedCharacter)
         {
             return;
         }
         WeaponScript weaponScrpt = bodyReference.GetComponent<WeaponScript>();
         Destroy(bodyReference);
         bodyReference = null;
-        bodyReference = Instantiate(titleRef.characterRefs[titleRef.charactersRefsIndices[PlayerData.playerdata.info.equippedCharacter]]);
+        bodyReference = Instantiate(titleRef.characterRefs[titleRef.charactersRefsIndices[PlayerData.playerdata.info.EquippedCharacter]]);
         EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
         WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
         characterEquips.ts = titleRef;
@@ -707,7 +714,6 @@ public class PlayerData : MonoBehaviour
             return;
         }
 
-        ModInfo newModInfo = new ModInfo();
         WeaponScript myWeps = bodyReference.GetComponent<WeaponScript>();
         Dictionary<string, object> inputData = new Dictionary<string, object>();
         inputData["callHash"] = DAOScript.functionsCallHash;
@@ -764,28 +770,31 @@ public class PlayerData : MonoBehaviour
     }
 
     public ModInfo LoadModDataForWeapon(string weaponName) {
+        playerDataModifyLegalFlag = true;
         ModInfo modInfo = new ModInfo();
-        modInfo.weaponName = weaponName;
+        modInfo.PropertyChanged += OnPlayerInfoChange;
+        modInfo.WeaponName = weaponName;
 
         foreach (KeyValuePair<string, ModData> entry in PlayerData.playerdata.inventory.myMods)
         {
             // If the mod is equipped on the given weapon, load it into the requested mod info
             ModData m = entry.Value;
-            if (m.equippedOn.Equals(weaponName)) {
-                Mod modDetails = InventoryScript.itemData.modCatalog[m.name];
+            if (m.EquippedOn.Equals(weaponName)) {
+                Mod modDetails = InventoryScript.itemData.modCatalog[m.Name];
                 if (modDetails.category.Equals("Suppressor")) {
-                    modInfo.suppressorId = entry.Key;
-                    modInfo.equippedSuppressor = m.name;
+                    modInfo.SuppressorId = entry.Key;
+                    modInfo.EquippedSuppressor = m.Name;
                 } else if (modDetails.category.Equals("Sight")) {
-                    modInfo.sightId = entry.Key;
-                    modInfo.equippedSight = m.name;
+                    modInfo.SightId = entry.Key;
+                    modInfo.EquippedSight = m.Name;
                 } else if (modDetails.category.Equals("Clip")) {
                     // modInfo.clipId = m.id;
-                    modInfo.equippedClip = m.name;
+                    modInfo.EquippedClip = m.Name;
                 }
             }
         }
         
+        playerDataModifyLegalFlag = false;
         return modInfo;
     }
 
@@ -879,8 +888,8 @@ public class PlayerData : MonoBehaviour
 
     public void AddExpAndGpToPlayer(uint aExp, uint aGp) {
         // Save locally
-        uint newExp = (uint)Mathf.Min(PlayerData.playerdata.info.exp + aExp, PlayerData.MAX_EXP);
-        uint newGp = (uint)Mathf.Min(PlayerData.playerdata.info.gp + aGp, PlayerData.MAX_GP);
+        uint newExp = (uint)Mathf.Min(PlayerData.playerdata.info.Exp + aExp, PlayerData.MAX_EXP);
+        uint newGp = (uint)Mathf.Min(PlayerData.playerdata.info.Gp + aGp, PlayerData.MAX_GP);
         // Save to DB
         Dictionary<string, object> inputData = new Dictionary<string, object>();
         inputData["callHash"] = DAOScript.functionsCallHash;
@@ -1206,9 +1215,9 @@ public class PlayerData : MonoBehaviour
         }
         if (args.Snapshot.Value != null) {
             playerDataModifyLegalFlag = true;
-            PlayerData.playerdata.info.gp = uint.Parse(args.Snapshot.Value.ToString());
+            PlayerData.playerdata.info.Gp = uint.Parse(args.Snapshot.Value.ToString());
             if (titleRef != null) {
-                titleRef.myGpTxt.text = ""+PlayerData.playerdata.info.gp;
+                titleRef.myGpTxt.text = ""+PlayerData.playerdata.info.Gp;
             }
             playerDataModifyLegalFlag = false;
         }
@@ -1225,9 +1234,9 @@ public class PlayerData : MonoBehaviour
         }
         if (args.Snapshot.Value != null) {
             playerDataModifyLegalFlag = true;
-            PlayerData.playerdata.info.kash = uint.Parse(args.Snapshot.Value.ToString());
+            PlayerData.playerdata.info.Kash = uint.Parse(args.Snapshot.Value.ToString());
             if (titleRef != null) {
-                titleRef.myKashTxt.text = ""+PlayerData.playerdata.info.kash;
+                titleRef.myKashTxt.text = ""+PlayerData.playerdata.info.Kash;
             }
             playerDataModifyLegalFlag = false;
         }
@@ -1245,7 +1254,7 @@ public class PlayerData : MonoBehaviour
         playerDataModifyLegalFlag = true;
         // When the armor is changed, equip it
         string itemEquipped = args.Snapshot.Value.ToString();
-        PlayerData.playerdata.info.equippedArmor = itemEquipped;
+        PlayerData.playerdata.info.EquippedArmor = itemEquipped;
         OnArmorChange(itemEquipped);
         playerDataModifyLegalFlag = false;
     }
@@ -1254,7 +1263,7 @@ public class PlayerData : MonoBehaviour
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
-            thisEquipScript.equippedArmor = PlayerData.playerdata.info.equippedArmor;
+            thisEquipScript.equippedArmor = PlayerData.playerdata.info.EquippedArmor;
             if (thisEquipScript.equippedArmorTopRef != null) {
                 Destroy(thisEquipScript.equippedArmorTopRef);
                 thisEquipScript.equippedArmorTopRef = null;
@@ -1267,11 +1276,11 @@ public class PlayerData : MonoBehaviour
 
         if (itemEquipped != "") {
             Armor a = InventoryScript.itemData.armorCatalog[itemEquipped];
-            GameObject p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathTop] : InventoryScript.itemData.itemReferences[a.femalePrefabPathTop]);
+            GameObject p = (InventoryScript.itemData.characterCatalog[info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathTop] : InventoryScript.itemData.itemReferences[a.femalePrefabPathTop]);
             thisEquipScript.equippedArmorTopRef = (GameObject)Instantiate(p);
             thisEquipScript.equippedArmorTopRef.transform.SetParent(bodyReference.transform);
 
-            p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathBottom] : InventoryScript.itemData.itemReferences[a.femalePrefabPathBottom]);
+            p = (InventoryScript.itemData.characterCatalog[info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathBottom] : InventoryScript.itemData.itemReferences[a.femalePrefabPathBottom]);
             thisEquipScript.equippedArmorBottomRef = (GameObject)Instantiate(p);
             thisEquipScript.equippedArmorBottomRef.transform.SetParent(bodyReference.transform);
             
@@ -1307,7 +1316,7 @@ public class PlayerData : MonoBehaviour
         playerDataModifyLegalFlag = true;
         // When the top is changed, equip it
         string itemEquipped = args.Snapshot.Value.ToString();
-        PlayerData.playerdata.info.equippedTop = itemEquipped;
+        PlayerData.playerdata.info.EquippedTop = itemEquipped;
         OnTopChange(itemEquipped);
         playerDataModifyLegalFlag = false;
     }
@@ -1316,7 +1325,7 @@ public class PlayerData : MonoBehaviour
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
-            thisEquipScript.equippedTop = PlayerData.playerdata.info.equippedTop;
+            thisEquipScript.equippedTop = PlayerData.playerdata.info.EquippedTop;
             if (thisEquipScript.equippedTopRef != null) {
                 Destroy(thisEquipScript.equippedTopRef);
                 thisEquipScript.equippedTopRef = null;
@@ -1324,7 +1333,7 @@ public class PlayerData : MonoBehaviour
         }
         
         Equipment e = InventoryScript.itemData.equipmentCatalog[itemEquipped];
-        GameObject p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        GameObject p = (InventoryScript.itemData.characterCatalog[info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         thisEquipScript.equippedTopRef = (GameObject)Instantiate(p);
         thisEquipScript.equippedTopRef.transform.SetParent(bodyReference.transform);
         MeshFixer m = thisEquipScript.equippedTopRef.GetComponentInChildren<MeshFixer>();
@@ -1352,7 +1361,7 @@ public class PlayerData : MonoBehaviour
         playerDataModifyLegalFlag = true;
         // When the bottom is changed, equip it
         string itemEquipped = args.Snapshot.Value.ToString();
-        PlayerData.playerdata.info.equippedBottom = itemEquipped;
+        PlayerData.playerdata.info.EquippedBottom = itemEquipped;
         OnBottomChange(itemEquipped);
         playerDataModifyLegalFlag = false;
     }
@@ -1361,7 +1370,7 @@ public class PlayerData : MonoBehaviour
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
-            thisEquipScript.equippedBottom = PlayerData.playerdata.info.equippedBottom;
+            thisEquipScript.equippedBottom = PlayerData.playerdata.info.EquippedBottom;
             if (thisEquipScript.equippedBottomRef != null) {
                 Destroy(thisEquipScript.equippedBottomRef);
                 thisEquipScript.equippedBottomRef = null;
@@ -1369,7 +1378,7 @@ public class PlayerData : MonoBehaviour
         }
 
         Equipment e = InventoryScript.itemData.equipmentCatalog[itemEquipped];
-        GameObject p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        GameObject p = (InventoryScript.itemData.characterCatalog[info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         thisEquipScript.equippedBottomRef = (GameObject)Instantiate(p);
         thisEquipScript.equippedBottomRef.transform.SetParent(bodyReference.transform);
         MeshFixer m = thisEquipScript.equippedBottomRef.GetComponentInChildren<MeshFixer>();
@@ -1395,7 +1404,7 @@ public class PlayerData : MonoBehaviour
         playerDataModifyLegalFlag = true;
         // When the character is changed, equip it
         string itemEquipped = args.Snapshot.Value.ToString();
-        PlayerData.playerdata.info.equippedCharacter = itemEquipped;
+        PlayerData.playerdata.info.EquippedCharacter = itemEquipped;
         UpdateBodyRef();
         OnCharacterChange(itemEquipped);
         playerDataModifyLegalFlag = false;
@@ -1405,7 +1414,7 @@ public class PlayerData : MonoBehaviour
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
 
         if (thisEquipScript != null) {
-            thisEquipScript.equippedCharacter = PlayerData.playerdata.info.equippedCharacter;
+            thisEquipScript.equippedCharacter = PlayerData.playerdata.info.EquippedCharacter;
             if (thisEquipScript.equippedSkinRef != null) {
                 Destroy(thisEquipScript.equippedSkinRef);
                 thisEquipScript.equippedSkinRef = null;
@@ -1430,6 +1439,10 @@ public class PlayerData : MonoBehaviour
         m.rootBone = thisEquipScript.myBones.transform;
         m.AdaptMesh();
         thisEquipScript.EquipSkin(e.skinType);
+        if (titleRef != null) {
+            titleRef.equippedTopSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+            titleRef.shopEquippedTopSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+        }
         // thisEquipScript.EquipBottom(c.defaultBottom, null);
         e = InventoryScript.itemData.equipmentCatalog[c.defaultBottom];
         p = (c.gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
@@ -1439,6 +1452,10 @@ public class PlayerData : MonoBehaviour
         m.target = thisEquipScript.myBottomRenderer.gameObject;
         m.rootBone = thisEquipScript.myBones.transform;
         m.AdaptMesh();
+        if (titleRef != null) {
+            titleRef.equippedBottomSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+            titleRef.shopEquippedBottomSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+        }
         // thisEquipScript.EquipFootwear((c.gender == 'M' ? "Standard Boots (M)" : "Standard Boots (F)"), null);
         e = InventoryScript.itemData.equipmentCatalog[c.gender == 'M' ? "Standard Boots (M)" : "Standard Boots (F)"];
         p = (c.gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
@@ -1448,18 +1465,22 @@ public class PlayerData : MonoBehaviour
         m.target = thisEquipScript.myFootwearRenderer.gameObject;
         m.rootBone = thisEquipScript.myBones.transform;
         m.AdaptMesh();
+        if (titleRef != null) {
+            titleRef.equippedFootSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+            titleRef.shopEquippedFootSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
+        }
 
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         // Reequip primary
-        Weapon w = InventoryScript.itemData.weaponCatalog[info.equippedPrimary];
+        Weapon w = InventoryScript.itemData.weaponCatalog[info.EquippedPrimary];
         string weaponType = w.category;
         GameObject wepEquipped = thisWepScript.weaponHolder.LoadWeapon(w.prefabPath);
         
         if (w.suppressorCompatible) {
-            thisWepScript.EquipMod("Suppressor", primaryModInfo.equippedSuppressor, info.equippedPrimary, null);
+            thisWepScript.EquipMod("Suppressor", primaryModInfo.EquippedSuppressor, info.EquippedPrimary, null);
         }
         if (w.sightCompatible) {
-            thisWepScript.EquipMod("Sight", primaryModInfo.equippedSight, info.equippedPrimary, null);
+            thisWepScript.EquipMod("Sight", primaryModInfo.EquippedSight, info.EquippedPrimary, null);
         }
 
         if (titleRef.currentCharGender == 'M') {
@@ -1480,7 +1501,7 @@ public class PlayerData : MonoBehaviour
         }
         playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
-        PlayerData.playerdata.info.equippedFacewear = itemEquipped;
+        PlayerData.playerdata.info.EquippedFacewear = itemEquipped;
         OnFacewearChange(itemEquipped);
         playerDataModifyLegalFlag = false;
     }
@@ -1498,9 +1519,9 @@ public class PlayerData : MonoBehaviour
 
         if (itemEquipped != "") {
             Equipment e = InventoryScript.itemData.equipmentCatalog[itemEquipped];
-            GameObject p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+            GameObject p = (InventoryScript.itemData.characterCatalog[info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
             thisEquipScript.equippedFacewearRef = (GameObject)Instantiate(p);
-            thisEquipScript.equippedFacewearRef.transform.SetParent(gameObject.transform);
+            thisEquipScript.equippedFacewearRef.transform.SetParent(bodyReference.transform);
             MeshFixer m = thisEquipScript.equippedFacewearRef.GetComponentInChildren<MeshFixer>();
             m.target = thisEquipScript.myFacewearRenderer.gameObject;
             m.rootBone = thisEquipScript.myBones.transform;
@@ -1527,7 +1548,7 @@ public class PlayerData : MonoBehaviour
         playerDataModifyLegalFlag = true;
         // When the footwear is changed, equip it
         string itemEquipped = args.Snapshot.Value.ToString();
-        PlayerData.playerdata.info.equippedFootwear = itemEquipped;
+        PlayerData.playerdata.info.EquippedFootwear = itemEquipped;
         OnFootwearChange(itemEquipped);
         playerDataModifyLegalFlag = false;
     }
@@ -1536,7 +1557,7 @@ public class PlayerData : MonoBehaviour
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
-            thisEquipScript.equippedFootwear = PlayerData.playerdata.info.equippedFootwear;
+            thisEquipScript.equippedFootwear = PlayerData.playerdata.info.EquippedFootwear;
             if (thisEquipScript.equippedFootwearRef != null) {
                 Destroy(thisEquipScript.equippedFootwearRef);
                 thisEquipScript.equippedFootwearRef = null;
@@ -1544,7 +1565,7 @@ public class PlayerData : MonoBehaviour
         }
 
         Equipment e = InventoryScript.itemData.equipmentCatalog[itemEquipped];
-        GameObject p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        GameObject p = (InventoryScript.itemData.characterCatalog[info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         thisEquipScript.equippedFootwearRef = (GameObject)Instantiate(p);
         thisEquipScript.equippedFootwearRef.transform.SetParent(bodyReference.transform);
         MeshFixer m = thisEquipScript.equippedFootwearRef.GetComponentInChildren<MeshFixer>();
@@ -1569,7 +1590,8 @@ public class PlayerData : MonoBehaviour
         }
         playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
-        PlayerData.playerdata.info.equippedHeadgear = itemEquipped;
+        PlayerData.playerdata.info.EquippedHeadgear = itemEquipped;
+        Debug.Log("qq");
         OnHeadgearChange(itemEquipped);
         playerDataModifyLegalFlag = false;
     }
@@ -1587,9 +1609,9 @@ public class PlayerData : MonoBehaviour
 
         if (itemEquipped != "") {
             Equipment e = InventoryScript.itemData.equipmentCatalog[itemEquipped];
-            GameObject p = (InventoryScript.itemData.characterCatalog[info.equippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+            GameObject p = (InventoryScript.itemData.characterCatalog[info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
             thisEquipScript.equippedHeadgearRef = (GameObject)Instantiate(p);
-            thisEquipScript.equippedHeadgearRef.transform.SetParent(gameObject.transform);
+            thisEquipScript.equippedHeadgearRef.transform.SetParent(bodyReference.transform);
             MeshFixer m = thisEquipScript.equippedHeadgearRef.GetComponentInChildren<MeshFixer>();
             m.target = thisEquipScript.myHeadgearRenderer.gameObject;
             m.rootBone = thisEquipScript.myBones.transform;
@@ -1615,7 +1637,7 @@ public class PlayerData : MonoBehaviour
         }
         playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
-        PlayerData.playerdata.info.equippedMelee = itemEquipped;
+        PlayerData.playerdata.info.EquippedMelee = itemEquipped;
         OnMeleeChange(itemEquipped);
         playerDataModifyLegalFlag = false;
     }
@@ -1640,7 +1662,7 @@ public class PlayerData : MonoBehaviour
         }
         playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
-        PlayerData.playerdata.info.equippedPrimary = itemEquipped;
+        PlayerData.playerdata.info.EquippedPrimary = itemEquipped;
         OnPrimaryChange(itemEquipped);
         playerDataModifyLegalFlag = false;
     }
@@ -1656,10 +1678,10 @@ public class PlayerData : MonoBehaviour
         GameObject wepEquipped = thisWepScript.weaponHolder.LoadWeapon(w.prefabPath);
         
         if (w.suppressorCompatible) {
-            thisWepScript.EquipMod("Suppressor", modInfo.equippedSuppressor, itemEquipped, null);
+            thisWepScript.EquipMod("Suppressor", modInfo.EquippedSuppressor, itemEquipped, null);
         }
         if (w.sightCompatible) {
-            thisWepScript.EquipMod("Sight", modInfo.equippedSight, itemEquipped, null);
+            thisWepScript.EquipMod("Sight", modInfo.EquippedSight, itemEquipped, null);
         }
 
         if (titleRef.currentCharGender == 'M') {
@@ -1684,7 +1706,7 @@ public class PlayerData : MonoBehaviour
         }
         playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
-        PlayerData.playerdata.info.equippedPrimary = itemEquipped;
+        PlayerData.playerdata.info.EquippedPrimary = itemEquipped;
         OnSecondaryChange(itemEquipped);
         playerDataModifyLegalFlag = false;
     }
@@ -1699,10 +1721,10 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.secondaryModInfo = modInfo;
 
         if (w.suppressorCompatible) {
-            thisWepScript.EquipMod("Suppressor", modInfo.equippedSuppressor, itemEquipped, null);
+            thisWepScript.EquipMod("Suppressor", modInfo.EquippedSuppressor, itemEquipped, null);
         }
         if (w.sightCompatible) {
-            thisWepScript.EquipMod("Sight", modInfo.equippedSight, itemEquipped, null);
+            thisWepScript.EquipMod("Sight", modInfo.EquippedSight, itemEquipped, null);
         }
 
         titleRef.equippedSecondarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
@@ -1720,7 +1742,7 @@ public class PlayerData : MonoBehaviour
         }
         playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
-        PlayerData.playerdata.info.equippedSupport = itemEquipped;
+        PlayerData.playerdata.info.EquippedSupport = itemEquipped;
         OnSupportChange(itemEquipped);
         playerDataModifyLegalFlag = false;
     }
@@ -1764,9 +1786,11 @@ public class PlayerData : MonoBehaviour
 
         // When inventory item has been updated, find the item that has been updated and update it
         if (args.Snapshot.Value != null) {
+            playerDataModifyLegalFlag = true;
             inventoryDataModifyLegalFlag = true;
             RefreshInventory(args.Snapshot, 'm');
             inventoryDataModifyLegalFlag = false;
+            playerDataModifyLegalFlag = false;
         }
     }
 
@@ -1782,9 +1806,11 @@ public class PlayerData : MonoBehaviour
 
         // When inventory item has been added, also add that item to this game session
         if (args.Snapshot.Value != null) {
+            playerDataModifyLegalFlag = true;
             inventoryDataModifyLegalFlag = true;
             RefreshInventory(args.Snapshot, 'a');
             inventoryDataModifyLegalFlag = false;
+            playerDataModifyLegalFlag = false;
         }
     }
 
@@ -1800,9 +1826,11 @@ public class PlayerData : MonoBehaviour
 
         // When inventory item has been removed, also remove that item from this game session
         if (args.Snapshot.Value != null) {
+            playerDataModifyLegalFlag = true;
             inventoryDataModifyLegalFlag = true;
             RefreshInventory(args.Snapshot, 'd');
             inventoryDataModifyLegalFlag = false;
+            playerDataModifyLegalFlag = false;
         }
     }
 
@@ -1842,28 +1870,196 @@ public class PlayerData : MonoBehaviour
     }
 }
 
-public class PlayerInfo
+public class PlayerInfo : INotifyPropertyChanged
 {
-    public string defaultChar;
-    public string defaultWeapon;
-	public string playername;
-    public string equippedCharacter;
-    public string equippedHeadgear;
-    public string equippedFacewear;
-    public string equippedTop;
-    public string equippedBottom;
-    public string equippedFootwear;
-    public string equippedArmor;
-    public string equippedPrimary;
-    public string equippedSecondary;
-    public string equippedSupport;
-    public string equippedMelee;
-    public uint exp;
-    public uint gp;
-    public uint kash;
+    private string defaultChar;
+    public string DefaultChar
+    {
+        get { return defaultChar; }
+        set
+        { 
+            defaultChar = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("defaultChar"));
+        }
+    }
 
-    public delegate void OnPlayerInfoChangeDelegate();
-    public event OnPlayerInfoChangeDelegate OnPlayerInfoChange;
+    private string defaultWeapon;
+    public string DefaultWeapon
+    {
+        get { return defaultWeapon; }
+        set
+        { 
+            defaultWeapon = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("defaultWeapon"));
+        }
+    }
+
+	private string playername;
+    public string Playername
+    {
+        get { return playername; }
+        set
+        { 
+            playername = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("playername"));
+        }
+    }
+
+    private string equippedCharacter;
+    public string EquippedCharacter
+    {
+        get { return equippedCharacter; }
+        set
+        { 
+            equippedCharacter = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedCharacter"));
+        }
+    }
+
+    private string equippedHeadgear;
+    public string EquippedHeadgear
+    {
+        get { return equippedHeadgear; }
+        set
+        { 
+            equippedHeadgear = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedHeadgear"));
+        }
+    }
+
+    private string equippedFacewear;
+    public string EquippedFacewear
+    {
+        get { return equippedFacewear; }
+        set
+        { 
+            equippedFacewear = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedFacewear"));
+        }
+    }
+
+    private string equippedTop;
+    public string EquippedTop
+    {
+        get { return equippedTop; }
+        set
+        { 
+            equippedTop = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedTop"));
+        }
+    }
+
+    private string equippedBottom;
+    public string EquippedBottom
+    {
+        get { return equippedBottom; }
+        set
+        { 
+            equippedBottom = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedBottom"));
+        }
+    }
+
+    private string equippedFootwear;
+    public string EquippedFootwear
+    {
+        get { return equippedFootwear; }
+        set
+        { 
+            equippedFootwear = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedFootwear"));
+        }
+    }
+
+    private string equippedArmor;
+    public string EquippedArmor
+    {
+        get { return equippedArmor; }
+        set
+        { 
+            equippedArmor = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedArmor"));
+        }
+    }
+
+    private string equippedPrimary;
+    public string EquippedPrimary
+    {
+        get { return equippedPrimary; }
+        set
+        { 
+            equippedPrimary = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedPrimary"));
+        }
+    }
+
+    private string equippedSecondary;
+    public string EquippedSecondary
+    {
+        get { return equippedSecondary; }
+        set
+        { 
+            equippedSecondary = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedSecondary"));
+        }
+    }
+
+    private string equippedSupport;
+    public string EquippedSupport
+    {
+        get { return equippedSupport; }
+        set
+        { 
+            equippedSupport = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedSupport"));
+        }
+    }
+
+    private string equippedMelee;
+    public string EquippedMelee
+    {
+        get { return equippedMelee; }
+        set
+        { 
+            equippedMelee = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedMelee"));
+        }
+    }
+
+    private uint exp;
+    public uint Exp
+    {
+        get { return exp; }
+        set
+        { 
+            exp = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("exp"));
+        }
+    }
+
+    private uint gp;
+    public uint Gp
+    {
+        get { return gp; }
+        set
+        { 
+            gp = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("gp"));
+        }
+    }
+
+    private uint kash;
+    public uint Kash
+    {
+        get { return kash; }
+        set
+        {
+            kash = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("kash"));
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
 }
 
 public class PlayerInventory {
@@ -1907,10 +2103,8 @@ public class PlayerInventory {
     public ObservableDict<string, CharacterData> myCharacters;
     public ObservableDict<string, ModData> myMods;
 
-    public delegate void OnInventoryChangeDelegate();
-    public event OnInventoryChangeDelegate OnInventoryChange;
-
     protected virtual void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+        Debug.Log("hhhhh");
         if (!PlayerData.playerdata.inventoryDataModifyLegalFlag) {
             if (PlayerData.playerdata == null) {
                 Application.Quit();
@@ -1931,6 +2125,7 @@ public class PlayerInventory {
     }
 
     protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+        Debug.Log("hhheeey");
         if (!PlayerData.playerdata.inventoryDataModifyLegalFlag) {
             if (PlayerData.playerdata == null) {
                 Application.Quit();
@@ -1953,42 +2148,236 @@ public class PlayerInventory {
 
 public class ModInfo
 {
-    public string suppressorId;
-    public string sightId;
-    public string weaponName;
-    public string equippedSuppressor;
-    public string equippedSight;
-    public string equippedClip;
+    private string suppressorId;
+    public string SuppressorId {
+        get { return suppressorId; }
+        set
+        { 
+            suppressorId = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("suppressorId"));
+        }
+    }
+    private string sightId;
+    public string SightId {
+        get { return sightId; }
+        set
+        { 
+            sightId = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("sightId"));
+        }
+    }
+
+    private string weaponName;
+    public string WeaponName {
+        get { return weaponName; }
+        set
+        { 
+            weaponName = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("weaponName"));
+        }
+    }
+
+    private string equippedSuppressor;
+    public string EquippedSuppressor {
+        get { return equippedSuppressor; }
+        set
+        { 
+            equippedSuppressor = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedSuppressor"));
+        }
+    }
+
+    private string equippedSight;
+    public string EquippedSight {
+        get { return equippedSight; }
+        set
+        { 
+            equippedSight = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedSight"));
+        }
+    }
+
+    private string equippedClip;
+    public string EquippedClip {
+        get { return equippedClip; }
+        set
+        { 
+            equippedClip = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedClip"));
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
 }
 
 public class WeaponData {
-    public string acquireDate;
-    public string duration;
-    public string equippedSuppressor;
-    public string equippedSight;
-    public string equippedClip;
+    private string acquireDate;
+    public string AcquireDate {
+        get { return acquireDate; }
+        set
+        { 
+            acquireDate = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("acquireDate"));
+        }
+    }
+
+    private string duration;
+    public string Duration {
+        get { return duration; }
+        set
+        { 
+            duration = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("duration"));
+        }
+    }
+
+    private string equippedSuppressor;
+    public string EquippedSuppressor {
+        get { return equippedSuppressor; }
+        set
+        { 
+            equippedSuppressor = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedSuppressor"));
+        }
+    }
+
+    private string equippedSight;
+    public string EquippedSight {
+        get { return equippedSight; }
+        set
+        { 
+            equippedSight = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedSight"));
+        }
+    }
+
+    private string equippedClip;
+    public string EquippedClip {
+        get { return equippedClip; }
+        set
+        { 
+            equippedClip = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedClip"));
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
 }
 
 public class EquipmentData {
-    public string acquireDate;
-    public string duration;
+    private string acquireDate;
+    public string AcquireDate {
+        get { return acquireDate; }
+        set
+        { 
+            acquireDate = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("acquireDate"));
+        }
+    }
+
+    private string duration;
+    public string Duration {
+        get { return duration; }
+        set
+        { 
+            duration = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("duration"));
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
 }
 
 public class ModData {
-    public string name;
-    public string equippedOn;
-    public string acquireDate;
-    public string duration;
+    private string name;
+    public string Name {
+        get { return name; }
+        set
+        { 
+            name = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("name"));
+        }
+    }
+
+    private string equippedOn;
+    public string EquippedOn {
+        get { return equippedOn; }
+        set
+        { 
+            equippedOn = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("equippedOn"));
+        }
+    }
+
+    private string acquireDate;
+    public string AcquireDate {
+        get { return acquireDate; }
+        set
+        { 
+            acquireDate = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("acquireDate"));
+        }
+    }
+
+    private string duration;
+    public string Duration {
+        get { return duration; }
+        set
+        { 
+            duration = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("duration"));
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
 }
 
 public class ArmorData {
-    public string acquireDate;
-    public string duration;
+    private string acquireDate;
+    public string AcquireDate {
+        get { return acquireDate; }
+        set
+        { 
+            acquireDate = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("acquireDate"));
+        }
+    }
+
+    private string duration;
+    public string Duration {
+        get { return duration; }
+        set
+        { 
+            duration = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("duration"));
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
 }
 
 public class CharacterData {
-    public string acquireDate;
-    public string duration;
+    private string acquireDate;
+    public string AcquireDate {
+        get { return acquireDate; }
+        set
+        { 
+            acquireDate = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("acquireDate"));
+        }
+    }
+
+    private string duration;
+    public string Duration {
+        get { return duration; }
+        set
+        { 
+            duration = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("duration"));
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
 }
 
 public class Rank {

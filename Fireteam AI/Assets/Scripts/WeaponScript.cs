@@ -83,10 +83,10 @@ public class WeaponScript : MonoBehaviour
             if (!onSetup) {
                 //EquipWeapon(PlayerData.playerdata.info.equippedPrimaryType, PlayerData.playerdata.info.equippedPrimary, null);
                 //EquipWeapon(PlayerData.playerdata.info.equippedSecondaryType, PlayerData.playerdata.info.equippedSecondary, null);
-                equippedPrimaryWeapon = PlayerData.playerdata.info.equippedPrimary;
-                equippedSecondaryWeapon = PlayerData.playerdata.info.equippedSecondary;
-                equippedSupportWeapon = PlayerData.playerdata.info.equippedSupport;
-                equippedMeleeWeapon = PlayerData.playerdata.info.equippedMelee;
+                equippedPrimaryWeapon = PlayerData.playerdata.info.EquippedPrimary;
+                equippedSecondaryWeapon = PlayerData.playerdata.info.EquippedSecondary;
+                equippedSupportWeapon = PlayerData.playerdata.info.EquippedSupport;
+                equippedMeleeWeapon = PlayerData.playerdata.info.EquippedMelee;
                 currentAmmoPrimary = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].clipCapacity;
                 currentAmmoSecondary = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
                 currentAmmoSupport = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].clipCapacity;
@@ -121,7 +121,7 @@ public class WeaponScript : MonoBehaviour
         weaponActionScript.totalAmmoLeft = totalPrimaryAmmoLeft;
         modInfo = PlayerData.playerdata.primaryModInfo;
 
-        pView.RPC("RpcInitializeWeapon", RpcTarget.All, 1, equippedWep, modInfo.equippedSuppressor, modInfo.equippedSight);
+        pView.RPC("RpcInitializeWeapon", RpcTarget.All, 1, equippedWep, modInfo.EquippedSuppressor, modInfo.EquippedSight);
     }
 
     [PunRPC]
@@ -271,7 +271,7 @@ public class WeaponScript : MonoBehaviour
             equippedWep = equippedSupportWeapon;
             modInfo = PlayerData.playerdata.supportModInfo;
         }
-        pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, modInfo.equippedSuppressor, modInfo.equippedSight);
+        pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, modInfo.EquippedSuppressor, modInfo.EquippedSight);
     }
 
     [PunRPC]
@@ -428,13 +428,13 @@ public class WeaponScript : MonoBehaviour
                 equippedWepInGame = weaponName;
                 EquipAssaultRifleInGame();
                 weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
-                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.SetCurrentAimDownSightPos(m.EquippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", m.equippedSuppressor, weaponName, null);
+                    EquipMod("Suppressor", m.EquippedSuppressor, weaponName, null);
                 }
                 if (w.sightCompatible) {
-                    EquipMod("Sight", m.equippedSight, weaponName, null);
+                    EquipMod("Sight", m.EquippedSight, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
@@ -454,13 +454,13 @@ public class WeaponScript : MonoBehaviour
                 equippedWepInGame = weaponName;
                 EquipSmgInGame();
                 weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
-                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.SetCurrentAimDownSightPos(m.EquippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", m.equippedSuppressor, weaponName, null);
+                    EquipMod("Suppressor", m.EquippedSuppressor, weaponName, null);
                 }
                 if (w.sightCompatible) {
-                    EquipMod("Sight", m.equippedSight, weaponName, null);
+                    EquipMod("Sight", m.EquippedSight, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
@@ -480,13 +480,13 @@ public class WeaponScript : MonoBehaviour
                 equippedWepInGame = weaponName;
                 EquipLmgInGame();
                 weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
-                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.SetCurrentAimDownSightPos(m.EquippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", m.equippedSuppressor, weaponName, null);
+                    EquipMod("Suppressor", m.EquippedSuppressor, weaponName, null);
                 }
                 if (w.sightCompatible) {
-                    EquipMod("Sight", m.equippedSight, weaponName, null);
+                    EquipMod("Sight", m.EquippedSight, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
@@ -506,13 +506,13 @@ public class WeaponScript : MonoBehaviour
                 equippedWepInGame = weaponName;
                 EquipShotgunInGame();
                 weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
-                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.SetCurrentAimDownSightPos(m.EquippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", m.equippedSuppressor, weaponName, null);
+                    EquipMod("Suppressor", m.EquippedSuppressor, weaponName, null);
                 }
                 if (w.sightCompatible) {
-                    EquipMod("Sight", m.equippedSight, weaponName, null);
+                    EquipMod("Sight", m.EquippedSight, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
@@ -532,13 +532,13 @@ public class WeaponScript : MonoBehaviour
                 equippedWepInGame = weaponName;
                 EquipSniperRifleInGame();
                 weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
-                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.SetCurrentAimDownSightPos(m.EquippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", m.equippedSuppressor, weaponName, null);
+                    EquipMod("Suppressor", m.EquippedSuppressor, weaponName, null);
                 }
                 if (w.sightCompatible) {
-                    EquipMod("Sight", m.equippedSight, weaponName, null);
+                    EquipMod("Sight", m.EquippedSight, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
@@ -558,13 +558,13 @@ public class WeaponScript : MonoBehaviour
                 equippedWepInGame = weaponName;
                 EquipPistolInGame();
                 weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
-                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.SetCurrentAimDownSightPos(m.EquippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (w.suppressorCompatible) {
-                    EquipMod("Suppressor", m.equippedSuppressor, weaponName, null);
+                    EquipMod("Suppressor", m.EquippedSuppressor, weaponName, null);
                 }
                 if (w.sightCompatible) {
-                    EquipMod("Sight", m.equippedSight, weaponName, null);
+                    EquipMod("Sight", m.EquippedSight, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
@@ -584,7 +584,7 @@ public class WeaponScript : MonoBehaviour
                 equippedWepInGame = weaponName;
                 EquipLauncherInGame();
                 weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
-                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.SetCurrentAimDownSightPos(m.EquippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
@@ -604,7 +604,7 @@ public class WeaponScript : MonoBehaviour
                 equippedWepInGame = weaponName;
                 EquipExplosiveInGame();
                 weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
-                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.SetCurrentAimDownSightPos(m.EquippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
@@ -624,7 +624,7 @@ public class WeaponScript : MonoBehaviour
                 equippedWepInGame = weaponName;
                 EquipBoosterInGame();
                 weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
-                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.SetCurrentAimDownSightPos(m.EquippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
@@ -646,7 +646,7 @@ public class WeaponScript : MonoBehaviour
                 EquipDeployableInGame();
                 weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
                 HideWeapon(currentAmmoSupport == 0 && totalSupportAmmoLeft == 0);
-                weaponActionScript.SetCurrentAimDownSightPos(m.equippedSight);
+                weaponActionScript.SetCurrentAimDownSightPos(m.EquippedSight);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);

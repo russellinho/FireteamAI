@@ -14,16 +14,16 @@ public class DrawWeaponBehavior : StateMachineBehaviour
        was.isDrawing = true;
        ws = was.playerActionScript.weaponScript;
        if (ws.currentlyEquippedType == 1) {
-          ws.EquipWeapon(ws.equippedPrimaryWeapon, PlayerData.playerdata.primaryModInfo.equippedSuppressor, PlayerData.playerdata.primaryModInfo.equippedSight, null);
+          ws.EquipWeapon(ws.equippedPrimaryWeapon, PlayerData.playerdata.primaryModInfo.EquippedSuppressor, PlayerData.playerdata.primaryModInfo.EquippedSight, null);
        } else if (ws.currentlyEquippedType == 2) {
-          ws.EquipWeapon(ws.equippedSecondaryWeapon, PlayerData.playerdata.secondaryModInfo.equippedSuppressor, PlayerData.playerdata.secondaryModInfo.equippedSight, null);
+          ws.EquipWeapon(ws.equippedSecondaryWeapon, PlayerData.playerdata.secondaryModInfo.EquippedSuppressor, PlayerData.playerdata.secondaryModInfo.EquippedSight, null);
          if (was.currentAmmo > 0) {
             ws.ToggleWarhead(true);
           } else {
              ws.ToggleWarhead(false);
           }
        } else if (ws.currentlyEquippedType == 4) {
-          ws.EquipWeapon(ws.equippedSupportWeapon, PlayerData.playerdata.supportModInfo.equippedSuppressor, PlayerData.playerdata.supportModInfo.equippedSight, null);
+          ws.EquipWeapon(ws.equippedSupportWeapon, PlayerData.playerdata.supportModInfo.EquippedSuppressor, PlayerData.playerdata.supportModInfo.EquippedSight, null);
        }
     }
 
