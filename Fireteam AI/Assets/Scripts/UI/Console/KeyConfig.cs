@@ -2,7 +2,7 @@
 
 namespace Koobando.UI.Console
 {
-    [CreateAssetMenu(fileName = "Untitled Key Config", menuName = "Quantum Console/Key Config")]
+    [CreateAssetMenu(fileName = "Untitled Key Config", menuName = "Console/Key Config")]
     public class KeyConfig : ScriptableObject
     {
         public ModifierKeyCombo HideConsoleKey = KeyCode.None;

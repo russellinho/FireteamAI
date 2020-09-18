@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 
 namespace Koobando.UI.Console
 {
-    [CreateAssetMenu(fileName = "Untitled Theme", menuName = "Quantum Console/Theme")]
+    [CreateAssetMenu(fileName = "Untitled Theme", menuName = "Console/Theme")]
     public class Theme : ScriptableObject
     {
         [FormerlySerializedAs("fontTMP")]
@@ -78,7 +78,7 @@ namespace Koobando.UI.Console
             {
                 leftScoper = formatter.LeftScoper.Replace("\\n", "\n");
                 seperator = formatter.SeperatorString.Replace("\\n", "\n");
-                rightScoper = formatter.RightScoper.Replace("\\n", "\n");
+                rightScoper = formatter.RightScoper.Replace("\\n", "\n"); //qq
             }
         }
     }

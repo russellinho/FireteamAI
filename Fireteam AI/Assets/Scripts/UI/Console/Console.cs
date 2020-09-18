@@ -63,7 +63,7 @@ namespace Koobando.UI.Console
         [FormerlySerializedAs("supportedState")]
         [SerializeField] private SupportedState _supportedState = SupportedState.Always;
         [FormerlySerializedAs("activateOnStartup")]
-        [SerializeField] private bool _activateOnStartup = true;
+        [SerializeField] private bool _activateOnStartup = false;
         [FormerlySerializedAs("initialiseOnStartup")]
         [SerializeField] private bool _initialiseOnStartup = false;
         [FormerlySerializedAs("closeOnSubmit")]
@@ -118,22 +118,22 @@ namespace Koobando.UI.Console
 #pragma warning restore 0414, 0067, 0649
 
         #region Callbacks
-        /// <summary>Callback executed when the QC state changes.</summary>
+        /// <summary>Callback executed when the state changes.</summary>
         public event Action OnStateChange;
 
-        /// <summary>Callback executed when the QC invokes a command.</summary>
+        /// <summary>Callback executed when the invokes a command.</summary>
         public event Action<string> OnInvoke;
 
-        /// <summary>Callback executed when the QC is cleared.</summary>
+        /// <summary>Callback executed when the is cleared.</summary>
         public event Action OnClear;
 
-        /// <summary>Callback executed when text has been logged to the QC.</summary>
+        /// <summary>Callback executed when text has been logged.</summary>
         public event Action<string> OnLog;
 
-        /// <summary>Callback executed when the QC is activated.</summary>
+        /// <summary>Callback executed when the is activated.</summary>
         public event Action OnActivate;
 
-        /// <summary>Callback executed when the QC is deactivated.</summary>
+        /// <summary>Callback executed when the is deactivated.</summary>
         public event Action OnDeactivate;
         #endregion
 
@@ -268,7 +268,7 @@ namespace Koobando.UI.Console
 
         private string GetTableGenerationText()
         {
-            string text = $"Q:\\>Quantum Console Processor is initialising";
+            string text = $"Q:\\>Console Processor is initialising";
             text += $"\nQ:\\>Table generation under progress";
             text += $"\nQ:\\>{ConsoleProcessor.LoadedCommandCount} commands have been loaded";
             if (ConsoleProcessor.TableIsGenerating) { text += "..."; }
@@ -504,7 +504,7 @@ namespace Koobando.UI.Console
             return commandResult;
         }
 
-        [Command("qc-script-extern", "Executes an external source of QC script file, where each line is a separate QC command.", MonoTargetType.Registry, Platform.AllPlatforms ^ Platform.WebGLPlayer)]
+        [Command("qc-script-extern", "Executes an external source of script file, where each line is a separate command.", MonoTargetType.Registry, Platform.AllPlatforms ^ Platform.WebGLPlayer)]
         public async Task InvokeExternalCommandsAsync(string filePath)
         {
             using (StreamReader reader = new StreamReader(filePath))
@@ -787,7 +787,7 @@ namespace Koobando.UI.Console
                     Deactivate();
                 }
             }
-            else { DisableQC(); }
+            else { Disable(); }
         }
 
         private bool IsSupportedState()
@@ -812,7 +812,7 @@ namespace Koobando.UI.Console
             Deactivate();
         }
 
-        private void DisableQC()
+        private void Disable()
         {
             Deactivate();
             enabled = false;

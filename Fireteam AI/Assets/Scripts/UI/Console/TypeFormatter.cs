@@ -22,13 +22,16 @@ namespace Koobando.UI.Console
     public abstract class TypeFormatter : ISerializationCallbackReceiver
     {
         public Type Type { get; private set; }
-        [SerializeField, HideInInspector] private string _type;
+        [SerializeField] private string _type;
 
         [Preserve]
         protected TypeFormatter(Type type) { Type = type; }
 
         public void OnAfterDeserialize()
         {
+            if (_type == "") {
+                return;
+            }
             Type = Type.GetType(_type, false);
             if (Type == null) { Type = KoobandoParser.ParseType(_type.Split(',')[0]); }
         }

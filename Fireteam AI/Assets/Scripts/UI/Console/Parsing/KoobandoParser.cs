@@ -173,7 +173,7 @@ namespace Koobando.UI.Console
 
         private static readonly Dictionary<string, Type> _reverseTypeDisplayNames = _typeDisplayNames.Invert();
         private static readonly Assembly[] _loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-        private static readonly string[] _defaultNamespaces = new string[] { "System", "System.Collections", "System.Collections.Generic", "UnityEngine", "UnityEngine.UI", "QFSW.QC" };
+        private static readonly string[] _defaultNamespaces = new string[] { "System", "System.Collections", "System.Collections.Generic", "UnityEngine", "UnityEngine.UI", "Koobando.UI.Console" };
         private static readonly List<string> _namespaceTable = new List<string>(_defaultNamespaces);
 
         private static readonly Regex _arrayTypeRegex = new Regex(@"^.*\[,*\]$");
@@ -352,6 +352,7 @@ namespace Koobando.UI.Console
         {
             foreach (string namespaceName in namespaces)
             {
+                Debug.Log($"{namespaceName}.{typeName}");
                 Type type = GetTypeFromAssemblies($"{namespaceName}.{typeName}", assemblies, false, ignoreCase);
                 if (type != null) { return type; }
             }
