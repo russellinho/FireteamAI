@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Koobando.UI.Console
 {
     /// <summary>
-    /// Marks the associated method as a command, allowing it to be loaded by the QuantumConsoleProcessor. This means it will be usable as a command from a Quantum Console.
+    /// Marks the associated method as a command, allowing it to be loaded by the ConsoleProcessor. This means it will be usable as a command from a Console.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true, Inherited = false)]
     public sealed class CommandAttribute : Attribute
