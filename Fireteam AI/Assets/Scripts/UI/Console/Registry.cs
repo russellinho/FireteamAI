@@ -53,7 +53,7 @@ namespace Koobando.UI.Console
             lock (_objectRegistry)
             {
                 if (_objectRegistry.ContainsKey(type) && _objectRegistry[type].Contains(obj)) { _objectRegistry[type].Remove(obj); }
-                else { throw new ArgumentException($"Could not deregister object '{obj}' of type {type.GetDisplayName()} as it was not found in the registry."); }
+                // else { throw new ArgumentException($"Could not deregister object '{obj}' of type {type.GetDisplayName()} as it was not found in the registry."); }
             }
         }
 

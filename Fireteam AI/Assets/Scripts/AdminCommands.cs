@@ -17,7 +17,12 @@ public class AdminCommands : MonoBehaviour
         HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("adminBanPlayerFireteam");
         func.CallAsync(inputData).ContinueWith((task) => {
             Dictionary<object, object> results = (Dictionary<object, object>)task.Result.Data;
-            Debug.Log("[BanPlayer] returned successfully with status code [" + results["status"] + "]");
+            string returnStatus = results["status"].ToString();
+            if (returnStatus == "200") {
+                Debug.Log("[BanPlayer] executed successfully with status code [200]");
+            } else {
+                Debug.LogError("[BanPlayer] executed unsuccessfully with status code [" + returnStatus + "]");
+            }
         });
     }
 }

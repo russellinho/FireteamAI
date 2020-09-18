@@ -11,6 +11,7 @@ using Photon.Realtime;
 using Photon.Pun;
 using Firebase.Database;
 using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
+using Koobando.UI.Console;
 
 public class PlayerData : MonoBehaviour
 {
@@ -72,6 +73,7 @@ public class PlayerData : MonoBehaviour
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedSupport").ValueChanged += HandleSupportChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedTop").ValueChanged += HandleTopChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildAdded += HandleBanEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildChanged += HandleBanEvent;
 
             // TODO: Add the rest of the categories for added, removed, and changed
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/facewear").ChildAdded += HandleInventoryAdded;
@@ -233,6 +235,8 @@ public class PlayerData : MonoBehaviour
                     info.Exp = uint.Parse(playerDataSnap["exp"].ToString());
                     info.Gp = uint.Parse(playerDataSnap["gp"].ToString());
                     info.Kash = uint.Parse(playerDataSnap["kash"].ToString());
+                    info.PrivilegeLevel = results["privilegeLevel"].ToString();
+                    
                     if (playerDataSnap.ContainsKey("equipment")) {
                         Dictionary<object, object> equipmentSnap = (Dictionary<object, object>)playerDataSnap["equipment"];
                         info.EquippedCharacter = equipmentSnap["equippedCharacter"].ToString();
@@ -1761,16 +1765,18 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleBanEvent(object sender, ChildChangedEventArgs args) {
+        if (bodyReference == null) {
+            return;
+        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-
-        if (args.Snapshot.Child("ban").Value != null) {
-            Dictionary<object, object> banValues = (Dictionary<object, object>)args.Snapshot.Value;
-            string reason = banValues["reason"].ToString();
-            TriggerEmergencyExit("You've been banned for the following reason:\n" + reason + "\nIf you feel this was done in error, you can dispute it by opening a ticket at \"www.koobando.com/support\".");
+        
+        if (args.Snapshot.Value != null) {
+            if (args.Snapshot.Key.ToString() != "reason") return;
+            TriggerEmergencyExit("You've been banned for the following reason:\n" + args.Snapshot.Value.ToString() + "\nIf you feel this was done in error, you can dispute it by opening a ticket at \"www.koobando.com/support\".");
         }
     }
 
@@ -2059,6 +2065,17 @@ public class PlayerInfo : INotifyPropertyChanged
         }
     }
 
+    private string privilegeLevel;
+    public string PrivilegeLevel
+    {
+        get { return privilegeLevel; }
+        set
+        {
+            privilegeLevel = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("privilegeLevel"));
+        }
+    }
+
     public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
 }
 
@@ -2104,7 +2121,6 @@ public class PlayerInventory {
     public ObservableDict<string, ModData> myMods;
 
     protected virtual void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-        Debug.Log("hhhhh");
         if (!PlayerData.playerdata.inventoryDataModifyLegalFlag) {
             if (PlayerData.playerdata == null) {
                 Application.Quit();
@@ -2125,7 +2141,6 @@ public class PlayerInventory {
     }
 
     protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs e) {
-        Debug.Log("hhheeey");
         if (!PlayerData.playerdata.inventoryDataModifyLegalFlag) {
             if (PlayerData.playerdata == null) {
                 Application.Quit();

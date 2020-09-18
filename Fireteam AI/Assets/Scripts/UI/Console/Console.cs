@@ -156,6 +156,7 @@ namespace Koobando.UI.Console
         private string _previousText;
         private bool _isGeneratingTable;
         private bool _consoleRequiresFlush;
+        private bool adminChecked;
 
         private TextMeshProUGUI[] _textComponents;
 
@@ -185,8 +186,20 @@ namespace Koobando.UI.Console
             }
         }
 
+        void AdminCheck() {
+            if (!adminChecked) {
+                if (PlayerData.playerdata != null && PlayerData.playerdata.info != null && PlayerData.playerdata.info.PrivilegeLevel != null) {
+                    if (PlayerData.playerdata.info.PrivilegeLevel != "admin") {
+                        Destroy(gameObject);
+                    }
+                    adminChecked = true;
+                }
+            }
+        }
+
         private void Update()
         {
+            AdminCheck();
             if (!IsActive)
             {
                 if (_keyConfig.ShowConsoleKey.IsPressed() || _keyConfig.ToggleConsoleVisibilityKey.IsPressed())
