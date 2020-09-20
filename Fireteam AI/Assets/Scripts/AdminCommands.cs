@@ -25,4 +25,21 @@ public class AdminCommands : MonoBehaviour
             }
         });
     }
+
+    [Command]
+    public void UnbanPlayer(string playerId) {
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["playerId"] = playerId;
+
+        HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("unbanPlayerFireteam");
+        func.CallAsync(inputData).ContinueWith((task) => {
+            Dictionary<object, object> results = (Dictionary<object, object>)task.Result.Data;
+            string returnStatus = results["status"].ToString();
+            if (returnStatus == "200") {
+                Debug.Log("[UnbanPlayer] executed successfully with status code [200]");
+            } else {
+                Debug.LogError("[UnbanPlayer] executed unsuccessfully with status code [" + returnStatus + "]");
+            }
+        });
+    }
 }
