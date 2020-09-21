@@ -401,6 +401,20 @@ public class WeaponScript : MonoBehaviour
         weaponHolderFpc.SetWeapon(drawnWeaponReference.transform, true);
     }
 
+    public void PreviewWeapon(string name) {
+        Character c = InventoryScript.itemData.characterCatalog[equipmentScript.equippedCharacter];
+
+        Weapon w = InventoryScript.itemData.weaponCatalog[name];
+        string weaponType = w.category;
+        GameObject wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+
+        if (c.gender == 'M') {
+            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
+        } else {
+            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
+        }
+    }
+
     public void EquipWeapon(string weaponName, string suppressorName, string sightName, GameObject shopItemRef) {
         if (onTitle) {
             EquipWeaponOnTitle(weaponName, suppressorName, sightName, shopItemRef);
@@ -695,7 +709,7 @@ public class WeaponScript : MonoBehaviour
         Dictionary<string, object> inputData = new Dictionary<string, object>();
         inputData["callHash"] = DAOScript.functionsCallHash;
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
-        inputData["equipped" + type] = name;
+        inputData["equipped" + type] = weaponName;
         
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {

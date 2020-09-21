@@ -214,6 +214,40 @@ public class EquipmentScript : MonoBehaviour
         });
     }
 
+    public void PreviewCharacter(string name) {
+        if (name.Equals(equippedCharacter)) {
+            return;
+        }
+
+        equippedCharacter = name;
+        Character c = InventoryScript.itemData.characterCatalog[name];
+        Destroy(PlayerData.playerdata.bodyReference);
+        PlayerData.playerdata.bodyReference = null;
+        PlayerData.playerdata.FindBodyRef(name);
+
+        PreviewTop(c.defaultTop);
+        PreviewBottom(c.defaultBottom);
+        PreviewFootwear("Standard Boots (" + c.gender + ")");
+
+        // Reequip primary for preview
+        Weapon w = InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedPrimary];
+        string weaponType = w.category;
+        GameObject wepEquipped = tws.weaponHolder.LoadWeapon(w.prefabPath);
+        
+        if (w.suppressorCompatible) {
+            tws.EquipMod("Suppressor", PlayerData.playerdata.primaryModInfo.EquippedSuppressor, PlayerData.playerdata.info.EquippedPrimary, null);
+        }
+        if (w.sightCompatible) {
+            tws.EquipMod("Sight", PlayerData.playerdata.primaryModInfo.EquippedSight, PlayerData.playerdata.info.EquippedPrimary, null);
+        }
+
+        if (c.gender == 'M') {
+            tws.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
+        } else {
+            tws.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
+        }
+    }
+
     public void ReequipWeapons() {
         ModInfo primaryModInfo = PlayerData.playerdata.LoadModDataForWeapon(PlayerData.playerdata.info.EquippedPrimary);
         ModInfo secondaryModInfo = PlayerData.playerdata.LoadModDataForWeapon(PlayerData.playerdata.info.EquippedSecondary);
@@ -289,6 +323,34 @@ public class EquipmentScript : MonoBehaviour
                 }
             }
         });
+    }
+
+    public void PreviewTop(string name) {
+        // Don't preview if not same gender or if restricted to certain characers
+        char charGender = GetGender();
+        Equipment e = InventoryScript.itemData.equipmentCatalog[name];
+        if (e.gender != charGender) {
+            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            return;
+        }
+        if (IsCharacterRestricted(e)) {
+            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
+            return;
+        }
+        equippedTop = name;
+
+        Destroy(equippedTopRef);
+        equippedTopRef = null;
+
+        GameObject p = (InventoryScript.itemData.characterCatalog[PlayerData.playerdata.info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedTopRef = (GameObject)Instantiate(p);
+        equippedTopRef.transform.SetParent(PlayerData.playerdata.bodyReference.transform);
+        MeshFixer m = equippedTopRef.GetComponentInChildren<MeshFixer>();
+        m.target = myTopRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+
+        EquipSkin(e.skinType);
     }
 
     void EquipTopForSetup() {
@@ -382,6 +444,32 @@ public class EquipmentScript : MonoBehaviour
         });
     }
 
+    public void PreviewBottom(string name) {
+        // Don't preview if not same gender or if restricted to certain characers
+        char charGender = GetGender();
+        Equipment e = InventoryScript.itemData.equipmentCatalog[name];
+        if (e.gender != charGender) {
+            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            return;
+        }
+        if (IsCharacterRestricted(e)) {
+            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
+            return;
+        }
+        equippedBottom = name;
+
+        Destroy(equippedBottomRef);
+        equippedBottomRef = null;
+
+        GameObject p = (InventoryScript.itemData.characterCatalog[PlayerData.playerdata.info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedBottomRef = (GameObject)Instantiate(p);
+        equippedBottomRef.transform.SetParent(PlayerData.playerdata.bodyReference.transform);
+        MeshFixer m = equippedBottomRef.GetComponentInChildren<MeshFixer>();
+        m.target = myBottomRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
+
     void EquipBottomForSetup() {
         equippedBottomRef = (GameObject)Instantiate((GameObject)Resources.Load(bottomPrefabSetupPath));
         equippedBottomRef.transform.SetParent(gameObject.transform);
@@ -447,6 +535,32 @@ public class EquipmentScript : MonoBehaviour
         });
     }
 
+    public void PreviewFootwear(string name) {
+        // Don't preview if not same gender or if restricted to certain characers
+        char charGender = GetGender();
+        Equipment e = InventoryScript.itemData.equipmentCatalog[name];
+        if (e.gender != charGender) {
+            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            return;
+        }
+        if (IsCharacterRestricted(e)) {
+            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
+            return;
+        }
+        equippedFootwear = name;
+
+        Destroy(equippedFootwearRef);
+        equippedFootwearRef = null;
+
+        GameObject p = (InventoryScript.itemData.characterCatalog[PlayerData.playerdata.info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedFootwearRef = (GameObject)Instantiate(p);
+        equippedFootwearRef.transform.SetParent(PlayerData.playerdata.bodyReference.transform);
+        MeshFixer m = equippedFootwearRef.GetComponentInChildren<MeshFixer>();
+        m.target = myFootwearRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
+
     void EquipFootwearForSetup() {
         equippedFootwearRef = (GameObject)Instantiate((GameObject)Resources.Load(footwearPrefabSetupPath));
         equippedFootwearRef.transform.SetParent(gameObject.transform);
@@ -493,6 +607,34 @@ public class EquipmentScript : MonoBehaviour
         });
     }
 
+    public void PreviewFacewear(string name) {
+        // Don't preview if not same gender or if restricted to certain characers
+        char charGender = GetGender();
+        Equipment e = InventoryScript.itemData.equipmentCatalog[name];
+        if (e.gender != charGender) {
+            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            return;
+        }
+        if (IsCharacterRestricted(e)) {
+            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
+            return;
+        }
+        equippedFacewear = name;
+
+        if (equippedFacewearRef != null) {
+            Destroy(equippedFacewearRef);
+            equippedFacewearRef = null;
+        }
+
+        GameObject p = (InventoryScript.itemData.characterCatalog[PlayerData.playerdata.info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedFacewearRef = (GameObject)Instantiate(p);
+        equippedFacewearRef.transform.SetParent(PlayerData.playerdata.bodyReference.transform);
+        MeshFixer m = equippedFacewearRef.GetComponentInChildren<MeshFixer>();
+        m.target = myFacewearRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
+
     public void EquipHeadgear(string name, GameObject shopItemRef) {
         if (name.Equals(equippedHeadgear)) {
             return;
@@ -530,6 +672,34 @@ public class EquipmentScript : MonoBehaviour
         });
     }
 
+    public void PreviewHeadgear(string name) {
+        // Don't preview if not same gender or if restricted to certain characers
+        char charGender = GetGender();
+        Equipment e = InventoryScript.itemData.equipmentCatalog[name];
+        if (e.gender != charGender) {
+            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            return;
+        }
+        if (IsCharacterRestricted(e)) {
+            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
+            return;
+        }
+        equippedHeadgear = name;
+
+        if (equippedHeadgearRef != null) {
+            Destroy(equippedHeadgearRef);
+            equippedHeadgearRef = null;
+        }
+
+        GameObject p = (InventoryScript.itemData.characterCatalog[PlayerData.playerdata.info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
+        equippedHeadgearRef = (GameObject)Instantiate(p);
+        equippedHeadgearRef.transform.SetParent(PlayerData.playerdata.bodyReference.transform);
+        MeshFixer m = equippedHeadgearRef.GetComponentInChildren<MeshFixer>();
+        m.target = myHeadgearRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+    }
+
     public void EquipArmor(string name, GameObject shopItemRef) {
         if (name.Equals(equippedArmor)) {
             return;
@@ -564,6 +734,42 @@ public class EquipmentScript : MonoBehaviour
                 }
             }
         });
+    }
+
+    public void PreviewArmor(string name) {
+        // Don't preview if not same gender or if restricted to certain characers
+        char charGender = GetGender();
+        Armor a = InventoryScript.itemData.armorCatalog[name];
+        if (name.Equals(equippedArmor)) {
+            return;
+        }
+
+        if (equippedArmorTopRef != null) {
+            Destroy(equippedArmorTopRef);
+            equippedArmorTopRef = null;
+        }
+        
+        if (equippedArmorBottomRef != null) {
+            Destroy(equippedArmorBottomRef);
+            equippedArmorBottomRef = null;
+        }
+        equippedArmor = name;
+
+        GameObject p = (InventoryScript.itemData.characterCatalog[PlayerData.playerdata.info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathTop] : InventoryScript.itemData.itemReferences[a.femalePrefabPathTop]);
+        equippedArmorTopRef = (GameObject)Instantiate(p);
+        equippedArmorTopRef.transform.SetParent(PlayerData.playerdata.bodyReference.transform);
+        MeshFixer m = equippedArmorTopRef.GetComponentInChildren<MeshFixer>();
+        m.target = myArmorTopRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
+
+        p = (InventoryScript.itemData.characterCatalog[PlayerData.playerdata.info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathBottom] : InventoryScript.itemData.itemReferences[a.femalePrefabPathBottom]);
+        equippedArmorBottomRef = (GameObject)Instantiate(p);
+        equippedArmorBottomRef.transform.SetParent(PlayerData.playerdata.bodyReference.transform);
+        m = equippedArmorBottomRef.GetComponentInChildren<MeshFixer>();
+        m.target = myArmorBottomRenderer.gameObject;
+        m.rootBone = myBones.transform;
+        m.AdaptMesh();
     }
 
     public void UpdateStats() {

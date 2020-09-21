@@ -335,8 +335,8 @@ public class PlayerData : MonoBehaviour
                     if (itemsExpired.Count > 0) {
                         titleRef.TriggerExpirationPopup(itemsExpired);
                     }
-                    dataLoadedFlag = true;
                     playerDataModifyLegalFlag = false;
+                    dataLoadedFlag = true;
                 } else {
                     TriggerEmergencyExit("Your data could not be loaded. Either your data is corrupted, or the service is unavailable. Please check the website for further details. If this issue persists, please create a ticket at koobando.com/support.");
                 }
@@ -352,20 +352,22 @@ public class PlayerData : MonoBehaviour
         this.primaryModInfo = LoadModDataForWeapon(info.EquippedPrimary);
         this.secondaryModInfo = LoadModDataForWeapon(info.EquippedSecondary);
         this.supportModInfo = LoadModDataForWeapon(info.EquippedSupport);
+        playerDataModifyLegalFlag = true;
         characterEquips.ts = titleRef;
         characterWeps.ts = titleRef;
         OnCharacterChange(info.EquippedCharacter);
         OnHeadgearChange(info.EquippedHeadgear);
         OnFacewearChange(info.EquippedFacewear);
-        // OnTopChange(info.equippedTop);
-        // OnBottomChange(info.equippedBottom);
-        // OnFootwearChange(info.equippedFootwear);
+        OnTopChange(info.EquippedTop);
+        OnBottomChange(info.EquippedBottom);
+        OnFootwearChange(info.EquippedFootwear);
         OnArmorChange(info.EquippedArmor);
         OnPrimaryChange(info.EquippedPrimary);
         OnSecondaryChange(info.EquippedSecondary);
         OnSupportChange(info.EquippedSupport);
         OnMeleeChange(info.EquippedMelee);
         PhotonNetwork.NickName = playername;
+        playerDataModifyLegalFlag = false;
     }
 
     void RefreshInventory(DataSnapshot snapshot, char transactionType) {
@@ -1255,6 +1257,10 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
+
+        if (PlayerData.playerdata.info.EquippedArmor == args.Snapshot.Value.ToString()) {
+            return;
+        }
         playerDataModifyLegalFlag = true;
         // When the armor is changed, equip it
         string itemEquipped = args.Snapshot.Value.ToString();
@@ -1317,6 +1323,10 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
+
+        if (PlayerData.playerdata.info.EquippedTop == args.Snapshot.Value.ToString()) {
+            return;
+        }
         playerDataModifyLegalFlag = true;
         // When the top is changed, equip it
         string itemEquipped = args.Snapshot.Value.ToString();
@@ -1362,6 +1372,10 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
+
+        if (PlayerData.playerdata.info.EquippedBottom == args.Snapshot.Value.ToString()) {
+            return;
+        }
         playerDataModifyLegalFlag = true;
         // When the bottom is changed, equip it
         string itemEquipped = args.Snapshot.Value.ToString();
@@ -1380,7 +1394,7 @@ public class PlayerData : MonoBehaviour
                 thisEquipScript.equippedBottomRef = null;
             }
         }
-
+        
         Equipment e = InventoryScript.itemData.equipmentCatalog[itemEquipped];
         GameObject p = (InventoryScript.itemData.characterCatalog[info.EquippedCharacter].gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         thisEquipScript.equippedBottomRef = (GameObject)Instantiate(p);
@@ -1405,9 +1419,14 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
+
+        if (PlayerData.playerdata.info.EquippedCharacter == args.Snapshot.Value.ToString()) {
+            return;
+        }
         playerDataModifyLegalFlag = true;
         // When the character is changed, equip it
         string itemEquipped = args.Snapshot.Value.ToString();
+        Character c = InventoryScript.itemData.characterCatalog[itemEquipped];
         PlayerData.playerdata.info.EquippedCharacter = itemEquipped;
         UpdateBodyRef();
         OnCharacterChange(itemEquipped);
@@ -1423,6 +1442,18 @@ public class PlayerData : MonoBehaviour
                 Destroy(thisEquipScript.equippedSkinRef);
                 thisEquipScript.equippedSkinRef = null;
             }
+            if (thisEquipScript.equippedTopRef != null) {
+                Destroy(thisEquipScript.equippedTopRef);
+                thisEquipScript.equippedTopRef = null;
+            }
+            if (thisEquipScript.equippedBottomRef != null) {
+                Destroy(thisEquipScript.equippedBottomRef);
+                thisEquipScript.equippedBottomRef = null;
+            }
+            if (thisEquipScript.equippedFootwearRef != null) {
+                Destroy(thisEquipScript.equippedFootwearRef);
+                thisEquipScript.equippedFootwearRef = null;
+            }
         }
 
         Character c = InventoryScript.itemData.characterCatalog[itemEquipped];
@@ -1434,7 +1465,7 @@ public class PlayerData : MonoBehaviour
         }
 
         // thisEquipScript.EquipTop(c.defaultTop, null);        
-        Equipment e = InventoryScript.itemData.equipmentCatalog[c.defaultTop];
+        Equipment e = InventoryScript.itemData.equipmentCatalog[PlayerData.playerdata.info.EquippedTop];
         GameObject p = (c.gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         thisEquipScript.equippedTopRef = (GameObject)Instantiate(p);
         thisEquipScript.equippedTopRef.transform.SetParent(bodyReference.transform);
@@ -1448,7 +1479,7 @@ public class PlayerData : MonoBehaviour
             titleRef.shopEquippedTopSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
         }
         // thisEquipScript.EquipBottom(c.defaultBottom, null);
-        e = InventoryScript.itemData.equipmentCatalog[c.defaultBottom];
+        e = InventoryScript.itemData.equipmentCatalog[PlayerData.playerdata.info.EquippedBottom];
         p = (c.gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         thisEquipScript.equippedBottomRef = (GameObject)Instantiate(p);
         thisEquipScript.equippedBottomRef.transform.SetParent(bodyReference.transform);
@@ -1461,7 +1492,7 @@ public class PlayerData : MonoBehaviour
             titleRef.shopEquippedBottomSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
         }
         // thisEquipScript.EquipFootwear((c.gender == 'M' ? "Standard Boots (M)" : "Standard Boots (F)"), null);
-        e = InventoryScript.itemData.equipmentCatalog[c.gender == 'M' ? "Standard Boots (M)" : "Standard Boots (F)"];
+        e = InventoryScript.itemData.equipmentCatalog[PlayerData.playerdata.info.EquippedFootwear];
         p = (c.gender == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         thisEquipScript.equippedFootwearRef = (GameObject)Instantiate(p);
         thisEquipScript.equippedFootwearRef.transform.SetParent(bodyReference.transform);
@@ -1503,6 +1534,10 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
+
+        if (PlayerData.playerdata.info.EquippedFacewear == args.Snapshot.Value.ToString()) {
+            return;
+        }
         playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.EquippedFacewear = itemEquipped;
@@ -1542,6 +1577,10 @@ public class PlayerData : MonoBehaviour
 
     void HandleFootwearChangeEvent(object sender, ValueChangedEventArgs args) {
         if (bodyReference == null) {
+            return;
+        }
+
+        if (PlayerData.playerdata.info.EquippedFootwear == args.Snapshot.Value.ToString()) {
             return;
         }
         if (args.DatabaseError != null) {
@@ -1592,6 +1631,10 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
+
+        if (PlayerData.playerdata.info.EquippedHeadgear == args.Snapshot.Value.ToString()) {
+            return;
+        }
         playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.EquippedHeadgear = itemEquipped;
@@ -1639,6 +1682,10 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
+
+        if (PlayerData.playerdata.info.EquippedMelee == args.Snapshot.Value.ToString()) {
+            return;
+        }
         playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.EquippedMelee = itemEquipped;
@@ -1662,6 +1709,10 @@ public class PlayerData : MonoBehaviour
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+
+        if (PlayerData.playerdata.info.EquippedPrimary == args.Snapshot.Value.ToString()) {
             return;
         }
         playerDataModifyLegalFlag = true;
@@ -1708,6 +1759,10 @@ public class PlayerData : MonoBehaviour
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
+
+        if (PlayerData.playerdata.info.EquippedSecondary == args.Snapshot.Value.ToString()) {
+            return;
+        }
         playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.EquippedPrimary = itemEquipped;
@@ -1742,6 +1797,10 @@ public class PlayerData : MonoBehaviour
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+
+        if (PlayerData.playerdata.info.EquippedSupport == args.Snapshot.Value.ToString()) {
             return;
         }
         playerDataModifyLegalFlag = true;
