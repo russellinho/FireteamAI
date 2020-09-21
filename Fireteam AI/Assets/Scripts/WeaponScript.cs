@@ -407,6 +407,9 @@ public class WeaponScript : MonoBehaviour
         Weapon w = InventoryScript.itemData.weaponCatalog[name];
         string weaponType = w.category;
         GameObject wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+        if (w.type == "Primary") {
+            equippedPrimaryWeapon = name;
+        }
 
         if (c.gender == 'M') {
             SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);

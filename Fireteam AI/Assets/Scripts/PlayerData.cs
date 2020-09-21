@@ -411,7 +411,7 @@ public class PlayerData : MonoBehaviour
                 w.EquippedSight = "";
                 w.EquippedClip = "";
                 inventory.myWeapons.Add(itemName, w);
-            } else if (InventoryScript.itemData.modCatalog.ContainsKey(itemName)) {
+            } else if (InventoryScript.itemData.modCatalog.ContainsKey(snapshot.Child("name").Value.ToString())) {
                 ModData m = new ModData();
                 m.PropertyChanged += OnPlayerInfoChange;
                 m.Name = snapshot.Child("name").Value.ToString();
@@ -505,19 +505,19 @@ public class PlayerData : MonoBehaviour
                 if (prevSuppId != newSuppId) {
                     wepScript.UnequipMod("Suppressor", itemName);
                     if (newSuppId != "") {
-                        wepScript.EquipMod("Suppressor", newSuppId, itemName, null);
+                        wepScript.EquipMod("Suppressor", inventory.myMods[newSuppId].Name, itemName, null);
                     }
                 }
                 if (prevSightId != newSightId) {
                     wepScript.UnequipMod("Sight", itemName);
                     if (newSightId != "") {
-                        wepScript.EquipMod("Sight", newSightId, itemName, null);
+                        wepScript.EquipMod("Sight", inventory.myMods[newSightId].Name, itemName, null);
                     }
                 }
                 if (prevClipId != newClipId) {
                     wepScript.UnequipMod("Clip", itemName);
                     if (newClipId != "") {
-                        wepScript.EquipMod("Clip", newClipId, itemName, null);
+                        wepScript.EquipMod("Clip", inventory.myMods[newClipId].Name, itemName, null);
                     }
                 }
             } else if (inventory.myMods.ContainsKey(itemName)) {
@@ -536,6 +536,9 @@ public class PlayerData : MonoBehaviour
         IEnumerator dataLoaded = subSnapshot.GetEnumerator();
         // Load weapons
         foreach(KeyValuePair<object, object> entry in subSnapshot) {
+            if (inventory.myWeapons.ContainsKey(entry.Key.ToString())) {
+                continue;
+            }
             WeaponData w = new WeaponData();
             Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
             string key = entry.Key.ToString();
@@ -563,6 +566,9 @@ public class PlayerData : MonoBehaviour
         dataLoaded = subSnapshot.GetEnumerator();
         // Load characters
         foreach(KeyValuePair<object, object> entry in subSnapshot) {
+            if (inventory.myCharacters.ContainsKey(entry.Key.ToString())) {
+                continue;
+            }
             CharacterData c = new CharacterData();
             Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
             string key = entry.Key.ToString();
@@ -578,6 +584,9 @@ public class PlayerData : MonoBehaviour
             dataLoaded = subSnapshot.GetEnumerator();
             // Load armor
             foreach(KeyValuePair<object, object> entry in subSnapshot) {
+                if (inventory.myArmor.ContainsKey(entry.Key.ToString())) {
+                    continue;
+                }
                 ArmorData a = new ArmorData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
@@ -592,6 +601,9 @@ public class PlayerData : MonoBehaviour
             dataLoaded = subSnapshot.GetEnumerator();
             // Load tops
             foreach(KeyValuePair<object, object> entry in subSnapshot) {
+                if (inventory.myTops.ContainsKey(entry.Key.ToString())) {
+                    continue;
+                }
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
@@ -606,6 +618,9 @@ public class PlayerData : MonoBehaviour
             dataLoaded = subSnapshot.GetEnumerator();
             // Load bottoms
             foreach(KeyValuePair<object, object> entry in subSnapshot) {
+                if (inventory.myBottoms.ContainsKey(entry.Key.ToString())) {
+                    continue;
+                }
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
@@ -620,6 +635,9 @@ public class PlayerData : MonoBehaviour
             dataLoaded = subSnapshot.GetEnumerator();
             // Load footwear
             foreach(KeyValuePair<object, object> entry in subSnapshot) {
+                if (inventory.myFootwear.ContainsKey(entry.Key.ToString())) {
+                    continue;
+                }
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
@@ -634,6 +652,9 @@ public class PlayerData : MonoBehaviour
             dataLoaded = subSnapshot.GetEnumerator();
             // Load headgear
             foreach(KeyValuePair<object, object> entry in subSnapshot) {
+                if (inventory.myHeadgear.ContainsKey(entry.Key.ToString())) {
+                    continue;
+                }
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
@@ -648,6 +669,9 @@ public class PlayerData : MonoBehaviour
             dataLoaded = subSnapshot.GetEnumerator();
             // Load facewear
             foreach(KeyValuePair<object, object> entry in subSnapshot) {
+                if (inventory.myFacewear.ContainsKey(entry.Key.ToString())) {
+                    continue;
+                }
                 EquipmentData d = new EquipmentData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
@@ -662,6 +686,9 @@ public class PlayerData : MonoBehaviour
             dataLoaded = subSnapshot.GetEnumerator();
             // Load mods
             foreach(KeyValuePair<object, object> entry in subSnapshot) {
+                if (inventory.myMods.ContainsKey(entry.Key.ToString())) {
+                    continue;
+                }
                 ModData m = new ModData();
                 Dictionary<object, object> thisSnapshot = (Dictionary<object, object>)entry.Value;
                 string key = entry.Key.ToString();
@@ -1510,6 +1537,10 @@ public class PlayerData : MonoBehaviour
         Weapon w = InventoryScript.itemData.weaponCatalog[info.EquippedPrimary];
         string weaponType = w.category;
         GameObject wepEquipped = thisWepScript.weaponHolder.LoadWeapon(w.prefabPath);
+        thisWepScript.equippedPrimaryWeapon = info.EquippedPrimary;
+        thisWepScript.equippedSecondaryWeapon = info.EquippedSecondary;
+        thisWepScript.equippedSupportWeapon = info.EquippedSupport;
+        thisWepScript.equippedMeleeWeapon = info.EquippedMelee;
         
         if (w.suppressorCompatible) {
             thisWepScript.EquipMod("Suppressor", primaryModInfo.EquippedSuppressor, info.EquippedPrimary, null);
@@ -1765,7 +1796,7 @@ public class PlayerData : MonoBehaviour
         }
         playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
-        PlayerData.playerdata.info.EquippedPrimary = itemEquipped;
+        PlayerData.playerdata.info.EquippedSecondary = itemEquipped;
         OnSecondaryChange(itemEquipped);
         playerDataModifyLegalFlag = false;
     }

@@ -225,26 +225,28 @@ public class EquipmentScript : MonoBehaviour
         PlayerData.playerdata.bodyReference = null;
         PlayerData.playerdata.FindBodyRef(name);
 
-        PreviewTop(c.defaultTop);
-        PreviewBottom(c.defaultBottom);
-        PreviewFootwear("Standard Boots (" + c.gender + ")");
+        EquipmentScript previewCharEquips = PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>();
+        previewCharEquips.PreviewTop(c.defaultTop);
+        previewCharEquips.PreviewBottom(c.defaultBottom);
+        previewCharEquips.PreviewFootwear("Standard Boots (" + c.gender + ")");
 
         // Reequip primary for preview
         Weapon w = InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedPrimary];
         string weaponType = w.category;
-        GameObject wepEquipped = tws.weaponHolder.LoadWeapon(w.prefabPath);
+        GameObject wepEquipped = previewCharEquips.tws.weaponHolder.LoadWeapon(w.prefabPath);
+        previewCharEquips.tws.equippedPrimaryWeapon = PlayerData.playerdata.info.EquippedPrimary;
         
         if (w.suppressorCompatible) {
-            tws.EquipMod("Suppressor", PlayerData.playerdata.primaryModInfo.EquippedSuppressor, PlayerData.playerdata.info.EquippedPrimary, null);
+            previewCharEquips.tws.EquipMod("Suppressor", PlayerData.playerdata.primaryModInfo.EquippedSuppressor, PlayerData.playerdata.info.EquippedPrimary, null);
         }
         if (w.sightCompatible) {
-            tws.EquipMod("Sight", PlayerData.playerdata.primaryModInfo.EquippedSight, PlayerData.playerdata.info.EquippedPrimary, null);
+            previewCharEquips.tws.EquipMod("Sight", PlayerData.playerdata.primaryModInfo.EquippedSight, PlayerData.playerdata.info.EquippedPrimary, null);
         }
 
         if (c.gender == 'M') {
-            tws.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
+            previewCharEquips.tws.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
         } else {
-            tws.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
+            previewCharEquips.tws.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
         }
     }
 
@@ -611,7 +613,7 @@ public class EquipmentScript : MonoBehaviour
         // Don't preview if not same gender or if restricted to certain characers
         char charGender = GetGender();
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
-        if (e.gender != charGender) {
+        if (e.gender != 'N' && e.gender != charGender) {
             ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
             return;
         }
@@ -676,7 +678,7 @@ public class EquipmentScript : MonoBehaviour
         // Don't preview if not same gender or if restricted to certain characers
         char charGender = GetGender();
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
-        if (e.gender != charGender) {
+        if (e.gender != 'N' && e.gender != charGender) {
             ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
             return;
         }
