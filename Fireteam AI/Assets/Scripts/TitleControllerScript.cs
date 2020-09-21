@@ -227,7 +227,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
 	void Awake() {
-		if (PlayerData.playerdata == null) {
+		if (PlayerData.playerdata == null || PlayerData.playerdata.bodyReference == null) {
 			ToggleSplashScreen(true, "Loading player details...");
 		}
 		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
