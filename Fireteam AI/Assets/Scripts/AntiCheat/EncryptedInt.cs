@@ -25,7 +25,7 @@
             fakeValueActive = true;
 #else
             bool detectorRunning = EncryptedCheatingDetector.ExistsAndIsRunning;
-            fakeValue = detectorRunning ? value : 0;
+            fakeValue = detectorRunning ? i : 0;
             fakeValueActive = detectorRunning;
 #endif
             initialized = true;
