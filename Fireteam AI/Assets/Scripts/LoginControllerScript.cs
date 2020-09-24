@@ -161,7 +161,7 @@ public class LoginControllerScript : MonoBehaviour
                                     });
                                 } else {
                                     DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").GetValueAsync().ContinueWith(taskC => {
-                                        if (taskC.Result.Child(AuthScript.authHandler.user.UserId).Child("loggedIn").Value.ToString() == "0") {
+                                        if (taskC.Result.Value.ToString() == "0") {
                                             func.CallAsync(inputData).ContinueWith((taskB) => {
                                                 if (taskB.IsFaulted) {
                                                     popupAlertMessage = ""+taskB.Exception;
