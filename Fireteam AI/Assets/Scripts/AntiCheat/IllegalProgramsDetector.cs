@@ -21,13 +21,9 @@
             Process[] localProcesses = Process.GetProcesses();
             for (int i = 0; i < localProcesses.Length; i++) {
                 try {
-                    string localProcessName = localProcesses[i].ProcessName;
+                    string localProcessName = localProcesses[i].ProcessName.ToLower();
                     if (localProcessName.Contains("cheat") ||
-                        localProcessName.Contains("engine") ||
-                        localProcessName.Contains("editor") ||
                         localProcessName.Contains("hack") ||
-                        localProcessName.Contains("tool") ||
-                        localProcessName.Contains("opcode") ||
                         localProcessName.Contains("inject") ||
                         localProcessName.Contains("injector")) {
                             Application.Quit();

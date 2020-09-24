@@ -290,6 +290,7 @@ public class InventoryScript : MonoBehaviour
 
     protected virtual void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
         if (PlayerData.playerdata == null) {
+            Debug.Log("7");
             Application.Quit();
         } else {
             // Ban player here for modifying item data
@@ -308,6 +309,7 @@ public class InventoryScript : MonoBehaviour
 
     protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs e) {
         if (PlayerData.playerdata == null) {
+            Debug.Log("8");
             Application.Quit();
         } else {
             // Ban player here for modifying item data

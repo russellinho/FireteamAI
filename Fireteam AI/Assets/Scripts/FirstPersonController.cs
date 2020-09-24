@@ -85,6 +85,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_NextStep = m_StepCycle/2f;
             m_Jumping = false;
             m_IsCrouching = false;
+            m_JumpSpeed = 10f;
 			canMove = true;
 			sprintLock = false;
 
@@ -285,6 +286,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     }
                     else
                     {
+                        Debug.Log(m_JumpSpeed);
                         m_MoveDir.y = m_JumpSpeed;
                         PlayJumpSound();
                         m_Jumping = true;

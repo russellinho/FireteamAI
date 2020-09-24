@@ -76,8 +76,8 @@ public class WeaponActionScript : MonoBehaviour
     public bool isUsingBooster = false;
     public bool isUsingDeployable = false;
     // Used for allowing arms to move during aim down sight movement
-    private EncryptedBool aimDownSightsLock;
-    private EncryptedFloat aimDownSightsTimer;
+    private bool aimDownSightsLock;
+    private float aimDownSightsTimer;
     public Vector3 currentAimDownSightPos;
     public Vector3 currentAimStableHandPos;
     

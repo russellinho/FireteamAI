@@ -1232,7 +1232,7 @@ public class PlayerData : MonoBehaviour
         if (args.Snapshot.Key.ToString().Equals("loggedIn")) {
             if (args.Snapshot.Value != null) {
                 if (args.Snapshot.Value.ToString() == "0") {
-                    Debug.Log("qqqqqq");
+                    Debug.Log("6");
                     Application.Quit();
                 }
             }
@@ -1940,6 +1940,7 @@ public class PlayerData : MonoBehaviour
 		inputData["loggedIn"] = "0";
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("setUserIsLoggedIn");
 		func.CallAsync(inputData).ContinueWith((task) => {
+            Debug.Log("5");
             Application.Quit();
         });
     }
@@ -2215,6 +2216,7 @@ public class PlayerInventory {
     protected virtual void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
         if (!PlayerData.playerdata.inventoryDataModifyLegalFlag) {
             if (PlayerData.playerdata == null) {
+                Debug.Log("4");
                 Application.Quit();
             } else {
                 // Ban player here for modifying item data

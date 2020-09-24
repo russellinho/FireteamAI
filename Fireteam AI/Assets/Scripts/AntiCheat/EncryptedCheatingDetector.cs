@@ -24,7 +24,11 @@
 		}
 
 		protected void BanPlayerOnEncryptedCheating() {
+			if (!started) {
+				return;
+			}
 			if (PlayerData.playerdata == null) {
+				Debug.Log("2");
             	Application.Quit();
 			} else {
 				// Ban player here for modifying memory

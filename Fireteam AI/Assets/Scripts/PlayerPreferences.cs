@@ -180,7 +180,7 @@ public class PlayerPreferences : MonoBehaviour
     {
         public bool rememberLogin;
         public string rememberUserId;
-        public EncryptedInt musicVolume;
+        public int musicVolume;
     }
 
     [Serializable]
