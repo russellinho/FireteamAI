@@ -1223,6 +1223,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleForceLogoutEvent(object sender, ValueChangedEventArgs args) {
+        if (PlayerData.playerdata.bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1231,6 +1232,7 @@ public class PlayerData : MonoBehaviour
         if (args.Snapshot.Key.ToString().Equals("loggedIn")) {
             if (args.Snapshot.Value != null) {
                 if (args.Snapshot.Value.ToString() == "0") {
+                    Debug.Log("qqqqqq");
                     Application.Quit();
                 }
             }
