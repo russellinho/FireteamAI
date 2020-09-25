@@ -16,7 +16,7 @@ public class GrenadeLoadAnimScript : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (!cockSoundPlayed && was.weaponStats.supportSoundTime != -1f && stateInfo.normalizedTime >= was.weaponStats.supportSoundTime) {
+        if (!cockSoundPlayed && was.weaponMetaData.supportSoundTime != -1f && stateInfo.normalizedTime >= was.weaponMetaData.supportSoundTime) {
 			cockSoundPlayed = true;
 			was.PlaySupportActionSound();
 		}

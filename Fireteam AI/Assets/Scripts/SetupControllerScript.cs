@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Firebase.Database;
+using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 
 public class SetupControllerScript : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class SetupControllerScript : MonoBehaviour
     public GameObject contentInventory;
     public InputField characterNameInput;
     private Dictionary<string, int> starterCharacters = new Dictionary<string, int>(){["Lucas"] = 0, ["Daryl"] = 1, ["Yongjin"] = 2, ["Rocko"] = 3, ["Hana"] = 4, ["Jade"] = 5, ["Dani"] = 6};
-    public ArrayList starterWeapons = new ArrayList(){"M4A1", "AK-47"};
+    public ArrayList starterWeapons = new ArrayList(){"N4A1", "KA-74"};
     private string selectedCharacter;
     public GameObject selectedPrefab;
     public GameObject contentPrefab;
@@ -157,213 +158,149 @@ public class SetupControllerScript : MonoBehaviour
         }
 
         // Check if username is taken
-        DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_takenUsernames").GetValueAsync().ContinueWith(taskA => {
-            if (taskA.IsFaulted) {
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["usernameLower"] = potentialNameLower;
+
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("checkUsernameTaken");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+			if (taskA.IsFaulted) {
                 activatePopupFlag = true;
                 popupMessage = "Database is currently unavailable. Please try again later.";
                 TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-            } else if (taskA.IsCompleted) {
-                if (taskA.Result.HasChild(potentialNameLower)) {
+            } else if (results["status"].ToString() == "200") {
+                activatePopupFlag = true;
+                popupMessage = "This username is taken! Please try another.";
+                completeCharCreationFlag = false;
+            } else {
+                if (!completeCharCreationFlag) {
                     activatePopupFlag = true;
-                    popupMessage = "This username is taken! Please try another.";
+                    popupMessage = "This name is available! You may use this name if you wish.";
                     completeCharCreationFlag = false;
                 } else {
-                    if (!completeCharCreationFlag) {
-                        activatePopupFlag = true;
-                        popupMessage = "This name is available! You may use this name if you wish.";
-                        completeCharCreationFlag = false;
-                    } else {
-                        // Everything is passed, create player data and mark username as taken
-                        DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_takenUsernames").Child(potentialNameLower).SetValueAsync("true").ContinueWith(taskB => {
-                            if (taskB.IsFaulted) {
-                                activatePopupFlag = true;
-                                // popupMessage = "Database is currently unavailable. Please try again later.";
-                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                completeCharCreationFlag = false;
-                                return;
-                            } else if (taskB.IsCompleted) {
-                                string json = "{" +
-                                    "\"username\":\"" + potentialName + "\"," +
-                                    "\"defaultChar\":\"" + selectedCharacter + "\"," +
-                                    "\"defaultWeapon\":\"" + starterWeapons[wepSelectionIndex] + "\"," +
-                                    "\"exp\":\"0\"," +
-                                    "\"gp\":\"100000\"," +
-                                    "\"kash\":\"0\"" +
-                                "}";
-                                DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).SetRawJsonValueAsync(json).ContinueWith(taskE => {
-                                    if (taskE.IsFaulted) {
+                    func = DAOScript.dao.functions.GetHttpsCallable("setUsernameTaken");
+                    inputData.Clear();
+                    inputData["callHash"] = DAOScript.functionsCallHash;
+                    inputData["usernameLower"] = potentialNameLower;
+                    inputData["usernameExact"] = potentialName;
+                    func.CallAsync(inputData).ContinueWith((taskB) => {
+                        if (taskB.IsFaulted) {
+                            activatePopupFlag = true;
+                            // popupMessage = "Database is currently unavailable. Please try again later.";
+                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                            completeCharCreationFlag = false;
+                            return;
+                        } else {
+                            Dictionary<object, object> results2 = (Dictionary<object, object>)taskB.Result.Data;
+                            if (results2["status"].ToString() == "200") {
+                                inputData.Clear();
+                                inputData["callHash"] = DAOScript.functionsCallHash;
+                                inputData["uid"] = AuthScript.authHandler.user.UserId;
+                                inputData["username"] = potentialName;
+                                inputData["selectedCharacter"] = selectedCharacter;
+                                inputData["starterWeapon"] = starterWeapons[wepSelectionIndex];
+                                func = DAOScript.dao.functions.GetHttpsCallable("createCharacter");
+                                func.CallAsync(inputData).ContinueWith((taskC) => {
+                                    if (taskC.IsFaulted) {
                                         activatePopupFlag = true;
                                         // popupMessage = "Database is currently unavailable. Please try again later.";
                                         TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                                         completeCharCreationFlag = false;
                                         return;
-                                    } else if (taskE.IsCompleted) {
-                                        string jsonA = "{\"weapons\":{" +
-                                        "\"" + starterWeapons[wepSelectionIndex] + "\": {" +
-                                            "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            "\"duration\":\"-1\"," +
-                                            "\"equippedSuppressor\":\"\"," +
-                                            "\"equippedSight\":\"\"," +
-                                            "\"equippedClip\":\"\""
-                                        + "}," +
-                                        "\"Glock23\": {" +
-                                            "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            "\"duration\":\"-1\"," +
-                                            "\"equippedSuppressor\":\"\"," +
-                                            "\"equippedSight\":\"\"," +
-                                            "\"equippedClip\":\"\""
-                                        + "}," + 
-                                        "\"M67 Frag\": {" +
-                                            "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            "\"duration\":\"-1\"," +
-                                            "\"equippedSuppressor\":\"\"," +
-                                            "\"equippedSight\":\"\"," +
-                                            "\"equippedClip\":\"\""
-                                        + "}" + 
-                                        "\"Recon Knife\": {" +
-                                            "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            "\"duration\":\"-1\""
-                                        + "}" + 
-                                        "}," +
-                                        "\"characters\":{" +
-                                            "\"" + selectedCharacter + "\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}" +
-                                        "}," +
-                                        // "\"armor\":{" +
-                                        //     "\"Standard Vest\": {" +
-                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                        //         "\"duration\":\"-1\""
-                                        //     + "}" +
-                                        // "}," +
-                                        "\"tops\":{" +
-                                            // "\"Casual T-Shirt (M)\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            // "\"Casual T-Shirt (F)\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            // "\"Casual Shirt\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            // "\"Casual Tank Top\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            "\"Standard Fatigues Top (M)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Standard Fatigues Top (F)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}" +
-                                        "}," +
-                                        "\"bottoms\":{" +
-                                            // "\"Dark Wash Denim Jeans (M)\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            // "\"Dark Wash Denim Jeans (F)\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            // "\"Light Wash Denim Jeans (M)\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            // "\"Light Wash Denim Jeans (F)\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            "\"Standard Fatigues Bottom (M)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Standard Fatigues Bottom (F)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}" +
-                                        "}," +
-                                        "\"footwear\":{" +
-                                            // "\"White Chucks\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            // "\"Red Chucks\": {" +
-                                            //     "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                            //     "\"duration\":\"-1\""
-                                            // + "}," +
-                                            "\"Standard Boots (M)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}," +
-                                            "\"Standard Boots (F)\": {" +
-                                                "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                "\"duration\":\"-1\""
-                                            + "}" +
-                                        "}," +
-                                        // "\"headgear\":{" +
-                                        //     "\"COM Hat\": {" +
-                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                        //         "\"duration\":\"-1\""
-                                        //     + "}," +
-                                        //     "\"MICH\": {" +
-                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                        //         "\"duration\":\"-1\""
-                                        //     + "}," +
-                                        //     "\"Combat Beanie\": {" +
-                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                        //         "\"duration\":\"-1\""
-                                        //     + "}" +
-                                        // "}," +
-                                        // "\"facewear\":{" +
-                                        //     "\"Standard Goggles\": {" +
-                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                        //         "\"duration\":\"-1\""
-                                        //     + "}," +
-                                        //     "\"Sport Shades\": {" +
-                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                        //         "\"duration\":\"-1\""
-                                        //     + "}," +
-                                        //     "\"Aviators\": {" +
-                                        //         "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                        //         "\"duration\":\"-1\""
-                                        //     + "}" +
-                                        // "}" +
-                                        "}";
-                                        DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).SetRawJsonValueAsync(jsonA).ContinueWith(taskC => {
-                                            if (taskC.IsFaulted) {
-                                                // Debug.Log(taskC.Exception.Message);
-                                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                            } else if (taskC.IsCompleted) {
-                                                string jsonTemp = "{" +
-                                                    "\"name\":\"Standard Suppressor\"," +
-                                                    "\"equippedOn\":\"\"," +
-                                                    "\"acquireDate\":\"" + DateTime.Now + "\"," +
-                                                    "\"duration\":\"-1\"" +
-                                                "}";
-                                                DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_inventory").Child(AuthScript.authHandler.user.UserId).Child("mods").Push().SetRawJsonValueAsync(jsonTemp).ContinueWith(taskD => {
-                                                    if (taskD.IsFaulted) {
-                                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-                                                    } else if (taskD.IsCompleted) {
+                                    } else {
+                                        Dictionary<object, object> results3 = (Dictionary<object, object>)taskC.Result.Data;
+                                        if (results3["status"].ToString() == "200") {
+                                            inputData.Clear();
+                                            inputData["callHash"] = DAOScript.functionsCallHash;
+                                            inputData["uid"] = AuthScript.authHandler.user.UserId;
+                                            Dictionary<string, string>[] starterItems = new Dictionary<string, string>[12];
+                                            Dictionary<string, string> item1 = new Dictionary<string, string>();
+                                            item1.Add("itemName", starterWeapons[wepSelectionIndex].ToString());
+                                            item1.Add("category", "weapons");
+                                            item1.Add("duration", "-1");
+                                            starterItems[0] = item1;
+                                            Dictionary<string, string> item2 = new Dictionary<string, string>();
+                                            item2.Add("itemName", "I32");
+                                            item2.Add("category", "weapons");
+                                            item2.Add("duration", "-1");
+                                            starterItems[1] = item2;
+                                            Dictionary<string, string> item3 = new Dictionary<string, string>();
+                                            item3.Add("itemName", "N76 Fragmentation");
+                                            item3.Add("category", "weapons");
+                                            item3.Add("duration", "-1");
+                                            starterItems[2] = item3;
+                                            Dictionary<string, string> item4 = new Dictionary<string, string>();
+                                            item4.Add("itemName", "Recon Knife");
+                                            item4.Add("category", "weapons");
+                                            item4.Add("duration", "-1");
+                                            starterItems[3] = item4;
+                                            Dictionary<string, string> item5 = new Dictionary<string, string>();
+                                            item5.Add("itemName", selectedCharacter);
+                                            item5.Add("category", "characters");
+                                            item5.Add("duration", "-1");
+                                            starterItems[4] = item5;
+                                            Dictionary<string, string> item6 = new Dictionary<string, string>();
+                                            item6.Add("itemName", "Standard Fatigues Top (M)");
+                                            item6.Add("category", "tops");
+                                            item6.Add("duration", "-1");
+                                            starterItems[5] = item6;
+                                            Dictionary<string, string> item7 = new Dictionary<string, string>();
+                                            item7.Add("itemName", "Standard Fatigues Top (F)");
+                                            item7.Add("category", "tops");
+                                            item7.Add("duration", "-1");
+                                            starterItems[6] = item7;
+                                            Dictionary<string, string> item8 = new Dictionary<string, string>();
+                                            item8.Add("itemName", "Standard Fatigues Bottom (M)");
+                                            item8.Add("category", "bottoms");
+                                            item8.Add("duration", "-1");
+                                            starterItems[7] = item8;
+                                            Dictionary<string, string> item9 = new Dictionary<string, string>();
+                                            item9.Add("itemName", "Standard Fatigues Bottom (F)");
+                                            item9.Add("category", "bottoms");
+                                            item9.Add("duration", "-1");
+                                            starterItems[8] = item9;
+                                            Dictionary<string, string> item10 = new Dictionary<string, string>();
+                                            item10.Add("itemName", "Standard Boots (M)");
+                                            item10.Add("category", "footwear");
+                                            item10.Add("duration", "-1");
+                                            starterItems[9] = item10;
+                                            Dictionary<string, string> item11 = new Dictionary<string, string>();
+                                            item11.Add("itemName", "Standard Boots (F)");
+                                            item11.Add("category", "footwear");
+                                            item11.Add("duration", "-1");
+                                            starterItems[10] = item11;
+                                            Dictionary<string, string> item12 = new Dictionary<string, string>();
+                                            item12.Add("itemName", "Standard Suppressor");
+                                            item12.Add("category", "mods");
+                                            starterItems[11] = item12;
+                                            inputData["items"] = starterItems;
+                                            func = DAOScript.dao.functions.GetHttpsCallable("giveItemsToUser");
+                                            func.CallAsync(inputData).ContinueWith((taskD) => {
+                                                if (taskD.IsFaulted) {
+                                                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                                } else {
+                                                    Dictionary<object, object> results4 = (Dictionary<object, object>)taskD.Result.Data;
+                                                    if (results4["status"].ToString() == "200") {
                                                         finishedFlag = true;
+                                                    } else {
+                                                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                                                     }
-                                                });
-                                            }
-                                        });
+                                                }
+                                            });
+                                        } else {
+                                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        }
                                     }
                                 });
+                            } else {
+                                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                             }
-                        });
-                    }
+                        }
+                    });
                 }
             }
-        });
+		});
     }
 
     public void OnCheckCharacterNameClick() {

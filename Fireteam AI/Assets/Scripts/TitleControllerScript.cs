@@ -8,6 +8,8 @@ using Photon.Pun;
 using UnityEngine.Networking;
 using TMPro;
 using Firebase.Database;
+using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
+using Koobando.AntiCheat;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private const float NINETY_DAYS_MINS = 129600f;
@@ -68,7 +70,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private string typeBeingPurchased;
 	private uint totalGpCostBeingPurchased;
 	public char currentCharGender;
-	public bool equipsModifiedFlag;
 
 	// Loading screen stuff
 	public RawImage screenArt;
@@ -204,8 +205,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Text modWeaponLbl;
 	public Text equippedSuppressorTxt;
 	public Text equippedSightTxt;
-	public string equippedSuppressorId;
-	public string equippedSightId;
+	public EncryptedString equippedSuppressorId;
+	public EncryptedString equippedSightId;
 	public Text modDamageTxt;
 	public Text modAccuracyTxt;
 	public Text modRecoilTxt;
@@ -219,10 +220,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Text changingKeyMappingText;
 	public bool isChangingKeyMapping;
 	public KeyMappingInput[] keyMappingInputs;
+	private bool triggerMarketplacePopupFlag;
+	private string marketplacePopupMessage;
+	private bool triggerMainPopupFlag;
+	private string mainPopupMessage;
 
 	// Use this for initialization
 	void Awake() {
-		if (PlayerData.playerdata == null) {
+		if (PlayerData.playerdata == null || PlayerData.playerdata.bodyReference == null) {
 			ToggleSplashScreen(true, "Loading player details...");
 		}
 		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
@@ -321,6 +326,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		} else {
+			if (triggerMarketplacePopupFlag) {
+				DoMarketplacePopup();
+				triggerMarketplacePopupFlag = false;
+			}
+			if (triggerMainPopupFlag) {
+				DoMainPopup();
+				triggerMainPopupFlag = false;
+			}
 			if (!matchmakingMenu.activeInHierarchy && !versusMenu.activeInHierarchy && !SettingsIsOpen()) {
 				// If going to main menu screen
 				if (camPos == 0) {
@@ -487,10 +500,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void ReturnToMainMenuFromCustomization() {
         // Save settings if the settings are active
 		 if (customizationMenu.activeInHierarchy) {
-			if (equipsModifiedFlag) {
-				savePlayerData ();
-				equipsModifiedFlag = false;
-			}
 			ClearCustomizationContent();
 			ResetCustomizationButtons();
 		 }
@@ -603,18 +612,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void quitGame() {
-		DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").SetValueAsync("0").ContinueWith(task => {
-			if (task.IsCanceled) {
-				PlayerData.playerdata.TriggerEmergencyExit("Error occurred while exiting.");
-			} else if (task.IsCompleted) {
-				Application.Quit (); 
-			}
-		});
-	}
+		Dictionary<string, object> inputData = new Dictionary<string, object>();
+		inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+		inputData["loggedIn"] = "0";
 
-	public void savePlayerData()
-	{
-		PlayerData.playerdata.SavePlayerData();
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("setUserIsLoggedIn");
+		func.CallAsync(inputData).ContinueWith((task) => {
+			Application.Quit ();
+		});
 	}
 
 	public void ClosePopup() {
@@ -628,13 +634,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		settingsMenuPopup.SetActive(false);
 	}
 
-    public void TriggerExpirationPopup(ArrayList expiredItems)
+    public void TriggerExpirationPopup(List<object> expiredItems)
     {
         TriggerMainPopup("The following items have expired and have been deleted from your inventory:\n" + string.Join(", ", expiredItems.ToArray()));
     }
 
 	public void TriggerMainPopup(string message) {
-		mainMenuPopup.GetComponentInChildren<Text> ().text = message;
+		triggerMainPopupFlag = true;
+		mainPopupMessage = message;
+	}
+
+	public void DoMainPopup() {
+		mainMenuPopup.GetComponentInChildren<Text> ().text = mainPopupMessage;
 		mainMenuPopup.SetActive (true);
 	}
 
@@ -644,7 +655,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void TriggerMarketplacePopup(string message) {
-		marketplaceMenuPopup.GetComponentInChildren<Text>().text = message;
+		triggerMarketplacePopupFlag = true;
+		marketplacePopupMessage = message;
+	}
+
+	void DoMarketplacePopup() {
+		marketplaceMenuPopup.GetComponentInChildren<Text>().text = marketplacePopupMessage;
 		marketplaceMenuPopup.SetActive(true);
 	}
 
@@ -691,10 +707,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate into grid layout
-        foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.myHeadgear)
+        foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myHeadgear)
         {
             EquipmentData ed = entry.Value;
-			string thisItemName = ed.name;
+			string thisItemName = entry.Key;
 			Equipment thisHeadgear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
@@ -702,8 +718,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.equipmentDetails = thisHeadgear;
 			s.itemName = thisItemName;
             s.itemType = "Headgear";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = thisHeadgear.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisHeadgear.thumbnailPath);
 			s.thumbnailRef.SetNativeSize();
@@ -774,10 +790,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate into grid layout
-        foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.myFacewear)
+        foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myFacewear)
         {
             EquipmentData ed = entry.Value;
-			string thisItemName = ed.name;
+			string thisItemName = entry.Key;
 			Equipment thisFacewear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
@@ -785,8 +801,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.equipmentDetails = thisFacewear;
 			s.itemName = thisItemName;
             s.itemType = "Facewear";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = thisFacewear.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisFacewear.thumbnailPath);
 			s.thumbnailRef.SetNativeSize();
@@ -857,10 +873,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate into grid layout
-        foreach (KeyValuePair<string, ArmorData> entry in PlayerData.playerdata.myArmor)
+        foreach (KeyValuePair<string, ArmorData> entry in PlayerData.playerdata.inventory.myArmor)
         {
             ArmorData ed = entry.Value;
-			string thisItemName = ed.name;
+			string thisItemName = entry.Key;
 			Armor thisArmor = InventoryScript.itemData.armorCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
@@ -868,8 +884,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.armorDetails = thisArmor;
 			s.itemName = thisItemName;
             s.itemType = "Armor";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = thisArmor.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisArmor.thumbnailPath);
 			s.thumbnailRef.SetNativeSize();
@@ -903,7 +919,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Populate into grid layout
 		foreach(KeyValuePair<string, Armor> entry in InventoryScript.itemData.armorCatalog) {
 			Armor thisArmor = entry.Value;
-			if (!thisArmor.category.Equals("Armor") || !thisArmor.purchasable) {
+			if (!thisArmor.purchasable) {
 				continue;
 			}
 			GameObject o = Instantiate(shopContentPrefab);
@@ -940,10 +956,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate into grid layout
-        foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.myTops)
+        foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myTops)
         {
             EquipmentData ed = entry.Value;
-			string thisItemName = ed.name;
+			string thisItemName = entry.Key;
 			Equipment thisTop = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
@@ -954,8 +970,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = thisTop.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
 			s.thumbnailRef.SetNativeSize();
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 4f, t.sizeDelta.y / 4f);
 			if (thisItemName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedTop)) {
@@ -1023,10 +1039,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate into grid layout
-        foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.myBottoms)
+        foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myBottoms)
         {
             EquipmentData ed = entry.Value;
-			string thisItemName = ed.name;
+			string thisItemName = entry.Key;
 			Equipment thisBottom = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
@@ -1034,8 +1050,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.equipmentDetails = thisBottom;
 			s.itemName = thisItemName;
             s.itemType = "Bottom";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = thisBottom.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
 			s.thumbnailRef.SetNativeSize();
@@ -1106,10 +1122,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate into grid layout
-        foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.myFootwear)
+        foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myFootwear)
         {
             EquipmentData ed = entry.Value;
-			string thisItemName = ed.name;
+			string thisItemName = entry.Key;
 			Equipment thisFootwear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
@@ -1117,8 +1133,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.equipmentDetails = thisFootwear;
 			s.itemName = thisItemName;
             s.itemType = "Footwear";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = thisFootwear.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
 			s.thumbnailRef.SetNativeSize();
@@ -1223,9 +1239,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate into grid layout
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons) {
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Primary")) {
 				continue;
@@ -1236,8 +1252,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -1373,10 +1389,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate into grid layout
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Secondary")) {
 				continue;
@@ -1387,8 +1403,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -1522,10 +1538,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate into grid layout
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Support")) {
 				continue;
@@ -1536,8 +1552,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -1671,10 +1687,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate into grid layout
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.type.Equals("Melee")) {
 				continue;
@@ -1685,8 +1701,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -1788,10 +1804,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate with assault rifles
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Assault Rifle")) {
 				continue;
@@ -1802,8 +1818,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -1866,10 +1882,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate with SMGs
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("SMG")) {
 				continue;
@@ -1880,8 +1896,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -1944,10 +1960,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate with SMGs
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("LMG")) {
 				continue;
@@ -1958,8 +1974,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2022,10 +2038,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate with shotguns
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Shotgun")) {
 				continue;
@@ -2036,8 +2052,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2100,10 +2116,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate with sniper rifles
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Sniper Rifle")) {
 				continue;
@@ -2114,8 +2130,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2175,10 +2191,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate with pistols
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Pistol")) {
 				continue;
@@ -2189,8 +2205,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2247,10 +2263,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate with pistols
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Launcher")) {
 				continue;
@@ -2261,8 +2277,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2320,10 +2336,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate with pistols
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Explosive")) {
 				continue;
@@ -2334,8 +2350,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2394,10 +2410,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate with pistols
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Booster")) {
 				continue;
@@ -2408,8 +2424,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2468,10 +2484,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate with pistols
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Deployable")) {
 				continue;
@@ -2482,8 +2498,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2540,10 +2556,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate with pistols
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             WeaponData ed = entry.Value;
-			string thisWeaponName = ed.name;
+			string thisWeaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
 			if (!w.category.Equals("Knife")) {
 				continue;
@@ -2554,8 +2570,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.weaponDetails = w;
 			s.itemName = w.name;
             s.itemType = "Weapon";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
@@ -2757,10 +2773,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ClearCustomizationContent();
 
         // Populate into grid layout
-        foreach (KeyValuePair<string, CharacterData> entry in PlayerData.playerdata.myCharacters)
+        foreach (KeyValuePair<string, CharacterData> entry in PlayerData.playerdata.inventory.myCharacters)
         {
             CharacterData ed = entry.Value;
-			string thisCharacterName = ed.name;
+			string thisCharacterName = entry.Key;
 			Character c = InventoryScript.itemData.characterCatalog[thisCharacterName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
@@ -2768,8 +2784,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.characterDetails = c;
 			s.itemName = thisCharacterName;
             s.itemType = "Character";
-			s.duration = ed.duration;
-			s.acquireDate = ed.acquireDate;
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
 			s.itemDescription = c.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(c.thumbnailPath);
 			s.thumbnailRef.SetNativeSize();
@@ -2890,10 +2906,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		WeaponScript ws = PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>();
 
         // Populate into grid layout
-        foreach (KeyValuePair<string, ModData> entry in PlayerData.playerdata.myMods)
+        foreach (KeyValuePair<string, ModData> entry in PlayerData.playerdata.inventory.myMods)
         {
             ModData modData = entry.Value;
-			string thisModName = modData.name;
+			string thisModName = modData.Name;
 			Mod m = InventoryScript.itemData.modCatalog[thisModName];
 			if (!m.category.Equals("Suppressor")) {
 				continue;
@@ -2902,8 +2918,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
 			s.modDescriptionPopupRef = modDescriptionPopupRef;
 			s.modDetails = m;
-			s.id = modData.id;
-			s.equippedOn = modData.equippedOn;
+			s.id = entry.Key;
+			s.equippedOn = modData.EquippedOn;
 			s.itemName = m.name;
             s.itemType = "Mod";
 			s.itemDescription = m.description;
@@ -2912,7 +2928,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			if (modWeaponLbl.text.Equals(modData.equippedOn)) {
+			if (modWeaponLbl.text.Equals(modData.EquippedOn)) {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedModPrefab = o;
 			}
@@ -2930,10 +2946,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		WeaponScript ws = PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>();
 
         // Populate into grid layout
-        foreach (KeyValuePair<string, ModData> entry in PlayerData.playerdata.myMods)
+        foreach (KeyValuePair<string, ModData> entry in PlayerData.playerdata.inventory.myMods)
         {
             ModData modData = entry.Value;
-			string thisModName = modData.name;
+			string thisModName = modData.Name;
 			Mod m = InventoryScript.itemData.modCatalog[thisModName];
 			if (!m.category.Equals("Sight")) {
 				continue;
@@ -2942,8 +2958,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
 			s.modDescriptionPopupRef = modDescriptionPopupRef;
 			s.modDetails = m;
-			s.id = modData.id;
-			s.equippedOn = modData.equippedOn;
+			s.id = entry.Key;
+			s.equippedOn = modData.EquippedOn;
 			s.itemName = m.name;
             s.itemType = "Mod";
 			s.itemDescription = m.description;
@@ -2952,7 +2968,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			if (modWeaponLbl.text.Equals(modData.equippedOn)) {
+			if (modWeaponLbl.text.Equals(modData.EquippedOn)) {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedModPrefab = o;
 			}
@@ -3201,7 +3217,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		modWeaponSelect.ClearOptions();
 		// Populate the dropdown with all weapons the player owns
 		List<string> myWepsList = new List<string>();
-        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
         {
             string weaponName = entry.Key;
 			Weapon w = InventoryScript.itemData.weaponCatalog[weaponName];
@@ -3234,9 +3250,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Place the saved mods for that weapon back on the weapon template
 		ModInfo savedModInfo = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
-		SetWeaponModValues(modWeaponLbl.text, true, null, savedModInfo.suppressorId, true, null, savedModInfo.sightId);
-		EquipModOnWeaponTemplate(savedModInfo.equippedSuppressor, "Suppressor", savedModInfo.suppressorId);
-		EquipModOnWeaponTemplate(savedModInfo.equippedSight, "Sight", savedModInfo.sightId);
+		SetWeaponModValues(modWeaponLbl.text, true, null, savedModInfo.SuppressorId, true, null, savedModInfo.SightId);
+		EquipModOnWeaponTemplate(savedModInfo.EquippedSuppressor, "Suppressor", savedModInfo.SuppressorId);
+		EquipModOnWeaponTemplate(savedModInfo.EquippedSight, "Sight", savedModInfo.SightId);
 
 		// Update shop items with the mods that are equipped
 		// If the suppressors menu was selected, update the shop items with what's equipped on the current weapon
@@ -3552,26 +3568,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         bool isStacking = (hasDuplicateCheck >= 0f && !Mathf.Approximately(0f, hasDuplicateCheck));
         float totalNewDuration = ConvertDurationInput(durationSelectionDropdown.value);
         totalNewDuration = (Mathf.Approximately(totalNewDuration, -1f) ? totalNewDuration : totalNewDuration + hasDuplicateCheck);
-		if (PlayerData.playerdata.info.gp >= totalGpCostBeingPurchased) {
-			PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, isStacking, totalGpCostBeingPurchased, 0);
+		if (PlayerData.playerdata.info.Gp >= totalGpCostBeingPurchased) {
+			PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, "gp");
 		} else {	
 			TriggerMarketplacePopup("You do not have enough GP to purchase this item.");	
 		}	
-        // Reach out to DB to verify player's GP and KASH before purchase
-		// DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).GetValueAsync().ContinueWith(task => {
-		// 	if (task.IsCompleted) {
-		// 		// PlayerData.playerdata.info.gp = uint.Parse(task.Result.Child("gp").Value.ToString());
-		// 		// PlayerData.playerdata.info.kash = uint.Parse(task.Result.Child("kash").Value.ToString());
-		// 		if (PlayerData.playerdata.info.gp >= totalGpCostBeingPurchased) {
-		// 			PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, isStacking, totalGpCostBeingPurchased, 0);
-		// 		} else {	
-		// 			TriggerMarketplacePopup("You do not have enough GP to purchase this item.");	
-		// 		}	
-		// 	} else {
-		// 		// TriggerMarketplacePopup("Transaction could not be completed at this time. Please try again later.");
-		// 		PlayerData.playerdata.TriggerEmergencyExit("Transaction could not be completed at this time. Please try again later.");	
-		// 	}
-		// });
 	}
 
 	float ConvertDurationInput(int durationSelection) {
@@ -3634,8 +3635,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void UpdateCurrency() {
-		myGpTxt.text = ""+PlayerData.playerdata.info.gp;
-		myKashTxt.text = ""+PlayerData.playerdata.info.kash;
+		myGpTxt.text = ""+PlayerData.playerdata.info.Gp;
+		myKashTxt.text = ""+PlayerData.playerdata.info.Kash;
 	}
 
 	// Players cannot own multiple of the same item unless they're mods.
@@ -3644,11 +3645,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public float HasDuplicateItem(string itemName, string type) {
 		if (type == "Mod") return 0f;
 		if (type.Equals("Weapon")) {
-            foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.myWeapons)
+            foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
             {
                 WeaponData item = entry.Value;
-				if (item.name.Equals(itemName)) {
-					float duration = float.Parse(item.duration);
+				if (entry.Key.Equals(itemName)) {
+					float duration = float.Parse(item.Duration);
 					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
 						return -1f;
 					} else {
@@ -3657,11 +3658,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		} else if (type.Equals("Character")) {
-            foreach (KeyValuePair<string, CharacterData> entry in PlayerData.playerdata.myCharacters)
+            foreach (KeyValuePair<string, CharacterData> entry in PlayerData.playerdata.inventory.myCharacters)
             {
                 CharacterData item = entry.Value;
-				if (item.name.Equals(itemName)) {
-					float duration = float.Parse(item.duration);
+				if (entry.Key.Equals(itemName)) {
+					float duration = float.Parse(item.Duration);
 					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
 						return -1f;
 					} else {
@@ -3670,11 +3671,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		} else if (type.Equals("Armor")) {
-            foreach (KeyValuePair<string, ArmorData> entry in PlayerData.playerdata.myArmor)
+            foreach (KeyValuePair<string, ArmorData> entry in PlayerData.playerdata.inventory.myArmor)
             {
                 ArmorData item = entry.Value;
-				if (item.name.Equals(itemName)) {
-					float duration = float.Parse(item.duration);
+				if (entry.Key.Equals(itemName)) {
+					float duration = float.Parse(item.Duration);
 					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
 						return -1f;
 					} else {
@@ -3684,29 +3685,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 		} else {
 			string itemCategory = InventoryScript.itemData.equipmentCatalog[itemName].category;
-			Dictionary<string, EquipmentData> inventoryRefForCat = null;
+			ObservableDict<string, EquipmentData> inventoryRefForCat = null;
 			switch (itemCategory) {
 				case "Top":
-					inventoryRefForCat = PlayerData.playerdata.myTops;
+					inventoryRefForCat = PlayerData.playerdata.inventory.myTops;
 					break;
 				case "Bottom":
-					inventoryRefForCat = PlayerData.playerdata.myBottoms;
+					inventoryRefForCat = PlayerData.playerdata.inventory.myBottoms;
 					break;
 				case "Footwear":
-					inventoryRefForCat = PlayerData.playerdata.myFootwear;
+					inventoryRefForCat = PlayerData.playerdata.inventory.myFootwear;
 					break;
 				case "Headgear":
-					inventoryRefForCat = PlayerData.playerdata.myHeadgear;
+					inventoryRefForCat = PlayerData.playerdata.inventory.myHeadgear;
 					break;
 				case "Facewear":
-					inventoryRefForCat = PlayerData.playerdata.myFacewear;
+					inventoryRefForCat = PlayerData.playerdata.inventory.myFacewear;
 					break;
 			}
             foreach (KeyValuePair<string, EquipmentData> entry in inventoryRefForCat)
             {
                 EquipmentData item = entry.Value;
-				if (item.name.Equals(itemName)) {
-					float duration = float.Parse(item.duration);
+				if (entry.Key.Equals(itemName)) {
+					float duration = float.Parse(item.Duration);
 					if (Mathf.Approximately(duration, -1f) || (duration >= float.MaxValue - NINETY_DAYS_MINS)) {
 						return -1f;
 					} else {
@@ -3783,17 +3784,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void SetPlayerNameForTitle() {
-		mainNametagTxt.text = PlayerData.playerdata.info.playername;
+		mainNametagTxt.text = PlayerData.playerdata.info.Playername;
 	}
 
 	void SetPlayerRankForTitle() {
-		Rank rank = PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.exp);
+		Rank rank = PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.Exp);
 		mainRankTxt.text = rank.name;
 		mainRankImg.texture = PlayerData.playerdata.GetRankInsigniaForRank(rank.name);
 	}
 
 	void SetPlayerLevelProgressForTitle() {
-		uint myExp = PlayerData.playerdata.info.exp;
+		uint myExp = PlayerData.playerdata.info.Exp;
 		Rank rank = PlayerData.playerdata.GetRankFromExp(myExp);
 		uint currExp = myExp - rank.minExp;
 		uint toExp = rank.maxExp - rank.minExp;
@@ -3803,10 +3804,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		mainExpTxt.text = currExp + " / " + toExp;
 	}
 
+	void SetPlayerCurrency() {
+		myGpTxt.text = ""+PlayerData.playerdata.info.Gp;
+		myKashTxt.text = ""+PlayerData.playerdata.info.Kash;
+	}
+
 	public void SetPlayerStatsForTitle() {
 		SetPlayerNameForTitle();
 		SetPlayerRankForTitle();
 		SetPlayerLevelProgressForTitle();
+		SetPlayerCurrency();
 	}
 
 	public void TriggerEmergencyPopup(string message) {

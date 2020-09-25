@@ -7,11 +7,11 @@ public class WeaponCreatorScript : MonoBehaviour
     public AudioSource fireSource;
     public AudioSource suppressedFireSource;
     public AudioSource weaponSoundSource;
-    public WeaponStats weaponStatsRef;
+    public WeaponMeta weaponMetaDataRef;
 
     public void AssignWeaponStats() {
-        weaponStatsRef.fireSound = fireSource;
-        weaponStatsRef.suppressedFireSound = suppressedFireSource;
-        weaponStatsRef.weaponSoundSource = weaponSoundSource;
+        weaponMetaDataRef.fireSound = fireSource;
+        weaponMetaDataRef.suppressedFireSound = suppressedFireSource;
+        weaponMetaDataRef.weaponSoundSource = weaponSoundSource;
     }
 }

@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3979abda5b9974f399ff70bbf31d40c9, type: 3}
+  m_Name: Default Theme
+  m_EditorClassIdentifier: 
+  Font: {fileID: 11400000, guid: 03667487b095d134cb5d244fc285c9d1, type: 2}
+  PanelMaterial: {fileID: 0}
+  PanelColor: {r: 0, g: 0, b: 0, a: 1}
+  CommandLogColor: {r: 0, g: 1, b: 1, a: 1}
+  SelectedSuggestionColor: {r: 1, g: 1, b: 0.55, a: 1}
+  SuggestionColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  ErrorColor: {r: 1, g: 0, b: 0, a: 1}
+  WarningColor: {r: 1, g: 0.5, b: 0, a: 1}
+  SuccessColor: {r: 0, g: 1, b: 0, a: 1}
+  DefaultReturnValueColor: {r: 0.9622642, g: 0.77817804, b: 0.040850822, a: 1}
+  TypeFormatters:
+  - _type: System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+    Color: {r: 1, g: 1, b: 1, a: 1}
+  - _type: System.Collections.IEnumerable, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    Color: {r: 1, g: 0.9392907, b: 0.3443396, a: 1}
+  - _type: System.Collections.Generic.KeyValuePair, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    Color: {r: 0.4198113, g: 1, b: 0.93775624, a: 1}
+  - _type: System.Collections.DictionaryEntry, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    Color: {r: 0.5518868, g: 1, b: 0.9776166, a: 1}
+  - _type: System.Enum, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+    Color: {r: 0.81494266, g: 1, b: 0.4292453, a: 1}
+  - _type: System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+    Color: {r: 1, g: 0.5518868, b: 0.9320819, a: 1}
+  CollectionFormatters:
+  - _type: 
+    SeperatorString: \n
+    LeftScoper: 
+    RightScoper: 
+  - _type: 
+    SeperatorString: ','
+    LeftScoper: '['
+    RightScoper: ']'
+  - _type: 
+    SeperatorString: \n
+    LeftScoper: 
+    RightScoper: 

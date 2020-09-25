@@ -249,24 +249,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1882055315889478}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be4f3b19e65670e489fc3c06bce0e96f, type: 3}
+  m_Script: {fileID: 11500000, guid: 11e070146f72647ff8647ed3aac3e56a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName: R870
-  type: Primary
-  category: Shotgun
-  damage: 200
-  mobility: 95
-  fireRate: 0.4
-  accuracy: 0
-  recoil: 10
-  sway: 0
-  range: 50
-  lungeRange: 0
-  clipCapacity: 8
-  maxAmmo: 48
+  weaponName: RG870
   steadyAim: 0
-  isSniper: 0
   aimDownSightPosMale: {x: -0.00058, y: 0.00185, z: 0.00132}
   aimDownSightPosFemale: {x: -0.00058, y: 0.00185, z: 0.00132}
   stableHandPosMale: {x: -0.0004247553, y: 0.001882724, z: 0.001321174}
@@ -296,8 +283,8 @@ MonoBehaviour:
     type: 3}
   weaponShellPoint: {fileID: 6259360522018003891}
   weaponShootPoint: {fileID: 8674524501001277483}
-  muzzleFlash: {fileID: 0}
-  bulletTracer: {fileID: 0}
+  muzzleFlash: {fileID: 3311286635242194055}
+  bulletTracer: {fileID: 5169282397189275649}
   fpcPosMale: {x: -0.00021, y: 0.00175, z: -0.00024}
   fpcLeftHandPosMale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotMale: {x: 0, y: 0, z: 0}
@@ -337,6 +324,7 @@ MonoBehaviour:
   - {fileID: 6240917754690856042}
   - {fileID: 6652122461810023940}
   - {fileID: 3037287283473807859}
+  - {fileID: 3334827700588022752}
   - {fileID: 7590026595964772250}
   - {fileID: 3249132113207761306}
   - {fileID: 5640191820478297890}
@@ -344,7 +332,6 @@ MonoBehaviour:
   - {fileID: 156317552168435762}
   - {fileID: 5408450049144122168}
   - {fileID: 6329940586828480517}
-  - {fileID: 3334827700588022752}
   warheadRenderer: {fileID: 0}
   deployPlanMesh: {fileID: 0}
   isSticky: 0

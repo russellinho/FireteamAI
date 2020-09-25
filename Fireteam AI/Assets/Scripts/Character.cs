@@ -16,8 +16,9 @@ public class Character
     public int gpPrice;
     public string defaultTop;
     public string defaultBottom;
+    public bool deleteable;
 
-    public Character(string name, char gender, string prefabPath, int fpcFullSkinPath, int fpcNoSkinPath, string thumbnailPath, string description, int[] skins, int gpPrice, bool purchasable, string defaultTop, string defaultBottom) {
+    public Character(string name, char gender, string prefabPath, int fpcFullSkinPath, int fpcNoSkinPath, string thumbnailPath, string description, int[] skins, int gpPrice, bool purchasable, string defaultTop, string defaultBottom, bool deleteable) {
         this.skins = skins;
         this.name = name;
         this.gender = gender;
@@ -30,6 +31,7 @@ public class Character
         this.purchasable = purchasable;
         this.defaultTop = defaultTop;
         this.defaultBottom = defaultBottom;
+        this.deleteable = deleteable;
     }
 
 }

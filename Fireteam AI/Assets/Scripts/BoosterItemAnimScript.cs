@@ -14,7 +14,7 @@ public class BoosterItemAnimScript : StateMachineBehaviour {
 
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-		if (!injectSoundPlayed && was.weaponStats.supportSoundTime != -1f && stateInfo.normalizedTime >= was.weaponStats.supportSoundTime) {
+		if (!injectSoundPlayed && was.weaponMetaData.supportSoundTime != -1f && stateInfo.normalizedTime >= was.weaponMetaData.supportSoundTime) {
 			injectSoundPlayed = true;
 			was.PlaySupportActionSound();
 		}

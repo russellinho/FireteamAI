@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
-using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 using Photon.Pun;
 using Photon.Realtime;
+using Koobando.AntiCheat;
 
 namespace UnityStandardAssets.Characters.FirstPerson
 {
@@ -17,7 +17,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
     	[SerializeField] public bool m_IsRunning;
         [SerializeField] public bool m_IsMoving;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
-        [SerializeField] private float m_JumpSpeed;
+        [SerializeField] private EncryptedFloat m_JumpSpeed;
         [SerializeField] private float m_StickToGroundForce;
         [SerializeField] private float m_GravityMultiplier;
         [SerializeField] public MouseLook m_MouseLook;
@@ -32,7 +32,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private AudioClip m_LandSound;           // the sound played when character touches back on ground.
 
         private Camera m_Camera;
-        private bool m_Jump;
+        private EncryptedBool m_Jump;
         private float m_YRotation;
         public Vector2 m_Input;
         private Vector3 m_MoveDir = Vector3.zero;
@@ -43,7 +43,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private Vector3 m_OriginalCameraPosition;
         private float m_StepCycle;
         private float m_NextStep;
-        private bool m_Jumping;
+        private EncryptedBool m_Jumping;
         public AudioSource m_AudioSource;
     		public bool sprintLock;
 
@@ -85,6 +85,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_NextStep = m_StepCycle/2f;
             m_Jumping = false;
             m_IsCrouching = false;
+            m_JumpSpeed = 10f;
 			canMove = true;
 			sprintLock = false;
 
@@ -285,6 +286,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     }
                     else
                     {
+                        Debug.Log(m_JumpSpeed);
                         m_MoveDir.y = m_JumpSpeed;
                         PlayJumpSound();
                         m_Jumping = true;
@@ -424,7 +426,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // if (weaponActionScript == null) {
             //     weaponActionScript = GetComponent<WeaponActionScript>();
             // }
-			if (weaponActionScript != null && (weaponActionScript.isAiming && weaponActionScript.weaponStats.steadyAim)) {
+			if (weaponActionScript != null && (weaponActionScript.isAiming && weaponActionScript.weaponMetaData.steadyAim)) {
 				if (!m_IsCrouching) {
 					m_IsWalking = true;
 					m_IsRunning = false;

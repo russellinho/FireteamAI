@@ -10,6 +10,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 using SpawnMode = GameControllerScript.SpawnMode;
 using NpcActionState = NpcScript.ActionStates;
 using FlightMode = BlackHawkScript.FlightMode;
+using Koobando.AntiCheat;
 
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
@@ -52,9 +53,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public Transform carryingSlot;
 
     // Player variables
-    public int health;
+    public EncryptedInt health;
     public float sprintTime;
-    public bool godMode;
+    private EncryptedBool spawnInvincibilityActive;
+    // public bool godMode;
     public bool canShoot;
     private float charHeightOriginal;
     private float charCenterYOriginal;
@@ -72,8 +74,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private bool interactionLock;
     private float enterSpectatorModeTimer;
     private bool unlimitedStamina;
-    private float originalSpeed;
-    public float totalSpeedBoost;
+    private EncryptedFloat originalSpeed;
+    public EncryptedFloat totalSpeedBoost;
     private float itemSpeedModifier;
     public float weaponSpeedModifier;
     private float originalFpcBodyPosY;
@@ -330,7 +332,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             {
                 escapeAvailablePopup = true;
                 hud.MessagePopup("Escape available! Head to the waypoint!");
-                hud.ComBoxPopup(2f, "Democko", "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.", "democko");
+                hud.ComBoxPopup(2f, "Democko", "Well done. There's an extraction waiting for you on the top of the construction site. Democko signing out.", "HUD/democko");
             }
 
             // Update assault mode
@@ -342,14 +344,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             {
                 assaultModeChangedIndicator = h;
                 hud.MessagePopup("Your cover is blown!");
-                hud.ComBoxPopup(2f, "Democko", "They know you're here! Slot the bastards!", "democko");
-                hud.ComBoxPopup(20f, "Democko", "Cicadas on the rooftops! Watch the rooftops!", "democko");
+                hud.ComBoxPopup(2f, "Democko", "They know you're here! Slot the bastards!", "HUD/democko");
+                hud.ComBoxPopup(20f, "Democko", "Cicadas on the rooftops! Watch the rooftops!", "HUD/democko");
             }
         } else if (gameController.currentMap == 2) {
             if (gameController.gameOver) {
                 if (gameController.objectives.stepsLeftToCompletion == 1) {
                     gameController.UpdateObjectives();
-                    hud.ComBoxPopup(1f, "Democko", "Alright, let's get the hell out of here!", "democko");
+                    hud.ComBoxPopup(1f, "Democko", "Alright, let's get the hell out of here!", "HUD/democko");
                 }
                 return;
             }
@@ -358,8 +360,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 if (gameController.spawnMode != SpawnMode.Routine) {
                     gameController.spawnMode = SpawnMode.Routine;
                     hud.MessagePopup("Survive until evac arrives!");
-                    hud.ComBoxPopup(3f, "Democko", "You guys have trouble inbound! My NAV scans show Cicadas closing in on you from all over the place!", "democko");
-                    hud.ComBoxPopup(240f, "Democko", "Guys, avoid going outside! This is their territory and they know it well!", "democko");
+                    hud.ComBoxPopup(3f, "Democko", "You guys have trouble inbound! My NAV scans show Cicadas closing in on you from all over the place!", "HUD/democko");
+                    hud.ComBoxPopup(240f, "Democko", "Guys, avoid going outside! This is their territory and they know it well!", "HUD/democko");
                     gameController.objectives.missionTimer2 = 720f;
                     // gameController.objectives.missionTimer2 = 130f;
                 }
@@ -373,15 +375,15 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 gameController.sectorsCleared++;
                 hud.OnScreenEffect("SECTOR CLEARED!", false);
                 BeginRespawn();
-                hud.ComBoxPopup(1f, "Red Ruby", "There are Cicadas all over the damn place!", "redruby");
-                hud.ComBoxPopup(4f, "Democko", "We’re about half way there; just hang in there!", "democko");
+                hud.ComBoxPopup(1f, "Red Ruby", "There are Cicadas all over the damn place!", "HUD/redruby");
+                hud.ComBoxPopup(4f, "Democko", "We’re about half way there; just hang in there!", "HUD/democko");
             }
 
             // When two minutes left, have player go select evac point if one isn't chosen yet
             if (gameController.objectives.selectedEvacIndex == -2 && gameController.objectives.missionTimer2 <= 120f) {
                 gameController.objectives.selectedEvacIndex = -1;
                 if (gameController.objectives.stepsLeftToCompletion != 2) {
-                    hud.ComBoxPopup(2f, "Democko", "The chopper’s about two minutes out! These landing zones aren’t clear; you guys need to go out there and mark one with a flare so we can know where to land!", "democko");
+                    hud.ComBoxPopup(2f, "Democko", "The chopper’s about two minutes out! These landing zones aren’t clear; you guys need to go out there and mark one with a flare so we can know where to land!", "HUD/democko");
                     hud.MessagePopup("Designate a landing zone for the evac team!");
                     gameController.UpdateObjectives();
                     foreach (GameObject o in gameController.items) {
@@ -398,13 +400,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 if (gameController.objectives.selectedEvacIndex == -1) {
                     gameController.objectives.selectedEvacIndex = -2;
                     gameController.objectives.missionTimer2 = 120f;
-                    hud.ComBoxPopup(0f, "Democko", "You guys didn’t plant the flare down! We’re circling back around!", "democko");
+                    hud.ComBoxPopup(0f, "Democko", "You guys didn’t plant the flare down! We’re circling back around!", "HUD/democko");
                     hud.MessagePopup("Designate a landing zone for the evac team!");
                     return;
                 } else {
                     // Land chopper in chosen evac spot and alert the team
                     if (gameController.objectives.stepsLeftToCompletion == 1 && gameController.objectives.missionTimer3 <= 0f) {
-                        hud.ComBoxPopup(2f, "Democko", "The chopper is here! There’s a lot of heat out here so we can’t stay long, so move quick!", "democko");
+                        hud.ComBoxPopup(2f, "Democko", "The chopper is here! There’s a lot of heat out here so we can’t stay long, so move quick!", "HUD/democko");
                         hud.MessagePopup("Escape available! Head to the waypoint with the pilot!");
                         gameController.objectives.missionTimer3 = 90f;
                     }
@@ -421,7 +423,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             // Run another timer for everyone being able to escape
             if (gameController.objectives.missionTimer3 <= 0f) {
                 gameController.objectives.missionTimer2 = 90f;
-                hud.ComBoxPopup(1f, "Democko", "We had to wave off! We'll circle around and come back!", "democko");
+                hud.ComBoxPopup(1f, "Democko", "We had to wave off! We'll circle around and come back!", "HUD/democko");
                 hud.MessagePopup("Survive until evac returns!");
                 Vector3 n = new Vector3(120f, 150f, -1340f);
                 Vector3 n2 = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 30f, gameController.exitPoint.transform.position.z - 8f);
@@ -478,10 +480,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         {
             audioController.PlayHitSound();
         }
-        if (!godMode)
-        {
-            health -= d;
-        }
+        // if (!godMode)
+        // {
+        //     health -= d;
+        // }
+        health -= d;
     }
 
     [PunRPC]
@@ -893,7 +896,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 float scale = 1f - (distanceFromGrenade / blastRadius);
 
                 // Scale damage done to enemy by the distance from the explosion
-                WeaponStats grenadeStats = other.gameObject.GetComponent<WeaponStats>();
+                Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
                 int damageReceived = (int)(grenadeStats.damage * scale);
 
                 // Validate that this enemy has already been affected
@@ -942,7 +945,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 float scale = 1f - (distanceFromExplosion / blastRadius);
 
                 // Scale damage done to enemy by the distance from the explosion
-                WeaponStats launcherStats = other.gameObject.GetComponent<WeaponStats>();
+                Weapon launcherStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
                 int damageReceived = (int)(launcherStats.damage * scale);
 
                 // Validate that this enemy has already been affected
@@ -976,7 +979,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             aud.clip = ammoPickupSound;
             aud.Play();
             if (weaponScript.currentlyEquippedType == 1) {
-                wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo - wepActionScript.currentAmmo;
+                wepActionScript.totalAmmoLeft = wepActionScript.weaponStats.maxAmmo - wepActionScript.currentAmmo;
             } else {
                 weaponScript.MaxRefillAmmoOnPrimary();
             }
@@ -1164,8 +1167,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         interactionTimer = 0f;
         wepActionScript.deployInProgress = false;
         wepActionScript.deployTimer = 0f;
-        wepActionScript.totalAmmoLeft = wepActionScript.GetWeaponStats().maxAmmo;
-        wepActionScript.currentAmmo = wepActionScript.GetWeaponStats().clipCapacity;
+        wepActionScript.totalAmmoLeft = wepActionScript.weaponStats.maxAmmo;
+        wepActionScript.currentAmmo = wepActionScript.weaponStats.clipCapacity;
         equipmentScript.ToggleFullBody(false);
         equipmentScript.ToggleFirstPersonBody(true);
         equipmentScript.ToggleFpcMesh(true);
@@ -1233,7 +1236,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     o.SetActive(false);
                 }
             }
-            hud.ComBoxPopup(1f, "Democko", "We see you! We’re incoming!", "democko");
+            hud.ComBoxPopup(1f, "Democko", "We see you! We’re incoming!", "HUD/democko");
             gameController.escapeVehicleRef.GetComponent<BlackHawkScript>().ToggleEnabled(true, false);
             Vector3 n = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 30f, gameController.exitPoint.transform.position.z - 8f);
             Vector3 n2 = new Vector3(gameController.exitPoint.transform.position.x, gameController.exitPoint.transform.position.y + 1.35f, gameController.exitPoint.transform.position.z - 8f);
@@ -1390,9 +1393,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     public void DetermineFallDamage() {
-        if (godMode) {
-            return;
-        }
+        // if (godMode) {
+        //     return;
+        // }
         float totalFallDamage = 0f;
         //Debug.Log("Vert velocity was: " + verticalVelocityBeforeLanding);
         if (verticalVelocityBeforeLanding <= -25f) {
@@ -1429,9 +1432,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     IEnumerator SpawnInvincibilityRoutine() {
-        godMode = true;
-        yield return new WaitForSeconds(3f);
-        godMode = false;
+        spawnInvincibilityActive = true;
+        yield return new WaitForSeconds(8f);
+        spawnInvincibilityActive = false;
     }
 
     // Disables player in current scene since they shouldn't exist in this scene

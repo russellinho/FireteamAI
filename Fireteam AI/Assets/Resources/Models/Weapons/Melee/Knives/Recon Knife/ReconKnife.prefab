@@ -201,24 +201,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1959315762895043422}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be4f3b19e65670e489fc3c06bce0e96f, type: 3}
+  m_Script: {fileID: 11500000, guid: 11e070146f72647ff8647ed3aac3e56a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   weaponName: Recon Knife
-  type: Melee
-  category: Knife
-  damage: 100
-  mobility: 0
-  fireRate: 0
-  accuracy: 0
-  recoil: 0
-  sway: 0
-  range: 1.5
-  lungeRange: 3
-  clipCapacity: 0
-  maxAmmo: 0
   steadyAim: 0
-  isSniper: 0
   aimDownSightPosMale: {x: 0, y: 0, z: 0}
   aimDownSightPosFemale: {x: 0, y: 0, z: 0}
   stableHandPosMale: {x: 0, y: 0, z: 0}

@@ -97,41 +97,38 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         switch (itemType)
         {
             case "Character":
-                PlayerData.playerdata.ChangeBodyRef(itemName, null, true);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().PreviewCharacter(itemName);
                 break;
             case "Top":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipTop(itemName, null);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().PreviewTop(itemName);
                 break;
             case "Bottom":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipBottom(itemName, null);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().PreviewBottom(itemName);
                 break;
             case "Footwear":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipFootwear(itemName, null);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().PreviewFootwear(itemName);
                 break;
             case "Headgear":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipHeadgear(itemName, null);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().PreviewHeadgear(itemName);
                 break;
             case "Facewear":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipFacewear(itemName, null);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().PreviewFacewear(itemName);
                 break;
             case "Armor":
-                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipArmor(itemName, null);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().PreviewArmor(itemName);
                 break;
             case "Weapon":
-                ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemName);
-                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, modInfo.equippedSuppressor, modInfo.equippedSight, null);
-                SetModInfo(modInfo);
+                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().PreviewWeapon(itemName);
                 break;
         }
     }
 
     private void EquipItem()
     {
-        ts.equipsModifiedFlag = true;
         switch (itemType)
         {
             case "Character":
-                PlayerData.playerdata.ChangeBodyRef(itemName, gameObject, false);
+                PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipCharacter(itemName, gameObject);
                 break;
             case "Top":
                 PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipTop(itemName, gameObject);
@@ -152,9 +149,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().EquipArmor(itemName, gameObject);
                 break;
             case "Weapon":
-                ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemName);
-                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, modInfo.equippedSuppressor, modInfo.equippedSight, gameObject);
-                SetModInfo(modInfo);
+                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipWeapon(itemName, null, null, gameObject);
                 break;
         }
     }
@@ -267,18 +262,6 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             modDescriptionPopupRef.SetActive(false);
         } else {
             itemDescriptionPopupRef.SetActive(false);
-        }
-    }
-
-    void SetModInfo(ModInfo modInfo) {
-        if (weaponDetails.type.Equals("Primary")) {
-            PlayerData.playerdata.primaryModInfo = modInfo;
-        }
-        if (weaponDetails.type.Equals("Secondary")) {
-            PlayerData.playerdata.secondaryModInfo = modInfo;
-        }
-        if (weaponDetails.type.Equals("Support")) {
-            PlayerData.playerdata.supportModInfo = modInfo;
         }
     }
 

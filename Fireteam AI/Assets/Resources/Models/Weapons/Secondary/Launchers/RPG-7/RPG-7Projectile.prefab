@@ -14466,26 +14466,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 5455440209890545542}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be4f3b19e65670e489fc3c06bce0e96f, type: 3}
+  m_Script: {fileID: 11500000, guid: 11e070146f72647ff8647ed3aac3e56a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName: RPG-7
-  type: Secondary
-  category: Launcher
-  damage: 110
-  mobility: 73
-  fireRate: 1
-  accuracy: 0
-  recoil: 2.8
-  sway: 0
-  range: 0
-  lungeRange: 0
-  clipCapacity: 1
-  maxAmmo: 4
+  weaponName: RPG-XA
   steadyAim: 1
-  isSniper: 0
-  aimDownSightPosMale: {x: -0.0005, y: 0.00145, z: 0.00131}
-  aimDownSightPosFemale: {x: -0.0005, y: 0.00145, z: 0.00131}
+  aimDownSightPosMale: {x: -0.0005, y: 0.00145, z: 0.0013}
+  aimDownSightPosFemale: {x: -0.0005, y: 0.00145, z: 0.0013}
   stableHandPosMale: {x: -0.0003357553, y: 0.0013, z: 0.00155}
   stableHandPosFemale: {x: -0.0003357553, y: 0.001432724, z: 0.001283174}
   defaultLeftCollarPosMale: {x: 0, y: 0.0008, z: 0.0002}
@@ -14624,7 +14611,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_GameController: {fileID: 0}
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 0
   m_SynchronizeScale: 0

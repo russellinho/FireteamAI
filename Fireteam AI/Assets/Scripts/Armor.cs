@@ -9,7 +9,6 @@ public class Armor
     public int malePrefabPathBottom;
     public int femalePrefabPathTop;
     public int femalePrefabPathBottom;
-    public string category;
     public string thumbnailPath;
     public string description;
     public float speed;
@@ -17,10 +16,10 @@ public class Armor
     public float armor;
     public bool purchasable;
     public int gpPrice;
+    public bool deleteable;
 
-    public Armor(string name, int malePrefabPathTop, int malePrefabPathBottom, int femalePrefabPathTop, int femalePrefabPathBottom, string thumbnailPath, string description, float speed, float stamina, float armor, int gpPrice, bool purchasable) {
+    public Armor(string name, int malePrefabPathTop, int malePrefabPathBottom, int femalePrefabPathTop, int femalePrefabPathBottom, string thumbnailPath, string description, float speed, float stamina, float armor, int gpPrice, bool purchasable, bool deleteable) {
         this.name = name;
-        this.category = "Armor";
         this.malePrefabPathTop = malePrefabPathTop;
         this.malePrefabPathBottom = malePrefabPathBottom;
         this.femalePrefabPathTop = femalePrefabPathTop;
@@ -32,5 +31,6 @@ public class Armor
         this.armor = armor;
         this.gpPrice = gpPrice;
         this.purchasable = purchasable;
+        this.deleteable = deleteable;
     }
 }

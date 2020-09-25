@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Koobando.AntiCheat;
 
 public class Stats
 {
-    public float speed;
-    public float stamina;
-    public float armor;
-    public int health;
+    public EncryptedFloat speed;
+    public EncryptedFloat stamina;
+    public EncryptedFloat armor;
+    public EncryptedInt health;
 
     public Stats() {
         SetDefaults();

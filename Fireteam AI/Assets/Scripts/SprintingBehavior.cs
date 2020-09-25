@@ -10,8 +10,8 @@ public class SprintingBehavior : StateMachineBehaviour
        WeaponActionScript was = animator.GetComponentInParent<WeaponActionScript>();
        was.isReloading = false;
        was.isCocking = false;
-        if (was.weaponStats.weaponAnimator != null) {
-            was.weaponStats.weaponAnimator.Play("null");
+        if (was.weaponMetaData.weaponAnimator != null) {
+            was.weaponMetaData.weaponAnimator.Play("null");
         }
     }
 

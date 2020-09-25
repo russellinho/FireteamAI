@@ -2636,6 +2636,8 @@ GameObject:
   - component: {fileID: 1820121350}
   - component: {fileID: 1820121353}
   - component: {fileID: 1820121354}
+  - component: {fileID: 1820121355}
+  - component: {fileID: 1820121356}
   m_Layer: 0
   m_Name: Firebase
   m_TagString: Untagged
@@ -2744,23 +2746,23 @@ MonoBehaviour:
   - {fileID: 7527277087273392961, guid: 6f9b926215d1f174eb83a538bf007b12, type: 3}
   - {fileID: 7441097772136126627, guid: d4567bcf95f934e2882e12785fac6edd, type: 3}
   - {fileID: 2023984468969165926, guid: c5aca98a299404d2a9c93e96959e4ce1, type: 3}
-  - {fileID: 647097629076513474, guid: 19bc27bcc1d69cb44b2307cc58b8dad9, type: 3}
-  - {fileID: 8022553417292482539, guid: a1aaab6831546c046aea2834825b45df, type: 3}
-  - {fileID: 5871399511424764621, guid: 0a4b95e24761c50469f7a9c4a75b6c53, type: 3}
+  - {fileID: 7362179297203274662, guid: f07e2f8cb83432043b9aa61f00b6ff02, type: 3}
+  - {fileID: 6385117378849180107, guid: c9f4de8f1c7d9fd46a351a1de71e380c, type: 3}
+  - {fileID: 3655303357107647874, guid: 4b077d4545d0d114e9424afc60688c24, type: 3}
   - {fileID: 6406017339835037078, guid: fa835ba5c8ef1ea49be495fda63cb5a7, type: 3}
   - {fileID: 4880856741166177744, guid: 1faf417f3a76eef48a9642ffa07e5250, type: 3}
   - {fileID: 3068366686370332039, guid: 6fabb4cbc73523348af4f8a81469bb12, type: 3}
-  - {fileID: 5572142118092405236, guid: 6bf045540cc217b4c8c7ea79618410eb, type: 3}
-  - {fileID: 6537120209402510724, guid: da0ac2a81383af5409a39810f4f6dc84, type: 3}
-  - {fileID: 3082689501662581914, guid: fa1f0f8573ca15b41ad04b7efd0f6905, type: 3}
+  - {fileID: 2763236472736943495, guid: aa4510bf84afa194188fea61a0330ee6, type: 3}
+  - {fileID: 9209282918807476503, guid: 597307a4da797184d803773dbcdc47a5, type: 3}
+  - {fileID: 5064404935402882203, guid: 3ecef27a46b80114cb06391115600896, type: 3}
   - {fileID: 494407532518222098, guid: 5979e9387aa9e46c9823728e66d5412f, type: 3}
   - {fileID: 345104316897799649, guid: f04368c019bb3424fbf9de6698b127e8, type: 3}
   - {fileID: 494407532518222098, guid: cc6166a092851fd439f3f62539b00d59, type: 3}
   - {fileID: 5292592947232726575, guid: ff82872a4f0b77a4d95ea7c0e95f60c1, type: 3}
   - {fileID: 345104316897799649, guid: 567f06d49d2ec844a91dc19ee61df105, type: 3}
-  - {fileID: 345104316897799649, guid: e43b23e697e244c74b3789d94d7cc3fb, type: 3}
+  - {fileID: 5425727197953467694, guid: 44e0c1ef984a61c4a9975bfd46a5837c, type: 3}
   - {fileID: 345104316897799649, guid: ebb7b3059bfed2a41ba54f5fd003363d, type: 3}
-  - {fileID: 345104316897799649, guid: d8ba5e61989214777ba2d35d19d9cef3, type: 3}
+  - {fileID: 6779886713933044853, guid: ff390d7f9573b5845ba6e5d90786caad, type: 3}
   - {fileID: 558888239628046051, guid: 7cc1cbb1f6b323e45b9571a0d053c0cd, type: 3}
   - {fileID: 552458756871227042, guid: 991f3ca4da390d945a266e293365c30d, type: 3}
   - {fileID: 1607339884371932959, guid: 9639419af40a6a1448664f3165017bf8, type: 3}
@@ -2799,7 +2801,45 @@ MonoBehaviour:
   preferenceData:
     rememberLogin: 0
     rememberUserId: 
-    musicVolume: 0
+    musicVolume:
+      currentCryptoKey: 0
+      initialized: 0
+      hiddenValue: 0
+      fakeValue: 0
+      fakeValueActive: 0
+--- !u!114 &1820121355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1820121349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b796bf682bf9a4d50b94b14ac1ada5fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  detectionEventHasListener: 0
+  doubleEpsilon: 0.0001
+  floatEpsilon: 0.0001
+  vector2Epsilon: 0.1
+  vector3Epsilon: 0.1
+  quaternionEpsilon: 0.1
+--- !u!114 &1820121356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1820121349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b856049f04e6e4d04aea382ee7a6382c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1863107390
 GameObject:
   m_ObjectHideFlags: 0

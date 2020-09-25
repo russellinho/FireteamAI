@@ -4988,24 +4988,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3764781458472127761}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be4f3b19e65670e489fc3c06bce0e96f, type: 3}
+  m_Script: {fileID: 11500000, guid: 11e070146f72647ff8647ed3aac3e56a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName: Glock23
-  type: Secondary
-  category: Pistol
-  damage: 48
-  mobility: 100
-  fireRate: 0
-  accuracy: 0
-  recoil: 2
-  sway: 0
-  range: 100
-  lungeRange: 0
-  clipCapacity: 12
-  maxAmmo: 60
+  weaponName: I32
   steadyAim: 0
-  isSniper: 0
   aimDownSightPosMale: {x: -0.00125, y: 0.00183, z: 0.000365}
   aimDownSightPosFemale: {x: -0.00125, y: 0.00183, z: 0.000365}
   stableHandPosMale: {x: -0.0007689242, y: 0.001638458, z: 0.0003511736}

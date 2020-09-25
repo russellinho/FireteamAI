@@ -9968,24 +9968,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3629330912203194240}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be4f3b19e65670e489fc3c06bce0e96f, type: 3}
+  m_Script: {fileID: 11500000, guid: 11e070146f72647ff8647ed3aac3e56a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName: L96A1
-  type: Primary
-  category: Sniper Rifle
-  damage: 180
-  mobility: 87
-  fireRate: 1.4
-  accuracy: 0
-  recoil: 13
-  sway: 0
-  range: 3000
-  lungeRange: 0
-  clipCapacity: 5
-  maxAmmo: 20
+  weaponName: J961A
   steadyAim: 1
-  isSniper: 1
   aimDownSightPosMale: {x: -0.000491, y: 0.0014, z: 0.001282}
   aimDownSightPosFemale: {x: -0.000491, y: 0.0014, z: 0.001282}
   stableHandPosMale: {x: -0.0003357553, y: 0.001432724, z: 0.001283174}

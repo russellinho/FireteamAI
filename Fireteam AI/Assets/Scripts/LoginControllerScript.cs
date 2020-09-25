@@ -6,6 +6,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 
 public class LoginControllerScript : MonoBehaviour
 {
@@ -14,12 +15,11 @@ public class LoginControllerScript : MonoBehaviour
     public RawImage titleLogoImg;
     public GameObject popupAlert;
     public Text popupAlertTxt;
+    private string popupAlertMessage;
     public InputField emailField;
     public InputField passwordField;
     public Button loginBtn;
     public Toggle rememberLoginToggle;
-    private bool activatePopupFlag;
-    private string popupMessage;
     private int signInFlag;
     private bool saveLoginPrefsFlag;
 
@@ -34,10 +34,9 @@ public class LoginControllerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (activatePopupFlag) {
-            ConvertPopupMessage();
-            TriggerPopup();
-            activatePopupFlag = false;
+        if (popupAlertMessage != null) {
+            TriggerPopup(popupAlertMessage);
+            popupAlertMessage = null;
         }
         if (signInFlag == 1) {
             if (saveLoginPrefsFlag) {
@@ -68,22 +67,13 @@ public class LoginControllerScript : MonoBehaviour
         }
     }
 
-    void ConvertPopupMessage() {
-        if (popupMessage.Contains("password")) {
-            popupMessage = "The password is invalid. Please try again.";
-        } else if (popupMessage.Contains("logged")) {
-            popupMessage = "This account is already logged in on another device! Please check again. If this issue is of error, please log out through the account dashboard on our website by clicking \"Log Out Of All Games\".";
-        } else {
-            popupMessage = "Couldn't establish connection to server. Please try again later.";
-        }
-    }
-
     public void ClosePopup() {
+        loginBtn.interactable = true;
         popupAlert.SetActive(false);
-        popupMessage = "";
     }
 
-    void TriggerPopup() {
+    void TriggerPopup(string popupMessage) {
+        loginBtn.interactable = false;
         popupAlertTxt.text = popupMessage;
         popupAlert.SetActive(true);
     }
@@ -92,71 +82,123 @@ public class LoginControllerScript : MonoBehaviour
         if (popupAlert.activeInHierarchy) {
             return;
         }
+        if (DAOScript.functionsCallHash == null) {
+            popupAlertMessage = "Database is currently unavailable. Please try again later.";
+            return;
+        }
         loginBtn.interactable = false;
         AuthScript.authHandler.auth.SignInWithEmailAndPasswordAsync(emailField.text, passwordField.text).ContinueWith(task => {
             if (task.IsCanceled) {
-                popupMessage = ""+task.Exception;
-                activatePopupFlag = true;
-                loginBtn.interactable = true;
+                popupAlertMessage = ""+task.Exception;
                 return;
             }
             if (task.IsFaulted) {
-                popupMessage = ""+task.Exception;
-                activatePopupFlag = true;
-                loginBtn.interactable = true;
+                popupAlertMessage = ""+task.Exception;
                 return;
             }
             AuthScript.authHandler.user = task.Result;
             //QueuePopup("User signed in successfully: {" + newUser.DisplayName + "} ({" + newUser.UserId + "})");
             // Query DB to see if the user is set up yet. If not, go to setup. Else, go to title page.
-            DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").GetValueAsync().ContinueWith(taskA => {
+            // Not banned, proceed
+            Dictionary<string, object> inputData = new Dictionary<string, object>();
+            inputData["callHash"] = DAOScript.functionsCallHash;
+            inputData["uid"] = AuthScript.authHandler.user.UserId;
+            HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("checkUserIsSetup");
+            func.CallAsync(inputData).ContinueWith((taskA) => {
                 if (taskA.IsFaulted) {
-                    popupMessage = ""+taskA.Exception;
-                    activatePopupFlag = true;
-                    loginBtn.interactable = true;
+                    popupAlertMessage = ""+taskA.Exception;
                     return;
-                } else if (taskA.IsCompleted) {
+                } else {
                     saveLoginPrefsFlag = true;
-                    if (!taskA.Result.HasChild(AuthScript.authHandler.user.UserId)) {
-                        Debug.Log("Success going to setup!");
+                    Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                    if (results["status"].ToString() == "401") {
+                        // Go to setup
                         signInFlag = 1;
-                    } else {
-                        if (developmentMode) {
-                            DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").SetValueAsync("1").ContinueWith(taskB => {
-                                if (taskB.IsFaulted) {
-                                    popupMessage = ""+taskB.Exception;
-                                    activatePopupFlag = true;
-                                    loginBtn.interactable = true;
-                                    return;
-                                } else if (taskB.IsCompleted) {
-                                    Debug.Log("Success going to title!");
-                                    signInFlag = 2;
+                    } else if (results["status"].ToString() == "200") {
+                        // Check if banned
+                        func = DAOScript.dao.functions.GetHttpsCallable("playerIsBanned");
+                        func.CallAsync(inputData).ContinueWith((taskS) => {
+                            Dictionary<object, object> resultsS = (Dictionary<object, object>)taskS.Result.Data;
+                            if (taskS.IsFaulted) {
+                                popupAlertMessage = ""+taskS.Exception;
+                                return;
+                            } else if (resultsS["status"].ToString() == "201") {
+                                // Is banned
+                                string duration = resultsS["duration"].ToString();
+                                string dateBanned = resultsS["dateBanned"].ToString();
+                                string reason = resultsS["reason"].ToString();
+                                string banString = "You have been banned for the following reason:\n" + reason + "\n";
+                                if (duration == "-1") {
+                                    banString += "This ban is permanent, so you will no longer be able to use this account.\n";
+                                } else {
+                                    banString += "Date the ban will be lifted:" + CalculateBannedUntilDate(float.Parse(duration), DateTime.Parse(dateBanned)) + "\n";
                                 }
-                            });
-                        } else {
-                            if (taskA.Result.Child(AuthScript.authHandler.user.UserId).Child("loggedIn").Value.ToString() == "0") {
-                                DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").SetValueAsync("1").ContinueWith(taskB => {
-                                    if (taskB.IsFaulted) {
-                                        popupMessage = ""+taskB.Exception;
-                                        activatePopupFlag = true;
-                                        loginBtn.interactable = true;
-                                        return;
-                                    } else if (taskB.IsCompleted) {
-                                        Debug.Log("Success going to title!");
-                                        signInFlag = 2;
-                                    }
-                                });
+                                banString += "If you think this is a mistake, please open a support ticket at \"www.koobando.com/support\"";
+                                popupAlertMessage = banString;
+                                return;
+                            } else if (resultsS["status"].ToString() == "200") {
+                                // Not banned, proceed
+                                inputData.Clear();
+                                inputData["callHash"] = DAOScript.functionsCallHash;
+                                inputData["uid"] = AuthScript.authHandler.user.UserId;
+                                inputData["loggedIn"] = "1";
+                                func = DAOScript.dao.functions.GetHttpsCallable("setUserIsLoggedIn");
+                                // Go to login
+                                if (developmentMode) {
+                                    func.CallAsync(inputData).ContinueWith((taskB) => {
+                                        if (taskB.IsFaulted) {
+                                            popupAlertMessage = ""+taskB.Exception;
+                                            return;
+                                        } else {
+                                            Dictionary<object, object> results2 = (Dictionary<object, object>)taskB.Result.Data;
+                                            if (results2["status"].ToString() == "200") {
+                                                signInFlag = 2;
+                                            } else {
+                                                popupAlertMessage = "Database is currently unavailable. Please try again later.";
+                                                return;
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(AuthScript.authHandler.user.UserId).Child("loggedIn").GetValueAsync().ContinueWith(taskC => {
+                                        if (taskC.Result.Value.ToString() == "0") {
+                                            func.CallAsync(inputData).ContinueWith((taskB) => {
+                                                if (taskB.IsFaulted) {
+                                                    popupAlertMessage = ""+taskB.Exception;
+                                                    return;
+                                                } else {
+                                                    Dictionary<object, object> results2 = (Dictionary<object, object>)taskB.Result.Data;
+                                                    if (results2["status"].ToString() == "200") {
+                                                        signInFlag = 2;
+                                                    } else {
+                                                        popupAlertMessage = "Database is currently unavailable. Please try again later.";
+                                                        return;
+                                                    }
+                                                }
+                                            });
+                                        } else {
+                                            popupAlertMessage = "This account is already logged in on another device! Please check again. If this issue is of error, please log out through the account dashboard on our website by clicking \"Log Out Of All Games\".";
+                                            return;
+                                        }
+                                    });
+                                }
                             } else {
-                                popupMessage = "logged";
-                                activatePopupFlag = true;
-                                loginBtn.interactable = true;
+                                popupAlertMessage = "Database is currently unavailable. Please try again later.";
                                 return;
                             }
-                        }
+                        });
+                    } else {
+                        // Error
+                        popupAlertMessage = "Database is currently unavailable. Please try again later.";
+                        return;
                     }
                 }
             });
         });
+    }
+
+    private DateTime CalculateBannedUntilDate(float duration, DateTime dateBanned) {
+        return dateBanned.AddMinutes(duration);
     }
 
     public void OnRegisterClick() {

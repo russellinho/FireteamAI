@@ -11,8 +11,8 @@ public class HolsterBehavior : StateMachineBehaviour
         was.isDrawing = true;
         was.isCocking = false;
         was.isReloading = false;
-        if (was.weaponStats.weaponAnimator != null) {
-            was.weaponStats.weaponAnimator.Play("null");
+        if (was.weaponMetaData.weaponAnimator != null) {
+            was.weaponMetaData.weaponAnimator.Play("null");
         }
         if (was.currentAmmo > 0) {
             was.playerActionScript.weaponScript.ToggleWarhead(true);

@@ -2690,24 +2690,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6875200785155198493}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be4f3b19e65670e489fc3c06bce0e96f, type: 3}
+  m_Script: {fileID: 11500000, guid: 11e070146f72647ff8647ed3aac3e56a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   weaponName: First Aid Kit
-  type: Support
-  category: Deployable
-  damage: 0
-  mobility: 97
-  fireRate: 1.5
-  accuracy: 0
-  recoil: 0
-  sway: 0
-  range: 0
-  lungeRange: 0
-  clipCapacity: 1
-  maxAmmo: 1
   steadyAim: 0
-  isSniper: 0
   aimDownSightPosMale: {x: 0, y: 0, z: 0}
   aimDownSightPosFemale: {x: 0, y: 0, z: 0}
   stableHandPosMale: {x: 0, y: 0, z: 0}
@@ -2742,7 +2729,7 @@ MonoBehaviour:
   fpcPosFemale: {x: -0.002, y: 0.0013, z: 0}
   fpcLeftHandPosFemale: {x: 0, y: 0, z: 0}
   fpcLeftHandRotFemale: {x: 0, y: 0, z: 0}
-  fpcRotFemale: {x: 0, y: 0, z: -20.737}
+  fpcRotFemale: {x: 0, y: 0, z: 0}
   fpcScaleFemale: {x: 0.0001100151, y: 0.0001100151, z: 0.0001100151}
   fullPosMale: {x: 0.1, y: 0.157, z: 0.236}
   fullRotMale: {x: -0.44, y: 91.39201, z: 177.6}
@@ -2791,6 +2778,7 @@ MonoBehaviour:
   - {fileID: 7963411690276778090}
   - {fileID: 2729402166507869627}
   - {fileID: 5100945733815934885}
+  - {fileID: 166315455686783782}
   - {fileID: 1856588322177983616}
   - {fileID: 8091083662639011152}
   - {fileID: 1082330628703539037}
@@ -2808,7 +2796,6 @@ MonoBehaviour:
   - {fileID: 2813028112378043205}
   - {fileID: 6316622571203092064}
   - {fileID: 5284667864874520072}
-  - {fileID: 166315455686783782}
   - {fileID: 7912903006521663754}
   - {fileID: 8463544199352371928}
   warheadRenderer: {fileID: 0}

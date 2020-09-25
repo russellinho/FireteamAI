@@ -198,7 +198,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		// Update UI
 		//container.weaponLabelTxt.text = playerActionScript.currWep;
-		container.weaponLabelTxt.text = wepScript.equippedWep;
+		container.weaponLabelTxt.text = wepScript.equippedWepInGame;
 		container.ammoTxt.text = "" + wepActionScript.currentAmmo + '/' + wepActionScript.totalAmmoLeft;
 		
 		UpdateCursorStatus ();
@@ -747,16 +747,16 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void InitialComBoxRoutineForMission(int mission) {
 		if (mission == 1) {
-			ComBoxPopup(7f, "Democko", "The local Cicada cannibal gang has planted gas bombs to turn the townspeople into minced meat. Let's take care of 'em.", "democko");
+			ComBoxPopup(7f, "Democko", "The local Cicada cannibal gang has planted gas bombs to turn the townspeople into minced meat. Let's take care of 'em.", "HUD/democko");
 		} else if (mission == 2) {
-			ComBoxPopup(4f, "Democko", "Alpha team! What the hell just happened?! Give me a sitrep!", "democko");
-			ComBoxPopup(9f, "Red Ruby", "Tail rotor got shot out with an RPG!", "redruby");
-			ComBoxPopup(11f, "Democko", "Damn it! Give me a status report!", "democko");
-			ComBoxPopup(14f, "Red Ruby", "I’m alive; leg is fractured! I’m stuck in the pilot seat! The rest of the team seems to be okay! This chopper’s combusting pretty fast!", "redruby");
-			ComBoxPopup(20f, "Democko", "Okay, just stay calm! Alpha team, get her out of there to safety! I’m dispatching another chopper to get you guys out of there ASAP!", "democko");
-			ComBoxPopup(29f, "Red Ruby", "Double time it, please! We’re sitting ducks out here!", "redruby");
-			ComBoxPopup(35f, "Democko", "Roger that, it’s on the way! Just sit tight!", "democko");
-			ComBoxPopup(40f, "Democko", "You guys won’t get far on foot. I recommend you set up a perimeter in the nearby buildings and defend yourselves until the chopper arrives. ETA is approximately 15 minutes!", "democko");
+			ComBoxPopup(4f, "Democko", "Alpha team! What the hell just happened?! Give me a sitrep!", "HUD/democko");
+			ComBoxPopup(9f, "Red Ruby", "Tail rotor got shot out with an RPG!", "HUD/redruby");
+			ComBoxPopup(11f, "Democko", "Damn it! Give me a status report!", "HUD/democko");
+			ComBoxPopup(14f, "Red Ruby", "I’m alive; leg is fractured! I’m stuck in the pilot seat! The rest of the team seems to be okay! This chopper’s combusting pretty fast!", "HUD/redruby");
+			ComBoxPopup(20f, "Democko", "Okay, just stay calm! Alpha team, get her out of there to safety! I’m dispatching another chopper to get you guys out of there ASAP!", "HUD/democko");
+			ComBoxPopup(29f, "Red Ruby", "Double time it, please! We’re sitting ducks out here!", "HUD/redruby");
+			ComBoxPopup(35f, "Democko", "Roger that, it’s on the way! Just sit tight!", "HUD/democko");
+			ComBoxPopup(40f, "Democko", "You guys won’t get far on foot. I recommend you set up a perimeter in the nearby buildings and defend yourselves until the chopper arrives. ETA is approximately 15 minutes!", "HUD/democko");
 		}
 	}
 
