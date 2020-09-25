@@ -1223,7 +1223,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     public void SetMeleeSpeed(float multiplier = 1f) {
-        animatorFpc.SetFloat("MeleeSpeed", weaponMetaData.defaultMeleeSpeed * multiplier);
+        animatorFpc.SetFloat("MeleeSpeed", meleeMetaData.defaultMeleeSpeed * multiplier);
     }
 
     public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {
