@@ -3,23 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Michsky.UI.Shift;
 
 public class HUDContainer : MonoBehaviour {
 
 	// Health HUD
-	public Text healthText;
+	public CanvasGroup healthGroup;
+	public CanvasGroup staminaGroup;
+	public TextMeshProUGUI healthPercentTxt;
+	public TextMeshProUGUI staminaPercentTxt;
+	public Slider healthBar;
 	public Slider staminaBar;
 	public Image flashbangOverlay;
 	public RawImage flashbangScreenCap;
+	public CanvasGroup vipHealthGroup;
+	public TextMeshProUGUI vipHealthPercentTxt;
 	public Slider vipHealthBar;
 
 	// Weapon HUD
-	public Text weaponLabelTxt;
-	public Text ammoTxt;
+	public UIManagerText weaponLabelTxt;
+	public UIManagerText ammoTxt;
 	public GameObject crosshair;
 	public RawImage sightCrosshair;
 	public GameObject SniperOverlay;
-	public GameObject itemCarryingPnl;
+	public CanvasGroup itemCarryingGroup;
 	public Text itemCarryingText;
 
 	// Pause/in-game menu HUD

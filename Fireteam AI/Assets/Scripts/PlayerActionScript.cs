@@ -479,6 +479,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (pView.IsMine)
         {
             audioController.PlayHitSound();
+            hud.UpdateHealth();
         }
         // if (!godMode)
         // {
