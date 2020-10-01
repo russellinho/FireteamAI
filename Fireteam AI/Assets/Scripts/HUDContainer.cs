@@ -30,11 +30,8 @@ public class HUDContainer : MonoBehaviour {
 	public Text itemCarryingText;
 
 	// Pause/in-game menu HUD
-	public GameObject pauseMenuGUI;
-	public GameObject pauseExitBtn;
-	public GameObject pauseResumeBtn;
-	public GameObject pauseOptionsBtn;
-	public Canvas scoreboard;
+	public CanvasGroup pauseMenuGUI;
+	public GameObject scoreboard;
     public InGameMessenger inGameMessenger;
 
 	// Hit indication HUD
@@ -51,13 +48,14 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject hudPlayerMarker;
 
 	// On-screen indication HUD
-	public Text objectivesTextParent;
-	public Text objectivesText;
+	public GameObject objectivesTextParent;
+	public GameObject objectiveTextEntry;
+	public TextMeshProUGUI[] objectivesText;
 	public GameObject missionText;
 	public Text deployInvalidText;
-	public Text actionBarText;
+	public TextMeshProUGUI actionBarText;
+	public Slider actionBarSlider;
 	public GameObject actionBar;
-	public Image[] actionBarImgs;
 	public Text hintText;
 	public Text spectatorText;
 	public Text missionTimeText;
@@ -81,9 +79,11 @@ public class HUDContainer : MonoBehaviour {
     // Versus mode HUD
     public GameObject redScore;
     public GameObject blueScore;
-    public Text redScoreTxt;
-    public Text blueScoreTxt;
+    public TextMeshProUGUI redScoreTxt;
+    public TextMeshProUGUI blueScoreTxt;
 	public GameObject redTeamHighlight;
 	public GameObject blueTeamHighlight;
+	public GameObject redTeamUnderline;
+	public GameObject blueTeamUnderline;
 
 }

@@ -12,7 +12,7 @@ using AlertStatus = BetaEnemyScript.AlertStatus;
 public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	// HUD object reference
 	public HUDContainer container;
-	private PauseMenuScript pauseMenuScript;
+	// private PauseMenuScript pauseMenuScript;
 
     // Player reference
     public PlayerActionScript playerActionScript;
@@ -66,7 +66,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.hitFlare.GetComponent<RawImage> ().enabled = false;
 		container.hitDir.GetComponent<RawImage> ().enabled = false;
 		container.hitMarker.GetComponent<RawImage> ().enabled = false;
-		pauseMenuScript = container.pauseMenuGUI.GetComponent<PauseMenuScript>();
+		// pauseMenuScript = container.pauseMenuGUI.gameObject.GetComponent<PauseMenuScript>();
 
 		foreach (int actorId in gameController.enemyList.Keys) {
 			GameObject marker = GameObject.Instantiate(container.enemyAlerted);
@@ -76,11 +76,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			enemyMarkers.Add(actorId, m);
 		}
 
-		container.pauseMenuGUI.SetActive (false);
+		container.pauseMenuGUI.alpha = 0f;
 		ToggleActionBar(false, null);
 		container.actionBarText.enabled = false;
 		container.hintText.enabled = false;
-		container.scoreboard.GetComponent<Canvas> ().enabled = false;
+		container.scoreboard.SetActive(false);
 		container.spectatorText.enabled = false;
 		ToggleDetectionHUD(false);
 		InitHealth();
@@ -112,7 +112,14 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void LoadHUDForMission() {
 		container.screenColor.color = new Color (0f, 0f, 0f, 1f);
-		container.objectivesText.text = gameController.objectives.GetObjectivesString();
+		container.objectivesText = new TextMeshProUGUI[gameController.objectives.objectivesText.Length];
+		for (int i = 0; i < gameController.objectives.objectivesText.Length; i++) {
+			string o = gameController.objectives.objectivesText[i];
+			GameObject objEntry = Instantiate(container.objectiveTextEntry);
+			objEntry.GetComponent<ObjectiveEntryScript>().SetObjectiveText(o);
+			objEntry.transform.SetParent(container.objectivesTextParent.transform);
+			container.objectivesText[i] = objEntry.GetComponent<ObjectiveEntryScript>().objectiveText;
+		}
         if (gameController.currentMap == 1) {
 			GameObject m1 = GameObject.Instantiate (container.hudWaypoint);
 			m1.GetComponent<RawImage>().enabled = false;
@@ -221,7 +228,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		OnStartScreenFade ();
 
 		HandleRespawnBar ();
-		UpdateObjectives ();
+		// UpdateObjectives ();
 		FlashbangUpdate();
 		UpdateDetectedText();
 		UpdateCarryingText();
@@ -284,7 +291,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	bool CanPause() {
 		if (wepActionScript.isCocking || wepActionScript.isDrawing || wepActionScript.isMeleeing || wepActionScript.isFiring || wepActionScript.isAiming || wepActionScript.isCockingGrenade 
 			|| wepActionScript.deployInProgress || wepActionScript.isUsingBooster || wepActionScript.isUsingDeployable || wepActionScript.isReloading || wepActionScript.fpc.m_IsRunning
-			|| container.scoreboard.GetComponent<Canvas>().enabled) {
+			|| container.scoreboard.activeInHierarchy) {
 				return false;
 			}
 		return true;
@@ -295,7 +302,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			Pause();
 		}
 
-		if (container.pauseMenuGUI.activeInHierarchy)
+		if (container.pauseMenuGUI.alpha == 1f)
 		{
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
@@ -717,9 +724,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.missionTimeText.enabled = !b;
 		container.missionTimeRemainingText.enabled = !b;
 		container.assaultModeIndText.enabled = !b;
-		container.objectivesText.enabled = !b;
-		container.objectivesTextParent.enabled = !b;
-        container.scoreboard.GetComponent<Canvas>().enabled = b;
+		container.objectivesTextParent.SetActive(!b);
+        container.scoreboard.SetActive(b);
     }
 
     public void ReturnToMenu()
@@ -730,13 +736,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     void Pause()
     {
-        if (!container.pauseMenuGUI.activeInHierarchy)
+        if (container.pauseMenuGUI.alpha == 0f)
         {
-            container.pauseMenuGUI.SetActive(true);
+            container.pauseMenuGUI.alpha = 1f;
         }
         else
         {
-            pauseMenuScript.HandleEscPress();
+            container.pauseMenuGUI.alpha = 0f;
         }
     }
 
@@ -777,39 +783,17 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     public void ToggleActionBar(bool enable, string actionText)
     {
-        int c = container.actionBarImgs.Length;
-        if (!enable)
-        {
-			// Preemptive check
-			if (!container.actionBarImgs[0].enabled) {
-				return;
-			}
-            // Disable all actionbar components
-			container.actionBarText.enabled = false;
-            for (int i = 0; i < c; i++)
-            {
-                container.actionBarImgs[i].enabled = false;
-            }
-        }
-        else
-        {
-			// Preemptive check
-			if (container.actionBarImgs[0].enabled) {
-				return;
-			}
-			container.actionBarText.text = actionText;
-			container.actionBarText.enabled = true;
-            for (int i = 0; i < c; i++)
-            {
-                container.actionBarImgs[i].enabled = true;
-            }
-        }
+		container.actionBar.SetActive(enable);
+		container.actionBarText.text = actionText;
     }
 
     public void UpdateObjectives()
     {
 		if (gameController.updateObjectivesFlag) {
-			container.objectivesText.text = gameController.objectives.GetObjectivesString();
+			for (int i = 0; i < gameController.objectives.objectivesText.Length; i++) {
+				string o = gameController.objectives.objectivesText[i];
+				container.objectivesText[i].text = o;
+			}
 			gameController.updateObjectivesFlag = false;
 		}
     }
@@ -824,7 +808,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     }
 
 	public void SetActionBarSlider(float val) {
-		container.actionBar.GetComponent<Slider> ().value = val;
+		container.actionBarSlider.value = val;
 	}
 
 	public void ToggleSpectatorMessage(bool b) {
@@ -1065,8 +1049,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         container.redScore.SetActive(b);
 		if (gameController.teamMap == "R") {
 			container.redTeamHighlight.SetActive(true);
+			container.redTeamUnderline.SetActive(true);
 		} else if (gameController.teamMap == "B") {
 			container.blueTeamHighlight.SetActive(true);
+			container.blueTeamUnderline.SetActive(true);
 		}
     }
 
@@ -1129,7 +1115,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	public bool PauseIsActive() {
-		return container.pauseMenuGUI.activeInHierarchy;
+		return container.pauseMenuGUI.alpha == 1f;
 	}
 
 	public void UpdateHealth() {

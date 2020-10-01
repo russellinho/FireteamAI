@@ -25,30 +25,30 @@ namespace Michsky.UI.Shift
 
         void Start()
         {
-            mixer.SetFloat("Master", Mathf.Log10(PlayerPrefs.GetFloat(masterSlider.sliderTag + "SliderValue")) * 20);
+            // mixer.SetFloat("Master", Mathf.Log10(PlayerPrefs.GetFloat(masterSlider.sliderTag + "SliderValue")) * 20);
             mixer.SetFloat("Music", Mathf.Log10(PlayerPrefs.GetFloat(musicSlider.sliderTag + "SliderValue")) * 20);
-            mixer.SetFloat("SFX", Mathf.Log10(PlayerPrefs.GetFloat(sfxSlider.sliderTag + "SliderValue")) * 20);
+            // mixer.SetFloat("SFX", Mathf.Log10(PlayerPrefs.GetFloat(sfxSlider.sliderTag + "SliderValue")) * 20);
 
-            resolutionSelector.itemList.RemoveRange(0, resolutionSelector.itemList.Count);
-            resolutions = Screen.resolutions;
+            // resolutionSelector.itemList.RemoveRange(0, resolutionSelector.itemList.Count);
+            // resolutions = Screen.resolutions;
 
-            int currentResolutionIndex = 0;
-            for (int i = 0; i < resolutions.Length; i++)
-            {
-                string option = resolutions[i].width + " x " + resolutions[i].height;
-                options.Add(option);
+            // int currentResolutionIndex = 0;
+            // for (int i = 0; i < resolutions.Length; i++)
+            // {
+            //     string option = resolutions[i].width + " x " + resolutions[i].height;
+            //     options.Add(option);
 
-                if (resolutions[i].width == Screen.currentResolution.width && resolutions[i].height == Screen.currentResolution.height)
-                {
-                    currentResolutionIndex = i;
-                    resolutionSelector.index = currentResolutionIndex;
-                }
+            //     if (resolutions[i].width == Screen.currentResolution.width && resolutions[i].height == Screen.currentResolution.height)
+            //     {
+            //         currentResolutionIndex = i;
+            //         resolutionSelector.index = currentResolutionIndex;
+            //     }
 
-                resolutionSelector.CreateNewItem(options[i]);
-                // resolutionSelector.itemList[i].onValueChanged.AddListener(UpdateResolution);
-            }
+            //     resolutionSelector.CreateNewItem(options[i]);
+            //     // resolutionSelector.itemList[i].onValueChanged.AddListener(UpdateResolution);
+            // }
 
-            resolutionSelector.UpdateUI();
+            // resolutionSelector.UpdateUI();
         }
 
         public void UpdateResolution()

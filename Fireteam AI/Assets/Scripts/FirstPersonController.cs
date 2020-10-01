@@ -101,7 +101,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             //RotateView();
             // the jump state needs to read here to make sure it is not missed
-			if (!m_Jump && canMove && !playerActionScript.hud.container.pauseMenuGUI.activeInHierarchy && IsFullyMobile())
+			if (!m_Jump && canMove && playerActionScript.hud.container.pauseMenuGUI.alpha == 0f && IsFullyMobile())
             {
                 m_Jump = PlayerPreferences.playerPreferences.KeyWasPressed("Jump");
             }
@@ -413,7 +413,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
 
             // Nullify movement if the user is paused
-            if (playerActionScript.hud.container.pauseMenuGUI.activeInHierarchy) {
+            if (playerActionScript.hud.container.pauseMenuGUI.alpha == 1f) {
                 horizontal = 0f;
                 vertical = 0f;
             }
@@ -507,7 +507,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private Rotations RotateView()
         {
-            return m_MouseLook.LookRotation (charTransform, spineTransform, fpcTransformSpine, fpcTransformBody, playerActionScript.hud.container.pauseMenuGUI.activeInHierarchy);
+            return m_MouseLook.LookRotation (charTransform, spineTransform, fpcTransformSpine, fpcTransformBody, playerActionScript.hud.container.pauseMenuGUI.alpha == 1f);
         }
 
         [PunRPC]

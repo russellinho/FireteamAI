@@ -286,7 +286,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         HandleInteracting();
 
-        if (fpc.enabled && fpc.canMove && !hud.container.pauseMenuGUI.activeInHierarchy)
+        if (fpc.enabled && fpc.canMove && hud.container.pauseMenuGUI.alpha == 0f)
         {
             HandleCrouch();
             if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact")) {
@@ -351,6 +351,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (gameController.gameOver) {
                 if (gameController.objectives.stepsLeftToCompletion == 1) {
                     gameController.UpdateObjectives();
+                    hud.UpdateObjectives();
                     hud.ComBoxPopup(1f, "Democko", "Alright, let's get the hell out of here!", "HUD/democko");
                 }
                 return;
@@ -386,6 +387,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     hud.ComBoxPopup(2f, "Democko", "The chopper’s about two minutes out! These landing zones aren’t clear; you guys need to go out there and mark one with a flare so we can know where to land!", "HUD/democko");
                     hud.MessagePopup("Designate a landing zone for the evac team!");
                     gameController.UpdateObjectives();
+                    hud.UpdateObjectives();
                     foreach (GameObject o in gameController.items) {
                         FlareScript f = o.GetComponentInChildren<FlareScript>(true);
                         f.ToggleFlareTemplate(true);
@@ -438,6 +440,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcUpdateObjectives() {
         gameController.UpdateObjectives();
+        hud.UpdateObjectives();
     }
 
     void AddMyselfToPlayerList()
@@ -1229,6 +1232,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void HandlePopFlareForMission(int mission, int i) {
         if (mission == 2) {
             gameController.UpdateObjectives();
+            hud.UpdateObjectives();
             gameController.objectives.missionTimer2 = 120f;
             gameController.objectives.selectedEvacIndex = i;
             foreach (GameObject o in gameController.items) {
@@ -1255,6 +1259,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (b.bombId == index) {
                 b.Defuse();
                 gameController.UpdateObjectives();
+                hud.UpdateObjectives();
                 break;
             }
         }

@@ -29,37 +29,55 @@ namespace Michsky.UI.Shift
 
             if (useCustomText == false)
             {
-                normalText = gameObject.transform.Find("Normal/Text").GetComponent<TextMeshProUGUI>();
-                highlightedText = gameObject.transform.Find("Highlighted/Text").GetComponent<TextMeshProUGUI>();
-                pressedText = gameObject.transform.Find("Pressed/Text").GetComponent<TextMeshProUGUI>();
+                normalText = gameObject.transform.Find("Normal/Text")?.GetComponent<TextMeshProUGUI>();
+                highlightedText = gameObject.transform.Find("Highlighted/Text")?.GetComponent<TextMeshProUGUI>();
+                pressedText = gameObject.transform.Find("Pressed/Text")?.GetComponent<TextMeshProUGUI>();
 
-                normalText.text = buttonText;
-                highlightedText.text = buttonText;
-                pressedText.text = buttonText;
+                if (normalText != null) {
+                    normalText.text = buttonText;
+                }
+                if (highlightedText != null) {
+                    highlightedText.text = buttonText;
+                }
+                if (pressedText != null) {
+                    pressedText.text = buttonText;
+                }
             }
 
             if (hasIcon == true)
             {
-                normalIcon = gameObject.transform.Find("Normal/Icon").GetComponent<Image>();
-                highlightedIcon = gameObject.transform.Find("Highlighted/Icon").GetComponent<Image>();
-                pressedIcon = gameObject.transform.Find("Pressed/Icon").GetComponent<Image>();
+                normalIcon = gameObject.transform.Find("Normal/Icon")?.GetComponent<Image>();
+                highlightedIcon = gameObject.transform.Find("Highlighted/Icon")?.GetComponent<Image>();
+                pressedIcon = gameObject.transform.Find("Pressed/Icon")?.GetComponent<Image>();
 
-                normalIcon.sprite = iconSprite;
-                highlightedIcon.sprite = iconSprite;
-                pressedIcon.sprite = iconSprite;
+                if (normalIcon != null) {
+                    normalIcon.sprite = iconSprite;
+                }
+                if (highlightedIcon != null) {
+                    highlightedIcon.sprite = iconSprite;
+                }
+                if (pressedIcon != null) {
+                    pressedIcon.sprite = iconSprite;
+                }
             }
 
             else if (hasIcon == false)
             {
                 try
                 {
-                    normalIcon = gameObject.transform.Find("Normal/Icon").GetComponent<Image>();
-                    highlightedIcon = gameObject.transform.Find("Highlighted/Icon").GetComponent<Image>();
-                    pressedIcon = gameObject.transform.Find("Pressed/Icon").GetComponent<Image>();
+                    normalIcon = gameObject.transform.Find("Normal/Icon")?.GetComponent<Image>();
+                    highlightedIcon = gameObject.transform.Find("Highlighted/Icon")?.GetComponent<Image>();
+                    pressedIcon = gameObject.transform.Find("Pressed/Icon")?.GetComponent<Image>();
 
-                    Destroy(normalIcon.gameObject);
-                    Destroy(highlightedIcon.gameObject);
-                    Destroy(pressedIcon.gameObject);
+                    if (normalIcon != null) {
+                        Destroy(normalIcon.gameObject);
+                    }
+                    if (highlightedIcon != null) {
+                        Destroy(highlightedIcon.gameObject);
+                    }
+                    if (pressedIcon != null) {
+                        Destroy(pressedIcon.gameObject);
+                    }
                 }
 
                 catch { }

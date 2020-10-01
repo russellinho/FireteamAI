@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
+using TMPro;
 
 public class PauseMenuScript : MonoBehaviourPunCallbacks {
 
@@ -13,7 +14,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public GameObject optionsMenuGroup;
 	public GameObject audioSettingsGroup;
 	public Slider musicVolumeSlider;
-	public InputField musicVolumeField;
+	public TextMeshProUGUI musicVolumeField;
 	public Button optionsKeyBindingsBtn;
 	public Button optionsAudioSettingsBtn;
 	public Button optionsBackBtn;
