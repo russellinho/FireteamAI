@@ -299,6 +299,14 @@ namespace Michsky.UI.Shift
             itemList.Add(item);
         }
 
+        public void ClearItems() {
+            itemList.Clear();
+        }
+
+        public string GetCurrentItem() {
+            return itemList[index].itemTitle;
+        }
+
         public void UpdateUI()
         {
             label.text = itemList[index].itemTitle;

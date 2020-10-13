@@ -10,6 +10,7 @@ using TMPro;
 using Firebase.Database;
 using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 using Koobando.AntiCheat;
+using Michsky.UI.Shift;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private const float NINETY_DAYS_MINS = 129600f;
@@ -23,49 +24,26 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     private const float NINETY_DAY_COST_MULTIPLIER = 90f * (1f - (COST_MULT_FRACTION * 3f));
     private const float PERMANENT_COST_MULTIPLIER = 365f;
 
-    private Vector3 customizationCameraPos = new Vector3(-4.7f, 4.08f, 21.5f);
-	private Vector3 defaultCameraPos = new Vector3(-7.3f, 4.08f, 22.91f);
-	private Vector3 defaultCameraRot = new Vector3(10f, 36.2f, 0f);
 	private Vector3 modCameraRot = new Vector3(3.5f, 43.5f, 0f);
 	private Vector3 modCameraPos = new Vector3(2f, 4.5f, 26.7f);
-	private int camPos;
-	private int previousCamPos;
-	private float camMoveTimer;
 	public GameObject itemDescriptionPopupRef;
 	public GameObject modDescriptionPopupRef;
 	public GameObject marketplaceItemDescriptionPopupRef;
 	public GameObject marketplaceModDescriptionPopupRef;
 
-	public GameObject mainMenu;
-	public Text mainNametagTxt;
+	public TextMeshProUGUI mainNametagTxt;
 	public RawImage mainRankImg;
-	public Text mainRankTxt;
+	public TextMeshProUGUI mainRankTxt;
 	public Slider mainLevelProgress;
-	public Text mainLevelProgressPercentTxt;
-	public Text mainExpTxt;
-	public Camera mainCam;
-	public Text titleText;
+	public TextMeshProUGUI mainExpTxt;
 	public Slider musicVolumeSlider;
-	public InputField musicVolumeField;
-	//public GameObject networkMan;
-	public Button keyBindingsBtn;
-	public Button audioSettingsBtn;
-	public GameObject settingsMenu;
-	public GameObject audioSettingsMenu;
-	public GameObject matchmakingMenu;
-	public GameObject customizationMenu;
-    public GameObject versusMenu;
-	public GameObject marketplaceMenu;
-	public GameObject modMenu;
-	public GameObject keyBindingsPopup;
-	public GameObject loadingScreen;
-	public GameObject mainMenuPopup;
-	public GameObject customizationMenuPopup;
-	public GameObject marketplaceMenuPopup;
-	public GameObject settingsMenuPopup;
-	public GameObject modMenuPopup;
-	public GameObject emergencyPopup;
-	public Text emergencyPopupTxt;
+	public TextMeshProUGUI musicVolumeField;
+	public CanvasGroup loadingScreen;
+	public Animator loadingScreenAnimator;
+	public ModalWindowManager alertPopup;
+	public ModalWindowManager confirmPopup;
+	public ModalWindowManager keyBindingsPopup;
+	public ModalWindowManager makePurchasePopup;
 	private string itemBeingPurchased;
 	private string typeBeingPurchased;
 	private uint totalGpCostBeingPurchased;
@@ -73,22 +51,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	// Loading screen stuff
 	public RawImage screenArt;
-	public Image bottomShade;
-	public Image topShade;
-	public Slider progressBar;
-	public Text proTipText;
-	public Text mapTitleText;
-	private short loadingStatus;
-	private float t;
+	public TextMeshProUGUI proTipText;
+	public TextMeshProUGUI mapTitleText;
+	public TextMeshProUGUI mapDescriptionText;
 	private string[] proTips = new string[2]{"Aim for the head for faster kills.", "Be on the lookout for ammo and health drops from enemies."};
 	private bool versionWarning;
-	public GameObject splashScreen;
-	public Text splashScreenPopup;
 	// Marketplace menu
 	public Button clearPreviewBtn;
-	public Button marketplaceBackBtn;
 	public GameObject shopContentPrefab;
-	public GameObject shopContentInventory;
+	public GameObject shopContentEquipment;
+	public GameObject shopContentWeapons;
 	public Button shopHeadgearBtn;
 	public Button shopFaceBtn;
 	public Button shopArmorBtn;
@@ -96,18 +68,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button shopBottomsBtn;
 	public Button shopFootwearBtn;
 	public Button shopCharacterBtn;
-	public GameObject shopEquippedHeadSlot;
-	public GameObject shopEquippedFaceSlot;
-	public GameObject shopEquippedTopSlot;
-	public GameObject shopEquippedBottomSlot;
-	public GameObject shopEquippedFootSlot;
-	public GameObject shopEquippedCharacterSlot;
-	public GameObject shopEquippedArmorSlot;
-	public GameObject shopCurrentlyEquippedItemPrefab;
-	public GameObject shopEquippedStatsSlot;
-	public Text shopArmorBoostPercent;
-	public Text shopSpeedBoostPercent;
-	public Text shopStaminaBoostPercent;
 	public Button shopPrimaryWepBtn;
 	public Button shopSecondaryWepBtn;
 	public Button shopSupportWepBtn;
@@ -126,21 +86,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button shopModsBtn;
 	public Button shopSuppressorsSubBtn;
 	public Button shopSightsSubBtn;
-	public GameObject shopEquippedPrimarySlot;
-	public GameObject shopEquippedSecondarySlot;
-	public GameObject shopEquippedSupportSlot;
-	public GameObject shopEquippedMeleeSlot;
-	public GameObject preparePurchasePopup;
-	public GameObject confirmPurchasePopup;
-	public Text confirmPurchaseTxt;
-	public Dropdown durationSelectionDropdown;
-	public Text totalGpCostTxt;
-	public Text myGpTxt;
-	public Text myKashTxt;
+	public HorizontalSelector durationSelection;
+	public TextMeshProUGUI totalGpCostTxt;
+	public TextMeshProUGUI myGpTxt;
+	public TextMeshProUGUI myKashTxt;
 
 	// Customization menu
 	public GameObject contentPrefab;
-	public GameObject contentInventory;
+	public GameObject contentInventoryEquipment;
+	public GameObject contentInventoryWeapons;
 	public Button headgearBtn;
 	public Button faceBtn;
 	public Button armorBtn;
@@ -156,28 +110,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject equippedCharacterSlot;
 	public GameObject equippedArmorSlot;
 	public GameObject currentlyEquippedItemPrefab;
-	public GameObject equippedStatsSlot;
-	public Text armorBoostPercent;
-	public Text speedBoostPercent;
-	public Text staminaBoostPercent;
-	public Button loadoutBtn;
-	public Button weaponsBtn;
+	public TextMeshProUGUI armorBoostPercent;
+	public TextMeshProUGUI speedBoostPercent;
+	public TextMeshProUGUI staminaBoostPercent;
 	public Button primaryWepBtn;
 	public Button secondaryWepBtn;
 	public Button supportWepBtn;
 	public Button meleeWepBtn;
 	// Number of sub buttons for primary weapon dropdown in shop
-	private const uint PRIMARY_SUBBUTTON_COUNT = 5;
-	private const uint SECONDARY_SUBBUTTON_COUNT = 2;
-	private const uint SUPPORT_SUBBUTTON_COUNT = 3;
-	private const uint MOD_SUBBUTTON_COUNT = 1;
-	private const uint MELEE_SUBBUTTON_COUNT = 1;
-	private const float SHOP_BUTTON_SPACING = -30f;
-	private float primaryWepBtnYPos = -65f;
-	private float secondaryWepBtnYPos = -95f;
-	private float supportWepBtnYPos = -125f;
-	private float meleeWepBtnYPos = -155f;
-	private float modWepBtnYPos = -185f;
 	public Button assaultRifleSubBtn;
 	public Button smgSubBtn;
 	public Button lmgSubBtn;
@@ -199,49 +139,45 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject weaponPreviewSlot;
 	public GameObject weaponPreviewRef;
 	public GameObject modInventoryContent;
+	public GameObject modWeaponInventoryContent;
 	public Button suppressorsBtn;
 	public Button sightsBtn;
-	public TMP_Dropdown modWeaponSelect;
-	public Text modWeaponLbl;
-	public Text equippedSuppressorTxt;
-	public Text equippedSightTxt;
-	public EncryptedString equippedSuppressorId;
-	public EncryptedString equippedSightId;
-	public Text modDamageTxt;
-	public Text modAccuracyTxt;
-	public Text modRecoilTxt;
-	public Text modRangeTxt;
-	public Text modClipCapacityTxt;
-	public Text modMaxAmmoTxt;
+	public GameObject currentlyEquippedWeaponToMod;
+	public GameObject equippedSuppressorSlot;
+	public GameObject equippedSightSlot;
+	public string equippedSuppressorId;
+	public string equippedSightId;
+	public TextMeshProUGUI modDamageTxt;
+	public TextMeshProUGUI modAccuracyTxt;
+	public TextMeshProUGUI modRecoilTxt;
+	public TextMeshProUGUI modRangeTxt;
+	public TextMeshProUGUI modClipCapacityTxt;
+	public TextMeshProUGUI modMaxAmmoTxt;
     public Button removeSuppressorBtn;
 	public Button removeSightBtn;
 	public Dictionary<string, int> charactersRefsIndices = new Dictionary<string, int>(){["Lucas"] = 0, ["Daryl"] = 1, ["Yongjin"] = 2, ["Rocko"] = 3, ["Hana"] = 4, ["Jade"] = 5, ["Dani"] = 6, ["Codename Sayre"] = 7};
 	public GameObject[] characterRefs;
-	public Text changingKeyMappingText;
-	public bool isChangingKeyMapping;
 	public KeyMappingInput[] keyMappingInputs;
-	private bool triggerMarketplacePopupFlag;
-	private string marketplacePopupMessage;
-	private bool triggerMainPopupFlag;
-	private string mainPopupMessage;
+	public bool triggerAlertPopupFlag;
+	public bool triggerConfirmPopupFlag;
+	public bool triggerKeyBindingsPopupFlag;
+	public bool triggerMakePurchasePopupFlag;
+	public string alertPopupMessage;
+	public string confirmPopupMessage;
+	public MainPanelManager mainPanelManager;
+	public Transform playerPreviewSlot;
 
 	// Use this for initialization
 	void Awake() {
 		if (PlayerData.playerdata == null || PlayerData.playerdata.bodyReference == null) {
-			ToggleSplashScreen(true, "Loading player details...");
+			InstantiateLoadingScreen(null);
+			ToggleLoadingScreen(true);
 		}
 		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
 		musicVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.musicVolume;
 	}
 
 	void Start () {
-		//PlayerData.playerdata.FindBodyRef ();
-		titleText.enabled = true;
-		mainMenu.SetActive (true);
-		loadingStatus = 0;
-		previousCamPos = 0;
-		camPos = 0;
-		camMoveTimer = 1f;
 		Cursor.lockState = CursorLockMode.None;
 		Cursor.visible = true;
 
@@ -277,183 +213,123 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void InstantiateLoadingScreen(string mapName) {
 		JukeboxScript.jukebox.audioSource1.Stop ();
 		JukeboxScript.jukebox.audioSource2.Stop ();
-		if (mapName.Equals ("Badlands: Act I")) {
-			screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands1_load");
-		} else if (mapName.Equals("Badlands: Act II")) {
-			screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands2_load");
+		if (mapName != null) {
+			if (mapName.Equals ("Badlands: Act I")) {
+				screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands1_load");
+			} else if (mapName.Equals("Badlands: Act II")) {
+				screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands2_load");
+			}
+			proTipText.text = proTips[Random.Range(0, 2)];
+			mapTitleText.text = mapName;
+			screenArt.gameObject.SetActive(true);
+			proTipText.gameObject.SetActive(true);
+			mapTitleText.gameObject.SetActive(true);
+		} else {
+			screenArt.gameObject.SetActive(false);
+			proTipText.gameObject.SetActive(false);
+			mapTitleText.gameObject.SetActive(false);
 		}
-        proTipText.text = proTips[Random.Range(0, 2)];
-		mapTitleText.text = mapName;
-		mapTitleText.rectTransform.localPosition = new Vector3 (1200f, mapTitleText.rectTransform.localPosition.y, mapTitleText.rectTransform.localPosition.z);
-		topShade.rectTransform.localPosition = new Vector3 (-1200f, topShade.rectTransform.localPosition.y, topShade.rectTransform.localPosition.z);
-		bottomShade.rectTransform.localPosition = new Vector3 (1200f, bottomShade.rectTransform.localPosition.y, bottomShade.rectTransform.localPosition.z);
-		loadingStatus = 1;
-		loadingScreen.SetActive (true);
+	}
+
+	public void ToggleLoadingScreen(bool b) {
+		if (b) {
+			loadingScreenAnimator.Play("Loading");
+		} else {
+			loadingScreenAnimator.Play("Loading Out");
+		}
 	}
 
 	void Update() {
-		if (splashScreen.activeInHierarchy && PlayerData.playerdata.bodyReference != null) {
-			ToggleSplashScreen(false);
+		if (loadingScreen.alpha == 1f && PlayerData.playerdata.bodyReference != null) {
+			ToggleLoadingScreen(false);
+			mainPanelManager.OpenFirstTab();
 		}
 
 		if (PlayerData.playerdata.disconnectedFromServer) {
 			PlayerData.playerdata.disconnectedFromServer = false;
-			TriggerMainPopup("Lost connection to server.\nReason: " + PlayerData.playerdata.disconnectReason);
+			TriggerAlertPopup("Lost connection to server.\nReason: " + PlayerData.playerdata.disconnectReason);
 			PlayerData.playerdata.disconnectReason = "";
 		} else if (versionWarning) {
 			versionWarning = false;
-			TriggerMainPopup("Your game is not updated to the latest version of Fireteam AI!\nThis may affect your matchmaking experience.");
+			TriggerAlertPopup("Your game is not updated to the latest version of Fireteam AI!\nThis may affect your matchmaking experience.");
 		}
-		if (loadingScreen.activeInHierarchy) {
-			progressBar.value = PhotonNetwork.LevelLoadingProgress;
-			// First stage of loading animation
-			if (loadingStatus == 1) {
-				t += (Time.deltaTime * 0.75f);
-				mapTitleText.rectTransform.localPosition = Vector3.Lerp (new Vector3 (1200f, mapTitleText.rectTransform.localPosition.y, mapTitleText.rectTransform.localPosition.z), new Vector3 (120f, mapTitleText.rectTransform.localPosition.y, mapTitleText.rectTransform.localPosition.z), t);
-				topShade.rectTransform.localPosition = Vector3.Lerp (new Vector3 (-1200f, topShade.rectTransform.localPosition.y, topShade.rectTransform.localPosition.z), new Vector3 (0f, topShade.rectTransform.localPosition.y, topShade.rectTransform.localPosition.z), t);
-				bottomShade.rectTransform.localPosition = Vector3.Lerp (new Vector3 (1200f, bottomShade.rectTransform.localPosition.y, bottomShade.rectTransform.localPosition.z), new Vector3 (0f, bottomShade.rectTransform.localPosition.y, mapTitleText.rectTransform.localPosition.z), t);
-				if (t >= 1f) {
-					loadingStatus = 2;
-					t = 0f;
-				}
-			} else if (loadingStatus == 2) {
-				// Second stage of loading animation
-				t += (Time.deltaTime * 0.2f);
-				mapTitleText.rectTransform.localPosition = Vector3.Lerp (new Vector3 (120f, mapTitleText.rectTransform.localPosition.y, mapTitleText.rectTransform.localPosition.z), new Vector3 (350f, mapTitleText.rectTransform.localPosition.y, mapTitleText.rectTransform.localPosition.z), t);
-				if (t >= 1f) {
-					loadingStatus = 0;
-					t = 0f;
-				}
-			}
-		} else {
-			if (triggerMarketplacePopupFlag) {
-				DoMarketplacePopup();
-				triggerMarketplacePopupFlag = false;
-			}
-			if (triggerMainPopupFlag) {
-				DoMainPopup();
-				triggerMainPopupFlag = false;
-			}
-			if (!matchmakingMenu.activeInHierarchy && !versusMenu.activeInHierarchy && !SettingsIsOpen()) {
-				// If going to main menu screen
-				if (camPos == 0) {
-					mainCam.transform.position = Vector3.Lerp(customizationCameraPos, defaultCameraPos, camMoveTimer);
-					if (camMoveTimer < 1f) {
-						camMoveTimer += (Time.deltaTime / 1.2f);
-					}
-					if (Vector3.Equals(mainCam.transform.position, defaultCameraPos) && !keyBindingsPopup.activeInHierarchy) {
-						titleText.enabled = true;
-						mainMenu.SetActive(true);
-					}
-				// If going to customization screen
-				} else if (camPos == 1) {
-					if (previousCamPos == 0) {
-						mainCam.transform.position = Vector3.Lerp(defaultCameraPos, customizationCameraPos, camMoveTimer);
-					} else if (previousCamPos == 3) {
-						mainCam.transform.position = Vector3.Lerp(modCameraPos, customizationCameraPos, camMoveTimer);
-						mainCam.transform.rotation = Quaternion.Lerp(Quaternion.Euler(modCameraRot), Quaternion.Euler(defaultCameraRot), camMoveTimer);						
-					}
-					if (camMoveTimer < 1f) {
-						camMoveTimer += (Time.deltaTime / 1.2f);
-					}
-					if (Vector3.Equals(mainCam.transform.position, customizationCameraPos)) {
-						if (!customizationMenu.activeInHierarchy) {
-							customizationMenu.SetActive(true);
-						}
-					}
-				// If going to marketplace screen
-				} else if (camPos == 2) {
-					if (previousCamPos == 0) {
-						mainCam.transform.position = Vector3.Lerp(defaultCameraPos, customizationCameraPos, camMoveTimer);
-					}
-					if (camMoveTimer < 1f) {
-						camMoveTimer += (Time.deltaTime / 1.2f);
-					}
-					if (Vector3.Equals(mainCam.transform.position, customizationCameraPos)) {
-						if (!marketplaceMenu.activeInHierarchy) {
-							marketplaceMenu.SetActive(true);
-						}
-					}
-				// If going to modification menu screen
-				} else if (camPos == 3) {
-					mainCam.transform.position = Vector3.Lerp(customizationCameraPos, modCameraPos, camMoveTimer);
-					mainCam.transform.rotation = Quaternion.Lerp(Quaternion.Euler(defaultCameraRot), Quaternion.Euler(modCameraRot), camMoveTimer);
-					if (camMoveTimer < 1f) {
-						camMoveTimer += (Time.deltaTime / 1.2f);
-					}
-					if (Vector3.Equals(mainCam.transform.position, modCameraPos)) {
-						if (!modMenu.activeInHierarchy) {
-							// Bring up the mod menu
-							modMenu.SetActive(true);
-							// Set up the weapon dropdown, stats, and template weapon
-							PopulateWeaponDropdownForModScreen();
-                            // Start on the suppressors menu
-                            OnSuppressorsBtnClicked();
-						}
-					}
-				}
-			}
+		if (triggerAlertPopupFlag) {
+			triggerAlertPopupFlag = false;
+			alertPopup.ModalWindowIn();
+		}
+		if (triggerConfirmPopupFlag) {
+			triggerConfirmPopupFlag = false;
+			confirmPopup.ModalWindowIn();
+		}
+		if (triggerKeyBindingsPopupFlag) {
+			triggerKeyBindingsPopupFlag = false;
+			keyBindingsPopup.ModalWindowIn();
+		}
+		if (triggerMakePurchasePopupFlag) {
+			triggerMakePurchasePopupFlag = false;
+			makePurchasePopup.ModalWindowIn();
 		}
 	}
 
 	public void GoToMatchmakingMenu() {
-		if (!PhotonNetwork.IsConnected) {
-			PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.playername;
-			PhotonNetwork.ConnectUsingSettings();
-		}
+		// if (!PhotonNetwork.IsConnected) {
+		// 	PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.playername;
+		// 	PhotonNetwork.ConnectUsingSettings();
+		// }
 
-		titleText.enabled = false;
-		mainMenu.SetActive (false);
-		customizationMenu.SetActive (false);
-        versusMenu.SetActive(false);
-		matchmakingMenu.SetActive (true);
+		// titleText.enabled = false;
+		// mainMenu.SetActive (false);
+		// customizationMenu.SetActive (false);
+        // versusMenu.SetActive(false);
+		// matchmakingMenu.SetActive (true);
 	}
 
     public void GoToVersusMenu()
     {
-        if (!PhotonNetwork.IsConnected)
-        {
-            PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.playername;
-            PhotonNetwork.ConnectUsingSettings();
-        }
+        // if (!PhotonNetwork.IsConnected)
+        // {
+        //     PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.playername;
+        //     PhotonNetwork.ConnectUsingSettings();
+        // }
 
-        titleText.enabled = false;
-        mainMenu.SetActive(false);
-        customizationMenu.SetActive(false);
-        versusMenu.SetActive(true);
+        // titleText.enabled = false;
+        // mainMenu.SetActive(false);
+        // customizationMenu.SetActive(false);
+        // versusMenu.SetActive(true);
     }
 		
 	public void ReturnToMainMenu() {
 		// Save settings if the settings are active
-		settingsMenu.SetActive(false);
-		customizationMenu.SetActive (false);
-		matchmakingMenu.SetActive (false);
-        versusMenu.SetActive(false);
-		keyBindingsPopup.SetActive(false);
-		titleText.enabled = true;
-		mainMenu.SetActive(true);
+		// settingsMenu.SetActive(false);
+		// customizationMenu.SetActive (false);
+		// matchmakingMenu.SetActive (false);
+        // versusMenu.SetActive(false);
+		// keyBindingsPopup.SetActive(false);
+		// titleText.enabled = true;
+		// mainMenu.SetActive(true);
 	}
 
-	public void GoToKeyBindings() {
-		keyBindingsPopup.SetActive(true);
-		titleText.enabled = false;
-		ToggleSettingsMainButtons(false);
-	}
+	// public void GoToKeyBindings() {
+	// 	keyBindingsPopup.SetActive(true);
+	// 	titleText.enabled = false;
+	// 	ToggleSettingsMainButtons(false);
+	// }
 
 	bool SettingsIsOpen() {
-		return settingsMenu.activeInHierarchy;
+		return false;
+		// return settingsMenu.activeInHierarchy;
 	}
 
-	public void GoToSettings() {
-		settingsMenu.SetActive(true);
-		titleText.enabled = false;
-		mainMenu.SetActive (false);
-	}
+	// public void GoToSettings() {
+	// 	settingsMenu.SetActive(true);
+	// 	titleText.enabled = false;
+	// 	mainMenu.SetActive (false);
+	// }
 
-	public void GoToAudioSettings() {
-		ToggleSettingsMainButtons(false);
-		audioSettingsMenu.SetActive(true);
-	}
+	// public void GoToAudioSettings() {
+	// 	ToggleSettingsMainButtons(false);
+	// 	audioSettingsMenu.SetActive(true);
+	// }
 
 	public void OnMusicVolumeSliderChanged() {
 		SetMusicVolume(musicVolumeSlider.value);
@@ -464,10 +340,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		JukeboxScript.jukebox.SetMusicVolume(v);
 	}
 
-	void ToggleSettingsMainButtons(bool b) {
-		audioSettingsBtn.gameObject.SetActive(b);
-		keyBindingsBtn.gameObject.SetActive(b);
-	}
+	// void ToggleSettingsMainButtons(bool b) {
+	// 	audioSettingsBtn.gameObject.SetActive(b);
+	// 	keyBindingsBtn.gameObject.SetActive(b);
+	// }
 
 	void SaveAudioSettings() {
 		PlayerPreferences.playerPreferences.preferenceData.musicVolume = (int)(musicVolumeSlider.value * 100f);
@@ -484,48 +360,48 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void ReturnToMainMenuFromSettings() {
-		if (isChangingKeyMapping) return;
-		if (keyBindingsPopup.activeInHierarchy) {
-			SaveKeyBindings();
-			keyBindingsPopup.SetActive(false);
-		} else if (audioSettingsMenu.activeInHierarchy) {
-			SaveAudioSettings();
-			audioSettingsMenu.SetActive(false);
-		} else {
-			ReturnToMainMenu();
-		}
-		ToggleSettingsMainButtons(true);
+		// if (isChangingKeyMapping) return;
+		// if (keyBindingsPopup.activeInHierarchy) {
+		// 	SaveKeyBindings();
+		// 	keyBindingsPopup.SetActive(false);
+		// } else if (audioSettingsMenu.activeInHierarchy) {
+		// 	SaveAudioSettings();
+		// 	audioSettingsMenu.SetActive(false);
+		// } else {
+		// 	ReturnToMainMenu();
+		// }
+		// ToggleSettingsMainButtons(true);
 	}
 
 	public void ReturnToMainMenuFromCustomization() {
         // Save settings if the settings are active
-		 if (customizationMenu.activeInHierarchy) {
-			ClearCustomizationContent();
-			ResetCustomizationButtons();
-		 }
+		//  if (customizationMenu.activeInHierarchy) {
+		// 	ClearCustomizationContent();
+		// 	ResetCustomizationButtons();
+		//  }
 		SwitchToEquipmentScreen();
-		customizationMenu.SetActive (false);
-		matchmakingMenu.SetActive (false);
-        versusMenu.SetActive(false);
-		previousCamPos = camPos;
-		camPos = 0;
-		camMoveTimer = 0f;
+		// customizationMenu.SetActive (false);
+		// matchmakingMenu.SetActive (false);
+        // versusMenu.SetActive(false);
+		// previousCamPos = camPos;
+		// camPos = 0;
+		// camMoveTimer = 0f;
 	}
 
 	public void ReturnToMainMenuFromMarketplace() {
 		// Clear previews and return to main menu
-		 if (marketplaceMenu.activeInHierarchy) {
-		 	ClearPreview();
-			ClearMarketplaceContent();
-			ResetMarketplaceButtons();
-		 }
-		SwitchToMarketplaceEquipmentScreen();
-		marketplaceMenu.SetActive (false);
-		matchmakingMenu.SetActive (false);
-        versusMenu.SetActive(false);
-		previousCamPos = camPos;
-		camPos = 0;
-		camMoveTimer = 0f;
+		//  if (marketplaceMenu.activeInHierarchy) {
+		//  	ClearPreview();
+		// 	ClearMarketplaceContent();
+		// 	ResetMarketplaceButtons();
+		//  }
+		// SwitchToMarketplaceEquipmentScreen();
+		// marketplaceMenu.SetActive (false);
+		// matchmakingMenu.SetActive (false);
+        // versusMenu.SetActive(false);
+		// previousCamPos = camPos;
+		// camPos = 0;
+		// camMoveTimer = 0f;
 	}
 
 	public void ClearPreview() {
@@ -542,50 +418,46 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     public override void OnDisconnected(DisconnectCause cause)
     {
         base.OnDisconnected(cause);
-        matchmakingMenu.SetActive(false);
-        versusMenu.SetActive(false);
-		titleText.enabled = true;
-        mainMenu.SetActive(true);
+		// titleText.enabled = true;
+        // mainMenu.SetActive(true);
     }
 
     public void GoToCustomization() {
-		titleText.enabled = false;
-		mainMenu.SetActive (false);
-		modMenu.SetActive(false);
+		// titleText.enabled = false;
+		// mainMenu.SetActive (false);
+		// modMenu.SetActive(false);
 		equippedPrimarySlot.SetActive(false);
 		equippedSecondarySlot.SetActive(false);
 		equippedSupportSlot.SetActive(false);
 		equippedMeleeSlot.SetActive(false);
-		matchmakingMenu.SetActive (false);
-        versusMenu.SetActive(false);
-		marketplaceMenu.SetActive(false);
-		previousCamPos = camPos;
-		camPos = 1;
-		camMoveTimer = 0f;
+		// marketplaceMenu.SetActive(false);
+		// previousCamPos = camPos;
+		// camPos = 1;
+		// camMoveTimer = 0f;
 	}
 
 	public void GoToMarketplace() {
-		titleText.enabled = false;
-		mainMenu.SetActive (false);
-		modMenu.SetActive(false);
-		shopEquippedPrimarySlot.SetActive(false);
-		shopEquippedSecondarySlot.SetActive(false);
-		shopEquippedSupportSlot.SetActive(false);
-		shopEquippedMeleeSlot.SetActive(false);
-		matchmakingMenu.SetActive (false);
-        versusMenu.SetActive(false);
-		customizationMenu.SetActive(false);
-		previousCamPos = camPos;
-		camPos = 2;
-		camMoveTimer = 0f;
+		// titleText.enabled = false;
+		// mainMenu.SetActive (false);
+		// modMenu.SetActive(false);
+		// shopEquippedPrimarySlot.SetActive(false);
+		// shopEquippedSecondarySlot.SetActive(false);
+		// shopEquippedSupportSlot.SetActive(false);
+		// shopEquippedMeleeSlot.SetActive(false);
+		// matchmakingMenu.SetActive (false);
+        // versusMenu.SetActive(false);
+		// customizationMenu.SetActive(false);
+		// previousCamPos = camPos;
+		// camPos = 2;
+		// camMoveTimer = 0f;
 	}
 
 	public void GoToMod() {
-		mainMenu.SetActive(false);
-		customizationMenu.SetActive(false);
-		previousCamPos = camPos;
-		camPos = 3;
-		camMoveTimer = 0f;
+		// mainMenu.SetActive(false);
+		// customizationMenu.SetActive(false);
+		// previousCamPos = camPos;
+		// camPos = 3;
+		// camMoveTimer = 0f;
 	}
 
 	public void ReturnToCustomizationFromModMenu() {
@@ -623,60 +495,57 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		});
 	}
 
-	public void ClosePopup() {
-		mainMenuPopup.SetActive (false);
-		if (marketplaceMenuPopup.activeInHierarchy) {
-			ToggleActiveMarketplaceButtons(true);
-		}
-		marketplaceMenuPopup.SetActive (false);
-		modMenuPopup.SetActive(false);
-		customizationMenuPopup.SetActive(false);
-		settingsMenuPopup.SetActive(false);
-	}
-
     public void TriggerExpirationPopup(List<object> expiredItems)
     {
-        TriggerMainPopup("The following items have expired and have been deleted from your inventory:\n" + string.Join(", ", expiredItems.ToArray()));
+        TriggerAlertPopup("The following items have expired and have been deleted from your inventory:\n" + string.Join(", ", expiredItems.ToArray()));
     }
 
-	public void TriggerMainPopup(string message) {
-		triggerMainPopupFlag = true;
-		mainPopupMessage = message;
+	public void TriggerAlertPopup(string message) {
+		triggerAlertPopupFlag = true;
+		alertPopupMessage = message;
 	}
 
-	public void DoMainPopup() {
-		mainMenuPopup.GetComponentInChildren<Text> ().text = mainPopupMessage;
-		mainMenuPopup.SetActive (true);
+	public void TriggerConfirmPopup(string message) {
+		triggerConfirmPopupFlag = true;
+		confirmPopupMessage = message;
 	}
 
-	public void TriggerCustomizationPopup(string message) {
-		customizationMenuPopup.GetComponentInChildren<Text>().text = message;
-		customizationMenuPopup.SetActive(true);
+	public void TriggerKeyBindingsPopup() {
+		triggerKeyBindingsPopupFlag = true;
 	}
 
-	public void TriggerMarketplacePopup(string message) {
-		triggerMarketplacePopupFlag = true;
-		marketplacePopupMessage = message;
-	}
-
-	void DoMarketplacePopup() {
-		marketplaceMenuPopup.GetComponentInChildren<Text>().text = marketplacePopupMessage;
-		marketplaceMenuPopup.SetActive(true);
+	public void TriggerMakePurchasePopup() {
+		triggerMakePurchasePopupFlag = true;
 	}
 
 	// Clears existing items from the shop panel
-	void ClearCustomizationContent() {
-		RawImage[] existingThumbnails = contentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			currentlyEquippedItemPrefab = null;
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+	void ClearCustomizationContent(char type) {
+		if (type == 'e') {
+			RawImage[] existingThumbnails = contentInventoryEquipment.GetComponentsInChildren<RawImage>();
+			foreach (RawImage r in existingThumbnails) {
+				currentlyEquippedItemPrefab = null;
+				Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+			}
+		} else if (type == 'w') {
+			RawImage[] existingThumbnails = contentInventoryWeapons.GetComponentsInChildren<RawImage>();
+			foreach (RawImage r in existingThumbnails) {
+				currentlyEquippedItemPrefab = null;
+				Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+			}
 		}
 	}
 
-	void ClearMarketplaceContent() {
-		RawImage[] existingThumbnails = shopContentInventory.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+	void ClearMarketplaceContent(char type) {
+		if (type == 'e') {
+			RawImage[] existingThumbnails = shopContentEquipment.GetComponentsInChildren<RawImage>();
+			foreach (RawImage r in existingThumbnails) {
+				Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+			}
+		} else if (type == 'w') {
+			RawImage[] existingThumbnails = shopContentWeapons.GetComponentsInChildren<RawImage>();
+			foreach (RawImage r in existingThumbnails) {
+				Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+			}
 		}
 	}
 
@@ -704,7 +573,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearCustomizationContent();
+		ClearCustomizationContent('e');
 
         // Populate into grid layout
         foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myHeadgear)
@@ -729,7 +598,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryEquipment.transform);
 		}
 	}
 
@@ -748,7 +617,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('e');
 
 		// Populate into grid layout
 		foreach(KeyValuePair<string, Equipment> entry in InventoryScript.itemData.equipmentCatalog) {
@@ -768,7 +637,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentEquipment.transform);
 		}
 	}
 
@@ -787,7 +656,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearCustomizationContent();
+		ClearCustomizationContent('e');
 
         // Populate into grid layout
         foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myFacewear)
@@ -812,7 +681,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryEquipment.transform);
 		}
 	}
 
@@ -831,7 +700,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('e');
 
 		// Populate into grid layout
 		foreach(KeyValuePair<string, Equipment> entry in InventoryScript.itemData.equipmentCatalog) {
@@ -851,7 +720,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentEquipment.transform);
 		}
 	}
 
@@ -870,7 +739,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearCustomizationContent();
+		ClearCustomizationContent('e');
 
         // Populate into grid layout
         foreach (KeyValuePair<string, ArmorData> entry in PlayerData.playerdata.inventory.myArmor)
@@ -895,7 +764,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryEquipment.transform);
 		}
 	}
 
@@ -914,7 +783,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('e');
 
 		// Populate into grid layout
 		foreach(KeyValuePair<string, Armor> entry in InventoryScript.itemData.armorCatalog) {
@@ -934,7 +803,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentEquipment.transform);
 		}
 	}
 
@@ -953,7 +822,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearCustomizationContent();
+		ClearCustomizationContent('e');
 
         // Populate into grid layout
         foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myTops)
@@ -978,7 +847,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryEquipment.transform);
 		}
 	}
 
@@ -997,7 +866,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('e');
 
 		// Populate into grid layout
 		foreach(KeyValuePair<string, Equipment> entry in InventoryScript.itemData.equipmentCatalog) {
@@ -1017,7 +886,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentEquipment.transform);
 		}
 	}
 
@@ -1036,7 +905,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearCustomizationContent();
+		ClearCustomizationContent('e');
 
         // Populate into grid layout
         foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myBottoms)
@@ -1061,7 +930,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryEquipment.transform);
 		}
 	}
 
@@ -1080,7 +949,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('e');
 
 		// Populate into grid layout
 		foreach(KeyValuePair<string, Equipment> entry in InventoryScript.itemData.equipmentCatalog) {
@@ -1100,7 +969,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentEquipment.transform);
 		}
 	}
 
@@ -1119,7 +988,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearCustomizationContent();
+		ClearCustomizationContent('e');
 
         // Populate into grid layout
         foreach (KeyValuePair<string, EquipmentData> entry in PlayerData.playerdata.inventory.myFootwear)
@@ -1144,7 +1013,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryEquipment.transform);
 		}
 	}
 
@@ -1163,7 +1032,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('e');
 
 		// Populate into grid layout
 		foreach(KeyValuePair<string, Equipment> entry in InventoryScript.itemData.equipmentCatalog) {
@@ -1183,25 +1052,20 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentEquipment.transform);
 		}
-	}
-
-	float CalculateButtonPositioning(float startingPoint, uint places) {
-		// Calculate button positioning
-		return startingPoint + (places * SHOP_BUTTON_SPACING);
 	}
 
 	public void OnPrimaryWepBtnClicked() {
 		// Moving secondary and support button down for submenu
-		RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
-		rt = secondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
-		rt = supportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
-		rt = meleeWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
+		// RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		// rt = secondaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
+		// rt = supportWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
+		// rt = meleeWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
 
 		// Change all button colors
 		primaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
@@ -1236,7 +1100,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		sniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate into grid layout
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
@@ -1264,22 +1128,22 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
 	public void OnMarketplacePrimaryWepBtnClicked() {
 		// Moving secondary and support button down for submenu
-		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
-		rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
-		rt = shopSupportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
-		rt = shopMeleeWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
-		rt = shopModsBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
+		// RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		// rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
+		// rt = shopSupportWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
+		// rt = shopMeleeWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
+		// rt = shopModsBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, PRIMARY_SUBBUTTON_COUNT));
 
 		// Change all button colors
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
@@ -1319,7 +1183,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSniperRifleSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate into grid layout
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -1340,7 +1204,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -1350,14 +1214,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
-		rt = secondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
-		rt = supportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
-		rt = meleeWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
+		// RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		// rt = secondaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
+		// rt = supportWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
+		// rt = meleeWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
 
 		// Remove sub buttons
 		assaultRifleSubBtn.gameObject.SetActive(false);
@@ -1386,7 +1250,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		launcherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate into grid layout
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -1415,7 +1279,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -1426,16 +1290,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
-		rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
-		rt = shopSupportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
-		rt = shopMeleeWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
-		rt = shopModsBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
+		// RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		// rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
+		// rt = shopSupportWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
+		// rt = shopMeleeWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
+		// rt = shopModsBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, SECONDARY_SUBBUTTON_COUNT));
 
 		// Remove sub buttons
 		shopAssaultRifleSubBtn.gameObject.SetActive(false);
@@ -1468,7 +1332,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopLauncherSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate into grid layout
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -1489,7 +1353,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -1499,14 +1363,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
-		rt = secondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
-		rt = supportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
-		rt = meleeWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, SUPPORT_SUBBUTTON_COUNT));
+		// RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		// rt = secondaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
+		// rt = supportWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
+		// rt = meleeWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, SUPPORT_SUBBUTTON_COUNT));
 
 		// Remove sub buttons
 		assaultRifleSubBtn.gameObject.SetActive(false);
@@ -1535,7 +1399,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		deployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate into grid layout
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -1564,7 +1428,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -1575,16 +1439,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
-		rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
-		rt = shopSupportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
-		rt = shopMeleeWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, SUPPORT_SUBBUTTON_COUNT));
-		rt = shopModsBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, SUPPORT_SUBBUTTON_COUNT));
+		// RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		// rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
+		// rt = shopSupportWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
+		// rt = shopMeleeWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, SUPPORT_SUBBUTTON_COUNT));
+		// rt = shopModsBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, SUPPORT_SUBBUTTON_COUNT));
 
 		// Remove sub buttons
 		shopAssaultRifleSubBtn.gameObject.SetActive(false);
@@ -1617,7 +1481,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopDeployablesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate into grid layout
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -1638,7 +1502,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -1648,14 +1512,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
-		rt = secondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
-		rt = supportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
-		rt = meleeWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, 0));
+		// RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		// rt = secondaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
+		// rt = supportWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
+		// rt = meleeWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, 0));
 
 		// Remove sub buttons
 		assaultRifleSubBtn.gameObject.SetActive(false);
@@ -1684,7 +1548,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		knivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate into grid layout
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -1713,7 +1577,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -1724,16 +1588,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
-		rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
-		rt = shopSupportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
-		rt = shopMeleeWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, 0));
-		rt = shopModsBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, MELEE_SUBBUTTON_COUNT));
+		// RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		// rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
+		// rt = shopSupportWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
+		// rt = shopMeleeWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, 0));
+		// rt = shopModsBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, MELEE_SUBBUTTON_COUNT));
 
 		// Remove sub buttons
 		shopAssaultRifleSubBtn.gameObject.SetActive(false);
@@ -1766,7 +1630,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopKnivesSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate into grid layout
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -1787,7 +1651,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -1801,7 +1665,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate with assault rifles
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -1830,7 +1694,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -1844,7 +1708,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate with assault rifles
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -1865,7 +1729,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -1879,7 +1743,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate with SMGs
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -1908,7 +1772,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -1922,7 +1786,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate with assault rifles
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -1943,7 +1807,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -1957,7 +1821,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate with SMGs
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -1986,7 +1850,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -2000,7 +1864,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate with assault rifles
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -2021,7 +1885,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -2035,7 +1899,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate with shotguns
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -2064,7 +1928,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -2078,7 +1942,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate with shotguns
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -2099,7 +1963,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -2113,7 +1977,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate with sniper rifles
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -2142,7 +2006,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -2156,7 +2020,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate with sniper rifles
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -2177,7 +2041,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6.5f, t.sizeDelta.y / 6.5f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -2188,7 +2052,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate with pistols
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -2217,7 +2081,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -2228,7 +2092,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate with pistols
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -2249,7 +2113,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -2260,7 +2124,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate with pistols
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -2289,7 +2153,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -2300,7 +2164,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate with pistols
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -2321,7 +2185,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -2333,7 +2197,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate with pistols
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -2362,7 +2226,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -2374,7 +2238,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate with pistols
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -2395,7 +2259,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -2407,7 +2271,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate with pistols
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -2436,7 +2300,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -2448,7 +2312,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate with pistols
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -2469,7 +2333,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -2481,7 +2345,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate with pistols
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -2510,7 +2374,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -2522,7 +2386,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate with pistols
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -2543,7 +2407,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -2553,7 +2417,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearCustomizationContent();
+		ClearCustomizationContent('w');
 
         // Populate with pistols
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -2582,7 +2446,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -2592,7 +2456,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate with pistols
 		foreach(KeyValuePair<string, Weapon> entry in InventoryScript.itemData.weaponCatalog) {
@@ -2613,7 +2477,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -2624,16 +2488,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
-		rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
-		rt = shopSupportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
-		rt = shopMeleeWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, 0));
-		rt = shopModsBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, 0));
+		// RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		// rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
+		// rt = shopSupportWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
+		// rt = shopMeleeWepBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, 0));
+		// rt = shopModsBtn.GetComponent<RectTransform>();
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, 0));
 
 		// Remove sub buttons
 		shopAssaultRifleSubBtn.gameObject.SetActive(false);
@@ -2666,7 +2530,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopSightsSubBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate into grid layout
 		foreach(KeyValuePair<string, Mod> entry in InventoryScript.itemData.modCatalog) {
@@ -2687,7 +2551,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -2698,7 +2562,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate with pistols
 		foreach(KeyValuePair<string, Mod> entry in InventoryScript.itemData.modCatalog) {
@@ -2719,7 +2583,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -2730,7 +2594,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 
 		// Clear items
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('w');
 
 		// Populate with pistols
 		foreach(KeyValuePair<string, Mod> entry in InventoryScript.itemData.modCatalog) {
@@ -2751,7 +2615,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			o.transform.SetParent(shopContentInventory.transform);
+			o.transform.SetParent(shopContentWeapons.transform);
 		}
 	}
 
@@ -2770,7 +2634,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearCustomizationContent();
+		ClearCustomizationContent('e');
 
         // Populate into grid layout
         foreach (KeyValuePair<string, CharacterData> entry in PlayerData.playerdata.inventory.myCharacters)
@@ -2795,7 +2659,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventoryWeapons.transform);
 		}
 	}
 
@@ -2815,7 +2679,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopCharacterBtn.GetComponent<Image>().color = new Color(188f / 255f, 136f / 255f, 45f / 255f, 214f / 255f);
 
 		// Delete any currently existing items in the grid
-		ClearMarketplaceContent();
+		ClearMarketplaceContent('e');
 
 		// Populate into grid layout
 		foreach(KeyValuePair<string, Character> entry in InventoryScript.itemData.characterCatalog) {
@@ -2835,64 +2699,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
-			o.transform.SetParent(shopContentInventory.transform);
-		}
-	}
-
-	public void OnLoadoutBtnClicked() {
-		Text t = loadoutBtn.GetComponentInChildren<Text>();
-		// Change all button colors
-		headgearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		faceBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		armorBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		topsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		bottomsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		footwearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		primaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		secondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		supportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		meleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-
-		// Delete any currently existing items in the grid
-		ClearCustomizationContent();
-
-		// If you're on equipment screen, go to loadout screen. Else, go back to loadout.
-		if (t.text.Equals("Loadout")) {
-			t.text = "Equipment";
-			SwitchToLoadoutScreen();
-		} else {
-			t.text = "Loadout";
-			SwitchToEquipmentScreen();
-		}
-	}
-
-	public void OnWeaponsBtnClicked() {
-		Text t = weaponsBtn.GetComponentInChildren<Text>();
-		// Change all button colors
-		shopHeadgearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopFaceBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopArmorBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopTopsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopBottomsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopFootwearBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopPrimaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopSecondaryWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopSupportWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopMeleeWepBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopModsBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-		shopCharacterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
-
-		// Delete any currently existing items in the grid
-		ClearMarketplaceContent();
-
-		// If you're on equipment screen, go to loadout screen. Else, go back to loadout.
-		if (t.text.Equals("Weapons")) {
-			t.text = "Equipment";
-			SwitchToMarketplaceWeaponsScreen();
-		} else {
-			t.text = "Weapons";
-			SwitchToMarketplaceEquipmentScreen();
+			o.transform.SetParent(shopContentEquipment.transform);
 		}
 	}
 
@@ -2928,10 +2735,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			if (modWeaponLbl.text.Equals(modData.EquippedOn)) {
-				s.ToggleEquippedIndicator(true);
-				currentlyEquippedModPrefab = o;
-			}
+			// if (modWeaponLbl.text.Equals(modData.EquippedOn)) {
+			// 	s.ToggleEquippedIndicator(true);
+			// 	currentlyEquippedModPrefab = o;
+			// }
 			o.transform.SetParent(modInventoryContent.transform);
 		}
 	}
@@ -2968,16 +2775,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.SetNativeSize();
 			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
 			t.sizeDelta = new Vector2(t.sizeDelta.x / 6f, t.sizeDelta.y / 6f);
-			if (modWeaponLbl.text.Equals(modData.EquippedOn)) {
-				s.ToggleEquippedIndicator(true);
-				currentlyEquippedModPrefab = o;
-			}
+			// if (modWeaponLbl.text.Equals(modData.EquippedOn)) {
+			// 	s.ToggleEquippedIndicator(true);
+			// 	currentlyEquippedModPrefab = o;
+			// }
 			o.transform.SetParent(modInventoryContent.transform);
 		}
 	}
 
 	void SwitchToLoadoutScreen() {
-		loadoutBtn.GetComponentInChildren<Text>().text = "Equipment";
+		// loadoutBtn.GetComponentInChildren<Text>().text = "Equipment";
 		headgearBtn.gameObject.SetActive(false);
 		faceBtn.gameObject.SetActive(false);
 		topsBtn.gameObject.SetActive(false);
@@ -2993,68 +2800,27 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		equippedFootSlot.SetActive(false);
 		equippedCharacterSlot.SetActive(false);
 		equippedArmorSlot.SetActive(false);
-		equippedStatsSlot.SetActive(false);
 
 		primaryWepBtn.gameObject.SetActive(true);
 		secondaryWepBtn.gameObject.SetActive(true);
 		supportWepBtn.gameObject.SetActive(true);
 		meleeWepBtn.gameObject.SetActive(true);
 		RectTransform rt = primaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
 		rt = secondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
 		rt = supportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
 		rt = meleeWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, 0));
+		// rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, 0));
 		equippedPrimarySlot.SetActive(true);
 		equippedSecondarySlot.SetActive(true);
 		equippedSupportSlot.SetActive(true);
 		equippedMeleeSlot.SetActive(true);
 	}
 
-	void SwitchToMarketplaceWeaponsScreen() {
-		weaponsBtn.GetComponentInChildren<Text>().text = "Equipment";
-		shopHeadgearBtn.gameObject.SetActive(false);
-		shopFaceBtn.gameObject.SetActive(false);
-		shopTopsBtn.gameObject.SetActive(false);
-		shopBottomsBtn.gameObject.SetActive(false);
-		shopFootwearBtn.gameObject.SetActive(false);
-		shopCharacterBtn.gameObject.SetActive(false);
-		shopArmorBtn.gameObject.SetActive(false);
-
-		shopEquippedHeadSlot.SetActive(false);
-		shopEquippedFaceSlot.SetActive(false);
-		shopEquippedTopSlot.SetActive(false);
-		shopEquippedBottomSlot.SetActive(false);
-		shopEquippedFootSlot.SetActive(false);
-		shopEquippedCharacterSlot.SetActive(false);
-		shopEquippedArmorSlot.SetActive(false);
-		shopEquippedStatsSlot.SetActive(false);
-
-		shopPrimaryWepBtn.gameObject.SetActive(true);
-		shopSecondaryWepBtn.gameObject.SetActive(true);
-		shopSupportWepBtn.gameObject.SetActive(true);
-		shopMeleeWepBtn.gameObject.SetActive(true);
-		shopModsBtn.gameObject.SetActive(true);
-		RectTransform rt = shopPrimaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(primaryWepBtnYPos, 0));
-		rt = shopSecondaryWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(secondaryWepBtnYPos, 0));
-		rt = shopSupportWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(supportWepBtnYPos, 0));
-		rt = shopMeleeWepBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(meleeWepBtnYPos, 0));
-		rt = shopModsBtn.GetComponent<RectTransform>();
-		rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, CalculateButtonPositioning(modWepBtnYPos, 0));
-		shopEquippedPrimarySlot.SetActive(true);
-		shopEquippedSecondarySlot.SetActive(true);
-		shopEquippedSupportSlot.SetActive(true);
-		shopEquippedMeleeSlot.SetActive(true);
-	}
-
 	void SwitchToEquipmentScreen() {
-		loadoutBtn.GetComponentInChildren<Text>().text = "Loadout";
+		// loadoutBtn.GetComponentInChildren<Text>().text = "Loadout";
 		headgearBtn.gameObject.SetActive(true);
 		faceBtn.gameObject.SetActive(true);
 		topsBtn.gameObject.SetActive(true);
@@ -3070,7 +2836,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		equippedFootSlot.SetActive(true);
 		equippedCharacterSlot.SetActive(true);
 		equippedArmorSlot.SetActive(true);
-		equippedStatsSlot.SetActive(true);
 
 		primaryWepBtn.gameObject.SetActive(false);
 		secondaryWepBtn.gameObject.SetActive(false);
@@ -3094,7 +2859,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void SwitchToMarketplaceEquipmentScreen() {
-		weaponsBtn.GetComponentInChildren<Text>().text = "Weapons";
+		// weaponsBtn.GetComponentInChildren<Text>().text = "Weapons";
 		shopHeadgearBtn.gameObject.SetActive(true);
 		shopFaceBtn.gameObject.SetActive(true);
 		shopTopsBtn.gameObject.SetActive(true);
@@ -3102,15 +2867,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopFootwearBtn.gameObject.SetActive(true);
 		shopCharacterBtn.gameObject.SetActive(true);
 		shopArmorBtn.gameObject.SetActive(true);
-
-		shopEquippedHeadSlot.SetActive(true);
-		shopEquippedFaceSlot.SetActive(true);
-		shopEquippedTopSlot.SetActive(true);
-		shopEquippedBottomSlot.SetActive(true);
-		shopEquippedFootSlot.SetActive(true);
-		shopEquippedCharacterSlot.SetActive(true);
-		shopEquippedArmorSlot.SetActive(true);
-		shopEquippedStatsSlot.SetActive(true);
 
 		shopPrimaryWepBtn.gameObject.SetActive(false);
 		shopSecondaryWepBtn.gameObject.SetActive(false);
@@ -3130,11 +2886,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shopModsBtn.gameObject.SetActive(false);
 		shopSuppressorsSubBtn.gameObject.SetActive(false);
 		shopSightsSubBtn.gameObject.SetActive(false);
-
-		shopEquippedPrimarySlot.SetActive(false);
-		shopEquippedSecondarySlot.SetActive(false);
-		shopEquippedSupportSlot.SetActive(false);
-		shopEquippedMeleeSlot.SetActive(false);
 	}
 
 	public void OnRemoveArmorClicked() {
@@ -3153,18 +2904,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (armor == 0) {
 			armorBoostPercent.color = Color.white;
 			armorBoostPercent.text = "+" + armor + "%";
-			shopArmorBoostPercent.color = Color.white;
-			shopArmorBoostPercent.text = "+" + armor + "%";
 		} else if (armor > 0) {
 			armorBoostPercent.color = Color.green;
 			armorBoostPercent.text = "+" + armor + "%";
-			shopArmorBoostPercent.color = Color.green;
-			shopArmorBoostPercent.text = "+" + armor + "%";
 		} else {
 			armorBoostPercent.color = Color.red;
 			armorBoostPercent.text = armor + "%";
-			shopArmorBoostPercent.color = Color.red;
-			shopArmorBoostPercent.text = armor + "%";
 		}
 	}
 
@@ -3172,18 +2917,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (speed == 0) {
 			speedBoostPercent.color = Color.white;
 			speedBoostPercent.text = "+" + speed + "%";
-			shopSpeedBoostPercent.color = Color.white;
-			shopSpeedBoostPercent.text = "+" + speed + "%";
 		} else if (speed > 0) {
 			speedBoostPercent.color = Color.green;
 			speedBoostPercent.text = "+" + speed + "%";
-			shopSpeedBoostPercent.color = Color.green;
-			shopSpeedBoostPercent.text = "+" + speed + "%";
 		} else {
 			speedBoostPercent.color = Color.red;
 			speedBoostPercent.text = speed + "%";
-			shopSpeedBoostPercent.color = Color.red;
-			shopSpeedBoostPercent.text = speed + "%";
 		}
 	}
 
@@ -3191,18 +2930,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (stamina == 0) {
 			staminaBoostPercent.color = Color.white;
 			staminaBoostPercent.text = "+" + stamina + "%";
-			shopStaminaBoostPercent.color = Color.white;
-			shopStaminaBoostPercent.text = "+" + stamina + "%";
 		} else if (stamina > 0) {
 			staminaBoostPercent.color = Color.green;
 			staminaBoostPercent.text = "+" + stamina + "%";
-			shopStaminaBoostPercent.color = Color.green;
-			shopStaminaBoostPercent.text = "+" + stamina + "%";
 		} else {
 			staminaBoostPercent.color = Color.red;
 			staminaBoostPercent.text = stamina + "%";
-			shopStaminaBoostPercent.color = Color.red;
-			shopStaminaBoostPercent.text = stamina + "%";
 		}
 	}
 
@@ -3214,7 +2947,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	private void PopulateWeaponDropdownForModScreen() {
 		// Clear dropdown from previous query
-		modWeaponSelect.ClearOptions();
+		// modWeaponSelect.ClearOptions();
 		// Populate the dropdown with all weapons the player owns
 		List<string> myWepsList = new List<string>();
         foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons)
@@ -3225,11 +2958,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				myWepsList.Add(weaponName);
 			}
 		}
-		modWeaponSelect.AddOptions(myWepsList);
+		// modWeaponSelect.AddOptions(myWepsList);
 
 		// Initialize the dropdown with the first option
-		modWeaponSelect.value = 0;
-		LoadWeaponForModding(modWeaponSelect.options[modWeaponSelect.value].text);
+		// modWeaponSelect.value = 0;
+		// LoadWeaponForModding(modWeaponSelect.options[modWeaponSelect.value].text);
 
 	}
 
@@ -3237,7 +2970,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Destroy old weapon preview
 		DestroyOldWeaponTemplate();
 		// Load the proper weapon modding template
-		modWeaponLbl.text = weaponName;
+		// modWeaponLbl.text = weaponName;
 		GameObject t = (GameObject)Instantiate(Resources.Load("WeaponTemplates/" + weaponName));
 
 		// Place the weapon template in the proper position
@@ -3250,7 +2983,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Place the saved mods for that weapon back on the weapon template
 		ModInfo savedModInfo = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
-		SetWeaponModValues(modWeaponLbl.text, true, null, savedModInfo.SuppressorId, true, null, savedModInfo.SightId);
+		// SetWeaponModValues(modWeaponLbl.text, true, null, savedModInfo.SuppressorId, true, null, savedModInfo.SightId);
 		EquipModOnWeaponTemplate(savedModInfo.EquippedSuppressor, "Suppressor", savedModInfo.SuppressorId);
 		EquipModOnWeaponTemplate(savedModInfo.EquippedSight, "Sight", savedModInfo.SightId);
 
@@ -3279,13 +3012,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		int clipCapacityBoost = 0;
 		int maxAmmoBoost = 0;
 		
-		modWeaponLbl.text = weaponName;
+		// modWeaponLbl.text = weaponName;
 
 		if (updateSuppressor) {
 			if (string.IsNullOrEmpty(suppressorName)) {
-				equippedSuppressorTxt.text = "";
+				// equippedSuppressorTxt.text = "";
 			} else {
-				equippedSuppressorTxt.text = suppressorName;
+				// equippedSuppressorTxt.text = suppressorName;
 			}
 			equippedSuppressorId = suppressorId;
 
@@ -3303,9 +3036,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		if (updateSight) {
 			if (string.IsNullOrEmpty(sightName)) {
-				equippedSightTxt.text = "";
+				// equippedSightTxt.text = "";
 			} else {
-				equippedSightTxt.text = sightName;
+				// equippedSightTxt.text = sightName;
 			}
 			equippedSightId = sightId;
 
@@ -3333,18 +3066,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	private void UnequipModFromWeaponTemplate(string modType) {
-		switch(modType) {
-			case "Suppressor":
-				if (equippedSuppressorTxt.text.Equals("")) return;
-				SetWeaponModValues(modWeaponLbl.text, true, null, equippedSuppressorId, false, null, null);
-				weaponPreviewRef.GetComponent<WeaponMods>().UnequipSuppressor();
-				break;
-			case "Sight":
-				if (equippedSightTxt.text.Equals("")) return;
-				SetWeaponModValues(modWeaponLbl.text, false, null, null, true, null, equippedSightId);
-				weaponPreviewRef.GetComponent<WeaponMods>().UnequipSight();
-				break;
-		}
+		// switch(modType) {
+		// 	case "Suppressor":
+		// 		if (equippedSuppressorSlot.GetComponent<ShopItemScript>() == null) return;
+		// 		SetWeaponModValues(modWeaponLbl.text, true, null, equippedSuppressorId, false, null, null);
+		// 		weaponPreviewRef.GetComponent<WeaponMods>().UnequipSuppressor();
+		// 		break;
+		// 	case "Sight":
+		// 		if (equippedSightSlot.GetComponent<ShopItemScript>() == null) return;
+		// 		SetWeaponModValues(modWeaponLbl.text, false, null, null, true, null, equippedSightId);
+		// 		weaponPreviewRef.GetComponent<WeaponMods>().UnequipSight();
+		// 		break;
+		// }
 	}
 
 	private void SetWeaponModdedStats(float damage, float accuracy, float recoil, float range, float clipCapacity, float maxAmmo) {
@@ -3436,96 +3169,90 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	private void SaveModsForCurrentWeapon() {
-		if (!modWeaponLbl.text.Equals("")) {
-			PlayerData.playerdata.SaveModDataForWeapon(modWeaponLbl.text, equippedSuppressorTxt.text, equippedSightTxt.text, equippedSuppressorId, equippedSightId);
-		}
+		// if (!modWeaponLbl.text.Equals("")) {
+		// 	PlayerData.playerdata.SaveModDataForWeapon(modWeaponLbl.text, equippedSuppressorSlot.GetComponent<ShopItemScript>().itemName, equippedSightSlot.GetComponent<ShopItemScript>().itemName, equippedSuppressorId, equippedSightId);
+		// }
 	}
 
 	public void OnWeaponModDropdownSelect() {
 		// If the weapon that was selected is the same as the current one, then don't do anything
-		string selectedWeapon = modWeaponSelect.options[modWeaponSelect.value].text;
-		if (selectedWeapon.Equals(modWeaponLbl.text)) {
-			return;
-		}
+		// string selectedWeapon = modWeaponSelect.options[modWeaponSelect.value].text;
+		// if (selectedWeapon.Equals(modWeaponLbl.text)) {
+		// 	return;
+		// }
 		// First, destroy the old weapon that was being modded and save its data
-		SaveModsForCurrentWeapon();
-		DestroyOldWeaponTemplate();
+		// SaveModsForCurrentWeapon();
+		// DestroyOldWeaponTemplate();
 
 		// Then create the new one
-		LoadWeaponForModding(selectedWeapon);
+		// LoadWeaponForModding(selectedWeapon);
 	}
 
 	public string EquipModOnWeaponTemplate(string modName, string modType, string modId) {
-		if (modName == null || modName.Equals("")) return modWeaponLbl.text;
-		Weapon w = InventoryScript.itemData.weaponCatalog[modWeaponLbl.text];
-		switch(modType) {
-			case "Suppressor":
-				if (w.suppressorCompatible) {
-					SetWeaponModValues(modWeaponLbl.text, true, modName, modId, false, null, null);
-					weaponPreviewRef.GetComponent<WeaponMods>().EquipSuppressor(modName);
-					return modWeaponLbl.text;
-				} else {
-					ToggleModMenuPopup(true, "Suppressors cannot be equipped on this weapon!");
-				}
-				break;
-			case "Sight":
-				if (w.sightCompatible) {
-					SetWeaponModValues(modWeaponLbl.text, false, null, null, true, modName, modId);
-					weaponPreviewRef.GetComponent<WeaponMods>().EquipSight(modName);
-					return modWeaponLbl.text;
-				} else {
-					ToggleModMenuPopup(true, "Sights cannot be equipped on this weapon!");
-				}
-				break;
-		}
+		// if (modName == null || modName.Equals("")) return modWeaponLbl.text;
+		// Weapon w = InventoryScript.itemData.weaponCatalog[modWeaponLbl.text];
+		// switch(modType) {
+		// 	case "Suppressor":
+		// 		if (w.suppressorCompatible) {
+		// 			SetWeaponModValues(modWeaponLbl.text, true, modName, modId, false, null, null);
+		// 			weaponPreviewRef.GetComponent<WeaponMods>().EquipSuppressor(modName);
+		// 			return modWeaponLbl.text;
+		// 		} else {
+		// 			ToggleModMenuPopup(true, "Suppressors cannot be equipped on this weapon!");
+		// 		}
+		// 		break;
+		// 	case "Sight":
+		// 		if (w.sightCompatible) {
+		// 			SetWeaponModValues(modWeaponLbl.text, false, null, null, true, modName, modId);
+		// 			weaponPreviewRef.GetComponent<WeaponMods>().EquipSight(modName);
+		// 			return modWeaponLbl.text;
+		// 		} else {
+		// 			ToggleModMenuPopup(true, "Sights cannot be equipped on this weapon!");
+		// 		}
+		// 		break;
+		// }
 		return null;
 	}
 
 	private void ToggleModMenuPopup(bool b, string message) {
-		if (b) {
-			modMenuPopup.GetComponentInChildren<Text>().text = message;
-			modMenuPopup.SetActive(true);
-		} else {
-			modMenuPopup.SetActive(false);
-		}
-	}
-
-	void ToggleSplashScreen(bool b, string message = "") {
-		splashScreen.SetActive(b);
-		splashScreenPopup.text = message;
+		// if (b) {
+		// 	modMenuPopup.GetComponentInChildren<Text>().text = message;
+		// 	modMenuPopup.SetActive(true);
+		// } else {
+		// 	modMenuPopup.SetActive(false);
+		// }
 	}
 
 	public void PreparePurchase(string itemName, string itemType, Texture thumb) {
 		PrepareDurationDropdown(itemType == "Mod");
-		durationSelectionDropdown.value = 0;
-		durationSelectionDropdown.RefreshShownValue();
-		ToggleActiveMarketplaceButtons(false);
+		durationSelection.index = 0;
+		// durationSelection.RefreshShownValue();
 		itemBeingPurchased = itemName;
 		typeBeingPurchased = itemType;
-		preparePurchasePopup.GetComponentInChildren<RawImage>().texture = thumb;
-		preparePurchasePopup.SetActive(true);
+		// preparePurchasePopup.GetComponentInChildren<RawImage>().texture = thumb;
+		// preparePurchasePopup.SetActive(true);
         // Initialize with 1 day price
-        SetTotalGPCost(0);
+        SetTotalGPCost(0, "1 day");
     }
 
 	void PrepareDurationDropdown(bool permOnly) {
-		durationSelectionDropdown.options.Clear();
+		durationSelection.ClearItems();
 		if (permOnly) {
-			durationSelectionDropdown.options.Add(new Dropdown.OptionData("Permanent"));
+			durationSelection.CreateNewItem("Permanent");
 		} else {
-			durationSelectionDropdown.options.Add(new Dropdown.OptionData("1 day"));
-			durationSelectionDropdown.options.Add(new Dropdown.OptionData("7 days"));
-			durationSelectionDropdown.options.Add(new Dropdown.OptionData("30 days"));
-			durationSelectionDropdown.options.Add(new Dropdown.OptionData("90 days"));
-			durationSelectionDropdown.options.Add(new Dropdown.OptionData("Permanent"));
+			durationSelection.CreateNewItem("1 day");
+			durationSelection.CreateNewItem("7 days");
+			durationSelection.CreateNewItem("30 days");
+			durationSelection.CreateNewItem("90 days");
+			durationSelection.CreateNewItem("Permanent");
 		}
 	}
 
 	public void OnConfirmPreparePurchaseClicked() {
-		preparePurchasePopup.SetActive(false);
-		confirmPurchaseTxt.text = "Are you sure you would like to buy " + itemBeingPurchased + " for " +
-		durationSelectionDropdown.options[durationSelectionDropdown.value].text + "? (" + totalGpCostBeingPurchased + " GP)";
-		confirmPurchasePopup.SetActive(true);
+		// preparePurchasePopup.SetActive(false);
+		// confirmPurchaseTxt.text = "Are you sure you would like to buy " + itemBeingPurchased + " for " +
+		// durationSelectionDropdown.options[durationSelectionDropdown.value].text + "? (" + totalGpCostBeingPurchased + " GP)";
+		// confirmPurchasePopup.SetActive(true);
 	}
 
 	public void OnConfirmPurchaseClicked() {
@@ -3533,45 +3260,43 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void OnDurationSelect() {
-		int durationInput = durationSelectionDropdown.value;
-        SetTotalGPCost(durationInput);
+		int durationInput = durationSelection.index;
+        SetTotalGPCost(durationInput, durationSelection.GetCurrentItem());
 	}
 
-    void SetTotalGPCost(int duration)
+    void SetTotalGPCost(int duration, string durationText)
     {
         totalGpCostBeingPurchased = GetGPCostForItemAndType(itemBeingPurchased, typeBeingPurchased, duration);
-        totalGpCostTxt.text = "" + totalGpCostBeingPurchased;
+        totalGpCostTxt.text = "YOU ARE BUYING [" + itemBeingPurchased + "] FOR [" + durationText + "] FOR " + totalGpCostBeingPurchased + " GP/KASH.";
     }
 
 	public void OnCancelPurchaseClicked() {
 		itemBeingPurchased = null;
 		typeBeingPurchased = null;
-		confirmPurchasePopup.SetActive(false);
-		ToggleActiveMarketplaceButtons(true);
+		// confirmPurchasePopup.SetActive(false);
 	}
 
 	public void OnCancelPreparePurchaseClicked() {
 		itemBeingPurchased = null;
 		typeBeingPurchased = null;
-		preparePurchasePopup.SetActive(false);
-		ToggleActiveMarketplaceButtons(true);
+		// preparePurchasePopup.SetActive(false);
 	}
 
 	void ConfirmPurchase() {
-		confirmPurchasePopup.SetActive(false);
+		// confirmPurchasePopup.SetActive(false);
         // Ensure that the user doesn't already have this item
         float hasDuplicateCheck = HasDuplicateItem(itemBeingPurchased, typeBeingPurchased);
         if (hasDuplicateCheck < 0f) {
-			TriggerMarketplacePopup("You already own this item.");
+			TriggerAlertPopup("You already own this item.");
 			return;
 		}
         bool isStacking = (hasDuplicateCheck >= 0f && !Mathf.Approximately(0f, hasDuplicateCheck));
-        float totalNewDuration = ConvertDurationInput(durationSelectionDropdown.value);
+        float totalNewDuration = ConvertDurationInput(durationSelection.index);
         totalNewDuration = (Mathf.Approximately(totalNewDuration, -1f) ? totalNewDuration : totalNewDuration + hasDuplicateCheck);
 		if (PlayerData.playerdata.info.Gp >= totalGpCostBeingPurchased) {
 			PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, "gp");
 		} else {	
-			TriggerMarketplacePopup("You do not have enough GP to purchase this item.");	
+			TriggerAlertPopup("You do not have enough GP to purchase this item.");	
 		}	
 	}
 
@@ -3748,41 +3473,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		characterBtn.GetComponent<Image>().color = new Color(0f / 255f, 0f / 255f, 0f / 255f, 214f / 255f);
 	}
 
-	void ToggleActiveMarketplaceButtons(bool b) {
-		marketplaceBackBtn.interactable = b;
-		clearPreviewBtn.interactable = b;
-		weaponsBtn.interactable = b;
-		shopHeadgearBtn.interactable = b;
-		shopFaceBtn.interactable = b;
-		shopArmorBtn.interactable = b;
-		shopTopsBtn.interactable = b;
-		shopBottomsBtn.interactable = b;
-		shopFootwearBtn.interactable = b;
-		shopCharacterBtn.interactable = b;
-		shopPrimaryWepBtn.interactable = b;
-		shopSecondaryWepBtn.interactable = b;
-		shopSupportWepBtn.interactable = b;
-		shopMeleeWepBtn.interactable = b;
-		shopAssaultRifleSubBtn.interactable = b;
-		shopSmgSubBtn.interactable = b;
-		shopLmgSubBtn.interactable = b;
-		shopShotgunSubBtn.interactable = b;
-		shopSniperRifleSubBtn.interactable = b;
-		shopPistolSubBtn.interactable = b;
-		shopLauncherSubBtn.interactable = b;
-		shopExplosivesSubBtn.interactable = b;
-		shopBoostersSubBtn.interactable = b;
-		shopDeployablesSubBtn.interactable = b;
-		shopKnivesSubBtn.interactable = b;
-		shopModsBtn.interactable = b;
-		shopSuppressorsSubBtn.interactable = b;
-		shopSightsSubBtn.interactable = b;
-		Button[] shopItemsBtns = shopContentInventory.GetComponentsInChildren<Button>();
-		foreach (Button btn in shopItemsBtns) {
-			btn.interactable = b;
-		}
-	}
-
 	void SetPlayerNameForTitle() {
 		mainNametagTxt.text = PlayerData.playerdata.info.Playername;
 	}
@@ -3800,8 +3490,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		uint toExp = rank.maxExp - rank.minExp;
 		float percentProgress = (float)currExp / (float)toExp;
 		mainLevelProgress.value = percentProgress;
-		mainLevelProgressPercentTxt.text = (uint)(percentProgress * 100) + "%";
-		mainExpTxt.text = currExp + " / " + toExp;
+		mainExpTxt.text = currExp + " / " + toExp + "(" + (uint)(percentProgress * 100) + "%)";
 	}
 
 	void SetPlayerCurrency() {
@@ -3817,23 +3506,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void TriggerEmergencyPopup(string message) {
-        emergencyPopupTxt.text = message;
-        emergencyPopup.SetActive(true);
+        // emergencyPopupTxt.text = message;
+        // .SetActive(true);
     }
 
     public void CloseEmergencyPopup() {
-        emergencyPopup.SetActive(false);
+        // emergencyPopup.SetActive(false);
     }
-
-	public void ToggleIsChangingKeyMapping(bool b, string keyChanging) {
-		if (b) {
-			isChangingKeyMapping = true;
-			changingKeyMappingText.text = "Press a button to set a key for [" + keyChanging + "]";
-			changingKeyMappingText.enabled = true;
-		} else {
-			isChangingKeyMapping = false;
-			changingKeyMappingText.enabled = false;
-		}
-	}
 		
 }

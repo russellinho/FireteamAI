@@ -277,19 +277,11 @@ public class EquipmentScript : MonoBehaviour
         char charGender = GetGender();
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
-            if (shopItemRef != null) {
-                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
-            } else {
-                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
-            }
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
             return;
         }
         if (IsCharacterRestricted(e)) {
-            if (shopItemRef != null) {
-                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
-            } else {
-                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
-            }
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
             return;
         }
         if (name.Equals(equippedTop)) {
@@ -332,11 +324,11 @@ public class EquipmentScript : MonoBehaviour
         char charGender = GetGender();
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
-            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
             return;
         }
         if (IsCharacterRestricted(e)) {
-            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
             return;
         }
         equippedTop = name;
@@ -395,19 +387,11 @@ public class EquipmentScript : MonoBehaviour
         char charGender = GetGender();
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
-            if (shopItemRef != null) {
-                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
-            } else {
-                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
-            }
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
             return;
         }
         if (IsCharacterRestricted(e)) {
-            if (shopItemRef != null) {
-                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
-            } else {
-                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
-            }
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
             return;
         }
 
@@ -451,11 +435,11 @@ public class EquipmentScript : MonoBehaviour
         char charGender = GetGender();
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
-            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
             return;
         }
         if (IsCharacterRestricted(e)) {
-            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
             return;
         }
         equippedBottom = name;
@@ -486,19 +470,11 @@ public class EquipmentScript : MonoBehaviour
         char charGender = GetGender();
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
-            if (shopItemRef != null) {
-                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
-            } else {
-                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
-            }
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
             return;
         }
         if (IsCharacterRestricted(e)) {
-            if (shopItemRef != null) {
-                ts.TriggerCustomizationPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
-            } else {
-                ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
-            }
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
             return;
         }
 
@@ -542,11 +518,11 @@ public class EquipmentScript : MonoBehaviour
         char charGender = GetGender();
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != charGender) {
-            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
             return;
         }
         if (IsCharacterRestricted(e)) {
-            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
             return;
         }
         equippedFootwear = name;
@@ -614,11 +590,11 @@ public class EquipmentScript : MonoBehaviour
         char charGender = GetGender();
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != 'N' && e.gender != charGender) {
-            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
             return;
         }
         if (IsCharacterRestricted(e)) {
-            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
             return;
         }
         equippedFacewear = name;
@@ -679,11 +655,11 @@ public class EquipmentScript : MonoBehaviour
         char charGender = GetGender();
         Equipment e = InventoryScript.itemData.equipmentCatalog[name];
         if (e.gender != 'N' && e.gender != charGender) {
-            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\n" + e.gender + " gender only");
             return;
         }
         if (IsCharacterRestricted(e)) {
-            ts.TriggerMarketplacePopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
+            ts.TriggerAlertPopup("You cannot equip this item due to the following restrictions:\nOnly equippable on these characters: " + string.Join(", ", e.characterRestrictions));
             return;
         }
         equippedHeadgear = name;

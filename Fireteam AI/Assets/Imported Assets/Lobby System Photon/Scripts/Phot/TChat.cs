@@ -13,7 +13,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public TMP_InputField TextSend;
 		public TMP_Text TextChat;
 		public GameObject TextSendObj;
-		public GameObject FrameSmiley;
+		// public GameObject FrameSmiley;
 		[SerializeField]
 		public string[] emojis;
 		public bool isSelect = false;
@@ -84,23 +84,23 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 		}
 
-		public void ShowSmileys()
-		{
-			if (FrameSmiley.activeSelf)
-			{
-				FrameSmiley.SetActive(false);
-			}
-			else
-			{
-				FrameSmiley.SetActive(true);
-			}
-		}
+		// public void ShowSmileys()
+		// {
+		// 	if (FrameSmiley.activeSelf)
+		// 	{
+		// 		FrameSmiley.SetActive(false);
+		// 	}
+		// 	else
+		// 	{
+		// 		FrameSmiley.SetActive(true);
+		// 	}
+		// }
 
-		public void AddSmiley(int idSmiley)
-		{
-			TextSend.text += " "+emojis[idSmiley];
-			FrameSmiley.SetActive(false);
-		}
+		// public void AddSmiley(int idSmiley)
+		// {
+		// 	TextSend.text += " "+emojis[idSmiley];
+		// 	FrameSmiley.SetActive(false);
+		// }
 
 
 		[PunRPC]

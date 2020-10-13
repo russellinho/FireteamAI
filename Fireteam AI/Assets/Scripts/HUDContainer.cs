@@ -33,6 +33,7 @@ public class HUDContainer : MonoBehaviour {
 	public CanvasGroup pauseMenuGUI;
 	public GameObject scoreboard;
     public InGameMessenger inGameMessenger;
+	public PauseMenuManager pauseMenuManager;
 
 	// Hit indication HUD
 	public RawImage hitFlare;

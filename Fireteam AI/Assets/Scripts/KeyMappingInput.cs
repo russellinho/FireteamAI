@@ -25,14 +25,13 @@ public class KeyMappingInput : MonoBehaviour
     }
 
     public void OnClick() {
-        if ((titleController != null && titleController.isChangingKeyMapping) || (pauseMenuScript != null && pauseMenuScript.isChangingKeyMapping)) return;
         // Go into changing key mapping mode
         currentlyChanging = true;
-        if (titleController != null) {
-            titleController.ToggleIsChangingKeyMapping(true, actionDescription.text);
-        } else if (pauseMenuScript != null) {
-            pauseMenuScript.ToggleIsChangingKeyMapping(true, actionDescription.text);
-        }
+        // if (titleController != null) {
+        //     titleController.ToggleIsChangingKeyMapping(true, actionDescription.text);
+        // } else if (pauseMenuScript != null) {
+        //     pauseMenuScript.ToggleIsChangingKeyMapping(true, actionDescription.text);
+        // }
 
         // Set the text to ? temporarily
         keyDescription.text = "???";
@@ -77,11 +76,11 @@ public class KeyMappingInput : MonoBehaviour
             keyDescription.text = "Mouse Wheel Down";
             // Take the key out of changing mode
             currentlyChanging = false;
-            if (titleController != null) {
-                titleController.ToggleIsChangingKeyMapping(false, null);
-            } else if (pauseMenuScript != null) {
-                pauseMenuScript.ToggleIsChangingKeyMapping(false, null);
-            }
+            // if (titleController != null) {
+            //     titleController.ToggleIsChangingKeyMapping(false, null);
+            // } else if (pauseMenuScript != null) {
+            //     pauseMenuScript.ToggleIsChangingKeyMapping(false, null);
+            // }
         } else if (Input.GetAxis("Mouse ScrollWheel") > 0f) {
             // If another action is already mapped to this key, then swap the keys
             string alreadyMappedAction = PlayerPreferences.playerPreferences.KeyIsMappedOn(KeyCode.None, 1);
@@ -103,11 +102,11 @@ public class KeyMappingInput : MonoBehaviour
             keyDescription.text = "Mouse Wheel Up";
             // Take the key out of changing mode
             currentlyChanging = false;
-            if (titleController != null) {
-                titleController.ToggleIsChangingKeyMapping(false, null);
-            } else if (pauseMenuScript != null) {
-                pauseMenuScript.ToggleIsChangingKeyMapping(false, null);
-            }
+            // if (titleController != null) {
+            //     titleController.ToggleIsChangingKeyMapping(false, null);
+            // } else if (pauseMenuScript != null) {
+            //     pauseMenuScript.ToggleIsChangingKeyMapping(false, null);
+            // }
         } else {
             foreach(KeyCode vKey in System.Enum.GetValues(typeof(KeyCode))){
                 if (Input.GetKey(vKey)) {
@@ -132,11 +131,11 @@ public class KeyMappingInput : MonoBehaviour
                     keyDescription.text = vKey.ToString();
                     // Take the key out of changing mode
                     currentlyChanging = false;
-                    if (titleController != null) {
-                        titleController.ToggleIsChangingKeyMapping(false, null);
-                    } else if (pauseMenuScript != null) {
-                        pauseMenuScript.ToggleIsChangingKeyMapping(false, null);
-                    }
+                    // if (titleController != null) {
+                    //     titleController.ToggleIsChangingKeyMapping(false, null);
+                    // } else if (pauseMenuScript != null) {
+                    //     pauseMenuScript.ToggleIsChangingKeyMapping(false, null);
+                    // }
                     break;
                 }
             }

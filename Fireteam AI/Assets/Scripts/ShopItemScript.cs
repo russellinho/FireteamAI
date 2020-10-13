@@ -155,10 +155,10 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     private void EquipMod() {
-        if (equippedOn == ts.modWeaponLbl.text)
-        {
-            return;
-        }
+        // if (equippedOn == ts.modWeaponLbl.text)
+        // {
+        //     return;
+        // }
         switch (modCategory)
         {
             case "Suppressor":
@@ -290,10 +290,10 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnRemoveSuppressorClicked()
     {
-        if (equippedOn != ts.modWeaponLbl.text)
-        {
-            return;
-        }
+        // if (equippedOn != ts.modWeaponLbl.text)
+        // {
+        //     return;
+        // }
         // Remove suppressor model from the player's weapon and the template weapon
         ts.RemoveSuppressorFromWeapon(equippedOn, true);
         ToggleEquippedIndicator(false);
@@ -301,9 +301,9 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void OnRemoveSightClicked() {
-        if (equippedOn != ts.modWeaponLbl.text) {
-            return;
-        }
+        // if (equippedOn != ts.modWeaponLbl.text) {
+        //     return;
+        // }
         // Remove sight model from the player's weapon and the template weapon
         ts.RemoveSightFromWeapon(equippedOn, true);
         ToggleEquippedIndicator(false);

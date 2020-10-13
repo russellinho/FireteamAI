@@ -351,12 +351,15 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		[PunRPC]
 		void RpcLoadingScreen() {
-			titleController.GetComponent<TitleControllerScript> ().InstantiateLoadingScreen (mapNames[mapIndex]);
+			TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
+			ts.InstantiateLoadingScreen (mapNames[mapIndex]);
+			ts.ToggleLoadingScreen(true);
 		}
 
 		void LoadingScreen() {
-			Debug.Log("Opened loading screen...");
-			titleController.GetComponent<TitleControllerScript> ().InstantiateLoadingScreen (mapNames[mapIndex]);
+			TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
+			ts.InstantiateLoadingScreen (mapNames[mapIndex]);
+			ts.ToggleLoadingScreen(true);
 		}
 
 		void Update() {

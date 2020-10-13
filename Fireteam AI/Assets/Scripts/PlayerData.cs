@@ -709,11 +709,19 @@ public class PlayerData : MonoBehaviour
         if (bodyReference == null)
         {
             bodyReference = Instantiate(titleRef.characterRefs[titleRef.charactersRefsIndices[character]]);
+            SetBodyRefPos();
         }
         // else
         // {
         //     bodyReference = GameObject.FindGameObjectWithTag("Player");
         // }
+    }
+
+    void SetBodyRefPos() {
+        bodyReference.transform.SetParent(titleRef.playerPreviewSlot);
+        bodyReference.transform.position = Vector3.zero;
+        bodyReference.transform.rotation = Quaternion.identity;
+        bodyReference.transform.localScale = Vector3.one;
     }
 
     // Ensure that character changed listener re-equips weapons and sets equipment to defautl too
@@ -730,6 +738,7 @@ public class PlayerData : MonoBehaviour
         Destroy(bodyReference);
         bodyReference = null;
         bodyReference = Instantiate(titleRef.characterRefs[titleRef.charactersRefsIndices[PlayerData.playerdata.info.EquippedCharacter]]);
+        SetBodyRefPos();
         EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
         WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
         characterEquips.ts = titleRef;
@@ -847,7 +856,7 @@ public class PlayerData : MonoBehaviour
                 } else {
                     Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
                     if (results["status"].ToString() == "200") {
-                        titleRef.TriggerMarketplacePopup("Purchase successful! The item has been added to your inventory.");
+                        titleRef.TriggerAlertPopup("Purchase successful! The item has been added to your inventory.");
                     } else {
                         TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                     }
@@ -1334,10 +1343,8 @@ public class PlayerData : MonoBehaviour
             m.AdaptMesh();
 
             titleRef.equippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(true, a.thumbnailPath);
-            titleRef.shopEquippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(true, a.thumbnailPath);
         } else {
             titleRef.equippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-            titleRef.shopEquippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
         }
 
         thisEquipScript.UpdateStats();
@@ -1386,7 +1393,6 @@ public class PlayerData : MonoBehaviour
 
         if (titleRef != null) {
             titleRef.equippedTopSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
-            titleRef.shopEquippedTopSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
         }
 
         thisEquipScript.EquipSkin(e.skinType);
@@ -1435,7 +1441,6 @@ public class PlayerData : MonoBehaviour
 
         if (titleRef != null) {
             titleRef.equippedBottomSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
-            titleRef.shopEquippedBottomSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
         }
     }
 
@@ -1488,7 +1493,6 @@ public class PlayerData : MonoBehaviour
         Character c = InventoryScript.itemData.characterCatalog[itemEquipped];
         if (titleRef != null) {
             titleRef.equippedCharacterSlot.GetComponent<SlotScript>().ToggleThumbnail(true, c.thumbnailPath);
-            titleRef.shopEquippedCharacterSlot.GetComponent<SlotScript>().ToggleThumbnail(true, c.thumbnailPath);
             titleRef.currentCharGender = c.gender;
             thisEquipScript.ResetStats();
         }
@@ -1505,7 +1509,6 @@ public class PlayerData : MonoBehaviour
         thisEquipScript.EquipSkin(e.skinType);
         if (titleRef != null) {
             titleRef.equippedTopSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
-            titleRef.shopEquippedTopSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
         }
         // thisEquipScript.EquipBottom(c.defaultBottom, null);
         e = InventoryScript.itemData.equipmentCatalog[PlayerData.playerdata.info.EquippedBottom];
@@ -1518,7 +1521,6 @@ public class PlayerData : MonoBehaviour
         m.AdaptMesh();
         if (titleRef != null) {
             titleRef.equippedBottomSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
-            titleRef.shopEquippedBottomSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
         }
         // thisEquipScript.EquipFootwear((c.gender == 'M' ? "Standard Boots (M)" : "Standard Boots (F)"), null);
         e = InventoryScript.itemData.equipmentCatalog[PlayerData.playerdata.info.EquippedFootwear];
@@ -1531,7 +1533,6 @@ public class PlayerData : MonoBehaviour
         m.AdaptMesh();
         if (titleRef != null) {
             titleRef.equippedFootSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
-            titleRef.shopEquippedFootSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
         }
 
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
@@ -1599,10 +1600,8 @@ public class PlayerData : MonoBehaviour
             m.rootBone = thisEquipScript.myBones.transform;
             m.AdaptMesh();
             titleRef.equippedFaceSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
-            titleRef.shopEquippedFaceSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
         } else {
             titleRef.equippedFaceSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-            titleRef.shopEquippedFaceSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
         }
 
         thisEquipScript.UpdateStats();
@@ -1651,7 +1650,6 @@ public class PlayerData : MonoBehaviour
 
         if (titleRef != null) {
             titleRef.equippedFootSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
-            titleRef.shopEquippedFootSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
         }
     }
 
@@ -1697,10 +1695,8 @@ public class PlayerData : MonoBehaviour
             m.rootBone = thisEquipScript.myBones.transform;
             m.AdaptMesh();
             titleRef.equippedHeadSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
-            titleRef.shopEquippedHeadSlot.GetComponent<SlotScript>().ToggleThumbnail(true, e.thumbnailPath);
         } else {
             titleRef.equippedHeadSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-            titleRef.shopEquippedHeadSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
         }
 
         thisEquipScript.UpdateStats();
@@ -1732,7 +1728,6 @@ public class PlayerData : MonoBehaviour
         // Get the weapon from the weapon catalog for its properties
         Weapon w = InventoryScript.itemData.weaponCatalog[itemEquipped];
         titleRef.equippedMeleeSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
-        titleRef.shopEquippedMeleeSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
     }
 
     void HandlePrimaryChangeEvent(object sender, ValueChangedEventArgs args) {
@@ -1780,7 +1775,6 @@ public class PlayerData : MonoBehaviour
 
         // Puts the item that you just equipped in its proper slot
         titleRef.equippedPrimarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
-        titleRef.shopEquippedPrimarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
     }
 
     void HandleSecondaryChangeEvent(object sender, ValueChangedEventArgs args) {
@@ -1820,7 +1814,6 @@ public class PlayerData : MonoBehaviour
         }
 
         titleRef.equippedSecondarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
-        titleRef.shopEquippedSecondarySlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
     }
 
     void HandleSupportChangeEvent(object sender, ValueChangedEventArgs args) {
@@ -1853,7 +1846,6 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.supportModInfo = modInfo;
 
         titleRef.equippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
-        titleRef.shopEquippedSupportSlot.GetComponent<SlotScript>().ToggleThumbnail(true, w.thumbnailPath);
     }
 
     void HandleBanEvent(object sender, ChildChangedEventArgs args) {

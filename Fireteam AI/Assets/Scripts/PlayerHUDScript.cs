@@ -302,7 +302,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			Pause();
 		}
 
-		if (container.pauseMenuGUI.alpha == 1f)
+		if (container.pauseMenuManager.pauseActive)
 		{
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
@@ -736,13 +736,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     void Pause()
     {
-        if (container.pauseMenuGUI.alpha == 0f)
+        if (container.pauseMenuManager.pauseActive)
         {
-            container.pauseMenuGUI.alpha = 1f;
+            container.pauseMenuManager.ClosePause();
         }
         else
         {
-            container.pauseMenuGUI.alpha = 0f;
+            container.pauseMenuManager.OpenPause();
         }
     }
 
