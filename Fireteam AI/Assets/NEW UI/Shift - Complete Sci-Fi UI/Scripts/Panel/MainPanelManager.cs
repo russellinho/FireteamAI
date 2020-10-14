@@ -6,6 +6,9 @@ namespace Michsky.UI.Shift
 {
     public class MainPanelManager : MonoBehaviour
     {
+        private const int SETTINGS_INDEX = 4;
+        public TitleControllerScript titleController;
+        public string panelManagerType;
         [Header("PANEL LIST")]
         public List<PanelItem> panels = new List<PanelItem>();
 
@@ -91,6 +94,18 @@ namespace Michsky.UI.Shift
             {
                 if (panels[i].panelName == newPanel)
                     newPanelIndex = i;
+            }
+
+            if (panelManagerType == "Top") {
+                if (currentPanelIndex == SETTINGS_INDEX) {
+                    titleController.SaveAudioSettings();
+                    titleController.SaveKeyBindings();
+                }
+                if (newPanel == "Settings" || newPanel == "Mod Shop") {
+                    titleController.TogglePlayerBody(false);
+                } else {
+                    titleController.TogglePlayerBody(true);
+                }
             }
 
             if (newPanelIndex != currentPanelIndex)

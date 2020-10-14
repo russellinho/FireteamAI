@@ -5,6 +5,7 @@ namespace Michsky.UI.Shift
 {
     public class ModalWindowManager : MonoBehaviour
     {
+        public TitleControllerScript titleController;
         [Header("RESOURCES")]
         public TextMeshProUGUI windowTitle;
         public TextMeshProUGUI windowDescription;
@@ -17,6 +18,7 @@ namespace Michsky.UI.Shift
 
         Animator mWindowAnimator;
         bool isOn = false;
+        bool hidPlayer;
 
         void Start()
         {
@@ -31,6 +33,12 @@ namespace Michsky.UI.Shift
 
         public void ModalWindowIn()
         {
+            if (titleController != null) {
+                if (PlayerData.playerdata.bodyReference != null && PlayerData.playerdata.bodyReference.activeInHierarchy) {
+                    hidPlayer = true;
+                    titleController.TogglePlayerBody(false);
+                }
+            }
             if (isOn == false)
             {
                 if (sharpAnimations == false)
@@ -44,6 +52,12 @@ namespace Michsky.UI.Shift
 
         public void ModalWindowOut()
         {
+            if (titleController != null) {
+                if (PlayerData.playerdata.bodyReference != null && hidPlayer) {
+                    hidPlayer = false;
+                    titleController.TogglePlayerBody(true);
+                }
+            }
             if (isOn == true)
             {
                 if (sharpAnimations == false)

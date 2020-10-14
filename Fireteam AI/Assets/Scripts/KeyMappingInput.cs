@@ -10,7 +10,7 @@ public class KeyMappingInput : MonoBehaviour
     public PauseMenuScript pauseMenuScript;
     public string keyCode;
     public Text keyDescription;
-    public Text actionDescription;
+    // public Text actionDescription;
     private bool currentlyChanging;
     // Start is called before the first frame update
     void Start() {

@@ -39,7 +39,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Slider musicVolumeSlider;
 	public TextMeshProUGUI musicVolumeField;
 	public CanvasGroup loadingScreen;
-	public Animator loadingScreenAnimator;
+	public CanvasGroup mainPanels;
 	public ModalWindowManager alertPopup;
 	public ModalWindowManager confirmPopup;
 	public ModalWindowManager keyBindingsPopup;
@@ -51,7 +51,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	// Loading screen stuff
 	public RawImage screenArt;
+	public GameObject screenArtContainer;
 	public TextMeshProUGUI proTipText;
+	public GameObject proTipContainer;
 	public TextMeshProUGUI mapTitleText;
 	public TextMeshProUGUI mapDescriptionText;
 	private string[] proTips = new string[2]{"Aim for the head for faster kills.", "Be on the lookout for ammo and health drops from enemies."};
@@ -165,7 +167,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public string alertPopupMessage;
 	public string confirmPopupMessage;
 	public MainPanelManager mainPanelManager;
-	public Transform playerPreviewSlot;
 
 	// Use this for initialization
 	void Awake() {
@@ -211,9 +212,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void InstantiateLoadingScreen(string mapName) {
-		JukeboxScript.jukebox.audioSource1.Stop ();
-		JukeboxScript.jukebox.audioSource2.Stop ();
 		if (mapName != null) {
+			JukeboxScript.jukebox.audioSource1.Stop ();
+			JukeboxScript.jukebox.audioSource2.Stop ();
 			if (mapName.Equals ("Badlands: Act I")) {
 				screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands1_load");
 			} else if (mapName.Equals("Badlands: Act II")) {
@@ -221,21 +222,23 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			proTipText.text = proTips[Random.Range(0, 2)];
 			mapTitleText.text = mapName;
-			screenArt.gameObject.SetActive(true);
-			proTipText.gameObject.SetActive(true);
+			screenArtContainer.gameObject.SetActive(true);
+			proTipContainer.gameObject.SetActive(true);
 			mapTitleText.gameObject.SetActive(true);
 		} else {
-			screenArt.gameObject.SetActive(false);
-			proTipText.gameObject.SetActive(false);
+			screenArtContainer.gameObject.SetActive(false);
+			proTipContainer.gameObject.SetActive(false);
 			mapTitleText.gameObject.SetActive(false);
 		}
 	}
 
 	public void ToggleLoadingScreen(bool b) {
 		if (b) {
-			loadingScreenAnimator.Play("Loading");
+			mainPanels.alpha = 0f;
+			loadingScreen.alpha = 1f;
 		} else {
-			loadingScreenAnimator.Play("Loading Out");
+			loadingScreen.alpha = 0f;
+			mainPanels.alpha = 1f;
 		}
 	}
 
@@ -345,12 +348,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	// 	keyBindingsBtn.gameObject.SetActive(b);
 	// }
 
-	void SaveAudioSettings() {
+	public void SaveAudioSettings() {
 		PlayerPreferences.playerPreferences.preferenceData.musicVolume = (int)(musicVolumeSlider.value * 100f);
 		PlayerPreferences.playerPreferences.SavePreferences();
 	}
 
-	void SaveKeyBindings() {
+	public void SaveKeyBindings() {
 		PlayerPreferences.playerPreferences.SaveKeyMappings();
 	}
 
@@ -2975,7 +2978,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		// Place the weapon template in the proper position
 		t.transform.SetParent(weaponPreviewSlot.transform);
-		t.transform.localPosition = t.GetComponent<WeaponMods>().previewPos;
+		// t.transform.localPosition = t.GetComponent<WeaponMods>().previewPos;
 		weaponPreviewRef = t;
 
 		// Set base stats
@@ -3513,5 +3516,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     public void CloseEmergencyPopup() {
         // emergencyPopup.SetActive(false);
     }
+
+	public void TogglePlayerBody(bool b) {
+		PlayerData.playerdata.bodyReference.SetActive(b);
+		PlayerData.playerdata.bodyReference.GetComponent<Animator>().SetBool("onTitle", true);
+	}
 		
 }

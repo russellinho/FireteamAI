@@ -15,6 +15,13 @@ using Koobando.UI.Console;
 
 public class PlayerData : MonoBehaviour
 {
+    private const float TITLE_POS_X = 0f;
+    private const float TITLE_POS_Y = -1.2f;
+    private const float TITLE_POS_Z = 2.1f;
+    private const float TITLE_ROT_X = 0f;
+    private const float TITLE_ROT_Y = 180f;
+    private const float TITLE_ROT_Z = 0f;
+
     private const string DEFAULT_SECONDARY = "I32";
     private const string DEFAULT_SUPPORT = "N76 Fragmentation";
     private const string DEFAULT_MELEE = "Recon Knife";
@@ -125,6 +132,14 @@ public class PlayerData : MonoBehaviour
             DoEmergencyExit();
             triggerEmergencyExitFlag = false;
         }
+    }
+
+    Vector3 GetTitlePos() {
+        return new Vector3(TITLE_POS_X, TITLE_POS_Y, TITLE_POS_Z);
+    }
+
+    Quaternion GetTitleRot() {
+        return Quaternion.Euler(TITLE_ROT_X, TITLE_ROT_Y, TITLE_ROT_Z);
     }
 
     string GetCharacterPrefabName() {
@@ -708,20 +723,12 @@ public class PlayerData : MonoBehaviour
     {
         if (bodyReference == null)
         {
-            bodyReference = Instantiate(titleRef.characterRefs[titleRef.charactersRefsIndices[character]]);
-            SetBodyRefPos();
+            bodyReference = Instantiate(titleRef.characterRefs[titleRef.charactersRefsIndices[character]], GetTitlePos(), GetTitleRot());
         }
         // else
         // {
         //     bodyReference = GameObject.FindGameObjectWithTag("Player");
         // }
-    }
-
-    void SetBodyRefPos() {
-        bodyReference.transform.SetParent(titleRef.playerPreviewSlot);
-        bodyReference.transform.position = Vector3.zero;
-        bodyReference.transform.rotation = Quaternion.identity;
-        bodyReference.transform.localScale = Vector3.one;
     }
 
     // Ensure that character changed listener re-equips weapons and sets equipment to defautl too
@@ -737,8 +744,7 @@ public class PlayerData : MonoBehaviour
         WeaponScript weaponScrpt = bodyReference.GetComponent<WeaponScript>();
         Destroy(bodyReference);
         bodyReference = null;
-        bodyReference = Instantiate(titleRef.characterRefs[titleRef.charactersRefsIndices[PlayerData.playerdata.info.EquippedCharacter]]);
-        SetBodyRefPos();
+        bodyReference = Instantiate(titleRef.characterRefs[titleRef.charactersRefsIndices[PlayerData.playerdata.info.EquippedCharacter]], GetTitlePos(), GetTitleRot());
         EquipmentScript characterEquips = bodyReference.GetComponent<EquipmentScript>();
         WeaponScript characterWeps = bodyReference.GetComponent<WeaponScript>();
         characterEquips.ts = titleRef;
