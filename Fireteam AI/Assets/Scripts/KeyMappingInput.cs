@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using KeyMapping = PlayerPreferences.KeyMapping;
+using TMPro;
+using Michsky.UI.Shift;
 
 public class KeyMappingInput : MonoBehaviour
 {
     public TitleControllerScript titleController;
+    public PressKeyEvent pressKeyEvent;
     public PauseMenuScript pauseMenuScript;
     public string keyCode;
-    public Text keyDescription;
+    public TextMeshProUGUI keyDescription;
     // public Text actionDescription;
-    private bool currentlyChanging;
     // Start is called before the first frame update
     void Start() {
         KeyMapping k = PlayerPreferences.playerPreferences.keyMappings[keyCode];
@@ -24,25 +26,6 @@ public class KeyMappingInput : MonoBehaviour
         }
     }
 
-    public void OnClick() {
-        // Go into changing key mapping mode
-        currentlyChanging = true;
-        // if (titleController != null) {
-        //     titleController.ToggleIsChangingKeyMapping(true, actionDescription.text);
-        // } else if (pauseMenuScript != null) {
-        //     pauseMenuScript.ToggleIsChangingKeyMapping(true, actionDescription.text);
-        // }
-
-        // Set the text to ? temporarily
-        keyDescription.text = "???";
-    }
-
-    void Update() {
-        if (currentlyChanging) {
-            HandleKeyChange();
-        }
-    }
-
     public KeyMappingInput GetKeyDescription(int i) {
         if (titleController != null) {
             return titleController.keyMappingInputs[i];
@@ -52,7 +35,11 @@ public class KeyMappingInput : MonoBehaviour
         return null;
     }
 
-    void HandleKeyChange() {
+    public void SetKeyMappingInputOnPopup() {
+        pressKeyEvent.keyMappingInput = this;
+    }
+
+    public void HandleKeyChange() {
         KeyMapping k = PlayerPreferences.playerPreferences.keyMappings[keyCode];
         // Set the key to the new key in the preferences
         if (Input.GetAxis("Mouse ScrollWheel") < 0f) {
@@ -74,13 +61,6 @@ public class KeyMappingInput : MonoBehaviour
             k.key = KeyCode.None;
             k.scrollWheelFlag = -1;
             keyDescription.text = "Mouse Wheel Down";
-            // Take the key out of changing mode
-            currentlyChanging = false;
-            // if (titleController != null) {
-            //     titleController.ToggleIsChangingKeyMapping(false, null);
-            // } else if (pauseMenuScript != null) {
-            //     pauseMenuScript.ToggleIsChangingKeyMapping(false, null);
-            // }
         } else if (Input.GetAxis("Mouse ScrollWheel") > 0f) {
             // If another action is already mapped to this key, then swap the keys
             string alreadyMappedAction = PlayerPreferences.playerPreferences.KeyIsMappedOn(KeyCode.None, 1);
@@ -100,13 +80,6 @@ public class KeyMappingInput : MonoBehaviour
             k.key = KeyCode.None;
             k.scrollWheelFlag = 1;
             keyDescription.text = "Mouse Wheel Up";
-            // Take the key out of changing mode
-            currentlyChanging = false;
-            // if (titleController != null) {
-            //     titleController.ToggleIsChangingKeyMapping(false, null);
-            // } else if (pauseMenuScript != null) {
-            //     pauseMenuScript.ToggleIsChangingKeyMapping(false, null);
-            // }
         } else {
             foreach(KeyCode vKey in System.Enum.GetValues(typeof(KeyCode))){
                 if (Input.GetKey(vKey)) {
@@ -129,13 +102,6 @@ public class KeyMappingInput : MonoBehaviour
                     k.scrollWheelFlag = 0;
                     k.key = vKey;
                     keyDescription.text = vKey.ToString();
-                    // Take the key out of changing mode
-                    currentlyChanging = false;
-                    // if (titleController != null) {
-                    //     titleController.ToggleIsChangingKeyMapping(false, null);
-                    // } else if (pauseMenuScript != null) {
-                    //     pauseMenuScript.ToggleIsChangingKeyMapping(false, null);
-                    // }
                     break;
                 }
             }

@@ -5,6 +5,7 @@ namespace Michsky.UI.Shift
 {
     public class PressKeyEvent : MonoBehaviour
     {
+        public KeyMappingInput keyMappingInput;
         [Header("KEY")]
         [SerializeField]
         public KeyCode hotkey;
@@ -15,7 +16,7 @@ namespace Michsky.UI.Shift
         [SerializeField]
         public UnityEvent pressAction;
 		
-		        void Start()
+		void Start()
         {
             if (invokeAtStart == true)
                 pressAction.Invoke();
@@ -25,8 +26,12 @@ namespace Michsky.UI.Shift
         {
             if (pressAnyKey == true)
             {
-                if (Input.anyKeyDown)
+                if (Input.anyKeyDown) {
                     pressAction.Invoke();
+                    if (keyMappingInput != null) {
+                        keyMappingInput.HandleKeyChange();
+                    }
+                }
             }
 
             else
