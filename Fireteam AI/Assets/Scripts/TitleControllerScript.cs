@@ -40,6 +40,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public TextMeshProUGUI musicVolumeField;
 	public CanvasGroup loadingScreen;
 	public CanvasGroup mainPanels;
+	public Animator mainPanelsAnimator;
 	public ModalWindowManager alertPopup;
 	public ModalWindowManager confirmPopup;
 	public ModalWindowManager keyBindingsPopup;
@@ -235,10 +236,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void ToggleLoadingScreen(bool b) {
 		if (b) {
 			mainPanels.alpha = 0f;
+			mainPanelsAnimator.enabled = false;
 			loadingScreen.alpha = 1f;
 		} else {
 			loadingScreen.alpha = 0f;
-			mainPanels.alpha = 1f;
+			mainPanelsAnimator.enabled = true;
+			mainPanelsAnimator.Play("Start");
 		}
 	}
 

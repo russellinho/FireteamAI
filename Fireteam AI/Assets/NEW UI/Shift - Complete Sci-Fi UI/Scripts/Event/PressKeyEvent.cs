@@ -27,9 +27,13 @@ namespace Michsky.UI.Shift
             if (pressAnyKey == true)
             {
                 if (Input.anyKeyDown) {
-                    pressAction.Invoke();
                     if (keyMappingInput != null) {
-                        keyMappingInput.HandleKeyChange();
+                        if (GetComponent<CanvasGroup>().alpha == 1f) {
+                            keyMappingInput.HandleKeyChange();
+                            pressAction.Invoke();
+                        }
+                    } else {
+                        pressAction.Invoke();
                     }
                 }
             }

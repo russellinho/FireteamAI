@@ -72,5 +72,9 @@ namespace Michsky.UI.Shift
         public bool GetIsOn() {
             return isOn;
         }
+
+        public void SetKeyBindingDescriptionText(string s) {
+            windowDescription.text = "PRESS A KEY TO RE-MAP [" + s + "]";
+        }
     }
 }
