@@ -168,6 +168,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public string alertPopupMessage;
 	public string confirmPopupMessage;
 	public MainPanelManager mainPanelManager;
+	public Button previouslyPressedButtonLeft;
+	public Button previouslyPressedSubButtonLeft;
+	public Button previouslyPressedButtonRight;
+	public Button previouslyPressedSubButtonRight;
 
 	// Use this for initialization
 	void Awake() {
@@ -3523,6 +3527,38 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void TogglePlayerBody(bool b) {
 		PlayerData.playerdata.bodyReference.SetActive(b);
 		PlayerData.playerdata.bodyReference.GetComponent<Animator>().SetBool("onTitle", true);
+	}
+
+	public void HandleLeftSideButtonPress(Button b) {
+		if (previouslyPressedButtonLeft != null) {
+			previouslyPressedButtonLeft.GetComponent<Animator>().Play("Pressed to Normal");
+		}
+		b.GetComponent<Animator>().Play("Normal to Pressed");
+		previouslyPressedButtonLeft = b;
+	}
+
+	public void HandleLeftSideSubButtonPress(Button b) {
+		if (previouslyPressedSubButtonLeft != null) {
+			previouslyPressedSubButtonLeft.GetComponent<Animator>().Play("Pressed to Normal");
+		}
+		b.GetComponent<Animator>().Play("Normal to Pressed");
+		previouslyPressedSubButtonLeft = b;
+	}
+
+	public void HandleRightSideButtonPress(Button b) {
+		if (previouslyPressedButtonRight != null) {
+			previouslyPressedButtonRight.GetComponent<Animator>().Play("Pressed to Normal");
+		}
+		b.GetComponent<Animator>().Play("Normal to Pressed");
+		previouslyPressedButtonRight = b;
+	}
+
+	public void HandleRightSideSubButtonPress(Button b) {
+		if (previouslyPressedSubButtonRight != null) {
+			previouslyPressedSubButtonRight.GetComponent<Animator>().Play("Pressed to Normal");
+		}
+		b.GetComponent<Animator>().Play("Normal to Pressed");
+		previouslyPressedSubButtonRight = b;
 	}
 		
 }
