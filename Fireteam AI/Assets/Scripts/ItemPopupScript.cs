@@ -9,7 +9,6 @@ public class ItemPopupScript : MonoBehaviour
     public GameObject equipmentStatDescriptor;
     public GameObject weaponStatDescriptor;
     public GameObject modStatDescriptor;
-    public GameObject restrictionsDescriptor;
 
     // Equipment stat labels
     public Text armorStatTxt;
@@ -17,6 +16,7 @@ public class ItemPopupScript : MonoBehaviour
     public Text staminaStatTxt;
     public Text genderRestTxt;
     public Text characterRestTxt;
+    public Text expirationDateEquipTxt;
 
     // Weapon stat labels
     public Text damageStatTxt;
@@ -26,6 +26,7 @@ public class ItemPopupScript : MonoBehaviour
     public Text mobilityTxt;
     public Text rangeTxt;
     public Text clipCapacityTxt;
+    public Text expirationDateWeaponTxt;
 
     // Mod stat labels
     public Text modDamageStatTxt;
@@ -35,7 +36,6 @@ public class ItemPopupScript : MonoBehaviour
     public Text modClipCapacityStatTxt;
     public Text modMaxAmmoStatTxt;
     public Text equippedOnTxt;
-    public Text expirationDateTxt;
 
     public Text title;
     public RawImage thumbnail;
@@ -80,10 +80,6 @@ public class ItemPopupScript : MonoBehaviour
 
     public void ToggleModStatDescriptor(bool b) {
         modStatDescriptor.SetActive(b);
-    }
-
-    public void ToggleRestrictionsDescriptor(bool b) {
-        restrictionsDescriptor.SetActive(b);
     }
 
     public void SetEquipmentStats(float armor, float speed, float stamina, char gender, string[] characterRestrictions) {
@@ -149,12 +145,12 @@ public class ItemPopupScript : MonoBehaviour
     }
 
     public void SetExpirationDate(string expirationDate) {
-        if (expirationDateTxt != null) {
-            expirationDateTxt.text = expirationDate + " EST";
-            if (expirationDate != "Permanent") {
-                expirationDateTxt.text += " EST";
-            }
-        }
+        // if (expirationDateTxt != null) {
+        //     expirationDateTxt.text = expirationDate + " EST";
+        //     if (expirationDate != "Permanent") {
+        //         expirationDateTxt.text += " EST";
+        //     }
+        // }
     }
 
 }

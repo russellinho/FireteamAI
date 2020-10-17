@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -28,12 +29,12 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public string weaponCategory;
     public string modCategory;
     // 0 = long sleeves, 1 = mid sleeves, 2 = short sleeves
-    public Text equippedInd;
     private int clickCount;
     private float clickTimer;
-    public Text gpPriceTxt;
+    public TextMeshProUGUI gpPriceTxt;
     public Button previewBtn;
     public Button purchaseBtn;
+    public Button equipBtn;
 
     void Start() {
         clickCount = 0;
@@ -214,9 +215,6 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             ips.SetDescription(itemDescription);
             ips.SetModStats(modDetails.damageBoost, modDetails.accuracyBoost, modDetails.recoilBoost, modDetails.rangeBoost, modDetails.clipCapacityBoost, modDetails.maxAmmoBoost, equippedOn);
             ips.ToggleModStatDescriptor(true);
-            if (ips.restrictionsDescriptor != null) {
-                ips.ToggleRestrictionsDescriptor(false);
-            }
         } else {
             if (itemDescriptionPopupRef.activeInHierarchy) {
                 return;
@@ -232,26 +230,20 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 ips.SetEquipmentStats(equipmentDetails.armor, equipmentDetails.speed, equipmentDetails.stamina, equipmentDetails.gender, equipmentDetails.characterRestrictions);
                 ips.ToggleEquipmentStatDescriptor(true);
                 ips.SetRestrictions(equipmentDetails.gender, equipmentDetails.characterRestrictions);
-                ips.ToggleRestrictionsDescriptor(true);
             } else if (itemType.Equals("Armor")) {
                 ips.ToggleWeaponStatDescriptor(false);
                 ips.SetArmorStats(armorDetails.armor, armorDetails.speed, armorDetails.stamina);
                 ips.ToggleEquipmentStatDescriptor(true);
-                ips.ToggleRestrictionsDescriptor(false);
             } else if (itemType.Equals("Weapon")) {
                 ips.ToggleEquipmentStatDescriptor(false);
                 ips.SetWeaponStats(weaponDetails.damage, weaponDetails.accuracy, weaponDetails.recoil, weaponDetails.fireRate, weaponDetails.mobility, weaponDetails.range, weaponDetails.clipCapacity);
                 ips.ToggleWeaponStatDescriptor(true);
-                ips.ToggleRestrictionsDescriptor(false);
             } else {
                 // For clothing and shoes
                 ips.ToggleEquipmentStatDescriptor(false);
                 ips.ToggleWeaponStatDescriptor(false);
                 if (!itemType.Equals("Character")) {
-                    ips.ToggleRestrictionsDescriptor(true);
                     ips.SetRestrictions(equipmentDetails.gender, equipmentDetails.characterRestrictions);
-                } else {
-                    ips.ToggleRestrictionsDescriptor(false);
                 }
             }
         }
@@ -281,10 +273,8 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void ToggleEquippedIndicator(bool b) {
         if (b) {
             outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-            equippedInd.enabled = true;
         } else {
             outline.color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
-            equippedInd.enabled = false;
         }
     }
 
@@ -308,6 +298,20 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         ts.RemoveSightFromWeapon(equippedOn, true);
         ToggleEquippedIndicator(false);
         equippedOn = "";
+    }
+
+    public void SetItemForMarket() {
+        gpPriceTxt.gameObject.SetActive(true);
+        previewBtn.gameObject.SetActive(true);
+        purchaseBtn.gameObject.SetActive(true);
+        equipBtn.gameObject.SetActive(false);
+    }
+
+    public void SetItemForLoadout() {
+        gpPriceTxt.gameObject.SetActive(false);
+        previewBtn.gameObject.SetActive(false);
+        purchaseBtn.gameObject.SetActive(false);
+        equipBtn.gameObject.SetActive(true);
     }
 
 }
