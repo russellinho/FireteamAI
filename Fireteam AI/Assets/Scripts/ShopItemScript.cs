@@ -6,10 +6,9 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 
-public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ShopItemScript : MonoBehaviour
 {
     public GameObject itemDescriptionPopupRef;
-    public GameObject modDescriptionPopupRef;
     public TitleControllerScript ts;
     public RawImage thumbnailRef;
     public Image outline;
@@ -21,7 +20,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public string id;
     public string equippedOn;
     public string acquireDate;
-    private string expirationDate;
+    public string expirationDate;
     public string duration;
     public string itemName;
     public string itemType;
@@ -199,65 +198,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData) {
-        if (modDetails == null && purchaseBtn == null && (expirationDate == null || "".Equals(expirationDate))) {
-            CalculateExpirationDate();
-        }
-        if (itemType.Equals("Mod")) {
-            if (modDescriptionPopupRef.activeInHierarchy) {
-                return;
-            }
-            modDescriptionPopupRef.SetActive(true);
-            ItemPopupScript ips = modDescriptionPopupRef.GetComponent<ItemPopupScript>();
-            ips.SetExpirationDate(expirationDate);
-            ips.SetTitle(itemName);
-            ips.SetThumbnail(thumbnailRef);
-            ips.SetDescription(itemDescription);
-            ips.SetModStats(modDetails.damageBoost, modDetails.accuracyBoost, modDetails.recoilBoost, modDetails.rangeBoost, modDetails.clipCapacityBoost, modDetails.maxAmmoBoost, equippedOn);
-            ips.ToggleModStatDescriptor(true);
-        } else {
-            if (itemDescriptionPopupRef.activeInHierarchy) {
-                return;
-            }
-            itemDescriptionPopupRef.SetActive(true);
-            ItemPopupScript ips = itemDescriptionPopupRef.GetComponent<ItemPopupScript>();
-            ips.SetExpirationDate(expirationDate);
-            ips.SetTitle(itemName);
-            ips.SetThumbnail(thumbnailRef);
-            ips.SetDescription(itemDescription);
-            if (itemType.Equals("Headgear") || itemType.Equals("Facewear")) {
-                ips.ToggleWeaponStatDescriptor(false);
-                ips.SetEquipmentStats(equipmentDetails.armor, equipmentDetails.speed, equipmentDetails.stamina, equipmentDetails.gender, equipmentDetails.characterRestrictions);
-                ips.ToggleEquipmentStatDescriptor(true);
-                ips.SetRestrictions(equipmentDetails.gender, equipmentDetails.characterRestrictions);
-            } else if (itemType.Equals("Armor")) {
-                ips.ToggleWeaponStatDescriptor(false);
-                ips.SetArmorStats(armorDetails.armor, armorDetails.speed, armorDetails.stamina);
-                ips.ToggleEquipmentStatDescriptor(true);
-            } else if (itemType.Equals("Weapon")) {
-                ips.ToggleEquipmentStatDescriptor(false);
-                ips.SetWeaponStats(weaponDetails.damage, weaponDetails.accuracy, weaponDetails.recoil, weaponDetails.fireRate, weaponDetails.mobility, weaponDetails.range, weaponDetails.clipCapacity);
-                ips.ToggleWeaponStatDescriptor(true);
-            } else {
-                // For clothing and shoes
-                ips.ToggleEquipmentStatDescriptor(false);
-                ips.ToggleWeaponStatDescriptor(false);
-                if (!itemType.Equals("Character")) {
-                    ips.SetRestrictions(equipmentDetails.gender, equipmentDetails.characterRestrictions);
-                }
-            }
-        }
-    }
-
-    public void OnPointerExit(PointerEventData eventData) {
-        if (itemType.Equals("Mod")) {
-            modDescriptionPopupRef.SetActive(false);
-        } else {
-            itemDescriptionPopupRef.SetActive(false);
-        }
-    }
-
-    private void CalculateExpirationDate() {
+    public void CalculateExpirationDate() {
         if (duration.Equals("-1")) {
             expirationDate = "Permanent";
         } else {

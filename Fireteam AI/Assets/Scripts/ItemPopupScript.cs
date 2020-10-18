@@ -40,18 +40,68 @@ public class ItemPopupScript : MonoBehaviour
     public Text title;
     public RawImage thumbnail;
     public Text description;
+    public Canvas parentCanvas;
+    public RectTransform rectTransform;
+    private int maxScreenRight;
+    private int maxScreenLeft;
+    private int maxScreenTop;
+    private int maxScreenBottom;
+
+    void Start() {
+        maxScreenBottom = 0;
+        maxScreenLeft = 0;
+        Vector2 maxes;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            parentCanvas.transform as RectTransform,
+            new Vector3(Screen.width, Screen.height, 0), parentCanvas.worldCamera,
+            out maxes);
+        maxScreenTop = (int)maxes.x - (int)rectTransform.rect.height;
+        maxScreenRight = (int)maxes.y - (int)rectTransform.rect.width;
+    }
 
     // Update is called once per frame
     void Update()
     {
         // Follow mouse position
-        // if (gameObject.activeInHierarchy) {
-        //     UpdatePosition();
-        // }
+        if (gameObject.activeInHierarchy) {
+            UpdatePosition();
+        }
+    }
+
+    void OnEnable() {
+        UpdatePosition();
     }
 
     void UpdatePosition() {
-        transform.position = Input.mousePosition;
+        Vector2 movePos;
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            parentCanvas.transform as RectTransform,
+            Input.mousePosition, parentCanvas.worldCamera,
+            out movePos);
+
+        // movePos = KeepPopupInScreenBounds(movePos);
+        transform.position = parentCanvas.transform.TransformPoint(movePos);
+    }
+
+    Vector2 KeepPopupInScreenBounds(Vector2 movePos) {
+        float newX = movePos.x;
+        float newY = movePos.y;
+
+        if (newX < maxScreenLeft) {
+            newX = maxScreenLeft;
+        }
+        if (newX > maxScreenRight) {
+            newX = maxScreenRight;
+        }
+        if (newY < maxScreenBottom) {
+            newY = maxScreenBottom;
+        }
+        if (newY > maxScreenTop) {
+            newY = maxScreenTop;
+        }
+        
+        return new Vector2(newX, newY);
     }
 
     public void SetTitle(string s) {
@@ -145,12 +195,12 @@ public class ItemPopupScript : MonoBehaviour
     }
 
     public void SetExpirationDate(string expirationDate) {
-        // if (expirationDateTxt != null) {
-        //     expirationDateTxt.text = expirationDate + " EST";
-        //     if (expirationDate != "Permanent") {
-        //         expirationDateTxt.text += " EST";
-        //     }
-        // }
+        expirationDateWeaponTxt.text = expirationDate;
+        expirationDateEquipTxt.text = expirationDate;
+        if (expirationDate != "Permanent") {
+            expirationDateWeaponTxt.text += " EST";
+            expirationDateEquipTxt.text += " EST";
+        }
     }
 
 }
