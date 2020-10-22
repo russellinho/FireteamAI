@@ -7,13 +7,17 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 {
     public ShopItemScript shopItemScript;
     public void OnPointerEnter(PointerEventData eventData) {
-        if (shopItemScript.modDetails == null && shopItemScript.purchaseBtn == null && (shopItemScript.expirationDate == null || "".Equals(shopItemScript.expirationDate))) {
-            shopItemScript.CalculateExpirationDate();
-        }
         ItemPopupScript ips = shopItemScript.itemDescriptionPopupRef.GetComponent<ItemPopupScript>();
         ips.SetTitle(shopItemScript.itemName);
         ips.SetThumbnail(shopItemScript.thumbnailRef);
         ips.SetDescription(shopItemScript.itemDescription);
+        if (shopItemScript.titleType == 'l') {
+            shopItemScript.CalculateExpirationDate();
+            ips.SetExpirationDate(shopItemScript.expirationDate);
+            ips.ToggleExpirationDateText(true);
+        } else {
+            ips.ToggleExpirationDateText(false);
+        }
         if (shopItemScript.itemType.Equals("Mod")) {
             if (shopItemScript.itemDescriptionPopupRef.activeInHierarchy) {
                 return;
@@ -29,7 +33,6 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return;
             }
             shopItemScript.itemDescriptionPopupRef.SetActive(true);
-            ips.SetExpirationDate(shopItemScript.expirationDate);
             if (shopItemScript.itemType.Equals("Headgear") || shopItemScript.itemType.Equals("Facewear")) {
                 ips.ToggleWeaponStatDescriptor(false);
                 ips.SetEquipmentStats(shopItemScript.equipmentDetails.armor, shopItemScript.equipmentDetails.speed, shopItemScript.equipmentDetails.stamina, shopItemScript.equipmentDetails.gender, shopItemScript.equipmentDetails.characterRestrictions);

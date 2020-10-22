@@ -84,6 +84,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button shopModsBtn;
 	public Button shopSuppressorsSubBtn;
 	public Button shopSightsSubBtn;
+	public Button modShopPrimaryWepBtn;
+	public Button modShopSecondaryWepBtn;
+	public Button modShopSupportWepBtn;
+	public Button modShopMeleeWepBtn;
+	public Button modShopSuppressorsBtn;
+	public Button modShopSightsBtn;
 	public HorizontalSelector durationSelection;
 	public TextMeshProUGUI totalGpCostTxt;
 	public TextMeshProUGUI myGpTxt;
@@ -107,6 +113,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject equippedFootSlot;
 	public GameObject equippedCharacterSlot;
 	public GameObject equippedArmorSlot;
+	public GameObject equippedSuppressorSlot;
+	public GameObject equippedSightSlot;
+	public ShopItemScript equippedSuppressorShopSlot;
+	public ShopItemScript equippedSightShopSlot;
 	public GameObject currentlyEquippedItemPrefab;
 	public TextMeshProUGUI armorBoostPercent;
 	public TextMeshProUGUI speedBoostPercent;
@@ -136,13 +146,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject currentlyEquippedModPrefab;
 	public GameObject weaponPreviewSlot;
 	public GameObject weaponPreviewRef;
+	public string weaponBeingPreviewed;
+	public ShopItemScript weaponPreviewShopSlot;
 	public GameObject modInventoryContent;
 	public GameObject modWeaponInventoryContent;
 	public Button suppressorsBtn;
 	public Button sightsBtn;
-	public GameObject currentlyEquippedWeaponToMod;
-	public GameObject equippedSuppressorSlot;
-	public GameObject equippedSightSlot;
 	public string equippedSuppressorId;
 	public string equippedSightId;
 	public TextMeshProUGUI modDamageTxt;
@@ -402,11 +411,19 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	// Clears existing items from the mod shop panel
-	void ClearModCustomizationContent() {
-		RawImage[] existingThumbnails = modInventoryContent.GetComponentsInChildren<RawImage>();
-		foreach (RawImage r in existingThumbnails) {
-			currentlyEquippedModPrefab = null;
-			Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+	void ClearModCustomizationContent(char type) {
+		if (type == 'm') {
+			RawImage[] existingThumbnails = modInventoryContent.GetComponentsInChildren<RawImage>();
+			foreach (RawImage r in existingThumbnails) {
+				currentlyEquippedModPrefab = null;
+				Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+			}
+		} else if (type == 'w') {
+			RawImage[] existingThumbnails = modWeaponInventoryContent.GetComponentsInChildren<RawImage>();
+			foreach (RawImage r in existingThumbnails) {
+				currentlyEquippedModPrefab = null;
+				Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
+			}
 		}
 	}
 
@@ -457,7 +474,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Headgear";
 			s.itemDescription = thisHeadgear.description;
-			s.gpPriceTxt.text = ""+thisHeadgear.gpPrice;
+			s.gpPriceTxt.text = ""+thisHeadgear.gpPrice + " GP";
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisHeadgear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
 		}
@@ -510,7 +527,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Facewear";
 			s.itemDescription = thisFacewear.description;
-			s.gpPriceTxt.text = ""+thisFacewear.gpPrice;
+			s.gpPriceTxt.text = ""+thisFacewear.gpPrice + " GP";
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisFacewear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
 		}
@@ -563,7 +580,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Armor";
 			s.itemDescription = thisArmor.description;
-			s.gpPriceTxt.text = ""+thisArmor.gpPrice;
+			s.gpPriceTxt.text = ""+thisArmor.gpPrice + " GP";
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisArmor.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
 		}
@@ -616,7 +633,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Top";
 			s.itemDescription = thisEquipment.description;
-			s.gpPriceTxt.text = ""+thisEquipment.gpPrice;
+			s.gpPriceTxt.text = ""+thisEquipment.gpPrice + " GP";
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisEquipment.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
 		}
@@ -669,7 +686,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Bottom";
 			s.itemDescription = thisBottom.description;
-			s.gpPriceTxt.text = ""+thisBottom.gpPrice;
+			s.gpPriceTxt.text = ""+thisBottom.gpPrice + " GP";
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisBottom.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
 		}
@@ -722,7 +739,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Footwear";
 			s.itemDescription = thisFootwear.description;
-			s.gpPriceTxt.text = ""+thisFootwear.gpPrice;
+			s.gpPriceTxt.text = ""+thisFootwear.gpPrice + " GP";
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisFootwear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
 		}
@@ -779,9 +796,44 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopPrimaryWepBtnClicked(bool first = false) {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.type.Equals("Primary")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (first) {
+				LoadWeaponForModding(s);
+				first = false;
+			}
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -837,9 +889,40 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopSecondaryWepBtnClicked() {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.type.Equals("Secondary")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -895,9 +978,40 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopSupportWepBtnClicked() {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.type.Equals("Support")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -953,9 +1067,40 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopMeleeWepBtnClicked() {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.type.Equals("Primary")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -1011,9 +1156,40 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopAssaultRifleSubBtnClicked() {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.category.Equals("Assault Rifle")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -1069,9 +1245,40 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopSmgSubBtnClicked() {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.category.Equals("SMG")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -1127,9 +1334,40 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopLmgSubBtnClicked() {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.category.Equals("LMG")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -1185,9 +1423,40 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopShotgunSubBtnClicked() {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.category.Equals("Shotgun")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -1243,9 +1512,40 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopSniperRifleSubBtnClicked() {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.category.Equals("Sniper Rifle")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -1301,9 +1601,40 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopPistolSubBtnClicked() {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.category.Equals("Pistol")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -1359,9 +1690,40 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopLaunchersSubBtnClicked() {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.category.Equals("Launcher")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -1390,7 +1752,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSecondaryWeapon)) {
+			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSupportWeapon)) {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
@@ -1417,9 +1779,41 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopExplosivesSubBtnClicked() {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.category.Equals("Explosive")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.SetItemForLoadout();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -1475,9 +1869,40 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopBoostersSubBtnClicked() {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.category.Equals("Booster")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -1533,9 +1958,40 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopDeployablesSubBtnClicked() {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.category.Equals("Deployable")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -1591,9 +2047,40 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice;
+            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
+		}
+	}
+
+	public void OnModShopKnivesSubBtnClicked() {
+		// Delete any currently existing items in the grid
+		ClearModCustomizationContent('w');
+
+		// Populate into grid layout
+        foreach (KeyValuePair<string, WeaponData> entry in PlayerData.playerdata.inventory.myWeapons) {
+            WeaponData ed = entry.Value;
+			string thisWeaponName = entry.Key;
+			Weapon w = InventoryScript.itemData.weaponCatalog[thisWeaponName];
+			if (!w.canBeModded || !w.category.Equals("Knife")) {
+				continue;
+			}
+			GameObject o = Instantiate(contentPrefab);
+			ShopItemScript s = o.GetComponent<ShopItemScript>();
+			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
+			s.weaponDetails = w;
+			s.SetItemForModShop();
+			s.itemName = w.name;
+            s.itemType = "Weapon";
+			s.duration = ed.Duration;
+			s.acquireDate = ed.AcquireDate;
+			s.itemDescription = w.description;
+			s.weaponCategory = w.category;
+			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
+			if (weaponBeingPreviewed == thisWeaponName) {
+				s.ToggleWeaponPreviewIndicator(true);
+			}
+			o.transform.SetParent(modWeaponInventoryContent.transform, false);
 		}
 	}
 
@@ -1616,7 +2103,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Mod";
 			s.itemDescription = m.description;
 			s.weaponCategory = m.category;
-            s.gpPriceTxt.text = "" + m.gpPrice;
+            s.gpPriceTxt.text = "" + m.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -1641,7 +2128,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Mod";
 			s.itemDescription = m.description;
 			s.weaponCategory = m.category;
-            s.gpPriceTxt.text = "" + m.gpPrice;
+            s.gpPriceTxt.text = "" + m.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -1666,7 +2153,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Mod";
 			s.itemDescription = m.description;
 			s.weaponCategory = m.category;
-            s.gpPriceTxt.text = "" + m.gpPrice;
+            s.gpPriceTxt.text = "" + m.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -1697,7 +2184,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				s.ToggleEquippedIndicator(true);
 				currentlyEquippedItemPrefab = o;
 			}
-			o.transform.SetParent(contentInventoryWeapons.transform, false);
+			o.transform.SetParent(contentInventoryEquipment.transform, false);
 		}
 	}
 
@@ -1719,7 +2206,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Character";
 			s.itemDescription = c.description;
-            s.gpPriceTxt.text = "" + c.gpPrice;
+            s.gpPriceTxt.text = "" + c.gpPrice + " GP";
             s.thumbnailRef.texture = (Texture)Resources.Load(c.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
 		}
@@ -1727,7 +2214,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void OnSuppressorsBtnClicked() {
 		// Delete any currently existing items in the grid
-		ClearModCustomizationContent();
+		ClearModCustomizationContent('m');
 		WeaponScript ws = PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>();
 
         // Populate into grid layout
@@ -1741,27 +2228,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.modDetails = m;
+			s.SetItemForModShop();
 			s.id = entry.Key;
 			s.equippedOn = modData.EquippedOn;
 			s.itemName = m.name;
             s.itemType = "Mod";
 			s.itemDescription = m.description;
 			s.modCategory = m.category;
+			s.acquireDate = modData.AcquireDate;
+			s.duration = modData.Duration;
 			s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
-			// if (modWeaponLbl.text.Equals(modData.EquippedOn)) {
-			// 	s.ToggleEquippedIndicator(true);
-			// 	currentlyEquippedModPrefab = o;
-			// }
+			if (weaponBeingPreviewed.Equals(modData.EquippedOn)) {
+				s.ToggleModEquippedIndicator(true);
+				currentlyEquippedModPrefab = o;
+			}
 			o.transform.SetParent(modInventoryContent.transform, false);
 		}
 	}
 
 	public void OnSightsBtnClicked() {
 		// Delete any currently existing items in the grid
-		ClearModCustomizationContent();
+		ClearModCustomizationContent('m');
 		WeaponScript ws = PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>();
 
         // Populate into grid layout
@@ -1775,9 +2264,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.modDetails = m;
+			s.SetItemForModShop();
 			s.id = entry.Key;
 			s.equippedOn = modData.EquippedOn;
 			s.itemName = m.name;
@@ -1785,81 +2274,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = m.description;
 			s.modCategory = m.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
-			// if (modWeaponLbl.text.Equals(modData.EquippedOn)) {
-			// 	s.ToggleEquippedIndicator(true);
-			// 	currentlyEquippedModPrefab = o;
-			// }
+			if (weaponBeingPreviewed.Equals(modData.EquippedOn)) {
+				s.ToggleModEquippedIndicator(true);
+				currentlyEquippedModPrefab = o;
+			}
 			o.transform.SetParent(modInventoryContent.transform, false);
 		}
-	}
-
-	void SwitchToEquipmentScreen() {
-		// loadoutBtn.GetComponentInChildren<Text>().text = "Loadout";
-		headgearBtn.gameObject.SetActive(true);
-		faceBtn.gameObject.SetActive(true);
-		topsBtn.gameObject.SetActive(true);
-		bottomsBtn.gameObject.SetActive(true);
-		footwearBtn.gameObject.SetActive(true);
-		characterBtn.gameObject.SetActive(true);
-		armorBtn.gameObject.SetActive(true);
-
-		equippedHeadSlot.SetActive(true);
-		equippedFaceSlot.SetActive(true);
-		equippedTopSlot.SetActive(true);
-		equippedBottomSlot.SetActive(true);
-		equippedFootSlot.SetActive(true);
-		equippedCharacterSlot.SetActive(true);
-		equippedArmorSlot.SetActive(true);
-
-		primaryWepBtn.gameObject.SetActive(false);
-		secondaryWepBtn.gameObject.SetActive(false);
-		supportWepBtn.gameObject.SetActive(false);
-		meleeWepBtn.gameObject.SetActive(false);
-		assaultRifleSubBtn.gameObject.SetActive(false);
-		smgSubBtn.gameObject.SetActive(false);
-		lmgSubBtn.gameObject.SetActive(false);
-		shotgunSubBtn.gameObject.SetActive(false);
-		sniperRifleSubBtn.gameObject.SetActive(false);
-		pistolSubBtn.gameObject.SetActive(false);
-		launcherSubBtn.gameObject.SetActive(false);
-		explosivesSubBtn.gameObject.SetActive(false);
-		boostersSubBtn.gameObject.SetActive(false);
-		deployablesSubBtn.gameObject.SetActive(false);
-		knivesSubBtn.gameObject.SetActive(false);
-		equippedPrimarySlot.SetActive(false);
-		equippedSecondarySlot.SetActive(false);
-		equippedSupportSlot.SetActive(false);
-		equippedMeleeSlot.SetActive(false);
-	}
-
-	void SwitchToMarketplaceEquipmentScreen() {
-		// weaponsBtn.GetComponentInChildren<Text>().text = "Weapons";
-		shopHeadgearBtn.gameObject.SetActive(true);
-		shopFaceBtn.gameObject.SetActive(true);
-		shopTopsBtn.gameObject.SetActive(true);
-		shopBottomsBtn.gameObject.SetActive(true);
-		shopFootwearBtn.gameObject.SetActive(true);
-		shopCharacterBtn.gameObject.SetActive(true);
-		shopArmorBtn.gameObject.SetActive(true);
-
-		shopPrimaryWepBtn.gameObject.SetActive(false);
-		shopSecondaryWepBtn.gameObject.SetActive(false);
-		shopSupportWepBtn.gameObject.SetActive(false);
-		shopMeleeWepBtn.gameObject.SetActive(false);
-		shopAssaultRifleSubBtn.gameObject.SetActive(false);
-		shopSmgSubBtn.gameObject.SetActive(false);
-		shopLmgSubBtn.gameObject.SetActive(false);
-		shopShotgunSubBtn.gameObject.SetActive(false);
-		shopSniperRifleSubBtn.gameObject.SetActive(false);
-		shopPistolSubBtn.gameObject.SetActive(false);
-		shopLauncherSubBtn.gameObject.SetActive(false);
-		shopExplosivesSubBtn.gameObject.SetActive(false);
-		shopBoostersSubBtn.gameObject.SetActive(false);
-		shopDeployablesSubBtn.gameObject.SetActive(false);
-		shopKnivesSubBtn.gameObject.SetActive(false);
-		shopModsBtn.gameObject.SetActive(false);
-		shopSuppressorsSubBtn.gameObject.SetActive(false);
-		shopSightsSubBtn.gameObject.SetActive(false);
 	}
 
 	public void OnRemoveArmorClicked() {
@@ -1919,33 +2339,41 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		SetStaminaBoostPercent(stamina);
 	}
 
-	public void LoadWeaponForModding(string weaponName) {
+	public void LoadWeaponForModding(ShopItemScript s) {
+		if (weaponPreviewShopSlot != null) {
+			SaveModsForCurrentWeapon();
+		}
+
 		// Destroy old weapon preview
 		DestroyOldWeaponTemplate();
 		// Load the proper weapon modding template
-		// modWeaponLbl.text = weaponName;
-		GameObject t = (GameObject)Instantiate(Resources.Load("WeaponTemplates/" + weaponName));
+		GameObject t = (GameObject)Instantiate(Resources.Load("WeaponTemplates/" + s.itemName));
 
 		// Place the weapon template in the proper position
 		t.transform.SetParent(weaponPreviewSlot.transform);
-		// t.transform.localPosition = t.GetComponent<WeaponMods>().previewPos;
+		t.transform.localPosition = Vector3.zero;
+		t.transform.localRotation = Quaternion.identity;
+
 		weaponPreviewRef = t;
+		weaponPreviewShopSlot = s;
+		weaponBeingPreviewed = s.itemName;
+		s.ToggleWeaponPreviewIndicator(true);
 
 		// Set base stats
-		// SetWeaponModValues(modWeaponLbl.text, null);
-
 		// Place the saved mods for that weapon back on the weapon template
-		ModInfo savedModInfo = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
-		// SetWeaponModValues(modWeaponLbl.text, true, null, savedModInfo.SuppressorId, true, null, savedModInfo.SightId);
+		ModInfo savedModInfo = PlayerData.playerdata.LoadModDataForWeapon(s.itemName);
+		SetWeaponModValues(s.itemName, true, null, savedModInfo.SuppressorId, true, null, savedModInfo.SightId);
 		EquipModOnWeaponTemplate(savedModInfo.EquippedSuppressor, "Suppressor", savedModInfo.SuppressorId);
 		EquipModOnWeaponTemplate(savedModInfo.EquippedSight, "Sight", savedModInfo.SightId);
 
 		// Update shop items with the mods that are equipped
-		// If the suppressors menu was selected, update the shop items with what's equipped on the current weapon
-		if (suppressorsBtn.GetComponent<Image>().color.r == (188f / 255f)) {
-			OnSuppressorsBtnClicked();
-		} else if (sightsBtn.GetComponent<Image>().color.r == (188f / 255f)) {
-			OnSightsBtnClicked();
+		ShopItemScript[] shopItems = modInventoryContent.GetComponentsInChildren<ShopItemScript>();
+		foreach (ShopItemScript si in shopItems) {
+			if (si.id == savedModInfo.SuppressorId || si.id == savedModInfo.SightId) {
+				si.ToggleModEquippedIndicator(true);
+			} else {
+				si.ToggleModEquippedIndicator(false);
+			}
 		}
 	}
 
@@ -1968,11 +2396,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// modWeaponLbl.text = weaponName;
 
 		if (updateSuppressor) {
-			if (string.IsNullOrEmpty(suppressorName)) {
-				// equippedSuppressorTxt.text = "";
-			} else {
-				// equippedSuppressorTxt.text = suppressorName;
-			}
 			equippedSuppressorId = suppressorId;
 
 			// Add suppressor stats
@@ -1988,11 +2411,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		if (updateSight) {
-			if (string.IsNullOrEmpty(sightName)) {
-				// equippedSightTxt.text = "";
-			} else {
-				// equippedSightTxt.text = sightName;
-			}
 			equippedSightId = sightId;
 
 			// Add sight stats
@@ -2019,18 +2437,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	private void UnequipModFromWeaponTemplate(string modType) {
-		// switch(modType) {
-		// 	case "Suppressor":
-		// 		if (equippedSuppressorSlot.GetComponent<ShopItemScript>() == null) return;
-		// 		SetWeaponModValues(modWeaponLbl.text, true, null, equippedSuppressorId, false, null, null);
-		// 		weaponPreviewRef.GetComponent<WeaponMods>().UnequipSuppressor();
-		// 		break;
-		// 	case "Sight":
-		// 		if (equippedSightSlot.GetComponent<ShopItemScript>() == null) return;
-		// 		SetWeaponModValues(modWeaponLbl.text, false, null, null, true, null, equippedSightId);
-		// 		weaponPreviewRef.GetComponent<WeaponMods>().UnequipSight();
-		// 		break;
-		// }
+		switch(modType) {
+			case "Suppressor":
+				SetWeaponModValues(weaponBeingPreviewed, true, null, equippedSuppressorId, false, null, null);
+				equippedSuppressorSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
+				weaponPreviewRef.GetComponent<WeaponMods>().UnequipSuppressor();
+				break;
+			case "Sight":
+				SetWeaponModValues(weaponBeingPreviewed, false, null, null, true, null, equippedSightId);
+				equippedSightSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
+				weaponPreviewRef.GetComponent<WeaponMods>().UnequipSight();
+				break;
+		}
 	}
 
 	private void SetWeaponModdedStats(float damage, float accuracy, float recoil, float range, float clipCapacity, float maxAmmo) {
@@ -2058,6 +2476,34 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             UnequipModFromWeaponTemplate("Sight");
         }
 	}
+
+	public void OnRemoveSuppressorClicked()
+    {
+        if (string.IsNullOrEmpty(weaponBeingPreviewed))
+        {
+            return;
+        }
+        // Remove suppressor model from the player's weapon and the template weapon
+        RemoveSuppressorFromWeapon(weaponBeingPreviewed, true);
+		if (currentlyEquippedModPrefab != null) {
+        	currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleModEquippedIndicator(false);
+		}
+        weaponPreviewShopSlot.equippedOn = "";
+		PlayerData.playerdata.SaveModDataForWeapon(weaponBeingPreviewed, "", null, equippedSuppressorId, null);
+    }
+
+    public void OnRemoveSightClicked() {
+        if (string.IsNullOrEmpty(weaponBeingPreviewed)) {
+            return;
+        }
+        // Remove sight model from the player's weapon and the template weapon
+        RemoveSightFromWeapon(weaponBeingPreviewed, true);
+		if (currentlyEquippedModPrefab != null) {
+        	currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleModEquippedIndicator(false);
+		}
+        weaponPreviewShopSlot.equippedOn = "";
+		PlayerData.playerdata.SaveModDataForWeapon(weaponBeingPreviewed, null, "", null, equippedSightId);
+    }
 
 	private void SetWeaponModdedStatsTextColor(float damage, float accuracy, float recoil, float range, float clipCapacity, float maxAmmo) {
 		if (damage > 0) {
@@ -2109,83 +2555,80 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	private void DestroyOldWeaponTemplate() {
+	public void DestroyOldWeaponTemplate() {
 		// Destroy a weapon that is currently in the modding slot to make way for a new one
 		if (weaponPreviewRef != null) {
 			Destroy(weaponPreviewRef);
+			if (weaponPreviewShopSlot != null) {
+				weaponPreviewShopSlot.ToggleWeaponPreviewIndicator(false);
+			}
 			weaponPreviewRef = null;
+			weaponPreviewShopSlot = null;
+			weaponBeingPreviewed = null;
 		}
-		// Transform[] children = weaponPreviewSlot.GetComponentsInChildren<Transform>();
-		// if (children.Length > 1) {
-		// 	Destroy(children[1].gameObject);
-		// }
 	}
 
-	private void SaveModsForCurrentWeapon() {
-		// if (!modWeaponLbl.text.Equals("")) {
-		// 	PlayerData.playerdata.SaveModDataForWeapon(modWeaponLbl.text, equippedSuppressorSlot.GetComponent<ShopItemScript>().itemName, equippedSightSlot.GetComponent<ShopItemScript>().itemName, equippedSuppressorId, equippedSightId);
-		// }
-	}
-
-	public void OnWeaponModDropdownSelect() {
-		// If the weapon that was selected is the same as the current one, then don't do anything
-		// string selectedWeapon = modWeaponSelect.options[modWeaponSelect.value].text;
-		// if (selectedWeapon.Equals(modWeaponLbl.text)) {
-		// 	return;
-		// }
-		// First, destroy the old weapon that was being modded and save its data
-		// SaveModsForCurrentWeapon();
-		// DestroyOldWeaponTemplate();
-
-		// Then create the new one
-		// LoadWeaponForModding(selectedWeapon);
+	public void SaveModsForCurrentWeapon() {
+		if (weaponBeingPreviewed != null) {
+			string equippedSuppressorName = null;
+			string equippedSightName = null;
+			if (equippedSuppressorId != null) {
+				equippedSuppressorName = PlayerData.playerdata.inventory.myMods[equippedSuppressorId].Name;
+			}
+			if (equippedSightId != null) {
+				equippedSightName = PlayerData.playerdata.inventory.myMods[equippedSightId].Name;
+			}
+			PlayerData.playerdata.SaveModDataForWeapon(weaponBeingPreviewed, equippedSuppressorName, equippedSightName, equippedSuppressorId, equippedSightId);
+		}
 	}
 
 	public string EquipModOnWeaponTemplate(string modName, string modType, string modId) {
-		// if (modName == null || modName.Equals("")) return modWeaponLbl.text;
-		// Weapon w = InventoryScript.itemData.weaponCatalog[modWeaponLbl.text];
-		// switch(modType) {
-		// 	case "Suppressor":
-		// 		if (w.suppressorCompatible) {
-		// 			SetWeaponModValues(modWeaponLbl.text, true, modName, modId, false, null, null);
-		// 			weaponPreviewRef.GetComponent<WeaponMods>().EquipSuppressor(modName);
-		// 			return modWeaponLbl.text;
-		// 		} else {
-		// 			ToggleModMenuPopup(true, "Suppressors cannot be equipped on this weapon!");
-		// 		}
-		// 		break;
-		// 	case "Sight":
-		// 		if (w.sightCompatible) {
-		// 			SetWeaponModValues(modWeaponLbl.text, false, null, null, true, modName, modId);
-		// 			weaponPreviewRef.GetComponent<WeaponMods>().EquipSight(modName);
-		// 			return modWeaponLbl.text;
-		// 		} else {
-		// 			ToggleModMenuPopup(true, "Sights cannot be equipped on this weapon!");
-		// 		}
-		// 		break;
-		// }
+		Weapon w = null;
+		switch(modType) {
+			case "Suppressor":
+				if (modName == null || modName.Equals("")) {
+					equippedSuppressorSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
+					return weaponBeingPreviewed;
+				}
+				w = InventoryScript.itemData.weaponCatalog[weaponBeingPreviewed];
+				if (w.suppressorCompatible) {
+					SetWeaponModValues(weaponBeingPreviewed, true, modName, modId, false, null, null);
+					weaponPreviewRef.GetComponent<WeaponMods>().EquipSuppressor(modName);
+					equippedSuppressorSlot.GetComponent<SlotScript>().ToggleThumbnail(true, InventoryScript.itemData.modCatalog[modName].thumbnailPath);
+					return weaponBeingPreviewed;
+				} else {
+					TriggerAlertPopup("Suppressors cannot be equipped on this weapon!");
+				}
+				break;
+			case "Sight":
+				if (modName == null || modName.Equals("")) {
+					equippedSightSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
+					return weaponBeingPreviewed;
+				}
+				w = InventoryScript.itemData.weaponCatalog[weaponBeingPreviewed];
+				if (w.sightCompatible) {
+					SetWeaponModValues(weaponBeingPreviewed, false, null, null, true, modName, modId);
+					weaponPreviewRef.GetComponent<WeaponMods>().EquipSight(modName);
+					equippedSightSlot.GetComponent<SlotScript>().ToggleThumbnail(true, InventoryScript.itemData.modCatalog[modName].thumbnailPath);
+					return weaponBeingPreviewed;
+				} else {
+					TriggerAlertPopup("Sights cannot be equipped on this weapon!");
+				}
+				break;
+		}
 		return null;
-	}
-
-	private void ToggleModMenuPopup(bool b, string message) {
-		// if (b) {
-		// 	modMenuPopup.GetComponentInChildren<Text>().text = message;
-		// 	modMenuPopup.SetActive(true);
-		// } else {
-		// 	modMenuPopup.SetActive(false);
-		// }
 	}
 
 	public void PreparePurchase(string itemName, string itemType, Texture thumb) {
 		PrepareDurationDropdown(itemType == "Mod");
 		durationSelection.index = 0;
-		// durationSelection.RefreshShownValue();
+		durationSelection.UpdateUI();
 		itemBeingPurchased = itemName;
 		typeBeingPurchased = itemType;
-		// preparePurchasePopup.GetComponentInChildren<RawImage>().texture = thumb;
-		// preparePurchasePopup.SetActive(true);
+		makePurchasePopup.GetComponentInChildren<RawImage>().texture = thumb;
         // Initialize with 1 day price
         SetTotalGPCost(0, "1 day");
+		TriggerMakePurchasePopup();
     }
 
 	void PrepareDurationDropdown(bool permOnly) {

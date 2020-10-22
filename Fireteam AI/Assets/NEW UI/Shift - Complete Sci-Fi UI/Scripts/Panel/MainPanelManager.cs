@@ -7,6 +7,7 @@ namespace Michsky.UI.Shift
     public class MainPanelManager : MonoBehaviour
     {
         private const int SETTINGS_INDEX = 4;
+        private const int MOD_SHOP_INDEX = 3;
         public TitleControllerScript titleController;
         public string panelManagerType;
         [Header("PANEL LIST")]
@@ -100,11 +101,38 @@ namespace Michsky.UI.Shift
                 if (currentPanelIndex == SETTINGS_INDEX) {
                     titleController.SaveAudioSettings();
                     titleController.SaveKeyBindings();
+                } else if (currentPanelIndex == MOD_SHOP_INDEX) {
+                    titleController.SaveModsForCurrentWeapon();
                 }
-                if (newPanel == "Settings" || newPanel == "Mod Shop") {
+                if (newPanel == "Settings") {
                     titleController.TogglePlayerBody(false);
+                    titleController.DestroyOldWeaponTemplate();
+                } else if (newPanel == "Mod Shop") {
+                    titleController.TogglePlayerBody(false);
+                    titleController.HandleLeftSideButtonPress(titleController.modShopPrimaryWepBtn);
+                    titleController.OnModShopPrimaryWepBtnClicked(true);
+                    titleController.OpenModShopPrimaryWeaponTabs();
+                    titleController.HandleRightSideButtonPress(titleController.modShopSuppressorsBtn);
+                    titleController.OnSuppressorsBtnClicked();
+                } else if (newPanel == "Market") {
+                    titleController.TogglePlayerBody(true);
+                    titleController.DestroyOldWeaponTemplate();
+                    titleController.HandleLeftSideButtonPress(titleController.shopPrimaryWepBtn);
+                    titleController.OnMarketplacePrimaryWepBtnClicked();
+                    titleController.OpenMarketplacePrimaryWeaponTabs();
+                    titleController.HandleRightSideButtonPress(titleController.shopCharacterBtn);
+                    titleController.OnMarketplaceCharacterBtnClicked();
+                } else if (newPanel == "Loadout") {
+                    titleController.TogglePlayerBody(true);
+                    titleController.DestroyOldWeaponTemplate();
+                    titleController.HandleLeftSideButtonPress(titleController.primaryWepBtn);
+                    titleController.OnPrimaryWepBtnClicked();
+                    titleController.OpenPrimaryWeaponTabs();
+                    titleController.HandleRightSideButtonPress(titleController.characterBtn);
+                    titleController.OnCharacterBtnClicked();
                 } else {
                     titleController.TogglePlayerBody(true);
+                    titleController.DestroyOldWeaponTemplate();
                 }
             }
 

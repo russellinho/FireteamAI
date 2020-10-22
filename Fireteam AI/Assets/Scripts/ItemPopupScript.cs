@@ -203,4 +203,9 @@ public class ItemPopupScript : MonoBehaviour
         }
     }
 
+    public void ToggleExpirationDateText(bool b) {
+        expirationDateEquipTxt.enabled = b;
+        expirationDateWeaponTxt.enabled = b;
+    }
+
 }

@@ -751,12 +751,12 @@ public class WeaponScript : MonoBehaviour
         if (shopItemRef != null) {
             // Sets item that you unequipped to white
             if (ts.currentlyEquippedModPrefab != null) {
-                ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+                ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleModEquippedIndicator(false);
             }
 
             // Sets item that you just equipped to orange in the shop
             if (shopItemRef != null) {
-                shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
+                shopItemRef.GetComponent<ShopItemScript>().ToggleModEquippedIndicator(true);
                 ts.currentlyEquippedModPrefab = shopItemRef;
             }
         }
@@ -797,7 +797,7 @@ public class WeaponScript : MonoBehaviour
         }
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedModPrefab != null) {
-            ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+            ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleModEquippedIndicator(false);
         }
     }
 
