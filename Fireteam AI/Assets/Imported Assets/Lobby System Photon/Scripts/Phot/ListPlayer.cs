@@ -20,8 +20,9 @@ namespace Photon.Pun.LobbySystemPhoton
 		public PhotonView pView;
 
 		[Header("Inside Room Panel")]
-		public GameObject[] InsideRoomPanel;
-		public GameObject[] InsideRoomPanelVs;
+		public Transform PlayersInRoomPanel;
+		public Transform PlayersInRoomPanelVsRed;
+		public Transform PlayersInRoomPanelVsBlue;
 		private int lastSlotUsed;
 
 		public Template templateUIClass;
@@ -217,9 +218,9 @@ namespace Photon.Pun.LobbySystemPhoton
 		[PunRPC]
 		public void RpcChangeReadyStatus(int playerId, bool readyStatus) {
 			if (readyStatus) {
-				playerListEntries [playerId].GetComponent<PlayerEntryScript> ().SetReady(true);
+				playerListEntries [playerId].GetComponent<PlayerEntryPrefab> ().SetReady(true);
 			} else {
-				playerListEntries [playerId].GetComponent<PlayerEntryScript> ().SetReady(false);
+				playerListEntries [playerId].GetComponent<PlayerEntryPrefab> ().SetReady(false);
 			}
 		}
 
@@ -255,7 +256,7 @@ namespace Photon.Pun.LobbySystemPhoton
         [PunRPC]
         void RpcStartVersusGame(string level) {
 			LoadingScreen();
-            string myTeam = (myPlayerListEntry.GetComponent<PlayerEntryScript>().team == 'R' ? "_Red" : "_Blue");
+            string myTeam = (myPlayerListEntry.GetComponent<PlayerEntryPrefab>().GetTeam() == 'R' ? "_Red" : "_Blue");
             PhotonNetwork.LoadLevel (level + myTeam);
         }
 
@@ -408,14 +409,14 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		[PunRPC]
 		void RpcSetRank(int actorId, int exp) {
-			PlayerEntryScript p = playerListEntries[actorId].GetComponent<PlayerEntryScript>();
+			PlayerEntryPrefab p = playerListEntries[actorId].GetComponent<PlayerEntryPrefab>();
 			p.SetRank(PlayerData.playerdata.GetRankFromExp((uint)exp).name);
 		}
 
 		public override void OnJoinedRoom()
 		{
 			mainPanelManager.ToggleTopBar(false);
-			mainPanelManager.ToggleBottomBar(false);
+			// mainPanelManager.ToggleBottomBar(false);
 			if (PhotonNetwork.IsMasterClient) {
 				mapIndex = 0;
 				SetMapInfo(true);
@@ -456,20 +457,20 @@ namespace Photon.Pun.LobbySystemPhoton
 			foreach (Player p in PhotonNetwork.PlayerList)
 			{
 				GameObject entry = Instantiate(PlayerListEntryPrefab);
-				PlayerEntryScript entryScript = entry.GetComponent<PlayerEntryScript>();
+				PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
+				string rankToSet = null;
 				if (p.IsLocal) {
-					entryScript.SetRank(PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.Exp).name);
+					rankToSet = PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.Exp).name;
 					myPlayerListEntry = entry;
 				} else {
-					entryScript.SetRank(PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name);
+					rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name;
 				}
+				entryScript.CreateEntry(p.NickName, rankToSet, p.ActorNumber, 'C');
 				if (p.IsMasterClient) {
-					entryScript.ToggleReadyIndicator(false);
+					entryScript.SetReady(false);
 				}
-				entry.transform.SetParent(InsideRoomPanel[lastSlotUsed++].transform);
-				entry.transform.localPosition = Vector3.zero;
-				entryScript.SetNameTag(p.NickName);
-                entryScript.SetActorId(p.ActorNumber);
+				entry.transform.SetParent(PlayersInRoomPanel, false);
+				// entry.transform.localPosition = Vector3.zero;
 			
 				playerListEntries.Add(p.ActorNumber, entry);
 			}
@@ -490,25 +491,25 @@ namespace Photon.Pun.LobbySystemPhoton
 			foreach (Player p in PhotonNetwork.PlayerList)
 			{
 				GameObject entry = Instantiate(PlayerListEntryPrefab);
-				PlayerEntryScript entryScript = entry.GetComponent<PlayerEntryScript>();
+				PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
+				string rankToSet = null;
 				if (p.IsLocal) {
-					entryScript.SetRank(PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.Exp).name);
+					rankToSet = PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.Exp).name;
 					myPlayerListEntry = entry;
 				} else {
-					entryScript.SetRank(PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name);
+					rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name;
 				}
+				entryScript.CreateEntry(p.NickName, rankToSet, p.ActorNumber, 'R');
 				if (p.IsMasterClient) {
-					entryScript.ToggleReadyIndicator(false);
+					entryScript.SetReady(false);
 				}
-				entry.transform.SetParent(InsideRoomPanelVs[lastSlotUsed++].transform);
-				entry.transform.localPosition = Vector3.zero;
-				entryScript.SetNameTag(p.NickName);
-                entryScript.SetActorId(p.ActorNumber);
                 if (p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
                 {
                     // If it's me, set team captain as me if possible and set my team
                     if (redTeam.Count <= blueTeam.Count)
                     {
+						entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
+						// entry.transform.localPosition = Vector3.zero;
                         entryScript.SetTeam('R');
                         redTeam.Add(p.ActorNumber);
                         SetTeamCaptain('R');
@@ -519,6 +520,8 @@ namespace Photon.Pun.LobbySystemPhoton
                     }
                     else
                     {
+						entry.transform.SetParent(PlayersInRoomPanelVsBlue, false);
+						// entry.transform.localPosition = Vector3.zero;
                         entryScript.SetTeam('B');
                         blueTeam.Add(p.ActorNumber);
                         SetTeamCaptain('B');
@@ -534,11 +537,15 @@ namespace Photon.Pun.LobbySystemPhoton
                     string theirTeam = (string)p.CustomProperties["team"];
                     if (theirTeam == "red")
                     {
+						entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
+						// entry.transform.localPosition = Vector3.zero;
                         entryScript.SetTeam('R');
                         redTeam.Add(p.ActorNumber);
                     }
                     else if (theirTeam == "blue")
                     {
+						entry.transform.SetParent(PlayersInRoomPanelVsBlue, false);
+						// entry.transform.localPosition = Vector3.zero;
                         entryScript.SetTeam('B');
                         blueTeam.Add(p.ActorNumber);
                     }
@@ -551,9 +558,9 @@ namespace Photon.Pun.LobbySystemPhoton
         public void OnSwitchTeamsButtonClicked()
         {
             GameObject playerEntry = playerListEntries[PhotonNetwork.LocalPlayer.ActorNumber];
-            PlayerEntryScript entry = playerEntry.GetComponent<PlayerEntryScript>();
+            PlayerEntryPrefab entry = playerEntry.GetComponent<PlayerEntryPrefab>();
             entry.ChangeTeam();
-            char newTeam = entry.team;
+            char newTeam = entry.GetTeam();
             if (newTeam == 'R')
             {
                 blueTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
@@ -577,7 +584,7 @@ namespace Photon.Pun.LobbySystemPhoton
         void RpcSwitchTeams(int actorId, string newTeam)
         {
             GameObject entry = playerListEntries[actorId];
-            PlayerEntryScript entryScript = entry.GetComponent<PlayerEntryScript>();
+            PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
             if (newTeam == "red")
             {
                 entryScript.SetTeam('R');
@@ -608,7 +615,7 @@ namespace Photon.Pun.LobbySystemPhoton
                     {
                         if (blueTeam.Count > 0)
                         {
-                            int nextBlueCaptain = playerListEntries[(int)blueTeam[0]].GetComponent<PlayerEntryScript>().actorId;
+                            int nextBlueCaptain = playerListEntries[(int)blueTeam[0]].GetComponent<PlayerEntryPrefab>().actorId;
                             h.Add("blueHost", nextBlueCaptain);
                         } else
                         {
@@ -631,7 +638,7 @@ namespace Photon.Pun.LobbySystemPhoton
                     {
                         if (redTeam.Count > 0)
                         {
-                            int nextRedCaptain = playerListEntries[(int)redTeam[0]].GetComponent<PlayerEntryScript>().actorId;
+                            int nextRedCaptain = playerListEntries[(int)redTeam[0]].GetComponent<PlayerEntryPrefab>().actorId;
                             h.Add("redHost", nextRedCaptain);
                         }
                         else
@@ -650,14 +657,14 @@ namespace Photon.Pun.LobbySystemPhoton
 			GameObject entry = Instantiate(PlayerListEntryPrefab);
             if (gameMode == "versus")
             {
-                entry.transform.SetParent(InsideRoomPanelVs[lastSlotUsed++].transform);
+                entry.transform.SetParent(PlayersInRoomPanelVsRed);
             } else if (gameMode == "camp")
             {
-                entry.transform.SetParent(InsideRoomPanel[lastSlotUsed++].transform);
+                entry.transform.SetParent(PlayersInRoomPanel, false);
             }
-			entry.transform.localPosition = Vector3.zero;
-			entry.transform.localScale = Vector3.one;
-			entry.GetComponent<TextMeshProUGUI>().text = newPlayer.NickName;
+			// entry.transform.localPosition = Vector3.zero;
+			// entry.transform.localScale = Vector3.one;
+			// entry.GetComponent<TextMeshProUGUI>().text = newPlayer.NickName;
 
 			playerListEntries.Add(newPlayer.ActorNumber, entry);
             loadPlayerQueue.Enqueue(newPlayer);
@@ -698,17 +705,17 @@ namespace Photon.Pun.LobbySystemPhoton
             ToggleButtons(true);
 			PhotonNetwork.JoinLobby();
 			mainPanelManager.ToggleTopBar(true);
-			mainPanelManager.ToggleBottomBar(true);
+			// mainPanelManager.ToggleBottomBar(true);
 		}
 
 		void RearrangePlayerSlots() {
 			lastSlotUsed = 0;
 			foreach (GameObject entry in playerListEntries.Values) {
 				if (currentMode == 'C') {
-					entry.transform.SetParent(InsideRoomPanel[lastSlotUsed++].transform);
+					entry.transform.SetParent(PlayersInRoomPanel);
 					entry.transform.localPosition = Vector3.zero;
 				} else if (currentMode == 'V') {
-					entry.transform.SetParent(InsideRoomPanelVs[lastSlotUsed++].transform);
+					entry.transform.SetParent(PlayersInRoomPanelVsRed);
 					entry.transform.localPosition = Vector3.zero;
 				}
 			}

@@ -332,6 +332,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         }
     }
 
+	public void JoinMatchmaking() {
+		if (!PhotonNetwork.IsConnected) {
+			PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.playername;
+			PhotonNetwork.ConnectUsingSettings();
+		}
+	}
+
     public override void OnDisconnected(DisconnectCause cause)
     {
         base.OnDisconnected(cause);

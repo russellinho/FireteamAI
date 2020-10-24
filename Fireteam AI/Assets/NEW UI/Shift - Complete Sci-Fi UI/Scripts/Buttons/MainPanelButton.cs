@@ -16,9 +16,9 @@ namespace Michsky.UI.Shift
         public Sprite iconSprite;
 
         Animator buttonAnimator;
-        TextMeshProUGUI normalText;
-        TextMeshProUGUI highlightedText;
-        TextMeshProUGUI pressedText;
+        public TextMeshProUGUI normalText;
+        public TextMeshProUGUI highlightedText;
+        public TextMeshProUGUI pressedText;
         Image normalIcon;
         Image highlightedIcon;
         Image pressedIcon;

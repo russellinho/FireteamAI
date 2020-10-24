@@ -32,6 +32,8 @@ namespace Michsky.UI.Shift
         private Animator nextButtonAnimator;
         public CanvasGroup topPanelGroup;
         public CanvasGroup bottomPanelGroup;
+        public GameObject campaignLobby;
+        public GameObject versusLobby;
 
         string panelFadeIn = "Panel In";
         string panelFadeOut = "Panel Out";
@@ -109,9 +111,9 @@ namespace Michsky.UI.Shift
                 } else if (currentPanelIndex == MOD_SHOP_INDEX) {
                     titleController.SaveModsForCurrentWeapon();
                 } else if (currentPanelIndex == CAMPAIGN_INDEX) {
-                    PhotonNetwork.LeaveLobby();
+                    titleController.ExitMatchmaking();
                 } else if (currentPanelIndex == VERSUS_INDEX) {
-                    PhotonNetwork.LeaveLobby();
+                    titleController.ExitMatchmaking();
                 }
                 if (newPanel == "Settings") {
                     titleController.TogglePlayerBody(false);
@@ -139,8 +141,16 @@ namespace Michsky.UI.Shift
                     titleController.OpenPrimaryWeaponTabs();
                     titleController.HandleRightSideButtonPress(titleController.characterBtn);
                     titleController.OnCharacterBtnClicked();
-                } else if (newPanel == "Campaign" || newPanel == "Versus") {
+                } else if (newPanel == "Campaign") {
                     titleController.TogglePlayerBody(false);
+                    titleController.JoinMatchmaking();
+                    campaignLobby.SetActive(true);
+                    versusLobby.SetActive(false);
+                } else if (newPanel == "Versus") {
+                    titleController.TogglePlayerBody(false);
+                    titleController.JoinMatchmaking();
+                    campaignLobby.SetActive(false);
+                    versusLobby.SetActive(true);
                 } else {
                     titleController.TogglePlayerBody(true);
                     titleController.DestroyOldWeaponTemplate();
@@ -222,12 +232,10 @@ namespace Michsky.UI.Shift
         }
 
         public void ToggleTopBar(bool b) {
-            topPanelGroup.GetComponent<Animator>().enabled = b;
             topPanelGroup.alpha = (b ? 1f : 0f);
         }
 
         public void ToggleBottomBar(bool b) {
-            bottomPanelGroup.GetComponent<Animator>().enabled = b;
             bottomPanelGroup.alpha = (b ? 1f : 0f);
         }
     }
