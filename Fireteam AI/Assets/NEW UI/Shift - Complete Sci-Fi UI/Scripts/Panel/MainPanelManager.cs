@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 namespace Michsky.UI.Shift
 {
@@ -8,6 +9,8 @@ namespace Michsky.UI.Shift
     {
         private const int SETTINGS_INDEX = 4;
         private const int MOD_SHOP_INDEX = 3;
+        private const int CAMPAIGN_INDEX = 5;
+        private const int VERSUS_INDEX = 6;
         public TitleControllerScript titleController;
         public string panelManagerType;
         [Header("PANEL LIST")]
@@ -27,6 +30,8 @@ namespace Michsky.UI.Shift
         private Animator nextPanelAnimator;
         private Animator currentButtonAnimator;
         private Animator nextButtonAnimator;
+        public CanvasGroup topPanelGroup;
+        public CanvasGroup bottomPanelGroup;
 
         string panelFadeIn = "Panel In";
         string panelFadeOut = "Panel Out";
@@ -103,6 +108,10 @@ namespace Michsky.UI.Shift
                     titleController.SaveKeyBindings();
                 } else if (currentPanelIndex == MOD_SHOP_INDEX) {
                     titleController.SaveModsForCurrentWeapon();
+                } else if (currentPanelIndex == CAMPAIGN_INDEX) {
+                    PhotonNetwork.LeaveLobby();
+                } else if (currentPanelIndex == VERSUS_INDEX) {
+                    PhotonNetwork.LeaveLobby();
                 }
                 if (newPanel == "Settings") {
                     titleController.TogglePlayerBody(false);
@@ -130,6 +139,8 @@ namespace Michsky.UI.Shift
                     titleController.OpenPrimaryWeaponTabs();
                     titleController.HandleRightSideButtonPress(titleController.characterBtn);
                     titleController.OnCharacterBtnClicked();
+                } else if (newPanel == "Campaign" || newPanel == "Versus") {
+                    titleController.TogglePlayerBody(false);
                 } else {
                     titleController.TogglePlayerBody(true);
                     titleController.DestroyOldWeaponTemplate();
@@ -208,6 +219,16 @@ namespace Michsky.UI.Shift
                 nextPanelAnimator.Play(panelFadeIn);
                 nextButtonAnimator.Play(buttonFadeIn);
             }
+        }
+
+        public void ToggleTopBar(bool b) {
+            topPanelGroup.GetComponent<Animator>().enabled = b;
+            topPanelGroup.alpha = (b ? 1f : 0f);
+        }
+
+        public void ToggleBottomBar(bool b) {
+            bottomPanelGroup.GetComponent<Animator>().enabled = b;
+            bottomPanelGroup.alpha = (b ? 1f : 0f);
         }
     }
 }

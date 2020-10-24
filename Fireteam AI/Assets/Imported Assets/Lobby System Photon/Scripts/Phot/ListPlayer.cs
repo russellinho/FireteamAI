@@ -10,17 +10,18 @@ using UITemplate;
 using TMPro;
 using ExitGames.Client.Photon;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using Michsky.UI.Shift;
 
 namespace Photon.Pun.LobbySystemPhoton
 {
 	public class ListPlayer : MonoBehaviourPunCallbacks
 	{
+		public MainPanelManager mainPanelManager;
 		public PhotonView pView;
 
 		[Header("Inside Room Panel")]
 		public GameObject[] InsideRoomPanel;
 		public GameObject[] InsideRoomPanelVs;
-        public Text myTeamVsTxt;
 		private int lastSlotUsed;
 
 		public Template templateUIClass;
@@ -32,20 +33,16 @@ namespace Photon.Pun.LobbySystemPhoton
 		public TChat chatVs;
 		public GameObject readyButton;
 		public GameObject readyButtonVs;
-        public Text readyButtonTxt;
-        public Text readyButtonVsTxt;
+        public MainPanelButton readyButtonTxt;
+        public MainPanelButton readyButtonVsTxt;
 		public RawImage mapPreviewThumb;
-        public Text mapPreviewTxt;
 		public RawImage mapPreviewVsThumb;
-        public Text mapPreviewVsTxt;
-		public Button mapNext;
-		public Button mapNextVs;
-		public Button mapPrev;
-		public Button mapPrevVs;
+		public HorizontalSelector mapSelector;
+		public HorizontalSelector mapSelectorVs; 
 		public Button sendMsgBtn;
 		public Button sendMsgBtnVs;
-		public Button emojiBtn;
-		public Button emojiBtnVs;
+		// public Button emojiBtn;
+		// public Button emojiBtnVs;
 		public Button leaveGameBtn;
 		public Button leaveGameBtnVs;
 		public Button switchTeamsBtnVs;
@@ -76,18 +73,18 @@ namespace Photon.Pun.LobbySystemPhoton
 			blueTeam = new ArrayList();
 		}
 
-        public void DisplayPopup(string message) {
-			ToggleButtons (false);
-            if (templateUIClass.gameObject.activeInHierarchy)
-            {
-                templateUIClass.popup.GetComponentsInChildren<Text>()[0].text = message;
-                templateUIClass.popup.SetActive(true);
-            } else if (templateUIClassVs.gameObject.activeInHierarchy)
-            {
-                templateUIClassVs.popup.GetComponentsInChildren<Text>()[0].text = message;
-                templateUIClassVs.popup.SetActive(true);
-            }
-		}
+        // public void DisplayPopup(string message) {
+		// 	ToggleButtons (false);
+        //     if (templateUIClass.gameObject.activeInHierarchy)
+        //     {
+        //         templateUIClass.popup.GetComponentsInChildren<Text>()[0].text = message;
+        //         templateUIClass.popup.SetActive(true);
+        //     } else if (templateUIClassVs.gameObject.activeInHierarchy)
+        //     {
+        //         templateUIClassVs.popup.GetComponentsInChildren<Text>()[0].text = message;
+        //         templateUIClassVs.popup.SetActive(true);
+        //     }
+		// }
 
 		public void StartGameBtn() {
 			if (currentMode == 'V') {
@@ -130,7 +127,7 @@ namespace Photon.Pun.LobbySystemPhoton
 					pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
 					pView.RPC("RpcStartGameCountdown", RpcTarget.All);
 				} else {
-					DisplayPopup ("There must be at least two ready players to start the game!");
+					titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("There must be at least two ready players to start the game!");
 				}
 			} else {
 				ChangeReadyStatus ();
@@ -156,7 +153,7 @@ namespace Photon.Pun.LobbySystemPhoton
                         // Set room invisible once it begins, for now
                         PhotonNetwork.CurrentRoom.IsOpen = true;
                         PhotonNetwork.CurrentRoom.IsVisible = true;
-                        DisplayPopup("You cannot start a versus game without a player on both teams!");
+                        titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("You cannot start a versus game without a player on both teams!");
 						return;
 					}
 				}
@@ -179,7 +176,7 @@ namespace Photon.Pun.LobbySystemPhoton
 					pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
 					pView.RPC("RpcStartVersusGameCountdown", RpcTarget.All);
 				} else {
-					DisplayPopup ("There must be at least two ready players to start the game!");
+					titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("There must be at least two ready players to start the game!");
 				}
 			} else {
 				ChangeReadyStatus ();
@@ -187,16 +184,12 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		void ToggleButtons(bool status) {
-			mapNext.interactable = status;
-            mapNextVs.interactable = status;
-			mapPrev.interactable = status;
-            mapPrevVs.interactable = status;
 			readyButton.GetComponent<Button> ().interactable = status;
             readyButtonVs.GetComponent<Button>().interactable = status;
             sendMsgBtn.interactable = status;
             sendMsgBtnVs.interactable = status;
-			emojiBtn.interactable = status;
-            emojiBtnVs.interactable = status;
+			// emojiBtn.interactable = status;
+            // emojiBtnVs.interactable = status;
 			leaveGameBtn.interactable = status;
             leaveGameBtnVs.interactable = status;
 			switchTeamsBtnVs.interactable = status;
@@ -205,16 +198,12 @@ namespace Photon.Pun.LobbySystemPhoton
 		[PunRPC]
 		void RpcToggleButtons(bool status, bool gameIsStarting) {
 			gameStarting = gameIsStarting;
-			mapNext.interactable = status;
-			mapNextVs.interactable = status;
-			mapPrev.interactable = status;
-			mapPrevVs.interactable = status;
 			readyButton.GetComponent<Button> ().interactable = status;
 			readyButtonVs.GetComponent<Button> ().interactable = status;
 			sendMsgBtn.interactable = status;
 			sendMsgBtnVs.interactable = status;
-			emojiBtn.interactable = status;
-			emojiBtnVs.interactable = status;
+			// emojiBtn.interactable = status;
+			// emojiBtnVs.interactable = status;
 			leaveGameBtn.interactable = status;
 			leaveGameBtnVs.interactable = status;
 			switchTeamsBtnVs.interactable = status;
@@ -363,18 +352,18 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		void Update() {
-			if (!templateUIClass.popup.activeInHierarchy && !gameStarting) {
-				if (!mapNext.interactable) {
-					ToggleButtons (true);
-				}
-			}
+			// if (!templateUIClass.popup.activeInHierarchy && !gameStarting) {
+			// 	if (!mapNext.interactable) {
+			// 		ToggleButtons (true);
+			// 	}
+			// }
 
 			if (PhotonNetwork.IsMasterClient) {
-				readyButtonTxt.text = "START";
-                readyButtonVsTxt.text = "START";
+				readyButtonTxt.UpdateText("START GAME");
+                readyButtonVsTxt.UpdateText("START GAME");
             } else {
-                readyButtonTxt.text = "READY";
-                readyButtonVsTxt.text = "READY";
+                readyButtonTxt.UpdateText("READY");
+                readyButtonVsTxt.UpdateText("READY");
             }
 
 		}
@@ -383,9 +372,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			if (offline) {
 				Texture mapTexture = (Texture)Resources.Load(mapStrings[mapIndex]);
 				mapPreviewThumb.texture = mapTexture;
-				mapPreviewTxt.text = mapNames [mapIndex];
 				mapPreviewVsThumb.texture = mapTexture;
-				mapPreviewVsTxt.text = mapNames[mapIndex];
 			} else {
 				if (PhotonNetwork.IsMasterClient) {
             		pView.RPC("RpcSetMapInfo", RpcTarget.All, mapIndex);
@@ -398,9 +385,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			mapIndex = i;
 			Texture mapTexture = (Texture)Resources.Load(mapStrings[mapIndex]);
             mapPreviewThumb.texture = mapTexture;
-			mapPreviewTxt.text = mapNames [mapIndex];
             mapPreviewVsThumb.texture = mapTexture;
-            mapPreviewVsTxt.text = mapNames[mapIndex];
 		}
 
 		public void goToNextMap() {
@@ -429,12 +414,14 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnJoinedRoom()
 		{
+			mainPanelManager.ToggleTopBar(false);
+			mainPanelManager.ToggleBottomBar(false);
 			if (PhotonNetwork.IsMasterClient) {
 				mapIndex = 0;
 				SetMapInfo(true);
 			}
             // Disable any loading screens
-            connexion.ToggleLobbyLoadingScreen(false);
+            // connexion.ToggleLobbyLoadingScreen(false);
 			Hashtable h = new Hashtable();
 			h.Add("exp", (int)PlayerData.playerdata.info.Exp);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
@@ -525,7 +512,6 @@ namespace Photon.Pun.LobbySystemPhoton
                         entryScript.SetTeam('R');
                         redTeam.Add(p.ActorNumber);
                         SetTeamCaptain('R');
-                        myTeamVsTxt.text = "RED TEAM";
                         Hashtable h = new Hashtable();
                         h.Add("team", "red");
                         PhotonNetwork.LocalPlayer.SetCustomProperties(h);
@@ -536,7 +522,6 @@ namespace Photon.Pun.LobbySystemPhoton
                         entryScript.SetTeam('B');
                         blueTeam.Add(p.ActorNumber);
                         SetTeamCaptain('B');
-                        myTeamVsTxt.text = "BLUE TEAM";
                         Hashtable h = new Hashtable();
                         h.Add("team", "blue");
                         PhotonNetwork.LocalPlayer.SetCustomProperties(h);
@@ -573,7 +558,6 @@ namespace Photon.Pun.LobbySystemPhoton
             {
                 blueTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 redTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
-                myTeamVsTxt.text = "RED TEAM";
 				Hashtable h = new Hashtable();
 				h.Add("team", "red");
                 PhotonNetwork.LocalPlayer.SetCustomProperties(h);
@@ -581,7 +565,6 @@ namespace Photon.Pun.LobbySystemPhoton
             {
                 redTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 blueTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
-                myTeamVsTxt.text = "BLUE TEAM";
 				Hashtable h = new Hashtable();
 				h.Add("team", "blue");
                 PhotonNetwork.LocalPlayer.SetCustomProperties(h);
@@ -692,10 +675,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		void ToggleMapChangeButtons(bool b) {
-			mapNext.gameObject.SetActive(b);
-			mapPrev.gameObject.SetActive(b);
-			mapNextVs.gameObject.SetActive(b);
-			mapPrevVs.gameObject.SetActive(b);
+			// TODO
 		}
 
 		public override void OnLeftRoom()
@@ -717,6 +697,8 @@ namespace Photon.Pun.LobbySystemPhoton
             templateUIClassVs.ChatText.text = "";
             ToggleButtons(true);
 			PhotonNetwork.JoinLobby();
+			mainPanelManager.ToggleTopBar(true);
+			mainPanelManager.ToggleBottomBar(true);
 		}
 
 		void RearrangePlayerSlots() {

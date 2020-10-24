@@ -13,8 +13,6 @@ namespace Photon.Pun.LobbySystemPhoton
 		public Template templateUIClassVs;
 
 		[Header("Room List Panel")]
-		public GameObject RoomListPanel;
-		public GameObject RoomListPanelVs;
 		public GameObject RoomListContent;
 		public GameObject RoomListContentVs;
 		public GameObject RoomListEntryPrefab;
@@ -88,14 +86,6 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 		private void UpdateRoomListView()
 		{
-			if (PhotonNetwork.CountOfRooms == 0)
-			{
-				templateUIClass.ListRoomEmpty.SetActive(true);
-			}
-			else
-			{
-				templateUIClass.ListRoomEmpty.SetActive(false);
-			}
 			foreach (RoomInfo info in cachedRoomList.Values)
 			{
 				GameObject entry = Instantiate(RoomListEntryPrefab);

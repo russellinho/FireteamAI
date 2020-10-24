@@ -95,5 +95,17 @@ namespace Michsky.UI.Shift
             if (!buttonAnimator.GetCurrentAnimatorStateInfo(0).IsName("Normal to Pressed"))
                 buttonAnimator.Play("Normal to Dissolve");
         }
+
+        public void UpdateText(string newText) {
+            if (normalText != null) {
+                normalText.text = newText;
+            }
+            if (highlightedText != null) {
+                highlightedText.text = newText;
+            }
+            if (pressedText != null) {
+                pressedText.text = newText;
+            }
+        }
     }
 }
