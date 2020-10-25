@@ -38,6 +38,8 @@ namespace Photon.Pun.LobbySystemPhoton
         public MainPanelButton readyButtonVsTxt;
 		public RawImage mapPreviewThumb;
 		public RawImage mapPreviewVsThumb;
+		public TextMeshProUGUI mapDescription;
+		public TextMeshProUGUI mapDescriptionVs;
 		public HorizontalSelector mapSelector;
 		public HorizontalSelector mapSelectorVs; 
 		public Button sendMsgBtn;
@@ -51,9 +53,10 @@ namespace Photon.Pun.LobbySystemPhoton
 		public AudioClip countdownSfx;
 
 		// Map options
-		private int mapIndex = 0;
-		private string[] mapNames = new string[]{"Badlands: Act I", "Badlands: Act II"};
+		private string[] mapNames = new string[]{"The Badlands: Act I", "The Badlands: Act II"};
 		private string[] mapStrings = new string[]{"MapImages/badlands1", "MapImages/badlands2"};
+		private string[] mapDescriptions = new string[]{"A local cannibal insurgent group in the de-facto midwest of the New States of America known as the Cicadas has taken over a local refugee outpost in order to develop chemical warheads. Disrupt their operation and salvage the outpost.", 
+			"The local Cicadas have shot down one of our evac choppers in the badlands. Rescue the surviving pilot and defend her until evac arrives."};
 		public static Vector3[] mapSpawnPoints = new Vector3[]{ new Vector3(-2f,1f,1f), new Vector3(119f, -5.19f, 116f) };
 
 		// Ready status
@@ -295,7 +298,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 			// pView.RPC ("RpcLoadingScreen", RpcTarget.All);
 			if (PhotonNetwork.IsMasterClient) {
-				StartGame (mapNames [mapIndex]);
+				StartGame (mapNames [mapSelector.index]);
 			}
 		}
 
@@ -335,20 +338,20 @@ namespace Photon.Pun.LobbySystemPhoton
 
 			// pView.RPC ("RpcLoadingScreen", RpcTarget.All);
 			if (PhotonNetwork.IsMasterClient) {
-				StartVersusGame (mapNames [mapIndex]);
+				StartVersusGame (mapNames [mapSelectorVs.index]);
 			}
 		}
 
 		[PunRPC]
 		void RpcLoadingScreen() {
 			TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
-			ts.InstantiateLoadingScreen (mapNames[mapIndex]);
+			ts.InstantiateLoadingScreen (mapNames[mapSelector.index]);
 			ts.ToggleLoadingScreen(true);
 		}
 
 		void LoadingScreen() {
 			TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
-			ts.InstantiateLoadingScreen (mapNames[mapIndex]);
+			ts.InstantiateLoadingScreen (mapNames[mapSelector.index]);
 			ts.ToggleLoadingScreen(true);
 		}
 
@@ -369,42 +372,27 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		}
 
-		void SetMapInfo(bool offline = false) {
+		public void SetMapInfo(bool offline = false) {
 			if (offline) {
-				Texture mapTexture = (Texture)Resources.Load(mapStrings[mapIndex]);
+				Texture mapTexture = (Texture)Resources.Load(mapStrings[mapSelector.index]);
 				mapPreviewThumb.texture = mapTexture;
 				mapPreviewVsThumb.texture = mapTexture;
+				mapDescription.text = mapDescriptions[mapSelector.index];
+				mapDescriptionVs.text = mapDescriptions[mapSelector.index];
 			} else {
 				if (PhotonNetwork.IsMasterClient) {
-            		pView.RPC("RpcSetMapInfo", RpcTarget.All, mapIndex);
+            		pView.RPC("RpcSetMapInfo", RpcTarget.All, mapSelector.index);
 				}
 			}
 		}
 
 		[PunRPC]
 		void RpcSetMapInfo(int i) {
-			mapIndex = i;
-			Texture mapTexture = (Texture)Resources.Load(mapStrings[mapIndex]);
+			Texture mapTexture = (Texture)Resources.Load(mapStrings[mapSelector.index]);
             mapPreviewThumb.texture = mapTexture;
             mapPreviewVsThumb.texture = mapTexture;
-		}
-
-		public void goToNextMap() {
-			if (!PhotonNetwork.IsMasterClient) return;
-			mapIndex++;
-			if (mapIndex >= mapNames.Length) {
-				mapIndex = 0;
-			}
-			SetMapInfo ();
-		}
-
-		public void goToPreviousMap() {
-			if (!PhotonNetwork.IsMasterClient) return;
-			mapIndex--;
-			if (mapIndex < 0) {
-				mapIndex = mapNames.Length - 1;
-			}
-			SetMapInfo ();
+			mapDescription.text = mapDescriptions[mapSelector.index];
+			mapDescriptionVs.text = mapDescriptions[mapSelector.index];
 		}
 
 		[PunRPC]
@@ -418,7 +406,6 @@ namespace Photon.Pun.LobbySystemPhoton
 			mainPanelManager.ToggleTopBar(false);
 			// mainPanelManager.ToggleBottomBar(false);
 			if (PhotonNetwork.IsMasterClient) {
-				mapIndex = 0;
 				SetMapInfo(true);
 			}
             // Disable any loading screens
@@ -687,7 +674,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnLeftRoom()
 		{
-			mapIndex = 0;
+			mapSelector.index = 0;
 			templateUIClass.RoomPanel.SetActive(false);
             templateUIClassVs.RoomPanel.SetActive(false);
 			templateUIClass.ListRoomPanel.SetActive(true);
@@ -705,6 +692,7 @@ namespace Photon.Pun.LobbySystemPhoton
             ToggleButtons(true);
 			PhotonNetwork.JoinLobby();
 			mainPanelManager.ToggleTopBar(true);
+			mainPanelManager.ReopenCurrentPanel();
 			// mainPanelManager.ToggleBottomBar(true);
 		}
 

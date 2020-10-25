@@ -37,6 +37,7 @@ namespace Michsky.UI.Shift
                 if (PlayerData.playerdata.bodyReference != null && PlayerData.playerdata.bodyReference.activeInHierarchy) {
                     hidPlayer = true;
                     titleController.TogglePlayerBody(false);
+                    titleController.ToggleWeaponPreview(false);
                 }
             }
             if (isOn == false)
@@ -56,6 +57,7 @@ namespace Michsky.UI.Shift
                 if (PlayerData.playerdata.bodyReference != null && hidPlayer) {
                     hidPlayer = false;
                     titleController.TogglePlayerBody(true);
+                    titleController.ToggleWeaponPreview(true);
                 }
             }
             if (isOn == true)

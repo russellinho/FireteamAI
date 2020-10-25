@@ -19,6 +19,7 @@ namespace Michsky.UI.Shift
         [Header("SETTINGS")]
         public int currentPanelIndex = 0;
         private int currentButtonIndex = 0;
+        private bool refresh;
         public int newPanelIndex;
 
         private GameObject currentPanel;
@@ -105,21 +106,25 @@ namespace Michsky.UI.Shift
             }
 
             if (panelManagerType == "Top") {
-                if (currentPanelIndex == SETTINGS_INDEX) {
-                    titleController.SaveAudioSettings();
-                    titleController.SaveKeyBindings();
-                } else if (currentPanelIndex == MOD_SHOP_INDEX) {
-                    titleController.SaveModsForCurrentWeapon();
-                } else if (currentPanelIndex == CAMPAIGN_INDEX) {
-                    titleController.ExitMatchmaking();
-                } else if (currentPanelIndex == VERSUS_INDEX) {
-                    titleController.ExitMatchmaking();
+                if (!refresh) {
+                    if (currentPanelIndex == SETTINGS_INDEX) {
+                        titleController.SaveAudioSettings();
+                        titleController.SaveKeyBindings();
+                    } else if (currentPanelIndex == MOD_SHOP_INDEX) {
+                        titleController.SaveModsForCurrentWeapon();
+                    } else if (currentPanelIndex == CAMPAIGN_INDEX) {
+                        titleController.ExitMatchmaking();
+                    } else if (currentPanelIndex == VERSUS_INDEX) {
+                        titleController.ExitMatchmaking();
+                    }
                 }
                 if (newPanel == "Settings") {
                     titleController.TogglePlayerBody(false);
+                    titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
                 } else if (newPanel == "Mod Shop") {
                     titleController.TogglePlayerBody(false);
+                    titleController.ToggleWeaponPreview(true);
                     titleController.HandleLeftSideButtonPress(titleController.modShopPrimaryWepBtn);
                     titleController.OnModShopPrimaryWepBtnClicked(true);
                     titleController.OpenModShopPrimaryWeaponTabs();
@@ -127,6 +132,7 @@ namespace Michsky.UI.Shift
                     titleController.OnSuppressorsBtnClicked();
                 } else if (newPanel == "Market") {
                     titleController.TogglePlayerBody(true);
+                    titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
                     titleController.HandleLeftSideButtonPress(titleController.shopPrimaryWepBtn);
                     titleController.OnMarketplacePrimaryWepBtnClicked();
@@ -135,6 +141,7 @@ namespace Michsky.UI.Shift
                     titleController.OnMarketplaceCharacterBtnClicked();
                 } else if (newPanel == "Loadout") {
                     titleController.TogglePlayerBody(true);
+                    titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
                     titleController.HandleLeftSideButtonPress(titleController.primaryWepBtn);
                     titleController.OnPrimaryWepBtnClicked();
@@ -143,21 +150,24 @@ namespace Michsky.UI.Shift
                     titleController.OnCharacterBtnClicked();
                 } else if (newPanel == "Campaign") {
                     titleController.TogglePlayerBody(false);
+                    titleController.ToggleWeaponPreview(false);
                     titleController.JoinMatchmaking();
                     campaignLobby.SetActive(true);
                     versusLobby.SetActive(false);
                 } else if (newPanel == "Versus") {
                     titleController.TogglePlayerBody(false);
+                    titleController.ToggleWeaponPreview(false);
                     titleController.JoinMatchmaking();
                     campaignLobby.SetActive(false);
                     versusLobby.SetActive(true);
                 } else {
                     titleController.TogglePlayerBody(true);
+                    titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
                 }
             }
 
-            if (newPanelIndex != currentPanelIndex)
+            if (refresh || newPanelIndex != currentPanelIndex)
             {
                 currentPanel = panels[currentPanelIndex].panelObject;
                 currentPanelIndex = newPanelIndex;
@@ -179,6 +189,14 @@ namespace Michsky.UI.Shift
                 currentButtonAnimator.Play(buttonFadeOut);
                 nextButtonAnimator.Play(buttonFadeIn);
             }
+
+            refresh = false;
+        }
+
+        public void ReopenCurrentPanel() {
+            Debug.Log("Reopning: " + panels[currentPanelIndex].panelName);
+            refresh = true;
+            OpenPanel(panels[currentPanelIndex].panelName);
         }
 
         public void NextPage()

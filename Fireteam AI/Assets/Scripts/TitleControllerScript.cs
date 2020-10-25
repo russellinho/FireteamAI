@@ -2880,17 +2880,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void TriggerEmergencyPopup(string message) {
-        // emergencyPopupTxt.text = message;
-        // .SetActive(true);
-    }
-
-    public void CloseEmergencyPopup() {
-        // emergencyPopup.SetActive(false);
+        TriggerAlertPopup(message);
     }
 
 	public void TogglePlayerBody(bool b) {
 		PlayerData.playerdata.bodyReference.SetActive(b);
 		PlayerData.playerdata.bodyReference.GetComponent<Animator>().SetBool("onTitle", true);
+	}
+
+	public void ToggleWeaponPreview(bool b) {
+		weaponPreviewSlot.SetActive(b);
 	}
 
 	public void HandleLeftSideButtonPress(Button b) {
