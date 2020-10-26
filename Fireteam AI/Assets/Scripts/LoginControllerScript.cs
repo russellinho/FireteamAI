@@ -66,6 +66,9 @@ public class LoginControllerScript : MonoBehaviour
             SceneManager.LoadScene("Title");
             signInFlag = 0;
         }
+        if (Input.GetKeyDown(KeyCode.Return)) {
+            OnLoginClick();
+        }
     }
 
     public void ClosePopup() {

@@ -34,8 +34,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		public TChat chatVs;
 		public GameObject readyButton;
 		public GameObject readyButtonVs;
-        public MainPanelButton readyButtonTxt;
-        public MainPanelButton readyButtonVsTxt;
+        public TextMeshProUGUI readyButtonTxt;
+        public TextMeshProUGUI readyButtonVsTxt;
 		public RawImage mapPreviewThumb;
 		public RawImage mapPreviewVsThumb;
 		public TextMeshProUGUI mapDescription;
@@ -363,11 +363,11 @@ namespace Photon.Pun.LobbySystemPhoton
 			// }
 
 			if (PhotonNetwork.IsMasterClient) {
-				readyButtonTxt.UpdateText("START GAME");
-                readyButtonVsTxt.UpdateText("START GAME");
+				readyButtonTxt.text = "START GAME";
+                readyButtonVsTxt.text = "START GAME";
             } else {
-                readyButtonTxt.UpdateText("READY");
-                readyButtonVsTxt.UpdateText("READY");
+                readyButtonTxt.text = "READY";
+                readyButtonVsTxt.text = "READY";
             }
 
 		}
@@ -461,7 +461,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			
 				playerListEntries.Add(p.ActorNumber, entry);
 			}
-            chat.SendMsgConnection(PhotonNetwork.LocalPlayer.NickName);
+            chat.SendServerMessage(PhotonNetwork.LocalPlayer.NickName + " has joined the game.");
 		}
 
 		void OnJoinedRoomVersus() {
@@ -539,7 +539,7 @@ namespace Photon.Pun.LobbySystemPhoton
                 }
 				playerListEntries.Add(p.ActorNumber, entry);
 			}
-            chatVs.SendMsgConnection(PhotonNetwork.LocalPlayer.NickName);
+            chatVs.SendServerMessage(PhotonNetwork.LocalPlayer.NickName + " has joined the game.");
 		}
 
         public void OnSwitchTeamsButtonClicked()
