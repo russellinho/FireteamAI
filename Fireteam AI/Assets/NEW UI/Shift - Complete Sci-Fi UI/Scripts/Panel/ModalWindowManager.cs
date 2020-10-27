@@ -54,7 +54,7 @@ namespace Michsky.UI.Shift
         public void ModalWindowOut()
         {
             if (titleController != null) {
-                if (PlayerData.playerdata.bodyReference != null && hidPlayer) {
+                if (PlayerData.playerdata.bodyReference != null && hidPlayer && !titleController.confirmingTransaction) {
                     hidPlayer = false;
                     titleController.TogglePlayerBody(true);
                     titleController.ToggleWeaponPreview(true);
@@ -76,7 +76,11 @@ namespace Michsky.UI.Shift
         }
 
         public void SetKeyBindingDescriptionText(string s) {
-            windowDescription.text = "PRESS A KEY TO RE-MAP [" + s + "]";
+            SetText("PRESS A KEY TO RE-MAP [" + s + "]");
+        }
+
+        public void SetText(string s) {
+            windowDescription.text = s;
         }
     }
 }

@@ -43,6 +43,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private string itemBeingPurchased;
 	private string typeBeingPurchased;
 	private uint totalGpCostBeingPurchased;
+	private char currencyTypeBeingPurchased;
+	public bool confirmingTransaction;
 	public char currentCharGender;
 
 	// Loading screen stuff
@@ -171,6 +173,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public bool triggerMakePurchasePopupFlag;
 	public string alertPopupMessage;
 	public string confirmPopupMessage;
+	private bool confirmClicked;
 	public MainPanelManager mainPanelManager;
 	public Button previouslyPressedButtonLeft;
 	public Button previouslyPressedSubButtonLeft;
@@ -282,10 +285,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 		if (triggerAlertPopupFlag) {
 			triggerAlertPopupFlag = false;
+			alertPopup.SetText(alertPopupMessage);
 			alertPopup.ModalWindowIn();
 		}
 		if (triggerConfirmPopupFlag) {
 			triggerConfirmPopupFlag = false;
+			confirmPopup.SetText(confirmPopupMessage);
 			confirmPopup.ModalWindowIn();
 		}
 		if (triggerKeyBindingsPopupFlag) {
@@ -2652,10 +2657,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void OnConfirmPreparePurchaseClicked() {
-		// preparePurchasePopup.SetActive(false);
-		// confirmPurchaseTxt.text = "Are you sure you would like to buy " + itemBeingPurchased + " for " +
-		// durationSelectionDropdown.options[durationSelectionDropdown.value].text + "? (" + totalGpCostBeingPurchased + " GP)";
-		// confirmPurchasePopup.SetActive(true);
+		confirmingTransaction = true;
+		makePurchasePopup.ModalWindowOut();
+		TriggerConfirmPopup("Are you sure you would like to buy " + itemBeingPurchased + " for " + durationSelection.GetCurrentItem() + " for " + totalGpCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + "?");
 	}
 
 	public void OnConfirmPurchaseClicked() {
@@ -2670,23 +2674,19 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     void SetTotalGPCost(int duration, string durationText)
     {
         totalGpCostBeingPurchased = GetGPCostForItemAndType(itemBeingPurchased, typeBeingPurchased, duration);
-        totalGpCostTxt.text = "YOU ARE BUYING [" + itemBeingPurchased + "] FOR [" + durationText + "] FOR " + totalGpCostBeingPurchased + " GP/KASH.";
+		currencyTypeBeingPurchased = 'G';
+        totalGpCostTxt.text = "YOU ARE BUYING [" + itemBeingPurchased + "] FOR [" + durationText + "] FOR " + totalGpCostBeingPurchased + " GP.";
     }
 
 	public void OnCancelPurchaseClicked() {
 		itemBeingPurchased = null;
 		typeBeingPurchased = null;
+		confirmingTransaction = false;
 		// confirmPurchasePopup.SetActive(false);
-	}
-
-	public void OnCancelPreparePurchaseClicked() {
-		itemBeingPurchased = null;
-		typeBeingPurchased = null;
-		// preparePurchasePopup.SetActive(false);
 	}
 
 	void ConfirmPurchase() {
-		// confirmPurchasePopup.SetActive(false);
+		confirmingTransaction = false;
         // Ensure that the user doesn't already have this item
         float hasDuplicateCheck = HasDuplicateItem(itemBeingPurchased, typeBeingPurchased);
         if (hasDuplicateCheck < 0f) {
@@ -2698,6 +2698,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         totalNewDuration = (Mathf.Approximately(totalNewDuration, -1f) ? totalNewDuration : totalNewDuration + hasDuplicateCheck);
 		if (PlayerData.playerdata.info.Gp >= totalGpCostBeingPurchased) {
 			PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, "gp");
+			confirmPopup.ModalWindowOut();
 		} else {	
 			TriggerAlertPopup("You do not have enough GP to purchase this item.");	
 		}	
@@ -2724,8 +2725,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 		return duration;
 	}
-
-
 
 	uint GetGPCostForItemAndType(string itemName, string itemType, int duration) {
         float durationMultiplier = 1f;
@@ -3065,6 +3064,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		modShopSecondaryWeaponTabs.SetActive(false);
 		modShopSupportWeaponTabs.SetActive(false);
 		modShopMeleeWeaponTabs.SetActive(false);
+	}
+
+	public void OnConfirmButtonClicked() {
+		if (confirmingTransaction) {
+			OnConfirmPurchaseClicked();
+		}
 	}
 		
 }

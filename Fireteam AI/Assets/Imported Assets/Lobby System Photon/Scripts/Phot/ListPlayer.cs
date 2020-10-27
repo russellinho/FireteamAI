@@ -343,15 +343,15 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		[PunRPC]
-		void RpcLoadingScreen() {
+		void RpcLoadingScreen(int i) {
 			TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
-			ts.InstantiateLoadingScreen (mapNames[mapSelector.index]);
+			ts.InstantiateLoadingScreen (mapNames[i]);
 			ts.ToggleLoadingScreen(true);
 		}
 
 		void LoadingScreen() {
 			TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
-			ts.InstantiateLoadingScreen (mapNames[mapSelector.index]);
+			ts.InstantiateLoadingScreen (mapNames[currentMode == 'C' ? mapSelector.index : mapSelectorVs.index]);
 			ts.ToggleLoadingScreen(true);
 		}
 
@@ -373,26 +373,27 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		public void SetMapInfo(bool offline = false) {
+			int i = currentMode == 'C' ? mapSelector.index : mapSelectorVs.index;
 			if (offline) {
-				Texture mapTexture = (Texture)Resources.Load(mapStrings[mapSelector.index]);
+				Texture mapTexture = (Texture)Resources.Load(mapStrings[i]);
 				mapPreviewThumb.texture = mapTexture;
 				mapPreviewVsThumb.texture = mapTexture;
-				mapDescription.text = mapDescriptions[mapSelector.index];
-				mapDescriptionVs.text = mapDescriptions[mapSelector.index];
+				mapDescription.text = mapDescriptions[i];
+				mapDescriptionVs.text = mapDescriptions[i];
 			} else {
 				if (PhotonNetwork.IsMasterClient) {
-            		pView.RPC("RpcSetMapInfo", RpcTarget.All, mapSelector.index);
+            		pView.RPC("RpcSetMapInfo", RpcTarget.All, i);
 				}
 			}
 		}
 
 		[PunRPC]
 		void RpcSetMapInfo(int i) {
-			Texture mapTexture = (Texture)Resources.Load(mapStrings[mapSelector.index]);
+			Texture mapTexture = (Texture)Resources.Load(mapStrings[i]);
             mapPreviewThumb.texture = mapTexture;
             mapPreviewVsThumb.texture = mapTexture;
-			mapDescription.text = mapDescriptions[mapSelector.index];
-			mapDescriptionVs.text = mapDescriptions[mapSelector.index];
+			mapDescription.text = mapDescriptions[i];
+			mapDescriptionVs.text = mapDescriptions[i];
 		}
 
 		[PunRPC]
@@ -550,6 +551,7 @@ namespace Photon.Pun.LobbySystemPhoton
             char newTeam = entry.GetTeam();
             if (newTeam == 'R')
             {
+				entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
                 blueTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 redTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
 				Hashtable h = new Hashtable();
@@ -557,6 +559,7 @@ namespace Photon.Pun.LobbySystemPhoton
                 PhotonNetwork.LocalPlayer.SetCustomProperties(h);
             } else if (newTeam == 'B')
             {
+				entry.transform.SetParent(PlayersInRoomPanelVsBlue, false);
                 redTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 blueTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
 				Hashtable h = new Hashtable();
@@ -669,12 +672,14 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		void ToggleMapChangeButtons(bool b) {
-			// TODO
+			mapSelector.ToggleSelectorButtons(b);
+			mapSelectorVs.ToggleSelectorButtons(b);
 		}
 
 		public override void OnLeftRoom()
 		{
 			mapSelector.index = 0;
+			mapSelectorVs.index = 0;
 			templateUIClass.RoomPanel.SetActive(false);
             templateUIClassVs.RoomPanel.SetActive(false);
 			templateUIClass.ListRoomPanel.SetActive(true);

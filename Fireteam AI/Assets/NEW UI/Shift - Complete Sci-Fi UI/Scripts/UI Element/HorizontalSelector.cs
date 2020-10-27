@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 using TMPro;
 
 namespace Michsky.UI.Shift
@@ -28,6 +29,8 @@ namespace Michsky.UI.Shift
         public bool enableIndicators = true;
         public Transform indicatorParent;
         public GameObject indicatorObject;
+        public Button nextBtn;
+        public Button prevBtn;
 
         [Header("ITEMS")]
         public List<Item> itemList = new List<Item>();
@@ -342,6 +345,11 @@ namespace Michsky.UI.Shift
                     }
                 }
             }
+        }
+
+        public void ToggleSelectorButtons(bool b) {
+            nextBtn.interactable = b;
+            prevBtn.interactable = b;
         }
     }
 }

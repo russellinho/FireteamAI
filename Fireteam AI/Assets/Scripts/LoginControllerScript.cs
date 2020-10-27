@@ -84,7 +84,7 @@ public class LoginControllerScript : MonoBehaviour
         quitBtn.interactable = false;
         forgotPasswordBtn.interactable = false;
         registerBtn.interactable = false;
-        popupAlert.windowDescription.text = popupMessage;
+        popupAlert.SetText(popupMessage);
         popupAlert.ModalWindowIn();
     }
 
