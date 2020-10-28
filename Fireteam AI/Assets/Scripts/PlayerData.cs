@@ -1230,7 +1230,7 @@ public class PlayerData : MonoBehaviour
         // Display emergency popup depending on which screen you're on
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene.Equals("GameOverSuccess") || currentScene.Equals("GameOverFail")) {
-            gameOverControllerRef.TriggerEmergencyPopup("A fatal error has occurred:\n" + emergencyExitMessage + "\nThe game will now close.");
+            gameOverControllerRef.TriggerAlertPopup("A fatal error has occurred:\n" + emergencyExitMessage + "\nThe game will now close.");
         } else if (currentScene.Equals("Title")) {
             titleRef.TriggerEmergencyPopup("A fatal error has occurred:\n" + emergencyExitMessage + "\nThe game will now close.");
         }

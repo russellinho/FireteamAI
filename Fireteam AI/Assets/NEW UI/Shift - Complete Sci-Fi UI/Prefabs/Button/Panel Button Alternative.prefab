@@ -766,6 +766,9 @@ MonoBehaviour:
   buttonText: TITLE
   hasIcon: 1
   iconSprite: {fileID: 21300000, guid: c26a820b2129e2f4eb122efd27df5339, type: 3}
+  normalText: {fileID: 0}
+  highlightedText: {fileID: 0}
+  pressedText: {fileID: 0}
 --- !u!114 &114779898764673524
 MonoBehaviour:
   m_ObjectHideFlags: 0
