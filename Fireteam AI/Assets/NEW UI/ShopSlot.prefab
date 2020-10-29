@@ -2794,6 +2794,9 @@ MonoBehaviour:
   buttonText: EQUIP
   hasIcon: 0
   iconSprite: {fileID: 21300000, guid: c26a820b2129e2f4eb122efd27df5339, type: 3}
+  normalText: {fileID: 0}
+  highlightedText: {fileID: 0}
+  pressedText: {fileID: 0}
 --- !u!114 &2325126064439601195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3700,6 +3703,9 @@ MonoBehaviour:
   buttonText: PREVIEW
   hasIcon: 0
   iconSprite: {fileID: 21300000, guid: c26a820b2129e2f4eb122efd27df5339, type: 3}
+  normalText: {fileID: 0}
+  highlightedText: {fileID: 0}
+  pressedText: {fileID: 0}
 --- !u!114 &2325126065444076834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4238,7 +4244,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 79.009995, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7019825599825784853
@@ -4958,6 +4964,9 @@ MonoBehaviour:
   buttonText: BUY
   hasIcon: 0
   iconSprite: {fileID: 21300000, guid: c26a820b2129e2f4eb122efd27df5339, type: 3}
+  normalText: {fileID: 0}
+  highlightedText: {fileID: 0}
+  pressedText: {fileID: 0}
 --- !u!114 &2776838392551330058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5615,7 +5624,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 79.009995, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6513289974210907578
@@ -7083,6 +7092,9 @@ MonoBehaviour:
   buttonText: EQUIP
   hasIcon: 0
   iconSprite: {fileID: 21300000, guid: c26a820b2129e2f4eb122efd27df5339, type: 3}
+  normalText: {fileID: 0}
+  highlightedText: {fileID: 0}
+  pressedText: {fileID: 0}
 --- !u!114 &5462645782874725862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8974,6 +8986,9 @@ MonoBehaviour:
   buttonText: MOD
   hasIcon: 0
   iconSprite: {fileID: 21300000, guid: c26a820b2129e2f4eb122efd27df5339, type: 3}
+  normalText: {fileID: 0}
+  highlightedText: {fileID: 0}
+  pressedText: {fileID: 0}
 --- !u!114 &4314430050723273597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9689,6 +9704,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shopItemScript: {fileID: 7842960523304197656}
+  setupItemScript: {fileID: 0}
 --- !u!114 &1416046465654379636
 MonoBehaviour:
   m_ObjectHideFlags: 0

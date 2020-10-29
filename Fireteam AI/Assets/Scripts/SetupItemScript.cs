@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class SetupItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class SetupItemScript : MonoBehaviour
 {
     public enum SetupItemType {Character, Weapon};
     public SetupItemType setupItemType;
@@ -15,7 +15,8 @@ public class SetupItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExit
     public string itemDescription;
     private int clickCount;
     private float clickTimer;
-    public Text equippedInd;
+    public Image outline;
+    public Button selectBtn;
     public SetupControllerScript setupController;
 
     void Start() {
@@ -43,35 +44,19 @@ public class SetupItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExit
         }
     }
 
-    private void EquipItem()
+    public void EquipItem()
     {
-        setupController.SelectCharacter(gameObject, characterDetails.name);
+        setupController.SelectCharacter(this, characterDetails.name);
     }
 
-    public void OnPointerEnter(PointerEventData eventData) {
-
-        if (itemDescriptionPopupRef.gameObject.activeInHierarchy) {
-            return;
+    public void ToggleSelectedIndicator(bool b) {
+        if (b) {
+            outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+            selectBtn.gameObject.SetActive(false);
+        } else {
+            outline.color = new Color(99f / 255f, 198f / 255f, 255f / 255f, 255f / 255f);
+            selectBtn.gameObject.SetActive(true);
         }
-        itemDescriptionPopupRef.gameObject.SetActive(true);
-        if (setupItemType == SetupItemType.Character) {
-            itemDescriptionPopupRef.weaponStatDescriptor.SetActive(false);
-            itemDescriptionPopupRef.SetTitle(itemName);
-            itemDescriptionPopupRef.SetThumbnail(thumbnailRef);
-            itemDescriptionPopupRef.SetDescription(itemDescription);
-        } else if (setupItemType == SetupItemType.Weapon) {
-            Weapon w = InventoryScript.itemData.weaponCatalog[(string)setupController.starterWeapons[setupController.wepSelectionIndex]];
-            itemDescriptionPopupRef.SetTitle(w.name);
-            itemDescriptionPopupRef.SetThumbnail((Texture)Resources.Load(w.thumbnailPath));
-            itemDescriptionPopupRef.SetDescription(w.description);
-            itemDescriptionPopupRef.SetWeaponStats(w.damage, w.accuracy, w.recoil, w.fireRate, w.mobility, w.range, w.clipCapacity);
-            itemDescriptionPopupRef.weaponStatDescriptor.SetActive(true);
-        }
-    }
-
-    public void OnPointerExit(PointerEventData eventData) {
-        itemDescriptionPopupRef.gameObject.SetActive(false);
-        itemDescriptionPopupRef.weaponStatDescriptor.SetActive(false);
     }
 
 }

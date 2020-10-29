@@ -7,45 +7,41 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Firebase.Database;
 using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
+using Michsky.UI.Shift;
+using TMPro;
 
 public class SetupControllerScript : MonoBehaviour
 {
-    private Vector3 bodyPos = new Vector3(-6f, 2.74f, 13.2f);
-    public GameObject bodyRef;
+    private Vector3 bodyPos = new Vector3(-0.45f, 4.87f, 2.13f);
+    private GameObject bodyRef;
     public GameObject contentInventory;
-    public InputField characterNameInput;
+    public TMP_InputField characterNameInput;
     private Dictionary<string, int> starterCharacters = new Dictionary<string, int>(){["Lucas"] = 0, ["Daryl"] = 1, ["Yongjin"] = 2, ["Rocko"] = 3, ["Hana"] = 4, ["Jade"] = 5, ["Dani"] = 6};
     public ArrayList starterWeapons = new ArrayList(){"N4A1", "KA-74"};
     private string selectedCharacter;
-    public GameObject selectedPrefab;
+    private SetupItemScript selectedSlot;
     public GameObject contentPrefab;
     public GameObject selectionDesc;
-    public GameObject popupAlert;
-    public GameObject confirmAlert;
+    public ModalWindowManager popupAlert;
+    public ModalWindowManager confirmAlert;
+    public BlurManager blurManager;
     public Button confirmAlertConfirmBtn;
     public Button confirmAlertCancelBtn;
     public Button proceedBtn;
     public Button checkBtn;
-    public Button nextWepBtn;
-    public Button prevWepBtn;
-    public Image wepPnl;
-    public Text wepTxt;
-    public short wepSelectionIndex;
-    public Text popupAlertTxt;
-    public Text confirmAlertTxt;
+    public HorizontalSelector weaponSelector;
     private bool activatePopupFlag;
     private bool activateConfirmFlag;
     private bool finishedFlag;
     private bool completeCharCreationFlag;
     private string popupMessage;
-    public GameObject emergencyPopup;
-    public Text emergencyPopupTxt;
     public GameObject[] starterCharacterRefs;
+    private int previousWeaponIndex;
     // Start is called before the first frame update
     void Start()
     {
-        wepSelectionIndex = 0;
-        SetSelectedWeaponText();
+        previousWeaponIndex = -1;
+        InitializeWeaponSelection();
         selectedCharacter = "Lucas";
         SpawnSelectedCharacter();
         EquipSelectedWeapon();
@@ -66,6 +62,14 @@ public class SetupControllerScript : MonoBehaviour
         }
     }
 
+    void InitializeWeaponSelection() {
+        weaponSelector.ClearItems();
+        for (int i = 0; i < starterWeapons.Count; i++) {
+            weaponSelector.CreateNewItem((string)starterWeapons[i]);
+        }
+        weaponSelector.UpdateUI();
+    }
+
     void InitializeCharacterSelection() {
         // Populate into grid layout
 		foreach (KeyValuePair<string, int> qq in starterCharacters) {
@@ -79,43 +83,33 @@ public class SetupControllerScript : MonoBehaviour
 			s.itemName = thisCharacterName;
 			s.itemDescription = c.description;
 			s.thumbnailRef.texture = (Texture)Resources.Load(c.thumbnailPath);
-			s.thumbnailRef.SetNativeSize();
-			RectTransform t = o.GetComponentsInChildren<RectTransform>()[3];
-			t.sizeDelta = new Vector2(t.sizeDelta.x / 2f, t.sizeDelta.y / 2f);
 			if (qq.Value == 0) {
-				o.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-				s.equippedInd.enabled = true;
-				selectedPrefab = o;
+				s.ToggleSelectedIndicator(true);
+				selectedSlot = s;
 			}
 			o.transform.SetParent(contentInventory.transform);
             s.setupController = this;
 		}
     }
 
-    void SetSelectedWeaponText() {
-        wepTxt.text = (string)starterWeapons[wepSelectionIndex];
-    }
-
     private void DeselectCharacter() {
         selectedCharacter = "";
-        selectedPrefab.GetComponentsInChildren<Image>()[0].color = Color.white;
-        selectedPrefab.GetComponent<SetupItemScript>().equippedInd.enabled = false;
-        selectedPrefab = null;
+        selectedSlot.ToggleSelectedIndicator(false);
+        selectedSlot = null;
         DespawnSelectedCharacter();
     }
 
-    public void SelectCharacter(GameObject setupItem, string name) {
+    public void SelectCharacter(SetupItemScript setupItem, string name) {
         DeselectCharacter();
         selectedCharacter = name;
-        setupItem.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-        setupItem.GetComponent<SetupItemScript>().equippedInd.enabled = true;
-        selectedPrefab = setupItem;
+        selectedSlot.ToggleSelectedIndicator(true);
+        selectedSlot = setupItem;
         SpawnSelectedCharacter();
         EquipSelectedWeapon();
     }
 
     void SpawnSelectedCharacter() {
-        bodyRef = Instantiate(starterCharacterRefs[starterCharacters[selectedCharacter]], bodyPos, Quaternion.Euler(new Vector3(0f, 327f, 0f)));
+        bodyRef = Instantiate(starterCharacterRefs[starterCharacters[selectedCharacter]], bodyPos, Quaternion.Euler(new Vector3(0f, -65f, 0f)));
     }
 
     void DespawnSelectedCharacter() {
@@ -199,7 +193,7 @@ public class SetupControllerScript : MonoBehaviour
                                 inputData["uid"] = AuthScript.authHandler.user.UserId;
                                 inputData["username"] = potentialName;
                                 inputData["selectedCharacter"] = selectedCharacter;
-                                inputData["starterWeapon"] = starterWeapons[wepSelectionIndex];
+                                inputData["starterWeapon"] = weaponSelector.GetCurrentItem();
                                 func = DAOScript.dao.functions.GetHttpsCallable("createCharacter");
                                 func.CallAsync(inputData).ContinueWith((taskC) => {
                                     if (taskC.IsFaulted) {
@@ -216,7 +210,7 @@ public class SetupControllerScript : MonoBehaviour
                                             inputData["uid"] = AuthScript.authHandler.user.UserId;
                                             Dictionary<string, string>[] starterItems = new Dictionary<string, string>[12];
                                             Dictionary<string, string> item1 = new Dictionary<string, string>();
-                                            item1.Add("itemName", starterWeapons[wepSelectionIndex].ToString());
+                                            item1.Add("itemName", weaponSelector.GetCurrentItem());
                                             item1.Add("category", "weapons");
                                             item1.Add("duration", "-1");
                                             starterItems[0] = item1;
@@ -304,18 +298,10 @@ public class SetupControllerScript : MonoBehaviour
     }
 
     public void OnCheckCharacterNameClick() {
-        if (popupAlert.activeInHierarchy || confirmAlert.activeInHierarchy) {
-            return;
-        }
-
         CheckCharacterName();
     }
 
     public void ConfirmCharacterCreation() {
-        if (popupAlert.activeInHierarchy || confirmAlert.activeInHierarchy) {
-            return;
-        }
-
         completeCharCreationFlag = true;
         string finalCharacterName = characterNameInput.text;
         ToggleInputs(false);
@@ -324,8 +310,7 @@ public class SetupControllerScript : MonoBehaviour
     }
 
     void ToggleInputs(bool b) {
-        nextWepBtn.interactable = b;
-        prevWepBtn.interactable = b;
+        weaponSelector.ToggleSelectorButtons(b);
         characterNameInput.interactable = b;
         proceedBtn.interactable = b;
         checkBtn.interactable = b;
@@ -337,9 +322,7 @@ public class SetupControllerScript : MonoBehaviour
         CheckCharacterName();
     }
 
-    public void ClosePopup() {
-        confirmAlert.SetActive(false);
-        popupAlert.SetActive(false);
+    void ClosePopup() {
         popupMessage = "";
         ToggleInputs(true);
     }
@@ -353,13 +336,15 @@ public class SetupControllerScript : MonoBehaviour
     }
 
     void TriggerPopup() {
-        popupAlertTxt.text = popupMessage;
-        popupAlert.SetActive(true);
+        popupAlert.SetText(popupMessage);
+        popupAlert.ModalWindowIn();
+        blurManager.BlurInAnim();
     }
 
     void TriggerConfirmPopup() {
-        confirmAlertTxt.text = popupMessage;
-        confirmAlert.SetActive(true);
+        confirmAlert.SetText(popupMessage);
+        confirmAlert.ModalWindowIn();
+        blurManager.BlurInAnim();
     }
 
     void QueueConfirmPopup(string message) {
@@ -367,13 +352,9 @@ public class SetupControllerScript : MonoBehaviour
         popupMessage = message;
     }
 
-    public void TriggerEmergencyPopup(string message) {
-        emergencyPopupTxt.text = message;
-        emergencyPopup.SetActive(true);
-    }
-
-    public void CloseEmergencyPopup() {
-        emergencyPopup.SetActive(false);
+    public void QueueAlertPopup(string message) {
+        activatePopupFlag = true;
+        popupMessage = message;
     }
 
         // Only called in an emergency situation when the game needs to exit immediately (ex: database failure or user gets banned).
@@ -383,7 +364,7 @@ public class SetupControllerScript : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
         // Display emergency popup
-        TriggerEmergencyPopup("A fatal error has occurred:\n" + message + "\nThe game will now close.");
+        QueueAlertPopup("A fatal error has occurred:\n" + message + "\nThe game will now close.");
 
         StartCoroutine("EmergencyExitGame");
     }
@@ -395,24 +376,22 @@ public class SetupControllerScript : MonoBehaviour
 
     void EquipSelectedWeapon() {
         WeaponScript ws = bodyRef.GetComponent<WeaponScript>();
-        ws.EquipWeaponForSetup((string)starterWeapons[wepSelectionIndex], selectedCharacter);
+        ws.EquipWeaponForSetup(weaponSelector.GetCurrentItem(), selectedCharacter);
     }
 
     public void SelectNextWeapon() {
-        wepSelectionIndex++;
-        if (wepSelectionIndex >= starterWeapons.Count) {
-            wepSelectionIndex = 0;
+        if (previousWeaponIndex == weaponSelector.index) {
+            return;
         }
-        SetSelectedWeaponText();
+        previousWeaponIndex = weaponSelector.index;
         EquipSelectedWeapon();
     }
 
     public void SelectPreviousWeapon() {
-        wepSelectionIndex--;
-        if (wepSelectionIndex < 0) {
-            wepSelectionIndex = (short)(starterWeapons.Count - 1);
+        if (previousWeaponIndex == weaponSelector.index) {
+            return;
         }
-        SetSelectedWeaponText();
+        previousWeaponIndex = weaponSelector.index;
         EquipSelectedWeapon();
     }
 
