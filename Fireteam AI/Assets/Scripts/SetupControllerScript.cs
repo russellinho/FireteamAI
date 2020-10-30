@@ -22,6 +22,7 @@ public class SetupControllerScript : MonoBehaviour
     private SetupItemScript selectedSlot;
     public GameObject contentPrefab;
     public GameObject selectionDesc;
+    public CanvasGroup mainPanel;
     public ModalWindowManager popupAlert;
     public ModalWindowManager confirmAlert;
     public BlurManager blurManager;
@@ -37,9 +38,13 @@ public class SetupControllerScript : MonoBehaviour
     private string popupMessage;
     public GameObject[] starterCharacterRefs;
     private int previousWeaponIndex;
+    private bool blockScreenTrigger;
+    public GameObject blockScreen;
+    public GameObject blockBlur;
     // Start is called before the first frame update
     void Start()
     {
+        mainPanel.GetComponent<Animator>().Play("Panel In");
         previousWeaponIndex = -1;
         InitializeWeaponSelection();
         selectedCharacter = "Lucas";
@@ -50,6 +55,7 @@ public class SetupControllerScript : MonoBehaviour
 
     void Update()
     {
+        ToggleBlockScreen(blockScreenTrigger);
         if (activatePopupFlag) {
             TriggerPopup();
             activatePopupFlag = false;
@@ -86,7 +92,9 @@ public class SetupControllerScript : MonoBehaviour
 			if (qq.Value == 0) {
 				s.ToggleSelectedIndicator(true);
 				selectedSlot = s;
-			}
+			} else {
+                s.ToggleSelectedIndicator(false);
+            }
 			o.transform.SetParent(contentInventory.transform);
             s.setupController = this;
 		}
@@ -102,8 +110,8 @@ public class SetupControllerScript : MonoBehaviour
     public void SelectCharacter(SetupItemScript setupItem, string name) {
         DeselectCharacter();
         selectedCharacter = name;
-        selectedSlot.ToggleSelectedIndicator(true);
         selectedSlot = setupItem;
+        selectedSlot.ToggleSelectedIndicator(true);
         SpawnSelectedCharacter();
         EquipSelectedWeapon();
     }
@@ -123,6 +131,9 @@ public class SetupControllerScript : MonoBehaviour
         if (potentialName.Length > 12 || potentialName.Length < 3) {
             activatePopupFlag = true;
             popupMessage = "Your character name must be between 3 and 12 characters long!";
+            confirmAlertCancelBtn.interactable= true;
+            confirmAlertConfirmBtn.interactable = true;
+            TriggerBlockScreen(false);
             completeCharCreationFlag = false;
             return;
         }
@@ -130,6 +141,9 @@ public class SetupControllerScript : MonoBehaviour
         if (potentialName.Contains(" ")) {
             activatePopupFlag = true;
             popupMessage = "Your character name must not contain spaces.";
+            confirmAlertCancelBtn.interactable = true;
+            confirmAlertConfirmBtn.interactable = true;
+            TriggerBlockScreen(false);
             completeCharCreationFlag = false;
             return;
         }
@@ -138,6 +152,9 @@ public class SetupControllerScript : MonoBehaviour
             if (potentialNameLower.Contains(word)) {
                 activatePopupFlag = true;
                 popupMessage = "You cannot use this name. Please try another.";
+                confirmAlertCancelBtn.interactable = true;
+                confirmAlertConfirmBtn.interactable = true;
+                TriggerBlockScreen(false);
                 completeCharCreationFlag = false;
                 return;
             }
@@ -147,6 +164,9 @@ public class SetupControllerScript : MonoBehaviour
         if (regex.Matches(potentialName).Count == 0) {
             activatePopupFlag = true;
             popupMessage = "Your name must only consist of alphanumeric characters.";
+            confirmAlertCancelBtn.interactable = true;
+            confirmAlertConfirmBtn.interactable = true;
+            TriggerBlockScreen(false);
             completeCharCreationFlag = false;
             return;
         }
@@ -161,16 +181,23 @@ public class SetupControllerScript : MonoBehaviour
             Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
 			if (taskA.IsFaulted) {
                 activatePopupFlag = true;
+                TriggerBlockScreen(false);
                 popupMessage = "Database is currently unavailable. Please try again later.";
                 TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
             } else if (results["status"].ToString() == "200") {
                 activatePopupFlag = true;
                 popupMessage = "This username is taken! Please try another.";
+                confirmAlertCancelBtn.interactable = true;
+                confirmAlertConfirmBtn.interactable = true;
+                TriggerBlockScreen(false);
                 completeCharCreationFlag = false;
             } else {
                 if (!completeCharCreationFlag) {
                     activatePopupFlag = true;
                     popupMessage = "This name is available! You may use this name if you wish.";
+                    confirmAlertCancelBtn.interactable = true;
+                    confirmAlertConfirmBtn.interactable = true;
+                    TriggerBlockScreen(false);
                     completeCharCreationFlag = false;
                 } else {
                     func = DAOScript.dao.functions.GetHttpsCallable("setUsernameTaken");
@@ -183,6 +210,9 @@ public class SetupControllerScript : MonoBehaviour
                             activatePopupFlag = true;
                             // popupMessage = "Database is currently unavailable. Please try again later.";
                             TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                            confirmAlertCancelBtn.interactable = true;
+                            confirmAlertConfirmBtn.interactable = true;
+                            TriggerBlockScreen(false);
                             completeCharCreationFlag = false;
                             return;
                         } else {
@@ -200,6 +230,9 @@ public class SetupControllerScript : MonoBehaviour
                                         activatePopupFlag = true;
                                         // popupMessage = "Database is currently unavailable. Please try again later.";
                                         TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                                        confirmAlertCancelBtn.interactable = true;
+                                        confirmAlertConfirmBtn.interactable = true;
+                                        TriggerBlockScreen(false);
                                         completeCharCreationFlag = false;
                                         return;
                                     } else {
@@ -272,22 +305,26 @@ public class SetupControllerScript : MonoBehaviour
                                             func = DAOScript.dao.functions.GetHttpsCallable("giveItemsToUser");
                                             func.CallAsync(inputData).ContinueWith((taskD) => {
                                                 if (taskD.IsFaulted) {
+                                                    TriggerBlockScreen(false);
                                                     TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                                                 } else {
                                                     Dictionary<object, object> results4 = (Dictionary<object, object>)taskD.Result.Data;
                                                     if (results4["status"].ToString() == "200") {
                                                         finishedFlag = true;
                                                     } else {
+                                                        TriggerBlockScreen(false);
                                                         TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                                                     }
                                                 }
                                             });
                                         } else {
+                                            TriggerBlockScreen(false);
                                             TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                                         }
                                     }
                                 });
                             } else {
+                                TriggerBlockScreen(false);
                                 TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                             }
                         }
@@ -316,9 +353,14 @@ public class SetupControllerScript : MonoBehaviour
         checkBtn.interactable = b;
     }
 
+    public void EnableInputs() {
+        ToggleInputs(true);
+    }
+
     public void CompleteCharacterCreation() {
         confirmAlertCancelBtn.interactable = false;
         confirmAlertConfirmBtn.interactable = false;
+        TriggerBlockScreen(true);
         CheckCharacterName();
     }
 
@@ -394,5 +436,14 @@ public class SetupControllerScript : MonoBehaviour
         previousWeaponIndex = weaponSelector.index;
         EquipSelectedWeapon();
     }
+
+    public void TriggerBlockScreen(bool b) {
+		blockScreenTrigger = b;
+	}
+
+	void ToggleBlockScreen(bool b) {
+		blockScreen.SetActive(b);
+		blockBlur.SetActive(b);
+	}
 
 }

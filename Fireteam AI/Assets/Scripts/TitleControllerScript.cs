@@ -40,6 +40,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public ModalWindowManager confirmPopup;
 	public ModalWindowManager keyBindingsPopup;
 	public ModalWindowManager makePurchasePopup;
+	// Block screen used for blocking player interaction with screen while something is going on in the backgronud (example: if a transaction is in progress)
+	private bool blockScreenTrigger;
+	public GameObject blockScreen;
+	public GameObject blockBlur;
 	private string itemBeingPurchased;
 	private string typeBeingPurchased;
 	private uint totalGpCostBeingPurchased;
@@ -275,6 +279,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			mainPanelManager.OpenFirstTab();
 		}
 
+		ToggleBlockScreen(blockScreenTrigger);
 		if (PlayerData.playerdata.disconnectedFromServer) {
 			PlayerData.playerdata.disconnectedFromServer = false;
 			TriggerAlertPopup("Lost connection to server.\nReason: " + PlayerData.playerdata.disconnectReason);
@@ -480,13 +485,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisHeadgear;
 			s.itemName = entry.Key;
             s.itemType = "Headgear";
 			s.itemDescription = thisHeadgear.description;
 			s.gpPriceTxt.text = ""+thisHeadgear.gpPrice + " GP";
+			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisHeadgear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
 		}
@@ -533,13 +538,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisFacewear;
 			s.itemName = entry.Key;
             s.itemType = "Facewear";
 			s.itemDescription = thisFacewear.description;
 			s.gpPriceTxt.text = ""+thisFacewear.gpPrice + " GP";
+			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisFacewear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
 		}
@@ -586,13 +591,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.armorDetails = thisArmor;
 			s.itemName = entry.Key;
             s.itemType = "Armor";
 			s.itemDescription = thisArmor.description;
 			s.gpPriceTxt.text = ""+thisArmor.gpPrice + " GP";
+			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisArmor.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
 		}
@@ -639,13 +644,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisEquipment;
 			s.itemName = entry.Key;
             s.itemType = "Top";
 			s.itemDescription = thisEquipment.description;
 			s.gpPriceTxt.text = ""+thisEquipment.gpPrice + " GP";
+			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisEquipment.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
 		}
@@ -692,13 +697,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisBottom;
 			s.itemName = entry.Key;
             s.itemType = "Bottom";
 			s.itemDescription = thisBottom.description;
 			s.gpPriceTxt.text = ""+thisBottom.gpPrice + " GP";
+			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisBottom.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
 		}
@@ -745,13 +750,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisFootwear;
 			s.itemName = entry.Key;
             s.itemType = "Footwear";
 			s.itemDescription = thisFootwear.description;
 			s.gpPriceTxt.text = ""+thisFootwear.gpPrice + " GP";
+			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisFootwear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
 		}
@@ -801,7 +806,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -809,6 +813,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -894,7 +899,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -902,6 +906,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -983,7 +988,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -991,6 +995,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -1072,7 +1077,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1080,6 +1084,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -1161,7 +1166,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1169,6 +1173,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -1250,7 +1255,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1258,6 +1262,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -1339,7 +1344,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1347,6 +1351,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -1428,7 +1433,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1436,6 +1440,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -1517,7 +1522,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1525,6 +1529,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -1606,7 +1611,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1614,6 +1618,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -1695,7 +1700,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1703,6 +1707,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -1784,7 +1789,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1792,6 +1796,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -1874,7 +1879,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1882,6 +1886,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -1963,7 +1968,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1971,6 +1975,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -2052,7 +2057,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -2060,6 +2064,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
             s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -2108,7 +2113,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef= itemDescriptionPopupRef;
 			s.modDetails = m;
 			s.itemName = m.name;
@@ -2116,6 +2120,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = m.description;
 			s.weaponCategory = m.category;
             s.gpPriceTxt.text = "" + m.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -2133,7 +2138,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.modDetails = m;
 			s.itemName = m.name;
@@ -2141,6 +2145,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = m.description;
 			s.weaponCategory = m.category;
             s.gpPriceTxt.text = "" + m.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -2158,7 +2163,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.modDetails = m;
 			s.itemName = m.name;
@@ -2166,6 +2170,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = m.description;
 			s.weaponCategory = m.category;
             s.gpPriceTxt.text = "" + m.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
 		}
@@ -2212,13 +2217,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(shopContentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForMarket();
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.characterDetails = c;
 			s.itemName = entry.Key;
             s.itemType = "Character";
 			s.itemDescription = c.description;
             s.gpPriceTxt.text = "" + c.gpPrice + " GP";
+			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(c.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
 		}
@@ -2659,10 +2664,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnConfirmPreparePurchaseClicked() {
 		confirmingTransaction = true;
 		makePurchasePopup.ModalWindowOut();
-		TriggerConfirmPopup("Are you sure you would like to buy " + itemBeingPurchased + " for " + durationSelection.GetCurrentItem() + " for " + totalGpCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + "?");
+		TriggerConfirmPopup("ARE YOU SURE YOU WOULD LIKE TO BUY " + itemBeingPurchased + " FOR " + durationSelection.GetCurrentItem() + " FOR " + totalGpCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + "?");
 	}
 
 	public void OnConfirmPurchaseClicked() {
+		TriggerBlockScreen(true);
 		ConfirmPurchase();
 	}
 
@@ -2686,11 +2692,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void ConfirmPurchase() {
-		confirmingTransaction = false;
         // Ensure that the user doesn't already have this item
         float hasDuplicateCheck = HasDuplicateItem(itemBeingPurchased, typeBeingPurchased);
         if (hasDuplicateCheck < 0f) {
 			TriggerAlertPopup("You already own this item.");
+			TriggerBlockScreen(false);
+			confirmingTransaction = false;
 			return;
 		}
         bool isStacking = (hasDuplicateCheck >= 0f && !Mathf.Approximately(0f, hasDuplicateCheck));
@@ -2700,7 +2707,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, "gp");
 			confirmPopup.ModalWindowOut();
 		} else {	
-			TriggerAlertPopup("You do not have enough GP to purchase this item.");	
+			TriggerAlertPopup("You do not have enough GP to purchase this item.");
+			TriggerBlockScreen(false);
+			confirmingTransaction = false;
 		}	
 	}
 
@@ -3070,6 +3079,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (confirmingTransaction) {
 			OnConfirmPurchaseClicked();
 		}
+	}
+
+	public void TriggerBlockScreen(bool b) {
+		blockScreenTrigger = b;
+	}
+
+	void ToggleBlockScreen(bool b) {
+		blockScreen.SetActive(b);
+		blockBlur.SetActive(b);
 	}
 		
 }

@@ -312,6 +312,8 @@ namespace Michsky.UI.Shift
 
         public void UpdateUI()
         {
+            Debug.Log("A:" + (label == null));
+            Debug.Log("B:" + (itemList[index] == null));
             label.text = itemList[index].itemTitle;
 
             if (enableIndicators == true)

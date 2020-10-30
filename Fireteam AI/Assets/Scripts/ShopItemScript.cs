@@ -59,7 +59,9 @@ public class ShopItemScript : MonoBehaviour
         clickCount++;
         if (clickCount == 2) {
             if (titleType == 'm') {
-                PreviewItem();
+                if (ItemCanBePreviewed()) {
+                    PreviewItem();
+                }
             } else if (titleType == 'l') {
                 EquipItem();
             } else if (titleType == 's') {
@@ -72,6 +74,13 @@ public class ShopItemScript : MonoBehaviour
             clickTimer = 0f;
             clickCount = 0;
         }
+    }
+
+    bool ItemCanBePreviewed() {
+        if (itemType == "Weapon" && weaponDetails.type != "Primary") {
+            return false;
+        }
+        return true;
     }
 
     public void LoadWeaponForModding() {
@@ -236,7 +245,7 @@ public class ShopItemScript : MonoBehaviour
 
     public void SetItemForMarket() {
         gpPriceTxt.gameObject.SetActive(true);
-        previewBtn.gameObject.SetActive(true);
+        previewBtn.gameObject.SetActive(ItemCanBePreviewed());
         purchaseBtn.gameObject.SetActive(true);
         equipBtn.gameObject.SetActive(false);
         modWeaponBtn.gameObject.SetActive(false);

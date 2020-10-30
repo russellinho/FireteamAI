@@ -859,12 +859,18 @@ public class PlayerData : MonoBehaviour
             func.CallAsync(inputData).ContinueWith((taskA) => {
                 if (taskA.IsFaulted) {
                     TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                    titleRef.TriggerBlockScreen(false);
+                    titleRef.confirmingTransaction = false;
                 } else {
                     Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
                     if (results["status"].ToString() == "200") {
                         titleRef.TriggerAlertPopup("Purchase successful! The item has been added to your inventory.");
+                        titleRef.TriggerBlockScreen(false);
+                        titleRef.confirmingTransaction = false;
                     } else {
                         TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        titleRef.TriggerBlockScreen(false);
+                        titleRef.confirmingTransaction = false;
                     }
                 }
             });
