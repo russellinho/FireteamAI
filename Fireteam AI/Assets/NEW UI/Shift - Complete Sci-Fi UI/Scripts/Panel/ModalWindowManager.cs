@@ -18,7 +18,6 @@ namespace Michsky.UI.Shift
 
         Animator mWindowAnimator;
         bool isOn = false;
-        bool hidPlayer;
 
         void Start()
         {
@@ -35,7 +34,7 @@ namespace Michsky.UI.Shift
         {
             if (titleController != null) {
                 if (PlayerData.playerdata.bodyReference != null && PlayerData.playerdata.bodyReference.activeInHierarchy) {
-                    hidPlayer = true;
+                    titleController.hidPlayer = true;
                     titleController.TogglePlayerBody(false);
                     titleController.ToggleWeaponPreview(false);
                 }
@@ -54,8 +53,8 @@ namespace Michsky.UI.Shift
         public void ModalWindowOut()
         {
             if (titleController != null) {
-                if (PlayerData.playerdata.bodyReference != null && hidPlayer && !titleController.confirmingTransaction) {
-                    hidPlayer = false;
+                if (PlayerData.playerdata.bodyReference != null && titleController.hidPlayer && !titleController.confirmingTransaction) {
+                    titleController.hidPlayer = false;
                     titleController.TogglePlayerBody(true);
                     titleController.ToggleWeaponPreview(true);
                 }

@@ -126,6 +126,8 @@ public class PlayerData : MonoBehaviour
         if (dataLoadedFlag) {
             InstantiatePlayer();
             titleRef.SetPlayerStatsForTitle();
+            titleRef.ToggleLoadingScreen(false);
+			titleRef.mainPanelManager.OpenFirstTab();
             dataLoadedFlag = false;
         }
         if (triggerEmergencyExitFlag) {

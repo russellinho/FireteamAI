@@ -696,14 +696,14 @@ public class WeaponScript : MonoBehaviour
         // Shop GUI stuff
         if (shopItemRef != null) {
             // Sets item that you unequipped to white
-            if (ts.currentlyEquippedItemPrefab != null) {
-                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+            if (ts.currentlyEquippedWeaponPrefab != null) {
+                ts.currentlyEquippedWeaponPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
             }
 
             // Sets item that you just equipped to orange in the shop
             if (shopItemRef != null) {
                 shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
-                ts.currentlyEquippedItemPrefab = shopItemRef;
+                ts.currentlyEquippedWeaponPrefab = shopItemRef;
             }
         }
 

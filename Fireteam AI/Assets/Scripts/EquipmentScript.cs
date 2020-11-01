@@ -174,24 +174,37 @@ public class EquipmentScript : MonoBehaviour
     public void HighlightItemPrefab(GameObject shopItemRef) {
         // Sets item that you just equipped to orange in the shop
         if (shopItemRef != null) {
-            shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
-            if (ts.currentlyEquippedItemPrefab != null) {
-                ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+            ShopItemScript sis = shopItemRef.GetComponent<ShopItemScript>();
+            sis.ToggleEquippedIndicator(true);
+            if (sis.itemType == "Weapon") {
+                if (ts.currentlyEquippedWeaponPrefab != null) {
+                    ts.currentlyEquippedWeaponPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+                }
+                ts.currentlyEquippedWeaponPrefab = shopItemRef;
+            } else if (sis.itemType == "Mod") {
+                if (ts.currentlyEquippedModPrefab != null) {
+                    ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+                }
+                ts.currentlyEquippedModPrefab = shopItemRef;
+            } else {
+                if (ts.currentlyEquippedEquipmentPrefab != null) {
+                    ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+                }
+                ts.currentlyEquippedEquipmentPrefab = shopItemRef;
             }
-            ts.currentlyEquippedItemPrefab = shopItemRef;
         }
     }
 
     public void EquipCharacter(string name, GameObject shopItemRef) {
         // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null && !ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemName.Equals(name)) {
-            ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+        if (ts.currentlyEquippedEquipmentPrefab != null && !ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().itemName.Equals(name)) {
+            ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
         }
 
         // Sets item that you just equipped to orange in the shop
         if (shopItemRef != null) {
             shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
-            ts.currentlyEquippedItemPrefab = shopItemRef;
+            ts.currentlyEquippedEquipmentPrefab = shopItemRef;
         }
 
         Dictionary<string, object> inputData = new Dictionary<string, object>();
@@ -289,14 +302,14 @@ public class EquipmentScript : MonoBehaviour
         }
 
         // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Top")) {
-            ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+        if (ts.currentlyEquippedEquipmentPrefab != null && ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().itemType.Equals("Top")) {
+            ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
         }
 
         // Sets item that you just equipped to orange in the shop
         if (shopItemRef != null) {
             shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
-            ts.currentlyEquippedItemPrefab = shopItemRef;
+            ts.currentlyEquippedEquipmentPrefab = shopItemRef;
         }
 
         Dictionary<string, object> inputData = new Dictionary<string, object>();
@@ -400,14 +413,14 @@ public class EquipmentScript : MonoBehaviour
         }
 
         // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Bottom")) {
-            ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+        if (ts.currentlyEquippedEquipmentPrefab != null && ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().itemType.Equals("Bottom")) {
+            ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
         }
 
         // Sets item that you just equipped to orange in the shop
         if (shopItemRef != null) {
             shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
-            ts.currentlyEquippedItemPrefab = shopItemRef;
+            ts.currentlyEquippedEquipmentPrefab = shopItemRef;
         }
 
         Dictionary<string, object> inputData = new Dictionary<string, object>();
@@ -483,14 +496,14 @@ public class EquipmentScript : MonoBehaviour
         }
 
         // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Footwear")) {
-            ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+        if (ts.currentlyEquippedEquipmentPrefab != null && ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().itemType.Equals("Footwear")) {
+            ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
         }
 
         // Sets item that you just equipped to orange in the shop
         if (shopItemRef != null) {
             shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
-            ts.currentlyEquippedItemPrefab = shopItemRef;
+            ts.currentlyEquippedEquipmentPrefab = shopItemRef;
         }
 
         Dictionary<string, object> inputData = new Dictionary<string, object>();
@@ -554,15 +567,15 @@ public class EquipmentScript : MonoBehaviour
         }
 
         // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Facewear")) {
-            ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
-            ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+        if (ts.currentlyEquippedEquipmentPrefab != null && ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().itemType.Equals("Facewear")) {
+            ts.currentlyEquippedEquipmentPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+            ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
         }
 
         // Sets item that you just equipped to orange in the shop
         if (shopItemRef != null) {
             shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
-            ts.currentlyEquippedItemPrefab = shopItemRef;
+            ts.currentlyEquippedEquipmentPrefab = shopItemRef;
         }
 
         Dictionary<string, object> inputData = new Dictionary<string, object>();
@@ -619,15 +632,15 @@ public class EquipmentScript : MonoBehaviour
         }
 
         // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Headgear")) {
-            ts.currentlyEquippedItemPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
-            ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+        if (ts.currentlyEquippedEquipmentPrefab != null && ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().itemType.Equals("Headgear")) {
+            ts.currentlyEquippedEquipmentPrefab.GetComponentsInChildren<Image>()[0].color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
+            ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
         }
 
         // Sets item that you just equipped to orange in the shop
         if (shopItemRef != null) {
             shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
-            ts.currentlyEquippedItemPrefab = shopItemRef;
+            ts.currentlyEquippedEquipmentPrefab = shopItemRef;
         }
 
         Dictionary<string, object> inputData = new Dictionary<string, object>();
@@ -684,14 +697,14 @@ public class EquipmentScript : MonoBehaviour
         }
 
         // Sets item that you unequipped to white
-        if (ts.currentlyEquippedItemPrefab != null && ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().itemType.Equals("Armor")) {
-            ts.currentlyEquippedItemPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
+        if (ts.currentlyEquippedEquipmentPrefab != null && ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().itemType.Equals("Armor")) {
+            ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
         }
 
         // Sets item that you just equipped to orange in the shop
         if (shopItemRef != null) {
             shopItemRef.GetComponent<ShopItemScript>().ToggleEquippedIndicator(true);
-            ts.currentlyEquippedItemPrefab = shopItemRef;
+            ts.currentlyEquippedEquipmentPrefab = shopItemRef;
         }
 
         Dictionary<string, object> inputData = new Dictionary<string, object>();

@@ -229,9 +229,9 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		void StartGame(string level) {
 			// Photon switch scene from lobby to loading screen to actual game. automaticallySyncScene should load map on clients.
-			if (level.Equals ("Badlands: Act I")) {
+			if (level.Equals ("The Badlands: Act I")) {
 				pView.RPC("RpcStartCampaignGame", RpcTarget.All, "Badlands1");
-			} else if (level.Equals("Badlands: Act II")) {
+			} else if (level.Equals("The Badlands: Act II")) {
 				pView.RPC("RpcStartCampaignGame", RpcTarget.All, "Badlands2");
 			} else {
 				pView.RPC("RpcStartCampaignGame", RpcTarget.All, level);
@@ -239,9 +239,9 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
         void StartVersusGame(string level) {
-            if (level.Equals ("Badlands: Act I")) {
+            if (level.Equals ("The Badlands: Act I")) {
                 pView.RPC("RpcStartVersusGame", RpcTarget.All, "Badlands1");
-			} else if (level.Equals ("Badlands: Act II")) {
+			} else if (level.Equals ("The Badlands: Act II")) {
 				pView.RPC("RpcStartVersusGame", RpcTarget.All, "Badlands2");
 			} else {
                 pView.RPC("RpcStartVersusGame", RpcTarget.All, level);
@@ -345,13 +345,14 @@ namespace Photon.Pun.LobbySystemPhoton
 		[PunRPC]
 		void RpcLoadingScreen(int i) {
 			TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
-			ts.InstantiateLoadingScreen (mapNames[i]);
+			ts.InstantiateLoadingScreen (mapNames[i], mapDescriptions[i]);
 			ts.ToggleLoadingScreen(true);
 		}
 
 		void LoadingScreen() {
 			TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
-			ts.InstantiateLoadingScreen (mapNames[currentMode == 'C' ? mapSelector.index : mapSelectorVs.index]);
+			int i = (currentMode == 'C' ? mapSelector.index : mapSelectorVs.index);
+			ts.InstantiateLoadingScreen (mapNames[i], mapDescriptions[i]);
 			ts.ToggleLoadingScreen(true);
 		}
 

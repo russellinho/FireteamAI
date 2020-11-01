@@ -123,7 +123,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject equippedSightSlot;
 	public ShopItemScript equippedSuppressorShopSlot;
 	public ShopItemScript equippedSightShopSlot;
-	public GameObject currentlyEquippedItemPrefab;
+	public GameObject currentlyEquippedWeaponPrefab;
+	public GameObject currentlyEquippedEquipmentPrefab;
 	public TextMeshProUGUI armorBoostPercent;
 	public TextMeshProUGUI speedBoostPercent;
 	public TextMeshProUGUI staminaBoostPercent;
@@ -178,6 +179,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public string alertPopupMessage;
 	public string confirmPopupMessage;
 	private bool confirmClicked;
+	public bool hidPlayer;
 	public MainPanelManager mainPanelManager;
 	public Button previouslyPressedButtonLeft;
 	public Button previouslyPressedSubButtonLeft;
@@ -200,7 +202,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	// Use this for initialization
 	void Awake() {
 		if (PlayerData.playerdata == null || PlayerData.playerdata.bodyReference == null) {
-			InstantiateLoadingScreen(null);
+			InstantiateLoadingScreen(null, null);
 			ToggleLoadingScreen(true);
 		}
 		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
@@ -240,24 +242,27 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	public void InstantiateLoadingScreen(string mapName) {
+	public void InstantiateLoadingScreen(string mapName, string mapDescription) {
 		if (mapName != null) {
 			JukeboxScript.jukebox.audioSource1.Stop ();
 			JukeboxScript.jukebox.audioSource2.Stop ();
-			if (mapName.Equals ("Badlands: Act I")) {
+			if (mapName.Equals ("The Badlands: Act I")) {
 				screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands1_load");
-			} else if (mapName.Equals("Badlands: Act II")) {
+			} else if (mapName.Equals("The Badlands: Act II")) {
 				screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands2_load");
 			}
 			proTipText.text = proTips[Random.Range(0, 2)];
 			mapTitleText.text = mapName;
+			mapDescriptionText.text = mapDescription;
 			screenArtContainer.gameObject.SetActive(true);
 			proTipContainer.gameObject.SetActive(true);
 			mapTitleText.gameObject.SetActive(true);
+			mapDescriptionText.gameObject.SetActive(true);
 		} else {
 			screenArtContainer.gameObject.SetActive(false);
 			proTipContainer.gameObject.SetActive(false);
 			mapTitleText.gameObject.SetActive(false);
+			mapDescriptionText.gameObject.SetActive(false);
 		}
 	}
 
@@ -274,10 +279,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void Update() {
-		if (loadingScreen.alpha == 1f && PlayerData.playerdata.bodyReference != null) {
-			ToggleLoadingScreen(false);
-			mainPanelManager.OpenFirstTab();
-		}
+		// if (loadingScreen.alpha == 1f && PlayerData.playerdata.bodyReference != null) {
+		// 	ToggleLoadingScreen(false);
+		// 	mainPanelManager.OpenFirstTab();
+		// }
 
 		ToggleBlockScreen(blockScreenTrigger);
 		if (PlayerData.playerdata.disconnectedFromServer) {
@@ -401,13 +406,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (type == 'e') {
 			RawImage[] existingThumbnails = contentInventoryEquipment.GetComponentsInChildren<RawImage>();
 			foreach (RawImage r in existingThumbnails) {
-				currentlyEquippedItemPrefab = null;
+				currentlyEquippedEquipmentPrefab = null;
 				Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 			}
 		} else if (type == 'w') {
 			RawImage[] existingThumbnails = contentInventoryWeapons.GetComponentsInChildren<RawImage>();
 			foreach (RawImage r in existingThumbnails) {
-				currentlyEquippedItemPrefab = null;
+				currentlyEquippedWeaponPrefab = null;
 				Destroy(r.GetComponentInParent<ShopItemScript>().gameObject);
 			}
 		}
@@ -467,7 +472,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisHeadgear.thumbnailPath);
 			if (thisItemName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedHeadgear)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedEquipmentPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryEquipment.transform, false);
 		}
@@ -520,7 +525,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisFacewear.thumbnailPath);
 			if (thisItemName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedFacewear)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedEquipmentPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryEquipment.transform, false);
 		}
@@ -573,7 +578,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisArmor.thumbnailPath);
 			if (thisItemName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedArmor)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedEquipmentPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryEquipment.transform, false);
 		}
@@ -626,7 +631,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.acquireDate = ed.AcquireDate;
 			if (thisItemName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedTop)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedEquipmentPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryEquipment.transform, false);
 		}
@@ -679,7 +684,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
 			if (thisItemName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedBottom)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedEquipmentPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryEquipment.transform, false);
 		}
@@ -732,7 +737,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(InventoryScript.itemData.equipmentCatalog[thisItemName].thumbnailPath);
 			if (thisItemName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedFootwear)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedEquipmentPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryEquipment.transform, false);
 		}
@@ -788,7 +793,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedPrimaryWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -881,7 +886,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSecondaryWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -970,7 +975,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSupportWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -1059,7 +1064,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedMeleeWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -1148,7 +1153,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedPrimaryWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -1237,7 +1242,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedPrimaryWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -1326,7 +1331,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedPrimaryWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -1415,7 +1420,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedPrimaryWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -1504,7 +1509,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedPrimaryWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -1593,7 +1598,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSecondaryWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -1682,7 +1687,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSecondaryWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -1771,7 +1776,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSupportWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -1861,7 +1866,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSupportWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -1950,7 +1955,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedSupportWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -2039,7 +2044,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			if (thisWeaponName.Equals(PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().equippedMeleeWeapon)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedWeaponPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryWeapons.transform, false);
 		}
@@ -2199,7 +2204,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.thumbnailRef.texture = (Texture)Resources.Load(c.thumbnailPath);
 			if (thisCharacterName.Equals(PlayerData.playerdata.bodyReference.GetComponent<EquipmentScript>().equippedCharacter)) {
 				s.ToggleEquippedIndicator(true);
-				currentlyEquippedItemPrefab = o;
+				currentlyEquippedEquipmentPrefab = o;
 			}
 			o.transform.SetParent(contentInventoryEquipment.transform, false);
 		}

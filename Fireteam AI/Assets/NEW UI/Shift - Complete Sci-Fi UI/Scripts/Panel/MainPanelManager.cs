@@ -11,6 +11,7 @@ namespace Michsky.UI.Shift
         private const int MOD_SHOP_INDEX = 3;
         private const int CAMPAIGN_INDEX = 5;
         private const int VERSUS_INDEX = 6;
+        private const int MARKET_INDEX = 1;
         public TitleControllerScript titleController;
         public string panelManagerType;
         [Header("PANEL LIST")]
@@ -116,6 +117,8 @@ namespace Michsky.UI.Shift
                         titleController.ExitMatchmaking();
                     } else if (currentPanelIndex == VERSUS_INDEX) {
                         titleController.ExitMatchmaking();
+                    } else if (currentPanelIndex == MARKET_INDEX) {
+                        titleController.ClearPreview();
                     }
                 }
                 if (newPanel == "Settings") {
