@@ -27791,7 +27791,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 218.01999, y: 0}
+  m_AnchoredPosition: {x: 259.02997, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5546923512010674783
@@ -31316,6 +31316,7 @@ GameObject:
   - component: {fileID: 5546923512794399333}
   - component: {fileID: 5546923512794399330}
   - component: {fileID: 3598933337518359387}
+  - component: {fileID: 6049243472863425801}
   m_Layer: 5
   m_Name: Pause Menu
   m_TagString: Untagged
@@ -31469,6 +31470,31 @@ MonoBehaviour:
   pauseActive: 0
   anim: {fileID: 5546923512794399330}
   blurManager: {fileID: 5546923513664927180}
+--- !u!114 &6049243472863425801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5546923512794399339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be758011c81081f47a6424da18aa756c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  keyMappingsPanel: {fileID: 0}
+  mainMenuGroup: {fileID: 0}
+  optionsMenuGroup: {fileID: 0}
+  audioSettingsGroup: {fileID: 0}
+  musicVolumeSlider: {fileID: 0}
+  musicVolumeField: {fileID: 0}
+  optionsKeyBindingsBtn: {fileID: 0}
+  optionsAudioSettingsBtn: {fileID: 0}
+  optionsBackBtn: {fileID: 0}
+  optionsTitle: {fileID: 0}
+  isChangingKeyMapping: 0
+  changingKeyMappingText: {fileID: 0}
+  keyMappingInputs: []
 --- !u!1 &5546923512854060487
 GameObject:
   m_ObjectHideFlags: 0
@@ -44582,9 +44608,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 6049243472863425801}
+        m_MethodName: ResumeGame
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -45115,6 +45141,17 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 5579191477849654379}
         m_MethodName: ModalWindowIn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 6049243472863425801}
+        m_MethodName: LeaveGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

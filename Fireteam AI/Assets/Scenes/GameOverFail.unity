@@ -156,8 +156,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 999.2959, y: -45}
-  m_SizeDelta: {x: 408.27835, y: 50}
+  m_AnchoredPosition: {x: 895.3503, y: -45}
+  m_SizeDelta: {x: 366.7001, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &35868990
 MonoBehaviour:
@@ -1793,8 +1793,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 203.23418, y: -45}
-  m_SizeDelta: {x: 406.46835, y: 50}
+  m_AnchoredPosition: {x: 182.44505, y: -45}
+  m_SizeDelta: {x: 364.8901, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &518680957
 MonoBehaviour:
@@ -2833,7 +2833,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 3465f1ac9d9ead2498991541c27ce58b, type: 3}
+  m_Texture: {fileID: 2800000, guid: 126b08fc9dab04ab1979609b71dfac13, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -3939,7 +3939,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1130588324
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4508,7 +4508,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1215034090
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4756,8 +4756,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 600.8125, y: -45}
-  m_SizeDelta: {x: 388.68835, y: 50}
+  m_AnchoredPosition: {x: 538.4452, y: -45}
+  m_SizeDelta: {x: 347.1101, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1264323134
 MonoBehaviour:
@@ -7065,7 +7065,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 3465f1ac9d9ead2498991541c27ce58b, type: 3}
+  m_Texture: {fileID: 2800000, guid: 126b08fc9dab04ab1979609b71dfac13, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0

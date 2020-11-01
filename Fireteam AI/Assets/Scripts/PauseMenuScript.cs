@@ -45,7 +45,6 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void ResumeGame() {
-		gameObject.SetActive (false);
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
 	}
