@@ -197,7 +197,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		if (container.staminaGroup.alpha == 1f) {
 			float f = (playerActionScript.sprintTime / playerActionScript.playerScript.stamina);
 			container.staminaBar.value = f;
-			container.staminaPercentTxt.text = ((int)(f * 100f)) + "%";
+			// container.staminaPercentTxt.text = ((int)(f * 100f)) + "%";
 		}
 		
 		HandleVipHealthBar();
