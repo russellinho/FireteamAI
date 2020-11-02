@@ -190,7 +190,7 @@ public class WeaponScript : MonoBehaviour
             return false;
         } else if (weaponActionScript.deployInProgress) {
             return false;
-        } else if (weaponActionScript.hudScript.container.pauseMenuGUI.alpha == 1f) {
+        } else if (weaponActionScript.hudScript.container.pauseMenuGUI.pauseActive) {
             return false;
         }
         return true;

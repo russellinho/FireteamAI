@@ -554,6 +554,7 @@ GameObject:
   - component: {fileID: 417765983675794287}
   - component: {fileID: 417765983675794281}
   - component: {fileID: 417765983675794280}
+  - component: {fileID: 8017533915737476653}
   m_Layer: 5
   m_Name: GameOverPlayerEntry
   m_TagString: Untagged
@@ -617,6 +618,23 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+--- !u!114 &8017533915737476653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 417765983675794286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a34f266a7b1784a10b826af1b3c6c10e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nametagText: {fileID: 417765983995014847}
+  rankImage: {fileID: 417765983515836312}
+  gpGainedText: {fileID: 417765983606560345}
+  expGainedText: {fileID: 417765983289326334}
+  levelUpText: {fileID: 417765982464692433}
 --- !u!1 &417765983995014845
 GameObject:
   m_ObjectHideFlags: 0

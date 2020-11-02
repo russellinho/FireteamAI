@@ -190,13 +190,14 @@ namespace Photon.Pun.LobbySystemPhoton
 		void ToggleButtons(bool status) {
 			readyButton.GetComponent<Button> ().interactable = status;
             readyButtonVs.GetComponent<Button>().interactable = status;
-            sendMsgBtn.interactable = status;
-            sendMsgBtnVs.interactable = status;
+            // sendMsgBtn.interactable = status;
+            // sendMsgBtnVs.interactable = status;
 			// emojiBtn.interactable = status;
             // emojiBtnVs.interactable = status;
 			leaveGameBtn.interactable = status;
             leaveGameBtnVs.interactable = status;
 			switchTeamsBtnVs.interactable = status;
+			ToggleMapChangeButtons(status);
 		}
 
 		[PunRPC]
@@ -204,13 +205,14 @@ namespace Photon.Pun.LobbySystemPhoton
 			gameStarting = gameIsStarting;
 			readyButton.GetComponent<Button> ().interactable = status;
 			readyButtonVs.GetComponent<Button> ().interactable = status;
-			sendMsgBtn.interactable = status;
-			sendMsgBtnVs.interactable = status;
+			// sendMsgBtn.interactable = status;
+			// sendMsgBtnVs.interactable = status;
 			// emojiBtn.interactable = status;
 			// emojiBtnVs.interactable = status;
 			leaveGameBtn.interactable = status;
 			leaveGameBtnVs.interactable = status;
 			switchTeamsBtnVs.interactable = status;
+			ToggleMapChangeButtons(status);
 		}
 
 		void ChangeReadyStatus() {
@@ -272,27 +274,27 @@ namespace Photon.Pun.LobbySystemPhoton
 			titleController.GetComponent<AudioSource> ().clip = countdownSfx;
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chat.sendChatOfMaster ("Game starting in 5");
+				chat.SendServerMessage ("Game starting in 5");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chat.sendChatOfMaster ("Game starting in 4");
+				chat.SendServerMessage ("Game starting in 4");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chat.sendChatOfMaster ("Game starting in 3");
+				chat.SendServerMessage ("Game starting in 3");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chat.sendChatOfMaster ("Game starting in 2");
+				chat.SendServerMessage ("Game starting in 2");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chat.sendChatOfMaster ("Game starting in 1");
+				chat.SendServerMessage ("Game starting in 1");
 			}
 			yield return new WaitForSeconds (1f);
 
@@ -312,27 +314,27 @@ namespace Photon.Pun.LobbySystemPhoton
 
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chatVs.sendChatOfMaster ("Game starting in 5");
+				chatVs.SendServerMessage ("Game starting in 5");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chatVs.sendChatOfMaster ("Game starting in 4");
+				chatVs.SendServerMessage ("Game starting in 4");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chatVs.sendChatOfMaster ("Game starting in 3");
+				chatVs.SendServerMessage ("Game starting in 3");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chatVs.sendChatOfMaster ("Game starting in 2");
+				chatVs.SendServerMessage ("Game starting in 2");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chatVs.sendChatOfMaster ("Game starting in 1");
+				chatVs.SendServerMessage ("Game starting in 1");
 			}
 			yield return new WaitForSeconds (1f);
 

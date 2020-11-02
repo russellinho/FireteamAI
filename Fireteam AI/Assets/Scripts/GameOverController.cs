@@ -106,8 +106,8 @@ public class GameOverController : MonoBehaviourPunCallbacks {
             GameObject thisPlayerEntry = GameObject.Instantiate(PlayerEntryPrefab);
             GameOverPlayerEntry g = thisPlayerEntry.GetComponent<GameOverPlayerEntry>();
             g.nametagText.text = s.name;
-            g.expGainedText.text = "+"+s.expGained;
-            g.gpGainedText.text = "+"+s.gpGained;
+            g.expGainedText.text = "+"+s.expGained + " EXP";
+            g.gpGainedText.text = "+"+s.gpGained + " GP";
             GameObject killsEntry = GameObject.Instantiate(KDPrefab);
             killsEntry.GetComponent<TextMeshProUGUI>().text = ""+s.kills;
             GameObject deathsEntry = GameObject.Instantiate(KDPrefab);
@@ -151,8 +151,8 @@ public class GameOverController : MonoBehaviourPunCallbacks {
             GameObject killsEntry = GameObject.Instantiate(KDPrefab);
             GameObject deathsEntry = GameObject.Instantiate(KDPrefab);
             g.nametagText.text = s.name;
-            g.expGainedText.text = "+"+s.expGained;
-            g.gpGainedText.text = "+"+s.gpGained;
+            g.expGainedText.text = "+"+s.expGained + " EXP";
+            g.gpGainedText.text = "+"+s.gpGained + " GP";
             if (s.exp < newRank.minExp) {
                 g.levelUpText.enabled = true;
                 if (s.actorId == PhotonNetwork.LocalPlayer.ActorNumber) {

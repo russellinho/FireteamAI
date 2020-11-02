@@ -76,7 +76,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			enemyMarkers.Add(actorId, m);
 		}
 
-		container.pauseMenuGUI.alpha = 0f;
 		ToggleActionBar(false, null);
 		container.actionBarText.enabled = false;
 		container.hintText.enabled = false;
@@ -689,18 +688,19 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleHUD(bool b)
     {
-		if (b && container.healthGroup.alpha == 1f) {
+		if (b && container.timeGroup.activeInHierarchy) {
 			return;
 		}
-		if (!b && container.healthGroup.alpha == 0f) {
+		if (!b && !container.timeGroup.activeInHierarchy) {
 			return;
 		}
         container.healthGroup.alpha = (b ? 1f : 0f);
 		container.staminaGroup.alpha = (b ? 1f : 0f);
         container.weaponLabelTxt.gameObject.SetActive(b);
         container.ammoTxt.gameObject.SetActive(b);
-		container.hudMap.enabled = b;
-		container.hudMap2.enabled = b;
+		container.minimapGroup.SetActive(b);
+		container.timeGroup.SetActive(b);
+		Debug.Log(container.minimapGroup.activeInHierarchy);
 		container.hintText.enabled = false;
 		if (!b) {
 			container.itemCarryingText.text = null;
@@ -802,7 +802,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     {
 		if (container != null) {
 			container.missionText.GetComponent<MissionTextAnimScript> ().Reset ();
-			container.missionText.GetComponent<Text> ().text = message;
+			container.missionText.GetComponent<TextMeshProUGUI> ().text = message;
 			container.missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();
 		}
     }
@@ -921,6 +921,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	void ToggleGameOverBanner(bool b) {
 		if (b) {
 			playerActionScript.HandleGameOverBanner ();
+			container.gameOverBanner.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
 			container.gameOverBanner.SetActive (true);
 		} else {
 			container.gameOverBanner.SetActive (false);
@@ -1115,7 +1116,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	public bool PauseIsActive() {
-		return container.pauseMenuGUI.alpha == 1f;
+		return container.pauseMenuGUI.pauseActive;
 	}
 
 	public void UpdateHealth() {

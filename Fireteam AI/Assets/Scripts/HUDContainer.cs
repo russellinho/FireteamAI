@@ -30,7 +30,7 @@ public class HUDContainer : MonoBehaviour {
 	public Text itemCarryingText;
 
 	// Pause/in-game menu HUD
-	public CanvasGroup pauseMenuGUI;
+	public PauseMenuManager pauseMenuGUI;
 	public GameObject scoreboard;
     public InGameMessenger inGameMessenger;
 	public PauseMenuManager pauseMenuManager;
@@ -43,6 +43,7 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject hitMarker;
 
 	// Map HUD
+	public GameObject minimapGroup;
 	public RawImage hudMap;
 	public RawImage hudMap2;
 	public GameObject hudWaypoint;
@@ -57,8 +58,9 @@ public class HUDContainer : MonoBehaviour {
 	public TextMeshProUGUI actionBarText;
 	public Slider actionBarSlider;
 	public GameObject actionBar;
-	public Text hintText;
+	public TextMeshProUGUI hintText;
 	public Text spectatorText;
+	public GameObject timeGroup;
 	public Text missionTimeText;
 	public Text missionTimeRemainingText;
 	public Text assaultModeIndText;

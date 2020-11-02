@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class MissionTextAnimScript : MonoBehaviour {
 
-	private Text missionText;
+	private TextMeshProUGUI missionText;
 	private bool fadeIn;
 	private bool peak;
 	private bool started;
@@ -14,7 +15,7 @@ public class MissionTextAnimScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		missionText = GetComponent<Text> ();
+		missionText = GetComponent<TextMeshProUGUI> ();
 		soundEffect = GetComponent<AudioSource> ();
 		Reset ();
     }

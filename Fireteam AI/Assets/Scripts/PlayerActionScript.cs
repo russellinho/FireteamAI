@@ -286,7 +286,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         HandleInteracting();
 
-        if (fpc.enabled && fpc.canMove && hud.container.pauseMenuGUI.alpha == 0f)
+        if (fpc.enabled && fpc.canMove && !hud.container.pauseMenuGUI.pauseActive)
         {
             HandleCrouch();
             if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact")) {
