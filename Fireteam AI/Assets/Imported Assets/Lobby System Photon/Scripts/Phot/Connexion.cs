@@ -52,7 +52,7 @@ namespace Photon.Pun.LobbySystemPhoton
             Hashtable h = new Hashtable();
             h.Add("gameMode", "camp");
 			h.Add("mapName", listPlayer.mapSelector.GetCurrentItem());
-			string[] lobbyProperties = new string[1] {"gameMode"};
+			string[] lobbyProperties = new string[2] {"gameMode", "mapName"};
             options.CustomRoomProperties = h;
 			options.CustomRoomPropertiesForLobby = lobbyProperties;
 
@@ -72,7 +72,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			h.Add("mapName", listPlayer.mapSelectorVs.GetCurrentItem());
 			h.Add("redScore", 0);
 			h.Add("blueScore", 0);
-            string[] lobbyProperties = new string[1] {"gameMode"};
+            string[] lobbyProperties = new string[2] {"gameMode", "mapName"};
             options.CustomRoomProperties = h;
             options.CustomRoomPropertiesForLobby = lobbyProperties;
 
