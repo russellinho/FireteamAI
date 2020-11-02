@@ -31,13 +31,6 @@ namespace Photon.Pun.LobbySystemPhoton
             StartCoroutine("AutoRefreshListRoom");
 		}
 
-        public void OnVersusRefreshButtonClicked()
-        {
-            StopCoroutine("AutoRefreshListRoom");
-            PhotonNetwork.JoinLobby();
-            StartCoroutine("AutoRefreshListRoom");
-        }
-
 		public override void OnConnectedToMaster()
 		{
             PhotonNetwork.NickName = PlayerData.playerdata.info.Playername;
@@ -58,6 +51,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			RoomOptions options = new RoomOptions { MaxPlayers = 8 };
             Hashtable h = new Hashtable();
             h.Add("gameMode", "camp");
+			h.Add("mapName", listPlayer.mapSelector.GetCurrentItem());
 			string[] lobbyProperties = new string[1] {"gameMode"};
             options.CustomRoomProperties = h;
 			options.CustomRoomPropertiesForLobby = lobbyProperties;
@@ -75,6 +69,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			RoomOptions options = new RoomOptions { MaxPlayers = 16 };
             Hashtable h = new Hashtable();
             h.Add("gameMode", "versus");
+			h.Add("mapName", listPlayer.mapSelectorVs.GetCurrentItem());
 			h.Add("redScore", 0);
 			h.Add("blueScore", 0);
             string[] lobbyProperties = new string[1] {"gameMode"};

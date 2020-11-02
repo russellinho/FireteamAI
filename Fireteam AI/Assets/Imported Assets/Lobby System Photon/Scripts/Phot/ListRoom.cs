@@ -9,6 +9,7 @@ namespace Photon.Pun.LobbySystemPhoton
 	{
 		private Dictionary<string, RoomInfo> cachedRoomList;
 		private Dictionary<string, GameObject> roomListEntries;
+		public ListPlayer listPlayer;
 		public Template templateUIClass;
 		public Template templateUIClassVs;
 
@@ -89,15 +90,19 @@ namespace Photon.Pun.LobbySystemPhoton
 			foreach (RoomInfo info in cachedRoomList.Values)
 			{
 				GameObject entry = Instantiate(RoomListEntryPrefab);
+				char gameMode = ' ';
                 if ((string)info.CustomProperties["gameMode"] == "camp")
                 {
-                    entry.transform.SetParent(RoomListContent.transform);
+                    entry.transform.SetParent(RoomListContent.transform, false);
+					gameMode = 'C';
                 } else if ((string)info.CustomProperties["gameMode"] == "versus")
                 {
-                    entry.transform.SetParent(RoomListContentVs.transform);
+                    entry.transform.SetParent(RoomListContentVs.transform, false);
+					gameMode = 'V';
                 }
 				entry.transform.localScale = Vector3.one;
-				entry.GetComponent<InitializeRoomStats>().Init(info.Name, (byte)info.PlayerCount, info.MaxPlayers);
+				string mapName = (string)info.CustomProperties["mapName"];
+				entry.GetComponent<InitializeRoomStats>().Init(listPlayer.connexion, info.Name, (byte)info.PlayerCount, info.MaxPlayers, mapName, listPlayer.GetMapImageFromMapName(mapName), gameMode);
 
 				roomListEntries.Add(info.Name, entry);
 			}

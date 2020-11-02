@@ -717,5 +717,14 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 		}
 
+		public string GetMapImageFromMapName(string mapName) {
+			for (int i = 0; i < mapStrings.Length; i++) {
+				if (mapNames[i] == mapName) {
+					return mapStrings[i];
+				}
+			}
+			return "";
+		}
+
 	}
 }

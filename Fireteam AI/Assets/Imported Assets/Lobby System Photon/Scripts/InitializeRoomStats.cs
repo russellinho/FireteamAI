@@ -1,26 +1,36 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun.LobbySystemPhoton;
+using TMPro;
 
 public class InitializeRoomStats : MonoBehaviour {
 
-	public Text TitleRoom;
-	public Text Slogan;
-	public PlayerInRoomIcons IconsPlayer;
+	public TextMeshProUGUI TitleRoom;
+	public TextMeshProUGUI MapName;
+	public TextMeshProUGUI PlayersInRoom;
+	public RawImage MapImage;
 	public Connexion conn;
+	public TextMeshProUGUI GameMode;
 
 	private string TitleRoom2;
 
 	// Use this for initialization
-	public void Init (string NameRoom, int CountPlayer, int MaxPlayer) {
+	public void Init (Connexion connexion, string NameRoom, int CountPlayer, int MaxPlayer, string mapName, string mapImage, char gameMode) {
 		TitleRoom.text = NameRoom;
 		TitleRoom2 = NameRoom;
-		Slogan.text = "Player(s) in Room - " + CountPlayer.ToString("00") + "/" + MaxPlayer.ToString("00");
-		IconsPlayer.InitIcon(CountPlayer);
-		conn = GameObject.Find("ConnexionPhoton").GetComponent<Connexion>();
+		MapName.text = mapName;
+		MapImage.texture = (Texture)Resources.Load(mapImage);
+		if (gameMode == 'C') {
+			GameMode.text = "CAMPAIGN";
+		} else if (gameMode == 'V') {
+			GameMode.text = "VERSUS";
+		}
+		PlayersInRoom.text = CountPlayer + "/" + MaxPlayer;
+		conn = connexion;
 	}
 	
 	public void ClickedJoinRoom()
 	{
-		conn.theJoinRoom("" + TitleRoom2);	}
+		conn.theJoinRoom("" + TitleRoom2);
+	}
 }
