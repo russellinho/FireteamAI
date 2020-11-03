@@ -261,7 +261,7 @@ namespace Photon.Pun.LobbySystemPhoton
         [PunRPC]
         void RpcStartVersusGame(string level) {
 			LoadingScreen();
-            string myTeam = (myPlayerListEntry.GetComponent<PlayerEntryPrefab>().GetTeam() == 'R' ? "_Red" : "_Blue");
+            string myTeam = ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red" ? "_Red" : "_Blue");
             PhotonNetwork.LoadLevel (level + myTeam);
         }
 
@@ -472,8 +472,7 @@ namespace Photon.Pun.LobbySystemPhoton
 					entryScript.SetReady(false);
 				}
 				entry.transform.SetParent(PlayersInRoomPanel, false);
-				// entry.transform.localPosition = Vector3.zero;
-			
+
 				playerListEntries.Add(p.ActorNumber, entry);
 			}
             chat.SendServerMessage(PhotonNetwork.LocalPlayer.NickName + " has joined the game.");
@@ -659,16 +658,18 @@ namespace Photon.Pun.LobbySystemPhoton
 		{
             string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
 			GameObject entry = Instantiate(PlayerListEntryPrefab);
+			PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
+			string rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(newPlayer.CustomProperties["exp"])).name;
+			entryScript.SetReady(false);
             if (gameMode == "versus")
             {
+				entryScript.CreateEntry(newPlayer.NickName, rankToSet, newPlayer.ActorNumber, 'V');
                 entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
             } else if (gameMode == "camp")
             {
+				entryScript.CreateEntry(newPlayer.NickName, rankToSet, newPlayer.ActorNumber, 'C');
                 entry.transform.SetParent(PlayersInRoomPanel, false);
             }
-			// entry.transform.localPosition = Vector3.zero;
-			// entry.transform.localScale = Vector3.one;
-			// entry.GetComponent<TextMeshProUGUI>().text = newPlayer.NickName;
 			if (PhotonNetwork.IsMasterClient) {
 				Hashtable h = new Hashtable();
 				h.Add("ping", (int)PhotonNetwork.GetPing());
