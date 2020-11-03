@@ -732,10 +732,13 @@ namespace Photon.Pun.LobbySystemPhoton
 			foreach (GameObject entry in playerListEntries.Values) {
 				if (currentMode == 'C') {
 					entry.transform.SetParent(PlayersInRoomPanel, false);
-					entry.transform.localPosition = Vector3.zero;
 				} else if (currentMode == 'V') {
-					entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
-					entry.transform.localPosition = Vector3.zero;
+					PlayerEntryPrefab p = entry.GetComponent<PlayerEntryPrefab>();
+					if (p.redEntry.activeInHierarchy) {
+						entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
+					} else if (p.blueEntry.activeInHierarchy) {
+						entry.transform.SetParent(PlayersInRoomPanelVsBlue, false);
+					}
 				}
 			}
 		}

@@ -95,7 +95,7 @@ public class SetupControllerScript : MonoBehaviour
 			} else {
                 s.ToggleSelectedIndicator(false);
             }
-			o.transform.SetParent(contentInventory.transform);
+			o.transform.SetParent(contentInventory.transform, false);
             s.setupController = this;
 		}
     }
