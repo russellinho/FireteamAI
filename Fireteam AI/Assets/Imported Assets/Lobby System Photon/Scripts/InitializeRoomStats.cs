@@ -16,7 +16,7 @@ public class InitializeRoomStats : MonoBehaviour {
 	private string TitleRoom2;
 
 	// Use this for initialization
-	public void Init (Connexion connexion, string NameRoom, int CountPlayer, int MaxPlayer, string mapName, string mapImage, char gameMode, string ping) {
+	public void Init (Connexion connexion, string NameRoom, int CountPlayer, int MaxPlayer, string mapName, string mapImage, char gameMode, int ping) {
 		TitleRoom.text = NameRoom;
 		TitleRoom2 = NameRoom;
 		MapName.text = mapName;
@@ -27,7 +27,7 @@ public class InitializeRoomStats : MonoBehaviour {
 			GameMode.text = "VERSUS";
 		}
 		PlayersInRoom.text = CountPlayer + "/" + MaxPlayer;
-		Ping.text = ping;
+		Ping.text = ""+ping;
 		conn = connexion;
 	}
 	
