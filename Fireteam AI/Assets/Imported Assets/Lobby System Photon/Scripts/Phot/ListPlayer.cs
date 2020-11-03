@@ -383,6 +383,11 @@ namespace Photon.Pun.LobbySystemPhoton
 				mapPreviewVsThumb.texture = mapTexture;
 				mapDescription.text = mapDescriptions[i];
 				mapDescriptionVs.text = mapDescriptions[i];
+				if (PhotonNetwork.InRoom) {
+					Hashtable h = new Hashtable();
+					h.Add("mapName", mapStrings[i]);
+					PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+				}
 			} else {
 				if (PhotonNetwork.IsMasterClient) {
             		pView.RPC("RpcSetMapInfo", RpcTarget.All, i);
@@ -392,11 +397,14 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		[PunRPC]
 		void RpcSetMapInfo(int i) {
+			Hashtable h = new Hashtable();
 			Texture mapTexture = (Texture)Resources.Load(mapStrings[i]);
             mapPreviewThumb.texture = mapTexture;
             mapPreviewVsThumb.texture = mapTexture;
 			mapDescription.text = mapDescriptions[i];
 			mapDescriptionVs.text = mapDescriptions[i];
+			h.Add("mapName", mapStrings[i]);
+			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 		}
 
 		[PunRPC]
@@ -416,6 +424,9 @@ namespace Photon.Pun.LobbySystemPhoton
             // connexion.ToggleLobbyLoadingScreen(false);
 			Hashtable h = new Hashtable();
 			h.Add("exp", (int)PlayerData.playerdata.info.Exp);
+			if (PhotonNetwork.IsMasterClient) {
+				h.Add("ping", (int)PhotonNetwork.GetPing());
+			}
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 			pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (int)PlayerData.playerdata.info.Exp);
 			currentMode = (!templateUIClassVs.gameObject.activeInHierarchy ? 'C' : 'V');
@@ -658,7 +669,11 @@ namespace Photon.Pun.LobbySystemPhoton
 			// entry.transform.localPosition = Vector3.zero;
 			// entry.transform.localScale = Vector3.one;
 			// entry.GetComponent<TextMeshProUGUI>().text = newPlayer.NickName;
-
+			if (PhotonNetwork.IsMasterClient) {
+				Hashtable h = new Hashtable();
+				h.Add("ping", (int)PhotonNetwork.GetPing());
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			}
 			playerListEntries.Add(newPlayer.ActorNumber, entry);
             loadPlayerQueue.Enqueue(newPlayer);
 			SetMapInfo();
@@ -671,6 +686,11 @@ namespace Photon.Pun.LobbySystemPhoton
 			RearrangePlayerSlots ();
 			if (PhotonNetwork.IsMasterClient) {
 				ToggleMapChangeButtons(true);
+			}
+			if (PhotonNetwork.IsMasterClient) {
+				Hashtable h = new Hashtable();
+				h.Add("ping", (int)PhotonNetwork.GetPing());
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 			}
 		}
 

@@ -102,7 +102,8 @@ namespace Photon.Pun.LobbySystemPhoton
                 }
 				entry.transform.localScale = Vector3.one;
 				string mapName = (string)info.CustomProperties["mapName"];
-				entry.GetComponent<InitializeRoomStats>().Init(listPlayer.connexion, info.Name, (byte)info.PlayerCount, info.MaxPlayers, mapName, listPlayer.GetMapImageFromMapName(mapName), gameMode);
+				string ping = (string)info.CustomProperties["ping"];
+				entry.GetComponent<InitializeRoomStats>().Init(listPlayer.connexion, info.Name, (byte)info.PlayerCount, info.MaxPlayers, mapName, listPlayer.GetMapImageFromMapName(mapName), gameMode, ping);
 
 				roomListEntries.Add(info.Name, entry);
 			}

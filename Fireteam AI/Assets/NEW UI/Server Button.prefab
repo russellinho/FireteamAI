@@ -1732,8 +1732,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: BlurInAnim
+      - m_Target: {fileID: 4637351617550353983}
+        m_MethodName: ClickedJoinRoom
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1922,3 +1922,4 @@ MonoBehaviour:
   MapImage: {fileID: 5891537026359343361}
   conn: {fileID: 0}
   GameMode: {fileID: 7687564965678652393}
+  Ping: {fileID: 7687564966857884585}

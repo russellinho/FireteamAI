@@ -11,11 +11,12 @@ public class InitializeRoomStats : MonoBehaviour {
 	public RawImage MapImage;
 	public Connexion conn;
 	public TextMeshProUGUI GameMode;
+	public TextMeshProUGUI Ping;
 
 	private string TitleRoom2;
 
 	// Use this for initialization
-	public void Init (Connexion connexion, string NameRoom, int CountPlayer, int MaxPlayer, string mapName, string mapImage, char gameMode) {
+	public void Init (Connexion connexion, string NameRoom, int CountPlayer, int MaxPlayer, string mapName, string mapImage, char gameMode, string ping) {
 		TitleRoom.text = NameRoom;
 		TitleRoom2 = NameRoom;
 		MapName.text = mapName;
@@ -26,6 +27,7 @@ public class InitializeRoomStats : MonoBehaviour {
 			GameMode.text = "VERSUS";
 		}
 		PlayersInRoom.text = CountPlayer + "/" + MaxPlayer;
+		Ping.text = ping;
 		conn = connexion;
 	}
 	
