@@ -385,7 +385,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				mapDescriptionVs.text = mapDescriptions[i];
 				if (PhotonNetwork.InRoom) {
 					Hashtable h = new Hashtable();
-					h.Add("mapName", mapStrings[i]);
+					h.Add("mapName", mapNames[i]);
 					PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 				}
 			} else {
@@ -403,7 +403,7 @@ namespace Photon.Pun.LobbySystemPhoton
             mapPreviewVsThumb.texture = mapTexture;
 			mapDescription.text = mapDescriptions[i];
 			mapDescriptionVs.text = mapDescriptions[i];
-			h.Add("mapName", mapStrings[i]);
+			h.Add("mapName", mapNames[i]);
 			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 		}
 
