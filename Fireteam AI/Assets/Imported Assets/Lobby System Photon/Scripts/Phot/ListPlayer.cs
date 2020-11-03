@@ -593,11 +593,13 @@ namespace Photon.Pun.LobbySystemPhoton
                 entryScript.SetTeam('R');
                 blueTeam.Remove(actorId);
                 redTeam.Add(actorId);
+				entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
             } else if (newTeam == "blue")
             {
                 entryScript.SetTeam('B');
                 redTeam.Remove(actorId);
                 blueTeam.Add(actorId);
+				entry.transform.SetParent(PlayersInRoomPanelVsBlue, false);
             }
         }
 
