@@ -16,7 +16,7 @@ namespace Michsky.UI.Shift
         public string titleText = "Title";
         [TextArea] public string descriptionText = "Description here";
 
-        Animator mWindowAnimator;
+        public Animator mWindowAnimator;
         bool isOn = false;
 
         void Start()

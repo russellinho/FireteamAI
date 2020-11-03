@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731713, g: 0.13414736, b: 0.121078536, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -16965,9 +16965,10 @@ MonoBehaviour:
   windowTitle: {fileID: 2541280034840470754}
   windowDescription: {fileID: 2541280034008619221}
   sharpAnimations: 0
-  useCustomTexts: 0
+  useCustomTexts: 1
   titleText: CONFIRM
   descriptionText: MESSAGE
+  mWindowAnimator: {fileID: 2541280035236956729}
 --- !u!95 &2541280035236956729
 Animator:
   serializedVersion: 3
@@ -17925,9 +17926,10 @@ MonoBehaviour:
   windowTitle: {fileID: 2541280034510708084}
   windowDescription: {fileID: 2541280034005280187}
   sharpAnimations: 0
-  useCustomTexts: 0
+  useCustomTexts: 1
   titleText: ALERT
   descriptionText: MESSAGE
+  mWindowAnimator: {fileID: 2541280035427857318}
 --- !u!1 &2541280035427857314
 GameObject:
   m_ObjectHideFlags: 0
