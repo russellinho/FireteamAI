@@ -661,7 +661,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			GameObject entry = Instantiate(PlayerListEntryPrefab);
             if (gameMode == "versus")
             {
-                entry.transform.SetParent(PlayersInRoomPanelVsRed);
+                entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
             } else if (gameMode == "camp")
             {
                 entry.transform.SetParent(PlayersInRoomPanel, false);
@@ -728,10 +728,10 @@ namespace Photon.Pun.LobbySystemPhoton
 			lastSlotUsed = 0;
 			foreach (GameObject entry in playerListEntries.Values) {
 				if (currentMode == 'C') {
-					entry.transform.SetParent(PlayersInRoomPanel);
+					entry.transform.SetParent(PlayersInRoomPanel, false);
 					entry.transform.localPosition = Vector3.zero;
 				} else if (currentMode == 'V') {
-					entry.transform.SetParent(PlayersInRoomPanelVsRed);
+					entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
 					entry.transform.localPosition = Vector3.zero;
 				}
 			}
