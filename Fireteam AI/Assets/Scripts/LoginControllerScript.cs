@@ -102,11 +102,11 @@ public class LoginControllerScript : MonoBehaviour
         registerBtn.interactable = false;
         AuthScript.authHandler.auth.SignInWithEmailAndPasswordAsync(emailField.text, passwordField.text).ContinueWith(task => {
             if (task.IsCanceled) {
-                popupAlertMessage = "Invalid password! Please try again.";
+                popupAlertMessage = "Invalid email/password! Please try again.";
                 return;
             }
             if (task.IsFaulted) {
-                popupAlertMessage = "Invalid password! Please try again.";
+                popupAlertMessage = "Invalid email/password! Please try again.";
                 return;
             }
             AuthScript.authHandler.user = task.Result;

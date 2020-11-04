@@ -28,12 +28,11 @@ namespace Michsky.UI.Shift
             {
                 if (Input.anyKeyDown) {
                     if (keyMappingInput != null) {
-                        if (GetComponent<CanvasGroup>().alpha == 1f) {
+                        if (GetComponent<ModalWindowManager>().isOn) {
                             keyMappingInput.HandleKeyChange();
                             pressAction.Invoke();
+                            keyMappingInput = null;
                         }
-                    } else {
-                        pressAction.Invoke();
                     }
                 }
             }

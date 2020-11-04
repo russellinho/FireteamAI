@@ -2649,7 +2649,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		typeBeingPurchased = itemType;
 		makePurchasePopup.GetComponentInChildren<RawImage>().texture = thumb;
         // Initialize with 1 day price
-        SetTotalGPCost(0, "1 day");
+        SetTotalGPCost(0, durationSelection.GetCurrentItem());
 		TriggerMakePurchasePopup();
     }
 
@@ -2896,13 +2896,19 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         TriggerAlertPopup(message);
     }
 
-	public void TogglePlayerBody(bool b) {
+	public void TogglePlayerTemplate(bool b) {
 		PlayerData.playerdata.bodyReference.SetActive(b);
 		PlayerData.playerdata.bodyReference.GetComponent<Animator>().SetBool("onTitle", true);
 	}
 
 	public void ToggleWeaponPreview(bool b) {
 		weaponPreviewSlot.SetActive(b);
+	}
+
+	public void HideAll(bool b) {
+		TogglePlayerTemplate(b);
+		ToggleWeaponPreview(b);
+		hidPlayer = !b;
 	}
 
 	public void HandleLeftSideButtonPress(Button b) {

@@ -122,11 +122,11 @@ namespace Michsky.UI.Shift
                     }
                 }
                 if (newPanel == "Settings") {
-                    titleController.TogglePlayerBody(false);
+                    titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
                 } else if (newPanel == "Mod Shop") {
-                    titleController.TogglePlayerBody(false);
+                    titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(true);
                     titleController.HandleLeftSideButtonPress(titleController.modShopPrimaryWepBtn);
                     titleController.OnModShopPrimaryWepBtnClicked(true);
@@ -134,7 +134,7 @@ namespace Michsky.UI.Shift
                     titleController.HandleRightSideButtonPress(titleController.modShopSuppressorsBtn);
                     titleController.OnSuppressorsBtnClicked();
                 } else if (newPanel == "Market") {
-                    titleController.TogglePlayerBody(true);
+                    titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
                     titleController.HandleLeftSideButtonPress(titleController.shopPrimaryWepBtn);
@@ -143,7 +143,7 @@ namespace Michsky.UI.Shift
                     titleController.HandleRightSideButtonPress(titleController.shopCharacterBtn);
                     titleController.OnMarketplaceCharacterBtnClicked();
                 } else if (newPanel == "Loadout") {
-                    titleController.TogglePlayerBody(true);
+                    titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
                     titleController.HandleLeftSideButtonPress(titleController.primaryWepBtn);
@@ -152,19 +152,19 @@ namespace Michsky.UI.Shift
                     titleController.HandleRightSideButtonPress(titleController.characterBtn);
                     titleController.OnCharacterBtnClicked();
                 } else if (newPanel == "Campaign") {
-                    titleController.TogglePlayerBody(false);
+                    titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.JoinMatchmaking();
                     campaignLobby.SetActive(true);
                     versusLobby.SetActive(false);
                 } else if (newPanel == "Versus") {
-                    titleController.TogglePlayerBody(false);
+                    titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.JoinMatchmaking();
                     campaignLobby.SetActive(false);
                     versusLobby.SetActive(true);
                 } else {
-                    titleController.TogglePlayerBody(true);
+                    titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
                 }

@@ -23,10 +23,10 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public Text changingKeyMappingText;
 	public KeyMappingInput[] keyMappingInputs;
 
-	// void Awake() {
-	// 	musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
-	// 	musicVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.musicVolume;
-	// }
+	void Awake() {
+		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
+		musicVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.musicVolume;
+	}
 
 	public void HandleEscPress() {
 		if (isChangingKeyMapping) return;

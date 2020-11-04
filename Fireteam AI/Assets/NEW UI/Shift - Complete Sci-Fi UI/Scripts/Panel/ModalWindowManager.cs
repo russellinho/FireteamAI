@@ -17,7 +17,7 @@ namespace Michsky.UI.Shift
         [TextArea] public string descriptionText = "Description here";
 
         public Animator mWindowAnimator;
-        bool isOn = false;
+        public bool isOn = false;
 
         void Start()
         {
@@ -34,9 +34,7 @@ namespace Michsky.UI.Shift
         {
             if (titleController != null) {
                 if (PlayerData.playerdata.bodyReference != null && PlayerData.playerdata.bodyReference.activeInHierarchy) {
-                    titleController.hidPlayer = true;
-                    titleController.TogglePlayerBody(false);
-                    titleController.ToggleWeaponPreview(false);
+                    titleController.HideAll(false);
                 }
             }
             if (isOn == false)
@@ -54,9 +52,7 @@ namespace Michsky.UI.Shift
         {
             if (titleController != null) {
                 if (PlayerData.playerdata.bodyReference != null && titleController.hidPlayer && !titleController.confirmingTransaction) {
-                    titleController.hidPlayer = false;
-                    titleController.TogglePlayerBody(true);
-                    titleController.ToggleWeaponPreview(true);
+                    titleController.HideAll(true);
                 }
             }
             if (isOn == true)

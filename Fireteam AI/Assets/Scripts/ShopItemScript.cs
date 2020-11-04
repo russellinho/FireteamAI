@@ -77,7 +77,7 @@ public class ShopItemScript : MonoBehaviour
     }
 
     bool ItemCanBePreviewed() {
-        if (itemType == "Weapon" && weaponDetails.type != "Primary") {
+        if (itemType == "Mod" || (itemType == "Weapon" && weaponDetails.type != "Primary")) {
             return false;
         }
         return true;

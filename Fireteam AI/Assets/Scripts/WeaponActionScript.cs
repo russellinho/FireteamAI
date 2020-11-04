@@ -160,7 +160,7 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
 
-        if (playerActionScript.health <= 0) {
+        if (playerActionScript.health <= 0 || playerActionScript.gameController.gameOver) {
             hudScript.toggleSniperOverlay(false);
             hudScript.ToggleSightCrosshair(false);
             return;

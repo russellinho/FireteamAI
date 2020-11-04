@@ -77,7 +77,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 
 		ToggleActionBar(false, null);
-		container.actionBarText.enabled = false;
 		container.hintText.enabled = false;
 		container.scoreboard.SetActive(false);
 		container.spectatorText.enabled = false;
@@ -736,11 +735,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     void Pause()
     {
-        if (container.pauseMenuManager.pauseActive)
-        {
-            container.pauseMenuManager.ClosePause();
-        }
-        else
+        if (!container.pauseMenuManager.pauseActive)
         {
             container.pauseMenuManager.OpenPause();
         }

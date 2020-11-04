@@ -17,6 +17,7 @@ public class ItemPopupScript : MonoBehaviour
     public Text genderRestTxt;
     public Text characterRestTxt;
     public Text expirationDateEquipTxt;
+    public GameObject expirationDateEquip;
 
     // Weapon stat labels
     public Text damageStatTxt;
@@ -27,6 +28,7 @@ public class ItemPopupScript : MonoBehaviour
     public Text rangeTxt;
     public Text clipCapacityTxt;
     public Text expirationDateWeaponTxt;
+    public GameObject expirationDateWeapon;
 
     // Mod stat labels
     public Text modDamageStatTxt;
@@ -204,8 +206,8 @@ public class ItemPopupScript : MonoBehaviour
     }
 
     public void ToggleExpirationDateText(bool b) {
-        expirationDateEquipTxt.enabled = b;
-        expirationDateWeaponTxt.enabled = b;
+        expirationDateEquip.SetActive(b);
+        expirationDateWeapon.SetActive(b);
     }
 
 }
