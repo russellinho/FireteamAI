@@ -5,6 +5,7 @@ namespace Michsky.UI.Shift
 {
     public class PressKeyEvent : MonoBehaviour
     {
+        private const float KEY_PRESS_DELAY = 0.75f;
         public KeyMappingInput keyMappingInput;
         [Header("KEY")]
         [SerializeField]
@@ -15,9 +16,11 @@ namespace Michsky.UI.Shift
         [Header("KEY ACTION")]
         [SerializeField]
         public UnityEvent pressAction;
+        private float keyPressDelay;
 		
 		void Start()
         {
+            keyPressDelay = 0f;
             if (invokeAtStart == true)
                 pressAction.Invoke();
         }
@@ -26,11 +29,13 @@ namespace Michsky.UI.Shift
         {
             if (pressAnyKey == true)
             {
-                if (Input.anyKeyDown) {
-                    if (keyMappingInput != null) {
-                        if (GetComponent<ModalWindowManager>().isOn) {
+                if (keyMappingInput != null) {
+                    keyPressDelay += Time.deltaTime;
+                    if (Input.anyKeyDown) {
+                        if (keyPressDelay >= KEY_PRESS_DELAY && GetComponent<ModalWindowManager>().isOn) {
                             keyMappingInput.HandleKeyChange();
                             pressAction.Invoke();
+                            keyPressDelay = 0f;
                             keyMappingInput = null;
                         }
                     }

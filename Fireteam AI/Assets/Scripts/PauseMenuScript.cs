@@ -101,12 +101,12 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		JukeboxScript.jukebox.SetMusicVolume(v);
 	}
 
-	void SaveAudioSettings() {
+	public void SaveAudioSettings() {
 		PlayerPreferences.playerPreferences.preferenceData.musicVolume = (int)(musicVolumeSlider.value * 100f);
 		PlayerPreferences.playerPreferences.SavePreferences();
 	}
 
-	void SaveKeyBindings() {
+	public void SaveKeyBindings() {
 		PlayerPreferences.playerPreferences.SaveKeyMappings();
 	}
 

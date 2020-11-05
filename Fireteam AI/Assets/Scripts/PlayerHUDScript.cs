@@ -738,7 +738,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         if (!container.pauseMenuManager.pauseActive)
         {
             container.pauseMenuManager.OpenPause();
-        }
+        } else {
+			container.pauseMenuManager.ClosePause();
+		}
     }
 
     IEnumerator ShowMissionText(int mission)

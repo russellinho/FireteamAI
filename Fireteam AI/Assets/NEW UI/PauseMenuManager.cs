@@ -8,6 +8,7 @@ public class PauseMenuManager : MonoBehaviour
     public bool pauseActive;
     public Animator anim;
     public BlurManager blurManager;
+    public CanvasGroup mainPauseCanvas;
 
     public void OpenPause() {
         anim.Play("Window In");
@@ -16,8 +17,10 @@ public class PauseMenuManager : MonoBehaviour
     }
 
     public void ClosePause() {
-        anim.Play("Window Out");
-        blurManager.BlurOutAnim();
-        pauseActive = false;
+        if (mainPauseCanvas.alpha == 1f) {
+            anim.Play("Window Out");
+            blurManager.BlurOutAnim();
+            pauseActive = false;
+        }
     }
 }
