@@ -482,7 +482,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (pView.IsMine)
         {
             audioController.PlayHitSound();
-            hud.UpdateHealth();
         }
         // if (!godMode)
         // {
@@ -1129,6 +1128,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             isRespawning = true;
         } else {
             health = 100;
+            pView.RPC("RpcSetHealth", RpcTarget.Others, 100);
         }
     }
 
@@ -1298,6 +1298,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             } else {
               this.health += healthIncrement;
             }
+            pView.RPC("RpcSetHealth", RpcTarget.Others, this.health);
             yield return new WaitForSeconds(2);
 
           }

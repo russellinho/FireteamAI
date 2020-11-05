@@ -191,7 +191,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameControllerScript> ();
 			return;
 		}
-		// UpdateHealth();
+		UpdateHealth();
 		if (container.staminaGroup.alpha == 1f) {
 			float f = (playerActionScript.sprintTime / playerActionScript.playerScript.stamina);
 			container.staminaBar.value = f;
