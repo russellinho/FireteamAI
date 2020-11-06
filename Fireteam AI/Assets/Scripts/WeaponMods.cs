@@ -35,7 +35,7 @@ public class WeaponMods : MonoBehaviour
         suppressorStats = newSuppressorStats;
         suppressorRef = (GameObject)Instantiate(InventoryScript.itemData.itemReferences[suppressorStats.prefabPath]);
         // Equip it and place it in the correct position
-        suppressorRef.transform.SetParent(suppressorPos);
+        suppressorRef.transform.SetParent(suppressorPos, false);
         suppressorRef.transform.localPosition = Vector3.zero;
         suppressorRef.transform.localRotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
         suppressorRef.transform.localScale = suppressorScaler;
@@ -75,7 +75,7 @@ public class WeaponMods : MonoBehaviour
         sightStats = newSightStats;
         sightRef = (GameObject)Instantiate(InventoryScript.itemData.itemReferences[sightStats.prefabPath]);
         // Equip it and place it in the correct position
-        sightRef.transform.SetParent(sightPos);
+        sightRef.transform.SetParent(sightPos, false);
         sightRef.transform.localPosition = Vector3.zero;
         sightRef.transform.localRotation = Quaternion.Euler(new Vector3(-3.166f, 89.6f, -1.5f));
         sightRef.transform.localScale = sightScaler;

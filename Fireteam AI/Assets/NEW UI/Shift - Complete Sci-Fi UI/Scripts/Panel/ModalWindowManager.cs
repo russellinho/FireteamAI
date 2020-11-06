@@ -6,6 +6,7 @@ namespace Michsky.UI.Shift
     public class ModalWindowManager : MonoBehaviour
     {
         public TitleControllerScript titleController;
+        public MainPanelManager mainPanelManager;
         [Header("RESOURCES")]
         public TextMeshProUGUI windowTitle;
         public TextMeshProUGUI windowDescription;
@@ -33,8 +34,12 @@ namespace Michsky.UI.Shift
         public void ModalWindowIn()
         {
             if (titleController != null) {
-                if (PlayerData.playerdata.bodyReference != null && PlayerData.playerdata.bodyReference.activeInHierarchy) {
-                    titleController.HideAll(false);
+                if (mainPanelManager.currentPanelIndex == MainPanelManager.MOD_SHOP_INDEX) {
+                    titleController.ToggleWeaponPreview(false);
+                } else {
+                    if (PlayerData.playerdata.bodyReference != null && PlayerData.playerdata.bodyReference.activeInHierarchy) {
+                        titleController.HideAll(false);
+                    }
                 }
             }
             if (isOn == false)
@@ -51,8 +56,12 @@ namespace Michsky.UI.Shift
         public void ModalWindowOut()
         {
             if (titleController != null) {
-                if (PlayerData.playerdata.bodyReference != null && titleController.hidPlayer && !titleController.confirmingTransaction) {
-                    titleController.HideAll(true);
+                if (mainPanelManager.currentPanelIndex == MainPanelManager.MOD_SHOP_INDEX) {
+                    titleController.ToggleWeaponPreview(true);
+                } else {
+                    if ((PlayerData.playerdata.bodyReference != null && titleController.hidPlayer) && !titleController.confirmingTransaction) {
+                        titleController.HideAll(true);
+                    }
                 }
             }
             if (isOn == true)

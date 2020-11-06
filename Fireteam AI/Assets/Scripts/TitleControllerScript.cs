@@ -2385,14 +2385,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Place the saved mods for that weapon back on the weapon template
 		ModInfo savedModInfo = PlayerData.playerdata.LoadModDataForWeapon(s.itemName);
 		SetWeaponModValues(s.itemName, true, null, savedModInfo.SuppressorId, true, null, savedModInfo.SightId);
-		EquipModOnWeaponTemplate(savedModInfo.EquippedSuppressor, "Suppressor", savedModInfo.SuppressorId);
-		EquipModOnWeaponTemplate(savedModInfo.EquippedSight, "Sight", savedModInfo.SightId);
+		EquipModOnWeaponTemplate(savedModInfo.EquippedSuppressor, "Suppressor", savedModInfo.SuppressorId, null);
+		EquipModOnWeaponTemplate(savedModInfo.EquippedSight, "Sight", savedModInfo.SightId, null);
 
 		// Update shop items with the mods that are equipped
 		ShopItemScript[] shopItems = modInventoryContent.GetComponentsInChildren<ShopItemScript>();
 		foreach (ShopItemScript si in shopItems) {
 			if (si.id == savedModInfo.SuppressorId || si.id == savedModInfo.SightId) {
 				si.ToggleModEquippedIndicator(true);
+				currentlyEquippedModPrefab = si.gameObject;
 			} else {
 				si.ToggleModEquippedIndicator(false);
 			}
@@ -2482,21 +2483,43 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		modMaxAmmoTxt.text = maxAmmo != -1 ? ""+maxAmmo : "-";
 	}
 
-    public void RemoveSuppressorFromWeapon(string weaponName, bool removeSuppressorClicked)
+    public string RemoveSuppressorFromWeapon(string weaponName, bool removeSuppressorClicked)
     {
+		ModInfo m = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
+		string suppIdBeforeRemoval = m.SuppressorId;
         PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().UnequipMod("Suppressor", weaponName);
         if (removeSuppressorClicked)
         {
             UnequipModFromWeaponTemplate("Suppressor");
         }
+		// If there was a suppressor equipped, find it in the current shop slots and clear its equipped on status
+		ShopItemScript[] items = modInventoryContent.GetComponentsInChildren<ShopItemScript>();
+		foreach (ShopItemScript s in items) {
+			if (s.id == suppIdBeforeRemoval) {
+				s.ClearEquippedOn();
+				break;
+			}
+		}
+		return suppIdBeforeRemoval;
     }
 
-	public void RemoveSightFromWeapon(string weaponName, bool removeSightClicked) {
+	public string RemoveSightFromWeapon(string weaponName, bool removeSightClicked) {
+		ModInfo m = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
+		string sightIdBeforeRemoval = m.SightId;
 		PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().UnequipMod("Sight", weaponName);
         if (removeSightClicked)
         {
             UnequipModFromWeaponTemplate("Sight");
         }
+		// If there was a sight equipped, find it in the current shop slots and clear its equipped on status
+		ShopItemScript[] items = modInventoryContent.GetComponentsInChildren<ShopItemScript>();
+		foreach (ShopItemScript s in items) {
+			if (s.id == sightIdBeforeRemoval) {
+				s.ClearEquippedOn();
+				break;
+			}
+		}
+		return sightIdBeforeRemoval;
 	}
 
 	public void OnRemoveSuppressorClicked()
@@ -2506,12 +2529,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             return;
         }
         // Remove suppressor model from the player's weapon and the template weapon
-        RemoveSuppressorFromWeapon(weaponBeingPreviewed, true);
+        string removedModId = RemoveSuppressorFromWeapon(weaponBeingPreviewed, true);
 		if (currentlyEquippedModPrefab != null) {
-        	currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleModEquippedIndicator(false);
+			ShopItemScript sh = currentlyEquippedModPrefab.GetComponent<ShopItemScript>();
+			sh.ClearEquippedOn();
 		}
-        weaponPreviewShopSlot.equippedOn = "";
-		PlayerData.playerdata.SaveModDataForWeapon(weaponBeingPreviewed, "", null, equippedSuppressorId, null);
+		PlayerData.playerdata.SaveModDataForWeapon(weaponBeingPreviewed, "", null, removedModId, null);
     }
 
     public void OnRemoveSightClicked() {
@@ -2519,12 +2542,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             return;
         }
         // Remove sight model from the player's weapon and the template weapon
-        RemoveSightFromWeapon(weaponBeingPreviewed, true);
+        string removedModId = RemoveSightFromWeapon(weaponBeingPreviewed, true);
 		if (currentlyEquippedModPrefab != null) {
-        	currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleModEquippedIndicator(false);
+			ShopItemScript sh = currentlyEquippedModPrefab.GetComponent<ShopItemScript>();
+			sh.ClearEquippedOn();
 		}
-        weaponPreviewShopSlot.equippedOn = "";
-		PlayerData.playerdata.SaveModDataForWeapon(weaponBeingPreviewed, null, "", null, equippedSightId);
+		PlayerData.playerdata.SaveModDataForWeapon(weaponBeingPreviewed, null, "", null, removedModId);
     }
 
 	private void SetWeaponModdedStatsTextColor(float damage, float accuracy, float recoil, float range, float clipCapacity, float maxAmmo) {
@@ -2604,7 +2627,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	public string EquipModOnWeaponTemplate(string modName, string modType, string modId) {
+	public string EquipModOnWeaponTemplate(string modName, string modType, string modId, ShopItemScript itemSlot) {
 		Weapon w = null;
 		switch(modType) {
 			case "Suppressor":
@@ -2617,11 +2640,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 					SetWeaponModValues(weaponBeingPreviewed, true, modName, modId, false, null, null);
 					weaponPreviewRef.GetComponent<WeaponMods>().EquipSuppressor(modName);
 					equippedSuppressorSlot.GetComponent<SlotScript>().ToggleThumbnail(true, InventoryScript.itemData.modCatalog[modName].thumbnailPath);
+					if (itemSlot != null) {
+						currentlyEquippedModPrefab = itemSlot.gameObject;
+					}
 					return weaponBeingPreviewed;
 				} else {
 					TriggerAlertPopup("Suppressors cannot be equipped on this weapon!");
+					return "0";
 				}
-				break;
 			case "Sight":
 				if (modName == null || modName.Equals("")) {
 					equippedSightSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
@@ -2632,11 +2658,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 					SetWeaponModValues(weaponBeingPreviewed, false, null, null, true, modName, modId);
 					weaponPreviewRef.GetComponent<WeaponMods>().EquipSight(modName);
 					equippedSightSlot.GetComponent<SlotScript>().ToggleThumbnail(true, InventoryScript.itemData.modCatalog[modName].thumbnailPath);
+					if (itemSlot != null) {
+						currentlyEquippedModPrefab = itemSlot.gameObject;
+					}
 					return weaponBeingPreviewed;
 				} else {
 					TriggerAlertPopup("Sights cannot be equipped on this weapon!");
+					return "0";
 				}
-				break;
 		}
 		return null;
 	}
@@ -3099,6 +3128,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	void ToggleBlockScreen(bool b) {
 		blockScreen.SetActive(b);
 		blockBlur.SetActive(b);
+	}
+
+	public bool WeaponIsSuppressorCompatible(string weaponName) {
+		return InventoryScript.itemData.weaponCatalog[weaponName].suppressorCompatible;
+	}
+
+	public bool WeaponIsSightCompatible(string weaponName) {
+		return InventoryScript.itemData.weaponCatalog[weaponBeingPreviewed].sightCompatible;
 	}
 		
 }

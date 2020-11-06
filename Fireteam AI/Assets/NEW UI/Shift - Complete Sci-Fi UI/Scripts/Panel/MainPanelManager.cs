@@ -7,11 +7,11 @@ namespace Michsky.UI.Shift
 {
     public class MainPanelManager : MonoBehaviour
     {
-        private const int SETTINGS_INDEX = 4;
-        private const int MOD_SHOP_INDEX = 3;
-        private const int CAMPAIGN_INDEX = 5;
-        private const int VERSUS_INDEX = 6;
-        private const int MARKET_INDEX = 1;
+        public const int SETTINGS_INDEX = 4;
+        public const int MOD_SHOP_INDEX = 3;
+        public const int CAMPAIGN_INDEX = 5;
+        public const int VERSUS_INDEX = 6;
+        public const int MARKET_INDEX = 1;
         public TitleControllerScript titleController;
         public string panelManagerType;
         [Header("PANEL LIST")]

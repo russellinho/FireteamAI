@@ -164,6 +164,18 @@ public class ShopItemScript : MonoBehaviour
         switch (modCategory)
         {
             case "Suppressor":
+                // Check if weapon is suppressor compatible before continuing
+                if (!ts.WeaponIsSuppressorCompatible(ts.weaponBeingPreviewed)) {
+                    ts.TriggerAlertPopup("Suppressors cannot be equipped on this weapon!");
+                    return;
+                }
+
+                // Clear orange highlight
+                if (ts.currentlyEquippedModPrefab != null) {
+                    ShopItemScript prev = ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>();
+                    prev.ToggleModEquippedIndicator(false);
+                }
+
                 // If this weapon already has a suppressor on it, unequip it first
                 ts.OnRemoveSuppressorClicked();
 
@@ -176,11 +188,28 @@ public class ShopItemScript : MonoBehaviour
                 }
 
                 // Attach to player weapon and attach to weapon mod template as well
-                string weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory, id);
+                string weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory, id, this);
+                if (weaponNameAttachedTo == "0") {
+                    return;
+                }
+
                 equippedOn = weaponNameAttachedTo;
                 PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipMod(modCategory, itemName, weaponNameAttachedTo, gameObject);
+                PlayerData.playerdata.SaveModDataForWeapon(equippedOn, itemName, null, id, null);
                 break;
             case "Sight":
+                // Check if weapon is sight compatible before continuing
+                if (!ts.WeaponIsSightCompatible(ts.weaponBeingPreviewed)) {
+                    ts.TriggerAlertPopup("Sights cannot be equipped on this weapon!");
+                    return;
+                }
+
+                // Clear orange highlight
+                if (ts.currentlyEquippedModPrefab != null) {
+                    ShopItemScript prev = ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>();
+                    prev.ToggleModEquippedIndicator(false);
+                }
+
                 // If this weapon already has a sight on it, unequip it first
                 ts.OnRemoveSightClicked();
 
@@ -193,9 +222,14 @@ public class ShopItemScript : MonoBehaviour
                 }
 
                 // Attach to player weapon and attach to weapon mod template as well
-                weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory, id);
+                weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory, id, this);
+                if (weaponNameAttachedTo == "0") {
+                    return;
+                }
+
                 equippedOn = weaponNameAttachedTo;
                 PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipMod(modCategory, itemName, weaponNameAttachedTo, gameObject);
+                PlayerData.playerdata.SaveModDataForWeapon(equippedOn, itemName, null, id, null);
                 break;
         }
     }
@@ -276,6 +310,10 @@ public class ShopItemScript : MonoBehaviour
         purchaseBtn.gameObject.SetActive(false);
         equipBtn.gameObject.SetActive(false);
         titleType = 's';
+    }
+
+    public void ClearEquippedOn() {
+        equippedOn = "";
     }
 
 }
