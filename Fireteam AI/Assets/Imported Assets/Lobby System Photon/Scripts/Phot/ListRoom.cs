@@ -1,4 +1,5 @@
-﻿using Photon.Realtime;
+﻿using System;
+using Photon.Realtime;
 using System.Collections.Generic;
 using UnityEngine;
 using UITemplate;
@@ -9,12 +10,11 @@ namespace Photon.Pun.LobbySystemPhoton
 	{
 		private Dictionary<string, RoomInfo> cachedRoomList;
 		private Dictionary<string, GameObject> roomListEntries;
+		public ListPlayer listPlayer;
 		public Template templateUIClass;
 		public Template templateUIClassVs;
 
 		[Header("Room List Panel")]
-		public GameObject RoomListPanel;
-		public GameObject RoomListPanelVs;
 		public GameObject RoomListContent;
 		public GameObject RoomListContentVs;
 		public GameObject RoomListEntryPrefab;
@@ -88,26 +88,23 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 		private void UpdateRoomListView()
 		{
-			if (PhotonNetwork.CountOfRooms == 0)
-			{
-				templateUIClass.ListRoomEmpty.SetActive(true);
-			}
-			else
-			{
-				templateUIClass.ListRoomEmpty.SetActive(false);
-			}
 			foreach (RoomInfo info in cachedRoomList.Values)
 			{
 				GameObject entry = Instantiate(RoomListEntryPrefab);
+				char gameMode = ' ';
                 if ((string)info.CustomProperties["gameMode"] == "camp")
                 {
-                    entry.transform.SetParent(RoomListContent.transform);
+                    entry.transform.SetParent(RoomListContent.transform, false);
+					gameMode = 'C';
                 } else if ((string)info.CustomProperties["gameMode"] == "versus")
                 {
-                    entry.transform.SetParent(RoomListContentVs.transform);
+                    entry.transform.SetParent(RoomListContentVs.transform, false);
+					gameMode = 'V';
                 }
 				entry.transform.localScale = Vector3.one;
-				entry.GetComponent<InitializeRoomStats>().Init(info.Name, (byte)info.PlayerCount, info.MaxPlayers);
+				string mapName = (string)info.CustomProperties["mapName"];
+				int ping = Convert.ToInt32(info.CustomProperties["ping"]);
+				entry.GetComponent<InitializeRoomStats>().Init(listPlayer.connexion, info.Name, (byte)info.PlayerCount, info.MaxPlayers, mapName, listPlayer.GetMapImageFromMapName(mapName), gameMode, ping);
 
 				roomListEntries.Add(info.Name, entry);
 			}

@@ -12,7 +12,7 @@ using AlertStatus = BetaEnemyScript.AlertStatus;
 public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	// HUD object reference
 	public HUDContainer container;
-	private PauseMenuScript pauseMenuScript;
+	// private PauseMenuScript pauseMenuScript;
 
     // Player reference
     public PlayerActionScript playerActionScript;
@@ -66,7 +66,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.hitFlare.GetComponent<RawImage> ().enabled = false;
 		container.hitDir.GetComponent<RawImage> ().enabled = false;
 		container.hitMarker.GetComponent<RawImage> ().enabled = false;
-		pauseMenuScript = container.pauseMenuGUI.GetComponent<PauseMenuScript>();
+		// pauseMenuScript = container.pauseMenuGUI.gameObject.GetComponent<PauseMenuScript>();
 
 		foreach (int actorId in gameController.enemyList.Keys) {
 			GameObject marker = GameObject.Instantiate(container.enemyAlerted);
@@ -76,13 +76,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			enemyMarkers.Add(actorId, m);
 		}
 
-		container.pauseMenuGUI.SetActive (false);
 		ToggleActionBar(false, null);
-		container.actionBarText.enabled = false;
 		container.hintText.enabled = false;
-		container.scoreboard.GetComponent<Canvas> ().enabled = false;
+		container.scoreboard.SetActive(false);
 		container.spectatorText.enabled = false;
 		ToggleDetectionHUD(false);
+		InitHealth();
 
 		if (gameController.matchType == 'C') {
 			ToggleVersusHUD(false);
@@ -111,7 +110,14 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void LoadHUDForMission() {
 		container.screenColor.color = new Color (0f, 0f, 0f, 1f);
-		container.objectivesText.text = gameController.objectives.GetObjectivesString();
+		container.objectivesText = new TextMeshProUGUI[gameController.objectives.objectivesText.Length];
+		for (int i = 0; i < gameController.objectives.objectivesText.Length; i++) {
+			string o = gameController.objectives.objectivesText[i];
+			GameObject objEntry = Instantiate(container.objectiveTextEntry);
+			objEntry.GetComponent<ObjectiveEntryScript>().SetObjectiveText(o);
+			objEntry.transform.SetParent(container.objectivesTextParent.transform);
+			container.objectivesText[i] = objEntry.GetComponent<ObjectiveEntryScript>().objectiveText;
+		}
         if (gameController.currentMap == 1) {
 			GameObject m1 = GameObject.Instantiate (container.hudWaypoint);
 			m1.GetComponent<RawImage>().enabled = false;
@@ -136,7 +142,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			missionWaypoints.Add (m5);
 		} else if (gameController.currentMap == 2) {
 			UpdateAssaultModeIndHud(true);
-			container.vipHealthBar.gameObject.SetActive(true);
+			container.vipHealthGroup.alpha = 1f;
 			GameObject m1 = GameObject.Instantiate (container.hudWaypoint);
 			m1.GetComponent<RawImage>().enabled = false;
 			m1.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
@@ -185,9 +191,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameControllerScript> ();
 			return;
 		}
-		container.healthText.text = (container.healthText ? "Health: " + playerActionScript.health : "");
-		if (container.staminaBar.isActiveAndEnabled) {
-			container.staminaBar.value = (playerActionScript.sprintTime / playerActionScript.playerScript.stamina);
+		UpdateHealth();
+		if (container.staminaGroup.alpha == 1f) {
+			float f = (playerActionScript.sprintTime / playerActionScript.playerScript.stamina);
+			container.staminaBar.value = f;
+			// container.staminaPercentTxt.text = ((int)(f * 100f)) + "%";
 		}
 		
 		HandleVipHealthBar();
@@ -198,8 +206,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		// Update UI
 		//container.weaponLabelTxt.text = playerActionScript.currWep;
-		container.weaponLabelTxt.text = wepScript.equippedWepInGame;
-		container.ammoTxt.text = "" + wepActionScript.currentAmmo + '/' + wepActionScript.totalAmmoLeft;
+		container.weaponLabelTxt.textObject.text = wepScript.equippedWepInGame;
+		container.ammoTxt.textObject.text = "" + wepActionScript.currentAmmo + '/' + wepActionScript.totalAmmoLeft;
 		
 		UpdateCursorStatus ();
 		if (gameController.matchType == 'V') {
@@ -218,7 +226,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		OnStartScreenFade ();
 
 		HandleRespawnBar ();
-		UpdateObjectives ();
+		// UpdateObjectives ();
 		FlashbangUpdate();
 		UpdateDetectedText();
 		UpdateCarryingText();
@@ -237,10 +245,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void HandleVipHealthBar() {
 		if (gameController.vipRef != null) {
-			container.vipHealthBar.gameObject.SetActive(true);
-			container.vipHealthBar.value = (float)gameController.vipRef.GetComponent<NpcScript>().health / 100f;
+			container.vipHealthGroup.alpha = 1f;
+			int h = gameController.vipRef.GetComponent<NpcScript>().health;
+			container.vipHealthPercentTxt.text = h + "%";
+			container.vipHealthBar.value = (float)h / 100f;
 		} else {
-			container.vipHealthBar.gameObject.SetActive(false);
+			container.vipHealthGroup.alpha = 0f;
 		}
 	}
 
@@ -279,7 +289,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	bool CanPause() {
 		if (wepActionScript.isCocking || wepActionScript.isDrawing || wepActionScript.isMeleeing || wepActionScript.isFiring || wepActionScript.isAiming || wepActionScript.isCockingGrenade 
 			|| wepActionScript.deployInProgress || wepActionScript.isUsingBooster || wepActionScript.isUsingDeployable || wepActionScript.isReloading || wepActionScript.fpc.m_IsRunning
-			|| container.scoreboard.GetComponent<Canvas>().enabled) {
+			|| container.scoreboard.activeInHierarchy) {
 				return false;
 			}
 		return true;
@@ -290,7 +300,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			Pause();
 		}
 
-		if (container.pauseMenuGUI.activeInHierarchy)
+		if (container.pauseMenuManager.pauseActive)
 		{
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
@@ -677,18 +687,19 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleHUD(bool b)
     {
-		if (b && container.healthText.enabled) {
+		if (b && container.timeGroup.activeInHierarchy) {
 			return;
 		}
-		if (!b && !container.healthText.enabled) {
+		if (!b && !container.timeGroup.activeInHierarchy) {
 			return;
 		}
-        container.healthText.enabled = b;
-		container.staminaBar.gameObject.SetActive (b);
-        container.weaponLabelTxt.enabled = b;
-        container.ammoTxt.enabled = b;
-		container.hudMap.enabled = b;
-		container.hudMap2.enabled = b;
+        container.healthGroup.alpha = (b ? 1f : 0f);
+		container.staminaGroup.alpha = (b ? 1f : 0f);
+        container.weaponLabelTxt.gameObject.SetActive(b);
+        container.ammoTxt.gameObject.SetActive(b);
+		container.minimapGroup.SetActive(b);
+		container.timeGroup.SetActive(b);
+		Debug.Log(container.minimapGroup.activeInHierarchy);
 		container.hintText.enabled = false;
 		if (!b) {
 			container.itemCarryingText.text = null;
@@ -699,22 +710,21 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	public void ToggleScoreboard(bool b)
     {
 		if (playerActionScript.health <= 0) {
-			container.healthText.enabled = false;
-			container.staminaBar.gameObject.SetActive (false);
-			container.weaponLabelTxt.enabled = false;
-			container.ammoTxt.enabled = false;
+			container.healthGroup.alpha = 0f;
+			container.staminaGroup.alpha = 0f;
+			container.weaponLabelTxt.gameObject.SetActive(false);
+			container.ammoTxt.gameObject.SetActive(false);
 		} else {
-			container.healthText.enabled = !b;
-			container.staminaBar.gameObject.SetActive (!b);
-			container.weaponLabelTxt.enabled = !b;
-			container.ammoTxt.enabled = !b;
+			container.healthGroup.alpha = (!b ? 1f : 0f);
+			container.staminaGroup.alpha = (!b ? 1f : 0f);
+			container.weaponLabelTxt.gameObject.SetActive(!b);
+			container.ammoTxt.gameObject.SetActive(!b);
 		}
 		container.missionTimeText.enabled = !b;
 		container.missionTimeRemainingText.enabled = !b;
 		container.assaultModeIndText.enabled = !b;
-		container.objectivesText.enabled = !b;
-		container.objectivesTextParent.enabled = !b;
-        container.scoreboard.GetComponent<Canvas>().enabled = b;
+		container.objectivesTextParent.SetActive(!b);
+        container.scoreboard.SetActive(b);
     }
 
     public void ReturnToMenu()
@@ -725,14 +735,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     void Pause()
     {
-        if (!container.pauseMenuGUI.activeInHierarchy)
+        if (!container.pauseMenuManager.pauseActive)
         {
-            container.pauseMenuGUI.SetActive(true);
-        }
-        else
-        {
-            pauseMenuScript.HandleEscPress();
-        }
+            container.pauseMenuManager.OpenPause();
+        } else {
+			container.pauseMenuManager.ClosePause();
+		}
     }
 
     IEnumerator ShowMissionText(int mission)
@@ -772,39 +780,17 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     public void ToggleActionBar(bool enable, string actionText)
     {
-        int c = container.actionBarImgs.Length;
-        if (!enable)
-        {
-			// Preemptive check
-			if (!container.actionBarImgs[0].enabled) {
-				return;
-			}
-            // Disable all actionbar components
-			container.actionBarText.enabled = false;
-            for (int i = 0; i < c; i++)
-            {
-                container.actionBarImgs[i].enabled = false;
-            }
-        }
-        else
-        {
-			// Preemptive check
-			if (container.actionBarImgs[0].enabled) {
-				return;
-			}
-			container.actionBarText.text = actionText;
-			container.actionBarText.enabled = true;
-            for (int i = 0; i < c; i++)
-            {
-                container.actionBarImgs[i].enabled = true;
-            }
-        }
+		container.actionBar.SetActive(enable);
+		container.actionBarText.text = actionText;
     }
 
     public void UpdateObjectives()
     {
 		if (gameController.updateObjectivesFlag) {
-			container.objectivesText.text = gameController.objectives.GetObjectivesString();
+			for (int i = 0; i < gameController.objectives.objectivesText.Length; i++) {
+				string o = gameController.objectives.objectivesText[i];
+				container.objectivesText[i].text = o;
+			}
 			gameController.updateObjectivesFlag = false;
 		}
     }
@@ -813,13 +799,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     {
 		if (container != null) {
 			container.missionText.GetComponent<MissionTextAnimScript> ().Reset ();
-			container.missionText.GetComponent<Text> ().text = message;
+			container.missionText.GetComponent<TextMeshProUGUI> ().text = message;
 			container.missionText.GetComponent<MissionTextAnimScript> ().SetStarted ();
 		}
     }
 
 	public void SetActionBarSlider(float val) {
-		container.actionBar.GetComponent<Slider> ().value = val;
+		container.actionBarSlider.value = val;
 	}
 
 	public void ToggleSpectatorMessage(bool b) {
@@ -932,6 +918,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	void ToggleGameOverBanner(bool b) {
 		if (b) {
 			playerActionScript.HandleGameOverBanner ();
+			container.gameOverBanner.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
 			container.gameOverBanner.SetActive (true);
 		} else {
 			container.gameOverBanner.SetActive (false);
@@ -1031,9 +1018,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void UpdateCarryingText() {
 		if (container.itemCarryingText.text != null && container.itemCarryingText.text != "") {
-			container.itemCarryingPnl.SetActive(true);
+			container.itemCarryingGroup.alpha = 1f;
 		} else {
-			container.itemCarryingPnl.SetActive(false);
+			container.itemCarryingGroup.alpha = 0f;
 		}
 	}
 
@@ -1060,8 +1047,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         container.redScore.SetActive(b);
 		if (gameController.teamMap == "R") {
 			container.redTeamHighlight.SetActive(true);
+			container.redTeamUnderline.SetActive(true);
 		} else if (gameController.teamMap == "B") {
 			container.blueTeamHighlight.SetActive(true);
+			container.blueTeamUnderline.SetActive(true);
 		}
     }
 
@@ -1124,7 +1113,17 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	public bool PauseIsActive() {
-		return container.pauseMenuGUI.activeInHierarchy;
+		return container.pauseMenuGUI.pauseActive;
+	}
+
+	public void UpdateHealth() {
+		container.healthBar.value = playerActionScript.health / 100f;
+		container.healthPercentTxt.text = playerActionScript.health + "%";
+	}
+
+	void InitHealth() {
+		container.healthBar.value = 1f;
+		container.healthPercentTxt.text = "100%";
 	}
 
 }

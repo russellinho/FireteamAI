@@ -6,42 +6,37 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
 using Firebase.Database;
+using TMPro;
+using Michsky.UI.Shift;
 
 public class GameOverController : MonoBehaviourPunCallbacks {
     public Slider prevExpSlider;
+    public Slider prevExpSliderVs;
     public Slider newExpSlider;
-    public Text expGainedTxt;
-    public GameObject levelUpPopup;
-    public GameObject emergencyPopup;
-    public Text emergencyPopupTxt;
+    public Slider newExpSliderVs;
+    public BlurManager blurManager;
+    public TextMeshProUGUI expGainedTxt;
+    public TextMeshProUGUI expGainedTxtVs;
+    public ModalWindowManager levelUpPopup;
+    public ModalWindowManager alertPopup;
+    private bool triggerAlertPopup;
+    private string alertPopupMessage;
 
-	public GameObject namesCol;
-	public GameObject killsCol;
-	public GameObject deathsCol;
+    public GameObject PlayerEntryPrefab;
+    public GameObject KDPrefab;
 
-	public Text[] campaignNames;
-	public Text[] campaignKills;
-	public Text[] campaignDeaths;
-    public Text[] campaignExp;
-    public Text[] campaignGp;
-    public Text[] campaignLevelUp;
-    public RawImage[] campaignRanks;
+	public Transform campaignNames;
+	public Transform campaignKills;
+	public Transform campaignDeaths;
 
-    public Text[] redNames;
-    public Text[] redKills;
-    public Text[] redDeaths;
-    public Text[] redExp;
-    public Text[] redGp;
-    public Text[] redLevelUp;
-    public RawImage[] redRanks;
+	public Transform redNames;
+	public Transform redKills;
+	public Transform redDeaths;
 
-    public Text[] blueNames;
-    public Text[] blueKills;
-    public Text[] blueDeaths;
-    public Text[] blueExp;
-    public Text[] blueGp;
-    public Text[] blueLevelUp;
-    public RawImage[] blueRanks;
+	public Transform blueNames;
+	public Transform blueKills;
+	public Transform blueDeaths;
+
     private bool exitButtonPressed;
 
     public GameObject versusPanel;
@@ -80,17 +75,23 @@ public class GameOverController : MonoBehaviourPunCallbacks {
         }
     }
 
+    void Update() {
+        if (triggerAlertPopup) {
+            triggerAlertPopup = false;
+            alertPopup.SetText(alertPopupMessage);
+            blurManager.BlurInAnim();
+            alertPopup.ModalWindowIn();
+        }
+    }
+
     void PopulateCampaignFinalStats()
     {
-        int i = 0;
-
         foreach (PlayerStat s in GameControllerScript.playerList.Values)
         {
             uint newExp = s.exp + s.expGained;
             Rank newRank = PlayerData.playerdata.GetRankFromExp(newExp);
             // If these are my scores, save the earned EXP and GP
             if (s.actorId == PhotonNetwork.LocalPlayer.ActorNumber) {
-
                 Rank oldRank = PlayerData.playerdata.GetRankFromExp(s.exp);
                 if (oldRank.minExp != newRank.minExp) {
                     prevExpSlider.value = 0f;
@@ -102,41 +103,32 @@ public class GameOverController : MonoBehaviourPunCallbacks {
                 expGainedTxt.text = s.expGained + " / " + toNextLevel;
                 SaveEarnings(s.expGained, s.gpGained);
             }
-            campaignNames[i].text = s.name;
-            campaignKills[i].text = ""+s.kills;
-            campaignDeaths[i].text = ""+s.deaths;
-            campaignExp[i].text = "+"+s.expGained;
-            campaignGp[i].text = "+"+s.gpGained;
+            GameObject thisPlayerEntry = GameObject.Instantiate(PlayerEntryPrefab);
+            GameOverPlayerEntry g = thisPlayerEntry.GetComponent<GameOverPlayerEntry>();
+            g.nametagText.text = s.name;
+            g.expGainedText.text = "+"+s.expGained + " EXP";
+            g.gpGainedText.text = "+"+s.gpGained + " GP";
+            GameObject killsEntry = GameObject.Instantiate(KDPrefab);
+            killsEntry.GetComponent<TextMeshProUGUI>().text = ""+s.kills;
+            GameObject deathsEntry = GameObject.Instantiate(KDPrefab);
+            deathsEntry.GetComponent<TextMeshProUGUI>().text = ""+s.deaths;
             if (s.exp < newRank.minExp) {
-                campaignLevelUp[i].enabled = true;
+                g.levelUpText.enabled = true;
                 if (s.actorId == PhotonNetwork.LocalPlayer.ActorNumber) {
                     ToggleLevelUpPopup(newRank);
                 }
             } else {
-                campaignLevelUp[i].enabled = false;
+                g.levelUpText.enabled = false;
             }
-            campaignRanks[i].texture = PlayerData.playerdata.GetRankInsigniaForRank(newRank.name);
-            i++;
-        }
-
-        while (i < 8)
-        {
-            campaignNames[i].text = "";
-            campaignKills[i].text = "";
-            campaignDeaths[i].text = "";
-            campaignExp[i].text = "";
-            campaignGp[i].text = "";
-            campaignLevelUp[i].enabled = false;
-            campaignRanks[i].enabled = false;
-            i++;
+            g.rankImage.texture = PlayerData.playerdata.GetRankInsigniaForRank(newRank.name);
+            thisPlayerEntry.transform.SetParent(campaignNames, false);
+            killsEntry.transform.SetParent(campaignKills, false);
+            deathsEntry.transform.SetParent(campaignDeaths, false);
         }
     }
 
     void PopulateVersusFinalStats()
     {
-        int redI = 0;
-        int blueI = 0;
-        
         foreach (PlayerStat s in GameControllerScript.playerList.Values) {
             uint newExp = s.exp + s.expGained;
             Rank newRank = PlayerData.playerdata.GetRankFromExp(newExp);
@@ -145,69 +137,42 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 
                 Rank oldRank = PlayerData.playerdata.GetRankFromExp(s.exp);
                 if (oldRank.minExp != newRank.minExp) {
-                    prevExpSlider.value = 0f;
+                    prevExpSliderVs.value = 0f;
                 } else {
-                    prevExpSlider.value = (float)(s.exp - oldRank.minExp) / (float)(oldRank.maxExp - oldRank.minExp);
+                    prevExpSliderVs.value = (float)(s.exp - oldRank.minExp) / (float)(oldRank.maxExp - oldRank.minExp);
                 }
-                newExpSlider.value = (float)(newExp - newRank.minExp) / (float)(newRank.maxExp - newRank.minExp);
+                newExpSliderVs.value = (float)(newExp - newRank.minExp) / (float)(newRank.maxExp - newRank.minExp);
                 uint toNextLevel = newRank.maxExp - newExp;
-                expGainedTxt.text = s.expGained + " / " + toNextLevel;
+                expGainedTxtVs.text = s.expGained + " / " + toNextLevel;
                 SaveEarnings(s.expGained, s.gpGained);
             }
-            if (s.team == 'R') {
-                redNames[redI].text = s.name;
-                redKills[redI].text = ""+s.kills;
-                redDeaths[redI].text = ""+s.deaths;
-                redExp[redI].text = "+"+s.expGained;
-                redGp[redI].text = "+"+s.gpGained;
-                if (s.exp < newRank.minExp) {
-                    redLevelUp[redI].enabled = true;
-                    if (s.actorId == PhotonNetwork.LocalPlayer.ActorNumber) {
-                        ToggleLevelUpPopup(newRank);
-                    }
-                } else {
-                    redLevelUp[redI].enabled = false;
+            GameObject thisPlayerEntry = GameObject.Instantiate(PlayerEntryPrefab);
+            GameOverPlayerEntry g = thisPlayerEntry.GetComponent<GameOverPlayerEntry>();
+            GameObject killsEntry = GameObject.Instantiate(KDPrefab);
+            GameObject deathsEntry = GameObject.Instantiate(KDPrefab);
+            g.nametagText.text = s.name;
+            g.expGainedText.text = "+"+s.expGained + " EXP";
+            g.gpGainedText.text = "+"+s.gpGained + " GP";
+            if (s.exp < newRank.minExp) {
+                g.levelUpText.enabled = true;
+                if (s.actorId == PhotonNetwork.LocalPlayer.ActorNumber) {
+                    ToggleLevelUpPopup(newRank);
                 }
-                redRanks[redI].texture = PlayerData.playerdata.GetRankInsigniaForRank(newRank.name);
-                redI++;
-            } else if (s.team == 'B') {
-                blueNames[blueI].text = s.name;
-                blueKills[blueI].text = ""+s.kills;
-                blueDeaths[blueI].text = ""+s.deaths;
-                blueExp[blueI].text = "+"+s.expGained;
-                blueGp[blueI].text = "+"+s.gpGained;
-                if (s.exp < newRank.minExp) {
-                    blueLevelUp[blueI].enabled = true;
-                } else {
-                    blueLevelUp[blueI].enabled = false;
-                }
-                blueRanks[blueI].texture = PlayerData.playerdata.GetRankInsigniaForRank(newRank.name);
-                blueI++;
+            } else {
+                g.levelUpText.enabled = false;
             }
-        }
-
-        while (redI < 8)
-        {
-            redNames[redI].text = "";
-            redKills[redI].text = "";
-            redDeaths[redI].text = "";
-            redExp[redI].text = "";
-            redGp[redI].text = "";
-            redLevelUp[redI].enabled = false;
-            redRanks[redI].enabled = false;
-            redI++;
-        }
-
-        while (blueI < 8)
-        {
-            blueNames[blueI].text = "";
-            blueKills[blueI].text = "";
-            blueDeaths[blueI].text = "";
-            blueExp[blueI].text = "";
-            blueGp[blueI].text = "";
-            blueLevelUp[blueI].enabled = false;
-            blueRanks[blueI].enabled = false;
-            blueI++;
+            g.rankImage.texture = PlayerData.playerdata.GetRankInsigniaForRank(newRank.name);
+            killsEntry.GetComponent<TextMeshProUGUI>().text = ""+s.kills;
+            deathsEntry.GetComponent<TextMeshProUGUI>().text = ""+s.deaths;
+            if (s.team == 'R') {
+                thisPlayerEntry.transform.SetParent(redNames, false);
+                killsEntry.transform.SetParent(redKills, false);
+                deathsEntry.transform.SetParent(redDeaths, false);
+            } else if (s.team == 'B') {
+                thisPlayerEntry.transform.SetParent(blueNames, false);
+                killsEntry.transform.SetParent(blueKills, false);
+                deathsEntry.transform.SetParent(blueDeaths, false);
+            }
         }
     }
 
@@ -243,20 +208,13 @@ public class GameOverController : MonoBehaviourPunCallbacks {
     void ToggleLevelUpPopup(Rank r) {
         levelUpPopup.GetComponent<LevelUpPopupScript>().rankInsigniaRef.texture = PlayerData.playerdata.GetRankInsigniaForRank(r.name);
         levelUpPopup.GetComponent<LevelUpPopupScript>().rankNameTxt.text = r.name;
-        levelUpPopup.SetActive(true);
+        blurManager.BlurInAnim();
+        levelUpPopup.ModalWindowIn();
     }
 
-    public void CloseLevelUpPopup() {
-        levelUpPopup.SetActive(false);
-    }
-
-    public void TriggerEmergencyPopup(string message) {
-        emergencyPopupTxt.text = message;
-        emergencyPopup.SetActive(true);
-    }
-
-    public void CloseEmergencyPopup() {
-        emergencyPopup.SetActive(false);
+    public void TriggerAlertPopup(string message) {
+        alertPopupMessage = message;
+        triggerAlertPopup = true;
     }
 
 }

@@ -4,11 +4,11 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
-public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ShopItemScript : MonoBehaviour
 {
     public GameObject itemDescriptionPopupRef;
-    public GameObject modDescriptionPopupRef;
     public TitleControllerScript ts;
     public RawImage thumbnailRef;
     public Image outline;
@@ -20,7 +20,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public string id;
     public string equippedOn;
     public string acquireDate;
-    private string expirationDate;
+    public string expirationDate;
     public string duration;
     public string itemName;
     public string itemType;
@@ -28,33 +28,20 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public string weaponCategory;
     public string modCategory;
     // 0 = long sleeves, 1 = mid sleeves, 2 = short sleeves
-    public Text equippedInd;
     private int clickCount;
     private float clickTimer;
-    public Text gpPriceTxt;
+    public TextMeshProUGUI gpPriceTxt;
     public Button previewBtn;
     public Button purchaseBtn;
+    public Button equipBtn;
+    public Button modWeaponBtn;
+    public Button modEquipBtn;
+    public char titleType;
 
     void Start() {
         clickCount = 0;
         clickTimer = 0f;
         ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
-        // Only allow previewing for characters, equipment, and primary weapons
-        if (previewBtn != null) {
-            if (modDetails != null) {
-                previewBtn.gameObject.SetActive(false);
-            }
-            if (weaponDetails != null && (weaponDetails.type != "Primary")) {
-                previewBtn.gameObject.SetActive(false);
-            }
-        } else
-        {
-            if (modDetails != null)
-            {
-                ts.removeSuppressorBtn.onClick.AddListener(() => OnRemoveSuppressorClicked());
-                ts.removeSightBtn.onClick.AddListener(() => OnRemoveSightClicked());
-            }
-        }
     }
 
     void FixedUpdate() {
@@ -71,18 +58,33 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void OnItemClick() {
         clickCount++;
         if (clickCount == 2) {
-            if (modDetails == null) {
-                if (gpPriceTxt == null) {
-                    EquipItem();
-                } else {
+            if (titleType == 'm') {
+                if (ItemCanBePreviewed()) {
                     PreviewItem();
                 }
-            } else {
-                EquipMod();
+            } else if (titleType == 'l') {
+                EquipItem();
+            } else if (titleType == 's') {
+                if (modDetails == null) {
+                    LoadWeaponForModding();
+                } else {
+                    EquipMod();
+                }
             }
             clickTimer = 0f;
             clickCount = 0;
         }
+    }
+
+    bool ItemCanBePreviewed() {
+        if (itemType == "Mod" || (itemType == "Weapon" && weaponDetails.type != "Primary")) {
+            return false;
+        }
+        return true;
+    }
+
+    public void LoadWeaponForModding() {
+        ts.LoadWeaponForModding(this);
     }
 
     public void OnPreviewBtnClicked() {
@@ -123,7 +125,7 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
-    private void EquipItem()
+    public void EquipItem()
     {
         switch (itemType)
         {
@@ -154,16 +156,28 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
-    private void EquipMod() {
-        if (equippedOn == ts.modWeaponLbl.text)
-        {
-            return;
-        }
+    public void EquipMod() {
+        // if (equippedOn == ts.modWeaponLbl.text)
+        // {
+        //     return;
+        // }
         switch (modCategory)
         {
             case "Suppressor":
+                // Check if weapon is suppressor compatible before continuing
+                if (!ts.WeaponIsSuppressorCompatible(ts.weaponBeingPreviewed)) {
+                    ts.TriggerAlertPopup("Suppressors cannot be equipped on this weapon!");
+                    return;
+                }
+
+                // Clear orange highlight
+                if (ts.currentlyEquippedModPrefab != null) {
+                    ShopItemScript prev = ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>();
+                    prev.ToggleModEquippedIndicator(false);
+                }
+
                 // If this weapon already has a suppressor on it, unequip it first
-                OnRemoveSuppressorClicked();
+                ts.OnRemoveSuppressorClicked();
 
                 // If this mod is equipped to another weapon, unequip it from that weapon as well
                 if (equippedOn != null && !"".Equals(equippedOn))
@@ -174,13 +188,30 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 }
 
                 // Attach to player weapon and attach to weapon mod template as well
-                string weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory, id);
+                string weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory, id, this);
+                if (weaponNameAttachedTo == "0") {
+                    return;
+                }
+
                 equippedOn = weaponNameAttachedTo;
                 PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipMod(modCategory, itemName, weaponNameAttachedTo, gameObject);
+                PlayerData.playerdata.SaveModDataForWeapon(equippedOn, itemName, null, id, null);
                 break;
             case "Sight":
+                // Check if weapon is sight compatible before continuing
+                if (!ts.WeaponIsSightCompatible(ts.weaponBeingPreviewed)) {
+                    ts.TriggerAlertPopup("Sights cannot be equipped on this weapon!");
+                    return;
+                }
+
+                // Clear orange highlight
+                if (ts.currentlyEquippedModPrefab != null) {
+                    ShopItemScript prev = ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>();
+                    prev.ToggleModEquippedIndicator(false);
+                }
+
                 // If this weapon already has a sight on it, unequip it first
-                OnRemoveSightClicked();
+                ts.OnRemoveSightClicked();
 
                 // If this mod is equipped to another weapon, unequip it from that weapon as well
                 if (equippedOn != null && !"".Equals(equippedOn))
@@ -191,81 +222,19 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 }
 
                 // Attach to player weapon and attach to weapon mod template as well
-                weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory, id);
+                weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory, id, this);
+                if (weaponNameAttachedTo == "0") {
+                    return;
+                }
+
                 equippedOn = weaponNameAttachedTo;
                 PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipMod(modCategory, itemName, weaponNameAttachedTo, gameObject);
+                PlayerData.playerdata.SaveModDataForWeapon(equippedOn, itemName, null, id, null);
                 break;
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData) {
-        if (modDetails == null && purchaseBtn == null && (expirationDate == null || "".Equals(expirationDate))) {
-            CalculateExpirationDate();
-        }
-        if (itemType.Equals("Mod")) {
-            if (modDescriptionPopupRef.activeInHierarchy) {
-                return;
-            }
-            modDescriptionPopupRef.SetActive(true);
-            ItemPopupScript ips = modDescriptionPopupRef.GetComponent<ItemPopupScript>();
-            ips.SetExpirationDate(expirationDate);
-            ips.SetTitle(itemName);
-            ips.SetThumbnail(thumbnailRef);
-            ips.SetDescription(itemDescription);
-            ips.SetModStats(modDetails.damageBoost, modDetails.accuracyBoost, modDetails.recoilBoost, modDetails.rangeBoost, modDetails.clipCapacityBoost, modDetails.maxAmmoBoost, equippedOn);
-            ips.ToggleModStatDescriptor(true);
-            if (ips.restrictionsDescriptor != null) {
-                ips.ToggleRestrictionsDescriptor(false);
-            }
-        } else {
-            if (itemDescriptionPopupRef.activeInHierarchy) {
-                return;
-            }
-            itemDescriptionPopupRef.SetActive(true);
-            ItemPopupScript ips = itemDescriptionPopupRef.GetComponent<ItemPopupScript>();
-            ips.SetExpirationDate(expirationDate);
-            ips.SetTitle(itemName);
-            ips.SetThumbnail(thumbnailRef);
-            ips.SetDescription(itemDescription);
-            if (itemType.Equals("Headgear") || itemType.Equals("Facewear")) {
-                ips.ToggleWeaponStatDescriptor(false);
-                ips.SetEquipmentStats(equipmentDetails.armor, equipmentDetails.speed, equipmentDetails.stamina, equipmentDetails.gender, equipmentDetails.characterRestrictions);
-                ips.ToggleEquipmentStatDescriptor(true);
-                ips.SetRestrictions(equipmentDetails.gender, equipmentDetails.characterRestrictions);
-                ips.ToggleRestrictionsDescriptor(true);
-            } else if (itemType.Equals("Armor")) {
-                ips.ToggleWeaponStatDescriptor(false);
-                ips.SetArmorStats(armorDetails.armor, armorDetails.speed, armorDetails.stamina);
-                ips.ToggleEquipmentStatDescriptor(true);
-                ips.ToggleRestrictionsDescriptor(false);
-            } else if (itemType.Equals("Weapon")) {
-                ips.ToggleEquipmentStatDescriptor(false);
-                ips.SetWeaponStats(weaponDetails.damage, weaponDetails.accuracy, weaponDetails.recoil, weaponDetails.fireRate, weaponDetails.mobility, weaponDetails.range, weaponDetails.clipCapacity);
-                ips.ToggleWeaponStatDescriptor(true);
-                ips.ToggleRestrictionsDescriptor(false);
-            } else {
-                // For clothing and shoes
-                ips.ToggleEquipmentStatDescriptor(false);
-                ips.ToggleWeaponStatDescriptor(false);
-                if (!itemType.Equals("Character")) {
-                    ips.ToggleRestrictionsDescriptor(true);
-                    ips.SetRestrictions(equipmentDetails.gender, equipmentDetails.characterRestrictions);
-                } else {
-                    ips.ToggleRestrictionsDescriptor(false);
-                }
-            }
-        }
-    }
-
-    public void OnPointerExit(PointerEventData eventData) {
-        if (itemType.Equals("Mod")) {
-            modDescriptionPopupRef.SetActive(false);
-        } else {
-            itemDescriptionPopupRef.SetActive(false);
-        }
-    }
-
-    private void CalculateExpirationDate() {
+    public void CalculateExpirationDate() {
         if (duration.Equals("-1")) {
             expirationDate = "Permanent";
         } else {
@@ -281,32 +250,69 @@ public class ShopItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void ToggleEquippedIndicator(bool b) {
         if (b) {
             outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-            equippedInd.enabled = true;
+            equipBtn.gameObject.SetActive(false);
         } else {
-            outline.color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 255f / 255f);
-            equippedInd.enabled = false;
+            outline.color = new Color(99f / 255f, 198f / 255f, 255f / 255f, 255f / 255f);
+            equipBtn.gameObject.SetActive(true);
         }
     }
 
-    public void OnRemoveSuppressorClicked()
-    {
-        if (equippedOn != ts.modWeaponLbl.text)
-        {
-            return;
+    public void ToggleWeaponPreviewIndicator(bool b) {
+        if (b) {
+            outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+            modWeaponBtn.gameObject.SetActive(false);
+        } else {
+            outline.color = new Color(99f / 255f, 198f / 255f, 255f / 255f, 255f / 255f);
+            modWeaponBtn.gameObject.SetActive(true);
         }
-        // Remove suppressor model from the player's weapon and the template weapon
-        ts.RemoveSuppressorFromWeapon(equippedOn, true);
-        ToggleEquippedIndicator(false);
-        equippedOn = "";
     }
 
-    public void OnRemoveSightClicked() {
-        if (equippedOn != ts.modWeaponLbl.text) {
-            return;
+    public void ToggleModEquippedIndicator(bool b) {
+        if (b) {
+            outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+            modEquipBtn.gameObject.SetActive(false);
+        } else {
+            outline.color = new Color(99f / 255f, 198f / 255f, 255f / 255f, 255f / 255f);
+            modEquipBtn.gameObject.SetActive(true);
         }
-        // Remove sight model from the player's weapon and the template weapon
-        ts.RemoveSightFromWeapon(equippedOn, true);
-        ToggleEquippedIndicator(false);
+    }
+
+    public void SetItemForMarket() {
+        gpPriceTxt.gameObject.SetActive(true);
+        previewBtn.gameObject.SetActive(ItemCanBePreviewed());
+        purchaseBtn.gameObject.SetActive(true);
+        equipBtn.gameObject.SetActive(false);
+        modWeaponBtn.gameObject.SetActive(false);
+        modEquipBtn.gameObject.SetActive(false);
+        titleType = 'm';
+    }
+
+    public void SetItemForLoadout() {
+        gpPriceTxt.gameObject.SetActive(false);
+        previewBtn.gameObject.SetActive(false);
+        purchaseBtn.gameObject.SetActive(false);
+        equipBtn.gameObject.SetActive(true);
+        modWeaponBtn.gameObject.SetActive(false);
+        modEquipBtn.gameObject.SetActive(false);
+        titleType = 'l';
+    }
+
+    public void SetItemForModShop() {
+        if (modDetails == null) {
+            modWeaponBtn.gameObject.SetActive(true);
+            modEquipBtn.gameObject.SetActive(false);
+        } else {
+            modWeaponBtn.gameObject.SetActive(false);
+            modEquipBtn.gameObject.SetActive(true);
+        }
+        gpPriceTxt.gameObject.SetActive(false);
+        previewBtn.gameObject.SetActive(false);
+        purchaseBtn.gameObject.SetActive(false);
+        equipBtn.gameObject.SetActive(false);
+        titleType = 's';
+    }
+
+    public void ClearEquippedOn() {
         equippedOn = "";
     }
 

@@ -160,7 +160,7 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
 
-        if (playerActionScript.health <= 0) {
+        if (playerActionScript.health <= 0 || playerActionScript.gameController.gameOver) {
             hudScript.toggleSniperOverlay(false);
             hudScript.ToggleSightCrosshair(false);
             return;
@@ -194,7 +194,7 @@ public class WeaponActionScript : MonoBehaviour
 
         HandleAttack();
 
-        if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster || isWieldingDeployable || hudScript.container.pauseMenuGUI.activeInHierarchy)
+        if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster || isWieldingDeployable || hudScript.container.pauseMenuGUI.pauseActive)
         {
             return;
         }
@@ -268,7 +268,7 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
         
-        if (shootInput && !meleeInput && !isMeleeing && !isDrawing && !isReloading && playerActionScript.canShoot && !hudScript.container.pauseMenuGUI.activeInHierarchy)
+        if (shootInput && !meleeInput && !isMeleeing && !isDrawing && !isReloading && playerActionScript.canShoot && !hudScript.container.pauseMenuGUI.pauseActive)
         {
             if (currentAmmo > 0)
             {
@@ -482,7 +482,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     bool CanMelee() {
-        if (!fpc.m_CharacterController.isGrounded || isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || deployInProgress || isUsingBooster || isUsingDeployable || hudScript.container.pauseMenuGUI.activeInHierarchy) {
+        if (!fpc.m_CharacterController.isGrounded || isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || deployInProgress || isUsingBooster || isUsingDeployable || hudScript.container.pauseMenuGUI.pauseActive) {
             return false;
         }
         return true;
@@ -1265,7 +1265,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     void FireBooster() {
-        if (fireTimer < weaponStats.fireRate || hudScript.container.pauseMenuGUI.activeInHierarchy)
+        if (fireTimer < weaponStats.fireRate || hudScript.container.pauseMenuGUI.pauseActive)
         {
             ResetBoosterState();
             return;
@@ -1289,7 +1289,7 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     void FireDeployable() {
-        if (fireTimer < weaponStats.fireRate || hudScript.container.pauseMenuGUI.activeInHierarchy)
+        if (fireTimer < weaponStats.fireRate || hudScript.container.pauseMenuGUI.pauseActive)
         {
             ResetDeployableState();
             return;

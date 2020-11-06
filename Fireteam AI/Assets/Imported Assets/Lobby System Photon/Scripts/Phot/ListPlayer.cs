@@ -10,17 +10,19 @@ using UITemplate;
 using TMPro;
 using ExitGames.Client.Photon;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using Michsky.UI.Shift;
 
 namespace Photon.Pun.LobbySystemPhoton
 {
 	public class ListPlayer : MonoBehaviourPunCallbacks
 	{
+		public MainPanelManager mainPanelManager;
 		public PhotonView pView;
 
 		[Header("Inside Room Panel")]
-		public GameObject[] InsideRoomPanel;
-		public GameObject[] InsideRoomPanelVs;
-        public Text myTeamVsTxt;
+		public Transform PlayersInRoomPanel;
+		public Transform PlayersInRoomPanelVsRed;
+		public Transform PlayersInRoomPanelVsBlue;
 		private int lastSlotUsed;
 
 		public Template templateUIClass;
@@ -32,20 +34,18 @@ namespace Photon.Pun.LobbySystemPhoton
 		public TChat chatVs;
 		public GameObject readyButton;
 		public GameObject readyButtonVs;
-        public Text readyButtonTxt;
-        public Text readyButtonVsTxt;
+        public TextMeshProUGUI readyButtonTxt;
+        public TextMeshProUGUI readyButtonVsTxt;
 		public RawImage mapPreviewThumb;
-        public Text mapPreviewTxt;
 		public RawImage mapPreviewVsThumb;
-        public Text mapPreviewVsTxt;
-		public Button mapNext;
-		public Button mapNextVs;
-		public Button mapPrev;
-		public Button mapPrevVs;
+		public TextMeshProUGUI mapDescription;
+		public TextMeshProUGUI mapDescriptionVs;
+		public HorizontalSelector mapSelector;
+		public HorizontalSelector mapSelectorVs; 
 		public Button sendMsgBtn;
 		public Button sendMsgBtnVs;
-		public Button emojiBtn;
-		public Button emojiBtnVs;
+		// public Button emojiBtn;
+		// public Button emojiBtnVs;
 		public Button leaveGameBtn;
 		public Button leaveGameBtnVs;
 		public Button switchTeamsBtnVs;
@@ -53,9 +53,10 @@ namespace Photon.Pun.LobbySystemPhoton
 		public AudioClip countdownSfx;
 
 		// Map options
-		private int mapIndex = 0;
-		private string[] mapNames = new string[]{"Badlands: Act I", "Badlands: Act II"};
+		private string[] mapNames = new string[]{"The Badlands: Act I", "The Badlands: Act II"};
 		private string[] mapStrings = new string[]{"MapImages/badlands1", "MapImages/badlands2"};
+		private string[] mapDescriptions = new string[]{"A local cannibal insurgent group in the de-facto midwest of the New States of America known as the Cicadas has taken over a local refugee outpost in order to develop chemical warheads. Disrupt their operation and salvage the outpost.", 
+			"The local Cicadas have shot down one of our evac choppers in the badlands. Rescue the surviving pilot and defend her until evac arrives."};
 		public static Vector3[] mapSpawnPoints = new Vector3[]{ new Vector3(-2f,1f,1f), new Vector3(119f, -5.19f, 116f) };
 
 		// Ready status
@@ -76,18 +77,18 @@ namespace Photon.Pun.LobbySystemPhoton
 			blueTeam = new ArrayList();
 		}
 
-        public void DisplayPopup(string message) {
-			ToggleButtons (false);
-            if (templateUIClass.gameObject.activeInHierarchy)
-            {
-                templateUIClass.popup.GetComponentsInChildren<Text>()[0].text = message;
-                templateUIClass.popup.SetActive(true);
-            } else if (templateUIClassVs.gameObject.activeInHierarchy)
-            {
-                templateUIClassVs.popup.GetComponentsInChildren<Text>()[0].text = message;
-                templateUIClassVs.popup.SetActive(true);
-            }
-		}
+        // public void DisplayPopup(string message) {
+		// 	ToggleButtons (false);
+        //     if (templateUIClass.gameObject.activeInHierarchy)
+        //     {
+        //         templateUIClass.popup.GetComponentsInChildren<Text>()[0].text = message;
+        //         templateUIClass.popup.SetActive(true);
+        //     } else if (templateUIClassVs.gameObject.activeInHierarchy)
+        //     {
+        //         templateUIClassVs.popup.GetComponentsInChildren<Text>()[0].text = message;
+        //         templateUIClassVs.popup.SetActive(true);
+        //     }
+		// }
 
 		public void StartGameBtn() {
 			if (currentMode == 'V') {
@@ -130,7 +131,7 @@ namespace Photon.Pun.LobbySystemPhoton
 					pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
 					pView.RPC("RpcStartGameCountdown", RpcTarget.All);
 				} else {
-					DisplayPopup ("There must be at least two ready players to start the game!");
+					titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("There must be at least two ready players to start the game!");
 				}
 			} else {
 				ChangeReadyStatus ();
@@ -156,7 +157,7 @@ namespace Photon.Pun.LobbySystemPhoton
                         // Set room invisible once it begins, for now
                         PhotonNetwork.CurrentRoom.IsOpen = true;
                         PhotonNetwork.CurrentRoom.IsVisible = true;
-                        DisplayPopup("You cannot start a versus game without a player on both teams!");
+                        titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("You cannot start a versus game without a player on both teams!");
 						return;
 					}
 				}
@@ -179,7 +180,7 @@ namespace Photon.Pun.LobbySystemPhoton
 					pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
 					pView.RPC("RpcStartVersusGameCountdown", RpcTarget.All);
 				} else {
-					DisplayPopup ("There must be at least two ready players to start the game!");
+					titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("There must be at least two ready players to start the game!");
 				}
 			} else {
 				ChangeReadyStatus ();
@@ -187,37 +188,31 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		void ToggleButtons(bool status) {
-			mapNext.interactable = status;
-            mapNextVs.interactable = status;
-			mapPrev.interactable = status;
-            mapPrevVs.interactable = status;
 			readyButton.GetComponent<Button> ().interactable = status;
             readyButtonVs.GetComponent<Button>().interactable = status;
-            sendMsgBtn.interactable = status;
-            sendMsgBtnVs.interactable = status;
-			emojiBtn.interactable = status;
-            emojiBtnVs.interactable = status;
+            // sendMsgBtn.interactable = status;
+            // sendMsgBtnVs.interactable = status;
+			// emojiBtn.interactable = status;
+            // emojiBtnVs.interactable = status;
 			leaveGameBtn.interactable = status;
             leaveGameBtnVs.interactable = status;
 			switchTeamsBtnVs.interactable = status;
+			ToggleMapChangeButtons(status);
 		}
 
 		[PunRPC]
 		void RpcToggleButtons(bool status, bool gameIsStarting) {
 			gameStarting = gameIsStarting;
-			mapNext.interactable = status;
-			mapNextVs.interactable = status;
-			mapPrev.interactable = status;
-			mapPrevVs.interactable = status;
 			readyButton.GetComponent<Button> ().interactable = status;
 			readyButtonVs.GetComponent<Button> ().interactable = status;
-			sendMsgBtn.interactable = status;
-			sendMsgBtnVs.interactable = status;
-			emojiBtn.interactable = status;
-			emojiBtnVs.interactable = status;
+			// sendMsgBtn.interactable = status;
+			// sendMsgBtnVs.interactable = status;
+			// emojiBtn.interactable = status;
+			// emojiBtnVs.interactable = status;
 			leaveGameBtn.interactable = status;
 			leaveGameBtnVs.interactable = status;
 			switchTeamsBtnVs.interactable = status;
+			ToggleMapChangeButtons(status);
 		}
 
 		void ChangeReadyStatus() {
@@ -228,17 +223,17 @@ namespace Photon.Pun.LobbySystemPhoton
 		[PunRPC]
 		public void RpcChangeReadyStatus(int playerId, bool readyStatus) {
 			if (readyStatus) {
-				playerListEntries [playerId].GetComponent<PlayerEntryScript> ().SetReady(true);
+				playerListEntries [playerId].GetComponent<PlayerEntryPrefab> ().SetReady(true);
 			} else {
-				playerListEntries [playerId].GetComponent<PlayerEntryScript> ().SetReady(false);
+				playerListEntries [playerId].GetComponent<PlayerEntryPrefab> ().SetReady(false);
 			}
 		}
 
 		void StartGame(string level) {
 			// Photon switch scene from lobby to loading screen to actual game. automaticallySyncScene should load map on clients.
-			if (level.Equals ("Badlands: Act I")) {
+			if (level.Equals ("The Badlands: Act I")) {
 				pView.RPC("RpcStartCampaignGame", RpcTarget.All, "Badlands1");
-			} else if (level.Equals("Badlands: Act II")) {
+			} else if (level.Equals("The Badlands: Act II")) {
 				pView.RPC("RpcStartCampaignGame", RpcTarget.All, "Badlands2");
 			} else {
 				pView.RPC("RpcStartCampaignGame", RpcTarget.All, level);
@@ -246,9 +241,9 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
         void StartVersusGame(string level) {
-            if (level.Equals ("Badlands: Act I")) {
+            if (level.Equals ("The Badlands: Act I")) {
                 pView.RPC("RpcStartVersusGame", RpcTarget.All, "Badlands1");
-			} else if (level.Equals ("Badlands: Act II")) {
+			} else if (level.Equals ("The Badlands: Act II")) {
 				pView.RPC("RpcStartVersusGame", RpcTarget.All, "Badlands2");
 			} else {
                 pView.RPC("RpcStartVersusGame", RpcTarget.All, level);
@@ -266,7 +261,7 @@ namespace Photon.Pun.LobbySystemPhoton
         [PunRPC]
         void RpcStartVersusGame(string level) {
 			LoadingScreen();
-            string myTeam = (myPlayerListEntry.GetComponent<PlayerEntryScript>().team == 'R' ? "_Red" : "_Blue");
+            string myTeam = ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red" ? "_Red" : "_Blue");
             PhotonNetwork.LoadLevel (level + myTeam);
         }
 
@@ -279,33 +274,33 @@ namespace Photon.Pun.LobbySystemPhoton
 			titleController.GetComponent<AudioSource> ().clip = countdownSfx;
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chat.sendChatOfMaster ("Game starting in 5");
+				chat.SendServerMessage ("Game starting in 5");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chat.sendChatOfMaster ("Game starting in 4");
+				chat.SendServerMessage ("Game starting in 4");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chat.sendChatOfMaster ("Game starting in 3");
+				chat.SendServerMessage ("Game starting in 3");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chat.sendChatOfMaster ("Game starting in 2");
+				chat.SendServerMessage ("Game starting in 2");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chat.sendChatOfMaster ("Game starting in 1");
+				chat.SendServerMessage ("Game starting in 1");
 			}
 			yield return new WaitForSeconds (1f);
 
 			// pView.RPC ("RpcLoadingScreen", RpcTarget.All);
 			if (PhotonNetwork.IsMasterClient) {
-				StartGame (mapNames [mapIndex]);
+				StartGame (mapNames [mapSelector.index]);
 			}
 		}
 
@@ -319,56 +314,60 @@ namespace Photon.Pun.LobbySystemPhoton
 
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chatVs.sendChatOfMaster ("Game starting in 5");
+				chatVs.SendServerMessage ("Game starting in 5");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chatVs.sendChatOfMaster ("Game starting in 4");
+				chatVs.SendServerMessage ("Game starting in 4");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chatVs.sendChatOfMaster ("Game starting in 3");
+				chatVs.SendServerMessage ("Game starting in 3");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chatVs.sendChatOfMaster ("Game starting in 2");
+				chatVs.SendServerMessage ("Game starting in 2");
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
-				chatVs.sendChatOfMaster ("Game starting in 1");
+				chatVs.SendServerMessage ("Game starting in 1");
 			}
 			yield return new WaitForSeconds (1f);
 
 			// pView.RPC ("RpcLoadingScreen", RpcTarget.All);
 			if (PhotonNetwork.IsMasterClient) {
-				StartVersusGame (mapNames [mapIndex]);
+				StartVersusGame (mapNames [mapSelectorVs.index]);
 			}
 		}
 
 		[PunRPC]
-		void RpcLoadingScreen() {
-			titleController.GetComponent<TitleControllerScript> ().InstantiateLoadingScreen (mapNames[mapIndex]);
+		void RpcLoadingScreen(int i) {
+			TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
+			ts.InstantiateLoadingScreen (mapNames[i], mapDescriptions[i]);
+			ts.ToggleLoadingScreen(true);
 		}
 
 		void LoadingScreen() {
-			Debug.Log("Opened loading screen...");
-			titleController.GetComponent<TitleControllerScript> ().InstantiateLoadingScreen (mapNames[mapIndex]);
+			TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
+			int i = (currentMode == 'C' ? mapSelector.index : mapSelectorVs.index);
+			ts.InstantiateLoadingScreen (mapNames[i], mapDescriptions[i]);
+			ts.ToggleLoadingScreen(true);
 		}
 
 		void Update() {
-			if (!templateUIClass.popup.activeInHierarchy && !gameStarting) {
-				if (!mapNext.interactable) {
-					ToggleButtons (true);
-				}
-			}
+			// if (!templateUIClass.popup.activeInHierarchy && !gameStarting) {
+			// 	if (!mapNext.interactable) {
+			// 		ToggleButtons (true);
+			// 	}
+			// }
 
 			if (PhotonNetwork.IsMasterClient) {
-				readyButtonTxt.text = "START";
-                readyButtonVsTxt.text = "START";
+				readyButtonTxt.text = "START GAME";
+                readyButtonVsTxt.text = "START GAME";
             } else {
                 readyButtonTxt.text = "READY";
                 readyButtonVsTxt.text = "READY";
@@ -376,64 +375,58 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		}
 
-		void SetMapInfo(bool offline = false) {
+		public void SetMapInfo(bool offline = false) {
+			int i = currentMode == 'C' ? mapSelector.index : mapSelectorVs.index;
 			if (offline) {
-				Texture mapTexture = (Texture)Resources.Load(mapStrings[mapIndex]);
+				Texture mapTexture = (Texture)Resources.Load(mapStrings[i]);
 				mapPreviewThumb.texture = mapTexture;
-				mapPreviewTxt.text = mapNames [mapIndex];
 				mapPreviewVsThumb.texture = mapTexture;
-				mapPreviewVsTxt.text = mapNames[mapIndex];
+				mapDescription.text = mapDescriptions[i];
+				mapDescriptionVs.text = mapDescriptions[i];
+				if (PhotonNetwork.InRoom) {
+					Hashtable h = new Hashtable();
+					h.Add("mapName", mapNames[i]);
+					PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+				}
 			} else {
 				if (PhotonNetwork.IsMasterClient) {
-            		pView.RPC("RpcSetMapInfo", RpcTarget.All, mapIndex);
+            		pView.RPC("RpcSetMapInfo", RpcTarget.All, i);
 				}
 			}
 		}
 
 		[PunRPC]
 		void RpcSetMapInfo(int i) {
-			mapIndex = i;
-			Texture mapTexture = (Texture)Resources.Load(mapStrings[mapIndex]);
+			Hashtable h = new Hashtable();
+			Texture mapTexture = (Texture)Resources.Load(mapStrings[i]);
             mapPreviewThumb.texture = mapTexture;
-			mapPreviewTxt.text = mapNames [mapIndex];
             mapPreviewVsThumb.texture = mapTexture;
-            mapPreviewVsTxt.text = mapNames[mapIndex];
-		}
-
-		public void goToNextMap() {
-			if (!PhotonNetwork.IsMasterClient) return;
-			mapIndex++;
-			if (mapIndex >= mapNames.Length) {
-				mapIndex = 0;
-			}
-			SetMapInfo ();
-		}
-
-		public void goToPreviousMap() {
-			if (!PhotonNetwork.IsMasterClient) return;
-			mapIndex--;
-			if (mapIndex < 0) {
-				mapIndex = mapNames.Length - 1;
-			}
-			SetMapInfo ();
+			mapDescription.text = mapDescriptions[i];
+			mapDescriptionVs.text = mapDescriptions[i];
+			h.Add("mapName", mapNames[i]);
+			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 		}
 
 		[PunRPC]
 		void RpcSetRank(int actorId, int exp) {
-			PlayerEntryScript p = playerListEntries[actorId].GetComponent<PlayerEntryScript>();
+			PlayerEntryPrefab p = playerListEntries[actorId].GetComponent<PlayerEntryPrefab>();
 			p.SetRank(PlayerData.playerdata.GetRankFromExp((uint)exp).name);
 		}
 
 		public override void OnJoinedRoom()
 		{
+			mainPanelManager.ToggleTopBar(false);
+			// mainPanelManager.ToggleBottomBar(false);
 			if (PhotonNetwork.IsMasterClient) {
-				mapIndex = 0;
 				SetMapInfo(true);
 			}
             // Disable any loading screens
-            connexion.ToggleLobbyLoadingScreen(false);
+            // connexion.ToggleLobbyLoadingScreen(false);
 			Hashtable h = new Hashtable();
 			h.Add("exp", (int)PlayerData.playerdata.info.Exp);
+			if (PhotonNetwork.IsMasterClient) {
+				h.Add("ping", (int)PhotonNetwork.GetPing());
+			}
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 			pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (int)PlayerData.playerdata.info.Exp);
 			currentMode = (!templateUIClassVs.gameObject.activeInHierarchy ? 'C' : 'V');
@@ -466,24 +459,23 @@ namespace Photon.Pun.LobbySystemPhoton
 			foreach (Player p in PhotonNetwork.PlayerList)
 			{
 				GameObject entry = Instantiate(PlayerListEntryPrefab);
-				PlayerEntryScript entryScript = entry.GetComponent<PlayerEntryScript>();
+				PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
+				string rankToSet = null;
 				if (p.IsLocal) {
-					entryScript.SetRank(PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.Exp).name);
+					rankToSet = PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.Exp).name;
 					myPlayerListEntry = entry;
 				} else {
-					entryScript.SetRank(PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name);
+					rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name;
 				}
+				entryScript.CreateEntry(p.NickName, rankToSet, p.ActorNumber, 'C');
 				if (p.IsMasterClient) {
-					entryScript.ToggleReadyIndicator(false);
+					entryScript.SetReady(false);
 				}
-				entry.transform.SetParent(InsideRoomPanel[lastSlotUsed++].transform);
-				entry.transform.localPosition = Vector3.zero;
-				entryScript.SetNameTag(p.NickName);
-                entryScript.SetActorId(p.ActorNumber);
-			
+				entry.transform.SetParent(PlayersInRoomPanel, false);
+
 				playerListEntries.Add(p.ActorNumber, entry);
 			}
-            chat.SendMsgConnection(PhotonNetwork.LocalPlayer.NickName);
+            chat.SendServerMessage(PhotonNetwork.LocalPlayer.NickName + " has joined the game.");
 		}
 
 		void OnJoinedRoomVersus() {
@@ -500,29 +492,28 @@ namespace Photon.Pun.LobbySystemPhoton
 			foreach (Player p in PhotonNetwork.PlayerList)
 			{
 				GameObject entry = Instantiate(PlayerListEntryPrefab);
-				PlayerEntryScript entryScript = entry.GetComponent<PlayerEntryScript>();
+				PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
+				string rankToSet = null;
 				if (p.IsLocal) {
-					entryScript.SetRank(PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.Exp).name);
+					rankToSet = PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.Exp).name;
 					myPlayerListEntry = entry;
 				} else {
-					entryScript.SetRank(PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name);
+					rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name;
 				}
+				entryScript.CreateEntry(p.NickName, rankToSet, p.ActorNumber, 'R');
 				if (p.IsMasterClient) {
-					entryScript.ToggleReadyIndicator(false);
+					entryScript.SetReady(false);
 				}
-				entry.transform.SetParent(InsideRoomPanelVs[lastSlotUsed++].transform);
-				entry.transform.localPosition = Vector3.zero;
-				entryScript.SetNameTag(p.NickName);
-                entryScript.SetActorId(p.ActorNumber);
                 if (p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
                 {
                     // If it's me, set team captain as me if possible and set my team
                     if (redTeam.Count <= blueTeam.Count)
                     {
+						entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
+						// entry.transform.localPosition = Vector3.zero;
                         entryScript.SetTeam('R');
                         redTeam.Add(p.ActorNumber);
                         SetTeamCaptain('R');
-                        myTeamVsTxt.text = "RED TEAM";
                         Hashtable h = new Hashtable();
                         h.Add("team", "red");
                         PhotonNetwork.LocalPlayer.SetCustomProperties(h);
@@ -530,10 +521,11 @@ namespace Photon.Pun.LobbySystemPhoton
                     }
                     else
                     {
+						entry.transform.SetParent(PlayersInRoomPanelVsBlue, false);
+						// entry.transform.localPosition = Vector3.zero;
                         entryScript.SetTeam('B');
                         blueTeam.Add(p.ActorNumber);
                         SetTeamCaptain('B');
-                        myTeamVsTxt.text = "BLUE TEAM";
                         Hashtable h = new Hashtable();
                         h.Add("team", "blue");
                         PhotonNetwork.LocalPlayer.SetCustomProperties(h);
@@ -546,39 +538,43 @@ namespace Photon.Pun.LobbySystemPhoton
                     string theirTeam = (string)p.CustomProperties["team"];
                     if (theirTeam == "red")
                     {
+						entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
+						// entry.transform.localPosition = Vector3.zero;
                         entryScript.SetTeam('R');
                         redTeam.Add(p.ActorNumber);
                     }
                     else if (theirTeam == "blue")
                     {
+						entry.transform.SetParent(PlayersInRoomPanelVsBlue, false);
+						// entry.transform.localPosition = Vector3.zero;
                         entryScript.SetTeam('B');
                         blueTeam.Add(p.ActorNumber);
                     }
                 }
 				playerListEntries.Add(p.ActorNumber, entry);
 			}
-            chatVs.SendMsgConnection(PhotonNetwork.LocalPlayer.NickName);
+            chatVs.SendServerMessage(PhotonNetwork.LocalPlayer.NickName + " has joined the game.");
 		}
 
         public void OnSwitchTeamsButtonClicked()
         {
             GameObject playerEntry = playerListEntries[PhotonNetwork.LocalPlayer.ActorNumber];
-            PlayerEntryScript entry = playerEntry.GetComponent<PlayerEntryScript>();
+            PlayerEntryPrefab entry = playerEntry.GetComponent<PlayerEntryPrefab>();
             entry.ChangeTeam();
-            char newTeam = entry.team;
+            char newTeam = entry.GetTeam();
             if (newTeam == 'R')
             {
+				entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
                 blueTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 redTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
-                myTeamVsTxt.text = "RED TEAM";
 				Hashtable h = new Hashtable();
 				h.Add("team", "red");
                 PhotonNetwork.LocalPlayer.SetCustomProperties(h);
             } else if (newTeam == 'B')
             {
+				entry.transform.SetParent(PlayersInRoomPanelVsBlue, false);
                 redTeam.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
                 blueTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
-                myTeamVsTxt.text = "BLUE TEAM";
 				Hashtable h = new Hashtable();
 				h.Add("team", "blue");
                 PhotonNetwork.LocalPlayer.SetCustomProperties(h);
@@ -591,17 +587,19 @@ namespace Photon.Pun.LobbySystemPhoton
         void RpcSwitchTeams(int actorId, string newTeam)
         {
             GameObject entry = playerListEntries[actorId];
-            PlayerEntryScript entryScript = entry.GetComponent<PlayerEntryScript>();
+            PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
             if (newTeam == "red")
             {
                 entryScript.SetTeam('R');
                 blueTeam.Remove(actorId);
                 redTeam.Add(actorId);
+				entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
             } else if (newTeam == "blue")
             {
                 entryScript.SetTeam('B');
                 redTeam.Remove(actorId);
                 blueTeam.Add(actorId);
+				entry.transform.SetParent(PlayersInRoomPanelVsBlue, false);
             }
         }
 
@@ -622,7 +620,7 @@ namespace Photon.Pun.LobbySystemPhoton
                     {
                         if (blueTeam.Count > 0)
                         {
-                            int nextBlueCaptain = playerListEntries[(int)blueTeam[0]].GetComponent<PlayerEntryScript>().actorId;
+                            int nextBlueCaptain = playerListEntries[(int)blueTeam[0]].GetComponent<PlayerEntryPrefab>().actorId;
                             h.Add("blueHost", nextBlueCaptain);
                         } else
                         {
@@ -645,7 +643,7 @@ namespace Photon.Pun.LobbySystemPhoton
                     {
                         if (redTeam.Count > 0)
                         {
-                            int nextRedCaptain = playerListEntries[(int)redTeam[0]].GetComponent<PlayerEntryScript>().actorId;
+                            int nextRedCaptain = playerListEntries[(int)redTeam[0]].GetComponent<PlayerEntryPrefab>().actorId;
                             h.Add("redHost", nextRedCaptain);
                         }
                         else
@@ -662,17 +660,23 @@ namespace Photon.Pun.LobbySystemPhoton
 		{
             string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
 			GameObject entry = Instantiate(PlayerListEntryPrefab);
+			PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
+			string rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(newPlayer.CustomProperties["exp"])).name;
+			entryScript.SetReady(false);
             if (gameMode == "versus")
             {
-                entry.transform.SetParent(InsideRoomPanelVs[lastSlotUsed++].transform);
+				entryScript.CreateEntry(newPlayer.NickName, rankToSet, newPlayer.ActorNumber, 'V');
+                entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
             } else if (gameMode == "camp")
             {
-                entry.transform.SetParent(InsideRoomPanel[lastSlotUsed++].transform);
+				entryScript.CreateEntry(newPlayer.NickName, rankToSet, newPlayer.ActorNumber, 'C');
+                entry.transform.SetParent(PlayersInRoomPanel, false);
             }
-			entry.transform.localPosition = Vector3.zero;
-			entry.transform.localScale = Vector3.one;
-			entry.GetComponent<TextMeshProUGUI>().text = newPlayer.NickName;
-
+			if (PhotonNetwork.IsMasterClient) {
+				Hashtable h = new Hashtable();
+				h.Add("ping", (int)PhotonNetwork.GetPing());
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			}
 			playerListEntries.Add(newPlayer.ActorNumber, entry);
             loadPlayerQueue.Enqueue(newPlayer);
 			SetMapInfo();
@@ -686,18 +690,22 @@ namespace Photon.Pun.LobbySystemPhoton
 			if (PhotonNetwork.IsMasterClient) {
 				ToggleMapChangeButtons(true);
 			}
+			if (PhotonNetwork.IsMasterClient) {
+				Hashtable h = new Hashtable();
+				h.Add("ping", (int)PhotonNetwork.GetPing());
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			}
 		}
 
 		void ToggleMapChangeButtons(bool b) {
-			mapNext.gameObject.SetActive(b);
-			mapPrev.gameObject.SetActive(b);
-			mapNextVs.gameObject.SetActive(b);
-			mapPrevVs.gameObject.SetActive(b);
+			mapSelector.ToggleSelectorButtons(b);
+			mapSelectorVs.ToggleSelectorButtons(b);
 		}
 
 		public override void OnLeftRoom()
 		{
-			mapIndex = 0;
+			mapSelector.index = 0;
+			mapSelectorVs.index = 0;
 			templateUIClass.RoomPanel.SetActive(false);
             templateUIClassVs.RoomPanel.SetActive(false);
 			templateUIClass.ListRoomPanel.SetActive(true);
@@ -714,19 +722,34 @@ namespace Photon.Pun.LobbySystemPhoton
             templateUIClassVs.ChatText.text = "";
             ToggleButtons(true);
 			PhotonNetwork.JoinLobby();
+			mainPanelManager.ToggleTopBar(true);
+			mainPanelManager.ReopenCurrentPanel();
+			// mainPanelManager.ToggleBottomBar(true);
 		}
 
 		void RearrangePlayerSlots() {
 			lastSlotUsed = 0;
 			foreach (GameObject entry in playerListEntries.Values) {
 				if (currentMode == 'C') {
-					entry.transform.SetParent(InsideRoomPanel[lastSlotUsed++].transform);
-					entry.transform.localPosition = Vector3.zero;
+					entry.transform.SetParent(PlayersInRoomPanel, false);
 				} else if (currentMode == 'V') {
-					entry.transform.SetParent(InsideRoomPanelVs[lastSlotUsed++].transform);
-					entry.transform.localPosition = Vector3.zero;
+					PlayerEntryPrefab p = entry.GetComponent<PlayerEntryPrefab>();
+					if (p.redEntry.activeInHierarchy) {
+						entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
+					} else if (p.blueEntry.activeInHierarchy) {
+						entry.transform.SetParent(PlayersInRoomPanelVsBlue, false);
+					}
 				}
 			}
+		}
+
+		public string GetMapImageFromMapName(string mapName) {
+			for (int i = 0; i < mapStrings.Length; i++) {
+				if (mapNames[i] == mapName) {
+					return mapStrings[i];
+				}
+			}
+			return "";
 		}
 
 	}

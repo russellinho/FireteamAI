@@ -13,7 +13,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public TMP_InputField TextSend;
 		public TMP_Text TextChat;
 		public GameObject TextSendObj;
-		public GameObject FrameSmiley;
+		// public GameObject FrameSmiley;
 		[SerializeField]
 		public string[] emojis;
 		public bool isSelect = false;
@@ -25,34 +25,26 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		// Update is called once per frame
-		void Update()
+		void LateUpdate()
 		{
-			if (Input.GetKeyDown(KeyCode.Return) && !isSelect)
+			if (Input.GetKeyDown(KeyCode.Return) && isSelect && TextSend.text.Length > 0)
 			{
-				//EventSystem.current.SetSelectedGameObject (TextSendObj.gameObject, null);
-				EventSystem.current.SetSelectedGameObject(TextSend.gameObject, null);
-				isSelect = true;
-			}
-			else if (Input.GetKeyDown(KeyCode.Return) && isSelect && TextSend.text.Length > 0)
-			{
-				isSelect = false;
 				string msg = TextSend.text;
-				EventSystem.current.SetSelectedGameObject(null);
 				sendChatOfMaster(msg);
 				TextSend.text = "";
+				ToggleInputFieldSelected(true);
 			}
 			else if (Input.GetKeyDown(KeyCode.Return) && isSelect && TextSend.text.Length == 0)
 			{
-				isSelect = false;
 				//TextSendObj.SetActive (false);
-				EventSystem.current.SetSelectedGameObject(null);
+				ToggleInputFieldSelected(false);
 				TextSend.text = "";
 			}
-			else if (!isSelect && TextSend.text.Length > 0)
-			{
-				isSelect = true;
-				EventSystem.current.SetSelectedGameObject(TextSend.gameObject, null);
-			}
+			// else if (!isSelect && TextSend.text.Length > 0)
+			// {
+			// 	isSelect = true;
+			// 	EventSystem.current.SetSelectedGameObject(TextSend.gameObject, null);
+			// }
 		}
 
 		public void sendChatOfMaster(string msg)
@@ -81,26 +73,37 @@ namespace Photon.Pun.LobbySystemPhoton
 				}
 				photonView.RPC("sendChatMaster", RpcTarget.MasterClient, isMaster, msg, PhotonNetwork.LocalPlayer.NickName);
 				TextSend.text = "";
+
 			}
 		}
 
-		public void ShowSmileys()
-		{
-			if (FrameSmiley.activeSelf)
-			{
-				FrameSmiley.SetActive(false);
+		void ToggleInputFieldSelected(bool b) {
+			if (b) {
+				EventSystem.current.SetSelectedGameObject(TextSend.gameObject, null);
+				TextSend.ActivateInputField();
+			} else {
+				EventSystem.current.SetSelectedGameObject(null);
 			}
-			else
-			{
-				FrameSmiley.SetActive(true);
-			}
+			isSelect = b;
 		}
 
-		public void AddSmiley(int idSmiley)
-		{
-			TextSend.text += " "+emojis[idSmiley];
-			FrameSmiley.SetActive(false);
-		}
+		// public void ShowSmileys()
+		// {
+		// 	if (FrameSmiley.activeSelf)
+		// 	{
+		// 		FrameSmiley.SetActive(false);
+		// 	}
+		// 	else
+		// 	{
+		// 		FrameSmiley.SetActive(true);
+		// 	}
+		// }
+
+		// public void AddSmiley(int idSmiley)
+		// {
+		// 	TextSend.text += " "+emojis[idSmiley];
+		// 	FrameSmiley.SetActive(false);
+		// }
 
 
 		[PunRPC]
@@ -122,11 +125,11 @@ namespace Photon.Pun.LobbySystemPhoton
 
 			if (master)
 			{
-				TextChat.text += "<color=#a52a2aff>" + pse + " : </color><color=#ffffffff>" + msg + "</color>\n";
+				TextChat.text += "<color=#63c6ffff>" + pse + " : </color><color=#ffffffff>" + msg + "</color>\n";
 			}
 			else
 			{
-				TextChat.text += "<color=#add8e6ff>" + pse + " : </color><color=#ffffffff>" + msg + "</color>\n";
+				TextChat.text += "<color=#f2f2f2ff>" + pse + " : </color><color=#ffffffff>" + msg + "</color>\n";
 			}
 			myScrollRect.verticalNormalizedPosition = 0f;
 		}
@@ -136,24 +139,24 @@ namespace Photon.Pun.LobbySystemPhoton
 			SendMsgConnectionMaster(player.NickName);
 		}
 
-		public void SendMsgConnection(string pse)
+		public void SendServerMessage(string message)
 		{
-			photonView.RPC("SendMsgConnectionMaster", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer.NickName);
+			photonView.RPC("SendMsgConnectionMaster", RpcTarget.MasterClient, message);
 		}
 
 		[PunRPC]
-		public void SendMsgConnectionMaster(string pse)
+		public void SendMsgConnectionMaster(string message)
 		{
 			if (PhotonNetwork.IsMasterClient)
 			{
-				photonView.RPC("SendMsgConnectionAll", RpcTarget.All, pse);
+				photonView.RPC("SendMsgConnectionAll", RpcTarget.All, message);
 			}
 		}
 
 		[PunRPC]
-		public void SendMsgConnectionAll(string pse)
+		public void SendMsgConnectionAll(string message)
 		{
-			TextChat.text += "<color=#ffa500ff><i>New connection </i></color><color=#add8e6ff><i>" + pse + "</i></color>\n";
+			TextChat.text += "<color=#ffa500ff><b>SERVER: </b>" + message + "</color>\n";
 		}
 
 		public void SelectInputByClick()
@@ -161,6 +164,12 @@ namespace Photon.Pun.LobbySystemPhoton
 			if (!isSelect)
 			{
 				isSelect = true;
+			}
+		}
+
+		public void DeselectInputByClick() {
+			if (isSelect) {
+				isSelect = false;
 			}
 		}
 	}

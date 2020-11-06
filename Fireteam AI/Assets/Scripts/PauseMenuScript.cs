@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
+using TMPro;
 
 public class PauseMenuScript : MonoBehaviourPunCallbacks {
 
@@ -13,7 +14,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public GameObject optionsMenuGroup;
 	public GameObject audioSettingsGroup;
 	public Slider musicVolumeSlider;
-	public InputField musicVolumeField;
+	public TextMeshProUGUI musicVolumeField;
 	public Button optionsKeyBindingsBtn;
 	public Button optionsAudioSettingsBtn;
 	public Button optionsBackBtn;
@@ -44,18 +45,18 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void ResumeGame() {
-		gameObject.SetActive (false);
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
 	}
 
 	public void LeaveGame() {
 		PhotonNetwork.LeaveRoom();
+		PhotonNetwork.Disconnect();
 	}
 
-	public override void OnLeftRoom() {
-		PhotonNetwork.Disconnect ();
-	}
+	// public override void OnLeftRoom() {
+	// 	PhotonNetwork.Disconnect ();
+	// }
 
 	public void OpenKeyMappings() {
 		ToggleSettingsMainButtons(false);
@@ -100,12 +101,12 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		JukeboxScript.jukebox.SetMusicVolume(v);
 	}
 
-	void SaveAudioSettings() {
+	public void SaveAudioSettings() {
 		PlayerPreferences.playerPreferences.preferenceData.musicVolume = (int)(musicVolumeSlider.value * 100f);
 		PlayerPreferences.playerPreferences.SavePreferences();
 	}
 
-	void SaveKeyBindings() {
+	public void SaveKeyBindings() {
 		PlayerPreferences.playerPreferences.SaveKeyMappings();
 	}
 

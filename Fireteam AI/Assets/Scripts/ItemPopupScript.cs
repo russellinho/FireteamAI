@@ -9,7 +9,6 @@ public class ItemPopupScript : MonoBehaviour
     public GameObject equipmentStatDescriptor;
     public GameObject weaponStatDescriptor;
     public GameObject modStatDescriptor;
-    public GameObject restrictionsDescriptor;
 
     // Equipment stat labels
     public Text armorStatTxt;
@@ -17,6 +16,8 @@ public class ItemPopupScript : MonoBehaviour
     public Text staminaStatTxt;
     public Text genderRestTxt;
     public Text characterRestTxt;
+    public Text expirationDateEquipTxt;
+    public GameObject expirationDateEquip;
 
     // Weapon stat labels
     public Text damageStatTxt;
@@ -26,6 +27,8 @@ public class ItemPopupScript : MonoBehaviour
     public Text mobilityTxt;
     public Text rangeTxt;
     public Text clipCapacityTxt;
+    public Text expirationDateWeaponTxt;
+    public GameObject expirationDateWeapon;
 
     // Mod stat labels
     public Text modDamageStatTxt;
@@ -35,23 +38,47 @@ public class ItemPopupScript : MonoBehaviour
     public Text modClipCapacityStatTxt;
     public Text modMaxAmmoStatTxt;
     public Text equippedOnTxt;
-    public Text expirationDateTxt;
 
     public Text title;
     public RawImage thumbnail;
     public Text description;
+    public Canvas parentCanvas;
+    public RectTransform rectCanvas;
+    public RectTransform rectTransform;
 
     // Update is called once per frame
     void Update()
     {
         // Follow mouse position
-        // if (gameObject.activeInHierarchy) {
-        //     UpdatePosition();
-        // }
+        if (gameObject.activeInHierarchy) {
+            UpdatePosition();
+        }
+    }
+
+    void OnEnable() {
+        UpdatePosition();
     }
 
     void UpdatePosition() {
-        transform.position = Input.mousePosition;
+        Vector2 movePos;
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            parentCanvas.transform as RectTransform,
+            Input.mousePosition, parentCanvas.worldCamera,
+            out movePos);
+
+        transform.position = parentCanvas.transform.TransformPoint(movePos);
+        KeepPopupInScreenBounds();
+    }
+
+    void KeepPopupInScreenBounds()
+    {
+        var sizeDelta = rectCanvas.sizeDelta - rectTransform.sizeDelta;
+        var panelPivot = rectTransform.pivot;
+        var position = rectTransform.anchoredPosition;
+        position.x = Mathf.Clamp(position.x, 0f, sizeDelta.x * (1.035f));
+        position.y = Mathf.Clamp(position.y, -sizeDelta.y * (1.035f), 0f);
+        rectTransform.anchoredPosition = position;
     }
 
     public void SetTitle(string s) {
@@ -80,10 +107,6 @@ public class ItemPopupScript : MonoBehaviour
 
     public void ToggleModStatDescriptor(bool b) {
         modStatDescriptor.SetActive(b);
-    }
-
-    public void ToggleRestrictionsDescriptor(bool b) {
-        restrictionsDescriptor.SetActive(b);
     }
 
     public void SetEquipmentStats(float armor, float speed, float stamina, char gender, string[] characterRestrictions) {
@@ -149,12 +172,17 @@ public class ItemPopupScript : MonoBehaviour
     }
 
     public void SetExpirationDate(string expirationDate) {
-        if (expirationDateTxt != null) {
-            expirationDateTxt.text = expirationDate + " EST";
-            if (expirationDate != "Permanent") {
-                expirationDateTxt.text += " EST";
-            }
+        expirationDateWeaponTxt.text = expirationDate;
+        expirationDateEquipTxt.text = expirationDate;
+        if (expirationDate != "Permanent") {
+            expirationDateWeaponTxt.text += " EST";
+            expirationDateEquipTxt.text += " EST";
         }
+    }
+
+    public void ToggleExpirationDateText(bool b) {
+        expirationDateEquip.SetActive(b);
+        expirationDateWeapon.SetActive(b);
     }
 
 }

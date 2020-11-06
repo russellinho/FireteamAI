@@ -3,32 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Michsky.UI.Shift;
 
 public class HUDContainer : MonoBehaviour {
 
 	// Health HUD
-	public Text healthText;
+	public CanvasGroup healthGroup;
+	public CanvasGroup staminaGroup;
+	public TextMeshProUGUI healthPercentTxt;
+	public TextMeshProUGUI staminaPercentTxt;
+	public Slider healthBar;
 	public Slider staminaBar;
 	public Image flashbangOverlay;
 	public RawImage flashbangScreenCap;
+	public CanvasGroup vipHealthGroup;
+	public TextMeshProUGUI vipHealthPercentTxt;
 	public Slider vipHealthBar;
 
 	// Weapon HUD
-	public Text weaponLabelTxt;
-	public Text ammoTxt;
+	public UIManagerText weaponLabelTxt;
+	public UIManagerText ammoTxt;
 	public GameObject crosshair;
 	public RawImage sightCrosshair;
 	public GameObject SniperOverlay;
-	public GameObject itemCarryingPnl;
+	public CanvasGroup itemCarryingGroup;
 	public Text itemCarryingText;
 
 	// Pause/in-game menu HUD
-	public GameObject pauseMenuGUI;
-	public GameObject pauseExitBtn;
-	public GameObject pauseResumeBtn;
-	public GameObject pauseOptionsBtn;
-	public Canvas scoreboard;
+	public PauseMenuManager pauseMenuGUI;
+	public GameObject scoreboard;
     public InGameMessenger inGameMessenger;
+	public PauseMenuManager pauseMenuManager;
 
 	// Hit indication HUD
 	public RawImage hitFlare;
@@ -38,21 +43,24 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject hitMarker;
 
 	// Map HUD
+	public GameObject minimapGroup;
 	public RawImage hudMap;
 	public RawImage hudMap2;
 	public GameObject hudWaypoint;
 	public GameObject hudPlayerMarker;
 
 	// On-screen indication HUD
-	public Text objectivesTextParent;
-	public Text objectivesText;
+	public GameObject objectivesTextParent;
+	public GameObject objectiveTextEntry;
+	public TextMeshProUGUI[] objectivesText;
 	public GameObject missionText;
 	public Text deployInvalidText;
-	public Text actionBarText;
+	public TextMeshProUGUI actionBarText;
+	public Slider actionBarSlider;
 	public GameObject actionBar;
-	public Image[] actionBarImgs;
-	public Text hintText;
+	public TextMeshProUGUI hintText;
 	public Text spectatorText;
+	public GameObject timeGroup;
 	public Text missionTimeText;
 	public Text missionTimeRemainingText;
 	public Text assaultModeIndText;
@@ -74,9 +82,11 @@ public class HUDContainer : MonoBehaviour {
     // Versus mode HUD
     public GameObject redScore;
     public GameObject blueScore;
-    public Text redScoreTxt;
-    public Text blueScoreTxt;
+    public TextMeshProUGUI redScoreTxt;
+    public TextMeshProUGUI blueScoreTxt;
 	public GameObject redTeamHighlight;
 	public GameObject blueTeamHighlight;
+	public GameObject redTeamUnderline;
+	public GameObject blueTeamUnderline;
 
 }

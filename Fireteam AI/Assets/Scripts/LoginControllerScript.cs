@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
+using Michsky.UI.Shift;
+using TMPro;
 
 public class LoginControllerScript : MonoBehaviour
 {
     public bool developmentMode;
     public Text copyrightTxt;
-    public RawImage titleLogoImg;
-    public GameObject popupAlert;
-    public Text popupAlertTxt;
+    public ModalWindowManager popupAlert;
     private string popupAlertMessage;
-    public InputField emailField;
-    public InputField passwordField;
+    public TMP_InputField emailField;
+    public TMP_InputField passwordField;
     public Button loginBtn;
-    public Toggle rememberLoginToggle;
+    public Button quitBtn;
+    public Button forgotPasswordBtn;
+    public Button registerBtn;
+    public SwitchManager rememberLoginToggle;
     private int signInFlag;
     private bool saveLoginPrefsFlag;
 
@@ -65,21 +66,30 @@ public class LoginControllerScript : MonoBehaviour
             SceneManager.LoadScene("Title");
             signInFlag = 0;
         }
+        if (Input.GetKeyDown(KeyCode.Return)) {
+            OnLoginClick();
+        }
     }
 
     public void ClosePopup() {
         loginBtn.interactable = true;
-        popupAlert.SetActive(false);
+        quitBtn.interactable = true;
+        forgotPasswordBtn.interactable = true;
+        registerBtn.interactable = true;
+        popupAlert.ModalWindowOut();
     }
 
     void TriggerPopup(string popupMessage) {
         loginBtn.interactable = false;
-        popupAlertTxt.text = popupMessage;
-        popupAlert.SetActive(true);
+        quitBtn.interactable = false;
+        forgotPasswordBtn.interactable = false;
+        registerBtn.interactable = false;
+        popupAlert.SetText(popupMessage);
+        popupAlert.ModalWindowIn();
     }
 
     public void OnLoginClick() {
-        if (popupAlert.activeInHierarchy) {
+        if (popupAlert.GetIsOn()) {
             return;
         }
         if (DAOScript.functionsCallHash == null) {
@@ -87,13 +97,16 @@ public class LoginControllerScript : MonoBehaviour
             return;
         }
         loginBtn.interactable = false;
+        quitBtn.interactable = false;
+        forgotPasswordBtn.interactable = false;
+        registerBtn.interactable = false;
         AuthScript.authHandler.auth.SignInWithEmailAndPasswordAsync(emailField.text, passwordField.text).ContinueWith(task => {
             if (task.IsCanceled) {
-                popupAlertMessage = ""+task.Exception;
+                popupAlertMessage = "Invalid email/password! Please try again.";
                 return;
             }
             if (task.IsFaulted) {
-                popupAlertMessage = ""+task.Exception;
+                popupAlertMessage = "Invalid email/password! Please try again.";
                 return;
             }
             AuthScript.authHandler.user = task.Result;
