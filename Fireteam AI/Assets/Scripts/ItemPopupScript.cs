@@ -43,23 +43,8 @@ public class ItemPopupScript : MonoBehaviour
     public RawImage thumbnail;
     public Text description;
     public Canvas parentCanvas;
+    public RectTransform rectCanvas;
     public RectTransform rectTransform;
-    private int maxScreenRight;
-    private int maxScreenLeft;
-    private int maxScreenTop;
-    private int maxScreenBottom;
-
-    void Start() {
-        maxScreenBottom = 0;
-        maxScreenLeft = 0;
-        Vector2 maxes;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            parentCanvas.transform as RectTransform,
-            new Vector3(Screen.width, Screen.height, 0), parentCanvas.worldCamera,
-            out maxes);
-        maxScreenTop = (int)maxes.x - (int)rectTransform.rect.height;
-        maxScreenRight = (int)maxes.y - (int)rectTransform.rect.width;
-    }
 
     // Update is called once per frame
     void Update()
@@ -82,28 +67,18 @@ public class ItemPopupScript : MonoBehaviour
             Input.mousePosition, parentCanvas.worldCamera,
             out movePos);
 
-        // movePos = KeepPopupInScreenBounds(movePos);
         transform.position = parentCanvas.transform.TransformPoint(movePos);
+        KeepPopupInScreenBounds();
     }
 
-    Vector2 KeepPopupInScreenBounds(Vector2 movePos) {
-        float newX = movePos.x;
-        float newY = movePos.y;
-
-        if (newX < maxScreenLeft) {
-            newX = maxScreenLeft;
-        }
-        if (newX > maxScreenRight) {
-            newX = maxScreenRight;
-        }
-        if (newY < maxScreenBottom) {
-            newY = maxScreenBottom;
-        }
-        if (newY > maxScreenTop) {
-            newY = maxScreenTop;
-        }
-        
-        return new Vector2(newX, newY);
+    void KeepPopupInScreenBounds()
+    {
+        var sizeDelta = rectCanvas.sizeDelta - rectTransform.sizeDelta;
+        var panelPivot = rectTransform.pivot;
+        var position = rectTransform.anchoredPosition;
+        position.x = Mathf.Clamp(position.x, 0f, sizeDelta.x * (1.035f));
+        position.y = Mathf.Clamp(position.y, -sizeDelta.y * (1.035f), 0f);
+        rectTransform.anchoredPosition = position;
     }
 
     public void SetTitle(string s) {
