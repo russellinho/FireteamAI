@@ -317,7 +317,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43ba59572d6e3784e98eeadd473e2ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  developmentMode: 1
+  developmentMode: 0
   copyrightTxt: {fileID: 1841848859}
   popupAlert: {fileID: 4539363469535828523}
   emailField: {fileID: 6093034276638731354}
@@ -8777,12 +8777,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   titleController: {fileID: 0}
+  mainPanelManager: {fileID: 0}
   windowTitle: {fileID: 4539363468354319615}
   windowDescription: {fileID: 4539363468859673648}
   sharpAnimations: 0
   useCustomTexts: 0
   titleText: ALERT
   descriptionText: MESSAGE
+  mWindowAnimator: {fileID: 0}
+  isOn: 0
 --- !u!225 &4539363469535828524
 CanvasGroup:
   m_ObjectHideFlags: 0
