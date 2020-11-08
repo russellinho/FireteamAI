@@ -109,12 +109,12 @@ namespace Photon.Pun.LobbySystemPhoton
 					if (p.IsMasterClient || Convert.ToInt32(p.CustomProperties["readyStatus"]) == 1) {
 						readyCount++;
 					}
-					if (readyCount >= 2) {
+					if (readyCount >= 1) {
 						break;
 					}
 				}
 
-				if (readyCount >= 2) {
+				if (readyCount >= 1) {
 					pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
 					pView.RPC("RpcStartGameCountdown", RpcTarget.All);
 				} else {
@@ -256,7 +256,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		void CampaignGameStart() {
-			string level = (string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"];
+			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
 			LoadingScreen();
 			PhotonNetwork.LoadLevel(level);
 		}
@@ -274,7 +274,7 @@ namespace Photon.Pun.LobbySystemPhoton
         }
 
 		void VersusGameStart() {
-			string level = (string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"];
+			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
 			LoadingScreen();
 			string myTeam = ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red" ? "_Red" : "_Blue");
 			PhotonNetwork.LoadLevel (level + myTeam);
@@ -433,10 +433,7 @@ namespace Photon.Pun.LobbySystemPhoton
             // connexion.ToggleLobbyLoadingScreen(false);
 			Hashtable h = new Hashtable();
 			h.Add("exp", (int)PlayerData.playerdata.info.Exp);
-			if (PhotonNetwork.IsMasterClient) {
-				h.Add("ping", (int)PhotonNetwork.GetPing());
-				h.Add("readyStatus", 0);
-			}
+			h.Add("readyStatus", 0);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 			pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (int)PlayerData.playerdata.info.Exp);
 			currentMode = (!templateUIClassVs.gameObject.activeInHierarchy ? 'C' : 'V');
