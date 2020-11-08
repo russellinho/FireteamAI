@@ -196,8 +196,15 @@ namespace Photon.Pun.LobbySystemPhoton
 			Hashtable h = new Hashtable();
 			h.Add("readyStatus", newStatus);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-			PlayerEntryPrefab p = myPlayerListEntry.GetComponent<PlayerEntryPrefab>();
-			int isInGame = Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["inGame"]);
+			pView.RPC("RpcChangeReadyStatus", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber);
+		}
+
+		[PunRPC]
+		void RpcChangeReadyStatus(int actorId) {
+			PlayerEntryPrefab p = playerListEntries[actorId].GetComponent<PlayerEntryPrefab>();
+			Player pl = PhotonNetwork.CurrentRoom.GetPlayer(actorId);
+			int isInGame = Convert.ToInt32(pl.CustomProperties["inGame"]);
+			int newStatus = Convert.ToInt32(pl.CustomProperties["readyStatus"]);
 			if (newStatus == 0) {
 				if (isInGame == 1) {
 					p.SetReadyText('i');
