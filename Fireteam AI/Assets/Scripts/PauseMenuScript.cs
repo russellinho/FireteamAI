@@ -50,8 +50,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void LeaveGame() {
-		PhotonNetwork.LeaveRoom();
-		PhotonNetwork.Disconnect();
+		PhotonNetwork.LoadLevel("Title");
 	}
 
 	// public override void OnLeftRoom() {
