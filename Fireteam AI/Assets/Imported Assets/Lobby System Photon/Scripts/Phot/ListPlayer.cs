@@ -106,7 +106,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				// Loops through player entry prefabs and checks if they're ready by their color
 				foreach (Player p in PhotonNetwork.PlayerList) {
 					// If the ready status is green or the indicator doesn't exist (master)
-					if (Convert.ToInt32(p.CustomProperties["readyStatus"]) == 1) {
+					if (p.IsMasterClient || Convert.ToInt32(p.CustomProperties["readyStatus"]) == 1) {
 						readyCount++;
 					}
 					if (readyCount >= 2) {
@@ -137,7 +137,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				// Loops through player entry prefabs and checks if they're ready by their color
 				foreach (Player p in PhotonNetwork.PlayerList) {
 					// If the ready status is green or the indicator doesn't exist (master)
-					if (Convert.ToInt32(p.CustomProperties["readyStatus"]) == 1) {
+					if (p.IsMasterClient || Convert.ToInt32(p.CustomProperties["readyStatus"]) == 1) {
 						if (p.CustomProperties["team"] == "red") {
 							redReadyCount++;
 						} else if (p.CustomProperties["team"] == "blue") {
