@@ -122,6 +122,26 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 SetTeamHost();
             }
         }
+
+        SceneManager.sceneLoaded += OnSceneFinishedLoading;
+
+        if (!IsInGame()) {
+            ChangePlayerDisableStatus(false);
+        }
+    }
+
+    public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
+        string levelName = SceneManager.GetActiveScene().name;
+        // Went back to title (left game)
+        if (levelName == "Title") {
+            ChangePlayerDisableStatus(false);
+        } else {
+            if (pView.IsMine) {
+                Respawn();
+            } else {
+                ChangePlayerDisableStatus(true);
+            }
+        }
     }
 
     void Start()
@@ -1070,6 +1090,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcChangePlayerDisableStatus(bool status)
     {
+        ChangePlayerDisableStatus(status);
+    }
+
+    void ChangePlayerDisableStatus(bool status) {
         if (gameObject.layer == 0) return;
         if (!status) {
             equipmentScript.DespawnPlayer();
@@ -1516,6 +1540,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (transform.position.y <= gameController.outOfBoundsPoint.position.y) {
             transform.position = gameController.spawnLocation.position;
         }
+    }
+
+    bool IsInGame() {
+        string thisScene = SceneManager.GetActiveScene().name;
+        if (thisScene == "Title") {
+            return false;
+        }
+        return true;
     }
 
 }

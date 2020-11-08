@@ -15,6 +15,7 @@ using Koobando.UI.Console;
 
 public class PlayerData : MonoBehaviour
 {
+    private const byte SPAWN_CODE = 123;
     private const float TITLE_POS_X = 0f;
     private const float TITLE_POS_Y = -1.2f;
     private const float TITLE_POS_Z = 2.1f;
@@ -234,6 +235,50 @@ public class PlayerData : MonoBehaviour
         }
 
     }
+
+    // public void SpawnPlayer(string playerPrefab, Vector3 spawnPoints)
+    // {
+    //     GameObject player = Instantiate((GameObject)Resources.Load(playerPrefab), spawnPoints, Quaternion.Euler(Vector3.zero));
+    //     PhotonView photonView = player.GetComponent<PhotonView>();
+
+    //     if (PhotonNetwork.AllocateViewID(photonView))
+    //     {
+    //         object[] data = new object[]
+    //         {
+    //             playerPrefab, player.transform.position, player.transform.rotation, photonView.ViewID
+    //         };
+
+    //         RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+    //         {
+    //             Receivers = ReceiverGroup.Others,
+    //             CachingOption = EventCaching.AddToRoomCache
+    //         };
+
+    //         SendOptions sendOptions = new SendOptions
+    //         {
+    //             Reliability = true
+    //         };
+
+    //         PhotonNetwork.RaiseEvent(SPAWN_CODE, data, raiseEventOptions, sendOptions);
+    //     }
+    //     else
+    //     {
+    //         Debug.LogError("Failed to allocate a ViewId.");
+    //         Destroy(player);
+    //     }
+    // }
+
+    // public void OnEvent(EventData photonEvent)
+    // {
+    //     if (photonEvent.Code == SPAWN_CODE)
+    //     {
+    //         object[] data = (object[]) photonEvent.CustomData;
+
+    //         GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
+    //         PhotonView photonView = player.GetComponent<PhotonView>();
+    //         photonView.ViewID = (int) data[3];
+    //     }
+    // }
 
     public void LoadPlayerData()
     {
