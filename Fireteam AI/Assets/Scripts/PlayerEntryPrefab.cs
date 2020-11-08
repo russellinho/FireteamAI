@@ -14,16 +14,19 @@ public class PlayerEntryPrefab : MonoBehaviour
     public RawImage campaignLogo;
     public TextMeshProUGUI campaignNameTag;
     public GameObject campaignReady;
+    public TextMeshProUGUI campaignReadyText;
 
     public GameObject redEntry;
     public RawImage redLogo;
     public TextMeshProUGUI redNameTag;
     public GameObject redReady;
+    public TextMeshProUGUI redReadyText;
 
     public GameObject blueEntry;
     public RawImage blueLogo;
     public TextMeshProUGUI blueNameTag;
     public GameObject blueReady;
+    public TextMeshProUGUI blueReadyText;
 
     public void CreateEntry(string nametag, string rank, int actorId, char team) {
         SetNameTag(nametag);
@@ -111,5 +114,25 @@ public class PlayerEntryPrefab : MonoBehaviour
             return 'B';
         }
         return 'C';
+    }
+
+    public void SetReadyText(char s) {
+        if (s == 'i') {
+            if (campaignEntry.activeInHierarchy) {
+                campaignReadyText.text = "In game";
+            } else if (redEntry.activeInHierarchy) {
+                redReadyText.text = "In game";
+            } else if (blueEntry.activeInHierarchy) {
+                blueReadyText.text = "In game";
+            }
+        } else if (s == 'r') {
+            if (campaignEntry.activeInHierarchy) {
+                campaignReadyText.text = "Ready";
+            } else if (redEntry.activeInHierarchy) {
+                redReadyText.text = "Ready";
+            } else if (blueEntry.activeInHierarchy) {
+                blueReadyText.text = "Ready";
+            }
+        }
     }
 }

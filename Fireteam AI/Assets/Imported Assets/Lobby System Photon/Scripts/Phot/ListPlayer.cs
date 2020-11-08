@@ -61,7 +61,6 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		// Ready status
 		private GameObject myPlayerListEntry;
-		private bool isReady = false;
 		private bool gameStarting = false;
         private char currentMode;
 
@@ -102,24 +101,12 @@ namespace Photon.Pun.LobbySystemPhoton
 		void StartGameCampaign() {
 			// If we're the host, start the game assuming there are at least two ready players
 			if (PhotonNetwork.IsMasterClient) {
-				// Set room invisible once it begins, for now
-				PhotonNetwork.CurrentRoom.IsOpen = false;
-				PhotonNetwork.CurrentRoom.IsVisible = false;
-
-				// Testing - comment in release
-				if (PlayerData.playerdata.testMode == true) {
-					pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
-					pView.RPC("RpcStartGameCountdown", RpcTarget.All);
-					return;
-				}
-
 				int readyCount = 0;
 
 				// Loops through player entry prefabs and checks if they're ready by their color
-				foreach (GameObject o in playerListEntries.Values) {
-					Image indicator = o.GetComponentInChildren<Image> ();
+				foreach (Player p in PhotonNetwork.PlayerList) {
 					// If the ready status is green or the indicator doesn't exist (master)
-					if (!indicator || indicator.color.g == 1f) {
+					if (Convert.ToInt32(p.CustomProperties["readyStatus"]) == 1) {
 						readyCount++;
 					}
 					if (readyCount >= 2) {
@@ -135,48 +122,34 @@ namespace Photon.Pun.LobbySystemPhoton
 				}
 			} else {
 				ChangeReadyStatus ();
+				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
+					CampaignGameStart();
+				}
 			}
 		}
 
 		void StartGameVersus() {
 			// If we're the host, start the game assuming there are at least two ready players
 			if (PhotonNetwork.IsMasterClient) {
-				// Set room invisible once it begins, for now
-				PhotonNetwork.CurrentRoom.IsOpen = false;
-				PhotonNetwork.CurrentRoom.IsVisible = false;
-
-				// Testing - comment in release
-				if (PlayerData.playerdata.testMode == true) {
-                    Debug.Log("red: " + redTeam.Count + " blue: " + blueTeam.Count);
-					if (redTeam.Count >= 1 && blueTeam.Count >= 1) {
-						pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
-						pView.RPC("RpcStartVersusGameCountdown", RpcTarget.All);
-						return;
-					} else {
-                        // If there's only 1 player, they cannot start the game
-                        // Set room invisible once it begins, for now
-                        PhotonNetwork.CurrentRoom.IsOpen = true;
-                        PhotonNetwork.CurrentRoom.IsVisible = true;
-                        titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("You cannot start a versus game without a player on both teams!");
-						return;
-					}
-				}
-
-				int readyCount = 0;
+				int redReadyCount = 0;
+				int blueReadyCount = 0;
 
 				// Loops through player entry prefabs and checks if they're ready by their color
-				foreach (GameObject o in playerListEntries.Values) {
-					Image indicator = o.GetComponentInChildren<Image> ();
+				foreach (Player p in PhotonNetwork.PlayerList) {
 					// If the ready status is green or the indicator doesn't exist (master)
-					if (!indicator || indicator.color.g == 1f) {
-						readyCount++;
+					if (Convert.ToInt32(p.CustomProperties["readyStatus"]) == 1) {
+						if (p.CustomProperties["team"] == "red") {
+							redReadyCount++;
+						} else if (p.CustomProperties["team"] == "blue") {
+							blueReadyCount++;
+						}
 					}
-					if (readyCount >= 2) {
+					if (redReadyCount > 0 && blueReadyCount > 0) {
 						break;
 					}
 				}
 
-				if (readyCount >= 2) {
+				if (redReadyCount > 0 && blueReadyCount > 0) {
 					pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
 					pView.RPC("RpcStartVersusGameCountdown", RpcTarget.All);
 				} else {
@@ -184,6 +157,9 @@ namespace Photon.Pun.LobbySystemPhoton
 				}
 			} else {
 				ChangeReadyStatus ();
+				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
+					VersusGameStart();
+				}
 			}
 		}
 
@@ -216,54 +192,86 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		void ChangeReadyStatus() {
-			isReady = !isReady;
-			pView.RPC ("RpcChangeReadyStatus", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, isReady);
-		}
-
-		[PunRPC]
-		public void RpcChangeReadyStatus(int playerId, bool readyStatus) {
-			if (readyStatus) {
-				playerListEntries [playerId].GetComponent<PlayerEntryPrefab> ().SetReady(true);
-			} else {
-				playerListEntries [playerId].GetComponent<PlayerEntryPrefab> ().SetReady(false);
+			int newStatus = Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1 ? 0 : 1;
+			Hashtable h = new Hashtable();
+			h.Add("readyStatus", newStatus);
+			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+			PlayerEntryPrefab p = myPlayerListEntry.GetComponent<PlayerEntryPrefab>();
+			int isInGame = Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["inGame"]);
+			if (newStatus == 0) {
+				if (isInGame == 1) {
+					p.SetReadyText('i');
+				} else {
+					p.SetReadyText('r');
+				}
+				p.SetReady(false);
+			} else if (newStatus == 1) {
+				if (isInGame == 1) {
+					p.SetReadyText('i');
+				} else {
+					p.SetReadyText('r');
+				}
+				p.SetReady(true);
 			}
 		}
 
 		void StartGame(string level) {
 			// Photon switch scene from lobby to loading screen to actual game. automaticallySyncScene should load map on clients.
 			if (level.Equals ("The Badlands: Act I")) {
-				pView.RPC("RpcStartCampaignGame", RpcTarget.All, "Badlands1");
+				pView.RPC("RpcStartCampaignGame", RpcTarget.All);
 			} else if (level.Equals("The Badlands: Act II")) {
-				pView.RPC("RpcStartCampaignGame", RpcTarget.All, "Badlands2");
+				pView.RPC("RpcStartCampaignGame", RpcTarget.All);
 			} else {
-				pView.RPC("RpcStartCampaignGame", RpcTarget.All, level);
+				pView.RPC("RpcStartCampaignGame", RpcTarget.All);
 			}
 		}
 
         void StartVersusGame(string level) {
             if (level.Equals ("The Badlands: Act I")) {
-                pView.RPC("RpcStartVersusGame", RpcTarget.All, "Badlands1");
+                pView.RPC("RpcStartVersusGame", RpcTarget.All);
 			} else if (level.Equals ("The Badlands: Act II")) {
-				pView.RPC("RpcStartVersusGame", RpcTarget.All, "Badlands2");
+				pView.RPC("RpcStartVersusGame", RpcTarget.All);
 			} else {
-                pView.RPC("RpcStartVersusGame", RpcTarget.All, level);
+                pView.RPC("RpcStartVersusGame", RpcTarget.All);
 			}
         }
 
 		[PunRPC]
-		void RpcStartCampaignGame(string level) {
-			LoadingScreen();
+		void RpcStartCampaignGame() {
 			if (PhotonNetwork.IsMasterClient) {
-				PhotonNetwork.LoadLevel(level);
+				Hashtable h = new Hashtable();
+				h.Add("inGame", 1);
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+				CampaignGameStart();
+			} else if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
+				CampaignGameStart();
 			}
 		}
 
-        [PunRPC]
-        void RpcStartVersusGame(string level) {
+		void CampaignGameStart() {
+			string level = (string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"];
 			LoadingScreen();
-            string myTeam = ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red" ? "_Red" : "_Blue");
-            PhotonNetwork.LoadLevel (level + myTeam);
+			PhotonNetwork.LoadLevel(level);
+		}
+
+        [PunRPC]
+        void RpcStartVersusGame() {
+			if (PhotonNetwork.IsMasterClient) {
+				Hashtable h = new Hashtable();
+				h.Add("inGame", 1);
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+				VersusGameStart();
+			} else if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
+				VersusGameStart();
+			}
         }
+
+		void VersusGameStart() {
+			string level = (string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"];
+			LoadingScreen();
+			string myTeam = ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red" ? "_Red" : "_Blue");
+			PhotonNetwork.LoadLevel (level + myTeam);
+		}
 
 		[PunRPC]
 		void RpcStartGameCountdown() {
@@ -359,12 +367,6 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		void Update() {
-			// if (!templateUIClass.popup.activeInHierarchy && !gameStarting) {
-			// 	if (!mapNext.interactable) {
-			// 		ToggleButtons (true);
-			// 	}
-			// }
-
 			if (PhotonNetwork.IsMasterClient) {
 				readyButtonTxt.text = "START GAME";
                 readyButtonVsTxt.text = "START GAME";
@@ -426,6 +428,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			h.Add("exp", (int)PlayerData.playerdata.info.Exp);
 			if (PhotonNetwork.IsMasterClient) {
 				h.Add("ping", (int)PhotonNetwork.GetPing());
+				h.Add("readyStatus", 0);
 			}
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 			pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (int)PlayerData.playerdata.info.Exp);
@@ -440,7 +443,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				OnJoinedRoomVersus();
 			} else if (currentMode == 'C')
             {
-				PhotonNetwork.AutomaticallySyncScene = true;
+				PhotonNetwork.AutomaticallySyncScene = false;
                 OnJoinedRoomCampaign();
             }
 		}
@@ -468,8 +471,21 @@ namespace Photon.Pun.LobbySystemPhoton
 					rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name;
 				}
 				entryScript.CreateEntry(p.NickName, rankToSet, p.ActorNumber, 'C');
-				if (p.IsMasterClient) {
-					entryScript.SetReady(false);
+				int readyStatus = Convert.ToInt32(p.CustomProperties["readyStatus"]);
+				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
+					entryScript.SetReadyText('i');
+					if (p.IsMasterClient || readyStatus == 1) {
+						entryScript.SetReady(true);
+					} else {
+						entryScript.SetReady(false);
+					}
+				} else {
+					entryScript.SetReadyText('r');
+					if (readyStatus == 1) {
+						entryScript.SetReady(true);
+					} else {
+						entryScript.SetReady(false);
+					}
 				}
 				entry.transform.SetParent(PlayersInRoomPanel, false);
 
@@ -501,8 +517,21 @@ namespace Photon.Pun.LobbySystemPhoton
 					rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name;
 				}
 				entryScript.CreateEntry(p.NickName, rankToSet, p.ActorNumber, 'R');
-				if (p.IsMasterClient) {
-					entryScript.SetReady(false);
+				int readyStatus = Convert.ToInt32(p.CustomProperties["readyStatus"]);
+				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
+					entryScript.SetReadyText('i');
+					if (p.IsMasterClient || readyStatus == 1) {
+						entryScript.SetReady(true);
+					} else {
+						entryScript.SetReady(false);
+					}
+				} else {
+					entryScript.SetReadyText('r');
+					if (readyStatus == 1) {
+						entryScript.SetReady(true);
+					} else {
+						entryScript.SetReady(false);
+					}
 				}
                 if (p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
                 {
@@ -748,6 +777,15 @@ namespace Photon.Pun.LobbySystemPhoton
 				if (mapNames[i] == mapName) {
 					return mapStrings[i];
 				}
+			}
+			return "";
+		}
+
+		private string GetMapShortenedNameForMapName(string m) {
+			if (m == "The Badlands: Act I") {
+				return "Badlands1";
+			} else if (m == "The Badlands: Act II") {
+				return "Badlands2";
 			}
 			return "";
 		}

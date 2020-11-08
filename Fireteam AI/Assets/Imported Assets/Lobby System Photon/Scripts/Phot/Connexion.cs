@@ -51,9 +51,10 @@ namespace Photon.Pun.LobbySystemPhoton
 			RoomOptions options = new RoomOptions { MaxPlayers = 8 };
             Hashtable h = new Hashtable();
             h.Add("gameMode", "camp");
+			h.Add("inGame", 0);
 			h.Add("mapName", listPlayer.mapSelector.GetCurrentItem());
 			h.Add("ping", (int)PhotonNetwork.GetPing());
-			string[] lobbyProperties = new string[3] {"gameMode", "mapName", "ping"};
+			string[] lobbyProperties = new string[4] {"gameMode", "mapName", "ping", "inGame"};
             options.CustomRoomProperties = h;
 			options.CustomRoomPropertiesForLobby = lobbyProperties;
 
@@ -70,11 +71,12 @@ namespace Photon.Pun.LobbySystemPhoton
 			RoomOptions options = new RoomOptions { MaxPlayers = 16 };
             Hashtable h = new Hashtable();
             h.Add("gameMode", "versus");
+			h.Add("inGame", 0);
 			h.Add("mapName", listPlayer.mapSelectorVs.GetCurrentItem());
 			h.Add("ping", (int)PhotonNetwork.GetPing());
 			h.Add("redScore", 0);
 			h.Add("blueScore", 0);
-            string[] lobbyProperties = new string[3] {"gameMode", "mapName", "ping"};
+            string[] lobbyProperties = new string[4] {"gameMode", "mapName", "ping", "inGame"};
             options.CustomRoomProperties = h;
             options.CustomRoomPropertiesForLobby = lobbyProperties;
 

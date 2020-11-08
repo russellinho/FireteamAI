@@ -127,7 +127,17 @@ public class PlayerData : MonoBehaviour
             InstantiatePlayer();
             titleRef.SetPlayerStatsForTitle();
             titleRef.ToggleLoadingScreen(false);
-			titleRef.mainPanelManager.OpenFirstTab();
+            if (PhotonNetwork.InRoom) {
+                string gameModeWas = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
+                if (gameModeWas == "versus") {
+                    titleRef.mainPanelManager.OpenPanel("Versus");
+                } else if (gameModeWas == "camp") {
+                    titleRef.mainPanelManager.OpenPanel("Campaign");
+                }
+                titleRef.connexion.listPlayer.OnJoinedRoom();
+            } else {
+			    titleRef.mainPanelManager.OpenFirstTab();
+            }
             dataLoadedFlag = false;
         }
         if (triggerEmergencyExitFlag) {

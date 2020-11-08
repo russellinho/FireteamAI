@@ -11,6 +11,7 @@ using Firebase.Database;
 using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 using Koobando.AntiCheat;
 using Michsky.UI.Shift;
+using Photon.Pun.LobbySystemPhoton;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private const float NINETY_DAYS_MINS = 129600f;
@@ -23,6 +24,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     private const float THIRTY_DAY_COST_MULTIPLIER = 30f * (1f - (COST_MULT_FRACTION * 2f));
     private const float NINETY_DAY_COST_MULTIPLIER = 90f * (1f - (COST_MULT_FRACTION * 3f));
     private const float PERMANENT_COST_MULTIPLIER = 365f;
+	public Connexion connexion;
 
 	public GameObject itemDescriptionPopupRef;
 

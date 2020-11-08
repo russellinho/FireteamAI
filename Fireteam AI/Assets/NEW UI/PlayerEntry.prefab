@@ -398,14 +398,17 @@ MonoBehaviour:
   campaignLogo: {fileID: 8434167758734010597}
   campaignNameTag: {fileID: 2947151154904921803}
   campaignReady: {fileID: 2947151154718873166}
+  campaignReadyText: {fileID: 2947151154718873160}
   redEntry: {fileID: 3686495929965001756}
   redLogo: {fileID: 9178652077510700669}
   redNameTag: {fileID: 6981269268290843064}
   redReady: {fileID: 1275918758543021222}
+  redReadyText: {fileID: 6171608599747334217}
   blueEntry: {fileID: 3417721913055662509}
   blueLogo: {fileID: 8527907894842817594}
   blueNameTag: {fileID: 7828163198084186397}
   blueReady: {fileID: 6905817768894858914}
+  blueReadyText: {fileID: 4641124433634417381}
 --- !u!1 &2219927307988532610
 GameObject:
   m_ObjectHideFlags: 0
