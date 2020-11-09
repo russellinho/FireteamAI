@@ -126,7 +126,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         SceneManager.sceneLoaded += OnSceneFinishedLoading;
 
         if (!IsInGame()) {
-            ChangePlayerDisableStatus(false);
+            gameObject.SetActive(false);
         }
     }
 
@@ -134,12 +134,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         string levelName = SceneManager.GetActiveScene().name;
         // Went back to title (left game)
         if (levelName == "Title") {
-            ChangePlayerDisableStatus(false);
+            gameObject.SetActive(false);
         } else {
             if (pView.IsMine) {
+                gameObject.SetActive(true);
                 Respawn();
             } else {
-                ChangePlayerDisableStatus(true);
+                gameObject.SetActive(true);
             }
         }
     }
