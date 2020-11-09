@@ -112,6 +112,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void Awake()
     {
+        Debug.Log("abb");
+        if (!IsInGame()) {
+            gameObject.SetActive(false);
+            Debug.Log("ayy2: " + gameObject.name);
+        }
+        
         gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
         DontDestroyOnLoad(gameObject);
         AddMyselfToPlayerList();
@@ -124,11 +130,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 
         SceneManager.sceneLoaded += OnSceneFinishedLoading;
-
-        if (!IsInGame()) {
-            gameObject.SetActive(false);
-            Debug.Log("ayy2: " + gameObject.name);
-        }
     }
 
     public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
@@ -138,6 +139,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             gameObject.SetActive(false);
             Debug.Log("ayy: " + gameObject.name);
         } else {
+            Debug.Log("heyyy");
             gameObject.SetActive(true);
             if (pView.IsMine) {
                 Respawn();
