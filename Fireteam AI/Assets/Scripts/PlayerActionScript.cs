@@ -127,6 +127,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         if (!IsInGame()) {
             gameObject.SetActive(false);
+            Debug.Log("ayy2: " + gameObject.name);
         }
     }
 
@@ -135,12 +136,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // Went back to title (left game)
         if (levelName == "Title") {
             gameObject.SetActive(false);
+            Debug.Log("ayy: " + gameObject.name);
         } else {
+            gameObject.SetActive(true);
             if (pView.IsMine) {
-                gameObject.SetActive(true);
                 Respawn();
-            } else {
-                gameObject.SetActive(true);
             }
         }
     }
