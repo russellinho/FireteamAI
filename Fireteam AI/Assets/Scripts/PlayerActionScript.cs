@@ -112,12 +112,17 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void Awake()
     {
-        Debug.Log("abb");
+        SceneManager.sceneLoaded += OnSceneFinishedLoading;
+
         if (!IsInGame()) {
             gameObject.SetActive(false);
-            Debug.Log("ayy2: " + gameObject.name);
+            return;
         }
-        
+
+        InitPlayer();
+    }
+
+    void InitPlayer() {
         gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
         DontDestroyOnLoad(gameObject);
         AddMyselfToPlayerList();
@@ -128,8 +133,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 SetTeamHost();
             }
         }
-
-        SceneManager.sceneLoaded += OnSceneFinishedLoading;
     }
 
     public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
@@ -137,10 +140,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // Went back to title (left game)
         if (levelName == "Title") {
             gameObject.SetActive(false);
-            Debug.Log("ayy: " + gameObject.name);
         } else {
-            Debug.Log("heyyy");
             gameObject.SetActive(true);
+            InitPlayer();
             if (pView.IsMine) {
                 Respawn();
             }
