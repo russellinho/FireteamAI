@@ -65,7 +65,21 @@ public class WeaponScript : MonoBehaviour
                 }
             }
         }
+        SceneManager.sceneLoaded += OnSceneFinishedLoading;
     }
+
+    public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+        string levelName = SceneManager.GetActiveScene().name;
+		if (levelName == "Title") {
+			Destroy(gameObject);
+			PhotonNetwork.Destroy(gameObject);
+		} else {
+			if (!PhotonNetwork.IsMasterClient && !pView.IsMine) {
+				pView.RPC("RpcAskServerForData", RpcTarget.MasterClient);
+			}
+		}
+	}
 
     // Start is called before the first frame update
     void Start()
@@ -1072,5 +1086,28 @@ public class WeaponScript : MonoBehaviour
             SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
         }
     }
+
+    [PunRPC]
+	void RpcAskServerForData() {
+		pView.RPC("RpcSyncData", RpcTarget.All, equippedPrimaryWeapon, equippedSecondaryWeapon, equippedSupportWeapon, equippedMeleeWeapon, totalPrimaryAmmoLeft,
+            totalSecondaryAmmoLeft, totalSupportAmmoLeft, currentAmmoPrimary, currentAmmoSecondary, currentAmmoSupport, currentlyEquippedType, weaponReady);
+	}
+
+	[PunRPC]
+	void RpcSyncData(string equippedPrimaryWeapon, string equippedSecondaryWeapon, string equippedSupportWeapon, string equippedMeleeWeapon, int totalPrimaryAmmoLeft,
+        int totalSecondaryAmmoLeft, int totalSupportAmmoLeft, int currentAmmoPrimary, int currentAmmoSecondary, int currentAmmoSupport, int currentlyEquippedType, bool weaponReady) {
+            this.equippedPrimaryWeapon = equippedPrimaryWeapon;
+            this.equippedSecondaryWeapon = equippedSecondaryWeapon;
+            this.equippedSupportWeapon = equippedSupportWeapon;
+            this.equippedMeleeWeapon = equippedMeleeWeapon;
+            this.weaponReady = weaponReady;
+            this.currentlyEquippedType = currentlyEquippedType;
+            this.totalPrimaryAmmoLeft = totalPrimaryAmmoLeft;
+            this.totalSecondaryAmmoLeft = totalSecondaryAmmoLeft;
+            this.totalSupportAmmoLeft = totalSupportAmmoLeft;
+            this.currentAmmoPrimary = currentAmmoPrimary;
+            this.currentAmmoSecondary = currentAmmoSecondary;
+            this.currentAmmoSupport = currentAmmoSupport;
+	}
 
 }

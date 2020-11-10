@@ -55,7 +55,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     // Sync mission time to clients every 10 seconds
     private float syncMissionTimeTimer;
 
-	private PhotonView pView;
+	public PhotonView pView;
 
     // Match state data
     public char matchType;
@@ -78,6 +78,20 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         opposingTeam = (myTeam == "red" ? "blue" : "red");
         forfeitDelay = FORFEIT_CHECK_DELAY;
 		DetermineObjectivesForMission(SceneManager.GetActiveScene().name);
+		SceneManager.sceneLoaded += OnSceneFinishedLoading;
+	}
+
+	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+        string levelName = SceneManager.GetActiveScene().name;
+		if (levelName == "Title") {
+			Destroy(gameObject);
+			PhotonNetwork.Destroy(gameObject);
+		} else {
+			if (!PhotonNetwork.IsMasterClient) {
+				pView.RPC("RpcAskServerForData", RpcTarget.MasterClient);
+			}
+		}
 	}
 
     void Start () {
@@ -114,7 +128,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		deadCount = 0;
 		objectives.escaperCount = 0;
 		objectives.escapeAvailable = false;
-		pView = GetComponent<PhotonView> ();
 
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
@@ -966,6 +979,32 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void RpcSetMyExpAndGpGained(int actorId, int expGained, int gpGained) {
 		playerList[actorId].expGained = (uint)expGained;
 		playerList[actorId].gpGained = (uint)gpGained;
+	}
+
+	[PunRPC]
+	void RpcAskServerForData() {
+		pView.RPC("RpcSyncData", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
+			spawnMode, gameOver, (int)sectorsCleared, deadCount, redTeamPlayerCount, blueTeamPlayerCount, assaultMode, enemyTeamNearingVictoryTrigger, endingGainsCalculated, endGameWithWin);
+	}
+
+	[PunRPC]
+	void RpcSyncData(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer,
+		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, int deadCount, int redTeamPlayerCount, int blueTeamPlayerCount,
+		bool assaultMode, bool enemyTeamNearingVictoryTrigger, bool endingGainsCalculated, bool endGameWithWin) {
+    	lastGunshotHeardPos = new Vector3(lastGunshotHeardPosX, lastGunshotHeardPosY, lastGunshotHeardPosZ);
+		this.lastGunshotTimer = lastGunshotTimer;
+		this.endGameTimer = endGameTimer;
+		this.loadExitCalled = loadExitCalled;
+		this.spawnMode = spawnMode;
+		this.gameOver = gameOver;
+		this.sectorsCleared = (short)sectorsCleared;
+		this.deadCount = deadCount;
+		this.redTeamPlayerCount = redTeamPlayerCount;
+		this.blueTeamPlayerCount = blueTeamPlayerCount;
+		this.assaultMode = assaultMode;
+		this.enemyTeamNearingVictoryTrigger = enemyTeamNearingVictoryTrigger;
+		this.endingGainsCalculated = endingGainsCalculated;
+		this.endGameWithWin = endGameWithWin;
 	}
 
 }

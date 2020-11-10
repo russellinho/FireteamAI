@@ -8,6 +8,7 @@ using UnityEngine.AI;
 using UnityStandardAssets.Characters.FirstPerson;
 using Random = UnityEngine.Random;
 using SpawnMode = GameControllerScript.SpawnMode;
+using UnityEngine.SceneManagement;
 
 public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
@@ -139,18 +140,22 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
     // Testing mode - set in inspector
     //public bool testingMode;
 
-	// void Awake() {
-	// 	SceneManager.sceneLoaded += OnSceneFinishedLoading;
-	// }
+	void Awake() {
+		SceneManager.sceneLoaded += OnSceneFinishedLoading;
+	}
 
-	// public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
-    // {
-    //     string levelName = SceneManager.GetActiveScene().name;
-	// 	if (levelName == "Title") {
-	// 		Destroy(gameObject);
-	// 		PhotonNetwork.Destroy(gameObject);
-	// 	}
-	// }
+	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+        string levelName = SceneManager.GetActiveScene().name;
+		if (levelName == "Title") {
+			Destroy(gameObject);
+			PhotonNetwork.Destroy(gameObject);
+		} else {
+			if (!PhotonNetwork.IsMasterClient && !pView.IsMine) {
+				pView.RPC("RpcAskServerForData", RpcTarget.MasterClient);
+			}
+		}
+	}
 
     void Start()
     {
@@ -2575,6 +2580,83 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (envDamageTimer < ENV_DAMAGE_DELAY) {
 			envDamageTimer += Time.deltaTime;
 		}
+	}
+
+	[PunRPC]
+	void RpcAskServerForData() {
+		int playerTargetingId = 0;
+		
+		if (playerTargeting == null) {
+			playerTargetingId = -1;
+		} else if (playerTargeting == gameControllerScript.vipRef) {
+			playerTargetingId = -2;
+		} else {
+			playerTargetingId = playerTargeting.GetComponent<PhotonView>().Owner.ActorNumber;
+		}
+
+		pView.RPC("RpcSyncData", RpcTarget.All, rigid.useGravity, rigid.isKinematic, rigid.freezeRotation, marker.enabled, modeler.PlayerIsDespawned(),
+				navMesh.isStopped, navMesh.enabled, navMesh.destination.x, navMesh.destination.y, navMesh.destination.z, navMesh.speed, navMeshObstacle.enabled,
+				myCollider.height, myCollider.radius, myCollider.center.x, myCollider.center.y, myCollider.center.z, myCollider.enabled, headCollider.gameObject.layer,
+				gunRef.enabled, prevNavDestination.x, prevNavDestination.y, prevNavDestination.z, prevWasStopped, actionState, firingState, isCrouching, health, disorientationTime,
+				spawnPos.x, spawnPos.y, spawnPos.z, alertStatus, wasMasterClient, currentBullets, fireTimer, playerTargetingId, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z,
+				suspicionMeter, suspicionCoolDownDelay, increaseSuspicionDelay, alertTeamAfterAlertedTimer, inCover, crouchMode);
+	}
+
+	[PunRPC]
+	void RpcSyncData(bool useGravity, bool isKinematic, bool freezeRotation, bool markerEnabled, bool playerDespawned,
+					bool isStopped, bool navMeshEnabled, float destinationX, float destinationY, float destinationZ, float navMeshSpeed,
+					bool navMeshObstacleEnabled, float colliderHeight, float colliderRadius, float colliderCenterX, float colliderCenterY,
+					float colliderCenterZ, bool colliderEnabled, int headColliderLayer, bool gunRefEnabled, float preNavDestX, float preNavDestY,
+					float preNavDestZ, bool prevWasStopped, ActionStates acState, FiringStates fiState, bool isCrouching, int health, float disorientationTime,
+					float spawnPosX, float spawnPosY, float spawnPosZ, AlertStatus alertStatus, bool wasMasterClient, int currentBullets, float fireTimer,
+					int playerTargetingId, float lastSeenPlayerPosX, float lastSeenPlayerPosY, float lastSeenPlayerPosZ, float suspicionMeter, float suspicionCoolDownDelay,
+					float increaseSuspicionDelay, float alertTeamAfterAlertedTimer, bool inCover, CrouchMode crouchMode) {
+		if (playerDespawned) {
+			modeler.DespawnPlayer();
+		} else {
+			modeler.RespawnPlayer();
+		}
+		rigid.useGravity = useGravity;
+		rigid.isKinematic = isKinematic;
+		rigid.freezeRotation = freezeRotation;
+		marker.enabled = markerEnabled;
+		navMesh.isStopped = isStopped;
+		navMesh.destination = new Vector3(destinationX, destinationY, destinationZ);
+		navMesh.speed = navMeshSpeed;
+		navMesh.enabled = navMeshEnabled;
+		navMeshObstacle.enabled = navMeshObstacleEnabled;
+		myCollider.height = colliderHeight;
+		myCollider.radius = colliderRadius;
+		myCollider.center = new Vector3(colliderCenterX, colliderCenterY, colliderCenterZ);
+		myCollider.enabled = colliderEnabled;
+		headCollider.gameObject.layer = headColliderLayer;
+		gunRef.enabled = gunRefEnabled;
+		prevNavDestination = new Vector3(preNavDestX, preNavDestY, preNavDestZ);
+		this.prevWasStopped = prevWasStopped;
+		actionState = acState;
+		firingState = fiState;
+		this.isCrouching = isCrouching;
+		this.health = health;
+		this.disorientationTime = disorientationTime;
+		this.spawnPos = new Vector3(spawnPosX, spawnPosY, spawnPosZ);
+		this.alertStatus = alertStatus;
+		this.wasMasterClient = wasMasterClient;
+		this.currentBullets = currentBullets;
+		this.fireTimer = fireTimer;
+		if (playerTargetingId == -1) {
+			playerTargeting = null;
+		} else if (playerTargetingId == -2) {
+			playerTargeting = gameControllerScript.vipRef;
+		} else {
+			playerTargeting = (GameObject)GameControllerScript.playerList [playerTargetingId].objRef;
+		}
+		lastSeenPlayerPos = new Vector3(lastSeenPlayerPosX, lastSeenPlayerPosY, lastSeenPlayerPosZ);
+		this.suspicionMeter = suspicionMeter;
+		this.suspicionCoolDownDelay = suspicionCoolDownDelay;
+		this.increaseSuspicionDelay = increaseSuspicionDelay;
+		this.alertTeamAfterAlertedTimer = alertTeamAfterAlertedTimer;
+		this.inCover = inCover;
+		this.crouchMode = crouchMode;
 	}
 
 }

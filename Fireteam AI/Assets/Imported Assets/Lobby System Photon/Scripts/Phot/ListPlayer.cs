@@ -251,6 +251,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				CampaignGameStart();
 			} else if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
 				CampaignGameStart();
+			} else {
+				ToggleButtons(true);
 			}
 		}
 
@@ -269,6 +271,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				VersusGameStart();
 			} else if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
 				VersusGameStart();
+			} else {
+				ToggleButtons(true);
 			}
         }
 
@@ -423,6 +427,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnJoinedRoom()
 		{
+			ToggleButtons(true);
 			mainPanelManager.ToggleTopBar(false);
 			// mainPanelManager.ToggleBottomBar(false);
 			if (PhotonNetwork.IsMasterClient) {

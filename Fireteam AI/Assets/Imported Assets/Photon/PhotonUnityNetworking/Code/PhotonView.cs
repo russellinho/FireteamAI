@@ -495,6 +495,11 @@ namespace Photon.Pun
         /// <summary>Called by Unity on start of the application and does a setup the PhotonView.</summary>
         protected internal void Awake()
         {
+            #if UNITY_EDITOR
+            Debug.logger.logEnabled = true;
+            #else
+            Debug.logger.logEnabled = false;
+            #endif
             if (this.ViewID != 0)
             {
                 int ownerId = this.ViewID / PhotonNetwork.MAX_VIEW_IDS;

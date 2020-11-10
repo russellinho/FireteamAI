@@ -146,6 +146,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (pView.IsMine) {
                 Respawn();
             }
+            if (!PhotonNetwork.IsMasterClient && !pView.IsMine) {
+				pView.RPC("RpcAskServerForData", RpcTarget.MasterClient);
+			}
         }
     }
 
@@ -644,7 +647,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 {
                     BombScript b = activeInteractable.GetComponent<BombScript>();
                     interactionTimer = 0f;
-                    pView.RPC("RpcDefuseBomb", RpcTarget.All, b.bombId);
+                    pView.RPC("RpcDefuseBomb", RpcTarget.AllBufferedViaServer, b.bombId);
                     activeInteractable = null;
                     interactionLock = true;
                 }
@@ -670,7 +673,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 {
                     FlareScript f = activeInteractable.GetComponent<FlareScript>();
                     interactionTimer = 0f;
-                    pView.RPC("RpcPopFlare", RpcTarget.All, f.flareId);
+                    pView.RPC("RpcPopFlare", RpcTarget.AllBufferedViaServer, f.flareId);
                     activeInteractable = null;
                     interactionLock = true;
                 }
@@ -1554,5 +1557,21 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         return true;
     }
+
+    [PunRPC]
+	void RpcAskServerForData() {
+        int healthToSend = health;
+		pView.RPC("RpcSyncData", RpcTarget.All, healthToSend, escapeValueSent, assaultModeChangedIndicator, kills, deaths, escapeAvailablePopup);
+	}
+
+	[PunRPC]
+	void RpcSyncData(int health, bool escapeValueSent, bool assaultModeChangedIndicator, int kills, int deaths, bool escapeAvailablePopup) {
+        this.health = health;
+        this.escapeValueSent = escapeValueSent;
+        this.assaultModeChangedIndicator = assaultModeChangedIndicator;
+        this.kills = kills;
+        this.deaths = deaths;
+        this.escapeAvailablePopup = escapeAvailablePopup;
+	}
 
 }
