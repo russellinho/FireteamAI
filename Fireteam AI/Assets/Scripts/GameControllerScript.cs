@@ -716,6 +716,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			PlayerData.playerdata.disconnectedFromServer = true;
 			PlayerData.playerdata.disconnectReason = cause.ToString ();
 		}
+		Debug.Log("ayy 1");
 		SceneManager.LoadScene ("Title");
 	}
 
