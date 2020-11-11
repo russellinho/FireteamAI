@@ -65,7 +65,7 @@ public class WeaponScript : MonoBehaviour
                 }
             }
         }
-        SceneManager.sceneLoaded += OnSceneFinishedLoading;
+        // SceneManager.sceneLoaded += OnSceneFinishedLoading;
     }
 
     public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)

@@ -112,7 +112,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void Awake()
     {
-        SceneManager.sceneLoaded += OnSceneFinishedLoading;
+        // SceneManager.sceneLoaded += OnSceneFinishedLoading;
 
         if (!IsInGame()) {
             gameObject.SetActive(false);
