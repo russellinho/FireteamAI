@@ -78,7 +78,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         opposingTeam = (myTeam == "red" ? "blue" : "red");
         forfeitDelay = FORFEIT_CHECK_DELAY;
 		DetermineObjectivesForMission(SceneManager.GetActiveScene().name);
-		// SceneManager.sceneLoaded += OnSceneFinishedLoading;
+		SceneManager.sceneLoaded += OnSceneFinishedLoading;
 	}
 
 	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)

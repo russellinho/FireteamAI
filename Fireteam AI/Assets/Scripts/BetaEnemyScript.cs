@@ -141,7 +141,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
     //public bool testingMode;
 
 	void Awake() {
-		// SceneManager.sceneLoaded += OnSceneFinishedLoading;
+		SceneManager.sceneLoaded += OnSceneFinishedLoading;
 	}
 
 	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)

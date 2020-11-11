@@ -50,6 +50,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void LeaveGame() {
+		Debug.Log("idk");
 		PhotonNetwork.LoadLevel("Title");
 	}
 
