@@ -96,7 +96,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     void Start () {
         if (matchType == 'C') {
-            PhotonNetwork.AutomaticallySyncScene = true;
+            PhotonNetwork.AutomaticallySyncScene = false;
         } else if (matchType == 'V') {
             PhotonNetwork.AutomaticallySyncScene = false;
         }

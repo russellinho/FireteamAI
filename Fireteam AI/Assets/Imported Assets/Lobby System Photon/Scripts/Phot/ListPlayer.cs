@@ -259,7 +259,6 @@ namespace Photon.Pun.LobbySystemPhoton
 		void CampaignGameStart() {
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
 			LoadingScreen();
-			Debug.Log("CampaignGameStart:" + level);
 			PhotonNetwork.LoadLevel(level);
 		}
 

@@ -28,7 +28,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public override void OnRoomListUpdate(List<RoomInfo> roomList)
 		{
 			if (templateUIClass.gameObject.activeInHierarchy) {
-				PhotonNetwork.AutomaticallySyncScene = true;
+				PhotonNetwork.AutomaticallySyncScene = false;
 			} else {
 				PhotonNetwork.AutomaticallySyncScene = false;
 			}
