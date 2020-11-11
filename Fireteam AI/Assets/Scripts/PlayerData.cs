@@ -7,15 +7,17 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using UnityEngine.SceneManagement;
+using ExitGames.Client.Photon;
 using Photon.Realtime;
 using Photon.Pun;
 using Firebase.Database;
 using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 using Koobando.UI.Console;
 
-public class PlayerData : MonoBehaviour
+public class PlayerData : MonoBehaviour, IOnEventCallback
 {
     private const byte SPAWN_CODE = 123;
+    private const byte ASK_OTHERS_FOR_THEM = 111;
     private const float TITLE_POS_X = 0f;
     private const float TITLE_POS_Y = -1.2f;
     private const float TITLE_POS_Z = 2.1f;
@@ -56,6 +58,7 @@ public class PlayerData : MonoBehaviour
 
     void Awake()
     {
+        PhotonNetwork.AddCallbackTarget(this);
         if (playerdata == null)
         {
             DontDestroyOnLoad(gameObject);
@@ -200,28 +203,41 @@ public class PlayerData : MonoBehaviour
         if (levelName.Equals("Badlands1") || levelName.Equals("Badlands1_Red") || levelName.Equals("Badlands1_Blue"))
         {
             string characterPrefabName = GetCharacterPrefabName();
-            PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
-                characterPrefabName,
-                Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
-                Quaternion.Euler(Vector3.zero));
+            SpawnPlayer(characterPrefabName, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0]);
+            AskOthersForThemselves();
+            // PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
+            //     characterPrefabName,
+            //     Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
+            //     Quaternion.Euler(Vector3.zero));
         } else if (levelName.Equals("Badlands2") || levelName.Equals("Badlands2_Red") || levelName.Equals("Badlands2_Blue")) {
             string characterPrefabName = GetCharacterPrefabName();
-            PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
-                characterPrefabName,
-                Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
-                Quaternion.Euler(0f, 180f, 0f));
-        } else if (levelName.Equals("Test")) {
-            string characterPrefabName = GetCharacterPrefabName();
-            PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
-                characterPrefabName,
-                Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
-                Quaternion.Euler(Vector3.zero));
+            SpawnPlayer(characterPrefabName, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1]);
+            AskOthersForThemselves();
+            // PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
+            //     characterPrefabName,
+            //     Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
+            //     Quaternion.Euler(0f, 180f, 0f));
         }
+        // else if (levelName.Equals("Test")) {
+        //     string characterPrefabName = GetCharacterPrefabName();
+        //     PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
+        //         characterPrefabName,
+        //         Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
+        //         Quaternion.Euler(Vector3.zero));
+        // }
         else
         {
+            GameControllerScript.redTeamPlayerCount = 0;
+			GameControllerScript.blueTeamPlayerCount = 0;
             if (PlayerData.playerdata.inGamePlayerReference != null)
             {
                 PhotonNetwork.Destroy(PlayerData.playerdata.inGamePlayerReference);
+                // foreach (PlayerStat entry in GameControllerScript.playerList.Values)
+                // {
+                //     Destroy(entry.objRef);
+                // }
+
+                // GameControllerScript.playerList.Clear();
             }
             if (levelName.Equals("Title"))
             {
@@ -236,49 +252,100 @@ public class PlayerData : MonoBehaviour
 
     }
 
-    // public void SpawnPlayer(string playerPrefab, Vector3 spawnPoints)
-    // {
-    //     GameObject player = Instantiate((GameObject)Resources.Load(playerPrefab), spawnPoints, Quaternion.Euler(Vector3.zero));
-    //     PhotonView photonView = player.GetComponent<PhotonView>();
+    void SpawnPlayer(string playerPrefab, Vector3 spawnPoints)
+    {
+        GameObject player = Instantiate((GameObject)Resources.Load(playerPrefab), spawnPoints, Quaternion.Euler(Vector3.zero));
+        PlayerData.playerdata.inGamePlayerReference = player;
+        PhotonView photonView = player.GetComponent<PhotonView>();
+        AddMyselfToPlayerList(photonView);
 
-    //     if (PhotonNetwork.AllocateViewID(photonView))
-    //     {
-    //         object[] data = new object[]
-    //         {
-    //             playerPrefab, player.transform.position, player.transform.rotation, photonView.ViewID
-    //         };
+        if (PhotonNetwork.AllocateViewID(photonView))
+        {
+            SpawnMyselfOnOthers();
+        }
+        else
+        {
+            Debug.LogError("Failed to allocate a ViewId.");
+            Destroy(player);
+        }
+    }
 
-    //         RaiseEventOptions raiseEventOptions = new RaiseEventOptions
-    //         {
-    //             Receivers = ReceiverGroup.Others,
-    //             CachingOption = EventCaching.AddToRoomCache
-    //         };
+    void SpawnMyselfOnOthers() {
+        GameObject player = PlayerData.playerdata.inGamePlayerReference;
+        PhotonView photonView = player.GetComponent<PhotonView>();
+        object[] data = new object[]
+        {
+            GetCharacterPrefabName(), player.transform.position, player.transform.rotation, photonView.ViewID, photonView.OwnerActorNr
+        };
 
-    //         SendOptions sendOptions = new SendOptions
-    //         {
-    //             Reliability = true
-    //         };
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+        {
+            Receivers = ReceiverGroup.Others,
+            // CachingOption = EventCaching.AddToRoomCache
+            CachingOption = EventCaching.DoNotCache
+        };
 
-    //         PhotonNetwork.RaiseEvent(SPAWN_CODE, data, raiseEventOptions, sendOptions);
-    //     }
-    //     else
-    //     {
-    //         Debug.LogError("Failed to allocate a ViewId.");
-    //         Destroy(player);
-    //     }
-    // }
+        SendOptions sendOptions = new SendOptions
+        {
+            Reliability = true
+        };
 
-    // public void OnEvent(EventData photonEvent)
-    // {
-    //     if (photonEvent.Code == SPAWN_CODE)
-    //     {
-    //         object[] data = (object[]) photonEvent.CustomData;
+        PhotonNetwork.RaiseEvent(SPAWN_CODE, data, raiseEventOptions, sendOptions);
+    }
 
-    //         GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
-    //         PhotonView photonView = player.GetComponent<PhotonView>();
-    //         photonView.ViewID = (int) data[3];
-    //     }
-    // }
+    void AskOthersForThemselves() {
+        object[] data = new object[]{};
+
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+        {
+            Receivers = ReceiverGroup.Others,
+            CachingOption = EventCaching.DoNotCache
+        };
+
+        SendOptions sendOptions = new SendOptions
+        {
+            Reliability = true
+        };
+
+        PhotonNetwork.RaiseEvent(ASK_OTHERS_FOR_THEM, data, raiseEventOptions, sendOptions);
+    }
+
+    void AddMyselfToPlayerList(PhotonView pView)
+    {
+        char team = 'N';
+        uint exp = Convert.ToUInt32(pView.Owner.CustomProperties["exp"]);
+        if ((string)pView.Owner.CustomProperties["team"] == "red") {
+            team = 'R';
+            GameControllerScript.redTeamPlayerCount++;
+            Debug.Log(pView.Owner.NickName + " joined red team.");
+        } else if ((string)pView.Owner.CustomProperties["team"] == "blue") {
+            team = 'B';
+            GameControllerScript.blueTeamPlayerCount++;
+            Debug.Log(pView.Owner.NickName + " joined blue team.");
+        }
+        PlayerStat p = new PlayerStat(gameObject, pView.Owner.ActorNumber, pView.Owner.NickName, team, exp);
+        GameControllerScript.playerList.Add(pView.Owner.ActorNumber, p);
+    }
+
+    public void OnEvent(EventData photonEvent)
+    {
+        if (photonEvent.Code == SPAWN_CODE)
+        {
+            object[] data = (object[]) photonEvent.CustomData;
+            int ownerActorNr = (int) data[4];
+            if (GameControllerScript.playerList.ContainsKey(ownerActorNr)) {
+                return;
+            }
+
+            GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
+            PhotonView photonView = player.GetComponent<PhotonView>();
+            photonView.ViewID = (int) data[3];
+            AddMyselfToPlayerList(photonView);
+        } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
+        {
+            SpawnMyselfOnOthers();
+        }
+    }
 
     public void LoadPlayerData()
     {

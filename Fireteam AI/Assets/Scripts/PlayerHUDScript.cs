@@ -275,7 +275,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (gameController.exitLevelLoaded) {
 				ToggleGameOverPopup (false);
 				ToggleGameOverBanner (true);
-			} else if ((gameController.teamMap == "R" && gameController.redTeamPlayerCount == gameController.deadCount) || (gameController.teamMap == "B" && gameController.blueTeamPlayerCount == gameController.deadCount)) {
+			} else if ((gameController.teamMap == "R" && GameControllerScript.redTeamPlayerCount == gameController.deadCount) || (gameController.teamMap == "B" && GameControllerScript.blueTeamPlayerCount == gameController.deadCount)) {
 				ToggleGameOverPopup (true);
 			}
 			ToggleHUD (false);

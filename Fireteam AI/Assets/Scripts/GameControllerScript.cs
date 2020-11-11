@@ -49,8 +49,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public int deadCount;
 	// TODO: These numbers need to be instantiated and networked
-	public int redTeamPlayerCount;
-	public int blueTeamPlayerCount;
+	public static int redTeamPlayerCount;
+	public static int blueTeamPlayerCount;
 	public bool assaultMode;
     // Sync mission time to clients every 10 seconds
     private float syncMissionTimeTimer;
@@ -603,15 +603,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	}*/
 
-	public override void OnLeftRoom()
-	{
-		foreach (PlayerStat entry in playerList.Values)
-		{
-			Destroy(entry.objRef);
-		}
+	// public override void OnLeftRoom()
+	// {
+	// 	foreach (PlayerStat entry in playerList.Values)
+	// 	{
+	// 		Destroy(entry.objRef);
+	// 	}
 
-		playerList.Clear();
-	}
+	// 	playerList.Clear();
+	// }
 
 	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
@@ -984,7 +984,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	[PunRPC]
 	void RpcAskServerForData() {
 		pView.RPC("RpcSyncData", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
-			spawnMode, gameOver, (int)sectorsCleared, deadCount, redTeamPlayerCount, blueTeamPlayerCount, assaultMode, enemyTeamNearingVictoryTrigger, endingGainsCalculated, endGameWithWin);
+			spawnMode, gameOver, (int)sectorsCleared, deadCount, assaultMode, enemyTeamNearingVictoryTrigger, endingGainsCalculated, endGameWithWin);
 	}
 
 	[PunRPC]
@@ -999,8 +999,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		this.gameOver = gameOver;
 		this.sectorsCleared = (short)sectorsCleared;
 		this.deadCount = deadCount;
-		this.redTeamPlayerCount = redTeamPlayerCount;
-		this.blueTeamPlayerCount = blueTeamPlayerCount;
 		this.assaultMode = assaultMode;
 		this.enemyTeamNearingVictoryTrigger = enemyTeamNearingVictoryTrigger;
 		this.endingGainsCalculated = endingGainsCalculated;
@@ -1011,7 +1009,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 public class PlayerStat {
 	public GameObject objRef;
-	public Transform carryingSlotRef;
 	public int actorId;
 	public string name;
 	public char team;
@@ -1021,9 +1018,8 @@ public class PlayerStat {
 	public uint expGained;
 	public uint gpGained;
 
-	public PlayerStat(GameObject objRef, Transform carryingSlotRef, int actorId, string name, char team, uint exp) {
+	public PlayerStat(GameObject objRef, int actorId, string name, char team, uint exp) {
 		this.objRef = objRef;
-		this.carryingSlotRef = carryingSlotRef;
 		this.actorId = actorId;
 		this.name = name;
 		this.team = team;

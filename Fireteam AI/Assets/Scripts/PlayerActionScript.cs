@@ -124,8 +124,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void InitPlayer() {
         gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
-        DontDestroyOnLoad(gameObject);
-        AddMyselfToPlayerList();
         if (pView.IsMine) {
             if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
                 string myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
@@ -469,23 +467,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcUpdateObjectives() {
         gameController.UpdateObjectives();
         hud.UpdateObjectives();
-    }
-
-    void AddMyselfToPlayerList()
-    {
-        char team = 'N';
-        uint exp = Convert.ToUInt32(pView.Owner.CustomProperties["exp"]);
-        if ((string)pView.Owner.CustomProperties["team"] == "red") {
-            team = 'R';
-            gameController.redTeamPlayerCount++;
-            Debug.Log(pView.Owner.NickName + " joined red team.");
-        } else if ((string)pView.Owner.CustomProperties["team"] == "blue") {
-            team = 'B';
-            gameController.blueTeamPlayerCount++;
-            Debug.Log(pView.Owner.NickName + " joined blue team.");
-        }
-        PlayerStat p = new PlayerStat(gameObject, carryingSlot, pView.Owner.ActorNumber, pView.Owner.NickName, team, exp);
-        GameControllerScript.playerList.Add(pView.Owner.ActorNumber, p);
     }
 
     public void TakeDamage(int d, bool useArmor)

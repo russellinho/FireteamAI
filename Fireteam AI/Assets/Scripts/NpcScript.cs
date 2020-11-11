@@ -134,7 +134,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			}
 		} else {
 			actionState = ActionStates.Carried;
-			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].carryingSlotRef;
+			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].objRef.GetComponent<PlayerActionScript>().carryingSlot;
 			ToggleCollider(false);
 			gameObject.transform.SetParent(carriedByTransform);
 			transform.localPosition = Vector3.zero;

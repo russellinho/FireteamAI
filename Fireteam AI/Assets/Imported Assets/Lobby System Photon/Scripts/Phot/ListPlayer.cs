@@ -427,6 +427,8 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnJoinedRoom()
 		{
+			GameControllerScript.redTeamPlayerCount = 0;
+			GameControllerScript.blueTeamPlayerCount = 0;
 			ToggleButtons(true);
 			mainPanelManager.ToggleTopBar(false);
 			// mainPanelManager.ToggleBottomBar(false);
@@ -741,6 +743,8 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnLeftRoom()
 		{
+			GameControllerScript.redTeamPlayerCount = 0;
+			GameControllerScript.blueTeamPlayerCount = 0;
 			mapSelector.index = 0;
 			mapSelectorVs.index = 0;
 			templateUIClass.RoomPanel.SetActive(false);
