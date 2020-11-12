@@ -83,14 +83,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
     {
-        string levelName = SceneManager.GetActiveScene().name;
-		if (levelName == "Title") {
-			Destroy(gameObject);
-			PhotonNetwork.Destroy(gameObject);
-		} else {
-			if (!PhotonNetwork.IsMasterClient) {
-				pView.RPC("RpcAskServerForData", RpcTarget.MasterClient);
-			}
+		if (!PhotonNetwork.IsMasterClient) {
+			pView.RPC("RpcAskServerForData", RpcTarget.MasterClient);
 		}
 	}
 

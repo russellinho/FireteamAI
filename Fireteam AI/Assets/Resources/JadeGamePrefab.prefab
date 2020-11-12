@@ -25380,14 +25380,44 @@ MonoBehaviour:
   equippedSecondaryWeapon: 
   equippedSupportWeapon: 
   equippedMeleeWeapon: 
-  equippedWep: 
+  equippedWepInGame: 
   currentlyEquippedType: 0
-  totalPrimaryAmmoLeft: 0
-  totalSecondaryAmmoLeft: 0
-  totalSupportAmmoLeft: 0
-  currentAmmoPrimary: 0
-  currentAmmoSecondary: 0
-  currentAmmoSupport: 0
+  totalPrimaryAmmoLeft:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  totalSecondaryAmmoLeft:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  totalSupportAmmoLeft:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  currentAmmoPrimary:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  currentAmmoSecondary:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  currentAmmoSupport:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
   weaponReady: 0
   pView: {fileID: 4997301263046971775}
   setupGender: 0
@@ -25403,10 +25433,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3674be1c45c09a4890f1a33d2ca7daf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0
-  stamina: 0
-  armor: 0
-  health: 0
+  speed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  stamina:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  armor:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  health:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
 --- !u!143 &4997301263046971761
 CharacterController:
   m_ObjectHideFlags: 0
@@ -25538,7 +25603,17 @@ MonoBehaviour:
   m_IsRunning: 0
   m_IsMoving: 0
   m_RunstepLenghten: 0.7
-  m_JumpSpeed: 10
+  m_JumpSpeed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
   m_StickToGroundForce: 10
   m_GravityMultiplier: 2.95
   m_MouseLook:
@@ -25695,15 +25770,35 @@ MonoBehaviour:
   weaponHolderFpc: {fileID: 5178772778736144025}
   animator: {fileID: 6545086241103380533}
   animatorFpc: {fileID: 8395974561300965294}
-  weaponStats: {fileID: 0}
-  meleeStats: {fileID: 0}
+  weaponMetaData: {fileID: 0}
+  meleeMetaData: {fileID: 0}
   BloodEffect: {fileID: 1175462165935484, guid: a5aeebbc9242b4a4cb24c32e945135f5,
     type: 3}
   BloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 3}
-  spread: 0
-  totalAmmoLeft: 0
-  currentAmmo: 0
+  spread:
+    currentCryptoKey: 1610755814
+    hiddenValue: 1613628134
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 1
+    fakeValue: 0
+    fakeValueActive: 1
+  totalAmmoLeft:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  currentAmmo:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
   shootPoint: {fileID: 5358521169694850170}
   fpcShootPoint: {fileID: 5358521169694850170}
   meleeTargetPos: {x: -Infinity, y: -Infinity, z: -Infinity}
@@ -25788,15 +25883,29 @@ MonoBehaviour:
   ammoPickupSound: {fileID: 8300000, guid: 2e0c337d7be1f394e90d1718f80fde8d, type: 3}
   healthPickupSound: {fileID: 8300000, guid: 2abf41e9ece742d44b0da495397486fb, type: 3}
   carryingSlot: {fileID: 2491556780384958635}
-  health: 0
+  health:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
   sprintTime: 0
-  godMode: 0
   canShoot: 0
   escapeValueSent: 0
   kills: 0
   isRespawning: 0
   respawnTimer: 0
-  totalSpeedBoost: 0
+  totalSpeedBoost:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
   weaponSpeedModifier: 0
   verticalVelocityBeforeLanding: 0
   objectCarrying: {fileID: 0}
@@ -25918,7 +26027,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 0
+  OwnershipTransfer: 1
   ObservedComponents:
   - {fileID: 8998841911799414109}
   viewIdField: 0

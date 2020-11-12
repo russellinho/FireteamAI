@@ -257,15 +257,17 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         GameObject player = Instantiate((GameObject)Resources.Load(playerPrefab), spawnPoints, Quaternion.Euler(Vector3.zero));
         PlayerData.playerdata.inGamePlayerReference = player;
         PhotonView photonView = player.GetComponent<PhotonView>();
-        AddMyselfToPlayerList(photonView);
+        // photonView.ViewID = PhotonNetwork.LocalPlayer.ActorNumber;
+        photonView.SetOwnerInternal(PhotonNetwork.LocalPlayer, PhotonNetwork.LocalPlayer.ActorNumber);
 
         if (PhotonNetwork.AllocateViewID(photonView))
         {
+            AddMyselfToPlayerList(photonView, player);
             SpawnMyselfOnOthers();
         }
         else
         {
-            Debug.LogError("Failed to allocate a ViewId.");
+            Debug.Log("Failed to allocate a ViewId.");
             Destroy(player);
         }
     }
@@ -310,20 +312,22 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         PhotonNetwork.RaiseEvent(ASK_OTHERS_FOR_THEM, data, raiseEventOptions, sendOptions);
     }
 
-    void AddMyselfToPlayerList(PhotonView pView)
+    void AddMyselfToPlayerList(PhotonView pView, GameObject playerRef)
     {
         char team = 'N';
-        uint exp = Convert.ToUInt32(pView.Owner.CustomProperties["exp"]);
-        if ((string)pView.Owner.CustomProperties["team"] == "red") {
+        if ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red") {
             team = 'R';
             GameControllerScript.redTeamPlayerCount++;
             Debug.Log(pView.Owner.NickName + " joined red team.");
-        } else if ((string)pView.Owner.CustomProperties["team"] == "blue") {
+        } else if ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "blue") {
             team = 'B';
             GameControllerScript.blueTeamPlayerCount++;
             Debug.Log(pView.Owner.NickName + " joined blue team.");
         }
-        PlayerStat p = new PlayerStat(gameObject, pView.Owner.ActorNumber, pView.Owner.NickName, team, exp);
+        PlayerStat p = new PlayerStat(playerRef, pView.Owner.ActorNumber, pView.Owner.NickName, team, Convert.ToUInt32(PhotonNetwork.LocalPlayer.CustomProperties["exp"]));
+        if (GameControllerScript.playerList == null) {
+            GameControllerScript.playerList = new Dictionary<int, PlayerStat>();
+        }
         GameControllerScript.playerList.Add(pView.Owner.ActorNumber, p);
     }
 
@@ -340,7 +344,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
             PhotonView photonView = player.GetComponent<PhotonView>();
             photonView.ViewID = (int) data[3];
-            AddMyselfToPlayerList(photonView);
+            AddMyselfToPlayerList(photonView, player);
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
         {
             SpawnMyselfOnOthers();
@@ -1377,7 +1381,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         if (args.Snapshot.Key.ToString().Equals("loggedIn")) {
             if (args.Snapshot.Value != null) {
                 if (args.Snapshot.Value.ToString() == "0") {
-                    Debug.Log("6");
                     Application.Quit();
                 }
             }
@@ -2068,7 +2071,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 		inputData["loggedIn"] = "0";
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("setUserIsLoggedIn");
 		func.CallAsync(inputData).ContinueWith((task) => {
-            Debug.Log("5");
             Application.Quit();
         });
     }
@@ -2344,7 +2346,6 @@ public class PlayerInventory {
     protected virtual void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
         if (!PlayerData.playerdata.inventoryDataModifyLegalFlag) {
             if (PlayerData.playerdata == null) {
-                Debug.Log("4");
                 Application.Quit();
             } else {
                 // Ban player here for modifying item data

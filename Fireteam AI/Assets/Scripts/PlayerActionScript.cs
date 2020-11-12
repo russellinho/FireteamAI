@@ -134,19 +134,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
-        string levelName = SceneManager.GetActiveScene().name;
-        // Went back to title (left game)
-        if (levelName == "Title") {
-            gameObject.SetActive(false);
-        } else {
-            gameObject.SetActive(true);
-            InitPlayer();
-            if (pView.IsMine) {
-                Respawn();
-            }
-            if (!PhotonNetwork.IsMasterClient && !pView.IsMine) {
-				pView.RPC("RpcAskServerForData", RpcTarget.MasterClient);
-			}
+        if (!PhotonNetwork.IsMasterClient && !pView.IsMine) {
+            pView.RPC("RpcAskServerForData", RpcTarget.MasterClient);
         }
     }
 
