@@ -344,8 +344,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
             PhotonView photonView = player.GetComponent<PhotonView>();
             photonView.ViewID = (int) data[3];
+            Debug.Log("Owner actor number: " + ownerActorNr + " " + PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr).NickName);
             photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
-            AddMyselfToPlayerList(photonView, player);
+            // AddMyselfToPlayerList(photonView, player);
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
         {
             SpawnMyselfOnOthers();
