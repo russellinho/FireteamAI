@@ -315,16 +315,16 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     void AddMyselfToPlayerList(PhotonView pView, GameObject playerRef)
     {
         char team = 'N';
-        if ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red") {
+        if ((string)pView.Owner.CustomProperties["team"] == "red") {
             team = 'R';
             GameControllerScript.redTeamPlayerCount++;
             Debug.Log(pView.Owner.NickName + " joined red team.");
-        } else if ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "blue") {
+        } else if ((string)pView.Owner.CustomProperties["team"] == "blue") {
             team = 'B';
             GameControllerScript.blueTeamPlayerCount++;
             Debug.Log(pView.Owner.NickName + " joined blue team.");
         }
-        PlayerStat p = new PlayerStat(playerRef, pView.Owner.ActorNumber, pView.Owner.NickName, team, Convert.ToUInt32(PhotonNetwork.LocalPlayer.CustomProperties["exp"]));
+        PlayerStat p = new PlayerStat(playerRef, pView.Owner.ActorNumber, pView.Owner.NickName, team, Convert.ToUInt32(pView.Owner.CustomProperties["exp"]));
         if (GameControllerScript.playerList == null) {
             GameControllerScript.playerList = new Dictionary<int, PlayerStat>();
         }
@@ -344,6 +344,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
             PhotonView photonView = player.GetComponent<PhotonView>();
             photonView.ViewID = (int) data[3];
+            photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
             AddMyselfToPlayerList(photonView, player);
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
         {
