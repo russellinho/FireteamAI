@@ -343,9 +343,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
             GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
             PhotonView photonView = player.GetComponent<PhotonView>();
-            // photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
-            photonView.ViewID = (int) data[3];
             photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
+            photonView.ViewID = (int) data[3];
+            // photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
             // photonView.Owner = PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr);
             AddMyselfToPlayerList(photonView, player);
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
