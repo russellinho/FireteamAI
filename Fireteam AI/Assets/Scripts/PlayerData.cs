@@ -229,16 +229,16 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         {
             GameControllerScript.redTeamPlayerCount = 0;
 			GameControllerScript.blueTeamPlayerCount = 0;
-            if (PlayerData.playerdata.inGamePlayerReference != null)
-            {
-                PhotonNetwork.Destroy(PlayerData.playerdata.inGamePlayerReference);
+            // if (PlayerData.playerdata.inGamePlayerReference != null)
+            // {
+                // PhotonNetwork.Destroy(PlayerData.playerdata.inGamePlayerReference);
                 // foreach (PlayerStat entry in GameControllerScript.playerList.Values)
                 // {
                 //     Destroy(entry.objRef);
                 // }
 
                 // GameControllerScript.playerList.Clear();
-            }
+            // }
             if (levelName.Equals("Title"))
             {
                 if (PlayerData.playerdata.bodyReference == null)
@@ -297,7 +297,10 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void AskOthersForThemselves() {
-        object[] data = new object[]{};
+        object[] data = new object[]
+        {
+            PhotonNetwork.LocalPlayer.ActorNumber
+        };
 
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions
         {
@@ -350,7 +353,12 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             AddMyselfToPlayerList(photonView, player);
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
         {
-            Debug.Log("two");
+            object[] data = (object[]) photonEvent.CustomData;
+            int caller = (int) data[0];
+            if (caller == PhotonNetwork.LocalPlayer.ActorNumber) {
+                Debug.Log("Tried to spawn yourself again.");
+                return;
+            }
             SpawnMyselfOnOthers();
         }
     }
