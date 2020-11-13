@@ -263,6 +263,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         if (PhotonNetwork.AllocateViewID(photonView))
         {
             AddMyselfToPlayerList(photonView, player);
+            Debug.Log("one");
             SpawnMyselfOnOthers();
         }
         else
@@ -345,11 +346,11 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             PhotonView photonView = player.GetComponent<PhotonView>();
             photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
             photonView.ViewID = (int) data[3];
-            // photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
-            // photonView.Owner = PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr);
+            Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID);
             AddMyselfToPlayerList(photonView, player);
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
         {
+            Debug.Log("two");
             SpawnMyselfOnOthers();
         }
     }
