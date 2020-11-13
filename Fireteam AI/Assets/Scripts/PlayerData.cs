@@ -263,7 +263,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         if (PhotonNetwork.AllocateViewID(photonView))
         {
             AddMyselfToPlayerList(photonView, player);
-            Debug.Log("one");
             SpawnMyselfOnOthers();
         }
         else
@@ -297,10 +296,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void AskOthersForThemselves() {
-        object[] data = new object[]
-        {
-            PhotonNetwork.LocalPlayer.ActorNumber
-        };
+        object[] data = new object[]{};
 
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions
         {
@@ -353,12 +349,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             AddMyselfToPlayerList(photonView, player);
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
         {
-            object[] data = (object[]) photonEvent.CustomData;
-            int caller = (int) data[0];
-            if (caller == PhotonNetwork.LocalPlayer.ActorNumber) {
-                Debug.Log("Tried to spawn yourself again.");
-                return;
-            }
             SpawnMyselfOnOthers();
         }
     }
