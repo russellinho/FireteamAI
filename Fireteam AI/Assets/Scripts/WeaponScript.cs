@@ -1108,6 +1108,7 @@ public class WeaponScript : MonoBehaviour
             this.currentAmmoSecondary = currentAmmoSecondary;
             this.currentAmmoSupport = currentAmmoSupport;
             if (weaponHolder.weapon == null) {
+                Debug.Log("FUCK1");
                 SyncWeps();
             }
 	}

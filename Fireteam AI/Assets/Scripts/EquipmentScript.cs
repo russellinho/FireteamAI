@@ -1146,7 +1146,8 @@ public class EquipmentScript : MonoBehaviour
         this.equippedTop = equippedTop;
         this.equippedBottom = equippedBottom;
         this.equippedCharacter = equippedCharacter;
-        if (equippedSkinRef != null) {
+        if (equippedSkinRef == null) {
+            Debug.Log("FUCK3");
             SyncEquips();
         }
 	}
