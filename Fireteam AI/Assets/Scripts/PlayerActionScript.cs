@@ -112,8 +112,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void Awake()
     {
-        SceneManager.sceneLoaded += OnSceneFinishedLoading;
-
         if (!IsInGame()) {
             gameObject.SetActive(false);
             return;
@@ -133,7 +131,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode) {
+    public void SyncDataOnJoin() {
         if (!PhotonNetwork.IsMasterClient && !pView.IsMine) {
             pView.RPC("RpcAskServerForData", RpcTarget.MasterClient);
         }

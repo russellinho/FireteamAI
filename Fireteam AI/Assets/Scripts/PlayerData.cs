@@ -349,6 +349,8 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
             photonView.ViewID = (int) data[3];
             Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID);
+            player.GetComponent<WeaponScript>().SyncDataOnJoin();
+            player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
             AddMyselfToPlayerList(photonView, player);
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
         {

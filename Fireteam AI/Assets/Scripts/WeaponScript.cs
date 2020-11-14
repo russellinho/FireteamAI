@@ -65,15 +65,13 @@ public class WeaponScript : MonoBehaviour
                 }
             }
         }
-        SceneManager.sceneLoaded += OnSceneFinishedLoading;
     }
 
-    public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
-    {
+    public void SyncDataOnJoin() {
         if (!PhotonNetwork.IsMasterClient && !pView.IsMine) {
             pView.RPC("RpcAskServerForData", RpcTarget.MasterClient);
         }
-	}
+    }
 
     // Start is called before the first frame update
     void Start()
