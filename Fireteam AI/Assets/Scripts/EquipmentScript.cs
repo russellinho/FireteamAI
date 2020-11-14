@@ -113,7 +113,6 @@ public class EquipmentScript : MonoBehaviour
     public void Initialize() {
         if (pView != null && !pView.IsMine) {
             initialized = true;
-            Debug.Log("heyho " + gameObject.name);
             return;
         }
 
@@ -840,7 +839,6 @@ public class EquipmentScript : MonoBehaviour
     }
 
     private void EquipSkinInGame(int skin) {
-        Debug.Log("Equipping skin " + skin + " " + gameObject.name);
         equippedSkin = skin;
         equippedSkinRef = (GameObject)Instantiate(InventoryScript.itemData.itemReferences[InventoryScript.itemData.characterCatalog[equippedCharacter].skins[skin]]);
         equippedSkinRef.transform.SetParent(fullBodyRef.transform);
@@ -1147,7 +1145,6 @@ public class EquipmentScript : MonoBehaviour
         this.equippedBottom = equippedBottom;
         this.equippedCharacter = equippedCharacter;
         if (equippedSkinRef == null) {
-            Debug.Log("FUCK3");
             SyncEquips();
         }
 	}
