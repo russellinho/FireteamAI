@@ -113,16 +113,17 @@ public class EquipmentScript : MonoBehaviour
     public void Initialize() {
         if (pView != null && !pView.IsMine) {
             initialized = true;
+            Debug.Log("heyho " + gameObject.name);
             return;
         }
 
-        pView.RPC("RpcEquipCharacterInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedCharacter);
-        pView.RPC("RpcEquipHeadgearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedHeadgear);
-        pView.RPC("RpcEquipFacewearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedFacewear);
-        pView.RPC("RpcEquipTopInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedTop);
-        pView.RPC("RpcEquipBottomInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedBottom);
-        pView.RPC("RpcEquipFootwearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedFootwear);
-        pView.RPC("RpcEquipArmorInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedArmor);
+        pView.RPC("RpcEquipCharacterInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedCharacter);
+        pView.RPC("RpcEquipHeadgearInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedHeadgear);
+        pView.RPC("RpcEquipFacewearInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedFacewear);
+        pView.RPC("RpcEquipTopInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedTop);
+        pView.RPC("RpcEquipBottomInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedBottom);
+        pView.RPC("RpcEquipFootwearInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedFootwear);
+        pView.RPC("RpcEquipArmorInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedArmor);
 
         initialized = true;
     }
@@ -846,6 +847,7 @@ public class EquipmentScript : MonoBehaviour
     // }
 
     private void EquipSkinInGame(int skin) {
+        Debug.Log("Equipping skin " + skin + " " + gameObject.name);
         equippedSkin = skin;
         equippedSkinRef = (GameObject)Instantiate(InventoryScript.itemData.itemReferences[InventoryScript.itemData.characterCatalog[equippedCharacter].skins[skin]]);
         equippedSkinRef.transform.SetParent(fullBodyRef.transform);
