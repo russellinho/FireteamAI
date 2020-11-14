@@ -274,7 +274,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void SpawnMyselfOnOthers() {
-        Debug.Log(PlayerData.playerdata.inGamePlayerReference == null);
+        if (SceneManager.GetActiveScene().name == "Title") return;
         GameObject player = PlayerData.playerdata.inGamePlayerReference;
         PhotonView photonView = player.GetComponent<PhotonView>();
         object[] data = new object[]
