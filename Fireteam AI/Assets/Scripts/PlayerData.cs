@@ -263,6 +263,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         if (PhotonNetwork.AllocateViewID(photonView))
         {
             AddMyselfToPlayerList(photonView, player);
+            Debug.Log("one");
             SpawnMyselfOnOthers();
         }
         else
@@ -273,6 +274,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void SpawnMyselfOnOthers() {
+        Debug.Log(PlayerData.playerdata.inGamePlayerReference == null);
         GameObject player = PlayerData.playerdata.inGamePlayerReference;
         PhotonView photonView = player.GetComponent<PhotonView>();
         object[] data = new object[]
@@ -349,6 +351,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             AddMyselfToPlayerList(photonView, player);
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
         {
+            Debug.Log("two");
             SpawnMyselfOnOthers();
         }
     }
