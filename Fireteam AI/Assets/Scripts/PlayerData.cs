@@ -17,6 +17,7 @@ using Koobando.UI.Console;
 public class PlayerData : MonoBehaviour, IOnEventCallback
 {
     private const byte SPAWN_CODE = 123;
+    private const byte SPAWN_INIT_CODE = 124;
     private const byte ASK_OTHERS_FOR_THEM = 111;
     private const float TITLE_POS_X = 0f;
     private const float TITLE_POS_Y = -1.2f;
@@ -263,8 +264,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         if (PhotonNetwork.AllocateViewID(photonView))
         {
             AddMyselfToPlayerList(photonView, player);
-            Debug.Log("one");
-            SpawnMyselfOnOthers();
+            SpawnMyselfOnOthers(true);
         }
         else
         {
@@ -273,7 +273,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
     }
 
-    void SpawnMyselfOnOthers() {
+    void SpawnMyselfOnOthers(bool initial) {
         if (SceneManager.GetActiveScene().name == "Title") return;
         GameObject player = PlayerData.playerdata.inGamePlayerReference;
         PhotonView photonView = player.GetComponent<PhotonView>();
@@ -294,7 +294,11 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             Reliability = true
         };
 
-        PhotonNetwork.RaiseEvent(SPAWN_CODE, data, raiseEventOptions, sendOptions);
+        if (initial) {
+            PhotonNetwork.RaiseEvent(SPAWN_INIT_CODE, data, raiseEventOptions, sendOptions);
+        } else {
+            PhotonNetwork.RaiseEvent(SPAWN_CODE, data, raiseEventOptions, sendOptions);
+        }
     }
 
     void AskOthersForThemselves() {
@@ -336,7 +340,21 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     public void OnEvent(EventData photonEvent)
     {
         if (SceneManager.GetActiveScene().name == "Title") return;
-        if (photonEvent.Code == SPAWN_CODE)
+        if (photonEvent.Code == SPAWN_INIT_CODE)
+        {
+            object[] data = (object[]) photonEvent.CustomData;
+            int ownerActorNr = (int) data[4];
+            if (GameControllerScript.playerList.ContainsKey(ownerActorNr)) {
+                return;
+            }
+
+            GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
+            PhotonView photonView = player.GetComponent<PhotonView>();
+            photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
+            photonView.ViewID = (int) data[3];
+            Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID);
+            AddMyselfToPlayerList(photonView, player);
+        } else if (photonEvent.Code == SPAWN_CODE)
         {
             object[] data = (object[]) photonEvent.CustomData;
             int ownerActorNr = (int) data[4];
@@ -354,8 +372,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             AddMyselfToPlayerList(photonView, player);
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
         {
-            Debug.Log("two");
-            SpawnMyselfOnOthers();
+            SpawnMyselfOnOthers(false);
         }
     }
 
