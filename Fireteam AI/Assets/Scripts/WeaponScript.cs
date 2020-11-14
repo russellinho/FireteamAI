@@ -1088,13 +1088,20 @@ public class WeaponScript : MonoBehaviour
     [PunRPC]
 	void RpcAskServerForData() {
         if (!pView.IsMine) return;
-		pView.RPC("RpcSyncData", RpcTarget.All, equippedPrimaryWeapon, equippedSecondaryWeapon, equippedSupportWeapon, equippedMeleeWeapon, totalPrimaryAmmoLeft,
-            totalSecondaryAmmoLeft, totalSupportAmmoLeft, currentAmmoPrimary, currentAmmoSecondary, currentAmmoSupport, currentlyEquippedType, weaponReady);
+        int primaryAmmoLeft = totalPrimaryAmmoLeft;
+        int secondaryAmmoLeft = totalSecondaryAmmoLeft;
+        int supportAmmoLeft = totalSupportAmmoLeft;
+        int currentAmmoP = currentAmmoPrimary;
+        int currentAmmoSec = currentAmmoSecondary;
+        int currentAmmoSupp = currentAmmoSupport;
+		pView.RPC("RpcSyncData", RpcTarget.All, equippedPrimaryWeapon, equippedSecondaryWeapon, equippedSupportWeapon, equippedMeleeWeapon, primaryAmmoLeft,
+            secondaryAmmoLeft, supportAmmoLeft, currentAmmoP, currentAmmoSec, currentAmmoSupp, currentlyEquippedType, weaponReady);
 	}
 
 	[PunRPC]
 	void RpcSyncData(string equippedPrimaryWeapon, string equippedSecondaryWeapon, string equippedSupportWeapon, string equippedMeleeWeapon, int totalPrimaryAmmoLeft,
         int totalSecondaryAmmoLeft, int totalSupportAmmoLeft, int currentAmmoPrimary, int currentAmmoSecondary, int currentAmmoSupport, int currentlyEquippedType, bool weaponReady) {
+            Debug.Log("sup m8s");
             this.equippedPrimaryWeapon = equippedPrimaryWeapon;
             this.equippedSecondaryWeapon = equippedSecondaryWeapon;
             this.equippedSupportWeapon = equippedSupportWeapon;
