@@ -66,8 +66,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private int networkDelayCount = 0;
         private bool meleeSlowActive;
 
+        private bool initialized;
+
         // Use this for initialization
-        private void Start()
+        public void Initialize()
         {
             if (animator.gameObject.activeInHierarchy) {
                 animator.SetBool("onTitle", false);
@@ -75,6 +77,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_MouseLook.Init(charTransform, spineTransform, fpcTransformSpine, fpcTransformBody);
             if (photonView != null && !photonView.IsMine) {
 				//this.enabled = false;
+                initialized = true;
                 return;
             }
             m_CharacterController = GetComponent<CharacterController>();
@@ -88,13 +91,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_JumpSpeed = 10f;
 			canMove = true;
 			sprintLock = false;
-
+            initialized = true;
         }
 
 
         // Update is called once per frame
         private void Update()
         {
+            if (!initialized) {
+                return;
+            }
             if (photonView != null && !photonView.IsMine)
             {
                 return;
@@ -129,6 +135,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         void LateUpdate() {
+            if (!initialized) {
+                return;
+            }
             if (photonView != null && !photonView.IsMine)
             {
                 ClientRotateView();
@@ -160,6 +169,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void FixedUpdate()
         {
+            if (!initialized) {
+                return;
+            }
             if (photonView != null && !photonView.IsMine)
             {
                 return;

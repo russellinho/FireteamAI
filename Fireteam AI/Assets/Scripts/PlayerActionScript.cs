@@ -110,7 +110,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     // Mission references
     private float detectionLevel;
 
-    void Awake()
+    private bool initialized;
+
+    public void PreInitialize()
     {
         if (!IsInGame()) {
             gameObject.SetActive(false);
@@ -137,7 +139,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    void Start()
+    public void Initialize()
     {
         // Load the in-game necessities
         //DontDestroyOnLoad(gameObject);
@@ -167,6 +169,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
              Destroy(viewCam.GetComponent<AudioLowPassFilter>());
              Destroy(viewCam.GetComponent<AudioListener>());
              viewCam.enabled = false;
+             initialized = true;
              //enabled = false;
              return;
          }
@@ -197,10 +200,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         totalSpeedBoost = originalSpeed;
 
         StartCoroutine(SpawnInvincibilityRoutine());
+        initialized = true;
     }
 
     void Update()
     {
+        if (!initialized) {
+            return;
+        }
         if (gameController == null)
         {
             GameObject gc = GameObject.FindWithTag("GameController");
@@ -317,6 +324,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     void FixedUpdate() {
+        if (!initialized) {
+            return;
+        }
         if (!pView.IsMine) {
             return;
         }

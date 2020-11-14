@@ -41,12 +41,14 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	public bool screenGrab;
 	private const float HEIGHT_OFFSET = 1.9f;
 
+	private bool initialized;
+
 	void Awake() {
 		container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
 	}
 
     // Use this for initialization
-    void Start () {
+    public void Initialize () {
 		// container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
         if (!GetComponent<PhotonView>().IsMine) {
 			myHudMarkerCam1.targetTexture = null;
@@ -56,6 +58,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			// myHudMarkerCam1.gameObject.SetActive(false);
 			// myHudMarkerCam2.gameObject.SetActive(false);
             this.enabled = false;
+			initialized = true;
 			return;
         }
 		// Find/load HUD components
@@ -100,6 +103,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		StartCoroutine("UpdatePlayerMarkers");
 		StartCoroutine("UpdateEnemyMarkers");
 		StartCoroutine("UpdateWaypoints");
+
+		initialized = true;
 	}
 
 	public void StartMatchCameraFade() {
@@ -187,6 +192,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	// Update is called once per frame
 	void Update () {
+		if (!initialized) {
+			return;
+		}
 		if (gameController == null) {
 			gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameControllerScript> ();
 			return;
@@ -233,6 +241,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     }
 
 	void FixedUpdate() {
+		if (!initialized) {
+			return;
+		}
 		// Hierarchy: hit (red) flare takes 1st priority, heal (green) second, boost (yellow) third
 		UpdateHitFlare();
 		if (!container.hitFlare.GetComponent<RawImage> ().enabled) {

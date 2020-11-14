@@ -30,16 +30,20 @@ public class CameraShakeScript : MonoBehaviour
 	public PhotonView pView;
 
 	Vector3 originalPos;
+
+	private bool initialized;
 	
-	void Awake()
+	public void PreInitialize()
 	{
 		if (!pView.IsMine) {
+			initialized = true;
 			this.enabled = false;
 			return;
 		}
 		initialCamRot = camTransform.localRotation.eulerAngles;
 		swingCamRot = new Vector3(initialCamRot.x + SWING_X_ROT, initialCamRot.y + SWING_Y_ROT, initialCamRot.z + SWING_Z_ROT);
 		lungeCamRot = new Vector3(initialCamRot.x + LUNGE_X_ROT, initialCamRot.y, initialCamRot.z);
+		initialized = true;
 	}
 
 	public void SetShake(bool b) {
@@ -53,6 +57,9 @@ public class CameraShakeScript : MonoBehaviour
 
 	void Update()
 	{
+		if (!initialized) {
+			return;
+		}
 		if (playerActionScript.health > 0) {
 			// Used for shaking the camera during melee
 			if (playerActionScript.wepActionScript.isMeleeing) {

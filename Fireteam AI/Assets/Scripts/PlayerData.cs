@@ -263,6 +263,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
         if (PhotonNetwork.AllocateViewID(photonView))
         {
+            InitPlayerInGame(player);
             AddMyselfToPlayerList(photonView, player);
             SpawnMyselfOnOthers(true);
         }
@@ -353,6 +354,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
             photonView.ViewID = (int) data[3];
             Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID);
+            InitPlayerInGame(player);
             AddMyselfToPlayerList(photonView, player);
         } else if (photonEvent.Code == SPAWN_CODE)
         {
@@ -367,6 +369,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
             photonView.ViewID = (int) data[3];
             Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID);
+            InitPlayerInGame(player);
             player.GetComponent<WeaponScript>().SyncDataOnJoin();
             player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
             AddMyselfToPlayerList(photonView, player);
@@ -374,6 +377,20 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         {
             SpawnMyselfOnOthers(false);
         }
+    }
+
+    void InitPlayerInGame(GameObject player) {
+        player.GetComponent<EquipmentScript>().PreInitialize();
+        player.GetComponent<EquipmentScript>().Initialize();
+        player.GetComponent<PlayerHUDScript>().Initialize();
+        player.GetComponent<WeaponScript>().PreInitialize();
+        player.GetComponent<WeaponScript>().Initialize();
+        player.GetComponent<WeaponActionScript>().Initialize();
+        player.GetComponent<PlayerActionScript>().PreInitialize();
+        player.GetComponent<PlayerActionScript>().Initialize();
+        player.GetComponent<CameraShakeScript>().PreInitialize();
+        player.GetComponent<AudioControllerScript>().Initialize();
+        player.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().Initialize();
     }
 
     public void LoadPlayerData()

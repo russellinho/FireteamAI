@@ -67,8 +67,9 @@ public class EquipmentScript : MonoBehaviour
     public string footwearPrefabSetupPath;
     public string skinPrefabSetupPath;
 
-    void Awake()
-    {
+    private bool initialized;
+
+    void Awake() {
         if (SceneManager.GetActiveScene().name.Equals("Title"))
         {
             onTitle = true;
@@ -80,6 +81,23 @@ public class EquipmentScript : MonoBehaviour
                 onSetup = true;
             }
         }
+    }
+
+    void Start() {
+        if (onTitle)
+        {
+            if (ts == null)
+            {
+                ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+            }
+        } else if (onSetup) {
+            EquipDefaultsForSetup();
+        }
+    }
+
+    public void PreInitialize()
+    {
+        onTitle = false;
 
         if (pView != null) {
             if (pView.IsMine) {
@@ -92,27 +110,21 @@ public class EquipmentScript : MonoBehaviour
         }
     }
 
-    void Start() {
+    public void Initialize() {
         if (pView != null && !pView.IsMine) {
+            initialized = true;
             return;
         }
-        if (onTitle)
-        {
-            if (ts == null)
-            {
-                ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
-            }
-        } else if (onSetup) {
-            EquipDefaultsForSetup();
-        } else {
-            pView.RPC("RpcEquipCharacterInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedCharacter);
-            pView.RPC("RpcEquipHeadgearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedHeadgear);
-            pView.RPC("RpcEquipFacewearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedFacewear);
-            pView.RPC("RpcEquipTopInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedTop);
-            pView.RPC("RpcEquipBottomInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedBottom);
-            pView.RPC("RpcEquipFootwearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedFootwear);
-            pView.RPC("RpcEquipArmorInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedArmor);
-        }
+
+        pView.RPC("RpcEquipCharacterInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedCharacter);
+        pView.RPC("RpcEquipHeadgearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedHeadgear);
+        pView.RPC("RpcEquipFacewearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedFacewear);
+        pView.RPC("RpcEquipTopInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedTop);
+        pView.RPC("RpcEquipBottomInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedBottom);
+        pView.RPC("RpcEquipFootwearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedFootwear);
+        pView.RPC("RpcEquipArmorInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedArmor);
+
+        initialized = true;
     }
 
     public void ToggleFirstPersonBody(bool b) {

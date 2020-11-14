@@ -48,8 +48,10 @@ public class AudioControllerScript : MonoBehaviour {
 	private bool wasRunning;
 	private PhotonView pView;
 
+	private bool initialized;
+
 	// Use this for initialization
-	void Start () {
+	public void Initialize () {
 		wasRunning = false;
 		fxSound2 = fxRef.GetComponents<AudioSource>() [1];
 		pView = GetComponent<PhotonView> ();
@@ -63,11 +65,14 @@ public class AudioControllerScript : MonoBehaviour {
 			fxSound7 = fxRefs [6];
 			PlayMissionStartSound ();
 		}
-
+		initialized = true;
 	}
 
 	// Update is called once per frame
 	void Update () {
+		if (!initialized) {
+			return;
+		}
 		// Ensure we can access game controller before we begin
 		if (!pView.IsMine) {
 			return;

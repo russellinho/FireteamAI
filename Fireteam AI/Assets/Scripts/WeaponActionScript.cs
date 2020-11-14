@@ -118,7 +118,9 @@ public class WeaponActionScript : MonoBehaviour
     public bool deployInProgress;
     public bool switchWeaponBackToRight;
     // Use this for initialization
-    void Start()
+
+    private bool initialized;
+    public void Initialize()
     {
         deployTimer = 0f;
         aimDownSightsLock = false;
@@ -126,6 +128,7 @@ public class WeaponActionScript : MonoBehaviour
         throwGrenade = false;
         if (pView != null && !pView.IsMine)
         {
+            initialized = true;
             return;
         }
         currentAmmo = weaponStats.clipCapacity;
@@ -139,6 +142,7 @@ public class WeaponActionScript : MonoBehaviour
         // Create animation event for shotgun reload
 
         // CreateAnimEvents();
+        initialized = true;
     }
 
     // void CreateAnimEvents() {
@@ -155,6 +159,9 @@ public class WeaponActionScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!initialized) {
+            return;
+        }
         if (pView != null && !pView.IsMine)
         {
             return;
@@ -341,6 +348,9 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     void LateUpdate() {
+        if (!initialized) {
+            return;
+        }
         UpdateAimDownSightsArms();
         if (deployPlanMesh != null) {
             UpdateDeployPlanMesh();
