@@ -1538,7 +1538,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 	void RpcAskServerForDataPlayer() {
         if (!pView.IsMine) return;
         int healthToSend = health;
-		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, assaultModeChangedIndicator, kills, deaths, escapeAvailablePopup);
+		pView.RPC("RpcSyncDataPlayer", RpcTarget.Others, healthToSend, escapeValueSent, assaultModeChangedIndicator, kills, deaths, escapeAvailablePopup);
 	}
 
 	[PunRPC]

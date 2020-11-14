@@ -299,6 +299,11 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
+    void WeaponRefresh() {
+        animator.SetInteger("WeaponType", currentlyEquippedType);
+        weaponHolder.LoadWeapon(InventoryScript.itemData.weaponCatalog[equippedWepInGame].prefabPath);
+    }
+
     void SetCurrentAmmo(int weaponCat) {
         if (weaponCat == 1)
         {
@@ -1094,13 +1099,13 @@ public class WeaponScript : MonoBehaviour
         int currentAmmoP = currentAmmoPrimary;
         int currentAmmoSec = currentAmmoSecondary;
         int currentAmmoSupp = currentAmmoSupport;
-		pView.RPC("RpcSyncDataWeps", RpcTarget.All, equippedPrimaryWeapon, equippedSecondaryWeapon, equippedSupportWeapon, equippedMeleeWeapon, primaryAmmoLeft,
-            secondaryAmmoLeft, supportAmmoLeft, currentAmmoP, currentAmmoSec, currentAmmoSupp, currentlyEquippedType, weaponReady);
+		pView.RPC("RpcSyncDataWeps", RpcTarget.Others, equippedPrimaryWeapon, equippedSecondaryWeapon, equippedSupportWeapon, equippedMeleeWeapon, primaryAmmoLeft,
+            secondaryAmmoLeft, supportAmmoLeft, currentAmmoP, currentAmmoSec, currentAmmoSupp, currentlyEquippedType, weaponReady, equippedWepInGame);
 	}
 
 	[PunRPC]
 	void RpcSyncDataWeps(string equippedPrimaryWeapon, string equippedSecondaryWeapon, string equippedSupportWeapon, string equippedMeleeWeapon, int totalPrimaryAmmoLeft,
-        int totalSecondaryAmmoLeft, int totalSupportAmmoLeft, int currentAmmoPrimary, int currentAmmoSecondary, int currentAmmoSupport, int currentlyEquippedType, bool weaponReady) {
+        int totalSecondaryAmmoLeft, int totalSupportAmmoLeft, int currentAmmoPrimary, int currentAmmoSecondary, int currentAmmoSupport, int currentlyEquippedType, bool weaponReady, string equippedWepInGame) {
             this.equippedPrimaryWeapon = equippedPrimaryWeapon;
             this.equippedSecondaryWeapon = equippedSecondaryWeapon;
             this.equippedSupportWeapon = equippedSupportWeapon;
@@ -1113,13 +1118,14 @@ public class WeaponScript : MonoBehaviour
             this.currentAmmoPrimary = currentAmmoPrimary;
             this.currentAmmoSecondary = currentAmmoSecondary;
             this.currentAmmoSupport = currentAmmoSupport;
+            this.equippedWepInGame = equippedWepInGame;
             if (weaponHolder.weapon == null) {
                 SyncWeps();
             }
 	}
 
     void SyncWeps() {
-        DrawWeapon(currentlyEquippedType);
+        WeaponRefresh();
     }
 
 }

@@ -1135,7 +1135,7 @@ public class EquipmentScript : MonoBehaviour
     [PunRPC]
 	void RpcAskServerForDataEquips() {
         if (!pView.IsMine) return;
-		pView.RPC("RpcSyncDataEquips", RpcTarget.All, equippedArmor, equippedHeadgear, equippedFacewear, equippedFootwear, equippedSkin, equippedTop, equippedBottom, equippedCharacter);
+		pView.RPC("RpcSyncDataEquips", RpcTarget.Others, equippedArmor, equippedHeadgear, equippedFacewear, equippedFootwear, equippedSkin, equippedTop, equippedBottom, equippedCharacter);
 	}
 
 	[PunRPC]
