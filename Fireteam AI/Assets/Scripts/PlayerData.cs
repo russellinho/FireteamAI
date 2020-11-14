@@ -335,6 +335,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
     public void OnEvent(EventData photonEvent)
     {
+        if (SceneManager.GetActiveScene().name == "Title") return;
         if (photonEvent.Code == SPAWN_CODE)
         {
             object[] data = (object[]) photonEvent.CustomData;
