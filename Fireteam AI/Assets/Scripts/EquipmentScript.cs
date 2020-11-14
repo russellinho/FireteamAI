@@ -888,6 +888,7 @@ public class EquipmentScript : MonoBehaviour
     }
 
     void EquipHeadgearInGame() {
+        if (string.IsNullOrEmpty(equippedHeadgear)) return;
         Equipment e = InventoryScript.itemData.equipmentCatalog[equippedHeadgear];
         // Hide hair if has hair
         if (e.hideHairFlag) {
@@ -922,6 +923,7 @@ public class EquipmentScript : MonoBehaviour
     }
 
     void EquipFacewearInGame() {
+        if (string.IsNullOrEmpty(equippedFacewear)) return;
         Equipment e = InventoryScript.itemData.equipmentCatalog[equippedFacewear];
         GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         equippedFacewearRef = (GameObject)Instantiate(p);
@@ -946,6 +948,7 @@ public class EquipmentScript : MonoBehaviour
     }
 
     void EquipArmorInGame() {
+        if (string.IsNullOrEmpty(equippedArmor)) return;
         Armor a = InventoryScript.itemData.armorCatalog[equippedArmor];
         GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathTop] : InventoryScript.itemData.itemReferences[a.femalePrefabPathTop]);
         equippedArmorTopRef = (GameObject)Instantiate(p);
@@ -975,6 +978,7 @@ public class EquipmentScript : MonoBehaviour
     }
 
     void EquipFootwearInGame() {
+        if (string.IsNullOrEmpty(equippedFootwear)) return;
         Equipment e = InventoryScript.itemData.equipmentCatalog[equippedFootwear];
         GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         equippedFootwearRef = (GameObject)Instantiate(p);

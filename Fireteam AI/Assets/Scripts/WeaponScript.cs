@@ -1101,7 +1101,6 @@ public class WeaponScript : MonoBehaviour
 	[PunRPC]
 	void RpcSyncData(string equippedPrimaryWeapon, string equippedSecondaryWeapon, string equippedSupportWeapon, string equippedMeleeWeapon, int totalPrimaryAmmoLeft,
         int totalSecondaryAmmoLeft, int totalSupportAmmoLeft, int currentAmmoPrimary, int currentAmmoSecondary, int currentAmmoSupport, int currentlyEquippedType, bool weaponReady) {
-            Debug.Log("sup m8s");
             this.equippedPrimaryWeapon = equippedPrimaryWeapon;
             this.equippedSecondaryWeapon = equippedSecondaryWeapon;
             this.equippedSupportWeapon = equippedSupportWeapon;
@@ -1114,7 +1113,6 @@ public class WeaponScript : MonoBehaviour
             this.currentAmmoPrimary = currentAmmoPrimary;
             this.currentAmmoSecondary = currentAmmoSecondary;
             this.currentAmmoSupport = currentAmmoSupport;
-            Debug.Log(weaponHolder.weapon.name);
             if (weaponHolder.weapon == null) {
                 SyncWeps();
             }
