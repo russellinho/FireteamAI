@@ -810,7 +810,11 @@ public class EquipmentScript : MonoBehaviour
     [PunRPC]
     private void RpcEquipTopInGame(string top) {
         equippedTop = top;
-        Equipment e = InventoryScript.itemData.equipmentCatalog[top];
+        EquipTopInGame();
+    }
+
+    void EquipTopInGame() {
+        Equipment e = InventoryScript.itemData.equipmentCatalog[equippedTop];
         
         GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         equippedTopRef = (GameObject)Instantiate(p);
@@ -834,17 +838,6 @@ public class EquipmentScript : MonoBehaviour
         //pView.RPC("RpcEquipSkinInGame", RpcTarget.AllBuffered, e.skinType);
         EquipSkinInGame(e.skinType);
     }
-
-    // [PunRPC]
-    // private void RpcEquipSkinInGame(int skin) {
-    //     equippedSkin = skin;
-    //     equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[equippedCharacter].skins[skin]));
-    //     equippedSkinRef.transform.SetParent(fullBodyRef.transform);
-    //     MeshFixer m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
-    //     m.target = mySkinRenderer.gameObject;
-    //     m.rootBone = myBones.transform;
-    //     m.AdaptMesh();
-    // }
 
     private void EquipSkinInGame(int skin) {
         Debug.Log("Equipping skin " + skin + " " + gameObject.name);
@@ -873,7 +866,11 @@ public class EquipmentScript : MonoBehaviour
     [PunRPC]
     private void RpcEquipBottomInGame(string bottom) {
         equippedBottom = bottom;
-        Equipment e = InventoryScript.itemData.equipmentCatalog[bottom];
+        EquipBottomInGame();
+    }
+
+    void EquipBottomInGame() {
+        Equipment e = InventoryScript.itemData.equipmentCatalog[equippedBottom];
         GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         equippedBottomRef = (GameObject)Instantiate(p);
         equippedBottomRef.transform.SetParent(fullBodyRef.transform);
@@ -889,7 +886,11 @@ public class EquipmentScript : MonoBehaviour
             return;
         }
         equippedHeadgear = headgear;
-        Equipment e = InventoryScript.itemData.equipmentCatalog[headgear];
+        EquipHeadgearInGame();
+    }
+
+    void EquipHeadgearInGame() {
+        Equipment e = InventoryScript.itemData.equipmentCatalog[equippedHeadgear];
         // Hide hair if has hair
         if (e.hideHairFlag) {
             if (myHairRenderer != null) {
@@ -919,7 +920,11 @@ public class EquipmentScript : MonoBehaviour
             return;
         }
         equippedFacewear = facewear;
-        Equipment e = InventoryScript.itemData.equipmentCatalog[facewear];
+        EquipFacewearInGame();
+    }
+
+    void EquipFacewearInGame() {
+        Equipment e = InventoryScript.itemData.equipmentCatalog[equippedFacewear];
         GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         equippedFacewearRef = (GameObject)Instantiate(p);
         equippedFacewearRef.transform.SetParent(fullBodyRef.transform);
@@ -939,7 +944,11 @@ public class EquipmentScript : MonoBehaviour
             return;
         }
         equippedArmor = armor;
-        Armor a = InventoryScript.itemData.armorCatalog[armor];
+        EquipArmorInGame();
+    }
+
+    void EquipArmorInGame() {
+        Armor a = InventoryScript.itemData.armorCatalog[equippedArmor];
         GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathTop] : InventoryScript.itemData.itemReferences[a.femalePrefabPathTop]);
         equippedArmorTopRef = (GameObject)Instantiate(p);
         equippedArmorTopRef.transform.SetParent(fullBodyRef.transform);
@@ -964,7 +973,11 @@ public class EquipmentScript : MonoBehaviour
     [PunRPC]
     private void RpcEquipFootwearInGame(string footwear) {
         equippedFootwear = footwear;
-        Equipment e = InventoryScript.itemData.equipmentCatalog[footwear];
+        EquipFootwearInGame();
+    }
+
+    void EquipFootwearInGame() {
+        Equipment e = InventoryScript.itemData.equipmentCatalog[equippedFootwear];
         GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         equippedFootwearRef = (GameObject)Instantiate(p);
         equippedFootwearRef.transform.SetParent(fullBodyRef.transform);
@@ -1111,6 +1124,37 @@ public class EquipmentScript : MonoBehaviour
         }
 
         return new StatBoosts(totalArmorBoost, totalSpeedBoost, totalStaminaBoost);
+    }
+
+    public void SyncDataOnJoin() {
+        pView.RPC("RpcAskServerForData", RpcTarget.Others);
+    }
+
+    [PunRPC]
+	void RpcAskServerForData() {
+        if (!pView.IsMine) return;
+		pView.RPC("RpcSyncData", RpcTarget.All, equippedArmor, equippedHeadgear, equippedFacewear, equippedFootwear, equippedSkin, equippedTop, equippedBottom, equippedCharacter);
+	}
+
+	[PunRPC]
+	void RpcSyncData(string equippedArmor, string equippedHeadgear, string equippedFacewear, string equippedFootwear, int equippedSkin, string equippedTop, string equippedBottom, string equippedCharacter) {
+        this.equippedArmor = equippedArmor;
+        this.equippedHeadgear = equippedHeadgear;
+        this.equippedFacewear = equippedFacewear;
+        this.equippedFootwear = equippedFootwear;
+        this.equippedSkin = equippedSkin;
+        this.equippedTop = equippedTop;
+        this.equippedBottom = equippedBottom;
+        this.equippedCharacter = equippedCharacter;
+	}
+
+    public void SyncEquips() {
+        EquipTopInGame();
+        EquipBottomInGame();
+        EquipFootwearInGame();
+        EquipHeadgearInGame();
+        EquipFacewearInGame();
+        EquipArmorInGame();
     }
 
     public class StatBoosts {

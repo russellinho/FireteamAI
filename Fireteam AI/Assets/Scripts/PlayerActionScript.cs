@@ -134,9 +134,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     public void SyncDataOnJoin() {
-        if (!PhotonNetwork.IsMasterClient && !pView.IsMine) {
-            pView.RPC("RpcAskServerForData", RpcTarget.MasterClient);
-        }
+        pView.RPC("RpcAskServerForData", RpcTarget.Others);
     }
 
     public void Initialize()
@@ -1538,6 +1536,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     [PunRPC]
 	void RpcAskServerForData() {
+        if (!pView.IsMine) return;
         int healthToSend = health;
 		pView.RPC("RpcSyncData", RpcTarget.All, healthToSend, escapeValueSent, assaultModeChangedIndicator, kills, deaths, escapeAvailablePopup);
 	}

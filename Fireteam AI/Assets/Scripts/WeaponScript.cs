@@ -78,9 +78,7 @@ public class WeaponScript : MonoBehaviour
     }
 
     public void SyncDataOnJoin() {
-        if (!PhotonNetwork.IsMasterClient && !pView.IsMine) {
-            pView.RPC("RpcAskServerForData", RpcTarget.MasterClient);
-        }
+        pView.RPC("RpcAskServerForData", RpcTarget.Others);
     }
 
     // Start is called before the first frame update
@@ -1089,6 +1087,7 @@ public class WeaponScript : MonoBehaviour
 
     [PunRPC]
 	void RpcAskServerForData() {
+        if (!pView.IsMine) return;
 		pView.RPC("RpcSyncData", RpcTarget.All, equippedPrimaryWeapon, equippedSecondaryWeapon, equippedSupportWeapon, equippedMeleeWeapon, totalPrimaryAmmoLeft,
             totalSecondaryAmmoLeft, totalSupportAmmoLeft, currentAmmoPrimary, currentAmmoSecondary, currentAmmoSupport, currentlyEquippedType, weaponReady);
 	}
@@ -1109,5 +1108,9 @@ public class WeaponScript : MonoBehaviour
             this.currentAmmoSecondary = currentAmmoSecondary;
             this.currentAmmoSupport = currentAmmoSupport;
 	}
+
+    public void SyncWeps() {
+        DrawWeapon(currentlyEquippedType);
+    }
 
 }
