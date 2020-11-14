@@ -84,7 +84,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
     {
 		if (!PhotonNetwork.IsMasterClient) {
-			pView.RPC("RpcAskServerForData", RpcTarget.MasterClient);
+			pView.RPC("RpcAskServerForDataGc", RpcTarget.MasterClient);
 		}
 	}
 
@@ -976,13 +976,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	[PunRPC]
-	void RpcAskServerForData() {
-		pView.RPC("RpcSyncData", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
+	void RpcAskServerForDataGc() {
+		pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
 			spawnMode, gameOver, (int)sectorsCleared, deadCount, assaultMode, enemyTeamNearingVictoryTrigger, endingGainsCalculated, endGameWithWin);
 	}
 
 	[PunRPC]
-	void RpcSyncData(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer,
+	void RpcSyncDataGc(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer,
 		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, int deadCount, int redTeamPlayerCount, int blueTeamPlayerCount,
 		bool assaultMode, bool enemyTeamNearingVictoryTrigger, bool endingGainsCalculated, bool endGameWithWin) {
     	lastGunshotHeardPos = new Vector3(lastGunshotHeardPosX, lastGunshotHeardPosY, lastGunshotHeardPosZ);

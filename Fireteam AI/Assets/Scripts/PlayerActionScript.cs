@@ -134,7 +134,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     public void SyncDataOnJoin() {
-        pView.RPC("RpcAskServerForData", RpcTarget.Others);
+        pView.RPC("RpcAskServerForDataPlayer", RpcTarget.Others);
     }
 
     public void Initialize()
@@ -1535,14 +1535,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-	void RpcAskServerForData() {
+	void RpcAskServerForDataPlayer() {
         if (!pView.IsMine) return;
         int healthToSend = health;
-		pView.RPC("RpcSyncData", RpcTarget.All, healthToSend, escapeValueSent, assaultModeChangedIndicator, kills, deaths, escapeAvailablePopup);
+		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, assaultModeChangedIndicator, kills, deaths, escapeAvailablePopup);
 	}
 
 	[PunRPC]
-	void RpcSyncData(int health, bool escapeValueSent, bool assaultModeChangedIndicator, int kills, int deaths, bool escapeAvailablePopup) {
+	void RpcSyncDataPlayer(int health, bool escapeValueSent, bool assaultModeChangedIndicator, int kills, int deaths, bool escapeAvailablePopup) {
         this.health = health;
         this.escapeValueSent = escapeValueSent;
         this.assaultModeChangedIndicator = assaultModeChangedIndicator;

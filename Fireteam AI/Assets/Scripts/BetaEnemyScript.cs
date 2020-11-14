@@ -147,7 +147,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
     {
 		if (!PhotonNetwork.IsMasterClient && !pView.IsMine) {
-			pView.RPC("RpcAskServerForData", RpcTarget.MasterClient);
+			pView.RPC("RpcAskServerForDataEnemies", RpcTarget.MasterClient);
 		}
 	}
 
@@ -2577,7 +2577,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	[PunRPC]
-	void RpcAskServerForData() {
+	void RpcAskServerForDataEnemies() {
 		int playerTargetingId = 0;
 		
 		if (playerTargeting == null) {
@@ -2588,7 +2588,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			playerTargetingId = playerTargeting.GetComponent<PhotonView>().Owner.ActorNumber;
 		}
 
-		pView.RPC("RpcSyncData", RpcTarget.All, rigid.useGravity, rigid.isKinematic, rigid.freezeRotation, marker.enabled, modeler.PlayerIsDespawned(),
+		pView.RPC("RpcSyncDataEnemies", RpcTarget.All, rigid.useGravity, rigid.isKinematic, rigid.freezeRotation, marker.enabled, modeler.PlayerIsDespawned(),
 				navMesh.isStopped, navMesh.enabled, navMesh.destination.x, navMesh.destination.y, navMesh.destination.z, navMesh.speed, navMeshObstacle.enabled,
 				myCollider.height, myCollider.radius, myCollider.center.x, myCollider.center.y, myCollider.center.z, myCollider.enabled, headCollider.gameObject.layer,
 				gunRef.enabled, prevNavDestination.x, prevNavDestination.y, prevNavDestination.z, prevWasStopped, actionState, firingState, isCrouching, health, disorientationTime,
@@ -2597,7 +2597,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	[PunRPC]
-	void RpcSyncData(bool useGravity, bool isKinematic, bool freezeRotation, bool markerEnabled, bool playerDespawned,
+	void RpcSyncDataEnemies(bool useGravity, bool isKinematic, bool freezeRotation, bool markerEnabled, bool playerDespawned,
 					bool isStopped, bool navMeshEnabled, float destinationX, float destinationY, float destinationZ, float navMeshSpeed,
 					bool navMeshObstacleEnabled, float colliderHeight, float colliderRadius, float colliderCenterX, float colliderCenterY,
 					float colliderCenterZ, bool colliderEnabled, int headColliderLayer, bool gunRefEnabled, float preNavDestX, float preNavDestY,

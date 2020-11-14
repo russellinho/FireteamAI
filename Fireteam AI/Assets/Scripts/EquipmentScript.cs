@@ -1129,17 +1129,17 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void SyncDataOnJoin() {
-        pView.RPC("RpcAskServerForData", RpcTarget.Others);
+        pView.RPC("RpcAskServerForDataEquips", RpcTarget.Others);
     }
 
     [PunRPC]
-	void RpcAskServerForData() {
+	void RpcAskServerForDataEquips() {
         if (!pView.IsMine) return;
-		pView.RPC("RpcSyncData", RpcTarget.All, equippedArmor, equippedHeadgear, equippedFacewear, equippedFootwear, equippedSkin, equippedTop, equippedBottom, equippedCharacter);
+		pView.RPC("RpcSyncDataEquips", RpcTarget.All, equippedArmor, equippedHeadgear, equippedFacewear, equippedFootwear, equippedSkin, equippedTop, equippedBottom, equippedCharacter);
 	}
 
 	[PunRPC]
-	void RpcSyncData(string equippedArmor, string equippedHeadgear, string equippedFacewear, string equippedFootwear, int equippedSkin, string equippedTop, string equippedBottom, string equippedCharacter) {
+	void RpcSyncDataEquips(string equippedArmor, string equippedHeadgear, string equippedFacewear, string equippedFootwear, int equippedSkin, string equippedTop, string equippedBottom, string equippedCharacter) {
         this.equippedArmor = equippedArmor;
         this.equippedHeadgear = equippedHeadgear;
         this.equippedFacewear = equippedFacewear;

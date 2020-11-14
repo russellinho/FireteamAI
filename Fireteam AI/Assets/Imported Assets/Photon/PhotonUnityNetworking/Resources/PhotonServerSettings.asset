@@ -166,6 +166,16 @@ MonoBehaviour:
   - StartDespawn
   - RpcAskServerForData
   - RpcSyncData
+  - RpcAskServerForDataEnemies
+  - RpcAskServerForDataEquips
+  - RpcAskServerForDataGc
+  - RpcAskServerForDataPlayer
+  - RpcAskServerForDataWeps
+  - RpcSyncDataEnemies
+  - RpcSyncDataEquips
+  - RpcSyncDataGc
+  - RpcSyncDataPlayer
+  - RpcSyncDataWeps
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
