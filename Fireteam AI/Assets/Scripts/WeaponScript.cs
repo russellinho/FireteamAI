@@ -1107,9 +1107,12 @@ public class WeaponScript : MonoBehaviour
             this.currentAmmoPrimary = currentAmmoPrimary;
             this.currentAmmoSecondary = currentAmmoSecondary;
             this.currentAmmoSupport = currentAmmoSupport;
+            if (weaponHolder.weapon == null) {
+                SyncWeps();
+            }
 	}
 
-    public void SyncWeps() {
+    void SyncWeps() {
         DrawWeapon(currentlyEquippedType);
     }
 

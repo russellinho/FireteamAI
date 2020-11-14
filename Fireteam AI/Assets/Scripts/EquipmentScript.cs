@@ -1133,13 +1133,11 @@ public class EquipmentScript : MonoBehaviour
     [PunRPC]
 	void RpcAskServerForData() {
         if (!pView.IsMine) return;
-        Debug.Log("Equipped Top: " + equippedTop);
 		pView.RPC("RpcSyncData", RpcTarget.All, equippedArmor, equippedHeadgear, equippedFacewear, equippedFootwear, equippedSkin, equippedTop, equippedBottom, equippedCharacter);
 	}
 
 	[PunRPC]
 	void RpcSyncData(string equippedArmor, string equippedHeadgear, string equippedFacewear, string equippedFootwear, int equippedSkin, string equippedTop, string equippedBottom, string equippedCharacter) {
-        Debug.Log("Setting equipped top: " + equippedTop);
         this.equippedArmor = equippedArmor;
         this.equippedHeadgear = equippedHeadgear;
         this.equippedFacewear = equippedFacewear;
@@ -1148,9 +1146,12 @@ public class EquipmentScript : MonoBehaviour
         this.equippedTop = equippedTop;
         this.equippedBottom = equippedBottom;
         this.equippedCharacter = equippedCharacter;
+        if (equippedSkinRef != null) {
+            SyncEquips();
+        }
 	}
 
-    public void SyncEquips() {
+    void SyncEquips() {
         EquipTopInGame();
         EquipBottomInGame();
         EquipFootwearInGame();

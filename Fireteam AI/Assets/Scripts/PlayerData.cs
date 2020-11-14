@@ -373,8 +373,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             player.GetComponent<EquipmentScript>().SyncDataOnJoin();
             player.GetComponent<WeaponScript>().SyncDataOnJoin();
             player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
-            player.GetComponent<EquipmentScript>().SyncEquips();
-            player.GetComponent<WeaponScript>().SyncWeps();
             AddMyselfToPlayerList(photonView, player);
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
         {
