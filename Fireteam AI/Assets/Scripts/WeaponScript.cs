@@ -299,9 +299,22 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
-    void WeaponRefresh() {
+    void WeaponRefresh(string equippedSuppressor, string equippedSight) {
         animator.SetInteger("WeaponType", currentlyEquippedType);
-        weaponHolder.LoadWeapon(InventoryScript.itemData.weaponCatalog[equippedWepInGame].prefabPath);
+        Weapon w = InventoryScript.itemData.weaponCatalog[equippedWepInGame];
+        GameObject wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+        weaponHolder.SetWeaponPosition(false);
+        WeaponMods wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
+        if (w.suppressorCompatible) {
+            if (equippedSuppressor != null && equippedSuppressor != "") {
+                wm.EquipSuppressor(equippedSuppressor);
+            }
+        }
+        if (w.sightCompatible) {
+            if (equippedSight != null && equippedSight != "") {
+                wm.EquipSight(equippedSight);
+            }
+        }
     }
 
     void SetCurrentAmmo(int weaponCat) {
@@ -1099,13 +1112,27 @@ public class WeaponScript : MonoBehaviour
         int currentAmmoP = currentAmmoPrimary;
         int currentAmmoSec = currentAmmoSecondary;
         int currentAmmoSupp = currentAmmoSupport;
+        string suppEquipped = null;
+        string sightEquipped = null;
+        if (currentlyEquippedType == 1) {
+            suppEquipped = PlayerData.playerdata.primaryModInfo.EquippedSuppressor;
+            sightEquipped = PlayerData.playerdata.primaryModInfo.EquippedSight;
+        } else if (currentlyEquippedType == 2) {
+            suppEquipped = PlayerData.playerdata.secondaryModInfo.EquippedSuppressor;
+            sightEquipped = PlayerData.playerdata.secondaryModInfo.EquippedSight;
+        } else if (currentlyEquippedType == 4) {
+            suppEquipped = PlayerData.playerdata.supportModInfo.EquippedSuppressor;
+            sightEquipped = PlayerData.playerdata.supportModInfo.EquippedSight;
+        }
 		pView.RPC("RpcSyncDataWeps", RpcTarget.Others, equippedPrimaryWeapon, equippedSecondaryWeapon, equippedSupportWeapon, equippedMeleeWeapon, primaryAmmoLeft,
-            secondaryAmmoLeft, supportAmmoLeft, currentAmmoP, currentAmmoSec, currentAmmoSupp, currentlyEquippedType, weaponReady, equippedWepInGame);
+            secondaryAmmoLeft, supportAmmoLeft, currentAmmoP, currentAmmoSec, currentAmmoSupp, currentlyEquippedType, weaponReady, equippedWepInGame,
+            suppEquipped, sightEquipped);
 	}
 
 	[PunRPC]
 	void RpcSyncDataWeps(string equippedPrimaryWeapon, string equippedSecondaryWeapon, string equippedSupportWeapon, string equippedMeleeWeapon, int totalPrimaryAmmoLeft,
-        int totalSecondaryAmmoLeft, int totalSupportAmmoLeft, int currentAmmoPrimary, int currentAmmoSecondary, int currentAmmoSupport, int currentlyEquippedType, bool weaponReady, string equippedWepInGame) {
+        int totalSecondaryAmmoLeft, int totalSupportAmmoLeft, int currentAmmoPrimary, int currentAmmoSecondary, int currentAmmoSupport, int currentlyEquippedType, bool weaponReady, string equippedWepInGame,
+        string currentlyEquippedSupp, string currentlyEquippedSight) {
             this.equippedPrimaryWeapon = equippedPrimaryWeapon;
             this.equippedSecondaryWeapon = equippedSecondaryWeapon;
             this.equippedSupportWeapon = equippedSupportWeapon;
@@ -1120,12 +1147,12 @@ public class WeaponScript : MonoBehaviour
             this.currentAmmoSupport = currentAmmoSupport;
             this.equippedWepInGame = equippedWepInGame;
             if (weaponHolder.weapon == null) {
-                SyncWeps();
+                SyncWeps(currentlyEquippedSupp, currentlyEquippedSight);
             }
 	}
 
-    void SyncWeps() {
-        WeaponRefresh();
+    void SyncWeps(string equippedSuppressor, string equippedSight) {
+        WeaponRefresh(equippedSuppressor, equippedSight);
     }
 
 }
