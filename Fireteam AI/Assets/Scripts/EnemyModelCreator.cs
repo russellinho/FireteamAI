@@ -70,7 +70,6 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
             }
         } else {
             if (!modelCreated) {
-                modelCreated = true;
                 PingServerForEquipment();
             }
         }
