@@ -978,7 +978,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	[PunRPC]
 	void RpcAskServerForDataGc() {
 		pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
-			spawnMode, gameOver, (int)sectorsCleared, deadCount, assaultMode, enemyTeamNearingVictoryTrigger, endingGainsCalculated, endGameWithWin);
+			spawnMode, gameOver, (int)sectorsCleared, deadCount, redTeamPlayerCount, blueTeamPlayerCount, assaultMode, enemyTeamNearingVictoryTrigger, endingGainsCalculated, endGameWithWin);
 	}
 
 	[PunRPC]
