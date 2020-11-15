@@ -710,7 +710,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         container.ammoTxt.gameObject.SetActive(b);
 		container.minimapGroup.SetActive(b);
 		container.timeGroup.SetActive(b);
-		Debug.Log(container.minimapGroup.activeInHierarchy);
 		container.hintText.enabled = false;
 		if (!b) {
 			container.itemCarryingText.text = null;
