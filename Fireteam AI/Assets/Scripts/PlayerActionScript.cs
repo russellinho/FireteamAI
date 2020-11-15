@@ -526,23 +526,35 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (!fpc.IsFullyMobile()) {
                 fpc.m_IsCrouching = false;
             }
+
+            FpcCrouch(fpc.m_IsCrouching);
+            fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
+
+            // Collect the original y position of the FPS controller since we're going to move it downwards to crouch
+            if (fpc.m_IsCrouching) {
+                charController.height = 1f;
+                charController.center = new Vector3(0f, 0.54f, 0f);
+                // Network it
+                pView.RPC("RpcCrouch", RpcTarget.Others, 1f, 0.54f);
+            } else {
+                charController.height = charHeightOriginal;
+                charController.center = new Vector3(0f, charCenterYOriginal, 0f);
+                // Network it
+                pView.RPC("RpcCrouch", RpcTarget.Others, charHeightOriginal, charCenterYOriginal);
+            }
         }
+    }
+
+    public void HandleJumpAfterCrouch() {
+        fpc.m_IsCrouching = false;
 
         FpcCrouch(fpc.m_IsCrouching);
         fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
 
-        // Collect the original y position of the FPS controller since we're going to move it downwards to crouch
-        if (fpc.m_IsCrouching) {
-            charController.height = 1f;
-            charController.center = new Vector3(0f, 0.54f, 0f);
-            // Network it
-            pView.RPC("RpcCrouch", RpcTarget.Others, 1f, 0.54f);
-        } else {
-            charController.height = charHeightOriginal;
-            charController.center = new Vector3(0f, charCenterYOriginal, 0f);
-            // Network it
-            pView.RPC("RpcCrouch", RpcTarget.Others, charHeightOriginal, charCenterYOriginal);
-        }
+        charController.height = charHeightOriginal;
+        charController.center = new Vector3(0f, charCenterYOriginal, 0f);
+        // Network it
+        pView.RPC("RpcCrouch", RpcTarget.Others, charHeightOriginal, charCenterYOriginal);
     }
 
     void FpcCrouch(bool crouch) {

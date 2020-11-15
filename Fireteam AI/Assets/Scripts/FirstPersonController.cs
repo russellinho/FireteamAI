@@ -294,7 +294,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     if (m_IsCrouching)
                     {
                         m_IsCrouching = false;
-                        playerActionScript.HandleCrouch();
+                        playerActionScript.HandleJumpAfterCrouch();
                     }
                     else
                     {
