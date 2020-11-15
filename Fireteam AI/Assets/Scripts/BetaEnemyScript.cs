@@ -2588,7 +2588,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			playerTargetingId = playerTargeting.GetComponent<PhotonView>().Owner.ActorNumber;
 		}
 
-		pView.RPC("RpcSyncDataEnemies", RpcTarget.Others, rigid.useGravity, rigid.isKinematic, rigid.freezeRotation, marker.enabled, modeler.PlayerIsDespawned(),
+		pView.RPC("RpcSyncDataEnemies", RpcTarget.Others, rigid.useGravity, rigid.isKinematic, rigid.freezeRotation, marker.enabled,
 				navMesh.enabled, navMesh.speed, navMeshObstacle.enabled,
 				myCollider.height, myCollider.radius, myCollider.center.x, myCollider.center.y, myCollider.center.z, myCollider.enabled, headCollider.gameObject.layer,
 				gunRef.enabled, prevNavDestination.x, prevNavDestination.y, prevNavDestination.z, prevWasStopped, actionState, firingState, isCrouching, health, disorientationTime,
@@ -2597,7 +2597,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	[PunRPC]
-	void RpcSyncDataEnemies(bool useGravity, bool isKinematic, bool freezeRotation, bool markerEnabled, bool playerDespawned,
+	void RpcSyncDataEnemies(bool useGravity, bool isKinematic, bool freezeRotation, bool markerEnabled,
 					bool navMeshEnabled, float navMeshSpeed,
 					bool navMeshObstacleEnabled, float colliderHeight, float colliderRadius, float colliderCenterX, float colliderCenterY,
 					float colliderCenterZ, bool colliderEnabled, int headColliderLayer, bool gunRefEnabled, float preNavDestX, float preNavDestY,
@@ -2605,11 +2605,11 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					float spawnPosX, float spawnPosY, float spawnPosZ, AlertStatus alertStatus, bool wasMasterClient, int currentBullets, float fireTimer,
 					int playerTargetingId, float lastSeenPlayerPosX, float lastSeenPlayerPosY, float lastSeenPlayerPosZ, float suspicionMeter, float suspicionCoolDownDelay,
 					float increaseSuspicionDelay, float alertTeamAfterAlertedTimer, bool inCover, CrouchMode crouchMode) {
-		if (playerDespawned) {
-			modeler.DespawnPlayer();
-		} else {
-			modeler.RespawnPlayer();
-		}
+		// if (playerDespawned) {
+		// 	modeler.DespawnPlayer();
+		// } else {
+		// 	modeler.RespawnPlayer();
+		// }
 		rigid.useGravity = useGravity;
 		rigid.isKinematic = isKinematic;
 		rigid.freezeRotation = freezeRotation;
