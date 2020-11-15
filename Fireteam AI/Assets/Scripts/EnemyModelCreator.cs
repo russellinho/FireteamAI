@@ -65,7 +65,7 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient) {
             if (!modelCreated) {
                 EquipRandomOutfitForEnemy();
-                pView.RPC("RpcSetModelCreated", RpcTarget.All);
+                // pView.RPC("RpcSetModelCreated", RpcTarget.All);
                 SendEquippedItemsToClients();
             }
         } else {
@@ -86,7 +86,7 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     //     }
     // }
 
-    void Update() {
+    // void Update() {
         // if (!modelCreated && !PhotonNetwork.IsMasterClient) {
         //     if (!createModelSemaphore) {
         //         createModelSemaphore = true;
@@ -95,12 +95,12 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         //         modelCreated = true;
         //     }
         // }
-    }
+    // }
 
-    [PunRPC]
-    void RpcSetModelCreated() {
-        modelCreated = true;
-    }
+    // [PunRPC]
+    // void RpcSetModelCreated() {
+    //     modelCreated = true;
+    // }
 
     void EquipRandomOutfitForEnemy() {
         if (enemyName.Equals("Cicadas")) {
@@ -174,6 +174,8 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     }
 
     void EquipGeneratedOutfitForCicadas() {
+        if (modelCreated) return;
+        modelCreated = true;
         // Render beard by default
         if (myBeardRenderer != null) {
             myBeardRenderer.GetComponent<SkinnedMeshRenderer>().enabled = true;
