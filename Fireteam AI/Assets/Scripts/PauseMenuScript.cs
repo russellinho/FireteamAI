@@ -9,6 +9,7 @@ using TMPro;
 
 public class PauseMenuScript : MonoBehaviourPunCallbacks {
 
+	public GameObject playerRef;
 	public GameObject keyMappingsPanel;
 	public GameObject mainMenuGroup;
 	public GameObject optionsMenuGroup;
@@ -50,7 +51,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void LeaveGame() {
-		PhotonNetwork.LoadLevel("Title");
+		PlayerData.playerdata.DestroyMyself();
 	}
 
 	// public override void OnLeftRoom() {
@@ -125,6 +126,10 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 			isChangingKeyMapping = false;
 			changingKeyMappingText.enabled = false;
 		}
+	}
+
+	public void SetPlayerRef(GameObject player) {
+		playerRef = player;
 	}
 
 }

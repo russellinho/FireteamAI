@@ -70,6 +70,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.hitDir.GetComponent<RawImage> ().enabled = false;
 		container.hitMarker.GetComponent<RawImage> ().enabled = false;
 		// pauseMenuScript = container.pauseMenuGUI.gameObject.GetComponent<PauseMenuScript>();
+		container.pauseMenuGUI.GetComponent<PauseMenuScript>().SetPlayerRef(gameObject);
 
 		foreach (int actorId in gameController.enemyList.Keys) {
 			GameObject marker = GameObject.Instantiate(container.enemyAlerted);
@@ -739,7 +740,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     public void ReturnToMenu()
     {
-		Debug.Log("m8s");
         SceneManager.LoadScene("Title");
 		PhotonNetwork.Disconnect ();
     }
@@ -937,8 +937,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
-		Destroy (playerMarkers [otherPlayer.ActorNumber]);
-		playerMarkers.Remove (otherPlayer.ActorNumber);
+		RemovePlayerMarker(otherPlayer.ActorNumber);
+	}
+
+	public void RemovePlayerMarker(int actorNumber) {
+		Destroy (playerMarkers [actorNumber]);
+		playerMarkers.Remove (actorNumber);
 	}
 
 	public void FlashbangEffect(float disorientationTime) {

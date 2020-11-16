@@ -18,6 +18,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 {
     private const byte SPAWN_CODE = 123;
     private const byte SPAWN_INIT_CODE = 124;
+    private const byte LEAVE_CODE = 125;
     private const byte ASK_OTHERS_FOR_THEM = 111;
     private const float TITLE_POS_X = 0f;
     private const float TITLE_POS_Y = -1.2f;
@@ -318,6 +319,27 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
         PhotonNetwork.RaiseEvent(ASK_OTHERS_FOR_THEM, data, raiseEventOptions, sendOptions);
     }
+    
+    public void DestroyMyself() {
+        object[] data = new object[]
+        {
+            PhotonNetwork.LocalPlayer.ActorNumber
+        };
+
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+        {
+            Receivers = ReceiverGroup.Others,
+            CachingOption = EventCaching.DoNotCache
+        };
+
+        SendOptions sendOptions = new SendOptions
+        {
+            Reliability = true
+        };
+
+        PhotonNetwork.RaiseEvent(LEAVE_CODE, data, raiseEventOptions, sendOptions);
+        PhotonNetwork.LoadLevel("Title");
+    }
 
     void AddMyselfToPlayerList(PhotonView pView, GameObject playerRef)
     {
@@ -377,6 +399,15 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             player.GetComponent<WeaponScript>().SyncDataOnJoin();
             player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
             AddMyselfToPlayerList(photonView, player);
+        } else if (photonEvent.Code == LEAVE_CODE)
+        {
+            if (SceneManager.GetActiveScene().name == "Title") return;
+            object[] data = (object[]) photonEvent.CustomData;
+            int actorNo = (int) data[0];
+            GameObject playerToDestroy = GameControllerScript.playerList[actorNo].objRef;
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().RemovePlayerMarker(actorNo);
+            GameControllerScript.playerList.Remove(actorNo);
+            Destroy(playerToDestroy);
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
         {
             SpawnMyselfOnOthers(false);
