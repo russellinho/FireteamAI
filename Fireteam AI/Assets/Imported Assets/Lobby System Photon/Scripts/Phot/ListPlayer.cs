@@ -14,7 +14,7 @@ using Michsky.UI.Shift;
 
 namespace Photon.Pun.LobbySystemPhoton
 {
-	public class ListPlayer : MonoBehaviourPunCallbacks
+	public class ListPlayer : MonoBehaviourPunCallbacks, IInRoomCallbacks
 	{
 		public MainPanelManager mainPanelManager;
 		public PhotonView pView;
@@ -196,30 +196,30 @@ namespace Photon.Pun.LobbySystemPhoton
 			Hashtable h = new Hashtable();
 			h.Add("readyStatus", newStatus);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-			pView.RPC("RpcChangeReadyStatus", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, newStatus);
+			// pView.RPC("RpcChangeReadyStatus", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, newStatus);
 		}
 
-		[PunRPC]
-		void RpcChangeReadyStatus(int actorId, int newStatus) {
-			PlayerEntryPrefab p = playerListEntries[actorId].GetComponent<PlayerEntryPrefab>();
-			Player pl = PhotonNetwork.CurrentRoom.GetPlayer(actorId);
-			int isInGame = Convert.ToInt32(pl.CustomProperties["inGame"]);
-			if (newStatus == 0) {
-				if (isInGame == 1) {
-					p.SetReadyText('i');
-				} else {
-					p.SetReadyText('r');
-				}
-				p.SetReady(false);
-			} else if (newStatus == 1) {
-				if (isInGame == 1) {
-					p.SetReadyText('i');
-				} else {
-					p.SetReadyText('r');
-				}
-				p.SetReady(true);
-			}
-		}
+		// [PunRPC]
+		// void RpcChangeReadyStatus(int actorId, int newStatus) {
+		// 	PlayerEntryPrefab p = playerListEntries[actorId].GetComponent<PlayerEntryPrefab>();
+		// 	Player pl = PhotonNetwork.CurrentRoom.GetPlayer(actorId);
+		// 	int isInGame = Convert.ToInt32(pl.CustomProperties["inGame"]);
+		// 	if (newStatus == 0) {
+		// 		if (isInGame == 1) {
+		// 			p.SetReadyText('i');
+		// 		} else {
+		// 			p.SetReadyText('r');
+		// 		}
+		// 		p.SetReady(false);
+		// 	} else if (newStatus == 1) {
+		// 		if (isInGame == 1) {
+		// 			p.SetReadyText('i');
+		// 		} else {
+		// 			p.SetReadyText('r');
+		// 		}
+		// 		p.SetReady(true);
+		// 	}
+		// }
 
 		void StartGame(string level) {
 			// Photon switch scene from lobby to loading screen to actual game. automaticallySyncScene should load map on clients.
@@ -800,6 +800,35 @@ namespace Photon.Pun.LobbySystemPhoton
 				return "Badlands2";
 			}
 			return "";
+		}
+
+		public override void OnPlayerPropertiesUpdate (Player targetPlayer, Hashtable changedProps) {
+			int actorNo = targetPlayer.ActorNumber;
+			if (changedProps.ContainsKey("readyStatus")) {
+				int newStatus = Convert.ToInt32(changedProps["readyStatus"]);
+				playerListEntries[actorNo].GetComponent<PlayerEntryPrefab>().SetReady(newStatus == 1);
+			}
+		}
+
+		public override void OnRoomPropertiesUpdate (Hashtable propertiesThatChanged) {
+			// If going in game or coming out of game, update everyone's entry
+			if (propertiesThatChanged.ContainsKey("inGame")) {
+				int val = Convert.ToInt32(propertiesThatChanged["inGame"]);
+				if (val == 1) {
+					foreach (GameObject entry in playerListEntries.Values) {
+						PlayerEntryPrefab p = entry.GetComponent<PlayerEntryPrefab>();
+						if (p.IsReady()) {
+							p.SetReadyText('i');
+						}
+					}
+				} else if (val == 0) {
+					foreach (GameObject entry in playerListEntries.Values) {
+						PlayerEntryPrefab p = entry.GetComponent<PlayerEntryPrefab>();
+						p.SetReadyText('r');
+						p.SetReady(false);
+					}
+				}
+			}
 		}
 
 	}
