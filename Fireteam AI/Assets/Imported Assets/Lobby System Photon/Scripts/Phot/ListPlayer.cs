@@ -817,8 +817,11 @@ namespace Photon.Pun.LobbySystemPhoton
 				if (val == 1) {
 					foreach (GameObject entry in playerListEntries.Values) {
 						PlayerEntryPrefab p = entry.GetComponent<PlayerEntryPrefab>();
-						if (PhotonNetwork.CurrentRoom.GetPlayer(p.actorId).IsMasterClient || p.IsReady()) {
+						if (p.IsReady()) {
 							p.SetReadyText('i');
+						}
+						if (PhotonNetwork.CurrentRoom.GetPlayer(p.actorId).IsMasterClient) {
+							p.SetReady(true);
 						}
 					}
 				} else if (val == 0) {
