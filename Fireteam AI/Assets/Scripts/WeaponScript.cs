@@ -303,6 +303,7 @@ public class WeaponScript : MonoBehaviour
         animator.SetInteger("WeaponType", currentlyEquippedType);
         Weapon w = InventoryScript.itemData.weaponCatalog[equippedWepInGame];
         GameObject wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+        weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[equippedWepInGame]);
         weaponHolder.SetWeaponPosition(false);
         WeaponMods wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
         if (w.suppressorCompatible) {
