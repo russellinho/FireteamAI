@@ -196,6 +196,9 @@ namespace Photon.Pun.LobbySystemPhoton
 			Hashtable h = new Hashtable();
 			h.Add("readyStatus", newStatus);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+			if (gameStarting) {
+				ToggleButtons(false);
+			}
 			// pView.RPC("RpcChangeReadyStatus", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, newStatus);
 		}
 
@@ -293,26 +296,31 @@ namespace Photon.Pun.LobbySystemPhoton
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
 				chat.SendServerMessage ("Game starting in 5");
+				pView.RPC("RpcSetGameIsStarting", RpcTarget.All, true);
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
 				chat.SendServerMessage ("Game starting in 4");
+				pView.RPC("RpcSetGameIsStarting", RpcTarget.All, true);
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
 				chat.SendServerMessage ("Game starting in 3");
+				pView.RPC("RpcSetGameIsStarting", RpcTarget.All, true);
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
 				chat.SendServerMessage ("Game starting in 2");
+				pView.RPC("RpcSetGameIsStarting", RpcTarget.All, true);
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
 				chat.SendServerMessage ("Game starting in 1");
+				pView.RPC("RpcSetGameIsStarting", RpcTarget.All, true);
 			}
 			yield return new WaitForSeconds (1f);
 
@@ -333,26 +341,31 @@ namespace Photon.Pun.LobbySystemPhoton
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
 				chatVs.SendServerMessage ("Game starting in 5");
+				pView.RPC("RpcSetGameIsStarting", RpcTarget.All, true);
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
 				chatVs.SendServerMessage ("Game starting in 4");
+				pView.RPC("RpcSetGameIsStarting", RpcTarget.All, true);
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
 				chatVs.SendServerMessage ("Game starting in 3");
+				pView.RPC("RpcSetGameIsStarting", RpcTarget.All, true);
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
 				chatVs.SendServerMessage ("Game starting in 2");
+				pView.RPC("RpcSetGameIsStarting", RpcTarget.All, true);
 			}
 			yield return new WaitForSeconds (1f);
 			titleController.GetComponent<AudioSource> ().Play ();
 			if (PhotonNetwork.IsMasterClient) {
 				chatVs.SendServerMessage ("Game starting in 1");
+				pView.RPC("RpcSetGameIsStarting", RpcTarget.All, true);
 			}
 			yield return new WaitForSeconds (1f);
 
@@ -830,6 +843,15 @@ namespace Photon.Pun.LobbySystemPhoton
 					}
 				}
 			}
+		}
+
+		[PunRPC]
+		void RpcSetGameIsStarting(bool b) {
+			gameStarting = b;
+		}
+
+		public void ClearGameStarting() {
+			pView.RPC("RpcSetGameIsStarting", RpcTarget.All, false);
 		}
 
 	}
