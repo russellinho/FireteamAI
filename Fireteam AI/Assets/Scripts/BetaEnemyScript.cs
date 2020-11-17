@@ -141,6 +141,13 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
     //public bool testingMode;
 
 	void Awake() {
+		if (gameControllerScript.matchType == 'C')
+        {
+            StartForCampaign();
+        } else if (gameControllerScript.matchType == 'V')
+        {
+            StartForVersus();
+        }
 		SceneManager.sceneLoaded += OnSceneFinishedLoading;
 	}
 
@@ -151,16 +158,16 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 	}
 
-    void Start()
-    {
-        if (gameControllerScript.matchType == 'C')
-        {
-            StartForCampaign();
-        } else if (gameControllerScript.matchType == 'V')
-        {
-            StartForVersus();
-        }
-    }
+    // void Start()
+    // {
+    //     if (gameControllerScript.matchType == 'C')
+    //     {
+    //         StartForCampaign();
+    //     } else if (gameControllerScript.matchType == 'V')
+    //     {
+    //         StartForVersus();
+    //     }
+    // }
 
     // Use this for initialization
     void StartForCampaign () {
