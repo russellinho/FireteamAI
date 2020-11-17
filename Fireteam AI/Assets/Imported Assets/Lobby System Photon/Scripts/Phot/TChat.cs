@@ -56,7 +56,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				{
 					isMaster = true;
 				}
-				photonView.RPC("sendChatMaster", RpcTarget.MasterClient, isMaster, msg, PhotonNetwork.LocalPlayer.NickName);
+				// photonView.RPC("sendChatMaster", RpcTarget.MasterClient, isMaster, msg, PhotonNetwork.LocalPlayer.NickName);
+				photonView.RPC("SendMsg", RpcTarget.All, isMaster, msg, PhotonNetwork.LocalPlayer.NickName);
 				TextSend.text = "";
 			}
 		}
@@ -64,17 +65,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public void sendChatOfMasterViaBtn()
 		{
 			string msg = TextSend.text;
-			if (msg != "")
-			{
-				bool isMaster = false;
-				if (PhotonNetwork.IsMasterClient)
-				{
-					isMaster = true;
-				}
-				photonView.RPC("sendChatMaster", RpcTarget.MasterClient, isMaster, msg, PhotonNetwork.LocalPlayer.NickName);
-				TextSend.text = "";
-
-			}
+			sendChatOfMaster(msg);
 		}
 
 		void ToggleInputFieldSelected(bool b) {
@@ -118,10 +109,10 @@ namespace Photon.Pun.LobbySystemPhoton
 		[PunRPC]
 		public void SendMsg(bool master, string msg, string pse)
 		{
-			for (int i = 0; i < emojis.Length; i++)
-			{
-				msg = msg.Replace(emojis[i], " <size=150%><sprite="+i+"><size=100%>");
-			}
+			// for (int i = 0; i < emojis.Length; i++)
+			// {
+			// 	msg = msg.Replace(emojis[i], " <size=150%><sprite="+i+"><size=100%>");
+			// }
 
 			if (master)
 			{
