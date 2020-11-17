@@ -132,7 +132,8 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void SendServerMessage(string message)
 		{
-			photonView.RPC("SendMsgConnectionMaster", RpcTarget.MasterClient, message);
+			// photonView.RPC("SendMsgConnectionMaster", RpcTarget.MasterClient, message);
+			photonView.RPC("SendMsgConnectionAll", RpcTarget.All, message);
 		}
 
 		[PunRPC]
