@@ -14,6 +14,8 @@ public class PauseMenuManager : MonoBehaviour
         anim.Play("Window In");
         blurManager.BlurInAnim();
         pauseActive = true;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     public void ClosePause() {
@@ -21,6 +23,8 @@ public class PauseMenuManager : MonoBehaviour
             anim.Play("Window Out");
             blurManager.BlurOutAnim();
             pauseActive = false;
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
 }

@@ -312,16 +312,16 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			Pause();
 		}
 
-		if (container.pauseMenuManager.pauseActive)
-		{
-			Cursor.lockState = CursorLockMode.None;
-			Cursor.visible = true;
-		}
-		else
-		{
-			Cursor.lockState = CursorLockMode.Locked;
-			Cursor.visible = false;
-		}
+		// if (container.pauseMenuManager.pauseActive)
+		// {
+		// 	Cursor.lockState = CursorLockMode.None;
+		// 	Cursor.visible = true;
+		// }
+		// else
+		// {
+		// 	Cursor.lockState = CursorLockMode.Locked;
+		// 	Cursor.visible = false;
+		// }
 	}
 
 	IEnumerator UpdateWaypoints() {

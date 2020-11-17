@@ -39,15 +39,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		} else if (optionsMenuGroup.activeInHierarchy) {
 			// If the options menu group is active, then go back to main menu
 			CloseOptionsMenu();
-		} else if (mainMenuGroup.activeInHierarchy) {
-			// If back on the main menu, then resume game
-			ResumeGame();
 		}
-	}
-
-	public void ResumeGame() {
-		Cursor.lockState = CursorLockMode.Locked;
-		Cursor.visible = false;
 	}
 
 	public void LeaveGame() {

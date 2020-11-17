@@ -115,7 +115,6 @@ namespace Photon.Pun.LobbySystemPhoton
 				}
 
 				if (readyCount >= 1) {
-					pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
 					pView.RPC("RpcStartGameCountdown", RpcTarget.All);
 				} else {
 					titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("There must be at least two ready players to start the game!");
@@ -150,7 +149,6 @@ namespace Photon.Pun.LobbySystemPhoton
 				}
 
 				if (redReadyCount > 0 && blueReadyCount > 0) {
-					pView.RPC ("RpcToggleButtons", RpcTarget.All, false, true);
 					pView.RPC("RpcStartVersusGameCountdown", RpcTarget.All);
 				} else {
 					titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("There must be at least two ready players to start the game!");
