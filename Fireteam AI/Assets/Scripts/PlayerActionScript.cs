@@ -1583,11 +1583,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         string[] playersDeadList = null;
         if (playersDead != null) {
             playersDeadList = playersDead.Split(',');
-        }
-        foreach (string p in playersDeadList) {
-            if (p == PhotonNetwork.LocalPlayer.NickName) {
-                healthToSend = 0;
-                break;
+            foreach (string p in playersDeadList) {
+                if (p == PhotonNetwork.LocalPlayer.NickName) {
+                    healthToSend = 0;
+                    break;
+                }
             }
         }
 		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, assaultModeChangedIndicator, kills, deaths, escapeAvailablePopup);
