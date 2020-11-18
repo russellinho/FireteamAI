@@ -1580,7 +1580,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (!pView.IsMine) return;
         int healthToSend = health;
         string playersDead = (string)PhotonNetwork.CurrentRoom.CustomProperties["deads"];
-        string[] playersDeadList = playersDead.Split(',');
+        string[] playersDeadList = null;
+        if (playersDead != null) {
+            playersDeadList = playersDead.Split(',');
+        }
         foreach (string p in playersDeadList) {
             if (p == PhotonNetwork.LocalPlayer.NickName) {
                 healthToSend = 0;
