@@ -343,6 +343,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
     void AddMyselfToPlayerList(PhotonView pView, GameObject playerRef)
     {
+        Debug.Log("Actor no: " + pView.Owner.ActorNumber);
         char team = 'N';
         if ((string)pView.Owner.CustomProperties["team"] == "red") {
             team = 'R';
