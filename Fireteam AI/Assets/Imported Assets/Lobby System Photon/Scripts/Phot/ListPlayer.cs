@@ -395,7 +395,11 @@ namespace Photon.Pun.LobbySystemPhoton
                 readyButtonTxt.text = "READY";
                 readyButtonVsTxt.text = "READY";
             }
-
+			if (gameStarting && readyButton.GetComponent<Button>().interactable) {
+				if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
+					ToggleButtons(false);
+				}
+			}
 		}
 
 		public void SetMapInfo(bool offline = false) {
