@@ -6,6 +6,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
 using TMPro;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class PauseMenuScript : MonoBehaviourPunCallbacks {
 
@@ -43,6 +44,16 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void LeaveGame() {
+		// Add myself to dead list if I'm dead
+		string currentDeads = (string)PhotonNetwork.CurrentRoom.CustomProperties["deads"];
+		Hashtable h = new Hashtable();
+		if (currentDeads == null) {
+			currentDeads = PhotonNetwork.LocalPlayer.NickName + ",";
+		} else {
+			currentDeads += PhotonNetwork.LocalPlayer.NickName + ",";
+		}
+		h.Add("deads", currentDeads);
+		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 		PlayerData.playerdata.DestroyMyself();
 	}
 

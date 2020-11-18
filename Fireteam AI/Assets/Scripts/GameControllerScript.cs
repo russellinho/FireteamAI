@@ -999,6 +999,14 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		this.endGameWithWin = endGameWithWin;
 	}
 
+	public void ClearDeadPlayersList() {
+		if (PhotonNetwork.IsMasterClient) {
+			Hashtable h = new Hashtable();
+			h.Add("deads", null);
+			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+		}
+	}
+
 }
 
 public class PlayerStat {

@@ -346,6 +346,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             {
                 gameController.sectorsCleared++;
                 hud.OnScreenEffect("SECTOR CLEARED!", false);
+                gameController.ClearDeadPlayersList();
                 BeginRespawn();
             }
 
@@ -396,6 +397,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (gameController.sectorsCleared == 0 && gameController.objectives.missionTimer2 <= 360f) {
                 gameController.sectorsCleared++;
                 hud.OnScreenEffect("SECTOR CLEARED!", false);
+                gameController.ClearDeadPlayersList();
                 BeginRespawn();
                 hud.ComBoxPopup(1f, "Red Ruby", "There are Cicadas all over the damn place!", "HUD/redruby");
                 hud.ComBoxPopup(4f, "Democko", "We’re about half way there; just hang in there!", "HUD/democko");
@@ -1071,9 +1073,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void EnterSpectatorMode()
     {
-        pView.RPC("RpcChangePlayerDisableStatus", RpcTarget.All, false);
-        thisSpectatorCam = Instantiate(spectatorCam, Vector3.zero, Quaternion.Euler(Vector3.zero));
-        thisSpectatorCam.transform.SetParent(null);
+        if (thisSpectatorCam != null) {
+            pView.RPC("RpcChangePlayerDisableStatus", RpcTarget.All, false);
+            thisSpectatorCam = Instantiate(spectatorCam, Vector3.zero, Quaternion.Euler(Vector3.zero));
+            thisSpectatorCam.transform.SetParent(null);
+        }
     }
 
     void LeaveSpectatorMode()
@@ -1546,11 +1550,44 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         return true;
     }
 
+    void SetPlayerDead() 
+    {
+        health = 0;
+        equipmentScript.ToggleFirstPersonBody(false);
+        equipmentScript.ToggleFullBody(false);
+        equipmentScript.ToggleMesh(false);
+        SetInteracting(false, null);
+        DropCarrying();
+        fpc.enabled = false;
+        if (pView.IsMine) {
+            hud.SetCarryingText(null);
+            if (!rotationSaved)
+            {
+                // if (escapeValueSent)
+                // {
+                //     gameController.ConvertCounts(1, -1);
+                // }
+                hud.ToggleHUD(false);
+                hud.ToggleSpectatorMessage(true);
+                rotationSaved = true;
+            }
+            EnterSpectatorMode();
+        }
+    }
+
     [PunRPC]
 	void RpcAskServerForDataPlayer() {
         if (!pView.IsMine) return;
         int healthToSend = health;
-		pView.RPC("RpcSyncDataPlayer", RpcTarget.Others, healthToSend, escapeValueSent, assaultModeChangedIndicator, kills, deaths, escapeAvailablePopup);
+        string playersDead = (string)PhotonNetwork.CurrentRoom.CustomProperties["deads"];
+        string[] playersDeadList = playersDead.Split(',');
+        foreach (string p in playersDeadList) {
+            if (p == PhotonNetwork.LocalPlayer.NickName) {
+                healthToSend = 0;
+                break;
+            }
+        }
+		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, assaultModeChangedIndicator, kills, deaths, escapeAvailablePopup);
 	}
 
 	[PunRPC]
@@ -1561,6 +1598,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         this.kills = kills;
         this.deaths = deaths;
         this.escapeAvailablePopup = escapeAvailablePopup;
+        if (health <= 0) {
+            SetPlayerDead();
+        }
 	}
 
 }
