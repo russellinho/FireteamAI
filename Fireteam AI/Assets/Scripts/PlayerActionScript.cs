@@ -292,7 +292,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (!escapeValueSent)
             {
                 escapeValueSent = true;
-                gameController.IncrementDeathCount();
             }
         }
         else
@@ -595,7 +594,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             {
                 if (escapeValueSent)
                 {
-                    gameController.ConvertCounts(1, -1);
+                    gameController.ConvertCounts(-1);
                 }
                 hud.ToggleHUD(false);
                 hud.ToggleSpectatorMessage(true);
@@ -1143,7 +1142,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         enterSpectatorModeTimer = 0f;
         if (health <= 0)
         {
-            gameController.ConvertCounts(-1, 0);
+            gameController.ConvertCounts(0);
             gameController.gameOver = false;
             // Flash the respawn time bar on the screen
             hud.RespawnBar();

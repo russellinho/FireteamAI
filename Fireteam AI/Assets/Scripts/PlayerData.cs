@@ -229,8 +229,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         // }
         else
         {
-            GameControllerScript.redTeamPlayerCount = 0;
-			GameControllerScript.blueTeamPlayerCount = 0;
             // if (PlayerData.playerdata.inGamePlayerReference != null)
             // {
                 // PhotonNetwork.Destroy(PlayerData.playerdata.inGamePlayerReference);
@@ -347,11 +345,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         char team = 'N';
         if ((string)pView.Owner.CustomProperties["team"] == "red") {
             team = 'R';
-            GameControllerScript.redTeamPlayerCount++;
             Debug.Log(pView.Owner.NickName + " joined red team.");
         } else if ((string)pView.Owner.CustomProperties["team"] == "blue") {
             team = 'B';
-            GameControllerScript.blueTeamPlayerCount++;
             Debug.Log(pView.Owner.NickName + " joined blue team.");
         }
         PlayerStat p = new PlayerStat(playerRef, pView.Owner.ActorNumber, pView.Owner.NickName, team, Convert.ToUInt32(pView.Owner.CustomProperties["exp"]));

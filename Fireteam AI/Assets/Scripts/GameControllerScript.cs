@@ -13,7 +13,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     // Timer
     public static float missionTime;
     public static float MAX_MISSION_TIME = 1800f;
-    private static float FORFEIT_CHECK_DELAY = 10f;
 
 	// A number value to the maps/missions starting with 1. The number correlates with the time it was released, so the lower the number, the earlier it was released.
 	// 1 = The Badlands: Act 1; 2 = The Badlands: Act 2
@@ -47,10 +46,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public Transform spawnLocation;
 	public Transform outOfBoundsPoint;
 
-	public int deadCount;
-	// TODO: These numbers need to be instantiated and networked
-	public static int redTeamPlayerCount;
-	public static int blueTeamPlayerCount;
 	public bool assaultMode;
     // Sync mission time to clients every 10 seconds
     private float syncMissionTimeTimer;
@@ -61,11 +56,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public char matchType;
     private string myTeam;
     private string opposingTeam;
-    private float forfeitDelay;
 	public bool enemyTeamNearingVictoryTrigger;
 	public string campaignAlertMessage;
 	public string alertMessage;
-	private bool endingGainsCalculated;
 	public GameObject vipRef;
 	public GameObject checkpointRef;
 	public GameObject escapeVehicleRef;
@@ -76,7 +69,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		coverSpots = new Dictionary<short, GameObject>();
         myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
         opposingTeam = (myTeam == "red" ? "blue" : "red");
-        forfeitDelay = FORFEIT_CHECK_DELAY;
 		DetermineObjectivesForMission(SceneManager.GetActiveScene().name);
 		SceneManager.sceneLoaded += OnSceneFinishedLoading;
 	}
@@ -119,7 +111,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		Physics.IgnoreLayerCollision (18, 19);
 
 		gameOver = false;
-		deadCount = 0;
 		objectives.escaperCount = 0;
 		objectives.escapeAvailable = false;
 
@@ -135,7 +126,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         syncMissionTimeTimer = 0f;
 
 		lastGunshotHeardPos = Vector3.negativeInfinity;
-
+		if (matchType == 'C') {
+			StartCoroutine("GameOverCheckForCampaign");
+		} else if (matchType == 'V') {
+			StartCoroutine("GameOverCheckForVersus");
+		}
 	}
 
 	public void UpdateObjectives() {
@@ -156,53 +151,27 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		if (!PhotonNetwork.InRoom) {
 			return;
 		}
+		UpdateMissionTime();
 		if (matchType == 'C') {
-			GameOverCheckForCampaign();
+			UpdateMissionProgressForCampaign();
 		} else if (matchType == 'V') {
-			GameOverCheckForVersus();
+			UpdateMissionProgressForVersus();
+		}
+		UpdateTimers();
+		DecrementLastGunshotTimer();
+	}
+
+	void UpdateTimers() {
+		if (PhotonNetwork.IsMasterClient) {
+			ResetLastGunshotPos ();
+			UpdateEndGameTimer();
 		}
 	}
 
-	void GameOverCheckForCampaign() {
+	void UpdateMissionProgressForCampaign() {
 		if (currentMap == 1) {
-			// Auto end game for testing
-            // if (Input.GetKeyDown(KeyCode.B)) {
-            // 	pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
-            // }
 			if (objectives.itemsRemaining == 0) {
 				objectives.escapeAvailable = true;
-			}
-            if (!gameOver)
-            {
-                UpdateMissionTime();
-            } else {
-				if (!endingGainsCalculated) {
-					endingGainsCalculated = true;
-					int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
-					pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths));
-				}
-			}
-			if (PhotonNetwork.IsMasterClient) {
-				// Check if the mission is over or if all players eliminated or out of time
-				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime())
-				{
-					if (!gameOver)
-					{
-						pView.RPC("RpcEndGame", RpcTarget.All, 9f, null, false);
-
-					}
-				}
-				else if (objectives.itemsRemaining == 0)
-				{
-					if (!gameOver && CheckEscapeForCampaign())
-					{
-						// If they can escape, end the game and bring up the stat board
-						pView.RPC("RpcEndGame", RpcTarget.All, 2f, null, true);
-					}
-				}
-
-				ResetLastGunshotPos ();
-				UpdateEndGameTimer();
 			}
 		} else if (currentMap == 2) {
 			if (objectives.stepsLeftToCompletion == 1) {
@@ -212,16 +181,48 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					objectives.escapeAvailable = false;
 				}
 			}
-            if (!gameOver)
-            {
-                UpdateMissionTime();
-            } else {
-				if (!endingGainsCalculated) {
-					endingGainsCalculated = true;
-					int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
-					pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths));
+		}
+	}
+
+	void UpdateMissionProgressForVersus() {
+		if (currentMap == 1) {
+			if (objectives.itemsRemaining == 0) {
+				objectives.escapeAvailable = true;
+			}
+		} else if (currentMap == 2) {
+			if (objectives.stepsLeftToCompletion == 1) {
+				if (objectives.missionTimer3 > 0f) {
+					objectives.escapeAvailable = true;
+				} else {
+					objectives.escapeAvailable = false;
 				}
 			}
+		}
+	}
+
+	IEnumerator GameOverCheckForCampaign() {
+		yield return new WaitForSeconds(1.5f);
+		int deadCount = GetDeadCount();
+		if (currentMap == 1) {
+			if (PhotonNetwork.IsMasterClient) {
+				// Check if the mission is over or if all players eliminated or out of time
+				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime())
+				{
+					if (!gameOver)
+					{
+						pView.RPC("RpcEndGame", RpcTarget.All, 9f, null, false);
+					}
+				}
+				else if (objectives.itemsRemaining == 0)
+				{
+					if (!gameOver && CheckEscapeForCampaign(deadCount))
+					{
+						// If they can escape, end the game and bring up the stat board
+						pView.RPC("RpcEndGame", RpcTarget.All, 2f, null, true);
+					}
+				}
+			}
+		} else if (currentMap == 2) {
 			if (PhotonNetwork.IsMasterClient) {
 				// Check if the mission is over or if all players eliminated or out of time
 				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count)
@@ -229,7 +230,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					if (!gameOver)
 					{
 						pView.RPC("RpcEndGame", RpcTarget.All, 9f, null, false);
-
 					}
 				} else if (vipRef.GetComponent<NpcScript>().actionState == NpcActionState.Dead) {
 					if (!gameOver)
@@ -238,42 +238,25 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				} else if (objectives.stepsLeftToCompletion == 1 && objectives.escapeAvailable)
 				{
-					if (!gameOver && CheckEscapeForCampaign())
+					if (!gameOver && CheckEscapeForCampaign(deadCount))
 					{
 						// If they can escape, end the game and bring up the stat board
 						pView.RPC("RpcEndGame", RpcTarget.All, 2f, null, true);
 					}
 				}
-
-				ResetLastGunshotPos ();
-				UpdateEndGameTimer();
 			}
 		}
-		DecrementLastGunshotTimer();
+		StartCoroutine("GameOverCheckForCampaign");
 	}
 
-	void GameOverCheckForVersus() {
+	IEnumerator GameOverCheckForVersus() {
+		yield return new WaitForSeconds(1.5f);
+		int deadCount = GetDeadCount();
 		if (currentMap == 1) {
-			// Auto end game for testing
-            // if (Input.GetKeyDown(KeyCode.B)) {
-            // 	pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
-            // }
-			if (objectives.itemsRemaining == 0) {
-				objectives.escapeAvailable = true;
-			}
-            if (!gameOver)
-            {
-                UpdateMissionTime();
-            } else {
-				if (!endingGainsCalculated) {
-					endingGainsCalculated = true;
-					int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
-					bool winner = (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Score"]) == 100);
-					pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths, winner), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths, winner));
-				}
-			}
 			if (isVersusHostForThisTeam()) {
-				int playerCount = (teamMap == "R" ? redTeamPlayerCount : blueTeamPlayerCount);
+				int redTeamCount = GetRedTeamCount();
+				int blueTeamCount = GetBlueTeamCount();
+				int playerCount = (teamMap == "R" ? redTeamCount : blueTeamCount);
 				if (deadCount == playerCount)
 				{
 					if (!gameOver)
@@ -286,7 +269,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				} else if (objectives.itemsRemaining == 0)
 				{
-					if (!gameOver && CheckEscapeForVersus())
+					if (!gameOver && CheckEscapeForVersus(deadCount, redTeamCount, blueTeamCount))
 					{
 						// Set completion to 100%
 						SetMyTeamScore(100);
@@ -295,32 +278,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				}
 				// Check to see if either team has forfeited
-				DetermineEnemyTeamForfeited();
-
-				ResetLastGunshotPos ();
-				UpdateEndGameTimer();
+				DetermineEnemyTeamForfeited(redTeamCount, blueTeamCount);
 			}
 		} else if (currentMap == 2) {
-			if (objectives.stepsLeftToCompletion == 1) {
-				if (objectives.missionTimer3 > 0f) {
-					objectives.escapeAvailable = true;
-				} else {
-					objectives.escapeAvailable = false;
-				}
-			}
-            if (!gameOver)
-            {
-                UpdateMissionTime();
-            } else {
-				if (!endingGainsCalculated) {
-					endingGainsCalculated = true;
-					int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
-					bool winner = (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Score"]) == 100);
-					pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths, winner), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths, winner));
-				}
-			}
 			if (isVersusHostForThisTeam()) {
-				int playerCount = (teamMap == "R" ? redTeamPlayerCount : blueTeamPlayerCount);
+				int redTeamCount = GetRedTeamCount();
+				int blueTeamCount = GetBlueTeamCount();
+				int playerCount = (teamMap == "R" ? redTeamCount : blueTeamCount);
 				if (deadCount == playerCount)
 				{
 					if (!gameOver)
@@ -337,7 +301,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				} else if (objectives.stepsLeftToCompletion == 1 && objectives.escapeAvailable)
 				{
-					if (!gameOver && CheckEscapeForVersus())
+					if (!gameOver && CheckEscapeForVersus(deadCount, redTeamCount, blueTeamCount))
 					{
 						// Set completion to 100%
 						SetMyTeamScore(100);
@@ -346,16 +310,10 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				}
 				// Check to see if either team has forfeited
-				DetermineEnemyTeamForfeited();
-
-				ResetLastGunshotPos ();
-				UpdateEndGameTimer();
+				DetermineEnemyTeamForfeited(redTeamCount, blueTeamCount);
 			}
 		}
-		if (forfeitDelay > 0f) {
-            forfeitDelay -= Time.deltaTime;
-        }
-		DecrementLastGunshotTimer();
+		StartCoroutine("GameOverCheckForVersus");
 	}
 
 	[PunRPC]
@@ -366,6 +324,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		if (eventMessage != null) {
 			alertMessage = eventMessage;
 		}
+		int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
+		pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths));
 	}
 
     [PunRPC]
@@ -401,6 +361,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+
+		int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
+		pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths, (winner == teamMap)), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths, (winner == teamMap)));
     }
 
 	public void UpdateAssaultMode() {
@@ -419,7 +382,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		assaultMode = assaultInProgress;
 	}
 
-	bool CheckEscapeForCampaign() {
+	bool CheckEscapeForCampaign(int deadCount) {
 		if (currentMap == 1) {
 			if (deadCount + objectives.escaperCount == PhotonNetwork.CurrentRoom.PlayerCount) {
 				return true;
@@ -432,24 +395,24 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		return false;
 	}
 
-	bool CheckEscapeForVersus() {
+	bool CheckEscapeForVersus(int deadCount, int redCount, int blueCount) {
 		if (currentMap == 1) {
 			if (teamMap == "R") {
-				if (deadCount + objectives.escaperCount == redTeamPlayerCount) {
+				if (deadCount + objectives.escaperCount == redCount) {
 					return true;
 				}
 			} else if (teamMap == "B") {
-				if (deadCount + objectives.escaperCount == blueTeamPlayerCount) {
+				if (deadCount + objectives.escaperCount == blueCount) {
 					return true;
 				}
 			}
 		} else if (currentMap == 2) {
 			if (teamMap == "R") {
-				if (deadCount + objectives.escaperCount == redTeamPlayerCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 6f) {
+				if (deadCount + objectives.escaperCount == redCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 6f) {
 					return true;
 				}
 			} else if (teamMap == "B") {
-				if (deadCount + objectives.escaperCount == blueTeamPlayerCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 6f) {
+				if (deadCount + objectives.escaperCount == blueCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 6f) {
 					return true;
 				}
 			}
@@ -457,17 +420,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		return false;
 	}
 
-    void DetermineEnemyTeamForfeited()
+    void DetermineEnemyTeamForfeited(int redTeamCount, int blueTeamCount)
     {
         if (gameOver) return;
 
         // Check if the other team has forfeited - can be determine by any players left on the opposing team
-        if (forfeitDelay <= 0f) {
-            if ((teamMap == "R" && blueTeamPlayerCount == 0) || (teamMap == "B" && redTeamPlayerCount == 0)) {
-				// Couldn't find another player on the other team. This means that they forfeit
-            	pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, teamMap, "The enemy team has forfeited!", null);
-			}
-        }
+		if ((teamMap == "R" && blueTeamCount == 0) || (teamMap == "B" && redTeamCount == 0)) {
+			// Couldn't find another player on the other team. This means that they forfeit
+			pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, teamMap, "The enemy team has forfeited!", null);
+		}
     }
 
 	public void SetLastGunshotHeardPos(bool clear, Vector3 pos) {
@@ -500,24 +461,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	public void IncrementDeathCount() {
-		pView.RPC ("RpcIncrementDeathCount", RpcTarget.All, teamMap);
+	public void ConvertCounts(int escape) {
+		pView.RPC ("RpcConvertCounts", RpcTarget.All, escape, teamMap);
 	}
 
 	[PunRPC]
-	void RpcIncrementDeathCount(string team) {
+	void RpcConvertCounts(int escape, string team) {
         if (team != teamMap) return;
-		deadCount++;
-	}
-
-	public void ConvertCounts(int dead, int escape) {
-		pView.RPC ("RpcConvertCounts", RpcTarget.All, dead, escape, teamMap);
-	}
-
-	[PunRPC]
-	void RpcConvertCounts(int dead, int escape, string team) {
-        if (team != teamMap) return;
-		deadCount += dead;
 		objectives.escaperCount += escape;
 	}
 
@@ -532,6 +482,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
     void UpdateMissionTime() {
+		if (gameOver) return;
         missionTime += Time.deltaTime;
 
         // Query server for sync time if not master client every 30 seconds
@@ -574,7 +525,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
     // When someone leaves the game in the middle of an escape, reset the values to recount
     void ResetEscapeValues() {
-		deadCount = 0;
 		objectives.escaperCount = 0;
 	}
 
@@ -619,24 +569,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		char wasTeam = playerList[otherPlayer.ActorNumber].team;
 		Destroy (playerList[otherPlayer.ActorNumber].objRef);
 		playerList.Remove (otherPlayer.ActorNumber);
-
-		// Update team counts if versus mode
-		if (matchType == 'V') {
-			if (PhotonNetwork.IsMasterClient) {
-				if (wasTeam == 'R') {
-					redTeamPlayerCount--;
-				} else if (wasTeam == 'B') {
-					blueTeamPlayerCount--;
-				}
-				pView.RPC("RpcSetTeamCounts", RpcTarget.All, redTeamPlayerCount, blueTeamPlayerCount);
-			}
-		}
-	}
-
-	[PunRPC]
-	void RpcSetTeamCounts(int red, int blue) {
-		redTeamPlayerCount = red;
-		blueTeamPlayerCount = blue;
 	}
 
 	/**public override void OnPlayerEnteredRoom(Player newPlayer) {
@@ -888,7 +820,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	// View the Leveling system documentation on drive to determine how these thresholds were determined
 	char GetCompletionGradeForMapCampaign(string map) {
 		if (map == "Badlands1") {
-			if (deadCount == playerList.Count || CheckOutOfTime()) {
+			if (GetDeadCount() == playerList.Count || CheckOutOfTime()) {
 				return 'F';
 			} else {
 				if (missionTime <= 180f) {
@@ -901,7 +833,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			}
 			return 'D';
 		} else if (map == "Badlands2") {
-			if (deadCount == playerList.Count || CheckOutOfTime()) {
+			if (GetDeadCount() == playerList.Count || CheckOutOfTime()) {
 				return 'F';
 			} else {
 				if (missionTime <= 900f) {
@@ -918,8 +850,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	char GetCompletionGradeForMapVersus(string map) {
+		int deadCount = GetDeadCount();
 		if (map == "Badlands1_Red" || map == "Badlands1_Blue") {
-			if (CheckOutOfTime() || (teamMap == "R" && deadCount == redTeamPlayerCount) || (teamMap == "B" && deadCount == blueTeamPlayerCount)) {
+			if (CheckOutOfTime() || (teamMap == "R" && deadCount == GetRedTeamCount()) || (teamMap == "B" && deadCount == GetBlueTeamCount())) {
 				return 'F';
 			} else {
 				if (missionTime <= 180f) {
@@ -978,13 +911,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	[PunRPC]
 	void RpcAskServerForDataGc() {
 		pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
-			spawnMode, gameOver, (int)sectorsCleared, deadCount, redTeamPlayerCount, blueTeamPlayerCount, assaultMode, enemyTeamNearingVictoryTrigger, endingGainsCalculated, endGameWithWin);
+			spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin);
 	}
 
 	[PunRPC]
 	void RpcSyncDataGc(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer,
-		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, int deadCount, int redTeamPlayerCount, int blueTeamPlayerCount,
-		bool assaultMode, bool enemyTeamNearingVictoryTrigger, bool endingGainsCalculated, bool endGameWithWin) {
+		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, 
+		bool assaultMode, bool enemyTeamNearingVictoryTrigger, bool endGameWithWin) {
     	lastGunshotHeardPos = new Vector3(lastGunshotHeardPosX, lastGunshotHeardPosY, lastGunshotHeardPosZ);
 		this.lastGunshotTimer = lastGunshotTimer;
 		this.endGameTimer = endGameTimer;
@@ -992,10 +925,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		this.spawnMode = spawnMode;
 		this.gameOver = gameOver;
 		this.sectorsCleared = (short)sectorsCleared;
-		this.deadCount = deadCount;
 		this.assaultMode = assaultMode;
 		this.enemyTeamNearingVictoryTrigger = enemyTeamNearingVictoryTrigger;
-		this.endingGainsCalculated = endingGainsCalculated;
 		this.endGameWithWin = endGameWithWin;
 	}
 
@@ -1005,6 +936,38 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			h.Add("deads", null);
 			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 		}
+	}
+
+	public int GetDeadCount() {
+		int total = 0;
+		foreach(KeyValuePair<int, PlayerStat> entry in GameControllerScript.playerList)
+		{
+			GameObject p = entry.Value.objRef;
+			if (p.GetComponent<PlayerActionScript>().health <= 0) {
+				total++;
+			}
+		}
+		return total;
+	}
+
+	public int GetRedTeamCount() {
+		int total = 0;
+		foreach (Player p in PhotonNetwork.PlayerList) {
+			if ((string)p.CustomProperties["team"] == "red") {
+				total++;
+			}
+		}
+		return total;
+	}
+
+	public int GetBlueTeamCount() {
+		int total = 0;
+		foreach (Player p in PhotonNetwork.PlayerList) {
+			if ((string)p.CustomProperties["team"] == "blue") {
+				total++;
+			}
+		}
+		return total;
 	}
 
 }

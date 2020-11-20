@@ -271,7 +271,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (gameController.exitLevelLoaded) {
 				ToggleGameOverPopup (false);
 				ToggleGameOverBanner (true);
-			} else if (PhotonNetwork.CurrentRoom.Players.Count == gameController.deadCount) {
+			} else if (container.spectatorText.enabled && PhotonNetwork.CurrentRoom.Players.Count == gameController.GetDeadCount()) {
 				ToggleGameOverPopup (true);
 			}
 			ToggleHUD (false);
@@ -287,7 +287,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (gameController.exitLevelLoaded) {
 				ToggleGameOverPopup (false);
 				ToggleGameOverBanner (true);
-			} else if ((gameController.teamMap == "R" && GameControllerScript.redTeamPlayerCount == gameController.deadCount) || (gameController.teamMap == "B" && GameControllerScript.blueTeamPlayerCount == gameController.deadCount)) {
+			} else if (container.spectatorText.enabled && (gameController.teamMap == "R" && gameController.GetRedTeamCount() == gameController.GetDeadCount()) || (gameController.teamMap == "B" && gameController.GetBlueTeamCount() == gameController.GetDeadCount())) {
 				ToggleGameOverPopup (true);
 			}
 			ToggleHUD (false);
