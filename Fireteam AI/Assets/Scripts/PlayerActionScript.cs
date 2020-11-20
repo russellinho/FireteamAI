@@ -1073,7 +1073,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void EnterSpectatorMode()
     {
-        if (thisSpectatorCam != null) {
+        if (thisSpectatorCam == null) {
             pView.RPC("RpcChangePlayerDisableStatus", RpcTarget.All, false);
             thisSpectatorCam = Instantiate(spectatorCam, Vector3.zero, Quaternion.Euler(Vector3.zero));
             thisSpectatorCam.transform.SetParent(null);
