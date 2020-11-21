@@ -565,22 +565,22 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
-		// If the player who left the room (disconnected) was the server, then disconnect everyone.
-		if (otherPlayer.IsMasterClient) {
-			PlayerData.playerdata.disconnectReason = "The host has left the game.";
-			PhotonNetwork.Disconnect();
-		} else {
-			if (!playerList.ContainsKey(otherPlayer.ActorNumber)) return;
-			ResetEscapeValues ();
-			foreach (PlayerStat entry in playerList.Values)
-			{
-				entry.objRef.GetComponent<PlayerActionScript> ().escapeValueSent = false;
-			}
-
-			char wasTeam = playerList[otherPlayer.ActorNumber].team;
-			Destroy (playerList[otherPlayer.ActorNumber].objRef);
-			playerList.Remove (otherPlayer.ActorNumber);
+		if (!playerList.ContainsKey(otherPlayer.ActorNumber)) return;
+		ResetEscapeValues ();
+		foreach (PlayerStat entry in playerList.Values)
+		{
+			entry.objRef.GetComponent<PlayerActionScript> ().escapeValueSent = false;
 		}
+
+		char wasTeam = playerList[otherPlayer.ActorNumber].team;
+		Destroy (playerList[otherPlayer.ActorNumber].objRef);
+		playerList.Remove (otherPlayer.ActorNumber);
+	}
+
+	public override void OnMasterClientSwitched(Player newMasterClient) {
+		// If the player who left the room (disconnected) was the server, then disconnect everyone.
+		PlayerData.playerdata.disconnectReason = "The host has left the game.";
+		PhotonNetwork.Disconnect();
 	}
 
 	/**public override void OnPlayerEnteredRoom(Player newPlayer) {

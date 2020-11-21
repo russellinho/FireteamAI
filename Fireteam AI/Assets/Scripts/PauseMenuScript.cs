@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -65,7 +66,11 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 			if (currentDeads == null) {
 				currentDeads = PhotonNetwork.LocalPlayer.NickName + ",";
 			} else {
-				currentDeads += PhotonNetwork.LocalPlayer.NickName + ",";
+				// Check if you're already on that list
+				string[] currDeadsList = currentDeads.Split(',');
+				if (!currDeadsList.Contains(PhotonNetwork.LocalPlayer.NickName)) {
+					currentDeads += PhotonNetwork.LocalPlayer.NickName + ",";
+				}
 			}
 			h.Add("deads", currentDeads);
 			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
