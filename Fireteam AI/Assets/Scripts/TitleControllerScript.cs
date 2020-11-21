@@ -2931,8 +2931,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     }
 
 	public void TogglePlayerTemplate(bool b) {
-		PlayerData.playerdata.bodyReference.SetActive(b);
-		PlayerData.playerdata.bodyReference.GetComponent<Animator>().SetBool("onTitle", true);
+		if (PlayerData.playerdata.bodyReference != null) {
+			PlayerData.playerdata.bodyReference.SetActive(b);
+			PlayerData.playerdata.bodyReference.GetComponent<Animator>().SetBool("onTitle", true);
+		}
 	}
 
 	public void ToggleWeaponPreview(bool b) {
