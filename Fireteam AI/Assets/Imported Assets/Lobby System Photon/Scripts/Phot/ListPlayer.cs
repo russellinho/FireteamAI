@@ -244,6 +244,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		void CampaignGameStart() {
 			if (titleController.GetComponent<TitleControllerScript>().loadingScreen.alpha != 1f) {
 				LoadingScreen();
+			} else {
+				return;
 			}
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
 			PhotonNetwork.LoadLevel(level);
@@ -269,6 +271,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		void VersusGameStart() {
 			if (titleController.GetComponent<TitleControllerScript>().loadingScreen.alpha != 1f) {
 				LoadingScreen();
+			} else {
+				return;
 			}
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
 			string myTeam = ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red" ? "_Red" : "_Blue");
@@ -878,8 +882,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				if (PhotonNetwork.LevelLoadingProgress >= 0.9f) {
 					PhotonNetwork.IsMessageQueueRunning = true;
 				}
-				Debug.Log("inGame: " + Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]));
 				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
+					Debug.Log("after");
 					PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
 				} else {
 					StartCoroutine("DetermineMasterClientLoaded");
