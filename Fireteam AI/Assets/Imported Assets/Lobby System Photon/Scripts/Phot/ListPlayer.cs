@@ -755,8 +755,9 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnMasterClientSwitched(Player newMasterClient) {
 			if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
-				PlayerData.playerdata.disconnectedFromServer = true;
-				PlayerData.playerdata.disconnectReason = "The host has left the game.";
+				PhotonNetwork.Disconnect();
+				PhotonNetwork.LeaveRoom();
+				OnDisconnected(DisconnectCause.DisconnectByClientLogic);
 				TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
 				ts.ToggleLoadingScreen(false);
 				ts.mainPanelManager.OpenFirstTab();
