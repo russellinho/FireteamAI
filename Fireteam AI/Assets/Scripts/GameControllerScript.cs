@@ -578,9 +578,12 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public override void OnMasterClientSwitched(Player newMasterClient) {
-		// If the player who left the room (disconnected) was the server, then disconnect everyone.
 		PlayerData.playerdata.disconnectReason = "The host has left the game.";
-		PhotonNetwork.Disconnect();
+		try {
+			PhotonNetwork.Disconnect();
+		} catch (NullReferenceException e) {
+			// nothing
+		}
 	}
 
 	/**public override void OnPlayerEnteredRoom(Player newPlayer) {
@@ -650,6 +653,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     }
 
 	public override void OnDisconnected(DisconnectCause cause) {
+		Debug.Log("heyhey");
 		PlayerData.playerdata.disconnectedFromServer = true;
 		if (!cause.ToString ().Equals (DisconnectCause.DisconnectByClientLogic)) {
 			PlayerData.playerdata.disconnectReason = cause.ToString ();
