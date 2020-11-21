@@ -210,8 +210,10 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             AskOthersForThemselves();
             if (PhotonNetwork.IsMasterClient) {
                 Hashtable h = new Hashtable();
+                Debug.Log("ayy");
 				h.Add("inGame", 1);
 				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+                Debug.Log("got set: " + Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]));
             }
             // PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
             //     characterPrefabName,
