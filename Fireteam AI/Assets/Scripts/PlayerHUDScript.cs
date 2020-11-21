@@ -172,7 +172,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			missionWaypoints.Add (m5);
 		}
 		StartCoroutine(ShowMissionText(gameController.currentMap));
-		InitialComBoxRoutineForMission(gameController.currentMap);
+		if (PhotonNetwork.IsMasterClient) {
+			InitialComBoxRoutineForMission(gameController.currentMap);
+		}
 	}
 
 	void OnStartScreenFade() {
