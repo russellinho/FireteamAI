@@ -244,8 +244,6 @@ namespace Photon.Pun.LobbySystemPhoton
 		void CampaignGameStart() {
 			if (titleController.GetComponent<TitleControllerScript>().loadingScreen.alpha != 1f) {
 				LoadingScreen();
-			} else {
-				return;
 			}
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
 			PhotonNetwork.LoadLevel(level);
@@ -271,8 +269,6 @@ namespace Photon.Pun.LobbySystemPhoton
 		void VersusGameStart() {
 			if (titleController.GetComponent<TitleControllerScript>().loadingScreen.alpha != 1f) {
 				LoadingScreen();
-			} else {
-				return;
 			}
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
 			string myTeam = ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red" ? "_Red" : "_Blue");
@@ -845,11 +841,13 @@ namespace Photon.Pun.LobbySystemPhoton
 						}
 					}
 					if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
-						string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
-						if (gameMode == "camp") {
-							CampaignGameStart();
-						} else if (gameMode == "versus") {
-							VersusGameStart();
+						if (titleController.GetComponent<TitleControllerScript>().loadingScreen.alpha != 1f) {
+							string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
+							if (gameMode == "camp") {
+								CampaignGameStart();
+							} else if (gameMode == "versus") {
+								VersusGameStart();
+							}
 						}
 					}
 				} else if (val == 0) {
