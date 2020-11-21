@@ -247,11 +247,10 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
 			PhotonNetwork.LoadLevel(level);
-			PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
-			PhotonNetwork.IsMessageQueueRunning = true;
 			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
-				StartCoroutine("DetermineMatchLoadedMaster");
+				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
 			} else {
+				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
 				StartCoroutine("DetermineMasterClientLoaded");
 			}
 		}
@@ -274,10 +273,10 @@ namespace Photon.Pun.LobbySystemPhoton
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
 			string myTeam = ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red" ? "_Red" : "_Blue");
 			PhotonNetwork.LoadLevel (level + myTeam);
-			PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
 			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
-				StartCoroutine("DetermineMatchLoadedMaster");
+				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
 			} else {
+				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
 				StartCoroutine("DetermineMasterClientLoaded");
 			}
 		}
@@ -876,29 +875,17 @@ namespace Photon.Pun.LobbySystemPhoton
 				ts.ToggleLoadingScreen(false);
 				ts.mainPanelManager.OpenFirstTab();
 				yield return null;
-			}
-			Debug.Log(Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]));
-			if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
-				Debug.Log("d");
-				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
-				yield return null;
 			} else {
-				Debug.Log("b");
-				StartCoroutine("DetermineMasterClientLoaded");
-			}
-		}
-
-		IEnumerator DetermineMatchLoadedMaster() {
-			yield return new WaitForSeconds(2f);
-			if (PhotonNetwork.LevelLoadingProgress >= 0.9f) {
-				PhotonNetwork.IsMessageQueueRunning = true;
-				// Set match in-game and start
-                Hashtable h = new Hashtable();
-				h.Add("inGame", 1);
-				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
-				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
-			} else {
-				StartCoroutine("DetermineMatchLoadedMaster");
+				if (PhotonNetwork.LevelLoadingProgress >= 0.9f) {
+					PhotonNetwork.IsMessageQueueRunning = true;
+				}
+				Debug.Log("inGame: " + Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]));
+				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
+					PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
+					yield return null;
+				} else {
+					StartCoroutine("DetermineMasterClientLoaded");
+				}
 			}
 		}
 

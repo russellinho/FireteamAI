@@ -201,6 +201,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         initialized = true;
     }
 
+    void Start() {
+        if (PhotonNetwork.IsMasterClient) {
+            Hashtable h = new Hashtable();
+            h.Add("inGame", 1);
+            PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+        }
+    }
+
     void Update()
     {
         if (!initialized) {
