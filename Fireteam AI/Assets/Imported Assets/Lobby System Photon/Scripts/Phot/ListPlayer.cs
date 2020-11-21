@@ -890,6 +890,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		IEnumerator DetermineMatchLoadedMaster() {
 			yield return new WaitForSeconds(2f);
 			if (PhotonNetwork.LevelLoadingProgress >= 0.9f) {
+				PhotonNetwork.IsMessageQueueRunning = true;
 				// Set match in-game and start
                 Hashtable h = new Hashtable();
 				h.Add("inGame", 1);
