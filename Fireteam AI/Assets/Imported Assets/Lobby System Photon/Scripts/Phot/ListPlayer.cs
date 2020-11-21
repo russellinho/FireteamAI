@@ -442,6 +442,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		[PunRPC]
 		void RpcSetRank(int actorId, int exp) {
+			if (!playerListEntries.ContainsKey(actorId) || playerListEntries[actorId].GetComponent<PlayerEntryPrefab>() == null) return;
 			PlayerEntryPrefab p = playerListEntries[actorId].GetComponent<PlayerEntryPrefab>();
 			p.SetRank(PlayerData.playerdata.GetRankFromExp((uint)exp).name);
 		}
@@ -837,6 +838,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			int actorNo = targetPlayer.ActorNumber;
 			if (changedProps.ContainsKey("readyStatus")) {
 				int newStatus = Convert.ToInt32(changedProps["readyStatus"]);
+				if (!playerListEntries.ContainsKey(actorNo) || playerListEntries[actorNo].GetComponent<PlayerEntryPrefab>() == null) return;
 				playerListEntries[actorNo].GetComponent<PlayerEntryPrefab>().SetReady(newStatus == 1);
 			}
 		}
@@ -846,8 +848,10 @@ namespace Photon.Pun.LobbySystemPhoton
 			if (propertiesThatChanged.ContainsKey("inGame")) {
 				int val = Convert.ToInt32(propertiesThatChanged["inGame"]);
 				if (val == 1) {
+					if (playerListEntries == null) return;
 					foreach (GameObject entry in playerListEntries.Values) {
 						PlayerEntryPrefab p = entry.GetComponent<PlayerEntryPrefab>();
+						if (p == null) return;
 						p.SetReadyText('i');
 						if (PhotonNetwork.CurrentRoom.GetPlayer(p.actorId).IsMasterClient) {
 							p.SetReady(true);
@@ -864,8 +868,10 @@ namespace Photon.Pun.LobbySystemPhoton
 						}
 					}
 				} else if (val == 0) {
+					if (playerListEntries == null) return;
 					foreach (GameObject entry in playerListEntries.Values) {
 						PlayerEntryPrefab p = entry.GetComponent<PlayerEntryPrefab>();
+						if (p == null) return;
 						p.SetReadyText('r');
 						p.SetReady(false);
 					}
