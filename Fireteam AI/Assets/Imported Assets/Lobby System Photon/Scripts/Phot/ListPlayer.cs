@@ -248,6 +248,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
 			PhotonNetwork.LoadLevel(level);
 			PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
+			PhotonNetwork.IsMessageQueueRunning = true;
 			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
 				StartCoroutine("DetermineMatchLoadedMaster");
 			} else {
