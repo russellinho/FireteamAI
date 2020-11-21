@@ -559,16 +559,22 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
-		if (!playerList.ContainsKey(otherPlayer.ActorNumber)) return;
-		ResetEscapeValues ();
-		foreach (PlayerStat entry in playerList.Values)
-		{
-			entry.objRef.GetComponent<PlayerActionScript> ().escapeValueSent = false;
-		}
+		// If the player who left the room (disconnected) was the server, then disconnect everyone.
+		if (otherPlayer.IsMasterClient) {
+			PlayerData.playerdata.disconnectReason = "The host has left the game.";
+			PhotonNetwork.Disconnect();
+		} else {
+			if (!playerList.ContainsKey(otherPlayer.ActorNumber)) return;
+			ResetEscapeValues ();
+			foreach (PlayerStat entry in playerList.Values)
+			{
+				entry.objRef.GetComponent<PlayerActionScript> ().escapeValueSent = false;
+			}
 
-		char wasTeam = playerList[otherPlayer.ActorNumber].team;
-		Destroy (playerList[otherPlayer.ActorNumber].objRef);
-		playerList.Remove (otherPlayer.ActorNumber);
+			char wasTeam = playerList[otherPlayer.ActorNumber].team;
+			Destroy (playerList[otherPlayer.ActorNumber].objRef);
+			playerList.Remove (otherPlayer.ActorNumber);
+		}
 	}
 
 	/**public override void OnPlayerEnteredRoom(Player newPlayer) {
@@ -638,8 +644,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     }
 
 	public override void OnDisconnected(DisconnectCause cause) {
-		if (!cause.ToString ().Equals ("DisconnectByClientLogic")) {
-			PlayerData.playerdata.disconnectedFromServer = true;
+		PlayerData.playerdata.disconnectedFromServer = true;
+		if (!cause.ToString ().Equals (DisconnectCause.DisconnectByClientLogic)) {
 			PlayerData.playerdata.disconnectReason = cause.ToString ();
 		}
 		SceneManager.LoadScene ("Title");
@@ -647,18 +653,27 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	void SwitchToGameOverScene(bool win) {
 		if (!win) {
-			PhotonNetwork.LoadLevel("GameOverFail");
+			// PhotonNetwork.LoadLevel("GameOverFail");
+			pView.RPC("RpcSwitchToGameOverScene", RpcTarget.All, "GameOverFail");
 		} else {
-			PhotonNetwork.LoadLevel("GameOverSuccess");
+			// PhotonNetwork.LoadLevel("GameOverSuccess");
+			pView.RPC("RpcSwitchToGameOverScene", RpcTarget.All, "GameOverSuccess");
 		}
 	}
 
 	void SwitchToGameOverScene() {
 		if (endGameWithWin) {
-			PhotonNetwork.LoadLevel("GameOverSuccess");
+			// PhotonNetwork.LoadLevel("GameOverSuccess");
+			pView.RPC("RpcSwitchToGameOverScene", RpcTarget.All, "GameOverSuccess");
 		} else {
-			PhotonNetwork.LoadLevel("GameOverFail");
+			// PhotonNetwork.LoadLevel("GameOverFail");
+			pView.RPC("RpcSwitchToGameOverScene", RpcTarget.All, "GameOverFail");
 		}
+	}
+
+	[PunRPC]
+	void RpcSwitchToGameOverScene(string s) {
+		PhotonNetwork.LoadLevel(s);
 	}
 
 	public void AddCoverSpot(GameObject coverSpot) {
@@ -968,6 +983,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			}
 		}
 		return total;
+	}
+
+	public void EndGameForAll() {
+		pView.RPC("RpcEndGameForAll", RpcTarget.All);
+	}
+
+	[PunRPC]
+	void RpcEndGameForAll() {
+		PlayerData.playerdata.DestroyMyself();
 	}
 
 }

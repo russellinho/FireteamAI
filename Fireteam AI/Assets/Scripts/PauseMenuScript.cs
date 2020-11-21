@@ -9,7 +9,7 @@ using TMPro;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class PauseMenuScript : MonoBehaviourPunCallbacks {
-
+	public GameControllerScript gameController;
 	public GameObject playerRef;
 	public GameObject keyMappingsPanel;
 	public GameObject mainMenuGroup;
@@ -44,17 +44,33 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void LeaveGame() {
-		// Add myself to dead list if I'm dead
-		string currentDeads = (string)PhotonNetwork.CurrentRoom.CustomProperties["deads"];
-		Hashtable h = new Hashtable();
-		if (currentDeads == null) {
-			currentDeads = PhotonNetwork.LocalPlayer.NickName + ",";
+		// If master client quits, end the game for all and reset deads, redScore, blueScore, redStatus, blueStatus, inGame
+		if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+			Hashtable h = new Hashtable();
+			h.Add("deads", null);
+			h.Add("inGame", 0);
+			if (gameController.matchType == 'V') {
+				h.Add("redScore", 0);
+				h.Add("blueScore", 0);
+				h.Add("redStatus", null);
+				h.Add("blueStatus", null);
+			}
+			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			gameController.EndGameForAll();
 		} else {
-			currentDeads += PhotonNetwork.LocalPlayer.NickName + ",";
+			// Else
+			// Add myself to dead list if I'm dead
+			string currentDeads = (string)PhotonNetwork.CurrentRoom.CustomProperties["deads"];
+			Hashtable h = new Hashtable();
+			if (currentDeads == null) {
+				currentDeads = PhotonNetwork.LocalPlayer.NickName + ",";
+			} else {
+				currentDeads += PhotonNetwork.LocalPlayer.NickName + ",";
+			}
+			h.Add("deads", currentDeads);
+			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			PlayerData.playerdata.DestroyMyself();
 		}
-		h.Add("deads", currentDeads);
-		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
-		PlayerData.playerdata.DestroyMyself();
 	}
 
 	// public override void OnLeftRoom() {

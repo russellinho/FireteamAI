@@ -316,6 +316,7 @@ public class WeaponScript : MonoBehaviour
                 wm.EquipSight(equippedSight);
             }
         }
+        drawnWeaponReference = wepEquipped;
     }
 
     void SetCurrentAmmo(int weaponCat) {
