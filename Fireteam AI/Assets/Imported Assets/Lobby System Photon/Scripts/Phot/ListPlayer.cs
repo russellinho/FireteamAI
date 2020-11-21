@@ -223,32 +223,16 @@ namespace Photon.Pun.LobbySystemPhoton
 		// }
 
 		void StartGame(string level) {
-			// Photon switch scene from lobby to loading screen to actual game. automaticallySyncScene should load map on clients.
-			if (level.Equals ("The Badlands: Act I")) {
-				pView.RPC("RpcStartCampaignGame", RpcTarget.All);
-			} else if (level.Equals("The Badlands: Act II")) {
-				pView.RPC("RpcStartCampaignGame", RpcTarget.All);
-			} else {
-				pView.RPC("RpcStartCampaignGame", RpcTarget.All);
-			}
+			pView.RPC("RpcStartCampaignGame", RpcTarget.All);
 		}
 
         void StartVersusGame(string level) {
-            if (level.Equals ("The Badlands: Act I")) {
-                pView.RPC("RpcStartVersusGame", RpcTarget.All);
-			} else if (level.Equals ("The Badlands: Act II")) {
-				pView.RPC("RpcStartVersusGame", RpcTarget.All);
-			} else {
-                pView.RPC("RpcStartVersusGame", RpcTarget.All);
-			}
+            pView.RPC("RpcStartVersusGame", RpcTarget.All);
         }
 
 		[PunRPC]
 		void RpcStartCampaignGame() {
 			if (PhotonNetwork.IsMasterClient) {
-				Hashtable h = new Hashtable();
-				h.Add("inGame", 1);
-				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 				CampaignGameStart();
 			} else if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
 				CampaignGameStart();
@@ -258,17 +242,22 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		void CampaignGameStart() {
+			if (titleController.GetComponent<TitleControllerScript>().loadingScreen.alpha != 1f) {
+				LoadingScreen();
+			}
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
-			LoadingScreen();
 			PhotonNetwork.LoadLevel(level);
+			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
+			} else {
+				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
+				StartCoroutine("DetermineMasterClientLoaded");
+			}
 		}
 
         [PunRPC]
         void RpcStartVersusGame() {
 			if (PhotonNetwork.IsMasterClient) {
-				Hashtable h = new Hashtable();
-				h.Add("inGame", 1);
-				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 				VersusGameStart();
 			} else if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
 				VersusGameStart();
@@ -278,10 +267,18 @@ namespace Photon.Pun.LobbySystemPhoton
         }
 
 		void VersusGameStart() {
+			if (titleController.GetComponent<TitleControllerScript>().loadingScreen.alpha != 1f) {
+				LoadingScreen();
+			}
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
-			LoadingScreen();
 			string myTeam = ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red" ? "_Red" : "_Blue");
 			PhotonNetwork.LoadLevel (level + myTeam);
+			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
+			} else {
+				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
+				StartCoroutine("DetermineMasterClientLoaded");
+			}
 		}
 
 		[PunRPC]
@@ -322,7 +319,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 			yield return new WaitForSeconds (1f);
 
-			// pView.RPC ("RpcLoadingScreen", RpcTarget.All);
+			LoadingScreen();
 			if (PhotonNetwork.IsMasterClient) {
 				StartGame (mapNames [mapSelector.index]);
 			}
@@ -367,15 +364,16 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 			yield return new WaitForSeconds (1f);
 
-			// pView.RPC ("RpcLoadingScreen", RpcTarget.All);
+			LoadingScreen();
 			if (PhotonNetwork.IsMasterClient) {
 				StartVersusGame (mapNames [mapSelectorVs.index]);
 			}
 		}
 
 		[PunRPC]
-		void RpcLoadingScreen(int i) {
+		void RpcLoadingScreen() {
 			TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
+			int i = (currentMode == 'C' ? mapSelector.index : mapSelectorVs.index);
 			ts.InstantiateLoadingScreen (mapNames[i], mapDescriptions[i]);
 			ts.ToggleLoadingScreen(true);
 		}
@@ -833,6 +831,14 @@ namespace Photon.Pun.LobbySystemPhoton
 							p.SetReady(true);
 						}
 					}
+					if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
+						string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
+						if (gameMode == "camp") {
+							CampaignGameStart();
+						} else if (gameMode == "versus") {
+							VersusGameStart();
+						}
+					}
 				} else if (val == 0) {
 					foreach (GameObject entry in playerListEntries.Values) {
 						PlayerEntryPrefab p = entry.GetComponent<PlayerEntryPrefab>();
@@ -850,6 +856,24 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void ClearGameStarting() {
 			pView.RPC("RpcSetGameIsStarting", RpcTarget.All, false);
+		}
+
+		IEnumerator DetermineMasterClientLoaded() {
+			yield return new WaitForSeconds(2f);
+
+			if (!PhotonNetwork.InRoom) {
+				TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
+				ts.ToggleLoadingScreen(false);
+				ts.mainPanelManager.OpenFirstTab();
+				yield return null;
+			}
+
+			if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
+				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
+				yield return null;
+			} else {
+				StartCoroutine("DetermineMasterClientLoaded");
+			}
 		}
 
 	}
