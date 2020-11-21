@@ -208,11 +208,11 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             string characterPrefabName = GetCharacterPrefabName();
             SpawnPlayer(characterPrefabName, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0]);
             AskOthersForThemselves();
-            // if (PhotonNetwork.IsMasterClient) {
-            //     Hashtable h = new Hashtable();
-			// 	h.Add("inGame", 1);
-			// 	PhotonNetwork.CurrentRoom.SetCustomProperties(h);
-            // }
+            if (PhotonNetwork.IsMasterClient) {
+                Hashtable h = new Hashtable();
+				h.Add("inGame", 1);
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+            }
             // PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
             //     characterPrefabName,
             //     Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],

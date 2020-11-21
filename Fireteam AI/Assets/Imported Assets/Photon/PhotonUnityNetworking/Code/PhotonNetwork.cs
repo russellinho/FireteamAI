@@ -2926,7 +2926,7 @@ namespace Photon.Pun
                 SetLevelInPropsIfSynced(levelNumber);
             }
 
-            PhotonNetwork.IsMessageQueueRunning = false;
+            // PhotonNetwork.IsMessageQueueRunning = false;
             loadingLevelAndPausedNetwork = true;
             _AsyncLevelLoadingOperation = SceneManager.LoadSceneAsync(levelNumber,LoadSceneMode.Single);
         }

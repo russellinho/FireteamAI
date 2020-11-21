@@ -201,16 +201,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         initialized = true;
     }
 
-    void Start() {
-        // Debug.Log("running: " + PhotonNetwork.IsMessageQueueRunning);
-        if (PhotonNetwork.IsMasterClient) {
-            Hashtable h = new Hashtable();
-            h.Add("inGame", 1);
-            PhotonNetwork.CurrentRoom.SetCustomProperties(h);
-            // Debug.Log("Custom props: " + Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]));
-        }
-    }
-
     void Update()
     {
         if (!initialized) {
