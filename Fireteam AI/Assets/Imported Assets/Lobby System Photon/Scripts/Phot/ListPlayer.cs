@@ -840,6 +840,7 @@ namespace Photon.Pun.LobbySystemPhoton
 							p.SetReady(true);
 						}
 					}
+					Debug.Log("got changed to " + (string)PhotonNetwork.CurrentRoom.CustomProperties["inGame"]);
 					if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
 						string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
 						if (gameMode == "camp") {
