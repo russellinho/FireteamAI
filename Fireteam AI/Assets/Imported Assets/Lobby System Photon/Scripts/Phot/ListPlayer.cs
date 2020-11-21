@@ -760,6 +760,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public override void OnMasterClientSwitched(Player newMasterClient) {
 			if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
 				PhotonNetwork.Disconnect();
+				PhotonNetwork.CurrentRoom.IsVisible = false;
 				PhotonNetwork.LeaveRoom();
 				TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
 				ts.ToggleLoadingScreen(false);
