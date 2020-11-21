@@ -734,6 +734,15 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnPlayerLeftRoom(Player otherPlayer)
 		{
+			if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
+				if (otherPlayer.IsMasterClient) {
+					PlayerData.playerdata.disconnectedFromServer = true;
+					PlayerData.playerdata.disconnectReason = "The host has left the game.";
+					TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
+					ts.ToggleLoadingScreen(false);
+					ts.mainPanelManager.OpenFirstTab();
+				}
+			}
 			Destroy(playerListEntries[otherPlayer.ActorNumber].gameObject);
 			playerListEntries.Remove(otherPlayer.ActorNumber);
 			RearrangePlayerSlots ();
@@ -867,11 +876,13 @@ namespace Photon.Pun.LobbySystemPhoton
 				ts.mainPanelManager.OpenFirstTab();
 				yield return null;
 			}
-
+			Debug.Log(Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]));
 			if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
+				Debug.Log("d");
 				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
 				yield return null;
 			} else {
+				Debug.Log("b");
 				StartCoroutine("DetermineMasterClientLoaded");
 			}
 		}
