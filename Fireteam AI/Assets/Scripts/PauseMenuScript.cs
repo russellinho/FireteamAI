@@ -61,19 +61,21 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		} else {
 			// Else
 			// Add myself to dead list if I'm dead
-			string currentDeads = (string)PhotonNetwork.CurrentRoom.CustomProperties["deads"];
-			Hashtable h = new Hashtable();
-			if (currentDeads == null) {
-				currentDeads = PhotonNetwork.LocalPlayer.NickName + ",";
-			} else {
-				// Check if you're already on that list
-				string[] currDeadsList = currentDeads.Split(',');
-				if (!currDeadsList.Contains(PhotonNetwork.LocalPlayer.NickName)) {
-					currentDeads += PhotonNetwork.LocalPlayer.NickName + ",";
+			if (PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().health <= 0) {
+				string currentDeads = (string)PhotonNetwork.CurrentRoom.CustomProperties["deads"];
+				Hashtable h = new Hashtable();
+				if (currentDeads == null) {
+					currentDeads = PhotonNetwork.LocalPlayer.NickName + ",";
+				} else {
+					// Check if you're already on that list
+					string[] currDeadsList = currentDeads.Split(',');
+					if (!currDeadsList.Contains(PhotonNetwork.LocalPlayer.NickName)) {
+						currentDeads += PhotonNetwork.LocalPlayer.NickName + ",";
+					}
 				}
+				h.Add("deads", currentDeads);
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 			}
-			h.Add("deads", currentDeads);
-			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 			PlayerData.playerdata.DestroyMyself();
 		}
 	}
