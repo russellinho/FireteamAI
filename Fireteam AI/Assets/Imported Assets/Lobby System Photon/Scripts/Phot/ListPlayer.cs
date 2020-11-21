@@ -874,7 +874,6 @@ namespace Photon.Pun.LobbySystemPhoton
 				TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
 				ts.ToggleLoadingScreen(false);
 				ts.mainPanelManager.OpenFirstTab();
-				yield return null;
 			} else {
 				if (PhotonNetwork.LevelLoadingProgress >= 0.9f) {
 					PhotonNetwork.IsMessageQueueRunning = true;
@@ -882,7 +881,6 @@ namespace Photon.Pun.LobbySystemPhoton
 				Debug.Log("inGame: " + Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]));
 				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
 					PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
-					yield return null;
 				} else {
 					StartCoroutine("DetermineMasterClientLoaded");
 				}
