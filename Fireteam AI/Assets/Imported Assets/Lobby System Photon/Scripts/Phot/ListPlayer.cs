@@ -246,8 +246,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				LoadingScreen();
 			}
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
-			PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
 			PhotonNetwork.LoadLevel(level);
+			PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
 			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
 				StartCoroutine("DetermineMatchLoadedMaster");
 			} else {
@@ -272,8 +272,8 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
 			string myTeam = ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red" ? "_Red" : "_Blue");
-			PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
 			PhotonNetwork.LoadLevel (level + myTeam);
+			PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
 			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
 				StartCoroutine("DetermineMatchLoadedMaster");
 			} else {
