@@ -313,8 +313,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			triggerMakePurchasePopupFlag = false;
 			makePurchasePopup.ModalWindowIn();
 		}
-		if (alertPopup.isOn || confirmPopup.isOn || keyBindingsPopup.isOn || makePurchasePopup.isOn && PlayerData.playerdata.bodyReference.activeInHierarchy) {
-			TogglePlayerTemplate(false);
+		if (alertPopup.isOn || confirmPopup.isOn || keyBindingsPopup.isOn || makePurchasePopup.isOn && (PlayerData.playerdata.bodyReference != null && PlayerData.playerdata.bodyReference.activeInHierarchy)) {
+			HideAll(false);
 		}
 	}
 
@@ -2931,10 +2931,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     }
 
 	public void TogglePlayerTemplate(bool b) {
-		if (PlayerData.playerdata.bodyReference != null) {
-			PlayerData.playerdata.bodyReference.SetActive(b);
-			PlayerData.playerdata.bodyReference.GetComponent<Animator>().SetBool("onTitle", true);
-		}
+		PlayerData.playerdata.bodyReference.SetActive(b);
+		PlayerData.playerdata.bodyReference.GetComponent<Animator>().SetBool("onTitle", true);
 	}
 
 	public void ToggleWeaponPreview(bool b) {
