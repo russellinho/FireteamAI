@@ -131,12 +131,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		} else if (matchType == 'V') {
 			StartCoroutine("GameOverCheckForVersus");
 		}
-		
-		if (PhotonNetwork.IsMasterClient) {
-			Hashtable h = new Hashtable();
-			h.Add("inGame", 1);
-			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
-		}
 	}
 
 	public void UpdateObjectives() {
