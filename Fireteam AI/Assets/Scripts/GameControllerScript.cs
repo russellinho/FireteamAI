@@ -172,6 +172,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		if (currentMap == 1) {
 			if (objectives.itemsRemaining == 0) {
 				objectives.escapeAvailable = true;
+				if (PhotonNetwork.CurrentRoom.IsOpen) {
+					LockRoom();
+				}
 			}
 		} else if (currentMap == 2) {
 			if (objectives.stepsLeftToCompletion == 1) {
@@ -179,6 +182,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					objectives.escapeAvailable = true;
 				} else {
 					objectives.escapeAvailable = false;
+				}
+				if (PhotonNetwork.CurrentRoom.IsOpen) {
+					LockRoom();
 				}
 			}
 		}
@@ -992,6 +998,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	[PunRPC]
 	void RpcEndGameForAll() {
 		PlayerData.playerdata.DestroyMyself();
+	}
+
+	public void LockRoom()
+	{
+		PhotonNetwork.CurrentRoom.IsOpen = false;
 	}
 
 }

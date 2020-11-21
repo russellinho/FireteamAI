@@ -90,6 +90,10 @@ namespace Photon.Pun.LobbySystemPhoton
 		// }
 
 		public void StartGameBtn() {
+			if (!PhotonNetwork.CurrentRoom.IsOpen) {
+				titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("This game is currently ending... please wait until the next round to join.");
+				return;
+			}
 			if (currentMode == 'V') {
 				StartGameVersus();
 			} else if (currentMode == 'C')
@@ -445,6 +449,8 @@ namespace Photon.Pun.LobbySystemPhoton
 			// mainPanelManager.ToggleBottomBar(false);
 			if (PhotonNetwork.IsMasterClient) {
 				SetMapInfo(true);
+				PhotonNetwork.CurrentRoom.IsOpen = true;
+				PhotonNetwork.CurrentRoom.IsVisible = true;
 			}
             // Disable any loading screens
             // connexion.ToggleLobbyLoadingScreen(false);
