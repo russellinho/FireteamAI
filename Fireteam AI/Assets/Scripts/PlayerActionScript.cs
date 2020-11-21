@@ -1613,4 +1613,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 	}
 
+    public void NetworkComBoxMessage(string speaker, string message, string picPath) {
+        pView.RPC("RpcNetworkComBoxMessage", RpcTarget.All, speaker, message, picPath);
+    }
+
+    [PunRPC]
+    void RpcNetworkComBoxMessage(string speaker, string message, string picPath) {
+        PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().DisplayComBox(speaker, message, picPath);
+    }
+
 }

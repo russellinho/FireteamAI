@@ -781,8 +781,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	IEnumerator ShowComBox(float t, string speaker, string s, string picPath) {
 		yield return new WaitForSeconds (t);
+		playerActionScript.NetworkComBoxMessage(speaker, s, picPath);
+	}
+
+	public void DisplayComBox(string speaker, string message, string picPath) {
 		container.comBox.SetActive (true);
-		container.comBoxText.GetComponent<ComboxTextEffect> ().SetText (s, speaker, picPath);
+		container.comBoxText.GetComponent<ComboxTextEffect> ().SetText (message, speaker, picPath);
 	}
 
 	public void ComBoxPopup(float t, string speaker, string s, string picPath) {

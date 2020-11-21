@@ -578,6 +578,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public override void OnMasterClientSwitched(Player newMasterClient) {
+		PhotonNetwork.CurrentRoom.IsVisible = false;
 		PhotonNetwork.Disconnect();
 		PhotonNetwork.LeaveRoom();
 		PlayerData.playerdata.disconnectReason = "The host has left the game.";
