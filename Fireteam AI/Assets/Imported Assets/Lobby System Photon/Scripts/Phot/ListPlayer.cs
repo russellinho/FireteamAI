@@ -442,7 +442,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		[PunRPC]
 		void RpcSetRank(int actorId, int exp) {
-			if (!playerListEntries.ContainsKey(actorId) || playerListEntries[actorId].GetComponent<PlayerEntryPrefab>() == null) return;
+			if (playerListEntries == null || !playerListEntries.ContainsKey(actorId) || playerListEntries[actorId].GetComponent<PlayerEntryPrefab>() == null) return;
 			PlayerEntryPrefab p = playerListEntries[actorId].GetComponent<PlayerEntryPrefab>();
 			p.SetRank(PlayerData.playerdata.GetRankFromExp((uint)exp).name);
 		}
@@ -463,7 +463,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			h.Add("exp", (int)PlayerData.playerdata.info.Exp);
 			h.Add("readyStatus", 0);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-			pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (int)PlayerData.playerdata.info.Exp);
+			// pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (int)PlayerData.playerdata.info.Exp);
 			currentMode = (!templateUIClassVs.gameObject.activeInHierarchy ? 'C' : 'V');
 			if (!PhotonNetwork.IsMasterClient) {
 				ToggleMapChangeButtons(false);
@@ -838,7 +838,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			int actorNo = targetPlayer.ActorNumber;
 			if (changedProps.ContainsKey("readyStatus")) {
 				int newStatus = Convert.ToInt32(changedProps["readyStatus"]);
-				if (!playerListEntries.ContainsKey(actorNo) || playerListEntries[actorNo].GetComponent<PlayerEntryPrefab>() == null) return;
+				if (playerListEntries == null || !playerListEntries.ContainsKey(actorNo) || playerListEntries[actorNo].GetComponent<PlayerEntryPrefab>() == null) return;
 				playerListEntries[actorNo].GetComponent<PlayerEntryPrefab>().SetReady(newStatus == 1);
 			}
 		}
