@@ -313,6 +313,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			triggerMakePurchasePopupFlag = false;
 			makePurchasePopup.ModalWindowIn();
 		}
+		if (alertPopup.isOn || confirmPopup.isOn || keyBindingsPopup.isOn || makePurchasePopup.isOn && PlayerData.playerdata.bodyReference.activeInHierarchy) {
+			TogglePlayerTemplate(false);
+		}
 	}
 
 	public void OnMusicVolumeSliderChanged() {
