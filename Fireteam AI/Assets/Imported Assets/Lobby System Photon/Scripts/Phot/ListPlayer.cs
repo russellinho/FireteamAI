@@ -246,11 +246,11 @@ namespace Photon.Pun.LobbySystemPhoton
 				LoadingScreen();
 			}
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
+			PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
 			PhotonNetwork.LoadLevel(level);
 			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
-				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
+				StartCoroutine("DetermineMatchLoadedMaster");
 			} else {
-				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
 				StartCoroutine("DetermineMasterClientLoaded");
 			}
 		}
@@ -272,11 +272,11 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
 			string myTeam = ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red" ? "_Red" : "_Blue");
+			PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
 			PhotonNetwork.LoadLevel (level + myTeam);
 			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
-				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
+				StartCoroutine("DetermineMatchLoadedMaster");
 			} else {
-				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
 				StartCoroutine("DetermineMasterClientLoaded");
 			}
 		}
@@ -840,7 +840,6 @@ namespace Photon.Pun.LobbySystemPhoton
 							p.SetReady(true);
 						}
 					}
-					Debug.Log("got changed to " + (string)PhotonNetwork.CurrentRoom.CustomProperties["inGame"]);
 					if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
 						string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
 						if (gameMode == "camp") {
@@ -885,6 +884,20 @@ namespace Photon.Pun.LobbySystemPhoton
 			} else {
 				Debug.Log("b");
 				StartCoroutine("DetermineMasterClientLoaded");
+			}
+		}
+
+		IEnumerator DetermineMatchLoadedMaster() {
+			yield return new WaitForSeconds(2f);
+
+			if (PhotonNetwork.LevelLoadingProgress == 1f) {
+				// Set match in-game and start
+                Hashtable h = new Hashtable();
+				h.Add("inGame", 1);
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
+			} else {
+				StartCoroutine("DetermineMatchLoadedMaster");
 			}
 		}
 
