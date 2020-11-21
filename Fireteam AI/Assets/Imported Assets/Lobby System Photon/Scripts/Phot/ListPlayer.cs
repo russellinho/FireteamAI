@@ -323,7 +323,9 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 			yield return new WaitForSeconds (1f);
 
-			LoadingScreen();
+			if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
+				LoadingScreen();
+			}
 			if (PhotonNetwork.IsMasterClient) {
 				StartGame (mapNames [mapSelector.index]);
 			}
@@ -368,7 +370,9 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 			yield return new WaitForSeconds (1f);
 
-			LoadingScreen();
+			if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
+				LoadingScreen();
+			}
 			if (PhotonNetwork.IsMasterClient) {
 				StartVersusGame (mapNames [mapSelectorVs.index]);
 			}
@@ -757,10 +761,10 @@ namespace Photon.Pun.LobbySystemPhoton
 			if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
 				PhotonNetwork.Disconnect();
 				PhotonNetwork.LeaveRoom();
-				OnDisconnected(DisconnectCause.DisconnectByClientLogic);
 				TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
 				ts.ToggleLoadingScreen(false);
 				ts.mainPanelManager.OpenFirstTab();
+				ts.TriggerAlertPopup("Lost connection to server.\nReason: The host has left the game.");
 			}
 		}
 
