@@ -630,6 +630,7 @@ namespace Photon.Pun.LobbySystemPhoton
                 redTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
 				Hashtable h = new Hashtable();
 				h.Add("team", "red");
+				h.Add("readyStatus", 0);
                 PhotonNetwork.LocalPlayer.SetCustomProperties(h);
             } else if (newTeam == 'B')
             {
@@ -638,6 +639,7 @@ namespace Photon.Pun.LobbySystemPhoton
                 blueTeam.Add(PhotonNetwork.LocalPlayer.ActorNumber);
 				Hashtable h = new Hashtable();
 				h.Add("team", "blue");
+				h.Add("readyStatus", 0);
                 PhotonNetwork.LocalPlayer.SetCustomProperties(h);
             }
             SetTeamCaptain(newTeam);

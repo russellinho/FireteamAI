@@ -357,6 +357,25 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         GameControllerScript.playerList.Add(pView.Owner.ActorNumber, p);
     }
 
+    void AddMyselfToPlayerList(int actorNo)
+    {
+        Debug.Log("Actor no: " + actorNo);
+        Player playerBeingAdded = PhotonNetwork.CurrentRoom.GetPlayer(actorNo);
+        char team = 'N';
+        if ((string)playerBeingAdded.CustomProperties["team"] == "red") {
+            team = 'R';
+            Debug.Log(playerBeingAdded.NickName + " joined red team.");
+        } else if ((string)playerBeingAdded.CustomProperties["team"] == "blue") {
+            team = 'B';
+            Debug.Log(playerBeingAdded.NickName + " joined blue team.");
+        }
+        PlayerStat p = new PlayerStat(null, actorNo, playerBeingAdded.NickName, team, Convert.ToUInt32(playerBeingAdded.CustomProperties["exp"]));
+        if (GameControllerScript.playerList == null) {
+            GameControllerScript.playerList = new Dictionary<int, PlayerStat>();
+        }
+        GameControllerScript.playerList.Add(actorNo, null);
+    }
+
     public void OnEvent(EventData photonEvent)
     {
         if (IsNotInGame()) return;
@@ -367,17 +386,38 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             if (GameControllerScript.playerList.ContainsKey(ownerActorNr)) {
                 return;
             }
+            string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
 
-            GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
-            PhotonView photonView = player.GetComponent<PhotonView>();
-            photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
-            photonView.ViewID = (int) data[3];
-            Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID);
-            InitPlayerInGame(player);
-            player.GetComponent<EquipmentScript>().SyncDataOnJoin();
-            player.GetComponent<WeaponScript>().SyncDataOnJoin();
-            player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
-            AddMyselfToPlayerList(photonView, player);
+            if (gameMode == "camp") {
+                GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
+                PhotonView photonView = player.GetComponent<PhotonView>();
+                photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
+                photonView.ViewID = (int) data[3];
+                Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID);
+                InitPlayerInGame(player);
+                player.GetComponent<EquipmentScript>().SyncDataOnJoin();
+                player.GetComponent<WeaponScript>().SyncDataOnJoin();
+                player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
+                AddMyselfToPlayerList(photonView, player);
+            } else if (gameMode == "versus") {
+                string currentMapName = SceneManager.GetActiveScene().name;
+                string team = (string)PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr).CustomProperties["team"];
+                // Only spawn players on the same team, but add ALL players to the list
+                if ((currentMapName.EndsWith("_Red") && team == "red") || (currentMapName.EndsWith("_Blue") && team == "blue")) {
+                    GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
+                    PhotonView photonView = player.GetComponent<PhotonView>();
+                    photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
+                    photonView.ViewID = (int) data[3];
+                    Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID + " on team [" + team + "]");
+                    InitPlayerInGame(player);
+                    player.GetComponent<EquipmentScript>().SyncDataOnJoin();
+                    player.GetComponent<WeaponScript>().SyncDataOnJoin();
+                    player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
+                    AddMyselfToPlayerList(photonView, player);
+                } else {
+                    AddMyselfToPlayerList(ownerActorNr);
+                }
+            }
         } else if (photonEvent.Code == SPAWN_CODE)
         {
             object[] data = (object[]) photonEvent.CustomData;
@@ -385,17 +425,38 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             if (GameControllerScript.playerList.ContainsKey(ownerActorNr)) {
                 return;
             }
+            string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
 
-            GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
-            PhotonView photonView = player.GetComponent<PhotonView>();
-            photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
-            photonView.ViewID = (int) data[3];
-            Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID);
-            InitPlayerInGame(player);
-            player.GetComponent<EquipmentScript>().SyncDataOnJoin();
-            player.GetComponent<WeaponScript>().SyncDataOnJoin();
-            player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
-            AddMyselfToPlayerList(photonView, player);
+            if (gameMode == "camp") {
+                GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
+                PhotonView photonView = player.GetComponent<PhotonView>();
+                photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
+                photonView.ViewID = (int) data[3];
+                Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID);
+                InitPlayerInGame(player);
+                player.GetComponent<EquipmentScript>().SyncDataOnJoin();
+                player.GetComponent<WeaponScript>().SyncDataOnJoin();
+                player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
+                AddMyselfToPlayerList(photonView, player);
+            } else if (gameMode == "versus") {
+                string currentMapName = SceneManager.GetActiveScene().name;
+                string team = (string)PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr).CustomProperties["team"];
+                // Only spawn players on the same team, but add ALL players to the list
+                if ((currentMapName.EndsWith("_Red") && team == "red") || (currentMapName.EndsWith("_Blue") && team == "blue")) {
+                    GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
+                    PhotonView photonView = player.GetComponent<PhotonView>();
+                    photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
+                    photonView.ViewID = (int) data[3];
+                    Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID + " on team [" + team + "]");
+                    InitPlayerInGame(player);
+                    player.GetComponent<EquipmentScript>().SyncDataOnJoin();
+                    player.GetComponent<WeaponScript>().SyncDataOnJoin();
+                    player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
+                    AddMyselfToPlayerList(photonView, player);
+                } else {
+                    AddMyselfToPlayerList(ownerActorNr);
+                }
+            }
         } else if (photonEvent.Code == LEAVE_CODE)
         {
             if (IsNotInGame()) return;
