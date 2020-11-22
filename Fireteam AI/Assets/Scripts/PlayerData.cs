@@ -135,6 +135,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             titleRef.SetPlayerStatsForTitle();
             titleRef.ToggleLoadingScreen(false);
             if (PhotonNetwork.InRoom) {
+                PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.playername;
                 string gameModeWas = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
                 if (gameModeWas == "versus") {
                     titleRef.mainPanelManager.OpenPanel("Versus");

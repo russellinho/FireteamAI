@@ -57,7 +57,6 @@ namespace Photon.Pun.LobbySystemPhoton
 			string[] lobbyProperties = new string[4] {"gameMode", "mapName", "ping", "inGame"};
             options.CustomRoomProperties = h;
 			options.CustomRoomPropertiesForLobby = lobbyProperties;
-			options.PublishUserId = true;
 
             PhotonNetwork.CreateRoom(roomName, options, null);
 		}
