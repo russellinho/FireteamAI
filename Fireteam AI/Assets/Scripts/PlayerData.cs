@@ -274,7 +274,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void SpawnMyselfOnOthers(bool initial) {
-        if (SceneManager.GetActiveScene().name == "Title") return;
+        if (IsNotInGame()) return;
         GameObject player = PlayerData.playerdata.inGamePlayerReference;
         PhotonView photonView = player.GetComponent<PhotonView>();
         object[] data = new object[]
@@ -359,7 +359,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
     public void OnEvent(EventData photonEvent)
     {
-        if (SceneManager.GetActiveScene().name == "Title") return;
+        if (IsNotInGame()) return;
         if (photonEvent.Code == SPAWN_INIT_CODE)
         {
             object[] data = (object[]) photonEvent.CustomData;
@@ -398,7 +398,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             AddMyselfToPlayerList(photonView, player);
         } else if (photonEvent.Code == LEAVE_CODE)
         {
-            if (SceneManager.GetActiveScene().name == "Title") return;
+            if (IsNotInGame()) return;
             object[] data = (object[]) photonEvent.CustomData;
             int actorNo = (int) data[0];
             GameObject playerToDestroy = GameControllerScript.playerList[actorNo].objRef;
@@ -2170,6 +2170,14 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             return "mods";
         }
         return "";
+    }
+
+    bool IsNotInGame() {
+        string thisSceneName = SceneManager.GetActiveScene().name;
+        if (thisSceneName == "Title" || thisSceneName == "GameOverSuccess" || thisSceneName == "GameOverFail") {
+            return true;
+        }
+        return false;
     }
 }
 

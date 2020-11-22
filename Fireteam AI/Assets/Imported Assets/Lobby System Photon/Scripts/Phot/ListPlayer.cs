@@ -900,7 +900,6 @@ namespace Photon.Pun.LobbySystemPhoton
 					PhotonNetwork.IsMessageQueueRunning = true;
 				}
 				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
-					Debug.Log("after");
 					PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
 				} else {
 					StartCoroutine("DetermineMasterClientLoaded");

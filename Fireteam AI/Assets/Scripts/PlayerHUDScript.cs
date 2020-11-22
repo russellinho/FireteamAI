@@ -49,7 +49,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     // Use this for initialization
     public void Initialize () {
-		// container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
+		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
         if (!GetComponent<PhotonView>().IsMine) {
 			myHudMarkerCam1.targetTexture = null;
 			myHudMarkerCam2.targetTexture = null;
@@ -62,10 +62,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			return;
         }
 		// Find/load HUD components
-		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
+		// gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 		missionWaypoints = new ArrayList ();
 
-		// container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
 		container.hitFlare.GetComponent<RawImage> ().enabled = false;
 		container.hitDir.GetComponent<RawImage> ().enabled = false;
 		container.hitMarker.GetComponent<RawImage> ().enabled = false;
