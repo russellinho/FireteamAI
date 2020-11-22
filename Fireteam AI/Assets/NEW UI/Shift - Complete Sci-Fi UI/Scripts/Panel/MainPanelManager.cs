@@ -12,6 +12,8 @@ namespace Michsky.UI.Shift
         public const int CAMPAIGN_INDEX = 5;
         public const int VERSUS_INDEX = 6;
         public const int MARKET_INDEX = 1;
+        private const int LOADOUT_INDEX = 2;
+        private const int HOME_INDEX = 0;
         public TitleControllerScript titleController;
         public string panelManagerType;
         [Header("PANEL LIST")]
@@ -257,6 +259,11 @@ namespace Michsky.UI.Shift
 
         public void ToggleBottomBar(bool b) {
             bottomPanelGroup.alpha = (b ? 1f : 0f);
+        }
+
+        public bool CurrentPanelAllowsPreviews()
+        {
+            return currentPanelIndex == HOME_INDEX || currentPanelIndex == MARKET_INDEX || currentPanelIndex == LOADOUT_INDEX || currentPanelIndex == MOD_SHOP_INDEX;
         }
     }
 }

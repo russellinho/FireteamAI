@@ -181,7 +181,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public string alertPopupMessage;
 	public string confirmPopupMessage;
 	private bool confirmClicked;
-	public bool hidPlayer;
 	public MainPanelManager mainPanelManager;
 	public Button previouslyPressedButtonLeft;
 	public Button previouslyPressedSubButtonLeft;
@@ -2944,7 +2943,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void HideAll(bool b) {
 		TogglePlayerTemplate(b);
 		ToggleWeaponPreview(b);
-		hidPlayer = !b;
 	}
 
 	public void HandleLeftSideButtonPress(Button b) {
