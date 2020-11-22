@@ -141,9 +141,9 @@ namespace Photon.Pun.LobbySystemPhoton
 				foreach (Player p in PhotonNetwork.PlayerList) {
 					// If the ready status is green or the indicator doesn't exist (master)
 					if (p.IsMasterClient || Convert.ToInt32(p.CustomProperties["readyStatus"]) == 1) {
-						if (p.CustomProperties["team"] == "red") {
+						if ((string)p.CustomProperties["team"] == "red") {
 							redReadyCount++;
-						} else if (p.CustomProperties["team"] == "blue") {
+						} else if ((string)p.CustomProperties["team"] == "blue") {
 							blueReadyCount++;
 						}
 					}
@@ -767,6 +767,12 @@ namespace Photon.Pun.LobbySystemPhoton
 				ts.ToggleLoadingScreen(false);
 				ts.mainPanelManager.OpenFirstTab();
 				ts.TriggerAlertPopup("Lost connection to server.\nReason: The host has left the game.");
+			} else {
+				if (PhotonNetwork.LocalPlayer.IsMasterClient && Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
+					Hashtable h = new Hashtable();
+					h.Add("readyStatus", 0);
+					PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+				}
 			}
 		}
 
