@@ -503,7 +503,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				} else {
 					rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name;
 				}
-				entryScript.CreateEntry((string)p.CustomProperties[ActorProperties.PlayerName], rankToSet, p.ActorNumber, 'C');
+				entryScript.CreateEntry(p.NickName, rankToSet, p.ActorNumber, 'C');
 				int readyStatus = Convert.ToInt32(p.CustomProperties["readyStatus"]);
 				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
 					entryScript.SetReadyText('i');
