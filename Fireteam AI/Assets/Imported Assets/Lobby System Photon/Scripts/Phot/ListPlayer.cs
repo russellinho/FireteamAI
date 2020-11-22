@@ -462,7 +462,6 @@ namespace Photon.Pun.LobbySystemPhoton
 			Hashtable h = new Hashtable();
 			h.Add("exp", (int)PlayerData.playerdata.info.Exp);
 			h.Add("readyStatus", 0);
-			h.Add("nickname", PlayerData.playerdata.playername);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 			// pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (int)PlayerData.playerdata.info.Exp);
 			currentMode = (!templateUIClassVs.gameObject.activeInHierarchy ? 'C' : 'V');
@@ -496,10 +495,6 @@ namespace Photon.Pun.LobbySystemPhoton
 			{
 				GameObject entry = Instantiate(PlayerListEntryPrefab);
 				PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
-				string nickName = p.NickName;
-				if (string.IsNullOrEmpty(nickName)) {
-					nickName = (string)p.CustomProperties["nickname"];
-				}
 				string rankToSet = null;
 				if (p.IsLocal) {
 					rankToSet = PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.Exp).name;
@@ -507,7 +502,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				} else {
 					rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name;
 				}
-				entryScript.CreateEntry(nickName, rankToSet, p.ActorNumber, 'C');
+				entryScript.CreateEntry(p.NickName, rankToSet, p.ActorNumber, 'C');
 				int readyStatus = Convert.ToInt32(p.CustomProperties["readyStatus"]);
 				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
 					entryScript.SetReadyText('i');
@@ -546,10 +541,6 @@ namespace Photon.Pun.LobbySystemPhoton
 			{
 				GameObject entry = Instantiate(PlayerListEntryPrefab);
 				PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
-				string nickName = p.NickName;
-				if (string.IsNullOrEmpty(nickName)) {
-					nickName = (string)p.CustomProperties["nickname"];
-				}
 				string rankToSet = null;
 				if (p.IsLocal) {
 					rankToSet = PlayerData.playerdata.GetRankFromExp(PlayerData.playerdata.info.Exp).name;
@@ -557,7 +548,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				} else {
 					rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name;
 				}
-				entryScript.CreateEntry(nickName, rankToSet, p.ActorNumber, 'R');
+				entryScript.CreateEntry(p.NickName, rankToSet, p.ActorNumber, 'R');
 				int readyStatus = Convert.ToInt32(p.CustomProperties["readyStatus"]);
 				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
 					entryScript.SetReadyText('i');
@@ -733,10 +724,6 @@ namespace Photon.Pun.LobbySystemPhoton
 			PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
 			string rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(newPlayer.CustomProperties["exp"])).name;
 			entryScript.SetReady(false);
-			string nickname = newPlayer.NickName;
-			if (string.IsNullOrEmpty(nickname)) {
-				nickname = (string)newPlayer.CustomProperties["nickname"];
-			}
             if (gameMode == "versus")
             {
 				entryScript.CreateEntry(newPlayer.NickName, rankToSet, newPlayer.ActorNumber, 'V');

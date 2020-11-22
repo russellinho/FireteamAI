@@ -38,7 +38,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     public const uint MAX_KASH = uint.MaxValue;
 
     public static PlayerData playerdata;
-    public string playername;
     public bool disconnectedFromServer;
     public string disconnectReason;
     public bool testMode;
@@ -584,7 +583,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         OnSecondaryChange(info.EquippedSecondary);
         OnSupportChange(info.EquippedSupport);
         OnMeleeChange(info.EquippedMelee);
-        PhotonNetwork.NickName = playername;
+        PhotonNetwork.NickName = info.Playername;
         playerDataModifyLegalFlag = false;
     }
 
