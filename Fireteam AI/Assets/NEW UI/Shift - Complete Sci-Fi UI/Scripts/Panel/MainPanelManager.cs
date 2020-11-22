@@ -197,7 +197,6 @@ namespace Michsky.UI.Shift
         }
 
         public void ReopenCurrentPanel() {
-            Debug.Log("Reopning: " + panels[currentPanelIndex].panelName);
             refresh = true;
             OpenPanel(panels[currentPanelIndex].panelName);
         }
