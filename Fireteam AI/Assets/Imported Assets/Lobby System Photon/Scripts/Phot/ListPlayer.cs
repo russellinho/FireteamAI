@@ -461,9 +461,9 @@ namespace Photon.Pun.LobbySystemPhoton
             // connexion.ToggleLobbyLoadingScreen(false);
 			Hashtable h = new Hashtable();
 			h.Add("exp", (int)PlayerData.playerdata.info.Exp);
-			h.Add("nickname", PlayerData.playerdata.playername);
 			h.Add("readyStatus", 0);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+			PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.playername;
 			// pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (int)PlayerData.playerdata.info.Exp);
 			currentMode = (!templateUIClassVs.gameObject.activeInHierarchy ? 'C' : 'V');
 			if (!PhotonNetwork.IsMasterClient) {
@@ -503,7 +503,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				} else {
 					rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name;
 				}
-				entryScript.CreateEntry((string)p.CustomProperties["nickname"], rankToSet, p.ActorNumber, 'C');
+				entryScript.CreateEntry((string)p.CustomProperties[ActorProperties.PlayerName], rankToSet, p.ActorNumber, 'C');
 				int readyStatus = Convert.ToInt32(p.CustomProperties["readyStatus"]);
 				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
 					entryScript.SetReadyText('i');
@@ -549,7 +549,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				} else {
 					rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name;
 				}
-				entryScript.CreateEntry((string)p.CustomProperties["nickname"], rankToSet, p.ActorNumber, 'R');
+				entryScript.CreateEntry(p.NickName, rankToSet, p.ActorNumber, 'R');
 				int readyStatus = Convert.ToInt32(p.CustomProperties["readyStatus"]);
 				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
 					entryScript.SetReadyText('i');
@@ -727,11 +727,11 @@ namespace Photon.Pun.LobbySystemPhoton
 			entryScript.SetReady(false);
             if (gameMode == "versus")
             {
-				entryScript.CreateEntry((string)newPlayer.CustomProperties["nickname"], rankToSet, newPlayer.ActorNumber, 'V');
+				entryScript.CreateEntry(newPlayer.NickName, rankToSet, newPlayer.ActorNumber, 'V');
                 entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
             } else if (gameMode == "camp")
             {
-				entryScript.CreateEntry((string)newPlayer.CustomProperties["nickname"], rankToSet, newPlayer.ActorNumber, 'C');
+				entryScript.CreateEntry(newPlayer.NickName, rankToSet, newPlayer.ActorNumber, 'C');
                 entry.transform.SetParent(PlayersInRoomPanel, false);
             }
 			if (PhotonNetwork.IsMasterClient) {
