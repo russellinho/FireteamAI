@@ -463,7 +463,6 @@ namespace Photon.Pun.LobbySystemPhoton
 			h.Add("exp", (int)PlayerData.playerdata.info.Exp);
 			h.Add("readyStatus", 0);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-			PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.playername;
 			// pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (int)PlayerData.playerdata.info.Exp);
 			currentMode = (!templateUIClassVs.gameObject.activeInHierarchy ? 'C' : 'V');
 			if (!PhotonNetwork.IsMasterClient) {
