@@ -179,6 +179,7 @@ MonoBehaviour:
   - RpcSetGameIsStarting
   - RpcEndGameForAll
   - RpcSwitchToGameOverScene
+  - RpcNetworkComBoxMessage
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

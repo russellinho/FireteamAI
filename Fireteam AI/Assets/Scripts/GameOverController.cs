@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,6 +9,7 @@ using UnityEngine.UI;
 using Firebase.Database;
 using TMPro;
 using Michsky.UI.Shift;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class GameOverController : MonoBehaviourPunCallbacks {
     public Slider prevExpSlider;
@@ -43,11 +45,28 @@ public class GameOverController : MonoBehaviourPunCallbacks {
     public GameObject campaignPanel;
     private bool isVersus;
 	void Awake() {
+
         exitButtonPressed = false;
         if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
             isVersus = true;
+            if (PhotonNetwork.IsMasterClient) {
+                Hashtable h = new Hashtable();
+                h.Add("deads", null);
+                h.Add("inGame", 0);
+                h.Add("redScore", 0);
+                h.Add("blueScore", 0);
+                h.Add("redStatus", null);
+                h.Add("blueStatus", null);
+                PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+            }
         } else if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp") {
             isVersus = false;
+            if (PhotonNetwork.IsMasterClient) {
+                Hashtable h = new Hashtable();
+                h.Add("deads", null);
+                h.Add("inGame", 0);
+                PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+            }
         }
         if (isVersus)
         {
@@ -62,6 +81,9 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 
     void Start()
     {
+        Hashtable h = new Hashtable();
+        h.Add("readyStatus", 0);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(h);
         PlayerData.playerdata.gameOverControllerRef = this;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -218,6 +240,14 @@ public class GameOverController : MonoBehaviourPunCallbacks {
     public void TriggerAlertPopup(string message) {
         alertPopupMessage = message;
         triggerAlertPopup = true;
+    }
+
+    public override void OnMasterClientSwitched(Player newMasterClient) {
+        if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
+            PhotonNetwork.Disconnect();
+            PhotonNetwork.CurrentRoom.IsVisible = false;
+            PhotonNetwork.LeaveRoom();
+        }
     }
 
 }
