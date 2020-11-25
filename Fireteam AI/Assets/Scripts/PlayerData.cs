@@ -373,7 +373,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         if (GameControllerScript.playerList == null) {
             GameControllerScript.playerList = new Dictionary<int, PlayerStat>();
         }
-        GameControllerScript.playerList.Add(actorNo, null);
+        GameControllerScript.playerList.Add(actorNo, p);
     }
 
     public void OnEvent(EventData photonEvent)
