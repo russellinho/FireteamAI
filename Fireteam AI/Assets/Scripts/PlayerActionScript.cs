@@ -61,7 +61,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private float charHeightOriginal;
     private float charCenterYOriginal;
     public bool escapeValueSent;
-    private bool assaultModeChangedIndicator;
     public bool isRespawning;
     public float respawnTimer;
     private bool escapeAvailablePopup;
@@ -146,7 +145,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         charCenterYOriginal = charController.center.y;
 
         escapeValueSent = false;
-        assaultModeChangedIndicator = false;
         SetInteracting(false, null);
         originalFpcBodyPosY = fpcBodyRef.transform.localPosition.y;
 
@@ -385,9 +383,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
             // On assault mode changed
             bool h = gameController.assaultMode;
-            if (h != assaultModeChangedIndicator)
+            if (h != gameController.assaultModeChangedIndicator)
             {
-                assaultModeChangedIndicator = h;
+                gameController.assaultModeChangedIndicator = h;
                 hud.MessagePopup("Your cover is blown!");
                 hud.ComBoxPopup(2f, "Democko", "They know you're here! Slot the bastards!", "HUD/democko");
                 hud.ComBoxPopup(20f, "Democko", "Cicadas on the rooftops! Watch the rooftops!", "HUD/democko");
@@ -1614,14 +1612,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             }
         }
-		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, assaultModeChangedIndicator, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup);
+		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup);
 	}
 
 	[PunRPC]
-	void RpcSyncDataPlayer(int health, bool escapeValueSent, bool assaultModeChangedIndicator, int kills, int deaths, bool escapeAvailablePopup) {
+	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup) {
         this.health = health;
         this.escapeValueSent = escapeValueSent;
-        this.assaultModeChangedIndicator = assaultModeChangedIndicator;
         GameControllerScript.playerList[pView.OwnerActorNr].kills = kills;
         GameControllerScript.playerList[pView.OwnerActorNr].deaths = deaths;
         this.escapeAvailablePopup = escapeAvailablePopup;

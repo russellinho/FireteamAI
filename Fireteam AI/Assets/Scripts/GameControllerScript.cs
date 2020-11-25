@@ -63,6 +63,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject checkpointRef;
 	public GameObject escapeVehicleRef;
 	private bool endGameWithWin;
+	public bool assaultModeChangedIndicator;
 
 	// Use this for initialization
 	void Awake() {
@@ -959,14 +960,14 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void RpcAskServerForDataGc() {
 		if (PhotonNetwork.IsMasterClient || isVersusHostForThisTeam()) {
 			pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
-				spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin, teamMap);
+				spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin, assaultModeChangedIndicator, teamMap);
 		}
 	}
 
 	[PunRPC]
 	void RpcSyncDataGc(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer,
 		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, 
-		bool assaultMode, bool enemyTeamNearingVictoryTrigger, bool endGameWithWin, string team) {
+		bool assaultMode, bool enemyTeamNearingVictoryTrigger, bool endGameWithWin, bool assaultModeChangedIndicator, string team) {
 		if (team != teamMap) return;
     	lastGunshotHeardPos = new Vector3(lastGunshotHeardPosX, lastGunshotHeardPosY, lastGunshotHeardPosZ);
 		this.lastGunshotTimer = lastGunshotTimer;
@@ -977,6 +978,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		this.sectorsCleared = (short)sectorsCleared;
 		this.assaultMode = assaultMode;
 		this.enemyTeamNearingVictoryTrigger = enemyTeamNearingVictoryTrigger;
+		this.assaultModeChangedIndicator = assaultModeChangedIndicator;
 		this.endGameWithWin = endGameWithWin;
 	}
 

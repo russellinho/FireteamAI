@@ -180,6 +180,7 @@ MonoBehaviour:
   - RpcEndGameForAll
   - RpcSwitchToGameOverScene
   - RpcNetworkComBoxMessage
+  - RpcOnPlayerLeftGame
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
