@@ -118,6 +118,18 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			SceneManager.MoveGameObjectToScene(gameObject, SceneManager.GetActiveScene());
 		}
     }
+
+	public void OnPlayerLeftGame(int actorNo) {
+		pView.RPC("RpcOnPlayerLeftGame", RpcTarget.All, actorNo);
+	}
+
+	[PunRPC]
+	void RpcOnPlayerLeftGame(int actorNo) {
+		if (actorNo == carriedByPlayerId) {
+			ToggleIsCarrying(false, -1);
+			SceneManager.MoveGameObjectToScene(gameObject, SceneManager.GetActiveScene());
+		}
+	}
 		
 	public void ToggleIsCarrying(bool b, int carriedByPlayerId) {
 		this.carriedByPlayerId = carriedByPlayerId;

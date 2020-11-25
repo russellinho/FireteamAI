@@ -153,8 +153,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
     {
-		if (!PhotonNetwork.IsMasterClient && !pView.IsMine) {
-			pView.RPC("RpcAskServerForDataEnemies", RpcTarget.MasterClient);
+		if (!PhotonNetwork.IsMasterClient && !gameControllerScript.isVersusHostForThisTeam() && !pView.IsMine) {
+			pView.RPC("RpcAskServerForDataEnemies", RpcTarget.All);
 		}
 	}
 
@@ -2050,7 +2050,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				ArrayList keysNearBy = new ArrayList ();
 				foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
 					GameObject p = playerStat.objRef;
-					if (!p || p.GetComponent<PlayerActionScript>().health <= 0)
+					if (p == null || p.GetComponent<PlayerActionScript>().health <= 0)
 						continue;
 					if (Vector3.Distance (transform.position, p.transform.position) < range + 20f) {
 						Vector3 toPlayer = p.transform.position - transform.position;
@@ -2585,22 +2585,24 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	[PunRPC]
 	void RpcAskServerForDataEnemies() {
-		int playerTargetingId = 0;
-		
-		if (playerTargeting == null) {
-			playerTargetingId = -1;
-		} else if (playerTargeting == gameControllerScript.vipRef) {
-			playerTargetingId = -2;
-		} else {
-			playerTargetingId = playerTargeting.GetComponent<PhotonView>().Owner.ActorNumber;
-		}
+		if (PhotonNetwork.IsMasterClient || gameControllerScript.isVersusHostForThisTeam()) {
+			int playerTargetingId = 0;
+			
+			if (playerTargeting == null) {
+				playerTargetingId = -1;
+			} else if (playerTargeting == gameControllerScript.vipRef) {
+				playerTargetingId = -2;
+			} else {
+				playerTargetingId = playerTargeting.GetComponent<PhotonView>().Owner.ActorNumber;
+			}
 
-		pView.RPC("RpcSyncDataEnemies", RpcTarget.Others, rigid.useGravity, rigid.isKinematic, rigid.freezeRotation, marker.enabled,
-				navMesh.enabled, navMesh.speed, navMeshObstacle.enabled,
-				myCollider.height, myCollider.radius, myCollider.center.x, myCollider.center.y, myCollider.center.z, myCollider.enabled, headCollider.gameObject.layer,
-				gunRef.enabled, prevNavDestination.x, prevNavDestination.y, prevNavDestination.z, prevWasStopped, actionState, firingState, isCrouching, health, disorientationTime,
-				spawnPos.x, spawnPos.y, spawnPos.z, alertStatus, wasMasterClient, currentBullets, fireTimer, playerTargetingId, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z,
-				suspicionMeter, suspicionCoolDownDelay, increaseSuspicionDelay, alertTeamAfterAlertedTimer, inCover, crouchMode);
+			pView.RPC("RpcSyncDataEnemies", RpcTarget.Others, rigid.useGravity, rigid.isKinematic, rigid.freezeRotation, marker.enabled,
+					navMesh.enabled, navMesh.speed, navMeshObstacle.enabled,
+					myCollider.height, myCollider.radius, myCollider.center.x, myCollider.center.y, myCollider.center.z, myCollider.enabled, headCollider.gameObject.layer,
+					gunRef.enabled, prevNavDestination.x, prevNavDestination.y, prevNavDestination.z, prevWasStopped, actionState, firingState, isCrouching, health, disorientationTime,
+					spawnPos.x, spawnPos.y, spawnPos.z, alertStatus, wasMasterClient, currentBullets, fireTimer, playerTargetingId, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z,
+					suspicionMeter, suspicionCoolDownDelay, increaseSuspicionDelay, alertTeamAfterAlertedTimer, inCover, crouchMode, gameControllerScript.teamMap);
+		}
 	}
 
 	[PunRPC]
@@ -2611,7 +2613,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					float preNavDestZ, bool prevWasStopped, ActionStates acState, FiringStates fiState, bool isCrouching, int health, float disorientationTime,
 					float spawnPosX, float spawnPosY, float spawnPosZ, AlertStatus alertStatus, bool wasMasterClient, int currentBullets, float fireTimer,
 					int playerTargetingId, float lastSeenPlayerPosX, float lastSeenPlayerPosY, float lastSeenPlayerPosZ, float suspicionMeter, float suspicionCoolDownDelay,
-					float increaseSuspicionDelay, float alertTeamAfterAlertedTimer, bool inCover, CrouchMode crouchMode) {
+					float increaseSuspicionDelay, float alertTeamAfterAlertedTimer, bool inCover, CrouchMode crouchMode, string team) {
+		if (team != gameControllerScript.teamMap) return;
 		// if (playerDespawned) {
 		// 	modeler.DespawnPlayer();
 		// } else {

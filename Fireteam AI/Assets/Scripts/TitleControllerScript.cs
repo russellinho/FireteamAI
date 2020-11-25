@@ -217,7 +217,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// Safety destroy previous match data
 		foreach (PlayerStat entry in GameControllerScript.playerList.Values)
 		{
-			Destroy(entry.objRef);
+			if (entry.objRef != null) {
+				Destroy(entry.objRef);
+			}
 		}
 		GameControllerScript.playerList.Clear();
 		// SetPlayerStatsForTitle();

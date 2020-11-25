@@ -467,23 +467,17 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
-    [PunRPC]
-    void RpcAddToTotalKills()
-    {
-        GameControllerScript.playerList[pView.Owner.ActorNumber].kills++;
-        if (gameObject.layer == 0) return;
-        if (playerActionScript.kills != int.MaxValue) {
-            playerActionScript.kills++;
-        }
+    void AddToTotalKills() {
+        playerActionScript.gameController.AddToTotalKills(PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
     // Increment kill count and display HUD popup for kill
     public void RewardKill(bool isHeadshot) {
-        pView.RPC("RpcAddToTotalKills", RpcTarget.All);
+        AddToTotalKills();
         if (isHeadshot) {
             hudScript.OnScreenEffect("HEADSHOT", true);
         } else {
-            hudScript.OnScreenEffect(playerActionScript.kills + " KILLS", true);
+            hudScript.OnScreenEffect(GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills + " KILLS", true);
         }
     }
 

@@ -62,8 +62,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private float charCenterYOriginal;
     public bool escapeValueSent;
     private bool assaultModeChangedIndicator;
-    public int kills;
-    private int deaths;
     public bool isRespawning;
     public float respawnTimer;
     private bool escapeAvailablePopup;
@@ -127,7 +125,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (pView.IsMine) {
             if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
                 string myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
-                pView.RPC("RpcDisablePlayerForVersus", RpcTarget.AllBuffered, myTeam);
+                // pView.RPC("RpcDisablePlayerForVersus", RpcTarget.AllBuffered, myTeam);
                 SetTeamHost();
             }
         }
@@ -153,8 +151,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         originalFpcBodyPosY = fpcBodyRef.transform.localPosition.y;
 
         health = 100;
-        kills = 0;
-        deaths = 0;
         detectionLevel = 0;
         sprintTime = playerScript.stamina;
 
@@ -206,6 +202,26 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             Hashtable h = new Hashtable();
             h.Add("inGame", 1);
             PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+        }
+        string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
+        if (gameMode == "versus") {
+            if (PhotonNetwork.IsMasterClient) {
+                SetTeamHost(true);
+            } else {
+                string myTeam = (string)PhotonNetwork.CurrentRoom.CustomProperties["team"];
+                string thisMap = SceneManager.GetActiveScene().name;
+                if (thisMap.EndsWith("_Red") && myTeam == "red") {
+                    int redLeader = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]);
+                    if (!GameControllerScript.playerList.ContainsKey(redLeader)) {
+                        SetTeamHost(true);
+                    }
+                } else if (thisMap.EndsWith("_Blue") && myTeam == "blue") {
+                    int blueLeader = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueHost"]);
+                    if (!GameControllerScript.playerList.ContainsKey(blueLeader)) {
+                        SetTeamHost(true);
+                    }
+                }
+            }
         }
     }
 
@@ -611,7 +627,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 viewCam.transform.SetParent(transform);
                 viewCam.fieldOfView = 60;
                 rotationSaved = true;
-                pView.RPC("RpcAddToTotalDeaths", RpcTarget.All);
+                AddToTotalDeaths();
             }
 
             deathCameraLerpPos = new Vector3(headTransform.localPosition.x, headTransform.localPosition.y + 2.5f, headTransform.localPosition.z - 4.5f);
@@ -619,14 +635,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    void RpcAddToTotalDeaths()
+    void AddToTotalDeaths()
     {
-        GameControllerScript.playerList[pView.Owner.ActorNumber].deaths++;
-        if (gameObject.layer == 0) return;
-        if (deaths != int.MaxValue) {
-            deaths++;
-        }
+        gameController.AddToTotalDeaths(PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
     void HandleInteracting() {
@@ -1503,12 +1514,18 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         this.enabled = false;
     }
 
-    void SetTeamHost() {
+    void SetTeamHost(bool force = false) {
         string t = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"] + "Host";
-        if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(t)) {
+        if (force) {
             Hashtable h = new Hashtable();
             h.Add(t, PhotonNetwork.LocalPlayer.ActorNumber);
             PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+        } else {
+            if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(t)) {
+                Hashtable h = new Hashtable();
+                h.Add(t, PhotonNetwork.LocalPlayer.ActorNumber);
+                PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+            }
         }
     }
 
@@ -1597,7 +1614,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             }
         }
-		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, assaultModeChangedIndicator, kills, deaths, escapeAvailablePopup);
+		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, assaultModeChangedIndicator, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup);
 	}
 
 	[PunRPC]
@@ -1605,8 +1622,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         this.health = health;
         this.escapeValueSent = escapeValueSent;
         this.assaultModeChangedIndicator = assaultModeChangedIndicator;
-        this.kills = kills;
-        this.deaths = deaths;
+        GameControllerScript.playerList[pView.OwnerActorNr].kills = kills;
+        GameControllerScript.playerList[pView.OwnerActorNr].deaths = deaths;
         this.escapeAvailablePopup = escapeAvailablePopup;
         if (health <= 0) {
             SetPlayerDead();

@@ -75,8 +75,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
     {
-		if (!PhotonNetwork.IsMasterClient) {
-			pView.RPC("RpcAskServerForDataGc", RpcTarget.MasterClient);
+		if (!PhotonNetwork.IsMasterClient && !isVersusHostForThisTeam()) {
+			pView.RPC("RpcAskServerForDataGc", RpcTarget.All);
 		}
 	}
 
@@ -567,14 +567,38 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
 		if (!playerList.ContainsKey(otherPlayer.ActorNumber)) return;
 		ResetEscapeValues ();
-		foreach (PlayerStat entry in playerList.Values)
+		foreach (PlayerStat entry in GameControllerScript.playerList.Values)
 		{
+			if (entry.objRef == null) continue;
 			entry.objRef.GetComponent<PlayerActionScript> ().escapeValueSent = false;
 		}
 
-		char wasTeam = playerList[otherPlayer.ActorNumber].team;
-		Destroy (playerList[otherPlayer.ActorNumber].objRef);
-		playerList.Remove (otherPlayer.ActorNumber);
+		if (GameControllerScript.playerList[otherPlayer.ActorNumber].objRef != null) {
+			Destroy (GameControllerScript.playerList[otherPlayer.ActorNumber].objRef);
+		}
+		GameControllerScript.playerList.Remove (otherPlayer.ActorNumber);
+	}
+
+	public void OnPlayerLeftGame(int actorNo) {
+		pView.RPC("RpcPlayerLeftGame", RpcTarget.All, actorNo);
+	}
+
+	[PunRPC]
+	void RpcOnPlayerLeftGame(int actorNo) {
+		PlayerData.playerdata.GetComponent<PlayerActionScript>().OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
+		PlayerData.playerdata.GetComponent<PlayerHUDScript>().RemovePlayerMarker(PhotonNetwork.LocalPlayer.ActorNumber);
+		if (!playerList.ContainsKey(actorNo)) return;
+		ResetEscapeValues ();
+		foreach (PlayerStat entry in GameControllerScript.playerList.Values)
+		{
+			if (entry.objRef == null) continue;
+			entry.objRef.GetComponent<PlayerActionScript> ().escapeValueSent = false;
+		}
+
+		if (GameControllerScript.playerList[actorNo].objRef != null) {
+			Destroy (GameControllerScript.playerList[actorNo].objRef);
+		}
+		GameControllerScript.playerList.Remove (actorNo);
 	}
 
 	public override void OnMasterClientSwitched(Player newMasterClient) {
@@ -933,14 +957,17 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	[PunRPC]
 	void RpcAskServerForDataGc() {
-		pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
-			spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin);
+		if (PhotonNetwork.IsMasterClient || isVersusHostForThisTeam()) {
+			pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
+				spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin, teamMap);
+		}
 	}
 
 	[PunRPC]
 	void RpcSyncDataGc(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer,
 		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, 
-		bool assaultMode, bool enemyTeamNearingVictoryTrigger, bool endGameWithWin) {
+		bool assaultMode, bool enemyTeamNearingVictoryTrigger, bool endGameWithWin, string team) {
+		if (team != teamMap) return;
     	lastGunshotHeardPos = new Vector3(lastGunshotHeardPosX, lastGunshotHeardPosY, lastGunshotHeardPosZ);
 		this.lastGunshotTimer = lastGunshotTimer;
 		this.endGameTimer = endGameTimer;
@@ -966,6 +993,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		foreach(KeyValuePair<int, PlayerStat> entry in GameControllerScript.playerList)
 		{
 			GameObject p = entry.Value.objRef;
+			if (p == null) continue;
 			if (p.GetComponent<PlayerActionScript>().health <= 0) {
 				total++;
 			}
@@ -1005,6 +1033,24 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public void LockRoom()
 	{
 		PhotonNetwork.CurrentRoom.IsOpen = false;
+	}
+
+	public void AddToTotalDeaths(int actorNo) {
+		pView.RPC("RpcAddToTotalDeaths", RpcTarget.All, actorNo);
+	}
+
+	[PunRPC]
+	void RpcAddToTotalDeaths(int actorNo) {
+		GameControllerScript.playerList[actorNo].deaths++;
+	}
+
+	public void AddToTotalKills(int actorNo) {
+		pView.RPC("RpcAddToTotalKills", RpcTarget.All, actorNo);
+	}
+
+	[PunRPC]
+	void RpcAddToTotalKills(int actorNo) {
+		GameControllerScript.playerList[actorNo].kills++;
 	}
 
 }

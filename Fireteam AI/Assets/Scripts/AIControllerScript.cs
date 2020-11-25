@@ -198,6 +198,7 @@ public class AIControllerScript : MonoBehaviour
             bool first = true;
             float minD = 0f;
             foreach (KeyValuePair<int, PlayerStat> p in GameControllerScript.playerList) {
+                if (p.Value.objRef == null) continue;
                 float d = Vector3.Distance(t.position, p.Value.objRef.transform.position);
                 if (first) {
                     minD = d;

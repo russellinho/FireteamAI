@@ -946,6 +946,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void RemovePlayerMarker(int actorNumber) {
+		if (!playerMarkers.ContainsKey(actorNumber)) return;
 		Destroy (playerMarkers [actorNumber]);
 		playerMarkers.Remove (actorNumber);
 	}

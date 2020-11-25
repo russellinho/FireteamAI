@@ -409,8 +409,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
                     photonView.ViewID = (int) data[3];
                     Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID + " on team [" + team + "]");
-                    // TODO: Ensure that none of the 4 below throw errors on versus
-                    // TODO: See what the ramifications are of adding a null player ref to the player list on AddMyselfToPlayerList
                     InitPlayerInGame(player);
                     player.GetComponent<EquipmentScript>().SyncDataOnJoin();
                     player.GetComponent<WeaponScript>().SyncDataOnJoin();

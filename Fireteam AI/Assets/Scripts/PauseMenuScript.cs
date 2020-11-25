@@ -76,6 +76,10 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 				h.Add("deads", currentDeads);
 				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 			}
+			if (gameController.vipRef != null) {
+				gameController.vipRef.GetComponent<NpcScript>().OnPlayerLeftGame(PhotonNetwork.LocalPlayer.ActorNumber);
+				gameController.OnPlayerLeftGame(PhotonNetwork.LocalPlayer.ActorNumber);
+			}
 			PlayerData.playerdata.DestroyMyself();
 		}
 	}
