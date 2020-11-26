@@ -654,20 +654,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				} else {
 					if (exitLevelLoadedTimer <= 0f && !loadExitCalled) {
                         loadExitCalled = true;
-                        if (matchType == 'C')
-                        {
-                            SwitchToGameOverScene();
-                        } else if (matchType == 'V')
-                        {
-                            string teamStatus = (string)PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Status"];
-                            if (teamStatus == "win")
-                            {
-                                SwitchToGameOverScene(true);
-                            } else if (teamStatus == "lose")
-                            {
-                                SwitchToGameOverScene(false);
-                            }
-                        }
+                        SwitchToGameOverScene();
 					} else {
 						exitLevelLoadedTimer -= Time.deltaTime;
 					}
@@ -684,29 +671,30 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		SceneManager.LoadScene ("Title");
 	}
 
-	void SwitchToGameOverScene(bool win) {
-		if (!win) {
-			// PhotonNetwork.LoadLevel("GameOverFail");
-			pView.RPC("RpcSwitchToGameOverScene", RpcTarget.All, "GameOverFail");
-		} else {
-			// PhotonNetwork.LoadLevel("GameOverSuccess");
-			pView.RPC("RpcSwitchToGameOverScene", RpcTarget.All, "GameOverSuccess");
-		}
-	}
-
 	void SwitchToGameOverScene() {
-		if (endGameWithWin) {
-			// PhotonNetwork.LoadLevel("GameOverSuccess");
-			pView.RPC("RpcSwitchToGameOverScene", RpcTarget.All, "GameOverSuccess");
-		} else {
-			// PhotonNetwork.LoadLevel("GameOverFail");
-			pView.RPC("RpcSwitchToGameOverScene", RpcTarget.All, "GameOverFail");
+		if (PhotonNetwork.IsMasterClient) {
+			pView.RPC("RpcSwitchToGameOverScene", RpcTarget.All);
 		}
 	}
 
 	[PunRPC]
-	void RpcSwitchToGameOverScene(string s) {
-		PhotonNetwork.LoadLevel(s);
+	void RpcSwitchToGameOverScene() {
+		string matchType = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
+		if (matchType == "versus") {
+			string myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
+			string teamStatus = (string)PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Status"];
+			if (teamStatus == "win") {
+				PhotonNetwork.LoadLevel("GameOverSuccess");
+			} else {
+				PhotonNetwork.LoadLevel("GameOverFail");
+			}
+		} else {
+			if (endGameWithWin) {
+				PhotonNetwork.LoadLevel("GameOverSuccess");
+			} else {
+				PhotonNetwork.LoadLevel("GameOverFail");
+			}
+		}
 	}
 
 	public void AddCoverSpot(GameObject coverSpot) {
