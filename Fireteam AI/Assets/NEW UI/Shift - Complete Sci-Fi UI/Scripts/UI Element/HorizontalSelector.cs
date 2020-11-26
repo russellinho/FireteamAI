@@ -312,6 +312,7 @@ namespace Michsky.UI.Shift
 
         public void UpdateUI()
         {
+            if (label == null) transform.Find("Text").GetComponent<TextMeshProUGUI>();
             label.text = itemList[index].itemTitle;
 
             if (enableIndicators == true)
