@@ -431,19 +431,24 @@ namespace Photon.Pun.LobbySystemPhoton
 		[PunRPC]
 		void RpcSetMapInfo(int i) {
 			Hashtable h = new Hashtable();
-			Texture mapTexture = (Texture)Resources.Load(mapStrings[i]);
-            mapPreviewThumb.texture = mapTexture;
-            mapPreviewVsThumb.texture = mapTexture;
-			mapDescription.text = mapDescriptions[i];
-			mapDescriptionVs.text = mapDescriptions[i];
-			if (!PhotonNetwork.IsMasterClient) {
-				mapSelector.index = i;
-				mapSelectorVs.index = i;
-				mapSelector.UpdateUI();
-				mapSelectorVs.UpdateUI();
-			}
 			h.Add("mapName", mapNames[i]);
 			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			Texture mapTexture = (Texture)Resources.Load(mapStrings[i]);
+			if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp") {
+				mapPreviewThumb.texture = mapTexture;
+				mapDescription.text = mapDescriptions[i];
+				if (!PhotonNetwork.IsMasterClient) {
+					mapSelector.index = i;
+					mapSelector.UpdateUI();
+				}
+			} else if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
+				mapPreviewVsThumb.texture = mapTexture;
+				mapDescriptionVs.text = mapDescriptions[i];
+				if (!PhotonNetwork.IsMasterClient) {
+					mapSelectorVs.index = i;
+					mapSelectorVs.UpdateUI();
+				}
+			}
 		}
 
 		[PunRPC]
