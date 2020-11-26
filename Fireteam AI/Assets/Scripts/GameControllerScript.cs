@@ -947,15 +947,30 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	[PunRPC]
 	void RpcAskServerForDataGc() {
 		if (PhotonNetwork.IsMasterClient || isVersusHostForThisTeam()) {
+			string bombsDefused = null;
+			if (SceneManager.GetActiveScene().name.StartsWith("Badlands1")) {
+				bombsDefused = "";
+				bool first = true;
+				for (int i = 0; i < items.Length; i++) {
+					BombScript b = items[i].GetComponent<BombScript>();
+					if (b.defused) {
+						if (!first) {
+							bombsDefused += ",";
+						}
+						bombsDefused += b.bombId;
+						first = false;
+					}
+				}
+			}
 			pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
-				spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin, assaultModeChangedIndicator, teamMap);
+				spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin, assaultModeChangedIndicator, bombsDefused, teamMap);
 		}
 	}
 
 	[PunRPC]
 	void RpcSyncDataGc(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer,
-		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, 
-		bool assaultMode, bool enemyTeamNearingVictoryTrigger, bool endGameWithWin, bool assaultModeChangedIndicator, string team) {
+		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, bool assaultMode, bool enemyTeamNearingVictoryTrigger, 
+		bool endGameWithWin, bool assaultModeChangedIndicator, string bombsDefused, string team) {
 		if (team != teamMap) return;
     	lastGunshotHeardPos = new Vector3(lastGunshotHeardPosX, lastGunshotHeardPosY, lastGunshotHeardPosZ);
 		this.lastGunshotTimer = lastGunshotTimer;
@@ -968,6 +983,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		this.enemyTeamNearingVictoryTrigger = enemyTeamNearingVictoryTrigger;
 		this.assaultModeChangedIndicator = assaultModeChangedIndicator;
 		this.endGameWithWin = endGameWithWin;
+		if (bombsDefused != null) {
+			string[] bombDefusedIds = bombsDefused.Split(',');
+			foreach (string s in bombDefusedIds) {
+				int bombId = int.Parse(s);
+				for (int i = 0; i < items.Length; i++) {
+					items[i].GetComponent<BombScript>().Defuse();
+				}
+			}
+		}
 	}
 
 	public void ClearDeadPlayersList() {
