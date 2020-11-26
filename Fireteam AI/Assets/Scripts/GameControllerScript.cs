@@ -947,30 +947,71 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	[PunRPC]
 	void RpcAskServerForDataGc() {
 		if (PhotonNetwork.IsMasterClient || isVersusHostForThisTeam()) {
-			string bombsDefused = null;
-			if (SceneManager.GetActiveScene().name.StartsWith("Badlands1")) {
-				bombsDefused = "";
-				bool first = true;
+			string currentSceneName = SceneManager.GetActiveScene().name;
+			string serializedObjectives = "";
+			bool first = true;
+			foreach (string s in objectives.objectivesText) {
+				if (!first) {
+					serializedObjectives += "#";
+				}
+				serializedObjectives += s;
+				first = false;
+			}
+
+			serializedObjectives += "|";
+			serializedObjectives += objectives.itemsRemaining;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.stepsLeftToCompletion;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.totalStepsToCompletion;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.escaperCount;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.escapeAvailable;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.missionTimer1;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.missionTimer2;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.missionTimer3;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.checkpoint1Passed;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.checkpoint2Passed;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.selectedEvacIndex;
+
+			if (currentSceneName.StartsWith("Badlands1")) {
 				for (int i = 0; i < items.Length; i++) {
 					BombScript b = items[i].GetComponent<BombScript>();
 					if (b.defused) {
-						if (!first) {
-							bombsDefused += ",";
+						serializedObjectives += "|";
+						serializedObjectives += b.bombId;
+					}
+				}
+			} else if (currentSceneName.StartsWith("Badlands2")) {
+				for (int i = 0; i < items.Length; i++) {
+					FlareScript f = items[i].GetComponent<FlareScript>();
+					if (!f.gameObject.activeInHierarchy) {
+						serializedObjectives += "|" + f.flareId + ":0";
+					} else {
+						if (f.popped) {
+							serializedObjectives += "|" + f.flareId + ":2";
+						} else {
+							serializedObjectives += "|" + f.flareId + ":1";
 						}
-						bombsDefused += b.bombId;
-						first = false;
 					}
 				}
 			}
 			pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
-				spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin, assaultModeChangedIndicator, bombsDefused, teamMap);
+				spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin, assaultModeChangedIndicator, serializedObjectives, GameControllerScript.missionTime, teamMap);
 		}
 	}
 
 	[PunRPC]
 	void RpcSyncDataGc(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer,
 		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, bool assaultMode, bool enemyTeamNearingVictoryTrigger, 
-		bool endGameWithWin, bool assaultModeChangedIndicator, string bombsDefused, string team) {
+		bool endGameWithWin, bool assaultModeChangedIndicator, string serializedObjectives, float missionTime, string team) {
 		if (team != teamMap) return;
     	lastGunshotHeardPos = new Vector3(lastGunshotHeardPosX, lastGunshotHeardPosY, lastGunshotHeardPosZ);
 		this.lastGunshotTimer = lastGunshotTimer;
@@ -983,16 +1024,86 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		this.enemyTeamNearingVictoryTrigger = enemyTeamNearingVictoryTrigger;
 		this.assaultModeChangedIndicator = assaultModeChangedIndicator;
 		this.endGameWithWin = endGameWithWin;
-		if (bombsDefused != null) {
-			string[] bombDefusedIds = bombsDefused.Split(',');
-			foreach (string s in bombDefusedIds) {
-				int bombId = int.Parse(s);
-				for (int i = 0; i < items.Length; i++) {
-					BombScript b = items[i].GetComponent<BombScript>();
-					if (bombId == b.bombId) {
-						b.Defuse();
+		GameControllerScript.missionTime = missionTime;
+		
+		string[] parsedSerializations = serializedObjectives.Split('|');
+		// Sync objectives text - TODO: Sync formatting too
+		string[] objectivesText = parsedSerializations[0].Split('#');
+		for (int i = 0; i < objectivesText.Length; i++) {
+			this.objectives.objectivesText[i] = objectivesText[i];
+		}
+		// Sync itemsRemaining
+		this.objectives.itemsRemaining = int.Parse(parsedSerializations[1]);
+		// Sync stepsLeftToCompletion
+		this.objectives.stepsLeftToCompletion = int.Parse(parsedSerializations[2]);
+		// Sync totalStepsToCompletion
+		this.objectives.totalStepsToCompletion = int.Parse(parsedSerializations[3]);
+		// Sync escaperCount
+		this.objectives.escaperCount = int.Parse(parsedSerializations[4]);
+		// Sync escapeAvailable
+		this.objectives.escapeAvailable = bool.Parse(parsedSerializations[5]);
+		// Sync missionTimer1
+		this.objectives.missionTimer1 = float.Parse(parsedSerializations[6]);
+		// Sync missionTimer2
+		this.objectives.missionTimer2 = float.Parse(parsedSerializations[7]);
+		// Sync missionTimer3
+		this.objectives.missionTimer3 = float.Parse(parsedSerializations[8]);
+		// Sync checkpoint1Passed
+		this.objectives.checkpoint1Passed = bool.Parse(parsedSerializations[9]);
+		// Sync checkpoint2Passed
+		this.objectives.checkpoint2Passed = bool.Parse(parsedSerializations[10]);
+		// Sync selectedEvacIndex
+		this.objectives.selectedEvacIndex = int.Parse(parsedSerializations[11]);
+		// Sync mission specific data
+		string currentSceneName = SceneManager.GetActiveScene().name;
+		if (currentSceneName.StartsWith("Badlands1")) {
+			if (parsedSerializations.Length > 12) {
+				for (int i = 12; i < parsedSerializations.Length; i++) {
+					int bombId = int.Parse(parsedSerializations[i]);
+					for (int j = 0; j < items.Length; j++) {
+						BombScript b = items[j].GetComponent<BombScript>();
+						if (bombId == b.bombId) {
+							b.Defuse();
+						}
 					}
 				}
+			}
+			// Update objectives formatting
+			if (this.objectives.stepsLeftToCompletion == 1) {
+				this.objectives.RemoveObjective(0);
+			}
+			if (this.objectives.stepsLeftToCompletion == 0) {
+				this.objectives.RemoveObjective(1);
+			}
+		} else if (currentSceneName.StartsWith("Badlands2")) {
+			for (int i = 12; i < parsedSerializations.Length; i++) {
+				string[] flareStatuses = parsedSerializations[i].Split(':');
+				int flareId = int.Parse(flareStatuses[0]);
+				int status = int.Parse(flareStatuses[1]);
+				for (int j = 0; j < items.Length; j++) {
+					FlareScript f = items[j].GetComponent<FlareScript>();
+					if (f.flareId == flareId) {
+						if (status == 0) {
+							f.gameObject.SetActive(false);
+						} else if (status == 1) {
+							f.gameObject.SetActive(true);
+							f.ToggleFlareTemplate(true);
+						} else if (status == 2) {
+							f.gameObject.SetActive(true);
+							f.PopFlare();
+						}
+					}
+				}
+			}
+			// Update objectives formatting
+			if (this.objectives.stepsLeftToCompletion == 2) {
+				this.objectives.RemoveObjective(0);
+			}
+			if (this.objectives.stepsLeftToCompletion == 1) {
+				this.objectives.RemoveObjective(1);
+			}
+			if (this.objectives.stepsLeftToCompletion == 0) {
+				this.objectives.RemoveObjective(2);
 			}
 		}
 	}

@@ -40,17 +40,15 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	// Use this for initialization
 	void Awake() {
 		carriedByPlayerId = -1;
-		// SceneManager.sceneLoaded += OnSceneFinishedLoading;
+		SceneManager.sceneLoaded += OnSceneFinishedLoading;
 	}
 
-	// public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
-    // {
-    //     string levelName = SceneManager.GetActiveScene().name;
-	// 	if (levelName == "Title") {
-	// 		Destroy(gameObject);
-	// 		PhotonNetwork.Destroy(gameObject);
-	// 	}
-	// }
+	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+		if (!PhotonNetwork.IsMasterClient && !gameController.isVersusHostForThisTeam()) {
+			pView.RPC("RpcAskServerForDataNpc", RpcTarget.All);
+		}
+	}
 
 	void Update()
     {
@@ -442,6 +440,29 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 
 			// float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
 			// pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
+		}
+	}
+
+	[PunRPC]
+	void RpcAskServerForDataNpc() {
+		if (PhotonNetwork.IsMasterClient || gameController.isVersusHostForThisTeam()) {
+			pView.RPC("RpcSyncDataNpc", RpcTarget.Others, health, carriedByPlayerId, actionState, firingState, deathBy, envDamageTimer, disorientationTime);
+		}
+	}
+
+	[PunRPC]
+	void RpcSyncDataNpc(int health, int carriedByPlayerId, ActionStates acState, FiringStates firingState, int deathBy, float envDamageTimer, float disorientationTimer) {
+		this.health = health;
+		this.carriedByPlayerId = carriedByPlayerId;
+		this.actionState = acState;
+		this.firingState = firingState;
+		this.deathBy = deathBy;
+		this.envDamageTimer = envDamageTimer;
+		this.disorientationTime = disorientationTimer;
+		if (carriedByPlayerId == -1) {
+			ToggleIsCarrying(false, -1);
+		} else {
+			ToggleIsCarrying(true, carriedByPlayerId);
 		}
 	}
 
