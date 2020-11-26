@@ -436,6 +436,10 @@ namespace Photon.Pun.LobbySystemPhoton
             mapPreviewVsThumb.texture = mapTexture;
 			mapDescription.text = mapDescriptions[i];
 			mapDescriptionVs.text = mapDescriptions[i];
+			mapSelector.index = i;
+			mapSelectorVs.index = i;
+			mapSelector.UpdateUI();
+			mapSelectorVs.UpdateUI();
 			h.Add("mapName", mapNames[i]);
 			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 		}

@@ -991,7 +991,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				}
 			} else if (currentSceneName.StartsWith("Badlands2")) {
 				for (int i = 0; i < items.Length; i++) {
-					FlareScript f = items[i].GetComponent<FlareScript>();
+					FlareScript f = items[i].GetComponentInChildren<FlareScript>();
 					if (!f.gameObject.activeInHierarchy) {
 						serializedObjectives += "|" + f.flareId + ":0";
 					} else {
@@ -1081,7 +1081,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				int flareId = int.Parse(flareStatuses[0]);
 				int status = int.Parse(flareStatuses[1]);
 				for (int j = 0; j < items.Length; j++) {
-					FlareScript f = items[j].GetComponent<FlareScript>();
+					FlareScript f = items[j].GetComponentInChildren<FlareScript>();
 					if (f.flareId == flareId) {
 						if (status == 0) {
 							f.gameObject.SetActive(false);

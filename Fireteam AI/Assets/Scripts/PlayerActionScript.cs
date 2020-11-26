@@ -1278,7 +1278,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             foreach (GameObject o in gameController.items) {
                 FlareScript s = o.GetComponentInChildren<FlareScript>();
                 if (s.flareId != i) {
-                    o.SetActive(false);
+                    s.gameObject.SetActive(false);
                 }
             }
             hud.ComBoxPopup(1f, "Democko", "We see you! We’re incoming!", "HUD/democko");
