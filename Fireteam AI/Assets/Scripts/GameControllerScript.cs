@@ -143,7 +143,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void DetermineObjectivesForMission(string sceneName) {
-		objectives = new Objectives();
+		objectives = new Objectives(this);
 		objectives.LoadObjectives(currentMap);
 	}
 

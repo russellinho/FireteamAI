@@ -1146,17 +1146,19 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     public void SetCurrentAimDownSightPos(string sightName) {
-        if (fpc.equipmentScript.GetGender() == 'M') {
-            currentAimDownSightPos = weaponMetaData.aimDownSightPosMale;
-            currentAimStableHandPos = weaponMetaData.stableHandPosMale;
-        } else if (fpc.equipmentScript.GetGender() == 'F') {
-            currentAimDownSightPos = weaponMetaData.aimDownSightPosFemale;
-            currentAimStableHandPos = weaponMetaData.stableHandPosFemale;
-        }
-        if (sightName != null) {
-            int index = InventoryScript.itemData.modCatalog[sightName].modIndex;
-            currentAimDownSightPos.y += weaponMetaData.crosshairAimOffset[index];
-            currentAimStableHandPos.y += weaponMetaData.crosshairAimOffset[index];
+        if (pView.IsMine) {
+            if (fpc.equipmentScript.GetGender() == 'M') {
+                currentAimDownSightPos = weaponMetaData.aimDownSightPosMale;
+                currentAimStableHandPos = weaponMetaData.stableHandPosMale;
+            } else if (fpc.equipmentScript.GetGender() == 'F') {
+                currentAimDownSightPos = weaponMetaData.aimDownSightPosFemale;
+                currentAimStableHandPos = weaponMetaData.stableHandPosFemale;
+            }
+            if (sightName != null && sightName != "") {
+                int index = InventoryScript.itemData.modCatalog[sightName].modIndex;
+                currentAimDownSightPos.y += weaponMetaData.crosshairAimOffset[index];
+                currentAimStableHandPos.y += weaponMetaData.crosshairAimOffset[index];
+            }
         }
     }
 
