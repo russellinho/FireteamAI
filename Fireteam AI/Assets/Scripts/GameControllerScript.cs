@@ -983,15 +983,18 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		this.enemyTeamNearingVictoryTrigger = enemyTeamNearingVictoryTrigger;
 		this.assaultModeChangedIndicator = assaultModeChangedIndicator;
 		this.endGameWithWin = endGameWithWin;
-		// if (bombsDefused != null) {
-		// 	string[] bombDefusedIds = bombsDefused.Split(',');
-		// 	foreach (string s in bombDefusedIds) {
-		// 		int bombId = int.Parse(s);
-		// 		for (int i = 0; i < items.Length; i++) {
-		// 			items[i].GetComponent<BombScript>().Defuse();
-		// 		}
-		// 	}
-		// }
+		if (bombsDefused != null) {
+			string[] bombDefusedIds = bombsDefused.Split(',');
+			foreach (string s in bombDefusedIds) {
+				int bombId = int.Parse(s);
+				for (int i = 0; i < items.Length; i++) {
+					BombScript b = items[i].GetComponent<BombScript>();
+					if (bombId == b.bombId) {
+						b.Defuse();
+					}
+				}
+			}
+		}
 	}
 
 	public void ClearDeadPlayersList() {
