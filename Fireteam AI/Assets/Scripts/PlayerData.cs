@@ -142,6 +142,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 }
                 titleRef.connexion.listPlayer.OnJoinedRoom();
             } else {
+                titleRef.connexion.OnLeaveGameButtonClicked();
 			    titleRef.mainPanelManager.OpenFirstTab();
             }
             dataLoadedFlag = false;
