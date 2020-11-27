@@ -755,6 +755,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public bool isVersusHostForThisTeam() {
+		if (PhotonNetwork.LocalPlayer.IsMasterClient) return true;
 		if (teamMap == "R" && Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]) == PhotonNetwork.LocalPlayer.ActorNumber) {
 			return true;
 		} else if (teamMap == "B" && Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueHost"]) == PhotonNetwork.LocalPlayer.ActorNumber) {
