@@ -1133,7 +1133,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         escapeValueSent = false;
-        if (gameController.matchType == 'V' && onMyMap) {
+        if (gameController.matchType == 'V' && onMyMap && otherPlayer != null) {
             RemovePlayerAsHost(otherPlayer.ActorNumber);
             SetTeamHost();
         }

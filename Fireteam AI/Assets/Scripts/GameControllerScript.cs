@@ -163,11 +163,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 		UpdateTimers();
 		DecrementLastGunshotTimer();
-		if (Input.GetKeyDown(KeyCode.U)) {
-			foreach (KeyValuePair<int, PlayerStat> j in GameControllerScript.playerList) {
-				Debug.Log(j.Key + " : " + (j.Value.objRef == null));
-			}
-		}
 	}
 
 	void UpdateTimers() {
@@ -584,7 +579,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
-		if (!playerList.ContainsKey(otherPlayer.ActorNumber)) return;
+		PlayerData.playerdata.GetComponent<PlayerHUDScript>().RemovePlayerMarker(otherPlayer.ActorNumber);
+		if (!GameControllerScript.playerList.ContainsKey(otherPlayer.ActorNumber)) return;
 		ResetEscapeValues ();
 		foreach (PlayerStat entry in GameControllerScript.playerList.Values)
 		{
@@ -604,9 +600,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	[PunRPC]
 	void RpcOnPlayerLeftGame(int actorNo) {
-		PlayerData.playerdata.GetComponent<PlayerActionScript>().OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
-		PlayerData.playerdata.GetComponent<PlayerHUDScript>().RemovePlayerMarker(PhotonNetwork.LocalPlayer.ActorNumber);
-		if (!playerList.ContainsKey(actorNo)) return;
+		PlayerData.playerdata.GetComponent<PlayerActionScript>().OnPlayerLeftRoom(PhotonNetwork.CurrentRoom.GetPlayer(actorNo));
+		PlayerData.playerdata.GetComponent<PlayerHUDScript>().RemovePlayerMarker(actorNo);
+		if (!GameControllerScript.playerList.ContainsKey(actorNo)) return;
 		ResetEscapeValues ();
 		foreach (PlayerStat entry in GameControllerScript.playerList.Values)
 		{
