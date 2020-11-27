@@ -465,7 +465,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             GameObject playerToDestroy = GameControllerScript.playerList[actorNo].objRef;
             PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().RemovePlayerMarker(actorNo);
             GameControllerScript.playerList.Remove(actorNo);
-            Destroy(playerToDestroy);
+            if (playerToDestroy != null) {
+                Destroy(playerToDestroy);
+            }
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
         {
             SpawnMyselfOnOthers(false);
