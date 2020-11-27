@@ -1131,7 +1131,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public int GetRedTeamCount() {
 		int total = 0;
-		foreach (Player p in PhotonNetwork.PlayerList) {
+		foreach (KeyValuePair<int, PlayerStat> entry in GameControllerScript.playerList)
+		{
+			Player p = PhotonNetwork.CurrentRoom.GetPlayer(entry.Key);
 			if ((string)p.CustomProperties["team"] == "red") {
 				total++;
 			}
@@ -1141,7 +1143,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public int GetBlueTeamCount() {
 		int total = 0;
-		foreach (Player p in PhotonNetwork.PlayerList) {
+		foreach (KeyValuePair<int, PlayerStat> entry in GameControllerScript.playerList)
+		{
+			Player p = PhotonNetwork.CurrentRoom.GetPlayer(entry.Key);
 			if ((string)p.CustomProperties["team"] == "blue") {
 				total++;
 			}
