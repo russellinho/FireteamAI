@@ -13,6 +13,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     // Timer
     public static float missionTime;
     public static float MAX_MISSION_TIME = 1800f;
+	private const float FORFEIT_CHECK_DELAY = 8f;
 
 	// A number value to the maps/missions starting with 1. The number correlates with the time it was released, so the lower the number, the earlier it was released.
 	// 1 = The Badlands: Act 1; 2 = The Badlands: Act 2
@@ -64,9 +65,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject escapeVehicleRef;
 	private bool endGameWithWin;
 	public bool assaultModeChangedIndicator;
+	private float forfeitDelayCheck;
 
 	// Use this for initialization
 	void Awake() {
+		forfeitDelayCheck = FORFEIT_CHECK_DELAY;
 		coverSpots = new Dictionary<short, GameObject>();
         myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
         opposingTeam = (myTeam == "red" ? "blue" : "red");
@@ -430,6 +433,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     void DetermineEnemyTeamForfeited(int redTeamCount, int blueTeamCount)
     {
         if (gameOver) return;
+		if (forfeitDelayCheck > 0f) {
+			forfeitDelayCheck -= Time.deltaTime;
+			return;
+		}
+		forfeitDelayCheck = FORFEIT_CHECK_DELAY;
 
         // Check if the other team has forfeited - can be determine by any players left on the opposing team
 		if ((teamMap == "R" && blueTeamCount == 0) || (teamMap == "B" && redTeamCount == 0)) {
