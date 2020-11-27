@@ -329,6 +329,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	[PunRPC]
 	void RpcEndGame(float f, string eventMessage, bool win) {
+		if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+			PhotonNetwork.CurrentRoom.IsOpen = false;
+		}
 		endGameTimer = f;
 		gameOver = true;
 		endGameWithWin = win;
@@ -343,7 +346,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     void RpcEndVersusGame(float f, string winner, string winnerEventMessage, string loserEventMessage)
     {
 		if (gameOver) return;
-
+		if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+			PhotonNetwork.CurrentRoom.IsOpen = false;
+		}
         endGameTimer = f;
         gameOver = true;
         
