@@ -96,10 +96,6 @@ public class PlayerEntryPrefab : MonoBehaviour
         ToggleEntryByTeam(team);
     }
 
-    public void ChangeTeam() {
-        SetTeam(redEntry.activeInHierarchy ? 'B' : 'R');
-    }
-
     public void SetActorId(int id)
     {
         actorId = id;

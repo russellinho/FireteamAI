@@ -76,6 +76,8 @@ namespace Photon.Pun.LobbySystemPhoton
 			h.Add("ping", (int)PhotonNetwork.GetPing());
 			h.Add("redScore", 0);
 			h.Add("blueScore", 0);
+			h.Add("redHost", -1);
+			h.Add("blueHost", -1);
             string[] lobbyProperties = new string[4] {"gameMode", "mapName", "ping", "inGame"};
             options.CustomRoomProperties = h;
             options.CustomRoomPropertiesForLobby = lobbyProperties;
