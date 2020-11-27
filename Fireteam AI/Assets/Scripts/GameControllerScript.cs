@@ -544,7 +544,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     }
 
     // When someone leaves the game in the middle of an escape, reset the values to recount
-    void ResetEscapeValues() {
+    public void ResetEscapeValues() {
 		objectives.escaperCount = 0;
 	}
 
@@ -592,22 +592,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			Destroy (GameControllerScript.playerList[otherPlayer.ActorNumber].objRef);
 		}
 		GameControllerScript.playerList.Remove (otherPlayer.ActorNumber);
-	}
-
-	public void OnPlayerLeftGame(int actorNo) {
-		pView.RPC("RpcOnPlayerLeftGame", RpcTarget.All, actorNo);
-	}
-
-	[PunRPC]
-	void RpcOnPlayerLeftGame(int actorNo) {
-		PlayerData.playerdata.GetComponent<PlayerActionScript>().OnPlayerLeftRoom(PhotonNetwork.CurrentRoom.GetPlayer(actorNo));
-		if (!GameControllerScript.playerList.ContainsKey(actorNo)) return;
-		ResetEscapeValues ();
-		foreach (PlayerStat entry in GameControllerScript.playerList.Values)
-		{
-			if (entry.objRef == null) continue;
-			entry.objRef.GetComponent<PlayerActionScript> ().escapeValueSent = false;
-		}
 	}
 
 	public override void OnMasterClientSwitched(Player newMasterClient) {

@@ -468,6 +468,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             GameObject playerToDestroy = GameControllerScript.playerList[actorNo].objRef;
             PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().RemovePlayerMarker(actorNo);
             GameControllerScript.playerList.Remove(actorNo);
+            foreach (PlayerStat entry in GameControllerScript.playerList.Values)
+            {
+                if (entry.objRef == null) continue;
+                entry.objRef.GetComponent<PlayerActionScript> ().escapeValueSent = false;
+            }
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().gameController.ResetEscapeValues ();
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().OnPlayerLeftRoom(PhotonNetwork.CurrentRoom.GetPlayer(actorNo));
             if (playerToDestroy != null) {
                 Destroy(playerToDestroy);
             }
