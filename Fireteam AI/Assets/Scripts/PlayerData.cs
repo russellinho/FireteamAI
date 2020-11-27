@@ -462,6 +462,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             if (IsNotInGame()) return;
             object[] data = (object[]) photonEvent.CustomData;
             int actorNo = (int) data[0];
+            Debug.Log("left: " + actorNo);
             GameObject playerToDestroy = GameControllerScript.playerList[actorNo].objRef;
             PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().RemovePlayerMarker(actorNo);
             GameControllerScript.playerList.Remove(actorNo);

@@ -13,7 +13,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     // Timer
     public static float missionTime;
     public static float MAX_MISSION_TIME = 1800f;
-	private const float FORFEIT_CHECK_DELAY = 8f;
+	private const float FORFEIT_CHECK_DELAY = 3f;
 
 	// A number value to the maps/missions starting with 1. The number correlates with the time it was released, so the lower the number, the earlier it was released.
 	// 1 = The Badlands: Act 1; 2 = The Badlands: Act 2
@@ -69,7 +69,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
 	void Awake() {
-		forfeitDelayCheck = FORFEIT_CHECK_DELAY;
+		forfeitDelayCheck = 20f;
 		coverSpots = new Dictionary<short, GameObject>();
         myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
         opposingTeam = (myTeam == "red" ? "blue" : "red");
@@ -163,6 +163,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 		UpdateTimers();
 		DecrementLastGunshotTimer();
+		if (Input.GetKeyDown(KeyCode.U)) {
+			foreach (KeyValuePair<int, PlayerStat> j in GameControllerScript.playerList) {
+				Debug.Log(j.Key + " : " + (j.Value.objRef == null));
+			}
+		}
 	}
 
 	void UpdateTimers() {
