@@ -78,6 +78,8 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 			}
 			if (gameController.vipRef != null) {
 				gameController.vipRef.GetComponent<NpcScript>().OnPlayerLeftGame(PhotonNetwork.LocalPlayer.ActorNumber);
+			}
+			if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
 				gameController.OnPlayerLeftGame(PhotonNetwork.LocalPlayer.ActorNumber);
 			}
 			PlayerData.playerdata.DestroyMyself();

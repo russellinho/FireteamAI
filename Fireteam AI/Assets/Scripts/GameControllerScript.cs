@@ -579,8 +579,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
-		PlayerData.playerdata.GetComponent<PlayerHUDScript>().RemovePlayerMarker(otherPlayer.ActorNumber);
 		if (!GameControllerScript.playerList.ContainsKey(otherPlayer.ActorNumber)) return;
+		PlayerData.playerdata.GetComponent<PlayerHUDScript>().RemovePlayerMarker(otherPlayer.ActorNumber);
 		ResetEscapeValues ();
 		foreach (PlayerStat entry in GameControllerScript.playerList.Values)
 		{
@@ -595,13 +595,12 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void OnPlayerLeftGame(int actorNo) {
-		pView.RPC("RpcPlayerLeftGame", RpcTarget.All, actorNo);
+		pView.RPC("RpcOnPlayerLeftGame", RpcTarget.All, actorNo);
 	}
 
 	[PunRPC]
 	void RpcOnPlayerLeftGame(int actorNo) {
 		PlayerData.playerdata.GetComponent<PlayerActionScript>().OnPlayerLeftRoom(PhotonNetwork.CurrentRoom.GetPlayer(actorNo));
-		PlayerData.playerdata.GetComponent<PlayerHUDScript>().RemovePlayerMarker(actorNo);
 		if (!GameControllerScript.playerList.ContainsKey(actorNo)) return;
 		ResetEscapeValues ();
 		foreach (PlayerStat entry in GameControllerScript.playerList.Values)
@@ -609,11 +608,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			if (entry.objRef == null) continue;
 			entry.objRef.GetComponent<PlayerActionScript> ().escapeValueSent = false;
 		}
-
-		if (GameControllerScript.playerList[actorNo].objRef != null) {
-			Destroy (GameControllerScript.playerList[actorNo].objRef);
-		}
-		GameControllerScript.playerList.Remove (actorNo);
 	}
 
 	public override void OnMasterClientSwitched(Player newMasterClient) {
