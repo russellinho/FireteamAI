@@ -355,6 +355,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void JoinMatchmaking() {
 		if (!PhotonNetwork.IsConnected) {
+			Debug.Log("one");
 			PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.info.Playername;
 			PhotonNetwork.ConnectUsingSettings();
 		}
