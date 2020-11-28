@@ -584,7 +584,7 @@ namespace Photon.Pun.LobbySystemPhoton
                         Hashtable h = new Hashtable();
                         h.Add("team", "red");
                         PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-                        pView.RPC("RpcSwitchTeams", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, "red");
+                        pView.RPC("RpcSwitchTeams", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, "red", true);
                     }
                     else
                     {
@@ -595,7 +595,7 @@ namespace Photon.Pun.LobbySystemPhoton
                         Hashtable h = new Hashtable();
                         h.Add("team", "blue");
                         PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-                        pView.RPC("RpcSwitchTeams", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, "blue");
+                        pView.RPC("RpcSwitchTeams", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, "blue", true);
                     }
                 }
                 else
@@ -643,11 +643,11 @@ namespace Photon.Pun.LobbySystemPhoton
 				h.Add("readyStatus", 0);
                 PhotonNetwork.LocalPlayer.SetCustomProperties(h);
             }
-            pView.RPC("RpcSwitchTeams", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, ""+newTeam);
+            pView.RPC("RpcSwitchTeams", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, ""+newTeam, false);
         }
 
         [PunRPC]
-        void RpcSwitchTeams(int actorId, string newTeam)
+        void RpcSwitchTeams(int actorId, string newTeam, bool joiningFlag)
         {
             GameObject entry = playerListEntries[actorId];
             PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
@@ -659,47 +659,49 @@ namespace Photon.Pun.LobbySystemPhoton
             {
 				entry.transform.SetParent(PlayersInRoomPanelVsBlue, false);
             }
-			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
-				int oldRedHost = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]);
-				int oldBlueHost = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueHost"]);
-				int newRedHost = -1;
-				int newBlueHost = -1;
-				Hashtable h = new Hashtable();
-				// If master client just switched teams, set the captain of the team he just switched to to that person.
-				// Then, assign a new captain to the team he just left
-				if (actorId == PhotonNetwork.LocalPlayer.ActorNumber) {
-					if (newTeam == "R") {
-						newRedHost = PhotonNetwork.LocalPlayer.ActorNumber;
-						newBlueHost = GetNextPlayerOnBlueTeam();
-					} else if (newTeam == "B") {
-						newBlueHost = PhotonNetwork.LocalPlayer.ActorNumber;
-						newRedHost = GetNextPlayerOnRedTeam();
-					}
-				} else {
-					// If not master client
-					if (newTeam == "R") {
-						// If just switched to red team and was previous blue captain, assign a new captain to blue
-						if (oldBlueHost == actorId) {
+			if (!joiningFlag) {
+				if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+					int oldRedHost = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]);
+					int oldBlueHost = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueHost"]);
+					int newRedHost = -1;
+					int newBlueHost = -1;
+					Hashtable h = new Hashtable();
+					// If master client just switched teams, set the captain of the team he just switched to to that person.
+					// Then, assign a new captain to the team he just left
+					if (actorId == PhotonNetwork.LocalPlayer.ActorNumber) {
+						if (newTeam == "R") {
+							newRedHost = PhotonNetwork.LocalPlayer.ActorNumber;
 							newBlueHost = GetNextPlayerOnBlueTeam();
-						}
-						// If there currently isn't a captain for red, then assign himself as captain
-						if (oldRedHost == -1) {
-							newRedHost = actorId;
-						}
-					} else if (newTeam == "B") {
-						// If just switched to blue team and was previous red captain, assign a new captain to red
-						if (oldRedHost == actorId) {
+						} else if (newTeam == "B") {
+							newBlueHost = PhotonNetwork.LocalPlayer.ActorNumber;
 							newRedHost = GetNextPlayerOnRedTeam();
 						}
-						// If there currently isn't a captain for blue, then assign himself as captain
-						if (oldBlueHost == -1) {
-							newBlueHost = actorId;
+					} else {
+						// If not master client
+						if (newTeam == "R") {
+							// If just switched to red team and was previous blue captain, assign a new captain to blue
+							if (oldBlueHost == actorId) {
+								newBlueHost = GetNextPlayerOnBlueTeam();
+							}
+							// If there currently isn't a captain for red, then assign himself as captain
+							if (oldRedHost == -1) {
+								newRedHost = actorId;
+							}
+						} else if (newTeam == "B") {
+							// If just switched to blue team and was previous red captain, assign a new captain to red
+							if (oldRedHost == actorId) {
+								newRedHost = GetNextPlayerOnRedTeam();
+							}
+							// If there currently isn't a captain for blue, then assign himself as captain
+							if (oldBlueHost == -1) {
+								newBlueHost = actorId;
+							}
 						}
 					}
+					h.Add("redHost", newRedHost);
+					h.Add("blueHost", newBlueHost);
+					PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 				}
-				h.Add("redHost", newRedHost);
-				h.Add("blueHost", newBlueHost);
-				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 			}
         }
 
