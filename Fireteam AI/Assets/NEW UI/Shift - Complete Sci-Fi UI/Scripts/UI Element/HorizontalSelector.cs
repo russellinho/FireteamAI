@@ -9,7 +9,7 @@ namespace Michsky.UI.Shift
 {
     public class HorizontalSelector : MonoBehaviour
     {
-        private TextMeshProUGUI label;
+        public TextMeshProUGUI label;
         private TextMeshProUGUI labeHelper;
         private Animator selectorAnimator;
         string newItemTitle;
