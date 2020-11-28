@@ -64,9 +64,6 @@ namespace Photon.Pun.LobbySystemPhoton
 		private bool gameStarting = false;
         private char currentMode;
 
-		// Versus mode state
-        private Queue loadPlayerQueue = new Queue();
-
 		void Start() {
 			SetMapInfo (true);
 			pView = GetComponent<PhotonView> ();
@@ -584,7 +581,7 @@ namespace Photon.Pun.LobbySystemPhoton
                         Hashtable h = new Hashtable();
                         h.Add("team", "red");
                         PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-                        pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, "red");
+						pView.RPC("RpcCreateVersusEntryForOthers", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, PhotonNetwork.LocalPlayer.NickName, "R");
                     }
                     else
                     {
@@ -595,7 +592,7 @@ namespace Photon.Pun.LobbySystemPhoton
                         Hashtable h = new Hashtable();
                         h.Add("team", "blue");
                         PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-                        pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, "blue");
+						pView.RPC("RpcCreateVersusEntryForOthers", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, PhotonNetwork.LocalPlayer.NickName, "B");
                     }
                 }
                 else
@@ -643,19 +640,48 @@ namespace Photon.Pun.LobbySystemPhoton
 				h.Add("readyStatus", 0);
                 PhotonNetwork.LocalPlayer.SetCustomProperties(h);
             }
-            pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, newTeam);
+            pView.RPC("RpcSwitchTeams", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, ""+newTeam);
         }
 
+		[PunRPC]
+		void RpcCreateVersusEntryForOthers(int actorNo, string nickname, string team) {
+			Player p = PhotonNetwork.CurrentRoom.GetPlayer(actorNo);
+			GameObject entry = Instantiate(PlayerListEntryPrefab);
+			PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
+			string rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(p.CustomProperties["exp"])).name;
+			entryScript.CreateEntry(nickname, rankToSet, actorNo, 'R');
+			if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
+				entryScript.SetReadyText('i');
+			} else {
+				entryScript.SetReadyText('r');
+			}
+			entryScript.SetReady(false);
+			// Set this player's team on your end. Set the value for entry script and UI
+			if (team == "R")
+			{
+				entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
+				// entry.transform.localPosition = Vector3.zero;
+				entryScript.SetTeam('R');
+			}
+			else if (team == "B")
+			{
+				entry.transform.SetParent(PlayersInRoomPanelVsBlue, false);
+				// entry.transform.localPosition = Vector3.zero;
+				entryScript.SetTeam('B');
+			}
+			playerListEntries.Add(p.ActorNumber, entry);
+		}
+
         [PunRPC]
-        void RpcSwitchTeams(int actorId, char newTeam)
+        void RpcSwitchTeams(int actorId, string newTeam)
         {
             GameObject entry = playerListEntries[actorId];
             PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
-			entryScript.SetTeam(newTeam);
-            if (newTeam == 'R')
+			entryScript.SetTeam(char.Parse(newTeam));
+            if (newTeam == "R")
             {
 				entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
-            } else if (newTeam == 'B')
+            } else if (newTeam == "B")
             {
 				entry.transform.SetParent(PlayersInRoomPanelVsBlue, false);
             }
@@ -668,16 +694,16 @@ namespace Photon.Pun.LobbySystemPhoton
 				// If master client just switched teams, set the captain of the team he just switched to to that person.
 				// Then, assign a new captain to the team he just left
 				if (actorId == PhotonNetwork.LocalPlayer.ActorNumber) {
-					if (newTeam == 'R') {
+					if (newTeam == "R") {
 						newRedHost = PhotonNetwork.LocalPlayer.ActorNumber;
 						newBlueHost = GetNextPlayerOnBlueTeam();
-					} else if (newTeam == 'B') {
+					} else if (newTeam == "B") {
 						newBlueHost = PhotonNetwork.LocalPlayer.ActorNumber;
 						newRedHost = GetNextPlayerOnRedTeam();
 					}
 				} else {
 					// If not master client
-					if (newTeam == 'R') {
+					if (newTeam == "R") {
 						// If just switched to red team and was previous blue captain, assign a new captain to blue
 						if (oldBlueHost == actorId) {
 							newBlueHost = GetNextPlayerOnBlueTeam();
@@ -686,7 +712,7 @@ namespace Photon.Pun.LobbySystemPhoton
 						if (oldRedHost == -1) {
 							newRedHost = actorId;
 						}
-					} else if (newTeam == 'B') {
+					} else if (newTeam == "B") {
 						// If just switched to blue team and was previous red captain, assign a new captain to red
 						if (oldRedHost == actorId) {
 							newRedHost = GetNextPlayerOnRedTeam();
@@ -706,26 +732,21 @@ namespace Photon.Pun.LobbySystemPhoton
 		public override void OnPlayerEnteredRoom(Player newPlayer)
 		{
             string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
-			GameObject entry = Instantiate(PlayerListEntryPrefab);
-			PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
-			string rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(newPlayer.CustomProperties["exp"])).name;
-			entryScript.SetReady(false);
-            if (gameMode == "versus")
+			if (gameMode == "camp")
             {
-				entryScript.CreateEntry(newPlayer.NickName, rankToSet, newPlayer.ActorNumber, 'V');
-                // entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
-            } else if (gameMode == "camp")
-            {
+				GameObject entry = Instantiate(PlayerListEntryPrefab);
+				PlayerEntryPrefab entryScript = entry.GetComponent<PlayerEntryPrefab>();
+				string rankToSet = PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(newPlayer.CustomProperties["exp"])).name;
+				entryScript.SetReady(false);
 				entryScript.CreateEntry(newPlayer.NickName, rankToSet, newPlayer.ActorNumber, 'C');
                 entry.transform.SetParent(PlayersInRoomPanel, false);
+				playerListEntries.Add(newPlayer.ActorNumber, entry);
             }
 			if (PhotonNetwork.IsMasterClient) {
 				Hashtable h = new Hashtable();
 				h.Add("ping", (int)PhotonNetwork.GetPing());
 				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 			}
-			playerListEntries.Add(newPlayer.ActorNumber, entry);
-            loadPlayerQueue.Enqueue(newPlayer);
 			SetMapInfo();
 		}
 
