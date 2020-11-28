@@ -938,11 +938,11 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 		}
 
-		int GetRedTeamSize(bool joining = false) {
+		int GetRedTeamSize(bool skipMyself = false) {
 			if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp") return 0;
 			int total = 0;
 			foreach (Player p in PhotonNetwork.PlayerList) {
-				if (joining && p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) {
+				if (skipMyself && p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) {
 					continue;
 				}
 				if ((string)p.CustomProperties["team"] == "red") {
@@ -952,11 +952,11 @@ namespace Photon.Pun.LobbySystemPhoton
 			return total;
 		}
 
-		int GetBlueTeamSize(bool joining = false) {
+		int GetBlueTeamSize(bool skipMyself = false) {
 			if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp") return 0;
 			int total = 0;
 			foreach (Player p in PhotonNetwork.PlayerList) {
-				if (joining && p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) {
+				if (skipMyself&& p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) {
 					continue;
 				}
 				if ((string)p.CustomProperties["team"] == "blue") {
