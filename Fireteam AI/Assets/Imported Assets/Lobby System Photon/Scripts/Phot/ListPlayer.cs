@@ -575,7 +575,7 @@ namespace Photon.Pun.LobbySystemPhoton
                 if (p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
                 {
                     // If it's me, set team captain as me if possible and set my team
-                    if (GetRedTeamSize() <= GetBlueTeamSize())
+                    if (GetRedTeamSize(true) <= GetBlueTeamSize(true))
                     {
 						entry.transform.SetParent(PlayersInRoomPanelVsRed, false);
 						// entry.transform.localPosition = Vector3.zero;
@@ -938,10 +938,13 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 		}
 
-		int GetRedTeamSize() {
+		int GetRedTeamSize(bool joining = false) {
 			if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp") return 0;
 			int total = 0;
 			foreach (Player p in PhotonNetwork.PlayerList) {
+				if (joining && p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) {
+					continue;
+				}
 				if ((string)p.CustomProperties["team"] == "red") {
 					total++;
 				}
@@ -949,10 +952,13 @@ namespace Photon.Pun.LobbySystemPhoton
 			return total;
 		}
 
-		int GetBlueTeamSize() {
+		int GetBlueTeamSize(bool joining = false) {
 			if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp") return 0;
 			int total = 0;
 			foreach (Player p in PhotonNetwork.PlayerList) {
+				if (joining && p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) {
+					continue;
+				}
 				if ((string)p.CustomProperties["team"] == "blue") {
 					total++;
 				}
