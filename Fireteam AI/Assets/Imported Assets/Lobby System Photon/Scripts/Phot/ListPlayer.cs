@@ -584,7 +584,7 @@ namespace Photon.Pun.LobbySystemPhoton
                         Hashtable h = new Hashtable();
                         h.Add("team", "red");
                         PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-                        pView.RPC("RpcSwitchTeams", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, "R", true);
+                        pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, "R", true);
                     }
                     else
                     {
@@ -595,7 +595,7 @@ namespace Photon.Pun.LobbySystemPhoton
                         Hashtable h = new Hashtable();
                         h.Add("team", "blue");
                         PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-                        pView.RPC("RpcSwitchTeams", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, "B", true);
+                        pView.RPC("RpcSwitchTeams", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, "B", true);
                     }
                 }
                 else
