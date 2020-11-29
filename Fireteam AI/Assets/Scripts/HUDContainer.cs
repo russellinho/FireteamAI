@@ -78,6 +78,13 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject enemyMarkers;
 	public Texture alertSymbol;
 	public Texture suspiciousSymbol;
+	public TextMeshProUGUI votePanel;
+	public GameObject voteOptions;
+	public GameObject voteResults;
+	public TextMeshProUGUI voteTime;
+	public TextMeshProUGUI yesVoteCount;
+	public TextMeshProUGUI noVoteCount;
+	public TextMeshProUGUI finalVoteResults;
 
     // Versus mode HUD
     public GameObject redScore;

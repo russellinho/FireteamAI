@@ -14,6 +14,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public static float missionTime;
     public static float MAX_MISSION_TIME = 1800f;
 	private const float FORFEIT_CHECK_DELAY = 3f;
+	private const float VOTE_TIME = 15f;
+	private const float VOTE_DELAY = 300f;
 
 	// A number value to the maps/missions starting with 1. The number correlates with the time it was released, so the lower the number, the earlier it was released.
 	// 1 = The Badlands: Act 1; 2 = The Badlands: Act 2
@@ -66,6 +68,16 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private bool endGameWithWin;
 	public bool assaultModeChangedIndicator;
 	private float forfeitDelayCheck;
+	// Voting variables
+	public enum VoteActions {KickPlayer};
+	public VoteActions currentVoteAction;
+	public Player playerBeingKicked;
+	public bool iHaveVoted;
+	public bool voteInProgress;
+	public float voteTimer;
+	public short yesVotes;
+	public short noVotes;
+	private float voteDelay;
 
 	// Use this for initialization
 	void Awake() {
@@ -163,12 +175,17 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 		UpdateTimers();
 		DecrementLastGunshotTimer();
+		UpdateVote();
+		HandleVoteCast();
 	}
 
 	void UpdateTimers() {
 		if (PhotonNetwork.IsMasterClient) {
 			ResetLastGunshotPos ();
 			UpdateEndGameTimer();
+		}
+		if (voteDelay > 0f) {
+			voteDelay -= Time.deltaTime;
 		}
 	}
 
@@ -1178,6 +1195,115 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		GameControllerScript.playerList[actorNo].kills++;
 	}
 
+	public void StartVote(Player p, VoteActions voteAc)
+	{
+		if (voteDelay > 0f) return;
+		if (gameOver) return;
+		if (voteAc == VoteActions.KickPlayer && p.IsMasterClient) return;
+		pView.RPC("RpcStartVote", RpcTarget.All, p.ActorNumber, voteAc, teamMap);
+		voteDelay = VOTE_DELAY;
+	}
+
+	[PunRPC]
+	void RpcStartVote(int actorNo, VoteActions voteAc, string team)
+	{
+		if (team != teamMap) return;
+		if (voteAc == VoteActions.KickPlayer) {
+			playerBeingKicked = PhotonNetwork.CurrentRoom.GetPlayer(actorNo);
+			if (playerBeingKicked.IsMasterClient) {
+				playerBeingKicked = null;
+				return;
+			}
+		}
+		currentVoteAction = voteAc;
+		noVotes = 0;
+		yesVotes = 0;
+		voteTimer = VOTE_TIME;
+		iHaveVoted = false;
+		voteInProgress = true;
+	}
+
+	void KickPlayer(Player playerToKick)
+	{
+		if (gameOver) return;
+		if (PhotonNetwork.LocalPlayer.IsMasterClient && playerToKick.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) return;
+		if (isVersusHostForThisTeam()) {
+			string nickname = playerToKick.NickName;
+			string currentKickedPlayers = (string)PhotonNetwork.CurrentRoom.CustomProperties["kickedPlayers"];
+			if (string.IsNullOrEmpty(currentKickedPlayers)) {
+				currentKickedPlayers = nickname;
+			} else {
+				currentKickedPlayers += ',' + nickname;
+			}
+			Hashtable h = new Hashtable();
+			h.Add("kickedPlayers", currentKickedPlayers);
+			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+				PhotonNetwork.CloseConnection(playerToKick);
+			} else {
+				pView.RPC("RpcKickPlayer", RpcTarget.MasterClient, playerToKick.ActorNumber);
+			}
+		}
+	}
+
+	[PunRPC]
+	void RpcKickPlayer(int actorNo)
+	{
+		PhotonNetwork.CloseConnection(PhotonNetwork.CurrentRoom.GetPlayer(actorNo));
+	}
+
+	public bool VoteHasSucceeded() {
+		if (yesVotes > noVotes) {
+			return true;
+		}
+		return false;
+	}
+
+	void HandleVoteCast() {
+		if (voteInProgress && !iHaveVoted) {
+			// You may not vote in a vote called to kick you
+			if (currentVoteAction == VoteActions.KickPlayer && playerBeingKicked.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) return;
+			if (Input.GetKeyDown(KeyCode.F1)) {
+				pView.RPC("RpcCastVote", RpcTarget.All, true, teamMap);
+				iHaveVoted = true;
+			} else if (Input.GetKeyDown(KeyCode.F2)) {
+				pView.RPC("RpcCastVote", RpcTarget.All, false, teamMap);
+				iHaveVoted = true;
+			}
+		}
+	}
+
+	[PunRPC]
+	void RpcCastVote(bool yes, string team) {
+		if (team != teamMap) return;
+		if (yes) {
+			yesVotes++;
+		} else {
+			noVotes++;
+		}
+	}
+
+	void UpdateVote() 
+	{	
+		if (voteInProgress) {
+			voteTimer -= Time.deltaTime;
+			if (voteTimer <= 0f) {
+				if (VoteHasSucceeded()) {
+					if (currentVoteAction == VoteActions.KickPlayer) {
+						KickPlayer(playerBeingKicked);
+					}
+				}
+				voteInProgress = false;
+				playerBeingKicked = null;
+			}
+		}
+	}
+
+	public bool CanCallVote()
+	{
+		if (voteDelay > 0f) return false;
+		return true;
+	}
 }
 
 public class PlayerStat {

@@ -7,41 +7,30 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
 using TMPro;
+using Michsky.UI.Shift;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public GameControllerScript gameController;
+	public PauseMenuManager pauseMenuManager;
+	public BlurManager blurManager;
+	public ModalWindowManager alertPopup;
+	public ModalWindowManager confirmPopup;
 	public GameObject playerRef;
-	public GameObject keyMappingsPanel;
-	public GameObject mainMenuGroup;
-	public GameObject optionsMenuGroup;
-	public GameObject audioSettingsGroup;
 	public Slider musicVolumeSlider;
 	public TextMeshProUGUI musicVolumeField;
-	public Button optionsKeyBindingsBtn;
-	public Button optionsAudioSettingsBtn;
-	public Button optionsBackBtn;
-	public Text optionsTitle;
 	public bool isChangingKeyMapping;
 	public Text changingKeyMappingText;
 	public KeyMappingInput[] keyMappingInputs;
+	public PlayerKick[] playerKickEntries;
+	private enum ConfirmType {KickPlayer};
+	private ConfirmType confirmType;
+	private Player playerSelected;
+	public GameObject gameOptionsMenu;
 
 	void Awake() {
 		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
 		musicVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.musicVolume;
-	}
-
-	public void HandleEscPress() {
-		if (isChangingKeyMapping) return;
-		// If the key binding menu is up and you press escape, then return to options menu
-		if (audioSettingsGroup.activeInHierarchy) {
-			CloseAudioSettings();
-		} else if (keyMappingsPanel.activeInHierarchy) {
-			CloseKeyMappings();
-		} else if (optionsMenuGroup.activeInHierarchy) {
-			// If the options menu group is active, then go back to main menu
-			CloseOptionsMenu();
-		}
 	}
 
 	public void LeaveGame() {
@@ -87,40 +76,6 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	// 	PhotonNetwork.Disconnect ();
 	// }
 
-	public void OpenKeyMappings() {
-		ToggleSettingsMainButtons(false);
-		keyMappingsPanel.SetActive(true);
-	}
-
-	public void CloseKeyMappings() {
-		if (isChangingKeyMapping) return;
-		SaveKeyBindings();
-		keyMappingsPanel.SetActive(false);
-		ToggleSettingsMainButtons(true);
-	}
-
-	public void OpenOptionsMenu() {
-		mainMenuGroup.SetActive(false);
-		optionsMenuGroup.SetActive(true);
-	}
-
-	public void CloseOptionsMenu() {
-		mainMenuGroup.SetActive(true);
-		optionsMenuGroup.SetActive(false);
-	}
-
-	public void OpenAudioSettings() {
-		ToggleSettingsMainButtons(false);
-		audioSettingsGroup.SetActive(true);
-	}
-
-	public void CloseAudioSettings() {
-		SaveAudioSettings();
-		audioSettingsGroup.SetActive(false);
-		optionsMenuGroup.SetActive(true);
-		ToggleSettingsMainButtons(true);
-	}
-
 	public void OnMusicVolumeSliderChanged() {
 		SetMusicVolume(musicVolumeSlider.value);
 	}
@@ -139,13 +94,6 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		PlayerPreferences.playerPreferences.SaveKeyMappings();
 	}
 
-	void ToggleSettingsMainButtons(bool b) {
-		optionsKeyBindingsBtn.gameObject.SetActive(b);
-		optionsAudioSettingsBtn.gameObject.SetActive(b);
-		optionsBackBtn.gameObject.SetActive(b);
-		optionsTitle.gameObject.SetActive(b);
-	}
-
 	public void ToggleIsChangingKeyMapping(bool b, string keyChanging) {
 		if (b) {
 			isChangingKeyMapping = true;
@@ -159,6 +107,57 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 
 	public void SetPlayerRef(GameObject player) {
 		playerRef = player;
+	}
+
+	public void KickPlayer(Player p) {
+		if (p == null) return;
+		if (gameController.CanCallVote()) {
+			confirmType = ConfirmType.KickPlayer;
+			playerSelected = p;
+			confirmPopup.SetText("ARE YOU SURE YOU WISH TO KICK PLAYER [" + p.NickName + "]?");
+			blurManager.BlurInAnim();
+			confirmPopup.ModalWindowIn();
+		} else {
+			alertPopup.SetText("YOU'VE RECENTLY CALLED A VOTE. PLEASE WAIT SOME TIME BEFORE CALLING ANOTHER.");
+			blurManager.BlurInAnim();
+			alertPopup.ModalWindowIn();
+		}
+	}
+
+	public void OnConfirmPopup()
+	{
+		if (confirmType == ConfirmType.KickPlayer) {
+			gameController.StartVote(playerSelected, GameControllerScript.VoteActions.KickPlayer);
+			gameOptionsMenu.GetComponent<Animator>().Play("Window Out");
+			pauseMenuManager.ClosePause();
+		}
+	}
+
+	public void KickPlayerPrepareList()
+	{
+		string myTeam = null;
+		if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
+			myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
+		}
+		int i = 0; // Player kick slot iterator
+		foreach (Player p in PhotonNetwork.PlayerList) {
+			// Cannot kick yourself or master client
+			if (p.IsMasterClient || p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) {
+				continue;
+			}
+			if (myTeam != null) {
+				string theirTeam = (string)p.CustomProperties["team"];
+				if (myTeam != theirTeam) continue;
+			}
+			playerKickEntries[i].Initialize(p);
+			playerKickEntries[i].gameObject.SetActive(true);
+			i++;
+		}
+		if (i <= 7) {
+			for (int j = i; j < 8; j++) {
+				playerKickEntries[j].gameObject.SetActive(false);
+			}
+		}
 	}
 
 }

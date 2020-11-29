@@ -184,6 +184,9 @@ MonoBehaviour:
   - RpcAskServerForDataNpc
   - RpcSyncDataNpc
   - RpcCreateVersusEntryForOthers
+  - RpcStartVote
+  - RpcCastVote
+  - RpcKickPlayer
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

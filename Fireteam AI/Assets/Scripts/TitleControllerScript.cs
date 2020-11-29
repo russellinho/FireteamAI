@@ -199,6 +199,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject modShopSecondaryWeaponTabs;
 	public GameObject modShopSupportWeaponTabs;
 	public GameObject modShopMeleeWeaponTabs;
+	public enum ConfirmType {KickPlayer};
+	public ConfirmType confirmType;
 
 	// Use this for initialization
 	void Awake() {
@@ -3125,6 +3127,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnConfirmButtonClicked() {
 		if (confirmingTransaction) {
 			OnConfirmPurchaseClicked();
+		} else if (connexion.listPlayer.kickingPlayerFlag) {
+			connexion.listPlayer.KickPlayer(connexion.listPlayer.playerBeingKicked);
 		}
 	}
 

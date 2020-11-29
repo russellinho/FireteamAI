@@ -201,6 +201,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameControllerScript> ();
 			return;
 		}
+		UpdateVoteUI();
 		UpdateHealth();
 		if (container.staminaGroup.alpha == 1f) {
 			float f = (playerActionScript.sprintTime / playerActionScript.playerScript.stamina);
@@ -1145,6 +1146,59 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	void InitHealth() {
 		container.healthBar.value = 1f;
 		container.healthPercentTxt.text = "100%";
+	}
+
+	void UpdateVoteUI() {
+		if (gameController.voteInProgress) {
+			if (!container.votePanel.gameObject.activeInHierarchy) {
+				if (gameController.currentVoteAction == GameControllerScript.VoteActions.KickPlayer) {
+					container.votePanel.text = "VOTE CALLED: KICK PLAYER [" + gameController.playerBeingKicked.NickName + "]?";
+					if (gameController.playerBeingKicked.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) {
+						container.voteOptions.GetComponent<TextMeshProUGUI>().text = "A VOTE IS BEING HELD TO KICK YOU.";
+						container.voteResults.SetActive(true);
+					} else {
+						container.voteOptions.GetComponent<TextMeshProUGUI>().text = "[F1] YES            [F2] NO";
+						container.voteResults.SetActive(false);
+					}
+				}
+				container.votePanel.gameObject.SetActive(true);
+				container.voteOptions.SetActive(true);
+				container.finalVoteResults.gameObject.SetActive(false);
+			}
+			if (gameController.iHaveVoted) {
+				if (!container.voteResults.activeInHierarchy) {
+					container.voteResults.SetActive(true);
+					container.voteOptions.SetActive(false);
+				}
+			}
+			container.voteTime.text = ""+gameController.voteTimer;
+			container.yesVoteCount.text = ""+gameController.yesVotes;
+			container.noVoteCount.text = ""+gameController.noVotes;
+		} else {
+			if (container.votePanel.gameObject.activeInHierarchy && !container.finalVoteResults.gameObject.activeInHierarchy) {
+				StartCoroutine("DisplayFinalVoteResults");
+			}
+		}
+	}
+
+	IEnumerator DisplayFinalVoteResults()
+	{
+		if (gameController.VoteHasSucceeded()) {
+			if (gameController.currentVoteAction == GameControllerScript.VoteActions.KickPlayer) {
+				container.finalVoteResults.text = "THE VOTE TO KICK [" + gameController.playerBeingKicked.NickName + "] HAS PASSED.";
+			} else {
+				container.finalVoteResults.text = "THE VOTE TO KICK [" + gameController.playerBeingKicked.NickName + "] HAS BEEN VETOED.";
+			}
+		}
+		container.finalVoteResults.gameObject.SetActive(true);
+		container.voteOptions.SetActive(false);
+		container.voteResults.SetActive(false);
+		container.voteTime.gameObject.SetActive(false);
+		yield return new WaitForSeconds(6f);
+		container.votePanel.gameObject.SetActive(false);
+		container.finalVoteResults.gameObject.SetActive(false);
+		container.voteOptions.SetActive(true);
+		container.voteResults.SetActive(false);
 	}
 
 }

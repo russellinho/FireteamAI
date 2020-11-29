@@ -49,8 +49,21 @@ namespace Photon.Pun.LobbySystemPhoton
 		public Button leaveGameBtn;
 		public Button leaveGameBtnVs;
 		public Button switchTeamsBtnVs;
+		public Button gameOptionsBtn;
+		public Button gameOptionsBtnVs;
+		public Button voteKickBtn;
+		public Button voteKickBtnVs;
 		public GameObject titleController;
 		public AudioClip countdownSfx;
+		public GameObject mainMenuCampaign;
+		public GameObject mainMenuVersus;
+		public GameObject gameOptionsMenuCampaign;
+		public GameObject gameOptionsMenuVersus;
+		public GameObject kickPlayerMenuCampaign;
+		public GameObject kickPlayerMenuVersus;
+		public PlayerKick[] playerKickSlotsCampaign;
+		public PlayerKick[] playerKickSlotsRed;
+		public PlayerKick[] playerKickSlotsBlue;
 
 		// Map options
 		private string[] mapNames = new string[]{"The Badlands: Act I", "The Badlands: Act II"};
@@ -63,9 +76,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		private GameObject myPlayerListEntry;
 		private bool gameStarting = false;
         private char currentMode;
-
-		// Versus mode state
-        private Queue loadPlayerQueue = new Queue();
+        public Player playerBeingKicked;
+		public bool kickingPlayerFlag;
 
 		void Start() {
 			SetMapInfo (true);
@@ -171,7 +183,15 @@ namespace Photon.Pun.LobbySystemPhoton
 			leaveGameBtn.interactable = status;
             leaveGameBtnVs.interactable = status;
 			switchTeamsBtnVs.interactable = status;
+			gameOptionsBtn.interactable = status;
+			gameOptionsBtnVs.interactable = status;
 			ToggleMapChangeButtons(status);
+			if (!status) {
+				kickPlayerMenuCampaign.SetActive(false);
+				kickPlayerMenuVersus.SetActive(false);
+				gameOptionsMenuCampaign.SetActive(false);
+				gameOptionsMenuVersus.SetActive(false);
+			}
 		}
 
 		[PunRPC]
@@ -186,7 +206,15 @@ namespace Photon.Pun.LobbySystemPhoton
 			leaveGameBtn.interactable = status;
 			leaveGameBtnVs.interactable = status;
 			switchTeamsBtnVs.interactable = status;
+			gameOptionsBtn.interactable = status;
+			gameOptionsBtnVs.interactable = status;
 			ToggleMapChangeButtons(status);
+			if (!status) {
+				kickPlayerMenuCampaign.SetActive(false);
+				kickPlayerMenuVersus.SetActive(false);
+				gameOptionsMenuCampaign.SetActive(false);
+				gameOptionsMenuVersus.SetActive(false);
+			}
 		}
 
 		void ChangeReadyStatus() {
@@ -393,9 +421,17 @@ namespace Photon.Pun.LobbySystemPhoton
 			if (PhotonNetwork.IsMasterClient) {
 				readyButtonTxt.text = "START GAME";
                 readyButtonVsTxt.text = "START GAME";
+				if (!voteKickBtn.enabled) {
+					voteKickBtn.enabled = true;
+					voteKickBtnVs.enabled = true;
+				}
             } else {
                 readyButtonTxt.text = "READY";
                 readyButtonVsTxt.text = "READY";
+				if (voteKickBtn.enabled) {
+					voteKickBtn.enabled = false;
+					voteKickBtnVs.enabled = false;
+				}
             }
 			if (gameStarting && (readyButton.GetComponent<Button>().interactable || readyButtonVs.GetComponent<Button>().interactable)) {
 				if (PhotonNetwork.IsMasterClient || Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
@@ -727,7 +763,6 @@ namespace Photon.Pun.LobbySystemPhoton
 				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 			}
 			playerListEntries.Add(newPlayer.ActorNumber, entry);
-            loadPlayerQueue.Enqueue(newPlayer);
 			SetMapInfo();
 		}
 
@@ -1035,6 +1070,115 @@ namespace Photon.Pun.LobbySystemPhoton
 				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 			}
         }
+
+		public void ResetPlayerKick() {
+			playerBeingKicked = null;
+			kickingPlayerFlag = false;
+		}
+
+		public void ConfirmKickForPlayer(Player playerToKick) {
+			titleController.GetComponent<TitleControllerScript>().TriggerConfirmPopup("ARE YOU SURE YOU WISH TO KICK PLAYER [" + playerToKick.NickName + "]?");
+			playerBeingKicked = playerToKick;
+			kickingPlayerFlag = true;
+		}
+
+		public void KickPlayer(Player playerToKick)
+		{
+			if (PhotonNetwork.IsMasterClient) {
+				string nickname = playerToKick.NickName;
+				string currentKickedPlayers = (string)PhotonNetwork.CurrentRoom.CustomProperties["kickedPlayers"];
+				if (string.IsNullOrEmpty(currentKickedPlayers)) {
+					currentKickedPlayers = nickname;
+				} else {
+					currentKickedPlayers += "," + nickname;
+				}
+				Hashtable h = new Hashtable();
+				h.Add("kickedPlayers", currentKickedPlayers);
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+				PhotonNetwork.CloseConnection(playerToKick);
+			}
+			ResetPlayerKick();
+		}
+
+		public void ToggleMainMenuCampaign(bool on) {
+			mainMenuCampaign.SetActive(on);
+		}
+
+		public void ToggleMainMenuVersus(bool on) {
+			mainMenuVersus.SetActive(on);
+		}
+
+		public void ToggleGameOptionsMenuCampaign(bool on) {
+			gameOptionsMenuCampaign.SetActive(on);
+		}
+
+		public void ToggleGameOptionsMenuVersus(bool on) {
+			gameOptionsMenuVersus.SetActive(on);
+		}
+
+		public void ToggleKickPlayerListMenuCampaign(bool on) {
+			if (on) {
+				PopulateVoteKickSlotsCampaign();
+			}
+			kickPlayerMenuCampaign.SetActive(on);
+		}
+
+		public void ToggleKickPlayerListMenuVersus(bool on) {
+			if (on) {
+				PopulateVoteKickSlotsVersus();
+			}
+			kickPlayerMenuVersus.SetActive(on);
+		}
+
+		void PopulateVoteKickSlotsCampaign() {
+			int i = 0; // Player kick slot iterator
+			foreach (Player p in PhotonNetwork.PlayerList) {
+				// Cannot kick yourself or master client
+				if (p.IsMasterClient || p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) {
+					continue;
+				}
+				playerKickSlotsCampaign[i].Initialize(p);
+				playerKickSlotsCampaign[i].gameObject.SetActive(true);
+				i++;
+			}
+			if (i <= 7) {
+				for (int j = i; j < 8; j++) {
+					playerKickSlotsCampaign[j].gameObject.SetActive(false);
+				}
+			}
+		}
+
+		void PopulateVoteKickSlotsVersus() {
+			int redI = 0; // Player kick slot iterator
+			int blueI = 0;
+			foreach (Player p in PhotonNetwork.PlayerList) {
+				// Cannot kick yourself or master client
+				if (p.IsMasterClient || p.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) {
+					continue;
+				}
+				// Get team
+				string theirTeam = (string)p.CustomProperties["team"];
+				if (theirTeam == "red") {
+					playerKickSlotsRed[redI].Initialize(p);
+					playerKickSlotsRed[redI].gameObject.SetActive(true);
+					redI++;
+				} else if (theirTeam == "blue") {
+					playerKickSlotsBlue[blueI].Initialize(p);
+					playerKickSlotsBlue[blueI].gameObject.SetActive(true);
+					blueI++;
+				}
+			}
+			if (redI <= 7) {
+				for (int j = redI; j < 8; j++) {
+					playerKickSlotsRed[j].gameObject.SetActive(false);
+				}
+			}
+			if (blueI <= 7) {
+				for (int j = blueI; j < 8; j++) {
+					playerKickSlotsBlue[j].gameObject.SetActive(false);
+				}
+			}
+		}
 
 	}
 }
