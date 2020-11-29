@@ -674,7 +674,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public override void OnDisconnected(DisconnectCause cause) {
 		PlayerData.playerdata.disconnectedFromServer = true;
-		if (string.IsNullOrEmpty(PlayerData.playerdata.disconnectReason) && !cause.ToString ().Equals (DisconnectCause.DisconnectByClientLogic)) {
+		if (string.IsNullOrEmpty(PlayerData.playerdata.disconnectReason)) {
 			PlayerData.playerdata.disconnectReason = cause.ToString ();
 		}
 		SceneManager.LoadScene ("Title");
@@ -1238,6 +1238,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			Hashtable h = new Hashtable();
 			h.Add("kickedPlayers", currentKickedPlayers);
 			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			pView.RPC("RpcAlertKickedPlayer", RpcTarget.All, playerToKick.ActorNumber);
 			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
 				PhotonNetwork.CloseConnection(playerToKick);
 			} else {
@@ -1250,6 +1251,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void RpcKickPlayer(int actorNo)
 	{
 		PhotonNetwork.CloseConnection(PhotonNetwork.CurrentRoom.GetPlayer(actorNo));
+	}
+
+	[PunRPC]
+	void RpcAlertKickedPlayer(int actorNo)
+	{
+		if (PhotonNetwork.LocalPlayer.ActorNumber == actorNo) {
+			PlayerData.playerdata.disconnectReason = "YOU'VE BEEN KICKED FROM THE GAME.";
+			// OnDisconnected(DisconnectCause.DisconnectByClientLogic);
+		}
 	}
 
 	public bool VoteHasSucceeded() {

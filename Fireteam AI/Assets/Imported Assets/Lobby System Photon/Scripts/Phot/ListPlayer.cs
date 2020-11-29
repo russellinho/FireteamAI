@@ -1095,6 +1095,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				Hashtable h = new Hashtable();
 				h.Add("kickedPlayers", currentKickedPlayers);
 				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+				pView.RPC("RpcAlertKickedPlayer", RpcTarget.All, playerToKick.ActorNumber);
 				PhotonNetwork.CloseConnection(playerToKick);
 			}
 			ResetPlayerKick();
@@ -1177,6 +1178,13 @@ namespace Photon.Pun.LobbySystemPhoton
 				for (int j = blueI; j < 8; j++) {
 					playerKickSlotsBlue[j].gameObject.SetActive(false);
 				}
+			}
+		}
+
+		[PunRPC]
+		void RpcAlertKickedPlayer(int actorNo) {
+			if (PhotonNetwork.LocalPlayer.ActorNumber == actorNo) {
+				titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("YOU'VE BEEN KICKED FROM THE GAME.");
 			}
 		}
 

@@ -2,6 +2,7 @@
 using UnityEngine;
 using UITemplate;
 using System.Collections;
+using System.Linq;
 using UnityEngine.UI;
 using Firebase.Database;
 using ExitGames.Client.Photon;
@@ -14,6 +15,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public Template templateUIClass;
         public Template templateUIVersusClass;
 		public ListPlayer listPlayer;
+		public ListRoom listRoom;
 		public TitleControllerScript titleController;
 
 		public override void OnJoinedLobby()  
@@ -95,7 +97,13 @@ namespace Photon.Pun.LobbySystemPhoton
 		public void theJoinRoom(string roomName)
 		{
 			// ToggleLobbyLoadingScreen(true);
-			PhotonNetwork.JoinRoom(roomName);
+			string kickedPlayers = (string)listRoom.cachedRoomList[roomName].CustomProperties["kickedPlayers"];
+			string[] kickedPlayersList = kickedPlayers.Split(',');
+			if (kickedPlayersList.Contains(PhotonNetwork.NickName)) {
+				OnJoinRoomFailed(-1, "You've been kicked from this game.");
+			} else {
+				PhotonNetwork.JoinRoom(roomName);
+			}
 		}
 
 		public override void OnJoinRoomFailed(short returnCode, string message) {

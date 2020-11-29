@@ -8,7 +8,7 @@ namespace Photon.Pun.LobbySystemPhoton
 {
 	public class ListRoom : MonoBehaviourPunCallbacks
 	{
-		private Dictionary<string, RoomInfo> cachedRoomList;
+		public Dictionary<string, RoomInfo> cachedRoomList;
 		private Dictionary<string, GameObject> roomListEntries;
 		public ListPlayer listPlayer;
 		public Template templateUIClass;
