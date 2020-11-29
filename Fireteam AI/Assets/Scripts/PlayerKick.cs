@@ -14,7 +14,7 @@ public class PlayerKick : MonoBehaviour
     public PauseMenuScript pauseMenuScript;
 
     public void KickPlayerFromLobby() {
-        listPlayer.ConfirmKickForPlayer(player);
+        listPlayer.ConfirmKickForPlayer(player, gameObject);
     }
 
     public void KickPlayerFromGame() {

@@ -77,6 +77,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		private bool gameStarting = false;
         private char currentMode;
         public Player playerBeingKicked;
+		public GameObject playerBeingKickedButton;
 		public bool kickingPlayerFlag;
 
 		void Start() {
@@ -1073,12 +1074,14 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void ResetPlayerKick() {
 			playerBeingKicked = null;
+			playerBeingKickedButton = null;
 			kickingPlayerFlag = false;
 		}
 
-		public void ConfirmKickForPlayer(Player playerToKick) {
+		public void ConfirmKickForPlayer(Player playerToKick, GameObject clickedButton) {
 			titleController.GetComponent<TitleControllerScript>().TriggerConfirmPopup("ARE YOU SURE YOU WISH TO KICK PLAYER [" + playerToKick.NickName + "]?");
 			playerBeingKicked = playerToKick;
+			playerBeingKickedButton = clickedButton;
 			kickingPlayerFlag = true;
 		}
 
@@ -1097,6 +1100,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 				pView.RPC("RpcAlertKickedPlayer", RpcTarget.All, playerToKick.ActorNumber);
 				PhotonNetwork.CloseConnection(playerToKick);
+				playerBeingKickedButton.SetActive(false);
 			}
 			ResetPlayerKick();
 		}
