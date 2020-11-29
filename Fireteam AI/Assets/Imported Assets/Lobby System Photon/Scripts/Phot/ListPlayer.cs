@@ -422,17 +422,9 @@ namespace Photon.Pun.LobbySystemPhoton
 			if (PhotonNetwork.IsMasterClient) {
 				readyButtonTxt.text = "START GAME";
                 readyButtonVsTxt.text = "START GAME";
-				if (!voteKickBtn.enabled) {
-					voteKickBtn.enabled = true;
-					voteKickBtnVs.enabled = true;
-				}
             } else {
                 readyButtonTxt.text = "READY";
                 readyButtonVsTxt.text = "READY";
-				if (voteKickBtn.enabled) {
-					voteKickBtn.enabled = false;
-					voteKickBtnVs.enabled = false;
-				}
             }
 			if (gameStarting && (readyButton.GetComponent<Button>().interactable || readyButtonVs.GetComponent<Button>().interactable)) {
 				if (PhotonNetwork.IsMasterClient || Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
@@ -511,8 +503,12 @@ namespace Photon.Pun.LobbySystemPhoton
 			currentMode = (!templateUIClassVs.gameObject.activeInHierarchy ? 'C' : 'V');
 			if (!PhotonNetwork.IsMasterClient) {
 				ToggleMapChangeButtons(false);
+				voteKickBtn.enabled = false;
+				voteKickBtnVs.enabled = false;
 			} else {
 				ToggleMapChangeButtons(true);
+				voteKickBtn.enabled = true;
+				voteKickBtnVs.enabled = true;
 			}
 			if (currentMode == 'V') {
 				PhotonNetwork.AutomaticallySyncScene = false;
@@ -829,10 +825,17 @@ namespace Photon.Pun.LobbySystemPhoton
 				ts.mainPanelManager.OpenFirstTab();
 				ts.TriggerAlertPopup("Lost connection to server.\nReason: The host has left the game.");
 			} else {
-				if (PhotonNetwork.LocalPlayer.IsMasterClient && Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
-					Hashtable h = new Hashtable();
-					h.Add("readyStatus", 0);
-					PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+				if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+					if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
+						Hashtable h = new Hashtable();
+						h.Add("readyStatus", 0);
+						PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+					}
+					voteKickBtn.enabled = true;
+					voteKickBtnVs.enabled = true;
+				} else {
+					voteKickBtn.enabled = false;
+					voteKickBtnVs.enabled = false;
 				}
 			}
 		}
