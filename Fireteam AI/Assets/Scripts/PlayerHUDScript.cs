@@ -1171,7 +1171,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					container.voteOptions.SetActive(false);
 				}
 			}
-			container.voteTime.text = ""+gameController.voteTimer;
+			container.voteTime.text = ""+(int)gameController.voteTimer;
 			container.yesVoteCount.text = ""+gameController.yesVotes;
 			container.noVoteCount.text = ""+gameController.noVotes;
 		} else {
@@ -1186,7 +1186,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		if (gameController.VoteHasSucceeded()) {
 			if (gameController.currentVoteAction == GameControllerScript.VoteActions.KickPlayer) {
 				container.finalVoteResults.text = "THE VOTE TO KICK [" + gameController.playerBeingKicked.NickName + "] HAS PASSED.";
-			} else {
+			}
+		} else {
+			if (gameController.currentVoteAction == GameControllerScript.VoteActions.KickPlayer) {
 				container.finalVoteResults.text = "THE VOTE TO KICK [" + gameController.playerBeingKicked.NickName + "] HAS BEEN VETOED.";
 			}
 		}
