@@ -1304,7 +1304,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				}
 				voteInProgress = false;
-				playerBeingKicked = null;
 			}
 		}
 	}
