@@ -1269,7 +1269,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	{
 		if (PhotonNetwork.LocalPlayer.ActorNumber == actorNo) {
 			PlayerData.playerdata.disconnectReason = "YOU'VE BEEN KICKED FROM THE GAME.";
-			// OnDisconnected(DisconnectCause.DisconnectByClientLogic);
+			OnDisconnected(DisconnectCause.DisconnectByClientLogic);
 		}
 	}
 
