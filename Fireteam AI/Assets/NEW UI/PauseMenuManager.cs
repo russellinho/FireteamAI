@@ -11,6 +11,7 @@ public class PauseMenuManager : MonoBehaviour
     public CanvasGroup mainPauseCanvas;
 
     public void OpenPause() {
+        GetComponent<PauseMenuScript>().SetCurrentPanel("Main");
         anim.Play("Window In");
         blurManager.BlurInAnim();
         pauseActive = true;

@@ -27,6 +27,12 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	private ConfirmType confirmType;
 	private Player playerSelected;
 	public GameObject gameOptionsMenu;
+	public Animator mainAnimator;
+	public Animator settingsAnimator;
+	public Animator gameOptionsAnimator;
+	public Animator kickPlayerAnimator;
+	public Button xButton;
+	public string currentPanel;
 
 	void Awake() {
 		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
@@ -158,6 +164,33 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 				playerKickEntries[j].gameObject.SetActive(false);
 			}
 		}
+	}
+
+	public void SetXButtonActions()
+	{
+		if (currentPanel == "Game Options") {
+			gameOptionsAnimator.Play("Panel Out");
+			mainAnimator.Play("Panel In");
+			xButton.gameObject.SetActive(false);
+			gameOptionsAnimator.gameObject.SetActive(false);
+			SetCurrentPanel("Main");
+		} else if (currentPanel == "Settings") {
+			SaveAudioSettings();
+			SaveKeyBindings();
+			settingsAnimator.Play("Panel Out");
+			mainAnimator.Play("Panel In");
+			SetCurrentPanel("Main");
+		} else if (currentPanel == "Kick") {
+			kickPlayerAnimator.Play("Panel Out");
+			gameOptionsAnimator.Play("Panel In");
+			kickPlayerAnimator.gameObject.SetActive(false);
+			gameOptionsAnimator.gameObject.SetActive(true);
+			SetCurrentPanel("Game Options");
+		}
+	}
+
+	public void SetCurrentPanel(string panel) {
+		this.currentPanel = panel;
 	}
 
 }

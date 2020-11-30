@@ -597,7 +597,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
 		if (!GameControllerScript.playerList.ContainsKey(otherPlayer.ActorNumber)) return;
-		PlayerData.playerdata.GetComponent<PlayerHUDScript>().RemovePlayerMarker(otherPlayer.ActorNumber);
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().RemovePlayerMarker(otherPlayer.ActorNumber);
 		ResetEscapeValues ();
 		foreach (PlayerStat entry in GameControllerScript.playerList.Values)
 		{
