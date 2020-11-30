@@ -1310,10 +1310,10 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public string CanCallVote()
 	{
-		if (voteDelay > 0f) {
-			return "YOU'VE RECENTLY CALLED A VOTE. PLEASE WAIT SOME TIME BEFORE CALLING ANOTHER.";
-		} else if (voteInProgress) {
+		if (voteInProgress) {
 			return "THERE IS CURRENTLY A VOTE IN PROGRESS. PLEASE WAIT UNTIL IT ENDS BEFORE CALLING ANOTHER.";
+		} else if (voteDelay > 0f) {
+			return "YOU'VE RECENTLY CALLED A VOTE. PLEASE WAIT SOME TIME BEFORE CALLING ANOTHER.";
 		}
 		return null;
 	}

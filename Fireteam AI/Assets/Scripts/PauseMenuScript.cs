@@ -180,6 +180,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		} else if (currentPanel == "Settings") {
 			SaveAudioSettings();
 			SaveKeyBindings();
+			xButton.gameObject.SetActive(false);
 			settingsAnimator.Play("Panel Out");
 			mainAnimator.Play("Panel In");
 			SetCurrentPanel("Main");
