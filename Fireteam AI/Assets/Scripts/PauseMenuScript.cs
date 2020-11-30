@@ -118,14 +118,15 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 
 	public void KickPlayer(Player p) {
 		if (p == null) return;
-		if (gameController.CanCallVote()) {
+		string canCallVoteResult = gameController.CanCallVote();
+		if (canCallVoteResult == null) {
 			confirmType = ConfirmType.KickPlayer;
 			playerSelected = p;
 			confirmPopup.SetText("ARE YOU SURE YOU WISH TO KICK PLAYER [" + p.NickName + "]?");
 			blurManager.BlurInAnim();
 			confirmPopup.ModalWindowIn();
 		} else {
-			alertPopup.SetText("YOU'VE RECENTLY CALLED A VOTE. PLEASE WAIT SOME TIME BEFORE CALLING ANOTHER.");
+			alertPopup.SetText(canCallVoteResult);
 			blurManager.BlurInAnim();
 			alertPopup.ModalWindowIn();
 		}
@@ -137,7 +138,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 			gameController.StartVote(playerSelected, GameControllerScript.VoteActions.KickPlayer);
 			gameOptionsMenu.GetComponent<Animator>().Play("Window Out");
 			ResetPauseMenu();
-			pauseMenuManager.ClosePause();
+			pauseMenuManager.ClosePause(true);
 		}
 	}
 

@@ -19,8 +19,8 @@ public class PauseMenuManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
     }
 
-    public void ClosePause() {
-        if (mainPauseCanvas.alpha == 1f) {
+    public void ClosePause(bool force = false) {
+        if (force || mainPauseCanvas.alpha == 1f) {
             PlayerData.playerdata.inGamePlayerReference.GetComponent<WeaponActionScript>().SetUnpaused();
             anim.Play("Window Out");
             blurManager.BlurOutAnim();
