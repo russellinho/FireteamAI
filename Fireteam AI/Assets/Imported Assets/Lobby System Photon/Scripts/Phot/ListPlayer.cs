@@ -1090,7 +1090,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void KickPlayer(Player playerToKick)
 		{
-			if (PhotonNetwork.IsMasterClient) {
+			if (PhotonNetwork.IsMasterClient && playerToKick != null) {
 				string nickname = playerToKick.NickName;
 				string currentKickedPlayers = (string)PhotonNetwork.CurrentRoom.CustomProperties["kickedPlayers"];
 				if (string.IsNullOrEmpty(currentKickedPlayers)) {

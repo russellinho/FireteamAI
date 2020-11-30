@@ -1152,8 +1152,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		if (gameController.voteInProgress) {
 			if (!container.votePanel.gameObject.activeInHierarchy) {
 				if (gameController.currentVoteAction == GameControllerScript.VoteActions.KickPlayer) {
-					container.votePanel.text = "VOTE CALLED: KICK PLAYER [" + gameController.playerBeingKicked.NickName + "]?";
-					if (gameController.playerBeingKicked.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) {
+					container.votePanel.text = "VOTE CALLED: KICK PLAYER [" + gameController.playerBeingKicked?.NickName + "]?";
+					if (gameController.playerBeingKicked?.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) {
 						container.voteOptions.GetComponent<TextMeshProUGUI>().text = "A VOTE IS BEING HELD TO KICK YOU.";
 						container.voteResults.SetActive(true);
 					} else {
@@ -1185,11 +1185,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	{
 		if (gameController.VoteHasSucceeded()) {
 			if (gameController.currentVoteAction == GameControllerScript.VoteActions.KickPlayer) {
-				container.finalVoteResults.text = "THE VOTE TO KICK [" + gameController.playerBeingKicked.NickName + "] HAS PASSED.";
+				container.finalVoteResults.text = "THE VOTE TO KICK [" + gameController.playerBeingKicked?.NickName + "] HAS PASSED.";
 			}
 		} else {
 			if (gameController.currentVoteAction == GameControllerScript.VoteActions.KickPlayer) {
-				container.finalVoteResults.text = "THE VOTE TO KICK [" + gameController.playerBeingKicked.NickName + "] HAS BEEN VETOED.";
+				container.finalVoteResults.text = "THE VOTE TO KICK [" + gameController.playerBeingKicked?.NickName + "] HAS BEEN VETOED.";
 			}
 		}
 		container.finalVoteResults.gameObject.SetActive(true);

@@ -1013,15 +1013,18 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				}
 			}
+			int playerBeingKickedId = playerBeingKicked == null ? -1 : playerBeingKicked.ActorNumber;
 			pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
-				spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin, assaultModeChangedIndicator, serializedObjectives, GameControllerScript.missionTime, teamMap);
+				spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin, assaultModeChangedIndicator, serializedObjectives, GameControllerScript.missionTime, 
+				currentVoteAction, playerBeingKickedId, voteInProgress, voteTimer, (int)yesVotes, (int)noVotes, teamMap);
 		}
 	}
 
 	[PunRPC]
 	void RpcSyncDataGc(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer,
 		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, bool assaultMode, bool enemyTeamNearingVictoryTrigger, 
-		bool endGameWithWin, bool assaultModeChangedIndicator, string serializedObjectives, float missionTime, string team) {
+		bool endGameWithWin, bool assaultModeChangedIndicator, string serializedObjectives, float missionTime, VoteActions currentVoteAction,
+		int playerBeingKickedId, bool voteInProgress, float voteTimer, int yesVotes, int noVotes, string team) {
 		if (team != teamMap) return;
     	lastGunshotHeardPos = new Vector3(lastGunshotHeardPosX, lastGunshotHeardPosY, lastGunshotHeardPosZ);
 		this.lastGunshotTimer = lastGunshotTimer;
@@ -1034,6 +1037,12 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		this.enemyTeamNearingVictoryTrigger = enemyTeamNearingVictoryTrigger;
 		this.assaultModeChangedIndicator = assaultModeChangedIndicator;
 		this.endGameWithWin = endGameWithWin;
+		this.currentVoteAction = currentVoteAction;
+		this.playerBeingKicked = (playerBeingKickedId == -1 ? null : PhotonNetwork.CurrentRoom.GetPlayer(playerBeingKickedId));
+		this.voteInProgress = voteInProgress;
+		this.voteTimer = voteTimer;
+		this.yesVotes = (short)yesVotes;
+		this.noVotes = (short)noVotes;
 		GameControllerScript.missionTime = missionTime;
 		
 		string[] parsedSerializations = serializedObjectives.Split('|');
@@ -1210,6 +1219,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		if (team != teamMap) return;
 		if (voteAc == VoteActions.KickPlayer) {
 			playerBeingKicked = PhotonNetwork.CurrentRoom.GetPlayer(actorNo);
+			if (playerBeingKicked == null) return;
 			if (playerBeingKicked.IsMasterClient) {
 				playerBeingKicked = null;
 				return;
@@ -1225,6 +1235,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	void KickPlayer(Player playerToKick)
 	{
+		if (playerToKick == null) return;
 		if (gameOver) return;
 		if (PhotonNetwork.LocalPlayer.IsMasterClient && playerToKick.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) return;
 		if (isVersusHostForThisTeam()) {
@@ -1272,7 +1283,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void HandleVoteCast() {
 		if (voteInProgress && !iHaveVoted) {
 			// You may not vote in a vote called to kick you
-			if (currentVoteAction == VoteActions.KickPlayer && playerBeingKicked.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) return;
+			if (currentVoteAction == VoteActions.KickPlayer && playerBeingKicked?.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) return;
 			if (Input.GetKeyDown(KeyCode.F1)) {
 				pView.RPC("RpcCastVote", RpcTarget.All, true, teamMap);
 				iHaveVoted = true;
