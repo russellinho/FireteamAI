@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Photon.Realtime;
 using System.Collections.Generic;
 using System.Collections;
@@ -847,6 +848,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnLeftRoom()
 		{
+			if (playerListEntries == null) return;
 			mapSelector.index = 0;
 			mapSelectorVs.index = 0;
 			templateUIClass.RoomPanel.SetActive(false);
@@ -945,6 +947,17 @@ namespace Photon.Pun.LobbySystemPhoton
 						p.SetReadyText('r');
 						p.SetReady(false);
 					}
+				}
+			}
+
+			if (propertiesThatChanged.ContainsKey("kickedPlayers")) {
+				string newKickedPlayers = (string)propertiesThatChanged["kickedPlayers"];
+				string[] newKickedPlayersList = newKickedPlayers.Split(',');
+				if (newKickedPlayersList.Contains(PhotonNetwork.NickName)) {
+					PhotonNetwork.LeaveRoom();
+					TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
+					ts.ToggleLoadingScreen(false);
+					ts.TriggerAlertPopup("Lost connection to server.\nReason: You've been kicked from the game.");
 				}
 			}
 		}
@@ -1092,6 +1105,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		{
 			if (PhotonNetwork.IsMasterClient && playerToKick != null) {
 				string nickname = playerToKick.NickName;
+				pView.RPC("RpcAlertKickedPlayer", RpcTarget.All, playerToKick.ActorNumber);
+				PhotonNetwork.CloseConnection(playerToKick);
 				string currentKickedPlayers = (string)PhotonNetwork.CurrentRoom.CustomProperties["kickedPlayers"];
 				if (string.IsNullOrEmpty(currentKickedPlayers)) {
 					currentKickedPlayers = nickname;
@@ -1101,8 +1116,6 @@ namespace Photon.Pun.LobbySystemPhoton
 				Hashtable h = new Hashtable();
 				h.Add("kickedPlayers", currentKickedPlayers);
 				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
-				pView.RPC("RpcAlertKickedPlayer", RpcTarget.All, playerToKick.ActorNumber);
-				PhotonNetwork.CloseConnection(playerToKick);
 				playerBeingKickedButton.SetActive(false);
 			}
 			ResetPlayerKick();

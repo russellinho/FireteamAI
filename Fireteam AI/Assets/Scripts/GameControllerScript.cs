@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -72,6 +73,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public enum VoteActions {KickPlayer};
 	public VoteActions currentVoteAction;
 	public Player playerBeingKicked;
+	public string playerBeingKickedName;
 	public bool iHaveVoted;
 	public bool voteInProgress;
 	public float voteTimer;
@@ -594,6 +596,20 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	// 	playerList.Clear();
 	// }
 
+	public override void OnRoomPropertiesUpdate (Hashtable propertiesThatChanged) {
+		if (propertiesThatChanged.ContainsKey("kickedPlayers")) {
+			string newKickedPlayers = (string)propertiesThatChanged["kickedPlayers"];
+			string[] newKickedPlayersList = newKickedPlayers.Split(',');
+			if (newKickedPlayersList.Contains(PhotonNetwork.NickName)) {
+				PhotonNetwork.CurrentRoom.IsVisible = false;
+				PhotonNetwork.Disconnect();
+				PhotonNetwork.LeaveRoom();
+				PlayerData.playerdata.disconnectReason = "YOU'VE BEEN KICKED FROM THE GAME.";
+				OnDisconnected(DisconnectCause.DisconnectByClientLogic);
+			}
+		}
+	}
+
 	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
 		if (!GameControllerScript.playerList.ContainsKey(otherPlayer.ActorNumber)) return;
@@ -1016,7 +1032,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			int playerBeingKickedId = playerBeingKicked == null ? -1 : playerBeingKicked.ActorNumber;
 			pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
 				spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin, assaultModeChangedIndicator, serializedObjectives, GameControllerScript.missionTime, 
-				currentVoteAction, playerBeingKickedId, voteInProgress, voteTimer, (int)yesVotes, (int)noVotes, teamMap);
+				currentVoteAction, playerBeingKickedId, playerBeingKickedName, voteInProgress, voteTimer, (int)yesVotes, (int)noVotes, teamMap);
 		}
 	}
 
@@ -1024,7 +1040,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void RpcSyncDataGc(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer,
 		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, bool assaultMode, bool enemyTeamNearingVictoryTrigger, 
 		bool endGameWithWin, bool assaultModeChangedIndicator, string serializedObjectives, float missionTime, VoteActions currentVoteAction,
-		int playerBeingKickedId, bool voteInProgress, float voteTimer, int yesVotes, int noVotes, string team) {
+		int playerBeingKickedId, string playerBeingKickedName, bool voteInProgress, float voteTimer, int yesVotes, int noVotes, string team) {
 		if (team != teamMap) return;
     	lastGunshotHeardPos = new Vector3(lastGunshotHeardPosX, lastGunshotHeardPosY, lastGunshotHeardPosZ);
 		this.lastGunshotTimer = lastGunshotTimer;
@@ -1039,6 +1055,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		this.endGameWithWin = endGameWithWin;
 		this.currentVoteAction = currentVoteAction;
 		this.playerBeingKicked = (playerBeingKickedId == -1 ? null : PhotonNetwork.CurrentRoom.GetPlayer(playerBeingKickedId));
+		this.playerBeingKickedName = playerBeingKickedName;
 		this.voteInProgress = voteInProgress;
 		this.voteTimer = voteTimer;
 		this.yesVotes = (short)yesVotes;
@@ -1206,6 +1223,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public void StartVote(Player p, VoteActions voteAc)
 	{
+		if (p == null) return;
 		if (voteDelay > 0f) return;
 		if (gameOver) return;
 		if (voteAc == VoteActions.KickPlayer && p.IsMasterClient) return;
@@ -1225,6 +1243,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				return;
 			}
 		}
+		playerBeingKickedName = playerBeingKicked.NickName;
 		currentVoteAction = voteAc;
 		noVotes = 0;
 		yesVotes = 0;
@@ -1233,13 +1252,34 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		voteInProgress = true;
 	}
 
+	void SetLeftPlayerAsKicked() {
+		string currentKickedPlayers = (string)PhotonNetwork.CurrentRoom.CustomProperties["kickedPlayers"];
+		if (string.IsNullOrEmpty(currentKickedPlayers)) {
+			currentKickedPlayers = playerBeingKickedName;
+		} else {
+			currentKickedPlayers += ',' + playerBeingKickedName;
+		}
+		Hashtable h = new Hashtable();
+		h.Add("kickedPlayers", currentKickedPlayers);
+		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+	}
+
 	void KickPlayer(Player playerToKick)
 	{
-		if (playerToKick == null) return;
 		if (gameOver) return;
-		if (PhotonNetwork.LocalPlayer.IsMasterClient && playerToKick.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) return;
+		if (PhotonNetwork.LocalPlayer.IsMasterClient && playerToKick?.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) return;
 		if (isVersusHostForThisTeam()) {
+			if (playerToKick == null) {
+				SetLeftPlayerAsKicked();
+				return;
+			}
 			string nickname = playerToKick.NickName;
+			pView.RPC("RpcAlertKickedPlayer", RpcTarget.All, playerToKick.ActorNumber);
+			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+				PhotonNetwork.CloseConnection(playerToKick);
+			} else {
+				pView.RPC("RpcKickPlayer", RpcTarget.MasterClient, playerToKick.ActorNumber);
+			}
 			string currentKickedPlayers = (string)PhotonNetwork.CurrentRoom.CustomProperties["kickedPlayers"];
 			if (string.IsNullOrEmpty(currentKickedPlayers)) {
 				currentKickedPlayers = nickname;
@@ -1249,12 +1289,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			Hashtable h = new Hashtable();
 			h.Add("kickedPlayers", currentKickedPlayers);
 			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
-			pView.RPC("RpcAlertKickedPlayer", RpcTarget.All, playerToKick.ActorNumber);
-			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
-				PhotonNetwork.CloseConnection(playerToKick);
-			} else {
-				pView.RPC("RpcKickPlayer", RpcTarget.MasterClient, playerToKick.ActorNumber);
-			}
 		}
 	}
 
