@@ -16,6 +16,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public BlurManager blurManager;
 	public ModalWindowManager alertPopup;
 	public ModalWindowManager confirmPopup;
+	public ModalWindowManager exitPopup;
 	public GameObject playerRef;
 	public Slider musicVolumeSlider;
 	public TextMeshProUGUI musicVolumeField;
@@ -135,6 +136,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		if (confirmType == ConfirmType.KickPlayer) {
 			gameController.StartVote(playerSelected, GameControllerScript.VoteActions.KickPlayer);
 			gameOptionsMenu.GetComponent<Animator>().Play("Window Out");
+			ResetPauseMenu();
 			pauseMenuManager.ClosePause();
 		}
 	}
@@ -191,6 +193,30 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 
 	public void SetCurrentPanel(string panel) {
 		this.currentPanel = panel;
+	}
+
+	public void HandleEscape()
+	{
+		if (alertPopup.isOn || confirmPopup.isOn || exitPopup.isOn) return;
+		if (currentPanel == "Main") {
+			pauseMenuManager.ClosePause();
+		} else {
+			if (currentPanel != "Settings") {
+				SetXButtonActions();
+			}
+		}
+	}
+
+	void ResetPauseMenu()
+	{
+		if (currentPanel == "Settings") {
+			settingsAnimator.Play("Panel Out");
+		}
+		gameOptionsAnimator.gameObject.SetActive(false);
+		kickPlayerAnimator.gameObject.SetActive(false);
+		xButton.gameObject.SetActive(false);
+		mainAnimator.Play("Panel In");
+		SetCurrentPanel("Main");
 	}
 
 }

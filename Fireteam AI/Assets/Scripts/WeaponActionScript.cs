@@ -15,6 +15,7 @@ public class WeaponActionScript : MonoBehaviour
     private const float DEPLOY_BASE_TIME = 2f;
     private const short DEPLOY_OFFSET = 2;
     private const float LUNGE_SPEED = 20f;
+    private const float UNPAUSE_DELAY = 0.5f;
 
     public MouseLook mouseLook;
     public PlayerActionScript playerActionScript;
@@ -117,8 +118,10 @@ public class WeaponActionScript : MonoBehaviour
     public float deployTimer;
     public bool deployInProgress;
     public bool switchWeaponBackToRight;
-    // Use this for initialization
+    // Timer that prevents player from accidentally firing right after unpausing
+    private float unpauseDelay;
 
+    // Use this for initialization
     private bool initialized;
     public void Initialize()
     {
@@ -188,7 +191,7 @@ public class WeaponActionScript : MonoBehaviour
         }
 
         meleeInput = PlayerPreferences.playerPreferences.KeyWasPressed("Melee");
-
+        
         switch (firingMode)
         {
             case FireMode.Auto:
@@ -204,6 +207,10 @@ public class WeaponActionScript : MonoBehaviour
         }
 
         HandleAttack();
+
+        if (unpauseDelay > 0f) {
+            unpauseDelay -= Time.deltaTime;
+        }
 
         if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster || isWieldingDeployable)
         {
@@ -279,7 +286,7 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
         
-        if (shootInput && !meleeInput && !isMeleeing && !isDrawing && !isReloading && playerActionScript.canShoot && !hudScript.container.pauseMenuGUI.pauseActive)
+        if (shootInput && !meleeInput && !isMeleeing && !isDrawing && !isReloading && playerActionScript.canShoot && !hudScript.container.pauseMenuGUI.pauseActive && unpauseDelay <= 0f)
         {
             if (currentAmmo > 0)
             {
@@ -1553,6 +1560,11 @@ public class WeaponActionScript : MonoBehaviour
 		GameObject o = GameObject.Instantiate(weaponMetaData.deployRef, new Vector3(posX, posY, posZ), Quaternion.Euler(rotX, rotY, rotZ));
 		o.GetComponent<DeployableScript>().deployableId = deployableId;
 		playerActionScript.gameController.DeployDeployable(deployableId, o);
+    }
+
+    public void SetUnpaused()
+    {
+        unpauseDelay = UNPAUSE_DELAY;
     }
 
 }

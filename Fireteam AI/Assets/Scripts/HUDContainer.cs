@@ -34,6 +34,7 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject scoreboard;
     public InGameMessenger inGameMessenger;
 	public PauseMenuManager pauseMenuManager;
+	public PauseMenuScript pauseMenuScript;
 
 	// Hit indication HUD
 	public RawImage hitFlare;

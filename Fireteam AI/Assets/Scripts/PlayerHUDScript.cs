@@ -752,7 +752,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         {
             container.pauseMenuManager.OpenPause();
         } else {
-			container.pauseMenuManager.ClosePause();
+			container.pauseMenuScript.HandleEscape();
 		}
     }
 

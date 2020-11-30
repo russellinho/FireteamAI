@@ -21,6 +21,7 @@ public class PauseMenuManager : MonoBehaviour
 
     public void ClosePause() {
         if (mainPauseCanvas.alpha == 1f) {
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<WeaponActionScript>().SetUnpaused();
             anim.Play("Window Out");
             blurManager.BlurOutAnim();
             pauseActive = false;
