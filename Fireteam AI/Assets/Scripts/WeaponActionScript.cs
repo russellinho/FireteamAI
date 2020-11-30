@@ -199,9 +199,13 @@ public class WeaponActionScript : MonoBehaviour
                 break;
         }
 
+        if (hudScript.container.pauseMenuGUI.pauseActive) {
+            return;
+        }
+
         HandleAttack();
 
-        if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster || isWieldingDeployable || hudScript.container.pauseMenuGUI.pauseActive)
+        if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster || isWieldingDeployable)
         {
             return;
         }
