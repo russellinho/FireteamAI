@@ -22,6 +22,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	// 1 = The Badlands: Act 1; 2 = The Badlands: Act 2
 	public int currentMap;
     public string teamMap;
+	public Terrain[] terrainMetaData;
 
     // variable for last gunshot position
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;

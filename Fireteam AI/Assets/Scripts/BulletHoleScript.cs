@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BulletHoleScript : MonoBehaviour {
 
+	public GameObject hitParticles;
 	public AudioClip ricochet1;
 	public AudioClip ricochet2;
 	public AudioClip ricochet3;
