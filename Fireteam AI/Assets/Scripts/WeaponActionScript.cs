@@ -824,7 +824,7 @@ public class WeaponActionScript : MonoBehaviour
         if (gameObject.layer == 0) return;
         if (terrainId == -1) return;
         Terrain terrainHit = playerActionScript.gameController.terrainMetaData[terrainId];
-        GameObject bulletHoleEffect = Instantiate(terrainHit.bulletHolePrefab, point, Quaternion.FromToRotation(Vector3.forward, normal));
+        GameObject bulletHoleEffect = Instantiate(terrainHit.GetRandomBulletHole(), point, Quaternion.FromToRotation(Vector3.forward, normal));
         bulletHoleEffect.transform.SetParent(terrainHit.gameObject.transform);
         Destroy(bulletHoleEffect, 3f);
         BulletHoleScript b = bulletHoleEffect.GetComponent<BulletHoleScript>();
