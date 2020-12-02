@@ -180,14 +180,13 @@ MonoBehaviour:
   - RpcEndGameForAll
   - RpcSwitchToGameOverScene
   - RpcNetworkComBoxMessage
-  - RpcOnPlayerLeftGame
+  - RpcAlertKickedPlayer
   - RpcAskServerForDataNpc
-  - RpcSyncDataNpc
-  - RpcCreateVersusEntryForOthers
-  - RpcStartVote
   - RpcCastVote
   - RpcKickPlayer
-  - RpcAlertKickedPlayer
+  - RpcOnPlayerLeftGame
+  - RpcStartVote
+  - RpcSyncDataNpc
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
