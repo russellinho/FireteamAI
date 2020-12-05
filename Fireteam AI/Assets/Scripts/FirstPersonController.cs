@@ -162,6 +162,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void PlayLandingSound()
         {
+            GetTerrainWalkingOn();
             int terrainType = GetTerrainTypeFromCurrentTerrain();
             if (terrainType != -1) {
                 m_AudioSource.clip = terrainSounds.landSounds[terrainType];
@@ -326,6 +327,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void PlayJumpSound()
         {
+            GetTerrainWalkingOn();
             int terrainType = GetTerrainTypeFromCurrentTerrain();
             if (terrainType != -1) {
                 m_AudioSource.clip = terrainSounds.jumpSounds[terrainType];
