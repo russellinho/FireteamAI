@@ -4,21 +4,15 @@ using UnityEngine;
 
 public class BulletHoleScript : MonoBehaviour {
 
-	public AudioClip ricochet1;
-	public AudioClip ricochet2;
-	public AudioClip ricochet3;
+	public ParticleSystem hitParticles;
+	public AudioClip[] ricochetSounds;
 	public AudioSource a;
 
 	// Use this for initialization
 	void Start () {
-		int r = Random.Range (0, 3);
-		if (r == 0) {
-			a.clip = ricochet1;
-		} else if (r == 1) {
-			a.clip = ricochet2;
-		} else {
-			a.clip = ricochet3;
-		}
+		hitParticles.Play();
+		int r = Random.Range (0, ricochetSounds.Length);
+		a.clip = ricochetSounds[r];
 		a.Play ();
 	}
 

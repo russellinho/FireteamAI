@@ -82,8 +82,6 @@ public class WeaponActionScript : MonoBehaviour
     public Vector3 currentAimDownSightPos;
     public Vector3 currentAimStableHandPos;
     
-    public GameObject hitParticles;
-    public GameObject bulletImpact;
     private GameObject bloodEffect;
 
     public enum FireMode { Auto, Semi }
@@ -651,8 +649,8 @@ public class WeaponActionScript : MonoBehaviour
                     pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                 }
             } else {
-                pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
-                pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
+                Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
+                pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index));
             }
         }
         if (weaponMods.suppressorRef == null)
@@ -793,8 +791,8 @@ public class WeaponActionScript : MonoBehaviour
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                     }
                 } else {
-                    pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
-                    pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
+                    Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
+                    pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index));
                 }
             }
         }
@@ -822,33 +820,13 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     [PunRPC]
-    void RpcInstantiateBulletHole(Vector3 point, Vector3 normal, string parentName)
-    {
+    void RpcHandleBulletVfx(Vector3 point, Vector3 normal, int terrainId) {
         if (gameObject.layer == 0) return;
-        GameObject bulletHoleEffect = Instantiate(bulletImpact, point, Quaternion.FromToRotation(Vector3.forward, normal));
-        bulletHoleEffect.transform.SetParent(GameObject.Find(parentName).transform);
-        Destroy(bulletHoleEffect, 3f);
-    }
-
-    void InstantiateBulletHole(Vector3 point, Vector3 normal, string parentName)
-    {
-        GameObject bulletHoleEffect = Instantiate(bulletImpact, point, Quaternion.FromToRotation(Vector3.forward, normal));
-        bulletHoleEffect.transform.SetParent(GameObject.Find(parentName).transform);
-        Destroy(bulletHoleEffect, 3f);
-    }
-
-    [PunRPC]
-    void RpcInstantiateHitParticleEffect(Vector3 point, Vector3 normal)
-    {
-        if (gameObject.layer == 0) return;
-        GameObject hitParticleEffect = Instantiate(hitParticles, point, Quaternion.FromToRotation(Vector3.up, normal));
-        Destroy(hitParticleEffect, 1f);
-    }
-
-    void InstantiateHitParticleEffect(Vector3 point, Vector3 normal)
-    {
-        GameObject hitParticleEffect = Instantiate(hitParticles, point, Quaternion.FromToRotation(Vector3.up, normal));
-        Destroy(hitParticleEffect, 1f);
+        if (terrainId == -1) return;
+        Terrain terrainHit = playerActionScript.gameController.terrainMetaData[terrainId];
+        GameObject bulletHoleEffect = Instantiate(terrainHit.GetRandomBulletHole(), point, Quaternion.FromToRotation(Vector3.forward, normal));
+        bulletHoleEffect.transform.SetParent(terrainHit.gameObject.transform);
+        Destroy(bulletHoleEffect, 4f);
     }
 
     void InstantiateGunSmokeEffect(float duration) {

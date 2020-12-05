@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
@@ -27,9 +28,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private CurveControlledBob m_HeadBob = new CurveControlledBob();
         [SerializeField] private LerpControlledBob m_JumpBob = new LerpControlledBob();
         [SerializeField] private float m_StepInterval;
-        [SerializeField] private AudioClip[] m_FootstepSounds;    // an array of footstep sounds that will be randomly selected from.
-        [SerializeField] private AudioClip m_JumpSound;           // the sound played when character leaves the ground.
-        [SerializeField] private AudioClip m_LandSound;           // the sound played when character touches back on ground.
+        private Terrain terrainUnderneath;
+        public TerrainSounds terrainSounds;
 
         private Camera m_Camera;
         private EncryptedBool m_Jump;
@@ -45,9 +45,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_NextStep;
         private EncryptedBool m_Jumping;
         public AudioSource m_AudioSource;
-    		public bool sprintLock;
+        public bool sprintLock;
 
-    		public bool canMove;
+        public bool canMove;
         public WeaponActionScript weaponActionScript;
         public EquipmentScript equipmentScript;
         public PlayerScript playerScript;
@@ -92,6 +92,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			canMove = true;
 			sprintLock = false;
             initialized = true;
+            StartCoroutine("StartGetTerrainWalkingOn");
         }
 
 
@@ -161,9 +162,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void PlayLandingSound()
         {
-            m_AudioSource.clip = m_LandSound;
-            m_AudioSource.Play();
-            m_NextStep = m_StepCycle + .5f;
+            GetTerrainWalkingOn();
+            int terrainType = GetTerrainTypeFromCurrentTerrain();
+            if (terrainType != -1) {
+                m_AudioSource.clip = terrainSounds.landSounds[terrainType];
+                m_AudioSource.Play();
+                m_NextStep = m_StepCycle + .5f;
+            }
         }
 
 
@@ -322,8 +327,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void PlayJumpSound()
         {
-            m_AudioSource.clip = m_JumpSound;
-            m_AudioSource.Play();
+            GetTerrainWalkingOn();
+            int terrainType = GetTerrainTypeFromCurrentTerrain();
+            if (terrainType != -1) {
+                m_AudioSource.clip = terrainSounds.jumpSounds[terrainType];
+                m_AudioSource.Play();
+            }
         }
 
 
@@ -352,14 +361,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 return;
             }
+            int terrainType = GetTerrainTypeFromCurrentTerrain();
             // pick & play a random footstep sound from the array,
             // excluding sound at index 0
-            int n = Random.Range(1, m_FootstepSounds.Length);
-            m_AudioSource.clip = m_FootstepSounds[n];
-            m_AudioSource.PlayOneShot(m_AudioSource.clip);
-            // move picked sound to index 0 so it's not picked next time
-            m_FootstepSounds[n] = m_FootstepSounds[0];
-            m_FootstepSounds[0] = m_AudioSource.clip;
+            if (terrainType != -1) {
+                AudioClip[] chosenTerrain = terrainSounds.GetTerrainFootsteps(terrainType);
+                int n = Random.Range(1, chosenTerrain.Length);
+                m_AudioSource.clip = chosenTerrain[n];
+                m_AudioSource.PlayOneShot(m_AudioSource.clip);
+                // move picked sound to index 0 so it's not picked next time
+                chosenTerrain[n] = chosenTerrain[0];
+                chosenTerrain[0] = m_AudioSource.clip;
+            }
         }
 
 
@@ -713,6 +726,34 @@ namespace UnityStandardAssets.Characters.FirstPerson
             fpcAnimator.ResetTrigger("ThrowGrenade");
             fpcAnimator.ResetTrigger("UseBooster");
             fpcAnimator.ResetTrigger("HolsterWeapon");
+        }
+
+        void GetTerrainWalkingOn()
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, 3f)) {
+                terrainUnderneath = hit.transform.gameObject.GetComponent<Terrain>();
+            } else {
+                terrainUnderneath = null;
+            }
+        }
+
+        IEnumerator StartGetTerrainWalkingOn()
+        {
+            if (this.enabled) {
+                GetTerrainWalkingOn();
+            }
+            yield return new WaitForSeconds(0.6f);
+            if (this.enabled) {
+                GetTerrainWalkingOn();
+            }
+            StartCoroutine("StartGetTerrainWalkingOn");
+        }
+
+        int GetTerrainTypeFromCurrentTerrain()
+        {
+            if (terrainUnderneath == null) return -1;
+            return (int)terrainUnderneath.terrainType;
         }
 
     }

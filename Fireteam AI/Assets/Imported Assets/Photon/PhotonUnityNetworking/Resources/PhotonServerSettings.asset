@@ -43,9 +43,16 @@ MonoBehaviour:
   - RespawnSpaceship
   - RpcAddToTotalDeaths
   - RpcAddToTotalKills
+  - RpcAlertKickedPlayer
+  - RpcAskServerForDataEnemies
+  - RpcAskServerForDataEquips
+  - RpcAskServerForDataGc
+  - RpcAskServerForDataNpc
+  - RpcAskServerForDataPlayer
+  - RpcAskServerForDataWeps
   - RpcCarryNpc
+  - RpcCastVote
   - RpcChangePlayerDisableStatus
-  - RpcChangeReadyStatus
   - RpcClearAIRespawns
   - RpcClearEnemySeenBy
   - RpcCockGrenade
@@ -62,6 +69,7 @@ MonoBehaviour:
   - RpcDropHealthPickup
   - RpcDropOffNpc
   - RpcEndGame
+  - RpcEndGameForAll
   - RpcEndVersusGame
   - RpcEquipArmorInGame
   - RpcEquipBottomInGame
@@ -72,16 +80,19 @@ MonoBehaviour:
   - RpcEquipTopInGame
   - RpcExplode
   - RpcExplodeDelay
-  - RpcIncrementDeathCount
+  - RpcHandleBulletVfx
   - RpcIncrementEscapeCount
   - RpcInitializeMelee
   - RpcInitializeWeapon
   - RpcInstantiateBloodSpill
   - RpcInstantiateBulletHole
   - RpcInstantiateHitParticleEffect
+  - RpcKickPlayer
   - RpcLoadingScreen
   - RpcMarkAIReadyForRespawn
   - RpcMarkEnemyOutline
+  - RpcNetworkComBoxMessage
+  - RpcOnPlayerLeftGame
   - RpcPingServerForEquipment
   - RpcPlayGruntSound
   - RpcPlayReloadSound
@@ -108,6 +119,7 @@ MonoBehaviour:
   - RpcSetEquippedItems
   - RpcSetExitLevelLoaded
   - RpcSetFiringModeTimer
+  - RpcSetGameIsStarting
   - RpcSetHealth
   - RpcSetInCover
   - RpcSetIsCrouching
@@ -115,7 +127,6 @@ MonoBehaviour:
   - RpcSetLastGunshotHeardPos
   - RpcSetLastSeenPlayerPos
   - RpcSetMapInfo
-  - RpcSetModelCreated
   - RpcSetMovingInAnimator
   - RpcSetMyExpAndGpGained
   - RpcSetNavMeshDestination
@@ -124,7 +135,6 @@ MonoBehaviour:
   - RpcSetRank
   - RpcSetSprintingInAnimator
   - RpcSetTarget
-  - RpcSetTeamCounts
   - RpcSetWalkingInAnimator
   - RpcSetWanderStallDelay
   - RpcSetWeaponReadyInAnimator
@@ -135,9 +145,17 @@ MonoBehaviour:
   - RpcStartGameCountdown
   - RpcStartVersusGame
   - RpcStartVersusGameCountdown
+  - RpcStartVote
   - RpcSwitchTeams
+  - RpcSwitchToGameOverScene
   - RpcSyncAnimatorValues
   - RpcSyncCoverSpot
+  - RpcSyncDataEnemies
+  - RpcSyncDataEquips
+  - RpcSyncDataGc
+  - RpcSyncDataNpc
+  - RpcSyncDataPlayer
+  - RpcSyncDataWeps
   - RpcSyncSuspicionValues
   - RpcTakeDamage
   - RpcToggleButtons
@@ -164,30 +182,6 @@ MonoBehaviour:
   - SendMsgConnectionAll
   - SendMsgConnectionMaster
   - StartDespawn
-  - RpcAskServerForData
-  - RpcSyncData
-  - RpcAskServerForDataEnemies
-  - RpcAskServerForDataEquips
-  - RpcAskServerForDataGc
-  - RpcAskServerForDataPlayer
-  - RpcAskServerForDataWeps
-  - RpcSyncDataEnemies
-  - RpcSyncDataEquips
-  - RpcSyncDataGc
-  - RpcSyncDataPlayer
-  - RpcSyncDataWeps
-  - RpcSetGameIsStarting
-  - RpcEndGameForAll
-  - RpcSwitchToGameOverScene
-  - RpcNetworkComBoxMessage
-  - RpcOnPlayerLeftGame
-  - RpcAskServerForDataNpc
-  - RpcSyncDataNpc
-  - RpcCreateVersusEntryForOthers
-  - RpcStartVote
-  - RpcCastVote
-  - RpcKickPlayer
-  - RpcAlertKickedPlayer
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
