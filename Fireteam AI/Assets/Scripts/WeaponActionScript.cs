@@ -650,7 +650,7 @@ public class WeaponActionScript : MonoBehaviour
                 }
             } else {
                 Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
-                pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, hit.normal, (t == null ? -1 : t.index));
+                pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index));
             }
         }
         if (weaponMods.suppressorRef == null)
@@ -792,7 +792,7 @@ public class WeaponActionScript : MonoBehaviour
                     }
                 } else {
                     Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
-                    pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, hit.normal, (t == null ? -1 : t.index));
+                    pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index));
                 }
             }
         }
@@ -826,10 +826,7 @@ public class WeaponActionScript : MonoBehaviour
         Terrain terrainHit = playerActionScript.gameController.terrainMetaData[terrainId];
         GameObject bulletHoleEffect = Instantiate(terrainHit.GetRandomBulletHole(), point, Quaternion.FromToRotation(Vector3.forward, normal));
         bulletHoleEffect.transform.SetParent(terrainHit.gameObject.transform);
-        Destroy(bulletHoleEffect, 3f);
-        BulletHoleScript b = bulletHoleEffect.GetComponent<BulletHoleScript>();
-        GameObject hitParticleEffect = Instantiate(b.hitParticles, point, Quaternion.FromToRotation(Vector3.up, normal));
-        Destroy(hitParticleEffect, 2f);
+        Destroy(bulletHoleEffect, 4f);
     }
 
     void InstantiateGunSmokeEffect(float duration) {

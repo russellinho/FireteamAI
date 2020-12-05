@@ -575,7 +575,7 @@ MonoBehaviour:
   m_JumpBob:
     BobDuration: 0.2
     BobAmount: 0.1
-  m_StepInterval: 5
+  m_StepInterval: 4
   terrainSounds: {fileID: 7990755629366096276}
   m_Input: {x: 0, y: 0}
   m_CharacterController: {fileID: 1029626021163347198}
