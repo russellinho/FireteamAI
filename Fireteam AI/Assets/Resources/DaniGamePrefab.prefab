@@ -76904,6 +76904,7 @@ GameObject:
   - component: {fileID: 5740449512303423530}
   - component: {fileID: 5740449512303423531}
   - component: {fileID: 5740449512303423528}
+  - component: {fileID: 6841245015182520099}
   - component: {fileID: 5740449512303423529}
   - component: {fileID: 8314606494561740902}
   m_Layer: 9
@@ -77350,11 +77351,7 @@ MonoBehaviour:
     BobDuration: 0.2
     BobAmount: 0.1
   m_StepInterval: 5
-  m_FootstepSounds:
-  - {fileID: 8300000, guid: 42e65e088b3f4374e851b8dbd38f3df9, type: 3}
-  - {fileID: 8300000, guid: 8bc94ec6ed537e743b481638bdcd503d, type: 3}
-  m_JumpSound: {fileID: 8300000, guid: 5897aeed9b676024fbb8c694b421a861, type: 3}
-  m_LandSound: {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
+  terrainSounds: {fileID: 6841245015182520099}
   m_Input: {x: 0, y: 0}
   m_CharacterController: {fileID: 5740449512303423507}
   m_AudioSource: {fileID: 5740449512303423504}
@@ -77459,10 +77456,6 @@ MonoBehaviour:
   isUsingDeployable: 0
   currentAimDownSightPos: {x: 0, y: 0, z: 0}
   currentAimStableHandPos: {x: 0, y: 0, z: 0}
-  hitParticles: {fileID: 1617700753897852, guid: 2b61531c3d65e3f4e949e45eb6021b7b,
-    type: 3}
-  bulletImpact: {fileID: 1235035097298946, guid: 1abe832de1d01be48b12062549dcc9fb,
-    type: 3}
   firingMode: 0
   shotMode: 0
   camTransform: {fileID: 5740449511238426492}
@@ -77534,7 +77527,6 @@ MonoBehaviour:
   sprintTime: 0
   canShoot: 0
   escapeValueSent: 0
-  kills: 0
   isRespawning: 0
   respawnTimer: 0
   totalSpeedBoost:
@@ -77653,6 +77645,176 @@ MonoBehaviour:
   myHudMarker: {fileID: 5740449512403238318}
   myHudMarker2: {fileID: 6172793881152011615}
   screenGrab: 0
+--- !u!114 &6841245015182520099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5740449512303423527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07063cd9b1e6147b8a97e80c6538280c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpSounds:
+  - {fileID: 8300000, guid: 5f49afa7109c44f4e9c93b47ba662ef9, type: 3}
+  - {fileID: 8300000, guid: b0478b5b421634d57867b1455c5036d8, type: 3}
+  - {fileID: 8300000, guid: acb617267922d4edaa50f9ec69a4de8a, type: 3}
+  - {fileID: 8300000, guid: 71e9dbd55612240e49f72379c9877aef, type: 3}
+  - {fileID: 8300000, guid: 5517a357d53d846769627e38b282deb7, type: 3}
+  - {fileID: 8300000, guid: 2e1cc1c02ab39460aa4124fcca4e58a2, type: 3}
+  - {fileID: 8300000, guid: 2782d04c15e04419089b9c76f6b97b12, type: 3}
+  - {fileID: 8300000, guid: 14f6d563d8d2b4ef68c87253c86f896a, type: 3}
+  - {fileID: 8300000, guid: 197673544e4ad47979284c35a0be683d, type: 3}
+  - {fileID: 8300000, guid: e9aaf79b605464f48aa1761611f18b96, type: 3}
+  - {fileID: 8300000, guid: 52f3f5aa154e04eb89191fd4ea00ffc4, type: 3}
+  - {fileID: 8300000, guid: d443fc23bbc14447898bdbb0f2e0dfb9, type: 3}
+  - {fileID: 8300000, guid: e776dd4a50431454f8482693a52f7459, type: 3}
+  - {fileID: 8300000, guid: cdfa4b7b436344d178dc32a248bb7c85, type: 3}
+  - {fileID: 8300000, guid: 14c5baa3f13f74dcf9f5c36e08c69f1e, type: 3}
+  - {fileID: 8300000, guid: 0955702a14c6047239b219177bf21f61, type: 3}
+  - {fileID: 8300000, guid: 212704c4cb05347d38e0b8fdaed13f71, type: 3}
+  - {fileID: 8300000, guid: 41edf3eeed0b34116ba7ed4ca4293380, type: 3}
+  - {fileID: 8300000, guid: 18c28431b8921492ea44708f461f9642, type: 3}
+  - {fileID: 8300000, guid: 860e6d9710a4e4fc8b3d9e85c2cc87d5, type: 3}
+  - {fileID: 8300000, guid: 1730037b67cde40d1a1d7ea230fdf65e, type: 3}
+  - {fileID: 8300000, guid: 40b144c9117244c8198eb5143abf5142, type: 3}
+  - {fileID: 8300000, guid: 0e4f815329fed46b6b31ab51c851974e, type: 3}
+  - {fileID: 8300000, guid: 37db89f09cf324c5392572259a89fb2b, type: 3}
+  landSounds:
+  - {fileID: 8300000, guid: 467498aacc26b4783ad7a1fa4300c8fc, type: 3}
+  - {fileID: 8300000, guid: bf786a49677a1457d8499145e850db42, type: 3}
+  - {fileID: 8300000, guid: 578d29ecff8894ea799d249bf6965f1b, type: 3}
+  - {fileID: 8300000, guid: 8fd2c3ae880aa4e82b331998e3884a12, type: 3}
+  - {fileID: 8300000, guid: 7c7a0554828d84784a1f1bcad7297b29, type: 3}
+  - {fileID: 8300000, guid: 200fa4a2613bc45a1945b5bdc43e3a53, type: 3}
+  - {fileID: 8300000, guid: 35a5040bb772d4759884396c8e880ab0, type: 3}
+  - {fileID: 8300000, guid: 14f6d563d8d2b4ef68c87253c86f896a, type: 3}
+  - {fileID: 8300000, guid: e76622005c6f44c9a844f907e166540e, type: 3}
+  - {fileID: 8300000, guid: f0605c4151873410a937d3633bc59286, type: 3}
+  - {fileID: 8300000, guid: 8a2bd6e23744144dd961178220ef41d3, type: 3}
+  - {fileID: 8300000, guid: 57e689da3798f4ebd84846ef1f149202, type: 3}
+  - {fileID: 8300000, guid: 4fddd823285374e7089dd830b89b4096, type: 3}
+  - {fileID: 8300000, guid: 3008af93127c647d8a9d91b907f9daba, type: 3}
+  - {fileID: 8300000, guid: 557cb39631e214d028796e719b275306, type: 3}
+  - {fileID: 8300000, guid: 97a0fbff462f4487db514378ef64487f, type: 3}
+  - {fileID: 8300000, guid: 7264c7f85dde348b998395a1ababebd2, type: 3}
+  - {fileID: 8300000, guid: 78f8e13d1e6e14a6da6b77ab3165fc88, type: 3}
+  - {fileID: 8300000, guid: adb57579c76a0401daee0fded2f46aa3, type: 3}
+  - {fileID: 8300000, guid: 823a81b28a9174a379991ab68c8bd7ab, type: 3}
+  - {fileID: 8300000, guid: 5fe8208ecff6d4990932fa135ab4eb6f, type: 3}
+  - {fileID: 8300000, guid: 504618647e58f41c48dbd1e7032d0439, type: 3}
+  - {fileID: 8300000, guid: 08e94762621654707a7028972269007e, type: 3}
+  - {fileID: 8300000, guid: c5ed4d6a3f75e4398812bb2b17602394, type: 3}
+  concreteTerrain:
+  - {fileID: 8300000, guid: 0248ff854229045d0b3b1824ffa682f0, type: 3}
+  - {fileID: 8300000, guid: 8abc4fd19304c4fa99eddb033cf87e76, type: 3}
+  - {fileID: 8300000, guid: dad3bfd6a9bdb4a2c82b849eb0c3f9e1, type: 3}
+  grassTerrain:
+  - {fileID: 8300000, guid: bd17f78ffeba143669b93b309d129e82, type: 3}
+  - {fileID: 8300000, guid: d9f60e59a68264a0686af595e6877130, type: 3}
+  - {fileID: 8300000, guid: f8501c8eda0064e32b2e836bc56ea406, type: 3}
+  woodTerrain:
+  - {fileID: 8300000, guid: d9672b029c18b4fba80a2ffc08c26d97, type: 3}
+  - {fileID: 8300000, guid: 8b518857e0aac42d18f32b4100dd59cb, type: 3}
+  - {fileID: 8300000, guid: b1284f767a8b341b08d79d2bdf844e64, type: 3}
+  waterTerrain:
+  - {fileID: 8300000, guid: dced10bb182494492a124e75eff4011f, type: 3}
+  - {fileID: 8300000, guid: 1746fc55a02cf43e68754ce45061808c, type: 3}
+  - {fileID: 8300000, guid: b10585725c5984a269d04623e6c41719, type: 3}
+  - {fileID: 8300000, guid: 66b51a0e307a94d928501ac0132f63d1, type: 3}
+  stoneTerrain:
+  - {fileID: 8300000, guid: 87a8d5b6f903142428d4212caefd7cef, type: 3}
+  - {fileID: 8300000, guid: 4af59e07d0f5b48bd9c11ac3e94b6ea9, type: 3}
+  - {fileID: 8300000, guid: 52d3dd5143781453c9ddc314dd3a3814, type: 3}
+  - {fileID: 8300000, guid: cc95ae78ccebe42369ae8bc9a095a67c, type: 3}
+  weakiceTerrain:
+  - {fileID: 8300000, guid: aacaccc92f8db4a849b75fe46a978a9c, type: 3}
+  - {fileID: 8300000, guid: 6c6be9630a92b4c37b888f5627e9dbd9, type: 3}
+  - {fileID: 8300000, guid: 8d255ac24e9424afd82469331e7fad17, type: 3}
+  - {fileID: 8300000, guid: 25a393bce1eec4b15acc2bdfe727064d, type: 3}
+  snowTerrain:
+  - {fileID: 8300000, guid: 675ce07d34a584e89ba5ed38c8ff6753, type: 3}
+  - {fileID: 8300000, guid: 3d507da8e1416409594bcc071ff3260c, type: 3}
+  - {fileID: 8300000, guid: f2b7b421abe5941fd9e897c029253566, type: 3}
+  - {fileID: 8300000, guid: a64a860ac36dc4bc0b3376527b6e915a, type: 3}
+  glassTerrain:
+  - {fileID: 8300000, guid: 5dba5b89e01f843f6a030e61cbc36843, type: 3}
+  - {fileID: 8300000, guid: 99d7fa7d7d183476ebca09b46fb8aab1, type: 3}
+  sandTerrain:
+  - {fileID: 8300000, guid: 5f751f312af904b46bbfa64fcc98323e, type: 3}
+  - {fileID: 8300000, guid: 9ab399eca486c416fa7ae5a9eb0c1e6f, type: 3}
+  - {fileID: 8300000, guid: dfb6e6c0654d341109653d83681fca0b, type: 3}
+  brushTerrain:
+  - {fileID: 8300000, guid: 8b66ff6437a9e4bd7862fb49c827477c, type: 3}
+  - {fileID: 8300000, guid: d723c48050097418b975d5c807161fd6, type: 3}
+  - {fileID: 8300000, guid: adadbb49059984d6e85159430f7564f1, type: 3}
+  dirtTerrain:
+  - {fileID: 8300000, guid: 7ff2c43160466494abc4518fc613c749, type: 3}
+  - {fileID: 8300000, guid: ac68284ce9705467cb4aef5040462454, type: 3}
+  - {fileID: 8300000, guid: 546b707967066477e8d40154df465ad2, type: 3}
+  deckwoodTerrain:
+  - {fileID: 8300000, guid: 8c4d12f85e72345fdbfa971450c4c6e2, type: 3}
+  - {fileID: 8300000, guid: db92e39e2d7dd4d809c172c9c8df34eb, type: 3}
+  - {fileID: 8300000, guid: 1434a865472f54aa3a59961b3b21198c, type: 3}
+  - {fileID: 8300000, guid: d3979389a8f1043789a8df22ec8b04d9, type: 3}
+  bluntwoodTerrain:
+  - {fileID: 8300000, guid: 542347fb94c63490691aab8791393495, type: 3}
+  - {fileID: 8300000, guid: 3d0c66a956db54fcaa248a99d716d0c3, type: 3}
+  - {fileID: 8300000, guid: d8b6086fe0c8049bf8f2c91a3ed3497e, type: 3}
+  - {fileID: 8300000, guid: 8775fe9c4da8045ad8995cf9b7c1dc29, type: 3}
+  gravelTerrain:
+  - {fileID: 8300000, guid: 6ffde26781efb42efa6d090ebbead9ed, type: 3}
+  - {fileID: 8300000, guid: 3976f5c37c6254c88a1d6669ace9a170, type: 3}
+  - {fileID: 8300000, guid: 6d23e3c45658b45a292d817d1d099a31, type: 3}
+  - {fileID: 8300000, guid: 7ef9dc7f138f0466a803bb4fb821c3d5, type: 3}
+  leavesTerrain:
+  - {fileID: 8300000, guid: 66e3f2c7e050144ecb68d9b56831ed16, type: 3}
+  - {fileID: 8300000, guid: ee5f3b6bbbb8e49f086ad60f86234718, type: 3}
+  - {fileID: 8300000, guid: 90da643263fbd4ce68784f94f897a552, type: 3}
+  - {fileID: 8300000, guid: ccae68d1022614fcaa8bddd5fff65008, type: 3}
+  linoTerrain:
+  - {fileID: 8300000, guid: e45931bbb16484f208d34ae6ef85342f, type: 3}
+  - {fileID: 8300000, guid: c92936c12c25248d499ff48ac3de2687, type: 3}
+  - {fileID: 8300000, guid: 909d6dd2a33684b69bbd698e01a8e157, type: 3}
+  marbleTerrain:
+  - {fileID: 8300000, guid: b5a349815b0ea442d94df131695cd93e, type: 3}
+  - {fileID: 8300000, guid: ec4b8932f0c1a4d13b13d53d584accb8, type: 3}
+  - {fileID: 8300000, guid: c6339789542374019a95716792c95f38, type: 3}
+  - {fileID: 8300000, guid: b1fa9aedc1e374e62b62f22dea9d0b52, type: 3}
+  metalboxTerrain:
+  - {fileID: 8300000, guid: a89b373b5404544088306f91769001fd, type: 3}
+  - {fileID: 8300000, guid: 8b245b0d33a9b4dd99f20421432d4507, type: 3}
+  - {fileID: 8300000, guid: 7b9d4310ca0f84247ad3e7aaa4cc7427, type: 3}
+  - {fileID: 8300000, guid: 9cc0a51c6b34a440c82757525fe76010, type: 3}
+  metalbarTerrain:
+  - {fileID: 8300000, guid: 681797e29029d490f88944476f6bf652, type: 3}
+  - {fileID: 8300000, guid: adf8364c8a99f4ac9a0e6381f7fb2398, type: 3}
+  - {fileID: 8300000, guid: 4503178b122554540b72a18ac2fb0140, type: 3}
+  - {fileID: 8300000, guid: 7469e2965ea4d4e51b67bc68fbc2f838, type: 3}
+  mudTerrain:
+  - {fileID: 8300000, guid: 537d8c51ca2b94a5fbb91f83526eaba6, type: 3}
+  - {fileID: 8300000, guid: 664dea6b3d3e5470cb4a8a75db930ccf, type: 3}
+  - {fileID: 8300000, guid: 0a18ee1f86eb448ddb8a3052b9de7d9b, type: 3}
+  - {fileID: 8300000, guid: 42df97719fbdd47deb33639cd100dad9, type: 3}
+  mufflediceTerrain:
+  - {fileID: 8300000, guid: f5b30e5ca370c4af68fb3dfbd75e3ce7, type: 3}
+  - {fileID: 8300000, guid: e1822c9e328254f4f802d9c353e85474, type: 3}
+  - {fileID: 8300000, guid: 5fe8208ecff6d4990932fa135ab4eb6f, type: 3}
+  quicksandTerrain:
+  - {fileID: 8300000, guid: ce6fe85080e954f0880d827904f100ea, type: 3}
+  - {fileID: 8300000, guid: 4fe932d205ea941038f77bb7ab05d03b, type: 3}
+  - {fileID: 8300000, guid: da2b305f0f4a44c85b4e72ba3010783c, type: 3}
+  rugTerrain:
+  - {fileID: 8300000, guid: 6cbdb6da5b870410295f48331653d6eb, type: 3}
+  - {fileID: 8300000, guid: 58833f6170a664576aa16a3cd08f4bfc, type: 3}
+  - {fileID: 8300000, guid: c0a2cdda59e16469c82c3ca1e61e929c, type: 3}
+  squeakywoodTerrain:
+  - {fileID: 8300000, guid: e32d34fd0c31740989850b456dd77dc4, type: 3}
+  - {fileID: 8300000, guid: c615cc1670a2344bc9cd03c4bb589d0c, type: 3}
+  - {fileID: 8300000, guid: 956eb3283095e479d9732366c39f94d6, type: 3}
+  - {fileID: 8300000, guid: 7aa933a8421084e1c89609bc7c7774dc, type: 3}
 --- !u!114 &5740449512303423529
 MonoBehaviour:
   m_ObjectHideFlags: 0
