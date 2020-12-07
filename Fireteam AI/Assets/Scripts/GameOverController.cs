@@ -44,6 +44,7 @@ public class GameOverController : MonoBehaviourPunCallbacks {
     public GameObject versusPanel;
     public GameObject campaignPanel;
     private bool isVersus;
+    public AudioSource rankUpSound;
 	void Awake() {
 
         exitButtonPressed = false;
@@ -237,6 +238,7 @@ public class GameOverController : MonoBehaviourPunCallbacks {
         levelUpPopup.GetComponent<LevelUpPopupScript>().rankNameTxt.text = r.name;
         blurManager.BlurInAnim();
         levelUpPopup.ModalWindowIn();
+        rankUpSound.Play();
     }
 
     public void TriggerAlertPopup(string message) {

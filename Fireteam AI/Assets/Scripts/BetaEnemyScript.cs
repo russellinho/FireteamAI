@@ -1310,6 +1310,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         if (playerNetworkId == PlayerData.playerdata.inGamePlayerReference.GetComponent<PhotonView>().ViewID) {
 			// Increment my kill score and show the kill popup for myself
 			PlayerData.playerdata.inGamePlayerReference.GetComponent<WeaponActionScript>().RewardKill(false);
+			PlayerData.playerdata.inGamePlayerReference.GetComponent<AudioControllerScript>().PlayKillSound();
 		}
 	}
 

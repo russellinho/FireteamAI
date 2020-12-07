@@ -563,6 +563,7 @@ public class WeaponActionScript : MonoBehaviour
                         if (b.health <= 0 && beforeHp > 0)
                         {
                             RewardKill(false);
+                            audioController.PlayKillSound();
                         }
                     }
                 }
@@ -641,6 +642,7 @@ public class WeaponActionScript : MonoBehaviour
                         if (b.health <= 0 && beforeHp > 0)
                         {
                             RewardKill(false);
+                            audioController.PlayKillSound();
                         }
                     }
                 }
@@ -783,6 +785,7 @@ public class WeaponActionScript : MonoBehaviour
                         if (b.health <= 0 && beforeHp > 0)
                         {
                             RewardKill(false);
+                            audioController.PlayKillSound();
                         }
                         totalDamageDealt += thisDamageDealt;
                     }

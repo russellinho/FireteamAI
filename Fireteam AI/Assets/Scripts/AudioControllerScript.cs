@@ -36,6 +36,7 @@ public class AudioControllerScript : MonoBehaviour {
 	public AudioClip stealthMusic;
 	public AudioClip assaultMusic;
 	public AudioClip headshotSound;
+	public AudioClip killSound;
 	public AudioClip playerHitSound;
 	public AudioClip playerGruntSound1;
 	public AudioClip playerGruntSound2;
@@ -137,6 +138,14 @@ public class AudioControllerScript : MonoBehaviour {
 		}
 		fxSound1.clip = headshotSound;
 		fxSound1.Play ();
+	}
+
+	public void PlayKillSound() {
+		if (!pView.IsMine) {
+			return;
+		}
+		fxSound1.clip = killSound;
+		fxSound1.Play();
 	}
 
 	public void PlayCautionSound() {
