@@ -80,7 +80,6 @@ MonoBehaviour:
   - RpcEquipTopInGame
   - RpcExplode
   - RpcExplodeDelay
-  - RpcHandleBulletVfx
   - RpcIncrementEscapeCount
   - RpcInitializeMelee
   - RpcInitializeWeapon
@@ -182,6 +181,7 @@ MonoBehaviour:
   - SendMsgConnectionAll
   - SendMsgConnectionMaster
   - StartDespawn
+  - RpcHandleBulletVfx
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
