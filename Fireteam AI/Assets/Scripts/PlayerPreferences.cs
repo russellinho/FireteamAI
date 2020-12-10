@@ -122,6 +122,10 @@ public class PlayerPreferences : MonoBehaviour
         keyMappings.Add("Reload", new KeyMapping(KeyCode.R, 14));
         keyMappings.Add("Melee", new KeyMapping(KeyCode.None, 13, -1));
         keyMappings.Add("AllChat", new KeyMapping(KeyCode.T, 18));
+        keyMappings.Add("VoiceChat", new KeyMapping(KeyCode.Period, 21));
+        keyMappings.Add("VCReport", new KeyMapping(KeyCode.V, 22));
+        keyMappings.Add("VCTactical", new KeyMapping(KeyCode.B, 23));
+        keyMappings.Add("VCSocial", new KeyMapping(KeyCode.N, 24));
         keyMappings.Add("Primary", new KeyMapping(KeyCode.Alpha1, 15));
         keyMappings.Add("Secondary", new KeyMapping(KeyCode.Alpha2, 16));
         keyMappings.Add("Support", new KeyMapping(KeyCode.Alpha4, 17));

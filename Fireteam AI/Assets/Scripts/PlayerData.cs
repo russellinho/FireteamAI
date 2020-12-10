@@ -467,6 +467,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             }
             GameObject playerToDestroy = GameControllerScript.playerList[actorNo].objRef;
             PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().RemovePlayerMarker(actorNo);
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().gameController.TogglePlayerSpeaking(false, actorNo, null);
             GameControllerScript.playerList.Remove(actorNo);
             foreach (PlayerStat entry in GameControllerScript.playerList.Values)
             {

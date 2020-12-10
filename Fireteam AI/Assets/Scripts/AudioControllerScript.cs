@@ -16,6 +16,7 @@ public class AudioControllerScript : MonoBehaviour {
 	private const int ECHO_DIFFERENCE = ECHO_START_VALUE - ECHO_END_VALUE;
 
 	private GameControllerScript gameControllerRef;
+	public PlayerHUDScript playerHUDScript;
 
 	// Audio stuff
 	public AudioLowPassFilter audioMuffle;
@@ -28,13 +29,12 @@ public class AudioControllerScript : MonoBehaviour {
 	private AudioSource fxSound5;
 	private AudioSource fxSound6;
 	private AudioSource fxSound7;
+	private AudioSource fxSound8;
 	private float flashbangRingTimer;
 	private float flashbangRingTotalTime;
 	private float flashbangRingThird;
 
 	// Clips
-	public AudioClip stealthMusic;
-	public AudioClip assaultMusic;
 	public AudioClip headshotSound;
 	public AudioClip killSound;
 	public AudioClip playerHitSound;
@@ -64,6 +64,7 @@ public class AudioControllerScript : MonoBehaviour {
 			fxSound5 = fxRefs [4];
 			fxSound6 = fxRefs [5];
 			fxSound7 = fxRefs [6];
+			fxSound8 = fxRefs [7];
 			PlayMissionStartSound ();
 		}
 		initialized = true;
@@ -138,6 +139,15 @@ public class AudioControllerScript : MonoBehaviour {
 		}
 		fxSound1.clip = headshotSound;
 		fxSound1.Play ();
+	}
+
+	public void PlayVoiceCommand(char type, int i, char gender)
+	{
+		if (!pView.IsMine) {
+			return;
+		}
+		fxSound8.clip = playerHUDScript.GetVoiceCommandAudio(type, i, gender);
+		fxSound8.Play();
 	}
 
 	public void PlayKillSound() {

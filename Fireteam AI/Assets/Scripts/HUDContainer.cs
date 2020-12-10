@@ -86,6 +86,14 @@ public class HUDContainer : MonoBehaviour {
 	public TextMeshProUGUI yesVoteCount;
 	public TextMeshProUGUI noVoteCount;
 	public TextMeshProUGUI finalVoteResults;
+	public VoiceChatEntryScript[] voiceChatEntries;
+	public GameObject voiceCommandsPanel;
+	public GameObject voiceCommandsReport;
+	public GameObject voiceCommandsTactical;
+	public GameObject voiceCommandsSocial;
+	public VoiceCommandScript[] reportCommands;
+	public VoiceCommandScript[] tacticalCommands;
+	public VoiceCommandScript[] supportCommands;
 
     // Versus mode HUD
     public GameObject redScore;
