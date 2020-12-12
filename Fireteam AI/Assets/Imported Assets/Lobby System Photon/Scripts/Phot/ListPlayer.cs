@@ -37,6 +37,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		public GameObject readyButtonVs;
         public TextMeshProUGUI readyButtonTxt;
         public TextMeshProUGUI readyButtonVsTxt;
+		public Button voiceChatBtn;
+		public Button voiceChatBtnVs;
 		public RawImage mapPreviewThumb;
 		public RawImage mapPreviewVsThumb;
 		public TextMeshProUGUI mapDescription;
@@ -178,6 +180,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		void ToggleButtons(bool status) {
 			readyButton.GetComponent<Button> ().interactable = status;
             readyButtonVs.GetComponent<Button>().interactable = status;
+			voiceChatBtn.interactable = status;
+			voiceChatBtnVs.interactable = status;
             // sendMsgBtn.interactable = status;
             // sendMsgBtnVs.interactable = status;
 			// emojiBtn.interactable = status;
@@ -201,6 +205,8 @@ namespace Photon.Pun.LobbySystemPhoton
 			gameStarting = gameIsStarting;
 			readyButton.GetComponent<Button> ().interactable = status;
 			readyButtonVs.GetComponent<Button> ().interactable = status;
+			voiceChatBtn.interactable = status;
+			voiceChatBtnVs.interactable = status;
 			// sendMsgBtn.interactable = status;
 			// sendMsgBtnVs.interactable = status;
 			// emojiBtn.interactable = status;

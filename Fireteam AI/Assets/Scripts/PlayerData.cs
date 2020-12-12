@@ -14,6 +14,9 @@ using Firebase.Database;
 using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 using Koobando.UI.Console;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using VivoxUnity;
+using VivoxUnity.Common;
+using VivoxUnity.Private;
 
 public class PlayerData : MonoBehaviour, IOnEventCallback
 {

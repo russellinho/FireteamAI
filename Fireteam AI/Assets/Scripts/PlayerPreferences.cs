@@ -86,6 +86,7 @@ public class PlayerPreferences : MonoBehaviour
         info.rememberLogin = playerPreferences.preferenceData.rememberLogin;
         info.rememberUserId = playerPreferences.preferenceData.rememberUserId;
         info.musicVolume = playerPreferences.preferenceData.musicVolume;
+        info.audioInputName = playerPreferences.preferenceData.audioInputName;
         bf.Serialize(file, info);
         file.Close();
         Debug.Log("Prefs saved.");
@@ -103,6 +104,7 @@ public class PlayerPreferences : MonoBehaviour
         playerPreferences.preferenceData.rememberLogin = false;
         playerPreferences.preferenceData.rememberUserId = null;
         playerPreferences.preferenceData.musicVolume = JukeboxScript.DEFAULT_MUSIC_VOLUME;
+        playerPreferences.preferenceData.audioInputName = "None";
         JukeboxScript.jukebox.SetMusicVolume((float)JukeboxScript.DEFAULT_MUSIC_VOLUME / 100f);
     }
 
@@ -185,6 +187,7 @@ public class PlayerPreferences : MonoBehaviour
         public bool rememberLogin;
         public string rememberUserId;
         public int musicVolume;
+        public string audioInputName;
     }
 
     [Serializable]

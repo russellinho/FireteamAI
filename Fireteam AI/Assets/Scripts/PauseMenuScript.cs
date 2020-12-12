@@ -20,6 +20,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public GameObject playerRef;
 	public Slider musicVolumeSlider;
 	public TextMeshProUGUI musicVolumeField;
+	public HorizontalSelector audioInputSelector;
 	public bool isChangingKeyMapping;
 	public Text changingKeyMappingText;
 	public KeyMappingInput[] keyMappingInputs;
