@@ -14,6 +14,9 @@ using Firebase.Database;
 using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 using Koobando.UI.Console;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using VivoxUnity;
+using VivoxUnity.Common;
+using VivoxUnity.Private;
 
 public class PlayerData : MonoBehaviour, IOnEventCallback
 {
@@ -88,7 +91,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildAdded += HandleBanEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildChanged += HandleBanEvent;
 
-            // TODO: Add the rest of the categories for added, removed, and changed
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/facewear").ChildAdded += HandleInventoryAdded;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/headgear").ChildAdded += HandleInventoryAdded;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/footwear").ChildAdded += HandleInventoryAdded;
@@ -143,6 +145,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 titleRef.connexion.listPlayer.OnJoinedRoom();
             } else {
 			    titleRef.mainPanelManager.OpenFirstTab();
+                try {
+                    ChannelId leavingChannelId = VivoxVoiceManager.Instance.TransmittingSession.Channel;
+                    VivoxVoiceManager.Instance.TransmittingSession.Disconnect();
+                    VivoxVoiceManager.Instance.LoginSession.DeleteChannelSession(leavingChannelId);
+                } catch (Exception e) {
+                    Debug.Log("Tried to leave Vivox voice channel, but encountered an error: " + e.Message);
+                }
             }
             dataLoadedFlag = false;
         }
@@ -467,6 +476,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             }
             GameObject playerToDestroy = GameControllerScript.playerList[actorNo].objRef;
             PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().RemovePlayerMarker(actorNo);
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().gameController.TogglePlayerSpeaking(false, actorNo, null);
             GameControllerScript.playerList.Remove(actorNo);
             foreach (PlayerStat entry in GameControllerScript.playerList.Values)
             {

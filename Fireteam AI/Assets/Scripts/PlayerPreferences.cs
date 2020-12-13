@@ -8,6 +8,7 @@ using Koobando.AntiCheat;
 
 public class PlayerPreferences : MonoBehaviour
 {
+    private const float KEY_COUNT = 25;
     public static PlayerPreferences playerPreferences;
     public PreferenceData preferenceData;
     public Dictionary<string, KeyMapping> keyMappings;
@@ -63,6 +64,11 @@ public class PlayerPreferences : MonoBehaviour
                 BinaryFormatter bf = new BinaryFormatter();
                 file = File.Open(Application.persistentDataPath + "/keyMappings.dat", FileMode.Open);
                 keyMappings = (Dictionary<string, KeyMapping>) bf.Deserialize(file);
+                if (keyMappings.Count != 25) {
+                    // For when new keys are added
+                    Debug.Log("More keys were added since last update, setting all to default.");
+                    SetDefaultKeyMappings();
+                }
                 Debug.Log("Key mappings loaded successfully!");
             } catch (Exception e) {
                 Debug.Log("Key mappings file was corrupted. Setting key mappings to default.");
@@ -86,6 +92,7 @@ public class PlayerPreferences : MonoBehaviour
         info.rememberLogin = playerPreferences.preferenceData.rememberLogin;
         info.rememberUserId = playerPreferences.preferenceData.rememberUserId;
         info.musicVolume = playerPreferences.preferenceData.musicVolume;
+        info.audioInputName = playerPreferences.preferenceData.audioInputName;
         bf.Serialize(file, info);
         file.Close();
         Debug.Log("Prefs saved.");
@@ -103,6 +110,7 @@ public class PlayerPreferences : MonoBehaviour
         playerPreferences.preferenceData.rememberLogin = false;
         playerPreferences.preferenceData.rememberUserId = null;
         playerPreferences.preferenceData.musicVolume = JukeboxScript.DEFAULT_MUSIC_VOLUME;
+        playerPreferences.preferenceData.audioInputName = "None";
         JukeboxScript.jukebox.SetMusicVolume((float)JukeboxScript.DEFAULT_MUSIC_VOLUME / 100f);
     }
 
@@ -122,6 +130,10 @@ public class PlayerPreferences : MonoBehaviour
         keyMappings.Add("Reload", new KeyMapping(KeyCode.R, 14));
         keyMappings.Add("Melee", new KeyMapping(KeyCode.None, 13, -1));
         keyMappings.Add("AllChat", new KeyMapping(KeyCode.T, 18));
+        keyMappings.Add("VoiceChat", new KeyMapping(KeyCode.Period, 21));
+        keyMappings.Add("VCReport", new KeyMapping(KeyCode.V, 22));
+        keyMappings.Add("VCTactical", new KeyMapping(KeyCode.B, 23));
+        keyMappings.Add("VCSocial", new KeyMapping(KeyCode.N, 24));
         keyMappings.Add("Primary", new KeyMapping(KeyCode.Alpha1, 15));
         keyMappings.Add("Secondary", new KeyMapping(KeyCode.Alpha2, 16));
         keyMappings.Add("Support", new KeyMapping(KeyCode.Alpha4, 17));
@@ -181,6 +193,7 @@ public class PlayerPreferences : MonoBehaviour
         public bool rememberLogin;
         public string rememberUserId;
         public int musicVolume;
+        public string audioInputName;
     }
 
     [Serializable]

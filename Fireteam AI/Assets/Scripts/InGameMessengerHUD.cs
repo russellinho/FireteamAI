@@ -61,7 +61,12 @@ public class InGameMessengerHUD : MonoBehaviour {
 	[PunRPC]
 	void RpcSendChatMessage(string message) {
 		if (gameObject.layer == 0) return;
-		container.inGameMessenger.AddMessage (message, pView.Owner.NickName);
+		container.inGameMessenger.AddMessage ('n', message, pView.Owner.NickName);
+	}
+
+	public void SendVoiceCommandMessage(string playerName, string message)
+	{
+		container.inGameMessenger.AddMessage ('v', message, playerName);
 	}
 
 }

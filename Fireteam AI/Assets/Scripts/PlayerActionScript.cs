@@ -610,6 +610,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 DropCarrying();
                 hud.SetCarryingText(null);
                 TriggerPlayerDownAlert();
+                hud.container.voiceCommandsPanel.SetActive(false);
             }
             fpc.enabled = false;
             if (!rotationSaved)

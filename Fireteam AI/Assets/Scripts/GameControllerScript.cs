@@ -359,6 +359,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			alertMessage = eventMessage;
 		}
 		int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.voiceCommandsPanel.SetActive(false);
 		pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths));
 	}
 
@@ -397,7 +398,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
-
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.voiceCommandsPanel.SetActive(false);
 		int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
 		pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths, (winner == teamMap)), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths, (winner == teamMap)));
     }
@@ -1363,6 +1364,42 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 		return null;
 	}
+
+	public void ToggleMyselfSpeaking(bool b)
+	{
+		pView.RPC("RpcTogglePlayerSpeaking", RpcTarget.All, b, PhotonNetwork.LocalPlayer.ActorNumber, PhotonNetwork.LocalPlayer.NickName, teamMap);
+	}
+
+	[PunRPC]
+	void RpcTogglePlayerSpeaking(bool b, int actorNo, string playerName, string team)
+	{
+		if (team != teamMap) return;
+		TogglePlayerSpeaking(b, actorNo, playerName);
+	}
+
+	public void TogglePlayerSpeaking(bool b, int actorNo, string playerName)
+	{
+		if (b) {
+			PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().AddPlayerSpeakingIndicator(actorNo, playerName);
+		} else {
+			PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().RemovePlayerSpeakingIndicator(actorNo);
+		}
+	}
+
+	public void SendVoiceCommand(char type, int i)
+	{
+		pView.RPC("RpcSendVoiceCommand", RpcTarget.All, PhotonNetwork.LocalPlayer.NickName, (int)type, i, (int)InventoryScript.itemData.characterCatalog[PlayerData.playerdata.info.EquippedCharacter].gender, teamMap);
+	}
+
+	[PunRPC]
+	void RpcSendVoiceCommand(string playerName, int type, int i, int gender, string team)
+	{
+		if (team != teamMap) return;
+		char typeChar = (char)type;
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().PlayVoiceCommand(playerName, typeChar, i);
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<AudioControllerScript>().PlayVoiceCommand(typeChar, i, (char)gender);
+	}
+
 }
 
 public class PlayerStat {

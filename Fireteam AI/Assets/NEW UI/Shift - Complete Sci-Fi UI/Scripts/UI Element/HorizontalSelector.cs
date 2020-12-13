@@ -352,5 +352,16 @@ namespace Michsky.UI.Shift
             nextBtn.interactable = b;
             prevBtn.interactable = b;
         }
+
+        public void SetSelector(string itemName)
+        {
+            for (int i = 0; i < itemList.Count; i++) {
+                if (itemList[i].itemTitle == itemName) {
+                    index = i;
+                    UpdateUI();
+                    break;
+                }
+            }
+        }
     }
 }

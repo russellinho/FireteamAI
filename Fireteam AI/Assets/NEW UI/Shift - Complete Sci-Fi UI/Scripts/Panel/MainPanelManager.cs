@@ -127,6 +127,7 @@ namespace Michsky.UI.Shift
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
+                    titleController.RefreshSavedAudioDevice();
                 } else if (newPanel == "Mod Shop") {
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(true);
@@ -159,12 +160,14 @@ namespace Michsky.UI.Shift
                     titleController.JoinMatchmaking();
                     campaignLobby.SetActive(true);
                     versusLobby.SetActive(false);
+                    VivoxVoiceManager.Instance.SetAudioInput(PlayerPreferences.playerPreferences.preferenceData.audioInputName);
                 } else if (newPanel == "Versus") {
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.JoinMatchmaking();
                     campaignLobby.SetActive(false);
                     versusLobby.SetActive(true);
+                    VivoxVoiceManager.Instance.SetAudioInput(PlayerPreferences.playerPreferences.preferenceData.audioInputName);
                 } else {
                     titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);

@@ -204,6 +204,8 @@ public class WeaponScript : MonoBehaviour
             return false;
         } else if (weaponActionScript.hudScript.container.pauseMenuGUI.pauseActive) {
             return false;
+        } else if (weaponActionScript.hudScript.commandDelay > 0f) {
+            return false;
         }
         return true;
     }

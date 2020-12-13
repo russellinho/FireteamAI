@@ -12,6 +12,9 @@ using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 using Koobando.AntiCheat;
 using Michsky.UI.Shift;
 using Photon.Pun.LobbySystemPhoton;
+using VivoxUnity;
+using VivoxUnity.Common;
+using VivoxUnity.Private;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private const float NINETY_DAYS_MINS = 129600f;
@@ -35,6 +38,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public TextMeshProUGUI mainExpTxt;
 	public Slider musicVolumeSlider;
 	public TextMeshProUGUI musicVolumeField;
+	public HorizontalSelector audioInputSelector;
 	public CanvasGroup loadingScreen;
 	public CanvasGroup mainPanels;
 	public Animator mainPanelsAnimator;
@@ -52,6 +56,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private char currencyTypeBeingPurchased;
 	public bool confirmingTransaction;
 	public char currentCharGender;
+	private bool audioInputDevicesInitialized;
 
 	// Loading screen stuff
 	public RawImage screenArt;
@@ -338,6 +343,34 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void SaveKeyBindings() {
 		PlayerPreferences.playerPreferences.SaveKeyMappings();
 	}
+
+	public void RefreshSavedAudioDevice()
+    {
+		if (!audioInputDevicesInitialized) {
+			audioInputSelector.ClearItems();
+		}
+		bool audioDeviceValid = false;
+        string currentAudioDevice = PlayerPreferences.playerPreferences.preferenceData.audioInputName;
+        foreach (IAudioDevice p in VivoxVoiceManager.Instance.AudioInputDevices.AvailableDevices) {
+			if (!audioInputDevicesInitialized) {
+				audioInputSelector.CreateNewItem(p.Name);
+			}
+            if (p.Name == currentAudioDevice) {
+				SetAudioDevice(p.Name);
+				audioDeviceValid = true;
+            }
+        }
+        // Set to default if not found
+		if (!audioDeviceValid) {
+        	SetAudioDevice("None");
+		}
+		audioInputDevicesInitialized = true;
+    }
+
+    void SetAudioDevice(string deviceName)
+    {
+		audioInputSelector.SetSelector(deviceName);
+    }
 
 	public void SetDefaultAudioSettings() {
 		musicVolumeSlider.value = (float)JukeboxScript.DEFAULT_MUSIC_VOLUME / 100f;

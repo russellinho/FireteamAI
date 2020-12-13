@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 2154730356117279664}
   - component: {fileID: 7931987627109423889}
   - component: {fileID: 3999572374622534174}
+  - component: {fileID: 3576511874038414870}
   m_Layer: 0
   m_Name: FX
   m_TagString: Untagged
@@ -670,6 +671,102 @@ AudioSource:
     - serializedVersion: 3
       time: 0
       value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!82 &3576511874038414870
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279818476125499168}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 110
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 1
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -25937,11 +26034,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8193b1dfb65b0124f9dbbdebaa8c1e19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerHUDScript: {fileID: 0}
   audioMuffle: {fileID: 1232901589956374731}
   audioEcho: {fileID: 885573412509471853}
   fxRef: {fileID: 279818476125499168}
-  stealthMusic: {fileID: 8300000, guid: 0d9941fe9ece306449145235b03e95cc, type: 3}
-  assaultMusic: {fileID: 8300000, guid: 5a6a5d747652a6745b50a03b9c57da11, type: 3}
   headshotSound: {fileID: 8300000, guid: 06e6a73291e7e0748be0d073a0e4ca9a, type: 3}
   killSound: {fileID: 8300000, guid: ba760314ea9ff7c4aa820ded350e41af, type: 3}
   playerHitSound: {fileID: 8300000, guid: 474f497ce2954d044b8570aceec22284, type: 3}
@@ -25996,6 +26092,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 0}
+  inGameMessenger: {fileID: 4997301263046971753}
   playerActionScript: {fileID: 4997301263046971765}
   wepActionScript: {fileID: 4997301263046971766}
   wepScript: {fileID: 4997301263046971763}
@@ -26003,6 +26100,7 @@ MonoBehaviour:
   myHudMarkerCam2: {fileID: 2075155409091195696}
   myHudMarker: {fileID: 3747650471785524426}
   myHudMarker2: {fileID: 4100624659251562195}
+  commandDelay: 0
   screenGrab: 0
 --- !u!114 &6354801714876031366
 MonoBehaviour:

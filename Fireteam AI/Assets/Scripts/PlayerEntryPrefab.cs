@@ -15,18 +15,21 @@ public class PlayerEntryPrefab : MonoBehaviour
     public TextMeshProUGUI campaignNameTag;
     public GameObject campaignReady;
     public TextMeshProUGUI campaignReadyText;
+    public GameObject campaignVoiceActiveIndicator;
 
     public GameObject redEntry;
     public RawImage redLogo;
     public TextMeshProUGUI redNameTag;
     public GameObject redReady;
     public TextMeshProUGUI redReadyText;
+    public GameObject redVoiceActiveIndicator;
 
     public GameObject blueEntry;
     public RawImage blueLogo;
     public TextMeshProUGUI blueNameTag;
     public GameObject blueReady;
     public TextMeshProUGUI blueReadyText;
+    public GameObject blueVoiceActiveIndicator;
 
     public void CreateEntry(string nametag, string rank, int actorId, char team) {
         SetNameTag(nametag);
@@ -48,6 +51,10 @@ public class PlayerEntryPrefab : MonoBehaviour
         campaignReady.SetActive(false);
         redReady.SetActive(false);
         blueReady.SetActive(false);
+        
+        campaignVoiceActiveIndicator.SetActive(false);
+        redVoiceActiveIndicator.SetActive(false);
+        blueVoiceActiveIndicator.SetActive(false);
     }
 
     public void ToggleEntryByTeam(char team) {
@@ -82,6 +89,17 @@ public class PlayerEntryPrefab : MonoBehaviour
             return blueReady.activeInHierarchy;
         }
         return false;
+    }
+
+    public void ToggleSpeakingIndicator(bool b)
+    {
+        if (campaignEntry.activeInHierarchy) {
+            campaignVoiceActiveIndicator.SetActive(b);
+        } else if (redEntry.activeInHierarchy) {
+            redVoiceActiveIndicator.SetActive(b);
+        } else if (blueEntry.activeInHierarchy) {
+            blueVoiceActiveIndicator.SetActive(b);
+        }
     }
 
     void SetNameTag(string nametag) {
