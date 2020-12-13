@@ -1231,20 +1231,39 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 		}
 
-		public void OnSpeechButtonDown()
+		public void OnSpeechButtonPress()
+		{
+			if (VivoxVoiceManager.Instance.AudioInputDevices.Muted) {
+				OnSpeechButtonDown();
+			} else {
+				OnSpeechButtonUp();
+			}
+		}
+
+		void OnSpeechButtonDown()
 		{
 			JukeboxScript.jukebox.SetMusicVolume(0.1f);
 			myPlayerListEntry.GetComponent<PlayerEntryPrefab>().ToggleSpeakingIndicator(true);
 			VivoxVoiceManager.Instance.AudioInputDevices.Muted = false;
 			pView.RPC("RpcToggleSpeechIndicatorForPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, 1);
+			if (currentMode == 'C') {
+				voiceChatBtn.GetComponent<Animator>().Play("Pressed");
+			} else if (currentMode == 'V') {
+				voiceChatBtnVs.GetComponent<Animator>().Play("Pressed");
+			}
 		}
 
-		public void OnSpeechButtonUp()
+		void OnSpeechButtonUp()
 		{
 			JukeboxScript.jukebox.SetMusicVolume(PlayerPreferences.playerPreferences.preferenceData.musicVolume);
 			myPlayerListEntry.GetComponent<PlayerEntryPrefab>().ToggleSpeakingIndicator(false);
 			VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
 			pView.RPC("RpcToggleSpeechIndicatorForPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, 0);
+			if (currentMode == 'C') {
+				voiceChatBtn.GetComponent<Animator>().Play("Normal");
+			} else if (currentMode == 'V') {
+				voiceChatBtnVs.GetComponent<Animator>().Play("Normal");
+			}
 		}
 
 		[PunRPC]

@@ -8,6 +8,7 @@ using Koobando.AntiCheat;
 
 public class PlayerPreferences : MonoBehaviour
 {
+    private const float KEY_COUNT = 25;
     public static PlayerPreferences playerPreferences;
     public PreferenceData preferenceData;
     public Dictionary<string, KeyMapping> keyMappings;
@@ -63,6 +64,11 @@ public class PlayerPreferences : MonoBehaviour
                 BinaryFormatter bf = new BinaryFormatter();
                 file = File.Open(Application.persistentDataPath + "/keyMappings.dat", FileMode.Open);
                 keyMappings = (Dictionary<string, KeyMapping>) bf.Deserialize(file);
+                if (keyMappings.Count != 25) {
+                    // For when new keys are added
+                    Debug.Log("More keys were added since last update, setting all to default.");
+                    SetDefaultKeyMappings();
+                }
                 Debug.Log("Key mappings loaded successfully!");
             } catch (Exception e) {
                 Debug.Log("Key mappings file was corrupted. Setting key mappings to default.");

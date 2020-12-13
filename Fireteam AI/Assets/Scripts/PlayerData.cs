@@ -145,9 +145,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 titleRef.connexion.listPlayer.OnJoinedRoom();
             } else {
 			    titleRef.mainPanelManager.OpenFirstTab();
-                ChannelId leavingChannelId = VivoxVoiceManager.Instance.TransmittingSession.Channel;
-                VivoxVoiceManager.Instance.TransmittingSession.Disconnect();
-                VivoxVoiceManager.Instance.LoginSession.DeleteChannelSession(leavingChannelId);
+                try {
+                    ChannelId leavingChannelId = VivoxVoiceManager.Instance.TransmittingSession.Channel;
+                    VivoxVoiceManager.Instance.TransmittingSession.Disconnect();
+                    VivoxVoiceManager.Instance.LoginSession.DeleteChannelSession(leavingChannelId);
+                } catch (Exception e) {
+                    Debug.Log("Tried to leave Vivox voice channel, but encountered an error: " + e.Message);
+                }
             }
             dataLoadedFlag = false;
         }
