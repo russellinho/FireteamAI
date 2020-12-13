@@ -91,7 +91,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildAdded += HandleBanEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildChanged += HandleBanEvent;
 
-            // TODO: Add the rest of the categories for added, removed, and changed
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/facewear").ChildAdded += HandleInventoryAdded;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/headgear").ChildAdded += HandleInventoryAdded;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/footwear").ChildAdded += HandleInventoryAdded;
@@ -146,6 +145,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 titleRef.connexion.listPlayer.OnJoinedRoom();
             } else {
 			    titleRef.mainPanelManager.OpenFirstTab();
+                ChannelId leavingChannelId = VivoxVoiceManager.Instance.TransmittingSession.Channel;
+                VivoxVoiceManager.Instance.TransmittingSession.Disconnect();
+                VivoxVoiceManager.Instance.LoginSession.DeleteChannelSession(leavingChannelId);
             }
             dataLoadedFlag = false;
         }

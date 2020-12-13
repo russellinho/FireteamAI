@@ -1239,13 +1239,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	{
 		if (PlayerPreferences.playerPreferences.KeyWasPressed("VoiceChat", true)) {
 			if (!voiceChatActive && CanVoiceChat()) {
-				// TODO: Turn on vivox and play in local audio
+				VivoxVoiceManager.Instance.AudioInputDevices.Muted = false;
 				MarkMyselfAsSpeaking();
 				voiceChatActive = true;
 			}
 		} else {
 			if (voiceChatActive) {
-				// TODO: Turn off vivox
+				VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
 				UnmarkMyselfAsSpeaking();
 				voiceChatActive = false;
 			}
@@ -1265,7 +1265,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	bool CanVoiceChat()
 	{
 		if (container.pauseMenuManager.pauseActive) return false;
-		// TODO: Ensure user has a microphone set up before continuing
+		if (PlayerPreferences.playerPreferences.preferenceData.audioInputName == "None") return false;
 		return true;
 	}
 

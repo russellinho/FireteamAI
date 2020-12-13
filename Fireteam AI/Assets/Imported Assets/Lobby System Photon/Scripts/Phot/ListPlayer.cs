@@ -12,6 +12,9 @@ using TMPro;
 using ExitGames.Client.Photon;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Michsky.UI.Shift;
+using VivoxUnity;
+using VivoxUnity.Common;
+using VivoxUnity.Private;
 
 namespace Photon.Pun.LobbySystemPhoton
 {
@@ -180,8 +183,10 @@ namespace Photon.Pun.LobbySystemPhoton
 		void ToggleButtons(bool status) {
 			readyButton.GetComponent<Button> ().interactable = status;
             readyButtonVs.GetComponent<Button>().interactable = status;
-			voiceChatBtn.interactable = status;
-			voiceChatBtnVs.interactable = status;
+			if (PlayerPreferences.playerPreferences.preferenceData.audioInputName != "None") {
+				voiceChatBtn.interactable = status;
+				voiceChatBtnVs.interactable = status;
+			}
             // sendMsgBtn.interactable = status;
             // sendMsgBtnVs.interactable = status;
 			// emojiBtn.interactable = status;
@@ -205,8 +210,10 @@ namespace Photon.Pun.LobbySystemPhoton
 			gameStarting = gameIsStarting;
 			readyButton.GetComponent<Button> ().interactable = status;
 			readyButtonVs.GetComponent<Button> ().interactable = status;
-			voiceChatBtn.interactable = status;
-			voiceChatBtnVs.interactable = status;
+			if (PlayerPreferences.playerPreferences.preferenceData.audioInputName != "None") {
+				voiceChatBtn.interactable = status;
+				voiceChatBtnVs.interactable = status;
+			}
 			// sendMsgBtn.interactable = status;
 			// sendMsgBtnVs.interactable = status;
 			// emojiBtn.interactable = status;
@@ -525,6 +532,13 @@ namespace Photon.Pun.LobbySystemPhoton
 				PhotonNetwork.AutomaticallySyncScene = false;
                 OnJoinedRoomCampaign();
             }
+			// Create voice chat
+			VivoxVoiceManager.Instance.JoinChannel(PhotonNetwork.CurrentRoom.Name, ChannelType.NonPositional, VivoxVoiceManager.ChatCapability.AudioOnly);
+			VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
+			if (PlayerPreferences.playerPreferences.preferenceData.audioInputName == "None") {
+				voiceChatBtn.interactable = false;
+				voiceChatBtnVs.interactable = false;
+			}
 		}
 
 		void OnJoinedRoomCampaign() {
@@ -875,6 +889,9 @@ namespace Photon.Pun.LobbySystemPhoton
 			PhotonNetwork.JoinLobby();
 			mainPanelManager.ToggleTopBar(true);
 			mainPanelManager.ReopenCurrentPanel();
+			ChannelId leavingChannelId = VivoxVoiceManager.Instance.TransmittingSession.Channel;
+			VivoxVoiceManager.Instance.TransmittingSession.Disconnect();
+			VivoxVoiceManager.Instance.LoginSession.DeleteChannelSession(leavingChannelId);
 			// mainPanelManager.ToggleBottomBar(true);
 		}
 
@@ -1212,6 +1229,28 @@ namespace Photon.Pun.LobbySystemPhoton
 			if (PhotonNetwork.LocalPlayer.ActorNumber == actorNo) {
 				titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("YOU'VE BEEN KICKED FROM THE GAME.");
 			}
+		}
+
+		public void OnSpeechButtonDown()
+		{
+			JukeboxScript.jukebox.SetMusicVolume(0.1f);
+			myPlayerListEntry.GetComponent<PlayerEntryPrefab>().ToggleSpeakingIndicator(true);
+			VivoxVoiceManager.Instance.AudioInputDevices.Muted = false;
+			pView.RPC("RpcToggleSpeechIndicatorForPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, 1);
+		}
+
+		public void OnSpeechButtonUp()
+		{
+			JukeboxScript.jukebox.SetMusicVolume(PlayerPreferences.playerPreferences.preferenceData.musicVolume);
+			myPlayerListEntry.GetComponent<PlayerEntryPrefab>().ToggleSpeakingIndicator(false);
+			VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
+			pView.RPC("RpcToggleSpeechIndicatorForPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, 0);
+		}
+
+		[PunRPC]
+		void RpcToggleSpeechIndicatorForPlayer(int actorNo, int on)
+		{
+			playerListEntries[actorNo].GetComponent<PlayerEntryPrefab>().ToggleSpeakingIndicator((on == 1 ? true : false));
 		}
 
 	}
