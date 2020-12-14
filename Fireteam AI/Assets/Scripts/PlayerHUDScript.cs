@@ -317,7 +317,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void UpdateCursorStatus() {
 		if (PlayerPreferences.playerPreferences.KeyWasPressed("Pause") && CanPause()) {
-			Pause();
+			if (container.inGameMessenger.inputText.enabled) {
+				inGameMessenger.CloseTextChat();
+			} else {
+				Pause();
+			}
 		}
 
 		// if (container.pauseMenuManager.pauseActive)

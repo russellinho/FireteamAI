@@ -1242,7 +1242,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		void OnSpeechButtonDown()
 		{
-			JukeboxScript.jukebox.SetMusicVolume(0.1f);
+			JukeboxScript.jukebox.SetMusicVolume(0.02f);
 			myPlayerListEntry.GetComponent<PlayerEntryPrefab>().ToggleSpeakingIndicator(true);
 			VivoxVoiceManager.Instance.AudioInputDevices.Muted = false;
 			pView.RPC("RpcToggleSpeechIndicatorForPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, 1);
@@ -1255,7 +1255,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		void OnSpeechButtonUp()
 		{
-			JukeboxScript.jukebox.SetMusicVolume(PlayerPreferences.playerPreferences.preferenceData.musicVolume);
+			JukeboxScript.jukebox.SetMusicVolume((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
 			myPlayerListEntry.GetComponent<PlayerEntryPrefab>().ToggleSpeakingIndicator(false);
 			VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
 			pView.RPC("RpcToggleSpeechIndicatorForPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, 0);

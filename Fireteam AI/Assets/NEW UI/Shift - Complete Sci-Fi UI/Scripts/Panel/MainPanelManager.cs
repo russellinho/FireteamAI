@@ -111,7 +111,7 @@ namespace Michsky.UI.Shift
             if (panelManagerType == "Top") {
                 if (!refresh) {
                     if (currentPanelIndex == SETTINGS_INDEX) {
-                        titleController.SaveAudioSettings();
+                        titleController.SaveSettings();
                         titleController.SaveKeyBindings();
                     } else if (currentPanelIndex == MOD_SHOP_INDEX) {
                         titleController.SaveModsForCurrentWeapon();

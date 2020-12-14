@@ -38,6 +38,18 @@ public class PlayerPreferences : MonoBehaviour
                 playerPreferences.preferenceData.rememberLogin = info.rememberLogin;
                 playerPreferences.preferenceData.rememberUserId = info.rememberUserId;
                 playerPreferences.preferenceData.musicVolume = info.musicVolume;
+                if (info.musicVolume < 0 || info.musicVolume > 100) {
+                    throw new InvalidDataException();
+                }
+                playerPreferences.preferenceData.voiceInputVolume = info.voiceInputVolume == 0 ? 50 : info.voiceInputVolume;
+                if (info.voiceInputVolume < 0 || info.voiceInputVolume > 75) {
+                    throw new InvalidDataException();
+                }
+                playerPreferences.preferenceData.voiceOutputVolume = info.voiceOutputVolume == 0 ? 50 : info.voiceOutputVolume;
+                if (info.voiceOutputVolume < 0 || info.voiceOutputVolume > 75) {
+                    throw new InvalidDataException();
+                }
+                playerPreferences.preferenceData.audioInputName = string.IsNullOrEmpty(info.audioInputName) ? "None" : info.audioInputName;
                 JukeboxScript.jukebox.SetMusicVolume((float)playerPreferences.preferenceData.musicVolume / 100f);
                 Debug.Log("Login prefs loaded successfully!");
             } catch (Exception e) {
@@ -92,6 +104,8 @@ public class PlayerPreferences : MonoBehaviour
         info.rememberLogin = playerPreferences.preferenceData.rememberLogin;
         info.rememberUserId = playerPreferences.preferenceData.rememberUserId;
         info.musicVolume = playerPreferences.preferenceData.musicVolume;
+        info.voiceInputVolume = playerPreferences.preferenceData.voiceInputVolume;
+        info.voiceOutputVolume = playerPreferences.preferenceData.voiceOutputVolume;
         info.audioInputName = playerPreferences.preferenceData.audioInputName;
         bf.Serialize(file, info);
         file.Close();
@@ -110,6 +124,8 @@ public class PlayerPreferences : MonoBehaviour
         playerPreferences.preferenceData.rememberLogin = false;
         playerPreferences.preferenceData.rememberUserId = null;
         playerPreferences.preferenceData.musicVolume = JukeboxScript.DEFAULT_MUSIC_VOLUME;
+        playerPreferences.preferenceData.voiceInputVolume = 50;
+        playerPreferences.preferenceData.voiceOutputVolume = 50;
         playerPreferences.preferenceData.audioInputName = "None";
         JukeboxScript.jukebox.SetMusicVolume((float)JukeboxScript.DEFAULT_MUSIC_VOLUME / 100f);
     }
@@ -193,6 +209,8 @@ public class PlayerPreferences : MonoBehaviour
         public bool rememberLogin;
         public string rememberUserId;
         public int musicVolume;
+        public int voiceInputVolume;
+        public int voiceOutputVolume;
         public string audioInputName;
     }
 

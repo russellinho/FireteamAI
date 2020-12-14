@@ -58,9 +58,7 @@ public class InGameMessenger : MonoBehaviour {
         messageInfos.Enqueue(toAdd);
 
         // Last, actually add the message to the chat box
-        if (!chatText.enabled) {
-            chatText.enabled = true;
-        }
+        chatText.enabled = true;
         chatText.text += totalMessage;
 	}
 

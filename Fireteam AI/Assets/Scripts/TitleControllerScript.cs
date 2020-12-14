@@ -37,7 +37,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Slider mainLevelProgress;
 	public TextMeshProUGUI mainExpTxt;
 	public Slider musicVolumeSlider;
+	public Slider voiceInputVolumeSlider;
+	public Slider voiceOutputVolumeSlider;
 	public TextMeshProUGUI musicVolumeField;
+	public TextMeshProUGUI voiceInputVolumeField;
+	public TextMeshProUGUI voiceOutputVolumeField;
 	public HorizontalSelector audioInputSelector;
 	public CanvasGroup loadingScreen;
 	public CanvasGroup mainPanels;
@@ -215,6 +219,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
 		musicVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.musicVolume;
+
+		voiceInputVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume / 100f;
+		voiceInputVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume;
+		
+		voiceOutputVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume / 100f;
+		voiceOutputVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume;
 	}
 
 	void Start () {
@@ -330,13 +340,38 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		SetMusicVolume(musicVolumeSlider.value);
 	}
 
+	public void OnVoiceInputVolumeChanged() {
+		SetVoiceInputVolume(voiceInputVolumeSlider.value);
+	}
+
+	public void OnVoiceOutputVolumeChanged() {
+		SetVoiceOutputVolume(voiceOutputVolumeSlider.value);
+	}
+
 	void SetMusicVolume(float v) {
 		musicVolumeField.text = ""+(int)(v * 100f);
 		JukeboxScript.jukebox.SetMusicVolume(v);
 	}
 
-	public void SaveAudioSettings() {
+	void SetVoiceInputVolume(float v) {
+		voiceInputVolumeField.text = ""+(int)(v * 100f);
+		if (VivoxVoiceManager.Instance != null) {
+			VivoxVoiceManager.Instance.AudioInputDevices.VolumeAdjustment = ((int)(v * 100f) - 50);
+		}
+	}
+
+	void SetVoiceOutputVolume(float v) {
+		voiceOutputVolumeField.text = ""+(int)(v * 100f);
+		if (VivoxVoiceManager.Instance != null) {
+			VivoxVoiceManager.Instance.AudioOutputDevices.VolumeAdjustment = ((int)(v * 100f) - 50);
+		}
+	}
+
+	public void SaveSettings() {
 		PlayerPreferences.playerPreferences.preferenceData.musicVolume = (int)(musicVolumeSlider.value * 100f);
+		PlayerPreferences.playerPreferences.preferenceData.audioInputName = audioInputSelector.GetCurrentItem();
+		PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume = (int)(voiceInputVolumeSlider.value * 100f);
+		PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume = (int)(voiceOutputVolumeSlider.value * 100f);
 		PlayerPreferences.playerPreferences.SavePreferences();
 	}
 
@@ -348,6 +383,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     {
 		if (!audioInputDevicesInitialized) {
 			audioInputSelector.ClearItems();
+			audioInputSelector.CreateNewItem("None");
 		}
 		bool audioDeviceValid = false;
         string currentAudioDevice = PlayerPreferences.playerPreferences.preferenceData.audioInputName;
@@ -356,14 +392,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				audioInputSelector.CreateNewItem(p.Name);
 			}
             if (p.Name == currentAudioDevice) {
-				SetAudioDevice(p.Name);
 				audioDeviceValid = true;
             }
         }
         // Set to default if not found
 		if (!audioDeviceValid) {
-        	SetAudioDevice("None");
+        	PlayerPreferences.playerPreferences.preferenceData.audioInputName = "None";
 		}
+		SetAudioDevice(PlayerPreferences.playerPreferences.preferenceData.audioInputName);
 		audioInputDevicesInitialized = true;
     }
 
@@ -374,7 +410,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void SetDefaultAudioSettings() {
 		musicVolumeSlider.value = (float)JukeboxScript.DEFAULT_MUSIC_VOLUME / 100f;
+		voiceInputVolumeSlider.value = 0.5f;
+		voiceOutputVolumeSlider.value = 0.5f;
 		SetMusicVolume(musicVolumeSlider.value);
+		SetVoiceInputVolume(0.5f);
+		SetVoiceOutputVolume(0.5f);
 	}
 
 	public void ClearPreview() {

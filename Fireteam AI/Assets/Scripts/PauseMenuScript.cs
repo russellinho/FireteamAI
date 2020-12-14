@@ -19,8 +19,12 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public ModalWindowManager exitPopup;
 	public GameObject playerRef;
 	public Slider musicVolumeSlider;
+	public Slider voiceInputVolumeSlider;
+	public Slider voiceOutputVolumeSlider;
 	public TextMeshProUGUI musicVolumeField;
-	public HorizontalSelector audioInputSelector;
+	public TextMeshProUGUI voiceInputVolumeField;
+	public TextMeshProUGUI voiceOutputVolumeField;
+	// public HorizontalSelector audioInputSelector;
 	public bool isChangingKeyMapping;
 	public Text changingKeyMappingText;
 	public KeyMappingInput[] keyMappingInputs;
@@ -39,6 +43,12 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	void Awake() {
 		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
 		musicVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.musicVolume;
+
+		voiceInputVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume / 100f;
+		voiceInputVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume;
+		
+		voiceOutputVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume / 100f;
+		voiceOutputVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume;
 	}
 
 	public void LeaveGame() {
@@ -88,13 +98,33 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		SetMusicVolume(musicVolumeSlider.value);
 	}
 
+	public void OnVoiceInputSliderChanged() {
+		SetVoiceInputVolume(voiceInputVolumeSlider.value);
+	}
+
+	public void OnVoiceOutputSliderChanged() {
+		SetVoiceOutputVolume(voiceOutputVolumeSlider.value);
+	}
+
 	void SetMusicVolume(float v) {
 		musicVolumeField.text = ""+(int)(v * 100f);
 		JukeboxScript.jukebox.SetMusicVolume(v);
 	}
 
+	void SetVoiceInputVolume(float v) {
+		voiceInputVolumeField.text = ""+(int)(v * 100f);
+		VivoxVoiceManager.Instance.AudioInputDevices.VolumeAdjustment = ((int)(v * 100f) - 50);
+	}
+
+	void SetVoiceOutputVolume(float v) {
+		voiceOutputVolumeField.text = ""+(int)(v * 100f);
+		VivoxVoiceManager.Instance.AudioOutputDevices.VolumeAdjustment = ((int)(v * 100f) - 50);
+	}
+
 	public void SaveAudioSettings() {
 		PlayerPreferences.playerPreferences.preferenceData.musicVolume = (int)(musicVolumeSlider.value * 100f);
+		PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume = (int)(voiceInputVolumeSlider.value * 100f);
+		PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume = (int)(voiceOutputVolumeSlider.value * 100f);
 		PlayerPreferences.playerPreferences.SavePreferences();
 	}
 

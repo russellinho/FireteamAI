@@ -699,10 +699,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             }
         } else {
-            fpc.canMove = true;
+            if (!hud.container.inGameMessenger.inputText.enabled) {
+                fpc.canMove = true;
+            }
             if (!wepActionScript.deployInProgress) {
                 hud.ToggleActionBar(false, null);
-                hud.ToggleChatText(true);
+                // hud.ToggleChatText(true);
             }
             interactionTimer = 0f;
         }
