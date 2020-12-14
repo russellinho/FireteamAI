@@ -533,8 +533,12 @@ namespace Photon.Pun.LobbySystemPhoton
                 OnJoinedRoomCampaign();
             }
 			// Create voice chat
-			VivoxVoiceManager.Instance.JoinChannel(PhotonNetwork.CurrentRoom.Name, ChannelType.NonPositional, VivoxVoiceManager.ChatCapability.AudioOnly);
-			VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
+			if (VivoxVoiceManager.Instance.TransmittingSession == null) {
+				VivoxVoiceManager.Instance.JoinChannel(PhotonNetwork.CurrentRoom.Name, ChannelType.NonPositional, VivoxVoiceManager.ChatCapability.AudioOnly);
+				VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
+				VivoxVoiceManager.Instance.AudioInputDevices.VolumeAdjustment = ((int)(titleController.GetComponent<TitleControllerScript>().voiceInputVolumeSlider.value * 100f) - 50);
+				VivoxVoiceManager.Instance.AudioOutputDevices.VolumeAdjustment = ((int)(titleController.GetComponent<TitleControllerScript>().voiceOutputVolumeSlider.value * 100f) - 50);
+			}
 			if (PlayerPreferences.playerPreferences.preferenceData.audioInputName == "None") {
 				voiceChatBtn.interactable = false;
 				voiceChatBtnVs.interactable = false;
