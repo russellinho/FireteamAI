@@ -25,7 +25,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     private const byte LEAVE_CODE = 125;
     private const byte ASK_OTHERS_FOR_THEM = 111;
     private const float TITLE_POS_X = 0f;
-    private const float TITLE_POS_Y = -1.2f;
+    private const float TITLE_POS_Y = -1.11f;
     private const float TITLE_POS_Z = 2.1f;
     private const float TITLE_ROT_X = 0f;
     private const float TITLE_ROT_Y = 180f;
@@ -268,6 +268,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         PhotonView photonView = player.GetComponent<PhotonView>();
         // photonView.ViewID = PhotonNetwork.LocalPlayer.ActorNumber;
         photonView.SetOwnerInternal(PhotonNetwork.LocalPlayer, PhotonNetwork.LocalPlayer.ActorNumber);
+        VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
 
         if (PhotonNetwork.AllocateViewID(photonView))
         {

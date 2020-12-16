@@ -185,6 +185,8 @@ MonoBehaviour:
   - RpcTogglePlayerSpeaking
   - RpcSendVoiceCommand
   - RpcToggleSpeechIndicatorForPlayer
+  - RpcPingServerForLobbyStates
+  - RpcSendStates
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

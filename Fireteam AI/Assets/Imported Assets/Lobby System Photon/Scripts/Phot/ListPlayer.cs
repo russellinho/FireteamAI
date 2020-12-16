@@ -532,7 +532,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				PhotonNetwork.AutomaticallySyncScene = false;
                 OnJoinedRoomCampaign();
             }
-			// Create voice chat
+			// Voice chat handling
 			if (VivoxVoiceManager.Instance.TransmittingSession == null) {
 				VivoxVoiceManager.Instance.JoinChannel(PhotonNetwork.CurrentRoom.Name, ChannelType.NonPositional, VivoxVoiceManager.ChatCapability.AudioOnly);
 				VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
@@ -543,6 +543,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				voiceChatBtn.interactable = false;
 				voiceChatBtnVs.interactable = false;
 			}
+
+			pView.RPC("RpcPingServerForLobbyStates", RpcTarget.MasterClient);
 		}
 
 		void OnJoinedRoomCampaign() {
@@ -1274,6 +1276,34 @@ namespace Photon.Pun.LobbySystemPhoton
 		void RpcToggleSpeechIndicatorForPlayer(int actorNo, int on)
 		{
 			playerListEntries[actorNo].GetComponent<PlayerEntryPrefab>().ToggleSpeakingIndicator((on == 1 ? true : false));
+		}
+
+		[PunRPC]
+		void RpcPingServerForLobbyStates()
+		{
+			string serializedSpeakers = null;
+			bool first = true;
+			foreach (KeyValuePair<int, GameObject> p in playerListEntries) {
+				if (!first) {
+					serializedSpeakers += ",";
+				}
+				serializedSpeakers += p.Key + "|" + (p.Value.GetComponent<PlayerEntryPrefab>().campaignVoiceActiveIndicator.activeInHierarchy || p.Value.GetComponent<PlayerEntryPrefab>().blueVoiceActiveIndicator.activeInHierarchy || p.Value.GetComponent<PlayerEntryPrefab>().redVoiceActiveIndicator.activeInHierarchy);
+				first = false;
+			}
+
+			pView.RPC("RpcSendStates", RpcTarget.All, serializedSpeakers);
+		}
+
+		[PunRPC]
+		void RpcSendStates(string serializedSpeakers)
+		{
+			string[] speakersList = serializedSpeakers.Split(',');
+			for (int i = 0; i < serializedSpeakers.Length; i++) {
+				string[] thisSpeakerData = speakersList[i].Split('|');
+				int thisActorNo = int.Parse(thisSpeakerData[0]);
+				bool thisActorSpeaking = bool.Parse(thisSpeakerData[1]);
+				playerListEntries[thisActorNo].GetComponent<PlayerEntryPrefab>().ToggleSpeakingIndicator(thisActorSpeaking);
+			}
 		}
 
 	}

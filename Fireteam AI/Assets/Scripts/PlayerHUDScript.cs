@@ -1176,6 +1176,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				}
 				container.votePanel.gameObject.SetActive(true);
 				container.voteOptions.SetActive(true);
+				container.voteTime.gameObject.SetActive(true);
 				container.finalVoteResults.gameObject.SetActive(false);
 			}
 			if (gameController.iHaveVoted) {
