@@ -544,7 +544,9 @@ namespace Photon.Pun.LobbySystemPhoton
 				voiceChatBtnVs.interactable = false;
 			}
 
-			pView.RPC("RpcPingServerForLobbyStates", RpcTarget.MasterClient);
+			if (!PhotonNetwork.IsMasterClient) {
+				pView.RPC("RpcPingServerForLobbyStates", RpcTarget.MasterClient);
+			}
 		}
 
 		void OnJoinedRoomCampaign() {
@@ -1301,6 +1303,9 @@ namespace Photon.Pun.LobbySystemPhoton
 			for (int i = 0; i < serializedSpeakers.Length; i++) {
 				string[] thisSpeakerData = speakersList[i].Split('|');
 				int thisActorNo = int.Parse(thisSpeakerData[0]);
+				if (thisActorNo == PhotonNetwork.LocalPlayer.ActorNumber) {
+					continue;
+				}
 				bool thisActorSpeaking = bool.Parse(thisSpeakerData[1]);
 				playerListEntries[thisActorNo].GetComponent<PlayerEntryPrefab>().ToggleSpeakingIndicator(thisActorSpeaking);
 			}

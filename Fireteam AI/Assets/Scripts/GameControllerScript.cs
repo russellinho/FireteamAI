@@ -1211,7 +1211,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	[PunRPC]
 	void RpcAddToTotalDeaths(int actorNo) {
-		GameControllerScript.playerList[actorNo].deaths++;
+		if (GameControllerScript.playerList.ContainsKey(actorNo)) {
+			GameControllerScript.playerList[actorNo].deaths++;
+		}
 	}
 
 	public void AddToTotalKills(int actorNo) {
@@ -1220,7 +1222,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	[PunRPC]
 	void RpcAddToTotalKills(int actorNo) {
-		GameControllerScript.playerList[actorNo].kills++;
+		if (GameControllerScript.playerList.ContainsKey(actorNo)) {
+			GameControllerScript.playerList[actorNo].kills++;
+		}
 	}
 
 	public void StartVote(Player p, VoteActions voteAc)
