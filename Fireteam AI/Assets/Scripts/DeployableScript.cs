@@ -8,7 +8,8 @@ public class DeployableScript : MonoBehaviour
     private const short MAX_FIRST_AID_KIT_USES = 6;
     private const short MAX_AMMO_BAG_USES = 8;
     public string deployableName;
-    private short usesRemaining;
+    public string refString;
+    public short usesRemaining;
     // Determines if deployable can be stuck to any surface
 
     public int InstantiateDeployable() {

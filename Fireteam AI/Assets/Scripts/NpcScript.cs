@@ -447,7 +447,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	void RpcAskServerForDataNpc() {
 		if (PhotonNetwork.IsMasterClient || gameController.isVersusHostForThisTeam()) {
 			pView.RPC("RpcSyncDataNpc", RpcTarget.Others, health, carriedByPlayerId, actionState, firingState, deathBy, envDamageTimer, disorientationTime, 
-					transform.position.x, transform.position.y, transform.position.z gameController.teamMap);
+					transform.position.x, transform.position.y, transform.position.z, gameController.teamMap);
 		}
 	}
 

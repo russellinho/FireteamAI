@@ -966,6 +966,25 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		return Mathf.Clamp(51f - Mathf.Pow(1.032f, (kills / 10)), 25f, 51f);
 	}
 
+	string SerializeDeployables()
+	{
+		string s = null;
+		bool first = true;
+		foreach (KeyValuePair<int, GameObject> k in deployableList)
+		{
+			if (!first) {
+				s += ",";
+			} else {
+				s = "";
+			}
+			DeployableScript d = k.Value.GetComponent<DeployableScript>();
+			// Add id, uses remaining, position
+			s += d.deployableId + '|' + d.usesRemaining + '|' + d.gameObject.transform.position.x + '|' + d.gameObject.transform.position.y + '|' + d.gameObject.transform.position.z + '|' + d.gameObject.transform.rotation.eulerAngles.x + '|' + d.gameObject.transform.rotation.eulerAngles.y + '|' + d.gameObject.transform.rotation.eulerAngles.z + '|' + d.refString;
+			first = false;
+		}
+		return s;
+	}
+
 	[PunRPC]
 	void RpcSetMyExpAndGpGained(int actorId, int expGained, int gpGained) {
 		playerList[actorId].expGained = (uint)expGained;
@@ -1034,7 +1053,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			int playerBeingKickedId = playerBeingKicked == null ? -1 : playerBeingKicked.ActorNumber;
 			pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
 				spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin, assaultModeChangedIndicator, serializedObjectives, GameControllerScript.missionTime, 
-				currentVoteAction, playerBeingKickedId, playerBeingKickedName, voteInProgress, voteTimer, (int)yesVotes, (int)noVotes, teamMap);
+				currentVoteAction, playerBeingKickedId, playerBeingKickedName, voteInProgress, voteTimer, (int)yesVotes, (int)noVotes, SerializeDeployables(), teamMap);
 		}
 	}
 
@@ -1042,7 +1061,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void RpcSyncDataGc(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer,
 		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, bool assaultMode, bool enemyTeamNearingVictoryTrigger, 
 		bool endGameWithWin, bool assaultModeChangedIndicator, string serializedObjectives, float missionTime, VoteActions currentVoteAction,
-		int playerBeingKickedId, string playerBeingKickedName, bool voteInProgress, float voteTimer, int yesVotes, int noVotes, string team) {
+		int playerBeingKickedId, string playerBeingKickedName, bool voteInProgress, float voteTimer, int yesVotes, int noVotes, string serializedDeployables, string team) {
 		if (team != teamMap) return;
     	lastGunshotHeardPos = new Vector3(lastGunshotHeardPosX, lastGunshotHeardPosY, lastGunshotHeardPosZ);
 		this.lastGunshotTimer = lastGunshotTimer;
@@ -1142,6 +1161,21 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			}
 			if (this.objectives.stepsLeftToCompletion == 0) {
 				this.objectives.RemoveObjective(2);
+			}
+		}
+
+		if (serializedDeployables != null) {
+			// Get serialized deployables
+			parsedSerializations = serializedDeployables.Split(',');
+			foreach (string d in parsedSerializations)
+			{
+				string[] dDetails = d.Split('|');
+				// Sync deployable
+				GameObject o = GameObject.Instantiate((GameObject)Resources.Load(dDetails[8]), new Vector3(float.Parse(dDetails[2]), float.Parse(dDetails[3]), float.Parse(dDetails[4])), Quaternion.Euler(float.Parse(dDetails[5]), float.Parse(dDetails[6]), float.Parse(dDetails[7])));
+				DeployableScript dScript = o.GetComponent<DeployableScript>();
+				dScript.deployableId = int.Parse(dDetails[0]);
+				dScript.usesRemaining = short.Parse(dDetails[1]);
+				DeployDeployable(dScript.deployableId, o);
 			}
 		}
 	}
