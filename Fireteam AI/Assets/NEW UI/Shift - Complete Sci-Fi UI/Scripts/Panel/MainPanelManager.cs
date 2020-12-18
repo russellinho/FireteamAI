@@ -257,11 +257,27 @@ namespace Michsky.UI.Shift
         }
 
         public void ToggleTopBar(bool b) {
-            topPanelGroup.alpha = (b ? 1f : 0f);
+            if (b) {
+                topPanelGroup.alpha = 1f;
+                topPanelGroup.interactable = true;
+                topPanelGroup.blocksRaycasts = true;
+            } else {
+                topPanelGroup.alpha = 0f;
+                topPanelGroup.interactable = false;
+                topPanelGroup.blocksRaycasts = false;
+            }
         }
 
         public void ToggleBottomBar(bool b) {
-            bottomPanelGroup.alpha = (b ? 1f : 0f);
+            if (b) {
+                bottomPanelGroup.alpha = 1f;
+                bottomPanelGroup.interactable = true;
+                bottomPanelGroup.blocksRaycasts = true;
+            } else {
+                bottomPanelGroup.alpha = 0f;
+                bottomPanelGroup.interactable = false;
+                bottomPanelGroup.blocksRaycasts = false;
+            }
         }
 
         public bool CurrentPanelAllowsPreviews()
