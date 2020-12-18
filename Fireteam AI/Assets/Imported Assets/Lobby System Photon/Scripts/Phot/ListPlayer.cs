@@ -1289,7 +1289,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				if (!first) {
 					serializedSpeakers += ",";
 				}
-				serializedSpeakers += p.Key + "|" + (p.Value.GetComponent<PlayerEntryPrefab>().campaignVoiceActiveIndicator.activeInHierarchy || p.Value.GetComponent<PlayerEntryPrefab>().blueVoiceActiveIndicator.activeInHierarchy || p.Value.GetComponent<PlayerEntryPrefab>().redVoiceActiveIndicator.activeInHierarchy);
+				serializedSpeakers += p.Key + "|" + (p.Value.GetComponent<PlayerEntryPrefab>().campaignVoiceActiveIndicator.activeInHierarchy || p.Value.GetComponent<PlayerEntryPrefab>().blueVoiceActiveIndicator.activeInHierarchy || p.Value.GetComponent<PlayerEntryPrefab>().redVoiceActiveIndicator.activeInHierarchy)
+								+ '|' + (p.Value.GetComponent<PlayerEntryPrefab>().campaignReady.activeInHierarchy || p.Value.GetComponent<PlayerEntryPrefab>().blueReady.activeInHierarchy || p.Value.GetComponent<PlayerEntryPrefab>().redReady.activeInHierarchy);
 				first = false;
 			}
 
@@ -1306,8 +1307,11 @@ namespace Photon.Pun.LobbySystemPhoton
 				if (thisActorNo == PhotonNetwork.LocalPlayer.ActorNumber) {
 					continue;
 				}
+				PlayerEntryPrefab pEntry = playerListEntries[thisActorNo].GetComponent<PlayerEntryPrefab>();
 				bool thisActorSpeaking = bool.Parse(thisSpeakerData[1]);
-				playerListEntries[thisActorNo].GetComponent<PlayerEntryPrefab>().ToggleSpeakingIndicator(thisActorSpeaking);
+				pEntry.ToggleSpeakingIndicator(thisActorSpeaking);
+				bool thisActorReady = bool.Parse(thisSpeakerData[2]);
+				pEntry.SetReady(thisActorReady);
 			}
 		}
 
