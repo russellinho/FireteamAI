@@ -1300,7 +1300,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		void RpcSendStates(string serializedSpeakers)
 		{
 			string[] speakersList = serializedSpeakers.Split(',');
-			for (int i = 0; i < serializedSpeakers.Length; i++) {
+			for (int i = 0; i < speakersList.Length; i++) {
 				string[] thisSpeakerData = speakersList[i].Split('|');
 				int thisActorNo = int.Parse(thisSpeakerData[0]);
 				if (thisActorNo == PhotonNetwork.LocalPlayer.ActorNumber) {
