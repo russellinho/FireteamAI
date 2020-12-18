@@ -23,6 +23,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private const float ENV_DAMAGE_DELAY = 0.5f;
     private const float MINIMUM_FALL_DMG_VELOCITY = 25f;
     private const float MINIMUM_FALL_DMG = 10f;
+    private const float FALL_DMG_MULTIPLIER = 2f;
+    private const float FALL_DMG_DIVISOR = 9f;
 
     // Object references
     public PhotonView pView;
@@ -1451,7 +1453,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         float totalFallDamage = 0f;
         //Debug.Log("Vert velocity was: " + verticalVelocityBeforeLanding);
         if (verticalVelocityBeforeLanding <= -MINIMUM_FALL_DMG_VELOCITY) {
-            totalFallDamage = MINIMUM_FALL_DMG * Mathf.Pow(2f, Mathf.Abs(verticalVelocityBeforeLanding) / 9f);
+            totalFallDamage = MINIMUM_FALL_DMG * Mathf.Pow(FALL_DMG_MULTIPLIER, Mathf.Abs(verticalVelocityBeforeLanding) / FALL_DMG_DIVISOR);
         }
         // Debug.Log("total fall damage: " + totalFallDamage);
         totalFallDamage = Mathf.Clamp(totalFallDamage, 0f, 100f);
