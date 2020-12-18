@@ -69,20 +69,24 @@ public class WeaponHandlerScript : MonoBehaviour
     }
 
     public void SwitchWeaponToLeftHand() {
-        // WeaponMeta wepMetaData = weapon.GetComponent<WeaponMeta>();
-        weapon.SetParent(leftHand);
-        // if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
-        //     weapon.localPosition = wepStats.fpcLeftHandPosMale;
-        //     weapon.localRotation = Quaternion.Euler(wepStats.fpcLeftHandRotMale);            
-        // } else if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'F') {
-        //     weapon.localPosition = wepStats.fpcLeftHandPosFemale;
-        //     weapon.localRotation = Quaternion.Euler(wepStats.fpcLeftHandRotFemale);
-        // }
+        if (weapon != null) {
+            // WeaponMeta wepMetaData = weapon.GetComponent<WeaponMeta>();
+            weapon.SetParent(leftHand);
+            // if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'M') {
+            //     weapon.localPosition = wepStats.fpcLeftHandPosMale;
+            //     weapon.localRotation = Quaternion.Euler(wepStats.fpcLeftHandRotMale);            
+            // } else if (fpc.equipmentScript.GetGenderByCharacter(PlayerData.playerdata.info.equippedCharacter) == 'F') {
+            //     weapon.localPosition = wepStats.fpcLeftHandPosFemale;
+            //     weapon.localRotation = Quaternion.Euler(wepStats.fpcLeftHandRotFemale);
+            // }
+        }
     }
 
     public void SwitchWeaponToRightHand() {
-        weapon.SetParent(gameObject.transform);
-        SetWeaponPosition(true);
+        if (weapon != null) {
+            weapon.SetParent(gameObject.transform);
+            SetWeaponPosition(true);
+        }
     }
 
 }

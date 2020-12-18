@@ -15,6 +15,7 @@ using Photon.Pun.LobbySystemPhoton;
 using VivoxUnity;
 using VivoxUnity.Common;
 using VivoxUnity.Private;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private const float NINETY_DAYS_MINS = 129600f;
@@ -431,6 +432,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void JoinMatchmaking() {
 		if (!PhotonNetwork.IsConnectedAndReady) {
 			PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.info.Playername;
+			Hashtable h = new Hashtable();
+			h.Add("exp", (int)PlayerData.playerdata.info.Exp);
+			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 			PhotonNetwork.ConnectUsingSettings();
 		}
 	}

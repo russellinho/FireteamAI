@@ -510,7 +510,7 @@ namespace Photon.Pun.LobbySystemPhoton
             // Disable any loading screens
             // connexion.ToggleLobbyLoadingScreen(false);
 			Hashtable h = new Hashtable();
-			h.Add("exp", (int)PlayerData.playerdata.info.Exp);
+			// h.Add("exp", (int)PlayerData.playerdata.info.Exp);
 			h.Add("readyStatus", 0);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 			// pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (int)PlayerData.playerdata.info.Exp);
