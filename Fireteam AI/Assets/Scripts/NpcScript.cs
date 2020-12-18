@@ -446,12 +446,15 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	[PunRPC]
 	void RpcAskServerForDataNpc() {
 		if (PhotonNetwork.IsMasterClient || gameController.isVersusHostForThisTeam()) {
-			pView.RPC("RpcSyncDataNpc", RpcTarget.Others, health, carriedByPlayerId, actionState, firingState, deathBy, envDamageTimer, disorientationTime);
+			pView.RPC("RpcSyncDataNpc", RpcTarget.Others, health, carriedByPlayerId, actionState, firingState, deathBy, envDamageTimer, disorientationTime, 
+					transform.position.x, transform.position.y, transform.position.z gameController.teamMap);
 		}
 	}
 
 	[PunRPC]
-	void RpcSyncDataNpc(int health, int carriedByPlayerId, ActionStates acState, FiringStates firingState, int deathBy, float envDamageTimer, float disorientationTimer) {
+	void RpcSyncDataNpc(int health, int carriedByPlayerId, ActionStates acState, FiringStates firingState, int deathBy, float envDamageTimer, float disorientationTimer, 
+					float posX, float posY, float posZ, string team) {
+		if (team != gameController.teamMap) return;
 		this.health = health;
 		this.carriedByPlayerId = carriedByPlayerId;
 		this.actionState = acState;
@@ -459,6 +462,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 		this.deathBy = deathBy;
 		this.envDamageTimer = envDamageTimer;
 		this.disorientationTime = disorientationTimer;
+		transform.position = new Vector3(posX, posY, posZ);
 		if (carriedByPlayerId == -1) {
 			ToggleIsCarrying(false, -1);
 		} else {
