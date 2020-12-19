@@ -441,9 +441,6 @@ namespace Photon.Pun.LobbySystemPhoton
 					ToggleButtons(false);
 				}
 			}
-			if (Input.GetKeyDown(KeyCode.P)) {
-				Debug.Log("R: " + Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]) + " | B: " + Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueHost"]));
-			}
 		}
 
 		public void SetMapInfo() {
