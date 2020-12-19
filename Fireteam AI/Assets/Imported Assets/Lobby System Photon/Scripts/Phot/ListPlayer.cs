@@ -486,6 +486,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		{
 			ToggleButtons(true);
 			mainPanelManager.ToggleTopBar(false);
+			currentMode = ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp" ? 'C' : 'V');
 			if (PhotonNetwork.IsMasterClient) {
 				ResetMapSelector();
 				SetMapInfo();
@@ -500,7 +501,6 @@ namespace Photon.Pun.LobbySystemPhoton
 			h.Add("readyStatus", 0);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 			// pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (int)PlayerData.playerdata.info.Exp);
-			currentMode = (!templateUIClassVs.gameObject.activeInHierarchy ? 'C' : 'V');
 			if (!PhotonNetwork.IsMasterClient) {
 				ToggleMapChangeButtons(false);
 				voteKickBtn.enabled = false;
