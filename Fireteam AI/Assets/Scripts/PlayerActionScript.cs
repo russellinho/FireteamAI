@@ -214,12 +214,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 string thisMap = SceneManager.GetActiveScene().name;
                 if (thisMap.EndsWith("_Red") && myTeam == "red") {
                     int redLeader = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]);
-                    if (!GameControllerScript.playerList.ContainsKey(redLeader)) {
+                    if (!GameControllerScript.playerList.ContainsKey(redLeader) || GameControllerScript.playerList[redLeader].objRef == null || !PlayerStillInRoom(redLeader)) {
                         SetTeamHost(true);
                     }
                 } else if (thisMap.EndsWith("_Blue") && myTeam == "blue") {
                     int blueLeader = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueHost"]);
-                    if (!GameControllerScript.playerList.ContainsKey(blueLeader)) {
+                    if (!GameControllerScript.playerList.ContainsKey(blueLeader) || GameControllerScript.playerList[blueLeader].objRef == null || !PlayerStillInRoom(blueLeader)) {
                         SetTeamHost(true);
                     }
                 }
@@ -1640,6 +1640,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcNetworkComBoxMessage(string speaker, string message, string picPath) {
         PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().DisplayComBox(speaker, message, picPath);
+    }
+
+    bool PlayerStillInRoom(int actorNo)
+    {
+        foreach (Player p in PhotonNetwork.PlayerList) {
+            if (p.ActorNumber == actorNo) return true;
+        }
+        return false;
     }
 
 }

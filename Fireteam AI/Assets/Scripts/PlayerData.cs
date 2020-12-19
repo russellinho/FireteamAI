@@ -142,6 +142,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 } else if (gameModeWas == "camp") {
                     titleRef.mainPanelManager.OpenPanel("Campaign");
                 }
+                titleRef.connexion.listPlayer.rejoinedRoomFlag = true;
                 titleRef.connexion.listPlayer.OnJoinedRoom();
             } else {
 			    titleRef.mainPanelManager.OpenFirstTab();
