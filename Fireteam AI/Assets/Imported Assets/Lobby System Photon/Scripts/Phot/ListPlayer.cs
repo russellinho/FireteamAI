@@ -757,6 +757,10 @@ namespace Photon.Pun.LobbySystemPhoton
 							// If just switched to red team and was previous blue captain, assign a new captain to blue
 							if (oldBlueHost == actorId) {
 								newBlueHost = GetNextPlayerOnBlueTeam(actorId);
+							} else {
+								if (oldBlueHost != -1 && PlayerStillInRoom(oldBlueHost)) {
+									newBlueHost = oldBlueHost;
+								}
 							}
 							// If there currently isn't a captain for red, then assign himself as captain
 							if (oldRedHost == -1 || !PlayerStillInRoom(oldRedHost)) {
@@ -766,6 +770,10 @@ namespace Photon.Pun.LobbySystemPhoton
 							// If just switched to blue team and was previous red captain, assign a new captain to red
 							if (oldRedHost == actorId) {
 								newRedHost = GetNextPlayerOnRedTeam(actorId);
+							} else {
+								if (oldRedHost != -1 && PlayerStillInRoom(oldRedHost)) {
+									newRedHost = oldRedHost;
+								}
 							}
 							// If there currently isn't a captain for blue, then assign himself as captain
 							if (oldBlueHost == -1 || !PlayerStillInRoom(oldBlueHost)) {
@@ -955,6 +963,11 @@ namespace Photon.Pun.LobbySystemPhoton
 				int newStatus = Convert.ToInt32(changedProps["readyStatus"]);
 				if (playerListEntries == null || !playerListEntries.ContainsKey(actorNo) || playerListEntries[actorNo].GetComponent<PlayerEntryPrefab>() == null) return;
 				playerListEntries[actorNo].GetComponent<PlayerEntryPrefab>().SetReady(newStatus == 1);
+			}
+			if (changedProps.ContainsKey("exp")) {
+				if (playerListEntries.ContainsKey(targetPlayer.ActorNumber)) {
+					playerListEntries[actorNo].GetComponent<PlayerEntryPrefab>().SetRank(PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(changedProps["exp"])).name);
+				}
 			}
 		}
 

@@ -231,6 +231,9 @@ public class GameOverController : MonoBehaviourPunCallbacks {
     void SaveEarnings(uint expEarned, uint gpEarned) {        
         // Save it to player
         PlayerData.playerdata.AddExpAndGpToPlayer(expEarned, gpEarned);
+        Hashtable h = new Hashtable();
+        h.Add("exp", (int)PlayerData.playerdata.info.Exp);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(h);
     }
 
     void ToggleLevelUpPopup(Rank r) {

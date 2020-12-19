@@ -180,9 +180,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		DecrementLastGunshotTimer();
 		UpdateVote();
 		HandleVoteCast();
-		if (Input.GetKeyDown(KeyCode.P)) {
-			Debug.Log("R: " + Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]) + " | B: " + Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueHost"]));
-		}
 	}
 
 	void UpdateTimers() {
