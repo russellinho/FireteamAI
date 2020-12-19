@@ -1063,6 +1063,15 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.itemCarryingText.text = t;
 	}
 
+	void UpdateCarryingKeyText() {
+		container.itemCarryingKeyText.text = "CARRYING (PRESS [" + PlayerPreferences.playerPreferences.keyMappings["Drop"].key.ToString() + "] TO DROP/THROW):";
+	}
+
+	public void UpdateKeyHints()
+	{
+		UpdateCarryingKeyText();
+	}
+
 	public void SetDetectionMeter(float detection) {
 		container.detectionMeter.fillAmount = detection;
 	}

@@ -130,6 +130,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 
 	public void SaveKeyBindings() {
 		PlayerPreferences.playerPreferences.SaveKeyMappings();
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().UpdateKeyHints();
 	}
 
 	public void ToggleIsChangingKeyMapping(bool b, string keyChanging) {
