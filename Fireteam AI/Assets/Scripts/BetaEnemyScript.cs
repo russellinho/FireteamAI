@@ -1751,17 +1751,14 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					ps.SetHitLocation (transform.position);
 				} else if (hit.transform.tag.Equals ("Human")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
-					BetaEnemyScript b = hit.transform.GetComponent<BetaEnemyScript>();
+					// BetaEnemyScript b = hit.transform.GetComponent<BetaEnemyScript>();
 					NpcScript n = hit.transform.GetComponent<NpcScript>();
 					if (n != null) {
 						n.TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, n.col.height));
 					}
-					if (b != null) {
-						b.TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height));
-					}
-				} else if (hit.transform.tag.Equals ("EnemyHead")) {
-					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
-					hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(100);
+					// if (b != null) {
+					// 	b.TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height));
+					// }
 				} else if (hit.transform.tag.Equals("NpcHead")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					hit.transform.GetComponent<NpcScript>().TakeDamage(100);
