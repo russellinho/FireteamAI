@@ -310,6 +310,17 @@ namespace Michsky.UI.Shift
             return itemList[index].itemTitle;
         }
 
+        public int GetIndexFromItem(string itemTitle)
+        {
+            for (int i = 0; i < itemList.Count; i++) {
+                Item j = itemList[i];
+                if (j.itemTitle == itemTitle) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         public void UpdateUI()
         {
             if (label == null) transform.Find("Text").GetComponent<TextMeshProUGUI>();

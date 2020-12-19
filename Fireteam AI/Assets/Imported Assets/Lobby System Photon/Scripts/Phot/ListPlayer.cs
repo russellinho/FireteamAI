@@ -86,11 +86,6 @@ namespace Photon.Pun.LobbySystemPhoton
 		public GameObject playerBeingKickedButton;
 		public bool kickingPlayerFlag;
 
-		void Start() {
-			SetMapInfo (true);
-			pView = GetComponent<PhotonView> ();
-		}
-
         // public void DisplayPopup(string message) {
 		// 	ToggleButtons (false);
         //     if (templateUIClass.gameObject.activeInHierarchy)
@@ -447,46 +442,30 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 		}
 
-		public void SetMapInfo(bool offline = false) {
-			int i = currentMode == 'C' ? mapSelector.index : mapSelectorVs.index;
-			if (offline) {
-				Texture mapTexture = (Texture)Resources.Load(mapStrings[i]);
-				mapPreviewThumb.texture = mapTexture;
-				mapPreviewVsThumb.texture = mapTexture;
-				mapDescription.text = mapDescriptions[i];
-				mapDescriptionVs.text = mapDescriptions[i];
-				if (PhotonNetwork.InRoom) {
-					Hashtable h = new Hashtable();
-					h.Add("mapName", mapNames[i]);
-					PhotonNetwork.CurrentRoom.SetCustomProperties(h);
-				}
-			} else {
-				if (PhotonNetwork.IsMasterClient) {
-            		pView.RPC("RpcSetMapInfo", RpcTarget.All, i);
-				}
+		public void SetMapInfo() {
+			if (PhotonNetwork.IsMasterClient) {
+				int i = currentMode == 'C' ? mapSelector.index : mapSelectorVs.index;
+				Hashtable h = new Hashtable();
+				h.Add("mapName", mapNames[i]);
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 			}
 		}
 
-		[PunRPC]
-		void RpcSetMapInfo(int i) {
-			Hashtable h = new Hashtable();
-			h.Add("mapName", mapNames[i]);
-			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+		void UpdateMapInfo()
+		{
+			string currentMapName = (string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"];
+			int i = (currentMode == 'C' ? mapSelector.GetIndexFromItem(currentMapName) : mapSelectorVs.GetIndexFromItem(currentMapName));
 			Texture mapTexture = (Texture)Resources.Load(mapStrings[i]);
-			if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp") {
+			if (currentMode == 'C') {
+				mapSelector.index = i;
 				mapPreviewThumb.texture = mapTexture;
 				mapDescription.text = mapDescriptions[i];
-				if (!PhotonNetwork.IsMasterClient) {
-					mapSelector.index = i;
-					mapSelector.UpdateUI();
-				}
-			} else if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
+				mapSelector.UpdateUI();
+			} else if (currentMode == 'V') {
+				mapSelectorVs.index = i;
 				mapPreviewVsThumb.texture = mapTexture;
 				mapDescriptionVs.text = mapDescriptions[i];
-				if (!PhotonNetwork.IsMasterClient) {
-					mapSelectorVs.index = i;
-					mapSelectorVs.UpdateUI();
-				}
+				mapSelectorVs.UpdateUI();
 			}
 		}
 
@@ -497,16 +476,23 @@ namespace Photon.Pun.LobbySystemPhoton
 			p.SetRank(PlayerData.playerdata.GetRankFromExp((uint)exp).name);
 		}
 
+		void ResetMapSelector()
+		{
+			mapSelector.index = 0;
+			mapSelectorVs.index = 0;
+		}
+
 		public override void OnJoinedRoom()
 		{
 			ToggleButtons(true);
 			mainPanelManager.ToggleTopBar(false);
-			// mainPanelManager.ToggleBottomBar(false);
 			if (PhotonNetwork.IsMasterClient) {
-				SetMapInfo(true);
+				ResetMapSelector();
+				SetMapInfo();
 				PhotonNetwork.CurrentRoom.IsOpen = true;
 				PhotonNetwork.CurrentRoom.IsVisible = true;
 			}
+			UpdateMapInfo();
             // Disable any loading screens
             // connexion.ToggleLobbyLoadingScreen(false);
 			Hashtable h = new Hashtable();
@@ -789,7 +775,6 @@ namespace Photon.Pun.LobbySystemPhoton
 				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 			}
 			playerListEntries.Add(newPlayer.ActorNumber, entry);
-			SetMapInfo();
 		}
 
 		public override void OnPlayerLeftRoom(Player otherPlayer)
@@ -990,6 +975,10 @@ namespace Photon.Pun.LobbySystemPhoton
 					ts.ToggleLoadingScreen(false);
 					ts.TriggerAlertPopup("Lost connection to server.\nReason: You've been kicked from the game.");
 				}
+			}
+
+			if (propertiesThatChanged.ContainsKey("mapName")) {
+				UpdateMapInfo();
 			}
 		}
 

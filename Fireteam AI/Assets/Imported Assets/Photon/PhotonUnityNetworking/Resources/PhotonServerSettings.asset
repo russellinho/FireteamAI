@@ -94,6 +94,7 @@ MonoBehaviour:
   - RpcNetworkComBoxMessage
   - RpcOnPlayerLeftGame
   - RpcPingServerForEquipment
+  - RpcPingServerForLobbyStates
   - RpcPlayGruntSound
   - RpcPlayReloadSound
   - RpcPlaySupportActionSound
@@ -107,6 +108,8 @@ MonoBehaviour:
   - RpcRespawnPlayer
   - RpcSendChatMessage
   - RpcSendMissionTimeToClients
+  - RpcSendStates
+  - RpcSendVoiceCommand
   - RpcSetAlertStatus
   - RpcSetCoverPos
   - RpcSetCoverSwitchPositionsTimer
@@ -126,7 +129,6 @@ MonoBehaviour:
   - RpcSetIsDeadInAnimator
   - RpcSetLastGunshotHeardPos
   - RpcSetLastSeenPlayerPos
-  - RpcSetMapInfo
   - RpcSetMovingInAnimator
   - RpcSetMyExpAndGpGained
   - RpcSetNavMeshDestination
@@ -160,6 +162,8 @@ MonoBehaviour:
   - RpcTakeDamage
   - RpcToggleButtons
   - RpcToggleEnabled
+  - RpcTogglePlayerSpeaking
+  - RpcToggleSpeechIndicatorForPlayer
   - RpcToggleWeaponVisible
   - RpcTriggerJumpInAnimator
   - RpcTriggerPlayerDownAlert
@@ -182,11 +186,6 @@ MonoBehaviour:
   - SendMsgConnectionAll
   - SendMsgConnectionMaster
   - StartDespawn
-  - RpcTogglePlayerSpeaking
-  - RpcSendVoiceCommand
-  - RpcToggleSpeechIndicatorForPlayer
-  - RpcPingServerForLobbyStates
-  - RpcSendStates
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
