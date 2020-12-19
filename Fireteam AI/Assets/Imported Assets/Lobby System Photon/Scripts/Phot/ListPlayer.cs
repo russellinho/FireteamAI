@@ -491,9 +491,9 @@ namespace Photon.Pun.LobbySystemPhoton
 			if (!rejoinedRoomFlag && PhotonNetwork.IsMasterClient) {
 				ResetMapSelector();
 				SetMapInfo();
-				PhotonNetwork.CurrentRoom.IsOpen = true;
-				PhotonNetwork.CurrentRoom.IsVisible = true;
 			}
+			PhotonNetwork.CurrentRoom.IsOpen = true;
+			PhotonNetwork.CurrentRoom.IsVisible = true;
 			UpdateMapInfo();
             // Disable any loading screens
             // connexion.ToggleLobbyLoadingScreen(false);
