@@ -19,6 +19,7 @@ namespace Michsky.UI.Shift
         public bool invokeAtStart;
         public bool invertAnimation;
         public bool loopSelection;
+        public bool skipInit;
         [HideInInspector] public int index = 0;
 		
 	    [Header("SAVING")]
@@ -57,9 +58,11 @@ namespace Michsky.UI.Shift
                     PlayerPrefs.SetInt(selectorTag + "HSelectorValue", defaultIndex);
             }
 
-            label.text = itemList[defaultIndex].itemTitle;
-            labeHelper.text = label.text;
-            index = defaultIndex;
+            if (!skipInit) {
+                label.text = itemList[defaultIndex].itemTitle;
+                labeHelper.text = label.text;
+                index = defaultIndex;
+            }
 
             if(enableIndicators == true)
             {
