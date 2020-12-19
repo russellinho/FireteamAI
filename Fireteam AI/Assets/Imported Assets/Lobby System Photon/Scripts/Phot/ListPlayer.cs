@@ -441,6 +441,9 @@ namespace Photon.Pun.LobbySystemPhoton
 					ToggleButtons(false);
 				}
 			}
+			if (Input.GetKeyDown(KeyCode.P)) {
+				Debug.Log("R: " + Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]) + " | B: " + Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueHost"]));
+			}
 		}
 
 		public void SetMapInfo() {
@@ -743,17 +746,17 @@ namespace Photon.Pun.LobbySystemPhoton
 					if (actorId == PhotonNetwork.LocalPlayer.ActorNumber) {
 						if (newTeam == "R") {
 							newRedHost = PhotonNetwork.LocalPlayer.ActorNumber;
-							newBlueHost = GetNextPlayerOnBlueTeam();
+							newBlueHost = GetNextPlayerOnBlueTeam(actorId);
 						} else if (newTeam == "B") {
 							newBlueHost = PhotonNetwork.LocalPlayer.ActorNumber;
-							newRedHost = GetNextPlayerOnRedTeam();
+							newRedHost = GetNextPlayerOnRedTeam(actorId);
 						}
 					} else {
 						// If not master client
 						if (newTeam == "R") {
 							// If just switched to red team and was previous blue captain, assign a new captain to blue
 							if (oldBlueHost == actorId) {
-								newBlueHost = GetNextPlayerOnBlueTeam();
+								newBlueHost = GetNextPlayerOnBlueTeam(actorId);
 							}
 							// If there currently isn't a captain for red, then assign himself as captain
 							if (oldRedHost == -1 || !PlayerStillInRoom(oldRedHost)) {
@@ -762,7 +765,7 @@ namespace Photon.Pun.LobbySystemPhoton
 						} else if (newTeam == "B") {
 							// If just switched to blue team and was previous red captain, assign a new captain to red
 							if (oldRedHost == actorId) {
-								newRedHost = GetNextPlayerOnRedTeam();
+								newRedHost = GetNextPlayerOnRedTeam(actorId);
 							}
 							// If there currently isn't a captain for blue, then assign himself as captain
 							if (oldBlueHost == -1 || !PlayerStillInRoom(oldBlueHost)) {
@@ -832,7 +835,7 @@ namespace Photon.Pun.LobbySystemPhoton
 					if (newRedHost == -1 || !PlayerStillInRoom(newRedHost)) {
 						// See if the current host still exists. If not, get the next one available
 						if (oldRedHost == otherPlayer.ActorNumber) {
-							newRedHost = GetNextPlayerOnRedTeam();
+							newRedHost = GetNextPlayerOnRedTeam(-1);
 						} else {
 							newRedHost = oldRedHost;
 						}
@@ -840,7 +843,7 @@ namespace Photon.Pun.LobbySystemPhoton
 					if (newBlueHost == -1 || !PlayerStillInRoom(newBlueHost)) {
 						// See if the current host still exists. If not, get the next one available
 						if (oldBlueHost == otherPlayer.ActorNumber) {
-							newBlueHost = GetNextPlayerOnBlueTeam();
+							newBlueHost = GetNextPlayerOnBlueTeam(-1);
 						} else {
 							newBlueHost = oldBlueHost;
 						}
@@ -1078,11 +1081,11 @@ namespace Photon.Pun.LobbySystemPhoton
 			return false;
 		}
 
-		int GetNextPlayerOnRedTeam(bool skipMaster = false) {
+		int GetNextPlayerOnRedTeam(int skipId) {
 			int next = -1;
 			foreach (Player p in PhotonNetwork.PlayerList) {
 				if ((string)p.CustomProperties["team"] == "red") {
-					if (skipMaster && p.IsMasterClient) continue;
+					if (skipId == p.ActorNumber) continue;
 					next = p.ActorNumber;
 					break;
 				}
@@ -1090,11 +1093,11 @@ namespace Photon.Pun.LobbySystemPhoton
 			return next;
 		}
 
-		int GetNextPlayerOnBlueTeam(bool skipMaster = false) {
+		int GetNextPlayerOnBlueTeam(int skipId) {
 			int next = -1;
 			foreach (Player p in PhotonNetwork.PlayerList) {
 				if ((string)p.CustomProperties["team"] == "blue") {
-					if (skipMaster && p.IsMasterClient) continue;
+					if (skipId == p.ActorNumber) continue;
 					next = p.ActorNumber;
 					break;
 				}

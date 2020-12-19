@@ -210,7 +210,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (PhotonNetwork.IsMasterClient) {
                 SetTeamHost(true);
             } else {
-                string myTeam = (string)PhotonNetwork.CurrentRoom.CustomProperties["team"];
+                string myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
                 string thisMap = SceneManager.GetActiveScene().name;
                 if (thisMap.EndsWith("_Red") && myTeam == "red") {
                     int redLeader = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]);
