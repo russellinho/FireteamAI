@@ -81,12 +81,11 @@ MonoBehaviour:
   - RpcExplode
   - RpcExplodeDelay
   - RpcHandleBulletVfx
+  - RpcHandleBulletVfxEnemy
   - RpcIncrementEscapeCount
   - RpcInitializeMelee
   - RpcInitializeWeapon
   - RpcInstantiateBloodSpill
-  - RpcInstantiateBulletHole
-  - RpcInstantiateHitParticleEffect
   - RpcKickPlayer
   - RpcLoadingScreen
   - RpcMarkAIReadyForRespawn

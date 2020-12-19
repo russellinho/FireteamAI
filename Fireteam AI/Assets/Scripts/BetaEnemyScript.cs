@@ -19,14 +19,13 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	// Scan for players every 0.8 of a second instead of every frame
 	private const float PLAYER_SCAN_DELAY = 0.8f;
 	private const float ENV_DAMAGE_DELAY = 0.5f;
+	private const int ENEMY_FIRE_IGNORE = ~(1 << 13 | 1 << 14);
 
 	// Prefab references
 	public GameObject ammoBoxPickup;
 	public GameObject healthBoxPickup;
 	public AudioClip[] voiceClips;
 	public AudioClip[] gruntSounds;
-	public GameObject hitParticles;
-	public GameObject bulletImpact;
 	public GameObject bloodEffect;
 	public GameObject bloodEffectHeadshot;
 
@@ -1734,16 +1733,16 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				playerPos = new Vector3(playerPos.x, playerPos.y + 0.5f, playerPos.z);
 			}
 			
-			Vector3 dir = playerPos - shootPoint.position;
+			Vector3 dir = playerPos - headTransform.position;
 
 			// Adding artificial stupidity - ensures that the player isn't hit every time by offsetting
 			// the shooting direction in x and y by two random numbers
-			float scaledOffset = ScaleOffset(Vector3.Distance(playerPos, shootPoint.position));
+			float scaledOffset = ScaleOffset(Vector3.Distance(playerPos, headTransform.position));
 			float xOffset = Random.Range (-scaledOffset, scaledOffset);
 			float yOffset = Random.Range (-scaledOffset, scaledOffset);
 			dir = new Vector3 (dir.x + xOffset, dir.y + yOffset, dir.z);
 			//Debug.DrawRay (shootPoint.position, dir * range, Color.red);
-			if (Physics.Raycast (shootPoint.position, dir, out hit)) {
+			if (Physics.Raycast (headTransform.position, dir, out hit, Mathf.Infinity, ENEMY_FIRE_IGNORE)) {
 				if (hit.transform.tag.Equals ("Player")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					PlayerActionScript ps = hit.transform.GetComponent<PlayerActionScript> ();
@@ -1767,8 +1766,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					hit.transform.GetComponent<NpcScript>().TakeDamage(100);
 				} else {
-					pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name, gameControllerScript.teamMap);
-					pView.RPC ("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
+					Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
+                	pView.RPC("RpcHandleBulletVfxEnemy", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index), gameControllerScript.teamMap);
 				}
 			}
 		}
@@ -1785,23 +1784,14 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	[PunRPC]
-	void RpcInstantiateBulletHole(Vector3 point, Vector3 normal, string parentName, string team) {
+	void RpcHandleBulletVfxEnemy(Vector3 point, Vector3 normal, int terrainId, string team) {
         if (team != gameControllerScript.teamMap) return;
-        GameObject attachToObject = GameObject.Find(parentName);
-		if (!attachToObject) {
-			return;
-		}
-		GameObject bulletHoleEffect = Instantiate (bulletImpact, point, Quaternion.FromToRotation (Vector3.forward, normal));
-		bulletHoleEffect.transform.SetParent (attachToObject.transform);
-		Destroy (bulletHoleEffect, 3f);
-	}
-
-
-	[PunRPC]
-	void RpcInstantiateHitParticleEffect(Vector3 point, Vector3 normal, string team) {
-        if (team != gameControllerScript.teamMap) return;
-        GameObject hitParticleEffect = Instantiate (hitParticles, point, Quaternion.FromToRotation (Vector3.up, normal));
-		Destroy (hitParticleEffect, 1f);
+		if (gameObject.layer == 0) return;
+        if (terrainId == -1) return;
+        Terrain terrainHit = gameControllerScript.terrainMetaData[terrainId];
+        GameObject bulletHoleEffect = Instantiate(terrainHit.GetRandomBulletHole(), point, Quaternion.FromToRotation(Vector3.forward, normal));
+        bulletHoleEffect.transform.SetParent(terrainHit.gameObject.transform);
+        Destroy(bulletHoleEffect, 4f);
 	}
 
 	[PunRPC]
