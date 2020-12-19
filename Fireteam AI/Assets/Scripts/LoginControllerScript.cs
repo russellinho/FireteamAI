@@ -12,6 +12,7 @@ public class LoginControllerScript : MonoBehaviour
 {
     public bool developmentMode;
     public Text copyrightTxt;
+    public Text versionTxt;
     public ModalWindowManager popupAlert;
     private string popupAlertMessage;
     public TMP_InputField emailField;
@@ -27,6 +28,7 @@ public class LoginControllerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        versionTxt.text = "Version: " + Application.version;
         copyrightTxt.text = DateTime.Now.Year + " ©";
         emailField.text = PlayerPreferences.playerPreferences.preferenceData.rememberUserId;
         rememberLoginToggle.isOn = PlayerPreferences.playerPreferences.preferenceData.rememberLogin;

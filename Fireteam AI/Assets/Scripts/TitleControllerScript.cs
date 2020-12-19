@@ -31,7 +31,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Connexion connexion;
 
 	public GameObject itemDescriptionPopupRef;
-
+	public Text versionText;
 	public TextMeshProUGUI mainNametagTxt;
 	public RawImage mainRankImg;
 	public TextMeshProUGUI mainRankTxt;
@@ -229,6 +229,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void Start () {
+		versionText.text = "V: " + Application.version;
 		Cursor.lockState = CursorLockMode.None;
 		Cursor.visible = true;
 
