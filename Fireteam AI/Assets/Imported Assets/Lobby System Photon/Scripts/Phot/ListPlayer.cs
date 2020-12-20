@@ -27,7 +27,6 @@ namespace Photon.Pun.LobbySystemPhoton
 		public Transform PlayersInRoomPanel;
 		public Transform PlayersInRoomPanelVsRed;
 		public Transform PlayersInRoomPanelVsBlue;
-		private int lastSlotUsed;
 
 		public Template templateUIClass;
 		public Template templateUIClassVs;
@@ -485,6 +484,8 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnJoinedRoom()
 		{
+			gameStarting = false;
+			kickingPlayerFlag = false;
 			ToggleButtons(true);
 			mainPanelManager.ToggleTopBar(false);
 			currentMode = ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp" ? 'C' : 'V');
@@ -548,7 +549,6 @@ namespace Photon.Pun.LobbySystemPhoton
 				playerListEntries = new Dictionary<int, GameObject>();
 			}
 
-			lastSlotUsed = 0;
 			foreach (Player p in PhotonNetwork.PlayerList)
 			{
 				GameObject entry = Instantiate(PlayerListEntryPrefab);
@@ -597,7 +597,6 @@ namespace Photon.Pun.LobbySystemPhoton
 				playerListEntries = new Dictionary<int, GameObject>();
 			}
 
-            lastSlotUsed = 0;
 			foreach (Player p in PhotonNetwork.PlayerList)
 			{
 				GameObject entry = Instantiate(PlayerListEntryPrefab);
