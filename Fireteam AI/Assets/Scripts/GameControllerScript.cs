@@ -15,7 +15,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public static float missionTime;
     public static float MAX_MISSION_TIME = 1800f;
 	private const float FORFEIT_CHECK_DELAY = 3f;
-	private const float VOTE_TIME = 15f;
+	private const float VOTE_TIME = 3f;
 	private const float VOTE_DELAY = 300f;
 
 	// A number value to the maps/missions starting with 1. The number correlates with the time it was released, so the lower the number, the earlier it was released.

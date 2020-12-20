@@ -290,13 +290,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleLoadingScreen(bool b) {
 		if (b) {
-			mainPanels.alpha = 0f;
 			mainPanelsAnimator.enabled = false;
+			mainPanels.alpha = 0f;
 			loadingScreen.alpha = 1f;
 		} else {
 			loadingScreen.alpha = 0f;
 			mainPanelsAnimator.enabled = true;
-			mainPanelsAnimator.Play("Start");
+			// mainPanelsAnimator.Play("Start");
 		}
 	}
 

@@ -20,6 +20,7 @@ namespace Photon.Pun.LobbySystemPhoton
 {
 	public class ListPlayer : MonoBehaviourPunCallbacks, IInRoomCallbacks
 	{
+		private const short LOADING_TIMEOUT_CYCLES = 45; // 1.5 minute timeout = 45 loading screen thread cycles
 		public MainPanelManager mainPanelManager;
 		public PhotonView pView;
 
@@ -85,6 +86,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public GameObject playerBeingKickedButton;
 		public bool kickingPlayerFlag;
 		public bool rejoinedRoomFlag;
+		private short loadingCycles;
 
         // public void DisplayPopup(string message) {
 		// 	ToggleButtons (false);
@@ -289,6 +291,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
 			} else {
 				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
+				loadingCycles = 0;
 				StartCoroutine("DetermineMasterClientLoaded");
 			}
 		}
@@ -315,6 +318,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
 			} else {
 				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = false;
+				loadingCycles = 0;
 				StartCoroutine("DetermineMasterClientLoaded");
 			}
 		}
@@ -484,6 +488,7 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public override void OnJoinedRoom()
 		{
+			PhotonNetwork.IsMessageQueueRunning = true;
 			gameStarting = false;
 			kickingPlayerFlag = false;
 			ToggleButtons(true);
@@ -867,8 +872,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				PhotonNetwork.LeaveRoom();
 				TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
 				ts.ToggleLoadingScreen(false);
-				ts.mainPanelManager.OpenFirstTab();
 				ts.TriggerAlertPopup("Lost connection to server.\nReason: The host has left the game.");
+				ts.mainPanelManager.OpenFirstTab();
 			} else {
 				if (PhotonNetwork.LocalPlayer.IsMasterClient) {
 					if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
@@ -882,6 +887,8 @@ namespace Photon.Pun.LobbySystemPhoton
 					voteKickBtn.enabled = false;
 					voteKickBtnVs.enabled = false;
 				}
+				TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
+				ts.ToggleLoadingScreen(false);
 			}
 		}
 
@@ -967,6 +974,19 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 		}
 
+		void ResetLoadingState()
+		{
+			TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
+			ts.ToggleLoadingScreen(false);
+			PhotonNetwork.IsMessageQueueRunning = true;
+			gameStarting = false;
+			kickingPlayerFlag = false;
+			ToggleButtons(true);
+			Hashtable h = new Hashtable();
+			h.Add("readyStatus", 0);
+			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+		}
+
 		public override void OnRoomPropertiesUpdate (Hashtable propertiesThatChanged) {
 			// If going in game or coming out of game, update everyone's entry
 			if (propertiesThatChanged.ContainsKey("inGame")) {
@@ -999,6 +1019,9 @@ namespace Photon.Pun.LobbySystemPhoton
 						p.SetReadyText('r');
 						p.SetReady(false);
 					}
+					if (myPlayerListEntry.GetComponent<PlayerEntryPrefab>().IsReady()) {
+						ResetLoadingState();
+					}
 				}
 			}
 
@@ -1006,10 +1029,12 @@ namespace Photon.Pun.LobbySystemPhoton
 				string newKickedPlayers = (string)propertiesThatChanged["kickedPlayers"];
 				string[] newKickedPlayersList = newKickedPlayers.Split(',');
 				if (newKickedPlayersList.Contains(PhotonNetwork.NickName)) {
+					PhotonNetwork.Disconnect();
 					PhotonNetwork.LeaveRoom();
 					TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
 					ts.ToggleLoadingScreen(false);
 					ts.TriggerAlertPopup("Lost connection to server.\nReason: You've been kicked from the game.");
+					ts.mainPanelManager.OpenFirstTab();
 				}
 			}
 
@@ -1029,12 +1054,19 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		IEnumerator DetermineMasterClientLoaded() {
 			yield return new WaitForSeconds(2f);
+			loadingCycles++;
 
 			if (!PhotonNetwork.InRoom) {
 				TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
 				ts.ToggleLoadingScreen(false);
+				ts.TriggerAlertPopup("Lost connection to server.\nReason: The host has left the game.");
 				ts.mainPanelManager.OpenFirstTab();
 			} else {
+				if (loadingCycles >= LOADING_TIMEOUT_CYCLES) {
+					// If stuck on loading screen for whatever reason, this is a fail-safe to ensure that the player eventually gets to go back to screen
+					ResetLoadingState();
+					yield break;
+				}
 				if (PhotonNetwork.LevelLoadingProgress >= 0.9f) {
 					PhotonNetwork.IsMessageQueueRunning = true;
 				}
