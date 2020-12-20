@@ -204,6 +204,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             Hashtable h = new Hashtable();
             h.Add("inGame", 1);
             PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+        } else {
+            if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) != 1) {
+                PlayerData.playerdata.DestroyMyself();
+            }
         }
         string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
         if (gameMode == "versus") {
