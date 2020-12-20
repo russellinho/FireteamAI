@@ -3226,5 +3226,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public bool WeaponIsSightCompatible(string weaponName) {
 		return InventoryScript.itemData.weaponCatalog[weaponBeingPreviewed].sightCompatible;
 	}
+
+	public void UnloadDeadScenes()
+	{
+		if (SceneManager.sceneCount > 1) {
+			for (int i = 0; i < SceneManager.sceneCount; i++) {
+				Scene thisScene = SceneManager.GetSceneAt(i);
+				if (thisScene.name != "Title") {
+					SceneManager.UnloadSceneAsync(thisScene);
+				}
+			}
+		}
+	}
 		
 }

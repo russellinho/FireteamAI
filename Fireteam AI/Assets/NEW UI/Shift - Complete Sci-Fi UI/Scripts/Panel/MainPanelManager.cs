@@ -66,6 +66,7 @@ namespace Michsky.UI.Shift
 
         public void OpenFirstTab()
         {
+            titleController.UnloadDeadScenes();
             if (currentPanelIndex != 0)
             {
                 currentPanel = panels[currentPanelIndex].panelObject;
