@@ -32,6 +32,7 @@ public class LoginControllerScript : MonoBehaviour
         copyrightTxt.text = DateTime.Now.Year + " ©";
         emailField.text = PlayerPreferences.playerPreferences.preferenceData.rememberUserId;
         rememberLoginToggle.isOn = PlayerPreferences.playerPreferences.preferenceData.rememberLogin;
+        UnloadDeadScenes();
     }
 
     // Update is called once per frame
@@ -211,6 +212,18 @@ public class LoginControllerScript : MonoBehaviour
             });
         });
     }
+
+    void UnloadDeadScenes()
+	{
+		if (SceneManager.sceneCount > 1) {
+			for (int i = 0; i < SceneManager.sceneCount; i++) {
+				Scene thisScene = SceneManager.GetSceneAt(i);
+				if (thisScene.name != "Login") {
+					SceneManager.UnloadSceneAsync(thisScene);
+				}
+			}
+		}
+	}
 
     private DateTime CalculateBannedUntilDate(float duration, DateTime dateBanned) {
         return dateBanned.AddMinutes(duration);
