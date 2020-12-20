@@ -221,9 +221,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		UpdateHitmarker ();
 
-		// Update UI
-		//container.weaponLabelTxt.text = playerActionScript.currWep;
-		container.weaponLabelTxt.textObject.text = wepScript.equippedWepInGame;
 		container.ammoTxt.textObject.text = "" + wepActionScript.currentAmmo + '/' + wepActionScript.totalAmmoLeft;
 		
 		UpdateCursorStatus ();
@@ -487,6 +484,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	public void SetFireMode(string mode)
 	{
 		container.fireModeTxt.textObject.text = mode;
+	}
+
+	public void SetWeaponLabel()
+	{
+		container.weaponLabelTxt.textObject.text = wepScript.equippedWepInGame;
 	}
 
 	IEnumerator UpdatePlayerMarkers() {

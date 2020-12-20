@@ -1210,6 +1210,7 @@ public class WeaponActionScript : MonoBehaviour
 
             if (pView.IsMine) {
                 hudScript.SetFireMode(firingMode.ToString().ToUpper());
+                hudScript.SetWeaponLabel();
             }
         }
     }
