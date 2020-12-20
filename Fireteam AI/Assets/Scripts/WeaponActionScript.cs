@@ -186,6 +186,7 @@ public class WeaponActionScript : MonoBehaviour
                 else
                     firingMode = FireMode.Semi;
             }
+            hudScript.SetFireMode(firingMode.ToString().ToUpper());
         }
 
         meleeInput = PlayerPreferences.playerPreferences.KeyWasPressed("Melee");
@@ -1205,6 +1206,10 @@ public class WeaponActionScript : MonoBehaviour
                         firingMode = FireMode.Semi;
                     }
                 }
+            }
+
+            if (pView.IsMine) {
+                hudScript.SetFireMode(firingMode.ToString().ToUpper());
             }
         }
     }

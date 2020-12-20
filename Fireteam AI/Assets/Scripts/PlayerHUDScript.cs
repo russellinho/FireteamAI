@@ -484,6 +484,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	public void SetFireMode(string mode)
+	{
+		container.fireModeTxt.textObject.text = mode;
+	}
+
 	IEnumerator UpdatePlayerMarkers() {
 		foreach (PlayerStat stat in GameControllerScript.playerList.Values) {
 			GameObject p = stat.objRef;

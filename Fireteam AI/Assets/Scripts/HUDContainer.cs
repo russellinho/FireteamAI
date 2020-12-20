@@ -23,6 +23,7 @@ public class HUDContainer : MonoBehaviour {
 	// Weapon HUD
 	public UIManagerText weaponLabelTxt;
 	public UIManagerText ammoTxt;
+	public UIManagerText fireModeTxt;
 	public GameObject crosshair;
 	public RawImage sightCrosshair;
 	public GameObject SniperOverlay;
