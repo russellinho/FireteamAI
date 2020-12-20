@@ -876,19 +876,13 @@ namespace Photon.Pun.LobbySystemPhoton
 				ts.mainPanelManager.OpenFirstTab();
 			} else {
 				if (PhotonNetwork.LocalPlayer.IsMasterClient) {
-					if (Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["readyStatus"]) == 1) {
-						Hashtable h = new Hashtable();
-						h.Add("readyStatus", 0);
-						PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-					}
 					voteKickBtn.enabled = true;
 					voteKickBtnVs.enabled = true;
 				} else {
 					voteKickBtn.enabled = false;
 					voteKickBtnVs.enabled = false;
 				}
-				TitleControllerScript ts = titleController.GetComponent<TitleControllerScript>();
-				ts.ToggleLoadingScreen(false);
+				ResetLoadingState();
 			}
 		}
 

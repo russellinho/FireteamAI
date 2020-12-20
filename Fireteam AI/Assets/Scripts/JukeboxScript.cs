@@ -218,13 +218,13 @@ public class JukeboxScript : MonoBehaviour
         StartCoroutine(QueueNextSongOnTitle(nextSource));
     }
 
-    void StopMusic() {
+    public void StopMusic() {
         audioSource1.Stop();
         audioSource2.Stop();
         StopAllCoroutines();
     }
 
-    void StartTitleMusic() {
+    public void StartTitleMusic() {
         currentMode = MusicMode.Title;
         audioSource1.loop = false;
         audioSource2.loop = false;

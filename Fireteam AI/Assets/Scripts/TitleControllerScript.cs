@@ -266,8 +266,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void InstantiateLoadingScreen(string mapName, string mapDescription) {
 		if (mapName != null) {
-			JukeboxScript.jukebox.audioSource1.Stop ();
-			JukeboxScript.jukebox.audioSource2.Stop ();
 			if (mapName.Equals ("The Badlands: Act I")) {
 				screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands1_load");
 			} else if (mapName.Equals("The Badlands: Act II")) {
@@ -290,10 +288,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleLoadingScreen(bool b) {
 		if (b) {
+			JukeboxScript.jukebox.StopMusic();
 			mainPanelsAnimator.enabled = false;
 			mainPanels.alpha = 0f;
 			loadingScreen.alpha = 1f;
 		} else {
+			JukeboxScript.jukebox.StartTitleMusic();
 			loadingScreen.alpha = 0f;
 			mainPanelsAnimator.enabled = true;
 			// mainPanelsAnimator.Play("Start");
