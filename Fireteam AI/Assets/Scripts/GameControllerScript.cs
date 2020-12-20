@@ -349,9 +349,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	[PunRPC]
 	void RpcEndGame(float f, string eventMessage, bool win) {
-		if (PhotonNetwork.LocalPlayer.IsMasterClient) {
-			PhotonNetwork.CurrentRoom.IsOpen = false;
-		}
+		LockRoom();
 		endGameTimer = f;
 		gameOver = true;
 		endGameWithWin = win;
@@ -367,9 +365,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     void RpcEndVersusGame(float f, string winner, string winnerEventMessage, string loserEventMessage)
     {
 		if (gameOver) return;
-		if (PhotonNetwork.LocalPlayer.IsMasterClient) {
-			PhotonNetwork.CurrentRoom.IsOpen = false;
-		}
+		LockRoom();
         endGameTimer = f;
         gameOver = true;
         
@@ -658,6 +654,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         if (team != teamMap) return;
         exitLevelLoaded = true;
 		exitLevelLoadedTimer = 4f;
+		// LockRoom();
 	}
 
     void SetMyTeamScore(short score)
@@ -1236,7 +1233,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public void LockRoom()
 	{
-		PhotonNetwork.CurrentRoom.IsOpen = false;
+		if (PhotonNetwork.IsMasterClient) {
+			PhotonNetwork.CurrentRoom.IsOpen = false;
+		}
 	}
 
 	public void AddToTotalDeaths(int actorNo) {
