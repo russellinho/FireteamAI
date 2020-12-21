@@ -483,7 +483,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void SetFireMode(string mode)
 	{
-		container.fireModeTxt.textObject.text = mode;
+		if (mode == null) {
+			container.fireModeTxt.gameObject.SetActive(false);
+		} else {
+			container.fireModeTxt.gameObject.SetActive(true);
+			container.fireModeTxt.textObject.text = mode;
+		}
 	}
 
 	public void SetWeaponLabel()
