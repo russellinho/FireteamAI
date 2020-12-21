@@ -25,6 +25,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private const float MINIMUM_FALL_DMG = 10f;
     private const float FALL_DMG_MULTIPLIER = 2f;
     private const float FALL_DMG_DIVISOR = 9f;
+    private const int ENEMY_LAYER = 14;
 
     // Object references
     public PhotonView pView;
@@ -1477,8 +1478,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void MarkEnemy() {
         if (!isInteracting && !gameController.assaultMode) {
             RaycastHit hit;
-            if (Physics.Raycast(wepActionScript.fpcShootPoint.position, wepActionScript.fpcShootPoint.transform.forward, out hit, 300f)) {
-                if (hit.transform.tag.Equals("Human")) {
+            if (Physics.SphereCast(wepActionScript.fpcShootPoint.position, 3f, wepActionScript.fpcShootPoint.transform.forward, out hit, Mathf.Infinity)) {
+                if (hit.transform.gameObject.layer == ENEMY_LAYER) {
                     BetaEnemyScript b = hit.transform.gameObject.GetComponent<BetaEnemyScript>();
                     if (b != null) {
                         b.MarkEnemyOutline();
