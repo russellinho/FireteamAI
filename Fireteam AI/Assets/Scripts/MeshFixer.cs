@@ -45,4 +45,23 @@ public class MeshFixer : MonoBehaviour
         meshTransform.localRotation = Quaternion.identity;
     }
 
+    public void EncapsulateThis()
+    {
+        SkinnedMeshRenderer targetRenderer = GetComponent<SkinnedMeshRenderer>();
+        targetRenderer.bounds.Encapsulate(meshTransform.position);
+    }
+
+    public void ExactThis()
+    {
+        SkinnedMeshRenderer skinnedMeshRenderer = GetComponent<SkinnedMeshRenderer>();
+        skinnedMeshRenderer.updateWhenOffscreen = true;
+        Bounds bounds = new Bounds();
+        Vector3 center = skinnedMeshRenderer.localBounds.center;
+        Vector3 extents = skinnedMeshRenderer.localBounds.extents;
+        bounds.center = center;
+        bounds.extents = extents;
+        skinnedMeshRenderer.updateWhenOffscreen = false;
+        skinnedMeshRenderer.localBounds = bounds;
+    }
+
 }
