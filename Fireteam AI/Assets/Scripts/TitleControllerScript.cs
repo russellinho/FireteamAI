@@ -60,6 +60,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private uint totalGpCostBeingPurchased;
 	private char currencyTypeBeingPurchased;
 	public bool confirmingTransaction;
+	private bool resettingKeysFlag;
 	public char currentCharGender;
 	private bool audioInputDevicesInitialized;
 
@@ -2808,6 +2809,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		itemBeingPurchased = null;
 		typeBeingPurchased = null;
 		confirmingTransaction = false;
+		resettingKeysFlag = false;
 		// confirmPurchasePopup.SetActive(false);
 	}
 
@@ -3207,6 +3209,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			OnConfirmPurchaseClicked();
 		} else if (connexion.listPlayer.kickingPlayerFlag) {
 			connexion.listPlayer.KickPlayer(connexion.listPlayer.playerBeingKicked);
+		} else if (resettingKeysFlag) {
+			ResetKeyBindings();
 		}
 	}
 
@@ -3236,6 +3240,20 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 					SceneManager.UnloadSceneAsync(thisScene);
 				}
 			}
+		}
+	}
+
+	public void OnResetKeyBindingsClicked()
+	{
+		resettingKeysFlag = true;
+		TriggerConfirmPopup("ARE YOU SURE YOU WISH TO RESET YOUR KEY BINDINGS TO DEFAULT?");
+	}
+
+	void ResetKeyBindings()
+	{
+		PlayerPreferences.playerPreferences.ResetKeyMappings();
+		foreach (KeyMappingInput k in keyMappingInputs) {
+			k.ResetKeyDisplay();
 		}
 	}
 		

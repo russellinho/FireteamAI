@@ -159,6 +159,60 @@ public class PlayerPreferences : MonoBehaviour
         keyMappings.Add("Aim", new KeyMapping(KeyCode.Mouse1, 11));
     }
 
+    public void ResetKeyMappings()
+    {
+        keyMappings["Forward"].key = KeyCode.W;
+        keyMappings["Forward"].scrollWheelFlag = 0;
+        keyMappings["Backward"].key = KeyCode.S;
+        keyMappings["Backward"].scrollWheelFlag = 0;
+        keyMappings["Left"].key = KeyCode.A;
+        keyMappings["Left"].scrollWheelFlag = 0;
+        keyMappings["Right"].key = KeyCode.D;
+        keyMappings["Right"].scrollWheelFlag = 0;
+        keyMappings["Sprint"].key = KeyCode.LeftShift;
+        keyMappings["Sprint"].scrollWheelFlag = 0;
+        keyMappings["Crouch"].key = KeyCode.LeftControl;
+        keyMappings["Crouch"].scrollWheelFlag = 0;
+        keyMappings["Jump"].key = KeyCode.Space;
+        keyMappings["Jump"].scrollWheelFlag = 0;
+        keyMappings["Walk"].key = KeyCode.C;
+        keyMappings["Walk"].scrollWheelFlag = 0;
+        keyMappings["Interact"].key = KeyCode.F;
+        keyMappings["Interact"].scrollWheelFlag = 0;
+        keyMappings["Drop"].key = KeyCode.G;
+        keyMappings["Drop"].scrollWheelFlag = 0;
+        keyMappings["FireMode"].key = KeyCode.Q;
+        keyMappings["FireMode"].scrollWheelFlag = 0;
+        keyMappings["Reload"].key = KeyCode.R;
+        keyMappings["Reload"].scrollWheelFlag = 0;
+        keyMappings["Melee"].key = KeyCode.None;
+        keyMappings["Melee"].scrollWheelFlag = -1;
+        keyMappings["AllChat"].key = KeyCode.T;
+        keyMappings["AllChat"].scrollWheelFlag = 0;
+        keyMappings["VoiceChat"].key = KeyCode.Period;
+        keyMappings["VoiceChat"].scrollWheelFlag = 0;
+        keyMappings["VCReport"].key = KeyCode.V;
+        keyMappings["VCReport"].scrollWheelFlag = 0;
+        keyMappings["VCTactical"].key = KeyCode.B;
+        keyMappings["VCTactical"].scrollWheelFlag = 0;
+        keyMappings["VCSocial"].key = KeyCode.N;
+        keyMappings["VCSocial"].scrollWheelFlag = 0;
+        keyMappings["Primary"].key = KeyCode.Alpha1;
+        keyMappings["Primary"].scrollWheelFlag = 0;
+        keyMappings["Secondary"].key = KeyCode.Alpha2;
+        keyMappings["Secondary"].scrollWheelFlag = 0;
+        keyMappings["Support"].key = KeyCode.Alpha4;
+        keyMappings["Support"].scrollWheelFlag = 0;
+        keyMappings["Scoreboard"].key = KeyCode.Tab;
+        keyMappings["Scoreboard"].scrollWheelFlag = 0;
+        keyMappings["Pause"].key = KeyCode.Escape;
+        keyMappings["Pause"].scrollWheelFlag = 0;
+        keyMappings["Fire"].key = KeyCode.Mouse0;
+        keyMappings["Fire"].scrollWheelFlag = 0;
+        keyMappings["Aim"].key = KeyCode.Mouse1;
+        keyMappings["Aim"].scrollWheelFlag = 0;
+    }
+
     public bool KeyWasPressed(string key, bool hold = false, bool up = false) {
         KeyMapping k = keyMappings[key];
         if (k.scrollWheelFlag == 1) {

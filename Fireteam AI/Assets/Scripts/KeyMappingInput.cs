@@ -16,6 +16,11 @@ public class KeyMappingInput : MonoBehaviour
     // public Text actionDescription;
     // Start is called before the first frame update
     void Start() {
+        ResetKeyDisplay();
+    }
+
+    public void ResetKeyDisplay()
+    {
         KeyMapping k = PlayerPreferences.playerPreferences.keyMappings[keyCode];
         if (k.scrollWheelFlag == 0) {
             keyDescription.text = k.key.ToString();

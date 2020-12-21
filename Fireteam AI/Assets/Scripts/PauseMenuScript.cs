@@ -29,7 +29,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public Text changingKeyMappingText;
 	public KeyMappingInput[] keyMappingInputs;
 	public PlayerKick[] playerKickEntries;
-	private enum ConfirmType {KickPlayer};
+	private enum ConfirmType {KickPlayer, ResetKeyBindings};
 	private ConfirmType confirmType;
 	private Player playerSelected;
 	public GameObject gameOptionsMenu;
@@ -171,6 +171,8 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 			gameOptionsMenu.GetComponent<Animator>().Play("Window Out");
 			ResetPauseMenu();
 			pauseMenuManager.ClosePause(true);
+		} else if (confirmType == ConfirmType.ResetKeyBindings) {
+			ResetKeyBindings();
 		}
 	}
 
@@ -251,6 +253,22 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		xButton.gameObject.SetActive(false);
 		mainAnimator.Play("Panel In");
 		SetCurrentPanel("Main");
+	}
+
+	public void OnResetKeyBindingsClicked()
+	{
+		confirmType = ConfirmType.ResetKeyBindings;
+		confirmPopup.SetText("ARE YOU SURE YOU WISH TO RESET YOUR KEY BINDINGS TO DEFAULT?");
+		blurManager.BlurInAnim();
+		confirmPopup.ModalWindowIn();
+	}
+
+	public void ResetKeyBindings()
+	{
+		PlayerPreferences.playerPreferences.ResetKeyMappings();
+		foreach (KeyMappingInput k in keyMappingInputs) {
+			k.ResetKeyDisplay();
+		}
 	}
 
 }
