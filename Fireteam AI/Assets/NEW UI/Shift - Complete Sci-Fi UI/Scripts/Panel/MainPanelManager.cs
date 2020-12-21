@@ -116,8 +116,6 @@ namespace Michsky.UI.Shift
                     if (currentPanelIndex == SETTINGS_INDEX) {
                         titleController.SaveSettings();
                         titleController.SaveKeyBindings();
-                    } else if (currentPanelIndex == MOD_SHOP_INDEX) {
-                        titleController.SaveModsForCurrentWeapon();
                     } else if (currentPanelIndex == CAMPAIGN_INDEX) {
                         titleController.ExitMatchmaking();
                     } else if (currentPanelIndex == VERSUS_INDEX) {

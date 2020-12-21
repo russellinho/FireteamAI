@@ -2448,9 +2448,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void LoadWeaponForModding(ShopItemScript s) {
-		if (weaponPreviewShopSlot != null) {
-			SaveModsForCurrentWeapon();
-		}
+		// if (weaponPreviewShopSlot != null) {
+		// 	SaveModsForCurrentWeapon();
+		// }
 
 		// Destroy old weapon preview
 		DestroyOldWeaponTemplate();

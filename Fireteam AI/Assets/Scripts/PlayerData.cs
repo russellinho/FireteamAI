@@ -822,11 +822,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         wepScript.EquipMod("Clip", inventory.myMods[newClipId].Name, itemName, null);
                     }
                 }
+                Debug.Log("UPDATING: " + itemName + " | " + newSightId + " | ");
             } else if (inventory.myMods.ContainsKey(itemName)) {
                 ModData e = inventory.myMods[itemName];
                 e.Duration = snapshot.Child("duration").Value.ToString();
                 e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
                 e.EquippedOn = snapshot.Child("equippedOn").Value.ToString();
+                Debug.Log("UPDATING: " + itemName + " | " + e.EquippedOn);
             }
         }
     }
