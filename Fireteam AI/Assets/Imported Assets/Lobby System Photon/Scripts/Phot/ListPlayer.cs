@@ -76,7 +76,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		private string[] mapStrings = new string[]{"MapImages/badlands1", "MapImages/badlands2"};
 		private string[] mapDescriptions = new string[]{"A local cannibal insurgent group in the de-facto midwest of the New States of America known as the Cicadas has taken over a local refugee outpost in order to develop chemical warheads. Disrupt their operation and salvage the outpost.", 
 			"The local Cicadas have shot down one of our evac choppers in the badlands. Rescue the surviving pilot and defend her until evac arrives."};
-		public static Vector3[] mapSpawnPoints = new Vector3[]{ new Vector3(-2f,1f,1f), new Vector3(119f, -5.19f, 116f) };
+		public static Vector3[] mapSpawnPoints = new Vector3[]{ new Vector3(1298f,10.53f,954.459f), new Vector3(119f, 0.17f, 116f) };
 
 		// Ready status
 		private GameObject myPlayerListEntry;
