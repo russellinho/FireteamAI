@@ -1470,7 +1470,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	void TriggerVoiceCommand(char type, int i) {
-		gameController.SendVoiceCommand(type, i);
+		playerActionScript.SendVoiceCommand(type, i);
 	}
 
 	public void PlayVoiceCommand(string playerName, char type, int i)

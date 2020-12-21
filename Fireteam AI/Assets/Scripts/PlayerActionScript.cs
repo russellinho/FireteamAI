@@ -36,6 +36,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public CameraShakeScript cameraShakeScript;
     public PhotonTransformViewKoobando photonTransformView;
     public AudioSource aud;
+    public AudioSource radioAud;
     public Camera viewCam;
     public GameObject spectatorCam;
     public GameObject thisSpectatorCam;
@@ -1654,5 +1655,25 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         return false;
     }
+
+    public void SendVoiceCommand(char type, int i)
+	{
+		pView.RPC("RpcSendVoiceCommand", RpcTarget.All, PhotonNetwork.LocalPlayer.NickName, (int)type, i, (int)InventoryScript.itemData.characterCatalog[PlayerData.playerdata.info.EquippedCharacter].gender, gameController.teamMap);
+	}
+
+	[PunRPC]
+	void RpcSendVoiceCommand(string playerName, int type, int i, int gender, string team)
+	{
+		if (team != gameController.teamMap) return;
+		char typeChar = (char)type;
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().PlayVoiceCommand(playerName, typeChar, i);
+		PlayVoiceCommand(typeChar, i, (char)gender);
+	}
+
+    public void PlayVoiceCommand(char type, int i, char gender)
+	{
+		radioAud.clip = hud.GetVoiceCommandAudio(type, i, gender);
+		radioAud.Play();
+	}
 
 }

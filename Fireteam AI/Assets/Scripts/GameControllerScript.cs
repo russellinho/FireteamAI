@@ -1423,20 +1423,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	public void SendVoiceCommand(char type, int i)
-	{
-		pView.RPC("RpcSendVoiceCommand", RpcTarget.All, PhotonNetwork.LocalPlayer.NickName, (int)type, i, (int)InventoryScript.itemData.characterCatalog[PlayerData.playerdata.info.EquippedCharacter].gender, teamMap);
-	}
-
-	[PunRPC]
-	void RpcSendVoiceCommand(string playerName, int type, int i, int gender, string team)
-	{
-		if (team != teamMap) return;
-		char typeChar = (char)type;
-		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().PlayVoiceCommand(playerName, typeChar, i);
-		PlayerData.playerdata.inGamePlayerReference.GetComponent<AudioControllerScript>().PlayVoiceCommand(typeChar, i, (char)gender);
-	}
-
 }
 
 public class PlayerStat {
