@@ -1324,10 +1324,20 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		return container.supportCommands[i].commandString;
 	}
 
+	bool CanUseVoiceCommands()
+	{
+		if (playerActionScript.health <= 0 || container.inGameMessenger.inputText.enabled) return false;
+		return true;
+	}
+
 	void HandleVoiceCommands()
 	{
 		if (commandDelay > 0f) {
 			commandDelay -= Time.deltaTime;
+			return;
+		}
+		if (!CanUseVoiceCommands()) {
+			container.voiceCommandsPanel.SetActive(false);
 			return;
 		}
 		// Open/closing menu
