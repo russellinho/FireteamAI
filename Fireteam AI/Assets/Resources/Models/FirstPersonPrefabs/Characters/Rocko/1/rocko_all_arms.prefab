@@ -1332,7 +1332,7 @@ SkinnedMeshRenderer:
   m_RootBone: {fileID: 5425727197953833322}
   m_AABB:
     m_Center: {x: 0.0010586223, y: 0.004590965, z: -0.000049522845}
-    m_Extent: {x: 0.003, y: 0.003, z: 0.003}
+    m_Extent: {x: 0.005, y: 0.005, z: 0.009}
   m_DirtyAABB: 0
 --- !u!114 &4688061630048478316
 MonoBehaviour:
