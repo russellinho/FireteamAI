@@ -721,9 +721,9 @@ public class WeaponActionScript : MonoBehaviour
         float totalDamageDealt = 0f;
         int headshotLayer = (1 << 13);
         for (int i = 0; i < 8; i++) {
-            float xSpread = Random.Range(-0.07f, 0.07f);
-            float ySpread = Random.Range(-0.07f, 0.07f);
-            float zSpread = Random.Range(-0.07f, 0.07f);
+            float xSpread = Random.Range(-0.03f, 0.03f);
+            float ySpread = Random.Range(-0.03f, 0.03f);
+            float zSpread = Random.Range(-0.03f, 0.03f);
             Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
             if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer) && !headshotDetected)
             {
@@ -850,10 +850,10 @@ public class WeaponActionScript : MonoBehaviour
         // Determine how high/low on the body was hit. The closer to 1, the closer to shoulders; closer to 0, closer to feet
         float bodyHeightHit = Mathf.Abs(hitY - baseY) / height;
         // Higher the height, the more damage dealt
-        if (bodyHeightHit <= 0.6f) {
+        if (bodyHeightHit < 0.2f) {
             total *= 0.6f;
-        } else if (bodyHeightHit < 0.8f) {
-            total *= bodyHeightHit;
+        } else if (bodyHeightHit < 0.4f) {
+            total *= 0.85f;
         }
         return (int)total;
     }

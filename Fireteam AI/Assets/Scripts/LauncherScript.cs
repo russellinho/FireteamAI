@@ -6,6 +6,7 @@ using Photon.Realtime;
 
 public class LauncherScript : MonoBehaviour
 {
+    public string rootWeapon;
     private const float LAUNCH_FORCE_MULTIPLIER = 45f;
     // RPG cannot be active for more than 12 seconds
     private const float MAX_ACTIVE_TIME = 12f;

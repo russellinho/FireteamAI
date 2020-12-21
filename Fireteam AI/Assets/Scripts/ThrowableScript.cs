@@ -6,6 +6,7 @@ using Photon.Realtime;
 
 public class ThrowableScript : MonoBehaviour
 {
+    public string rootWeapon;
     private const float THROW_FORCE_MULTIPLIER = 25f;
     public static float MAX_FLASHBANG_TIME = 9f; // 8 seconds max flashbang time
     private const float EXPLOSION_ACTIVE_DELAY = 0.8f;

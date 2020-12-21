@@ -398,13 +398,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 		CheckForGunfireSounds ();
 		CheckTargetDead ();
-
-		// If disoriented, don't have the ability to do anything else except die
-		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
-			// StopVoices();
-			return;
-		}
-
 		HandleCrouching ();
 
 		if (enemyType == EnemyType.Patrol) {
@@ -414,6 +407,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		} else {
 			DecideActionScout ();
 		}
+
+		// If disoriented, don't have the ability to do anything else except die
+		if (actionState == ActionStates.Dead || actionState == ActionStates.Disoriented) return;
 
 		// Shoot at player
 		// Add !isCrouching if you don't want the AI to fire while crouched behind cover
@@ -466,13 +462,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 		CheckForGunfireSounds ();
 		CheckTargetDead ();
-
-		// If disoriented, don't have the ability to do anything else except die
-		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
-			// StopVoices();
-			return;
-		}
-
 		HandleCrouching ();
 
 		if (enemyType == EnemyType.Patrol) {
@@ -482,6 +471,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		} else {
 			DecideActionScout ();
 		}
+		
+		// If disoriented, don't have the ability to do anything else except die
+		if (actionState == ActionStates.Dead || actionState == ActionStates.Disoriented) return;
 
 		// Shoot at player
 		// Add !isCrouching if you don't want the AI to fire while crouched behind cover
@@ -1080,8 +1072,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			return;
 		}
 
-		// Melee attack trumps all
-		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented) {
+		// Melee attack, disorientation, death trumps all
+		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
 			return;
 		}
 
@@ -1202,12 +1194,12 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !t.isLive && !t.PlayerHasBeenAffected(pView.ViewID)) {
 					// Determine how far from the explosion the enemy was
 					float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
-					float blastRadius = other.gameObject.GetComponent<ThrowableScript>().blastRadius;
+					float blastRadius = t.blastRadius;
 					distanceFromGrenade = Mathf.Min(distanceFromGrenade, blastRadius);
 					float scale = 1f - (distanceFromGrenade / blastRadius);
 
 					// Scale damage done to enemy by the distance from the explosion
-					Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
+					Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[t.rootWeapon];
 					int damageReceived = (int)(grenadeStats.damage * scale);
 					// Deal damage to the enemy
 					TakeDamage(damageReceived);
@@ -1228,7 +1220,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					float scale = 1f - (distanceFromProjectile / blastRadius);
 
 					// Scale damage done to enemy by the distance from the explosion
-					Weapon projectileStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
+					Weapon projectileStats = InventoryScript.itemData.weaponCatalog[l.rootWeapon];
 					int damageReceived = (int)(projectileStats.damage * scale);
 					// Deal damage to the enemy
 					TakeDamage(damageReceived);
@@ -1271,6 +1263,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				disorientationTime = Mathf.Min(disorientationTime, ThrowableScript.MAX_FLASHBANG_TIME);
 				if (disorientationTime > 0f) {
 					UpdateActionState(ActionStates.Disoriented);
+					pView.RPC ("RpcSetIsCrouching", RpcTarget.All, false, gameControllerScript.teamMap);
 				}
                 // Validate that this enemy has already been affected
                 t.AddHitPlayer(pView.ViewID);
@@ -1448,8 +1441,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			return;
 		}
 
-		// Melee attack trumps all
-		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented) {
+		// Melee attack, death, disorientation trumps all
+		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
 			return;
 		}
 
