@@ -1362,39 +1362,35 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     public void UseSupportItem() {
         // If the item is a grenade, instantiate and launch the grenade
         if (weaponStats.category.Equals("Explosive")) {
-            GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, weaponHolderFpc.transform.position, Quaternion.identity);
-            projectile.transform.forward = weaponHolderFpc.transform.forward;
-            projectile.GetComponent<ThrowableScript>().Launch(gameObject, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
-            // Reset fire timer and subtract ammo used
+            GameObject projectile = GameObject.Instantiate((GameObject)Resources.Load(InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath), weaponHolderFpc.transform.position, Quaternion.identity);
+            PhotonView thisPView = projectile.GetComponent<PhotonView>();
+            if (PhotonNetwork.AllocateViewID(thisPView))
+            {
+                projectile.transform.forward = weaponHolderFpc.transform.forward;
+                projectile.GetComponent<ThrowableScript>().Launch(pView.ViewID, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
+                currentAmmo--;
+                playerActionScript.weaponScript.SyncAmmoCounts();
+                fireTimer = 0.0f;
+                SpawnThrowableItemOnOthers(projectile);
+            }
+            else
+            {
+                Debug.Log("Failed to allocate a ViewId for throwable.");
+                Destroy(projectile);
+            }
         } else if (weaponStats.category.Equals("Booster")) {
             // Reset fire timer and subtract ammo used
             BoosterScript boosterScript = weaponMetaData.GetComponentInChildren<BoosterScript>();
             boosterScript.UseBoosterItem(weaponStats.name);
+            currentAmmo--;
+            playerActionScript.weaponScript.SyncAmmoCounts();
+            fireTimer = 0.0f;
         } else if (weaponStats.category.Equals("Deployable")) {
             DeployDeployable(deployPos, deployRot);
+            currentAmmo--;
+            playerActionScript.weaponScript.SyncAmmoCounts();
+            fireTimer = 0.0f;
         }
-        currentAmmo--;
-        playerActionScript.weaponScript.SyncAmmoCounts();
-        fireTimer = 0.0f;
-
-        // GameObject player = Instantiate((GameObject)Resources.Load(playerPrefab), spawnPoints, Quaternion.Euler(Vector3.zero));
-        // PlayerData.playerdata.inGamePlayerReference = player;
-        // PhotonView photonView = player.GetComponent<PhotonView>();
-        // // photonView.ViewID = PhotonNetwork.LocalPlayer.ActorNumber;
-        // photonView.SetOwnerInternal(PhotonNetwork.LocalPlayer, PhotonNetwork.LocalPlayer.ActorNumber);
-        // VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
-
-        // if (PhotonNetwork.AllocateViewID(photonView))
-        // {
-        //     InitPlayerInGame(player);
-        //     AddMyselfToPlayerList(photonView, player);
-        //     SpawnMyselfOnOthers(true);
-        // }
-        // else
-        // {
-        //     Debug.Log("Failed to allocate a ViewId.");
-        //     Destroy(player);
-        // }
     }
 
     public void UseLauncherItem() {
@@ -1416,6 +1412,28 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             Debug.Log("Failed to allocate a ViewId for projectile.");
             Destroy(projectile);
         }
+    }
+
+    void SpawnThrowableItemOnOthers(GameObject projectile)
+    {
+        PhotonView photonView = projectile.GetComponent<PhotonView>();
+        object[] data = new object[]
+        {
+            InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, weaponHolderFpc.transform.position.x, weaponHolderFpc.transform.position.y, weaponHolderFpc.transform.position.z, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, photonView.ViewID, playerActionScript.gameController.teamMap, pView.ViewID
+        };
+
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+        {
+            Receivers = ReceiverGroup.Others,
+            CachingOption = EventCaching.DoNotCache
+        };
+
+        SendOptions sendOptions = new SendOptions
+        {
+            Reliability = true
+        };
+
+        PhotonNetwork.RaiseEvent(THROWABLE_SPAWN_CODE, data, raiseEventOptions, sendOptions);
     }
 
     void SpawnLauncherItemOnOthers(GameObject projectile)
@@ -1464,6 +1482,29 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             // projectile.transform.right = -weaponHolderFpc.transform.forward;
             projectile.transform.right = -forward;
             projectile.GetComponent<LauncherScript>().Launch((int) data[7], forward.x, forward.y, forward.z);
+            currentAmmo--;
+            playerActionScript.weaponScript.SyncAmmoCounts();
+            fireTimer = 0.0f;
+        } else if (photonEvent.Code == THROWABLE_SPAWN_CODE) {
+            object[] data = (object[]) photonEvent.CustomData;
+            int fromViewId = (int) data[9];
+            if (fromViewId != pView.ViewID) return;
+
+            string team = (string) data[8];
+
+            if (team != playerActionScript.gameController.teamMap) return;
+
+            string projectilePath = (string) data[0];
+            Vector3 origin = new Vector3((float) data[1], (float) data[2], (float) data[3]);
+            Vector3 forward = new Vector3((float) data[4], (float) data[5], (float) data[6]);
+
+            GameObject projectile = GameObject.Instantiate((GameObject)Resources.Load(projectilePath), origin, Quaternion.identity);
+            PhotonView photonView = projectile.GetComponent<PhotonView>();
+            photonView.ViewID = (int) data[7];
+            Debug.Log("Spawned throwable projectile " + projectile.gameObject.name + " with view ID " + photonView.ViewID);
+
+            projectile.transform.forward = forward;
+            projectile.GetComponent<ThrowableScript>().Launch((int) data[7], forward.x, forward.y, forward.z);
             currentAmmo--;
             playerActionScript.weaponScript.SyncAmmoCounts();
             fireTimer = 0.0f;

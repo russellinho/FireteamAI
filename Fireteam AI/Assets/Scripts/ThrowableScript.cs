@@ -46,9 +46,10 @@ public class ThrowableScript : MonoBehaviour
         return playersHit.Contains(vId);
     }
 
-    public void Launch(GameObject thrownByPlayer, float xForce, float yForce, float zForce) {
+    public void Launch(int thrownByPlayerViewId, float xForce, float yForce, float zForce) {
         // Assign a reference to the player who threw this projectile
-        pView.RPC("RpcSetPlayerThrownByReference", RpcTarget.All, thrownByPlayer.GetComponent<PhotonView>().ViewID);
+        // pView.RPC("RpcSetPlayerThrownByReference", RpcTarget.All, thrownByPlayer.GetComponent<PhotonView>().ViewID);
+        SetPlayerThrownByReference(thrownByPlayerViewId);
         // Apply a force to the throwable that's equal to the forward position of the weapon holder
         rBody.velocity = new Vector3(xForce * THROW_FORCE_MULTIPLIER, yForce * THROW_FORCE_MULTIPLIER, zForce * THROW_FORCE_MULTIPLIER);
         //rBody.AddForce(xForce * THROW_FORCE_MULTIPLIER, yForce * THROW_FORCE_MULTIPLIER, zForce * THROW_FORCE_MULTIPLIER);
@@ -57,6 +58,10 @@ public class ThrowableScript : MonoBehaviour
 
     [PunRPC]
     void RpcSetPlayerThrownByReference(int playerViewId) {
+        fromPlayerId = playerViewId;
+    }
+
+    void SetPlayerThrownByReference(int playerViewId) {
         fromPlayerId = playerViewId;
     }
 
@@ -160,9 +165,7 @@ public class ThrowableScript : MonoBehaviour
     }
 
     void DestroySelf() {
-        if (PhotonNetwork.IsMasterClient) {
-            PhotonNetwork.Destroy(gameObject);
-        }
+        Destroy(gameObject);
     }
 
     public void PlayPinSound() {
