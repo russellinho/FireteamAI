@@ -946,7 +946,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 float scale = 1f - (distanceFromGrenade / blastRadius);
 
                 // Scale damage done to enemy by the distance from the explosion
-                Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
+                Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[t.rootWeapon];
                 int damageReceived = (int)(grenadeStats.damage * scale);
 
                 // Validate that this enemy has already been affected
@@ -995,7 +995,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 float scale = 1f - (distanceFromExplosion / blastRadius);
 
                 // Scale damage done to enemy by the distance from the explosion
-                Weapon launcherStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
+                Weapon launcherStats = InventoryScript.itemData.weaponCatalog[l.rootWeapon];
                 int damageReceived = (int)(launcherStats.damage * scale);
 
                 // Validate that this enemy has already been affected
