@@ -47,6 +47,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public CanvasGroup loadingScreen;
 	public CanvasGroup mainPanels;
 	public Animator mainPanelsAnimator;
+	public CreditsManager creditsManager;
+	public GameObject glowMotes;
+	public Animator backgroundAnimator;
+	public Button creditsButton;
+	public Button creditsExitButton;
 	public ModalWindowManager alertPopup;
 	public ModalWindowManager confirmPopup;
 	public ModalWindowManager keyBindingsPopup;
@@ -3255,6 +3260,60 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		foreach (KeyMappingInput k in keyMappingInputs) {
 			k.ResetKeyDisplay();
 		}
+	}
+
+	public void OnCreditsButtonClicked()
+	{
+		// Hide templates
+		TogglePlayerTemplate(false);
+		ToggleWeaponPreview(false);
+		DestroyOldWeaponTemplate();
+
+		// Disable main panel, main panel animator, top panel, bottom panel
+		mainPanelsAnimator.enabled = false;
+		mainPanels.alpha = 0f;
+		mainPanels.interactable = false;
+		mainPanels.blocksRaycasts = false;
+
+		// Change background to credits video
+		creditsManager.backgroundPlayer.GetComponent<UIManagerBackground>().enabled = false;
+		backgroundAnimator.enabled = false;
+		creditsManager.backgroundPlayer.gameObject.GetComponent<RawImage>().color = Color.white;
+		glowMotes.SetActive(false);
+		creditsManager.backgroundPlayer.Stop();
+		creditsManager.backgroundPlayer.enabled = false;
+		creditsManager.backgroundPlayerCredits.enabled = true;
+		creditsManager.backgroundPlayerCredits.Play();
+
+		// Activate credits exit button
+		creditsExitButton.gameObject.SetActive(true);
+	}
+
+	public void OnCreditsExitButtonClicked()
+	{
+		// Change background back to normal
+		creditsManager.backgroundPlayer.GetComponent<UIManagerBackground>().enabled = true;
+		creditsManager.backgroundPlayerCredits.enabled = false;
+		creditsManager.backgroundPlayerCredits.Stop();
+		creditsExitButton.gameObject.SetActive(false);
+		backgroundAnimator.enabled = true;
+		glowMotes.SetActive(true);
+		creditsManager.backgroundPlayer.enabled = true;
+		creditsManager.backgroundPlayer.Play();
+
+		// Enable main panel, main panel animator, top panel, bottom panel
+		StartCoroutine("CreditsExit");
+	}
+
+	IEnumerator CreditsExit()
+	{
+		yield return new WaitForSeconds(1f);
+		mainPanelsAnimator.enabled = true;
+		mainPanels.alpha = 1f;
+		mainPanels.interactable = true;
+		mainPanels.blocksRaycasts = true;
+		mainPanelManager.OpenFirstTab();
+		mainPanelManager.OpenPanel("Title");
 	}
 		
 }

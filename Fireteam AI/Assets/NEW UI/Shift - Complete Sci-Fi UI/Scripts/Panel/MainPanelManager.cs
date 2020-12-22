@@ -125,11 +125,13 @@ namespace Michsky.UI.Shift
                     }
                 }
                 if (newPanel == "Settings") {
+                    titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
                     titleController.RefreshSavedAudioDevice();
                 } else if (newPanel == "Mod Shop") {
+                    titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(true);
                     titleController.HandleLeftSideButtonPress(titleController.modShopPrimaryWepBtn);
@@ -138,6 +140,7 @@ namespace Michsky.UI.Shift
                     titleController.HandleRightSideButtonPress(titleController.modShopSuppressorsBtn);
                     titleController.OnSuppressorsBtnClicked();
                 } else if (newPanel == "Market") {
+                    titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
@@ -147,6 +150,7 @@ namespace Michsky.UI.Shift
                     titleController.HandleRightSideButtonPress(titleController.shopCharacterBtn);
                     titleController.OnMarketplaceCharacterBtnClicked();
                 } else if (newPanel == "Loadout") {
+                    titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
@@ -156,6 +160,7 @@ namespace Michsky.UI.Shift
                     titleController.HandleRightSideButtonPress(titleController.characterBtn);
                     titleController.OnCharacterBtnClicked();
                 } else if (newPanel == "Campaign") {
+                    titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.JoinMatchmaking();
@@ -163,6 +168,7 @@ namespace Michsky.UI.Shift
                     versusLobby.SetActive(false);
                     VivoxVoiceManager.Instance.SetAudioInput(PlayerPreferences.playerPreferences.preferenceData.audioInputName);
                 } else if (newPanel == "Versus") {
+                    titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.JoinMatchmaking();
@@ -173,6 +179,7 @@ namespace Michsky.UI.Shift
                     titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
+                    titleController.creditsButton.gameObject.SetActive(true);
                 }
             }
 
