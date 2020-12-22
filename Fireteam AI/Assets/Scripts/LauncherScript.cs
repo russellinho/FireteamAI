@@ -96,7 +96,7 @@ public class LauncherScript : MonoBehaviour
     }
 
     void DestroySelf() {
-        PhotonNetwork.Destroy(gameObject);
+        Destroy(gameObject);
     }
 
     public void AddHitPlayer(int vId)

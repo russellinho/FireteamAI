@@ -10,8 +10,8 @@ using ExitGames.Client.Photon;
 
 public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 {
-    private const byte LAUNCHER_SPAWN_CODE = 123;
-    private const byte THROWABLE_SPAWN_CODE = 124;
+    private const byte LAUNCHER_SPAWN_CODE = 126;
+    private const byte THROWABLE_SPAWN_CODE = 127;
     private const float SHELL_SPEED = 3f;
     private const float SHELL_TUMBLE = 4f;
     private const float DEPLOY_BASE_TIME = 2f;
@@ -123,6 +123,12 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     // Use this for initialization
     private bool initialized;
+
+    void Awake()
+    {
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
     public void Initialize()
     {
         deployTimer = 0f;
@@ -1417,7 +1423,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         PhotonView photonView = projectile.GetComponent<PhotonView>();
         object[] data = new object[]
         {
-            InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, camTransform.position.x, camTransform.position.y, camTransform.position.z, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, photonView.ViewID, playerActionScript.gameController.teamMap
+            InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, camTransform.position.x, camTransform.position.y, camTransform.position.z, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, photonView.ViewID, playerActionScript.gameController.teamMap, pView.ViewID
         };
 
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions
@@ -1436,6 +1442,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     public void OnEvent(EventData photonEvent)
     {
+        int fromViewId = (int) data[9];
+        if (fromViewId != pView.ViewID) return;
         if (photonEvent.Code == LAUNCHER_SPAWN_CODE)
         {
             object[] data = (object[]) photonEvent.CustomData;
