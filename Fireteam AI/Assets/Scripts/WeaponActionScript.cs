@@ -1442,11 +1442,11 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     public void OnEvent(EventData photonEvent)
     {
-        int fromViewId = (int) data[9];
-        if (fromViewId != pView.ViewID) return;
         if (photonEvent.Code == LAUNCHER_SPAWN_CODE)
         {
             object[] data = (object[]) photonEvent.CustomData;
+            int fromViewId = (int) data[9];
+            if (fromViewId != pView.ViewID) return;
 
             string team = (string) data[8];
 
