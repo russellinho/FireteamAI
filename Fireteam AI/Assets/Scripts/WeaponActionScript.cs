@@ -6,10 +6,12 @@ using Photon.Realtime;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Characters.FirstPerson;
 using Koobando.AntiCheat;
+using ExitGames.Client.Photon;
 
-public class WeaponActionScript : MonoBehaviour
+public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 {
-
+    private const byte LAUNCHER_SPAWN_CODE = 123;
+    private const byte THROWABLE_SPAWN_CODE = 124;
     private const float SHELL_SPEED = 3f;
     private const float SHELL_TUMBLE = 4f;
     private const float DEPLOY_BASE_TIME = 2f;
@@ -1368,16 +1370,96 @@ public class WeaponActionScript : MonoBehaviour
         currentAmmo--;
         playerActionScript.weaponScript.SyncAmmoCounts();
         fireTimer = 0.0f;
+
+        // GameObject player = Instantiate((GameObject)Resources.Load(playerPrefab), spawnPoints, Quaternion.Euler(Vector3.zero));
+        // PlayerData.playerdata.inGamePlayerReference = player;
+        // PhotonView photonView = player.GetComponent<PhotonView>();
+        // // photonView.ViewID = PhotonNetwork.LocalPlayer.ActorNumber;
+        // photonView.SetOwnerInternal(PhotonNetwork.LocalPlayer, PhotonNetwork.LocalPlayer.ActorNumber);
+        // VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
+
+        // if (PhotonNetwork.AllocateViewID(photonView))
+        // {
+        //     InitPlayerInGame(player);
+        //     AddMyselfToPlayerList(photonView, player);
+        //     SpawnMyselfOnOthers(true);
+        // }
+        // else
+        // {
+        //     Debug.Log("Failed to allocate a ViewId.");
+        //     Destroy(player);
+        // }
     }
 
     public void UseLauncherItem() {
-        GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, camTransform.position + camTransform.forward, Quaternion.identity);
-        // projectile.transform.right = -weaponHolderFpc.transform.forward;
-        projectile.transform.right = -camTransform.forward;
-        projectile.GetComponent<LauncherScript>().Launch(gameObject, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
-        currentAmmo--;
-        playerActionScript.weaponScript.SyncAmmoCounts();
-        fireTimer = 0.0f;
+        GameObject projectile = GameObject.Instantiate((GameObject)Resources.Load(InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath), camTransform.position + camTransform.forward, Quaternion.identity);
+        PhotonView thisPView = projectile.GetComponent<PhotonView>();
+        // photonView.SetOwnerInternal(PhotonNetwork.LocalPlayer, PhotonNetwork.LocalPlayer.ActorNumber);
+        if (PhotonNetwork.AllocateViewID(thisPView))
+        {
+            // projectile.transform.right = -weaponHolderFpc.transform.forward;
+            projectile.transform.right = -camTransform.forward;
+            projectile.GetComponent<LauncherScript>().Launch(pView.ViewID, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
+            currentAmmo--;
+            playerActionScript.weaponScript.SyncAmmoCounts();
+            fireTimer = 0.0f;
+            SpawnLauncherItemOnOthers(projectile);
+        }
+        else
+        {
+            Debug.Log("Failed to allocate a ViewId for projectile.");
+            Destroy(projectile);
+        }
+    }
+
+    void SpawnLauncherItemOnOthers(GameObject projectile)
+    {
+        PhotonView photonView = projectile.GetComponent<PhotonView>();
+        object[] data = new object[]
+        {
+            InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, camTransform.position.x, camTransform.position.y, camTransform.position.z, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, photonView.ViewID, playerActionScript.gameController.teamMap
+        };
+
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+        {
+            Receivers = ReceiverGroup.Others,
+            CachingOption = EventCaching.DoNotCache
+        };
+
+        SendOptions sendOptions = new SendOptions
+        {
+            Reliability = true
+        };
+
+        PhotonNetwork.RaiseEvent(LAUNCHER_SPAWN_CODE, data, raiseEventOptions, sendOptions);
+    }
+
+    public void OnEvent(EventData photonEvent)
+    {
+        if (photonEvent.Code == LAUNCHER_SPAWN_CODE)
+        {
+            object[] data = (object[]) photonEvent.CustomData;
+
+            string team = (string) data[8];
+
+            if (team != playerActionScript.gameController.teamMap) return;
+
+            string projectilePath = (string) data[0];
+            Vector3 origin = new Vector3((float) data[1], (float) data[2], (float) data[3]);
+            Vector3 forward = new Vector3((float) data[4], (float) data[5], (float) data[6]);
+
+            GameObject projectile = GameObject.Instantiate((GameObject)Resources.Load(projectilePath), origin + forward, Quaternion.identity);
+            PhotonView photonView = projectile.GetComponent<PhotonView>();
+            photonView.ViewID = (int) data[7];
+            Debug.Log("Spawned launcher projectile " + projectile.gameObject.name + " with view ID " + photonView.ViewID);
+            
+            // projectile.transform.right = -weaponHolderFpc.transform.forward;
+            projectile.transform.right = -forward;
+            projectile.GetComponent<LauncherScript>().Launch((int) data[7], forward.x, forward.y, forward.z);
+            currentAmmo--;
+            playerActionScript.weaponScript.SyncAmmoCounts();
+            fireTimer = 0.0f;
+        }
     }
 
     bool DeployPositionIsValid() {

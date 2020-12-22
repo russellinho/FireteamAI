@@ -109,9 +109,10 @@ public class LauncherScript : MonoBehaviour
         return playersHit.Contains(vId);
     }
 
-    public void Launch(GameObject thrownByPlayer, float xForce, float yForce, float zForce) {
+    public void Launch(int thrownByPlayerViewId, float xForce, float yForce, float zForce) {
         // Assign a reference to the player who launched this projectile
-        pView.RPC("RpcSetPlayerLaunchedByReference", RpcTarget.All, thrownByPlayer.GetComponent<PhotonView>().ViewID);
+        // pView.RPC("RpcSetPlayerLaunchedByReference", RpcTarget.All, thrownByPlayer.GetComponent<PhotonView>().ViewID);
+        SetPlayerLaunchedByReference(thrownByPlayerViewId);
         // Apply a force to the throwable that's equal to the forward position of the weapon holder
         rBody.velocity = new Vector3(xForce * LAUNCH_FORCE_MULTIPLIER, yForce * LAUNCH_FORCE_MULTIPLIER, zForce * LAUNCH_FORCE_MULTIPLIER);
         isLive = true;
@@ -120,6 +121,10 @@ public class LauncherScript : MonoBehaviour
 
     [PunRPC]
     void RpcSetPlayerLaunchedByReference(int playerViewId) {
+        fromPlayerId = playerViewId;
+    }
+
+    void SetPlayerLaunchedByReference(int playerViewId) {
         fromPlayerId = playerViewId;
     }
 }
