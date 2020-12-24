@@ -292,5 +292,10 @@ namespace Michsky.UI.Shift
         {
             return currentPanelIndex == HOME_INDEX || currentPanelIndex == MARKET_INDEX || currentPanelIndex == LOADOUT_INDEX || currentPanelIndex == MOD_SHOP_INDEX;
         }
+
+        public int GetModShopIndex()
+        {
+            return MOD_SHOP_INDEX;
+        }
     }
 }

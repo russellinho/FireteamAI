@@ -562,8 +562,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         primaryModInfo.WeaponName = info.EquippedPrimary;
                         primaryModInfo.SuppressorId = suppressorModId;
                         primaryModInfo.SightId = sightModId;
-                        Debug.Log(suppressorModId);
-                        Debug.Log(sightModId);
                         if (!"".Equals(suppressorModId)) {
                             suppressorModSnap = (Dictionary<object, object>)modsInventorySnap[suppressorModId];
                             primaryModInfo.EquippedSuppressor = suppressorModSnap["name"].ToString();
@@ -793,42 +791,34 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 WeaponScript wepScript = bodyReference.GetComponent<WeaponScript>();
                 WeaponData e = null;
                 e = inventory.myWeapons[itemName];
-                string prevSuppId = e.EquippedSuppressor;
-                string prevSightId = e.EquippedSight;
-                string prevClipId = e.EquippedClip;
-                string newSuppId = snapshot.Child("equippedSuppressor").Value.ToString();
-                string newSightId = snapshot.Child("equippedSight").Value.ToString();
-                string newClipId = snapshot.Child("equippedClip").Value.ToString();
                 e.Duration = snapshot.Child("duration").Value.ToString();
                 e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
                 e.EquippedSuppressor = snapshot.Child("equippedSuppressor").Value.ToString();
                 e.EquippedSight = snapshot.Child("equippedSight").Value.ToString();
                 e.EquippedClip = snapshot.Child("equippedClip").Value.ToString();
-                if (prevSuppId != newSuppId) {
-                    wepScript.UnequipMod("Suppressor", itemName);
-                    if (newSuppId != "") {
-                        wepScript.EquipMod("Suppressor", inventory.myMods[newSuppId].Name, itemName, null);
-                    }
-                }
-                if (prevSightId != newSightId) {
-                    wepScript.UnequipMod("Sight", itemName);
-                    if (newSightId != "") {
-                        wepScript.EquipMod("Sight", inventory.myMods[newSightId].Name, itemName, null);
-                    }
-                }
-                if (prevClipId != newClipId) {
-                    wepScript.UnequipMod("Clip", itemName);
-                    if (newClipId != "") {
-                        wepScript.EquipMod("Clip", inventory.myMods[newClipId].Name, itemName, null);
-                    }
-                }
-                Debug.Log("UPDATING: " + itemName + " | " + newSightId + " | ");
             } else if (inventory.myMods.ContainsKey(itemName)) {
+                // If on menu, update player template weapon, weapon mod template if active, mod shop entries, refresh weapon stats
                 ModData e = inventory.myMods[itemName];
                 e.Duration = snapshot.Child("duration").Value.ToString();
                 e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
                 e.EquippedOn = snapshot.Child("equippedOn").Value.ToString();
-                Debug.Log("UPDATING: " + itemName + " | " + e.EquippedOn);
+                if (titleRef != null) {
+                    playerDataModifyLegalFlag = true;
+                    
+                    // Update player template weapon
+                    OnPrimaryChange(PlayerData.playerdata.info.EquippedPrimary);
+                    OnSecondaryChange(PlayerData.playerdata.info.EquippedSecondary);
+                    OnSupportChange(PlayerData.playerdata.info.EquippedSupport);
+
+                    // Update weapon mod template if active and refresh weapon stats
+                    if (titleRef.mainPanelManager.currentPanelIndex == titleRef.mainPanelManager.GetModShopIndex()) {
+                        titleRef.LoadWeaponForModding(titleRef.weaponPreviewShopSlot);
+                        // Update all active shop slots
+                        titleRef.RefreshModShopContent();
+                    }
+                    
+                    playerDataModifyLegalFlag = false;
+                }
             }
         }
     }
@@ -1026,6 +1016,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         if (titleRef == null) {
             titleRef = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
         }
+        if (bodyReference == null) return;
         if (bodyReference.GetComponent<EquipmentScript>().equippedCharacter == PlayerData.playerdata.info.EquippedCharacter)
         {
             return;
@@ -1040,56 +1031,18 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         characterWeps.ts = titleRef;
     }
 
-    // Saves mod data for given weapon. If ID is null, then that means there was no mod on that weapon to begin with when it was saved.
-    // Therefore, don't do anything.
-    // If the ID is not null but the equippedSuppressor is, then that means that a suppressor was unequipped from a weapon.
-    // Therefore, set the equipped on for the mod to empty string and set the equippedSuppressor for the weapon to empty string.
-    public void SaveModDataForWeapon(string weaponName, string equippedSuppressor, string equippedSight, string suppressorId, string sightId) {
-        //Debug.Log("Data passed in: " + weaponName + ", " + equippedSuppressor + ", " + id);
-        if (string.IsNullOrEmpty(suppressorId) && string.IsNullOrEmpty(sightId))
-        {
-            return;
+    // Saves mod data for given weapon. If ID is null, then don't mess with that mod. If ID is empty, remove mod. Else, equip that mod.
+    public void SaveModDataForWeapon(string weaponName, string suppressorId, string sightId) {
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(true);
         }
-
         WeaponScript myWeps = bodyReference.GetComponent<WeaponScript>();
         Dictionary<string, object> inputData = new Dictionary<string, object>();
         inputData["callHash"] = DAOScript.functionsCallHash;
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
-
-        if (suppressorId != null && !"".Equals(suppressorId)) {
-            if (suppressorId != null && !"".Equals(suppressorId) && string.IsNullOrEmpty(equippedSuppressor))
-            {
-                inputData["weaponName"] = weaponName;
-                inputData["suppressorId"] = suppressorId;
-                inputData["equippedSuppressor"] = "";
-                inputData["suppressorEquippedOn"] = "";
-            }
-            else
-            {
-                inputData["weaponName"] = weaponName;
-                inputData["suppressorId"] = suppressorId;
-                inputData["equippedSuppressor"] = suppressorId;
-                inputData["suppressorEquippedOn"] = weaponName;
-            }
-        }
-
-        if (sightId != null && !"".Equals(sightId)) {
-            if (sightId != null && !"".Equals(sightId) && string.IsNullOrEmpty(equippedSight))
-            {
-                inputData["weaponName"] = weaponName;
-                inputData["sightId"] = sightId;
-                inputData["equippedSight"] = "";
-                inputData["sightEquippedOn"] = "";
-            }
-            else
-            {
-                // Mod was added/changed
-                inputData["weaponName"] = weaponName;
-                inputData["sightId"] = sightId;
-                inputData["equippedSight"] = sightId;
-                inputData["sightEquippedOn"] = weaponName;
-            }
-        }
+        inputData["weaponName"] = weaponName;
+        inputData["suppressorId"] = suppressorId;
+        inputData["sightId"] = sightId;
 
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("saveModDataForWeapon");
         func.CallAsync(inputData).ContinueWith((taskA) => {
@@ -1549,9 +1502,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandleGpChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1568,9 +1519,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandleKashChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1587,9 +1536,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandleArmorChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1605,9 +1552,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         PlayerData.playerdata.info.EquippedArmor = itemEquipped;
         OnArmorChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnArmorChange(string itemEquipped) {
+        if (bodyReference == null) return;
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
@@ -1651,9 +1602,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandleTopChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1669,9 +1618,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         PlayerData.playerdata.info.EquippedTop = itemEquipped;
         OnTopChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnTopChange(string itemEquipped) {
+        if (bodyReference == null) return;
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
@@ -1699,9 +1652,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandleBottomChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1717,9 +1668,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         PlayerData.playerdata.info.EquippedBottom = itemEquipped;
         OnBottomChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnBottomChange(string itemEquipped) {
+        if (bodyReference == null) return;
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
@@ -1745,9 +1700,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandleCharacterChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1765,9 +1718,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         UpdateBodyRef();
         OnCharacterChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnCharacterChange(string itemEquipped) {
+        if (bodyReference == null) return;
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
 
         if (thisEquipScript != null) {
@@ -1860,9 +1817,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandleFacewearChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1877,9 +1832,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         PlayerData.playerdata.info.EquippedFacewear = itemEquipped;
         OnFacewearChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnFacewearChange(string itemEquipped) {
+        if (bodyReference == null) return;
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
 
         if (thisEquipScript != null) {
@@ -1908,10 +1867,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandleFootwearChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
-
+        if (bodyReference == null) return;
         if (PlayerData.playerdata.info.EquippedFootwear == args.Snapshot.Value.ToString()) {
             return;
         }
@@ -1926,9 +1882,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         PlayerData.playerdata.info.EquippedFootwear = itemEquipped;
         OnFootwearChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnFootwearChange(string itemEquipped) {
+        if (bodyReference == null) return;
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
@@ -1954,9 +1914,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandleHeadgearChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1969,12 +1927,15 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.EquippedHeadgear = itemEquipped;
-        Debug.Log("qq");
         OnHeadgearChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnHeadgearChange(string itemEquipped) {
+        if (bodyReference == null) return;
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
 
         if (thisEquipScript != null) {
@@ -2003,9 +1964,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandleMeleeChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -2020,9 +1979,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         PlayerData.playerdata.info.EquippedMelee = itemEquipped;
         OnMeleeChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnMeleeChange(string itemEquipped) {
+        if (bodyReference == null) return;
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         thisWepScript.equippedMeleeWeapon = itemEquipped;
         // Get the weapon from the weapon catalog for its properties
@@ -2031,9 +1994,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandlePrimaryChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -2048,9 +2009,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         PlayerData.playerdata.info.EquippedPrimary = itemEquipped;
         OnPrimaryChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnPrimaryChange(string itemEquipped) {
+        if (bodyReference == null) return;
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         thisWepScript.equippedPrimaryWeapon = itemEquipped;
         // Get the weapon from the weapon catalog for its properties
@@ -2078,9 +2043,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandleSecondaryChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -2095,9 +2058,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         PlayerData.playerdata.info.EquippedSecondary = itemEquipped;
         OnSecondaryChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnSecondaryChange(string itemEquipped) {
+        if (bodyReference == null) return;
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         thisWepScript.equippedSecondaryWeapon = itemEquipped;
         // Get the weapon from the weapon catalog for its properties
@@ -2117,9 +2084,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandleSupportChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -2134,9 +2099,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         PlayerData.playerdata.info.EquippedSupport = itemEquipped;
         OnSupportChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnSupportChange(string itemEquipped) {
+        if (bodyReference == null) return;
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         thisWepScript.equippedSupportWeapon = itemEquipped;
         // Get the weapon from the weapon catalog for its properties
@@ -2149,9 +2118,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandleBanEvent(object sender, ChildChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -2165,9 +2131,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void HandleInventoryChanged(object sender, ChildChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -2176,18 +2140,22 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
         // When inventory item has been updated, find the item that has been updated and update it
         if (args.Snapshot.Value != null) {
+            if (titleRef != null) {
+                titleRef.TriggerBlockScreen(true);
+            }
             playerDataModifyLegalFlag = true;
             inventoryDataModifyLegalFlag = true;
             RefreshInventory(args.Snapshot, 'm');
             inventoryDataModifyLegalFlag = false;
             playerDataModifyLegalFlag = false;
+            if (titleRef != null) {
+                titleRef.TriggerBlockScreen(false);
+            }
         }
     }
 
     void HandleInventoryAdded(object sender, ChildChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -2196,18 +2164,22 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
         // When inventory item has been added, also add that item to this game session
         if (args.Snapshot.Value != null) {
+            if (titleRef != null) {
+                titleRef.TriggerBlockScreen(true);
+            }
             playerDataModifyLegalFlag = true;
             inventoryDataModifyLegalFlag = true;
             RefreshInventory(args.Snapshot, 'a');
             inventoryDataModifyLegalFlag = false;
             playerDataModifyLegalFlag = false;
+            if (titleRef != null) {
+                titleRef.TriggerBlockScreen(false);
+            }
         }
     }
 
     void HandleInventoryRemoved(object sender, ChildChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -2216,11 +2188,17 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
         // When inventory item has been removed, also remove that item from this game session
         if (args.Snapshot.Value != null) {
+            if (titleRef != null) {
+                titleRef.TriggerBlockScreen(true);
+            }
             playerDataModifyLegalFlag = true;
             inventoryDataModifyLegalFlag = true;
             RefreshInventory(args.Snapshot, 'd');
             inventoryDataModifyLegalFlag = false;
             playerDataModifyLegalFlag = false;
+            if (titleRef != null) {
+                titleRef.TriggerBlockScreen(false);
+            }
         }
     }
 

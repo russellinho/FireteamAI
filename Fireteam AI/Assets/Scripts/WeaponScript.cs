@@ -436,6 +436,7 @@ public class WeaponScript : MonoBehaviour
     }
 
     public void PreviewWeapon(string name) {
+        if (equippedPrimaryWeapon == name) return;
         Character c = InventoryScript.itemData.characterCatalog[equipmentScript.equippedCharacter];
 
         Weapon w = InventoryScript.itemData.weaponCatalog[name];
@@ -738,6 +739,7 @@ public class WeaponScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equipped" + type] = weaponName;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {
@@ -818,10 +820,6 @@ public class WeaponScript : MonoBehaviour
                 if (equippedSight == null || equippedSight.Equals("")) return;
                 UnequipSightOnTitle(unequipFromWeapon);
                 break;
-        }
-        // Sets item that you unequipped to white
-        if (ts.currentlyEquippedModPrefab != null) {
-            ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>().ToggleModEquippedIndicator(false);
         }
     }
 

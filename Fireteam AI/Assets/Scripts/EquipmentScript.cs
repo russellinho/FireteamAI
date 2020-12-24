@@ -208,6 +208,7 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void EquipCharacter(string name, GameObject shopItemRef) {
+        if (PlayerData.playerdata.info.EquippedCharacter == name) return;
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedEquipmentPrefab != null && !ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().itemName.Equals(name)) {
             ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
@@ -224,6 +225,7 @@ public class EquipmentScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equippedCharacter"] = name;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {
@@ -329,6 +331,7 @@ public class EquipmentScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equippedTop"] = name;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {
@@ -440,6 +443,7 @@ public class EquipmentScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equippedBottom"] = name;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {
@@ -523,6 +527,7 @@ public class EquipmentScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equippedFootwear"] = name;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {
@@ -595,6 +600,7 @@ public class EquipmentScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equippedFacewear"] = name;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {
@@ -660,6 +666,7 @@ public class EquipmentScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equippedHeadgear"] = name;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {
@@ -724,6 +731,7 @@ public class EquipmentScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equippedArmor"] = name;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {

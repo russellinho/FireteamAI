@@ -139,8 +139,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject equippedArmorSlot;
 	public GameObject equippedSuppressorSlot;
 	public GameObject equippedSightSlot;
-	public ShopItemScript equippedSuppressorShopSlot;
-	public ShopItemScript equippedSightShopSlot;
 	public GameObject currentlyEquippedWeaponPrefab;
 	public GameObject currentlyEquippedEquipmentPrefab;
 	public TextMeshProUGUI armorBoostPercent;
@@ -171,14 +169,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject currentlyEquippedModPrefab;
 	public GameObject weaponPreviewSlot;
 	public GameObject weaponPreviewRef;
-	public string weaponBeingPreviewed;
 	public ShopItemScript weaponPreviewShopSlot;
 	public GameObject modInventoryContent;
 	public GameObject modWeaponInventoryContent;
 	public Button suppressorsBtn;
 	public Button sightsBtn;
-	public string equippedSuppressorId;
-	public string equippedSightId;
 	public TextMeshProUGUI modDamageTxt;
 	public TextMeshProUGUI modAccuracyTxt;
 	public TextMeshProUGUI modRecoilTxt;
@@ -944,7 +939,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				LoadWeaponForModding(s);
 				first = false;
 			}
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1033,7 +1028,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1122,7 +1117,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1211,7 +1206,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1300,7 +1295,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1389,7 +1384,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1478,7 +1473,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1567,7 +1562,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1656,7 +1651,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1745,7 +1740,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1834,7 +1829,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1924,7 +1919,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -2013,7 +2008,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -2102,7 +2097,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -2191,7 +2186,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -2354,7 +2349,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.acquireDate = modData.AcquireDate;
 			s.duration = modData.Duration;
 			s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
-			if (weaponBeingPreviewed.Equals(modData.EquippedOn)) {
+			if (weaponPreviewShopSlot.itemName.Equals(modData.EquippedOn)) {
 				s.ToggleModEquippedIndicator(true);
 				currentlyEquippedModPrefab = o;
 			}
@@ -2387,12 +2382,25 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Mod";
 			s.itemDescription = m.description;
 			s.modCategory = m.category;
+			s.acquireDate = modData.AcquireDate;
+			s.duration = modData.Duration;
 			s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
-			if (weaponBeingPreviewed.Equals(modData.EquippedOn)) {
+			if (weaponPreviewShopSlot.itemName.Equals(modData.EquippedOn)) {
 				s.ToggleModEquippedIndicator(true);
 				currentlyEquippedModPrefab = o;
 			}
 			o.transform.SetParent(modInventoryContent.transform, false);
+		}
+	}
+
+	public void RefreshModShopContent()
+	{
+		ShopItemScript[] currentlyDisplayedContent = modInventoryContent.GetComponentsInChildren<ShopItemScript>();
+		foreach (ShopItemScript s in currentlyDisplayedContent) {
+			ModData thisModData = PlayerData.playerdata.inventory.myMods[s.id];
+			s.equippedOn = thisModData.EquippedOn;
+			s.duration = thisModData.Duration;
+			s.acquireDate = thisModData.AcquireDate;
 		}
 	}
 
@@ -2470,7 +2478,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		weaponPreviewRef = t;
 		weaponPreviewShopSlot = s;
-		weaponBeingPreviewed = s.itemName;
+		weaponPreviewShopSlot.itemName = s.itemName;
 		s.ToggleWeaponPreviewIndicator(true);
 
 		// Set base stats
@@ -2511,7 +2519,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// modWeaponLbl.text = weaponName;
 
 		if (updateSuppressor) {
-			equippedSuppressorId = suppressorId;
 
 			// Add suppressor stats
 			if (!string.IsNullOrEmpty(suppressorName)) {
@@ -2526,7 +2533,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		if (updateSight) {
-			equippedSightId = sightId;
 
 			// Add sight stats
 			if (!string.IsNullOrEmpty(sightName)) {
@@ -2551,21 +2557,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		SetWeaponModdedStatsTextColor(damageBoost, accuracyBoost, recoilBoost, rangeBoost, clipCapacityBoost, maxAmmoBoost);
 	}
 
-	private void UnequipModFromWeaponTemplate(string modType) {
-		switch(modType) {
-			case "Suppressor":
-				SetWeaponModValues(weaponBeingPreviewed, true, null, equippedSuppressorId, false, null, null);
-				equippedSuppressorSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-				weaponPreviewRef.GetComponent<WeaponMods>().UnequipSuppressor();
-				break;
-			case "Sight":
-				SetWeaponModValues(weaponBeingPreviewed, false, null, null, true, null, equippedSightId);
-				equippedSightSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-				weaponPreviewRef.GetComponent<WeaponMods>().UnequipSight();
-				break;
-		}
-	}
-
 	private void SetWeaponModdedStats(float damage, float accuracy, float recoil, float range, float clipCapacity, float maxAmmo) {
 		modDamageTxt.text = damage != -1 ? ""+damage : "-";
 		modAccuracyTxt.text = accuracy != -1 ? ""+accuracy : "-";
@@ -2575,71 +2566,22 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		modMaxAmmoTxt.text = maxAmmo != -1 ? ""+maxAmmo : "-";
 	}
 
-    public string RemoveSuppressorFromWeapon(string weaponName, bool removeSuppressorClicked)
-    {
-		ModInfo m = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
-		string suppIdBeforeRemoval = m.SuppressorId;
-        PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().UnequipMod("Suppressor", weaponName);
-        if (removeSuppressorClicked)
-        {
-            UnequipModFromWeaponTemplate("Suppressor");
-        }
-		// If there was a suppressor equipped, find it in the current shop slots and clear its equipped on status
-		ShopItemScript[] items = modInventoryContent.GetComponentsInChildren<ShopItemScript>();
-		foreach (ShopItemScript s in items) {
-			if (s.id == suppIdBeforeRemoval) {
-				s.ClearEquippedOn();
-				break;
-			}
-		}
-		return suppIdBeforeRemoval;
-    }
-
-	public string RemoveSightFromWeapon(string weaponName, bool removeSightClicked) {
-		ModInfo m = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
-		string sightIdBeforeRemoval = m.SightId;
-		PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().UnequipMod("Sight", weaponName);
-        if (removeSightClicked)
-        {
-            UnequipModFromWeaponTemplate("Sight");
-        }
-		// If there was a sight equipped, find it in the current shop slots and clear its equipped on status
-		ShopItemScript[] items = modInventoryContent.GetComponentsInChildren<ShopItemScript>();
-		foreach (ShopItemScript s in items) {
-			if (s.id == sightIdBeforeRemoval) {
-				s.ClearEquippedOn();
-				break;
-			}
-		}
-		return sightIdBeforeRemoval;
-	}
-
 	public void OnRemoveSuppressorClicked()
     {
-        if (string.IsNullOrEmpty(weaponBeingPreviewed))
+        if (string.IsNullOrEmpty(weaponPreviewShopSlot.itemName) || string.IsNullOrEmpty(PlayerData.playerdata.LoadModDataForWeapon(weaponPreviewShopSlot.itemName).SuppressorId))
         {
             return;
         }
-        // Remove suppressor model from the player's weapon and the template weapon
-        string removedModId = RemoveSuppressorFromWeapon(weaponBeingPreviewed, true);
-		if (currentlyEquippedModPrefab != null) {
-			ShopItemScript sh = currentlyEquippedModPrefab.GetComponent<ShopItemScript>();
-			sh.ClearEquippedOn();
-		}
-		PlayerData.playerdata.SaveModDataForWeapon(weaponBeingPreviewed, "", null, removedModId, null);
+        
+		PlayerData.playerdata.SaveModDataForWeapon(weaponPreviewShopSlot.itemName, "", null);
     }
 
     public void OnRemoveSightClicked() {
-        if (string.IsNullOrEmpty(weaponBeingPreviewed)) {
+        if (string.IsNullOrEmpty(weaponPreviewShopSlot.itemName) || string.IsNullOrEmpty(PlayerData.playerdata.LoadModDataForWeapon(weaponPreviewShopSlot.itemName).SightId)) {
             return;
         }
-        // Remove sight model from the player's weapon and the template weapon
-        string removedModId = RemoveSightFromWeapon(weaponBeingPreviewed, true);
-		if (currentlyEquippedModPrefab != null) {
-			ShopItemScript sh = currentlyEquippedModPrefab.GetComponent<ShopItemScript>();
-			sh.ClearEquippedOn();
-		}
-		PlayerData.playerdata.SaveModDataForWeapon(weaponBeingPreviewed, null, "", null, removedModId);
+        
+		PlayerData.playerdata.SaveModDataForWeapon(weaponPreviewShopSlot.itemName, null, "");
     }
 
 	private void SetWeaponModdedStatsTextColor(float damage, float accuracy, float recoil, float range, float clipCapacity, float maxAmmo) {
@@ -2701,21 +2643,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			weaponPreviewRef = null;
 			weaponPreviewShopSlot = null;
-			weaponBeingPreviewed = null;
-		}
-	}
-
-	public void SaveModsForCurrentWeapon() {
-		if (weaponBeingPreviewed != null) {
-			string equippedSuppressorName = null;
-			string equippedSightName = null;
-			if (equippedSuppressorId != null) {
-				equippedSuppressorName = PlayerData.playerdata.inventory.myMods[equippedSuppressorId].Name;
-			}
-			if (equippedSightId != null) {
-				equippedSightName = PlayerData.playerdata.inventory.myMods[equippedSightId].Name;
-			}
-			PlayerData.playerdata.SaveModDataForWeapon(weaponBeingPreviewed, equippedSuppressorName, equippedSightName, equippedSuppressorId, equippedSightId);
 		}
 	}
 
@@ -2725,17 +2652,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			case "Suppressor":
 				if (modName == null || modName.Equals("")) {
 					equippedSuppressorSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-					return weaponBeingPreviewed;
+					return weaponPreviewShopSlot.itemName;
 				}
-				w = InventoryScript.itemData.weaponCatalog[weaponBeingPreviewed];
+				w = InventoryScript.itemData.weaponCatalog[weaponPreviewShopSlot.itemName];
 				if (w.suppressorCompatible) {
-					SetWeaponModValues(weaponBeingPreviewed, true, modName, modId, false, null, null);
+					SetWeaponModValues(weaponPreviewShopSlot.itemName, true, modName, modId, false, null, null);
 					weaponPreviewRef.GetComponent<WeaponMods>().EquipSuppressor(modName);
 					equippedSuppressorSlot.GetComponent<SlotScript>().ToggleThumbnail(true, InventoryScript.itemData.modCatalog[modName].thumbnailPath);
 					if (itemSlot != null) {
 						currentlyEquippedModPrefab = itemSlot.gameObject;
 					}
-					return weaponBeingPreviewed;
+					return weaponPreviewShopSlot.itemName;
 				} else {
 					TriggerAlertPopup("Suppressors cannot be equipped on this weapon!");
 					return "0";
@@ -2743,17 +2670,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			case "Sight":
 				if (modName == null || modName.Equals("")) {
 					equippedSightSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-					return weaponBeingPreviewed;
+					return weaponPreviewShopSlot.itemName;
 				}
-				w = InventoryScript.itemData.weaponCatalog[weaponBeingPreviewed];
+				w = InventoryScript.itemData.weaponCatalog[weaponPreviewShopSlot.itemName];
 				if (w.sightCompatible) {
-					SetWeaponModValues(weaponBeingPreviewed, false, null, null, true, modName, modId);
+					SetWeaponModValues(weaponPreviewShopSlot.itemName, false, null, null, true, modName, modId);
 					weaponPreviewRef.GetComponent<WeaponMods>().EquipSight(modName);
 					equippedSightSlot.GetComponent<SlotScript>().ToggleThumbnail(true, InventoryScript.itemData.modCatalog[modName].thumbnailPath);
 					if (itemSlot != null) {
 						currentlyEquippedModPrefab = itemSlot.gameObject;
 					}
-					return weaponBeingPreviewed;
+					return weaponPreviewShopSlot.itemName;
 				} else {
 					TriggerAlertPopup("Sights cannot be equipped on this weapon!");
 					return "0";
@@ -3233,7 +3160,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public bool WeaponIsSightCompatible(string weaponName) {
-		return InventoryScript.itemData.weaponCatalog[weaponBeingPreviewed].sightCompatible;
+		return InventoryScript.itemData.weaponCatalog[weaponPreviewShopSlot.itemName].sightCompatible;
 	}
 
 	public void UnloadDeadScenes()
