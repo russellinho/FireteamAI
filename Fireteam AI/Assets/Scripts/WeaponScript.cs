@@ -150,7 +150,6 @@ public class WeaponScript : MonoBehaviour
         if (currentlyEquippedType == 1) return;
         DrawWeapon(1);
         currentlyEquippedType = 1;
-        weaponActionScript.firingMode = WeaponActionScript.FireMode.Auto;
     }
 
     void DrawSecondary()

@@ -89,6 +89,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     public enum FireMode { Auto, Semi }
     public enum ShotMode { Single, Burst }
     public FireMode firingMode;
+    private int currentFiringModeIndex;
     public ShotMode shotMode;
     private bool shootInput;
     private bool meleeInput;
@@ -188,13 +189,14 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
         if (PlayerPreferences.playerPreferences.KeyWasPressed("FireMode"))
         {
-            if (weaponStats.category == "Assault Rifle") {
-                if (firingMode == FireMode.Semi)
-                    firingMode = FireMode.Auto;
-                else
-                    firingMode = FireMode.Semi;
+            if (weaponStats.firingModes != null) {
+                currentFiringModeIndex++;
+                if (currentFiringModeIndex >= weaponStats.firingModes.Length) {
+                    currentFiringModeIndex = 0;
+                }
+                firingMode = (FireMode)weaponStats.firingModes[currentFiringModeIndex];
+                hudScript.SetFireMode(firingMode.ToString().ToUpper());
             }
-            hudScript.SetFireMode(firingMode.ToString().ToUpper());
         }
 
         meleeInput = PlayerPreferences.playerPreferences.KeyWasPressed("Melee");
@@ -1173,6 +1175,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             weaponStats = w;
             weaponMods = ws.GetComponent<WeaponMods>();
             fireTimer = w.fireRate;
+            firingMode = w.firingModes == null ? FireMode.Semi : (FireMode)w.firingModes[0];
+            currentFiringModeIndex = 0;
             weaponCam.nearClipPlane = ws.aimDownSightClipping;
             playerActionScript.weaponSpeedModifier = w.mobility/100f;
             if (playerActionScript.equipmentScript.GetGender() == 'M') {
@@ -1189,12 +1193,10 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     isWieldingThrowable = true;
                     isWieldingBooster = false;
                     isWieldingDeployable = false;
-                    firingMode = FireMode.Semi;
                 } else if (weaponStats.category.Equals("Booster")) {
                     isWieldingThrowable = false;
                     isWieldingBooster = true;
                     isWieldingDeployable = false;
-                    firingMode = FireMode.Semi;
                 } else if (weaponStats.category.Equals("Deployable")) {
                     isWieldingThrowable = false;
                     isWieldingBooster = false;
@@ -1207,17 +1209,13 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                 isWieldingDeployable = false;
                 if (weaponStats.category.Equals("Shotgun")) {
                     shotMode = ShotMode.Burst;
-                    firingMode = FireMode.Semi;
                 } else {
                     shotMode = ShotMode.Single;
-                    if (weaponStats.category.Equals("Pistol") || weaponStats.category.Equals("Launcher")) {
-                        firingMode = FireMode.Semi;
-                    }
                 }
             }
 
             if (pView.IsMine) {
-                hudScript.SetFireMode(firingMode.ToString().ToUpper());
+                hudScript.SetFireMode(w.firingModes == null ? null : firingMode.ToString().ToUpper());
                 hudScript.SetWeaponLabel();
             }
         }

@@ -252,7 +252,15 @@ public class InventoryScript : MonoBehaviour
                     float swayFloat = (sway == null ? -1f : float.Parse(sway.ToString()));
                     float lungeRangeFloat = (lungeRange == null ? -1f : float.Parse(lungeRange.ToString()));
                     bool isSniperBool = (isSniper == null ? false : (int.Parse(isSniper.ToString()) == 1));
-                    weaponCatalog.Add(itemName, new Weapon(itemName, d.Child("type").Value.ToString(), d.Child("category").Value.ToString(), int.Parse(d.Child("prefabPath").Value.ToString()), projectilePathString, d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), damage == null ? -1f : float.Parse(damage.ToString()), mobility == null ? -1f : float.Parse(mobility.ToString()), fireRate == null ? -1f : float.Parse(fireRate.ToString()), accuracy == null ? -1f : float.Parse(accuracy.ToString()), recoil == null ? -1f : float.Parse(recoil.ToString()), range == null ? -1f : float.Parse(range.ToString()), clipCapacity == null ? -1 : int.Parse(clipCapacity.ToString()), maxAmmo == null ? -1 : int.Parse(maxAmmo.ToString()), swayFloat, lungeRangeFloat, isSniperBool, canBeModdedBool, suppressorCompatibleBool, sightCompatibleBool, int.Parse(d.Child("gpPrice").Value.ToString()), purchasableBool, deleteableBool));
+                    string[] firingModes = d.Child("firingModes").Value?.ToString().Split(',');
+                    int[] firingModesInt = null;
+                    if (firingModes != null) {
+                        firingModesInt = new int[firingModes.Length];
+                        for (int i = 0; i < firingModes.Length; i++) {
+                            firingModesInt[i] = int.Parse(firingModes[i]);
+                        }
+                    }
+                    weaponCatalog.Add(itemName, new Weapon(itemName, d.Child("type").Value.ToString(), d.Child("category").Value.ToString(), int.Parse(d.Child("prefabPath").Value.ToString()), projectilePathString, d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), damage == null ? -1f : float.Parse(damage.ToString()), mobility == null ? -1f : float.Parse(mobility.ToString()), fireRate == null ? -1f : float.Parse(fireRate.ToString()), accuracy == null ? -1f : float.Parse(accuracy.ToString()), recoil == null ? -1f : float.Parse(recoil.ToString()), range == null ? -1f : float.Parse(range.ToString()), clipCapacity == null ? -1 : int.Parse(clipCapacity.ToString()), maxAmmo == null ? -1 : int.Parse(maxAmmo.ToString()), swayFloat, lungeRangeFloat, isSniperBool, canBeModdedBool, suppressorCompatibleBool, sightCompatibleBool, int.Parse(d.Child("gpPrice").Value.ToString()), purchasableBool, deleteableBool, firingModesInt));
                 }
 
                 // Get mods
