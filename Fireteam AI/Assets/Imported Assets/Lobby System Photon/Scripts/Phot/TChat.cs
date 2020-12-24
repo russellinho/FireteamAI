@@ -120,7 +120,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 			else
 			{
-				TextChat.text += "<color=#f2f2f2ff>" + pse + " : </color><color=#ffffffff>" + msg + "</color>\n";
+				TextChat.text += "<color=#9c4141ff>" + pse + " : </color><color=#ffffffff>" + msg + "</color>\n";
 			}
 			myScrollRect.verticalNormalizedPosition = 0f;
 		}

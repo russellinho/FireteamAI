@@ -160,6 +160,7 @@ namespace Michsky.UI.Shift
                     titleController.HandleRightSideButtonPress(titleController.characterBtn);
                     titleController.OnCharacterBtnClicked();
                 } else if (newPanel == "Campaign") {
+                    titleController.JoinCampaignGlobalChat();
                     titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
@@ -168,6 +169,7 @@ namespace Michsky.UI.Shift
                     versusLobby.SetActive(false);
                     VivoxVoiceManager.Instance.SetAudioInput(PlayerPreferences.playerPreferences.preferenceData.audioInputName);
                 } else if (newPanel == "Versus") {
+                    titleController.JoinVersusGlobalChat();
                     titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
@@ -176,6 +178,7 @@ namespace Michsky.UI.Shift
                     versusLobby.SetActive(true);
                     VivoxVoiceManager.Instance.SetAudioInput(PlayerPreferences.playerPreferences.preferenceData.audioInputName);
                 } else {
+                    titleController.LeaveGlobalChats();
                     titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
