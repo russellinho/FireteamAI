@@ -33,6 +33,7 @@ public class InGameMessengerHUD : MonoBehaviour {
 		// Handle activating the input box
 		if (PlayerPreferences.playerPreferences.KeyWasPressed("AllChat")) {
 			if (!container.inGameMessenger.inputText.enabled) {
+				container.inGameMessenger.inputText.text = "";
 				// Enable
 				container.inGameMessenger.inputText.enabled = true;
 				playerScript.fpc.canMove = false;
@@ -49,9 +50,14 @@ public class InGameMessengerHUD : MonoBehaviour {
 				SendChatMessage (container.inGameMessenger.inputText.text);
 				container.inGameMessenger.inputText.text = "";
 			}
-			container.inGameMessenger.inputText.enabled = false;
-			playerScript.fpc.canMove = true;
+			CloseTextChat();
 		}
+	}
+
+	public void CloseTextChat()
+	{
+		container.inGameMessenger.inputText.enabled = false;
+		playerScript.fpc.canMove = true;
 	}
 
 	void SendChatMessage(string message) {
@@ -61,7 +67,12 @@ public class InGameMessengerHUD : MonoBehaviour {
 	[PunRPC]
 	void RpcSendChatMessage(string message) {
 		if (gameObject.layer == 0) return;
-		container.inGameMessenger.AddMessage (message, pView.Owner.NickName);
+		container.inGameMessenger.AddMessage ('n', message, pView.Owner.NickName);
+	}
+
+	public void SendVoiceCommandMessage(string playerName, string message)
+	{
+		container.inGameMessenger.AddMessage ('v', message, playerName);
 	}
 
 }

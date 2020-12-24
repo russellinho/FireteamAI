@@ -84,6 +84,9 @@ public class ShopItemScript : MonoBehaviour
     }
 
     public void LoadWeaponForModding() {
+        if (ts.weaponPreviewShopSlot.itemName == this.itemName) {
+            return;
+        }
         ts.LoadWeaponForModding(this);
     }
 
@@ -157,79 +160,35 @@ public class ShopItemScript : MonoBehaviour
     }
 
     public void EquipMod() {
-        // if (equippedOn == ts.modWeaponLbl.text)
-        // {
-        //     return;
-        // }
         switch (modCategory)
         {
             case "Suppressor":
                 // Check if weapon is suppressor compatible before continuing
-                if (!ts.WeaponIsSuppressorCompatible(ts.weaponBeingPreviewed)) {
+                if (!ts.WeaponIsSuppressorCompatible(ts.weaponPreviewShopSlot.itemName)) {
                     ts.TriggerAlertPopup("Suppressors cannot be equipped on this weapon!");
                     return;
                 }
 
-                // Clear orange highlight
-                if (ts.currentlyEquippedModPrefab != null) {
-                    ShopItemScript prev = ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>();
-                    prev.ToggleModEquippedIndicator(false);
-                }
-
-                // If this weapon already has a suppressor on it, unequip it first
-                ts.OnRemoveSuppressorClicked();
-
-                // If this mod is equipped to another weapon, unequip it from that weapon as well
-                if (equippedOn != null && !"".Equals(equippedOn))
-                {
-                    ts.RemoveSuppressorFromWeapon(equippedOn, false);
-                    // Ensure that it gets saved in the DB
-                    PlayerData.playerdata.SaveModDataForWeapon(equippedOn, "", null, id, null);
-                }
-
-                // Attach to player weapon and attach to weapon mod template as well
-                string weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory, id, this);
-                if (weaponNameAttachedTo == "0") {
+                // Check if the weapon already has this mod equipped
+                if (PlayerData.playerdata.LoadModDataForWeapon(ts.weaponPreviewShopSlot.itemName).SuppressorId == this.id) {
                     return;
                 }
 
-                equippedOn = weaponNameAttachedTo;
-                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipMod(modCategory, itemName, weaponNameAttachedTo, gameObject);
-                PlayerData.playerdata.SaveModDataForWeapon(equippedOn, itemName, null, id, null);
+                PlayerData.playerdata.SaveModDataForWeapon(ts.weaponPreviewShopSlot.itemName, id, null);
                 break;
             case "Sight":
                 // Check if weapon is sight compatible before continuing
-                if (!ts.WeaponIsSightCompatible(ts.weaponBeingPreviewed)) {
+                if (!ts.WeaponIsSightCompatible(ts.weaponPreviewShopSlot.itemName)) {
                     ts.TriggerAlertPopup("Sights cannot be equipped on this weapon!");
                     return;
                 }
 
-                // Clear orange highlight
-                if (ts.currentlyEquippedModPrefab != null) {
-                    ShopItemScript prev = ts.currentlyEquippedModPrefab.GetComponent<ShopItemScript>();
-                    prev.ToggleModEquippedIndicator(false);
-                }
-
-                // If this weapon already has a sight on it, unequip it first
-                ts.OnRemoveSightClicked();
-
-                // If this mod is equipped to another weapon, unequip it from that weapon as well
-                if (equippedOn != null && !"".Equals(equippedOn))
-                {
-                    ts.RemoveSightFromWeapon(equippedOn, false);
-                    // Ensure that it gets saved in the DB
-                    PlayerData.playerdata.SaveModDataForWeapon(equippedOn, null, "", null, id);
-                }
-
-                // Attach to player weapon and attach to weapon mod template as well
-                weaponNameAttachedTo = ts.EquipModOnWeaponTemplate(itemName, modCategory, id, this);
-                if (weaponNameAttachedTo == "0") {
+                // Check if the weapon already has this mod equipped
+                if (PlayerData.playerdata.LoadModDataForWeapon(ts.weaponPreviewShopSlot.itemName).SightId == this.id) {
                     return;
                 }
 
-                equippedOn = weaponNameAttachedTo;
-                PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().EquipMod(modCategory, itemName, weaponNameAttachedTo, gameObject);
-                PlayerData.playerdata.SaveModDataForWeapon(equippedOn, itemName, null, id, null);
+                PlayerData.playerdata.SaveModDataForWeapon(ts.weaponPreviewShopSlot.itemName, null, id);
                 break;
         }
     }
@@ -250,30 +209,30 @@ public class ShopItemScript : MonoBehaviour
     public void ToggleEquippedIndicator(bool b) {
         if (b) {
             outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-            equipBtn.gameObject.SetActive(false);
+            equipBtn?.gameObject.SetActive(false);
         } else {
             outline.color = new Color(99f / 255f, 198f / 255f, 255f / 255f, 255f / 255f);
-            equipBtn.gameObject.SetActive(true);
+            equipBtn?.gameObject.SetActive(true);
         }
     }
 
     public void ToggleWeaponPreviewIndicator(bool b) {
         if (b) {
             outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-            modWeaponBtn.gameObject.SetActive(false);
+            modWeaponBtn?.gameObject.SetActive(false);
         } else {
             outline.color = new Color(99f / 255f, 198f / 255f, 255f / 255f, 255f / 255f);
-            modWeaponBtn.gameObject.SetActive(true);
+            modWeaponBtn?.gameObject.SetActive(true);
         }
     }
 
     public void ToggleModEquippedIndicator(bool b) {
         if (b) {
             outline.color = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
-            modEquipBtn.gameObject.SetActive(false);
+            modEquipBtn?.gameObject.SetActive(false);
         } else {
             outline.color = new Color(99f / 255f, 198f / 255f, 255f / 255f, 255f / 255f);
-            modEquipBtn.gameObject.SetActive(true);
+            modEquipBtn?.gameObject.SetActive(true);
         }
     }
 

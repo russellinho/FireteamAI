@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,12 +14,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     // Timer
     public static float missionTime;
     public static float MAX_MISSION_TIME = 1800f;
-    private static float FORFEIT_CHECK_DELAY = 10f;
+	private const float FORFEIT_CHECK_DELAY = 3f;
+	private const float VOTE_TIME = 3f;
+	private const float VOTE_DELAY = 300f;
 
 	// A number value to the maps/missions starting with 1. The number correlates with the time it was released, so the lower the number, the earlier it was released.
 	// 1 = The Badlands: Act 1; 2 = The Badlands: Act 2
 	public int currentMap;
     public string teamMap;
+	public Terrain[] terrainMetaData;
 
     // variable for last gunshot position
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
@@ -47,42 +51,57 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public Transform spawnLocation;
 	public Transform outOfBoundsPoint;
 
-	public int deadCount;
-	// TODO: These numbers need to be instantiated and networked
-	public int redTeamPlayerCount;
-	public int blueTeamPlayerCount;
 	public bool assaultMode;
     // Sync mission time to clients every 10 seconds
     private float syncMissionTimeTimer;
 
-	private PhotonView pView;
+	public PhotonView pView;
 
     // Match state data
     public char matchType;
     private string myTeam;
     private string opposingTeam;
-    private float forfeitDelay;
 	public bool enemyTeamNearingVictoryTrigger;
 	public string campaignAlertMessage;
 	public string alertMessage;
-	private bool endingGainsCalculated;
 	public GameObject vipRef;
 	public GameObject checkpointRef;
 	public GameObject escapeVehicleRef;
 	private bool endGameWithWin;
+	public bool assaultModeChangedIndicator;
+	private float forfeitDelayCheck;
+	// Voting variables
+	public enum VoteActions {KickPlayer};
+	public VoteActions currentVoteAction;
+	public Player playerBeingKicked;
+	public string playerBeingKickedName;
+	public bool iHaveVoted;
+	public bool voteInProgress;
+	public float voteTimer;
+	public short yesVotes;
+	public short noVotes;
+	private float voteDelay;
 
 	// Use this for initialization
 	void Awake() {
+		forfeitDelayCheck = 20f;
 		coverSpots = new Dictionary<short, GameObject>();
         myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
         opposingTeam = (myTeam == "red" ? "blue" : "red");
-        forfeitDelay = FORFEIT_CHECK_DELAY;
 		DetermineObjectivesForMission(SceneManager.GetActiveScene().name);
+		SceneManager.sceneLoaded += OnSceneFinishedLoading;
+	}
+
+	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+		if (!PhotonNetwork.IsMasterClient && !isVersusHostForThisTeam()) {
+			pView.RPC("RpcAskServerForDataGc", RpcTarget.All);
+		}
 	}
 
     void Start () {
         if (matchType == 'C') {
-            PhotonNetwork.AutomaticallySyncScene = true;
+            PhotonNetwork.AutomaticallySyncScene = false;
         } else if (matchType == 'V') {
             PhotonNetwork.AutomaticallySyncScene = false;
         }
@@ -111,10 +130,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		Physics.IgnoreLayerCollision (18, 19);
 
 		gameOver = false;
-		deadCount = 0;
 		objectives.escaperCount = 0;
 		objectives.escapeAvailable = false;
-		pView = GetComponent<PhotonView> ();
 
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
@@ -128,7 +145,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         syncMissionTimeTimer = 0f;
 
 		lastGunshotHeardPos = Vector3.negativeInfinity;
-
+		if (matchType == 'C') {
+			StartCoroutine("GameOverCheckForCampaign");
+		} else if (matchType == 'V') {
+			StartCoroutine("GameOverCheckForVersus");
+		}
 	}
 
 	public void UpdateObjectives() {
@@ -140,7 +161,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void DetermineObjectivesForMission(string sceneName) {
-		objectives = new Objectives();
+		objectives = new Objectives(this);
 		objectives.LoadObjectives(currentMap);
 	}
 
@@ -149,53 +170,54 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		if (!PhotonNetwork.InRoom) {
 			return;
 		}
+		UpdateMissionTime();
 		if (matchType == 'C') {
-			GameOverCheckForCampaign();
+			UpdateMissionProgressForCampaign();
 		} else if (matchType == 'V') {
-			GameOverCheckForVersus();
+			UpdateMissionProgressForVersus();
+		}
+		UpdateTimers();
+		DecrementLastGunshotTimer();
+		UpdateVote();
+		HandleVoteCast();
+	}
+
+	void UpdateTimers() {
+		if (PhotonNetwork.IsMasterClient) {
+			ResetLastGunshotPos ();
+			UpdateEndGameTimer();
+		}
+		if (voteDelay > 0f) {
+			voteDelay -= Time.deltaTime;
 		}
 	}
 
-	void GameOverCheckForCampaign() {
+	void UpdateMissionProgressForCampaign() {
 		if (currentMap == 1) {
-			// Auto end game for testing
-            // if (Input.GetKeyDown(KeyCode.B)) {
-            // 	pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
-            // }
 			if (objectives.itemsRemaining == 0) {
 				objectives.escapeAvailable = true;
-			}
-            if (!gameOver)
-            {
-                UpdateMissionTime();
-            } else {
-				if (!endingGainsCalculated) {
-					endingGainsCalculated = true;
-					int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
-					pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths));
+				if (PhotonNetwork.CurrentRoom.IsOpen) {
+					LockRoom();
 				}
 			}
-			if (PhotonNetwork.IsMasterClient) {
-				// Check if the mission is over or if all players eliminated or out of time
-				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime())
-				{
-					if (!gameOver)
-					{
-						pView.RPC("RpcEndGame", RpcTarget.All, 9f, null, false);
-
-					}
+		} else if (currentMap == 2) {
+			if (objectives.stepsLeftToCompletion == 1) {
+				if (objectives.missionTimer3 > 0f) {
+					objectives.escapeAvailable = true;
+				} else {
+					objectives.escapeAvailable = false;
 				}
-				else if (objectives.itemsRemaining == 0)
-				{
-					if (!gameOver && CheckEscapeForCampaign())
-					{
-						// If they can escape, end the game and bring up the stat board
-						pView.RPC("RpcEndGame", RpcTarget.All, 2f, null, true);
-					}
+				if (PhotonNetwork.CurrentRoom.IsOpen) {
+					LockRoom();
 				}
+			}
+		}
+	}
 
-				ResetLastGunshotPos ();
-				UpdateEndGameTimer();
+	void UpdateMissionProgressForVersus() {
+		if (currentMap == 1) {
+			if (objectives.itemsRemaining == 0) {
+				objectives.escapeAvailable = true;
 			}
 		} else if (currentMap == 2) {
 			if (objectives.stepsLeftToCompletion == 1) {
@@ -205,16 +227,32 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					objectives.escapeAvailable = false;
 				}
 			}
-            if (!gameOver)
-            {
-                UpdateMissionTime();
-            } else {
-				if (!endingGainsCalculated) {
-					endingGainsCalculated = true;
-					int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
-					pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths));
+		}
+	}
+
+	IEnumerator GameOverCheckForCampaign() {
+		yield return new WaitForSeconds(1.5f);
+		int deadCount = GetDeadCount();
+		if (currentMap == 1) {
+			if (PhotonNetwork.IsMasterClient) {
+				// Check if the mission is over or if all players eliminated or out of time
+				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime())
+				{
+					if (!gameOver)
+					{
+						pView.RPC("RpcEndGame", RpcTarget.All, 9f, null, false);
+					}
+				}
+				else if (objectives.itemsRemaining == 0)
+				{
+					if (!gameOver && CheckEscapeForCampaign(deadCount))
+					{
+						// If they can escape, end the game and bring up the stat board
+						pView.RPC("RpcEndGame", RpcTarget.All, 2f, null, true);
+					}
 				}
 			}
+		} else if (currentMap == 2) {
 			if (PhotonNetwork.IsMasterClient) {
 				// Check if the mission is over or if all players eliminated or out of time
 				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count)
@@ -222,7 +260,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					if (!gameOver)
 					{
 						pView.RPC("RpcEndGame", RpcTarget.All, 9f, null, false);
-
 					}
 				} else if (vipRef.GetComponent<NpcScript>().actionState == NpcActionState.Dead) {
 					if (!gameOver)
@@ -231,42 +268,25 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				} else if (objectives.stepsLeftToCompletion == 1 && objectives.escapeAvailable)
 				{
-					if (!gameOver && CheckEscapeForCampaign())
+					if (!gameOver && CheckEscapeForCampaign(deadCount))
 					{
 						// If they can escape, end the game and bring up the stat board
 						pView.RPC("RpcEndGame", RpcTarget.All, 2f, null, true);
 					}
 				}
-
-				ResetLastGunshotPos ();
-				UpdateEndGameTimer();
 			}
 		}
-		DecrementLastGunshotTimer();
+		StartCoroutine("GameOverCheckForCampaign");
 	}
 
-	void GameOverCheckForVersus() {
+	IEnumerator GameOverCheckForVersus() {
+		yield return new WaitForSeconds(1.5f);
+		int deadCount = GetDeadCount();
 		if (currentMap == 1) {
-			// Auto end game for testing
-            // if (Input.GetKeyDown(KeyCode.B)) {
-            // 	pView.RPC ("RpcEndGame", RpcTarget.All, 3f);
-            // }
-			if (objectives.itemsRemaining == 0) {
-				objectives.escapeAvailable = true;
-			}
-            if (!gameOver)
-            {
-                UpdateMissionTime();
-            } else {
-				if (!endingGainsCalculated) {
-					endingGainsCalculated = true;
-					int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
-					bool winner = (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Score"]) == 100);
-					pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths, winner), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths, winner));
-				}
-			}
 			if (isVersusHostForThisTeam()) {
-				int playerCount = (teamMap == "R" ? redTeamPlayerCount : blueTeamPlayerCount);
+				int redTeamCount = GetRedTeamCount();
+				int blueTeamCount = GetBlueTeamCount();
+				int playerCount = (teamMap == "R" ? redTeamCount : blueTeamCount);
 				if (deadCount == playerCount)
 				{
 					if (!gameOver)
@@ -279,7 +299,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				} else if (objectives.itemsRemaining == 0)
 				{
-					if (!gameOver && CheckEscapeForVersus())
+					if (!gameOver && CheckEscapeForVersus(deadCount, redTeamCount, blueTeamCount))
 					{
 						// Set completion to 100%
 						SetMyTeamScore(100);
@@ -288,32 +308,14 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				}
 				// Check to see if either team has forfeited
-				DetermineEnemyTeamForfeited();
-
-				ResetLastGunshotPos ();
-				UpdateEndGameTimer();
+				// Debug.Log("r: " + redTeamCount + ", b: " + blueTeamCount);
+				DetermineEnemyTeamForfeited(redTeamCount, blueTeamCount);
 			}
 		} else if (currentMap == 2) {
-			if (objectives.stepsLeftToCompletion == 1) {
-				if (objectives.missionTimer3 > 0f) {
-					objectives.escapeAvailable = true;
-				} else {
-					objectives.escapeAvailable = false;
-				}
-			}
-            if (!gameOver)
-            {
-                UpdateMissionTime();
-            } else {
-				if (!endingGainsCalculated) {
-					endingGainsCalculated = true;
-					int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
-					bool winner = (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Score"]) == 100);
-					pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths, winner), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths, winner));
-				}
-			}
 			if (isVersusHostForThisTeam()) {
-				int playerCount = (teamMap == "R" ? redTeamPlayerCount : blueTeamPlayerCount);
+				int redTeamCount = GetRedTeamCount();
+				int blueTeamCount = GetBlueTeamCount();
+				int playerCount = (teamMap == "R" ? redTeamCount : blueTeamCount);
 				if (deadCount == playerCount)
 				{
 					if (!gameOver)
@@ -330,7 +332,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				} else if (objectives.stepsLeftToCompletion == 1 && objectives.escapeAvailable)
 				{
-					if (!gameOver && CheckEscapeForVersus())
+					if (!gameOver && CheckEscapeForVersus(deadCount, redTeamCount, blueTeamCount))
 					{
 						// Set completion to 100%
 						SetMyTeamScore(100);
@@ -339,33 +341,31 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					}
 				}
 				// Check to see if either team has forfeited
-				DetermineEnemyTeamForfeited();
-
-				ResetLastGunshotPos ();
-				UpdateEndGameTimer();
+				DetermineEnemyTeamForfeited(redTeamCount, blueTeamCount);
 			}
 		}
-		if (forfeitDelay > 0f) {
-            forfeitDelay -= Time.deltaTime;
-        }
-		DecrementLastGunshotTimer();
+		StartCoroutine("GameOverCheckForVersus");
 	}
 
 	[PunRPC]
 	void RpcEndGame(float f, string eventMessage, bool win) {
+		LockRoom();
 		endGameTimer = f;
 		gameOver = true;
 		endGameWithWin = win;
 		if (eventMessage != null) {
 			alertMessage = eventMessage;
 		}
+		int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.voiceCommandsPanel.SetActive(false);
+		pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths));
 	}
 
     [PunRPC]
     void RpcEndVersusGame(float f, string winner, string winnerEventMessage, string loserEventMessage)
     {
 		if (gameOver) return;
-
+		LockRoom();
         endGameTimer = f;
         gameOver = true;
         
@@ -394,6 +394,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.voiceCommandsPanel.SetActive(false);
+		int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
+		pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths, (winner == teamMap)), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths, (winner == teamMap)));
     }
 
 	public void UpdateAssaultMode() {
@@ -412,7 +415,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		assaultMode = assaultInProgress;
 	}
 
-	bool CheckEscapeForCampaign() {
+	bool CheckEscapeForCampaign(int deadCount) {
 		if (currentMap == 1) {
 			if (deadCount + objectives.escaperCount == PhotonNetwork.CurrentRoom.PlayerCount) {
 				return true;
@@ -425,24 +428,24 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		return false;
 	}
 
-	bool CheckEscapeForVersus() {
+	bool CheckEscapeForVersus(int deadCount, int redCount, int blueCount) {
 		if (currentMap == 1) {
 			if (teamMap == "R") {
-				if (deadCount + objectives.escaperCount == redTeamPlayerCount) {
+				if (deadCount + objectives.escaperCount == redCount) {
 					return true;
 				}
 			} else if (teamMap == "B") {
-				if (deadCount + objectives.escaperCount == blueTeamPlayerCount) {
+				if (deadCount + objectives.escaperCount == blueCount) {
 					return true;
 				}
 			}
 		} else if (currentMap == 2) {
 			if (teamMap == "R") {
-				if (deadCount + objectives.escaperCount == redTeamPlayerCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 6f) {
+				if (deadCount + objectives.escaperCount == redCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 6f) {
 					return true;
 				}
 			} else if (teamMap == "B") {
-				if (deadCount + objectives.escaperCount == blueTeamPlayerCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 6f) {
+				if (deadCount + objectives.escaperCount == blueCount && Vector3.Distance(vipRef.transform.position, exitPoint.transform.position) <= 6f) {
 					return true;
 				}
 			}
@@ -450,17 +453,19 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		return false;
 	}
 
-    void DetermineEnemyTeamForfeited()
+    void DetermineEnemyTeamForfeited(int redTeamCount, int blueTeamCount)
     {
         if (gameOver) return;
-
+		if (forfeitDelayCheck > 0f) {
+			forfeitDelayCheck -= 1.5f;
+			return;
+		}
+		forfeitDelayCheck = FORFEIT_CHECK_DELAY;
         // Check if the other team has forfeited - can be determine by any players left on the opposing team
-        if (forfeitDelay <= 0f) {
-            if ((teamMap == "R" && blueTeamPlayerCount == 0) || (teamMap == "B" && redTeamPlayerCount == 0)) {
-				// Couldn't find another player on the other team. This means that they forfeit
-            	pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, teamMap, "The enemy team has forfeited!", null);
-			}
-        }
+		if ((teamMap == "R" && blueTeamCount == 0) || (teamMap == "B" && redTeamCount == 0)) {
+			// Couldn't find another player on the other team. This means that they forfeit
+			pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, teamMap, "The enemy team has forfeited!", null);
+		}
     }
 
 	public void SetLastGunshotHeardPos(bool clear, Vector3 pos) {
@@ -493,24 +498,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	public void IncrementDeathCount() {
-		pView.RPC ("RpcIncrementDeathCount", RpcTarget.All, teamMap);
+	public void ConvertCounts(int escape) {
+		pView.RPC ("RpcConvertCounts", RpcTarget.All, escape, teamMap);
 	}
 
 	[PunRPC]
-	void RpcIncrementDeathCount(string team) {
+	void RpcConvertCounts(int escape, string team) {
         if (team != teamMap) return;
-		deadCount++;
-	}
-
-	public void ConvertCounts(int dead, int escape) {
-		pView.RPC ("RpcConvertCounts", RpcTarget.All, dead, escape, teamMap);
-	}
-
-	[PunRPC]
-	void RpcConvertCounts(int dead, int escape, string team) {
-        if (team != teamMap) return;
-		deadCount += dead;
 		objectives.escaperCount += escape;
 	}
 
@@ -525,6 +519,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
     void UpdateMissionTime() {
+		if (gameOver) return;
         missionTime += Time.deltaTime;
 
         // Query server for sync time if not master client every 30 seconds
@@ -566,8 +561,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     }
 
     // When someone leaves the game in the middle of an escape, reset the values to recount
-    void ResetEscapeValues() {
-		deadCount = 0;
+    public void ResetEscapeValues() {
 		objectives.escaperCount = 0;
 	}
 
@@ -590,46 +584,53 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	}*/
 
-	public override void OnLeftRoom()
-	{
-		foreach (PlayerStat entry in playerList.Values)
-		{
-			Destroy(entry.objRef);
-		}
+	// public override void OnLeftRoom()
+	// {
+	// 	foreach (PlayerStat entry in playerList.Values)
+	// 	{
+	// 		Destroy(entry.objRef);
+	// 	}
 
-		playerList.Clear();
-	}
+	// 	playerList.Clear();
+	// }
 
-	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
-	public override void OnPlayerLeftRoom(Player otherPlayer) {
-		if (!playerList.ContainsKey(otherPlayer.ActorNumber)) return;
-		ResetEscapeValues ();
-		foreach (PlayerStat entry in playerList.Values)
-		{
-			entry.objRef.GetComponent<PlayerActionScript> ().escapeValueSent = false;
-		}
-
-		char wasTeam = playerList[otherPlayer.ActorNumber].team;
-		Destroy (playerList[otherPlayer.ActorNumber].objRef);
-		playerList.Remove (otherPlayer.ActorNumber);
-
-		// Update team counts if versus mode
-		if (matchType == 'V') {
-			if (PhotonNetwork.IsMasterClient) {
-				if (wasTeam == 'R') {
-					redTeamPlayerCount--;
-				} else if (wasTeam == 'B') {
-					blueTeamPlayerCount--;
-				}
-				pView.RPC("RpcSetTeamCounts", RpcTarget.All, redTeamPlayerCount, blueTeamPlayerCount);
+	public override void OnRoomPropertiesUpdate (Hashtable propertiesThatChanged) {
+		if (propertiesThatChanged.ContainsKey("kickedPlayers")) {
+			string newKickedPlayers = (string)propertiesThatChanged["kickedPlayers"];
+			string[] newKickedPlayersList = newKickedPlayers.Split(',');
+			if (newKickedPlayersList.Contains(PhotonNetwork.NickName)) {
+				PhotonNetwork.CurrentRoom.IsVisible = false;
+				PhotonNetwork.Disconnect();
+				PhotonNetwork.LeaveRoom();
+				PlayerData.playerdata.disconnectReason = "YOU'VE BEEN KICKED FROM THE GAME.";
+				OnDisconnected(DisconnectCause.DisconnectByClientLogic);
 			}
 		}
 	}
 
-	[PunRPC]
-	void RpcSetTeamCounts(int red, int blue) {
-		redTeamPlayerCount = red;
-		blueTeamPlayerCount = blue;
+	// When a player leaves the room in the middle of an escape, resend the escape status of the player (dead or escaped/not escaped)
+	public override void OnPlayerLeftRoom(Player otherPlayer) {
+		if (!GameControllerScript.playerList.ContainsKey(otherPlayer.ActorNumber)) return;
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().RemovePlayerMarker(otherPlayer.ActorNumber);
+		ResetEscapeValues ();
+		foreach (PlayerStat entry in GameControllerScript.playerList.Values)
+		{
+			if (entry.objRef == null) continue;
+			entry.objRef.GetComponent<PlayerActionScript> ().escapeValueSent = false;
+		}
+
+		if (GameControllerScript.playerList[otherPlayer.ActorNumber].objRef != null) {
+			Destroy (GameControllerScript.playerList[otherPlayer.ActorNumber].objRef);
+		}
+		GameControllerScript.playerList.Remove (otherPlayer.ActorNumber);
+	}
+
+	public override void OnMasterClientSwitched(Player newMasterClient) {
+		PhotonNetwork.CurrentRoom.IsVisible = false;
+		PhotonNetwork.Disconnect();
+		PhotonNetwork.LeaveRoom();
+		PlayerData.playerdata.disconnectReason = "The host has left the game.";
+		OnDisconnected(DisconnectCause.DisconnectByClientLogic);
 	}
 
 	/**public override void OnPlayerEnteredRoom(Player newPlayer) {
@@ -653,6 +654,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         if (team != teamMap) return;
         exitLevelLoaded = true;
 		exitLevelLoadedTimer = 4f;
+		// LockRoom();
 	}
 
     void SetMyTeamScore(short score)
@@ -676,20 +678,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				} else {
 					if (exitLevelLoadedTimer <= 0f && !loadExitCalled) {
                         loadExitCalled = true;
-                        if (matchType == 'C')
-                        {
-                            SwitchToGameOverScene();
-                        } else if (matchType == 'V')
-                        {
-                            string teamStatus = (string)PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Status"];
-                            if (teamStatus == "win")
-                            {
-                                SwitchToGameOverScene(true);
-                            } else if (teamStatus == "lose")
-                            {
-                                SwitchToGameOverScene(false);
-                            }
-                        }
+                        SwitchToGameOverScene();
 					} else {
 						exitLevelLoadedTimer -= Time.deltaTime;
 					}
@@ -699,26 +688,36 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     }
 
 	public override void OnDisconnected(DisconnectCause cause) {
-		if (!cause.ToString ().Equals ("DisconnectByClientLogic")) {
-			PlayerData.playerdata.disconnectedFromServer = true;
+		PlayerData.playerdata.disconnectedFromServer = true;
+		if (string.IsNullOrEmpty(PlayerData.playerdata.disconnectReason)) {
 			PlayerData.playerdata.disconnectReason = cause.ToString ();
 		}
 		SceneManager.LoadScene ("Title");
 	}
 
-	void SwitchToGameOverScene(bool win) {
-		if (!win) {
-			PhotonNetwork.LoadLevel("GameOverFail");
-		} else {
-			PhotonNetwork.LoadLevel("GameOverSuccess");
+	void SwitchToGameOverScene() {
+		if (PhotonNetwork.IsMasterClient) {
+			pView.RPC("RpcSwitchToGameOverScene", RpcTarget.All);
 		}
 	}
 
-	void SwitchToGameOverScene() {
-		if (endGameWithWin) {
-			PhotonNetwork.LoadLevel("GameOverSuccess");
+	[PunRPC]
+	void RpcSwitchToGameOverScene() {
+		string matchType = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
+		if (matchType == "versus") {
+			string myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
+			string teamStatus = (string)PhotonNetwork.CurrentRoom.CustomProperties[myTeam + "Status"];
+			if (teamStatus == "win") {
+				PhotonNetwork.LoadLevel("GameOverSuccess");
+			} else {
+				PhotonNetwork.LoadLevel("GameOverFail");
+			}
 		} else {
-			PhotonNetwork.LoadLevel("GameOverFail");
+			if (endGameWithWin) {
+				PhotonNetwork.LoadLevel("GameOverSuccess");
+			} else {
+				PhotonNetwork.LoadLevel("GameOverFail");
+			}
 		}
 	}
 
@@ -772,6 +771,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public bool isVersusHostForThisTeam() {
+		if (PhotonNetwork.LocalPlayer.IsMasterClient) return true;
 		if (teamMap == "R" && Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]) == PhotonNetwork.LocalPlayer.ActorNumber) {
 			return true;
 		} else if (teamMap == "B" && Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueHost"]) == PhotonNetwork.LocalPlayer.ActorNumber) {
@@ -881,7 +881,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	// View the Leveling system documentation on drive to determine how these thresholds were determined
 	char GetCompletionGradeForMapCampaign(string map) {
 		if (map == "Badlands1") {
-			if (deadCount == playerList.Count || CheckOutOfTime()) {
+			if (GetDeadCount() == playerList.Count || CheckOutOfTime()) {
 				return 'F';
 			} else {
 				if (missionTime <= 180f) {
@@ -894,7 +894,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			}
 			return 'D';
 		} else if (map == "Badlands2") {
-			if (deadCount == playerList.Count || CheckOutOfTime()) {
+			if (GetDeadCount() == playerList.Count || CheckOutOfTime()) {
 				return 'F';
 			} else {
 				if (missionTime <= 900f) {
@@ -911,8 +911,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	char GetCompletionGradeForMapVersus(string map) {
+		int deadCount = GetDeadCount();
 		if (map == "Badlands1_Red" || map == "Badlands1_Blue") {
-			if (CheckOutOfTime() || (teamMap == "R" && deadCount == redTeamPlayerCount) || (teamMap == "B" && deadCount == blueTeamPlayerCount)) {
+			if (CheckOutOfTime() || (teamMap == "R" && deadCount == GetRedTeamCount()) || (teamMap == "B" && deadCount == GetBlueTeamCount())) {
 				return 'F';
 			} else {
 				if (missionTime <= 180f) {
@@ -962,17 +963,470 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		return Mathf.Clamp(51f - Mathf.Pow(1.032f, (kills / 10)), 25f, 51f);
 	}
 
+	string SerializeDeployables()
+	{
+		string s = null;
+		bool first = true;
+		foreach (KeyValuePair<int, GameObject> k in deployableList)
+		{
+			if (!first) {
+				s += ",";
+			} else {
+				s = "";
+			}
+			DeployableScript d = k.Value.GetComponent<DeployableScript>();
+			// Add id, uses remaining, position
+			s += d.deployableId + '|' + d.usesRemaining + '|' + d.gameObject.transform.position.x + '|' + d.gameObject.transform.position.y + '|' + d.gameObject.transform.position.z + '|' + d.gameObject.transform.rotation.eulerAngles.x + '|' + d.gameObject.transform.rotation.eulerAngles.y + '|' + d.gameObject.transform.rotation.eulerAngles.z + '|' + d.refString;
+			first = false;
+		}
+		return s;
+	}
+
 	[PunRPC]
 	void RpcSetMyExpAndGpGained(int actorId, int expGained, int gpGained) {
 		playerList[actorId].expGained = (uint)expGained;
 		playerList[actorId].gpGained = (uint)gpGained;
 	}
 
+	[PunRPC]
+	void RpcAskServerForDataGc() {
+		if (PhotonNetwork.IsMasterClient || isVersusHostForThisTeam()) {
+			string currentSceneName = SceneManager.GetActiveScene().name;
+			string serializedObjectives = "";
+			bool first = true;
+			foreach (string s in objectives.objectivesText) {
+				if (!first) {
+					serializedObjectives += "#";
+				}
+				serializedObjectives += s;
+				first = false;
+			}
+
+			serializedObjectives += "|";
+			serializedObjectives += objectives.itemsRemaining;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.stepsLeftToCompletion;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.totalStepsToCompletion;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.escaperCount;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.escapeAvailable;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.missionTimer1;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.missionTimer2;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.missionTimer3;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.checkpoint1Passed;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.checkpoint2Passed;
+			serializedObjectives += "|";
+			serializedObjectives += objectives.selectedEvacIndex;
+
+			if (currentSceneName.StartsWith("Badlands1")) {
+				for (int i = 0; i < items.Length; i++) {
+					BombScript b = items[i].GetComponent<BombScript>();
+					if (b.defused) {
+						serializedObjectives += "|";
+						serializedObjectives += b.bombId;
+					}
+				}
+			} else if (currentSceneName.StartsWith("Badlands2")) {
+				for (int i = 0; i < items.Length; i++) {
+					FlareScript f = items[i].GetComponentInChildren<FlareScript>(true);
+					if (!f.gameObject.activeInHierarchy) {
+						serializedObjectives += "|" + f.flareId + ":0";
+					} else {
+						if (f.popped) {
+							serializedObjectives += "|" + f.flareId + ":2";
+						} else {
+							serializedObjectives += "|" + f.flareId + ":1";
+						}
+					}
+				}
+			}
+			int playerBeingKickedId = playerBeingKicked == null ? -1 : playerBeingKicked.ActorNumber;
+			pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
+				spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin, assaultModeChangedIndicator, serializedObjectives, GameControllerScript.missionTime, 
+				currentVoteAction, playerBeingKickedId, playerBeingKickedName, voteInProgress, voteTimer, (int)yesVotes, (int)noVotes, SerializeDeployables(), teamMap);
+		}
+	}
+
+	[PunRPC]
+	void RpcSyncDataGc(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer,
+		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, bool assaultMode, bool enemyTeamNearingVictoryTrigger, 
+		bool endGameWithWin, bool assaultModeChangedIndicator, string serializedObjectives, float missionTime, VoteActions currentVoteAction,
+		int playerBeingKickedId, string playerBeingKickedName, bool voteInProgress, float voteTimer, int yesVotes, int noVotes, string serializedDeployables, string team) {
+		if (team != teamMap) return;
+    	lastGunshotHeardPos = new Vector3(lastGunshotHeardPosX, lastGunshotHeardPosY, lastGunshotHeardPosZ);
+		this.lastGunshotTimer = lastGunshotTimer;
+		this.endGameTimer = endGameTimer;
+		this.loadExitCalled = loadExitCalled;
+		this.spawnMode = spawnMode;
+		this.gameOver = gameOver;
+		this.sectorsCleared = (short)sectorsCleared;
+		this.assaultMode = assaultMode;
+		this.enemyTeamNearingVictoryTrigger = enemyTeamNearingVictoryTrigger;
+		this.assaultModeChangedIndicator = assaultModeChangedIndicator;
+		this.endGameWithWin = endGameWithWin;
+		this.currentVoteAction = currentVoteAction;
+		this.playerBeingKicked = (playerBeingKickedId == -1 ? null : PhotonNetwork.CurrentRoom.GetPlayer(playerBeingKickedId));
+		this.playerBeingKickedName = playerBeingKickedName;
+		this.voteInProgress = voteInProgress;
+		this.voteTimer = voteTimer;
+		this.yesVotes = (short)yesVotes;
+		this.noVotes = (short)noVotes;
+		GameControllerScript.missionTime = missionTime;
+		
+		string[] parsedSerializations = serializedObjectives.Split('|');
+		// Sync objectives text - TODO: Sync formatting too
+		string[] objectivesText = parsedSerializations[0].Split('#');
+		for (int i = 0; i < objectivesText.Length; i++) {
+			this.objectives.objectivesText[i] = objectivesText[i];
+		}
+		// Sync itemsRemaining
+		this.objectives.itemsRemaining = int.Parse(parsedSerializations[1]);
+		// Sync stepsLeftToCompletion
+		this.objectives.stepsLeftToCompletion = int.Parse(parsedSerializations[2]);
+		// Sync totalStepsToCompletion
+		this.objectives.totalStepsToCompletion = int.Parse(parsedSerializations[3]);
+		// Sync escaperCount
+		this.objectives.escaperCount = int.Parse(parsedSerializations[4]);
+		// Sync escapeAvailable
+		this.objectives.escapeAvailable = bool.Parse(parsedSerializations[5]);
+		// Sync missionTimer1
+		this.objectives.missionTimer1 = float.Parse(parsedSerializations[6]);
+		// Sync missionTimer2
+		this.objectives.missionTimer2 = float.Parse(parsedSerializations[7]);
+		// Sync missionTimer3
+		this.objectives.missionTimer3 = float.Parse(parsedSerializations[8]);
+		// Sync checkpoint1Passed
+		this.objectives.checkpoint1Passed = bool.Parse(parsedSerializations[9]);
+		// Sync checkpoint2Passed
+		this.objectives.checkpoint2Passed = bool.Parse(parsedSerializations[10]);
+		// Sync selectedEvacIndex
+		this.objectives.selectedEvacIndex = int.Parse(parsedSerializations[11]);
+		// Sync mission specific data
+		string currentSceneName = SceneManager.GetActiveScene().name;
+		if (currentSceneName.StartsWith("Badlands1")) {
+			if (parsedSerializations.Length > 12) {
+				for (int i = 12; i < parsedSerializations.Length; i++) {
+					int bombId = int.Parse(parsedSerializations[i]);
+					for (int j = 0; j < items.Length; j++) {
+						BombScript b = items[j].GetComponent<BombScript>();
+						if (bombId == b.bombId) {
+							b.Defuse();
+						}
+					}
+				}
+			}
+			// Update objectives formatting
+			if (this.objectives.stepsLeftToCompletion == 1) {
+				this.objectives.RemoveObjective(0);
+			}
+			if (this.objectives.stepsLeftToCompletion == 0) {
+				this.objectives.RemoveObjective(1);
+			}
+		} else if (currentSceneName.StartsWith("Badlands2")) {
+			for (int i = 12; i < parsedSerializations.Length; i++) {
+				string[] flareStatuses = parsedSerializations[i].Split(':');
+				int flareId = int.Parse(flareStatuses[0]);
+				int status = int.Parse(flareStatuses[1]);
+				for (int j = 0; j < items.Length; j++) {
+					FlareScript f = items[j].GetComponentInChildren<FlareScript>(true);
+					if (f.flareId == flareId) {
+						if (status == 0) {
+							f.gameObject.SetActive(false);
+						} else if (status == 1) {
+							f.gameObject.SetActive(true);
+							f.ToggleFlareTemplate(true);
+						} else if (status == 2) {
+							f.gameObject.SetActive(true);
+							f.PopFlare();
+						}
+					}
+				}
+			}
+			// Update objectives formatting
+			if (this.objectives.stepsLeftToCompletion == 2) {
+				this.objectives.RemoveObjective(0);
+			}
+			if (this.objectives.stepsLeftToCompletion == 1) {
+				this.objectives.RemoveObjective(1);
+			}
+			if (this.objectives.stepsLeftToCompletion == 0) {
+				this.objectives.RemoveObjective(2);
+			}
+		}
+
+		if (serializedDeployables != null) {
+			// Get serialized deployables
+			parsedSerializations = serializedDeployables.Split(',');
+			foreach (string d in parsedSerializations)
+			{
+				string[] dDetails = d.Split('|');
+				// Sync deployable
+				GameObject o = GameObject.Instantiate((GameObject)Resources.Load(dDetails[8]), new Vector3(float.Parse(dDetails[2]), float.Parse(dDetails[3]), float.Parse(dDetails[4])), Quaternion.Euler(float.Parse(dDetails[5]), float.Parse(dDetails[6]), float.Parse(dDetails[7])));
+				DeployableScript dScript = o.GetComponent<DeployableScript>();
+				dScript.deployableId = int.Parse(dDetails[0]);
+				dScript.usesRemaining = short.Parse(dDetails[1]);
+				DeployDeployable(dScript.deployableId, o);
+			}
+		}
+	}
+
+	public void ClearDeadPlayersList() {
+		if (PhotonNetwork.IsMasterClient) {
+			Hashtable h = new Hashtable();
+			h.Add("deads", null);
+			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+		}
+	}
+
+	public int GetDeadCount() {
+		int total = 0;
+		foreach(KeyValuePair<int, PlayerStat> entry in GameControllerScript.playerList)
+		{
+			GameObject p = entry.Value.objRef;
+			if (p == null) continue;
+			if (p.GetComponent<PlayerActionScript>().health <= 0) {
+				total++;
+			}
+		}
+		return total;
+	}
+
+	public int GetRedTeamCount() {
+		int total = 0;
+		foreach (KeyValuePair<int, PlayerStat> entry in GameControllerScript.playerList)
+		{
+			Player p = PhotonNetwork.CurrentRoom.GetPlayer(entry.Key);
+			if ((string)p.CustomProperties["team"] == "red") {
+				total++;
+			}
+		}
+		return total;
+	}
+
+	public int GetBlueTeamCount() {
+		int total = 0;
+		foreach (KeyValuePair<int, PlayerStat> entry in GameControllerScript.playerList)
+		{
+			Player p = PhotonNetwork.CurrentRoom.GetPlayer(entry.Key);
+			if ((string)p.CustomProperties["team"] == "blue") {
+				total++;
+			}
+		}
+		return total;
+	}
+
+	public void EndGameForAll() {
+		pView.RPC("RpcEndGameForAll", RpcTarget.All);
+	}
+
+	[PunRPC]
+	void RpcEndGameForAll() {
+		PlayerData.playerdata.DestroyMyself();
+	}
+
+	public void LockRoom()
+	{
+		if (PhotonNetwork.IsMasterClient) {
+			PhotonNetwork.CurrentRoom.IsOpen = false;
+		}
+	}
+
+	public void AddToTotalDeaths(int actorNo) {
+		pView.RPC("RpcAddToTotalDeaths", RpcTarget.All, actorNo);
+	}
+
+	[PunRPC]
+	void RpcAddToTotalDeaths(int actorNo) {
+		if (GameControllerScript.playerList.ContainsKey(actorNo)) {
+			GameControllerScript.playerList[actorNo].deaths++;
+		}
+	}
+
+	public void AddToTotalKills(int actorNo) {
+		pView.RPC("RpcAddToTotalKills", RpcTarget.All, actorNo);
+	}
+
+	[PunRPC]
+	void RpcAddToTotalKills(int actorNo) {
+		if (GameControllerScript.playerList.ContainsKey(actorNo)) {
+			GameControllerScript.playerList[actorNo].kills++;
+		}
+	}
+
+	public void StartVote(Player p, VoteActions voteAc)
+	{
+		if (p == null) return;
+		if (voteDelay > 0f) return;
+		if (gameOver) return;
+		if (voteAc == VoteActions.KickPlayer && p.IsMasterClient) return;
+		pView.RPC("RpcStartVote", RpcTarget.All, p.ActorNumber, voteAc, teamMap);
+		voteDelay = VOTE_DELAY;
+	}
+
+	[PunRPC]
+	void RpcStartVote(int actorNo, VoteActions voteAc, string team)
+	{
+		if (team != teamMap) return;
+		if (voteAc == VoteActions.KickPlayer) {
+			playerBeingKicked = PhotonNetwork.CurrentRoom.GetPlayer(actorNo);
+			if (playerBeingKicked == null) return;
+			if (playerBeingKicked.IsMasterClient) {
+				playerBeingKicked = null;
+				return;
+			}
+		}
+		playerBeingKickedName = playerBeingKicked.NickName;
+		currentVoteAction = voteAc;
+		noVotes = 0;
+		yesVotes = 0;
+		voteTimer = VOTE_TIME;
+		iHaveVoted = false;
+		voteInProgress = true;
+	}
+
+	void SetLeftPlayerAsKicked() {
+		string currentKickedPlayers = (string)PhotonNetwork.CurrentRoom.CustomProperties["kickedPlayers"];
+		if (string.IsNullOrEmpty(currentKickedPlayers)) {
+			currentKickedPlayers = playerBeingKickedName;
+		} else {
+			currentKickedPlayers += ',' + playerBeingKickedName;
+		}
+		Hashtable h = new Hashtable();
+		h.Add("kickedPlayers", currentKickedPlayers);
+		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+	}
+
+	void KickPlayer(Player playerToKick)
+	{
+		if (gameOver) return;
+		if (PhotonNetwork.LocalPlayer.IsMasterClient && playerToKick?.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) return;
+		if (isVersusHostForThisTeam()) {
+			if (playerToKick == null) {
+				SetLeftPlayerAsKicked();
+				return;
+			}
+			string nickname = playerToKick.NickName;
+			pView.RPC("RpcAlertKickedPlayer", RpcTarget.All, playerToKick.ActorNumber);
+			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+				PhotonNetwork.CloseConnection(playerToKick);
+			} else {
+				pView.RPC("RpcKickPlayer", RpcTarget.MasterClient, playerToKick.ActorNumber);
+			}
+			string currentKickedPlayers = (string)PhotonNetwork.CurrentRoom.CustomProperties["kickedPlayers"];
+			if (string.IsNullOrEmpty(currentKickedPlayers)) {
+				currentKickedPlayers = nickname;
+			} else {
+				currentKickedPlayers += ',' + nickname;
+			}
+			Hashtable h = new Hashtable();
+			h.Add("kickedPlayers", currentKickedPlayers);
+			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+		}
+	}
+
+	[PunRPC]
+	void RpcKickPlayer(int actorNo)
+	{
+		PhotonNetwork.CloseConnection(PhotonNetwork.CurrentRoom.GetPlayer(actorNo));
+	}
+
+	[PunRPC]
+	void RpcAlertKickedPlayer(int actorNo)
+	{
+		if (PhotonNetwork.LocalPlayer.ActorNumber == actorNo) {
+			PlayerData.playerdata.disconnectReason = "YOU'VE BEEN KICKED FROM THE GAME.";
+			OnDisconnected(DisconnectCause.DisconnectByClientLogic);
+		}
+	}
+
+	public bool VoteHasSucceeded() {
+		if (yesVotes > noVotes) {
+			return true;
+		}
+		return false;
+	}
+
+	void HandleVoteCast() {
+		if (voteInProgress && !iHaveVoted) {
+			// You may not vote in a vote called to kick you
+			if (currentVoteAction == VoteActions.KickPlayer && playerBeingKicked?.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) return;
+			if (Input.GetKeyDown(KeyCode.F1)) {
+				pView.RPC("RpcCastVote", RpcTarget.All, true, teamMap);
+				iHaveVoted = true;
+			} else if (Input.GetKeyDown(KeyCode.F2)) {
+				pView.RPC("RpcCastVote", RpcTarget.All, false, teamMap);
+				iHaveVoted = true;
+			}
+		}
+	}
+
+	[PunRPC]
+	void RpcCastVote(bool yes, string team) {
+		if (team != teamMap) return;
+		if (yes) {
+			yesVotes++;
+		} else {
+			noVotes++;
+		}
+	}
+
+	void UpdateVote() 
+	{	
+		if (voteInProgress) {
+			voteTimer -= Time.deltaTime;
+			if (voteTimer <= 0f) {
+				if (VoteHasSucceeded()) {
+					if (currentVoteAction == VoteActions.KickPlayer) {
+						KickPlayer(playerBeingKicked);
+					}
+				}
+				voteInProgress = false;
+			}
+		}
+	}
+
+	public string CanCallVote()
+	{
+		if (voteInProgress) {
+			return "THERE IS CURRENTLY A VOTE IN PROGRESS. PLEASE WAIT UNTIL IT ENDS BEFORE CALLING ANOTHER.";
+		} else if (voteDelay > 0f) {
+			return "YOU'VE RECENTLY CALLED A VOTE. PLEASE WAIT SOME TIME BEFORE CALLING ANOTHER.";
+		}
+		return null;
+	}
+
+	public void ToggleMyselfSpeaking(bool b)
+	{
+		pView.RPC("RpcTogglePlayerSpeaking", RpcTarget.All, b, PhotonNetwork.LocalPlayer.ActorNumber, PhotonNetwork.LocalPlayer.NickName, teamMap);
+	}
+
+	[PunRPC]
+	void RpcTogglePlayerSpeaking(bool b, int actorNo, string playerName, string team)
+	{
+		if (team != teamMap) return;
+		TogglePlayerSpeaking(b, actorNo, playerName);
+	}
+
+	public void TogglePlayerSpeaking(bool b, int actorNo, string playerName)
+	{
+		if (b) {
+			PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().AddPlayerSpeakingIndicator(actorNo, playerName);
+		} else {
+			PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().RemovePlayerSpeakingIndicator(actorNo);
+		}
+	}
+
 }
 
 public class PlayerStat {
 	public GameObject objRef;
-	public Transform carryingSlotRef;
 	public int actorId;
 	public string name;
 	public char team;
@@ -982,9 +1436,8 @@ public class PlayerStat {
 	public uint expGained;
 	public uint gpGained;
 
-	public PlayerStat(GameObject objRef, Transform carryingSlotRef, int actorId, string name, char team, uint exp) {
+	public PlayerStat(GameObject objRef, int actorId, string name, char team, uint exp) {
 		this.objRef = objRef;
-		this.carryingSlotRef = carryingSlotRef;
 		this.actorId = actorId;
 		this.name = name;
 		this.team = team;

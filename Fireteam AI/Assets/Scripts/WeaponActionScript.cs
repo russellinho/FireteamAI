@@ -6,15 +6,18 @@ using Photon.Realtime;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Characters.FirstPerson;
 using Koobando.AntiCheat;
+using ExitGames.Client.Photon;
 
-public class WeaponActionScript : MonoBehaviour
+public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 {
-
+    private const byte LAUNCHER_SPAWN_CODE = 126;
+    private const byte THROWABLE_SPAWN_CODE = 127;
     private const float SHELL_SPEED = 3f;
     private const float SHELL_TUMBLE = 4f;
     private const float DEPLOY_BASE_TIME = 2f;
     private const short DEPLOY_OFFSET = 2;
     private const float LUNGE_SPEED = 20f;
+    private const float UNPAUSE_DELAY = 0.5f;
 
     public MouseLook mouseLook;
     public PlayerActionScript playerActionScript;
@@ -81,13 +84,12 @@ public class WeaponActionScript : MonoBehaviour
     public Vector3 currentAimDownSightPos;
     public Vector3 currentAimStableHandPos;
     
-    public GameObject hitParticles;
-    public GameObject bulletImpact;
     private GameObject bloodEffect;
 
     public enum FireMode { Auto, Semi }
     public enum ShotMode { Single, Burst }
     public FireMode firingMode;
+    private int currentFiringModeIndex;
     public ShotMode shotMode;
     private bool shootInput;
     private bool meleeInput;
@@ -117,8 +119,18 @@ public class WeaponActionScript : MonoBehaviour
     public float deployTimer;
     public bool deployInProgress;
     public bool switchWeaponBackToRight;
+    // Timer that prevents player from accidentally firing right after unpausing
+    private float unpauseDelay;
+
     // Use this for initialization
-    void Start()
+    private bool initialized;
+
+    void Awake()
+    {
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
+    public void Initialize()
     {
         deployTimer = 0f;
         aimDownSightsLock = false;
@@ -126,6 +138,7 @@ public class WeaponActionScript : MonoBehaviour
         throwGrenade = false;
         if (pView != null && !pView.IsMine)
         {
+            initialized = true;
             return;
         }
         currentAmmo = weaponStats.clipCapacity;
@@ -139,6 +152,7 @@ public class WeaponActionScript : MonoBehaviour
         // Create animation event for shotgun reload
 
         // CreateAnimEvents();
+        initialized = true;
     }
 
     // void CreateAnimEvents() {
@@ -155,6 +169,9 @@ public class WeaponActionScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!initialized) {
+            return;
+        }
         if (pView != null && !pView.IsMine)
         {
             return;
@@ -172,16 +189,18 @@ public class WeaponActionScript : MonoBehaviour
 
         if (PlayerPreferences.playerPreferences.KeyWasPressed("FireMode"))
         {
-            if (weaponStats.category == "Assault Rifle") {
-                if (firingMode == FireMode.Semi)
-                    firingMode = FireMode.Auto;
-                else
-                    firingMode = FireMode.Semi;
+            if (weaponStats.firingModes != null) {
+                currentFiringModeIndex++;
+                if (currentFiringModeIndex >= weaponStats.firingModes.Length) {
+                    currentFiringModeIndex = 0;
+                }
+                firingMode = (FireMode)weaponStats.firingModes[currentFiringModeIndex];
+                hudScript.SetFireMode(firingMode.ToString().ToUpper());
             }
         }
 
         meleeInput = PlayerPreferences.playerPreferences.KeyWasPressed("Melee");
-
+        
         switch (firingMode)
         {
             case FireMode.Auto:
@@ -192,9 +211,17 @@ public class WeaponActionScript : MonoBehaviour
                 break;
         }
 
+        if (hudScript.container.pauseMenuGUI.pauseActive) {
+            return;
+        }
+
         HandleAttack();
 
-        if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster || isWieldingDeployable || hudScript.container.pauseMenuGUI.pauseActive)
+        if (unpauseDelay > 0f) {
+            unpauseDelay -= Time.deltaTime;
+        }
+
+        if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster || isWieldingDeployable)
         {
             return;
         }
@@ -268,7 +295,7 @@ public class WeaponActionScript : MonoBehaviour
             return;
         }
         
-        if (shootInput && !meleeInput && !isMeleeing && !isDrawing && !isReloading && playerActionScript.canShoot && !hudScript.container.pauseMenuGUI.pauseActive)
+        if (shootInput && !meleeInput && !isMeleeing && !isDrawing && !isReloading && playerActionScript.canShoot && !hudScript.container.pauseMenuGUI.pauseActive && unpauseDelay <= 0f)
         {
             if (currentAmmo > 0)
             {
@@ -341,6 +368,9 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     void LateUpdate() {
+        if (!initialized) {
+            return;
+        }
         UpdateAimDownSightsArms();
         if (deployPlanMesh != null) {
             UpdateDeployPlanMesh();
@@ -457,23 +487,17 @@ public class WeaponActionScript : MonoBehaviour
         }
     }
 
-    [PunRPC]
-    void RpcAddToTotalKills()
-    {
-        GameControllerScript.playerList[pView.Owner.ActorNumber].kills++;
-        if (gameObject.layer == 0) return;
-        if (playerActionScript.kills != int.MaxValue) {
-            playerActionScript.kills++;
-        }
+    void AddToTotalKills() {
+        playerActionScript.gameController.AddToTotalKills(PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
     // Increment kill count and display HUD popup for kill
     public void RewardKill(bool isHeadshot) {
-        pView.RPC("RpcAddToTotalKills", RpcTarget.All);
+        AddToTotalKills();
         if (isHeadshot) {
             hudScript.OnScreenEffect("HEADSHOT", true);
         } else {
-            hudScript.OnScreenEffect(playerActionScript.kills + " KILLS", true);
+            hudScript.OnScreenEffect(GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills + " KILLS", true);
         }
     }
 
@@ -550,6 +574,7 @@ public class WeaponActionScript : MonoBehaviour
                         if (b.health <= 0 && beforeHp > 0)
                         {
                             RewardKill(false);
+                            audioController.PlayKillSound();
                         }
                     }
                 }
@@ -628,6 +653,7 @@ public class WeaponActionScript : MonoBehaviour
                         if (b.health <= 0 && beforeHp > 0)
                         {
                             RewardKill(false);
+                            audioController.PlayKillSound();
                         }
                     }
                 }
@@ -636,8 +662,8 @@ public class WeaponActionScript : MonoBehaviour
                     pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                 }
             } else {
-                pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
-                pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
+                Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
+                pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index));
             }
         }
         if (weaponMods.suppressorRef == null)
@@ -705,9 +731,9 @@ public class WeaponActionScript : MonoBehaviour
         float totalDamageDealt = 0f;
         int headshotLayer = (1 << 13);
         for (int i = 0; i < 8; i++) {
-            float xSpread = Random.Range(-0.07f, 0.07f);
-            float ySpread = Random.Range(-0.07f, 0.07f);
-            float zSpread = Random.Range(-0.07f, 0.07f);
+            float xSpread = Random.Range(-0.03f, 0.03f);
+            float ySpread = Random.Range(-0.03f, 0.03f);
+            float zSpread = Random.Range(-0.03f, 0.03f);
             Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
             if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, headshotLayer) && !headshotDetected)
             {
@@ -770,6 +796,7 @@ public class WeaponActionScript : MonoBehaviour
                         if (b.health <= 0 && beforeHp > 0)
                         {
                             RewardKill(false);
+                            audioController.PlayKillSound();
                         }
                         totalDamageDealt += thisDamageDealt;
                     }
@@ -778,8 +805,8 @@ public class WeaponActionScript : MonoBehaviour
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                     }
                 } else {
-                    pView.RPC("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal);
-                    pView.RPC("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name);
+                    Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
+                    pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index));
                 }
             }
         }
@@ -807,33 +834,13 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     [PunRPC]
-    void RpcInstantiateBulletHole(Vector3 point, Vector3 normal, string parentName)
-    {
+    void RpcHandleBulletVfx(Vector3 point, Vector3 normal, int terrainId) {
         if (gameObject.layer == 0) return;
-        GameObject bulletHoleEffect = Instantiate(bulletImpact, point, Quaternion.FromToRotation(Vector3.forward, normal));
-        bulletHoleEffect.transform.SetParent(GameObject.Find(parentName).transform);
-        Destroy(bulletHoleEffect, 3f);
-    }
-
-    void InstantiateBulletHole(Vector3 point, Vector3 normal, string parentName)
-    {
-        GameObject bulletHoleEffect = Instantiate(bulletImpact, point, Quaternion.FromToRotation(Vector3.forward, normal));
-        bulletHoleEffect.transform.SetParent(GameObject.Find(parentName).transform);
-        Destroy(bulletHoleEffect, 3f);
-    }
-
-    [PunRPC]
-    void RpcInstantiateHitParticleEffect(Vector3 point, Vector3 normal)
-    {
-        if (gameObject.layer == 0) return;
-        GameObject hitParticleEffect = Instantiate(hitParticles, point, Quaternion.FromToRotation(Vector3.up, normal));
-        Destroy(hitParticleEffect, 1f);
-    }
-
-    void InstantiateHitParticleEffect(Vector3 point, Vector3 normal)
-    {
-        GameObject hitParticleEffect = Instantiate(hitParticles, point, Quaternion.FromToRotation(Vector3.up, normal));
-        Destroy(hitParticleEffect, 1f);
+        if (terrainId == -1) return;
+        Terrain terrainHit = playerActionScript.gameController.terrainMetaData[terrainId];
+        GameObject bulletHoleEffect = Instantiate(terrainHit.GetRandomBulletHole(), point, Quaternion.FromToRotation(Vector3.forward, normal));
+        bulletHoleEffect.transform.SetParent(terrainHit.gameObject.transform);
+        Destroy(bulletHoleEffect, 4f);
     }
 
     void InstantiateGunSmokeEffect(float duration) {
@@ -853,10 +860,10 @@ public class WeaponActionScript : MonoBehaviour
         // Determine how high/low on the body was hit. The closer to 1, the closer to shoulders; closer to 0, closer to feet
         float bodyHeightHit = Mathf.Abs(hitY - baseY) / height;
         // Higher the height, the more damage dealt
-        if (bodyHeightHit <= 0.6f) {
+        if (bodyHeightHit < 0.2f) {
             total *= 0.6f;
-        } else if (bodyHeightHit < 0.8f) {
-            total *= bodyHeightHit;
+        } else if (bodyHeightHit < 0.4f) {
+            total *= 0.85f;
         }
         return (int)total;
     }
@@ -1142,17 +1149,19 @@ public class WeaponActionScript : MonoBehaviour
     }
 
     public void SetCurrentAimDownSightPos(string sightName) {
-        if (fpc.equipmentScript.GetGender() == 'M') {
-            currentAimDownSightPos = weaponMetaData.aimDownSightPosMale;
-            currentAimStableHandPos = weaponMetaData.stableHandPosMale;
-        } else if (fpc.equipmentScript.GetGender() == 'F') {
-            currentAimDownSightPos = weaponMetaData.aimDownSightPosFemale;
-            currentAimStableHandPos = weaponMetaData.stableHandPosFemale;
-        }
-        if (sightName != null) {
-            int index = InventoryScript.itemData.modCatalog[sightName].modIndex;
-            currentAimDownSightPos.y += weaponMetaData.crosshairAimOffset[index];
-            currentAimStableHandPos.y += weaponMetaData.crosshairAimOffset[index];
+        if (pView.IsMine) {
+            if (fpc.equipmentScript.GetGender() == 'M') {
+                currentAimDownSightPos = weaponMetaData.aimDownSightPosMale;
+                currentAimStableHandPos = weaponMetaData.stableHandPosMale;
+            } else if (fpc.equipmentScript.GetGender() == 'F') {
+                currentAimDownSightPos = weaponMetaData.aimDownSightPosFemale;
+                currentAimStableHandPos = weaponMetaData.stableHandPosFemale;
+            }
+            if (sightName != null && sightName != "") {
+                int index = InventoryScript.itemData.modCatalog[sightName].modIndex;
+                currentAimDownSightPos.y += weaponMetaData.crosshairAimOffset[index];
+                currentAimStableHandPos.y += weaponMetaData.crosshairAimOffset[index];
+            }
         }
     }
 
@@ -1166,6 +1175,8 @@ public class WeaponActionScript : MonoBehaviour
             weaponStats = w;
             weaponMods = ws.GetComponent<WeaponMods>();
             fireTimer = w.fireRate;
+            firingMode = w.firingModes == null ? FireMode.Semi : (FireMode)w.firingModes[0];
+            currentFiringModeIndex = 0;
             weaponCam.nearClipPlane = ws.aimDownSightClipping;
             playerActionScript.weaponSpeedModifier = w.mobility/100f;
             if (playerActionScript.equipmentScript.GetGender() == 'M') {
@@ -1182,12 +1193,10 @@ public class WeaponActionScript : MonoBehaviour
                     isWieldingThrowable = true;
                     isWieldingBooster = false;
                     isWieldingDeployable = false;
-                    firingMode = FireMode.Semi;
                 } else if (weaponStats.category.Equals("Booster")) {
                     isWieldingThrowable = false;
                     isWieldingBooster = true;
                     isWieldingDeployable = false;
-                    firingMode = FireMode.Semi;
                 } else if (weaponStats.category.Equals("Deployable")) {
                     isWieldingThrowable = false;
                     isWieldingBooster = false;
@@ -1200,13 +1209,14 @@ public class WeaponActionScript : MonoBehaviour
                 isWieldingDeployable = false;
                 if (weaponStats.category.Equals("Shotgun")) {
                     shotMode = ShotMode.Burst;
-                    firingMode = FireMode.Semi;
                 } else {
                     shotMode = ShotMode.Single;
-                    if (weaponStats.category.Equals("Pistol") || weaponStats.category.Equals("Launcher")) {
-                        firingMode = FireMode.Semi;
-                    }
                 }
+            }
+
+            if (pView.IsMine) {
+                hudScript.SetFireMode(w.firingModes == null ? null : firingMode.ToString().ToUpper());
+                hudScript.SetWeaponLabel();
             }
         }
     }
@@ -1350,30 +1360,153 @@ public class WeaponActionScript : MonoBehaviour
     public void UseSupportItem() {
         // If the item is a grenade, instantiate and launch the grenade
         if (weaponStats.category.Equals("Explosive")) {
-            GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, weaponHolderFpc.transform.position, Quaternion.identity);
-            projectile.transform.forward = weaponHolderFpc.transform.forward;
-            projectile.GetComponent<ThrowableScript>().Launch(gameObject, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
-            // Reset fire timer and subtract ammo used
+            GameObject projectile = GameObject.Instantiate((GameObject)Resources.Load(InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath), weaponHolderFpc.transform.position, Quaternion.identity);
+            PhotonView thisPView = projectile.GetComponent<PhotonView>();
+            if (PhotonNetwork.AllocateViewID(thisPView))
+            {
+                projectile.transform.forward = weaponHolderFpc.transform.forward;
+                projectile.GetComponent<ThrowableScript>().Launch(pView.ViewID, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
+                currentAmmo--;
+                playerActionScript.weaponScript.SyncAmmoCounts();
+                fireTimer = 0.0f;
+                SpawnThrowableItemOnOthers(projectile);
+            }
+            else
+            {
+                Debug.Log("Failed to allocate a ViewId for throwable.");
+                Destroy(projectile);
+            }
         } else if (weaponStats.category.Equals("Booster")) {
             // Reset fire timer and subtract ammo used
             BoosterScript boosterScript = weaponMetaData.GetComponentInChildren<BoosterScript>();
             boosterScript.UseBoosterItem(weaponStats.name);
+            currentAmmo--;
+            playerActionScript.weaponScript.SyncAmmoCounts();
+            fireTimer = 0.0f;
         } else if (weaponStats.category.Equals("Deployable")) {
             DeployDeployable(deployPos, deployRot);
+            currentAmmo--;
+            playerActionScript.weaponScript.SyncAmmoCounts();
+            fireTimer = 0.0f;
         }
-        currentAmmo--;
-        playerActionScript.weaponScript.SyncAmmoCounts();
-        fireTimer = 0.0f;
     }
 
     public void UseLauncherItem() {
-        GameObject projectile = PhotonNetwork.Instantiate(InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, camTransform.position + camTransform.forward, Quaternion.identity);
-        // projectile.transform.right = -weaponHolderFpc.transform.forward;
-        projectile.transform.right = -camTransform.forward;
-        projectile.GetComponent<LauncherScript>().Launch(gameObject, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
-        currentAmmo--;
-        playerActionScript.weaponScript.SyncAmmoCounts();
-        fireTimer = 0.0f;
+        GameObject projectile = GameObject.Instantiate((GameObject)Resources.Load(InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath), camTransform.position + camTransform.forward, Quaternion.identity);
+        PhotonView thisPView = projectile.GetComponent<PhotonView>();
+        // photonView.SetOwnerInternal(PhotonNetwork.LocalPlayer, PhotonNetwork.LocalPlayer.ActorNumber);
+        if (PhotonNetwork.AllocateViewID(thisPView))
+        {
+            // projectile.transform.right = -weaponHolderFpc.transform.forward;
+            projectile.transform.right = -camTransform.forward;
+            projectile.GetComponent<LauncherScript>().Launch(pView.ViewID, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
+            currentAmmo--;
+            playerActionScript.weaponScript.SyncAmmoCounts();
+            fireTimer = 0.0f;
+            SpawnLauncherItemOnOthers(projectile);
+        }
+        else
+        {
+            Debug.Log("Failed to allocate a ViewId for projectile.");
+            Destroy(projectile);
+        }
+    }
+
+    void SpawnThrowableItemOnOthers(GameObject projectile)
+    {
+        PhotonView photonView = projectile.GetComponent<PhotonView>();
+        object[] data = new object[]
+        {
+            InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, weaponHolderFpc.transform.position.x, weaponHolderFpc.transform.position.y, weaponHolderFpc.transform.position.z, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, photonView.ViewID, playerActionScript.gameController.teamMap, pView.ViewID
+        };
+
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+        {
+            Receivers = ReceiverGroup.Others,
+            CachingOption = EventCaching.DoNotCache
+        };
+
+        SendOptions sendOptions = new SendOptions
+        {
+            Reliability = true
+        };
+
+        PhotonNetwork.RaiseEvent(THROWABLE_SPAWN_CODE, data, raiseEventOptions, sendOptions);
+    }
+
+    void SpawnLauncherItemOnOthers(GameObject projectile)
+    {
+        PhotonView photonView = projectile.GetComponent<PhotonView>();
+        object[] data = new object[]
+        {
+            InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, camTransform.position.x, camTransform.position.y, camTransform.position.z, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, photonView.ViewID, playerActionScript.gameController.teamMap, pView.ViewID
+        };
+
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+        {
+            Receivers = ReceiverGroup.Others,
+            CachingOption = EventCaching.DoNotCache
+        };
+
+        SendOptions sendOptions = new SendOptions
+        {
+            Reliability = true
+        };
+
+        PhotonNetwork.RaiseEvent(LAUNCHER_SPAWN_CODE, data, raiseEventOptions, sendOptions);
+    }
+
+    public void OnEvent(EventData photonEvent)
+    {
+        if (photonEvent.Code == LAUNCHER_SPAWN_CODE)
+        {
+            object[] data = (object[]) photonEvent.CustomData;
+            int fromViewId = (int) data[9];
+            if (fromViewId != pView.ViewID) return;
+
+            string team = (string) data[8];
+
+            if (team != playerActionScript.gameController.teamMap) return;
+
+            string projectilePath = (string) data[0];
+            Vector3 origin = new Vector3((float) data[1], (float) data[2], (float) data[3]);
+            Vector3 forward = new Vector3((float) data[4], (float) data[5], (float) data[6]);
+
+            GameObject projectile = GameObject.Instantiate((GameObject)Resources.Load(projectilePath), origin + forward, Quaternion.identity);
+            PhotonView photonView = projectile.GetComponent<PhotonView>();
+            photonView.ViewID = (int) data[7];
+            Debug.Log("Spawned launcher projectile " + projectile.gameObject.name + " with view ID " + photonView.ViewID);
+            
+            // projectile.transform.right = -weaponHolderFpc.transform.forward;
+            projectile.transform.right = -forward;
+            projectile.GetComponent<LauncherScript>().Launch((int) data[7], forward.x, forward.y, forward.z);
+            currentAmmo--;
+            playerActionScript.weaponScript.SyncAmmoCounts();
+            fireTimer = 0.0f;
+        } else if (photonEvent.Code == THROWABLE_SPAWN_CODE) {
+            object[] data = (object[]) photonEvent.CustomData;
+            int fromViewId = (int) data[9];
+            if (fromViewId != pView.ViewID) return;
+
+            string team = (string) data[8];
+
+            if (team != playerActionScript.gameController.teamMap) return;
+
+            string projectilePath = (string) data[0];
+            Vector3 origin = new Vector3((float) data[1], (float) data[2], (float) data[3]);
+            Vector3 forward = new Vector3((float) data[4], (float) data[5], (float) data[6]);
+
+            GameObject projectile = GameObject.Instantiate((GameObject)Resources.Load(projectilePath), origin, Quaternion.identity);
+            PhotonView photonView = projectile.GetComponent<PhotonView>();
+            photonView.ViewID = (int) data[7];
+            Debug.Log("Spawned throwable projectile " + projectile.gameObject.name + " with view ID " + photonView.ViewID);
+
+            projectile.transform.forward = forward;
+            projectile.GetComponent<ThrowableScript>().Launch((int) data[7], forward.x, forward.y, forward.z);
+            currentAmmo--;
+            playerActionScript.weaponScript.SyncAmmoCounts();
+            fireTimer = 0.0f;
+        }
     }
 
     bool DeployPositionIsValid() {
@@ -1543,6 +1676,11 @@ public class WeaponActionScript : MonoBehaviour
 		GameObject o = GameObject.Instantiate(weaponMetaData.deployRef, new Vector3(posX, posY, posZ), Quaternion.Euler(rotX, rotY, rotZ));
 		o.GetComponent<DeployableScript>().deployableId = deployableId;
 		playerActionScript.gameController.DeployDeployable(deployableId, o);
+    }
+
+    public void SetUnpaused()
+    {
+        unpauseDelay = UNPAUSE_DELAY;
     }
 
 }

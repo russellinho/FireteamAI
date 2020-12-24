@@ -218,24 +218,26 @@ public class JukeboxScript : MonoBehaviour
         StartCoroutine(QueueNextSongOnTitle(nextSource));
     }
 
-    void StopMusic() {
+    public void StopMusic() {
         audioSource1.Stop();
         audioSource2.Stop();
         StopAllCoroutines();
     }
 
-    void StartTitleMusic() {
-        currentMode = MusicMode.Title;
-        audioSource1.loop = false;
-        audioSource2.loop = false;
-        audio1FadeTime = 0f;
-        audio2FadeTime = 0f;
-        int r = Random.Range(0, titleTrackList.Length);
-        audio1Index = r;
-        audioSource1.clip = titleTrackList[r];
-        // audioSource1.volume = 0f;
-        audioSource1.Play();
-        StartCoroutine(QueueNextSongOnTitle(2));
+    public void StartTitleMusic() {
+        if (!audioSource1.isPlaying && !audioSource2.isPlaying) {
+            currentMode = MusicMode.Title;
+            audioSource1.loop = false;
+            audioSource2.loop = false;
+            audio1FadeTime = 0f;
+            audio2FadeTime = 0f;
+            int r = Random.Range(0, titleTrackList.Length);
+            audio1Index = r;
+            audioSource1.clip = titleTrackList[r];
+            // audioSource1.volume = 0f;
+            audioSource1.Play();
+            StartCoroutine(QueueNextSongOnTitle(2));
+        }
     }
 
     void StartInGameMusic(string sceneName) {

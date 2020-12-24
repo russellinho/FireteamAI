@@ -10,8 +10,10 @@ using TMPro;
 using AlertStatus = BetaEnemyScript.AlertStatus;
 
 public class PlayerHUDScript : MonoBehaviourPunCallbacks {
+	private const float COMMAND_DELAY = 0.5f;
 	// HUD object reference
 	public HUDContainer container;
+	public InGameMessengerHUD inGameMessenger;
 	// private PauseMenuScript pauseMenuScript;
 
     // Player reference
@@ -30,6 +32,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private Dictionary<int, AlertMarker> enemyMarkers = new Dictionary<int, AlertMarker> ();
 
 	// Other vars
+	public float commandDelay;
 	private float killPopupTimer;
 	private bool popupIsStarting;
 	private bool roundStartFadeIn;
@@ -39,15 +42,18 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private float totalDisorientationTime;
 	private float detectedTextTimer;
 	public bool screenGrab;
+	private bool voiceChatActive;
 	private const float HEIGHT_OFFSET = 1.9f;
+
+	private bool initialized;
 
 	void Awake() {
 		container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
 	}
 
     // Use this for initialization
-    void Start () {
-		// container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
+    public void Initialize () {
+		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
         if (!GetComponent<PhotonView>().IsMine) {
 			myHudMarkerCam1.targetTexture = null;
 			myHudMarkerCam2.targetTexture = null;
@@ -56,17 +62,18 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			// myHudMarkerCam1.gameObject.SetActive(false);
 			// myHudMarkerCam2.gameObject.SetActive(false);
             this.enabled = false;
+			initialized = true;
 			return;
         }
 		// Find/load HUD components
-		gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
+		// gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 		missionWaypoints = new ArrayList ();
 
-		// container = GameObject.FindWithTag ("HUD").GetComponent<HUDContainer> ();
 		container.hitFlare.GetComponent<RawImage> ().enabled = false;
 		container.hitDir.GetComponent<RawImage> ().enabled = false;
 		container.hitMarker.GetComponent<RawImage> ().enabled = false;
 		// pauseMenuScript = container.pauseMenuGUI.gameObject.GetComponent<PauseMenuScript>();
+		container.pauseMenuGUI.GetComponent<PauseMenuScript>().SetPlayerRef(gameObject);
 
 		foreach (int actorId in gameController.enemyList.Keys) {
 			GameObject marker = GameObject.Instantiate(container.enemyAlerted);
@@ -100,6 +107,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		StartCoroutine("UpdatePlayerMarkers");
 		StartCoroutine("UpdateEnemyMarkers");
 		StartCoroutine("UpdateWaypoints");
+
+		initialized = true;
 	}
 
 	public void StartMatchCameraFade() {
@@ -166,7 +175,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			missionWaypoints.Add (m5);
 		}
 		StartCoroutine(ShowMissionText(gameController.currentMap));
-		InitialComBoxRoutineForMission(gameController.currentMap);
+		if (PhotonNetwork.IsMasterClient) {
+			InitialComBoxRoutineForMission(gameController.currentMap);
+		}
 	}
 
 	void OnStartScreenFade() {
@@ -187,10 +198,16 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	// Update is called once per frame
 	void Update () {
+		if (!initialized) {
+			return;
+		}
 		if (gameController == null) {
 			gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameControllerScript> ();
 			return;
 		}
+		HandleVoiceChat();
+		HandleVoiceCommands();
+		UpdateVoteUI();
 		UpdateHealth();
 		if (container.staminaGroup.alpha == 1f) {
 			float f = (playerActionScript.sprintTime / playerActionScript.playerScript.stamina);
@@ -204,9 +221,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		UpdateHitmarker ();
 
-		// Update UI
-		//container.weaponLabelTxt.text = playerActionScript.currWep;
-		container.weaponLabelTxt.textObject.text = wepScript.equippedWepInGame;
 		container.ammoTxt.textObject.text = "" + wepActionScript.currentAmmo + '/' + wepActionScript.totalAmmoLeft;
 		
 		UpdateCursorStatus ();
@@ -233,6 +247,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     }
 
 	void FixedUpdate() {
+		if (!initialized) {
+			return;
+		}
 		// Hierarchy: hit (red) flare takes 1st priority, heal (green) second, boost (yellow) third
 		UpdateHitFlare();
 		if (!container.hitFlare.GetComponent<RawImage> ().enabled) {
@@ -259,7 +276,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (gameController.exitLevelLoaded) {
 				ToggleGameOverPopup (false);
 				ToggleGameOverBanner (true);
-			} else if (PhotonNetwork.CurrentRoom.Players.Count == gameController.deadCount) {
+			} else if (container.spectatorText.enabled && PhotonNetwork.CurrentRoom.Players.Count == gameController.GetDeadCount()) {
 				ToggleGameOverPopup (true);
 			}
 			ToggleHUD (false);
@@ -275,7 +292,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (gameController.exitLevelLoaded) {
 				ToggleGameOverPopup (false);
 				ToggleGameOverBanner (true);
-			} else if ((gameController.teamMap == "R" && gameController.redTeamPlayerCount == gameController.deadCount) || (gameController.teamMap == "B" && gameController.blueTeamPlayerCount == gameController.deadCount)) {
+			} else if (container.spectatorText.enabled && (gameController.teamMap == "R" && gameController.GetRedTeamCount() == gameController.GetDeadCount()) || (gameController.teamMap == "B" && gameController.GetBlueTeamCount() == gameController.GetDeadCount())) {
 				ToggleGameOverPopup (true);
 			}
 			ToggleHUD (false);
@@ -297,19 +314,23 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	void UpdateCursorStatus() {
 		if (PlayerPreferences.playerPreferences.KeyWasPressed("Pause") && CanPause()) {
-			Pause();
+			if (container.inGameMessenger.inputText.enabled) {
+				inGameMessenger.CloseTextChat();
+			} else {
+				Pause();
+			}
 		}
 
-		if (container.pauseMenuManager.pauseActive)
-		{
-			Cursor.lockState = CursorLockMode.None;
-			Cursor.visible = true;
-		}
-		else
-		{
-			Cursor.lockState = CursorLockMode.Locked;
-			Cursor.visible = false;
-		}
+		// if (container.pauseMenuManager.pauseActive)
+		// {
+		// 	Cursor.lockState = CursorLockMode.None;
+		// 	Cursor.visible = true;
+		// }
+		// else
+		// {
+		// 	Cursor.lockState = CursorLockMode.Locked;
+		// 	Cursor.visible = false;
+		// }
 	}
 
 	IEnumerator UpdateWaypoints() {
@@ -458,6 +479,21 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			Vector3 startPoint = missionWaypointTrans.position;
 			missionWaypointTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
 		}
+	}
+
+	public void SetFireMode(string mode)
+	{
+		if (mode == null) {
+			container.fireModeTxt.gameObject.SetActive(false);
+		} else {
+			container.fireModeTxt.gameObject.SetActive(true);
+			container.fireModeTxt.textObject.text = mode;
+		}
+	}
+
+	public void SetWeaponLabel()
+	{
+		container.weaponLabelTxt.textObject.text = wepScript.equippedWepInGame;
 	}
 
 	IEnumerator UpdatePlayerMarkers() {
@@ -699,7 +735,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
         container.ammoTxt.gameObject.SetActive(b);
 		container.minimapGroup.SetActive(b);
 		container.timeGroup.SetActive(b);
-		Debug.Log(container.minimapGroup.activeInHierarchy);
 		container.hintText.enabled = false;
 		if (!b) {
 			container.itemCarryingText.text = null;
@@ -735,11 +770,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
     void Pause()
     {
+		container.voiceCommandsPanel.SetActive(false);
         if (!container.pauseMenuManager.pauseActive)
         {
             container.pauseMenuManager.OpenPause();
         } else {
-			container.pauseMenuManager.ClosePause();
+			container.pauseMenuScript.HandleEscape();
 		}
     }
 
@@ -770,8 +806,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	IEnumerator ShowComBox(float t, string speaker, string s, string picPath) {
 		yield return new WaitForSeconds (t);
+		playerActionScript.NetworkComBoxMessage(speaker, s, picPath);
+	}
+
+	public void DisplayComBox(string speaker, string message, string picPath) {
 		container.comBox.SetActive (true);
-		container.comBoxText.GetComponent<ComboxTextEffect> ().SetText (s, speaker, picPath);
+		container.comBoxText.GetComponent<ComboxTextEffect> ().SetText (message, speaker, picPath);
 	}
 
 	public void ComBoxPopup(float t, string speaker, string s, string picPath) {
@@ -926,8 +966,15 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	}
 
 	public override void OnPlayerLeftRoom(Player otherPlayer) {
-		Destroy (playerMarkers [otherPlayer.ActorNumber]);
-		playerMarkers.Remove (otherPlayer.ActorNumber);
+		if (!GetComponent<PhotonView>().IsMine) return;
+		RemovePlayerMarker(otherPlayer.ActorNumber);
+		gameController.TogglePlayerSpeaking(false, otherPlayer.ActorNumber, otherPlayer.NickName);
+	}
+
+	public void RemovePlayerMarker(int actorNumber) {
+		if (!playerMarkers.ContainsKey(actorNumber)) return;
+		Destroy (playerMarkers [actorNumber]);
+		playerMarkers.Remove (actorNumber);
 	}
 
 	public void FlashbangEffect(float disorientationTime) {
@@ -1028,6 +1075,15 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.itemCarryingText.text = t;
 	}
 
+	void UpdateCarryingKeyText() {
+		container.itemCarryingKeyText.text = "CARRYING (PRESS [" + PlayerPreferences.playerPreferences.keyMappings["Drop"].key.ToString() + "] TO DROP/THROW):";
+	}
+
+	public void UpdateKeyHints()
+	{
+		UpdateCarryingKeyText();
+	}
+
 	public void SetDetectionMeter(float detection) {
 		container.detectionMeter.fillAmount = detection;
 	}
@@ -1124,6 +1180,303 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	void InitHealth() {
 		container.healthBar.value = 1f;
 		container.healthPercentTxt.text = "100%";
+	}
+
+	void UpdateVoteUI() {
+		if (gameController.voteInProgress) {
+			if (!container.votePanel.gameObject.activeInHierarchy) {
+				if (gameController.currentVoteAction == GameControllerScript.VoteActions.KickPlayer) {
+					container.votePanel.text = "VOTE CALLED: KICK PLAYER [" + gameController.playerBeingKickedName + "]?";
+					if (gameController.playerBeingKicked?.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber) {
+						container.voteOptions.GetComponent<TextMeshProUGUI>().text = "A VOTE IS BEING HELD TO KICK YOU.";
+						container.voteResults.SetActive(true);
+					} else {
+						container.voteOptions.GetComponent<TextMeshProUGUI>().text = "[F1] YES            [F2] NO";
+						container.voteResults.SetActive(false);
+					}
+				}
+				container.votePanel.gameObject.SetActive(true);
+				container.voteOptions.SetActive(true);
+				container.voteTime.gameObject.SetActive(true);
+				container.finalVoteResults.gameObject.SetActive(false);
+			}
+			if (gameController.iHaveVoted) {
+				if (!container.voteResults.activeInHierarchy) {
+					container.voteResults.SetActive(true);
+					container.voteOptions.SetActive(false);
+				}
+			}
+			container.voteTime.text = ""+(int)gameController.voteTimer;
+			container.yesVoteCount.text = ""+gameController.yesVotes;
+			container.noVoteCount.text = ""+gameController.noVotes;
+		} else {
+			if (container.votePanel.gameObject.activeInHierarchy && !container.finalVoteResults.gameObject.activeInHierarchy) {
+				StartCoroutine("DisplayFinalVoteResults");
+			}
+		}
+	}
+
+	IEnumerator DisplayFinalVoteResults()
+	{
+		if (gameController.VoteHasSucceeded()) {
+			if (gameController.currentVoteAction == GameControllerScript.VoteActions.KickPlayer) {
+				container.finalVoteResults.text = "THE VOTE TO KICK [" + gameController.playerBeingKickedName + "] HAS PASSED.";
+			}
+		} else {
+			if (gameController.currentVoteAction == GameControllerScript.VoteActions.KickPlayer) {
+				container.finalVoteResults.text = "THE VOTE TO KICK [" + gameController.playerBeingKickedName + "] HAS BEEN VETOED.";
+			}
+		}
+		container.finalVoteResults.gameObject.SetActive(true);
+		container.voteOptions.SetActive(false);
+		container.voteResults.SetActive(false);
+		container.voteTime.gameObject.SetActive(false);
+		yield return new WaitForSeconds(6f);
+		container.votePanel.gameObject.SetActive(false);
+		container.finalVoteResults.gameObject.SetActive(false);
+		container.voteOptions.SetActive(true);
+		container.voteResults.SetActive(false);
+	}
+
+	public void AddPlayerSpeakingIndicator(int actorNo, string playerName)
+	{
+		foreach (VoiceChatEntryScript v in container.voiceChatEntries)
+		{
+			if (!v.gameObject.activeInHierarchy) {
+				v.SetPlayerNameEntry(actorNo, playerName);
+				v.gameObject.SetActive(true);
+				break;
+			}
+		}
+	}
+
+	public void RemovePlayerSpeakingIndicator(int actorNo)
+	{
+		foreach (VoiceChatEntryScript v in container.voiceChatEntries)
+		{
+			if (v.gameObject.activeInHierarchy && actorNo == v.actorNo) {
+				v.gameObject.SetActive(false);
+				break;
+			}
+		}
+	}
+
+	void HandleVoiceChat()
+	{
+		if (PlayerPreferences.playerPreferences.KeyWasPressed("VoiceChat", true)) {
+			if (!voiceChatActive && CanVoiceChat()) {
+				VivoxVoiceManager.Instance.AudioInputDevices.Muted = false;
+				MarkMyselfAsSpeaking();
+				voiceChatActive = true;
+			}
+		} else {
+			if (voiceChatActive) {
+				VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
+				UnmarkMyselfAsSpeaking();
+				voiceChatActive = false;
+			}
+		}
+	}
+
+	void MarkMyselfAsSpeaking()
+	{
+		gameController.ToggleMyselfSpeaking(true);
+	}
+
+	void UnmarkMyselfAsSpeaking()
+	{
+		gameController.ToggleMyselfSpeaking(false);
+	}
+
+	bool CanVoiceChat()
+	{
+		if (container.pauseMenuManager.pauseActive) return false;
+		if (PlayerPreferences.playerPreferences.preferenceData.audioInputName == "None") return false;
+		return true;
+	}
+
+	bool CanVoiceCommand()
+	{
+		if (container.pauseMenuManager.pauseActive) return false;
+		if (!container.voiceCommandsPanel.activeInHierarchy) return false;
+		if (playerActionScript.health <= 0) return false;
+		if (gameController.gameOver) return false;
+		return true;
+	}
+
+	public AudioClip GetVoiceCommandAudio(char type, int i, char gender)
+	{
+		if (type == 'r') {
+			return container.reportCommands[i].GetCommandAudio(gender);
+		} else if (type == 't') {
+			return container.tacticalCommands[i].GetCommandAudio(gender);
+		}
+		return container.supportCommands[i].GetCommandAudio(gender);
+	}
+
+	string GetVoiceCommandText(char type, int i)
+	{
+		if (type == 'r') {
+			return container.reportCommands[i].commandString;
+		} else if (type == 't') {
+			return container.tacticalCommands[i].commandString;
+		}
+		return container.supportCommands[i].commandString;
+	}
+
+	bool CanUseVoiceCommands()
+	{
+		if (playerActionScript.health <= 0 || container.inGameMessenger.inputText.enabled) return false;
+		return true;
+	}
+
+	void HandleVoiceCommands()
+	{
+		if (commandDelay > 0f) {
+			commandDelay -= Time.deltaTime;
+			return;
+		}
+		if (!CanUseVoiceCommands()) {
+			container.voiceCommandsPanel.SetActive(false);
+			return;
+		}
+		// Open/closing menu
+		if (PlayerPreferences.playerPreferences.KeyWasPressed("VCReport")) {
+			if (!container.voiceCommandsPanel.activeInHierarchy) {
+				container.voiceCommandsReport.SetActive(true);
+				container.voiceCommandsSocial.SetActive(false);
+				container.voiceCommandsTactical.SetActive(false);
+				container.voiceCommandsPanel.SetActive(true);
+			} else {
+				if (container.voiceCommandsReport.activeInHierarchy) {
+					container.voiceCommandsPanel.SetActive(false);
+				} else {
+					container.voiceCommandsReport.SetActive(true);
+					container.voiceCommandsSocial.SetActive(false);
+					container.voiceCommandsTactical.SetActive(false);
+				}
+			}
+		} else if (PlayerPreferences.playerPreferences.KeyWasPressed("VCTactical")) {
+			if (!container.voiceCommandsPanel.activeInHierarchy) {
+				container.voiceCommandsReport.SetActive(false);
+				container.voiceCommandsSocial.SetActive(false);
+				container.voiceCommandsTactical.SetActive(true);
+				container.voiceCommandsPanel.SetActive(true);
+			} else {
+				if (container.voiceCommandsTactical.activeInHierarchy) {
+					container.voiceCommandsPanel.SetActive(false);
+				} else {
+					container.voiceCommandsReport.SetActive(false);
+					container.voiceCommandsSocial.SetActive(false);
+					container.voiceCommandsTactical.SetActive(true);
+				}
+			}
+		} else if (PlayerPreferences.playerPreferences.KeyWasPressed("VCSocial")) {
+			if (!container.voiceCommandsPanel.activeInHierarchy) {
+				container.voiceCommandsReport.SetActive(false);
+				container.voiceCommandsSocial.SetActive(true);
+				container.voiceCommandsTactical.SetActive(false);
+				container.voiceCommandsPanel.SetActive(true);
+			} else {
+				if (container.voiceCommandsSocial.activeInHierarchy) {
+					container.voiceCommandsPanel.SetActive(false);
+				} else {
+					container.voiceCommandsReport.SetActive(false);
+					container.voiceCommandsSocial.SetActive(true);
+					container.voiceCommandsTactical.SetActive(false);
+				}
+			}
+		}
+
+		// Giving commands
+		if (container.voiceCommandsPanel.activeInHierarchy) {
+			if (Input.GetKeyDown(KeyCode.Alpha1)) {
+				if (CanVoiceCommand()) {
+					char type = GetCurrentVoiceCommandType();
+					TriggerVoiceCommand(type, 0);
+				}
+				container.voiceCommandsPanel.SetActive(false);
+				commandDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+				if (CanVoiceCommand()) {
+					char type = GetCurrentVoiceCommandType();
+					TriggerVoiceCommand(type, 1);
+				}
+				container.voiceCommandsPanel.SetActive(false);
+				commandDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+				if (CanVoiceCommand()) {
+					char type = GetCurrentVoiceCommandType();
+					TriggerVoiceCommand(type, 2);
+				}
+				container.voiceCommandsPanel.SetActive(false);
+				commandDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+				if (CanVoiceCommand()) {
+					char type = GetCurrentVoiceCommandType();
+					TriggerVoiceCommand(type, 3);
+				}
+				container.voiceCommandsPanel.SetActive(false);
+				commandDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha5)) {
+				if (CanVoiceCommand()) {
+					char type = GetCurrentVoiceCommandType();
+					TriggerVoiceCommand(type, 4);
+				}
+				container.voiceCommandsPanel.SetActive(false);
+				commandDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha6)) {
+				if (CanVoiceCommand()) {
+					char type = GetCurrentVoiceCommandType();
+					TriggerVoiceCommand(type, 5);
+				}
+				container.voiceCommandsPanel.SetActive(false);
+				commandDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha7)) {
+				if (CanVoiceCommand()) {
+					char type = GetCurrentVoiceCommandType();
+					TriggerVoiceCommand(type, 6);
+				}
+				container.voiceCommandsPanel.SetActive(false);
+				commandDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha8)) {
+				if (CanVoiceCommand()) {
+					char type = GetCurrentVoiceCommandType();
+					TriggerVoiceCommand(type, 7);
+				}
+				container.voiceCommandsPanel.SetActive(false);
+				commandDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha9)) {
+				if (CanVoiceCommand()) {
+					char type = GetCurrentVoiceCommandType();
+					TriggerVoiceCommand(type, 8);
+				}
+				container.voiceCommandsPanel.SetActive(false);
+				commandDelay = COMMAND_DELAY;
+			}
+		}
+	}
+
+	char GetCurrentVoiceCommandType()
+	{
+		if (container.voiceCommandsReport.activeInHierarchy) {
+			return 'r';
+		} else if (container.voiceCommandsSocial.activeInHierarchy) {
+			return 's';
+		} else if (container.voiceCommandsTactical.activeInHierarchy) {
+			return 't';
+		}
+		return '0';
+	}
+
+	void TriggerVoiceCommand(char type, int i) {
+		playerActionScript.SendVoiceCommand(type, i);
+	}
+
+	public void PlayVoiceCommand(string playerName, char type, int i)
+	{
+		string voiceCommandMessage = GetVoiceCommandText(type, i);
+		inGameMessenger.SendVoiceCommandMessage(playerName, voiceCommandMessage);
 	}
 
 }

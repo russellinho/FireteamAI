@@ -14,16 +14,22 @@ public class PlayerEntryPrefab : MonoBehaviour
     public RawImage campaignLogo;
     public TextMeshProUGUI campaignNameTag;
     public GameObject campaignReady;
+    public TextMeshProUGUI campaignReadyText;
+    public GameObject campaignVoiceActiveIndicator;
 
     public GameObject redEntry;
     public RawImage redLogo;
     public TextMeshProUGUI redNameTag;
     public GameObject redReady;
+    public TextMeshProUGUI redReadyText;
+    public GameObject redVoiceActiveIndicator;
 
     public GameObject blueEntry;
     public RawImage blueLogo;
     public TextMeshProUGUI blueNameTag;
     public GameObject blueReady;
+    public TextMeshProUGUI blueReadyText;
+    public GameObject blueVoiceActiveIndicator;
 
     public void CreateEntry(string nametag, string rank, int actorId, char team) {
         SetNameTag(nametag);
@@ -45,6 +51,10 @@ public class PlayerEntryPrefab : MonoBehaviour
         campaignReady.SetActive(false);
         redReady.SetActive(false);
         blueReady.SetActive(false);
+        
+        campaignVoiceActiveIndicator.SetActive(false);
+        redVoiceActiveIndicator.SetActive(false);
+        blueVoiceActiveIndicator.SetActive(false);
     }
 
     public void ToggleEntryByTeam(char team) {
@@ -81,6 +91,17 @@ public class PlayerEntryPrefab : MonoBehaviour
         return false;
     }
 
+    public void ToggleSpeakingIndicator(bool b)
+    {
+        if (campaignEntry.activeInHierarchy) {
+            campaignVoiceActiveIndicator.SetActive(b);
+        } else if (redEntry.activeInHierarchy) {
+            redVoiceActiveIndicator.SetActive(b);
+        } else if (blueEntry.activeInHierarchy) {
+            blueVoiceActiveIndicator.SetActive(b);
+        }
+    }
+
     void SetNameTag(string nametag) {
         this.nametag = nametag;
     }
@@ -91,10 +112,6 @@ public class PlayerEntryPrefab : MonoBehaviour
 
     public void SetTeam(char team) {
         ToggleEntryByTeam(team);
-    }
-
-    public void ChangeTeam() {
-        SetTeam(redEntry.activeInHierarchy ? 'B' : 'R');
     }
 
     public void SetActorId(int id)
@@ -111,5 +128,25 @@ public class PlayerEntryPrefab : MonoBehaviour
             return 'B';
         }
         return 'C';
+    }
+
+    public void SetReadyText(char s) {
+        if (s == 'i') {
+            if (campaignEntry.activeInHierarchy) {
+                campaignReadyText.text = "In game";
+            } else if (redEntry.activeInHierarchy) {
+                redReadyText.text = "In game";
+            } else if (blueEntry.activeInHierarchy) {
+                blueReadyText.text = "In game";
+            }
+        } else if (s == 'r') {
+            if (campaignEntry.activeInHierarchy) {
+                campaignReadyText.text = "Ready";
+            } else if (redEntry.activeInHierarchy) {
+                redReadyText.text = "Ready";
+            } else if (blueEntry.activeInHierarchy) {
+                blueReadyText.text = "Ready";
+            }
+        }
     }
 }

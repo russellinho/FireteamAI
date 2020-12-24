@@ -67,8 +67,9 @@ public class EquipmentScript : MonoBehaviour
     public string footwearPrefabSetupPath;
     public string skinPrefabSetupPath;
 
-    void Awake()
-    {
+    private bool initialized;
+
+    void Awake() {
         if (SceneManager.GetActiveScene().name.Equals("Title"))
         {
             onTitle = true;
@@ -80,6 +81,23 @@ public class EquipmentScript : MonoBehaviour
                 onSetup = true;
             }
         }
+    }
+
+    void Start() {
+        if (onTitle)
+        {
+            if (ts == null)
+            {
+                ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+            }
+        } else if (onSetup) {
+            EquipDefaultsForSetup();
+        }
+    }
+
+    public void PreInitialize()
+    {
+        onTitle = false;
 
         if (pView != null) {
             if (pView.IsMine) {
@@ -92,27 +110,21 @@ public class EquipmentScript : MonoBehaviour
         }
     }
 
-    void Start() {
+    public void Initialize() {
         if (pView != null && !pView.IsMine) {
+            initialized = true;
             return;
         }
-        if (onTitle)
-        {
-            if (ts == null)
-            {
-                ts = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
-            }
-        } else if (onSetup) {
-            EquipDefaultsForSetup();
-        } else {
-            pView.RPC("RpcEquipCharacterInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedCharacter);
-            pView.RPC("RpcEquipHeadgearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedHeadgear);
-            pView.RPC("RpcEquipFacewearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedFacewear);
-            pView.RPC("RpcEquipTopInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedTop);
-            pView.RPC("RpcEquipBottomInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedBottom);
-            pView.RPC("RpcEquipFootwearInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedFootwear);
-            pView.RPC("RpcEquipArmorInGame", RpcTarget.AllBuffered, PlayerData.playerdata.info.EquippedArmor);
-        }
+
+        pView.RPC("RpcEquipCharacterInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedCharacter);
+        pView.RPC("RpcEquipHeadgearInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedHeadgear);
+        pView.RPC("RpcEquipFacewearInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedFacewear);
+        pView.RPC("RpcEquipTopInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedTop);
+        pView.RPC("RpcEquipBottomInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedBottom);
+        pView.RPC("RpcEquipFootwearInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedFootwear);
+        pView.RPC("RpcEquipArmorInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedArmor);
+
+        initialized = true;
     }
 
     public void ToggleFirstPersonBody(bool b) {
@@ -196,6 +208,7 @@ public class EquipmentScript : MonoBehaviour
     }
 
     public void EquipCharacter(string name, GameObject shopItemRef) {
+        if (PlayerData.playerdata.info.EquippedCharacter == name) return;
         // Sets item that you unequipped to white
         if (ts.currentlyEquippedEquipmentPrefab != null && !ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().itemName.Equals(name)) {
             ts.currentlyEquippedEquipmentPrefab.GetComponent<ShopItemScript>().ToggleEquippedIndicator(false);
@@ -212,6 +225,7 @@ public class EquipmentScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equippedCharacter"] = name;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {
@@ -317,6 +331,7 @@ public class EquipmentScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equippedTop"] = name;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {
@@ -428,6 +443,7 @@ public class EquipmentScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equippedBottom"] = name;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {
@@ -511,6 +527,7 @@ public class EquipmentScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equippedFootwear"] = name;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {
@@ -583,6 +600,7 @@ public class EquipmentScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equippedFacewear"] = name;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {
@@ -648,6 +666,7 @@ public class EquipmentScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equippedHeadgear"] = name;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {
@@ -712,6 +731,7 @@ public class EquipmentScript : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["equippedArmor"] = name;
         
+        ts.TriggerBlockScreen(true);
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsFaulted) {
@@ -797,7 +817,11 @@ public class EquipmentScript : MonoBehaviour
     [PunRPC]
     private void RpcEquipTopInGame(string top) {
         equippedTop = top;
-        Equipment e = InventoryScript.itemData.equipmentCatalog[top];
+        EquipTopInGame();
+    }
+
+    void EquipTopInGame() {
+        Equipment e = InventoryScript.itemData.equipmentCatalog[equippedTop];
         
         GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         equippedTopRef = (GameObject)Instantiate(p);
@@ -821,17 +845,6 @@ public class EquipmentScript : MonoBehaviour
         //pView.RPC("RpcEquipSkinInGame", RpcTarget.AllBuffered, e.skinType);
         EquipSkinInGame(e.skinType);
     }
-
-    // [PunRPC]
-    // private void RpcEquipSkinInGame(int skin) {
-    //     equippedSkin = skin;
-    //     equippedSkinRef = (GameObject)Instantiate((GameObject)Resources.Load(InventoryScript.characterCatalog[equippedCharacter].skins[skin]));
-    //     equippedSkinRef.transform.SetParent(fullBodyRef.transform);
-    //     MeshFixer m = equippedSkinRef.GetComponentInChildren<MeshFixer>();
-    //     m.target = mySkinRenderer.gameObject;
-    //     m.rootBone = myBones.transform;
-    //     m.AdaptMesh();
-    // }
 
     private void EquipSkinInGame(int skin) {
         equippedSkin = skin;
@@ -859,7 +872,11 @@ public class EquipmentScript : MonoBehaviour
     [PunRPC]
     private void RpcEquipBottomInGame(string bottom) {
         equippedBottom = bottom;
-        Equipment e = InventoryScript.itemData.equipmentCatalog[bottom];
+        EquipBottomInGame();
+    }
+
+    void EquipBottomInGame() {
+        Equipment e = InventoryScript.itemData.equipmentCatalog[equippedBottom];
         GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         equippedBottomRef = (GameObject)Instantiate(p);
         equippedBottomRef.transform.SetParent(fullBodyRef.transform);
@@ -875,7 +892,12 @@ public class EquipmentScript : MonoBehaviour
             return;
         }
         equippedHeadgear = headgear;
-        Equipment e = InventoryScript.itemData.equipmentCatalog[headgear];
+        EquipHeadgearInGame();
+    }
+
+    void EquipHeadgearInGame() {
+        if (string.IsNullOrEmpty(equippedHeadgear)) return;
+        Equipment e = InventoryScript.itemData.equipmentCatalog[equippedHeadgear];
         // Hide hair if has hair
         if (e.hideHairFlag) {
             if (myHairRenderer != null) {
@@ -905,7 +927,12 @@ public class EquipmentScript : MonoBehaviour
             return;
         }
         equippedFacewear = facewear;
-        Equipment e = InventoryScript.itemData.equipmentCatalog[facewear];
+        EquipFacewearInGame();
+    }
+
+    void EquipFacewearInGame() {
+        if (string.IsNullOrEmpty(equippedFacewear)) return;
+        Equipment e = InventoryScript.itemData.equipmentCatalog[equippedFacewear];
         GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         equippedFacewearRef = (GameObject)Instantiate(p);
         equippedFacewearRef.transform.SetParent(fullBodyRef.transform);
@@ -925,7 +952,12 @@ public class EquipmentScript : MonoBehaviour
             return;
         }
         equippedArmor = armor;
-        Armor a = InventoryScript.itemData.armorCatalog[armor];
+        EquipArmorInGame();
+    }
+
+    void EquipArmorInGame() {
+        if (string.IsNullOrEmpty(equippedArmor)) return;
+        Armor a = InventoryScript.itemData.armorCatalog[equippedArmor];
         GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[a.malePrefabPathTop] : InventoryScript.itemData.itemReferences[a.femalePrefabPathTop]);
         equippedArmorTopRef = (GameObject)Instantiate(p);
         equippedArmorTopRef.transform.SetParent(fullBodyRef.transform);
@@ -950,7 +982,12 @@ public class EquipmentScript : MonoBehaviour
     [PunRPC]
     private void RpcEquipFootwearInGame(string footwear) {
         equippedFootwear = footwear;
-        Equipment e = InventoryScript.itemData.equipmentCatalog[footwear];
+        EquipFootwearInGame();
+    }
+
+    void EquipFootwearInGame() {
+        if (string.IsNullOrEmpty(equippedFootwear)) return;
+        Equipment e = InventoryScript.itemData.equipmentCatalog[equippedFootwear];
         GameObject p = (GetGender() == 'M' ? InventoryScript.itemData.itemReferences[e.malePrefabPath] : InventoryScript.itemData.itemReferences[e.femalePrefabPath]);
         equippedFootwearRef = (GameObject)Instantiate(p);
         equippedFootwearRef.transform.SetParent(fullBodyRef.transform);
@@ -1097,6 +1134,40 @@ public class EquipmentScript : MonoBehaviour
         }
 
         return new StatBoosts(totalArmorBoost, totalSpeedBoost, totalStaminaBoost);
+    }
+
+    public void SyncDataOnJoin() {
+        pView.RPC("RpcAskServerForDataEquips", RpcTarget.Others);
+    }
+
+    [PunRPC]
+	void RpcAskServerForDataEquips() {
+        if (!pView.IsMine) return;
+		pView.RPC("RpcSyncDataEquips", RpcTarget.Others, equippedArmor, equippedHeadgear, equippedFacewear, equippedFootwear, equippedSkin, equippedTop, equippedBottom, equippedCharacter);
+	}
+
+	[PunRPC]
+	void RpcSyncDataEquips(string equippedArmor, string equippedHeadgear, string equippedFacewear, string equippedFootwear, int equippedSkin, string equippedTop, string equippedBottom, string equippedCharacter) {
+        this.equippedArmor = equippedArmor;
+        this.equippedHeadgear = equippedHeadgear;
+        this.equippedFacewear = equippedFacewear;
+        this.equippedFootwear = equippedFootwear;
+        this.equippedSkin = equippedSkin;
+        this.equippedTop = equippedTop;
+        this.equippedBottom = equippedBottom;
+        this.equippedCharacter = equippedCharacter;
+        if (equippedSkinRef == null) {
+            SyncEquips();
+        }
+	}
+
+    void SyncEquips() {
+        EquipTopInGame();
+        EquipBottomInGame();
+        EquipFootwearInGame();
+        EquipHeadgearInGame();
+        EquipFacewearInGame();
+        EquipArmorInGame();
     }
 
     public class StatBoosts {

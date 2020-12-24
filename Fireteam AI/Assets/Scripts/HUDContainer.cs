@@ -23,10 +23,12 @@ public class HUDContainer : MonoBehaviour {
 	// Weapon HUD
 	public UIManagerText weaponLabelTxt;
 	public UIManagerText ammoTxt;
+	public UIManagerText fireModeTxt;
 	public GameObject crosshair;
 	public RawImage sightCrosshair;
 	public GameObject SniperOverlay;
 	public CanvasGroup itemCarryingGroup;
+	public Text itemCarryingKeyText;
 	public Text itemCarryingText;
 
 	// Pause/in-game menu HUD
@@ -34,6 +36,7 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject scoreboard;
     public InGameMessenger inGameMessenger;
 	public PauseMenuManager pauseMenuManager;
+	public PauseMenuScript pauseMenuScript;
 
 	// Hit indication HUD
 	public RawImage hitFlare;
@@ -78,6 +81,21 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject enemyMarkers;
 	public Texture alertSymbol;
 	public Texture suspiciousSymbol;
+	public TextMeshProUGUI votePanel;
+	public GameObject voteOptions;
+	public GameObject voteResults;
+	public TextMeshProUGUI voteTime;
+	public TextMeshProUGUI yesVoteCount;
+	public TextMeshProUGUI noVoteCount;
+	public TextMeshProUGUI finalVoteResults;
+	public VoiceChatEntryScript[] voiceChatEntries;
+	public GameObject voiceCommandsPanel;
+	public GameObject voiceCommandsReport;
+	public GameObject voiceCommandsTactical;
+	public GameObject voiceCommandsSocial;
+	public VoiceCommandScript[] reportCommands;
+	public VoiceCommandScript[] tacticalCommands;
+	public VoiceCommandScript[] supportCommands;
 
     // Versus mode HUD
     public GameObject redScore;

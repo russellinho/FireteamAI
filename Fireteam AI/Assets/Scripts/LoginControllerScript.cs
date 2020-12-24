@@ -12,6 +12,7 @@ public class LoginControllerScript : MonoBehaviour
 {
     public bool developmentMode;
     public Text copyrightTxt;
+    public Text versionTxt;
     public ModalWindowManager popupAlert;
     private string popupAlertMessage;
     public TMP_InputField emailField;
@@ -27,9 +28,11 @@ public class LoginControllerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        versionTxt.text = "Version: " + Application.version;
         copyrightTxt.text = DateTime.Now.Year + " ©";
         emailField.text = PlayerPreferences.playerPreferences.preferenceData.rememberUserId;
         rememberLoginToggle.isOn = PlayerPreferences.playerPreferences.preferenceData.rememberLogin;
+        UnloadDeadScenes();
     }
 
     // Update is called once per frame
@@ -209,6 +212,18 @@ public class LoginControllerScript : MonoBehaviour
             });
         });
     }
+
+    void UnloadDeadScenes()
+	{
+		if (SceneManager.sceneCount > 1) {
+			for (int i = 0; i < SceneManager.sceneCount; i++) {
+				Scene thisScene = SceneManager.GetSceneAt(i);
+				if (thisScene.name != "Login") {
+					SceneManager.UnloadSceneAsync(thisScene);
+				}
+			}
+		}
+	}
 
     private DateTime CalculateBannedUntilDate(float duration, DateTime dateBanned) {
         return dateBanned.AddMinutes(duration);

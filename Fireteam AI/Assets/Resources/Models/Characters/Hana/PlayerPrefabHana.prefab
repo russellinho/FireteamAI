@@ -39,12 +39,13 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1677404027871520742}
   m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -671,12 +672,13 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2052873151880460971}
   m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -870,14 +872,44 @@ MonoBehaviour:
   equippedSecondaryWeapon: 
   equippedSupportWeapon: 
   equippedMeleeWeapon: 
-  equippedWep: 
+  equippedWepInGame: 
   currentlyEquippedType: 0
-  totalPrimaryAmmoLeft: 0
-  totalSecondaryAmmoLeft: 0
-  totalSupportAmmoLeft: 0
-  currentAmmoPrimary: 0
-  currentAmmoSecondary: 0
-  currentAmmoSupport: 0
+  totalPrimaryAmmoLeft:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  totalSecondaryAmmoLeft:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  totalSupportAmmoLeft:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  currentAmmoPrimary:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  currentAmmoSecondary:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  currentAmmoSupport:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
   weaponReady: 0
   pView: {fileID: 0}
   setupGender: 70
@@ -893,10 +925,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3674be1c45c09a4890f1a33d2ca7daf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0
-  stamina: 0
-  armor: 0
-  health: 0
+  speed:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  stamina:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  armor:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  health:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
+    fakeValue: 0
+    fakeValueActive: 0
 --- !u!1 &2052873151880460975
 GameObject:
   m_ObjectHideFlags: 0
@@ -936,12 +1003,13 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2052873151880460975}
   m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1544,12 +1612,13 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2052873151880461105}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1659,12 +1728,13 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2052873151880461107}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1811,12 +1881,13 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2052873151880461113}
   m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1920,12 +1991,13 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2052873151880461115}
   m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2009,12 +2081,13 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2052873151880461117}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2091,12 +2164,13 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2052873151880461119}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -3163,12 +3237,13 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7568732749520786901}
   m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

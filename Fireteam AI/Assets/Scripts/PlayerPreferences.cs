@@ -8,6 +8,7 @@ using Koobando.AntiCheat;
 
 public class PlayerPreferences : MonoBehaviour
 {
+    private const float KEY_COUNT = 25;
     public static PlayerPreferences playerPreferences;
     public PreferenceData preferenceData;
     public Dictionary<string, KeyMapping> keyMappings;
@@ -37,6 +38,18 @@ public class PlayerPreferences : MonoBehaviour
                 playerPreferences.preferenceData.rememberLogin = info.rememberLogin;
                 playerPreferences.preferenceData.rememberUserId = info.rememberUserId;
                 playerPreferences.preferenceData.musicVolume = info.musicVolume;
+                if (info.musicVolume < 0 || info.musicVolume > 100) {
+                    throw new InvalidDataException();
+                }
+                playerPreferences.preferenceData.voiceInputVolume = info.voiceInputVolume == 0 ? 50 : info.voiceInputVolume;
+                if (info.voiceInputVolume < 0 || info.voiceInputVolume > 75) {
+                    throw new InvalidDataException();
+                }
+                playerPreferences.preferenceData.voiceOutputVolume = info.voiceOutputVolume == 0 ? 50 : info.voiceOutputVolume;
+                if (info.voiceOutputVolume < 0 || info.voiceOutputVolume > 75) {
+                    throw new InvalidDataException();
+                }
+                playerPreferences.preferenceData.audioInputName = string.IsNullOrEmpty(info.audioInputName) ? "None" : info.audioInputName;
                 JukeboxScript.jukebox.SetMusicVolume((float)playerPreferences.preferenceData.musicVolume / 100f);
                 Debug.Log("Login prefs loaded successfully!");
             } catch (Exception e) {
@@ -63,6 +76,11 @@ public class PlayerPreferences : MonoBehaviour
                 BinaryFormatter bf = new BinaryFormatter();
                 file = File.Open(Application.persistentDataPath + "/keyMappings.dat", FileMode.Open);
                 keyMappings = (Dictionary<string, KeyMapping>) bf.Deserialize(file);
+                if (keyMappings.Count != 25) {
+                    // For when new keys are added
+                    Debug.Log("More keys were added since last update, setting all to default.");
+                    SetDefaultKeyMappings();
+                }
                 Debug.Log("Key mappings loaded successfully!");
             } catch (Exception e) {
                 Debug.Log("Key mappings file was corrupted. Setting key mappings to default.");
@@ -86,6 +104,9 @@ public class PlayerPreferences : MonoBehaviour
         info.rememberLogin = playerPreferences.preferenceData.rememberLogin;
         info.rememberUserId = playerPreferences.preferenceData.rememberUserId;
         info.musicVolume = playerPreferences.preferenceData.musicVolume;
+        info.voiceInputVolume = playerPreferences.preferenceData.voiceInputVolume;
+        info.voiceOutputVolume = playerPreferences.preferenceData.voiceOutputVolume;
+        info.audioInputName = playerPreferences.preferenceData.audioInputName;
         bf.Serialize(file, info);
         file.Close();
         Debug.Log("Prefs saved.");
@@ -103,6 +124,9 @@ public class PlayerPreferences : MonoBehaviour
         playerPreferences.preferenceData.rememberLogin = false;
         playerPreferences.preferenceData.rememberUserId = null;
         playerPreferences.preferenceData.musicVolume = JukeboxScript.DEFAULT_MUSIC_VOLUME;
+        playerPreferences.preferenceData.voiceInputVolume = 50;
+        playerPreferences.preferenceData.voiceOutputVolume = 50;
+        playerPreferences.preferenceData.audioInputName = "None";
         JukeboxScript.jukebox.SetMusicVolume((float)JukeboxScript.DEFAULT_MUSIC_VOLUME / 100f);
     }
 
@@ -122,6 +146,10 @@ public class PlayerPreferences : MonoBehaviour
         keyMappings.Add("Reload", new KeyMapping(KeyCode.R, 14));
         keyMappings.Add("Melee", new KeyMapping(KeyCode.None, 13, -1));
         keyMappings.Add("AllChat", new KeyMapping(KeyCode.T, 18));
+        keyMappings.Add("VoiceChat", new KeyMapping(KeyCode.Period, 21));
+        keyMappings.Add("VCReport", new KeyMapping(KeyCode.V, 22));
+        keyMappings.Add("VCTactical", new KeyMapping(KeyCode.B, 23));
+        keyMappings.Add("VCSocial", new KeyMapping(KeyCode.N, 24));
         keyMappings.Add("Primary", new KeyMapping(KeyCode.Alpha1, 15));
         keyMappings.Add("Secondary", new KeyMapping(KeyCode.Alpha2, 16));
         keyMappings.Add("Support", new KeyMapping(KeyCode.Alpha4, 17));
@@ -129,6 +157,60 @@ public class PlayerPreferences : MonoBehaviour
         keyMappings.Add("Pause", new KeyMapping(KeyCode.Escape, 19));
         keyMappings.Add("Fire", new KeyMapping(KeyCode.Mouse0, 10));
         keyMappings.Add("Aim", new KeyMapping(KeyCode.Mouse1, 11));
+    }
+
+    public void ResetKeyMappings()
+    {
+        keyMappings["Forward"].key = KeyCode.W;
+        keyMappings["Forward"].scrollWheelFlag = 0;
+        keyMappings["Backward"].key = KeyCode.S;
+        keyMappings["Backward"].scrollWheelFlag = 0;
+        keyMappings["Left"].key = KeyCode.A;
+        keyMappings["Left"].scrollWheelFlag = 0;
+        keyMappings["Right"].key = KeyCode.D;
+        keyMappings["Right"].scrollWheelFlag = 0;
+        keyMappings["Sprint"].key = KeyCode.LeftShift;
+        keyMappings["Sprint"].scrollWheelFlag = 0;
+        keyMappings["Crouch"].key = KeyCode.LeftControl;
+        keyMappings["Crouch"].scrollWheelFlag = 0;
+        keyMappings["Jump"].key = KeyCode.Space;
+        keyMappings["Jump"].scrollWheelFlag = 0;
+        keyMappings["Walk"].key = KeyCode.C;
+        keyMappings["Walk"].scrollWheelFlag = 0;
+        keyMappings["Interact"].key = KeyCode.F;
+        keyMappings["Interact"].scrollWheelFlag = 0;
+        keyMappings["Drop"].key = KeyCode.G;
+        keyMappings["Drop"].scrollWheelFlag = 0;
+        keyMappings["FireMode"].key = KeyCode.Q;
+        keyMappings["FireMode"].scrollWheelFlag = 0;
+        keyMappings["Reload"].key = KeyCode.R;
+        keyMappings["Reload"].scrollWheelFlag = 0;
+        keyMappings["Melee"].key = KeyCode.None;
+        keyMappings["Melee"].scrollWheelFlag = -1;
+        keyMappings["AllChat"].key = KeyCode.T;
+        keyMappings["AllChat"].scrollWheelFlag = 0;
+        keyMappings["VoiceChat"].key = KeyCode.Period;
+        keyMappings["VoiceChat"].scrollWheelFlag = 0;
+        keyMappings["VCReport"].key = KeyCode.V;
+        keyMappings["VCReport"].scrollWheelFlag = 0;
+        keyMappings["VCTactical"].key = KeyCode.B;
+        keyMappings["VCTactical"].scrollWheelFlag = 0;
+        keyMappings["VCSocial"].key = KeyCode.N;
+        keyMappings["VCSocial"].scrollWheelFlag = 0;
+        keyMappings["Primary"].key = KeyCode.Alpha1;
+        keyMappings["Primary"].scrollWheelFlag = 0;
+        keyMappings["Secondary"].key = KeyCode.Alpha2;
+        keyMappings["Secondary"].scrollWheelFlag = 0;
+        keyMappings["Support"].key = KeyCode.Alpha4;
+        keyMappings["Support"].scrollWheelFlag = 0;
+        keyMappings["Scoreboard"].key = KeyCode.Tab;
+        keyMappings["Scoreboard"].scrollWheelFlag = 0;
+        keyMappings["Pause"].key = KeyCode.Escape;
+        keyMappings["Pause"].scrollWheelFlag = 0;
+        keyMappings["Fire"].key = KeyCode.Mouse0;
+        keyMappings["Fire"].scrollWheelFlag = 0;
+        keyMappings["Aim"].key = KeyCode.Mouse1;
+        keyMappings["Aim"].scrollWheelFlag = 0;
     }
 
     public bool KeyWasPressed(string key, bool hold = false, bool up = false) {
@@ -181,6 +263,9 @@ public class PlayerPreferences : MonoBehaviour
         public bool rememberLogin;
         public string rememberUserId;
         public int musicVolume;
+        public int voiceInputVolume;
+        public int voiceOutputVolume;
+        public string audioInputName;
     }
 
     [Serializable]

@@ -2,6 +2,7 @@
 using UnityEngine;
 using UITemplate;
 using System.Collections;
+using System.Linq;
 using UnityEngine.UI;
 using Firebase.Database;
 using ExitGames.Client.Photon;
@@ -14,6 +15,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public Template templateUIClass;
         public Template templateUIVersusClass;
 		public ListPlayer listPlayer;
+		public ListRoom listRoom;
 		public TitleControllerScript titleController;
 
 		public override void OnJoinedLobby()  
@@ -51,9 +53,11 @@ namespace Photon.Pun.LobbySystemPhoton
 			RoomOptions options = new RoomOptions { MaxPlayers = 8 };
             Hashtable h = new Hashtable();
             h.Add("gameMode", "camp");
+			h.Add("inGame", 0);
 			h.Add("mapName", listPlayer.mapSelector.GetCurrentItem());
 			h.Add("ping", (int)PhotonNetwork.GetPing());
-			string[] lobbyProperties = new string[3] {"gameMode", "mapName", "ping"};
+			h.Add("kickedPlayers", "");
+			string[] lobbyProperties = new string[5] {"gameMode", "mapName", "ping", "inGame", "kickedPlayers"};
             options.CustomRoomProperties = h;
 			options.CustomRoomPropertiesForLobby = lobbyProperties;
 
@@ -70,11 +74,15 @@ namespace Photon.Pun.LobbySystemPhoton
 			RoomOptions options = new RoomOptions { MaxPlayers = 16 };
             Hashtable h = new Hashtable();
             h.Add("gameMode", "versus");
+			h.Add("inGame", 0);
 			h.Add("mapName", listPlayer.mapSelectorVs.GetCurrentItem());
 			h.Add("ping", (int)PhotonNetwork.GetPing());
 			h.Add("redScore", 0);
 			h.Add("blueScore", 0);
-            string[] lobbyProperties = new string[3] {"gameMode", "mapName", "ping"};
+			h.Add("redHost", -1);
+			h.Add("blueHost", -1);
+			h.Add("kickedPlayers", "");
+            string[] lobbyProperties = new string[5] {"gameMode", "mapName", "ping", "inGame", "kickedPlayers"};
             options.CustomRoomProperties = h;
             options.CustomRoomPropertiesForLobby = lobbyProperties;
 
@@ -89,7 +97,13 @@ namespace Photon.Pun.LobbySystemPhoton
 		public void theJoinRoom(string roomName)
 		{
 			// ToggleLobbyLoadingScreen(true);
-			PhotonNetwork.JoinRoom(roomName);
+			string kickedPlayers = (string)listRoom.cachedRoomList[roomName].CustomProperties["kickedPlayers"];
+			string[] kickedPlayersList = kickedPlayers.Split(',');
+			if (kickedPlayersList.Contains(PhotonNetwork.NickName)) {
+				OnJoinRoomFailed(-1, "You've been kicked from this game.");
+			} else {
+				PhotonNetwork.JoinRoom(roomName);
+			}
 		}
 
 		public override void OnJoinRoomFailed(short returnCode, string message) {

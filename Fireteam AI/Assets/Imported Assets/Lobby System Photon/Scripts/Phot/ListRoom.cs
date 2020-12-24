@@ -8,7 +8,7 @@ namespace Photon.Pun.LobbySystemPhoton
 {
 	public class ListRoom : MonoBehaviourPunCallbacks
 	{
-		private Dictionary<string, RoomInfo> cachedRoomList;
+		public Dictionary<string, RoomInfo> cachedRoomList;
 		private Dictionary<string, GameObject> roomListEntries;
 		public ListPlayer listPlayer;
 		public Template templateUIClass;
@@ -28,7 +28,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public override void OnRoomListUpdate(List<RoomInfo> roomList)
 		{
 			if (templateUIClass.gameObject.activeInHierarchy) {
-				PhotonNetwork.AutomaticallySyncScene = true;
+				PhotonNetwork.AutomaticallySyncScene = false;
 			} else {
 				PhotonNetwork.AutomaticallySyncScene = false;
 			}
@@ -62,7 +62,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			{
 				// Remove room from cached room list if it got closed, became invisible or was marked as removed
 				// If we are in the versus lobby, don't load campaign matches and vice versa
-                if (!info.IsOpen || !info.IsVisible || info.RemovedFromList || 
+                if (!info.IsVisible || info.RemovedFromList || 
 					((string)info.CustomProperties["gameMode"] == "camp" && gameMode == 'V') ||
 					((string)info.CustomProperties["gameMode"] == "versus" && gameMode == 'C'))
 				{

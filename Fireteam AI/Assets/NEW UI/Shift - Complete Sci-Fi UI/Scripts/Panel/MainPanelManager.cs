@@ -12,6 +12,8 @@ namespace Michsky.UI.Shift
         public const int CAMPAIGN_INDEX = 5;
         public const int VERSUS_INDEX = 6;
         public const int MARKET_INDEX = 1;
+        private const int LOADOUT_INDEX = 2;
+        private const int HOME_INDEX = 0;
         public TitleControllerScript titleController;
         public string panelManagerType;
         [Header("PANEL LIST")]
@@ -64,6 +66,9 @@ namespace Michsky.UI.Shift
 
         public void OpenFirstTab()
         {
+            if (titleController != null) {
+                titleController.UnloadDeadScenes();
+            }
             if (currentPanelIndex != 0)
             {
                 currentPanel = panels[currentPanelIndex].panelObject;
@@ -109,10 +114,8 @@ namespace Michsky.UI.Shift
             if (panelManagerType == "Top") {
                 if (!refresh) {
                     if (currentPanelIndex == SETTINGS_INDEX) {
-                        titleController.SaveAudioSettings();
+                        titleController.SaveSettings();
                         titleController.SaveKeyBindings();
-                    } else if (currentPanelIndex == MOD_SHOP_INDEX) {
-                        titleController.SaveModsForCurrentWeapon();
                     } else if (currentPanelIndex == CAMPAIGN_INDEX) {
                         titleController.ExitMatchmaking();
                     } else if (currentPanelIndex == VERSUS_INDEX) {
@@ -122,10 +125,13 @@ namespace Michsky.UI.Shift
                     }
                 }
                 if (newPanel == "Settings") {
+                    titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
+                    titleController.RefreshSavedAudioDevice();
                 } else if (newPanel == "Mod Shop") {
+                    titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(true);
                     titleController.HandleLeftSideButtonPress(titleController.modShopPrimaryWepBtn);
@@ -134,6 +140,7 @@ namespace Michsky.UI.Shift
                     titleController.HandleRightSideButtonPress(titleController.modShopSuppressorsBtn);
                     titleController.OnSuppressorsBtnClicked();
                 } else if (newPanel == "Market") {
+                    titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
@@ -143,6 +150,7 @@ namespace Michsky.UI.Shift
                     titleController.HandleRightSideButtonPress(titleController.shopCharacterBtn);
                     titleController.OnMarketplaceCharacterBtnClicked();
                 } else if (newPanel == "Loadout") {
+                    titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
@@ -152,21 +160,29 @@ namespace Michsky.UI.Shift
                     titleController.HandleRightSideButtonPress(titleController.characterBtn);
                     titleController.OnCharacterBtnClicked();
                 } else if (newPanel == "Campaign") {
+                    titleController.JoinCampaignGlobalChat();
+                    titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.JoinMatchmaking();
                     campaignLobby.SetActive(true);
                     versusLobby.SetActive(false);
+                    VivoxVoiceManager.Instance.SetAudioInput(PlayerPreferences.playerPreferences.preferenceData.audioInputName);
                 } else if (newPanel == "Versus") {
+                    titleController.JoinVersusGlobalChat();
+                    titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.JoinMatchmaking();
                     campaignLobby.SetActive(false);
                     versusLobby.SetActive(true);
+                    VivoxVoiceManager.Instance.SetAudioInput(PlayerPreferences.playerPreferences.preferenceData.audioInputName);
                 } else {
+                    titleController.LeaveGlobalChats();
                     titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
+                    titleController.creditsButton.gameObject.SetActive(true);
                 }
             }
 
@@ -197,7 +213,6 @@ namespace Michsky.UI.Shift
         }
 
         public void ReopenCurrentPanel() {
-            Debug.Log("Reopning: " + panels[currentPanelIndex].panelName);
             refresh = true;
             OpenPanel(panels[currentPanelIndex].panelName);
         }
@@ -253,11 +268,37 @@ namespace Michsky.UI.Shift
         }
 
         public void ToggleTopBar(bool b) {
-            topPanelGroup.alpha = (b ? 1f : 0f);
+            if (b) {
+                topPanelGroup.alpha = 1f;
+                topPanelGroup.interactable = true;
+                topPanelGroup.blocksRaycasts = true;
+            } else {
+                topPanelGroup.alpha = 0f;
+                topPanelGroup.interactable = false;
+                topPanelGroup.blocksRaycasts = false;
+            }
         }
 
         public void ToggleBottomBar(bool b) {
-            bottomPanelGroup.alpha = (b ? 1f : 0f);
+            if (b) {
+                bottomPanelGroup.alpha = 1f;
+                bottomPanelGroup.interactable = true;
+                bottomPanelGroup.blocksRaycasts = true;
+            } else {
+                bottomPanelGroup.alpha = 0f;
+                bottomPanelGroup.interactable = false;
+                bottomPanelGroup.blocksRaycasts = false;
+            }
+        }
+
+        public bool CurrentPanelAllowsPreviews()
+        {
+            return currentPanelIndex == HOME_INDEX || currentPanelIndex == MARKET_INDEX || currentPanelIndex == LOADOUT_INDEX || currentPanelIndex == MOD_SHOP_INDEX;
+        }
+
+        public int GetModShopIndex()
+        {
+            return MOD_SHOP_INDEX;
         }
     }
 }

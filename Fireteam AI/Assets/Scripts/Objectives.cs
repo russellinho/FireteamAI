@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Objectives {
 
+	private GameControllerScript gameController;
 	public string[] objectivesText;
 	public int itemsRemaining;
 	public int stepsLeftToCompletion;
@@ -17,6 +18,10 @@ public class Objectives {
 	public bool checkpoint1Passed;
 	public bool checkpoint2Passed;
 	public int selectedEvacIndex;
+
+	public Objectives(GameControllerScript gameController) {
+		this.gameController = gameController;
+	}
 
     public void LoadObjectives(int map)
     {
@@ -87,11 +92,7 @@ public class Objectives {
 	}
 
 	public void RemoveObjective(int index) {
-		string temp = "";
-		for (int i = 0; i < objectivesText [index].Length; i++) {
-			temp = temp + objectivesText[index][i] + '\u0336';
-		}
-		objectivesText [index] = temp;
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.objectivesText[index].fontStyle = TMPro.FontStyles.Strikethrough;
 	}
 
 	public float GetMissionProgress() {

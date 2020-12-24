@@ -7,16 +7,25 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using UnityEngine.SceneManagement;
+using ExitGames.Client.Photon;
 using Photon.Realtime;
 using Photon.Pun;
 using Firebase.Database;
 using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 using Koobando.UI.Console;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+using VivoxUnity;
+using VivoxUnity.Common;
+using VivoxUnity.Private;
 
-public class PlayerData : MonoBehaviour
+public class PlayerData : MonoBehaviour, IOnEventCallback
 {
+    private const byte SPAWN_CODE = 123;
+    private const byte SPAWN_INIT_CODE = 124;
+    private const byte LEAVE_CODE = 125;
+    private const byte ASK_OTHERS_FOR_THEM = 111;
     private const float TITLE_POS_X = 0f;
-    private const float TITLE_POS_Y = -1.2f;
+    private const float TITLE_POS_Y = -1.11f;
     private const float TITLE_POS_Z = 2.1f;
     private const float TITLE_ROT_X = 0f;
     private const float TITLE_ROT_Y = 180f;
@@ -32,10 +41,8 @@ public class PlayerData : MonoBehaviour
     public const uint MAX_KASH = uint.MaxValue;
 
     public static PlayerData playerdata;
-    public string playername;
     public bool disconnectedFromServer;
     public string disconnectReason;
-    public bool testMode;
     private bool dataLoadedFlag;
     private bool triggerEmergencyExitFlag;
     private string emergencyExitMessage;
@@ -51,10 +58,12 @@ public class PlayerData : MonoBehaviour
     public GameObject inGamePlayerReference;
     public TitleControllerScript titleRef;
     public GameOverController gameOverControllerRef;
+    public GlobalChatClient globalChatClient;
     public Texture[] rankInsignias;
 
     void Awake()
     {
+        PhotonNetwork.AddCallbackTarget(this);
         if (playerdata == null)
         {
             DontDestroyOnLoad(gameObject);
@@ -82,7 +91,6 @@ public class PlayerData : MonoBehaviour
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildAdded += HandleBanEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildChanged += HandleBanEvent;
 
-            // TODO: Add the rest of the categories for added, removed, and changed
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/facewear").ChildAdded += HandleInventoryAdded;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/headgear").ChildAdded += HandleInventoryAdded;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/footwear").ChildAdded += HandleInventoryAdded;
@@ -124,10 +132,29 @@ public class PlayerData : MonoBehaviour
 
     void Update() {
         if (dataLoadedFlag) {
+            globalChatClient.Initialize(PlayerData.playerdata.info.Playername);
             InstantiatePlayer();
             titleRef.SetPlayerStatsForTitle();
             titleRef.ToggleLoadingScreen(false);
-			titleRef.mainPanelManager.OpenFirstTab();
+            if (PhotonNetwork.InRoom) {
+                string gameModeWas = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
+                if (gameModeWas == "versus") {
+                    titleRef.mainPanelManager.OpenPanel("Versus");
+                } else if (gameModeWas == "camp") {
+                    titleRef.mainPanelManager.OpenPanel("Campaign");
+                }
+                titleRef.connexion.listPlayer.rejoinedRoomFlag = true;
+                titleRef.connexion.listPlayer.OnJoinedRoom();
+            } else {
+			    titleRef.mainPanelManager.OpenFirstTab();
+                try {
+                    ChannelId leavingChannelId = VivoxVoiceManager.Instance.TransmittingSession.Channel;
+                    VivoxVoiceManager.Instance.TransmittingSession.Disconnect();
+                    VivoxVoiceManager.Instance.LoginSession.DeleteChannelSession(leavingChannelId);
+                } catch (Exception e) {
+                    Debug.Log("Tried to leave Vivox voice channel, but encountered an error: " + e.Message);
+                }
+            }
             dataLoadedFlag = false;
         }
         if (triggerEmergencyExitFlag) {
@@ -188,30 +215,43 @@ public class PlayerData : MonoBehaviour
         string levelName = SceneManager.GetActiveScene().name;
         if (levelName.Equals("Badlands1") || levelName.Equals("Badlands1_Red") || levelName.Equals("Badlands1_Blue"))
         {
+            globalChatClient.UnsubscribeFromGlobalChat();
             string characterPrefabName = GetCharacterPrefabName();
-            PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
-                characterPrefabName,
-                Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
-                Quaternion.Euler(Vector3.zero));
+            SpawnPlayer(characterPrefabName, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0]);
+            AskOthersForThemselves();
+            // PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
+            //     characterPrefabName,
+            //     Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
+            //     Quaternion.Euler(Vector3.zero));
         } else if (levelName.Equals("Badlands2") || levelName.Equals("Badlands2_Red") || levelName.Equals("Badlands2_Blue")) {
+            globalChatClient.UnsubscribeFromGlobalChat();
             string characterPrefabName = GetCharacterPrefabName();
-            PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
-                characterPrefabName,
-                Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
-                Quaternion.Euler(0f, 180f, 0f));
-        } else if (levelName.Equals("Test")) {
-            string characterPrefabName = GetCharacterPrefabName();
-            PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
-                characterPrefabName,
-                Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
-                Quaternion.Euler(Vector3.zero));
+            SpawnPlayer(characterPrefabName, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1]);
+            AskOthersForThemselves();
+            // PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
+            //     characterPrefabName,
+            //     Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
+            //     Quaternion.Euler(0f, 180f, 0f));
         }
+        // else if (levelName.Equals("Test")) {
+        //     string characterPrefabName = GetCharacterPrefabName();
+        //     PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
+        //         characterPrefabName,
+        //         Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
+        //         Quaternion.Euler(Vector3.zero));
+        // }
         else
         {
-            if (PlayerData.playerdata.inGamePlayerReference != null)
-            {
-                PhotonNetwork.Destroy(PlayerData.playerdata.inGamePlayerReference);
-            }
+            // if (PlayerData.playerdata.inGamePlayerReference != null)
+            // {
+                // PhotonNetwork.Destroy(PlayerData.playerdata.inGamePlayerReference);
+                // foreach (PlayerStat entry in GameControllerScript.playerList.Values)
+                // {
+                //     Destroy(entry.objRef);
+                // }
+
+                // GameControllerScript.playerList.Clear();
+            // }
             if (levelName.Equals("Title"))
             {
                 if (PlayerData.playerdata.bodyReference == null)
@@ -225,10 +265,261 @@ public class PlayerData : MonoBehaviour
 
     }
 
+    void SpawnPlayer(string playerPrefab, Vector3 spawnPoints)
+    {
+        GameObject player = Instantiate((GameObject)Resources.Load(playerPrefab), spawnPoints, Quaternion.Euler(Vector3.zero));
+        PlayerData.playerdata.inGamePlayerReference = player;
+        PhotonView photonView = player.GetComponent<PhotonView>();
+        // photonView.ViewID = PhotonNetwork.LocalPlayer.ActorNumber;
+        photonView.SetOwnerInternal(PhotonNetwork.LocalPlayer, PhotonNetwork.LocalPlayer.ActorNumber);
+        VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
+
+        if (PhotonNetwork.AllocateViewID(photonView))
+        {
+            InitPlayerInGame(player);
+            AddMyselfToPlayerList(photonView, player);
+            SpawnMyselfOnOthers(true);
+        }
+        else
+        {
+            Debug.Log("Failed to allocate a ViewId.");
+            Destroy(player);
+        }
+    }
+
+    void SpawnMyselfOnOthers(bool initial) {
+        if (IsNotInGame()) return;
+        GameObject player = PlayerData.playerdata.inGamePlayerReference;
+        PhotonView photonView = player.GetComponent<PhotonView>();
+        object[] data = new object[]
+        {
+            GetCharacterPrefabName(), player.transform.position, player.transform.rotation, photonView.ViewID, photonView.OwnerActorNr
+        };
+
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+        {
+            Receivers = ReceiverGroup.Others,
+            // CachingOption = EventCaching.AddToRoomCache
+            CachingOption = EventCaching.DoNotCache
+        };
+
+        SendOptions sendOptions = new SendOptions
+        {
+            Reliability = true
+        };
+
+        if (initial) {
+            PhotonNetwork.RaiseEvent(SPAWN_INIT_CODE, data, raiseEventOptions, sendOptions);
+        } else {
+            PhotonNetwork.RaiseEvent(SPAWN_CODE, data, raiseEventOptions, sendOptions);
+        }
+    }
+
+    void AskOthersForThemselves() {
+        object[] data = new object[]{};
+
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+        {
+            Receivers = ReceiverGroup.Others,
+            CachingOption = EventCaching.DoNotCache
+        };
+
+        SendOptions sendOptions = new SendOptions
+        {
+            Reliability = true
+        };
+
+        PhotonNetwork.RaiseEvent(ASK_OTHERS_FOR_THEM, data, raiseEventOptions, sendOptions);
+    }
+    
+    public void DestroyMyself() {
+        object[] data = new object[]
+        {
+            PhotonNetwork.LocalPlayer.ActorNumber
+        };
+
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+        {
+            Receivers = ReceiverGroup.Others,
+            CachingOption = EventCaching.DoNotCache
+        };
+
+        SendOptions sendOptions = new SendOptions
+        {
+            Reliability = true
+        };
+
+        PhotonNetwork.RaiseEvent(LEAVE_CODE, data, raiseEventOptions, sendOptions);
+        PhotonNetwork.LoadLevel("Title");
+    }
+
+    void AddMyselfToPlayerList(PhotonView pView, GameObject playerRef)
+    {
+        Debug.Log("Actor no: " + pView.Owner.ActorNumber);
+        char team = 'N';
+        if ((string)pView.Owner.CustomProperties["team"] == "red") {
+            team = 'R';
+            Debug.Log(pView.Owner.NickName + " joined red team.");
+        } else if ((string)pView.Owner.CustomProperties["team"] == "blue") {
+            team = 'B';
+            Debug.Log(pView.Owner.NickName + " joined blue team.");
+        }
+        PlayerStat p = new PlayerStat(playerRef, pView.Owner.ActorNumber, pView.Owner.NickName, team, Convert.ToUInt32(pView.Owner.CustomProperties["exp"]));
+        if (GameControllerScript.playerList == null) {
+            GameControllerScript.playerList = new Dictionary<int, PlayerStat>();
+        }
+        GameControllerScript.playerList.Add(pView.Owner.ActorNumber, p);
+    }
+
+    void AddMyselfToPlayerList(int actorNo)
+    {
+        Debug.Log("Actor no: " + actorNo);
+        Player playerBeingAdded = PhotonNetwork.CurrentRoom.GetPlayer(actorNo);
+        char team = 'N';
+        if ((string)playerBeingAdded.CustomProperties["team"] == "red") {
+            team = 'R';
+            Debug.Log(playerBeingAdded.NickName + " joined red team.");
+        } else if ((string)playerBeingAdded.CustomProperties["team"] == "blue") {
+            team = 'B';
+            Debug.Log(playerBeingAdded.NickName + " joined blue team.");
+        }
+        PlayerStat p = new PlayerStat(null, actorNo, playerBeingAdded.NickName, team, Convert.ToUInt32(playerBeingAdded.CustomProperties["exp"]));
+        if (GameControllerScript.playerList == null) {
+            GameControllerScript.playerList = new Dictionary<int, PlayerStat>();
+        }
+        GameControllerScript.playerList.Add(actorNo, p);
+    }
+
+    public void OnEvent(EventData photonEvent)
+    {
+        if (IsNotInGame()) return;
+        if (photonEvent.Code == SPAWN_INIT_CODE)
+        {
+            object[] data = (object[]) photonEvent.CustomData;
+            int ownerActorNr = (int) data[4];
+            if (GameControllerScript.playerList.ContainsKey(ownerActorNr)) {
+                return;
+            }
+            string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
+
+            if (gameMode == "camp") {
+                GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
+                PhotonView photonView = player.GetComponent<PhotonView>();
+                photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
+                photonView.ViewID = (int) data[3];
+                Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID);
+                InitPlayerInGame(player);
+                player.GetComponent<EquipmentScript>().SyncDataOnJoin();
+                player.GetComponent<WeaponScript>().SyncDataOnJoin();
+                player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
+                AddMyselfToPlayerList(photonView, player);
+            } else if (gameMode == "versus") {
+                string currentMapName = SceneManager.GetActiveScene().name;
+                string team = (string)PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr).CustomProperties["team"];
+                // Only spawn players on the same team, but add ALL players to the list
+                if ((currentMapName.EndsWith("_Red") && team == "red") || (currentMapName.EndsWith("_Blue") && team == "blue")) {
+                    GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
+                    PhotonView photonView = player.GetComponent<PhotonView>();
+                    photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
+                    photonView.ViewID = (int) data[3];
+                    Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID + " on team [" + team + "]");
+                    InitPlayerInGame(player);
+                    player.GetComponent<EquipmentScript>().SyncDataOnJoin();
+                    player.GetComponent<WeaponScript>().SyncDataOnJoin();
+                    player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
+                    AddMyselfToPlayerList(photonView, player);
+                } else {
+                    AddMyselfToPlayerList(ownerActorNr);
+                }
+            }
+        } else if (photonEvent.Code == SPAWN_CODE)
+        {
+            object[] data = (object[]) photonEvent.CustomData;
+            int ownerActorNr = (int) data[4];
+            if (GameControllerScript.playerList.ContainsKey(ownerActorNr)) {
+                return;
+            }
+            string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
+
+            if (gameMode == "camp") {
+                GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
+                PhotonView photonView = player.GetComponent<PhotonView>();
+                photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
+                photonView.ViewID = (int) data[3];
+                Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID);
+                InitPlayerInGame(player);
+                player.GetComponent<EquipmentScript>().SyncDataOnJoin();
+                player.GetComponent<WeaponScript>().SyncDataOnJoin();
+                player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
+                AddMyselfToPlayerList(photonView, player);
+            } else if (gameMode == "versus") {
+                string currentMapName = SceneManager.GetActiveScene().name;
+                string team = (string)PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr).CustomProperties["team"];
+                // Only spawn players on the same team, but add ALL players to the list
+                if ((currentMapName.EndsWith("_Red") && team == "red") || (currentMapName.EndsWith("_Blue") && team == "blue")) {
+                    GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
+                    PhotonView photonView = player.GetComponent<PhotonView>();
+                    photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
+                    photonView.ViewID = (int) data[3];
+                    Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID + " on team [" + team + "]");
+                    InitPlayerInGame(player);
+                    player.GetComponent<EquipmentScript>().SyncDataOnJoin();
+                    player.GetComponent<WeaponScript>().SyncDataOnJoin();
+                    player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
+                    AddMyselfToPlayerList(photonView, player);
+                } else {
+                    AddMyselfToPlayerList(ownerActorNr);
+                }
+            }
+        } else if (photonEvent.Code == LEAVE_CODE)
+        {
+            if (IsNotInGame()) return;
+            object[] data = (object[]) photonEvent.CustomData;
+            int actorNo = (int) data[0];
+            if (!GameControllerScript.playerList.ContainsKey(actorNo)) {
+                return;
+            }
+            GameObject playerToDestroy = GameControllerScript.playerList[actorNo].objRef;
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().RemovePlayerMarker(actorNo);
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().gameController.TogglePlayerSpeaking(false, actorNo, null);
+            GameControllerScript.playerList.Remove(actorNo);
+            foreach (PlayerStat entry in GameControllerScript.playerList.Values)
+            {
+                if (entry.objRef == null) continue;
+                entry.objRef.GetComponent<PlayerActionScript> ().escapeValueSent = false;
+            }
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().gameController.ResetEscapeValues ();
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().OnPlayerLeftRoom(PhotonNetwork.CurrentRoom.GetPlayer(actorNo));
+            if (playerToDestroy != null) {
+                Destroy(playerToDestroy);
+            }
+        } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
+        {
+            SpawnMyselfOnOthers(false);
+        }
+    }
+
+    void InitPlayerInGame(GameObject player) {
+        player.GetComponent<EquipmentScript>().PreInitialize();
+        player.GetComponent<EquipmentScript>().Initialize();
+        player.GetComponent<PlayerHUDScript>().Initialize();
+        player.GetComponent<WeaponScript>().PreInitialize();
+        player.GetComponent<WeaponScript>().Initialize();
+        player.GetComponent<WeaponActionScript>().Initialize();
+        player.GetComponent<PlayerActionScript>().PreInitialize();
+        player.GetComponent<PlayerActionScript>().Initialize();
+        player.GetComponent<CameraShakeScript>().PreInitialize();
+        player.GetComponent<AudioControllerScript>().Initialize();
+        player.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().Initialize();
+    }
+
     public void LoadPlayerData()
     {
         if (titleRef == null) {
             titleRef = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+        }
+        if (globalChatClient == null) {
+            globalChatClient = GameObject.Find("GlobalChatClient").GetComponent<GlobalChatClient>();
         }
         playerDataModifyLegalFlag = true;
         // Check if the DB has equipped data for the player. If not, then set default char and equips.
@@ -277,8 +568,6 @@ public class PlayerData : MonoBehaviour
                         primaryModInfo.WeaponName = info.EquippedPrimary;
                         primaryModInfo.SuppressorId = suppressorModId;
                         primaryModInfo.SightId = sightModId;
-                        Debug.Log(suppressorModId);
-                        Debug.Log(sightModId);
                         if (!"".Equals(suppressorModId)) {
                             suppressorModSnap = (Dictionary<object, object>)modsInventorySnap[suppressorModId];
                             primaryModInfo.EquippedSuppressor = suppressorModSnap["name"].ToString();
@@ -383,7 +672,7 @@ public class PlayerData : MonoBehaviour
         OnSecondaryChange(info.EquippedSecondary);
         OnSupportChange(info.EquippedSupport);
         OnMeleeChange(info.EquippedMelee);
-        PhotonNetwork.NickName = playername;
+        PhotonNetwork.NickName = info.Playername;
         playerDataModifyLegalFlag = false;
     }
 
@@ -508,40 +797,34 @@ public class PlayerData : MonoBehaviour
                 WeaponScript wepScript = bodyReference.GetComponent<WeaponScript>();
                 WeaponData e = null;
                 e = inventory.myWeapons[itemName];
-                string prevSuppId = e.EquippedSuppressor;
-                string prevSightId = e.EquippedSight;
-                string prevClipId = e.EquippedClip;
-                string newSuppId = snapshot.Child("equippedSuppressor").Value.ToString();
-                string newSightId = snapshot.Child("equippedSight").Value.ToString();
-                string newClipId = snapshot.Child("equippedClip").Value.ToString();
                 e.Duration = snapshot.Child("duration").Value.ToString();
                 e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
                 e.EquippedSuppressor = snapshot.Child("equippedSuppressor").Value.ToString();
                 e.EquippedSight = snapshot.Child("equippedSight").Value.ToString();
                 e.EquippedClip = snapshot.Child("equippedClip").Value.ToString();
-                if (prevSuppId != newSuppId) {
-                    wepScript.UnequipMod("Suppressor", itemName);
-                    if (newSuppId != "") {
-                        wepScript.EquipMod("Suppressor", inventory.myMods[newSuppId].Name, itemName, null);
-                    }
-                }
-                if (prevSightId != newSightId) {
-                    wepScript.UnequipMod("Sight", itemName);
-                    if (newSightId != "") {
-                        wepScript.EquipMod("Sight", inventory.myMods[newSightId].Name, itemName, null);
-                    }
-                }
-                if (prevClipId != newClipId) {
-                    wepScript.UnequipMod("Clip", itemName);
-                    if (newClipId != "") {
-                        wepScript.EquipMod("Clip", inventory.myMods[newClipId].Name, itemName, null);
-                    }
-                }
             } else if (inventory.myMods.ContainsKey(itemName)) {
+                // If on menu, update player template weapon, weapon mod template if active, mod shop entries, refresh weapon stats
                 ModData e = inventory.myMods[itemName];
                 e.Duration = snapshot.Child("duration").Value.ToString();
                 e.AcquireDate = snapshot.Child("acquireDate").Value.ToString();
                 e.EquippedOn = snapshot.Child("equippedOn").Value.ToString();
+                if (titleRef != null) {
+                    playerDataModifyLegalFlag = true;
+                    
+                    // Update player template weapon
+                    OnPrimaryChange(PlayerData.playerdata.info.EquippedPrimary);
+                    OnSecondaryChange(PlayerData.playerdata.info.EquippedSecondary);
+                    OnSupportChange(PlayerData.playerdata.info.EquippedSupport);
+
+                    // Update weapon mod template if active and refresh weapon stats
+                    if (titleRef.mainPanelManager.currentPanelIndex == titleRef.mainPanelManager.GetModShopIndex()) {
+                        titleRef.LoadWeaponForModding(titleRef.weaponPreviewShopSlot);
+                        // Update all active shop slots
+                        titleRef.RefreshModShopContent();
+                    }
+                    
+                    playerDataModifyLegalFlag = false;
+                }
             }
         }
     }
@@ -739,6 +1022,7 @@ public class PlayerData : MonoBehaviour
         if (titleRef == null) {
             titleRef = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
         }
+        if (bodyReference == null) return;
         if (bodyReference.GetComponent<EquipmentScript>().equippedCharacter == PlayerData.playerdata.info.EquippedCharacter)
         {
             return;
@@ -753,56 +1037,18 @@ public class PlayerData : MonoBehaviour
         characterWeps.ts = titleRef;
     }
 
-    // Saves mod data for given weapon. If ID is null, then that means there was no mod on that weapon to begin with when it was saved.
-    // Therefore, don't do anything.
-    // If the ID is not null but the equippedSuppressor is, then that means that a suppressor was unequipped from a weapon.
-    // Therefore, set the equipped on for the mod to empty string and set the equippedSuppressor for the weapon to empty string.
-    public void SaveModDataForWeapon(string weaponName, string equippedSuppressor, string equippedSight, string suppressorId, string sightId) {
-        //Debug.Log("Data passed in: " + weaponName + ", " + equippedSuppressor + ", " + id);
-        if (string.IsNullOrEmpty(suppressorId) && string.IsNullOrEmpty(sightId))
-        {
-            return;
+    // Saves mod data for given weapon. If ID is null, then don't mess with that mod. If ID is empty, remove mod. Else, equip that mod.
+    public void SaveModDataForWeapon(string weaponName, string suppressorId, string sightId) {
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(true);
         }
-
         WeaponScript myWeps = bodyReference.GetComponent<WeaponScript>();
         Dictionary<string, object> inputData = new Dictionary<string, object>();
         inputData["callHash"] = DAOScript.functionsCallHash;
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
-
-        if (suppressorId != null && !"".Equals(suppressorId)) {
-            if (suppressorId != null && !"".Equals(suppressorId) && string.IsNullOrEmpty(equippedSuppressor))
-            {
-                inputData["weaponName"] = weaponName;
-                inputData["suppressorId"] = suppressorId;
-                inputData["equippedSuppressor"] = "";
-                inputData["suppressorEquippedOn"] = "";
-            }
-            else
-            {
-                inputData["weaponName"] = weaponName;
-                inputData["suppressorId"] = suppressorId;
-                inputData["equippedSuppressor"] = suppressorId;
-                inputData["suppressorEquippedOn"] = weaponName;
-            }
-        }
-
-        if (sightId != null && !"".Equals(sightId)) {
-            if (sightId != null && !"".Equals(sightId) && string.IsNullOrEmpty(equippedSight))
-            {
-                inputData["weaponName"] = weaponName;
-                inputData["sightId"] = sightId;
-                inputData["equippedSight"] = "";
-                inputData["sightEquippedOn"] = "";
-            }
-            else
-            {
-                // Mod was added/changed
-                inputData["weaponName"] = weaponName;
-                inputData["sightId"] = sightId;
-                inputData["equippedSight"] = sightId;
-                inputData["sightEquippedOn"] = weaponName;
-            }
-        }
+        inputData["weaponName"] = weaponName;
+        inputData["suppressorId"] = suppressorId;
+        inputData["sightId"] = sightId;
 
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("saveModDataForWeapon");
         func.CallAsync(inputData).ContinueWith((taskA) => {
@@ -1255,7 +1501,6 @@ public class PlayerData : MonoBehaviour
         if (args.Snapshot.Key.ToString().Equals("loggedIn")) {
             if (args.Snapshot.Value != null) {
                 if (args.Snapshot.Value.ToString() == "0") {
-                    Debug.Log("6");
                     Application.Quit();
                 }
             }
@@ -1263,9 +1508,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleGpChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1282,9 +1525,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleKashChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1301,9 +1542,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleArmorChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1319,9 +1558,13 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.EquippedArmor = itemEquipped;
         OnArmorChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnArmorChange(string itemEquipped) {
+        if (bodyReference == null) return;
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
@@ -1365,9 +1608,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleTopChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1383,9 +1624,13 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.EquippedTop = itemEquipped;
         OnTopChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnTopChange(string itemEquipped) {
+        if (bodyReference == null) return;
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
@@ -1413,9 +1658,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleBottomChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1431,9 +1674,13 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.EquippedBottom = itemEquipped;
         OnBottomChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnBottomChange(string itemEquipped) {
+        if (bodyReference == null) return;
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
@@ -1459,9 +1706,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleCharacterChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1479,9 +1724,13 @@ public class PlayerData : MonoBehaviour
         UpdateBodyRef();
         OnCharacterChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnCharacterChange(string itemEquipped) {
+        if (bodyReference == null) return;
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
 
         if (thisEquipScript != null) {
@@ -1574,9 +1823,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleFacewearChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1591,9 +1838,13 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.EquippedFacewear = itemEquipped;
         OnFacewearChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnFacewearChange(string itemEquipped) {
+        if (bodyReference == null) return;
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
 
         if (thisEquipScript != null) {
@@ -1622,10 +1873,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleFootwearChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
-
+        if (bodyReference == null) return;
         if (PlayerData.playerdata.info.EquippedFootwear == args.Snapshot.Value.ToString()) {
             return;
         }
@@ -1640,9 +1888,13 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.EquippedFootwear = itemEquipped;
         OnFootwearChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnFootwearChange(string itemEquipped) {
+        if (bodyReference == null) return;
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
         
         if (thisEquipScript != null) {
@@ -1668,9 +1920,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleHeadgearChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1683,12 +1933,15 @@ public class PlayerData : MonoBehaviour
         playerDataModifyLegalFlag = true;
         string itemEquipped = args.Snapshot.Value.ToString();
         PlayerData.playerdata.info.EquippedHeadgear = itemEquipped;
-        Debug.Log("qq");
         OnHeadgearChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnHeadgearChange(string itemEquipped) {
+        if (bodyReference == null) return;
         EquipmentScript thisEquipScript = bodyReference.GetComponent<EquipmentScript>();
 
         if (thisEquipScript != null) {
@@ -1717,9 +1970,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleMeleeChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1734,9 +1985,13 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.EquippedMelee = itemEquipped;
         OnMeleeChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnMeleeChange(string itemEquipped) {
+        if (bodyReference == null) return;
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         thisWepScript.equippedMeleeWeapon = itemEquipped;
         // Get the weapon from the weapon catalog for its properties
@@ -1745,9 +2000,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandlePrimaryChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1762,9 +2015,13 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.EquippedPrimary = itemEquipped;
         OnPrimaryChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnPrimaryChange(string itemEquipped) {
+        if (bodyReference == null) return;
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         thisWepScript.equippedPrimaryWeapon = itemEquipped;
         // Get the weapon from the weapon catalog for its properties
@@ -1792,9 +2049,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleSecondaryChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1809,9 +2064,13 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.EquippedSecondary = itemEquipped;
         OnSecondaryChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnSecondaryChange(string itemEquipped) {
+        if (bodyReference == null) return;
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         thisWepScript.equippedSecondaryWeapon = itemEquipped;
         // Get the weapon from the weapon catalog for its properties
@@ -1831,9 +2090,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleSupportChangeEvent(object sender, ValueChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1848,9 +2105,13 @@ public class PlayerData : MonoBehaviour
         PlayerData.playerdata.info.EquippedSupport = itemEquipped;
         OnSupportChange(itemEquipped);
         playerDataModifyLegalFlag = false;
+        if (titleRef != null) {
+            titleRef.TriggerBlockScreen(false);
+        }
     }
 
     void OnSupportChange(string itemEquipped) {
+        if (bodyReference == null) return;
         WeaponScript thisWepScript = bodyReference.GetComponent<WeaponScript>();
         thisWepScript.equippedSupportWeapon = itemEquipped;
         // Get the weapon from the weapon catalog for its properties
@@ -1863,9 +2124,6 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleBanEvent(object sender, ChildChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1879,9 +2137,7 @@ public class PlayerData : MonoBehaviour
     }
 
     void HandleInventoryChanged(object sender, ChildChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1890,18 +2146,22 @@ public class PlayerData : MonoBehaviour
 
         // When inventory item has been updated, find the item that has been updated and update it
         if (args.Snapshot.Value != null) {
+            if (titleRef != null) {
+                titleRef.TriggerBlockScreen(true);
+            }
             playerDataModifyLegalFlag = true;
             inventoryDataModifyLegalFlag = true;
             RefreshInventory(args.Snapshot, 'm');
             inventoryDataModifyLegalFlag = false;
             playerDataModifyLegalFlag = false;
+            if (titleRef != null) {
+                titleRef.TriggerBlockScreen(false);
+            }
         }
     }
 
     void HandleInventoryAdded(object sender, ChildChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1910,18 +2170,22 @@ public class PlayerData : MonoBehaviour
 
         // When inventory item has been added, also add that item to this game session
         if (args.Snapshot.Value != null) {
+            if (titleRef != null) {
+                titleRef.TriggerBlockScreen(true);
+            }
             playerDataModifyLegalFlag = true;
             inventoryDataModifyLegalFlag = true;
             RefreshInventory(args.Snapshot, 'a');
             inventoryDataModifyLegalFlag = false;
             playerDataModifyLegalFlag = false;
+            if (titleRef != null) {
+                titleRef.TriggerBlockScreen(false);
+            }
         }
     }
 
     void HandleInventoryRemoved(object sender, ChildChangedEventArgs args) {
-        if (bodyReference == null) {
-            return;
-        }
+        if (bodyReference == null) return;
         if (args.DatabaseError != null) {
             Debug.LogError(args.DatabaseError.Message);
             TriggerEmergencyExit(args.DatabaseError.Message);
@@ -1930,11 +2194,17 @@ public class PlayerData : MonoBehaviour
 
         // When inventory item has been removed, also remove that item from this game session
         if (args.Snapshot.Value != null) {
+            if (titleRef != null) {
+                titleRef.TriggerBlockScreen(true);
+            }
             playerDataModifyLegalFlag = true;
             inventoryDataModifyLegalFlag = true;
             RefreshInventory(args.Snapshot, 'd');
             inventoryDataModifyLegalFlag = false;
             playerDataModifyLegalFlag = false;
+            if (titleRef != null) {
+                titleRef.TriggerBlockScreen(false);
+            }
         }
     }
 
@@ -1946,7 +2216,6 @@ public class PlayerData : MonoBehaviour
 		inputData["loggedIn"] = "0";
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("setUserIsLoggedIn");
 		func.CallAsync(inputData).ContinueWith((task) => {
-            Debug.Log("5");
             Application.Quit();
         });
     }
@@ -1972,6 +2241,14 @@ public class PlayerData : MonoBehaviour
             return "mods";
         }
         return "";
+    }
+
+    bool IsNotInGame() {
+        string thisSceneName = SceneManager.GetActiveScene().name;
+        if (thisSceneName == "Title" || thisSceneName == "GameOverSuccess" || thisSceneName == "GameOverFail") {
+            return true;
+        }
+        return false;
     }
 }
 
@@ -2222,7 +2499,6 @@ public class PlayerInventory {
     protected virtual void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
         if (!PlayerData.playerdata.inventoryDataModifyLegalFlag) {
             if (PlayerData.playerdata == null) {
-                Debug.Log("4");
                 Application.Quit();
             } else {
                 // Ban player here for modifying item data

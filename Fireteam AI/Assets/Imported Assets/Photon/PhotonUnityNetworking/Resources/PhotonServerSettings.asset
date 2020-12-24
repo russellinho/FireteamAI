@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AppSettings:
     AppIdRealtime: 759c3bf2-4dac-4abc-8645-adefe6e264a1
-    AppIdChat: 
+    AppIdChat: bc66ee21-fc46-4986-8a9f-03fb1c13ea9e
     AppIdVoice: 
-    AppVersion: 0.06
+    AppVersion: 0.07
     UseNameServer: 1
     FixedRegion: us
     Server: 
@@ -43,9 +43,16 @@ MonoBehaviour:
   - RespawnSpaceship
   - RpcAddToTotalDeaths
   - RpcAddToTotalKills
+  - RpcAlertKickedPlayer
+  - RpcAskServerForDataEnemies
+  - RpcAskServerForDataEquips
+  - RpcAskServerForDataGc
+  - RpcAskServerForDataNpc
+  - RpcAskServerForDataPlayer
+  - RpcAskServerForDataWeps
   - RpcCarryNpc
+  - RpcCastVote
   - RpcChangePlayerDisableStatus
-  - RpcChangeReadyStatus
   - RpcClearAIRespawns
   - RpcClearEnemySeenBy
   - RpcCockGrenade
@@ -62,6 +69,7 @@ MonoBehaviour:
   - RpcDropHealthPickup
   - RpcDropOffNpc
   - RpcEndGame
+  - RpcEndGameForAll
   - RpcEndVersusGame
   - RpcEquipArmorInGame
   - RpcEquipBottomInGame
@@ -72,17 +80,20 @@ MonoBehaviour:
   - RpcEquipTopInGame
   - RpcExplode
   - RpcExplodeDelay
-  - RpcIncrementDeathCount
+  - RpcHandleBulletVfx
+  - RpcHandleBulletVfxEnemy
   - RpcIncrementEscapeCount
   - RpcInitializeMelee
   - RpcInitializeWeapon
   - RpcInstantiateBloodSpill
-  - RpcInstantiateBulletHole
-  - RpcInstantiateHitParticleEffect
+  - RpcKickPlayer
   - RpcLoadingScreen
   - RpcMarkAIReadyForRespawn
   - RpcMarkEnemyOutline
+  - RpcNetworkComBoxMessage
+  - RpcOnPlayerLeftGame
   - RpcPingServerForEquipment
+  - RpcPingServerForLobbyStates
   - RpcPlayGruntSound
   - RpcPlayReloadSound
   - RpcPlaySupportActionSound
@@ -96,6 +107,8 @@ MonoBehaviour:
   - RpcRespawnPlayer
   - RpcSendChatMessage
   - RpcSendMissionTimeToClients
+  - RpcSendStates
+  - RpcSendVoiceCommand
   - RpcSetAlertStatus
   - RpcSetCoverPos
   - RpcSetCoverSwitchPositionsTimer
@@ -108,14 +121,13 @@ MonoBehaviour:
   - RpcSetEquippedItems
   - RpcSetExitLevelLoaded
   - RpcSetFiringModeTimer
+  - RpcSetGameIsStarting
   - RpcSetHealth
   - RpcSetInCover
   - RpcSetIsCrouching
   - RpcSetIsDeadInAnimator
   - RpcSetLastGunshotHeardPos
   - RpcSetLastSeenPlayerPos
-  - RpcSetMapInfo
-  - RpcSetModelCreated
   - RpcSetMovingInAnimator
   - RpcSetMyExpAndGpGained
   - RpcSetNavMeshDestination
@@ -124,7 +136,6 @@ MonoBehaviour:
   - RpcSetRank
   - RpcSetSprintingInAnimator
   - RpcSetTarget
-  - RpcSetTeamCounts
   - RpcSetWalkingInAnimator
   - RpcSetWanderStallDelay
   - RpcSetWeaponReadyInAnimator
@@ -135,13 +146,23 @@ MonoBehaviour:
   - RpcStartGameCountdown
   - RpcStartVersusGame
   - RpcStartVersusGameCountdown
+  - RpcStartVote
   - RpcSwitchTeams
+  - RpcSwitchToGameOverScene
   - RpcSyncAnimatorValues
   - RpcSyncCoverSpot
+  - RpcSyncDataEnemies
+  - RpcSyncDataEquips
+  - RpcSyncDataGc
+  - RpcSyncDataNpc
+  - RpcSyncDataPlayer
+  - RpcSyncDataWeps
   - RpcSyncSuspicionValues
   - RpcTakeDamage
   - RpcToggleButtons
   - RpcToggleEnabled
+  - RpcTogglePlayerSpeaking
+  - RpcToggleSpeechIndicatorForPlayer
   - RpcToggleWeaponVisible
   - RpcTriggerJumpInAnimator
   - RpcTriggerPlayerDownAlert

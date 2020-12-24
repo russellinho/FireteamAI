@@ -17,6 +17,7 @@ public class MessageInfo : MonoBehaviour {
 	}
 	
 	public void SetLength(short s) {
+		timeRemaining = 7f;
 		lengthOfString = s;
 	}
 

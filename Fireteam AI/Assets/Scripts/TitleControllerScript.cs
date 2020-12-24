@@ -11,6 +11,11 @@ using Firebase.Database;
 using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 using Koobando.AntiCheat;
 using Michsky.UI.Shift;
+using Photon.Pun.LobbySystemPhoton;
+using VivoxUnity;
+using VivoxUnity.Common;
+using VivoxUnity.Private;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private const float NINETY_DAYS_MINS = 129600f;
@@ -23,19 +28,30 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     private const float THIRTY_DAY_COST_MULTIPLIER = 30f * (1f - (COST_MULT_FRACTION * 2f));
     private const float NINETY_DAY_COST_MULTIPLIER = 90f * (1f - (COST_MULT_FRACTION * 3f));
     private const float PERMANENT_COST_MULTIPLIER = 365f;
+	public Connexion connexion;
 
 	public GameObject itemDescriptionPopupRef;
-
+	public Text versionText;
 	public TextMeshProUGUI mainNametagTxt;
 	public RawImage mainRankImg;
 	public TextMeshProUGUI mainRankTxt;
 	public Slider mainLevelProgress;
 	public TextMeshProUGUI mainExpTxt;
 	public Slider musicVolumeSlider;
+	public Slider voiceInputVolumeSlider;
+	public Slider voiceOutputVolumeSlider;
 	public TextMeshProUGUI musicVolumeField;
+	public TextMeshProUGUI voiceInputVolumeField;
+	public TextMeshProUGUI voiceOutputVolumeField;
+	public HorizontalSelector audioInputSelector;
 	public CanvasGroup loadingScreen;
 	public CanvasGroup mainPanels;
 	public Animator mainPanelsAnimator;
+	public CreditsManager creditsManager;
+	public GameObject glowMotes;
+	public Animator backgroundAnimator;
+	public Button creditsButton;
+	public Button creditsExitButton;
 	public ModalWindowManager alertPopup;
 	public ModalWindowManager confirmPopup;
 	public ModalWindowManager keyBindingsPopup;
@@ -49,7 +65,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private uint totalGpCostBeingPurchased;
 	private char currencyTypeBeingPurchased;
 	public bool confirmingTransaction;
+	private bool resettingKeysFlag;
 	public char currentCharGender;
+	private bool audioInputDevicesInitialized;
 
 	// Loading screen stuff
 	public RawImage screenArt;
@@ -121,8 +139,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject equippedArmorSlot;
 	public GameObject equippedSuppressorSlot;
 	public GameObject equippedSightSlot;
-	public ShopItemScript equippedSuppressorShopSlot;
-	public ShopItemScript equippedSightShopSlot;
 	public GameObject currentlyEquippedWeaponPrefab;
 	public GameObject currentlyEquippedEquipmentPrefab;
 	public TextMeshProUGUI armorBoostPercent;
@@ -153,14 +169,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject currentlyEquippedModPrefab;
 	public GameObject weaponPreviewSlot;
 	public GameObject weaponPreviewRef;
-	public string weaponBeingPreviewed;
 	public ShopItemScript weaponPreviewShopSlot;
 	public GameObject modInventoryContent;
 	public GameObject modWeaponInventoryContent;
 	public Button suppressorsBtn;
 	public Button sightsBtn;
-	public string equippedSuppressorId;
-	public string equippedSightId;
 	public TextMeshProUGUI modDamageTxt;
 	public TextMeshProUGUI modAccuracyTxt;
 	public TextMeshProUGUI modRecoilTxt;
@@ -179,7 +192,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public string alertPopupMessage;
 	public string confirmPopupMessage;
 	private bool confirmClicked;
-	public bool hidPlayer;
 	public MainPanelManager mainPanelManager;
 	public Button previouslyPressedButtonLeft;
 	public Button previouslyPressedSubButtonLeft;
@@ -198,6 +210,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject modShopSecondaryWeaponTabs;
 	public GameObject modShopSupportWeaponTabs;
 	public GameObject modShopMeleeWeaponTabs;
+	public enum ConfirmType {KickPlayer};
+	public ConfirmType confirmType;
+	public GlobalChat chatManagerCamp;
+	public GlobalChat chatManagerVersus;
 
 	// Use this for initialization
 	void Awake() {
@@ -207,16 +223,25 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
 		musicVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.musicVolume;
+
+		voiceInputVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume / 100f;
+		voiceInputVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume;
+		
+		voiceOutputVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume / 100f;
+		voiceOutputVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume;
 	}
 
 	void Start () {
+		versionText.text = "V: " + Application.version;
 		Cursor.lockState = CursorLockMode.None;
 		Cursor.visible = true;
 
 		// Safety destroy previous match data
 		foreach (PlayerStat entry in GameControllerScript.playerList.Values)
 		{
-			Destroy(entry.objRef);
+			if (entry.objRef != null) {
+				Destroy(entry.objRef);
+			}
 		}
 		GameControllerScript.playerList.Clear();
 		// SetPlayerStatsForTitle();
@@ -244,8 +269,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void InstantiateLoadingScreen(string mapName, string mapDescription) {
 		if (mapName != null) {
-			JukeboxScript.jukebox.audioSource1.Stop ();
-			JukeboxScript.jukebox.audioSource2.Stop ();
+			JukeboxScript.jukebox.StopMusic();
 			if (mapName.Equals ("The Badlands: Act I")) {
 				screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands1_load");
 			} else if (mapName.Equals("The Badlands: Act II")) {
@@ -268,13 +292,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleLoadingScreen(bool b) {
 		if (b) {
-			mainPanels.alpha = 0f;
 			mainPanelsAnimator.enabled = false;
+			mainPanels.alpha = 0f;
 			loadingScreen.alpha = 1f;
 		} else {
+			JukeboxScript.jukebox.StartTitleMusic();
 			loadingScreen.alpha = 0f;
 			mainPanelsAnimator.enabled = true;
-			mainPanelsAnimator.Play("Start");
+			// mainPanelsAnimator.Play("Start");
 		}
 	}
 
@@ -311,10 +336,21 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			triggerMakePurchasePopupFlag = false;
 			makePurchasePopup.ModalWindowIn();
 		}
+		if (alertPopup.isOn || confirmPopup.isOn || keyBindingsPopup.isOn || makePurchasePopup.isOn && (PlayerData.playerdata.bodyReference != null && PlayerData.playerdata.bodyReference.activeInHierarchy)) {
+			HideAll(false);
+		}
 	}
 
 	public void OnMusicVolumeSliderChanged() {
 		SetMusicVolume(musicVolumeSlider.value);
+	}
+
+	public void OnVoiceInputVolumeChanged() {
+		SetVoiceInputVolume(voiceInputVolumeSlider.value);
+	}
+
+	public void OnVoiceOutputVolumeChanged() {
+		SetVoiceOutputVolume(voiceOutputVolumeSlider.value);
 	}
 
 	void SetMusicVolume(float v) {
@@ -322,8 +358,25 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		JukeboxScript.jukebox.SetMusicVolume(v);
 	}
 
-	public void SaveAudioSettings() {
+	void SetVoiceInputVolume(float v) {
+		voiceInputVolumeField.text = ""+(int)(v * 100f);
+		if (VivoxVoiceManager.Instance != null) {
+			VivoxVoiceManager.Instance.AudioInputDevices.VolumeAdjustment = ((int)(v * 100f) - 50);
+		}
+	}
+
+	void SetVoiceOutputVolume(float v) {
+		voiceOutputVolumeField.text = ""+(int)(v * 100f);
+		if (VivoxVoiceManager.Instance != null) {
+			VivoxVoiceManager.Instance.AudioOutputDevices.VolumeAdjustment = ((int)(v * 100f) - 50);
+		}
+	}
+
+	public void SaveSettings() {
 		PlayerPreferences.playerPreferences.preferenceData.musicVolume = (int)(musicVolumeSlider.value * 100f);
+		PlayerPreferences.playerPreferences.preferenceData.audioInputName = audioInputSelector.GetCurrentItem();
+		PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume = (int)(voiceInputVolumeSlider.value * 100f);
+		PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume = (int)(voiceOutputVolumeSlider.value * 100f);
 		PlayerPreferences.playerPreferences.SavePreferences();
 	}
 
@@ -331,9 +384,42 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		PlayerPreferences.playerPreferences.SaveKeyMappings();
 	}
 
+	public void RefreshSavedAudioDevice()
+    {
+		if (!audioInputDevicesInitialized) {
+			audioInputSelector.ClearItems();
+			audioInputSelector.CreateNewItem("None");
+		}
+		bool audioDeviceValid = false;
+        string currentAudioDevice = PlayerPreferences.playerPreferences.preferenceData.audioInputName;
+        foreach (IAudioDevice p in VivoxVoiceManager.Instance.AudioInputDevices.AvailableDevices) {
+			if (!audioInputDevicesInitialized) {
+				audioInputSelector.CreateNewItem(p.Name);
+			}
+            if (p.Name == currentAudioDevice) {
+				audioDeviceValid = true;
+            }
+        }
+        // Set to default if not found
+		if (!audioDeviceValid) {
+        	PlayerPreferences.playerPreferences.preferenceData.audioInputName = "None";
+		}
+		SetAudioDevice(PlayerPreferences.playerPreferences.preferenceData.audioInputName);
+		audioInputDevicesInitialized = true;
+    }
+
+    void SetAudioDevice(string deviceName)
+    {
+		audioInputSelector.SetSelector(deviceName);
+    }
+
 	public void SetDefaultAudioSettings() {
 		musicVolumeSlider.value = (float)JukeboxScript.DEFAULT_MUSIC_VOLUME / 100f;
+		voiceInputVolumeSlider.value = 0.5f;
+		voiceOutputVolumeSlider.value = 0.5f;
 		SetMusicVolume(musicVolumeSlider.value);
+		SetVoiceInputVolume(0.5f);
+		SetVoiceOutputVolume(0.5f);
 	}
 
 	public void ClearPreview() {
@@ -348,8 +434,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     }
 
 	public void JoinMatchmaking() {
-		if (!PhotonNetwork.IsConnected) {
-			PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.playername;
+		if (!PhotonNetwork.IsConnectedAndReady) {
+			PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.info.Playername;
+			Hashtable h = new Hashtable();
+			h.Add("exp", (int)PlayerData.playerdata.info.Exp);
+			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 			PhotonNetwork.ConnectUsingSettings();
 		}
 	}
@@ -852,7 +941,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				LoadWeaponForModding(s);
 				first = false;
 			}
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -941,7 +1030,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1030,7 +1119,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1119,7 +1208,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1208,7 +1297,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1297,7 +1386,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1386,7 +1475,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1475,7 +1564,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1564,7 +1653,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1653,7 +1742,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1742,7 +1831,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1832,7 +1921,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -1921,7 +2010,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -2010,7 +2099,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -2099,7 +2188,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
 			s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
-			if (weaponBeingPreviewed == thisWeaponName) {
+			if (weaponPreviewShopSlot.itemName == thisWeaponName) {
 				s.ToggleWeaponPreviewIndicator(true);
 			}
 			o.transform.SetParent(modWeaponInventoryContent.transform, false);
@@ -2262,7 +2351,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.acquireDate = modData.AcquireDate;
 			s.duration = modData.Duration;
 			s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
-			if (weaponBeingPreviewed.Equals(modData.EquippedOn)) {
+			if (weaponPreviewShopSlot.itemName.Equals(modData.EquippedOn)) {
 				s.ToggleModEquippedIndicator(true);
 				currentlyEquippedModPrefab = o;
 			}
@@ -2295,12 +2384,25 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Mod";
 			s.itemDescription = m.description;
 			s.modCategory = m.category;
+			s.acquireDate = modData.AcquireDate;
+			s.duration = modData.Duration;
 			s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
-			if (weaponBeingPreviewed.Equals(modData.EquippedOn)) {
+			if (weaponPreviewShopSlot.itemName.Equals(modData.EquippedOn)) {
 				s.ToggleModEquippedIndicator(true);
 				currentlyEquippedModPrefab = o;
 			}
 			o.transform.SetParent(modInventoryContent.transform, false);
+		}
+	}
+
+	public void RefreshModShopContent()
+	{
+		ShopItemScript[] currentlyDisplayedContent = modInventoryContent.GetComponentsInChildren<ShopItemScript>();
+		foreach (ShopItemScript s in currentlyDisplayedContent) {
+			ModData thisModData = PlayerData.playerdata.inventory.myMods[s.id];
+			s.equippedOn = thisModData.EquippedOn;
+			s.duration = thisModData.Duration;
+			s.acquireDate = thisModData.AcquireDate;
 		}
 	}
 
@@ -2362,9 +2464,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void LoadWeaponForModding(ShopItemScript s) {
-		if (weaponPreviewShopSlot != null) {
-			SaveModsForCurrentWeapon();
-		}
+		// if (weaponPreviewShopSlot != null) {
+		// 	SaveModsForCurrentWeapon();
+		// }
 
 		// Destroy old weapon preview
 		DestroyOldWeaponTemplate();
@@ -2378,7 +2480,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 		weaponPreviewRef = t;
 		weaponPreviewShopSlot = s;
-		weaponBeingPreviewed = s.itemName;
+		weaponPreviewShopSlot.itemName = s.itemName;
 		s.ToggleWeaponPreviewIndicator(true);
 
 		// Set base stats
@@ -2419,7 +2521,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// modWeaponLbl.text = weaponName;
 
 		if (updateSuppressor) {
-			equippedSuppressorId = suppressorId;
 
 			// Add suppressor stats
 			if (!string.IsNullOrEmpty(suppressorName)) {
@@ -2434,7 +2535,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		if (updateSight) {
-			equippedSightId = sightId;
 
 			// Add sight stats
 			if (!string.IsNullOrEmpty(sightName)) {
@@ -2459,21 +2559,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		SetWeaponModdedStatsTextColor(damageBoost, accuracyBoost, recoilBoost, rangeBoost, clipCapacityBoost, maxAmmoBoost);
 	}
 
-	private void UnequipModFromWeaponTemplate(string modType) {
-		switch(modType) {
-			case "Suppressor":
-				SetWeaponModValues(weaponBeingPreviewed, true, null, equippedSuppressorId, false, null, null);
-				equippedSuppressorSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-				weaponPreviewRef.GetComponent<WeaponMods>().UnequipSuppressor();
-				break;
-			case "Sight":
-				SetWeaponModValues(weaponBeingPreviewed, false, null, null, true, null, equippedSightId);
-				equippedSightSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-				weaponPreviewRef.GetComponent<WeaponMods>().UnequipSight();
-				break;
-		}
-	}
-
 	private void SetWeaponModdedStats(float damage, float accuracy, float recoil, float range, float clipCapacity, float maxAmmo) {
 		modDamageTxt.text = damage != -1 ? ""+damage : "-";
 		modAccuracyTxt.text = accuracy != -1 ? ""+accuracy : "-";
@@ -2483,71 +2568,22 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		modMaxAmmoTxt.text = maxAmmo != -1 ? ""+maxAmmo : "-";
 	}
 
-    public string RemoveSuppressorFromWeapon(string weaponName, bool removeSuppressorClicked)
-    {
-		ModInfo m = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
-		string suppIdBeforeRemoval = m.SuppressorId;
-        PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().UnequipMod("Suppressor", weaponName);
-        if (removeSuppressorClicked)
-        {
-            UnequipModFromWeaponTemplate("Suppressor");
-        }
-		// If there was a suppressor equipped, find it in the current shop slots and clear its equipped on status
-		ShopItemScript[] items = modInventoryContent.GetComponentsInChildren<ShopItemScript>();
-		foreach (ShopItemScript s in items) {
-			if (s.id == suppIdBeforeRemoval) {
-				s.ClearEquippedOn();
-				break;
-			}
-		}
-		return suppIdBeforeRemoval;
-    }
-
-	public string RemoveSightFromWeapon(string weaponName, bool removeSightClicked) {
-		ModInfo m = PlayerData.playerdata.LoadModDataForWeapon(weaponName);
-		string sightIdBeforeRemoval = m.SightId;
-		PlayerData.playerdata.bodyReference.GetComponent<WeaponScript>().UnequipMod("Sight", weaponName);
-        if (removeSightClicked)
-        {
-            UnequipModFromWeaponTemplate("Sight");
-        }
-		// If there was a sight equipped, find it in the current shop slots and clear its equipped on status
-		ShopItemScript[] items = modInventoryContent.GetComponentsInChildren<ShopItemScript>();
-		foreach (ShopItemScript s in items) {
-			if (s.id == sightIdBeforeRemoval) {
-				s.ClearEquippedOn();
-				break;
-			}
-		}
-		return sightIdBeforeRemoval;
-	}
-
 	public void OnRemoveSuppressorClicked()
     {
-        if (string.IsNullOrEmpty(weaponBeingPreviewed))
+        if (string.IsNullOrEmpty(weaponPreviewShopSlot.itemName) || string.IsNullOrEmpty(PlayerData.playerdata.LoadModDataForWeapon(weaponPreviewShopSlot.itemName).SuppressorId))
         {
             return;
         }
-        // Remove suppressor model from the player's weapon and the template weapon
-        string removedModId = RemoveSuppressorFromWeapon(weaponBeingPreviewed, true);
-		if (currentlyEquippedModPrefab != null) {
-			ShopItemScript sh = currentlyEquippedModPrefab.GetComponent<ShopItemScript>();
-			sh.ClearEquippedOn();
-		}
-		PlayerData.playerdata.SaveModDataForWeapon(weaponBeingPreviewed, "", null, removedModId, null);
+        
+		PlayerData.playerdata.SaveModDataForWeapon(weaponPreviewShopSlot.itemName, "", null);
     }
 
     public void OnRemoveSightClicked() {
-        if (string.IsNullOrEmpty(weaponBeingPreviewed)) {
+        if (string.IsNullOrEmpty(weaponPreviewShopSlot.itemName) || string.IsNullOrEmpty(PlayerData.playerdata.LoadModDataForWeapon(weaponPreviewShopSlot.itemName).SightId)) {
             return;
         }
-        // Remove sight model from the player's weapon and the template weapon
-        string removedModId = RemoveSightFromWeapon(weaponBeingPreviewed, true);
-		if (currentlyEquippedModPrefab != null) {
-			ShopItemScript sh = currentlyEquippedModPrefab.GetComponent<ShopItemScript>();
-			sh.ClearEquippedOn();
-		}
-		PlayerData.playerdata.SaveModDataForWeapon(weaponBeingPreviewed, null, "", null, removedModId);
+        
+		PlayerData.playerdata.SaveModDataForWeapon(weaponPreviewShopSlot.itemName, null, "");
     }
 
 	private void SetWeaponModdedStatsTextColor(float damage, float accuracy, float recoil, float range, float clipCapacity, float maxAmmo) {
@@ -2609,21 +2645,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			weaponPreviewRef = null;
 			weaponPreviewShopSlot = null;
-			weaponBeingPreviewed = null;
-		}
-	}
-
-	public void SaveModsForCurrentWeapon() {
-		if (weaponBeingPreviewed != null) {
-			string equippedSuppressorName = null;
-			string equippedSightName = null;
-			if (equippedSuppressorId != null) {
-				equippedSuppressorName = PlayerData.playerdata.inventory.myMods[equippedSuppressorId].Name;
-			}
-			if (equippedSightId != null) {
-				equippedSightName = PlayerData.playerdata.inventory.myMods[equippedSightId].Name;
-			}
-			PlayerData.playerdata.SaveModDataForWeapon(weaponBeingPreviewed, equippedSuppressorName, equippedSightName, equippedSuppressorId, equippedSightId);
 		}
 	}
 
@@ -2633,17 +2654,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			case "Suppressor":
 				if (modName == null || modName.Equals("")) {
 					equippedSuppressorSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-					return weaponBeingPreviewed;
+					return weaponPreviewShopSlot.itemName;
 				}
-				w = InventoryScript.itemData.weaponCatalog[weaponBeingPreviewed];
+				w = InventoryScript.itemData.weaponCatalog[weaponPreviewShopSlot.itemName];
 				if (w.suppressorCompatible) {
-					SetWeaponModValues(weaponBeingPreviewed, true, modName, modId, false, null, null);
+					SetWeaponModValues(weaponPreviewShopSlot.itemName, true, modName, modId, false, null, null);
 					weaponPreviewRef.GetComponent<WeaponMods>().EquipSuppressor(modName);
 					equippedSuppressorSlot.GetComponent<SlotScript>().ToggleThumbnail(true, InventoryScript.itemData.modCatalog[modName].thumbnailPath);
 					if (itemSlot != null) {
 						currentlyEquippedModPrefab = itemSlot.gameObject;
 					}
-					return weaponBeingPreviewed;
+					return weaponPreviewShopSlot.itemName;
 				} else {
 					TriggerAlertPopup("Suppressors cannot be equipped on this weapon!");
 					return "0";
@@ -2651,17 +2672,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			case "Sight":
 				if (modName == null || modName.Equals("")) {
 					equippedSightSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
-					return weaponBeingPreviewed;
+					return weaponPreviewShopSlot.itemName;
 				}
-				w = InventoryScript.itemData.weaponCatalog[weaponBeingPreviewed];
+				w = InventoryScript.itemData.weaponCatalog[weaponPreviewShopSlot.itemName];
 				if (w.sightCompatible) {
-					SetWeaponModValues(weaponBeingPreviewed, false, null, null, true, modName, modId);
+					SetWeaponModValues(weaponPreviewShopSlot.itemName, false, null, null, true, modName, modId);
 					weaponPreviewRef.GetComponent<WeaponMods>().EquipSight(modName);
 					equippedSightSlot.GetComponent<SlotScript>().ToggleThumbnail(true, InventoryScript.itemData.modCatalog[modName].thumbnailPath);
 					if (itemSlot != null) {
 						currentlyEquippedModPrefab = itemSlot.gameObject;
 					}
-					return weaponBeingPreviewed;
+					return weaponPreviewShopSlot.itemName;
 				} else {
 					TriggerAlertPopup("Sights cannot be equipped on this weapon!");
 					return "0";
@@ -2722,6 +2743,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		itemBeingPurchased = null;
 		typeBeingPurchased = null;
 		confirmingTransaction = false;
+		resettingKeysFlag = false;
 		// confirmPurchasePopup.SetActive(false);
 	}
 
@@ -2926,8 +2948,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     }
 
 	public void TogglePlayerTemplate(bool b) {
-		PlayerData.playerdata.bodyReference.SetActive(b);
-		PlayerData.playerdata.bodyReference.GetComponent<Animator>().SetBool("onTitle", true);
+		if (PlayerData.playerdata.bodyReference != null) {
+			PlayerData.playerdata.bodyReference.SetActive(b);
+			PlayerData.playerdata.bodyReference.GetComponent<Animator>().SetBool("onTitle", true);
+		}
 	}
 
 	public void ToggleWeaponPreview(bool b) {
@@ -2937,7 +2961,6 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void HideAll(bool b) {
 		TogglePlayerTemplate(b);
 		ToggleWeaponPreview(b);
-		hidPlayer = !b;
 	}
 
 	public void HandleLeftSideButtonPress(Button b) {
@@ -3118,6 +3141,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnConfirmButtonClicked() {
 		if (confirmingTransaction) {
 			OnConfirmPurchaseClicked();
+		} else if (connexion.listPlayer.kickingPlayerFlag) {
+			connexion.listPlayer.KickPlayer(connexion.listPlayer.playerBeingKicked);
+		} else if (resettingKeysFlag) {
+			ResetKeyBindings();
 		}
 	}
 
@@ -3135,7 +3162,102 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public bool WeaponIsSightCompatible(string weaponName) {
-		return InventoryScript.itemData.weaponCatalog[weaponBeingPreviewed].sightCompatible;
+		return InventoryScript.itemData.weaponCatalog[weaponPreviewShopSlot.itemName].sightCompatible;
+	}
+
+	public void UnloadDeadScenes()
+	{
+		if (SceneManager.sceneCount > 1) {
+			for (int i = 0; i < SceneManager.sceneCount; i++) {
+				Scene thisScene = SceneManager.GetSceneAt(i);
+				if (thisScene.name != "Title") {
+					SceneManager.UnloadSceneAsync(thisScene);
+				}
+			}
+		}
+	}
+
+	public void OnResetKeyBindingsClicked()
+	{
+		resettingKeysFlag = true;
+		TriggerConfirmPopup("ARE YOU SURE YOU WISH TO RESET YOUR KEY BINDINGS TO DEFAULT?");
+	}
+
+	void ResetKeyBindings()
+	{
+		PlayerPreferences.playerPreferences.ResetKeyMappings();
+		foreach (KeyMappingInput k in keyMappingInputs) {
+			k.ResetKeyDisplay();
+		}
+	}
+
+	public void OnCreditsButtonClicked()
+	{
+		// Hide templates
+		TogglePlayerTemplate(false);
+		ToggleWeaponPreview(false);
+		DestroyOldWeaponTemplate();
+
+		// Disable main panel, main panel animator, top panel, bottom panel
+		mainPanelsAnimator.enabled = false;
+		mainPanels.alpha = 0f;
+		mainPanels.interactable = false;
+		mainPanels.blocksRaycasts = false;
+
+		// Change background to credits video
+		creditsManager.backgroundPlayer.GetComponent<UIManagerBackground>().enabled = false;
+		backgroundAnimator.enabled = false;
+		creditsManager.backgroundPlayer.gameObject.GetComponent<RawImage>().color = Color.white;
+		glowMotes.SetActive(false);
+		creditsManager.backgroundPlayer.Stop();
+		creditsManager.backgroundPlayer.enabled = false;
+		creditsManager.backgroundPlayerCredits.enabled = true;
+		creditsManager.backgroundPlayerCredits.Play();
+
+		// Activate credits exit button
+		creditsExitButton.gameObject.SetActive(true);
+	}
+
+	public void OnCreditsExitButtonClicked()
+	{
+		// Change background back to normal
+		creditsManager.backgroundPlayer.GetComponent<UIManagerBackground>().enabled = true;
+		creditsManager.backgroundPlayerCredits.enabled = false;
+		creditsManager.backgroundPlayerCredits.Stop();
+		creditsExitButton.gameObject.SetActive(false);
+		backgroundAnimator.enabled = true;
+		glowMotes.SetActive(true);
+		creditsManager.backgroundPlayer.enabled = true;
+		creditsManager.backgroundPlayer.Play();
+
+		// Enable main panel, main panel animator, top panel, bottom panel
+		StartCoroutine("CreditsExit");
+	}
+
+	IEnumerator CreditsExit()
+	{
+		yield return new WaitForSeconds(1f);
+		mainPanelsAnimator.enabled = true;
+		mainPanels.alpha = 1f;
+		mainPanels.interactable = true;
+		mainPanels.blocksRaycasts = true;
+		mainPanelManager.OpenFirstTab();
+		mainPanelManager.OpenPanel("Title");
+	}
+
+	public void JoinCampaignGlobalChat()
+	{
+		PlayerData.playerdata.globalChatClient.SubscribeToGlobalChat('C');
+	}
+
+	public void JoinVersusGlobalChat()
+	{
+		PlayerData.playerdata.globalChatClient.SubscribeToGlobalChat('V');
+	}
+
+	public void LeaveGlobalChats()
+	{
+		PlayerData.playerdata.globalChatClient.UnsubscribeFromGlobalChat();
 	}
 		
 }

@@ -39,22 +39,26 @@ public class InGameMessenger : MonoBehaviour {
 		}
 	}
 
-	public void AddMessage(string message, string playerName) {
+	public void AddMessage(char type, string message, string playerName) {
         // First, check if the queue already has 5 messages in it, don't want more than 5 messages on screen at a time
 		if (messageInfos.Count > MAX_MESSAGES) {
             ExpireMessage();
         }
 
         // Second, create message info and add to queue
-        string totalMessage = playerName + ": " + message + "\n";
-        GameObject toAdd = (GameObject)Instantiate(messageInfo);
+        GameObject toAdd = null;
+        string totalMessage = null;
+        if (type == 'n') {
+            totalMessage = playerName + ": " + message + "\n";
+        } else if (type == 'v') {
+            totalMessage = "<color=#F0FEFF>[" + playerName + "]: " + message + "</color>\n";
+        }
+        toAdd = (GameObject)Instantiate(messageInfo);
         toAdd.GetComponent<MessageInfo>().SetLength((short)totalMessage.Length);
         messageInfos.Enqueue(toAdd);
 
         // Last, actually add the message to the chat box
-        if (!chatText.enabled) {
-            chatText.enabled = true;
-        }
+        chatText.enabled = true;
         chatText.text += totalMessage;
 	}
 

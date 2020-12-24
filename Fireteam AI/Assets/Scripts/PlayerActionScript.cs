@@ -21,6 +21,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     const float DEPLOY_USE_TIME = 3f;
     const float NPC_INTERACT_TIME = 5f;
     private const float ENV_DAMAGE_DELAY = 0.5f;
+    private const float MINIMUM_FALL_DMG_VELOCITY = 25f;
+    private const float MINIMUM_FALL_DMG = 10f;
+    private const float FALL_DMG_MULTIPLIER = 2f;
+    private const float FALL_DMG_DIVISOR = 9f;
+    private const int ENEMY_LAYER = 14;
 
     // Object references
     public PhotonView pView;
@@ -31,6 +36,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public CameraShakeScript cameraShakeScript;
     public PhotonTransformViewKoobando photonTransformView;
     public AudioSource aud;
+    public AudioSource radioAud;
     public Camera viewCam;
     public GameObject spectatorCam;
     public GameObject thisSpectatorCam;
@@ -61,9 +67,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private float charHeightOriginal;
     private float charCenterYOriginal;
     public bool escapeValueSent;
-    private bool assaultModeChangedIndicator;
-    public int kills;
-    private int deaths;
     public bool isRespawning;
     public float respawnTimer;
     private bool escapeAvailablePopup;
@@ -110,21 +113,34 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     // Mission references
     private float detectionLevel;
 
-    void Awake()
+    private bool initialized;
+
+    public void PreInitialize()
     {
+        if (!IsInGame()) {
+            gameObject.SetActive(false);
+            return;
+        }
+
+        InitPlayer();
+    }
+
+    void InitPlayer() {
         gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
-        DontDestroyOnLoad(gameObject);
-        AddMyselfToPlayerList();
         if (pView.IsMine) {
             if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
                 string myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
-                pView.RPC("RpcDisablePlayerForVersus", RpcTarget.AllBuffered, myTeam);
+                // pView.RPC("RpcDisablePlayerForVersus", RpcTarget.AllBuffered, myTeam);
                 SetTeamHost();
             }
         }
     }
 
-    void Start()
+    public void SyncDataOnJoin() {
+        pView.RPC("RpcAskServerForDataPlayer", RpcTarget.Others);
+    }
+
+    public void Initialize()
     {
         // Load the in-game necessities
         //DontDestroyOnLoad(gameObject);
@@ -135,13 +151,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         charCenterYOriginal = charController.center.y;
 
         escapeValueSent = false;
-        assaultModeChangedIndicator = false;
         SetInteracting(false, null);
         originalFpcBodyPosY = fpcBodyRef.transform.localPosition.y;
 
         health = 100;
-        kills = 0;
-        deaths = 0;
         detectionLevel = 0;
         sprintTime = playerScript.stamina;
 
@@ -154,6 +167,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
              Destroy(viewCam.GetComponent<AudioLowPassFilter>());
              Destroy(viewCam.GetComponent<AudioListener>());
              viewCam.enabled = false;
+             initialized = true;
              //enabled = false;
              return;
          }
@@ -184,10 +198,46 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         totalSpeedBoost = originalSpeed;
 
         StartCoroutine(SpawnInvincibilityRoutine());
+        initialized = true;
+    }
+
+    void Start() {
+        if (PhotonNetwork.IsMasterClient) {
+            Hashtable h = new Hashtable();
+            h.Add("inGame", 1);
+            PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+        } else {
+            if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) != 1) {
+                PlayerData.playerdata.DestroyMyself();
+            }
+        }
+        string gameMode = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
+        if (gameMode == "versus") {
+            if (PhotonNetwork.IsMasterClient) {
+                SetTeamHost(true);
+            } else {
+                string myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
+                string thisMap = SceneManager.GetActiveScene().name;
+                if (thisMap.EndsWith("_Red") && myTeam == "red") {
+                    int redLeader = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["redHost"]);
+                    if (!GameControllerScript.playerList.ContainsKey(redLeader) || GameControllerScript.playerList[redLeader].objRef == null || !PlayerStillInRoom(redLeader)) {
+                        SetTeamHost(true);
+                    }
+                } else if (thisMap.EndsWith("_Blue") && myTeam == "blue") {
+                    int blueLeader = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["blueHost"]);
+                    if (!GameControllerScript.playerList.ContainsKey(blueLeader) || GameControllerScript.playerList[blueLeader].objRef == null || !PlayerStillInRoom(blueLeader)) {
+                        SetTeamHost(true);
+                    }
+                }
+            }
+        }
     }
 
     void Update()
     {
+        if (!initialized) {
+            return;
+        }
         if (gameController == null)
         {
             GameObject gc = GameObject.FindWithTag("GameController");
@@ -274,7 +324,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (!escapeValueSent)
             {
                 escapeValueSent = true;
-                gameController.IncrementDeathCount();
             }
         }
         else
@@ -304,6 +353,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     void FixedUpdate() {
+        if (!initialized) {
+            return;
+        }
         if (!pView.IsMine) {
             return;
         }
@@ -325,6 +377,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             {
                 gameController.sectorsCleared++;
                 hud.OnScreenEffect("SECTOR CLEARED!", false);
+                gameController.ClearDeadPlayersList();
                 BeginRespawn();
             }
 
@@ -340,9 +393,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
             // On assault mode changed
             bool h = gameController.assaultMode;
-            if (h != assaultModeChangedIndicator)
+            if (h != gameController.assaultModeChangedIndicator)
             {
-                assaultModeChangedIndicator = h;
+                gameController.assaultModeChangedIndicator = h;
                 hud.MessagePopup("Your cover is blown!");
                 hud.ComBoxPopup(2f, "Democko", "They know you're here! Slot the bastards!", "HUD/democko");
                 hud.ComBoxPopup(20f, "Democko", "Cicadas on the rooftops! Watch the rooftops!", "HUD/democko");
@@ -375,6 +428,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (gameController.sectorsCleared == 0 && gameController.objectives.missionTimer2 <= 360f) {
                 gameController.sectorsCleared++;
                 hud.OnScreenEffect("SECTOR CLEARED!", false);
+                gameController.ClearDeadPlayersList();
                 BeginRespawn();
                 hud.ComBoxPopup(1f, "Red Ruby", "There are Cicadas all over the damn place!", "HUD/redruby");
                 hud.ComBoxPopup(4f, "Democko", "We’re about half way there; just hang in there!", "HUD/democko");
@@ -443,23 +497,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hud.UpdateObjectives();
     }
 
-    void AddMyselfToPlayerList()
-    {
-        char team = 'N';
-        uint exp = Convert.ToUInt32(pView.Owner.CustomProperties["exp"]);
-        if ((string)pView.Owner.CustomProperties["team"] == "red") {
-            team = 'R';
-            gameController.redTeamPlayerCount++;
-            Debug.Log(pView.Owner.NickName + " joined red team.");
-        } else if ((string)pView.Owner.CustomProperties["team"] == "blue") {
-            team = 'B';
-            gameController.blueTeamPlayerCount++;
-            Debug.Log(pView.Owner.NickName + " joined blue team.");
-        }
-        PlayerStat p = new PlayerStat(gameObject, carryingSlot, pView.Owner.ActorNumber, pView.Owner.NickName, team, exp);
-        GameControllerScript.playerList.Add(pView.Owner.ActorNumber, p);
-    }
-
     public void TakeDamage(int d, bool useArmor)
     {
         if (d <= 0) return;
@@ -522,23 +559,35 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (!fpc.IsFullyMobile()) {
                 fpc.m_IsCrouching = false;
             }
+
+            FpcCrouch(fpc.m_IsCrouching);
+            fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
+
+            // Collect the original y position of the FPS controller since we're going to move it downwards to crouch
+            if (fpc.m_IsCrouching) {
+                charController.height = 1f;
+                charController.center = new Vector3(0f, 0.54f, 0f);
+                // Network it
+                pView.RPC("RpcCrouch", RpcTarget.Others, 1f, 0.54f);
+            } else {
+                charController.height = charHeightOriginal;
+                charController.center = new Vector3(0f, charCenterYOriginal, 0f);
+                // Network it
+                pView.RPC("RpcCrouch", RpcTarget.Others, charHeightOriginal, charCenterYOriginal);
+            }
         }
+    }
+
+    public void HandleJumpAfterCrouch() {
+        fpc.m_IsCrouching = false;
 
         FpcCrouch(fpc.m_IsCrouching);
         fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
 
-        // Collect the original y position of the FPS controller since we're going to move it downwards to crouch
-        if (fpc.m_IsCrouching) {
-            charController.height = 1f;
-            charController.center = new Vector3(0f, 0.54f, 0f);
-            // Network it
-            pView.RPC("RpcCrouch", RpcTarget.Others, 1f, 0.54f);
-        } else {
-            charController.height = charHeightOriginal;
-            charController.center = new Vector3(0f, charCenterYOriginal, 0f);
-            // Network it
-            pView.RPC("RpcCrouch", RpcTarget.Others, charHeightOriginal, charCenterYOriginal);
-        }
+        charController.height = charHeightOriginal;
+        charController.center = new Vector3(0f, charCenterYOriginal, 0f);
+        // Network it
+        pView.RPC("RpcCrouch", RpcTarget.Others, charHeightOriginal, charCenterYOriginal);
     }
 
     void FpcCrouch(bool crouch) {
@@ -571,13 +620,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 DropCarrying();
                 hud.SetCarryingText(null);
                 TriggerPlayerDownAlert();
+                hud.container.voiceCommandsPanel.SetActive(false);
             }
             fpc.enabled = false;
             if (!rotationSaved)
             {
                 if (escapeValueSent)
                 {
-                    gameController.ConvertCounts(1, -1);
+                    gameController.ConvertCounts(-1);
                 }
                 hud.ToggleHUD(false);
                 hud.ToggleSpectatorMessage(true);
@@ -586,7 +636,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 viewCam.transform.SetParent(transform);
                 viewCam.fieldOfView = 60;
                 rotationSaved = true;
-                pView.RPC("RpcAddToTotalDeaths", RpcTarget.All);
+                AddToTotalDeaths();
             }
 
             deathCameraLerpPos = new Vector3(headTransform.localPosition.x, headTransform.localPosition.y + 2.5f, headTransform.localPosition.z - 4.5f);
@@ -594,14 +644,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    void RpcAddToTotalDeaths()
+    void AddToTotalDeaths()
     {
-        GameControllerScript.playerList[pView.Owner.ActorNumber].deaths++;
-        if (gameObject.layer == 0) return;
-        if (deaths != int.MaxValue) {
-            deaths++;
-        }
+        gameController.AddToTotalDeaths(PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
     void HandleInteracting() {
@@ -619,7 +664,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 {
                     BombScript b = activeInteractable.GetComponent<BombScript>();
                     interactionTimer = 0f;
-                    pView.RPC("RpcDefuseBomb", RpcTarget.All, b.bombId);
+                    pView.RPC("RpcDefuseBomb", RpcTarget.AllBufferedViaServer, b.bombId);
                     activeInteractable = null;
                     interactionLock = true;
                 }
@@ -645,7 +690,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 {
                     FlareScript f = activeInteractable.GetComponent<FlareScript>();
                     interactionTimer = 0f;
-                    pView.RPC("RpcPopFlare", RpcTarget.All, f.flareId);
+                    pView.RPC("RpcPopFlare", RpcTarget.AllBufferedViaServer, f.flareId);
                     activeInteractable = null;
                     interactionLock = true;
                 }
@@ -664,10 +709,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             }
         } else {
-            fpc.canMove = true;
+            if (!hud.container.inGameMessenger.inputText.enabled) {
+                fpc.canMove = true;
+            }
             if (!wepActionScript.deployInProgress) {
                 hud.ToggleActionBar(false, null);
-                hud.ToggleChatText(true);
+                // hud.ToggleChatText(true);
             }
             interactionTimer = 0f;
         }
@@ -899,7 +946,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 float scale = 1f - (distanceFromGrenade / blastRadius);
 
                 // Scale damage done to enemy by the distance from the explosion
-                Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
+                Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[t.rootWeapon];
                 int damageReceived = (int)(grenadeStats.damage * scale);
 
                 // Validate that this enemy has already been affected
@@ -948,7 +995,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 float scale = 1f - (distanceFromExplosion / blastRadius);
 
                 // Scale damage done to enemy by the distance from the explosion
-                Weapon launcherStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
+                Weapon launcherStats = InventoryScript.itemData.weaponCatalog[l.rootWeapon];
                 int damageReceived = (int)(launcherStats.damage * scale);
 
                 // Validate that this enemy has already been affected
@@ -1055,9 +1102,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void EnterSpectatorMode()
     {
-        pView.RPC("RpcChangePlayerDisableStatus", RpcTarget.All, false);
-        thisSpectatorCam = Instantiate(spectatorCam, Vector3.zero, Quaternion.Euler(Vector3.zero));
-        thisSpectatorCam.transform.SetParent(null);
+        if (thisSpectatorCam == null) {
+            pView.RPC("RpcChangePlayerDisableStatus", RpcTarget.All, false);
+            thisSpectatorCam = Instantiate(spectatorCam, Vector3.zero, Quaternion.Euler(Vector3.zero));
+            thisSpectatorCam.transform.SetParent(null);
+        }
     }
 
     void LeaveSpectatorMode()
@@ -1070,6 +1119,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcChangePlayerDisableStatus(bool status)
     {
+        ChangePlayerDisableStatus(status);
+    }
+
+    void ChangePlayerDisableStatus(bool status) {
         if (gameObject.layer == 0) return;
         if (!status) {
             equipmentScript.DespawnPlayer();
@@ -1093,7 +1146,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         escapeValueSent = false;
-        if (gameController.matchType == 'V' && onMyMap) {
+        if (gameController.matchType == 'V' && onMyMap && otherPlayer != null) {
             RemovePlayerAsHost(otherPlayer.ActorNumber);
             SetTeamHost();
         }
@@ -1119,7 +1172,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         enterSpectatorModeTimer = 0f;
         if (health <= 0)
         {
-            gameController.ConvertCounts(-1, 0);
+            gameController.ConvertCounts(0);
             gameController.gameOver = false;
             // Flash the respawn time bar on the screen
             hud.RespawnBar();
@@ -1238,7 +1291,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             foreach (GameObject o in gameController.items) {
                 FlareScript s = o.GetComponentInChildren<FlareScript>();
                 if (s.flareId != i) {
-                    o.SetActive(false);
+                    s.gameObject.SetActive(false);
                 }
             }
             hud.ComBoxPopup(1f, "Democko", "We see you! We’re incoming!", "HUD/democko");
@@ -1405,9 +1458,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // }
         float totalFallDamage = 0f;
         //Debug.Log("Vert velocity was: " + verticalVelocityBeforeLanding);
-        if (verticalVelocityBeforeLanding <= -25f) {
-            //totalFallDamage = 40f * (Mathf.Abs(verticalVelocityBeforeLanding) / 20f);
-            totalFallDamage = 10f * Mathf.Pow(2, Mathf.Abs(verticalVelocityBeforeLanding) / 14f);
+        if (verticalVelocityBeforeLanding <= -MINIMUM_FALL_DMG_VELOCITY) {
+            totalFallDamage = MINIMUM_FALL_DMG * Mathf.Pow(FALL_DMG_MULTIPLIER, Mathf.Abs(verticalVelocityBeforeLanding) / FALL_DMG_DIVISOR);
         }
         // Debug.Log("total fall damage: " + totalFallDamage);
         totalFallDamage = Mathf.Clamp(totalFallDamage, 0f, 100f);
@@ -1427,8 +1479,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void MarkEnemy() {
         if (!isInteracting && !gameController.assaultMode) {
             RaycastHit hit;
-            if (Physics.Raycast(wepActionScript.fpcShootPoint.position, wepActionScript.fpcShootPoint.transform.forward, out hit, 300f)) {
-                if (hit.transform.tag.Equals("Human")) {
+            if (Physics.SphereCast(wepActionScript.fpcShootPoint.position, 3f, wepActionScript.fpcShootPoint.transform.forward, out hit, Mathf.Infinity)) {
+                if (hit.transform.gameObject.layer == ENEMY_LAYER) {
                     BetaEnemyScript b = hit.transform.gameObject.GetComponent<BetaEnemyScript>();
                     if (b != null) {
                         b.MarkEnemyOutline();
@@ -1472,12 +1524,18 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         this.enabled = false;
     }
 
-    void SetTeamHost() {
+    void SetTeamHost(bool force = false) {
         string t = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"] + "Host";
-        if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(t)) {
+        if (force) {
             Hashtable h = new Hashtable();
             h.Add(t, PhotonNetwork.LocalPlayer.ActorNumber);
             PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+        } else {
+            if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(t)) {
+                Hashtable h = new Hashtable();
+                h.Add(t, PhotonNetwork.LocalPlayer.ActorNumber);
+                PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+            }
         }
     }
 
@@ -1517,5 +1575,105 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             transform.position = gameController.spawnLocation.position;
         }
     }
+
+    bool IsInGame() {
+        string thisScene = SceneManager.GetActiveScene().name;
+        if (thisScene == "Title") {
+            return false;
+        }
+        return true;
+    }
+
+    void SetPlayerDead() 
+    {
+        health = 0;
+        equipmentScript.ToggleFirstPersonBody(false);
+        equipmentScript.ToggleFullBody(false);
+        equipmentScript.ToggleMesh(false);
+        SetInteracting(false, null);
+        DropCarrying();
+        fpc.enabled = false;
+        if (pView.IsMine) {
+            hud.SetCarryingText(null);
+            if (!rotationSaved)
+            {
+                // if (escapeValueSent)
+                // {
+                //     gameController.ConvertCounts(1, -1);
+                // }
+                hud.ToggleHUD(false);
+                hud.ToggleSpectatorMessage(true);
+                rotationSaved = true;
+            }
+            EnterSpectatorMode();
+        }
+    }
+
+    [PunRPC]
+	void RpcAskServerForDataPlayer() {
+        if (!pView.IsMine) return;
+        int healthToSend = health;
+        string playersDead = (string)PhotonNetwork.CurrentRoom.CustomProperties["deads"];
+        string[] playersDeadList = null;
+        if (playersDead != null) {
+            playersDeadList = playersDead.Split(',');
+            foreach (string p in playersDeadList) {
+                if (p == PhotonNetwork.LocalPlayer.NickName) {
+                    healthToSend = 0;
+                    break;
+                }
+            }
+        }
+		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup);
+	}
+
+	[PunRPC]
+	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup) {
+        this.health = health;
+        this.escapeValueSent = escapeValueSent;
+        GameControllerScript.playerList[pView.OwnerActorNr].kills = kills;
+        GameControllerScript.playerList[pView.OwnerActorNr].deaths = deaths;
+        this.escapeAvailablePopup = escapeAvailablePopup;
+        if (health <= 0) {
+            SetPlayerDead();
+        }
+	}
+
+    public void NetworkComBoxMessage(string speaker, string message, string picPath) {
+        pView.RPC("RpcNetworkComBoxMessage", RpcTarget.All, speaker, message, picPath);
+    }
+
+    [PunRPC]
+    void RpcNetworkComBoxMessage(string speaker, string message, string picPath) {
+        PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().DisplayComBox(speaker, message, picPath);
+    }
+
+    bool PlayerStillInRoom(int actorNo)
+    {
+        foreach (Player p in PhotonNetwork.PlayerList) {
+            if (p.ActorNumber == actorNo) return true;
+        }
+        return false;
+    }
+
+    public void SendVoiceCommand(char type, int i)
+	{
+		pView.RPC("RpcSendVoiceCommand", RpcTarget.All, PhotonNetwork.LocalPlayer.NickName, (int)type, i, (int)InventoryScript.itemData.characterCatalog[PlayerData.playerdata.info.EquippedCharacter].gender, gameController.teamMap);
+	}
+
+	[PunRPC]
+	void RpcSendVoiceCommand(string playerName, int type, int i, int gender, string team)
+	{
+		if (team != gameController.teamMap) return;
+		char typeChar = (char)type;
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().PlayVoiceCommand(playerName, typeChar, i);
+		PlayVoiceCommand(typeChar, i, (char)gender);
+	}
+
+    public void PlayVoiceCommand(char type, int i, char gender)
+	{
+		radioAud.clip = hud.GetVoiceCommandAudio(type, i, gender);
+		radioAud.Play();
+	}
 
 }

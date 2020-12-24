@@ -9,7 +9,7 @@ namespace Michsky.UI.Shift
 {
     public class HorizontalSelector : MonoBehaviour
     {
-        private TextMeshProUGUI label;
+        public TextMeshProUGUI label;
         private TextMeshProUGUI labeHelper;
         private Animator selectorAnimator;
         string newItemTitle;
@@ -19,6 +19,7 @@ namespace Michsky.UI.Shift
         public bool invokeAtStart;
         public bool invertAnimation;
         public bool loopSelection;
+        public bool skipInit;
         [HideInInspector] public int index = 0;
 		
 	    [Header("SAVING")]
@@ -57,9 +58,11 @@ namespace Michsky.UI.Shift
                     PlayerPrefs.SetInt(selectorTag + "HSelectorValue", defaultIndex);
             }
 
-            label.text = itemList[defaultIndex].itemTitle;
-            labeHelper.text = label.text;
-            index = defaultIndex;
+            if (!skipInit) {
+                label.text = itemList[defaultIndex].itemTitle;
+                labeHelper.text = label.text;
+                index = defaultIndex;
+            }
 
             if(enableIndicators == true)
             {
@@ -310,8 +313,20 @@ namespace Michsky.UI.Shift
             return itemList[index].itemTitle;
         }
 
+        public int GetIndexFromItem(string itemTitle)
+        {
+            for (int i = 0; i < itemList.Count; i++) {
+                Item j = itemList[i];
+                if (j.itemTitle == itemTitle) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         public void UpdateUI()
         {
+            if (label == null) transform.Find("Text").GetComponent<TextMeshProUGUI>();
             label.text = itemList[index].itemTitle;
 
             if (enableIndicators == true)
@@ -350,6 +365,17 @@ namespace Michsky.UI.Shift
         public void ToggleSelectorButtons(bool b) {
             nextBtn.interactable = b;
             prevBtn.interactable = b;
+        }
+
+        public void SetSelector(string itemName)
+        {
+            for (int i = 0; i < itemList.Count; i++) {
+                if (itemList[i].itemTitle == itemName) {
+                    index = i;
+                    UpdateUI();
+                    break;
+                }
+            }
         }
     }
 }

@@ -913,6 +913,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -948,7 +949,7 @@ SkinnedMeshRenderer:
   m_RootBone: {fileID: 1297775745728991018}
   m_AABB:
     m_Center: {x: 0.0000027120113, y: 0.06558662, z: 0.04991454}
-    m_Extent: {x: 0.07665527, y: 0.026267821, z: 0.083758965}
+    m_Extent: {x: 0.1, y: 0.05, z: 0.1}
   m_DirtyAABB: 0
 --- !u!114 &7184064174757837462
 MonoBehaviour:

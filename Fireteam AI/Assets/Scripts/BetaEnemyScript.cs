@@ -8,6 +8,7 @@ using UnityEngine.AI;
 using UnityStandardAssets.Characters.FirstPerson;
 using Random = UnityEngine.Random;
 using SpawnMode = GameControllerScript.SpawnMode;
+using UnityEngine.SceneManagement;
 
 public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
@@ -18,14 +19,13 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	// Scan for players every 0.8 of a second instead of every frame
 	private const float PLAYER_SCAN_DELAY = 0.8f;
 	private const float ENV_DAMAGE_DELAY = 0.5f;
+	private const int ENEMY_FIRE_IGNORE = ~(1 << 13 | 1 << 14);
 
 	// Prefab references
 	public GameObject ammoBoxPickup;
 	public GameObject healthBoxPickup;
 	public AudioClip[] voiceClips;
 	public AudioClip[] gruntSounds;
-	public GameObject hitParticles;
-	public GameObject bulletImpact;
 	public GameObject bloodEffect;
 	public GameObject bloodEffectHeadshot;
 
@@ -139,29 +139,34 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
     // Testing mode - set in inspector
     //public bool testingMode;
 
-	// void Awake() {
-	// 	SceneManager.sceneLoaded += OnSceneFinishedLoading;
-	// }
-
-	// public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
-    // {
-    //     string levelName = SceneManager.GetActiveScene().name;
-	// 	if (levelName == "Title") {
-	// 		Destroy(gameObject);
-	// 		PhotonNetwork.Destroy(gameObject);
-	// 	}
-	// }
-
-    void Start()
-    {
-        if (gameControllerScript.matchType == 'C')
+	void Awake() {
+		if (gameControllerScript.matchType == 'C')
         {
             StartForCampaign();
         } else if (gameControllerScript.matchType == 'V')
         {
             StartForVersus();
         }
-    }
+		SceneManager.sceneLoaded += OnSceneFinishedLoading;
+	}
+
+	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+		if (!PhotonNetwork.IsMasterClient && !gameControllerScript.isVersusHostForThisTeam() && !pView.IsMine) {
+			pView.RPC("RpcAskServerForDataEnemies", RpcTarget.All);
+		}
+	}
+
+    // void Start()
+    // {
+    //     if (gameControllerScript.matchType == 'C')
+    //     {
+    //         StartForCampaign();
+    //     } else if (gameControllerScript.matchType == 'V')
+    //     {
+    //         StartForVersus();
+    //     }
+    // }
 
     // Use this for initialization
     void StartForCampaign () {
@@ -393,13 +398,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 		CheckForGunfireSounds ();
 		CheckTargetDead ();
-
-		// If disoriented, don't have the ability to do anything else except die
-		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
-			// StopVoices();
-			return;
-		}
-
 		HandleCrouching ();
 
 		if (enemyType == EnemyType.Patrol) {
@@ -409,6 +407,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		} else {
 			DecideActionScout ();
 		}
+
+		// If disoriented, don't have the ability to do anything else except die
+		if (actionState == ActionStates.Dead || actionState == ActionStates.Disoriented) return;
 
 		// Shoot at player
 		// Add !isCrouching if you don't want the AI to fire while crouched behind cover
@@ -461,13 +462,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 		CheckForGunfireSounds ();
 		CheckTargetDead ();
-
-		// If disoriented, don't have the ability to do anything else except die
-		if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
-			// StopVoices();
-			return;
-		}
-
 		HandleCrouching ();
 
 		if (enemyType == EnemyType.Patrol) {
@@ -477,6 +471,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		} else {
 			DecideActionScout ();
 		}
+		
+		// If disoriented, don't have the ability to do anything else except die
+		if (actionState == ActionStates.Dead || actionState == ActionStates.Disoriented) return;
 
 		// Shoot at player
 		// Add !isCrouching if you don't want the AI to fire while crouched behind cover
@@ -1075,8 +1072,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			return;
 		}
 
-		// Melee attack trumps all
-		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented) {
+		// Melee attack, disorientation, death trumps all
+		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
 			return;
 		}
 
@@ -1197,12 +1194,12 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				if (!EnvObstructionExists(headTransform.position, other.gameObject.transform.position) && !t.isLive && !t.PlayerHasBeenAffected(pView.ViewID)) {
 					// Determine how far from the explosion the enemy was
 					float distanceFromGrenade = Vector3.Distance(transform.position, other.gameObject.transform.position);
-					float blastRadius = other.gameObject.GetComponent<ThrowableScript>().blastRadius;
+					float blastRadius = t.blastRadius;
 					distanceFromGrenade = Mathf.Min(distanceFromGrenade, blastRadius);
 					float scale = 1f - (distanceFromGrenade / blastRadius);
 
 					// Scale damage done to enemy by the distance from the explosion
-					Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
+					Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[t.rootWeapon];
 					int damageReceived = (int)(grenadeStats.damage * scale);
 					// Deal damage to the enemy
 					TakeDamage(damageReceived);
@@ -1223,7 +1220,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					float scale = 1f - (distanceFromProjectile / blastRadius);
 
 					// Scale damage done to enemy by the distance from the explosion
-					Weapon projectileStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
+					Weapon projectileStats = InventoryScript.itemData.weaponCatalog[l.rootWeapon];
 					int damageReceived = (int)(projectileStats.damage * scale);
 					// Deal damage to the enemy
 					TakeDamage(damageReceived);
@@ -1266,6 +1263,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				disorientationTime = Mathf.Min(disorientationTime, ThrowableScript.MAX_FLASHBANG_TIME);
 				if (disorientationTime > 0f) {
 					UpdateActionState(ActionStates.Disoriented);
+					pView.RPC ("RpcSetIsCrouching", RpcTarget.All, false, gameControllerScript.teamMap);
 				}
                 // Validate that this enemy has already been affected
                 t.AddHitPlayer(pView.ViewID);
@@ -1304,6 +1302,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         if (playerNetworkId == PlayerData.playerdata.inGamePlayerReference.GetComponent<PhotonView>().ViewID) {
 			// Increment my kill score and show the kill popup for myself
 			PlayerData.playerdata.inGamePlayerReference.GetComponent<WeaponActionScript>().RewardKill(false);
+			PlayerData.playerdata.inGamePlayerReference.GetComponent<AudioControllerScript>().PlayKillSound();
 		}
 	}
 
@@ -1442,8 +1441,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			return;
 		}
 
-		// Melee attack trumps all
-		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented) {
+		// Melee attack, death, disorientation trumps all
+		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
 			return;
 		}
 
@@ -1727,16 +1726,16 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				playerPos = new Vector3(playerPos.x, playerPos.y + 0.5f, playerPos.z);
 			}
 			
-			Vector3 dir = playerPos - shootPoint.position;
+			Vector3 dir = playerPos - headTransform.position;
 
 			// Adding artificial stupidity - ensures that the player isn't hit every time by offsetting
 			// the shooting direction in x and y by two random numbers
-			float scaledOffset = ScaleOffset(Vector3.Distance(playerPos, shootPoint.position));
+			float scaledOffset = ScaleOffset(Vector3.Distance(playerPos, headTransform.position));
 			float xOffset = Random.Range (-scaledOffset, scaledOffset);
 			float yOffset = Random.Range (-scaledOffset, scaledOffset);
 			dir = new Vector3 (dir.x + xOffset, dir.y + yOffset, dir.z);
 			//Debug.DrawRay (shootPoint.position, dir * range, Color.red);
-			if (Physics.Raycast (shootPoint.position, dir, out hit)) {
+			if (Physics.Raycast (headTransform.position, dir, out hit, Mathf.Infinity, ENEMY_FIRE_IGNORE)) {
 				if (hit.transform.tag.Equals ("Player")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					PlayerActionScript ps = hit.transform.GetComponent<PlayerActionScript> ();
@@ -1745,23 +1744,20 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					ps.SetHitLocation (transform.position);
 				} else if (hit.transform.tag.Equals ("Human")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
-					BetaEnemyScript b = hit.transform.GetComponent<BetaEnemyScript>();
+					// BetaEnemyScript b = hit.transform.GetComponent<BetaEnemyScript>();
 					NpcScript n = hit.transform.GetComponent<NpcScript>();
 					if (n != null) {
 						n.TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, n.col.height));
 					}
-					if (b != null) {
-						b.TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height));
-					}
-				} else if (hit.transform.tag.Equals ("EnemyHead")) {
-					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
-					hit.transform.GetComponent<BetaEnemyScript>().TakeDamage(100);
+					// if (b != null) {
+					// 	b.TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height));
+					// }
 				} else if (hit.transform.tag.Equals("NpcHead")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					hit.transform.GetComponent<NpcScript>().TakeDamage(100);
 				} else {
-					pView.RPC ("RpcInstantiateBulletHole", RpcTarget.All, hit.point, hit.normal, hit.transform.gameObject.name, gameControllerScript.teamMap);
-					pView.RPC ("RpcInstantiateHitParticleEffect", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
+					Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
+                	pView.RPC("RpcHandleBulletVfxEnemy", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index), gameControllerScript.teamMap);
 				}
 			}
 		}
@@ -1778,23 +1774,14 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	[PunRPC]
-	void RpcInstantiateBulletHole(Vector3 point, Vector3 normal, string parentName, string team) {
+	void RpcHandleBulletVfxEnemy(Vector3 point, Vector3 normal, int terrainId, string team) {
         if (team != gameControllerScript.teamMap) return;
-        GameObject attachToObject = GameObject.Find(parentName);
-		if (!attachToObject) {
-			return;
-		}
-		GameObject bulletHoleEffect = Instantiate (bulletImpact, point, Quaternion.FromToRotation (Vector3.forward, normal));
-		bulletHoleEffect.transform.SetParent (attachToObject.transform);
-		Destroy (bulletHoleEffect, 3f);
-	}
-
-
-	[PunRPC]
-	void RpcInstantiateHitParticleEffect(Vector3 point, Vector3 normal, string team) {
-        if (team != gameControllerScript.teamMap) return;
-        GameObject hitParticleEffect = Instantiate (hitParticles, point, Quaternion.FromToRotation (Vector3.up, normal));
-		Destroy (hitParticleEffect, 1f);
+		if (gameObject.layer == 0) return;
+        if (terrainId == -1) return;
+        Terrain terrainHit = gameControllerScript.terrainMetaData[terrainId];
+        GameObject bulletHoleEffect = Instantiate(terrainHit.GetRandomBulletHole(), point, Quaternion.FromToRotation(Vector3.forward, normal));
+        bulletHoleEffect.transform.SetParent(terrainHit.gameObject.transform);
+        Destroy(bulletHoleEffect, 4f);
 	}
 
 	[PunRPC]
@@ -2044,7 +2031,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				ArrayList keysNearBy = new ArrayList ();
 				foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
 					GameObject p = playerStat.objRef;
-					if (!p || p.GetComponent<PlayerActionScript>().health <= 0)
+					if (p == null || p.GetComponent<PlayerActionScript>().health <= 0)
 						continue;
 					if (Vector3.Distance (transform.position, p.transform.position) < range + 20f) {
 						Vector3 toPlayer = p.transform.position - transform.position;
@@ -2575,6 +2562,86 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (envDamageTimer < ENV_DAMAGE_DELAY) {
 			envDamageTimer += Time.deltaTime;
 		}
+	}
+
+	[PunRPC]
+	void RpcAskServerForDataEnemies() {
+		if (PhotonNetwork.IsMasterClient || gameControllerScript.isVersusHostForThisTeam()) {
+			int playerTargetingId = 0;
+			
+			if (playerTargeting == null) {
+				playerTargetingId = -1;
+			} else if (playerTargeting == gameControllerScript.vipRef) {
+				playerTargetingId = -2;
+			} else {
+				playerTargetingId = playerTargeting.GetComponent<PhotonView>().Owner.ActorNumber;
+			}
+
+			pView.RPC("RpcSyncDataEnemies", RpcTarget.Others, rigid.useGravity, rigid.isKinematic, rigid.freezeRotation, marker.enabled,
+					navMesh.enabled, navMesh.speed, navMeshObstacle.enabled,
+					myCollider.height, myCollider.radius, myCollider.center.x, myCollider.center.y, myCollider.center.z, myCollider.enabled, headCollider.gameObject.layer,
+					gunRef.enabled, prevNavDestination.x, prevNavDestination.y, prevNavDestination.z, prevWasStopped, actionState, firingState, isCrouching, health, disorientationTime,
+					spawnPos.x, spawnPos.y, spawnPos.z, alertStatus, wasMasterClient, currentBullets, fireTimer, playerTargetingId, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z,
+					suspicionMeter, suspicionCoolDownDelay, increaseSuspicionDelay, alertTeamAfterAlertedTimer, inCover, crouchMode, gameControllerScript.teamMap);
+		}
+	}
+
+	[PunRPC]
+	void RpcSyncDataEnemies(bool useGravity, bool isKinematic, bool freezeRotation, bool markerEnabled,
+					bool navMeshEnabled, float navMeshSpeed,
+					bool navMeshObstacleEnabled, float colliderHeight, float colliderRadius, float colliderCenterX, float colliderCenterY,
+					float colliderCenterZ, bool colliderEnabled, int headColliderLayer, bool gunRefEnabled, float preNavDestX, float preNavDestY,
+					float preNavDestZ, bool prevWasStopped, ActionStates acState, FiringStates fiState, bool isCrouching, int health, float disorientationTime,
+					float spawnPosX, float spawnPosY, float spawnPosZ, AlertStatus alertStatus, bool wasMasterClient, int currentBullets, float fireTimer,
+					int playerTargetingId, float lastSeenPlayerPosX, float lastSeenPlayerPosY, float lastSeenPlayerPosZ, float suspicionMeter, float suspicionCoolDownDelay,
+					float increaseSuspicionDelay, float alertTeamAfterAlertedTimer, bool inCover, CrouchMode crouchMode, string team) {
+		if (team != gameControllerScript.teamMap) return;
+		// if (playerDespawned) {
+		// 	modeler.DespawnPlayer();
+		// } else {
+		// 	modeler.RespawnPlayer();
+		// }
+		rigid.useGravity = useGravity;
+		rigid.isKinematic = isKinematic;
+		rigid.freezeRotation = freezeRotation;
+		marker.enabled = markerEnabled;
+		// navMesh.isStopped = isStopped;
+		// navMesh.destination = new Vector3(destinationX, destinationY, destinationZ);
+		navMesh.speed = navMeshSpeed;
+		navMesh.enabled = navMeshEnabled;
+		navMeshObstacle.enabled = navMeshObstacleEnabled;
+		myCollider.height = colliderHeight;
+		myCollider.radius = colliderRadius;
+		myCollider.center = new Vector3(colliderCenterX, colliderCenterY, colliderCenterZ);
+		myCollider.enabled = colliderEnabled;
+		headCollider.gameObject.layer = headColliderLayer;
+		gunRef.enabled = gunRefEnabled;
+		prevNavDestination = new Vector3(preNavDestX, preNavDestY, preNavDestZ);
+		this.prevWasStopped = prevWasStopped;
+		actionState = acState;
+		firingState = fiState;
+		this.isCrouching = isCrouching;
+		this.health = health;
+		this.disorientationTime = disorientationTime;
+		this.spawnPos = new Vector3(spawnPosX, spawnPosY, spawnPosZ);
+		this.alertStatus = alertStatus;
+		this.wasMasterClient = wasMasterClient;
+		this.currentBullets = currentBullets;
+		this.fireTimer = fireTimer;
+		if (playerTargetingId == -1) {
+			playerTargeting = null;
+		} else if (playerTargetingId == -2) {
+			playerTargeting = gameControllerScript.vipRef;
+		} else {
+			playerTargeting = (GameObject)GameControllerScript.playerList [playerTargetingId].objRef;
+		}
+		lastSeenPlayerPos = new Vector3(lastSeenPlayerPosX, lastSeenPlayerPosY, lastSeenPlayerPosZ);
+		this.suspicionMeter = suspicionMeter;
+		this.suspicionCoolDownDelay = suspicionCoolDownDelay;
+		this.increaseSuspicionDelay = increaseSuspicionDelay;
+		this.alertTeamAfterAlertedTimer = alertTeamAfterAlertedTimer;
+		this.inCover = inCover;
+		this.crouchMode = crouchMode;
 	}
 
 }

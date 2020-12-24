@@ -137,12 +137,13 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 298226323729355103}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -219,7 +220,7 @@ SkinnedMeshRenderer:
   m_RootBone: {fileID: 6412392246503161470}
   m_AABB:
     m_Center: {x: 0.0013927186, y: 0.0026729985, z: -0.000052300515}
-    m_Extent: {x: 0.003, y: 0.0039681336, z: 0.0074448623}
+    m_Extent: {x: 0.005, y: 0.005, z: 0.009}
   m_DirtyAABB: 0
 --- !u!114 &6474727382475513516
 MonoBehaviour:

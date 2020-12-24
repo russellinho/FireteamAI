@@ -40,17 +40,15 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	// Use this for initialization
 	void Awake() {
 		carriedByPlayerId = -1;
-		// SceneManager.sceneLoaded += OnSceneFinishedLoading;
+		SceneManager.sceneLoaded += OnSceneFinishedLoading;
 	}
 
-	// public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
-    // {
-    //     string levelName = SceneManager.GetActiveScene().name;
-	// 	if (levelName == "Title") {
-	// 		Destroy(gameObject);
-	// 		PhotonNetwork.Destroy(gameObject);
-	// 	}
-	// }
+	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+		if (!PhotonNetwork.IsMasterClient && !gameController.isVersusHostForThisTeam()) {
+			pView.RPC("RpcAskServerForDataNpc", RpcTarget.All);
+		}
+	}
 
 	void Update()
     {
@@ -118,6 +116,18 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			SceneManager.MoveGameObjectToScene(gameObject, SceneManager.GetActiveScene());
 		}
     }
+
+	public void OnPlayerLeftGame(int actorNo) {
+		pView.RPC("RpcOnPlayerLeftGame", RpcTarget.All, actorNo);
+	}
+
+	[PunRPC]
+	void RpcOnPlayerLeftGame(int actorNo) {
+		if (actorNo == carriedByPlayerId) {
+			ToggleIsCarrying(false, -1);
+			SceneManager.MoveGameObjectToScene(gameObject, SceneManager.GetActiveScene());
+		}
+	}
 		
 	public void ToggleIsCarrying(bool b, int carriedByPlayerId) {
 		this.carriedByPlayerId = carriedByPlayerId;
@@ -134,7 +144,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			}
 		} else {
 			actionState = ActionStates.Carried;
-			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].carryingSlotRef;
+			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].objRef.GetComponent<PlayerActionScript>().carryingSlot;
 			ToggleCollider(false);
 			gameObject.transform.SetParent(carriedByTransform);
 			transform.localPosition = Vector3.zero;
@@ -279,7 +289,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 					float scale = 1f - (distanceFromGrenade / blastRadius);
 
 					// Scale damage done to enemy by the distance from the explosion
-					Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
+					Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[t.rootWeapon];
 					int damageReceived = (int)(grenadeStats.damage * scale);
 					// Deal damage to the enemy
 					TakeDamage(damageReceived);
@@ -300,7 +310,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 					float scale = 1f - (distanceFromProjectile / blastRadius);
 
 					// Scale damage done to enemy by the distance from the explosion
-					Weapon projectileStats = InventoryScript.itemData.weaponCatalog[other.gameObject.GetComponent<WeaponMeta>().weaponName];
+					Weapon projectileStats = InventoryScript.itemData.weaponCatalog[l.rootWeapon];
 					int damageReceived = (int)(projectileStats.damage * scale);
 					// Deal damage to the enemy
 					TakeDamage(damageReceived);
@@ -430,6 +440,33 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 
 			// float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
 			// pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
+		}
+	}
+
+	[PunRPC]
+	void RpcAskServerForDataNpc() {
+		if (PhotonNetwork.IsMasterClient || gameController.isVersusHostForThisTeam()) {
+			pView.RPC("RpcSyncDataNpc", RpcTarget.Others, health, carriedByPlayerId, actionState, firingState, deathBy, envDamageTimer, disorientationTime, 
+					transform.position.x, transform.position.y, transform.position.z, gameController.teamMap);
+		}
+	}
+
+	[PunRPC]
+	void RpcSyncDataNpc(int health, int carriedByPlayerId, ActionStates acState, FiringStates firingState, int deathBy, float envDamageTimer, float disorientationTimer, 
+					float posX, float posY, float posZ, string team) {
+		if (team != gameController.teamMap) return;
+		this.health = health;
+		this.carriedByPlayerId = carriedByPlayerId;
+		this.actionState = acState;
+		this.firingState = firingState;
+		this.deathBy = deathBy;
+		this.envDamageTimer = envDamageTimer;
+		this.disorientationTime = disorientationTimer;
+		transform.position = new Vector3(posX, posY, posZ);
+		if (carriedByPlayerId == -1) {
+			ToggleIsCarrying(false, -1);
+		} else {
+			ToggleIsCarrying(true, carriedByPlayerId);
 		}
 	}
 

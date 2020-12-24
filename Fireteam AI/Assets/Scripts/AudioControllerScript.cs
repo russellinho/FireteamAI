@@ -16,6 +16,7 @@ public class AudioControllerScript : MonoBehaviour {
 	private const int ECHO_DIFFERENCE = ECHO_START_VALUE - ECHO_END_VALUE;
 
 	private GameControllerScript gameControllerRef;
+	public PlayerHUDScript playerHUDScript;
 
 	// Audio stuff
 	public AudioLowPassFilter audioMuffle;
@@ -33,9 +34,8 @@ public class AudioControllerScript : MonoBehaviour {
 	private float flashbangRingThird;
 
 	// Clips
-	public AudioClip stealthMusic;
-	public AudioClip assaultMusic;
 	public AudioClip headshotSound;
+	public AudioClip killSound;
 	public AudioClip playerHitSound;
 	public AudioClip playerGruntSound1;
 	public AudioClip playerGruntSound2;
@@ -48,8 +48,10 @@ public class AudioControllerScript : MonoBehaviour {
 	private bool wasRunning;
 	private PhotonView pView;
 
+	private bool initialized;
+
 	// Use this for initialization
-	void Start () {
+	public void Initialize () {
 		wasRunning = false;
 		fxSound2 = fxRef.GetComponents<AudioSource>() [1];
 		pView = GetComponent<PhotonView> ();
@@ -63,11 +65,14 @@ public class AudioControllerScript : MonoBehaviour {
 			fxSound7 = fxRefs [6];
 			PlayMissionStartSound ();
 		}
-
+		initialized = true;
 	}
 
 	// Update is called once per frame
 	void Update () {
+		if (!initialized) {
+			return;
+		}
 		// Ensure we can access game controller before we begin
 		if (!pView.IsMine) {
 			return;
@@ -132,6 +137,14 @@ public class AudioControllerScript : MonoBehaviour {
 		}
 		fxSound1.clip = headshotSound;
 		fxSound1.Play ();
+	}
+
+	public void PlayKillSound() {
+		if (!pView.IsMine) {
+			return;
+		}
+		fxSound1.clip = killSound;
+		fxSound1.Play();
 	}
 
 	public void PlayCautionSound() {

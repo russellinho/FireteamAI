@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using UnityEngine.SceneManagement;
 
 public class SpectatorScript : MonoBehaviour {
 
@@ -11,8 +12,6 @@ public class SpectatorScript : MonoBehaviour {
 	private const float INITIAL_SPECTATE_DISTANCE = 6f;
 	private const float MAX_SPECTATE_DISTANCE = 8f;
 	private const float MIN_SPECTATE_DISTANCE = 3f;
-	private Vector3 gameOverCamPos = new Vector3(81f, 30f, 5f);
-	private Vector3 gameOverCamRot = new Vector3(0f, -40f, 0f);
 
 	// Reference to the player we're currently following
 	public GameObject following;
@@ -36,6 +35,7 @@ public class SpectatorScript : MonoBehaviour {
 
 		foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
 			GameObject o = playerStat.objRef;
+			if (o == null) continue;
 			PlayerActionScript p = o.GetComponent<PlayerActionScript> ();
             if (p.health > 0 && !o.GetComponent<PhotonView>().IsMine) {
 				following = o;
@@ -87,6 +87,7 @@ public class SpectatorScript : MonoBehaviour {
 		bool currentIdFound = false;
 		foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
 			GameObject o = playerStat.objRef;
+			if (o == null) continue;
 			if (o.GetComponent<PlayerActionScript> ().health > 0) {
 				// If we haven't defined first person in the collection yet, define it
 				if (!first) {
@@ -115,8 +116,16 @@ public class SpectatorScript : MonoBehaviour {
 	public void GameOverCam() {
 		gameOverLock = true;
 		rotationLock = true;
-		transform.position = gameOverCamPos;
-		transform.rotation = Quaternion.Euler (gameOverCamRot);
+		if (SceneManager.GetActiveScene().name.StartsWith("Badlands1")) {
+			transform.position = new Vector3(1291f, 30.64f, 1098f);
+			transform.rotation = Quaternion.Euler(15.9f, 74.1f, 0f);
+		} else if (SceneManager.GetActiveScene().name.StartsWith("Badlands2")) {
+			transform.position = new Vector3(68.7f, 9.77f, 9.2f);
+			transform.rotation = Quaternion.Euler(7.7f, 400f, 0f);
+		} else {
+			transform.position = Vector3.zero;
+			transform.rotation = Quaternion.identity;
+		}
 	}
 
 }
