@@ -212,6 +212,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject modShopMeleeWeaponTabs;
 	public enum ConfirmType {KickPlayer};
 	public ConfirmType confirmType;
+	public GlobalChat chatManagerCamp;
+	public GlobalChat chatManagerVersus;
 
 	// Use this for initialization
 	void Awake() {
@@ -3241,6 +3243,21 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		mainPanels.blocksRaycasts = true;
 		mainPanelManager.OpenFirstTab();
 		mainPanelManager.OpenPanel("Title");
+	}
+
+	public void JoinCampaignGlobalChat()
+	{
+		PlayerData.playerdata.globalChatClient.SubscribeToGlobalChat('C');
+	}
+
+	public void JoinVersusGlobalChat()
+	{
+		PlayerData.playerdata.globalChatClient.SubscribeToGlobalChat('V');
+	}
+
+	public void LeaveGlobalChats()
+	{
+		PlayerData.playerdata.globalChatClient.UnsubscribeFromGlobalChat();
 	}
 		
 }

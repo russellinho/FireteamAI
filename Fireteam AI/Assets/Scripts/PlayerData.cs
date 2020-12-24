@@ -43,7 +43,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     public static PlayerData playerdata;
     public bool disconnectedFromServer;
     public string disconnectReason;
-    public bool testMode;
     private bool dataLoadedFlag;
     private bool triggerEmergencyExitFlag;
     private string emergencyExitMessage;
@@ -59,6 +58,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     public GameObject inGamePlayerReference;
     public TitleControllerScript titleRef;
     public GameOverController gameOverControllerRef;
+    public GlobalChatClient globalChatClient;
     public Texture[] rankInsignias;
 
     void Awake()
@@ -132,6 +132,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
     void Update() {
         if (dataLoadedFlag) {
+            globalChatClient.Initialize(PlayerData.playerdata.info.Playername);
             InstantiatePlayer();
             titleRef.SetPlayerStatsForTitle();
             titleRef.ToggleLoadingScreen(false);
@@ -214,6 +215,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         string levelName = SceneManager.GetActiveScene().name;
         if (levelName.Equals("Badlands1") || levelName.Equals("Badlands1_Red") || levelName.Equals("Badlands1_Blue"))
         {
+            globalChatClient.UnsubscribeFromGlobalChat();
             string characterPrefabName = GetCharacterPrefabName();
             SpawnPlayer(characterPrefabName, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0]);
             AskOthersForThemselves();
@@ -222,6 +224,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             //     Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
             //     Quaternion.Euler(Vector3.zero));
         } else if (levelName.Equals("Badlands2") || levelName.Equals("Badlands2_Red") || levelName.Equals("Badlands2_Blue")) {
+            globalChatClient.UnsubscribeFromGlobalChat();
             string characterPrefabName = GetCharacterPrefabName();
             SpawnPlayer(characterPrefabName, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1]);
             AskOthersForThemselves();
@@ -514,6 +517,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     {
         if (titleRef == null) {
             titleRef = GameObject.Find("TitleController").GetComponent<TitleControllerScript>();
+        }
+        if (globalChatClient == null) {
+            globalChatClient = GameObject.Find("GlobalChatClient").GetComponent<GlobalChatClient>();
         }
         playerDataModifyLegalFlag = true;
         // Check if the DB has equipped data for the player. If not, then set default char and equips.
