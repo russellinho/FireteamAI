@@ -527,7 +527,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 50d04e5e47e8c6b44bfeef72a69c77f5, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 8d0f69467a70f4f16b3a12a3f42bdf98, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -25951,8 +25951,8 @@ MonoBehaviour:
   hitmarkerSound: {fileID: 8300000, guid: f5f9c7f44fd0db94fb7457a968a1def7, type: 3}
   sirenSound: {fileID: 8300000, guid: e4fdcd319d7fc2f459e5894d9c267ee5, type: 3}
   missionStartSound: {fileID: 8300000, guid: d7c0f3c0f50863143a8e354f4786f6b5, type: 3}
-  cautionSound: {fileID: 8300000, guid: e1f6f769003b1ce4db2348eab63c8679, type: 3}
-  detectedSound: {fileID: 8300000, guid: 54de29992fc5bf949bcb5eb7d52b8fcf, type: 3}
+  cautionSound: {fileID: 8300000, guid: 619aad4b55767445aa5d50082ec885da, type: 3}
+  detectedSound: {fileID: 8300000, guid: 2921c9e78f7fe4665820f80e3128dbc4, type: 3}
 --- !u!54 &4997301263046971754
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -567,7 +567,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     {
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                         hudScript.InstantiateHitmarker();
-                        audioController.PlayHitmarkerSound();
+                        // audioController.PlayHitmarkerSound();
                         b.TakeDamage((int)meleeStats.damage);
                         b.PlayGruntSound();
                         b.SetAlerted();
@@ -646,7 +646,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     if (beforeHp > 0)
                     {
                         hudScript.InstantiateHitmarker();
-                        audioController.PlayHitmarkerSound();
+                        // audioController.PlayHitmarkerSound();
                         b.TakeDamage(thisDamageDealt);
                         b.PlayGruntSound();
                         b.SetAlerted();
@@ -786,7 +786,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                             if (beforeHp > 0)
                             {
                                 hudScript.InstantiateHitmarker();
-                                audioController.PlayHitmarkerSound();
+                                // audioController.PlayHitmarkerSound();
                                 //hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
                                 b.PlayGruntSound();
                                 b.SetAlerted();
