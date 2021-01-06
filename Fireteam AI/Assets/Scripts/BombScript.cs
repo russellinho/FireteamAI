@@ -14,8 +14,6 @@ public class BombScript : MonoBehaviour {
 		
 	public void Defuse() {
 		defused = true;
-		GetComponent<MeshRenderer> ().material.color = Color.white;
-		GetComponentInChildren<SpriteRenderer> ().enabled = false;
 	}
 
 }
