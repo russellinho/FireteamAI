@@ -51,7 +51,7 @@ public class InventoryScript : MonoBehaviour
                     }
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    characterCatalog.Add(itemName, new Character(itemName, char.Parse(d.Child("gender").Value.ToString()), d.Child("prefabPath").Value.ToString(), int.Parse(d.Child("fpcFullSkinPath").Value.ToString()), int.Parse(d.Child("fpcNoSkinPath").Value.ToString()), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), skinsInt, int.Parse(d.Child("gpPrice").Value.ToString()), purchasable, d.Child("defaultTop").Value.ToString(), d.Child("defaultBottom").Value.ToString(), deleteable));
+                    characterCatalog.Add(itemName, new Character(itemName, char.Parse(d.Child("gender").Value.ToString()), d.Child("prefabPath").Value.ToString(), int.Parse(d.Child("fpcFullSkinPath").Value.ToString()), int.Parse(d.Child("fpcNoSkinPath").Value.ToString()), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), skinsInt, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, d.Child("defaultTop").Value.ToString(), d.Child("defaultBottom").Value.ToString(), deleteable));
                 }
 
                 // Get tops
@@ -80,7 +80,7 @@ public class InventoryScript : MonoBehaviour
                     string[] characterRestrictionsString = (characterRestrictions == null ? new string[0]{} : characterRestrictions.ToString().Split(','));
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Top", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), purchasable, deleteable));
+                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Top", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
                 }
 
                 // Get bottoms
@@ -109,7 +109,7 @@ public class InventoryScript : MonoBehaviour
                     string[] characterRestrictionsString = (characterRestrictions == null ? new string[0]{} : characterRestrictions.ToString().Split(','));
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Bottom", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), purchasable, deleteable));
+                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Bottom", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
                 }
 
                 // Get footwear
@@ -138,7 +138,7 @@ public class InventoryScript : MonoBehaviour
                     string[] characterRestrictionsString = (characterRestrictions == null ? new string[0]{} : characterRestrictions.ToString().Split(','));
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Footwear", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), purchasable, deleteable));
+                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Footwear", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
                 }
 
                 // Get facewear
@@ -167,7 +167,7 @@ public class InventoryScript : MonoBehaviour
                     string[] characterRestrictionsString = (characterRestrictions == null ? new string[0]{} : characterRestrictions.ToString().Split(','));
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Facewear", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), purchasable, deleteable));
+                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Facewear", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
                 }
 
                 // Get headgear
@@ -196,7 +196,7 @@ public class InventoryScript : MonoBehaviour
                     string[] characterRestrictionsString = (characterRestrictions == null ? new string[0]{} : characterRestrictions.ToString().Split(','));
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Headgear", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), purchasable, deleteable));
+                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Headgear", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
                 }
 
                 // Get armor
@@ -217,7 +217,7 @@ public class InventoryScript : MonoBehaviour
                     float armorFloat = (armor == null ? 0f : float.Parse(armor.ToString()));
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    armorCatalog.Add(itemName, new Armor(itemName, int.Parse(malePrefabPathTop.ToString()), int.Parse(malePrefabPathBottom.ToString()), int.Parse(femalePrefabPathTop.ToString()), int.Parse(femalePrefabPathBottom.ToString()), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), speedFloat, staminaFloat, armorFloat, int.Parse(d.Child("gpPrice").Value.ToString()), purchasable, deleteable));
+                    armorCatalog.Add(itemName, new Armor(itemName, int.Parse(malePrefabPathTop.ToString()), int.Parse(malePrefabPathBottom.ToString()), int.Parse(femalePrefabPathTop.ToString()), int.Parse(femalePrefabPathBottom.ToString()), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), speedFloat, staminaFloat, armorFloat, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
                 }
 
                 // Get weapons
@@ -260,7 +260,7 @@ public class InventoryScript : MonoBehaviour
                             firingModesInt[i] = int.Parse(firingModes[i]);
                         }
                     }
-                    weaponCatalog.Add(itemName, new Weapon(itemName, d.Child("type").Value.ToString(), d.Child("category").Value.ToString(), int.Parse(d.Child("prefabPath").Value.ToString()), projectilePathString, d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), damage == null ? -1f : float.Parse(damage.ToString()), mobility == null ? -1f : float.Parse(mobility.ToString()), fireRate == null ? -1f : float.Parse(fireRate.ToString()), accuracy == null ? -1f : float.Parse(accuracy.ToString()), recoil == null ? -1f : float.Parse(recoil.ToString()), range == null ? -1f : float.Parse(range.ToString()), clipCapacity == null ? -1 : int.Parse(clipCapacity.ToString()), maxAmmo == null ? -1 : int.Parse(maxAmmo.ToString()), swayFloat, lungeRangeFloat, isSniperBool, canBeModdedBool, suppressorCompatibleBool, sightCompatibleBool, int.Parse(d.Child("gpPrice").Value.ToString()), purchasableBool, deleteableBool, firingModesInt));
+                    weaponCatalog.Add(itemName, new Weapon(itemName, d.Child("type").Value.ToString(), d.Child("category").Value.ToString(), int.Parse(d.Child("prefabPath").Value.ToString()), projectilePathString, d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), damage == null ? -1f : float.Parse(damage.ToString()), mobility == null ? -1f : float.Parse(mobility.ToString()), fireRate == null ? -1f : float.Parse(fireRate.ToString()), accuracy == null ? -1f : float.Parse(accuracy.ToString()), recoil == null ? -1f : float.Parse(recoil.ToString()), range == null ? -1f : float.Parse(range.ToString()), clipCapacity == null ? -1 : int.Parse(clipCapacity.ToString()), maxAmmo == null ? -1 : int.Parse(maxAmmo.ToString()), swayFloat, lungeRangeFloat, isSniperBool, canBeModdedBool, suppressorCompatibleBool, sightCompatibleBool, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasableBool, deleteableBool, firingModesInt));
                 }
 
                 // Get mods
@@ -279,7 +279,7 @@ public class InventoryScript : MonoBehaviour
                     object maxAmmoBoost = d.Child("maxAmmoBoost").Value;
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    modCatalog.Add(itemName, new Mod(itemName, d.Child("category").Value.ToString(), int.Parse(d.Child("prefabPath").Value.ToString()), d.Child("thumbnailPath").Value.ToString(), int.Parse(d.Child("modIndex").Value.ToString()), crosshairPathString, d.Child("description").Value.ToString(), float.Parse(damageBoost.ToString()), float.Parse(accuracyBoost.ToString()), float.Parse(recoilBoost.ToString()), float.Parse(rangeBoost.ToString()), int.Parse(clipCapacityBoost.ToString()), int.Parse(maxAmmoBoost.ToString()), int.Parse(d.Child("gpPrice").Value.ToString()), purchasable, deleteable));
+                    modCatalog.Add(itemName, new Mod(itemName, d.Child("category").Value.ToString(), int.Parse(d.Child("prefabPath").Value.ToString()), d.Child("thumbnailPath").Value.ToString(), int.Parse(d.Child("modIndex").Value.ToString()), crosshairPathString, d.Child("description").Value.ToString(), float.Parse(damageBoost.ToString()), float.Parse(accuracyBoost.ToString()), float.Parse(recoilBoost.ToString()), float.Parse(rangeBoost.ToString()), int.Parse(clipCapacityBoost.ToString()), int.Parse(maxAmmoBoost.ToString()), int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
                 }
             }
 

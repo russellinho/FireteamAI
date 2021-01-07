@@ -62,7 +62,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject blockBlur;
 	private string itemBeingPurchased;
 	private string typeBeingPurchased;
-	private uint totalGpCostBeingPurchased;
+	private uint totalCostBeingPurchased;
 	private char currencyTypeBeingPurchased;
 	public bool confirmingTransaction;
 	private bool resettingKeysFlag;
@@ -584,7 +584,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Headgear";
 			s.itemDescription = thisHeadgear.description;
-			s.gpPriceTxt.text = ""+thisHeadgear.gpPrice + " GP";
+			if (thisHeadgear.gpPrice == 0) {
+				s.priceTxt.text = ""+thisHeadgear.kashPrice + " KASH";
+			} else {
+				s.priceTxt.text = ""+thisHeadgear.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisHeadgear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
@@ -637,7 +641,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Facewear";
 			s.itemDescription = thisFacewear.description;
-			s.gpPriceTxt.text = ""+thisFacewear.gpPrice + " GP";
+			if (thisFacewear.gpPrice == 0) {
+				s.priceTxt.text = ""+thisFacewear.kashPrice + " KASH";
+			} else {
+				s.priceTxt.text = ""+thisFacewear.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisFacewear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
@@ -690,7 +698,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Armor";
 			s.itemDescription = thisArmor.description;
-			s.gpPriceTxt.text = ""+thisArmor.gpPrice + " GP";
+			if (thisArmor.gpPrice == 0) {
+				s.priceTxt.text = ""+thisArmor.kashPrice + " KASH";
+			} else {
+				s.priceTxt.text = ""+thisArmor.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisArmor.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
@@ -743,7 +755,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Top";
 			s.itemDescription = thisEquipment.description;
-			s.gpPriceTxt.text = ""+thisEquipment.gpPrice + " GP";
+			if (thisEquipment.gpPrice == 0) {
+				s.priceTxt.text = ""+thisEquipment.kashPrice + " KASH";
+			} else {
+				s.priceTxt.text = ""+thisEquipment.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisEquipment.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
@@ -796,7 +812,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Bottom";
 			s.itemDescription = thisBottom.description;
-			s.gpPriceTxt.text = ""+thisBottom.gpPrice + " GP";
+			if (thisBottom.gpPrice == 0) {
+				s.priceTxt.text = ""+thisBottom.kashPrice + " KASH";
+			} else {
+				s.priceTxt.text = ""+thisBottom.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisBottom.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
@@ -849,7 +869,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Footwear";
 			s.itemDescription = thisFootwear.description;
-			s.gpPriceTxt.text = ""+thisFootwear.gpPrice + " GP";
+			if (thisFootwear.gpPrice == 0) {
+				s.priceTxt.text = ""+thisFootwear.kashPrice + " KASH";
+			} else {
+				s.priceTxt.text = ""+thisFootwear.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisFootwear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
@@ -906,7 +930,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -999,7 +1027,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1088,7 +1120,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1177,7 +1213,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1266,7 +1306,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1355,7 +1399,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1444,7 +1492,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1533,7 +1585,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1622,7 +1678,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1711,7 +1771,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1800,7 +1864,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1889,7 +1957,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1979,7 +2051,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -2068,7 +2144,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -2157,7 +2237,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -2213,7 +2297,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Mod";
 			s.itemDescription = m.description;
 			s.weaponCategory = m.category;
-            s.gpPriceTxt.text = "" + m.gpPrice + " GP";
+			if (m.gpPrice == 0) {
+				s.priceTxt.text = "" + m.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + m.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -2238,7 +2326,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Mod";
 			s.itemDescription = m.description;
 			s.weaponCategory = m.category;
-            s.gpPriceTxt.text = "" + m.gpPrice + " GP";
+			if (m.gpPrice == 0) {
+				s.priceTxt.text = "" + m.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + m.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -2263,7 +2355,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Mod";
 			s.itemDescription = m.description;
 			s.weaponCategory = m.category;
-            s.gpPriceTxt.text = "" + m.gpPrice + " GP";
+			if (m.gpPrice == 0) {
+				s.priceTxt.text = "" + m.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + m.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -2316,7 +2412,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Character";
 			s.itemDescription = c.description;
-            s.gpPriceTxt.text = "" + c.gpPrice + " GP";
+			if (c.gpPrice == 0) {
+            	s.priceTxt.text = "" + c.kashPrice + " KASH";
+			} else {
+				s.priceTxt.text = "" + c.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(c.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
@@ -2691,15 +2791,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		return null;
 	}
 
-	public void PreparePurchase(string itemName, string itemType, Texture thumb) {
+	public void PreparePurchase(string itemName, string itemType, char currencyType, Texture thumb) {
 		PrepareDurationDropdown(itemType == "Mod");
 		durationSelection.index = 0;
 		durationSelection.UpdateUI();
 		itemBeingPurchased = itemName;
 		typeBeingPurchased = itemType;
+		currencyTypeBeingPurchased = currencyType;
 		makePurchasePopup.GetComponentInChildren<RawImage>().texture = thumb;
         // Initialize with 1 day price
-        SetTotalGPCost(0, durationSelection.GetCurrentItem());
+        SetTotalCost(0, durationSelection.GetCurrentItem());
 		TriggerMakePurchasePopup();
     }
 
@@ -2719,7 +2820,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnConfirmPreparePurchaseClicked() {
 		confirmingTransaction = true;
 		makePurchasePopup.ModalWindowOut();
-		TriggerConfirmPopup("ARE YOU SURE YOU WOULD LIKE TO BUY " + itemBeingPurchased + " FOR " + durationSelection.GetCurrentItem() + " FOR " + totalGpCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + "?");
+		TriggerConfirmPopup("ARE YOU SURE YOU WOULD LIKE TO BUY " + itemBeingPurchased + " FOR " + durationSelection.GetCurrentItem() + " FOR " + totalCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + "?");
 	}
 
 	public void OnConfirmPurchaseClicked() {
@@ -2729,14 +2830,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void OnDurationSelect() {
 		int durationInput = durationSelection.index;
-        SetTotalGPCost(durationInput, durationSelection.GetCurrentItem());
+        SetTotalCost(durationInput, durationSelection.GetCurrentItem());
 	}
 
-    void SetTotalGPCost(int duration, string durationText)
+    void SetTotalCost(int duration, string durationText)
     {
-        totalGpCostBeingPurchased = GetGPCostForItemAndType(itemBeingPurchased, typeBeingPurchased, duration);
-		currencyTypeBeingPurchased = 'G';
-        totalGpCostTxt.text = "YOU ARE BUYING [" + itemBeingPurchased + "] FOR [" + durationText + "] FOR " + totalGpCostBeingPurchased + " GP.";
+        totalCostBeingPurchased = GetCostForItemAndType(itemBeingPurchased, typeBeingPurchased, duration);
+        totalGpCostTxt.text = "YOU ARE BUYING [" + itemBeingPurchased + "] FOR [" + durationText + "] FOR " + totalCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + ".";
     }
 
 	public void OnCancelPurchaseClicked() {
@@ -2759,14 +2859,25 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         bool isStacking = (hasDuplicateCheck >= 0f && !Mathf.Approximately(0f, hasDuplicateCheck));
         float totalNewDuration = ConvertDurationInput(durationSelection.index);
         totalNewDuration = (Mathf.Approximately(totalNewDuration, -1f) ? totalNewDuration : totalNewDuration + hasDuplicateCheck);
-		if (PlayerData.playerdata.info.Gp >= totalGpCostBeingPurchased) {
-			PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, "gp");
-			confirmPopup.ModalWindowOut();
-		} else {	
-			TriggerAlertPopup("You do not have enough GP to purchase this item.");
-			TriggerBlockScreen(false);
-			confirmingTransaction = false;
-		}	
+		if (currencyTypeBeingPurchased == 'G') {
+			if (PlayerData.playerdata.info.Gp >= totalCostBeingPurchased) {
+				PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, "gp");
+				confirmPopup.ModalWindowOut();
+			} else {	
+				TriggerAlertPopup("You do not have enough GP to purchase this item.");
+				TriggerBlockScreen(false);
+				confirmingTransaction = false;
+			}	
+		} else if (currencyTypeBeingPurchased == 'K') {
+			if (PlayerData.playerdata.info.Kash >= totalCostBeingPurchased) {
+				PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, "kash");
+				confirmPopup.ModalWindowOut();
+			} else {	
+				TriggerAlertPopup("You do not have enough KASH to purchase this item.");
+				TriggerBlockScreen(false);
+				confirmingTransaction = false;
+			}	
+		}
 	}
 
 	float ConvertDurationInput(int durationSelection) {
@@ -2791,7 +2902,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		return duration;
 	}
 
-	uint GetGPCostForItemAndType(string itemName, string itemType, int duration) {
+	uint GetCostForItemAndType(string itemName, string itemType, int duration) {
         float durationMultiplier = 1f;
 		
 		if (itemType != "Mod") {
@@ -2815,15 +2926,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 		}
 		if (itemType.Equals("Armor")) {
-			return (uint)(InventoryScript.itemData.armorCatalog[itemName].gpPrice * durationMultiplier);
+			return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.armorCatalog[itemName].gpPrice : InventoryScript.itemData.armorCatalog[itemName].kashPrice) * durationMultiplier);
 		} else if (itemType.Equals("Character")) {
-			return (uint)(InventoryScript.itemData.characterCatalog[itemName].gpPrice * durationMultiplier);
+			return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.characterCatalog[itemName].gpPrice : InventoryScript.itemData.characterCatalog[itemName].kashPrice) * durationMultiplier);
 		} else if (itemType.Equals("Weapon")) {
-			return (uint)(InventoryScript.itemData.weaponCatalog[itemName].gpPrice * durationMultiplier);
+			return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.weaponCatalog[itemName].gpPrice : InventoryScript.itemData.weaponCatalog[itemName].kashPrice) * durationMultiplier);
 		} else if (itemType.Equals("Mod")) {
-			return (uint)(InventoryScript.itemData.modCatalog[itemName].gpPrice * durationMultiplier);
+			return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.modCatalog[itemName].gpPrice : InventoryScript.itemData.modCatalog[itemName].kashPrice) * durationMultiplier);
 		}
-		return (uint)(InventoryScript.itemData.equipmentCatalog[itemName].gpPrice * durationMultiplier);
+		return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.equipmentCatalog[itemName].gpPrice : InventoryScript.itemData.equipmentCatalog[itemName].kashPrice) * durationMultiplier);
 	}
 
 	public void UpdateCurrency() {

@@ -30,7 +30,7 @@ public class ShopItemScript : MonoBehaviour
     // 0 = long sleeves, 1 = mid sleeves, 2 = short sleeves
     private int clickCount;
     private float clickTimer;
-    public TextMeshProUGUI gpPriceTxt;
+    public TextMeshProUGUI priceTxt;
     public Button previewBtn;
     public Button purchaseBtn;
     public Button equipBtn;
@@ -95,7 +95,21 @@ public class ShopItemScript : MonoBehaviour
     }
 
     public void OnPurchaseBtnClicked() {
-        ts.PreparePurchase(itemName, itemType, thumbnailRef.texture);
+        ts.PreparePurchase(itemName, itemType, GetCurrencyTypeForItem(), thumbnailRef.texture);
+    }
+
+    char GetCurrencyTypeForItem()
+    {
+        if (characterDetails != null) {
+            return characterDetails.gpPrice == 0 ? 'K' : 'G';
+        } else if (equipmentDetails != null) {
+            return equipmentDetails.gpPrice == 0 ? 'K' : 'G';
+        } else if (armorDetails != null) {
+            return armorDetails.gpPrice == 0 ? 'K' : 'G';
+        } else if (weaponDetails != null) {
+            return weaponDetails.gpPrice == 0 ? 'K' : 'G';
+        }
+        return modDetails.gpPrice == 0 ? 'K' : 'G';
     }
 
     private void PreviewItem() {
@@ -237,7 +251,7 @@ public class ShopItemScript : MonoBehaviour
     }
 
     public void SetItemForMarket() {
-        gpPriceTxt.gameObject.SetActive(true);
+        priceTxt.gameObject.SetActive(true);
         previewBtn.gameObject.SetActive(ItemCanBePreviewed());
         purchaseBtn.gameObject.SetActive(true);
         equipBtn.gameObject.SetActive(false);
@@ -247,7 +261,7 @@ public class ShopItemScript : MonoBehaviour
     }
 
     public void SetItemForLoadout() {
-        gpPriceTxt.gameObject.SetActive(false);
+        priceTxt.gameObject.SetActive(false);
         previewBtn.gameObject.SetActive(false);
         purchaseBtn.gameObject.SetActive(false);
         equipBtn.gameObject.SetActive(true);
@@ -264,7 +278,7 @@ public class ShopItemScript : MonoBehaviour
             modWeaponBtn.gameObject.SetActive(false);
             modEquipBtn.gameObject.SetActive(true);
         }
-        gpPriceTxt.gameObject.SetActive(false);
+        priceTxt.gameObject.SetActive(false);
         previewBtn.gameObject.SetActive(false);
         purchaseBtn.gameObject.SetActive(false);
         equipBtn.gameObject.SetActive(false);
