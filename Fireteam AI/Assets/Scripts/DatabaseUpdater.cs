@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Realtime;
 using Firebase.Database;
+using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 
 public class DatabaseUpdater : MonoBehaviour
 {
@@ -106,5 +107,11 @@ public class DatabaseUpdater : MonoBehaviour
                 DAOScript.dao.dbRef.Child("fteam_ai").Child("fteam_ai_users").Child(accountId).Child("loggedIn").SetValueAsync("0");
             }
         });
+    }
+
+    public void AddKashFieldToAllAccounts() {
+        Dictionary<string, object> inputData = new Dictionary<string, object>();        
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("kashFieldAdd");
+		func.CallAsync(inputData);
     }
 }

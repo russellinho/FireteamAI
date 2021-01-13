@@ -76,7 +76,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/loggedIn").ValueChanged += HandleForceLogoutEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/gp").ValueChanged += HandleGpChangeEvent;
-            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/kash").ValueChanged += HandleKashChangeEvent;
+            DAOScript.dao.dbRef.Child("users/" + AuthScript.authHandler.user.UserId + "/kash").ValueChanged += HandleKashChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedArmor").ValueChanged += HandleArmorChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedBottom").ValueChanged += HandleBottomChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedCharacter").ValueChanged += HandleCharacterChangeEvent;
@@ -542,7 +542,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     info.Playername = playerDataSnap["username"].ToString();
                     info.Exp = uint.Parse(playerDataSnap["exp"].ToString());
                     info.Gp = uint.Parse(playerDataSnap["gp"].ToString());
-                    info.Kash = uint.Parse(playerDataSnap["kash"].ToString());
+                    info.Kash = Convert.ToUInt32(results["kash"]);
                     info.PrivilegeLevel = results["privilegeLevel"].ToString();
                     
                     if (playerDataSnap.ContainsKey("equipment")) {
