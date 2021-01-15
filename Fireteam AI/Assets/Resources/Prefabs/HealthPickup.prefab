@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3246182835575405652}
   - component: {fileID: 3246182835575405655}
   - component: {fileID: 3246182835575405654}
+  - component: {fileID: 7584546685059685731}
   m_Layer: 0
   m_Name: HealthPickup
   m_TagString: HealthBox
@@ -128,3 +129,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pickupId: 0
   pickupSound: {fileID: 8300000, guid: 2abf41e9ece742d44b0da495397486fb, type: 3}
+--- !u!114 &7584546685059685731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3246182835575405648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

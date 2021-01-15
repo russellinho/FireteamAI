@@ -91,6 +91,7 @@ GameObject:
   - component: {fileID: 84568084601308781}
   - component: {fileID: -5690211269819924657}
   - component: {fileID: 84568084601308780}
+  - component: {fileID: 8464676360341391579}
   m_Layer: 0
   m_Name: BH_Wood2
   m_TagString: Untagged
@@ -332,6 +333,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 59d28093355910041ac327c35e92ae54, type: 3}
   a: {fileID: 84568084601308781}
   aAmbient: {fileID: -5690211269819924657}
+--- !u!114 &8464676360341391579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 84568084601308779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2180187882199618861
 GameObject:
   m_ObjectHideFlags: 0

@@ -21200,6 +21200,7 @@ GameObject:
   - component: {fileID: 3458023707702244803}
   - component: {fileID: 4842245935165833152}
   - component: {fileID: 4797392498632426522}
+  - component: {fileID: 7488753673110335424}
   m_Layer: 9
   m_Name: YongjinGamePrefab
   m_TagString: Player
@@ -22245,6 +22246,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &7488753673110335424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4923794394266060381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4943226923559033421
 GameObject:
   m_ObjectHideFlags: 0

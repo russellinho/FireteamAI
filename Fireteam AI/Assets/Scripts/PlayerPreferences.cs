@@ -9,6 +9,8 @@ using Koobando.AntiCheat;
 public class PlayerPreferences : MonoBehaviour
 {
     private const float KEY_COUNT = 25;
+    private const int DEFAULT_GAME_VOL = 90;
+    private const int DEFAULT_AMBIENT_VOL = 90;
     public static PlayerPreferences playerPreferences;
     public PreferenceData preferenceData;
     public Dictionary<string, KeyMapping> keyMappings;
@@ -39,6 +41,14 @@ public class PlayerPreferences : MonoBehaviour
                 playerPreferences.preferenceData.rememberUserId = info.rememberUserId;
                 playerPreferences.preferenceData.musicVolume = info.musicVolume;
                 if (info.musicVolume < 0 || info.musicVolume > 100) {
+                    throw new InvalidDataException();
+                }
+                playerPreferences.preferenceData.gameVolume = info.gameVolume == 0 ? 1 : info.gameVolume;
+                if (info.gameVolume < 0 || info.gameVolume > 100) {
+                    throw new InvalidDataException();
+                }
+                playerPreferences.preferenceData.ambientVolume = info.ambientVolume == 0 ? 1 : info.ambientVolume;
+                if (info.ambientVolume < 0 || info.ambientVolume > 100) {
                     throw new InvalidDataException();
                 }
                 playerPreferences.preferenceData.voiceInputVolume = info.voiceInputVolume == 0 ? 50 : info.voiceInputVolume;
@@ -104,6 +114,8 @@ public class PlayerPreferences : MonoBehaviour
         info.rememberLogin = playerPreferences.preferenceData.rememberLogin;
         info.rememberUserId = playerPreferences.preferenceData.rememberUserId;
         info.musicVolume = playerPreferences.preferenceData.musicVolume;
+        info.gameVolume = playerPreferences.preferenceData.gameVolume;
+        info.ambientVolume = playerPreferences.preferenceData.ambientVolume;
         info.voiceInputVolume = playerPreferences.preferenceData.voiceInputVolume;
         info.voiceOutputVolume = playerPreferences.preferenceData.voiceOutputVolume;
         info.audioInputName = playerPreferences.preferenceData.audioInputName;
@@ -124,6 +136,8 @@ public class PlayerPreferences : MonoBehaviour
         playerPreferences.preferenceData.rememberLogin = false;
         playerPreferences.preferenceData.rememberUserId = null;
         playerPreferences.preferenceData.musicVolume = JukeboxScript.DEFAULT_MUSIC_VOLUME;
+        playerPreferences.preferenceData.gameVolume = DEFAULT_GAME_VOL;
+        playerPreferences.preferenceData.ambientVolume = DEFAULT_AMBIENT_VOL;
         playerPreferences.preferenceData.voiceInputVolume = 50;
         playerPreferences.preferenceData.voiceOutputVolume = 50;
         playerPreferences.preferenceData.audioInputName = "None";
@@ -263,6 +277,8 @@ public class PlayerPreferences : MonoBehaviour
         public bool rememberLogin;
         public string rememberUserId;
         public int musicVolume;
+        public int gameVolume;
+        public int ambientVolume;
         public int voiceInputVolume;
         public int voiceOutputVolume;
         public string audioInputName;

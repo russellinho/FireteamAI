@@ -18918,6 +18918,7 @@ GameObject:
   - component: {fileID: 3562820332796900391}
   - component: {fileID: -6904577451147006055}
   - component: {fileID: 3562820332796900388}
+  - component: {fileID: 1160362658421322961}
   m_Layer: 0
   m_Name: BH_Concrete3
   m_TagString: Untagged
@@ -19159,6 +19160,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 59d28093355910041ac327c35e92ae54, type: 3}
   a: {fileID: 3562820332796900391}
   aAmbient: {fileID: -6904577451147006055}
+--- !u!114 &1160362658421322961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3562820332796900389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3562820332796974793
 GameObject:
   m_ObjectHideFlags: 0

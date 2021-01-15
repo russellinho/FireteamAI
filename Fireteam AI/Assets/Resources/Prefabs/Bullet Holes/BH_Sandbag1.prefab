@@ -28624,6 +28624,7 @@ GameObject:
   - component: {fileID: 9197053838858526402}
   - component: {fileID: -6942923613633074573}
   - component: {fileID: 9197053838858526403}
+  - component: {fileID: 5483628760969556526}
   m_Layer: 0
   m_Name: BH_Sandbag1
   m_TagString: Untagged
@@ -28865,3 +28866,15 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 59d28093355910041ac327c35e92ae54, type: 3}
   a: {fileID: 9197053838858526402}
   aAmbient: {fileID: -6942923613633074573}
+--- !u!114 &5483628760969556526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9197053838858526400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -42955,6 +42955,7 @@ GameObject:
   - component: {fileID: 8133746942893727938}
   - component: {fileID: 6670328389465151357}
   - component: {fileID: 8133746942893727949}
+  - component: {fileID: 5530986153175068357}
   m_Layer: 0
   m_Name: BH_MetalTinplate5
   m_TagString: Untagged
@@ -43196,3 +43197,15 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 59d28093355910041ac327c35e92ae54, type: 3}
   a: {fileID: 8133746942893727938}
   aAmbient: {fileID: 6670328389465151357}
+--- !u!114 &5530986153175068357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8133746942893727948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

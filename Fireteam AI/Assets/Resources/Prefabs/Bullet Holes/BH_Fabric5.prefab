@@ -42839,6 +42839,7 @@ GameObject:
   - component: {fileID: 8490873142851921787}
   - component: {fileID: -6994753179228098235}
   - component: {fileID: 8490873142851921786}
+  - component: {fileID: 5052002583631618841}
   m_Layer: 0
   m_Name: BH_Fabric5
   m_TagString: Untagged
@@ -43080,3 +43081,15 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 59d28093355910041ac327c35e92ae54, type: 3}
   a: {fileID: 8490873142851921787}
   aAmbient: {fileID: -6994753179228098235}
+--- !u!114 &5052002583631618841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8490873142851921789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

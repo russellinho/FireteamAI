@@ -4892,6 +4892,7 @@ GameObject:
   - component: {fileID: 2721572691974866832}
   - component: {fileID: 3488274390392471232}
   - component: {fileID: 2721572691974866835}
+  - component: {fileID: 707222305531324513}
   m_Layer: 0
   m_Name: BH_Snow4
   m_TagString: Untagged
@@ -5133,6 +5134,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 59d28093355910041ac327c35e92ae54, type: 3}
   a: {fileID: 2721572691974866832}
   aAmbient: {fileID: 3488274390392471232}
+--- !u!114 &707222305531324513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2721572691974866834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2721572691975045920
 GameObject:
   m_ObjectHideFlags: 0

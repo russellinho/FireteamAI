@@ -33297,6 +33297,7 @@ GameObject:
   - component: {fileID: 6659795216717789163}
   - component: {fileID: -139298054962970826}
   - component: {fileID: 6659795216717789160}
+  - component: {fileID: 980758229373078385}
   m_Layer: 0
   m_Name: BH_ElecDevice3
   m_TagString: Untagged
@@ -33538,6 +33539,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 59d28093355910041ac327c35e92ae54, type: 3}
   a: {fileID: 6659795216717789163}
   aAmbient: {fileID: -139298054962970826}
+--- !u!114 &980758229373078385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6659795216717789161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7174955340806350373
 GameObject:
   m_ObjectHideFlags: 0

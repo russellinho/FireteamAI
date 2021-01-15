@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 216377073408485974}
   - component: {fileID: 2086536006848149930}
   - component: {fileID: 216377073408485975}
+  - component: {fileID: -7951385103710338704}
   m_Layer: 0
   m_Name: BH_Concrete4
   m_TagString: Untagged
@@ -253,6 +254,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 59d28093355910041ac327c35e92ae54, type: 3}
   a: {fileID: 216377073408485974}
   aAmbient: {fileID: 2086536006848149930}
+--- !u!114 &-7951385103710338704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 216377073408485972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &216377073408498528
 GameObject:
   m_ObjectHideFlags: 0

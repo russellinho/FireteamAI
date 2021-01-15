@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1507552443156411279}
   - component: {fileID: -3700237305903153264}
   - component: {fileID: 1507552443156411278}
+  - component: {fileID: 2906992243461734454}
   m_Layer: 0
   m_Name: BH_MetalSolid3
   m_TagString: Untagged
@@ -253,6 +254,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 59d28093355910041ac327c35e92ae54, type: 3}
   a: {fileID: 1507552443156411279}
   aAmbient: {fileID: -3700237305903153264}
+--- !u!114 &2906992243461734454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1507552443156411277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1507552443156433715
 GameObject:
   m_ObjectHideFlags: 0

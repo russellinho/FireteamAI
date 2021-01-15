@@ -1814,6 +1814,7 @@ GameObject:
   - component: {fileID: 5473420403315338994}
   - component: {fileID: 2219568387016488609}
   - component: {fileID: 7601635865629732844}
+  - component: {fileID: 1416137312949336666}
   m_Layer: 14
   m_Name: Cicada2
   m_TagString: Human
@@ -2219,6 +2220,18 @@ MonoBehaviour:
   - {fileID: 6412639871476851721, guid: 38a4a2721141fe84caabb80af0b55652, type: 3}
   - {fileID: 7935064943305219587, guid: 594329fdd0f9e2847be2d6cbb4afbb6a, type: 3}
   - {fileID: 4582262662082505350, guid: cc843941bef07c5468f9a55683079dd2, type: 3}
+--- !u!114 &1416137312949336666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1942978092247955579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1942978092247955581
 GameObject:
   m_ObjectHideFlags: 0

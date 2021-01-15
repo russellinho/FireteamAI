@@ -29,6 +29,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     private const float NINETY_DAY_COST_MULTIPLIER = 90f * (1f - (COST_MULT_FRACTION * 3f));
     private const float PERMANENT_COST_MULTIPLIER = 365f;
 	public Connexion connexion;
+	private AudioSourceModifier[] sceneAudioSources;
 
 	public GameObject itemDescriptionPopupRef;
 	public Text versionText;
@@ -38,9 +39,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Slider mainLevelProgress;
 	public TextMeshProUGUI mainExpTxt;
 	public Slider musicVolumeSlider;
+	public Slider gameVolumeSlider;
+	public Slider ambientVolumeSlider;
 	public Slider voiceInputVolumeSlider;
 	public Slider voiceOutputVolumeSlider;
 	public TextMeshProUGUI musicVolumeField;
+	public TextMeshProUGUI gameVolumeField;
+	public TextMeshProUGUI ambientVolumeField;
 	public TextMeshProUGUI voiceInputVolumeField;
 	public TextMeshProUGUI voiceOutputVolumeField;
 	public HorizontalSelector audioInputSelector;
@@ -224,11 +229,19 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
 		musicVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.musicVolume;
 
+		gameVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.gameVolume / 100f;
+		gameVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.gameVolume;
+
+		ambientVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.ambientVolume / 100f;
+		ambientVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.ambientVolume;
+
 		voiceInputVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume / 100f;
 		voiceInputVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume;
 		
 		voiceOutputVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume / 100f;
 		voiceOutputVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume;
+
+		GetSceneAudioSources();
 	}
 
 	void Start () {
@@ -265,6 +278,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				versionWarning = false;
 			}
 		}
+	}
+
+	void GetSceneAudioSources()
+	{
+		sceneAudioSources = (AudioSourceModifier[]) GameObject.FindObjectsOfType (typeof(AudioSourceModifier));
 	}
 
 	public void InstantiateLoadingScreen(string mapName, string mapDescription) {
@@ -345,6 +363,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		SetMusicVolume(musicVolumeSlider.value);
 	}
 
+	public void OnGameVolumeSliderChanged() {
+		SetGameVolume(gameVolumeSlider.value);
+	}
+
+	public void OnAmbientVolumeSliderChanged() {
+		SetAmbientVolume(ambientVolumeSlider.value);
+	}
+
 	public void OnVoiceInputVolumeChanged() {
 		SetVoiceInputVolume(voiceInputVolumeSlider.value);
 	}
@@ -356,6 +382,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	void SetMusicVolume(float v) {
 		musicVolumeField.text = ""+(int)(v * 100f);
 		JukeboxScript.jukebox.SetMusicVolume(v);
+	}
+
+	void SetGameVolume(float v) {
+		gameVolumeField.text = ""+(int)(v * 100f);
+	}
+
+	void SetAmbientVolume(float v) {
+		ambientVolumeField.text = ""+(int)(v * 100f);
 	}
 
 	void SetVoiceInputVolume(float v) {
@@ -372,11 +406,22 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	void UpdateAllAudioSources()
+	{
+		foreach (AudioSourceModifier a in sceneAudioSources)
+		{
+			a.SetVolume();
+		}
+	}
+
 	public void SaveSettings() {
 		PlayerPreferences.playerPreferences.preferenceData.musicVolume = (int)(musicVolumeSlider.value * 100f);
+		PlayerPreferences.playerPreferences.preferenceData.gameVolume = (int)(gameVolumeSlider.value * 100f);
+		PlayerPreferences.playerPreferences.preferenceData.ambientVolume = (int)(ambientVolumeSlider.value * 100f);
 		PlayerPreferences.playerPreferences.preferenceData.audioInputName = audioInputSelector.GetCurrentItem();
 		PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume = (int)(voiceInputVolumeSlider.value * 100f);
 		PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume = (int)(voiceOutputVolumeSlider.value * 100f);
+		UpdateAllAudioSources();
 		PlayerPreferences.playerPreferences.SavePreferences();
 	}
 
@@ -415,9 +460,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void SetDefaultAudioSettings() {
 		musicVolumeSlider.value = (float)JukeboxScript.DEFAULT_MUSIC_VOLUME / 100f;
+		gameVolumeSlider.value = 1f;
+		ambientVolumeSlider.value = 1f;
 		voiceInputVolumeSlider.value = 0.5f;
 		voiceOutputVolumeSlider.value = 0.5f;
 		SetMusicVolume(musicVolumeSlider.value);
+		SetGameVolume(gameVolumeSlider.value);
+		SetAmbientVolume(ambientVolumeSlider.value);
 		SetVoiceInputVolume(0.5f);
 		SetVoiceOutputVolume(0.5f);
 	}

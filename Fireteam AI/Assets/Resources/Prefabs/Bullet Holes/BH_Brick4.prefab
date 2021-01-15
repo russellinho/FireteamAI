@@ -19163,6 +19163,7 @@ GameObject:
   - component: {fileID: 2341480466799784687}
   - component: {fileID: 6056188227622501873}
   - component: {fileID: 2341480466799784680}
+  - component: {fileID: 4793714410965735967}
   m_Layer: 0
   m_Name: BH_Brick4
   m_TagString: Untagged
@@ -19404,6 +19405,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 59d28093355910041ac327c35e92ae54, type: 3}
   a: {fileID: 2341480466799784687}
   aAmbient: {fileID: 6056188227622501873}
+--- !u!114 &4793714410965735967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2341480466799784681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4961166441873443150
 GameObject:
   m_ObjectHideFlags: 0

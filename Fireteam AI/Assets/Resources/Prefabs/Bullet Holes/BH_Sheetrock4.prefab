@@ -23815,6 +23815,7 @@ GameObject:
   - component: {fileID: 7672348774906834411}
   - component: {fileID: 3071271453003659641}
   - component: {fileID: 7672348774906834410}
+  - component: {fileID: -7921652702209779196}
   m_Layer: 0
   m_Name: BH_Sheetrock4
   m_TagString: Untagged
@@ -24056,6 +24057,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 59d28093355910041ac327c35e92ae54, type: 3}
   a: {fileID: 7672348774906834411}
   aAmbient: {fileID: 3071271453003659641}
+--- !u!114 &-7921652702209779196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7672348774906834421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7672348774906940375
 GameObject:
   m_ObjectHideFlags: 0
