@@ -57,6 +57,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -92,7 +93,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 105.12, y: 60.2, z: 60.523796}
+  m_Size: {x: 170, y: 60.2, z: 130}
   m_Center: {x: 3.3473492, y: 33.321247, z: 4.5995994}
 --- !u!95 &3246182835575405655
 Animator:
