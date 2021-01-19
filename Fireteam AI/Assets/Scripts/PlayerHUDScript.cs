@@ -1479,6 +1479,20 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		inGameMessenger.SendVoiceCommandMessage(playerName, voiceCommandMessage);
 	}
 
+	void QueuePlayerJoining(string playerName)
+	{
+		GameObject p = GameObject.Instantiate(container.acceptPlayerTemplate, container.acceptPlayerSlots);
+		p.GetComponentInChildren<Text>().text = playerName + " IS JOINING... ([F5] ACCEPT | [F6] DECLINE)";
+	}
+
+	void DequeuePlayerJoining()
+	{
+		RectTransform[] j = container.acceptPlayerSlots.GetComponentsInChildren<RectTransform>();
+		if (j.Length > 1) {
+			GameObject.Destroy(j[1].gameObject);
+		}
+	}
+
 }
 
 public class AlertMarker {

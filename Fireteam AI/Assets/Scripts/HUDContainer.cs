@@ -96,6 +96,8 @@ public class HUDContainer : MonoBehaviour {
 	public VoiceCommandScript[] reportCommands;
 	public VoiceCommandScript[] tacticalCommands;
 	public VoiceCommandScript[] supportCommands;
+	public GameObject acceptPlayerTemplate;
+	public Transform acceptPlayerSlots;
 
     // Versus mode HUD
     public GameObject redScore;

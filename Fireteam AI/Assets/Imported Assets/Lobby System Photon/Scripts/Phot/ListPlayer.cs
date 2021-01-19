@@ -47,7 +47,11 @@ namespace Photon.Pun.LobbySystemPhoton
 		public TextMeshProUGUI mapDescription;
 		public TextMeshProUGUI mapDescriptionVs;
 		public HorizontalSelector mapSelector;
-		public HorizontalSelector mapSelectorVs; 
+		public HorizontalSelector mapSelectorVs;
+		public HorizontalSelector stealthTrackSelector;
+		public HorizontalSelector assaultTrackSelector;
+		public HorizontalSelector stealthTrackSelectorVs;
+		public HorizontalSelector assaultTrackSelectorVs;
 		public Button sendMsgBtn;
 		public Button sendMsgBtnVs;
 		// public Button emojiBtn;
@@ -65,6 +69,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		public GameObject mainMenuVersus;
 		public GameObject gameOptionsMenuCampaign;
 		public GameObject gameOptionsMenuVersus;
+		public GameObject gameMusicMenuCampaign;
+		public GameObject gameMusicMenuVersus;
 		public GameObject kickPlayerMenuCampaign;
 		public GameObject kickPlayerMenuVersus;
 		public PlayerKick[] playerKickSlotsCampaign;
@@ -199,6 +205,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				kickPlayerMenuVersus.SetActive(false);
 				gameOptionsMenuCampaign.SetActive(false);
 				gameOptionsMenuVersus.SetActive(false);
+				gameMusicMenuCampaign.SetActive(false);
+				gameMusicMenuVersus.SetActive(false);
 			}
 		}
 
@@ -226,6 +234,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				kickPlayerMenuVersus.SetActive(false);
 				gameOptionsMenuCampaign.SetActive(false);
 				gameOptionsMenuVersus.SetActive(false);
+				gameMusicMenuCampaign.SetActive(false);
+				gameMusicMenuVersus.SetActive(false);
 			}
 		}
 
@@ -501,6 +511,8 @@ namespace Photon.Pun.LobbySystemPhoton
 			PhotonNetwork.CurrentRoom.IsOpen = true;
 			PhotonNetwork.CurrentRoom.IsVisible = true;
 			UpdateMapInfo();
+			SetStealthMusic();
+			SetAssaultMusic();
             // Disable any loading screens
             // connexion.ToggleLobbyLoadingScreen(false);
 			Hashtable h = new Hashtable();
@@ -1219,6 +1231,70 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void ToggleGameOptionsMenuVersus(bool on) {
 			gameOptionsMenuVersus.SetActive(on);
+		}
+
+		public void ToggleGameMusicMenuCampaign(bool on) {
+			gameMusicMenuCampaign.SetActive(on);
+			if (!on) {
+				PlayerPreferences.playerPreferences.SavePreferences();
+			}
+		}
+
+		public void ToggleGameMusicMenuVersus(bool on) {
+			gameMusicMenuVersus.SetActive(on);
+			if (!on) {
+				PlayerPreferences.playerPreferences.SavePreferences();
+			}
+		}
+
+		public void OnStealthMusicChanged(bool increase)
+		{
+			// Change playerpreferences
+			if (increase) {
+				if (PlayerPreferences.playerPreferences.preferenceData.stealthTrack < (PlayerPreferences.STEALTH_TRACK_COUNT - 1)) {
+					PlayerPreferences.playerPreferences.preferenceData.stealthTrack++;
+				}
+			} else {
+				if (PlayerPreferences.playerPreferences.preferenceData.stealthTrack > 0) {
+					PlayerPreferences.playerPreferences.preferenceData.stealthTrack--;
+				}
+			}
+			
+			// Preview the song for a few seconds
+			JukeboxScript.jukebox.PreviewTrack('S', PlayerPreferences.playerPreferences.preferenceData.stealthTrack);
+		}
+
+		public void OnAssaultMusicChanged(bool increase)
+		{
+			// Change playerpreferences
+			if (increase) {
+				if (PlayerPreferences.playerPreferences.preferenceData.assaultTrack < (PlayerPreferences.ASSAULT_TRACK_COUNT - 1)) {
+					PlayerPreferences.playerPreferences.preferenceData.assaultTrack++;
+				}
+			} else {
+				if (PlayerPreferences.playerPreferences.preferenceData.assaultTrack > 0) {
+					PlayerPreferences.playerPreferences.preferenceData.assaultTrack--;
+				}
+			}
+
+			// Preview the song for a few seconds
+			JukeboxScript.jukebox.PreviewTrack('A', PlayerPreferences.playerPreferences.preferenceData.assaultTrack);
+		}
+
+		void SetStealthMusic()
+		{
+			stealthTrackSelector.index = PlayerPreferences.playerPreferences.preferenceData.stealthTrack;
+			stealthTrackSelectorVs.index = PlayerPreferences.playerPreferences.preferenceData.stealthTrack;
+			stealthTrackSelector.UpdateUI();
+			stealthTrackSelectorVs.UpdateUI();
+		}
+
+		void SetAssaultMusic()
+		{
+			assaultTrackSelector.index = PlayerPreferences.playerPreferences.preferenceData.assaultTrack;
+			assaultTrackSelectorVs.index = PlayerPreferences.playerPreferences.preferenceData.assaultTrack;
+			assaultTrackSelector.UpdateUI();
+			assaultTrackSelectorVs.UpdateUI();
 		}
 
 		public void ToggleKickPlayerListMenuCampaign(bool on) {

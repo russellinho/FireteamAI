@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5857006096580309011}
   - component: {fileID: 5857006096580309008}
   - component: {fileID: 5857006096580309013}
+  - component: {fileID: 4417873623352888297}
   - component: {fileID: 5857006096580309010}
   m_Layer: 0
   m_Name: Jukebox
@@ -225,6 +226,102 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!82 &4417873623352888297
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5857006096580309009}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 0.75
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 250
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!114 &5857006096580309010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,7 +336,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource1: {fileID: 5857006096580309008}
   audioSource2: {fileID: 5857006096580309013}
+  audioSource3: {fileID: 4417873623352888297}
   titleTrackList:
   - {fileID: 8300000, guid: b0db16fb194e40143af2b0a079cb58b4, type: 3}
   - {fileID: 8300000, guid: 834bba778d36b964aae0ff62f096fb35, type: 3}
   - {fileID: 8300000, guid: 226ce3f011fddca45a2ef669bd92c561, type: 3}
+  stealthTracks:
+  - {fileID: 8300000, guid: b61b945ecc1384588a3312b46da742fb, type: 3}
+  assaultTracks:
+  - {fileID: 8300000, guid: 83a797b15e3be47b7bfd49ac86d34ec3, type: 3}
+  - {fileID: 8300000, guid: c2012ef38cb48b84faf773847febcb97, type: 3}

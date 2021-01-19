@@ -11,6 +11,8 @@ public class PlayerPreferences : MonoBehaviour
     private const float KEY_COUNT = 25;
     private const int DEFAULT_GAME_VOL = 90;
     private const int DEFAULT_AMBIENT_VOL = 90;
+    public static int ASSAULT_TRACK_COUNT = 2;
+    public static int STEALTH_TRACK_COUNT = 1;
     public static PlayerPreferences playerPreferences;
     public PreferenceData preferenceData;
     public Dictionary<string, KeyMapping> keyMappings;
@@ -60,6 +62,14 @@ public class PlayerPreferences : MonoBehaviour
                     throw new InvalidDataException();
                 }
                 playerPreferences.preferenceData.audioInputName = string.IsNullOrEmpty(info.audioInputName) ? "None" : info.audioInputName;
+                playerPreferences.preferenceData.stealthTrack = info.stealthTrack;
+                if (info.stealthTrack < 0 || info.stealthTrack >= STEALTH_TRACK_COUNT) {
+                    playerPreferences.preferenceData.stealthTrack = 0;
+                }
+                playerPreferences.preferenceData.assaultTrack = info.assaultTrack;
+                if (info.assaultTrack < 0 || info.assaultTrack >= ASSAULT_TRACK_COUNT) {
+                    playerPreferences.preferenceData.assaultTrack = 0;
+                }
                 JukeboxScript.jukebox.SetMusicVolume((float)playerPreferences.preferenceData.musicVolume / 100f);
                 Debug.Log("Login prefs loaded successfully!");
             } catch (Exception e) {
@@ -119,6 +129,8 @@ public class PlayerPreferences : MonoBehaviour
         info.voiceInputVolume = playerPreferences.preferenceData.voiceInputVolume;
         info.voiceOutputVolume = playerPreferences.preferenceData.voiceOutputVolume;
         info.audioInputName = playerPreferences.preferenceData.audioInputName;
+        info.stealthTrack = playerPreferences.preferenceData.stealthTrack;
+        info.assaultTrack = playerPreferences.preferenceData.assaultTrack;
         bf.Serialize(file, info);
         file.Close();
         Debug.Log("Prefs saved.");
@@ -141,6 +153,8 @@ public class PlayerPreferences : MonoBehaviour
         playerPreferences.preferenceData.voiceInputVolume = 50;
         playerPreferences.preferenceData.voiceOutputVolume = 50;
         playerPreferences.preferenceData.audioInputName = "None";
+        playerPreferences.preferenceData.stealthTrack = 0;
+        playerPreferences.preferenceData.assaultTrack = 0;
         JukeboxScript.jukebox.SetMusicVolume((float)JukeboxScript.DEFAULT_MUSIC_VOLUME / 100f);
     }
 
@@ -282,6 +296,8 @@ public class PlayerPreferences : MonoBehaviour
         public int voiceInputVolume;
         public int voiceOutputVolume;
         public string audioInputName;
+        public int stealthTrack;
+        public int assaultTrack;
     }
 
     [Serializable]
