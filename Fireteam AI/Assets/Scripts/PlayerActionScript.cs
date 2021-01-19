@@ -114,6 +114,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private float detectionLevel;
 
     private bool initialized;
+    public bool waitingOnAccept;
 
     public void PreInitialize()
     {
@@ -1199,7 +1200,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     // Reset character health, scale, rotation, position, ammo, disabled HUD components, disabled scripts, death variables, etc.
-    void Respawn()
+    public void Respawn()
     {
         health = 100;
         pView.RPC("RpcSetHealth", RpcTarget.Others, 100);
@@ -1624,11 +1625,20 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             }
         }
-		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup);
+        int joinMode = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
+        bool waitForAccept = false;
+        if (joinMode == 1) {
+            waitForAccept = true;
+        } else if (joinMode == 2) {
+            if (!gameController.assaultMode) {
+                waitForAccept = true;
+            }
+        }
+		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept);
 	}
 
 	[PunRPC]
-	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup) {
+	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept) {
         this.health = health;
         this.escapeValueSent = escapeValueSent;
         GameControllerScript.playerList[pView.OwnerActorNr].kills = kills;
@@ -1636,6 +1646,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         this.escapeAvailablePopup = escapeAvailablePopup;
         if (health <= 0) {
             SetPlayerDead();
+        } else if (waitForAccept) {
+            waitingOnAccept = true;
+            SetPlayerDead();
+            hud.container.spectatorText.text = "PLEASE WAIT FOR THE HOST TO ACCEPT YOU INTO THE GAME.";
         }
 	}
 

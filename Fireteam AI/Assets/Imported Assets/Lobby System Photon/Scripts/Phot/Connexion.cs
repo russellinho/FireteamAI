@@ -57,6 +57,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			h.Add("mapName", listPlayer.mapSelector.GetCurrentItem());
 			h.Add("ping", (int)PhotonNetwork.GetPing());
 			h.Add("kickedPlayers", "");
+			h.Add("joinMode", 0);
 			string[] lobbyProperties = new string[5] {"gameMode", "mapName", "ping", "inGame", "kickedPlayers"};
             options.CustomRoomProperties = h;
 			options.CustomRoomPropertiesForLobby = lobbyProperties;
@@ -82,6 +83,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			h.Add("redHost", -1);
 			h.Add("blueHost", -1);
 			h.Add("kickedPlayers", "");
+			h.Add("joinMode", 0);
             string[] lobbyProperties = new string[5] {"gameMode", "mapName", "ping", "inGame", "kickedPlayers"};
             options.CustomRoomProperties = h;
             options.CustomRoomPropertiesForLobby = lobbyProperties;

@@ -52,6 +52,8 @@ namespace Photon.Pun.LobbySystemPhoton
 		public HorizontalSelector assaultTrackSelector;
 		public HorizontalSelector stealthTrackSelectorVs;
 		public HorizontalSelector assaultTrackSelectorVs;
+		public HorizontalSelector joinModeSelector;
+		public HorizontalSelector joinModeSelectorVs;
 		public Button sendMsgBtn;
 		public Button sendMsgBtnVs;
 		// public Button emojiBtn;
@@ -528,6 +530,10 @@ namespace Photon.Pun.LobbySystemPhoton
 				ToggleMapChangeButtons(true);
 				voteKickBtn.enabled = true;
 				voteKickBtnVs.enabled = true;
+				joinModeSelector.index = 0;
+				joinModeSelectorVs.index = 0;
+				joinModeSelector.UpdateUI();
+				joinModeSelectorVs.UpdateUI();
 			}
 			if (currentMode == 'V') {
 				PhotonNetwork.AutomaticallySyncScene = false;
@@ -1227,10 +1233,22 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void ToggleGameOptionsMenuCampaign(bool on) {
 			gameOptionsMenuCampaign.SetActive(on);
+			if (!on) {
+				// Save join mode
+				Hashtable h = new Hashtable();
+				h.Add("joinMode", joinModeSelector.index);
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			}
 		}
 
 		public void ToggleGameOptionsMenuVersus(bool on) {
 			gameOptionsMenuVersus.SetActive(on);
+			if (!on) {
+				// Save join mode
+				Hashtable h = new Hashtable();
+				h.Add("joinMode", joinModeSelectorVs.index);
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			}
 		}
 
 		public void ToggleGameMusicMenuCampaign(bool on) {
@@ -1450,6 +1468,18 @@ namespace Photon.Pun.LobbySystemPhoton
 				if (p.ActorNumber == actorNo) return true;
 			}
 			return false;
+		}
+
+		string GetJoiningModeString(int i)
+		{
+			if (i == 0) {
+				return "Always Allow";
+			} else if (i == 1) {
+				return "Prompt";
+			} else if (i == 2) {
+				return "Stealth Prompt";
+			}
+			return "";
 		}
 
 	}

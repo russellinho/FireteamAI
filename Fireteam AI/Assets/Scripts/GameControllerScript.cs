@@ -34,6 +34,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public Dictionary<int, GameObject> enemyList = new Dictionary<int, GameObject> ();
 	private Dictionary<int, GameObject> pickupList = new Dictionary<int, GameObject>();
 	private Dictionary<int, GameObject> deployableList = new Dictionary<int, GameObject>();
+	private Queue<int> acceptPlayerQueue;
 
     // Mission variables
 	public AIControllerScript aIController;
@@ -86,6 +87,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void Awake() {
 		forfeitDelayCheck = 20f;
 		coverSpots = new Dictionary<short, GameObject>();
+		acceptPlayerQueue = new Queue<int>();
         myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
         opposingTeam = (myTeam == "red" ? "blue" : "red");
 		DetermineObjectivesForMission(SceneManager.GetActiveScene().name);
@@ -180,6 +182,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		DecrementLastGunshotTimer();
 		UpdateVote();
 		HandleVoteCast();
+		HandleAcceptPlayer();
 	}
 
 	void UpdateTimers() {
@@ -1421,6 +1424,81 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		} else {
 			PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().RemovePlayerSpeakingIndicator(actorNo);
 		}
+	}
+
+	void HandleAcceptPlayer()
+	{
+		if (Input.GetKeyDown(KeyCode.F5)) {
+			if (acceptPlayerQueue.Count > 0) {
+				if (isVersusHostForThisTeam()) {
+					AcceptPlayer();
+				}
+			}
+		}
+		if (Input.GetKeyDown(KeyCode.F6)) {
+			if (acceptPlayerQueue.Count > 0) {
+				if (isVersusHostForThisTeam()) {
+					RejectPlayer();
+				}
+			}
+		}
+	}
+
+	public void PingMasterForAcceptance()
+	{
+		pView.RPC("RpcPingMasterForAcceptance", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer.ActorNumber, PhotonNetwork.LocalPlayer.NickName);
+	}
+
+	[PunRPC]
+	void RpcPingMasterForAcceptance(int actorNo, string playerName)
+	{
+		if (isVersusHostForThisTeam()) {
+			acceptPlayerQueue.Enqueue(actorNo);
+			PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().QueuePlayerJoining(playerName);
+		}
+	}
+
+	[PunRPC]
+	void RpcAcceptPlayer(int actorNo)
+	{
+		if (PhotonNetwork.LocalPlayer.ActorNumber == actorNo) {
+			// Spawn myself in
+			if (PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().waitingOnAccept) {
+				PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().Respawn();
+			}
+		}
+	}
+
+	public void AcceptAllPlayers()
+	{
+		if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+			while (acceptPlayerQueue.Count > 0) {
+				AcceptPlayer();
+			}
+		}
+	}
+
+	void AcceptPlayer()
+	{
+		// Dequeue from accept queue
+		int actorNo = acceptPlayerQueue.Dequeue();
+		// Send RPC to spawn the player in
+		pView.RPC("RpcAcceptPlayer", RpcTarget.All, actorNo);
+		// Remove from HUD queue
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().DequeuePlayerJoining();
+	}
+
+	void RejectPlayer()
+	{
+		// Dequeue from accept queue
+		int actorNo = acceptPlayerQueue.Dequeue();
+		// Kick/ban the next player in the queue
+		Player p = PhotonNetwork.CurrentRoom.GetPlayer(actorNo);
+		if (p != null) {
+			KickPlayer(PhotonNetwork.CurrentRoom.GetPlayer(actorNo));
+		}
+		// Remove from HUD queue
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().DequeuePlayerJoining();
 	}
 
 }

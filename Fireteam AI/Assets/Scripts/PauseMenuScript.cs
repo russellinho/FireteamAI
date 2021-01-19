@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,6 +29,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public TextMeshProUGUI ambientVolumeField;
 	public TextMeshProUGUI voiceInputVolumeField;
 	public TextMeshProUGUI voiceOutputVolumeField;
+	public HorizontalSelector joinModeSelector;
 	// public HorizontalSelector audioInputSelector;
 	public bool isChangingKeyMapping;
 	public Text changingKeyMappingText;
@@ -60,6 +62,9 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		
 		voiceOutputVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume / 100f;
 		voiceOutputVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume;
+
+		joinModeSelector.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
+		joinModeSelector.UpdateUI();
 
 		GetSceneAudioSources();
 	}
@@ -299,6 +304,15 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		xButton.gameObject.SetActive(false);
 		mainAnimator.Play("Panel In");
 		SetCurrentPanel("Main");
+
+		// Save join mode
+		Hashtable h = new Hashtable();
+		h.Add("joinMode", joinModeSelector.index);
+		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+
+		if (joinModeSelector.index == 0) {
+			gameController.AcceptAllPlayers();
+		}
 	}
 
 	public void OnResetKeyBindingsClicked()
