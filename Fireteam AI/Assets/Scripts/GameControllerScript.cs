@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
@@ -23,6 +24,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public int currentMap;
     public string teamMap;
 	public Terrain[] terrainMetaData;
+	public PostProcessVolume postProcessVolume;
 
     // variable for last gunshot position
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
@@ -85,6 +87,18 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
 	void Awake() {
+		Bloom myBloom;
+		MotionBlur myMotionBlur;
+		if (PlayerPreferences.playerPreferences.preferenceData.bloom) {
+			postProcessVolume.profile.TryGetSettings(out myBloom);
+			myBloom.active = true;
+			myBloom.enabled = new BoolParameter{ value = true };
+		}
+		if (PlayerPreferences.playerPreferences.preferenceData.motionBlur) {
+			postProcessVolume.profile.TryGetSettings(out myMotionBlur);
+			myMotionBlur.active = true;
+			myMotionBlur.enabled = new BoolParameter{ value = true };
+		}
 		forfeitDelayCheck = 20f;
 		coverSpots = new Dictionary<short, GameObject>();
 		acceptPlayerQueue = new Queue<int>();

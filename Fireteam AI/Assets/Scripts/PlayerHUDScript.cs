@@ -854,12 +854,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.spectatorText.enabled = b;
 	}
 
-	//public override void OnPlayerEnteredRoom(Player newPlayer) {
-	//	Debug.Log (newPlayer.NickName + " has joined the room");
-	//	GameControllerScript.playerList.Add (gameObject);
-	//	Debug.Log ("anotha one");
-	//}
-
     private void UpdateMissionTimeText() {
         float totalSecs = GameControllerScript.missionTime;
         int mins = (int)(totalSecs / 60f);

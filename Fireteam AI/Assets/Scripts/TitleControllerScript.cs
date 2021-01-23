@@ -49,6 +49,21 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public TextMeshProUGUI voiceInputVolumeField;
 	public TextMeshProUGUI voiceOutputVolumeField;
 	public HorizontalSelector audioInputSelector;
+	// Graphics settings
+	public HorizontalSelector resolutionSelector;
+	public HorizontalSelector qualitySelector;
+	public HorizontalSelector vSyncSelector;
+	public Slider lodBiasSlider;
+	public HorizontalSelector antiAliasingSelector;
+	public HorizontalSelector anisotropicFilteringSelector;
+	public Slider masterTextureLimitSlider;
+	public HorizontalSelector shadowCascadesSelector;
+	public HorizontalSelector shadowResolutionSelector;
+	public HorizontalSelector shadowSelector;
+	public SwitchManager bloomSwitch;
+	public SwitchManager motionBlurSwitch;
+	public Slider brightnessSlider;
+
 	public CanvasGroup loadingScreen;
 	public CanvasGroup mainPanels;
 	public Animator mainPanelsAnimator;
@@ -61,6 +76,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public ModalWindowManager confirmPopup;
 	public ModalWindowManager keyBindingsPopup;
 	public ModalWindowManager makePurchasePopup;
+	public ModalWindowManager roomPasswordPopup;
+	public ModalWindowManager roomEnterPasswordPopup;
+	public BlurManager blurManager;
+	public TMP_InputField roomPasswordInput;
+	public TMP_InputField roomEnterPasswordInput;
 	// Block screen used for blocking player interaction with screen while something is going on in the backgronud (example: if a transaction is in progress)
 	private bool blockScreenTrigger;
 	public GameObject blockScreen;
@@ -194,8 +214,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public bool triggerConfirmPopupFlag;
 	public bool triggerKeyBindingsPopupFlag;
 	public bool triggerMakePurchasePopupFlag;
+	public bool triggerRoomPasswordChangePopupFlag;
+	public bool triggerRoomPasswordEnterPopupFlag;
 	public string alertPopupMessage;
 	public string confirmPopupMessage;
+	private string roomEnteringName;
 	private bool confirmClicked;
 	public MainPanelManager mainPanelManager;
 	public Button previouslyPressedButtonLeft;
@@ -242,6 +265,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		voiceOutputVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume;
 
 		GetSceneAudioSources();
+		InitializeGraphicSettings();
 	}
 
 	void Start () {
@@ -353,6 +377,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (triggerMakePurchasePopupFlag) {
 			triggerMakePurchasePopupFlag = false;
 			makePurchasePopup.ModalWindowIn();
+		}
+		if (triggerRoomPasswordEnterPopupFlag) {
+			triggerRoomPasswordEnterPopupFlag = false;
+			roomEnterPasswordPopup.ModalWindowIn();
+		}
+		if (triggerRoomPasswordChangePopupFlag) {
+			triggerRoomPasswordChangePopupFlag = false;
+			roomPasswordPopup.ModalWindowIn();
 		}
 		if (alertPopup.isOn || confirmPopup.isOn || keyBindingsPopup.isOn || makePurchasePopup.isOn && (PlayerData.playerdata.bodyReference != null && PlayerData.playerdata.bodyReference.activeInHierarchy)) {
 			HideAll(false);
@@ -524,6 +556,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void TriggerAlertPopup(string message) {
 		triggerAlertPopupFlag = true;
 		alertPopupMessage = message;
+	}
+
+	public void TriggerRoomPasswordChangePopup()
+	{
+		triggerRoomPasswordChangePopupFlag = true;
+	}
+
+	public void TriggerRoomPasswordEnterPopup(string roomName)
+	{
+		triggerRoomPasswordEnterPopupFlag = true;
+		roomEnteringName = roomName;
 	}
 
 	public void TriggerConfirmPopup(string message) {
@@ -3418,6 +3461,170 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void LeaveGlobalChats()
 	{
 		PlayerData.playerdata.globalChatClient.UnsubscribeFromGlobalChat();
+	}
+
+	public void OnRoomPasswordEnter()
+	{
+		string passwordEntered = roomEnterPasswordInput.text;
+		roomEnterPasswordInput.text = "";
+		connexion.AttemptJoinRoom(roomEnteringName, passwordEntered);
+	}
+
+	public void OnRoomPasswordChange()
+	{
+		string passwordEntered = roomPasswordInput.text;
+		bool success = connexion.listPlayer.SetRoomPassword(passwordEntered);
+		if (success) {
+			roomPasswordInput.text = "";
+			CloseRoomPasswordChange();
+		}
+	}
+
+	public void CloseRoomPasswordEnter()
+	{
+		roomEnterPasswordPopup.ModalWindowOut();
+		blurManager.BlurOutAnim();
+	}
+
+	public void CloseRoomPasswordChange()
+	{
+		roomPasswordPopup.ModalWindowOut();
+		blurManager.BlurOutAnim();
+	}
+
+	void InitializeGraphicSettings()
+	{
+		PopulateResolutions();
+		qualitySelector.index = PlayerPreferences.playerPreferences.preferenceData.qualityPreset;
+		qualitySelector.UpdateUI();
+		vSyncSelector.index = PlayerPreferences.playerPreferences.preferenceData.vSyncCount;
+		vSyncSelector.UpdateUI();
+		lodBiasSlider.value = PlayerPreferences.playerPreferences.preferenceData.lodBias;
+		antiAliasingSelector.index = PlayerPreferences.playerPreferences.preferenceData.antiAliasing;
+		antiAliasingSelector.UpdateUI();
+		anisotropicFilteringSelector.index = PlayerPreferences.playerPreferences.preferenceData.anisotropicFiltering;
+		anisotropicFilteringSelector.UpdateUI();
+		masterTextureLimitSlider.value = PlayerPreferences.playerPreferences.preferenceData.masterTextureLimit;
+		shadowCascadesSelector.index = PlayerPreferences.playerPreferences.preferenceData.shadowCascades;
+		shadowCascadesSelector.UpdateUI();
+		shadowResolutionSelector.index = PlayerPreferences.playerPreferences.preferenceData.shadowResolution;
+		shadowResolutionSelector.UpdateUI();
+		shadowSelector.index = PlayerPreferences.playerPreferences.preferenceData.shadows;
+		shadowSelector.UpdateUI();
+		bloomSwitch.isOn = PlayerPreferences.playerPreferences.preferenceData.bloom;
+		motionBlurSwitch.isOn = PlayerPreferences.playerPreferences.preferenceData.motionBlur;
+		brightnessSlider.value = PlayerPreferences.playerPreferences.preferenceData.brightness;
+	}
+
+	public void OnResolutionSelect()
+	{
+		Resolution r = Screen.resolutions[resolutionSelector.index];
+		Screen.SetResolution(r.width, r.height, true);
+	}
+
+	void PopulateResolutions()
+	{
+		resolutionSelector.ClearItems();
+		Resolution currRes = Screen.currentResolution;
+		Resolution[] rrs = Screen.resolutions;
+		int i = 0;
+		foreach (Resolution r in rrs) {
+			resolutionSelector.CreateNewItem(r.ToString());
+			if (r.ToString() == currRes.ToString()) {
+				resolutionSelector.index = i;
+			}
+			i++;
+		}
+		resolutionSelector.UpdateUI();
+	}
+
+	public void OnQualitySelect()
+	{
+		int q = qualitySelector.index;
+		PlayerPreferences.playerPreferences.preferenceData.qualityPreset = q;
+		QualitySettings.SetQualityLevel(q);
+		PlayerPreferences.playerPreferences.preferenceData.vSyncCount = QualitySettings.vSyncCount;
+        PlayerPreferences.playerPreferences.preferenceData.lodBias = QualitySettings.lodBias;
+        PlayerPreferences.playerPreferences.preferenceData.antiAliasing = QualitySettings.antiAliasing;
+        PlayerPreferences.playerPreferences.preferenceData.anisotropicFiltering = (int)QualitySettings.anisotropicFiltering;
+        PlayerPreferences.playerPreferences.preferenceData.masterTextureLimit = QualitySettings.masterTextureLimit;
+        PlayerPreferences.playerPreferences.preferenceData.shadowCascades = QualitySettings.shadowCascades;
+        PlayerPreferences.playerPreferences.preferenceData.shadowResolution = (int)QualitySettings.shadowResolution;
+		PlayerPreferences.playerPreferences.preferenceData.brightness = 1f;
+		PlayerPreferences.playerPreferences.SetGraphicsSettings();
+		InitializeGraphicSettings();
+	}
+
+	public void OnVSyncSelect()
+	{
+		int i = vSyncSelector.index;
+		PlayerPreferences.playerPreferences.preferenceData.vSyncCount = i;
+		QualitySettings.vSyncCount = i;
+	}
+
+	public void OnLodBiasSelect()
+	{
+		int i = (int)lodBiasSlider.value;
+		PlayerPreferences.playerPreferences.preferenceData.lodBias = i;
+		QualitySettings.lodBias = i;
+	}
+
+	public void OnAntiAliasingSelect()
+	{
+		int i = antiAliasingSelector.index;
+		PlayerPreferences.playerPreferences.preferenceData.antiAliasing = i;
+		QualitySettings.antiAliasing = i;
+	}
+
+	public void OnAnisotropicFilteringSelect()
+	{
+		int i = anisotropicFilteringSelector.index;
+		PlayerPreferences.playerPreferences.preferenceData.anisotropicFiltering = i;
+		QualitySettings.anisotropicFiltering = (AnisotropicFiltering)i;
+	}
+
+	public void OnMasterTextureLimitSelect()
+	{
+		int i = (int)masterTextureLimitSlider.value;
+		PlayerPreferences.playerPreferences.preferenceData.masterTextureLimit = i;
+		QualitySettings.masterTextureLimit = i;
+	}
+
+	public void OnShadowCascadesSelect()
+	{
+		int i = shadowCascadesSelector.index;
+		PlayerPreferences.playerPreferences.preferenceData.shadowCascades = i;
+		QualitySettings.shadowCascades = i;
+	}
+
+	public void OnShadowResolutionSelect()
+	{
+		int i = shadowResolutionSelector.index;
+		PlayerPreferences.playerPreferences.preferenceData.shadowResolution = i;
+		QualitySettings.shadowResolution = (ShadowResolution)i;
+	}
+
+	public void OnShadowSelect()
+	{
+		int i = shadowSelector.index;
+		PlayerPreferences.playerPreferences.preferenceData.shadows = i;
+		QualitySettings.shadows = (ShadowQuality)i;
+	}
+
+	public void OnBloomSwitch()
+	{
+		PlayerPreferences.playerPreferences.preferenceData.bloom = bloomSwitch.isOn;
+	}
+
+	public void OnMotionBlurSwitch()
+	{
+		PlayerPreferences.playerPreferences.preferenceData.motionBlur = motionBlurSwitch.isOn;
+	}
+
+	public void OnBrightnessSelect()
+	{
+		PlayerPreferences.playerPreferences.preferenceData.brightness = brightnessSlider.value;
+		Screen.brightness = brightnessSlider.value;
 	}
 		
 }
