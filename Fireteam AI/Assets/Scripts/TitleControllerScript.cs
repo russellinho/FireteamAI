@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
@@ -19,7 +20,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private const float NINETY_DAYS_MINS = 129600f;
-	private const float THIRTY_DAYS_MINS = 43200;
+	private const float THIRTY_DAYS_MINS = 43200f;
 	private const float SEVEN_DAYS_MINS = 10080f;
 	private const float ONE_DAY_MINS = 1440f;
 	private const float PERMANENT = -1f;
@@ -90,6 +91,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private uint totalCostBeingPurchased;
 	private char currencyTypeBeingPurchased;
 	public bool confirmingTransaction;
+	public bool confirmingSale;
 	private bool resettingKeysFlag;
 	public char currentCharGender;
 	private bool audioInputDevicesInitialized;
@@ -2920,6 +2922,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ConfirmPurchase();
 	}
 
+	public void OnConfirmSaleClicked() {
+		TriggerBlockScreen(true);
+		ConfirmSale();
+	}
+
 	public void OnDurationSelect() {
 		int durationInput = durationSelection.index;
         SetTotalCost(durationInput, durationSelection.GetCurrentItem());
@@ -2935,8 +2942,18 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		itemBeingPurchased = null;
 		typeBeingPurchased = null;
 		confirmingTransaction = false;
+		confirmingSale = false;
 		resettingKeysFlag = false;
 		// confirmPurchasePopup.SetActive(false);
+	}
+
+	public void PrepareSale(DateTime acquireDate, int duration, int cost, string itemName, string itemType)
+	{
+		confirmingSale = true;
+		itemBeingPurchased = itemName;
+		typeBeingPurchased = itemType;
+		int salePrice = GetSalePriceForItem(acquireDate, duration, cost);
+		TriggerConfirmPopup("YOU MAY SELL [" + itemName + "] FOR [" + salePrice + "].\n\nWOULD YOU LIKE TO PROCEED WITH THIS SALE?");
 	}
 
 	void ConfirmPurchase() {
@@ -2970,6 +2987,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				confirmingTransaction = false;
 			}	
 		}
+	}
+
+	void ConfirmSale() {
+		PlayerData.playerdata.SellItemFromInventory(itemBeingPurchased, typeBeingPurchased);
 	}
 
 	float ConvertDurationInput(int durationSelection) {
@@ -3344,6 +3365,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnConfirmButtonClicked() {
 		if (confirmingTransaction) {
 			OnConfirmPurchaseClicked();
+		} else if (confirmingSale) {
+			OnConfirmSaleClicked();
 		} else if (connexion.listPlayer.kickingPlayerFlag) {
 			connexion.listPlayer.KickPlayer(connexion.listPlayer.playerBeingKicked);
 		} else if (resettingKeysFlag) {
@@ -3625,6 +3648,28 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	{
 		PlayerPreferences.playerPreferences.preferenceData.brightness = brightnessSlider.value;
 		Screen.brightness = brightnessSlider.value;
+	}
+
+	public int GetSalePriceForItem(DateTime acquireDate, int duration, int cost) {
+		cost /= 2;
+		if (duration == -1) {
+			return cost;
+		}
+
+		DateTime expirationDate = acquireDate.AddMinutes(duration * 60000);
+		DateTime currentDate = DateTime.Now;
+		int remainingDays = (expirationDate.Millisecond - currentDate.Millisecond) / 86400000;
+		if (remainingDays == 0) {
+			remainingDays = 1;
+		}
+
+		if (remainingDays <= 7) {
+			return (int)(cost * remainingDays * (1f - (0.5f / 1f)));
+		} else if (remainingDays <= 30) {
+			return (int)(cost * remainingDays * (1f - (0.5f / 2f)));
+		}
+
+		return (int)(cost * remainingDays * (1f - (0.5f / 3f)));
 	}
 		
 }

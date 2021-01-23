@@ -34,6 +34,7 @@ public class ShopItemScript : MonoBehaviour
     public Button previewBtn;
     public Button purchaseBtn;
     public Button equipBtn;
+    public Button sellBtn;
     public Button modWeaponBtn;
     public Button modEquipBtn;
     public char titleType;
@@ -96,6 +97,57 @@ public class ShopItemScript : MonoBehaviour
 
     public void OnPurchaseBtnClicked() {
         ts.PreparePurchase(itemName, itemType, GetCurrencyTypeForItem(), thumbnailRef.texture);
+    }
+
+    public void OnSellBtnClicked()
+    {
+        int costOfItem = 0;
+        int itemDuration = 0;
+        string itemNameToPass = null;
+        DateTime itemAcquireDate = DateTime.Now;
+        if (characterDetails != null) {
+            costOfItem = characterDetails.gpPrice == 0 ? characterDetails.kashPrice : characterDetails.gpPrice;
+            itemDuration = int.Parse(PlayerData.playerdata.inventory.myCharacters[itemName].Duration);
+            itemAcquireDate = DateTime.Parse(PlayerData.playerdata.inventory.myCharacters[itemName].AcquireDate);
+            itemNameToPass = itemName;
+        } else if (equipmentDetails != null) {
+            costOfItem = equipmentDetails.gpPrice == 0 ? equipmentDetails.kashPrice : equipmentDetails.gpPrice;
+            EquipmentData tempE = null;
+            if (itemType == "Top") {
+                tempE = PlayerData.playerdata.inventory.myTops[itemName];
+            } else if (itemType == "Bottom") {
+                tempE = PlayerData.playerdata.inventory.myBottoms[itemName];
+            } else if (itemType == "Footwear") {
+                tempE = PlayerData.playerdata.inventory.myFootwear[itemName];
+            } else if (itemType == "Headgear") {
+                tempE = PlayerData.playerdata.inventory.myHeadgear[itemName];
+            } else if (itemType == "Facewear") {
+                tempE = PlayerData.playerdata.inventory.myFacewear[itemName];
+            }
+            itemDuration = int.Parse(tempE.Duration);
+            itemAcquireDate = DateTime.Parse(tempE.AcquireDate);
+            itemNameToPass = itemName;
+        } else if (armorDetails != null) {
+            costOfItem = armorDetails.gpPrice == 0 ? armorDetails.kashPrice : armorDetails.gpPrice;
+            ArmorData tempA = PlayerData.playerdata.inventory.myArmor[itemName];
+            itemDuration = int.Parse(tempA.Duration);
+            itemAcquireDate = DateTime.Parse(tempA.AcquireDate);
+            itemNameToPass = itemName;
+        } else if (weaponDetails != null) {
+            costOfItem = weaponDetails.gpPrice == 0 ? weaponDetails.kashPrice : weaponDetails.gpPrice;
+            WeaponData tempW = PlayerData.playerdata.inventory.myWeapons[itemName];
+            itemDuration = int.Parse(tempW.Duration);
+            itemAcquireDate = DateTime.Parse(tempW.AcquireDate);
+            itemNameToPass = itemName;
+        } else if (modDetails != null) {
+            costOfItem = modDetails.gpPrice == 0 ? modDetails.kashPrice : modDetails.gpPrice;
+            ModData tempM = PlayerData.playerdata.inventory.myMods[itemName];
+            itemDuration = int.Parse(tempM.Duration);
+            itemAcquireDate = DateTime.Parse(tempM.AcquireDate);
+            itemNameToPass = id;
+        }
+
+        ts.PrepareSale(itemAcquireDate, itemDuration, costOfItem, itemNameToPass, itemType);
     }
 
     char GetCurrencyTypeForItem()
@@ -257,6 +309,7 @@ public class ShopItemScript : MonoBehaviour
         equipBtn.gameObject.SetActive(false);
         modWeaponBtn.gameObject.SetActive(false);
         modEquipBtn.gameObject.SetActive(false);
+        sellBtn.gameObject.SetActive(false);
         titleType = 'm';
     }
 
@@ -265,6 +318,7 @@ public class ShopItemScript : MonoBehaviour
         previewBtn.gameObject.SetActive(false);
         purchaseBtn.gameObject.SetActive(false);
         equipBtn.gameObject.SetActive(true);
+        sellBtn.gameObject.SetActive(true);
         modWeaponBtn.gameObject.SetActive(false);
         modEquipBtn.gameObject.SetActive(false);
         titleType = 'l';
@@ -274,9 +328,11 @@ public class ShopItemScript : MonoBehaviour
         if (modDetails == null) {
             modWeaponBtn.gameObject.SetActive(true);
             modEquipBtn.gameObject.SetActive(false);
+            sellBtn.gameObject.SetActive(false);
         } else {
             modWeaponBtn.gameObject.SetActive(false);
             modEquipBtn.gameObject.SetActive(true);
+            sellBtn.gameObject.SetActive(true);
         }
         priceTxt.gameObject.SetActive(false);
         previewBtn.gameObject.SetActive(false);

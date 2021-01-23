@@ -1102,7 +1102,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         inputData["duration"] = duration;
         inputData["category"] = ConvertTypeToFirebaseType(type);
         if (purchased) {
-            inputData["currency"] = purchaseWithCurrency;
             HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("transactItem");
             func.CallAsync(inputData).ContinueWith((taskA) => {
                 if (taskA.IsFaulted) {
@@ -1183,6 +1182,55 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
                 if (results["status"].ToString() != "200") {
                     TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                }
+            }
+        });
+    }
+
+    public void SellItemFromInventory(string itemId, string type)
+    {
+        // If item cannot be deleted, then skip
+        if (!ItemIsDeletable(itemId, type))
+        {
+            return;
+        }
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+        inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["itemId"] = itemId;
+        inputData["category"] = ConvertTypeToFirebaseType(type);
+        HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("sellItemFromUser");
+        func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsCompleted) {
+                func = DAOScript.dao.functions.GetHttpsCallable("deleteItemFromUser");
+                func.CallAsync(inputData).ContinueWith((taskB) => {
+                    if (taskB.IsCompleted) {
+                        titleRef.TriggerAlertPopup("Sale successful! The GP has been refunded to you.");
+                        titleRef.TriggerBlockScreen(false);
+                        titleRef.confirmingSale = false;
+                    } else if (taskB.IsFaulted) {
+                        TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                        titleRef.TriggerBlockScreen(false);
+                        titleRef.confirmingSale = false;
+                    } else {
+                        Dictionary<object, object> results = (Dictionary<object, object>)taskB.Result.Data;
+                        if (results["status"].ToString() != "200") {
+                            TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                            titleRef.TriggerBlockScreen(false);
+                            titleRef.confirmingSale = false;
+                        }
+                    }
+                });
+            } else if (taskA.IsFaulted) {
+                TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                titleRef.TriggerBlockScreen(false);
+                titleRef.confirmingSale = false;
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() != "200") {
+                    TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                    titleRef.TriggerBlockScreen(false);
+                    titleRef.confirmingSale = false;
                 }
             }
         });
