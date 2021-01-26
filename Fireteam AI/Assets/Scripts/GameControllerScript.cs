@@ -89,16 +89,19 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	void Awake() {
 		Bloom myBloom;
 		MotionBlur myMotionBlur;
-		if (PlayerPreferences.playerPreferences.preferenceData.bloom) {
+		ColorGrading myColorGrading;
+		if (!PlayerPreferences.playerPreferences.preferenceData.bloom) {
 			postProcessVolume.profile.TryGetSettings(out myBloom);
-			myBloom.active = true;
-			myBloom.enabled = new BoolParameter{ value = true };
+			myBloom.active = false;
+			myBloom.enabled = new BoolParameter{ value = false };
 		}
-		if (PlayerPreferences.playerPreferences.preferenceData.motionBlur) {
+		if (!PlayerPreferences.playerPreferences.preferenceData.motionBlur) {
 			postProcessVolume.profile.TryGetSettings(out myMotionBlur);
-			myMotionBlur.active = true;
-			myMotionBlur.enabled = new BoolParameter{ value = true };
+			myMotionBlur.active = false;
+			myMotionBlur.enabled = new BoolParameter{ value = false };
 		}
+		postProcessVolume.profile.TryGetSettings(out myColorGrading);
+		myColorGrading.postExposure.value = PlayerPreferences.playerPreferences.preferenceData.brightness - 0.5f;
 		forfeitDelayCheck = 20f;
 		coverSpots = new Dictionary<short, GameObject>();
 		acceptPlayerQueue = new Queue<int>();

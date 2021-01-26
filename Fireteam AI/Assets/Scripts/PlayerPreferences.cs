@@ -22,7 +22,7 @@ public class PlayerPreferences : MonoBehaviour
     private const int DEFAULT_SHADOW_CASCADES = 4;
     private const int DEFAULT_SHADOW_RESOLUTION = 1;
     private const int DEFAULT_SHADOWS = 2;
-    private const float DEFAULT_BRIGHTNESS = 1f;
+    private const float DEFAULT_BRIGHTNESS = 0.5f;
     public const int MIN_QUALITY_PRESET = 0;
     public const int MAX_QUALITY_PRESET = 5;
     public const int MIN_VSYNC = 0;
@@ -41,7 +41,7 @@ public class PlayerPreferences : MonoBehaviour
     public const int MAX_SHADOW_RESOLUTION = 3;
     public const int MIN_SHADOWS = 0;
     public const int MAX_SHADOWS = 2;
-    public const float MIN_BRIGHTNESS = 0.1f;
+    public const float MIN_BRIGHTNESS = 0f;
     public const float MAX_BRIGHTNESS = 1f;
     public static PlayerPreferences playerPreferences;
     public PreferenceData preferenceData;
@@ -243,21 +243,26 @@ public class PlayerPreferences : MonoBehaviour
         playerPreferences.preferenceData.assaultTrack = 0;
 
         // Default graphics
-        playerPreferences.preferenceData.qualityPreset = 5;
-        playerPreferences.preferenceData.vSyncCount = 1;
-        playerPreferences.preferenceData.lodBias = 2;
-        playerPreferences.preferenceData.antiAliasing = 2;
-        playerPreferences.preferenceData.anisotropicFiltering = 2;
-        playerPreferences.preferenceData.masterTextureLimit = 0;
-        playerPreferences.preferenceData.shadowCascades = 4;
-        playerPreferences.preferenceData.shadowResolution = 1;
-        playerPreferences.preferenceData.shadows = 2;
-        playerPreferences.preferenceData.bloom = false;
-        playerPreferences.preferenceData.motionBlur = false;
-        playerPreferences.preferenceData.brightness = 1f;
+        SetDefaultGraphics();
 
         SetGraphicsSettings();
         JukeboxScript.jukebox.SetMusicVolume((float)JukeboxScript.DEFAULT_MUSIC_VOLUME / 100f);
+    }
+
+    public void SetDefaultGraphics()
+    {
+        playerPreferences.preferenceData.qualityPreset = DEFAULT_QUALITY_PRESET;
+        playerPreferences.preferenceData.vSyncCount = DEFAULT_VSYNC;
+        playerPreferences.preferenceData.lodBias = DEFAULT_LOD_BIAS;
+        playerPreferences.preferenceData.antiAliasing = DEFAULT_ANTIALIASING;
+        playerPreferences.preferenceData.anisotropicFiltering = DEFAULT_ANISOTROPICFILTERING;
+        playerPreferences.preferenceData.masterTextureLimit = DEFAULT_MASTER_TEXTURE_LIMIT;
+        playerPreferences.preferenceData.shadowCascades = DEFAULT_SHADOW_CASCADES;
+        playerPreferences.preferenceData.shadowResolution = DEFAULT_SHADOW_RESOLUTION;
+        playerPreferences.preferenceData.shadows = DEFAULT_SHADOWS;
+        playerPreferences.preferenceData.bloom = false;
+        playerPreferences.preferenceData.motionBlur = false;
+        playerPreferences.preferenceData.brightness = DEFAULT_BRIGHTNESS;
     }
 
     public void SetGraphicsSettings()
@@ -271,7 +276,6 @@ public class PlayerPreferences : MonoBehaviour
         QualitySettings.shadowCascades = playerPreferences.preferenceData.shadowCascades;
         QualitySettings.shadowResolution = (ShadowResolution)playerPreferences.preferenceData.shadowResolution;
         QualitySettings.shadows = (ShadowQuality)playerPreferences.preferenceData.shadows;
-        Screen.brightness = playerPreferences.preferenceData.brightness;
     }
 
     void SetDefaultKeyMappings() {

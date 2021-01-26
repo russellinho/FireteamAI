@@ -94,6 +94,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public bool confirmingTransaction;
 	public bool confirmingSale;
 	private bool resettingKeysFlag;
+	private bool resettingGraphicsFlag;
 	public char currentCharGender;
 	private bool audioInputDevicesInitialized;
 
@@ -3014,6 +3015,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		confirmingTransaction = false;
 		confirmingSale = false;
 		resettingKeysFlag = false;
+		resettingGraphicsFlag = false;
 		// confirmPurchasePopup.SetActive(false);
 	}
 
@@ -3441,6 +3443,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			connexion.listPlayer.KickPlayer(connexion.listPlayer.playerBeingKicked);
 		} else if (resettingKeysFlag) {
 			ResetKeyBindings();
+		} else if (resettingGraphicsFlag) {
+			ResetGraphicsSettings();
 		}
 	}
 
@@ -3479,12 +3483,27 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		TriggerConfirmPopup("ARE YOU SURE YOU WISH TO RESET YOUR KEY BINDINGS TO DEFAULT?");
 	}
 
+	public void OnResetGraphicsSettingsClicked()
+	{
+		resettingGraphicsFlag = true;
+		TriggerConfirmPopup("ARE YOU SURE YOU WISH TO RESET YOUR GRAPHICS SETTINGS TO DEFAULT?");
+	}
+
 	void ResetKeyBindings()
 	{
+		resettingKeysFlag = false;
 		PlayerPreferences.playerPreferences.ResetKeyMappings();
 		foreach (KeyMappingInput k in keyMappingInputs) {
 			k.ResetKeyDisplay();
 		}
+	}
+
+	void ResetGraphicsSettings()
+	{
+		resettingGraphicsFlag = false;
+		PlayerPreferences.playerPreferences.SetDefaultGraphics();
+		InitializeGraphicSettings();
+		PlayerPreferences.playerPreferences.SetGraphicsSettings();
 	}
 
 	public void OnCreditsButtonClicked()
@@ -3598,6 +3617,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		anisotropicFilteringSelector.index = PlayerPreferences.playerPreferences.preferenceData.anisotropicFiltering;
 		anisotropicFilteringSelector.UpdateUI();
 		masterTextureLimitSlider.value = PlayerPreferences.playerPreferences.preferenceData.masterTextureLimit;
+		if (PlayerPreferences.playerPreferences.preferenceData.shadowCascades > PlayerPreferences.MAX_SHADOW_CASCADES) {
+			PlayerPreferences.playerPreferences.preferenceData.shadowCascades = PlayerPreferences.MAX_SHADOW_CASCADES;
+		}
 		shadowCascadesSelector.index = PlayerPreferences.playerPreferences.preferenceData.shadowCascades;
 		shadowCascadesSelector.UpdateUI();
 		shadowResolutionSelector.index = PlayerPreferences.playerPreferences.preferenceData.shadowResolution;
@@ -3605,8 +3627,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		shadowSelector.index = PlayerPreferences.playerPreferences.preferenceData.shadows;
 		shadowSelector.UpdateUI();
 		bloomSwitch.isOn = PlayerPreferences.playerPreferences.preferenceData.bloom;
+		bloomSwitch.RefreshSwitch();
 		motionBlurSwitch.isOn = PlayerPreferences.playerPreferences.preferenceData.motionBlur;
-		brightnessSlider.value = PlayerPreferences.playerPreferences.preferenceData.brightness;
+		motionBlurSwitch.RefreshSwitch();
+		brightnessSlider.value = (int)(PlayerPreferences.playerPreferences.preferenceData.brightness * 100f);
 	}
 
 	public void OnResolutionSelect()
@@ -3641,6 +3665,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         PlayerPreferences.playerPreferences.preferenceData.antiAliasing = QualitySettings.antiAliasing;
         PlayerPreferences.playerPreferences.preferenceData.anisotropicFiltering = (int)QualitySettings.anisotropicFiltering;
         PlayerPreferences.playerPreferences.preferenceData.masterTextureLimit = QualitySettings.masterTextureLimit;
+		if (QualitySettings.shadowCascades > PlayerPreferences.MAX_SHADOW_CASCADES) {
+			QualitySettings.shadowCascades = PlayerPreferences.MAX_SHADOW_CASCADES;
+		}
         PlayerPreferences.playerPreferences.preferenceData.shadowCascades = QualitySettings.shadowCascades;
         PlayerPreferences.playerPreferences.preferenceData.shadowResolution = (int)QualitySettings.shadowResolution;
 		PlayerPreferences.playerPreferences.preferenceData.brightness = 1f;
@@ -3704,20 +3731,19 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		QualitySettings.shadows = (ShadowQuality)i;
 	}
 
-	public void OnBloomSwitch()
+	public void OnBloomSwitch(bool o)
 	{
-		PlayerPreferences.playerPreferences.preferenceData.bloom = bloomSwitch.isOn;
+		PlayerPreferences.playerPreferences.preferenceData.bloom = o;
 	}
 
-	public void OnMotionBlurSwitch()
+	public void OnMotionBlurSwitch(bool o)
 	{
-		PlayerPreferences.playerPreferences.preferenceData.motionBlur = motionBlurSwitch.isOn;
+		PlayerPreferences.playerPreferences.preferenceData.motionBlur = o;
 	}
 
 	public void OnBrightnessSelect()
 	{
-		PlayerPreferences.playerPreferences.preferenceData.brightness = brightnessSlider.value;
-		Screen.brightness = brightnessSlider.value;
+		PlayerPreferences.playerPreferences.preferenceData.brightness = brightnessSlider.value / 100f;
 	}
 
 	public int GetSalePriceForItem(DateTime acquireDate, int duration, int cost) {

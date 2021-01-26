@@ -16,12 +16,14 @@ namespace Michsky.UI.Shift
         public UnityEvent OnEvents;
         public UnityEvent OffEvents;
 
-        Animator switchAnimator;
+        public Animator switchAnimator;
         Button switchButton;
 
         void Start()
         {
-            switchAnimator = gameObject.GetComponent<Animator>();
+            if (switchAnimator == null) {
+                switchAnimator = gameObject.GetComponent<Animator>();
+            }
             switchButton = gameObject.GetComponent<Button>();
             switchButton.onClick.AddListener(AnimateSwitch);
 
@@ -98,6 +100,15 @@ namespace Michsky.UI.Shift
 
                 if (saveValue == true)
                     PlayerPrefs.SetString(switchTag + "Switch", "true");
+            }
+        }
+
+        public void RefreshSwitch()
+        {
+            if (isOn) {
+                switchAnimator.Play("Switch On");
+            } else {
+                switchAnimator.Play("Switch Off");
             }
         }
     }
