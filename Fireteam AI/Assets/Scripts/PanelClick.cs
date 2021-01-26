@@ -36,6 +36,7 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             ips.ToggleModStatDescriptor(true);
             ips.ToggleEquipmentStatDescriptor(false);
             ips.ToggleWeaponStatDescriptor(false);
+            ips.ToggleClothingStatDescriptor(false);
         } else {
             ips.ToggleModStatDescriptor(false);
             if (shopItemScript.itemDescriptionPopupRef.activeInHierarchy) {
@@ -47,14 +48,17 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 ips.SetEquipmentStats(shopItemScript.equipmentDetails.armor, shopItemScript.equipmentDetails.speed, shopItemScript.equipmentDetails.stamina, shopItemScript.equipmentDetails.gender, shopItemScript.equipmentDetails.characterRestrictions);
                 ips.ToggleEquipmentStatDescriptor(true);
                 ips.SetRestrictions(shopItemScript.equipmentDetails.gender, shopItemScript.equipmentDetails.characterRestrictions);
+                ips.ToggleClothingStatDescriptor(false);
             } else if (shopItemScript.itemType.Equals("Armor")) {
                 ips.ToggleWeaponStatDescriptor(false);
                 ips.SetArmorStats(shopItemScript.armorDetails.armor, shopItemScript.armorDetails.speed, shopItemScript.armorDetails.stamina);
                 ips.ToggleEquipmentStatDescriptor(true);
+                ips.ToggleClothingStatDescriptor(false);
             } else if (shopItemScript.itemType.Equals("Weapon")) {
                 ips.ToggleEquipmentStatDescriptor(false);
                 ips.SetWeaponStats(shopItemScript.weaponDetails.damage, shopItemScript.weaponDetails.accuracy, shopItemScript.weaponDetails.recoil, shopItemScript.weaponDetails.fireRate, shopItemScript.weaponDetails.mobility, shopItemScript.weaponDetails.range, shopItemScript.weaponDetails.clipCapacity);
                 ips.ToggleWeaponStatDescriptor(true);
+                ips.ToggleClothingStatDescriptor(false);
             } else {
                 // For clothing and shoes
                 ips.ToggleEquipmentStatDescriptor(false);
@@ -62,6 +66,7 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 if (!shopItemScript.itemType.Equals("Character")) {
                     ips.SetRestrictions(shopItemScript.equipmentDetails.gender, shopItemScript.equipmentDetails.characterRestrictions);
                 }
+                ips.ToggleClothingStatDescriptor(true);
             }
         }
     }

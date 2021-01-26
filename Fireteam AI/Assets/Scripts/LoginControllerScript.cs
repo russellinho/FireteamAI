@@ -33,7 +33,6 @@ public class LoginControllerScript : MonoBehaviour
         emailField.text = PlayerPreferences.playerPreferences.preferenceData.rememberUserId;
         rememberLoginToggle.isOn = PlayerPreferences.playerPreferences.preferenceData.rememberLogin;
         UnloadDeadScenes();
-        Debug.Log(Screen.brightness);
     }
 
     // Update is called once per frame

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BulletHoleScript : MonoBehaviour {
-
+	public bool skipRicochetAmbient;
 	public ParticleSystem hitParticles;
 	public AudioClip[] ricochetSounds;
 	public AudioClip[] ricochetAmbient;
@@ -17,10 +17,12 @@ public class BulletHoleScript : MonoBehaviour {
 		a.clip = ricochetSounds[r];
 		a.Play ();
 
-		r = Random.Range (0, ricochetAmbient.Length * 2);
-		if (r < ricochetAmbient.Length) {
-			aAmbient.clip = ricochetAmbient[r];
-			aAmbient.Play();
+		if (!skipRicochetAmbient) {
+			r = Random.Range (0, ricochetAmbient.Length * 2);
+			if (r < ricochetAmbient.Length) {
+				aAmbient.clip = ricochetAmbient[r];
+				aAmbient.Play();
+			}
 		}
 	}
 

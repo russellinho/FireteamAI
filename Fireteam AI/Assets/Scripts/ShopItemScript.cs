@@ -104,6 +104,7 @@ public class ShopItemScript : MonoBehaviour
         int costOfItem = 0;
         int itemDuration = 0;
         string itemNameToPass = null;
+        string idToPass = null;
         DateTime itemAcquireDate = DateTime.Now;
         if (characterDetails != null) {
             costOfItem = characterDetails.gpPrice == 0 ? characterDetails.kashPrice : characterDetails.gpPrice;
@@ -141,13 +142,14 @@ public class ShopItemScript : MonoBehaviour
             itemNameToPass = itemName;
         } else if (modDetails != null) {
             costOfItem = modDetails.gpPrice == 0 ? modDetails.kashPrice : modDetails.gpPrice;
-            ModData tempM = PlayerData.playerdata.inventory.myMods[itemName];
+            ModData tempM = PlayerData.playerdata.inventory.myMods[id];
             itemDuration = int.Parse(tempM.Duration);
             itemAcquireDate = DateTime.Parse(tempM.AcquireDate);
-            itemNameToPass = id;
+            itemNameToPass = itemName;
+            idToPass = id;
         }
 
-        ts.PrepareSale(itemAcquireDate, itemDuration, costOfItem, itemNameToPass, itemType);
+        ts.PrepareSale(itemAcquireDate, itemDuration, costOfItem, itemNameToPass, itemType, idToPass);
     }
 
     char GetCurrencyTypeForItem()
@@ -313,7 +315,7 @@ public class ShopItemScript : MonoBehaviour
         titleType = 'm';
     }
 
-    public void SetItemForLoadout() {
+    public void SetItemForLoadout(bool deleteable) {
         priceTxt.gameObject.SetActive(false);
         previewBtn.gameObject.SetActive(false);
         purchaseBtn.gameObject.SetActive(false);
@@ -322,6 +324,11 @@ public class ShopItemScript : MonoBehaviour
         modWeaponBtn.gameObject.SetActive(false);
         modEquipBtn.gameObject.SetActive(false);
         titleType = 'l';
+        if (deleteable) {
+            sellBtn.gameObject.SetActive(true);
+        } else {
+            sellBtn.gameObject.SetActive(false);
+        }
     }
 
     public void SetItemForModShop() {

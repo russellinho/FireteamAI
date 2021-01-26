@@ -17,6 +17,7 @@ using VivoxUnity;
 using VivoxUnity.Common;
 using VivoxUnity.Private;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using Random = UnityEngine.Random;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private const float NINETY_DAYS_MINS = 129600f;
@@ -644,7 +645,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisHeadgear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(thisHeadgear.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisHeadgear;
 			s.itemName = thisItemName;
@@ -701,7 +702,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisFacewear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(thisFacewear.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisFacewear;
 			s.itemName = thisItemName;
@@ -758,7 +759,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Armor thisArmor = InventoryScript.itemData.armorCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(thisArmor.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.armorDetails = thisArmor;
 			s.itemName = thisItemName;
@@ -815,7 +816,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisTop = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(thisTop.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisTop;
             s.itemName = thisItemName;
@@ -872,7 +873,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisBottom = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(thisBottom.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisBottom;
 			s.itemName = thisItemName;
@@ -929,7 +930,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisFootwear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(thisFootwear.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisFootwear;
 			s.itemName = thisItemName;
@@ -988,7 +989,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1085,7 +1086,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1178,7 +1179,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1271,7 +1272,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1364,7 +1365,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1457,7 +1458,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1550,7 +1551,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1643,7 +1644,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1736,7 +1737,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1829,7 +1830,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1922,7 +1923,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -2015,7 +2016,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -2076,7 +2077,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.SetItemForModShop();
@@ -2109,7 +2110,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -2202,7 +2203,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -2295,7 +2296,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -2472,7 +2473,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Character c = InventoryScript.itemData.characterCatalog[thisCharacterName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(c.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.characterDetails = c;
 			s.itemName = thisCharacterName;
@@ -2586,6 +2587,75 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedModPrefab = o;
 			}
 			o.transform.SetParent(modInventoryContent.transform, false);
+		}
+	}
+
+	public void RemoveItemFromShopContent(char shopType, string itemId)
+	{
+		if (shopType == 'c') {
+			ShopItemScript[] currentlyDisplayedContent = contentInventoryEquipment.GetComponentsInChildren<ShopItemScript>();
+			if (itemId == currentlyEquippedEquipmentPrefab?.GetComponent<ShopItemScript>().itemName) {
+				foreach (ShopItemScript s in currentlyDisplayedContent) {
+					if (s.itemName == PlayerData.playerdata.info.DefaultChar) {
+						s.ToggleEquippedIndicator(true);
+						currentlyEquippedEquipmentPrefab = s.gameObject;
+						break;
+					}
+				}
+			}
+			foreach (ShopItemScript s in currentlyDisplayedContent) {
+				if (s.itemName == itemId) {
+					GameObject.Destroy(s.gameObject);
+					break;
+				}
+			}
+		} else if (shopType == 'e') {
+			ShopItemScript[] currentlyDisplayedContent = contentInventoryEquipment.GetComponentsInChildren<ShopItemScript>();
+			if (itemId == currentlyEquippedEquipmentPrefab?.GetComponent<ShopItemScript>().itemName) {
+				Character myChar = InventoryScript.itemData.characterCatalog[PlayerData.playerdata.info.EquippedCharacter];
+				string myDefaultTop = myChar.defaultTop;
+				string myDefaultBottom = myChar.defaultBottom;
+				string myDefaultFootwear = (myChar.gender == 'M' ? PlayerData.DEFAULT_FOOTWEAR_MALE : PlayerData.DEFAULT_FOOTWEAR_FEMALE);
+				foreach (ShopItemScript s in currentlyDisplayedContent) {
+					if (s.itemName == myDefaultTop || s.itemName == myDefaultBottom || s.itemName == myDefaultFootwear) {
+						s.ToggleEquippedIndicator(true);
+						currentlyEquippedEquipmentPrefab = s.gameObject;
+						break;
+					}
+				}
+			}
+			foreach (ShopItemScript s in currentlyDisplayedContent) {
+				if (s.itemName == itemId) {
+					GameObject.Destroy(s.gameObject);
+					break;
+				}
+			}
+		} else if (shopType == 'w') {
+			ShopItemScript[] currentlyDisplayedContent = contentInventoryWeapons.GetComponentsInChildren<ShopItemScript>();
+			if (itemId == currentlyEquippedWeaponPrefab?.GetComponent<ShopItemScript>().itemName) {
+				foreach (ShopItemScript s in currentlyDisplayedContent) {
+					if (s.itemName == PlayerData.playerdata.info.DefaultWeapon || s.itemName == PlayerData.DEFAULT_SECONDARY ||
+						s.itemName == PlayerData.DEFAULT_SUPPORT || s.itemName == PlayerData.DEFAULT_MELEE) {
+						s.ToggleEquippedIndicator(true);
+						currentlyEquippedWeaponPrefab = s.gameObject;
+						break;
+					}
+				}
+			}
+			foreach (ShopItemScript s in currentlyDisplayedContent) {
+				if (s.itemName == itemId) {
+					GameObject.Destroy(s.gameObject);
+					break;
+				}
+			}
+		} else if (shopType == 'm') {
+			ShopItemScript[] currentlyDisplayedContent = modInventoryContent.GetComponentsInChildren<ShopItemScript>();
+			foreach (ShopItemScript s in currentlyDisplayedContent) {
+				if (s.id == itemId) {
+					GameObject.Destroy(s.gameObject);
+					break;
+				}
+			}
 		}
 	}
 
@@ -2947,13 +3017,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		// confirmPurchasePopup.SetActive(false);
 	}
 
-	public void PrepareSale(DateTime acquireDate, int duration, int cost, string itemName, string itemType)
+	public void PrepareSale(DateTime acquireDate, int duration, int cost, string itemName, string itemType, string id)
 	{
 		confirmingSale = true;
-		itemBeingPurchased = itemName;
+		itemBeingPurchased = id == null ? itemName : id;
 		typeBeingPurchased = itemType;
 		int salePrice = GetSalePriceForItem(acquireDate, duration, cost);
-		TriggerConfirmPopup("YOU MAY SELL [" + itemName + "] FOR [" + salePrice + "].\n\nWOULD YOU LIKE TO PROCEED WITH THIS SALE?");
+		TriggerConfirmPopup("YOU MAY SELL [" + itemName + "] FOR [" + salePrice + "] GP.\n\nWOULD YOU LIKE TO PROCEED WITH THIS SALE?");
 	}
 
 	void ConfirmPurchase() {
@@ -3651,12 +3721,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	public int GetSalePriceForItem(DateTime acquireDate, int duration, int cost) {
-		cost /= 2;
+		cost /= 4;
 		if (duration == -1) {
 			return cost;
 		}
 
-		DateTime expirationDate = acquireDate.AddMinutes(duration * 60000);
+		DateTime expirationDate = acquireDate.AddMinutes(duration);
 		DateTime currentDate = DateTime.Now;
 		int remainingDays = (expirationDate.Millisecond - currentDate.Millisecond) / 86400000;
 		if (remainingDays == 0) {

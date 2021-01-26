@@ -5,10 +5,16 @@ using UnityEngine.UI;
 
 public class ItemPopupScript : MonoBehaviour
 {
-
+    public GameObject clothingStatDescriptor;
     public GameObject equipmentStatDescriptor;
     public GameObject weaponStatDescriptor;
     public GameObject modStatDescriptor;
+
+    // Clothing stat labels
+    public Text genderRestTxtClothing;
+    public Text characterRestTxtClothing;
+    public Text expirationDateTxtClothing;
+    public GameObject expirationDateClothing;
 
     // Equipment stat labels
     public Text armorStatTxt;
@@ -97,6 +103,10 @@ public class ItemPopupScript : MonoBehaviour
         description.text = s;
     }
 
+    public void ToggleClothingStatDescriptor(bool b) {
+        clothingStatDescriptor.SetActive(b);
+    }
+
     public void ToggleEquipmentStatDescriptor(bool b) {
         equipmentStatDescriptor.SetActive(b);
     }
@@ -118,12 +128,22 @@ public class ItemPopupScript : MonoBehaviour
     public void SetRestrictions(char gender, string[] characterRestrictions) {
         if (gender == 'M') {
             genderRestTxt.text = "Male";
+            genderRestTxtClothing.text = "Male";
         } else if (gender == 'F') {
             genderRestTxt.text = "Female";
+            genderRestTxtClothing.text = "Female";
         } else {
             genderRestTxt.text = "None";
+            genderRestTxtClothing.text = "None";
         }
-        characterRestTxt.text = characterRestrictions.Length == 0 ? "None" : string.Join(", ", characterRestrictions);
+        if (characterRestrictions.Length == 0) {
+            characterRestTxt.text = "None";
+            characterRestTxtClothing.text = "None";
+        } else {
+            string rests = string.Join(", ", characterRestrictions);
+            characterRestTxt.text = rests;
+            characterRestTxtClothing.text = rests;
+        }
     }
 
     public void SetArmorStats(float armor, float speed, float stamina) {
@@ -169,20 +189,26 @@ public class ItemPopupScript : MonoBehaviour
         clipCapacityTxt.text = "-";
         genderRestTxt.text = "";
         characterRestTxt.text = "";
+        genderRestTxtClothing.text = "";
+        characterRestTxtClothing.text = "";
+        expirationDateTxtClothing.text = "";
     }
 
     public void SetExpirationDate(string expirationDate) {
         expirationDateWeaponTxt.text = expirationDate;
         expirationDateEquipTxt.text = expirationDate;
+        expirationDateTxtClothing.text = expirationDate;
         if (expirationDate != "Permanent") {
             expirationDateWeaponTxt.text += " EST";
             expirationDateEquipTxt.text += " EST";
+            expirationDateTxtClothing.text += " EST";
         }
     }
 
     public void ToggleExpirationDateText(bool b) {
         expirationDateEquip.SetActive(b);
         expirationDateWeapon.SetActive(b);
+        expirationDateClothing.SetActive(b);
     }
 
 }

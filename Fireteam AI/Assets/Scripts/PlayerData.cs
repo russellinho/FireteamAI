@@ -31,11 +31,11 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     private const float TITLE_ROT_Y = 180f;
     private const float TITLE_ROT_Z = 0f;
 
-    private const string DEFAULT_SECONDARY = "I32";
-    private const string DEFAULT_SUPPORT = "N76 Fragmentation";
-    private const string DEFAULT_MELEE = "Recon Knife";
-    private const string DEFAULT_FOOTWEAR_MALE = "Standard Boots (M)";
-    private const string DEFAULT_FOOTWEAR_FEMALE = "Standard Boots (F)";
+    public const string DEFAULT_SECONDARY = "I32";
+    public const string DEFAULT_SUPPORT = "N76 Fragmentation";
+    public const string DEFAULT_MELEE = "Recon Knife";
+    public const string DEFAULT_FOOTWEAR_MALE = "Standard Boots (M)";
+    public const string DEFAULT_FOOTWEAR_FEMALE = "Standard Boots (F)";
     public const uint MAX_EXP = 50000000;
     public const uint MAX_GP = uint.MaxValue;
     public const uint MAX_KASH = uint.MaxValue;
@@ -560,49 +560,51 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         info.EquippedArmor = equipmentSnap["equippedArmor"].ToString();
                         Dictionary<object, object> weaponsInventorySnap = (Dictionary<object, object>)inventorySnap["weapons"];
                         Dictionary<object, object> thisWeaponInventorySnap = (Dictionary<object, object>)weaponsInventorySnap[info.EquippedPrimary];
-                        Dictionary<object, object> modsInventorySnap = (Dictionary<object, object>)inventorySnap["mods"];
-                        Dictionary<object, object> suppressorModSnap = null;
-                        Dictionary<object, object> sightModSnap = null;
-                        string suppressorModId = thisWeaponInventorySnap["equippedSuppressor"].ToString();
-                        string sightModId = thisWeaponInventorySnap["equippedSight"].ToString();
-                        primaryModInfo.WeaponName = info.EquippedPrimary;
-                        primaryModInfo.SuppressorId = suppressorModId;
-                        primaryModInfo.SightId = sightModId;
-                        if (!"".Equals(suppressorModId)) {
-                            suppressorModSnap = (Dictionary<object, object>)modsInventorySnap[suppressorModId];
-                            primaryModInfo.EquippedSuppressor = suppressorModSnap["name"].ToString();
-                        }
-                        if (!"".Equals(sightModId)) {
-                            sightModSnap = (Dictionary<object, object>)modsInventorySnap[sightModId];
-                            primaryModInfo.EquippedSight = sightModSnap["name"].ToString();
-                        }
-                        thisWeaponInventorySnap = (Dictionary<object, object>)weaponsInventorySnap[info.EquippedSecondary];
-                        suppressorModId = thisWeaponInventorySnap["equippedSuppressor"].ToString();
-                        sightModId = thisWeaponInventorySnap["equippedSight"].ToString();
-                        secondaryModInfo.WeaponName = info.EquippedSecondary;
-                        secondaryModInfo.SuppressorId = suppressorModId;
-                        secondaryModInfo.SightId = sightModId;
-                        if (!"".Equals(suppressorModId)) {
-                            suppressorModSnap = (Dictionary<object, object>)modsInventorySnap[suppressorModId];
-                            secondaryModInfo.EquippedSuppressor = suppressorModSnap["name"].ToString();
-                        }
-                        if (!"".Equals(sightModId)) {
-                            sightModSnap = (Dictionary<object, object>)modsInventorySnap[sightModId];
-                            secondaryModInfo.EquippedSight = sightModSnap["name"].ToString();
-                        }
-                        thisWeaponInventorySnap = (Dictionary<object, object>)weaponsInventorySnap[info.EquippedSupport];
-                        suppressorModId = thisWeaponInventorySnap["equippedSuppressor"].ToString();
-                        sightModId = thisWeaponInventorySnap["equippedSight"].ToString();
-                        supportModInfo.WeaponName = info.EquippedSupport;
-                        supportModInfo.SuppressorId = suppressorModId;
-                        supportModInfo.SightId = sightModId;
-                        if (!"".Equals(suppressorModId)) {
-                            suppressorModSnap = (Dictionary<object, object>)modsInventorySnap[suppressorModId];
-                            supportModInfo.EquippedSuppressor = suppressorModSnap["name"].ToString();
-                        }
-                        if (!"".Equals(sightModId)) {
-                            sightModSnap = (Dictionary<object, object>)modsInventorySnap[sightModId];
-                            supportModInfo.EquippedSuppressor = sightModSnap["name"].ToString();
+                        if (inventorySnap.ContainsKey("mods")) {
+                            Dictionary<object, object> modsInventorySnap = (Dictionary<object, object>)inventorySnap["mods"];
+                            Dictionary<object, object> suppressorModSnap = null;
+                            Dictionary<object, object> sightModSnap = null;
+                            string suppressorModId = thisWeaponInventorySnap["equippedSuppressor"].ToString();
+                            string sightModId = thisWeaponInventorySnap["equippedSight"].ToString();
+                            primaryModInfo.WeaponName = info.EquippedPrimary;
+                            primaryModInfo.SuppressorId = suppressorModId;
+                            primaryModInfo.SightId = sightModId;
+                            if (!"".Equals(suppressorModId)) {
+                                suppressorModSnap = (Dictionary<object, object>)modsInventorySnap[suppressorModId];
+                                primaryModInfo.EquippedSuppressor = suppressorModSnap["name"].ToString();
+                            }
+                            if (!"".Equals(sightModId)) {
+                                sightModSnap = (Dictionary<object, object>)modsInventorySnap[sightModId];
+                                primaryModInfo.EquippedSight = sightModSnap["name"].ToString();
+                            }
+                            thisWeaponInventorySnap = (Dictionary<object, object>)weaponsInventorySnap[info.EquippedSecondary];
+                            suppressorModId = thisWeaponInventorySnap["equippedSuppressor"].ToString();
+                            sightModId = thisWeaponInventorySnap["equippedSight"].ToString();
+                            secondaryModInfo.WeaponName = info.EquippedSecondary;
+                            secondaryModInfo.SuppressorId = suppressorModId;
+                            secondaryModInfo.SightId = sightModId;
+                            if (!"".Equals(suppressorModId)) {
+                                suppressorModSnap = (Dictionary<object, object>)modsInventorySnap[suppressorModId];
+                                secondaryModInfo.EquippedSuppressor = suppressorModSnap["name"].ToString();
+                            }
+                            if (!"".Equals(sightModId)) {
+                                sightModSnap = (Dictionary<object, object>)modsInventorySnap[sightModId];
+                                secondaryModInfo.EquippedSight = sightModSnap["name"].ToString();
+                            }
+                            thisWeaponInventorySnap = (Dictionary<object, object>)weaponsInventorySnap[info.EquippedSupport];
+                            suppressorModId = thisWeaponInventorySnap["equippedSuppressor"].ToString();
+                            sightModId = thisWeaponInventorySnap["equippedSight"].ToString();
+                            supportModInfo.WeaponName = info.EquippedSupport;
+                            supportModInfo.SuppressorId = suppressorModId;
+                            supportModInfo.SightId = sightModId;
+                            if (!"".Equals(suppressorModId)) {
+                                suppressorModSnap = (Dictionary<object, object>)modsInventorySnap[suppressorModId];
+                                supportModInfo.EquippedSuppressor = suppressorModSnap["name"].ToString();
+                            }
+                            if (!"".Equals(sightModId)) {
+                                sightModSnap = (Dictionary<object, object>)modsInventorySnap[sightModId];
+                                supportModInfo.EquippedSuppressor = sightModSnap["name"].ToString();
+                            }
                         }
                     } else {
                         info.EquippedCharacter = playerDataSnap["defaultChar"].ToString();
@@ -731,30 +733,54 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             if (inventory.myTops.ContainsKey(itemName)) {
                 inventory.myTops[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myTops.Remove(itemName);
+                titleRef.RemoveItemFromShopContent('e', itemName);
             } else if (inventory.myBottoms.ContainsKey(itemName)) {
                 inventory.myBottoms[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myBottoms.Remove(itemName);
+                titleRef.RemoveItemFromShopContent('e', itemName);
             } else if (inventory.myArmor.ContainsKey(itemName)) {
                 inventory.myArmor[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myArmor.Remove(itemName);
+                titleRef.RemoveItemFromShopContent('e', itemName);
             } else if (inventory.myCharacters.ContainsKey(itemName)) {
                 inventory.myCharacters[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myCharacters.Remove(itemName);
+                titleRef.RemoveItemFromShopContent('c', itemName);
             } else if (inventory.myFacewear.ContainsKey(itemName)) {
                 inventory.myFacewear[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myFacewear.Remove(itemName);
+                titleRef.RemoveItemFromShopContent('e', itemName);
             } else if (inventory.myFootwear.ContainsKey(itemName)) {
                 inventory.myFootwear[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myFootwear.Remove(itemName);
+                titleRef.RemoveItemFromShopContent('e', itemName);
             } else if (inventory.myHeadgear.ContainsKey(itemName)) {
                 inventory.myHeadgear[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myHeadgear.Remove(itemName);
+                titleRef.RemoveItemFromShopContent('e', itemName);
             } else if (inventory.myWeapons.ContainsKey(itemName)) {
                 inventory.myWeapons[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myWeapons.Remove(itemName);
+                titleRef.RemoveItemFromShopContent('w', itemName);
             } else if (inventory.myMods.ContainsKey(itemName)) {
                 inventory.myMods[itemName].PropertyChanged -= OnPlayerInfoChange;
                 inventory.myMods.Remove(itemName);
+                titleRef.RemoveItemFromShopContent('m', itemName);
+                if (titleRef != null) {
+                    playerDataModifyLegalFlag = true;
+                    
+                    // Update player template weapon
+                    OnPrimaryChange(PlayerData.playerdata.info.EquippedPrimary);
+                    OnSecondaryChange(PlayerData.playerdata.info.EquippedSecondary);
+                    OnSupportChange(PlayerData.playerdata.info.EquippedSupport);
+
+                    // Update weapon mod template if active and refresh weapon stats
+                    if (titleRef.mainPanelManager.currentPanelIndex == titleRef.mainPanelManager.GetModShopIndex()) {
+                        titleRef.LoadWeaponForModding(titleRef.weaponPreviewShopSlot);
+                    }
+                    
+                    playerDataModifyLegalFlag = false;
+                }
             }
         } else if (transactionType == 'm') {
             string itemName = snapshot.Key;
@@ -1150,7 +1176,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 return false;
             }
         } else if (type == "Mod") {
-            if (!InventoryScript.itemData.modCatalog[itemName].deleteable) {
+            if (!InventoryScript.itemData.modCatalog[PlayerData.playerdata.inventory.myMods[itemName].Name].deleteable) {
                 return false;
             }
         } else {
@@ -1197,11 +1223,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         Dictionary<string, object> inputData = new Dictionary<string, object>();
         inputData["callHash"] = DAOScript.functionsCallHash;
         inputData["uid"] = AuthScript.authHandler.user.UserId;
-        inputData["itemId"] = itemId;
+        inputData["itemName"] = itemId;
         inputData["category"] = ConvertTypeToFirebaseType(type);
         HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("sellItemFromUser");
         func.CallAsync(inputData).ContinueWith((taskA) => {
             if (taskA.IsCompleted) {
+                inputData.Remove("itemName");
+                inputData["itemId"] = itemId;
                 func = DAOScript.dao.functions.GetHttpsCallable("deleteItemFromUser");
                 func.CallAsync(inputData).ContinueWith((taskB) => {
                     if (taskB.IsCompleted) {
@@ -2239,7 +2267,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             TriggerEmergencyExit(args.DatabaseError.Message);
             return;
         }
-
+        
         // When inventory item has been removed, also remove that item from this game session
         if (args.Snapshot.Value != null) {
             if (titleRef != null) {

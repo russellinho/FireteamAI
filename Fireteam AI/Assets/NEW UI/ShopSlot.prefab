@@ -4070,7 +4070,7 @@ MonoBehaviour:
   previewBtn: {fileID: 2325126065444076836}
   purchaseBtn: {fileID: 2776477496835623502}
   equipBtn: {fileID: 2325126064439601197}
-  sellBtn: {fileID: 0}
+  sellBtn: {fileID: 6850596801265198894}
   modWeaponBtn: {fileID: 3389070738163667792}
   modEquipBtn: {fileID: 3159788567848110571}
   titleType: 0
@@ -9759,7 +9759,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7576897891449801484}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7842960523304197656}
+        m_MethodName: OnSellBtnClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &8921308585192338298
 MonoBehaviour:
   m_ObjectHideFlags: 0

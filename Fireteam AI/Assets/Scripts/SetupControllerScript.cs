@@ -241,7 +241,7 @@ public class SetupControllerScript : MonoBehaviour
                                             inputData.Clear();
                                             inputData["callHash"] = DAOScript.functionsCallHash;
                                             inputData["uid"] = AuthScript.authHandler.user.UserId;
-                                            Dictionary<string, string>[] starterItems = new Dictionary<string, string>[12];
+                                            Dictionary<string, string>[] starterItems = new Dictionary<string, string>[11];
                                             Dictionary<string, string> item1 = new Dictionary<string, string>();
                                             item1.Add("itemName", weaponSelector.GetCurrentItem());
                                             item1.Add("category", "weapons");
@@ -297,10 +297,10 @@ public class SetupControllerScript : MonoBehaviour
                                             item11.Add("category", "footwear");
                                             item11.Add("duration", "-1");
                                             starterItems[10] = item11;
-                                            Dictionary<string, string> item12 = new Dictionary<string, string>();
-                                            item12.Add("itemName", "Standard Suppressor");
-                                            item12.Add("category", "mods");
-                                            starterItems[11] = item12;
+                                            // Dictionary<string, string> item12 = new Dictionary<string, string>();
+                                            // item12.Add("itemName", "Standard Suppressor");
+                                            // item12.Add("category", "mods");
+                                            // starterItems[11] = item12;
                                             inputData["items"] = starterItems;
                                             func = DAOScript.dao.functions.GetHttpsCallable("giveItemsToUser");
                                             func.CallAsync(inputData).ContinueWith((taskD) => {
