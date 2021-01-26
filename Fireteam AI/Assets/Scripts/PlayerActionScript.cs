@@ -1653,6 +1653,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         } else if (waitForAccept) {
             waitingOnAccept = true;
             if (pView.IsMine) {
+                Debug.Log("one");
                 SetPlayerDead();
                 hud.container.spectatorText.text = "PLEASE WAIT FOR THE HOST TO ACCEPT YOU INTO THE GAME.";
             }
