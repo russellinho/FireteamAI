@@ -1647,16 +1647,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         GameControllerScript.playerList[pView.OwnerActorNr].deaths = deaths;
         this.escapeAvailablePopup = escapeAvailablePopup;
         if (health <= 0) {
-            if (pView.IsMine) {
-                SetPlayerDead();
-            }
+            SetPlayerDead();
         } else if (waitForAccept) {
             waitingOnAccept = true;
-            if (pView.IsMine) {
-                Debug.Log("one");
-                SetPlayerDead();
-                hud.container.spectatorText.text = "PLEASE WAIT FOR THE HOST TO ACCEPT YOU INTO THE GAME.";
-            }
+            SetPlayerDead();
+            hud.container.spectatorText.text = "PLEASE WAIT FOR THE HOST TO ACCEPT YOU INTO THE GAME.";
         }
 	}
 
