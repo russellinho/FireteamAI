@@ -15,6 +15,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     // Timer
     public static float missionTime;
     public static float MAX_MISSION_TIME = 1800f;
+	public static float WAIT_TRIGGER_TIME = 60f;
 	private const float FORFEIT_CHECK_DELAY = 3f;
 	private const float VOTE_TIME = 3f;
 	private const float VOTE_DELAY = 300f;

@@ -1627,11 +1627,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         int joinMode = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
         bool waitForAccept = false;
-        if (joinMode == 1) {
-            waitForAccept = true;
-        } else if (joinMode == 2) {
-            if (!gameController.assaultMode) {
+        if (GameControllerScript.missionTime > GameControllerScript.WAIT_TRIGGER_TIME) {
+            if (joinMode == 1) {
                 waitForAccept = true;
+            } else if (joinMode == 2) {
+                if (!gameController.assaultMode) {
+                    waitForAccept = true;
+                }
             }
         }
 		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept);
