@@ -533,8 +533,17 @@ namespace Photon.Pun.LobbySystemPhoton
 			if (privacyMode == 0) {
 				passwordDisplayText.gameObject.SetActive(false);
 				passwordDisplayTextVs.gameObject.SetActive(false);
-				changePasswordBtn.interactable = false;
-				changePasswordBtnVs.interactable = false;
+				if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+					changePasswordBtn.interactable = true;
+					changePasswordBtnVs.interactable = true;
+				} else {
+					changePasswordBtn.interactable = false;
+					changePasswordBtnVs.interactable = false;
+				}
+				privacySelector.index = 0;
+				privacySelectorVs.index = 0;
+				privacySelector.UpdateUI();
+				privacySelectorVs.UpdateUI();
 			} else if (privacyMode == 1) {
 				passwordDisplayText.gameObject.SetActive(true);
 				passwordDisplayTextVs.gameObject.SetActive(true);
@@ -548,6 +557,10 @@ namespace Photon.Pun.LobbySystemPhoton
 					changePasswordBtn.interactable = false;
 					changePasswordBtnVs.interactable = false;
 				}
+				privacySelector.index = 1;
+				privacySelectorVs.index = 1;
+				privacySelector.UpdateUI();
+				privacySelectorVs.UpdateUI();
 			}
             // Disable any loading screens
             // connexion.ToggleLobbyLoadingScreen(false);
@@ -950,6 +963,10 @@ namespace Photon.Pun.LobbySystemPhoton
 					privacySelector.prevBtn.interactable = true;
 					privacySelectorVs.nextBtn.interactable = true;
 					privacySelectorVs.prevBtn.interactable = true;
+					privacySelector.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["privacy"]);
+					privacySelectorVs.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["privacy"]);
+					privacySelector.UpdateUI();
+					privacySelectorVs.UpdateUI();
 					changePasswordBtn.interactable = true;
 					changePasswordBtnVs.interactable = true;
 					joinModeSelector.prevBtn.interactable = true;
@@ -957,9 +974,11 @@ namespace Photon.Pun.LobbySystemPhoton
 					joinModeSelectorVs.prevBtn.interactable = true;
 					joinModeSelectorVs.nextBtn.interactable = true;
 					joinModeSelector.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
-					joinModeSelector.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
+					joinModeSelectorVs.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
 					joinModeSelector.UpdateUI();
 					joinModeSelectorVs.UpdateUI();
+					changePasswordBtn.interactable = true;
+					changePasswordBtnVs.interactable = true;
 				} else {
 					voteKickBtn.enabled = false;
 					voteKickBtnVs.enabled = false;
@@ -973,6 +992,8 @@ namespace Photon.Pun.LobbySystemPhoton
 					joinModeSelector.nextBtn.interactable = false;
 					joinModeSelectorVs.prevBtn.interactable = false;
 					joinModeSelectorVs.nextBtn.interactable = false;
+					changePasswordBtn.interactable = false;
+					changePasswordBtnVs.interactable = false;
 				}
 				ResetLoadingState();
 			}
