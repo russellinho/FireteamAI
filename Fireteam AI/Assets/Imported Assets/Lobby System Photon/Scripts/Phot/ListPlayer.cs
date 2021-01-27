@@ -564,6 +564,10 @@ namespace Photon.Pun.LobbySystemPhoton
 				privacySelector.prevBtn.interactable = false;
 				privacySelectorVs.nextBtn.interactable = false;
 				privacySelectorVs.prevBtn.interactable = false;
+				joinModeSelector.prevBtn.interactable = false;
+				joinModeSelector.nextBtn.interactable = false;
+				joinModeSelectorVs.prevBtn.interactable = false;
+				joinModeSelectorVs.nextBtn.interactable = false;
 			} else {
 				ToggleMapChangeButtons(true);
 				voteKickBtn.enabled = true;
@@ -576,6 +580,10 @@ namespace Photon.Pun.LobbySystemPhoton
 				privacySelector.prevBtn.interactable = true;
 				privacySelectorVs.nextBtn.interactable = true;
 				privacySelectorVs.prevBtn.interactable = true;
+				joinModeSelector.prevBtn.interactable = true;
+				joinModeSelector.nextBtn.interactable = true;
+				joinModeSelectorVs.prevBtn.interactable = true;
+				joinModeSelectorVs.nextBtn.interactable = true;
 			}
 			if (currentMode == 'V') {
 				PhotonNetwork.AutomaticallySyncScene = false;
@@ -944,6 +952,14 @@ namespace Photon.Pun.LobbySystemPhoton
 					privacySelectorVs.prevBtn.interactable = true;
 					changePasswordBtn.interactable = true;
 					changePasswordBtnVs.interactable = true;
+					joinModeSelector.prevBtn.interactable = true;
+					joinModeSelector.nextBtn.interactable = true;
+					joinModeSelectorVs.prevBtn.interactable = true;
+					joinModeSelectorVs.nextBtn.interactable = true;
+					joinModeSelector.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
+					joinModeSelector.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
+					joinModeSelector.UpdateUI();
+					joinModeSelectorVs.UpdateUI();
 				} else {
 					voteKickBtn.enabled = false;
 					voteKickBtnVs.enabled = false;
@@ -953,6 +969,10 @@ namespace Photon.Pun.LobbySystemPhoton
 					privacySelectorVs.prevBtn.interactable = false;
 					changePasswordBtn.interactable = false;
 					changePasswordBtnVs.interactable = false;
+					joinModeSelector.prevBtn.interactable = false;
+					joinModeSelector.nextBtn.interactable = false;
+					joinModeSelectorVs.prevBtn.interactable = false;
+					joinModeSelectorVs.nextBtn.interactable = false;
 				}
 				ResetLoadingState();
 			}
