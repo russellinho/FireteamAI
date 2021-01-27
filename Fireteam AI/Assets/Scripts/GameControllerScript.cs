@@ -1464,7 +1464,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	public void PingMasterForAcceptance()
 	{
-		pView.RPC("RpcPingMasterForAcceptance", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer.ActorNumber, PhotonNetwork.LocalPlayer.NickName);
+		pView.RPC("RpcPingMasterForAcceptance", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, PhotonNetwork.LocalPlayer.NickName);
 	}
 
 	[PunRPC]

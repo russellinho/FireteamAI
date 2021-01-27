@@ -1652,6 +1652,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             waitingOnAccept = true;
             SetPlayerDead();
             if (pView.OwnerActorNr == PhotonNetwork.LocalPlayer.ActorNumber) {
+                gameController.PingMasterForAcceptance();
                 hud.container.spectatorText.text = "PLEASE WAIT FOR THE HOST TO ACCEPT YOU INTO THE GAME.";
             }
         }
