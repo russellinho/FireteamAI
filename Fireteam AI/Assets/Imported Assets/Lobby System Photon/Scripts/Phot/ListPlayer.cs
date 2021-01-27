@@ -533,13 +533,8 @@ namespace Photon.Pun.LobbySystemPhoton
 			if (privacyMode == 0) {
 				passwordDisplayText.gameObject.SetActive(false);
 				passwordDisplayTextVs.gameObject.SetActive(false);
-				if (PhotonNetwork.LocalPlayer.IsMasterClient) {
-					changePasswordBtn.interactable = true;
-					changePasswordBtnVs.interactable = true;
-				} else {
-					changePasswordBtn.interactable = false;
-					changePasswordBtnVs.interactable = false;
-				}
+				changePasswordBtn.interactable = false;
+				changePasswordBtnVs.interactable = false;
 				privacySelector.index = 0;
 				privacySelectorVs.index = 0;
 				privacySelector.UpdateUI();
@@ -967,8 +962,13 @@ namespace Photon.Pun.LobbySystemPhoton
 					privacySelectorVs.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["privacy"]);
 					privacySelector.UpdateUI();
 					privacySelectorVs.UpdateUI();
-					changePasswordBtn.interactable = true;
-					changePasswordBtnVs.interactable = true;
+					if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["privacy"]) == 1) {
+						changePasswordBtn.interactable = true;
+						changePasswordBtnVs.interactable = true;
+					} else {
+						changePasswordBtn.interactable = false;
+						changePasswordBtnVs.interactable = false;
+					}
 					joinModeSelector.prevBtn.interactable = true;
 					joinModeSelector.nextBtn.interactable = true;
 					joinModeSelectorVs.prevBtn.interactable = true;
