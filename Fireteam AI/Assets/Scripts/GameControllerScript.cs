@@ -15,7 +15,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     // Timer
     public static float missionTime;
     public static float MAX_MISSION_TIME = 1800f;
-	public static float WAIT_TRIGGER_TIME = 0f;
+	public static float WAIT_TRIGGER_TIME = 30f;
 	private const float FORFEIT_CHECK_DELAY = 3f;
 	private const float VOTE_TIME = 3f;
 	private const float VOTE_DELAY = 300f;
@@ -85,6 +85,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public short yesVotes;
 	public short noVotes;
 	private float voteDelay;
+	private float waitTriggerTimer;
 
 	// Use this for initialization
 	void Awake() {
@@ -198,6 +199,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			UpdateMissionProgressForCampaign();
 		} else if (matchType == 'V') {
 			UpdateMissionProgressForVersus();
+		}
+		if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+			if (waitTriggerTimer >= 0f) {
+				waitTriggerTimer += Time.deltaTime;
+			}
+			if (waitTriggerTimer >= WAIT_TRIGGER_TIME) {
+				SetWaitPeriodDone();
+				waitTriggerTimer = -1f;
+			}
 		}
 		UpdateTimers();
 		DecrementLastGunshotTimer();
@@ -685,6 +695,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         exitLevelLoaded = true;
 		exitLevelLoadedTimer = 4f;
 		// LockRoom();
+	}
+
+	void SetWaitPeriodDone()
+	{
+		Hashtable h = new Hashtable();
+		h.Add("waitPeriod", 1);
+		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 	}
 
     void SetMyTeamScore(short score)

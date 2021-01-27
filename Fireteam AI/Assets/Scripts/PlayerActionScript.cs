@@ -1628,7 +1628,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         int joinMode = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
         bool waitForAccept = false;
-        if (init && !gameController.isVersusHostForThisTeam() && GameControllerScript.missionTime > GameControllerScript.WAIT_TRIGGER_TIME) {
+        if (init && !gameController.isVersusHostForThisTeam() && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("waitPeriod")) {
             if (joinMode == 1) {
                 waitForAccept = true;
             } else if (joinMode == 2) {
