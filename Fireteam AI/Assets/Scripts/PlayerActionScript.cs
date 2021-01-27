@@ -1203,6 +1203,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public void Respawn()
     {
         health = 100;
+        waitingOnAccept = false;
         pView.RPC("RpcSetHealth", RpcTarget.Others, 100);
         viewCam.transform.SetParent(cameraParent);
         viewCam.transform.GetComponent<Camera>().fieldOfView = 60;
