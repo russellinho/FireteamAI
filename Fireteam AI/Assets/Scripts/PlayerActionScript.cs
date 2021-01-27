@@ -137,8 +137,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    public void SyncDataOnJoin() {
-        pView.RPC("RpcAskServerForDataPlayer", RpcTarget.Others);
+    public void SyncDataOnJoin(bool init) {
+        pView.RPC("RpcAskServerForDataPlayer", RpcTarget.Others, init);
     }
 
     public void Initialize()
@@ -1611,7 +1611,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-	void RpcAskServerForDataPlayer() {
+	void RpcAskServerForDataPlayer(bool init) {
         if (!pView.IsMine) return;
         int healthToSend = health;
         string playersDead = (string)PhotonNetwork.CurrentRoom.CustomProperties["deads"];
@@ -1627,7 +1627,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         int joinMode = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
         bool waitForAccept = false;
-        if (GameControllerScript.missionTime > GameControllerScript.WAIT_TRIGGER_TIME) {
+        if (init && GameControllerScript.missionTime > GameControllerScript.WAIT_TRIGGER_TIME) {
             if (joinMode == 1) {
                 waitForAccept = true;
             } else if (joinMode == 2) {
@@ -1651,7 +1651,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         } else if (waitForAccept) {
             waitingOnAccept = true;
             SetPlayerDead();
-            hud.container.spectatorText.text = "PLEASE WAIT FOR THE HOST TO ACCEPT YOU INTO THE GAME.";
+            if (pView.OwnerActorNr == PhotonNetwork.LocalPlayer.ActorNumber) {
+                hud.container.spectatorText.text = "PLEASE WAIT FOR THE HOST TO ACCEPT YOU INTO THE GAME.";
+            }
         }
 	}
 

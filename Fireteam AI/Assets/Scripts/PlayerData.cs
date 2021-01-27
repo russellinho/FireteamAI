@@ -413,7 +413,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 InitPlayerInGame(player);
                 player.GetComponent<EquipmentScript>().SyncDataOnJoin();
                 player.GetComponent<WeaponScript>().SyncDataOnJoin();
-                player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
+                player.GetComponent<PlayerActionScript>().SyncDataOnJoin(true);
                 AddMyselfToPlayerList(photonView, player);
             } else if (gameMode == "versus") {
                 string currentMapName = SceneManager.GetActiveScene().name;
@@ -428,7 +428,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     InitPlayerInGame(player);
                     player.GetComponent<EquipmentScript>().SyncDataOnJoin();
                     player.GetComponent<WeaponScript>().SyncDataOnJoin();
-                    player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
+                    player.GetComponent<PlayerActionScript>().SyncDataOnJoin(true);
                     AddMyselfToPlayerList(photonView, player);
                 } else {
                     AddMyselfToPlayerList(ownerActorNr);
@@ -452,7 +452,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 InitPlayerInGame(player);
                 player.GetComponent<EquipmentScript>().SyncDataOnJoin();
                 player.GetComponent<WeaponScript>().SyncDataOnJoin();
-                player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
+                player.GetComponent<PlayerActionScript>().SyncDataOnJoin(false);
                 AddMyselfToPlayerList(photonView, player);
             } else if (gameMode == "versus") {
                 string currentMapName = SceneManager.GetActiveScene().name;
@@ -467,7 +467,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     InitPlayerInGame(player);
                     player.GetComponent<EquipmentScript>().SyncDataOnJoin();
                     player.GetComponent<WeaponScript>().SyncDataOnJoin();
-                    player.GetComponent<PlayerActionScript>().SyncDataOnJoin();
+                    player.GetComponent<PlayerActionScript>().SyncDataOnJoin(false);
                     AddMyselfToPlayerList(photonView, player);
                 } else {
                     AddMyselfToPlayerList(ownerActorNr);
