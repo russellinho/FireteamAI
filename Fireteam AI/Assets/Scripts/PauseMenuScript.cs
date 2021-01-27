@@ -86,7 +86,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		} else {
 			// Else
 			// Add myself to dead list if I'm dead
-			if (PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().health <= 0) {
+			if (!PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().waitingOnAccept && PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().health <= 0) {
 				string currentDeads = (string)PhotonNetwork.CurrentRoom.CustomProperties["deads"];
 				Hashtable h = new Hashtable();
 				if (currentDeads == null) {
