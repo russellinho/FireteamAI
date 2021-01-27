@@ -580,10 +580,6 @@ namespace Photon.Pun.LobbySystemPhoton
 				ToggleMapChangeButtons(true);
 				voteKickBtn.enabled = true;
 				voteKickBtnVs.enabled = true;
-				joinModeSelector.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
-				joinModeSelectorVs.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
-				joinModeSelector.UpdateUI();
-				joinModeSelectorVs.UpdateUI();
 				privacySelector.nextBtn.interactable = true;
 				privacySelector.prevBtn.interactable = true;
 				privacySelectorVs.nextBtn.interactable = true;
@@ -593,6 +589,10 @@ namespace Photon.Pun.LobbySystemPhoton
 				joinModeSelectorVs.prevBtn.interactable = true;
 				joinModeSelectorVs.nextBtn.interactable = true;
 			}
+			joinModeSelector.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
+			joinModeSelectorVs.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
+			joinModeSelector.UpdateUI();
+			joinModeSelectorVs.UpdateUI();
 			if (currentMode == 'V') {
 				PhotonNetwork.AutomaticallySyncScene = false;
 				OnJoinedRoomVersus();
