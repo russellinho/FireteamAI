@@ -1631,7 +1631,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (joinMode == 1) {
                 waitForAccept = true;
             } else if (joinMode == 2) {
-                if (!gameController.assaultMode) {
+                if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(gameController.teamMap + "Assault")) {
                     waitForAccept = true;
                 }
             }

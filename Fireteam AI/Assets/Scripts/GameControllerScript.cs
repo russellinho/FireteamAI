@@ -165,6 +165,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         syncMissionTimeTimer = 0f;
 
 		lastGunshotHeardPos = Vector3.negativeInfinity;
+		if (isVersusHostForThisTeam()) {
+			ResetAssaultInProgressOverNetwork();
+		}
 		if (matchType == 'C') {
 			StartCoroutine("GameOverCheckForCampaign");
 		} else if (matchType == 'V') {
@@ -429,11 +432,17 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         if (team != teamMap) return;
 		// StartCoroutine (UpdateAssaultModeTimer(5f, assaultInProgress));
 		assaultMode = assaultInProgress;
+		if (isVersusHostForThisTeam() && assaultInProgress) {
+			SetAssaultInProgressOverNetwork();
+		}
 	}
 
 	IEnumerator UpdateAssaultModeTimer(float secs, bool assaultInProgress) {
 		yield return new WaitForSeconds (secs);
 		assaultMode = assaultInProgress;
+		if (isVersusHostForThisTeam() && assaultInProgress) {
+			SetAssaultInProgressOverNetwork();
+		}
 	}
 
 	bool CheckEscapeForCampaign(int deadCount) {
@@ -684,6 +693,20 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		h.Add(myTeam + "Score", (int)score);
 		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
     }
+
+	void SetAssaultInProgressOverNetwork()
+	{
+		Hashtable h = new Hashtable();
+		h.Add(teamMap + "Assault", 1);
+		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+	}
+
+	void ResetAssaultInProgressOverNetwork()
+	{
+		Hashtable h = new Hashtable();
+		h.Add(teamMap + "Assault", null);
+		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+	}
 
     void UpdateEndGameTimer() {
         if (gameOver) {

@@ -51496,7 +51496,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 259.02997, y: 0}
+  m_AnchoredPosition: {x: 218.01999, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5546923512010674783
@@ -93872,7 +93872,7 @@ MonoBehaviour:
   invokeAtStart: 0
   invertAnimation: 0
   loopSelection: 0
-  skipInit: 0
+  skipInit: 1
   index: 0
   saveValue: 0
   selectorTag: Tag Text
