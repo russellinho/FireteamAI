@@ -1102,6 +1102,9 @@ public class EquipmentScript : MonoBehaviour
         {
             myHairRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
         }
+        if (!pView.IsMine) {
+            ToggleFullBody(true);
+        }
     }
 
     public void RespawnPlayer() {
