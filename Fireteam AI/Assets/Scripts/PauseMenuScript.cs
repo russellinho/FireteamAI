@@ -261,6 +261,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 			mainAnimator.Play("Panel In");
 			xButton.gameObject.SetActive(false);
 			gameOptionsAnimator.gameObject.SetActive(false);
+			SaveJoinMode();
 			SetCurrentPanel("Main");
 		} else if (currentPanel == "Settings") {
 			SaveAudioSettings();
@@ -303,8 +304,12 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		kickPlayerAnimator.gameObject.SetActive(false);
 		xButton.gameObject.SetActive(false);
 		mainAnimator.Play("Panel In");
+		SaveJoinMode();
 		SetCurrentPanel("Main");
+	}
 
+	void SaveJoinMode()
+	{
 		// Save join mode
 		Hashtable h = new Hashtable();
 		h.Add("joinMode", joinModeSelector.index);

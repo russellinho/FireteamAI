@@ -568,8 +568,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				ToggleMapChangeButtons(true);
 				voteKickBtn.enabled = true;
 				voteKickBtnVs.enabled = true;
-				joinModeSelector.index = 0;
-				joinModeSelectorVs.index = 0;
+				joinModeSelector.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
+				joinModeSelectorVs.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
 				joinModeSelector.UpdateUI();
 				joinModeSelectorVs.UpdateUI();
 				privacySelector.nextBtn.interactable = true;
