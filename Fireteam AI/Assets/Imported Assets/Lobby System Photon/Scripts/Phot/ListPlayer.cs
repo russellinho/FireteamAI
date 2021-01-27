@@ -977,8 +977,6 @@ namespace Photon.Pun.LobbySystemPhoton
 					joinModeSelectorVs.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
 					joinModeSelector.UpdateUI();
 					joinModeSelectorVs.UpdateUI();
-					changePasswordBtn.interactable = true;
-					changePasswordBtnVs.interactable = true;
 				} else {
 					voteKickBtn.enabled = false;
 					voteKickBtnVs.enabled = false;
