@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Linq;
 using Photon.Realtime;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ using Michsky.UI.Shift;
 using VivoxUnity;
 using VivoxUnity.Common;
 using VivoxUnity.Private;
+using Random = UnityEngine.Random;
 
 namespace Photon.Pun.LobbySystemPhoton
 {
@@ -47,7 +49,17 @@ namespace Photon.Pun.LobbySystemPhoton
 		public TextMeshProUGUI mapDescription;
 		public TextMeshProUGUI mapDescriptionVs;
 		public HorizontalSelector mapSelector;
-		public HorizontalSelector mapSelectorVs; 
+		public HorizontalSelector mapSelectorVs;
+		public HorizontalSelector stealthTrackSelector;
+		public HorizontalSelector assaultTrackSelector;
+		public HorizontalSelector stealthTrackSelectorVs;
+		public HorizontalSelector assaultTrackSelectorVs;
+		public HorizontalSelector joinModeSelector;
+		public HorizontalSelector joinModeSelectorVs;
+		public HorizontalSelector privacySelector;
+		public HorizontalSelector privacySelectorVs;
+		public TextMeshProUGUI passwordDisplayText;
+		public TextMeshProUGUI passwordDisplayTextVs;
 		public Button sendMsgBtn;
 		public Button sendMsgBtnVs;
 		// public Button emojiBtn;
@@ -59,14 +71,20 @@ namespace Photon.Pun.LobbySystemPhoton
 		public Button gameOptionsBtnVs;
 		public Button voteKickBtn;
 		public Button voteKickBtnVs;
+		public Button changePasswordBtn;
+		public Button changePasswordBtnVs;
 		public GameObject titleController;
 		public AudioClip countdownSfx;
 		public GameObject mainMenuCampaign;
 		public GameObject mainMenuVersus;
 		public GameObject gameOptionsMenuCampaign;
 		public GameObject gameOptionsMenuVersus;
+		public GameObject gameMusicMenuCampaign;
+		public GameObject gameMusicMenuVersus;
 		public GameObject kickPlayerMenuCampaign;
 		public GameObject kickPlayerMenuVersus;
+		public GameObject privacyMenuCampaign;
+		public GameObject privacyMenuVersus;
 		public PlayerKick[] playerKickSlotsCampaign;
 		public PlayerKick[] playerKickSlotsRed;
 		public PlayerKick[] playerKickSlotsBlue;
@@ -199,6 +217,10 @@ namespace Photon.Pun.LobbySystemPhoton
 				kickPlayerMenuVersus.SetActive(false);
 				gameOptionsMenuCampaign.SetActive(false);
 				gameOptionsMenuVersus.SetActive(false);
+				gameMusicMenuCampaign.SetActive(false);
+				gameMusicMenuVersus.SetActive(false);
+				privacyMenuCampaign.SetActive(false);
+				privacyMenuVersus.SetActive(false);
 			}
 		}
 
@@ -226,6 +248,10 @@ namespace Photon.Pun.LobbySystemPhoton
 				kickPlayerMenuVersus.SetActive(false);
 				gameOptionsMenuCampaign.SetActive(false);
 				gameOptionsMenuVersus.SetActive(false);
+				gameMusicMenuCampaign.SetActive(false);
+				gameMusicMenuVersus.SetActive(false);
+				privacyMenuCampaign.SetActive(false);
+				privacyMenuVersus.SetActive(false);
 			}
 		}
 
@@ -501,6 +527,36 @@ namespace Photon.Pun.LobbySystemPhoton
 			PhotonNetwork.CurrentRoom.IsOpen = true;
 			PhotonNetwork.CurrentRoom.IsVisible = true;
 			UpdateMapInfo();
+			SetStealthMusic();
+			SetAssaultMusic();
+			int privacyMode = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["privacy"]);
+			if (privacyMode == 0) {
+				passwordDisplayText.gameObject.SetActive(false);
+				passwordDisplayTextVs.gameObject.SetActive(false);
+				changePasswordBtn.interactable = false;
+				changePasswordBtnVs.interactable = false;
+				privacySelector.index = 0;
+				privacySelectorVs.index = 0;
+				privacySelector.UpdateUI();
+				privacySelectorVs.UpdateUI();
+			} else if (privacyMode == 1) {
+				passwordDisplayText.gameObject.SetActive(true);
+				passwordDisplayTextVs.gameObject.SetActive(true);
+				string roomPass = (string)PhotonNetwork.CurrentRoom.CustomProperties["password"];
+				passwordDisplayText.text = roomPass;
+				passwordDisplayTextVs.text = roomPass;
+				if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+					changePasswordBtn.interactable = true;
+					changePasswordBtnVs.interactable = true;
+				} else {
+					changePasswordBtn.interactable = false;
+					changePasswordBtnVs.interactable = false;
+				}
+				privacySelector.index = 1;
+				privacySelectorVs.index = 1;
+				privacySelector.UpdateUI();
+				privacySelectorVs.UpdateUI();
+			}
             // Disable any loading screens
             // connexion.ToggleLobbyLoadingScreen(false);
 			Hashtable h = new Hashtable();
@@ -512,11 +568,31 @@ namespace Photon.Pun.LobbySystemPhoton
 				ToggleMapChangeButtons(false);
 				voteKickBtn.enabled = false;
 				voteKickBtnVs.enabled = false;
+				privacySelector.nextBtn.interactable = false;
+				privacySelector.prevBtn.interactable = false;
+				privacySelectorVs.nextBtn.interactable = false;
+				privacySelectorVs.prevBtn.interactable = false;
+				joinModeSelector.prevBtn.interactable = false;
+				joinModeSelector.nextBtn.interactable = false;
+				joinModeSelectorVs.prevBtn.interactable = false;
+				joinModeSelectorVs.nextBtn.interactable = false;
 			} else {
 				ToggleMapChangeButtons(true);
 				voteKickBtn.enabled = true;
 				voteKickBtnVs.enabled = true;
+				privacySelector.nextBtn.interactable = true;
+				privacySelector.prevBtn.interactable = true;
+				privacySelectorVs.nextBtn.interactable = true;
+				privacySelectorVs.prevBtn.interactable = true;
+				joinModeSelector.prevBtn.interactable = true;
+				joinModeSelector.nextBtn.interactable = true;
+				joinModeSelectorVs.prevBtn.interactable = true;
+				joinModeSelectorVs.nextBtn.interactable = true;
 			}
+			joinModeSelector.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
+			joinModeSelectorVs.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
+			joinModeSelector.UpdateUI();
+			joinModeSelectorVs.UpdateUI();
 			if (currentMode == 'V') {
 				PhotonNetwork.AutomaticallySyncScene = false;
 				OnJoinedRoomVersus();
@@ -878,9 +954,44 @@ namespace Photon.Pun.LobbySystemPhoton
 				if (PhotonNetwork.LocalPlayer.IsMasterClient) {
 					voteKickBtn.enabled = true;
 					voteKickBtnVs.enabled = true;
+					privacySelector.nextBtn.interactable = true;
+					privacySelector.prevBtn.interactable = true;
+					privacySelectorVs.nextBtn.interactable = true;
+					privacySelectorVs.prevBtn.interactable = true;
+					privacySelector.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["privacy"]);
+					privacySelectorVs.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["privacy"]);
+					privacySelector.UpdateUI();
+					privacySelectorVs.UpdateUI();
+					if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["privacy"]) == 1) {
+						changePasswordBtn.interactable = true;
+						changePasswordBtnVs.interactable = true;
+					} else {
+						changePasswordBtn.interactable = false;
+						changePasswordBtnVs.interactable = false;
+					}
+					joinModeSelector.prevBtn.interactable = true;
+					joinModeSelector.nextBtn.interactable = true;
+					joinModeSelectorVs.prevBtn.interactable = true;
+					joinModeSelectorVs.nextBtn.interactable = true;
+					joinModeSelector.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
+					joinModeSelectorVs.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
+					joinModeSelector.UpdateUI();
+					joinModeSelectorVs.UpdateUI();
 				} else {
 					voteKickBtn.enabled = false;
 					voteKickBtnVs.enabled = false;
+					privacySelector.nextBtn.interactable = false;
+					privacySelector.prevBtn.interactable = false;
+					privacySelectorVs.nextBtn.interactable = false;
+					privacySelectorVs.prevBtn.interactable = false;
+					changePasswordBtn.interactable = false;
+					changePasswordBtnVs.interactable = false;
+					joinModeSelector.prevBtn.interactable = false;
+					joinModeSelector.nextBtn.interactable = false;
+					joinModeSelectorVs.prevBtn.interactable = false;
+					joinModeSelectorVs.nextBtn.interactable = false;
+					changePasswordBtn.interactable = false;
+					changePasswordBtnVs.interactable = false;
 				}
 				ResetLoadingState();
 			}
@@ -1034,6 +1145,28 @@ namespace Photon.Pun.LobbySystemPhoton
 
 			if (propertiesThatChanged.ContainsKey("mapName")) {
 				UpdateMapInfo();
+			}
+
+			if (propertiesThatChanged.ContainsKey("privacy")) {
+				// Show/remove password text label
+				int newPrivacy = Convert.ToInt32(propertiesThatChanged["privacy"]);
+				if (newPrivacy == 0) {
+					passwordDisplayText.gameObject.SetActive(false);
+					passwordDisplayTextVs.gameObject.SetActive(false);
+					changePasswordBtn.interactable = false;
+					changePasswordBtnVs.interactable = false;
+				} else if (newPrivacy == 1) {
+					passwordDisplayText.gameObject.SetActive(true);
+					passwordDisplayTextVs.gameObject.SetActive(true);
+					changePasswordBtn.interactable = true;
+					changePasswordBtnVs.interactable = true;
+				}
+			}
+
+			if (propertiesThatChanged.ContainsKey("password")) {
+				// Update password text label
+				passwordDisplayText.text = (string)propertiesThatChanged["password"];
+				passwordDisplayTextVs.text = (string)propertiesThatChanged["password"];
 			}
 		}
 
@@ -1215,10 +1348,151 @@ namespace Photon.Pun.LobbySystemPhoton
 
 		public void ToggleGameOptionsMenuCampaign(bool on) {
 			gameOptionsMenuCampaign.SetActive(on);
+			if (!on) {
+				// Save join mode
+				Hashtable h = new Hashtable();
+				h.Add("joinMode", joinModeSelector.index);
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			}
 		}
 
 		public void ToggleGameOptionsMenuVersus(bool on) {
 			gameOptionsMenuVersus.SetActive(on);
+			if (!on) {
+				// Save join mode
+				Hashtable h = new Hashtable();
+				h.Add("joinMode", joinModeSelectorVs.index);
+				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			}
+		}
+
+		public void ToggleGameMusicMenuCampaign(bool on) {
+			gameMusicMenuCampaign.SetActive(on);
+			if (!on) {
+				PlayerPreferences.playerPreferences.SavePreferences();
+			}
+		}
+
+		public void ToggleGameMusicMenuVersus(bool on) {
+			gameMusicMenuVersus.SetActive(on);
+			if (!on) {
+				PlayerPreferences.playerPreferences.SavePreferences();
+			}
+		}
+
+		public void TogglePrivacyMenuCampaign(bool on) {
+			privacyMenuCampaign.SetActive(on);
+		}
+
+		public void TogglePrivacyMenuVersus(bool on) {
+			privacyMenuVersus.SetActive(on);
+		}
+
+		public void OnStealthMusicChanged(bool increase)
+		{
+			// Change playerpreferences
+			if (increase) {
+				if (PlayerPreferences.playerPreferences.preferenceData.stealthTrack < (PlayerPreferences.STEALTH_TRACK_COUNT - 1)) {
+					PlayerPreferences.playerPreferences.preferenceData.stealthTrack++;
+				}
+			} else {
+				if (PlayerPreferences.playerPreferences.preferenceData.stealthTrack > 0) {
+					PlayerPreferences.playerPreferences.preferenceData.stealthTrack--;
+				}
+			}
+			
+			// Preview the song for a few seconds
+			JukeboxScript.jukebox.PreviewTrack('S', PlayerPreferences.playerPreferences.preferenceData.stealthTrack);
+		}
+
+		public void OnAssaultMusicChanged(bool increase)
+		{
+			// Change playerpreferences
+			if (increase) {
+				if (PlayerPreferences.playerPreferences.preferenceData.assaultTrack < (PlayerPreferences.ASSAULT_TRACK_COUNT - 1)) {
+					PlayerPreferences.playerPreferences.preferenceData.assaultTrack++;
+				}
+			} else {
+				if (PlayerPreferences.playerPreferences.preferenceData.assaultTrack > 0) {
+					PlayerPreferences.playerPreferences.preferenceData.assaultTrack--;
+				}
+			}
+
+			// Preview the song for a few seconds
+			JukeboxScript.jukebox.PreviewTrack('A', PlayerPreferences.playerPreferences.preferenceData.assaultTrack);
+		}
+
+		void SetStealthMusic()
+		{
+			stealthTrackSelector.index = PlayerPreferences.playerPreferences.preferenceData.stealthTrack;
+			stealthTrackSelectorVs.index = PlayerPreferences.playerPreferences.preferenceData.stealthTrack;
+			stealthTrackSelector.UpdateUI();
+			stealthTrackSelectorVs.UpdateUI();
+		}
+
+		void SetAssaultMusic()
+		{
+			assaultTrackSelector.index = PlayerPreferences.playerPreferences.preferenceData.assaultTrack;
+			assaultTrackSelectorVs.index = PlayerPreferences.playerPreferences.preferenceData.assaultTrack;
+			assaultTrackSelector.UpdateUI();
+			assaultTrackSelectorVs.UpdateUI();
+		}
+
+		public void SetRoomPrivacyCampaign()
+		{
+			if (!PhotonNetwork.LocalPlayer.IsMasterClient) return;
+			Hashtable h = new Hashtable();
+			h.Add("privacy", privacySelector.index);
+			if (privacySelector.index == 0) {
+				h.Add("password", null);
+			} else {
+				string newPass = "";
+				for (int i = 0; i < 10; i++) {
+					newPass += GenerateRandomAlphanumericChar();
+				}
+				h.Add("password", newPass);
+			}
+			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+		}
+
+		public void SetRoomPrivacyVersus()
+		{
+			if (!PhotonNetwork.LocalPlayer.IsMasterClient) return;
+			Hashtable h = new Hashtable();
+			h.Add("privacy", privacySelectorVs.index);
+			if (privacySelectorVs.index == 0) {
+				h.Add("password", null);
+			} else {
+				string newPass = "";
+				for (int i = 0; i < 10; i++) {
+					newPass += GenerateRandomAlphanumericChar();
+				}
+				h.Add("password", newPass);
+			}
+			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+		}
+
+		public bool SetRoomPassword(string passedPass = null)
+		{
+			Regex regex = new Regex(@"^[a-zA-Z0-9]+$");
+			string proposedPassword = passedPass == null ? titleController.GetComponent<TitleControllerScript>().roomPasswordInput.text : passedPass;
+			if (proposedPassword.Length == 0 || proposedPassword.Length > 12 || regex.Matches(proposedPassword).Count == 0) {
+				titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("The password must only consist of alphanumeric characters!");
+				return false;
+        	}
+
+			// Passed, set room password
+			Hashtable h = new Hashtable();
+			h.Add("password", passedPass);
+			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+			return true;
+		}
+
+		void ClearPassword()
+		{
+			Hashtable h = new Hashtable();
+			h.Add("password", null);
+			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 		}
 
 		public void ToggleKickPlayerListMenuCampaign(bool on) {
@@ -1374,6 +1648,29 @@ namespace Photon.Pun.LobbySystemPhoton
 				if (p.ActorNumber == actorNo) return true;
 			}
 			return false;
+		}
+
+		string GetJoiningModeString(int i)
+		{
+			if (i == 0) {
+				return "Always Allow";
+			} else if (i == 1) {
+				return "Prompt";
+			} else if (i == 2) {
+				return "Stealth Prompt";
+			}
+			return "";
+		}
+
+		char GenerateRandomAlphanumericChar()
+		{
+			int r = Random.Range(48, 123);
+			if (r >= 58 && r <= 64) {
+				r = Random.Range(65, 91);
+			} else if (r >= 91 && r <= 96) {
+				r = Random.Range(97, 123);
+			}
+			return (char)r;
 		}
 
 	}

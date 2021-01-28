@@ -567,7 +567,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     {
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                         hudScript.InstantiateHitmarker();
-                        audioController.PlayHitmarkerSound();
+                        // audioController.PlayHitmarkerSound();
                         b.TakeDamage((int)meleeStats.damage);
                         b.PlayGruntSound();
                         b.SetAlerted();
@@ -646,7 +646,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     if (beforeHp > 0)
                     {
                         hudScript.InstantiateHitmarker();
-                        audioController.PlayHitmarkerSound();
+                        // audioController.PlayHitmarkerSound();
                         b.TakeDamage(thisDamageDealt);
                         b.PlayGruntSound();
                         b.SetAlerted();
@@ -663,7 +663,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                 }
             } else {
                 Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
-                pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index));
+                pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index), PhotonNetwork.LocalPlayer.ActorNumber);
             }
         }
         if (weaponMods.suppressorRef == null)
@@ -786,7 +786,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                             if (beforeHp > 0)
                             {
                                 hudScript.InstantiateHitmarker();
-                                audioController.PlayHitmarkerSound();
+                                // audioController.PlayHitmarkerSound();
                                 //hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
                                 b.PlayGruntSound();
                                 b.SetAlerted();
@@ -806,7 +806,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     }
                 } else {
                     Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
-                    pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index));
+                    pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index), PhotonNetwork.LocalPlayer.ActorNumber);
                 }
             }
         }
@@ -834,11 +834,14 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     }
 
     [PunRPC]
-    void RpcHandleBulletVfx(Vector3 point, Vector3 normal, int terrainId) {
+    void RpcHandleBulletVfx(Vector3 point, Vector3 normal, int terrainId, int shooterActorNo) {
         if (gameObject.layer == 0) return;
         if (terrainId == -1) return;
         Terrain terrainHit = playerActionScript.gameController.terrainMetaData[terrainId];
         GameObject bulletHoleEffect = Instantiate(terrainHit.GetRandomBulletHole(), point, Quaternion.FromToRotation(Vector3.forward, normal));
+        if (shooterActorNo == PhotonNetwork.LocalPlayer.ActorNumber) {
+            bulletHoleEffect.GetComponent<BulletHoleScript>().skipRicochetAmbient = true;
+        }
         bulletHoleEffect.transform.SetParent(terrainHit.gameObject.transform);
         Destroy(bulletHoleEffect, 4f);
     }

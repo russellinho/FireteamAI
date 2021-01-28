@@ -19,9 +19,10 @@ public class Mod
     public int maxAmmoBoost;
     public bool purchasable;
     public int gpPrice;
+    public int kashPrice;
     public bool deleteable;
 
-    public Mod(string name, string category, int prefabPath, string thumbnailPath, int modIndex, string crosshairPath, string description, float damageBoost, float accuracyBoost, float recoilBoost, float rangeBoost, int clipCapacityBoost, int maxAmmoBoost, int gpPrice, bool purchasable, bool deleteable) {
+    public Mod(string name, string category, int prefabPath, string thumbnailPath, int modIndex, string crosshairPath, string description, float damageBoost, float accuracyBoost, float recoilBoost, float rangeBoost, int clipCapacityBoost, int maxAmmoBoost, int gpPrice, int kashPrice, bool purchasable, bool deleteable) {
         this.name = name;
         this.category = category;
         this.prefabPath = prefabPath;
@@ -36,6 +37,7 @@ public class Mod
         this.clipCapacityBoost = clipCapacityBoost;
         this.maxAmmoBoost = maxAmmoBoost;
         this.gpPrice = gpPrice;
+        this.kashPrice = kashPrice;
         this.purchasable = purchasable;
         this.deleteable = deleteable;
     }

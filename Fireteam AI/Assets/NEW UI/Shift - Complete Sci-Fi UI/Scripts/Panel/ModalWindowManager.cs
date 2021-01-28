@@ -59,7 +59,7 @@ namespace Michsky.UI.Shift
                 if (mainPanelManager.currentPanelIndex == MainPanelManager.MOD_SHOP_INDEX) {
                     titleController.ToggleWeaponPreview(true);
                 } else {
-                    if (PlayerData.playerdata.bodyReference != null && !titleController.confirmingTransaction && mainPanelManager.CurrentPanelAllowsPreviews()) {
+                    if (PlayerData.playerdata.bodyReference != null && !titleController.confirmingSale && !titleController.confirmingTransaction && mainPanelManager.CurrentPanelAllowsPreviews()) {
                         titleController.HideAll(true);
                     }
                 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,11 +20,16 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public ModalWindowManager exitPopup;
 	public GameObject playerRef;
 	public Slider musicVolumeSlider;
+	public Slider gameVolumeSlider;
+	public Slider ambientVolumeSlider;
 	public Slider voiceInputVolumeSlider;
 	public Slider voiceOutputVolumeSlider;
 	public TextMeshProUGUI musicVolumeField;
+	public TextMeshProUGUI gameVolumeField;
+	public TextMeshProUGUI ambientVolumeField;
 	public TextMeshProUGUI voiceInputVolumeField;
 	public TextMeshProUGUI voiceOutputVolumeField;
+	public HorizontalSelector joinModeSelector;
 	// public HorizontalSelector audioInputSelector;
 	public bool isChangingKeyMapping;
 	public Text changingKeyMappingText;
@@ -39,16 +45,28 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	public Animator kickPlayerAnimator;
 	public Button xButton;
 	public string currentPanel;
+	private AudioSourceModifier[] sceneAudioSources;
 
 	void Awake() {
 		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
 		musicVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.musicVolume;
+
+		gameVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.gameVolume / 100f;
+		gameVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.gameVolume;
+
+		ambientVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.ambientVolume / 100f;
+		ambientVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.ambientVolume;
 
 		voiceInputVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume / 100f;
 		voiceInputVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume;
 		
 		voiceOutputVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume / 100f;
 		voiceOutputVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume;
+
+		joinModeSelector.index = Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["joinMode"]);
+		joinModeSelector.UpdateUI();
+
+		GetSceneAudioSources();
 	}
 
 	public void LeaveGame() {
@@ -68,7 +86,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		} else {
 			// Else
 			// Add myself to dead list if I'm dead
-			if (PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().health <= 0) {
+			if (!PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().waitingOnAccept && PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().health <= 0) {
 				string currentDeads = (string)PhotonNetwork.CurrentRoom.CustomProperties["deads"];
 				Hashtable h = new Hashtable();
 				if (currentDeads == null) {
@@ -90,12 +108,33 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	void GetSceneAudioSources()
+	{
+		sceneAudioSources = (AudioSourceModifier[]) GameObject.FindObjectsOfType (typeof(AudioSourceModifier));
+	}
+
+	void UpdateAllAudioSources()
+	{
+		foreach (AudioSourceModifier a in sceneAudioSources)
+		{
+			a.SetVolume();
+		}
+	}
+
 	// public override void OnLeftRoom() {
 	// 	PhotonNetwork.Disconnect ();
 	// }
 
 	public void OnMusicVolumeSliderChanged() {
 		SetMusicVolume(musicVolumeSlider.value);
+	}
+
+	public void OnGameVolumeSliderChanged() {
+		SetGameVolume(gameVolumeSlider.value);
+	}
+
+	public void OnAmbientVolumeSliderChanged() {
+		SetAmbientVolume(ambientVolumeSlider.value);
 	}
 
 	public void OnVoiceInputSliderChanged() {
@@ -111,6 +150,14 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		JukeboxScript.jukebox.SetMusicVolume(v);
 	}
 
+	void SetGameVolume(float v) {
+		gameVolumeField.text = ""+(int)(v * 100f);
+	}
+
+	void SetAmbientVolume(float v) {
+		ambientVolumeField.text = ""+(int)(v * 100f);
+	}
+
 	void SetVoiceInputVolume(float v) {
 		voiceInputVolumeField.text = ""+(int)(v * 100f);
 		VivoxVoiceManager.Instance.AudioInputDevices.VolumeAdjustment = ((int)(v * 100f) - 50);
@@ -122,9 +169,13 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 	}
 
 	public void SaveAudioSettings() {
+		GetSceneAudioSources();
 		PlayerPreferences.playerPreferences.preferenceData.musicVolume = (int)(musicVolumeSlider.value * 100f);
+		PlayerPreferences.playerPreferences.preferenceData.gameVolume = (int)(gameVolumeSlider.value * 100f);
+		PlayerPreferences.playerPreferences.preferenceData.ambientVolume = (int)(ambientVolumeSlider.value * 100f);
 		PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume = (int)(voiceInputVolumeSlider.value * 100f);
 		PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume = (int)(voiceOutputVolumeSlider.value * 100f);
+		UpdateAllAudioSources();
 		PlayerPreferences.playerPreferences.SavePreferences();
 	}
 
@@ -210,6 +261,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 			mainAnimator.Play("Panel In");
 			xButton.gameObject.SetActive(false);
 			gameOptionsAnimator.gameObject.SetActive(false);
+			SaveJoinMode();
 			SetCurrentPanel("Main");
 		} else if (currentPanel == "Settings") {
 			SaveAudioSettings();
@@ -252,7 +304,20 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 		kickPlayerAnimator.gameObject.SetActive(false);
 		xButton.gameObject.SetActive(false);
 		mainAnimator.Play("Panel In");
+		SaveJoinMode();
 		SetCurrentPanel("Main");
+	}
+
+	void SaveJoinMode()
+	{
+		// Save join mode
+		Hashtable h = new Hashtable();
+		h.Add("joinMode", joinModeSelector.index);
+		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+
+		if (joinModeSelector.index == 0) {
+			gameController.AcceptAllPlayers();
+		}
 	}
 
 	public void OnResetKeyBindingsClicked()

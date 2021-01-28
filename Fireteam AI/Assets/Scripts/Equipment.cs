@@ -23,8 +23,9 @@ public class Equipment
     public bool purchasable;
     public bool deleteable;
     public int gpPrice;
+    public int kashPrice;
 
-    public Equipment(string name, string category, int malePrefabPath, int femalePrefabPath, int maleFpcPrefabPath, int femaleFpcPrefabPath, string thumbnailPath, string description, bool hideHairFlag, int skinType, float speed, float stamina, float armor, char gender, string[] characterRestrictions, int gpPrice, bool purchasable, bool deleteable) {
+    public Equipment(string name, string category, int malePrefabPath, int femalePrefabPath, int maleFpcPrefabPath, int femaleFpcPrefabPath, string thumbnailPath, string description, bool hideHairFlag, int skinType, float speed, float stamina, float armor, char gender, string[] characterRestrictions, int gpPrice, int kashPrice, bool purchasable, bool deleteable) {
         this.name = name;
         this.category = category;
         this.malePrefabPath = malePrefabPath;
@@ -41,6 +42,7 @@ public class Equipment
         this.gender = gender;
         this.characterRestrictions = characterRestrictions;
         this.gpPrice = gpPrice;
+        this.kashPrice = kashPrice;
         this.purchasable = purchasable;
         this.deleteable = deleteable;
     }

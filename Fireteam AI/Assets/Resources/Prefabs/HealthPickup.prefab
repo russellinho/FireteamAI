@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3246182835575405652}
   - component: {fileID: 3246182835575405655}
   - component: {fileID: 3246182835575405654}
+  - component: {fileID: 7584546685059685731}
   m_Layer: 0
   m_Name: HealthPickup
   m_TagString: HealthBox
@@ -57,6 +58,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -92,7 +94,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 105.12, y: 60.2, z: 60.523796}
+  m_Size: {x: 170, y: 60.2, z: 130}
   m_Center: {x: 3.3473492, y: 33.321247, z: 4.5995994}
 --- !u!95 &3246182835575405655
 Animator:
@@ -127,3 +129,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pickupId: 0
   pickupSound: {fileID: 8300000, guid: 2abf41e9ece742d44b0da495397486fb, type: 3}
+--- !u!114 &7584546685059685731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3246182835575405648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

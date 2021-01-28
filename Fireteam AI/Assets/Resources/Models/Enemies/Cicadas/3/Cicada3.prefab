@@ -5079,7 +5079,7 @@ AudioSource:
   Priority: 100
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 200
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -6412,6 +6412,7 @@ GameObject:
   - component: {fileID: 1676270384887863585}
   - component: {fileID: 6673300643649586747}
   - component: {fileID: 4161791296749964571}
+  - component: {fileID: 7041066125790170815}
   m_Layer: 14
   m_Name: Cicada3
   m_TagString: Human
@@ -6512,10 +6513,10 @@ AudioSource:
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 100
+  Priority: 9
   DopplerLevel: 1
   MinDistance: 3
-  MaxDistance: 500
+  MaxDistance: 20
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -6818,6 +6819,18 @@ MonoBehaviour:
   - {fileID: 8745907913043419332, guid: 7e4bcd0779119234d917e7a430527e7d, type: 3}
   - {fileID: 7996858819316988844, guid: 0142b3ea1c258f84e8c6b38696f77df1, type: 3}
   - {fileID: 1082840528973483707, guid: a4d1ad4e999f9554680188638ae96ba9, type: 3}
+--- !u!114 &7041066125790170815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8502661351813044425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8502661351813044427
 GameObject:
   m_ObjectHideFlags: 0

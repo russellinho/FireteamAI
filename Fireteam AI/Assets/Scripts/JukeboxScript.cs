@@ -5,21 +5,26 @@ using UnityEngine.SceneManagement;
 
 public class JukeboxScript : MonoBehaviour
 {
+    private const float TRACK_PREVIEW_TIME = 7f;
     private enum MusicMode {Title, InGame, GameOver};
     private MusicMode currentMode;
     public static JukeboxScript jukebox;
     public AudioSource audioSource1;
     public AudioSource audioSource2;
+    public AudioSource audioSource3;
     private int audio1Index;
     private int audio2Index;
     private float audio1FadeTime;
     private float audio2FadeTime;
     private bool assaultMode;
     public AudioClip[] titleTrackList;
+    public AudioClip[] stealthTracks;
+    public AudioClip[] assaultTracks;
     private const float SONG_FADE_DELAY = 3f;
     public const int DEFAULT_MUSIC_VOLUME = 70;
     private bool audioSource1FullyQueued;
     private bool audioSource2FullyQueued;
+    private float previewSongTimer;
 
     void Awake() {
         if (jukebox == null)
@@ -69,6 +74,16 @@ public class JukeboxScript : MonoBehaviour
     }
 
     void HandleUpdateForTitle() {
+        if (previewSongTimer > 0f) {
+            previewSongTimer -= Time.deltaTime;
+            if (previewSongTimer <= 0f) {
+                audioSource3.Stop();
+                JukeboxScript.jukebox.SetMusicVolume((float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f);
+            } else {
+                SetMusicVolume(0f);
+            }
+        }
+
         if (audioSource1.isPlaying) {
             if (audioSource1.time >= audioSource1.clip.length) {
                 audioSource1.Stop();
@@ -266,13 +281,35 @@ public class JukeboxScript : MonoBehaviour
     }
 
     void LoadMusicForScene(string sceneName) {
-        audioSource1.clip = (AudioClip)Resources.Load("Audio/BGM/" + sceneName + "_Stealth");
-        audioSource2.clip = (AudioClip)Resources.Load("Audio/BGM/" + sceneName + "_Assault");
+        audioSource1.clip = GetCurrentStealthTrack();
+        audioSource2.clip = GetCurrentAssaultTrack();
     }
 
     public void SetMusicVolume(float v) {
         audioSource1.volume = v;
         audioSource2.volume = v;
+    }
+
+    public AudioClip GetCurrentStealthTrack()
+    {
+        return stealthTracks[PlayerPreferences.playerPreferences.preferenceData.stealthTrack];
+    }
+
+    public AudioClip GetCurrentAssaultTrack()
+    {
+        return assaultTracks[PlayerPreferences.playerPreferences.preferenceData.assaultTrack];
+    }
+
+    public void PreviewTrack(char mode, int i)
+    {
+        audioSource3.volume = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
+        previewSongTimer = TRACK_PREVIEW_TIME;
+        if (mode == 'A') {
+            audioSource3.clip = assaultTracks[i];
+        } else if (mode == 'S') {
+            audioSource3.clip = stealthTracks[i];
+        }
+        audioSource3.Play();
     }
 
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
@@ -14,6 +15,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     // Timer
     public static float missionTime;
     public static float MAX_MISSION_TIME = 1800f;
+	public static float WAIT_TRIGGER_TIME = 30f;
 	private const float FORFEIT_CHECK_DELAY = 3f;
 	private const float VOTE_TIME = 3f;
 	private const float VOTE_DELAY = 300f;
@@ -23,6 +25,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public int currentMap;
     public string teamMap;
 	public Terrain[] terrainMetaData;
+	public PostProcessVolume postProcessVolume;
 
     // variable for last gunshot position
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
@@ -34,6 +37,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public Dictionary<int, GameObject> enemyList = new Dictionary<int, GameObject> ();
 	private Dictionary<int, GameObject> pickupList = new Dictionary<int, GameObject>();
 	private Dictionary<int, GameObject> deployableList = new Dictionary<int, GameObject>();
+	private Queue<int> acceptPlayerQueue;
 
     // Mission variables
 	public AIControllerScript aIController;
@@ -81,11 +85,28 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public short yesVotes;
 	public short noVotes;
 	private float voteDelay;
+	private float waitTriggerTimer;
 
 	// Use this for initialization
 	void Awake() {
+		Bloom myBloom;
+		MotionBlur myMotionBlur;
+		ColorGrading myColorGrading;
+		if (!PlayerPreferences.playerPreferences.preferenceData.bloom) {
+			postProcessVolume.profile.TryGetSettings(out myBloom);
+			myBloom.active = false;
+			myBloom.enabled = new BoolParameter{ value = false };
+		}
+		if (!PlayerPreferences.playerPreferences.preferenceData.motionBlur) {
+			postProcessVolume.profile.TryGetSettings(out myMotionBlur);
+			myMotionBlur.active = false;
+			myMotionBlur.enabled = new BoolParameter{ value = false };
+		}
+		postProcessVolume.profile.TryGetSettings(out myColorGrading);
+		myColorGrading.postExposure.value = PlayerPreferences.playerPreferences.preferenceData.brightness - 0.5f;
 		forfeitDelayCheck = 20f;
 		coverSpots = new Dictionary<short, GameObject>();
+		acceptPlayerQueue = new Queue<int>();
         myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
         opposingTeam = (myTeam == "red" ? "blue" : "red");
 		DetermineObjectivesForMission(SceneManager.GetActiveScene().name);
@@ -145,6 +166,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         syncMissionTimeTimer = 0f;
 
 		lastGunshotHeardPos = Vector3.negativeInfinity;
+		if (isVersusHostForThisTeam()) {
+			ResetAssaultInProgressOverNetwork();
+		}
 		if (matchType == 'C') {
 			StartCoroutine("GameOverCheckForCampaign");
 		} else if (matchType == 'V') {
@@ -176,10 +200,20 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		} else if (matchType == 'V') {
 			UpdateMissionProgressForVersus();
 		}
+		if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+			if (waitTriggerTimer >= 0f) {
+				waitTriggerTimer += Time.deltaTime;
+			}
+			if (waitTriggerTimer >= WAIT_TRIGGER_TIME) {
+				SetWaitPeriodDone();
+				waitTriggerTimer = -1f;
+			}
+		}
 		UpdateTimers();
 		DecrementLastGunshotTimer();
 		UpdateVote();
 		HandleVoteCast();
+		HandleAcceptPlayer();
 	}
 
 	void UpdateTimers() {
@@ -408,11 +442,17 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         if (team != teamMap) return;
 		// StartCoroutine (UpdateAssaultModeTimer(5f, assaultInProgress));
 		assaultMode = assaultInProgress;
+		if (isVersusHostForThisTeam() && assaultInProgress) {
+			SetAssaultInProgressOverNetwork();
+		}
 	}
 
 	IEnumerator UpdateAssaultModeTimer(float secs, bool assaultInProgress) {
 		yield return new WaitForSeconds (secs);
 		assaultMode = assaultInProgress;
+		if (isVersusHostForThisTeam() && assaultInProgress) {
+			SetAssaultInProgressOverNetwork();
+		}
 	}
 
 	bool CheckEscapeForCampaign(int deadCount) {
@@ -657,12 +697,33 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		// LockRoom();
 	}
 
+	void SetWaitPeriodDone()
+	{
+		Hashtable h = new Hashtable();
+		h.Add("waitPeriod", 1);
+		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+	}
+
     void SetMyTeamScore(short score)
     {
 		Hashtable h = new Hashtable();
 		h.Add(myTeam + "Score", (int)score);
 		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
     }
+
+	void SetAssaultInProgressOverNetwork()
+	{
+		Hashtable h = new Hashtable();
+		h.Add(teamMap + "Assault", 1);
+		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+	}
+
+	void ResetAssaultInProgressOverNetwork()
+	{
+		Hashtable h = new Hashtable();
+		h.Add(teamMap + "Assault", null);
+		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+	}
 
     void UpdateEndGameTimer() {
         if (gameOver) {
@@ -1421,6 +1482,81 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		} else {
 			PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().RemovePlayerSpeakingIndicator(actorNo);
 		}
+	}
+
+	void HandleAcceptPlayer()
+	{
+		if (Input.GetKeyDown(KeyCode.F5)) {
+			if (acceptPlayerQueue.Count > 0) {
+				if (isVersusHostForThisTeam()) {
+					AcceptPlayer();
+				}
+			}
+		}
+		if (Input.GetKeyDown(KeyCode.F6)) {
+			if (acceptPlayerQueue.Count > 0) {
+				if (isVersusHostForThisTeam()) {
+					RejectPlayer();
+				}
+			}
+		}
+	}
+
+	public void PingMasterForAcceptance()
+	{
+		pView.RPC("RpcPingMasterForAcceptance", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, PhotonNetwork.LocalPlayer.NickName);
+	}
+
+	[PunRPC]
+	void RpcPingMasterForAcceptance(int actorNo, string playerName)
+	{
+		if (isVersusHostForThisTeam()) {
+			acceptPlayerQueue.Enqueue(actorNo);
+			PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().QueuePlayerJoining(playerName);
+		}
+	}
+
+	[PunRPC]
+	void RpcAcceptPlayer(int actorNo)
+	{
+		if (PhotonNetwork.LocalPlayer.ActorNumber == actorNo) {
+			// Spawn myself in
+			if (PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().waitingOnAccept) {
+				PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().Respawn();
+			}
+		}
+	}
+
+	public void AcceptAllPlayers()
+	{
+		if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+			while (acceptPlayerQueue.Count > 0) {
+				AcceptPlayer();
+			}
+		}
+	}
+
+	void AcceptPlayer()
+	{
+		// Dequeue from accept queue
+		int actorNo = acceptPlayerQueue.Dequeue();
+		// Send RPC to spawn the player in
+		pView.RPC("RpcAcceptPlayer", RpcTarget.All, actorNo);
+		// Remove from HUD queue
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().DequeuePlayerJoining();
+	}
+
+	void RejectPlayer()
+	{
+		// Dequeue from accept queue
+		int actorNo = acceptPlayerQueue.Dequeue();
+		// Kick/ban the next player in the queue
+		Player p = PhotonNetwork.CurrentRoom.GetPlayer(actorNo);
+		if (p != null) {
+			KickPlayer(PhotonNetwork.CurrentRoom.GetPlayer(actorNo));
+		}
+		// Remove from HUD queue
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().DequeuePlayerJoining();
 	}
 
 }

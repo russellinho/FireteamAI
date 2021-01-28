@@ -30,10 +30,11 @@ public class ShopItemScript : MonoBehaviour
     // 0 = long sleeves, 1 = mid sleeves, 2 = short sleeves
     private int clickCount;
     private float clickTimer;
-    public TextMeshProUGUI gpPriceTxt;
+    public TextMeshProUGUI priceTxt;
     public Button previewBtn;
     public Button purchaseBtn;
     public Button equipBtn;
+    public Button sellBtn;
     public Button modWeaponBtn;
     public Button modEquipBtn;
     public char titleType;
@@ -95,7 +96,74 @@ public class ShopItemScript : MonoBehaviour
     }
 
     public void OnPurchaseBtnClicked() {
-        ts.PreparePurchase(itemName, itemType, thumbnailRef.texture);
+        ts.PreparePurchase(itemName, itemType, GetCurrencyTypeForItem(), thumbnailRef.texture);
+    }
+
+    public void OnSellBtnClicked()
+    {
+        int costOfItem = 0;
+        int itemDuration = 0;
+        string itemNameToPass = null;
+        string idToPass = null;
+        DateTime itemAcquireDate = DateTime.Now;
+        if (characterDetails != null) {
+            costOfItem = characterDetails.gpPrice == 0 ? characterDetails.kashPrice : characterDetails.gpPrice;
+            itemDuration = int.Parse(PlayerData.playerdata.inventory.myCharacters[itemName].Duration);
+            itemAcquireDate = DateTime.Parse(PlayerData.playerdata.inventory.myCharacters[itemName].AcquireDate);
+            itemNameToPass = itemName;
+        } else if (equipmentDetails != null) {
+            costOfItem = equipmentDetails.gpPrice == 0 ? equipmentDetails.kashPrice : equipmentDetails.gpPrice;
+            EquipmentData tempE = null;
+            if (itemType == "Top") {
+                tempE = PlayerData.playerdata.inventory.myTops[itemName];
+            } else if (itemType == "Bottom") {
+                tempE = PlayerData.playerdata.inventory.myBottoms[itemName];
+            } else if (itemType == "Footwear") {
+                tempE = PlayerData.playerdata.inventory.myFootwear[itemName];
+            } else if (itemType == "Headgear") {
+                tempE = PlayerData.playerdata.inventory.myHeadgear[itemName];
+            } else if (itemType == "Facewear") {
+                tempE = PlayerData.playerdata.inventory.myFacewear[itemName];
+            }
+            itemDuration = int.Parse(tempE.Duration);
+            itemAcquireDate = DateTime.Parse(tempE.AcquireDate);
+            itemNameToPass = itemName;
+        } else if (armorDetails != null) {
+            costOfItem = armorDetails.gpPrice == 0 ? armorDetails.kashPrice : armorDetails.gpPrice;
+            ArmorData tempA = PlayerData.playerdata.inventory.myArmor[itemName];
+            itemDuration = int.Parse(tempA.Duration);
+            itemAcquireDate = DateTime.Parse(tempA.AcquireDate);
+            itemNameToPass = itemName;
+        } else if (weaponDetails != null) {
+            costOfItem = weaponDetails.gpPrice == 0 ? weaponDetails.kashPrice : weaponDetails.gpPrice;
+            WeaponData tempW = PlayerData.playerdata.inventory.myWeapons[itemName];
+            itemDuration = int.Parse(tempW.Duration);
+            itemAcquireDate = DateTime.Parse(tempW.AcquireDate);
+            itemNameToPass = itemName;
+        } else if (modDetails != null) {
+            costOfItem = modDetails.gpPrice == 0 ? modDetails.kashPrice : modDetails.gpPrice;
+            ModData tempM = PlayerData.playerdata.inventory.myMods[id];
+            itemDuration = int.Parse(tempM.Duration);
+            itemAcquireDate = DateTime.Parse(tempM.AcquireDate);
+            itemNameToPass = itemName;
+            idToPass = id;
+        }
+
+        ts.PrepareSale(itemAcquireDate, itemDuration, costOfItem, itemNameToPass, itemType, idToPass);
+    }
+
+    char GetCurrencyTypeForItem()
+    {
+        if (characterDetails != null) {
+            return characterDetails.gpPrice == 0 ? 'K' : 'G';
+        } else if (equipmentDetails != null) {
+            return equipmentDetails.gpPrice == 0 ? 'K' : 'G';
+        } else if (armorDetails != null) {
+            return armorDetails.gpPrice == 0 ? 'K' : 'G';
+        } else if (weaponDetails != null) {
+            return weaponDetails.gpPrice == 0 ? 'K' : 'G';
+        }
+        return modDetails.gpPrice == 0 ? 'K' : 'G';
     }
 
     private void PreviewItem() {
@@ -237,34 +305,43 @@ public class ShopItemScript : MonoBehaviour
     }
 
     public void SetItemForMarket() {
-        gpPriceTxt.gameObject.SetActive(true);
+        priceTxt.gameObject.SetActive(true);
         previewBtn.gameObject.SetActive(ItemCanBePreviewed());
         purchaseBtn.gameObject.SetActive(true);
         equipBtn.gameObject.SetActive(false);
         modWeaponBtn.gameObject.SetActive(false);
         modEquipBtn.gameObject.SetActive(false);
+        sellBtn.gameObject.SetActive(false);
         titleType = 'm';
     }
 
-    public void SetItemForLoadout() {
-        gpPriceTxt.gameObject.SetActive(false);
+    public void SetItemForLoadout(bool deleteable) {
+        priceTxt.gameObject.SetActive(false);
         previewBtn.gameObject.SetActive(false);
         purchaseBtn.gameObject.SetActive(false);
         equipBtn.gameObject.SetActive(true);
+        sellBtn.gameObject.SetActive(true);
         modWeaponBtn.gameObject.SetActive(false);
         modEquipBtn.gameObject.SetActive(false);
         titleType = 'l';
+        if (deleteable) {
+            sellBtn.gameObject.SetActive(true);
+        } else {
+            sellBtn.gameObject.SetActive(false);
+        }
     }
 
     public void SetItemForModShop() {
         if (modDetails == null) {
             modWeaponBtn.gameObject.SetActive(true);
             modEquipBtn.gameObject.SetActive(false);
+            sellBtn.gameObject.SetActive(false);
         } else {
             modWeaponBtn.gameObject.SetActive(false);
             modEquipBtn.gameObject.SetActive(true);
+            sellBtn.gameObject.SetActive(true);
         }
-        gpPriceTxt.gameObject.SetActive(false);
+        priceTxt.gameObject.SetActive(false);
         previewBtn.gameObject.SetActive(false);
         purchaseBtn.gameObject.SetActive(false);
         equipBtn.gameObject.SetActive(false);

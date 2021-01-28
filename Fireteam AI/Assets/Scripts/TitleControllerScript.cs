@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
@@ -16,10 +17,11 @@ using VivoxUnity;
 using VivoxUnity.Common;
 using VivoxUnity.Private;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using Random = UnityEngine.Random;
 
 public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private const float NINETY_DAYS_MINS = 129600f;
-	private const float THIRTY_DAYS_MINS = 43200;
+	private const float THIRTY_DAYS_MINS = 43200f;
 	private const float SEVEN_DAYS_MINS = 10080f;
 	private const float ONE_DAY_MINS = 1440f;
 	private const float PERMANENT = -1f;
@@ -29,6 +31,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     private const float NINETY_DAY_COST_MULTIPLIER = 90f * (1f - (COST_MULT_FRACTION * 3f));
     private const float PERMANENT_COST_MULTIPLIER = 365f;
 	public Connexion connexion;
+	private AudioSourceModifier[] sceneAudioSources;
 
 	public GameObject itemDescriptionPopupRef;
 	public Text versionText;
@@ -38,12 +41,31 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Slider mainLevelProgress;
 	public TextMeshProUGUI mainExpTxt;
 	public Slider musicVolumeSlider;
+	public Slider gameVolumeSlider;
+	public Slider ambientVolumeSlider;
 	public Slider voiceInputVolumeSlider;
 	public Slider voiceOutputVolumeSlider;
 	public TextMeshProUGUI musicVolumeField;
+	public TextMeshProUGUI gameVolumeField;
+	public TextMeshProUGUI ambientVolumeField;
 	public TextMeshProUGUI voiceInputVolumeField;
 	public TextMeshProUGUI voiceOutputVolumeField;
 	public HorizontalSelector audioInputSelector;
+	// Graphics settings
+	public HorizontalSelector resolutionSelector;
+	public HorizontalSelector qualitySelector;
+	public HorizontalSelector vSyncSelector;
+	public Slider lodBiasSlider;
+	public HorizontalSelector antiAliasingSelector;
+	public HorizontalSelector anisotropicFilteringSelector;
+	public Slider masterTextureLimitSlider;
+	public HorizontalSelector shadowCascadesSelector;
+	public HorizontalSelector shadowResolutionSelector;
+	public HorizontalSelector shadowSelector;
+	public SwitchManager bloomSwitch;
+	public SwitchManager motionBlurSwitch;
+	public Slider brightnessSlider;
+
 	public CanvasGroup loadingScreen;
 	public CanvasGroup mainPanels;
 	public Animator mainPanelsAnimator;
@@ -56,16 +78,23 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public ModalWindowManager confirmPopup;
 	public ModalWindowManager keyBindingsPopup;
 	public ModalWindowManager makePurchasePopup;
+	public ModalWindowManager roomPasswordPopup;
+	public ModalWindowManager roomEnterPasswordPopup;
+	public BlurManager blurManager;
+	public TMP_InputField roomPasswordInput;
+	public TMP_InputField roomEnterPasswordInput;
 	// Block screen used for blocking player interaction with screen while something is going on in the backgronud (example: if a transaction is in progress)
 	private bool blockScreenTrigger;
 	public GameObject blockScreen;
 	public GameObject blockBlur;
 	private string itemBeingPurchased;
 	private string typeBeingPurchased;
-	private uint totalGpCostBeingPurchased;
+	private uint totalCostBeingPurchased;
 	private char currencyTypeBeingPurchased;
 	public bool confirmingTransaction;
+	public bool confirmingSale;
 	private bool resettingKeysFlag;
+	private bool resettingGraphicsFlag;
 	public char currentCharGender;
 	private bool audioInputDevicesInitialized;
 
@@ -189,8 +218,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public bool triggerConfirmPopupFlag;
 	public bool triggerKeyBindingsPopupFlag;
 	public bool triggerMakePurchasePopupFlag;
+	public bool triggerRoomPasswordChangePopupFlag;
+	public bool triggerRoomPasswordEnterPopupFlag;
 	public string alertPopupMessage;
 	public string confirmPopupMessage;
+	private string roomEnteringName;
 	private bool confirmClicked;
 	public MainPanelManager mainPanelManager;
 	public Button previouslyPressedButtonLeft;
@@ -224,11 +256,20 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		musicVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.musicVolume / 100f;
 		musicVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.musicVolume;
 
+		gameVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.gameVolume / 100f;
+		gameVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.gameVolume;
+
+		ambientVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.ambientVolume / 100f;
+		ambientVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.ambientVolume;
+
 		voiceInputVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume / 100f;
 		voiceInputVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume;
 		
 		voiceOutputVolumeSlider.value = (float)PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume / 100f;
 		voiceOutputVolumeField.text = ""+PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume;
+
+		GetSceneAudioSources();
+		InitializeGraphicSettings();
 	}
 
 	void Start () {
@@ -265,6 +306,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				versionWarning = false;
 			}
 		}
+	}
+
+	void GetSceneAudioSources()
+	{
+		sceneAudioSources = (AudioSourceModifier[]) GameObject.FindObjectsOfType (typeof(AudioSourceModifier));
 	}
 
 	public void InstantiateLoadingScreen(string mapName, string mapDescription) {
@@ -336,6 +382,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			triggerMakePurchasePopupFlag = false;
 			makePurchasePopup.ModalWindowIn();
 		}
+		if (triggerRoomPasswordEnterPopupFlag) {
+			triggerRoomPasswordEnterPopupFlag = false;
+			roomEnterPasswordPopup.ModalWindowIn();
+		}
+		if (triggerRoomPasswordChangePopupFlag) {
+			triggerRoomPasswordChangePopupFlag = false;
+			roomPasswordPopup.ModalWindowIn();
+		}
 		if (alertPopup.isOn || confirmPopup.isOn || keyBindingsPopup.isOn || makePurchasePopup.isOn && (PlayerData.playerdata.bodyReference != null && PlayerData.playerdata.bodyReference.activeInHierarchy)) {
 			HideAll(false);
 		}
@@ -343,6 +397,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void OnMusicVolumeSliderChanged() {
 		SetMusicVolume(musicVolumeSlider.value);
+	}
+
+	public void OnGameVolumeSliderChanged() {
+		SetGameVolume(gameVolumeSlider.value);
+	}
+
+	public void OnAmbientVolumeSliderChanged() {
+		SetAmbientVolume(ambientVolumeSlider.value);
 	}
 
 	public void OnVoiceInputVolumeChanged() {
@@ -356,6 +418,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	void SetMusicVolume(float v) {
 		musicVolumeField.text = ""+(int)(v * 100f);
 		JukeboxScript.jukebox.SetMusicVolume(v);
+	}
+
+	void SetGameVolume(float v) {
+		gameVolumeField.text = ""+(int)(v * 100f);
+	}
+
+	void SetAmbientVolume(float v) {
+		ambientVolumeField.text = ""+(int)(v * 100f);
 	}
 
 	void SetVoiceInputVolume(float v) {
@@ -372,11 +442,22 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	void UpdateAllAudioSources()
+	{
+		foreach (AudioSourceModifier a in sceneAudioSources)
+		{
+			a.SetVolume();
+		}
+	}
+
 	public void SaveSettings() {
 		PlayerPreferences.playerPreferences.preferenceData.musicVolume = (int)(musicVolumeSlider.value * 100f);
+		PlayerPreferences.playerPreferences.preferenceData.gameVolume = (int)(gameVolumeSlider.value * 100f);
+		PlayerPreferences.playerPreferences.preferenceData.ambientVolume = (int)(ambientVolumeSlider.value * 100f);
 		PlayerPreferences.playerPreferences.preferenceData.audioInputName = audioInputSelector.GetCurrentItem();
 		PlayerPreferences.playerPreferences.preferenceData.voiceInputVolume = (int)(voiceInputVolumeSlider.value * 100f);
 		PlayerPreferences.playerPreferences.preferenceData.voiceOutputVolume = (int)(voiceOutputVolumeSlider.value * 100f);
+		UpdateAllAudioSources();
 		PlayerPreferences.playerPreferences.SavePreferences();
 	}
 
@@ -415,9 +496,13 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void SetDefaultAudioSettings() {
 		musicVolumeSlider.value = (float)JukeboxScript.DEFAULT_MUSIC_VOLUME / 100f;
+		gameVolumeSlider.value = 1f;
+		ambientVolumeSlider.value = 1f;
 		voiceInputVolumeSlider.value = 0.5f;
 		voiceOutputVolumeSlider.value = 0.5f;
 		SetMusicVolume(musicVolumeSlider.value);
+		SetGameVolume(gameVolumeSlider.value);
+		SetAmbientVolume(ambientVolumeSlider.value);
 		SetVoiceInputVolume(0.5f);
 		SetVoiceOutputVolume(0.5f);
 	}
@@ -475,6 +560,17 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void TriggerAlertPopup(string message) {
 		triggerAlertPopupFlag = true;
 		alertPopupMessage = message;
+	}
+
+	public void TriggerRoomPasswordChangePopup()
+	{
+		triggerRoomPasswordChangePopupFlag = true;
+	}
+
+	public void TriggerRoomPasswordEnterPopup(string roomName)
+	{
+		triggerRoomPasswordEnterPopupFlag = true;
+		roomEnteringName = roomName;
 	}
 
 	public void TriggerConfirmPopup(string message) {
@@ -550,7 +646,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisHeadgear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(thisHeadgear.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisHeadgear;
 			s.itemName = thisItemName;
@@ -584,7 +680,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Headgear";
 			s.itemDescription = thisHeadgear.description;
-			s.gpPriceTxt.text = ""+thisHeadgear.gpPrice + " GP";
+			if (thisHeadgear.gpPrice == 0) {
+				s.priceTxt.text = ""+thisHeadgear.kashPrice + " KASH";
+			} else {
+				s.priceTxt.text = ""+thisHeadgear.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisHeadgear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
@@ -603,7 +703,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisFacewear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(thisFacewear.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisFacewear;
 			s.itemName = thisItemName;
@@ -637,7 +737,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Facewear";
 			s.itemDescription = thisFacewear.description;
-			s.gpPriceTxt.text = ""+thisFacewear.gpPrice + " GP";
+			if (thisFacewear.gpPrice == 0) {
+				s.priceTxt.text = ""+thisFacewear.kashPrice + " KASH";
+			} else {
+				s.priceTxt.text = ""+thisFacewear.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisFacewear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
@@ -656,7 +760,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Armor thisArmor = InventoryScript.itemData.armorCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(thisArmor.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.armorDetails = thisArmor;
 			s.itemName = thisItemName;
@@ -690,7 +794,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Armor";
 			s.itemDescription = thisArmor.description;
-			s.gpPriceTxt.text = ""+thisArmor.gpPrice + " GP";
+			if (thisArmor.gpPrice == 0) {
+				s.priceTxt.text = ""+thisArmor.kashPrice + " KASH";
+			} else {
+				s.priceTxt.text = ""+thisArmor.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisArmor.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
@@ -709,7 +817,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisTop = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(thisTop.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisTop;
             s.itemName = thisItemName;
@@ -743,7 +851,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Top";
 			s.itemDescription = thisEquipment.description;
-			s.gpPriceTxt.text = ""+thisEquipment.gpPrice + " GP";
+			if (thisEquipment.gpPrice == 0) {
+				s.priceTxt.text = ""+thisEquipment.kashPrice + " KASH";
+			} else {
+				s.priceTxt.text = ""+thisEquipment.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisEquipment.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
@@ -762,7 +874,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisBottom = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(thisBottom.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisBottom;
 			s.itemName = thisItemName;
@@ -796,7 +908,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Bottom";
 			s.itemDescription = thisBottom.description;
-			s.gpPriceTxt.text = ""+thisBottom.gpPrice + " GP";
+			if (thisBottom.gpPrice == 0) {
+				s.priceTxt.text = ""+thisBottom.kashPrice + " KASH";
+			} else {
+				s.priceTxt.text = ""+thisBottom.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisBottom.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
@@ -815,7 +931,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Equipment thisFootwear = InventoryScript.itemData.equipmentCatalog[thisItemName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(thisFootwear.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.equipmentDetails = thisFootwear;
 			s.itemName = thisItemName;
@@ -849,7 +965,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Footwear";
 			s.itemDescription = thisFootwear.description;
-			s.gpPriceTxt.text = ""+thisFootwear.gpPrice + " GP";
+			if (thisFootwear.gpPrice == 0) {
+				s.priceTxt.text = ""+thisFootwear.kashPrice + " KASH";
+			} else {
+				s.priceTxt.text = ""+thisFootwear.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
 			s.thumbnailRef.texture = (Texture)Resources.Load(thisFootwear.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
@@ -870,7 +990,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -906,7 +1026,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -963,7 +1087,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -999,7 +1123,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1052,7 +1180,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1088,7 +1216,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1141,7 +1273,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1177,7 +1309,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1230,7 +1366,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1266,7 +1402,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1319,7 +1459,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1355,7 +1495,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1408,7 +1552,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1444,7 +1588,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1497,7 +1645,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1533,7 +1681,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1586,7 +1738,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1622,7 +1774,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1675,7 +1831,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1711,7 +1867,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1764,7 +1924,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1800,7 +1960,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1853,7 +2017,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1889,7 +2053,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -1910,7 +2078,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.SetItemForModShop();
@@ -1943,7 +2111,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -1979,7 +2147,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -2032,7 +2204,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -2068,7 +2240,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -2121,7 +2297,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(w.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.weaponDetails = w;
 			s.itemName = w.name;
@@ -2157,7 +2333,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Weapon";
 			s.itemDescription = w.description;
 			s.weaponCategory = w.category;
-            s.gpPriceTxt.text = "" + w.gpPrice + " GP";
+			if (w.gpPrice == 0) {
+				s.priceTxt.text = "" + w.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + w.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(w.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -2213,7 +2393,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Mod";
 			s.itemDescription = m.description;
 			s.weaponCategory = m.category;
-            s.gpPriceTxt.text = "" + m.gpPrice + " GP";
+			if (m.gpPrice == 0) {
+				s.priceTxt.text = "" + m.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + m.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -2238,7 +2422,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Mod";
 			s.itemDescription = m.description;
 			s.weaponCategory = m.category;
-            s.gpPriceTxt.text = "" + m.gpPrice + " GP";
+			if (m.gpPrice == 0) {
+				s.priceTxt.text = "" + m.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + m.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -2263,7 +2451,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
             s.itemType = "Mod";
 			s.itemDescription = m.description;
 			s.weaponCategory = m.category;
-            s.gpPriceTxt.text = "" + m.gpPrice + " GP";
+			if (m.gpPrice == 0) {
+				s.priceTxt.text = "" + m.kashPrice + " KASH";
+			} else {
+            	s.priceTxt.text = "" + m.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(m.thumbnailPath);
 			o.transform.SetParent(shopContentWeapons.transform, false);
@@ -2282,7 +2474,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			Character c = InventoryScript.itemData.characterCatalog[thisCharacterName];
 			GameObject o = Instantiate(contentPrefab);
 			ShopItemScript s = o.GetComponent<ShopItemScript>();
-			s.SetItemForLoadout();
+			s.SetItemForLoadout(c.deleteable);
 			s.itemDescriptionPopupRef = itemDescriptionPopupRef;
 			s.characterDetails = c;
 			s.itemName = thisCharacterName;
@@ -2316,7 +2508,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			s.itemName = entry.Key;
             s.itemType = "Character";
 			s.itemDescription = c.description;
-            s.gpPriceTxt.text = "" + c.gpPrice + " GP";
+			if (c.gpPrice == 0) {
+            	s.priceTxt.text = "" + c.kashPrice + " KASH";
+			} else {
+				s.priceTxt.text = "" + c.gpPrice + " GP";
+			}
 			s.SetItemForMarket();
             s.thumbnailRef.texture = (Texture)Resources.Load(c.thumbnailPath);
 			o.transform.SetParent(shopContentEquipment.transform, false);
@@ -2392,6 +2588,75 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				currentlyEquippedModPrefab = o;
 			}
 			o.transform.SetParent(modInventoryContent.transform, false);
+		}
+	}
+
+	public void RemoveItemFromShopContent(char shopType, string itemId)
+	{
+		if (shopType == 'c') {
+			ShopItemScript[] currentlyDisplayedContent = contentInventoryEquipment.GetComponentsInChildren<ShopItemScript>();
+			if (itemId == currentlyEquippedEquipmentPrefab?.GetComponent<ShopItemScript>().itemName) {
+				foreach (ShopItemScript s in currentlyDisplayedContent) {
+					if (s.itemName == PlayerData.playerdata.info.DefaultChar) {
+						s.ToggleEquippedIndicator(true);
+						currentlyEquippedEquipmentPrefab = s.gameObject;
+						break;
+					}
+				}
+			}
+			foreach (ShopItemScript s in currentlyDisplayedContent) {
+				if (s.itemName == itemId) {
+					GameObject.Destroy(s.gameObject);
+					break;
+				}
+			}
+		} else if (shopType == 'e') {
+			ShopItemScript[] currentlyDisplayedContent = contentInventoryEquipment.GetComponentsInChildren<ShopItemScript>();
+			if (itemId == currentlyEquippedEquipmentPrefab?.GetComponent<ShopItemScript>().itemName) {
+				Character myChar = InventoryScript.itemData.characterCatalog[PlayerData.playerdata.info.EquippedCharacter];
+				string myDefaultTop = myChar.defaultTop;
+				string myDefaultBottom = myChar.defaultBottom;
+				string myDefaultFootwear = (myChar.gender == 'M' ? PlayerData.DEFAULT_FOOTWEAR_MALE : PlayerData.DEFAULT_FOOTWEAR_FEMALE);
+				foreach (ShopItemScript s in currentlyDisplayedContent) {
+					if (s.itemName == myDefaultTop || s.itemName == myDefaultBottom || s.itemName == myDefaultFootwear) {
+						s.ToggleEquippedIndicator(true);
+						currentlyEquippedEquipmentPrefab = s.gameObject;
+						break;
+					}
+				}
+			}
+			foreach (ShopItemScript s in currentlyDisplayedContent) {
+				if (s.itemName == itemId) {
+					GameObject.Destroy(s.gameObject);
+					break;
+				}
+			}
+		} else if (shopType == 'w') {
+			ShopItemScript[] currentlyDisplayedContent = contentInventoryWeapons.GetComponentsInChildren<ShopItemScript>();
+			if (itemId == currentlyEquippedWeaponPrefab?.GetComponent<ShopItemScript>().itemName) {
+				foreach (ShopItemScript s in currentlyDisplayedContent) {
+					if (s.itemName == PlayerData.playerdata.info.DefaultWeapon || s.itemName == PlayerData.DEFAULT_SECONDARY ||
+						s.itemName == PlayerData.DEFAULT_SUPPORT || s.itemName == PlayerData.DEFAULT_MELEE) {
+						s.ToggleEquippedIndicator(true);
+						currentlyEquippedWeaponPrefab = s.gameObject;
+						break;
+					}
+				}
+			}
+			foreach (ShopItemScript s in currentlyDisplayedContent) {
+				if (s.itemName == itemId) {
+					GameObject.Destroy(s.gameObject);
+					break;
+				}
+			}
+		} else if (shopType == 'm') {
+			ShopItemScript[] currentlyDisplayedContent = modInventoryContent.GetComponentsInChildren<ShopItemScript>();
+			foreach (ShopItemScript s in currentlyDisplayedContent) {
+				if (s.id == itemId) {
+					GameObject.Destroy(s.gameObject);
+					break;
+				}
+			}
 		}
 	}
 
@@ -2691,15 +2956,16 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		return null;
 	}
 
-	public void PreparePurchase(string itemName, string itemType, Texture thumb) {
+	public void PreparePurchase(string itemName, string itemType, char currencyType, Texture thumb) {
 		PrepareDurationDropdown(itemType == "Mod");
 		durationSelection.index = 0;
 		durationSelection.UpdateUI();
 		itemBeingPurchased = itemName;
 		typeBeingPurchased = itemType;
+		currencyTypeBeingPurchased = currencyType;
 		makePurchasePopup.GetComponentInChildren<RawImage>().texture = thumb;
         // Initialize with 1 day price
-        SetTotalGPCost(0, durationSelection.GetCurrentItem());
+        SetTotalCost(0, durationSelection.GetCurrentItem());
 		TriggerMakePurchasePopup();
     }
 
@@ -2719,7 +2985,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnConfirmPreparePurchaseClicked() {
 		confirmingTransaction = true;
 		makePurchasePopup.ModalWindowOut();
-		TriggerConfirmPopup("ARE YOU SURE YOU WOULD LIKE TO BUY " + itemBeingPurchased + " FOR " + durationSelection.GetCurrentItem() + " FOR " + totalGpCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + "?");
+		TriggerConfirmPopup("ARE YOU SURE YOU WOULD LIKE TO BUY " + itemBeingPurchased + " FOR " + durationSelection.GetCurrentItem() + " FOR " + totalCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + "?");
 	}
 
 	public void OnConfirmPurchaseClicked() {
@@ -2727,24 +2993,39 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ConfirmPurchase();
 	}
 
-	public void OnDurationSelect() {
-		int durationInput = durationSelection.index;
-        SetTotalGPCost(durationInput, durationSelection.GetCurrentItem());
+	public void OnConfirmSaleClicked() {
+		TriggerBlockScreen(true);
+		ConfirmSale();
 	}
 
-    void SetTotalGPCost(int duration, string durationText)
+	public void OnDurationSelect() {
+		int durationInput = durationSelection.index;
+        SetTotalCost(durationInput, durationSelection.GetCurrentItem());
+	}
+
+    void SetTotalCost(int duration, string durationText)
     {
-        totalGpCostBeingPurchased = GetGPCostForItemAndType(itemBeingPurchased, typeBeingPurchased, duration);
-		currencyTypeBeingPurchased = 'G';
-        totalGpCostTxt.text = "YOU ARE BUYING [" + itemBeingPurchased + "] FOR [" + durationText + "] FOR " + totalGpCostBeingPurchased + " GP.";
+        totalCostBeingPurchased = GetCostForItemAndType(itemBeingPurchased, typeBeingPurchased, duration);
+        totalGpCostTxt.text = "YOU ARE BUYING [" + itemBeingPurchased + "] FOR [" + durationText + "] FOR " + totalCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + ".";
     }
 
 	public void OnCancelPurchaseClicked() {
 		itemBeingPurchased = null;
 		typeBeingPurchased = null;
 		confirmingTransaction = false;
+		confirmingSale = false;
 		resettingKeysFlag = false;
+		resettingGraphicsFlag = false;
 		// confirmPurchasePopup.SetActive(false);
+	}
+
+	public void PrepareSale(DateTime acquireDate, int duration, int cost, string itemName, string itemType, string id)
+	{
+		confirmingSale = true;
+		itemBeingPurchased = id == null ? itemName : id;
+		typeBeingPurchased = itemType;
+		int salePrice = GetSalePriceForItem(acquireDate, duration, cost);
+		TriggerConfirmPopup("YOU MAY SELL [" + itemName + "] FOR [" + salePrice + "] GP.\n\nWOULD YOU LIKE TO PROCEED WITH THIS SALE?");
 	}
 
 	void ConfirmPurchase() {
@@ -2759,14 +3040,29 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         bool isStacking = (hasDuplicateCheck >= 0f && !Mathf.Approximately(0f, hasDuplicateCheck));
         float totalNewDuration = ConvertDurationInput(durationSelection.index);
         totalNewDuration = (Mathf.Approximately(totalNewDuration, -1f) ? totalNewDuration : totalNewDuration + hasDuplicateCheck);
-		if (PlayerData.playerdata.info.Gp >= totalGpCostBeingPurchased) {
-			PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, "gp");
-			confirmPopup.ModalWindowOut();
-		} else {	
-			TriggerAlertPopup("You do not have enough GP to purchase this item.");
-			TriggerBlockScreen(false);
-			confirmingTransaction = false;
-		}	
+		if (currencyTypeBeingPurchased == 'G') {
+			if (PlayerData.playerdata.info.Gp >= totalCostBeingPurchased) {
+				PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, "gp");
+				confirmPopup.ModalWindowOut();
+			} else {	
+				TriggerAlertPopup("You do not have enough GP to purchase this item.");
+				TriggerBlockScreen(false);
+				confirmingTransaction = false;
+			}	
+		} else if (currencyTypeBeingPurchased == 'K') {
+			if (PlayerData.playerdata.info.Kash >= totalCostBeingPurchased) {
+				PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, "kash");
+				confirmPopup.ModalWindowOut();
+			} else {	
+				TriggerAlertPopup("You do not have enough KASH to purchase this item.");
+				TriggerBlockScreen(false);
+				confirmingTransaction = false;
+			}	
+		}
+	}
+
+	void ConfirmSale() {
+		PlayerData.playerdata.SellItemFromInventory(itemBeingPurchased, typeBeingPurchased);
 	}
 
 	float ConvertDurationInput(int durationSelection) {
@@ -2791,7 +3087,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		return duration;
 	}
 
-	uint GetGPCostForItemAndType(string itemName, string itemType, int duration) {
+	uint GetCostForItemAndType(string itemName, string itemType, int duration) {
         float durationMultiplier = 1f;
 		
 		if (itemType != "Mod") {
@@ -2815,15 +3111,15 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}
 		}
 		if (itemType.Equals("Armor")) {
-			return (uint)(InventoryScript.itemData.armorCatalog[itemName].gpPrice * durationMultiplier);
+			return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.armorCatalog[itemName].gpPrice : InventoryScript.itemData.armorCatalog[itemName].kashPrice) * durationMultiplier);
 		} else if (itemType.Equals("Character")) {
-			return (uint)(InventoryScript.itemData.characterCatalog[itemName].gpPrice * durationMultiplier);
+			return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.characterCatalog[itemName].gpPrice : InventoryScript.itemData.characterCatalog[itemName].kashPrice) * durationMultiplier);
 		} else if (itemType.Equals("Weapon")) {
-			return (uint)(InventoryScript.itemData.weaponCatalog[itemName].gpPrice * durationMultiplier);
+			return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.weaponCatalog[itemName].gpPrice : InventoryScript.itemData.weaponCatalog[itemName].kashPrice) * durationMultiplier);
 		} else if (itemType.Equals("Mod")) {
-			return (uint)(InventoryScript.itemData.modCatalog[itemName].gpPrice * durationMultiplier);
+			return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.modCatalog[itemName].gpPrice : InventoryScript.itemData.modCatalog[itemName].kashPrice) * durationMultiplier);
 		}
-		return (uint)(InventoryScript.itemData.equipmentCatalog[itemName].gpPrice * durationMultiplier);
+		return (uint)((currencyTypeBeingPurchased == 'G' ? InventoryScript.itemData.equipmentCatalog[itemName].gpPrice : InventoryScript.itemData.equipmentCatalog[itemName].kashPrice) * durationMultiplier);
 	}
 
 	public void UpdateCurrency() {
@@ -3141,10 +3437,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnConfirmButtonClicked() {
 		if (confirmingTransaction) {
 			OnConfirmPurchaseClicked();
+		} else if (confirmingSale) {
+			OnConfirmSaleClicked();
 		} else if (connexion.listPlayer.kickingPlayerFlag) {
 			connexion.listPlayer.KickPlayer(connexion.listPlayer.playerBeingKicked);
 		} else if (resettingKeysFlag) {
 			ResetKeyBindings();
+		} else if (resettingGraphicsFlag) {
+			ResetGraphicsSettings();
 		}
 	}
 
@@ -3183,12 +3483,27 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		TriggerConfirmPopup("ARE YOU SURE YOU WISH TO RESET YOUR KEY BINDINGS TO DEFAULT?");
 	}
 
+	public void OnResetGraphicsSettingsClicked()
+	{
+		resettingGraphicsFlag = true;
+		TriggerConfirmPopup("ARE YOU SURE YOU WISH TO RESET YOUR GRAPHICS SETTINGS TO DEFAULT?");
+	}
+
 	void ResetKeyBindings()
 	{
+		resettingKeysFlag = false;
 		PlayerPreferences.playerPreferences.ResetKeyMappings();
 		foreach (KeyMappingInput k in keyMappingInputs) {
 			k.ResetKeyDisplay();
 		}
+	}
+
+	void ResetGraphicsSettings()
+	{
+		resettingGraphicsFlag = false;
+		PlayerPreferences.playerPreferences.SetDefaultGraphics();
+		InitializeGraphicSettings();
+		PlayerPreferences.playerPreferences.SetGraphicsSettings();
 	}
 
 	public void OnCreditsButtonClicked()
@@ -3258,6 +3573,199 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void LeaveGlobalChats()
 	{
 		PlayerData.playerdata.globalChatClient.UnsubscribeFromGlobalChat();
+	}
+
+	public void OnRoomPasswordEnter()
+	{
+		string passwordEntered = roomEnterPasswordInput.text;
+		roomEnterPasswordInput.text = "";
+		connexion.AttemptJoinRoom(roomEnteringName, passwordEntered);
+	}
+
+	public void OnRoomPasswordChange()
+	{
+		string passwordEntered = roomPasswordInput.text;
+		bool success = connexion.listPlayer.SetRoomPassword(passwordEntered);
+		if (success) {
+			roomPasswordInput.text = "";
+			CloseRoomPasswordChange();
+		}
+	}
+
+	public void CloseRoomPasswordEnter()
+	{
+		roomEnterPasswordPopup.ModalWindowOut();
+		blurManager.BlurOutAnim();
+	}
+
+	public void CloseRoomPasswordChange()
+	{
+		roomPasswordPopup.ModalWindowOut();
+		blurManager.BlurOutAnim();
+	}
+
+	void InitializeGraphicSettings()
+	{
+		PopulateResolutions();
+		qualitySelector.index = PlayerPreferences.playerPreferences.preferenceData.qualityPreset;
+		qualitySelector.UpdateUI();
+		vSyncSelector.index = PlayerPreferences.playerPreferences.preferenceData.vSyncCount;
+		vSyncSelector.UpdateUI();
+		lodBiasSlider.value = PlayerPreferences.playerPreferences.preferenceData.lodBias;
+		antiAliasingSelector.index = PlayerPreferences.playerPreferences.preferenceData.antiAliasing;
+		antiAliasingSelector.UpdateUI();
+		anisotropicFilteringSelector.index = PlayerPreferences.playerPreferences.preferenceData.anisotropicFiltering;
+		anisotropicFilteringSelector.UpdateUI();
+		masterTextureLimitSlider.value = PlayerPreferences.playerPreferences.preferenceData.masterTextureLimit;
+		if (PlayerPreferences.playerPreferences.preferenceData.shadowCascades > PlayerPreferences.MAX_SHADOW_CASCADES) {
+			PlayerPreferences.playerPreferences.preferenceData.shadowCascades = PlayerPreferences.MAX_SHADOW_CASCADES;
+		}
+		shadowCascadesSelector.index = PlayerPreferences.playerPreferences.preferenceData.shadowCascades;
+		shadowCascadesSelector.UpdateUI();
+		shadowResolutionSelector.index = PlayerPreferences.playerPreferences.preferenceData.shadowResolution;
+		shadowResolutionSelector.UpdateUI();
+		shadowSelector.index = PlayerPreferences.playerPreferences.preferenceData.shadows;
+		shadowSelector.UpdateUI();
+		bloomSwitch.isOn = PlayerPreferences.playerPreferences.preferenceData.bloom;
+		bloomSwitch.RefreshSwitch();
+		motionBlurSwitch.isOn = PlayerPreferences.playerPreferences.preferenceData.motionBlur;
+		motionBlurSwitch.RefreshSwitch();
+		brightnessSlider.value = (int)(PlayerPreferences.playerPreferences.preferenceData.brightness * 100f);
+	}
+
+	public void OnResolutionSelect()
+	{
+		Resolution r = Screen.resolutions[resolutionSelector.index];
+		Screen.SetResolution(r.width, r.height, true);
+	}
+
+	void PopulateResolutions()
+	{
+		resolutionSelector.ClearItems();
+		Resolution currRes = Screen.currentResolution;
+		Resolution[] rrs = Screen.resolutions;
+		int i = 0;
+		foreach (Resolution r in rrs) {
+			resolutionSelector.CreateNewItem(r.ToString());
+			if (r.ToString() == currRes.ToString()) {
+				resolutionSelector.index = i;
+			}
+			i++;
+		}
+		resolutionSelector.UpdateUI();
+	}
+
+	public void OnQualitySelect()
+	{
+		int q = qualitySelector.index;
+		PlayerPreferences.playerPreferences.preferenceData.qualityPreset = q;
+		QualitySettings.SetQualityLevel(q);
+		PlayerPreferences.playerPreferences.preferenceData.vSyncCount = QualitySettings.vSyncCount;
+        PlayerPreferences.playerPreferences.preferenceData.lodBias = QualitySettings.lodBias;
+        PlayerPreferences.playerPreferences.preferenceData.antiAliasing = QualitySettings.antiAliasing;
+        PlayerPreferences.playerPreferences.preferenceData.anisotropicFiltering = (int)QualitySettings.anisotropicFiltering;
+        PlayerPreferences.playerPreferences.preferenceData.masterTextureLimit = QualitySettings.masterTextureLimit;
+		if (QualitySettings.shadowCascades > PlayerPreferences.MAX_SHADOW_CASCADES) {
+			QualitySettings.shadowCascades = PlayerPreferences.MAX_SHADOW_CASCADES;
+		}
+        PlayerPreferences.playerPreferences.preferenceData.shadowCascades = QualitySettings.shadowCascades;
+        PlayerPreferences.playerPreferences.preferenceData.shadowResolution = (int)QualitySettings.shadowResolution;
+		PlayerPreferences.playerPreferences.preferenceData.brightness = 1f;
+		PlayerPreferences.playerPreferences.SetGraphicsSettings();
+		InitializeGraphicSettings();
+	}
+
+	public void OnVSyncSelect()
+	{
+		int i = vSyncSelector.index;
+		PlayerPreferences.playerPreferences.preferenceData.vSyncCount = i;
+		QualitySettings.vSyncCount = i;
+	}
+
+	public void OnLodBiasSelect()
+	{
+		int i = (int)lodBiasSlider.value;
+		PlayerPreferences.playerPreferences.preferenceData.lodBias = i;
+		QualitySettings.lodBias = i;
+	}
+
+	public void OnAntiAliasingSelect()
+	{
+		int i = antiAliasingSelector.index;
+		PlayerPreferences.playerPreferences.preferenceData.antiAliasing = i;
+		QualitySettings.antiAliasing = i;
+	}
+
+	public void OnAnisotropicFilteringSelect()
+	{
+		int i = anisotropicFilteringSelector.index;
+		PlayerPreferences.playerPreferences.preferenceData.anisotropicFiltering = i;
+		QualitySettings.anisotropicFiltering = (AnisotropicFiltering)i;
+	}
+
+	public void OnMasterTextureLimitSelect()
+	{
+		int i = (int)masterTextureLimitSlider.value;
+		PlayerPreferences.playerPreferences.preferenceData.masterTextureLimit = i;
+		QualitySettings.masterTextureLimit = i;
+	}
+
+	public void OnShadowCascadesSelect()
+	{
+		int i = shadowCascadesSelector.index;
+		PlayerPreferences.playerPreferences.preferenceData.shadowCascades = i;
+		QualitySettings.shadowCascades = i;
+	}
+
+	public void OnShadowResolutionSelect()
+	{
+		int i = shadowResolutionSelector.index;
+		PlayerPreferences.playerPreferences.preferenceData.shadowResolution = i;
+		QualitySettings.shadowResolution = (ShadowResolution)i;
+	}
+
+	public void OnShadowSelect()
+	{
+		int i = shadowSelector.index;
+		PlayerPreferences.playerPreferences.preferenceData.shadows = i;
+		QualitySettings.shadows = (ShadowQuality)i;
+	}
+
+	public void OnBloomSwitch(bool o)
+	{
+		PlayerPreferences.playerPreferences.preferenceData.bloom = o;
+	}
+
+	public void OnMotionBlurSwitch(bool o)
+	{
+		PlayerPreferences.playerPreferences.preferenceData.motionBlur = o;
+	}
+
+	public void OnBrightnessSelect()
+	{
+		PlayerPreferences.playerPreferences.preferenceData.brightness = brightnessSlider.value / 100f;
+	}
+
+	public int GetSalePriceForItem(DateTime acquireDate, int duration, int cost) {
+		cost /= 4;
+		if (duration == -1) {
+			return cost;
+		}
+
+		DateTime expirationDate = acquireDate.AddMinutes(duration);
+		DateTime currentDate = DateTime.Now;
+		int remainingDays = (expirationDate.Millisecond - currentDate.Millisecond) / 86400000;
+		if (remainingDays == 0) {
+			remainingDays = 1;
+		}
+
+		if (remainingDays <= 7) {
+			return (int)(cost * remainingDays * (1f - (0.5f / 1f)));
+		} else if (remainingDays <= 30) {
+			return (int)(cost * remainingDays * (1f - (0.5f / 2f)));
+		}
+
+		return (int)(cost * remainingDays * (1f - (0.5f / 3f)));
 	}
 		
 }

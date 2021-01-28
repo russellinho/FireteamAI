@@ -1,5 +1,6 @@
 ﻿using Photon.Realtime;
 using UnityEngine;
+using System;
 using UITemplate;
 using System.Collections;
 using System.Linq;
@@ -7,6 +8,7 @@ using UnityEngine.UI;
 using Firebase.Database;
 using ExitGames.Client.Photon;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using Random = UnityEngine.Random;
 
 namespace Photon.Pun.LobbySystemPhoton
 {
@@ -57,7 +59,9 @@ namespace Photon.Pun.LobbySystemPhoton
 			h.Add("mapName", listPlayer.mapSelector.GetCurrentItem());
 			h.Add("ping", (int)PhotonNetwork.GetPing());
 			h.Add("kickedPlayers", "");
-			string[] lobbyProperties = new string[5] {"gameMode", "mapName", "ping", "inGame", "kickedPlayers"};
+			h.Add("joinMode", 0);
+			h.Add("privacy", 0);
+			string[] lobbyProperties = new string[7] {"gameMode", "mapName", "ping", "inGame", "kickedPlayers", "privacy", "password"};
             options.CustomRoomProperties = h;
 			options.CustomRoomPropertiesForLobby = lobbyProperties;
 
@@ -82,7 +86,9 @@ namespace Photon.Pun.LobbySystemPhoton
 			h.Add("redHost", -1);
 			h.Add("blueHost", -1);
 			h.Add("kickedPlayers", "");
-            string[] lobbyProperties = new string[5] {"gameMode", "mapName", "ping", "inGame", "kickedPlayers"};
+			h.Add("joinMode", 0);
+			h.Add("privacy", 0);
+            string[] lobbyProperties = new string[7] {"gameMode", "mapName", "ping", "inGame", "kickedPlayers", "privacy", "password"};
             options.CustomRoomProperties = h;
             options.CustomRoomPropertiesForLobby = lobbyProperties;
 
@@ -97,12 +103,29 @@ namespace Photon.Pun.LobbySystemPhoton
 		public void theJoinRoom(string roomName)
 		{
 			// ToggleLobbyLoadingScreen(true);
-			string kickedPlayers = (string)listRoom.cachedRoomList[roomName].CustomProperties["kickedPlayers"];
+			RoomInfo joiningRoomInfo = listRoom.cachedRoomList[roomName];
+			string kickedPlayers = (string)joiningRoomInfo.CustomProperties["kickedPlayers"];
 			string[] kickedPlayersList = kickedPlayers.Split(',');
 			if (kickedPlayersList.Contains(PhotonNetwork.NickName)) {
 				OnJoinRoomFailed(-1, "You've been kicked from this game.");
 			} else {
+				int thisRoomPrivacy = Convert.ToInt32(joiningRoomInfo.CustomProperties["privacy"]);
+				if (thisRoomPrivacy == 0) {
+					PhotonNetwork.JoinRoom(roomName);
+				} else if (thisRoomPrivacy == 1) {
+					titleController.TriggerRoomPasswordEnterPopup(roomName);
+				}
+			}
+		}
+
+		public void AttemptJoinRoom(string roomName, string passwordEntered)
+		{
+			string roomPassword = (string)listRoom.cachedRoomList[roomName].CustomProperties["password"];
+			if (passwordEntered == roomPassword) {
 				PhotonNetwork.JoinRoom(roomName);
+				titleController.CloseRoomPasswordEnter();
+			} else {
+				titleController.TriggerAlertPopup("THIS PASSWORD IS INCORRECT. PLEASE TRY AGAIN.");
 			}
 		}
 

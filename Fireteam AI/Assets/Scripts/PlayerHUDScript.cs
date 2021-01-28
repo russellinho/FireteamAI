@@ -244,6 +244,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		FlashbangUpdate();
 		UpdateDetectedText();
 		UpdateCarryingText();
+
     }
 
 	void FixedUpdate() {
@@ -852,12 +853,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		container.spectatorText.text = "You've been eliminated.\nYou can respawn if an ally clears the sector.";
 		container.spectatorText.enabled = b;
 	}
-
-	//public override void OnPlayerEnteredRoom(Player newPlayer) {
-	//	Debug.Log (newPlayer.NickName + " has joined the room");
-	//	GameControllerScript.playerList.Add (gameObject);
-	//	Debug.Log ("anotha one");
-	//}
 
     private void UpdateMissionTimeText() {
         float totalSecs = GameControllerScript.missionTime;
@@ -1477,6 +1472,20 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	{
 		string voiceCommandMessage = GetVoiceCommandText(type, i);
 		inGameMessenger.SendVoiceCommandMessage(playerName, voiceCommandMessage);
+	}
+
+	public void QueuePlayerJoining(string playerName)
+	{
+		GameObject p = GameObject.Instantiate(container.acceptPlayerTemplate, container.acceptPlayerSlots);
+		p.GetComponentInChildren<Text>().text = playerName + " IS JOINING... ([F5] ACCEPT | [F6] DECLINE)";
+	}
+
+	public void DequeuePlayerJoining()
+	{
+		RectTransform[] j = container.acceptPlayerSlots.GetComponentsInChildren<RectTransform>();
+		if (j.Length > 1) {
+			GameObject.Destroy(j[1].gameObject);
+		}
 	}
 
 }

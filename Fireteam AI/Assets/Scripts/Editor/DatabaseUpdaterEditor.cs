@@ -20,8 +20,11 @@ public class DatabaseUpdaterEditor : Editor
         // if (GUILayout.Button("Add Default Wep Category To All Accounts")) {
         //     myScript.AddDefaultWeaponFieldToAllAccounts();
         // }
-        if (GUILayout.Button("Add Logged In Field to all accounts")) {
-            myScript.AddLoggedInFieldToAllAccounts();
-        }
+        // if (GUILayout.Button("Add Logged In Field to all accounts")) {
+        //     myScript.AddLoggedInFieldToAllAccounts();
+        // }
+        // if (GUILayout.Button("Add KASH")) {
+        //     myScript.AddKashFieldToAllAccounts();
+        // }
     }
 }
