@@ -5720,6 +5720,8 @@ GameObject:
   - component: {fileID: 6669402545296423026}
   - component: {fileID: 6796253373759659883}
   - component: {fileID: 380831760583482929}
+  - component: {fileID: 4863305059160283954}
+  - component: {fileID: 7961130368368064315}
   m_Layer: 0
   m_Name: Cicada4
   m_TagString: Untagged
@@ -5913,6 +5915,7 @@ MonoBehaviour:
     type: 3}
   audioSource: {fileID: 393207969202640462}
   pView: {fileID: 2359349457904820835}
+  mainCol: {fileID: 7961130368368064315}
   headTransform: {fileID: 7271996880874543261}
   torsoTransform: {fileID: 7271996880874543389}
   leftArmTransform: {fileID: 7271996880874543239}
@@ -6119,6 +6122,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &4863305059160283954
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7271996880874177715}
+  serializedVersion: 2
+  m_Mass: 20
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!136 &7961130368368064315
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7271996880874177715}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.22
+  m_Height: 1.47
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.73, z: 0}
 --- !u!1 &7271996880874177717
 GameObject:
   m_ObjectHideFlags: 0

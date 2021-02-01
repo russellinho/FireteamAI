@@ -31,6 +31,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	private Transform carriedByTransform;
 	public SkinnedMeshRenderer[] rends;
 	public Animator animator;
+	public Collider mainCol;
 	public Transform headTransform;
 	public Transform torsoTransform;
 	public Transform leftArmTransform;
@@ -167,7 +168,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 
 	public void TakeDamage(int d, Vector3 hitFromPos, int hitBy, int bodyPartHit) {
 		// if (godMode) return;
-		pView.RPC ("RpcTakeDamage", RpcTarget.All, d, hitFromPos.x, hitFromPos.y, hitFromPos.z, bodyPartHit, gameController.teamMap);
+		pView.RPC ("RpcTakeDamage", RpcTarget.All, d, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit, gameController.teamMap);
 	}
 
 	[PunRPC]
@@ -194,23 +195,25 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 
 	void ToggleRagdoll(bool b) {
 		animator.enabled = !b;
+		mainCol.enabled = !b;
 
 		foreach (Rigidbody rb in ragdollBodies)
 		{
 			rb.isKinematic = !b;
+			rb.useGravity = b;
 		}
 
-		headTransform.GetComponent<Collider>().enabled = b;
-		torsoTransform.GetComponent<Collider>().enabled = b;
-		leftArmTransform.GetComponent<Collider>().enabled = b;
-		leftForeArmTransform.GetComponent<Collider>().enabled = b;
-		rightArmTransform.GetComponent<Collider>().enabled = b;
-		rightForeArmTransform.GetComponent<Collider>().enabled = b;
-		pelvisTransform.GetComponent<Collider>().enabled = b;
-		leftUpperLegTransform.GetComponent<Collider>().enabled = b;
-		leftLowerLegTransform.GetComponent<Collider>().enabled = b;
-		rightUpperLegTransform.GetComponent<Collider>().enabled = b;
-		rightLowerLegTransform.GetComponent<Collider>().enabled = b;
+		// headTransform.GetComponent<Collider>().enabled = b;
+		// torsoTransform.GetComponent<Collider>().enabled = b;
+		// leftArmTransform.GetComponent<Collider>().enabled = b;
+		// leftForeArmTransform.GetComponent<Collider>().enabled = b;
+		// rightArmTransform.GetComponent<Collider>().enabled = b;
+		// rightForeArmTransform.GetComponent<Collider>().enabled = b;
+		// pelvisTransform.GetComponent<Collider>().enabled = b;
+		// leftUpperLegTransform.GetComponent<Collider>().enabled = b;
+		// leftLowerLegTransform.GetComponent<Collider>().enabled = b;
+		// rightUpperLegTransform.GetComponent<Collider>().enabled = b;
+		// rightLowerLegTransform.GetComponent<Collider>().enabled = b;
 	}
 
 	void ToggleHumanCollision(bool b)

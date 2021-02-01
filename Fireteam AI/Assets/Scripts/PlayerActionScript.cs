@@ -16,6 +16,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
     const float MAX_DETECTION_LEVEL = 100f;
     const float BASE_DETECTION_RATE = 20f;
+    private const float EXPLOSION_FORCE = 75f;
+	private const float BULLET_FORCE = 50f;
     const float INTERACTION_DISTANCE = 4.5f;
     const float BOMB_DEFUSE_TIME = 8f;
     const float DEPLOY_USE_TIME = 3f;
@@ -57,6 +59,18 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public AudioClip ammoPickupSound;
     public AudioClip healthPickupSound;
     public Transform carryingSlot;
+    public Transform headTransform;
+	public Transform torsoTransform;
+	public Transform leftArmTransform;
+	public Transform leftForeArmTransform;
+	public Transform rightArmTransform;
+	public Transform rightForeArmTransform;
+	public Transform pelvisTransform;
+	public Transform leftUpperLegTransform;
+	public Transform leftLowerLegTransform;
+	public Transform rightUpperLegTransform;
+	public Transform rightLowerLegTransform;
+    public Rigidbody[] ragdollBodies;
 
     // Player variables
     public EncryptedInt health;
@@ -107,7 +121,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public float boostTimer;
     private float envDamageTimer;
     public Vector3 hitLocation;
-    public Transform headTransform;
     public Transform cameraParent;
 
     // Mission references
@@ -115,6 +128,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     private bool initialized;
     public bool waitingOnAccept;
+    private Vector3 lastHitFromPos;
+	private int lastHitBy;
+	private int lastBodyPartHit;
 
     public void PreInitialize()
     {
@@ -498,7 +514,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hud.UpdateObjectives();
     }
 
-    public void TakeDamage(int d, bool useArmor)
+    public void TakeDamage(int d, bool useArmor, Vector3 hitFromPos, int hitBy, int bodyPartHit)
     {
         if (d <= 0) return;
         // Calculate damage done including armor
@@ -508,11 +524,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 
         // Send over network
-        pView.RPC("RpcTakeDamage", RpcTarget.All, d);
+        pView.RPC("RpcTakeDamage", RpcTarget.All, d, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit);
     }
 
     [PunRPC]
-    void RpcTakeDamage(int d)
+    void RpcTakeDamage(int d, float hitFromX, float hitFromY, float hitFromZ, int hitBy, int bodyPartHit)
     {
         if (gameObject.layer == 0) return;
         ResetHitTimer();
@@ -526,6 +542,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         //     health -= d;
         // }
         health -= d;
+        lastHitFromPos = new Vector3(hitFromX, hitFromY, hitFromZ);
+		lastHitBy = hitBy;
+		lastBodyPartHit = bodyPartHit;
     }
 
     [PunRPC]
@@ -614,6 +633,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (fpc.enabled) {
                 equipmentScript.ToggleFirstPersonBody(false);
                 equipmentScript.ToggleFullBody(true);
+                ToggleRagdoll(true);
+                ApplyForceModifiers();
                 equipmentScript.ToggleMesh(true);
                 //weaponScript.SwitchWeaponToFullBody();
                 fpc.SetIsDeadInAnimator(true);
@@ -953,7 +974,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 // Validate that this enemy has already been affected
                 t.AddHitPlayer(pView.ViewID);
                 // Deal damage to the player
-                TakeDamage(damageReceived, false);
+                TakeDamage(damageReceived, false, other.gameObject.transform.position, 1, 0);
                 //ResetHitTimer();
                 SetHitLocation(other.transform.position);
             }
@@ -1002,7 +1023,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 // Validate that this enemy has already been affected
                 l.AddHitPlayer(pView.ViewID);
                 // Deal damage to the player
-                TakeDamage(damageReceived, false);
+                TakeDamage(damageReceived, false, other.gameObject.transform.position, 1, 0);
                 //ResetHitTimer();
                 SetHitLocation(other.transform.position);
             }
@@ -1017,7 +1038,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 		if (other.gameObject.tag.Equals("Fire")) {
 			FireScript f = other.gameObject.GetComponent<FireScript>();
 			int damageReceived = (int)(f.damage);
-			TakeDamage(damageReceived, false);
+			TakeDamage(damageReceived, false, other.gameObject.transform.position, 2, 0);
 			ResetEnvDamageTimer();
             SetHitLocation(other.transform.position);
 		}
@@ -1131,7 +1152,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         hudMarker.enabled = status;
         hudMarker2.enabled = status;
-        charController.enabled = status;
+        // charController.enabled = status;
+        ToggleRagdoll(!status);
         if (pView.IsMine)
         {
             fpc.enabled = status;
@@ -1240,9 +1262,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         // Send player back to spawn position, reset rotation, leave spectator mode
         //transform.rotation = Quaternion.Euler(Vector3.zero);
-        transform.position = gameController.spawnLocation.position;
+        // transform.position = gameController.spawnLocation.position;
         fpc.m_MouseLook.Init(fpc.charTransform, fpc.spineTransform, fpc.fpcTransformSpine, fpc.fpcTransformBody);
         LeaveSpectatorMode();
+        transform.position = gameController.spawnLocation.position;
         //weaponScript.DrawWeapon(1);
         StartCoroutine(SpawnInvincibilityRoutine());
     }
@@ -1465,7 +1488,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         // Debug.Log("total fall damage: " + totalFallDamage);
         totalFallDamage = Mathf.Clamp(totalFallDamage, 0f, 100f);
-        TakeDamage((int)totalFallDamage, false);
+        TakeDamage((int)totalFallDamage, false, Vector3.zero, 2, 0);
     }
 
     public void UpdateVerticalVelocityBeforeLanding() {
@@ -1694,6 +1717,75 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 	{
 		radioAud.clip = hud.GetVoiceCommandAudio(type, i, gender);
 		radioAud.Play();
+	}
+
+    void ToggleRagdoll(bool b) {
+		animator.enabled = !b;
+		charController.enabled = !b;
+
+		foreach (Rigidbody rb in ragdollBodies)
+		{
+			rb.isKinematic = !b;
+			rb.useGravity = b;
+		}
+
+		headTransform.GetComponent<Collider>().enabled = b;
+		torsoTransform.GetComponent<Collider>().enabled = b;
+		leftArmTransform.GetComponent<Collider>().enabled = b;
+		leftForeArmTransform.GetComponent<Collider>().enabled = b;
+		rightArmTransform.GetComponent<Collider>().enabled = b;
+		rightForeArmTransform.GetComponent<Collider>().enabled = b;
+		pelvisTransform.GetComponent<Collider>().enabled = b;
+		leftUpperLegTransform.GetComponent<Collider>().enabled = b;
+		leftLowerLegTransform.GetComponent<Collider>().enabled = b;
+		rightUpperLegTransform.GetComponent<Collider>().enabled = b;
+		rightLowerLegTransform.GetComponent<Collider>().enabled = b;
+	}
+
+    void ApplyForceModifiers()
+	{
+		// 0 = death from bullet, 1 = death from explosion, 2 = death from fire/etc.
+		if (lastHitBy == 0) {
+			Rigidbody rb = ragdollBodies[lastBodyPartHit - 1];
+			if (lastBodyPartHit == WeaponActionScript.HEAD_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(headTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.TORSO_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(torsoTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.LEFT_ARM_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(leftArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.LEFT_FOREARM_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(leftForeArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_ARM_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(rightArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_FOREARM_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(rightForeArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.PELVIS_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(pelvisTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.LEFT_UPPER_LEG_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(leftUpperLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.LEFT_LOWER_LEG_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(leftLowerLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_UPPER_LEG_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(rightUpperLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_LOWER_LEG_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(rightLowerLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			}
+		} else if (lastHitBy == 1) {
+			foreach (Rigidbody rb in ragdollBodies) {
+				rb.AddExplosionForce(EXPLOSION_FORCE, lastHitFromPos, 7f, 0f, ForceMode.Impulse);
+			}
+		}
 	}
 
 }

@@ -25940,6 +25940,29 @@ MonoBehaviour:
   ammoPickupSound: {fileID: 8300000, guid: 2e0c337d7be1f394e90d1718f80fde8d, type: 3}
   healthPickupSound: {fileID: 8300000, guid: 2abf41e9ece742d44b0da495397486fb, type: 3}
   carryingSlot: {fileID: 2491556780384958635}
+  headTransform: {fileID: 6545086241112944601}
+  torsoTransform: {fileID: 6545086241112944217}
+  leftArmTransform: {fileID: 6545086241112944583}
+  leftForeArmTransform: {fileID: 6545086241112944589}
+  rightArmTransform: {fileID: 6545086241112944517}
+  rightForeArmTransform: {fileID: 6545086241112944515}
+  pelvisTransform: {fileID: 6545086241112944581}
+  leftUpperLegTransform: {fileID: 6545086241112944537}
+  leftLowerLegTransform: {fileID: 6545086241112944529}
+  rightUpperLegTransform: {fileID: 6545086241112944223}
+  rightLowerLegTransform: {fileID: 6545086241112944215}
+  ragdollBodies:
+  - {fileID: 5712258681830270945}
+  - {fileID: 7017968228961004906}
+  - {fileID: 1801622761717751061}
+  - {fileID: 6793265809509622245}
+  - {fileID: 6205836914935474375}
+  - {fileID: 2497175031981120798}
+  - {fileID: 942264075457543218}
+  - {fileID: 6943389310805072991}
+  - {fileID: 3246953153621532308}
+  - {fileID: 83207300146786494}
+  - {fileID: 5400591474683762932}
   health:
     currentCryptoKey: 0
     initialized: 0
@@ -25971,7 +25994,6 @@ MonoBehaviour:
   healTimer: 0
   boostTimer: 0
   hitLocation: {x: 0, y: 0, z: 0}
-  headTransform: {fileID: 6545086241112944601}
   cameraParent: {fileID: 8395974561293240328}
   waitingOnAccept: 0
 --- !u!114 &4997301263046971764

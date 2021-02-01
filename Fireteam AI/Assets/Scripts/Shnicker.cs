@@ -40,7 +40,11 @@ public class Shnicker : MonoBehaviour
         } else if (Input.GetKeyDown(KeyCode.X)) {
             animator.Play("Idle");
             ToggleRagdoll(false);
-        }
+			transform.position = new Vector3(0f, 0.5f, 0f);
+			transform.rotation = Quaternion.identity;
+        } else if (Input.GetKeyDown(KeyCode.J)) {
+			transform.Rotate(0f, 90f, 0f);
+		}
     }
 
     void ToggleRagdoll(bool b)
@@ -54,17 +58,17 @@ public class Shnicker : MonoBehaviour
             rb.useGravity = b;
 		}
 
-		headTransform.GetComponent<Collider>().enabled = b;
-		torsoTransform.GetComponent<Collider>().enabled = b;
-		leftArmTransform.GetComponent<Collider>().enabled = b;
-		leftForeArmTransform.GetComponent<Collider>().enabled = b;
-		rightArmTransform.GetComponent<Collider>().enabled = b;
-		rightForeArmTransform.GetComponent<Collider>().enabled = b;
-		pelvisTransform.GetComponent<Collider>().enabled = b;
-		leftUpperLegTransform.GetComponent<Collider>().enabled = b;
-		leftLowerLegTransform.GetComponent<Collider>().enabled = b;
-		rightUpperLegTransform.GetComponent<Collider>().enabled = b;
-		rightLowerLegTransform.GetComponent<Collider>().enabled = b;
+		// headTransform.GetComponent<Collider>().enabled = b;
+		// torsoTransform.GetComponent<Collider>().enabled = b;
+		// leftArmTransform.GetComponent<Collider>().enabled = b;
+		// leftForeArmTransform.GetComponent<Collider>().enabled = b;
+		// rightArmTransform.GetComponent<Collider>().enabled = b;
+		// rightForeArmTransform.GetComponent<Collider>().enabled = b;
+		// pelvisTransform.GetComponent<Collider>().enabled = b;
+		// leftUpperLegTransform.GetComponent<Collider>().enabled = b;
+		// leftLowerLegTransform.GetComponent<Collider>().enabled = b;
+		// rightUpperLegTransform.GetComponent<Collider>().enabled = b;
+		// rightLowerLegTransform.GetComponent<Collider>().enabled = b;
 	}
 
     void ApplyForceModifiers()
