@@ -917,7 +917,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 	bool EnvObstructionExists(Vector3 a, Vector3 b) {
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
-		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 17) | (1 << 18);
+		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 18);
         ignoreLayers = ~ignoreLayers;
         RaycastHit hitInfo;
         bool obstructed = Physics.Linecast(a, b, out hitInfo, ignoreLayers, QueryTriggerInteraction.Ignore);
@@ -1483,7 +1483,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             RaycastHit hit;
             if (Physics.SphereCast(wepActionScript.fpcShootPoint.position, 3f, wepActionScript.fpcShootPoint.transform.forward, out hit, Mathf.Infinity)) {
                 if (hit.transform.gameObject.layer == ENEMY_LAYER) {
-                    BetaEnemyScript b = hit.transform.gameObject.GetComponent<BetaEnemyScript>();
+                    BetaEnemyScript b = hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>();
                     if (b != null) {
                         b.MarkEnemyOutline();
                     }

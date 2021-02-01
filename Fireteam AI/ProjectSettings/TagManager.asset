@@ -10,15 +10,14 @@ TagManager:
   - EnemySpawnPoint
   - PlayerTesting
   - Cover
-  - EnemyHead
   - AmmoBox
   - HealthBox
   - Fire
   - Explosive
   - Flashbang
-  - EnemyArm
   - HUD
-  - NpcHead
+  - EnemyHead
+  - EnemyArm
   layers:
   - Default
   - TransparentFX
@@ -33,11 +32,11 @@ TagManager:
   - Environment
   - Marker
   - Dead
-  - HumanHead
+  - Main
   - Enemy
-  - DeadHead
+  - 
   - Weapon
-  - EnemyArm
+  - 
   - Interactable
   - MapBoundary
   - PostProcessing

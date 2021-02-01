@@ -89,6 +89,22 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
 	void Awake() {
+		Physics.IgnoreLayerCollision (14, 13);
+		Physics.IgnoreLayerCollision (9, 12);
+		Physics.IgnoreLayerCollision (14, 12);
+		Physics.IgnoreLayerCollision (0, 19);
+		Physics.IgnoreLayerCollision (1, 19);
+		Physics.IgnoreLayerCollision (2, 19);
+		Physics.IgnoreLayerCollision (4, 19);
+		Physics.IgnoreLayerCollision (5, 19);
+		Physics.IgnoreLayerCollision (8, 19);
+		Physics.IgnoreLayerCollision (10, 19);
+		Physics.IgnoreLayerCollision (11, 19);
+		Physics.IgnoreLayerCollision (12, 19);
+		Physics.IgnoreLayerCollision (14, 19);
+		Physics.IgnoreLayerCollision (16, 19);
+		Physics.IgnoreLayerCollision (18, 19);
+		
 		Bloom myBloom;
 		MotionBlur myMotionBlur;
 		ColorGrading myColorGrading;
@@ -126,29 +142,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         } else if (matchType == 'V') {
             PhotonNetwork.AutomaticallySyncScene = false;
         }
-		Physics.IgnoreLayerCollision (9, 12);
-		Physics.IgnoreLayerCollision (9, 15);
-		Physics.IgnoreLayerCollision (14, 12);
-		Physics.IgnoreLayerCollision (15, 12);
-		Physics.IgnoreLayerCollision (14, 15);
-		Physics.IgnoreLayerCollision (0, 19);
-		Physics.IgnoreLayerCollision (1, 19);
-		Physics.IgnoreLayerCollision (2, 19);
-		Physics.IgnoreLayerCollision (3, 19);
-		Physics.IgnoreLayerCollision (4, 19);
-		Physics.IgnoreLayerCollision (5, 19);
-		Physics.IgnoreLayerCollision (6, 19);
-		Physics.IgnoreLayerCollision (7, 19);
-		Physics.IgnoreLayerCollision (8, 19);
-		Physics.IgnoreLayerCollision (10, 19);
-		Physics.IgnoreLayerCollision (11, 19);
-		Physics.IgnoreLayerCollision (12, 19);
-		Physics.IgnoreLayerCollision (13, 19);
-		Physics.IgnoreLayerCollision (14, 19);
-		Physics.IgnoreLayerCollision (15, 19);
-		Physics.IgnoreLayerCollision (16, 19);
-		Physics.IgnoreLayerCollision (17, 19);
-		Physics.IgnoreLayerCollision (18, 19);
 
 		gameOver = false;
 		objectives.escaperCount = 0;

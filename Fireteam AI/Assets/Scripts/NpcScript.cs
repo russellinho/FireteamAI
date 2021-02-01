@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 public class NpcScript : MonoBehaviourPunCallbacks {
 
 	private const float ENV_DAMAGE_DELAY = 0.5f;
+	private const float EXPLOSION_FORCE = 75f;
+	private const float BULLET_FORCE = 50f;
 	public enum NpcType {Neutral, Friendly};
 	public GameControllerScript gameController;
 	public PhotonView pView;
@@ -23,22 +25,34 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	public bool immobileWhileCarrying;
 	// Amount of speed to reduce while carrying
 	public float weightSpeedReduction;
-	private int deathBy;
 	public NpcType npcType;
 	public AudioClip[] gruntSounds;
 	public AudioSource audioSource;
 	private Transform carriedByTransform;
 	public SkinnedMeshRenderer[] rends;
-	public CapsuleCollider col;
 	public Animator animator;
-	public Rigidbody rBody;
 	public Transform headTransform;
+	public Transform torsoTransform;
+	public Transform leftArmTransform;
+	public Transform leftForeArmTransform;
+	public Transform rightArmTransform;
+	public Transform rightForeArmTransform;
+	public Transform pelvisTransform;
+	public Transform leftUpperLegTransform;
+	public Transform leftLowerLegTransform;
+	public Transform rightUpperLegTransform;
+	public Transform rightLowerLegTransform;
+	public Rigidbody[] ragdollBodies;
 	// Timers
 	private float envDamageTimer;
 	private float disorientationTime;
+	private Vector3 lastHitFromPos;
+	private int lastHitBy;
+	private int lastBodyPartHit;
 
 	// Use this for initialization
 	void Awake() {
+		ToggleRagdoll(false);
 		carriedByPlayerId = -1;
 		SceneManager.sceneLoaded += OnSceneFinishedLoading;
 	}
@@ -135,17 +149,13 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			actionState = ActionStates.Incapacitated;
 			carriedByTransform = null;
 			// ToggleRenderers(true);
-			ToggleCollider(true);
+			ToggleRagdoll(true);
 			gameObject.transform.SetParent(null);
 			transform.rotation = Quaternion.identity;
-			// TODO: Temporary hack
-			if (!PhotonNetwork.IsMasterClient) {
-				transform.position = new Vector3(transform.position.x, transform.position.y - 0.4f, transform.position.z);
-			}
 		} else {
 			actionState = ActionStates.Carried;
 			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].objRef.GetComponent<PlayerActionScript>().carryingSlot;
-			ToggleCollider(false);
+			ToggleRagdoll(false);
 			gameObject.transform.SetParent(carriedByTransform);
 			transform.localPosition = Vector3.zero;
 			transform.localRotation = Quaternion.identity;
@@ -155,15 +165,18 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	public void TakeDamage(int d) {
+	public void TakeDamage(int d, Vector3 hitFromPos, int hitBy, int bodyPartHit) {
 		// if (godMode) return;
-		pView.RPC ("RpcTakeDamage", RpcTarget.All, d, gameController.teamMap);
+		pView.RPC ("RpcTakeDamage", RpcTarget.All, d, hitFromPos.x, hitFromPos.y, hitFromPos.z, bodyPartHit, gameController.teamMap);
 	}
 
 	[PunRPC]
-	public void RpcTakeDamage(int d, string team) {
+	public void RpcTakeDamage(int d, float hitFromX, float hitFromY, float hitFromZ, int hitBy, int bodyPartHit, string team) {
         if (team != gameController.teamMap) return;
         health -= d;
+		lastHitFromPos = new Vector3(hitFromX, hitFromY, hitFromZ);
+		lastHitBy = hitBy;
+		lastBodyPartHit = bodyPartHit;
 	}
 
 	public void PlayGruntSound(string team) {
@@ -179,14 +192,99 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 		audioSource.Play ();
 	}
 
-	void ToggleCollider(bool b) {
-		col.enabled = b;
-		if (b) {
-			rBody.isKinematic = false;
-			rBody.useGravity = true;
+	void ToggleRagdoll(bool b) {
+		animator.enabled = !b;
+
+		foreach (Rigidbody rb in ragdollBodies)
+		{
+			rb.isKinematic = !b;
+		}
+
+		headTransform.GetComponent<Collider>().enabled = b;
+		torsoTransform.GetComponent<Collider>().enabled = b;
+		leftArmTransform.GetComponent<Collider>().enabled = b;
+		leftForeArmTransform.GetComponent<Collider>().enabled = b;
+		rightArmTransform.GetComponent<Collider>().enabled = b;
+		rightForeArmTransform.GetComponent<Collider>().enabled = b;
+		pelvisTransform.GetComponent<Collider>().enabled = b;
+		leftUpperLegTransform.GetComponent<Collider>().enabled = b;
+		leftLowerLegTransform.GetComponent<Collider>().enabled = b;
+		rightUpperLegTransform.GetComponent<Collider>().enabled = b;
+		rightLowerLegTransform.GetComponent<Collider>().enabled = b;
+	}
+
+	void ToggleHumanCollision(bool b)
+	{
+		if (!b) {
+			headTransform.gameObject.layer = 12;
+			torsoTransform.gameObject.layer = 12;
+			leftArmTransform.gameObject.layer = 12;
+			leftForeArmTransform.gameObject.layer = 12;
+			rightArmTransform.gameObject.layer = 12;
+			rightForeArmTransform.gameObject.layer = 12;
+			pelvisTransform.gameObject.layer = 12;
+			leftUpperLegTransform.gameObject.layer = 12;
+			leftLowerLegTransform.gameObject.layer = 12;
+			rightUpperLegTransform.gameObject.layer = 12;
+			rightLowerLegTransform.gameObject.layer = 12;
 		} else {
-			rBody.isKinematic = true;
-			rBody.useGravity = false;
+			headTransform.gameObject.layer = 14;
+			torsoTransform.gameObject.layer = 14;
+			leftArmTransform.gameObject.layer = 14;
+			leftForeArmTransform.gameObject.layer = 14;
+			rightArmTransform.gameObject.layer = 14;
+			rightForeArmTransform.gameObject.layer = 14;
+			pelvisTransform.gameObject.layer = 14;
+			leftUpperLegTransform.gameObject.layer = 14;
+			leftLowerLegTransform.gameObject.layer = 14;
+			rightUpperLegTransform.gameObject.layer = 14;
+			rightLowerLegTransform.gameObject.layer = 14;
+		}
+	}
+
+	void ApplyForceModifiers()
+	{
+		// 0 = death from bullet, 1 = death from explosion, 2 = death from fire/etc.
+		if (lastHitBy == 0) {
+			Rigidbody rb = ragdollBodies[lastBodyPartHit - 1];
+			if (lastBodyPartHit == WeaponActionScript.HEAD_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(headTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.TORSO_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(torsoTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.LEFT_ARM_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(leftArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.LEFT_FOREARM_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(leftForeArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_ARM_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(rightArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_FOREARM_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(rightForeArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.PELVIS_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(pelvisTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.LEFT_UPPER_LEG_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(leftUpperLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.LEFT_LOWER_LEG_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(leftLowerLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_UPPER_LEG_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(rightUpperLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_LOWER_LEG_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(rightLowerLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			}
+		} else if (lastHitBy == 1) {
+			foreach (Rigidbody rb in ragdollBodies) {
+				rb.AddExplosionForce(EXPLOSION_FORCE, lastHitFromPos, 7f, 0f, ForceMode.Impulse);
+			}
 		}
 	}
 
@@ -266,7 +364,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 		if (other.gameObject.tag.Equals("Fire")) {
 			FireScript f = other.gameObject.GetComponent<FireScript>();
 			int damageReceived = (int)(f.damage);
-			TakeDamage(damageReceived);
+			TakeDamage(damageReceived, other.gameObject.transform.position, 2, 0);
 			ResetEnvDamageTimer();
 		}
 	}
@@ -292,11 +390,10 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 					Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[t.rootWeapon];
 					int damageReceived = (int)(grenadeStats.damage * scale);
 					// Deal damage to the enemy
-					TakeDamage(damageReceived);
+					TakeDamage(damageReceived, other.gameObject.transform.position, 1, 0);
 					// Validate that this enemy has already been affected
 					t.AddHitPlayer(pView.ViewID);
 					if (health <= 0) {
-						deathBy = 1;
 						KilledByGrenade(t.fromPlayerId);
 					}
 				}
@@ -313,11 +410,10 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 					Weapon projectileStats = InventoryScript.itemData.weaponCatalog[l.rootWeapon];
 					int damageReceived = (int)(projectileStats.damage * scale);
 					// Deal damage to the enemy
-					TakeDamage(damageReceived);
+					TakeDamage(damageReceived, other.gameObject.transform.position, 1, 0);
 					// Validate that this enemy has already been affected
 					l.AddHitPlayer(pView.ViewID);
 					if (health <= 0) {
-						deathBy = 1;
 						KilledByGrenade(l.fromPlayerId);
 					}
 				}
@@ -378,7 +474,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	bool EnvObstructionExists(Vector3 a, Vector3 b) {
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
-		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 17) | (1 << 18);
+		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 18);
 		ignoreLayers = ~ignoreLayers;
 		RaycastHit hitInfo;
 		bool t = Physics.Linecast(a, b, out hitInfo, ignoreLayers, QueryTriggerInteraction.Ignore);
@@ -424,7 +520,6 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 		// Play grunt when enemy dies or hit by flashbang
 		if (action == ActionStates.Dead) {
 			PlayGruntSound(gameController.teamMap);
-			headTransform.gameObject.layer = 15;
 		}
 		if (action == ActionStates.Disoriented) {
 			PlayGruntSound(gameController.teamMap);
@@ -440,26 +535,32 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 
 			// float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
 			// pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
+			ToggleRagdoll(true);
+			ApplyForceModifiers();
 		}
 	}
 
 	[PunRPC]
 	void RpcAskServerForDataNpc() {
 		if (PhotonNetwork.IsMasterClient || gameController.isVersusHostForThisTeam()) {
-			pView.RPC("RpcSyncDataNpc", RpcTarget.Others, health, carriedByPlayerId, actionState, firingState, deathBy, envDamageTimer, disorientationTime, 
+			pView.RPC("RpcSyncDataNpc", RpcTarget.Others, health, carriedByPlayerId, actionState, firingState, envDamageTimer, disorientationTime, 
 					transform.position.x, transform.position.y, transform.position.z, gameController.teamMap);
 		}
 	}
 
 	[PunRPC]
-	void RpcSyncDataNpc(int health, int carriedByPlayerId, ActionStates acState, FiringStates firingState, int deathBy, float envDamageTimer, float disorientationTimer, 
+	void RpcSyncDataNpc(int health, int carriedByPlayerId, ActionStates acState, FiringStates firingState, float envDamageTimer, float disorientationTimer, 
 					float posX, float posY, float posZ, string team) {
 		if (team != gameController.teamMap) return;
 		this.health = health;
 		this.carriedByPlayerId = carriedByPlayerId;
 		this.actionState = acState;
+		if (this.actionState == ActionStates.Dead) {
+			ToggleHumanCollision(false);
+		} else {
+			ToggleHumanCollision(true);
+		}
 		this.firingState = firingState;
-		this.deathBy = deathBy;
 		this.envDamageTimer = envDamageTimer;
 		this.disorientationTime = disorientationTimer;
 		transform.position = new Vector3(posX, posY, posZ);
