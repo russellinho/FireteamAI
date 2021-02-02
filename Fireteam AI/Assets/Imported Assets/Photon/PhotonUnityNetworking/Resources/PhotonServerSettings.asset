@@ -187,6 +187,9 @@ MonoBehaviour:
   - SendMsgConnectionAll
   - SendMsgConnectionMaster
   - StartDespawn
+  - RpcToggleRagdoll
+  - RpcToggleRagdollPlayer
+  - RpcToggleRagdollNpc
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

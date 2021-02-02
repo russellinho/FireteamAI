@@ -46,7 +46,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	public Transform leftLowerLegTransform;
 	public Transform rightUpperLegTransform;
 	public Transform rightLowerLegTransform;
-	public Transform shootPoint;
 	public LineRenderer sniperTracer;
 	public Animator animator;
 	public Rigidbody[] ragdollBodies;
@@ -1113,11 +1112,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 			UpdateActionState(ActionStates.Dead);
 
-			// Toggle ragdoll
-			ToggleRagdoll(true);
-			// Apply force modifiers
-			ApplyForceModifiers();
-
 			float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
 			pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
 			return;
@@ -1485,11 +1479,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			SetNavMeshStopped(true);
 			UpdateActionState(ActionStates.Dead);
 
-			// Toggle ragdoll
-			ToggleRagdoll(true);
-			// Apply force modifiers
-			ApplyForceModifiers();
-
 			float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
 			pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
 			return;
@@ -1788,7 +1777,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			float xOffset = Random.Range (-scaledOffset, scaledOffset);
 			float yOffset = Random.Range (-scaledOffset, scaledOffset);
 			dir = new Vector3 (dir.x + xOffset, dir.y + yOffset, dir.z);
-			//Debug.DrawRay (shootPoint.position, dir * range, Color.red);
+			//Debug.DrawRay (gunRef.weaponShootPoint.position, dir * range, Color.red);
 			if (Physics.Raycast (headTransform.position, dir, out hit, Mathf.Infinity, ENEMY_FIRE_IGNORE)) {
 				if (hit.transform.tag.Equals ("Player")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
@@ -1847,7 +1836,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (sniper && playerTargeting != null) {
 			SniperTracerScript s = sniperTracer.gameObject.GetComponent<SniperTracerScript> ();
 			s.enabled = true;
-			s.SetDistance (Vector3.Distance(shootPoint.position, playerTargeting.transform.position));
+			s.SetDistance (Vector3.Distance(gunRef.weaponShootPoint.position, playerTargeting.transform.position));
 			sniperTracer.enabled = true;
 		}
 	}
@@ -1898,6 +1887,10 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	IEnumerator Despawn(float respawnTime) {
 		if (actionState != ActionStates.Dead) yield return null;
+		// Toggle ragdoll
+		ToggleRagdoll(true);
+		// Apply force modifiers
+		ApplyForceModifiers();
 		ToggleHumanCollision(false);
 		// RemoveHitboxes ();
 		yield return new WaitForSeconds(5f);

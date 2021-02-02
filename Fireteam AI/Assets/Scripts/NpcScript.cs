@@ -538,8 +538,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 
 			// float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
 			// pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
-			ToggleRagdoll(true);
-			ApplyForceModifiers();
+			StartCoroutine(DelayToggleRagdoll(0.2f, true));
 		}
 	}
 
@@ -573,5 +572,20 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			ToggleIsCarrying(true, carriedByPlayerId);
 		}
 	}
+
+	IEnumerator DelayToggleRagdoll(float seconds, bool b)
+    {
+        yield return new WaitForSeconds(seconds);
+        pView.RPC("RpcToggleRagdollPlayer", RpcTarget.All, b);
+    }
+
+    [PunRPC]
+    void RpcToggleRagdollNpc(bool b)
+    {
+        ToggleRagdoll(b);
+        if (b) {
+            ApplyForceModifiers();
+        }
+    }
 
 }

@@ -213,6 +213,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         itemSpeedModifier = 1f;
         originalSpeed = playerScript.speed;
         totalSpeedBoost = originalSpeed;
+        ToggleRagdoll(false);
 
         StartCoroutine(SpawnInvincibilityRoutine());
         initialized = true;
@@ -633,11 +634,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (fpc.enabled) {
                 equipmentScript.ToggleFirstPersonBody(false);
                 equipmentScript.ToggleFullBody(true);
-                ToggleRagdoll(true);
-                ApplyForceModifiers();
                 equipmentScript.ToggleMesh(true);
                 //weaponScript.SwitchWeaponToFullBody();
                 fpc.SetIsDeadInAnimator(true);
+                StartCoroutine(DelayToggleRagdoll(0.2f, true));
                 SetInteracting(false, null);
                 DropCarrying();
                 hud.SetCarryingText(null);
@@ -1251,6 +1251,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         wepActionScript.totalAmmoLeft = wepActionScript.weaponStats.maxAmmo;
         wepActionScript.currentAmmo = wepActionScript.weaponStats.clipCapacity;
         equipmentScript.ToggleFullBody(false);
+        equipmentScript.fullBodyRef.transform.localPosition = Vector3.zero;
+        equipmentScript.fullBodyRef.transform.localRotation = Quaternion.identity;
         equipmentScript.ToggleFirstPersonBody(true);
         equipmentScript.ToggleFpcMesh(true);
         //weaponScript.SwitchWeaponToFpcBody();
@@ -1787,5 +1789,20 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 			}
 		}
 	}
+
+    IEnumerator DelayToggleRagdoll(float seconds, bool b)
+    {
+        yield return new WaitForSeconds(seconds);
+        pView.RPC("RpcToggleRagdollPlayer", RpcTarget.All, b);
+    }
+
+    [PunRPC]
+    void RpcToggleRagdollPlayer(bool b)
+    {
+        ToggleRagdoll(b);
+        if (b) {
+            ApplyForceModifiers();
+        }
+    }
 
 }
