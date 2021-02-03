@@ -150,13 +150,13 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			actionState = ActionStates.Incapacitated;
 			carriedByTransform = null;
 			// ToggleRenderers(true);
-			ToggleRagdoll(true);
+			// ToggleRagdoll(true);
 			gameObject.transform.SetParent(null);
 			transform.rotation = Quaternion.identity;
 		} else {
 			actionState = ActionStates.Carried;
 			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].objRef.GetComponent<PlayerActionScript>().carryingSlot;
-			ToggleRagdoll(false);
+			// ToggleRagdoll(false);
 			gameObject.transform.SetParent(carriedByTransform);
 			transform.localPosition = Vector3.zero;
 			transform.localRotation = Quaternion.identity;

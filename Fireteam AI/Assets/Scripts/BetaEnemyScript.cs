@@ -20,6 +20,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private const float PLAYER_SCAN_DELAY = 0.8f;
 	private const float ENV_DAMAGE_DELAY = 0.5f;
 	private const int ENEMY_FIRE_IGNORE = ~(1 << 14 | 1 << 13);
+	private const int OBSCURE_IGNORE = ~(1 << 14 | 1 << 15 | 1 << 16);
 	private const float EXPLOSION_FORCE = 75;
 	private const float BULLET_FORCE = 50f;
 
@@ -1322,13 +1323,13 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	bool TargetIsWithinMeleeDistance() {
 		RaycastHit hit;
-		Vector3 meleeTargetPos = Vector3.zero;
-		if (playerTargeting.GetComponent<PlayerActionScript>() != null) {
-			meleeTargetPos = playerTargeting.GetComponent<PlayerActionScript>().headTransform.position;
-		} else {
-			meleeTargetPos = new Vector3(playerTargeting.transform.position.x, playerTargeting.transform.position.y + 0.5f, playerTargeting.transform.position.z);
-		}
-		if (Physics.Linecast (headTransform.position, meleeTargetPos, out hit)) {
+		Vector3 meleeTargetPos = new Vector3(playerTargeting.transform.position.x, playerTargeting.transform.position.y + 0.5f, playerTargeting.transform.position.z);
+		// if (playerTargeting.GetComponent<PlayerActionScript>() != null) {
+		// 	meleeTargetPos = playerTargeting.GetComponent<PlayerActionScript>().headTransform.position;
+		// } else {
+		// 	meleeTargetPos = new Vector3(playerTargeting.transform.position.x, playerTargeting.transform.position.y + 0.5f, playerTargeting.transform.position.z);
+		// }
+		if (Physics.Linecast (headTransform.position, meleeTargetPos, out hit, (1 << 9))) {
 			if (hit.transform.gameObject.tag == "Player") {
 				if (hit.distance <= MELEE_DISTANCE) {
 					return true;
@@ -2168,11 +2169,11 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		RaycastHit hit1;
 		RaycastHit hit2;
 
-		if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2))
+		if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2, OBSCURE_IGNORE))
 		{
 			return true;
 		}
-		if (!Physics.Linecast (headTransform.position, topHalfCheck, out hit1))
+		if (!Physics.Linecast (headTransform.position, topHalfCheck, out hit1, OBSCURE_IGNORE))
 		{
 			return true;
 		}
