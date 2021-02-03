@@ -1897,7 +1897,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (actionState != ActionStates.Dead) yield return null;
 		DespawnAction();
 		StartCoroutine(DelayToggleRagdoll(0.2f, true));
-		ToggleHumanCollision(false);
 		// RemoveHitboxes ();
 		yield return new WaitForSeconds(5f);
 		DespawnRenderers();
@@ -2755,6 +2754,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
     void RpcToggleRagdollEnemy(bool b)
     {
         ToggleRagdoll(b);
+		ToggleHumanCollision(!b);
         if (b) {
             ApplyForceModifiers();
         }

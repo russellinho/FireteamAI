@@ -1840,6 +1840,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcToggleRagdollPlayer(bool b)
     {
         ToggleRagdoll(b);
+        ToggleHumanCollision(!b);
         if (b) {
             ApplyForceModifiers();
         }
