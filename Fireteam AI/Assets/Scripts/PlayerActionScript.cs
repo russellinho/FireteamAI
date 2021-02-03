@@ -947,7 +947,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 	bool EnvObstructionExists(Vector3 a, Vector3 b) {
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
-		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 18);
+		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 17) | (1 << 18);
         ignoreLayers = ~ignoreLayers;
         RaycastHit hitInfo;
         bool obstructed = Physics.Linecast(a, b, out hitInfo, ignoreLayers, QueryTriggerInteraction.Ignore);
@@ -1798,6 +1798,35 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 			foreach (Rigidbody rb in ragdollBodies) {
 				rb.AddExplosionForce(EXPLOSION_FORCE, lastHitFromPos, 7f, 0f, ForceMode.Impulse);
 			}
+		}
+	}
+
+    void ToggleHumanCollision(bool b)
+	{
+		if (!b) {
+			headTransform.gameObject.layer = 17;
+			torsoTransform.gameObject.layer = 17;
+			leftArmTransform.gameObject.layer = 17;
+			leftForeArmTransform.gameObject.layer = 17;
+			rightArmTransform.gameObject.layer = 17;
+			rightForeArmTransform.gameObject.layer = 17;
+			pelvisTransform.gameObject.layer = 17;
+			leftUpperLegTransform.gameObject.layer = 17;
+			leftLowerLegTransform.gameObject.layer = 17;
+			rightUpperLegTransform.gameObject.layer = 17;
+			rightLowerLegTransform.gameObject.layer = 17;
+		} else {
+			headTransform.gameObject.layer = 15;
+			torsoTransform.gameObject.layer = 15;
+			leftArmTransform.gameObject.layer = 15;
+			leftForeArmTransform.gameObject.layer = 15;
+			rightArmTransform.gameObject.layer = 15;
+			rightForeArmTransform.gameObject.layer = 15;
+			pelvisTransform.gameObject.layer = 15;
+			leftUpperLegTransform.gameObject.layer = 15;
+			leftLowerLegTransform.gameObject.layer = 15;
+			rightUpperLegTransform.gameObject.layer = 15;
+			rightLowerLegTransform.gameObject.layer = 15;
 		}
 	}
 

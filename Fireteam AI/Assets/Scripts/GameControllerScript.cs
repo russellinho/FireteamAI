@@ -89,6 +89,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 	// Use this for initialization
 	void Awake() {
+		Physics.IgnoreLayerCollision (9, 17);
+		Physics.IgnoreLayerCollision (17, 13);
 		Physics.IgnoreLayerCollision (12, 13);
 		Physics.IgnoreLayerCollision (14, 13);
 		Physics.IgnoreLayerCollision (15, 13);

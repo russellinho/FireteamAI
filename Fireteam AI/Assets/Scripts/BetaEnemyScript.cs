@@ -20,7 +20,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private const float PLAYER_SCAN_DELAY = 0.8f;
 	private const float ENV_DAMAGE_DELAY = 0.5f;
 	private const int ENEMY_FIRE_IGNORE = ~(1 << 14 | 1 << 13);
-	private const int OBSCURE_IGNORE = ~(1 << 14 | 1 << 15 | 1 << 16);
+	private const int OBSCURE_IGNORE = ~(1 << 14 | 1 << 15 | 1 << 16 | 1 << 17);
 	private const float EXPLOSION_FORCE = 75;
 	private const float BULLET_FORCE = 50f;
 
@@ -1196,7 +1196,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	bool EnvObstructionExists(Vector3 a, Vector3 b) {
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
-		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 18);
+		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 17) | (1 << 18);
 		ignoreLayers = ~ignoreLayers;
 		RaycastHit hitInfo;
 		bool t = Physics.Linecast(a, b, out hitInfo, ignoreLayers, QueryTriggerInteraction.Ignore);

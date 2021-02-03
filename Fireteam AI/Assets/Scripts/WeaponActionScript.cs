@@ -1514,7 +1514,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         // If the deploy plan mesh is sticky, then it can be planted anywhere.
         // If it isn't, then it can only be planted if the up vector is above 45 degrees
         RaycastHit hit;
-        int validTerrainMask = (1 << 4) | (1 << 5) | (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 16) | (1 << 18);
+        int validTerrainMask = (1 << 4) | (1 << 5) | (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 17) | (1 << 16) | (1 << 18);
         validTerrainMask = ~validTerrainMask;
         if (deployPlanMesh.collidingWithObject == null) {
             return false;
