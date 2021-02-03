@@ -544,7 +544,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			// float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
 			// pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
 			StartCoroutine(DelayToggleRagdoll(0.2f, true));
-			ToggleHumanCollision(false);
+			// ToggleHumanCollision(false);
 		}
 	}
 
@@ -589,6 +589,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
     void RpcToggleRagdollNpc(bool b)
     {
         ToggleRagdoll(b);
+		ToggleHumanCollision(!b);
         if (b) {
             ApplyForceModifiers();
         }
