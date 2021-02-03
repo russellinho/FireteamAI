@@ -886,9 +886,18 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void CheckForInteractables() {
         RaycastHit hit;
-        int interactableMask = (1 << 18);
+        int interactableMask = (1 << 18 | 1 << 15);
         if (Physics.Raycast(viewCam.transform.position, viewCam.transform.forward, out hit, INTERACTION_DISTANCE, interactableMask)) {
-            activeInteractable = hit.transform.gameObject;
+            if (hit.transform.gameObject.tag == "Human") {
+                NpcScript n = hit.transform.GetComponentInParent<NpcScript>();
+                if (n != null) {
+                    if (n.actionState == NpcActionState.Incapacitated) {
+                        activeInteractable = n.transform.gameObject;
+                    }
+                }
+            } else {
+                activeInteractable = hit.transform.gameObject;
+            }
         } else {
             activeInteractable = null;
         }
@@ -938,7 +947,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 	bool EnvObstructionExists(Vector3 a, Vector3 b) {
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
-		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 18);
+		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 18);
         ignoreLayers = ~ignoreLayers;
         RaycastHit hitInfo;
         bool obstructed = Physics.Linecast(a, b, out hitInfo, ignoreLayers, QueryTriggerInteraction.Ignore);
@@ -1742,6 +1751,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 		leftLowerLegTransform.GetComponent<Collider>().enabled = b;
 		rightUpperLegTransform.GetComponent<Collider>().enabled = b;
 		rightLowerLegTransform.GetComponent<Collider>().enabled = b;
+
+        equipmentScript.ToggleUpdateWhenOffscreen(b);
 	}
 
     void ApplyForceModifiers()

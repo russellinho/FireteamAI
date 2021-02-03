@@ -231,17 +231,17 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			rightUpperLegTransform.gameObject.layer = 12;
 			rightLowerLegTransform.gameObject.layer = 12;
 		} else {
-			headTransform.gameObject.layer = 14;
-			torsoTransform.gameObject.layer = 14;
-			leftArmTransform.gameObject.layer = 14;
-			leftForeArmTransform.gameObject.layer = 14;
-			rightArmTransform.gameObject.layer = 14;
-			rightForeArmTransform.gameObject.layer = 14;
-			pelvisTransform.gameObject.layer = 14;
-			leftUpperLegTransform.gameObject.layer = 14;
-			leftLowerLegTransform.gameObject.layer = 14;
-			rightUpperLegTransform.gameObject.layer = 14;
-			rightLowerLegTransform.gameObject.layer = 14;
+			headTransform.gameObject.layer = 15;
+			torsoTransform.gameObject.layer = 15;
+			leftArmTransform.gameObject.layer = 15;
+			leftForeArmTransform.gameObject.layer = 15;
+			rightArmTransform.gameObject.layer = 15;
+			rightForeArmTransform.gameObject.layer = 15;
+			pelvisTransform.gameObject.layer = 15;
+			leftUpperLegTransform.gameObject.layer = 15;
+			leftLowerLegTransform.gameObject.layer = 15;
+			rightUpperLegTransform.gameObject.layer = 15;
+			rightLowerLegTransform.gameObject.layer = 15;
 		}
 	}
 
@@ -477,7 +477,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	bool EnvObstructionExists(Vector3 a, Vector3 b) {
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
-		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 18);
+		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 18);
 		ignoreLayers = ~ignoreLayers;
 		RaycastHit hitInfo;
 		bool t = Physics.Linecast(a, b, out hitInfo, ignoreLayers, QueryTriggerInteraction.Ignore);
@@ -539,6 +539,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			// float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
 			// pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
 			StartCoroutine(DelayToggleRagdoll(0.2f, true));
+			ToggleHumanCollision(false);
 		}
 	}
 
@@ -576,7 +577,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	IEnumerator DelayToggleRagdoll(float seconds, bool b)
     {
         yield return new WaitForSeconds(seconds);
-        pView.RPC("RpcToggleRagdollPlayer", RpcTarget.All, b);
+        pView.RPC("RpcToggleRagdollNpc", RpcTarget.All, b);
     }
 
     [PunRPC]

@@ -563,8 +563,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, meleeStats.range)) {
             if (hit.transform.tag.Equals("Human")) {
                 // Determine whether you hit an NPC or enemy
-                NpcScript n = hit.transform.gameObject.GetComponent<NpcScript>();
-                BetaEnemyScript b = hit.transform.gameObject.GetComponent<BetaEnemyScript>();
+                NpcScript n = hit.transform.gameObject.GetComponentInParent<NpcScript>();
+                BetaEnemyScript b = hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>();
                 if (n != null) {
                     int beforeHp = n.health;
                     if (beforeHp > 0) {
@@ -619,8 +619,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         {
             if (hit.transform.tag.Equals("Human"))
             {
-                NpcScript n = hit.transform.gameObject.GetComponent<NpcScript>();
-                BetaEnemyScript b = hit.transform.gameObject.GetComponent<BetaEnemyScript>();
+                NpcScript n = hit.transform.gameObject.GetComponentInParent<NpcScript>();
+                BetaEnemyScript b = hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>();
                 if (n != null) {
                     int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
                     pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, (bodyPartIdHit == HEAD_TARGET));
@@ -737,8 +737,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                 // Debug.DrawRay(fpcShootPoint.position, impactDir, Color.blue, 10f, false);
                 if (hit.transform.tag.Equals("Human"))
                 {
-                    BetaEnemyScript b = hit.transform.gameObject.GetComponent<BetaEnemyScript>();
-                    NpcScript n = hit.transform.gameObject.GetComponent<NpcScript>();
+                    BetaEnemyScript b = hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>();
+                    NpcScript n = hit.transform.gameObject.GetComponentInParent<NpcScript>();
                     if (n != null) {
                         int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
                         int beforeHp = 0;
@@ -1514,7 +1514,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         // If the deploy plan mesh is sticky, then it can be planted anywhere.
         // If it isn't, then it can only be planted if the up vector is above 45 degrees
         RaycastHit hit;
-        int validTerrainMask = (1 << 4) | (1 << 5) | (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 16) | (1 << 18);
+        int validTerrainMask = (1 << 4) | (1 << 5) | (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 16) | (1 << 18);
         validTerrainMask = ~validTerrainMask;
         if (deployPlanMesh.collidingWithObject == null) {
             return false;

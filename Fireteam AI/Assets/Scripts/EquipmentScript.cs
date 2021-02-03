@@ -1173,6 +1173,58 @@ public class EquipmentScript : MonoBehaviour
         EquipArmorInGame();
     }
 
+    public void ToggleUpdateWhenOffscreen(bool b)
+	{
+		if (equippedSkinRef != null)
+        {
+            equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (equippedHeadgearRef != null)
+        {
+            equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (equippedFacewearRef != null)
+        {
+            equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (equippedArmorTopRef != null)
+        {
+            equippedArmorTopRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (equippedArmorBottomRef != null)
+        {
+            equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (equippedTopRef != null)
+        {
+            equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (equippedBottomRef != null)
+        {
+            equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (equippedFootwearRef != null)
+        {
+            equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (myHairRenderer != null)
+        {
+            myHairRenderer.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (myGlovesRenderer != null)
+        {
+            myGlovesRenderer.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (myEyesRenderer != null)
+        {
+            myEyesRenderer.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (myEyelashRenderer != null)
+        {
+            myEyelashRenderer.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+	}
+
     public class StatBoosts {
         public float armorBoost;
         public float speedBoost;

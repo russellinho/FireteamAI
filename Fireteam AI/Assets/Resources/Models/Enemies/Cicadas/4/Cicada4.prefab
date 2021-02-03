@@ -5722,7 +5722,7 @@ GameObject:
   - component: {fileID: 380831760583482929}
   - component: {fileID: 4863305059160283954}
   - component: {fileID: 7961130368368064315}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cicada4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5927,7 +5927,6 @@ MonoBehaviour:
   leftLowerLegTransform: {fileID: 7271996880874543317}
   rightUpperLegTransform: {fileID: 7271996880874543391}
   rightLowerLegTransform: {fileID: 7271996880874543383}
-  shootPoint: {fileID: 3940422534523389917}
   sniperTracer: {fileID: 120618447016034370, guid: d2f76ff8a9655024c83a8ede7a1b4bcf,
     type: 3}
   animator: {fileID: 7271996880883578743}

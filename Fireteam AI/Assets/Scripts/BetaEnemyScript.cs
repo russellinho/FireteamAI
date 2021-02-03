@@ -94,7 +94,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private float neutralRange;
 	public int bulletsPerMag = 30;
 	public int currentBullets;
-	public ParticleSystem muzzleFlash;
 	private bool isReloading = false;
 	public float fireRate = 0.4f;
 	float fireTimer = 0.0f; // Once it equals fireRate, it will allow us to shoot
@@ -643,6 +642,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		// leftLowerLegTransform.GetComponent<Collider>().enabled = b;
 		// rightUpperLegTransform.GetComponent<Collider>().enabled = b;
 		// rightLowerLegTransform.GetComponent<Collider>().enabled = b;
+
+		ToggleUpdateWhenOffscreen(b);
 	}
 
 	void CheckForGunfireSounds() {
@@ -1194,7 +1195,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	bool EnvObstructionExists(Vector3 a, Vector3 b) {
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
-		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 18);
+		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 18);
 		ignoreLayers = ~ignoreLayers;
 		RaycastHit hitInfo;
 		bool t = Physics.Linecast(a, b, out hitInfo, ignoreLayers, QueryTriggerInteraction.Ignore);
@@ -1788,7 +1789,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				} else if (hit.transform.tag.Equals ("Human")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					// BetaEnemyScript b = hit.transform.GetComponent<BetaEnemyScript>();
-					NpcScript n = hit.transform.GetComponent<NpcScript>();
+					NpcScript n = hit.transform.GetComponentInParent<NpcScript>();
 					if (n != null) {
 						int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
 						n.TakeDamage(CalculateDamageDealtToNpc(InventoryScript.itemData.weaponCatalog[gunRef.weaponName].damage / 2f, bodyPartIdHit), headTransform.position, 0, bodyPartIdHit);
@@ -1828,7 +1829,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	[PunRPC]
 	void RpcShootAction(string team) {
         if (team != gameControllerScript.teamMap) return;
-        muzzleFlash.Play();
+        PlayMuzzleFlash();
 		PlayShootSound();
 		currentBullets--;
 		// Reset fire timer
@@ -1840,6 +1841,12 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			sniperTracer.enabled = true;
 		}
 	}
+
+	void PlayMuzzleFlash() {
+        if (gunRef.muzzleFlash != null) {
+            gunRef.muzzleFlash.Play();
+        }
+    }
 
 	private void PlayShootSound() {
 		gunRef.fireSound.Play();
@@ -1887,14 +1894,12 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	IEnumerator Despawn(float respawnTime) {
 		if (actionState != ActionStates.Dead) yield return null;
-		// Toggle ragdoll
-		ToggleRagdoll(true);
-		// Apply force modifiers
-		ApplyForceModifiers();
+		DespawnAction();
+		StartCoroutine(DelayToggleRagdoll(0.2f, true));
 		ToggleHumanCollision(false);
 		// RemoveHitboxes ();
 		yield return new WaitForSeconds(5f);
-		DespawnAction ();
+		DespawnRenderers();
 		if (!sniper) {
 			StartCoroutine (Respawn(respawnTime, false));
 		}
@@ -1905,11 +1910,20 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
 				navMesh.ResetPath ();
 				navMesh.isStopped = true;
-				navMesh.enabled = false;
 			}
+			navMesh.enabled = false;
 		} else {
 			navMeshObstacle.enabled = false;
 		}
+	}
+
+	void ToggleUpdateWhenOffscreen(bool b)
+	{
+		modeler.ToggleUpdateWhenOffscreen(b);
+	}
+
+	void DespawnRenderers()
+	{
 		modeler.DespawnPlayer();
 		marker.enabled = false;
 		ToggleWeaponMesh(false);
@@ -2587,7 +2601,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		ToggleHumanCollision(false);
 
 		// RemoveHitboxes ();
-		DespawnAction ();
+		DespawnRenderers();
 		
 	}
 
@@ -2729,5 +2743,20 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			m.enabled = b;
 		}
 	}
+
+	IEnumerator DelayToggleRagdoll(float seconds, bool b)
+    {
+        yield return new WaitForSeconds(seconds);
+        pView.RPC("RpcToggleRagdollEnemy", RpcTarget.All, b);
+    }
+
+    [PunRPC]
+    void RpcToggleRagdollEnemy(bool b)
+    {
+        ToggleRagdoll(b);
+        if (b) {
+            ApplyForceModifiers();
+        }
+    }
 
 }
