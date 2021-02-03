@@ -32,6 +32,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	public SkinnedMeshRenderer[] rends;
 	public Animator animator;
 	public Collider mainCol;
+	public Rigidbody mainRigid;
 	public Transform headTransform;
 	public Transform torsoTransform;
 	public Transform leftArmTransform;
@@ -153,10 +154,14 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 			// ToggleRagdoll(true);
 			gameObject.transform.SetParent(null);
 			transform.rotation = Quaternion.identity;
+			mainRigid.isKinematic = false;
+			mainRigid.useGravity = true;
 		} else {
 			actionState = ActionStates.Carried;
 			carriedByTransform = GameControllerScript.playerList[carriedByPlayerId].objRef.GetComponent<PlayerActionScript>().carryingSlot;
 			// ToggleRagdoll(false);
+			mainRigid.useGravity = false;
+			mainRigid.isKinematic = true;
 			gameObject.transform.SetParent(carriedByTransform);
 			transform.localPosition = Vector3.zero;
 			transform.localRotation = Quaternion.identity;
