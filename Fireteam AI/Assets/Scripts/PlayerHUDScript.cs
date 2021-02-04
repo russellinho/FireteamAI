@@ -488,12 +488,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			} catch (Exception e) {
 				updateIteration = 0;
 			}
-			if (updateIteration > 7) {
+			if (updateIteration > 15) {
 				updateIteration = 0;
 			}
 			if (i != -1) {
 				PlayerStat toUpdate = GameControllerScript.playerList[i];
-				if (toUpdate.actorId != PhotonNetwork.LocalPlayer.ActorNumber) {
+				if (toUpdate.actorId != PhotonNetwork.LocalPlayer.ActorNumber && toUpdate.objRef != null) {
 					// Add player names and health that aren't in the list
 					// Update player health that is already on the list
 					UpdatePlayerSlot(i, toUpdate.name, toUpdate.objRef.GetComponent<PlayerActionScript>().health);
