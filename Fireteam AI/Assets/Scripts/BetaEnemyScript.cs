@@ -2750,12 +2750,13 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	IEnumerator DelayToggleRagdoll(float seconds, bool b)
     {
         yield return new WaitForSeconds(seconds);
-        pView.RPC("RpcToggleRagdollEnemy", RpcTarget.All, b);
+        pView.RPC("RpcToggleRagdollEnemy", RpcTarget.All, b, gameControllerScript.teamMap);
     }
 
     [PunRPC]
-    void RpcToggleRagdollEnemy(bool b)
+    void RpcToggleRagdollEnemy(bool b, string team)
     {
+		if (team != gameControllerScript.teamMap) return;
         ToggleRagdoll(b);
 		ToggleHumanCollision(!b);
         if (b) {

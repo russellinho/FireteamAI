@@ -1838,6 +1838,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcToggleRagdollPlayer(bool b)
     {
+        if (gameObject.layer == 0) return;
         ToggleRagdoll(b);
         ToggleHumanCollision(!b);
         if (b) {

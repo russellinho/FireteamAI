@@ -590,12 +590,13 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	IEnumerator DelayToggleRagdoll(float seconds, bool b)
     {
         yield return new WaitForSeconds(seconds);
-        pView.RPC("RpcToggleRagdollNpc", RpcTarget.All, b);
+        pView.RPC("RpcToggleRagdollNpc", RpcTarget.All, b, gameController.teamMap);
     }
 
     [PunRPC]
-    void RpcToggleRagdollNpc(bool b)
+    void RpcToggleRagdollNpc(bool b, string team)
     {
+		if (team != gameController.teamMap) return;
         ToggleRagdoll(b);
 		ToggleHumanCollision(!b);
         if (b) {
