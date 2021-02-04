@@ -582,7 +582,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	IEnumerator DelayToggleRagdoll(float seconds, bool b)
     {
         yield return new WaitForSeconds(seconds);
-        pView.RPC("RpcToggleRagdollNpc", RpcTarget.MasterClient, b);
+        pView.RPC("RpcToggleRagdollNpc", RpcTarget.All, b);
     }
 
     [PunRPC]
