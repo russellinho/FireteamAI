@@ -201,6 +201,8 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	void ToggleRagdoll(bool b) {
 		animator.enabled = !b;
 		mainCol.enabled = !b;
+		mainRigid.isKinematic = b;
+		mainRigid.useGravity = !b;
 
 		foreach (Rigidbody rb in ragdollBodies)
 		{
