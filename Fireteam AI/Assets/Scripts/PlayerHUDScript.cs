@@ -481,7 +481,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		// If player health list is active
 		if (currentStatusMode == StatusMode.Team) {
 			// Loop through player list
-			int i = 0;
+			int i = -1;
 			try {
 				i = GameControllerScript.playerList.Keys.ElementAt(updateIteration++);
 			} catch (Exception e) {
@@ -490,11 +490,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (updateIteration > 7) {
 				updateIteration = 0;
 			}
-			PlayerStat toUpdate = GameControllerScript.playerList[i];
-			if (toUpdate.actorId != PhotonNetwork.LocalPlayer.ActorNumber) {
-				// Add player names and health that aren't in the list
-				// Update player health that is already on the list
-				UpdatePlayerSlot(i, toUpdate.name, toUpdate.objRef.GetComponent<PlayerActionScript>().health);
+			if (i != -1) {
+				PlayerStat toUpdate = GameControllerScript.playerList[i];
+				if (toUpdate.actorId != PhotonNetwork.LocalPlayer.ActorNumber) {
+					// Add player names and health that aren't in the list
+					// Update player health that is already on the list
+					UpdatePlayerSlot(i, toUpdate.name, toUpdate.objRef.GetComponent<PlayerActionScript>().health);
+				}
 			}
 
 			// Loop back through current list
