@@ -7415,6 +7415,7 @@ MonoBehaviour:
   audioSource: {fileID: 4036572419614156457}
   pView: {fileID: 1797082000122076369}
   mainCol: {fileID: 6794830770159409565}
+  mainRigid: {fileID: 3467278731619798888}
   headTransform: {fileID: 7526729005399732824}
   torsoTransform: {fileID: 7526729005399733208}
   leftArmTransform: {fileID: 7526729005399732802}
@@ -7460,7 +7461,6 @@ MonoBehaviour:
   range: 27
   bulletsPerMag: 30
   currentBullets: 0
-  muzzleFlash: {fileID: 5998347990334894407}
   fireRate: 0.4
   playerTargeting: {fileID: 0}
   lastSeenPlayerPos: {x: -Infinity, y: -Infinity, z: -Infinity}

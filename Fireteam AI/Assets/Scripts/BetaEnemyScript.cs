@@ -36,6 +36,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	public AudioSource audioSource;
 	public PhotonView pView;
 	public Collider mainCol;
+	public Rigidbody mainRigid;
 	public Transform headTransform;
 	public Transform torsoTransform;
 	public Transform leftArmTransform;
@@ -625,6 +626,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	{
 		animator.enabled = !b;
 		mainCol.enabled = !b;
+		mainRigid.isKinematic = b;
+		mainRigid.useGravity = !b;
 
 		foreach (Rigidbody rb in ragdollBodies)
 		{

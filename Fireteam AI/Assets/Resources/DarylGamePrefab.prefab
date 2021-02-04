@@ -46370,6 +46370,7 @@ MonoBehaviour:
   gameController: {fileID: 0}
   audioController: {fileID: 9158664062041186719}
   charController: {fileID: 9158664062041186693}
+  mainRigid: {fileID: 9158664062041186718}
   wepActionScript: {fileID: 9158664062041186690}
   cameraShakeScript: {fileID: 9158664062041186688}
   photonTransformView: {fileID: 6966216837115666800}
@@ -46514,7 +46515,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0

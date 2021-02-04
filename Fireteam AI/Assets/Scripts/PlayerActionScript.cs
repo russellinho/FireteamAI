@@ -34,6 +34,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public GameControllerScript gameController;
     public AudioControllerScript audioController;
     public CharacterController charController;
+    public Rigidbody mainRigid;
     public WeaponActionScript wepActionScript;
     public CameraShakeScript cameraShakeScript;
     public PhotonTransformViewKoobando photonTransformView;
@@ -97,7 +98,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public float weaponSpeedModifier;
     private float originalFpcBodyPosY;
     public float verticalVelocityBeforeLanding;
-    private Rigidbody rBody;
     private bool onMyMap;
     public GameObject objectCarrying;
 
@@ -174,8 +174,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         health = 100;
         detectionLevel = 0;
         sprintTime = playerScript.stamina;
-
-        rBody = GetComponent<Rigidbody>();
 
         // // If this isn't the local player's prefab, then he/she shouldn't be controlled by the local player
          if (!pView.IsMine)
@@ -1733,6 +1731,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void ToggleRagdoll(bool b) {
 		animator.enabled = !b;
 		charController.enabled = !b;
+        mainRigid.isKinematic = b;
+		mainRigid.useGravity = !b;
 
 		foreach (Rigidbody rb in ragdollBodies)
 		{
