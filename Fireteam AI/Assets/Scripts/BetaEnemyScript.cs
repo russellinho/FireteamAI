@@ -19,7 +19,10 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	// Scan for players every 0.8 of a second instead of every frame
 	private const float PLAYER_SCAN_DELAY = 0.8f;
 	private const float ENV_DAMAGE_DELAY = 0.5f;
-	private const int ENEMY_FIRE_IGNORE = ~(1 << 13 | 1 << 14);
+	private const int ENEMY_FIRE_IGNORE = ~(1 << 14 | 1 << 13);
+	private const int OBSCURE_IGNORE = ~(1 << 14 | 1 << 15 | 1 << 16 | 1 << 17);
+	private const float EXPLOSION_FORCE = 75;
+	private const float BULLET_FORCE = 50f;
 
 	// Prefab references
 	public GameObject ammoBoxPickup;
@@ -31,20 +34,28 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	// Body/Component references
 	public AudioSource audioSource;
-	public AudioSource gunAudio;
 	public PhotonView pView;
+	public Collider mainCol;
+	public Rigidbody mainRigid;
 	public Transform headTransform;
-	public Transform shootPoint;
+	public Transform torsoTransform;
+	public Transform leftArmTransform;
+	public Transform leftForeArmTransform;
+	public Transform rightArmTransform;
+	public Transform rightForeArmTransform;
+	public Transform pelvisTransform;
+	public Transform leftUpperLegTransform;
+	public Transform leftLowerLegTransform;
+	public Transform rightUpperLegTransform;
+	public Transform rightLowerLegTransform;
 	public LineRenderer sniperTracer;
 	public Animator animator;
-	public Rigidbody rigid;
+	public Rigidbody[] ragdollBodies;
 	public SpriteRenderer marker;
 	public EnemyModelCreator modeler;
 	public NavMeshAgent navMesh;
 	public NavMeshObstacle navMeshObstacle;
-	public CapsuleCollider myCollider;
-	public CapsuleCollider headCollider;
-	public MeshRenderer gunRef;
+	public WeaponMeta gunRef;
 	private Vector3 prevNavDestination;
 	private bool prevWasStopped;
 
@@ -58,7 +69,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	public bool sniper;
 	public float rotationSpeed = 6f;
 	public int health;
-	public int deathBy;
+	private int lastHitBy;
+	private int lastBodyPartHit;
 	public float disorientationTime;
 	private Vector3 spawnPos;
 	// The alert state for the enemy. None = enemy is neutral; Suspicious = enemy is suspicious (?); alert = enemy is alerted (!)
@@ -84,11 +96,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private float neutralRange;
 	public int bulletsPerMag = 30;
 	public int currentBullets;
-	public AudioClip shootSound;
-	public ParticleSystem muzzleFlash;
 	private bool isReloading = false;
 	public float fireRate = 0.4f;
-	public float damage = 10f;
 	float fireTimer = 0.0f; // Once it equals fireRate, it will allow us to shoot
 
 	// Target references
@@ -129,17 +138,14 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private enum CrouchMode {ForceCover, ForceLeaveCover, Natural};
 	private CrouchMode crouchMode;
 	private float coverScanRange = 22f;
-
-	// Collision
-	public float originalColliderHeight;
-	public float originalColliderRadius;
-	public Vector3 originalColliderCenter;
+	private Vector3 lastHitFromPos;
 	// public Transform pNav;
 
     // Testing mode - set in inspector
     //public bool testingMode;
 
 	void Awake() {
+		ToggleRagdoll(false);
 		if (gameControllerScript.matchType == 'C')
         {
             StartForCampaign();
@@ -182,7 +188,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		disorientationTime = 0f;
 		currentBullets = bulletsPerMag;
 		audioSource.maxDistance = 100f;
-		rigid.freezeRotation = true;
 		isCrouching = false;
 		isOutlined = false;
 
@@ -195,22 +200,16 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			range = 20f;
 			accuracyOffset = 1.05f;
 			fireRate = 0.4f;
-			damage = 20f;
-			gunAudio.minDistance = 9f;
 			aggression = 14;
 		} else {
 			if (sniper) {
 				range = 35f;
 				accuracyOffset = 1.25f;
 				fireRate = 20f;
-				damage = 35f;
-				gunAudio.minDistance = 18f;
 			} else {
 				range = 27f;
 				accuracyOffset = 1.05f;
 				fireRate = 0.4f;
-				damage = 20f;
-				gunAudio.minDistance = 9f;
 			}
 		}
 
@@ -248,7 +247,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         disorientationTime = 0f;
         currentBullets = bulletsPerMag;
         audioSource.maxDistance = 100f;
-        rigid.freezeRotation = true;
         isCrouching = false;
         isOutlined = false;
 
@@ -262,8 +260,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
             range = 20f;
             accuracyOffset = 1.05f;
             fireRate = 0.4f;
-            damage = 20f;
-            gunAudio.minDistance = 9f;
             aggression = 14;
         }
         else
@@ -273,16 +269,12 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
                 range = 35f;
                 accuracyOffset = 1.25f;
                 fireRate = 20f;
-                damage = 35f;
-                gunAudio.minDistance = 18f;
             }
             else
             {
                 range = 27f;
                 accuracyOffset = 1.05f;
                 fireRate = 0.4f;
-                damage = 20f;
-                gunAudio.minDistance = 9f;
             }
         }
 
@@ -398,7 +390,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 		CheckForGunfireSounds ();
 		CheckTargetDead ();
-		HandleCrouching ();
 
 		if (enemyType == EnemyType.Patrol) {
 			DecideActionPatrolInCombat();
@@ -462,7 +453,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 		CheckForGunfireSounds ();
 		CheckTargetDead ();
-		HandleCrouching ();
 
 		if (enemyType == EnemyType.Patrol) {
 			DecideActionPatrolInCombat();
@@ -632,18 +622,32 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 	}
 
-	void HandleCrouching() {
-		if (health > 0) {
-			if (isCrouching) {
-				myCollider.height = 0.97f;
-				myCollider.radius = 0.32f;
-				// myCollider.center = new Vector3 (-0.05f, 0.43f, -0.03f);
-			} else {
-				myCollider.height = originalColliderHeight;
-				myCollider.radius = originalColliderRadius;
-				myCollider.center = originalColliderCenter;
-			}
+	void ToggleRagdoll(bool b)
+	{
+		animator.enabled = !b;
+		mainCol.enabled = !b;
+		mainRigid.isKinematic = b;
+		mainRigid.useGravity = !b;
+
+		foreach (Rigidbody rb in ragdollBodies)
+		{
+			rb.isKinematic = !b;
+			rb.useGravity = b;
 		}
+
+		// headTransform.GetComponent<Collider>().enabled = b;
+		// torsoTransform.GetComponent<Collider>().enabled = b;
+		// leftArmTransform.GetComponent<Collider>().enabled = b;
+		// leftForeArmTransform.GetComponent<Collider>().enabled = b;
+		// rightArmTransform.GetComponent<Collider>().enabled = b;
+		// rightForeArmTransform.GetComponent<Collider>().enabled = b;
+		// pelvisTransform.GetComponent<Collider>().enabled = b;
+		// leftUpperLegTransform.GetComponent<Collider>().enabled = b;
+		// leftLowerLegTransform.GetComponent<Collider>().enabled = b;
+		// rightUpperLegTransform.GetComponent<Collider>().enabled = b;
+		// rightLowerLegTransform.GetComponent<Collider>().enabled = b;
+
+		ToggleUpdateWhenOffscreen(b);
 	}
 
 	void CheckForGunfireSounds() {
@@ -1038,6 +1042,52 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 	}
 
+	void ApplyForceModifiers()
+	{
+		// 0 = death from bullet, 1 = death from explosion, 2 = death from fire/etc.
+		if (lastHitBy == 0) {
+			Rigidbody rb = ragdollBodies[lastBodyPartHit - 1];
+			if (lastBodyPartHit == WeaponActionScript.HEAD_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(headTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.TORSO_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(torsoTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.LEFT_ARM_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(leftArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.LEFT_FOREARM_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(leftForeArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_ARM_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(rightArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_FOREARM_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(rightForeArmTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.PELVIS_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(pelvisTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.LEFT_UPPER_LEG_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(leftUpperLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.LEFT_LOWER_LEG_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(leftLowerLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_UPPER_LEG_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(rightUpperLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			} else if (lastBodyPartHit == WeaponActionScript.RIGHT_LOWER_LEG_TARGET) {
+				Vector3 forceDir = Vector3.Normalize(rightLowerLegTransform.position - lastHitFromPos) * BULLET_FORCE;
+				rb.AddForce(forceDir, ForceMode.Impulse);
+			}
+		} else if (lastHitBy == 1) {
+			foreach (Rigidbody rb in ragdollBodies) {
+				rb.AddExplosionForce(EXPLOSION_FORCE, lastHitFromPos, 7f, 0f, ForceMode.Impulse);
+			}
+		}
+	}
+
 	// Decision tree for scout type enemy
 	void DecideActionScout() {
 		// Check for death first
@@ -1176,7 +1226,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (other.gameObject.tag.Equals("Fire")) {
 			FireScript f = other.gameObject.GetComponent<FireScript>();
 			int damageReceived = (int)(f.damage);
-			TakeDamage(damageReceived);
+			TakeDamage(damageReceived, other.gameObject.transform.position, 2, 0);
 			ResetEnvDamageTimer();
 		}
 	}
@@ -1202,11 +1252,10 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[t.rootWeapon];
 					int damageReceived = (int)(grenadeStats.damage * scale);
 					// Deal damage to the enemy
-					TakeDamage(damageReceived);
+					TakeDamage(damageReceived, other.gameObject.transform.position, 1, 0);
 					// Validate that this enemy has already been affected
 					t.AddHitPlayer(pView.ViewID);
 					if (health <= 0) {
-						deathBy = 1;
 						KilledByGrenade(t.fromPlayerId);
 					}
 				}
@@ -1223,11 +1272,10 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					Weapon projectileStats = InventoryScript.itemData.weaponCatalog[l.rootWeapon];
 					int damageReceived = (int)(projectileStats.damage * scale);
 					// Deal damage to the enemy
-					TakeDamage(damageReceived);
+					TakeDamage(damageReceived, other.gameObject.transform.position, 1, 0);
 					// Validate that this enemy has already been affected
 					l.AddHitPlayer(pView.ViewID);
 					if (health <= 0) {
-						deathBy = 1;
 						KilledByGrenade(l.fromPlayerId);
 					}
 				}
@@ -1278,13 +1326,13 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	bool TargetIsWithinMeleeDistance() {
 		RaycastHit hit;
-		Vector3 meleeTargetPos = Vector3.zero;
-		if (playerTargeting.GetComponent<PlayerActionScript>() != null) {
-			meleeTargetPos = playerTargeting.GetComponent<PlayerActionScript>().headTransform.position;
-		} else {
-			meleeTargetPos = new Vector3(playerTargeting.transform.position.x, playerTargeting.transform.position.y + 0.5f, playerTargeting.transform.position.z);
-		}
-		if (Physics.Linecast (headTransform.position, meleeTargetPos, out hit)) {
+		Vector3 meleeTargetPos = new Vector3(playerTargeting.transform.position.x, playerTargeting.transform.position.y + 0.5f, playerTargeting.transform.position.z);
+		// if (playerTargeting.GetComponent<PlayerActionScript>() != null) {
+		// 	meleeTargetPos = playerTargeting.GetComponent<PlayerActionScript>().headTransform.position;
+		// } else {
+		// 	meleeTargetPos = new Vector3(playerTargeting.transform.position.x, playerTargeting.transform.position.y + 0.5f, playerTargeting.transform.position.z);
+		// }
+		if (Physics.Linecast (headTransform.position, meleeTargetPos, out hit, (1 << 9))) {
 			if (hit.transform.gameObject.tag == "Player") {
 				if (hit.distance <= MELEE_DISTANCE) {
 					return true;
@@ -1610,7 +1658,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") && !animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")
 			&& !animator.GetCurrentAnimatorStateInfo (0).IsName ("Die2") && !animator.GetCurrentAnimatorStateInfo (0).IsName ("DieExplosion")) {
 				// If killed by an explosion, play the explosion death animation. Else, play a random regular death animation
-				if (deathBy == 1) {
+				if (lastHitBy == 1) {
 					animator.Play("DieExplosion");
 				} else {
 					int r = Random.Range (1, 4);
@@ -1734,27 +1782,25 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			float xOffset = Random.Range (-scaledOffset, scaledOffset);
 			float yOffset = Random.Range (-scaledOffset, scaledOffset);
 			dir = new Vector3 (dir.x + xOffset, dir.y + yOffset, dir.z);
-			//Debug.DrawRay (shootPoint.position, dir * range, Color.red);
+			//Debug.DrawRay (gunRef.weaponShootPoint.position, dir * range, Color.red);
 			if (Physics.Raycast (headTransform.position, dir, out hit, Mathf.Infinity, ENEMY_FIRE_IGNORE)) {
 				if (hit.transform.tag.Equals ("Player")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					PlayerActionScript ps = hit.transform.GetComponent<PlayerActionScript> ();
-					ps.TakeDamage(CalculateDamageDealt(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CharacterController>().height), true);
+					ps.TakeDamage(CalculateDamageDealt(InventoryScript.itemData.weaponCatalog[gunRef.weaponName].damage / 2f, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CharacterController>().height), true, transform.position, 0, Random.Range(1, 12));
 					//ps.ResetHitTimer ();
 					ps.SetHitLocation (transform.position);
 				} else if (hit.transform.tag.Equals ("Human")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					// BetaEnemyScript b = hit.transform.GetComponent<BetaEnemyScript>();
-					NpcScript n = hit.transform.GetComponent<NpcScript>();
+					NpcScript n = hit.transform.GetComponentInParent<NpcScript>();
 					if (n != null) {
-						n.TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, n.col.height));
+						int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
+						n.TakeDamage(CalculateDamageDealtToNpc(InventoryScript.itemData.weaponCatalog[gunRef.weaponName].damage / 2f, bodyPartIdHit), headTransform.position, 0, bodyPartIdHit);
 					}
 					// if (b != null) {
 					// 	b.TakeDamage(CalculateDamageDealtAgainstEnemyAlly(damage, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CapsuleCollider>().height));
 					// }
-				} else if (hit.transform.tag.Equals("NpcHead")) {
-					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
-					hit.transform.GetComponent<NpcScript>().TakeDamage(100);
 				} else {
 					Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
                 	pView.RPC("RpcHandleBulletVfxEnemy", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index), gameControllerScript.teamMap);
@@ -1787,7 +1833,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	[PunRPC]
 	void RpcShootAction(string team) {
         if (team != gameControllerScript.teamMap) return;
-        muzzleFlash.Play();
+        PlayMuzzleFlash();
 		PlayShootSound();
 		currentBullets--;
 		// Reset fire timer
@@ -1795,13 +1841,19 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (sniper && playerTargeting != null) {
 			SniperTracerScript s = sniperTracer.gameObject.GetComponent<SniperTracerScript> ();
 			s.enabled = true;
-			s.SetDistance (Vector3.Distance(shootPoint.position, playerTargeting.transform.position));
+			s.SetDistance (Vector3.Distance(gunRef.weaponShootPoint.position, playerTargeting.transform.position));
 			sniperTracer.enabled = true;
 		}
 	}
 
+	void PlayMuzzleFlash() {
+        if (gunRef.muzzleFlash != null) {
+            gunRef.muzzleFlash.Play();
+        }
+    }
+
 	private void PlayShootSound() {
-		gunAudio.PlayOneShot (shootSound);
+		gunRef.fireSound.Play();
 	}
 
 	public void Reload() {
@@ -1825,10 +1877,10 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			PlayerActionScript ps = playerTargeting.GetComponent<PlayerActionScript> ();
 			NpcScript n = playerTargeting.GetComponent<NpcScript> ();
 			if (n != null) {
-				n.TakeDamage(50);
+				n.TakeDamage(50, transform.position, 2, 0);
 			}
 			if (ps != null) {
-				ps.TakeDamage (50, true);
+				ps.TakeDamage (50, true, transform.position, 2, 0);
 				//ps.ResetHitTimer();
 				ps.SetHitLocation (transform.position);
 			}
@@ -1846,11 +1898,11 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	IEnumerator Despawn(float respawnTime) {
 		if (actionState != ActionStates.Dead) yield return null;
-		gameObject.layer = 12;
-		headCollider.gameObject.layer = 15;
-		RemoveHitboxes ();
+		DespawnAction();
+		StartCoroutine(DelayToggleRagdoll(0.2f, true));
+		// RemoveHitboxes ();
 		yield return new WaitForSeconds(5f);
-		DespawnAction ();
+		DespawnRenderers();
 		if (!sniper) {
 			StartCoroutine (Respawn(respawnTime, false));
 		}
@@ -1861,22 +1913,37 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
 				navMesh.ResetPath ();
 				navMesh.isStopped = true;
-				navMesh.enabled = false;
 			}
+			navMesh.enabled = false;
 		} else {
 			navMeshObstacle.enabled = false;
 		}
+	}
+
+	void ToggleUpdateWhenOffscreen(bool b)
+	{
+		modeler.ToggleUpdateWhenOffscreen(b);
+	}
+
+	void DespawnRenderers()
+	{
 		modeler.DespawnPlayer();
 		marker.enabled = false;
-		gunRef.enabled = false;
-		myCollider.enabled = false;
-		rigid.useGravity = false;
-		rigid.isKinematic = true;
+		ToggleWeaponMesh(false);
 	}
 
 	void RemoveHitboxes() {
-		myCollider.height = 0f;
-		myCollider.center = new Vector3 (0f, 0f, 0f);
+		headTransform.GetComponent<Collider>().enabled = false;
+		torsoTransform.GetComponent<Collider>().enabled = false;
+		leftArmTransform.GetComponent<Collider>().enabled = false;
+		leftForeArmTransform.GetComponent<Collider>().enabled = false;
+		rightArmTransform.GetComponent<Collider>().enabled = false;
+		rightForeArmTransform.GetComponent<Collider>().enabled = false;
+		pelvisTransform.GetComponent<Collider>().enabled = false;
+		leftUpperLegTransform.GetComponent<Collider>().enabled = false;
+		leftLowerLegTransform.GetComponent<Collider>().enabled = false;
+		rightUpperLegTransform.GetComponent<Collider>().enabled = false;
+		rightLowerLegTransform.GetComponent<Collider>().enabled = false;
 	}
 
 	// Used for Scout AI
@@ -2104,11 +2171,11 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		RaycastHit hit1;
 		RaycastHit hit2;
 
-		if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2))
+		if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2, OBSCURE_IGNORE))
 		{
 			return true;
 		}
-		if (!Physics.Linecast (headTransform.position, topHalfCheck, out hit1))
+		if (!Physics.Linecast (headTransform.position, topHalfCheck, out hit1, OBSCURE_IGNORE))
 		{
 			return true;
 		}
@@ -2144,14 +2211,17 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 	}
 
-	public void TakeDamage(int d) {
-		pView.RPC ("RpcTakeDamage", RpcTarget.All, d, gameControllerScript.teamMap);
+	public void TakeDamage(int d, Vector3 hitFromPos, int hitBy, int bodyPartHit) {
+		pView.RPC ("RpcTakeDamage", RpcTarget.All, d, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit, gameControllerScript.teamMap);
 	}
 
 	[PunRPC]
-	public void RpcTakeDamage(int d, string team) {
+	public void RpcTakeDamage(int d, float hitFromX, float hitFromY, float hitFromZ, int hitBy, int bodyPartHit, string team) {
         if (team != gameControllerScript.teamMap) return;
         health -= d;
+		lastHitFromPos = new Vector3(hitFromX, hitFromY, hitFromZ);
+		lastHitBy = hitBy;
+		lastBodyPartHit = bodyPartHit;
 	}
 
 	void UpdateActionState(ActionStates action) {
@@ -2236,17 +2306,14 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (syncWithClientsAgain) {
 			pView.RPC("RpcRespawnAtPosition", RpcTarget.All, gameControllerScript.teamMap, pos.x, pos.y, pos.z);
 		} else {
+			ToggleRagdoll(false);
 			navMesh.enabled = false;
 			navMeshObstacle.enabled = false;
 			transform.position = pos;
 			transform.rotation = Quaternion.identity;
-			myCollider.height = originalColliderHeight;
-			myCollider.radius = originalColliderRadius;
-			myCollider.center = originalColliderCenter;
-			myCollider.enabled = true;
-			gameObject.layer = 14;
-			headCollider.gameObject.layer = 13;
+			ToggleHumanCollision(true);
 			health = 100;
+			lastHitBy = 0;
 			coverWaitTimer = Random.Range (2f, 7f);
 			coverSwitchPositionsTimer = Random.Range (6f, 10f);
 			playerTargeting = null;
@@ -2272,9 +2339,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 			modeler.RespawnPlayer();
 			marker.enabled = true;
-			gunRef.enabled = true;
-			rigid.useGravity = true;
-			rigid.isKinematic = false;
+			ToggleWeaponMesh(true);
 
 			if (enemyType == EnemyType.Patrol) {
 				navMesh.enabled = true;
@@ -2289,17 +2354,14 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	[PunRPC]
 	void RpcRespawnAtPosition(string team, float respawnPosX, float respawnPosY, float respawnPosZ) {
 		if (team != gameControllerScript.teamMap) return;
+		ToggleRagdoll(false);
 		navMesh.enabled = false;
 		navMeshObstacle.enabled = false;
 		transform.position = new Vector3(respawnPosX, respawnPosY, respawnPosZ);
 		transform.rotation = Quaternion.identity;
-		myCollider.height = originalColliderHeight;
-		myCollider.radius = originalColliderRadius;
-		myCollider.center = originalColliderCenter;
-		myCollider.enabled = true;
-		gameObject.layer = 14;
-		headCollider.gameObject.layer = 13;
+		ToggleHumanCollision(true);
 		health = 100;
+		lastHitBy = 0;
 		coverWaitTimer = Random.Range (2f, 7f);
 		coverSwitchPositionsTimer = Random.Range (6f, 10f);
 		playerTargeting = null;
@@ -2325,9 +2387,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 		modeler.RespawnPlayer();
 		marker.enabled = true;
-		gunRef.enabled = true;
-		rigid.useGravity = true;
-		rigid.isKinematic = false;
+		ToggleWeaponMesh(true);
 
 		if (enemyType == EnemyType.Patrol) {
 			navMesh.enabled = true;
@@ -2423,17 +2483,31 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         return (int)total;
     }
 
-	int CalculateDamageDealtAgainstEnemyAlly(float initialDamage, float baseY, float hitY, float height, int divisor = 1) {
-        float total = initialDamage / (float)divisor;
-		// Determine how high/low on the body was hit. The closer to 1, the closer to shoulders; closer to 0, closer to feet
-		float bodyHeightHit = Mathf.Abs(hitY - baseY) / height;
-		// Higher the height, the more damage dealt
-		if (bodyHeightHit <= 0.35f) {
-			total *= 0.35f;
-		} else if (bodyHeightHit < 0.8f) {
-			total *= bodyHeightHit;
-		}
-        return (int)total;
+	int CalculateDamageDealtToNpc(float initialDamage, int bodyPartHit, int divisor = 1) {
+        if (bodyPartHit == WeaponActionScript.HEAD_TARGET) {
+            return 100;
+        } else if (bodyPartHit == WeaponActionScript.TORSO_TARGET) {
+            return (int)(initialDamage / (float)divisor);
+        } else if (bodyPartHit == WeaponActionScript.LEFT_ARM_TARGET) {
+            return (int)((initialDamage / (float)divisor) / 2f);
+        } else if (bodyPartHit == WeaponActionScript.LEFT_FOREARM_TARGET) {
+            return (int)((initialDamage / (float)divisor) / 3f);
+        } else if (bodyPartHit == WeaponActionScript.RIGHT_ARM_TARGET) {
+            return (int)((initialDamage / (float)divisor) / 2f);
+        } else if (bodyPartHit == WeaponActionScript.RIGHT_FOREARM_TARGET) {
+            return (int)((initialDamage / (float)divisor) / 3f);
+        } else if (bodyPartHit == WeaponActionScript.PELVIS_TARGET) {
+            return (int)(initialDamage / (float)divisor);
+        } else if (bodyPartHit == WeaponActionScript.LEFT_UPPER_LEG_TARGET) {
+            return (int)((initialDamage / (float)divisor) / 1.5f);
+        } else if (bodyPartHit == WeaponActionScript.LEFT_LOWER_LEG_TARGET) {
+            return (int)((initialDamage / (float)divisor) / 2f);
+        } else if (bodyPartHit == WeaponActionScript.RIGHT_UPPER_LEG_TARGET) {
+            return (int)((initialDamage / (float)divisor) / 1.5f);
+        } else if (bodyPartHit == WeaponActionScript.RIGHT_LOWER_LEG_TARGET) {
+            return (int)((initialDamage / (float)divisor) / 2f);
+        }
+        return 0;
     }
 
 	public void IncreaseSuspicionLevel(float amount) {
@@ -2527,12 +2601,40 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		alertStatus = AlertStatus.Neutral;
 		actionState = ActionStates.Dead;
 
-		gameObject.layer = 12;
-		headCollider.gameObject.layer = 15;
+		ToggleHumanCollision(false);
 
-		RemoveHitboxes ();
-		DespawnAction ();
+		// RemoveHitboxes ();
+		DespawnRenderers();
 		
+	}
+
+	void ToggleHumanCollision(bool b)
+	{
+		if (!b) {
+			headTransform.gameObject.layer = 12;
+			torsoTransform.gameObject.layer = 12;
+			leftArmTransform.gameObject.layer = 12;
+			leftForeArmTransform.gameObject.layer = 12;
+			rightArmTransform.gameObject.layer = 12;
+			rightForeArmTransform.gameObject.layer = 12;
+			pelvisTransform.gameObject.layer = 12;
+			leftUpperLegTransform.gameObject.layer = 12;
+			leftLowerLegTransform.gameObject.layer = 12;
+			rightUpperLegTransform.gameObject.layer = 12;
+			rightLowerLegTransform.gameObject.layer = 12;
+		} else {
+			headTransform.gameObject.layer = 14;
+			torsoTransform.gameObject.layer = 14;
+			leftArmTransform.gameObject.layer = 14;
+			leftForeArmTransform.gameObject.layer = 14;
+			rightArmTransform.gameObject.layer = 14;
+			rightForeArmTransform.gameObject.layer = 14;
+			pelvisTransform.gameObject.layer = 14;
+			leftUpperLegTransform.gameObject.layer = 14;
+			leftLowerLegTransform.gameObject.layer = 14;
+			rightUpperLegTransform.gameObject.layer = 14;
+			rightLowerLegTransform.gameObject.layer = 14;
+		}
 	}
 
 	void PrintNavMeshAgentStats() {
@@ -2577,20 +2679,17 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				playerTargetingId = playerTargeting.GetComponent<PhotonView>().Owner.ActorNumber;
 			}
 
-			pView.RPC("RpcSyncDataEnemies", RpcTarget.Others, rigid.useGravity, rigid.isKinematic, rigid.freezeRotation, marker.enabled,
-					navMesh.enabled, navMesh.speed, navMeshObstacle.enabled,
-					myCollider.height, myCollider.radius, myCollider.center.x, myCollider.center.y, myCollider.center.z, myCollider.enabled, headCollider.gameObject.layer,
-					gunRef.enabled, prevNavDestination.x, prevNavDestination.y, prevNavDestination.z, prevWasStopped, actionState, firingState, isCrouching, health, disorientationTime,
+			pView.RPC("RpcSyncDataEnemies", RpcTarget.Others, marker.enabled,
+					navMesh.enabled, navMesh.speed, navMeshObstacle.enabled, 
+					gunRef.weaponParts[0].enabled, prevNavDestination.x, prevNavDestination.y, prevNavDestination.z, prevWasStopped, actionState, firingState, isCrouching, health, disorientationTime,
 					spawnPos.x, spawnPos.y, spawnPos.z, alertStatus, wasMasterClient, currentBullets, fireTimer, playerTargetingId, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z,
 					suspicionMeter, suspicionCoolDownDelay, increaseSuspicionDelay, alertTeamAfterAlertedTimer, inCover, crouchMode, gameControllerScript.teamMap);
 		}
 	}
 
 	[PunRPC]
-	void RpcSyncDataEnemies(bool useGravity, bool isKinematic, bool freezeRotation, bool markerEnabled,
-					bool navMeshEnabled, float navMeshSpeed,
-					bool navMeshObstacleEnabled, float colliderHeight, float colliderRadius, float colliderCenterX, float colliderCenterY,
-					float colliderCenterZ, bool colliderEnabled, int headColliderLayer, bool gunRefEnabled, float preNavDestX, float preNavDestY,
+	void RpcSyncDataEnemies(bool markerEnabled,
+					bool navMeshEnabled, float navMeshSpeed, bool navMeshObstacleEnabled, bool gunRefEnabled, float preNavDestX, float preNavDestY,
 					float preNavDestZ, bool prevWasStopped, ActionStates acState, FiringStates fiState, bool isCrouching, int health, float disorientationTime,
 					float spawnPosX, float spawnPosY, float spawnPosZ, AlertStatus alertStatus, bool wasMasterClient, int currentBullets, float fireTimer,
 					int playerTargetingId, float lastSeenPlayerPosX, float lastSeenPlayerPosY, float lastSeenPlayerPosZ, float suspicionMeter, float suspicionCoolDownDelay,
@@ -2601,24 +2700,21 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		// } else {
 		// 	modeler.RespawnPlayer();
 		// }
-		rigid.useGravity = useGravity;
-		rigid.isKinematic = isKinematic;
-		rigid.freezeRotation = freezeRotation;
 		marker.enabled = markerEnabled;
 		// navMesh.isStopped = isStopped;
 		// navMesh.destination = new Vector3(destinationX, destinationY, destinationZ);
 		navMesh.speed = navMeshSpeed;
 		navMesh.enabled = navMeshEnabled;
 		navMeshObstacle.enabled = navMeshObstacleEnabled;
-		myCollider.height = colliderHeight;
-		myCollider.radius = colliderRadius;
-		myCollider.center = new Vector3(colliderCenterX, colliderCenterY, colliderCenterZ);
-		myCollider.enabled = colliderEnabled;
-		headCollider.gameObject.layer = headColliderLayer;
-		gunRef.enabled = gunRefEnabled;
+		ToggleWeaponMesh(gunRefEnabled);
 		prevNavDestination = new Vector3(preNavDestX, preNavDestY, preNavDestZ);
 		this.prevWasStopped = prevWasStopped;
 		actionState = acState;
+		if (actionState == ActionStates.Dead) {
+			ToggleHumanCollision(false);
+		} else {
+			ToggleHumanCollision(true);
+		}
 		firingState = fiState;
 		this.isCrouching = isCrouching;
 		this.health = health;
@@ -2643,5 +2739,29 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		this.inCover = inCover;
 		this.crouchMode = crouchMode;
 	}
+
+	void ToggleWeaponMesh(bool b)
+	{
+		foreach (MeshRenderer m in gunRef.weaponParts) {
+			m.enabled = b;
+		}
+	}
+
+	IEnumerator DelayToggleRagdoll(float seconds, bool b)
+    {
+        yield return new WaitForSeconds(seconds);
+        pView.RPC("RpcToggleRagdollEnemy", RpcTarget.All, b, gameControllerScript.teamMap);
+    }
+
+    [PunRPC]
+    void RpcToggleRagdollEnemy(bool b, string team)
+    {
+		if (team != gameControllerScript.teamMap) return;
+        ToggleRagdoll(b);
+		ToggleHumanCollision(!b);
+        if (b) {
+            ApplyForceModifiers();
+        }
+    }
 
 }

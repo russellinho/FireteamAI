@@ -16,7 +16,7 @@ MonoBehaviour:
     AppIdRealtime: 759c3bf2-4dac-4abc-8645-adefe6e264a1
     AppIdChat: bc66ee21-fc46-4986-8a9f-03fb1c13ea9e
     AppIdVoice: 
-    AppVersion: 0.08
+    AppVersion: 0.09
     UseNameServer: 1
     FixedRegion: us
     Server: 
@@ -41,6 +41,7 @@ MonoBehaviour:
   - FireEffectsLauncher
   - FireEffectsSuppressed
   - RespawnSpaceship
+  - RpcAcceptPlayer
   - RpcAddToTotalDeaths
   - RpcAddToTotalKills
   - RpcAlertKickedPlayer
@@ -92,6 +93,7 @@ MonoBehaviour:
   - RpcMarkEnemyOutline
   - RpcNetworkComBoxMessage
   - RpcOnPlayerLeftGame
+  - RpcPingMasterForAcceptance
   - RpcPingServerForEquipment
   - RpcPingServerForLobbyStates
   - RpcPlayGruntSound
@@ -185,8 +187,10 @@ MonoBehaviour:
   - SendMsgConnectionAll
   - SendMsgConnectionMaster
   - StartDespawn
-  - RpcAcceptPlayer
-  - RpcPingMasterForAcceptance
+  - RpcToggleRagdoll
+  - RpcToggleRagdollPlayer
+  - RpcToggleRagdollNpc
+  - RpcToggleRagdollEnemy
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

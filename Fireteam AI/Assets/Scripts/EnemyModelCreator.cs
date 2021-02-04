@@ -410,6 +410,43 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
     //     return equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled;
     // }
 
+    public void ToggleUpdateWhenOffscreen(bool b)
+    {
+        if (equippedSkinRef != null) {
+            equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (equippedHeadgearRef != null) {
+            equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (equippedFacewearRef != null) {
+            equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (equippedEyewearRef != null) {
+            equippedEyewearRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (equippedTopRef != null) {
+            equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (equippedBottomRef != null) {
+            equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (equippedFootwearRef != null) {
+            equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (myHairRenderer != null) {
+            myHairRenderer.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (myBeardRenderer != null) {
+            myBeardRenderer.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (myEyesRenderer != null) {
+            myEyesRenderer.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+        if (myEyelashRenderer != null) {
+            myEyelashRenderer.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = b;
+        }
+    }
+
     public void DespawnPlayer() {
         if (equippedSkinRef != null) {
             equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
@@ -432,7 +469,6 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
         if (equippedFootwearRef != null) {
             equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
         }
-
         if (myHairRenderer != null) {
             myHairRenderer.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
         }

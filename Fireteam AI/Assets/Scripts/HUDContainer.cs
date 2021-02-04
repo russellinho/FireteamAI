@@ -16,9 +16,12 @@ public class HUDContainer : MonoBehaviour {
 	public Slider staminaBar;
 	public Image flashbangOverlay;
 	public RawImage flashbangScreenCap;
-	public CanvasGroup vipHealthGroup;
-	public TextMeshProUGUI vipHealthPercentTxt;
-	public Slider vipHealthBar;
+	public TextMeshProUGUI statusPageTitle;
+	public TextMeshProUGUI statusHiddenText;
+	public AllyHealthBar[] teamHealthPage;
+	public AllyHealthBar[] allyHealthPage1;
+	public AllyHealthBar[] allyHealthPage2;
+	public AllyHealthBar[] allyHealthPage3;
 
 	// Weapon HUD
 	public UIManagerText weaponLabelTxt;
