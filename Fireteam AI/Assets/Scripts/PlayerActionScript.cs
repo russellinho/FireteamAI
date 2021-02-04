@@ -1731,7 +1731,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void ToggleRagdoll(bool b) {
 		animator.enabled = !b;
 		charController.enabled = !b;
-        mainRigid.isKinematic = b;
 		mainRigid.useGravity = !b;
 
 		foreach (Rigidbody rb in ragdollBodies)
