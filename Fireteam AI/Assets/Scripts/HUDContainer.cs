@@ -19,6 +19,12 @@ public class HUDContainer : MonoBehaviour {
 	public CanvasGroup vipHealthGroup;
 	public TextMeshProUGUI vipHealthPercentTxt;
 	public Slider vipHealthBar;
+	public TextMeshProUGUI statusPageTitle;
+	public TextMeshProUGUI statusHiddenText;
+	public Slider[] teamHealthPage;
+	public Slider[] allyHealthPage1;
+	public Slider[] allyHealthPage2;
+	public Slider[] allyHealthPage3;
 
 	// Weapon HUD
 	public UIManagerText weaponLabelTxt;
