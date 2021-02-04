@@ -105,6 +105,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		Physics.IgnoreLayerCollision (16, 13);
 		Physics.IgnoreLayerCollision (16, 14);
 		Physics.IgnoreLayerCollision (16, 15);
+		Physics.IgnoreLayerCollision (12, 12);
+		Physics.IgnoreLayerCollision (14, 14);
+		Physics.IgnoreLayerCollision (15, 15);
+		Physics.IgnoreLayerCollision (16, 16);
+		Physics.IgnoreLayerCollision (17, 17);
 		Physics.IgnoreLayerCollision (9, 12);
 		Physics.IgnoreLayerCollision (14, 12);
 		Physics.IgnoreLayerCollision (0, 19);

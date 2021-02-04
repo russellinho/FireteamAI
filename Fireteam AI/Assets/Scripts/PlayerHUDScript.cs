@@ -76,6 +76,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		missionWaypoints = new ArrayList ();
 		statusOn = true;
 		deleteIteration = 7;
+		RepopulateStatusForCurrentMode();
 
 		container.hitFlare.GetComponent<RawImage> ().enabled = false;
 		container.hitDir.GetComponent<RawImage> ().enabled = false;
