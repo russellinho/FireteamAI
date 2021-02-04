@@ -11,6 +11,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	private const float EXPLOSION_FORCE = 75f;
 	private const float BULLET_FORCE = 50f;
 	public enum NpcType {Neutral, Friendly};
+	public string npcName;
 	public GameControllerScript gameController;
 	public PhotonView pView;
 	public int health;
@@ -57,6 +58,11 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 		ToggleRagdoll(false);
 		carriedByPlayerId = -1;
 		SceneManager.sceneLoaded += OnSceneFinishedLoading;
+	}
+
+	void Start()
+	{
+		gameController.npcList.Add(pView.ViewID, gameObject);
 	}
 
 	public void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)

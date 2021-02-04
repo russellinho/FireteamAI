@@ -33,6 +33,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public float endGameTimer = 0f;
 	private bool loadExitCalled;
 	public static Dictionary<int, PlayerStat> playerList = new Dictionary<int, PlayerStat> ();
+	public Dictionary<int, GameObject> npcList = new Dictionary<int, GameObject>();
 	public Dictionary<short, GameObject> coverSpots;
 	public Dictionary<int, GameObject> enemyList = new Dictionary<int, GameObject> ();
 	private Dictionary<int, GameObject> pickupList = new Dictionary<int, GameObject>();

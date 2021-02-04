@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -44,6 +45,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	public bool screenGrab;
 	private bool voiceChatActive;
 	private const float HEIGHT_OFFSET = 1.9f;
+	private enum StatusMode {Team, Ally1, Ally2, Ally3};
+	private StatusMode currentStatusMode;
+	private bool statusOn;
+	private int updateIteration;
+	private int deleteIteration;
 
 	private bool initialized;
 
@@ -68,6 +74,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		// Find/load HUD components
 		// gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 		missionWaypoints = new ArrayList ();
+		statusOn = true;
+		deleteIteration = 7;
 
 		container.hitFlare.GetComponent<RawImage> ().enabled = false;
 		container.hitDir.GetComponent<RawImage> ().enabled = false;
@@ -151,7 +159,6 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			missionWaypoints.Add (m5);
 		} else if (gameController.currentMap == 2) {
 			UpdateAssaultModeIndHud(true);
-			container.vipHealthGroup.alpha = 1f;
 			GameObject m1 = GameObject.Instantiate (container.hudWaypoint);
 			m1.GetComponent<RawImage>().enabled = false;
 			m1.GetComponent<RectTransform> ().SetParent (container.waypointMarkers.transform);
@@ -196,6 +203,40 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	void HandleStatusPanels()
+	{
+		if (Input.GetKeyDown(KeyCode.Alpha9)) {
+			// Turn the statuses on/off
+			statusOn = !statusOn;
+			if (!statusOn) {
+				foreach (AllyHealthBar a in container.teamHealthPage) {
+					a.gameObject.SetActive(false);
+				}
+				foreach (AllyHealthBar a in container.allyHealthPage1) {
+					a.gameObject.SetActive(false);
+				}
+				foreach (AllyHealthBar a in container.allyHealthPage2) {
+					a.gameObject.SetActive(false);
+				}
+				foreach (AllyHealthBar a in container.allyHealthPage3) {
+					a.gameObject.SetActive(false);
+				}
+				container.statusHiddenText.text = "[9] SHOW STATUS";
+			} else {
+				container.statusHiddenText.text = "[9] HIDE STATUS";
+				RepopulateStatusForCurrentMode();
+			}
+		} else if (Input.GetKeyDown(KeyCode.Alpha0)) {
+			if (statusOn) {
+				SwitchStatusPage(true);
+			}
+		} else if (Input.GetKeyDown(KeyCode.Alpha8)) {
+			if (statusOn) {
+				SwitchStatusPage(false);
+			}
+		}
+	}
+
 	// Update is called once per frame
 	void Update () {
 		if (!initialized) {
@@ -214,8 +255,13 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			container.staminaBar.value = f;
 			// container.staminaPercentTxt.text = ((int)(f * 100f)) + "%";
 		}
+
+		HandleStatusPanels();
 		
-		HandleVipHealthBar();
+		if (statusOn) {
+			HandleAllyHealthBars();
+			HandleTeamHealthBars();
+		}
 
 		ToggleScoreboard (PlayerPreferences.playerPreferences.KeyWasPressed("Scoreboard", true));
 
@@ -261,14 +307,272 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	void HandleVipHealthBar() {
-		if (gameController.vipRef != null) {
-			container.vipHealthGroup.alpha = 1f;
-			int h = gameController.vipRef.GetComponent<NpcScript>().health;
-			container.vipHealthPercentTxt.text = h + "%";
-			container.vipHealthBar.value = (float)h / 100f;
-		} else {
-			container.vipHealthGroup.alpha = 0f;
+	void SwitchStatusPage(bool increase)
+	{
+		deleteIteration = 7;
+		if (currentStatusMode == StatusMode.Team) {
+			updateIteration = 0;
+			foreach (AllyHealthBar a in container.teamHealthPage) {
+				a.gameObject.SetActive(false);
+			}
+			if (increase) {
+				currentStatusMode = StatusMode.Ally1;
+			} else {
+				currentStatusMode = StatusMode.Ally3;
+			}
+		} else if (currentStatusMode == StatusMode.Ally1) {
+			updateIteration = 0;
+			foreach (AllyHealthBar a in container.allyHealthPage1) {
+				a.gameObject.SetActive(false);
+			}
+			if (increase) {
+				currentStatusMode = StatusMode.Ally2;
+			} else {
+				currentStatusMode = StatusMode.Team;
+			}
+		} else if (currentStatusMode == StatusMode.Ally2) {
+			updateIteration = 8;
+			foreach (AllyHealthBar a in container.allyHealthPage2) {
+				a.gameObject.SetActive(false);
+			}
+			if (increase) {
+				currentStatusMode = StatusMode.Ally3;
+			} else {
+				currentStatusMode = StatusMode.Ally1;
+			}
+		} else if (currentStatusMode == StatusMode.Ally3) {
+			updateIteration = 16;
+			foreach (AllyHealthBar a in container.allyHealthPage3) {
+				a.gameObject.SetActive(false);
+			}
+			if (increase) {
+				currentStatusMode = StatusMode.Team;
+			} else {
+				currentStatusMode = StatusMode.Ally2;
+			}
+		}
+
+		RepopulateStatusForCurrentMode();
+	}
+
+	void RepopulateStatusForCurrentMode()
+	{
+		if (currentStatusMode == StatusMode.Team) {
+			container.statusPageTitle.text = "TEAM STATUS";
+			foreach (AllyHealthBar a in container.teamHealthPage) {
+				if (a.viewId != -1) {
+					a.gameObject.SetActive(true);
+				}
+			}
+		} else if (currentStatusMode == StatusMode.Ally1) {
+			container.statusPageTitle.text = "ALLY STATUS 1";
+			foreach (AllyHealthBar a in container.allyHealthPage1) {
+				if (a.viewId != -1) {
+					a.gameObject.SetActive(true);
+				}
+			}
+		} else if (currentStatusMode == StatusMode.Ally2) {
+			container.statusPageTitle.text = "ALLY STATUS 2";
+			foreach (AllyHealthBar a in container.allyHealthPage2) {
+				if (a.viewId != -1) {
+					a.gameObject.SetActive(true);
+				}
+			}
+		} else if (currentStatusMode == StatusMode.Ally3) {
+			container.statusPageTitle.text = "ALLY STATUS 3";
+			foreach (AllyHealthBar a in container.allyHealthPage3) {
+				if (a.viewId != -1) {
+					a.gameObject.SetActive(true);
+				}
+			}
+		}
+	}
+
+	void HandleAllyHealthBars()
+	{
+		if (currentStatusMode == StatusMode.Ally1) {
+			int i = -1;
+			try {
+				i = gameController.npcList.Keys.ElementAt(updateIteration++);
+			} catch (Exception e) {
+				updateIteration = 0;
+			}
+			if (updateIteration > 7) {
+				updateIteration = 0;
+			}
+			// In case there are no NPCs
+			if (i != -1) {
+				NpcScript toUpdate = gameController.npcList[i].GetComponent<NpcScript>();
+				UpdateNpcSlot(i, toUpdate.npcName, toUpdate.health, 0);
+			}
+
+			// Loop back through current list
+			// Delete players that are no longer in the game
+			AllyHealthBar toDel = container.allyHealthPage1[deleteIteration--];
+			if (deleteIteration < 0) {
+				deleteIteration = 7;
+			}
+			if (toDel.viewId != -1 && !gameController.npcList.ContainsKey(toDel.viewId)) {
+				toDel.ResetData();
+			}
+		} else if (currentStatusMode == StatusMode.Ally2) {
+			if (gameController.npcList.Count <= 8) {
+				return;
+			}
+			
+			int i = -1;
+			try {
+				i = gameController.npcList.Keys.ElementAt(updateIteration++);
+			} catch (Exception e) {
+				updateIteration = 8;
+			}
+			if (updateIteration > 15) {
+				updateIteration = 8;
+			}
+			// In case there are no NPCs
+			if (i != -1) {
+				NpcScript toUpdate = gameController.npcList[i].GetComponent<NpcScript>();
+				UpdateNpcSlot(i, toUpdate.npcName, toUpdate.health, 1);
+			}
+
+			// Loop back through current list
+			// Delete players that are no longer in the game
+			AllyHealthBar toDel = container.allyHealthPage2[deleteIteration--];
+			if (deleteIteration < 0) {
+				deleteIteration = 7;
+			}
+			if (toDel.viewId != -1 && !gameController.npcList.ContainsKey(toDel.viewId)) {
+				toDel.ResetData();
+			}
+		} else if (currentStatusMode == StatusMode.Ally3) {
+			if (gameController.npcList.Count <= 16) {
+				return;
+			}
+
+			int i = -1;
+			try {
+				i = gameController.npcList.Keys.ElementAt(updateIteration++);
+			} catch (Exception e) {
+				updateIteration = 16;
+			}
+			if (updateIteration > 23) {
+				updateIteration = 16;
+			}
+			// In case there are no NPCs
+			if (i != -1) {
+				NpcScript toUpdate = gameController.npcList[i].GetComponent<NpcScript>();
+				UpdateNpcSlot(i, toUpdate.npcName, toUpdate.health, 2);
+			}
+
+			// Loop back through current list
+			// Delete players that are no longer in the game
+			AllyHealthBar toDel = container.allyHealthPage3[deleteIteration--];
+			if (deleteIteration < 0) {
+				deleteIteration = 7;
+			}
+			if (toDel.viewId != -1 && !gameController.npcList.ContainsKey(toDel.viewId)) {
+				toDel.ResetData();
+			}
+		}
+	}
+
+	void HandleTeamHealthBars()
+	{
+		// If player health list is active
+		if (currentStatusMode == StatusMode.Team) {
+			// Loop through player list
+			int i = 0;
+			try {
+				i = GameControllerScript.playerList.Keys.ElementAt(updateIteration++);
+			} catch (Exception e) {
+				updateIteration = 0;
+			}
+			if (updateIteration > 7) {
+				updateIteration = 0;
+			}
+			PlayerStat toUpdate = GameControllerScript.playerList[i];
+			if (toUpdate.actorId != PhotonNetwork.LocalPlayer.ActorNumber) {
+				// Add player names and health that aren't in the list
+				// Update player health that is already on the list
+				UpdatePlayerSlot(i, toUpdate.name, toUpdate.objRef.GetComponent<PlayerActionScript>().health);
+			}
+
+			// Loop back through current list
+			// Delete players that are no longer in the game
+			AllyHealthBar toDel = container.teamHealthPage[deleteIteration--];
+			if (deleteIteration < 0) {
+				deleteIteration = 7;
+			}
+			if (toDel.viewId != -1 && !GameControllerScript.playerList.ContainsKey(toDel.viewId)) {
+				toDel.ResetData();
+			}
+		}
+	}
+
+	void UpdatePlayerSlot(int viewId, string playerName, int health)
+	{
+		AllyHealthBar lastEmptySlot = null;
+		foreach (AllyHealthBar a in container.teamHealthPage) {
+			if (lastEmptySlot == null && a.viewId == -1) {
+				lastEmptySlot = a;
+			} else if (a.viewId == viewId) {
+				a.SetHealth(health);
+				return;
+			}
+		}
+		// Else, not currently in list, so add it
+		if (lastEmptySlot != null) {
+			lastEmptySlot.gameObject.SetActive(true);
+			lastEmptySlot.InitData(viewId, playerName, health);
+		}
+	}
+
+	void UpdateNpcSlot(int viewId, string npcName, int health, int page) {
+		if (page == 0) {
+			AllyHealthBar lastEmptySlot = null;
+			foreach (AllyHealthBar a in container.allyHealthPage1) {
+				if (lastEmptySlot == null && (a.viewId == -1 || a.healthSlider.value == 0f)) {
+					lastEmptySlot = a;
+				} else if (a.viewId == viewId) {
+					a.SetHealth(health);
+					return;
+				}
+			}
+			// Else, not currently in list, so add it
+			if (lastEmptySlot != null) {
+				lastEmptySlot.gameObject.SetActive(true);
+				lastEmptySlot.InitData(viewId, npcName, health);
+			}
+		} else if (page == 1) {
+			AllyHealthBar lastEmptySlot = null;
+			foreach (AllyHealthBar a in container.allyHealthPage2) {
+				if (lastEmptySlot == null && (a.viewId == -1 || a.healthSlider.value == 0f)) {
+					lastEmptySlot = a;
+				} else if (a.viewId == viewId) {
+					a.SetHealth(health);
+					return;
+				}
+			}
+			// Else, not currently in list, so add it
+			if (lastEmptySlot != null) {
+				lastEmptySlot.gameObject.SetActive(true);
+				lastEmptySlot.InitData(viewId, npcName, health);
+			}
+		} else if (page == 2) {
+			AllyHealthBar lastEmptySlot = null;
+			foreach (AllyHealthBar a in container.allyHealthPage3) {
+				if (lastEmptySlot == null && (a.viewId == -1 || a.healthSlider.value == 0f)) {
+					lastEmptySlot = a;
+				} else if (a.viewId == viewId) {
+					a.SetHealth(health);
+					return;
+				}
+			}
+			// Else, not currently in list, so add it
+			if (lastEmptySlot != null) {
+				lastEmptySlot.gameObject.SetActive(true);
+				lastEmptySlot.InitData(viewId, npcName, health);
+			}
 		}
 	}
 
