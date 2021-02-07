@@ -31,6 +31,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     private const float NINETY_DAY_COST_MULTIPLIER = 90f * (1f - (COST_MULT_FRACTION * 3f));
     private const float PERMANENT_COST_MULTIPLIER = 365f;
 	public Connexion connexion;
+	public FriendsMessenger friendsMessenger;
 	private AudioSourceModifier[] sceneAudioSources;
 
 	public GameObject itemDescriptionPopupRef;

@@ -50,6 +50,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     public bool inventoryDataModifyLegalFlag;
     public PlayerInfo info;
     public PlayerInventory inventory;
+    public ObservableDict<string, FriendData> friendsList;
     public ModInfo primaryModInfo;
     public ModInfo secondaryModInfo;
     public ModInfo supportModInfo;
@@ -72,6 +73,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             this.primaryModInfo = new ModInfo();
             this.secondaryModInfo = new ModInfo();
             this.supportModInfo = new ModInfo();
+            friendsList = new ObservableDict<string, FriendData>();
             playerdata = this;
 
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/loggedIn").ValueChanged += HandleForceLogoutEvent;
@@ -90,6 +92,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedTop").ValueChanged += HandleTopChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildAdded += HandleBanEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildChanged += HandleBanEvent;
+
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/friends").ChildAdded += HandleFriendAdded;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/friends").ChildRemoved += HandleFriendRemoved;
 
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/facewear").ChildAdded += HandleInventoryAdded;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/headgear").ChildAdded += HandleInventoryAdded;
@@ -123,6 +128,8 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
             PlayerData.playerdata.info.PropertyChanged += OnPlayerInfoChange;
+            friendsList.CollectionChanged += OnPlayerInfoChange;
+            friendsList.PropertyChanged += OnPlayerInfoChange;
         }
         else if (playerdata != this)
         {
@@ -195,6 +202,22 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
     protected virtual void OnPlayerInfoChange(object sender, PropertyChangedEventArgs e) {
         // This should never be triggered unless called from the listeners. Therefore if it is, we need to ban the player
+        if (!playerDataModifyLegalFlag) {
+            // Ban player here
+            Dictionary<string, object> inputData = new Dictionary<string, object>();
+            inputData["callHash"] = DAOScript.functionsCallHash;
+            inputData["uid"] = AuthScript.authHandler.user.UserId;
+            inputData["duration"] = "-1";
+            inputData["reason"] = "Illegal modification of user data.";
+
+            HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("banPlayer");
+            func.CallAsync(inputData).ContinueWith((task) => {
+                TriggerEmergencyExit("You've been banned for the following reason:\nIllegal modification of user data.\nIf you feel this was done in error, you can dispute it by opening a ticket at \"www.koobando.com/support\".");
+            });
+        }
+    }
+
+    protected virtual void OnPlayerInfoChange(object sender, NotifyCollectionChangedEventArgs e) {
         if (!playerDataModifyLegalFlag) {
             // Ban player here
             Dictionary<string, object> inputData = new Dictionary<string, object>();
@@ -539,6 +562,8 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 if (results["status"].ToString() == "200") {
                     Dictionary<object, object> playerDataSnap = (Dictionary<object, object>)results["playerData"];
                     Dictionary<object, object> inventorySnap = (Dictionary<object, object>)results["inventory"];
+                    Dictionary<object, object> friendsUsernameMap = (Dictionary<object, object>)results["friendUsernameMap"];
+                    List<object> friendData = (List<object>)results["friendData"];
                     info.DefaultChar = playerDataSnap["defaultChar"].ToString();
                     info.DefaultWeapon = playerDataSnap["defaultWeapon"].ToString();
                     info.Playername = playerDataSnap["username"].ToString();
@@ -641,6 +666,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         supportModInfo.SightId = "";
                     }
                     LoadInventory(inventorySnap);
+                    LoadFriends(friendsUsernameMap, friendData);
                     List<object> itemsExpired = (List<object>)results["itemsExpired"];
                     if (itemsExpired.Count > 0) {
                         titleRef.TriggerExpirationPopup(itemsExpired);
@@ -855,6 +881,43 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 }
             }
         }
+    }
+
+    void LoadFriends(Dictionary<object, object> friendsUsernamesMap, List<object> friendsDetails) {
+        playerDataModifyLegalFlag = true;
+        foreach (object f in friendsDetails) {
+            Dictionary<object, object> d = (Dictionary<object, object>)f;
+            // Extract the friend request ID
+            string friendRequestId = d["friendRequestId"].ToString();
+            // Get details
+            Dictionary<object, object> friendRequest = (Dictionary<object, object>)d["details"];
+            string friendId = friendRequest["requestor"].ToString() == AuthScript.authHandler.user.UserId ? friendRequest["requestee"].ToString() : friendRequest["requestor"].ToString();
+            int status = Convert.ToInt32(friendRequest["status"]);
+            string blocker = null;
+            if (friendRequest.ContainsKey("blocker")) {
+                blocker = friendRequest["blocker"].ToString();
+            }
+            // Create friend data
+            FriendData fd = new FriendData();
+            fd.PropertyChanged += OnPlayerInfoChange;
+            fd.FriendRequestId = friendRequestId;
+            fd.FriendId = friendId;
+            fd.FriendUsername = friendsUsernamesMap[friendId].ToString();
+            fd.Status = status;
+            fd.Blocker = blocker;
+
+            // Add update callback
+            DAOScript.dao.dbRef.Child("fteam_ai/friends/" + friendRequestId).ChildChanged += HandleFriendUpdate;
+
+            // Add to friend list
+            PlayerData.playerdata.friendsList.Add(friendRequestId, fd);
+
+            // Add to UI
+            if (titleRef != null) {
+                titleRef.friendsMessenger.EnqueueMessengerEntryCreation(friendRequestId, fd.FriendUsername);
+            }
+        }
+        playerDataModifyLegalFlag = false;
     }
 
     public void LoadInventory(Dictionary<object, object> snapshot) {
@@ -2286,6 +2349,126 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
     }
 
+    void HandleFriendAdded(object sender, ChildChangedEventArgs args)
+    {
+        if (bodyReference == null) return;
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+
+        // When friend item has been added, also add that item to this game session
+        if (args.Snapshot.Value != null) {
+            playerDataModifyLegalFlag = true;
+            
+            // Extract the friend request ID
+            string friendRequestId = args.Snapshot.Key;
+            // Get details
+            Dictionary<object, object> friendRequest = (Dictionary<object, object>)args.Snapshot.Value;
+            string friendId = friendRequest["requestor"].ToString() == AuthScript.authHandler.user.UserId ? friendRequest["requestee"].ToString() : friendRequest["requestor"].ToString();
+            int status = Convert.ToInt32(friendRequest["status"]);
+            string blocker = null;
+            if (friendRequest.ContainsKey("blocker")) {
+                blocker = friendRequest["blocker"].ToString();
+            }
+            // Create friend data
+            FriendData fd = new FriendData();
+
+            Dictionary<string, object> inputData = new Dictionary<string, object>();
+            inputData["callHash"] = DAOScript.functionsCallHash;
+            inputData["uid"] = friendId;
+
+            HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("getUsernameForId");
+            func.CallAsync(inputData).ContinueWith((task) => {
+                if (task.IsFaulted) {
+                    Debug.LogError("Friend [" + friendId + "] could not be added because no username was found.");
+                } else {
+                    Dictionary<object, object> results = (Dictionary<object, object>)task.Result.Data;
+                    if (results["status"].ToString() == "200") {
+                        fd.FriendUsername = results["message"].ToString();
+
+                        fd.PropertyChanged += OnPlayerInfoChange;
+                        fd.FriendRequestId = friendRequestId;
+                        fd.FriendId = friendId;
+                        fd.Status = status;
+                        fd.Blocker = blocker;
+
+                        // Add update callback
+                        DAOScript.dao.dbRef.Child("fteam_ai/friends/" + friendRequestId).ChildChanged += HandleFriendUpdate;
+
+                        // Add to friend list
+                        PlayerData.playerdata.friendsList.Add(friendRequestId, fd);
+
+                        // Add to UI
+                        if (titleRef != null) {
+                            titleRef.friendsMessenger.EnqueueMessengerEntryCreation(friendRequestId, fd.FriendUsername);
+                        }
+                    } else {
+                        Debug.LogError("Friend [" + friendId + "] could not be added because no username was found.");
+                    }
+                }
+                playerDataModifyLegalFlag = false;
+            });
+        }
+    }
+
+    void HandleFriendRemoved(object sender, ChildChangedEventArgs args)
+    {
+        if (bodyReference == null) return;
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+
+        // When friend item has been added, also add that item to this game session
+        if (args.Snapshot.Value != null) {
+            playerDataModifyLegalFlag = true;
+            
+            string key = args.Snapshot.Key;
+            FriendData fd = PlayerData.playerdata.friendsList[key];
+            fd.PropertyChanged -= OnPlayerInfoChange;
+            PlayerData.playerdata.friendsList.Remove(key);
+            if (titleRef != null) {
+                titleRef.friendsMessenger.DeleteMessengerEntry(key);
+            }
+
+            playerDataModifyLegalFlag = false;
+        }
+    }
+
+    void HandleFriendUpdate(object sender, ChildChangedEventArgs args)
+    {
+        if (bodyReference == null) return;
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+
+        // When friend item has been added, also add that item to this game session
+        if (args.Snapshot.Value != null) {
+            playerDataModifyLegalFlag = true;
+            
+            string key = args.Snapshot.Key;
+            Dictionary<object, object> newVals = (Dictionary<object, object>)args.Snapshot.Value;
+            FriendData fd = PlayerData.playerdata.friendsList[key];
+            fd.Status = Convert.ToInt32(newVals["status"]);
+            string blocker = null;
+            if (newVals.ContainsKey("blocker")) {
+                blocker = newVals["blocker"].ToString();
+            }
+            fd.Blocker = blocker;
+            if (titleRef != null) {
+                MessengerEntryScript m = titleRef.friendsMessenger.GetMessengerEntry(key);
+                m.UpdateFriendStatus();
+            }
+
+            playerDataModifyLegalFlag = false;
+        }
+    }
+
     IEnumerator EmergencyExitGame() {
         yield return new WaitForSeconds(5f);
         Dictionary<string, object> inputData = new Dictionary<string, object>();
@@ -2615,7 +2798,7 @@ public class PlayerInventory {
     }
 }
 
-public class ModInfo
+public class ModInfo : INotifyPropertyChanged
 {
     private string suppressorId;
     public string SuppressorId {
@@ -2679,7 +2862,7 @@ public class ModInfo
     public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
 }
 
-public class WeaponData {
+public class WeaponData : INotifyPropertyChanged {
     private string acquireDate;
     public string AcquireDate {
         get { return acquireDate; }
@@ -2733,7 +2916,7 @@ public class WeaponData {
     public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
 }
 
-public class EquipmentData {
+public class EquipmentData : INotifyPropertyChanged {
     private string acquireDate;
     public string AcquireDate {
         get { return acquireDate; }
@@ -2757,7 +2940,7 @@ public class EquipmentData {
     public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
 }
 
-public class ModData {
+public class ModData : INotifyPropertyChanged {
     private string name;
     public string Name {
         get { return name; }
@@ -2801,7 +2984,7 @@ public class ModData {
     public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
 }
 
-public class ArmorData {
+public class ArmorData : INotifyPropertyChanged {
     private string acquireDate;
     public string AcquireDate {
         get { return acquireDate; }
@@ -2825,7 +3008,7 @@ public class ArmorData {
     public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
 }
 
-public class CharacterData {
+public class CharacterData : INotifyPropertyChanged {
     private string acquireDate;
     public string AcquireDate {
         get { return acquireDate; }
@@ -2843,6 +3026,60 @@ public class CharacterData {
         { 
             duration = value;
             PropertyChanged(this, new PropertyChangedEventArgs ("duration"));
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
+}
+
+public class FriendData : INotifyPropertyChanged {
+    private string friendRequestId;
+    public string FriendRequestId {
+        get { return friendRequestId; }
+        set
+        {
+            friendRequestId = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("friendRequestId"));
+        }
+    }
+
+    private string friendId;
+    public string FriendId {
+        get { return friendId; }
+        set
+        {
+            friendId = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("friendId"));
+        }
+    }
+
+    private string friendUsername;
+    public string FriendUsername {
+        get { return friendUsername; }
+        set
+        {
+            friendUsername = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("friendUsername"));
+        }
+    }
+
+    private int status;
+    public int Status {
+        get { return status; }
+        set
+        {
+            status = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("status"));
+        }
+    }
+
+    private string blocker;
+    public string Blocker {
+        get { return blocker; }
+        set
+        {
+            blocker = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("blocker"));
         }
     }
 
