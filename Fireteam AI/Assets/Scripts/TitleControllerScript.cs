@@ -81,9 +81,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public ModalWindowManager makePurchasePopup;
 	public ModalWindowManager roomPasswordPopup;
 	public ModalWindowManager roomEnterPasswordPopup;
+	public ModalWindowManager addFriendPopup;
 	public BlurManager blurManager;
 	public TMP_InputField roomPasswordInput;
 	public TMP_InputField roomEnterPasswordInput;
+	public TMP_InputField addFriendInput;
 	// Block screen used for blocking player interaction with screen while something is going on in the backgronud (example: if a transaction is in progress)
 	private bool blockScreenTrigger;
 	public GameObject blockScreen;
@@ -221,6 +223,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public bool triggerMakePurchasePopupFlag;
 	public bool triggerRoomPasswordChangePopupFlag;
 	public bool triggerRoomPasswordEnterPopupFlag;
+	public bool triggerAddFriendPopupFlag;
 	public string alertPopupMessage;
 	public string confirmPopupMessage;
 	private string roomEnteringName;
@@ -390,6 +393,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (triggerRoomPasswordChangePopupFlag) {
 			triggerRoomPasswordChangePopupFlag = false;
 			roomPasswordPopup.ModalWindowIn();
+		}
+		if (triggerAddFriendPopupFlag) {
+			triggerAddFriendPopupFlag = false;
+			addFriendPopup.ModalWindowIn();
 		}
 		if (alertPopup.isOn || confirmPopup.isOn || keyBindingsPopup.isOn || makePurchasePopup.isOn && (PlayerData.playerdata.bodyReference != null && PlayerData.playerdata.bodyReference.activeInHierarchy)) {
 			HideAll(false);
@@ -566,6 +573,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void TriggerRoomPasswordChangePopup()
 	{
 		triggerRoomPasswordChangePopupFlag = true;
+	}
+
+	public void TriggerAddFriendPopup()
+	{
+		triggerAddFriendPopupFlag = true;
 	}
 
 	public void TriggerRoomPasswordEnterPopup(string roomName)
@@ -3593,6 +3605,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	public void OnAddFriend()
+	{
+		friendsMessenger.AddFriend(addFriendInput.text);
+	}
+
 	public void CloseRoomPasswordEnter()
 	{
 		roomEnterPasswordPopup.ModalWindowOut();
@@ -3602,6 +3619,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void CloseRoomPasswordChange()
 	{
 		roomPasswordPopup.ModalWindowOut();
+		blurManager.BlurOutAnim();
+	}
+
+	public void CloseAddFriend()
+	{
+		addFriendPopup.ModalWindowOut();
 		blurManager.BlurOutAnim();
 	}
 

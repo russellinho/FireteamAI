@@ -7,6 +7,7 @@ using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 
 public class FriendsMessenger : MonoBehaviour
 {
+    public QuickActionMenu quickActionMenu;
     private Queue<QueueData> messengerEntryCreateQueue;
     public TitleControllerScript titleController;
     public Transform friendsListEntries;
@@ -26,27 +27,121 @@ public class FriendsMessenger : MonoBehaviour
         messengerEntryCreateQueue = new Queue<QueueData>();
     }
 
-    public void AddFriend()
+    public void OnClickAddFriend()
     {
-        // Dictionary<string, object> inputData = new Dictionary<string, object>();
-        // inputData["callHash"] = DAOScript.functionsCallHash;
-		// inputData["uid"] = AuthScript.authHandler.user.UserId;
-        // inputData["equipped" + type] = weaponName;
+        titleController.TriggerAddFriendPopup();
+    }
+
+    public void AddFriend(string username)
+    {
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["requestUsername"] = username;
         
-        // ts.TriggerBlockScreen(true);
-		// HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("savePlayerData");
-		// func.CallAsync(inputData).ContinueWith((taskA) => {
-        //     if (taskA.IsFaulted) {
-        //         PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-        //     } else {
-        //         Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-        //         if (results["status"].ToString() == "200") {
-        //             Debug.Log("Save successful.");
-        //         } else {
-        //             PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
-        //         }
-        //     }
-        // });
+        titleController.TriggerBlockScreen(true);
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("sendFriendRequest");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() == "401") {
+                    titleController.TriggerAlertPopup("USER [" + username + "] IS ALREADY YOUR FRIEND OR A REQUEST WITH THEM IS PENDING.");
+                } else if (results["status"].ToString() != "200") {
+                    titleController.TriggerAlertPopup("USER [" + username + "] DOES NOT EXIST!");
+                }
+            }
+            titleController.TriggerBlockScreen(false);
+        });
+    }
+
+    public void RemoveFriend(string friendRequestId)
+    {
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["friendRequestId"] = friendRequestId;
+        
+        titleController.TriggerBlockScreen(true);
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("deleteFriendRequest");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() != "200") {
+                    titleController.TriggerAlertPopup("USER IS NOT ON YOUR FRIENDS LIST!");
+                }
+            }
+            titleController.TriggerBlockScreen(false);
+        });
+    }
+
+    public void AcceptFriendRequest(string friendRequestId)
+    {
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["friendRequestId"] = friendRequestId;
+        
+        titleController.TriggerBlockScreen(true);
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("acceptFriendRequest");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() != "200") {
+                    titleController.TriggerAlertPopup("USER IS NOT ON YOUR FRIENDS LIST!");
+                }
+            }
+            titleController.TriggerBlockScreen(false);
+        });
+    }
+
+    public void BlockFriend(string friendRequestId)
+    {
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["friendRequestId"] = friendRequestId;
+        
+        titleController.TriggerBlockScreen(true);
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("blockFriend");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() != "200") {
+                    titleController.TriggerAlertPopup("USER IS NOT ON YOUR FRIENDS LIST!");
+                }
+            }
+            titleController.TriggerBlockScreen(false);
+        });
+    }
+
+    public void UnblockFriend(string friendRequestId)
+    {
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["friendRequestId"] = friendRequestId;
+        
+        titleController.TriggerBlockScreen(true);
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("unblockFriend");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() != "200") {
+                    titleController.TriggerAlertPopup("USER IS NOT ON YOUR FRIENDS LIST!");
+                }
+            }
+            titleController.TriggerBlockScreen(false);
+        });
     }
 
     void Update()
@@ -83,15 +178,10 @@ public class FriendsMessenger : MonoBehaviour
 
     public void CreateMessengerEntry(string friendRequestId, string username)
     {
-        Debug.Log("1");
         GameObject o = GameObject.Instantiate(messengerEntry, friendsListEntries);
-        Debug.Log("2");
         MessengerEntryScript m = o.GetComponent<MessengerEntryScript>();
-        Debug.Log("3");
         messengerEntries[friendRequestId] = m;
-        Debug.Log("4");
         m.InitEntry(this, friendRequestId, username);
-        Debug.Log("5");
     }
 
     public void ToggleMessenger()
@@ -99,6 +189,7 @@ public class FriendsMessenger : MonoBehaviour
         if (messengerMain.activeInHierarchy) {
             messengerMain.SetActive(false);
             messengerChatBox.SetActive(false);
+            quickActionMenu.gameObject.SetActive(false);
         } else {
             messengerMain.SetActive(true);
             messengerChatBox.SetActive(chatBoxOpen);

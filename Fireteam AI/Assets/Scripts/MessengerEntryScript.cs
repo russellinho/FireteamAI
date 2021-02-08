@@ -22,6 +22,9 @@ public class MessengerEntryScript : MonoBehaviour
 
     public void UpdateFriendStatus()
     {
+        if (friendsMessenger.quickActionMenu.GetActingOnEntry() == this) {
+            friendsMessenger.quickActionMenu.gameObject.SetActive(false);
+        }
         int newStatus = PlayerData.playerdata.friendsList[friendRequestId].Status;
         if (newStatus == 0) {
             this.status.text = "Offline";
@@ -56,4 +59,14 @@ public class MessengerEntryScript : MonoBehaviour
         gameObject.SetActive(b);
     }
 
+    public void OnEntryClick()
+    {
+        friendsMessenger.quickActionMenu.InitButtons(PlayerData.playerdata.friendsList[friendRequestId].Status);
+        friendsMessenger.quickActionMenu.SetActingOnEntry(this);
+        friendsMessenger.quickActionMenu.gameObject.SetActive(true);
+        // Move menu to mouse position
+        friendsMessenger.quickActionMenu.UpdatePosition();
+    }
+
 }
+ 
