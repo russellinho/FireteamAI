@@ -50,7 +50,11 @@ public class FriendsMessenger : MonoBehaviour
 
     public void OnClickAddFriend()
     {
-        titleController.TriggerAddFriendPopup();
+        if (PlayerData.playerdata.friendsList.Keys.Count < MAX_FRIENDS) {
+            titleController.TriggerAddFriendPopup();
+        } else {
+            titleController.TriggerAlertPopup("YOU HAVE ALREADY REACHED THE MAXIMUM NUMBER OF ALLOWED FRIENDS (40).");
+        }
     }
 
     public void AddFriend(string username)
