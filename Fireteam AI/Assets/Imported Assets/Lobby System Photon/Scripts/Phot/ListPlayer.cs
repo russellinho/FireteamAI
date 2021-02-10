@@ -312,6 +312,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				LoadingScreen();
 			}
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
+			titleController.GetComponent<TitleControllerScript>().friendsMessenger.CacheCurrentChat();
 			PhotonNetwork.LoadLevel(level);
 			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
 				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;
@@ -339,6 +340,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 			string level = GetMapShortenedNameForMapName((string)PhotonNetwork.CurrentRoom.CustomProperties["mapName"]);
 			string myTeam = ((string)PhotonNetwork.LocalPlayer.CustomProperties["team"] == "red" ? "_Red" : "_Blue");
+			titleController.GetComponent<TitleControllerScript>().friendsMessenger.CacheCurrentChat();
 			PhotonNetwork.LoadLevel (level + myTeam);
 			if (PhotonNetwork.LocalPlayer.IsMasterClient) {
 				PhotonNetwork._AsyncLevelLoadingOperation.allowSceneActivation = true;

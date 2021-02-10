@@ -439,7 +439,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6327187509928898577}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2557516942509912741}
+        m_MethodName: OnEntryClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &6326604415531871451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -637,9 +648,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4fa7aebbb4034abc8cd1c8f03be0ef7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  friendsMessenger: {fileID: 0}
   nametag: {fileID: 6326864261567193253}
   status: {fileID: 6326569924353351753}
+  border: {fileID: 6326876466319697675}
+  glow: {fileID: 6326971664506113955}
 --- !u!1 &6223564733985970427
 GameObject:
   m_ObjectHideFlags: 0
@@ -820,7 +832,7 @@ MonoBehaviour:
   UIManagerAsset: {fileID: 11400000, guid: ed935159a86a1be4cbc1c44848b24daf, type: 2}
   imageObject: {fileID: 6326971664506113955}
   keepAlphaValue: 1
-  useCustomColor: 0
+  useCustomColor: 1
   colorType: 0
 --- !u!114 &6326461629977322175
 MonoBehaviour:
@@ -932,7 +944,7 @@ MonoBehaviour:
   UIManagerAsset: {fileID: 11400000, guid: ed935159a86a1be4cbc1c44848b24daf, type: 2}
   imageObject: {fileID: 6326876466319697675}
   keepAlphaValue: 1
-  useCustomColor: 0
+  useCustomColor: 1
   colorType: 0
 --- !u!1 &6223734460338178271
 GameObject:

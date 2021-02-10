@@ -51,6 +51,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     public PlayerInfo info;
     public PlayerInventory inventory;
     public ObservableDict<string, FriendData> friendsList;
+    public Dictionary<string, CachedMessage> cachedConversations;
     public ModInfo primaryModInfo;
     public ModInfo secondaryModInfo;
     public ModInfo supportModInfo;
@@ -74,6 +75,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             this.secondaryModInfo = new ModInfo();
             this.supportModInfo = new ModInfo();
             friendsList = new ObservableDict<string, FriendData>();
+            cachedConversations = new Dictionary<string, CachedMessage>();
             playerdata = this;
 
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/loggedIn").ValueChanged += HandleForceLogoutEvent;
@@ -242,6 +244,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             string characterPrefabName = GetCharacterPrefabName();
             SpawnPlayer(characterPrefabName, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0]);
             AskOthersForThemselves();
+            if (PlayerData.playerdata.globalChatClient != null) {
+                PlayerData.playerdata.globalChatClient.UpdateStatus("IN GAME");
+            }
             // PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
             //     characterPrefabName,
             //     Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
@@ -251,6 +256,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             string characterPrefabName = GetCharacterPrefabName();
             SpawnPlayer(characterPrefabName, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1]);
             AskOthersForThemselves();
+            if (PlayerData.playerdata.globalChatClient != null) {
+                PlayerData.playerdata.globalChatClient.UpdateStatus("IN GAME");
+            }
             // PlayerData.playerdata.inGamePlayerReference = PhotonNetwork.Instantiate(
             //     characterPrefabName,
             //     Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1],
@@ -283,6 +291,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     // LoadInventory();
                 }
                 titleRef.SetPlayerStatsForTitle();
+                if (PlayerData.playerdata.globalChatClient != null) {
+                    PlayerData.playerdata.globalChatClient.UpdateStatus("ONLINE");
+                }
             }
         }
 
@@ -885,13 +896,16 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
     void LoadFriends(Dictionary<object, object> friendsUsernamesMap, List<object> friendsDetails) {
         playerDataModifyLegalFlag = true;
+        List<string> usernameList = new List<string>();
         foreach (object f in friendsDetails) {
             Dictionary<object, object> d = (Dictionary<object, object>)f;
             // Extract the friend request ID
             string friendRequestId = d["friendRequestId"].ToString();
             // Get details
             Dictionary<object, object> friendRequest = (Dictionary<object, object>)d["details"];
-            string friendId = friendRequest["requestor"].ToString() == AuthScript.authHandler.user.UserId ? friendRequest["requestee"].ToString() : friendRequest["requestor"].ToString();
+            string requestor = friendRequest["requestor"].ToString();
+            string requestee = friendRequest["requestee"].ToString();
+            string friendId = requestor == AuthScript.authHandler.user.UserId ? requestee : requestor;
             int status = Convert.ToInt32(friendRequest["status"]);
             string blocker = null;
             if (friendRequest.ContainsKey("blocker")) {
@@ -904,19 +918,25 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             fd.FriendId = friendId;
             fd.FriendUsername = friendsUsernamesMap[friendId].ToString();
             fd.Status = status;
+            fd.Requestee = requestee;
+            fd.Requestor = requestor;
             fd.Blocker = blocker;
 
             // Add update callback
             DAOScript.dao.dbRef.Child("fteam_ai/friends/" + friendRequestId).ChildChanged += HandleFriendUpdate;
 
             // Add to friend list
+            usernameList.Add(fd.FriendUsername);
             PlayerData.playerdata.friendsList.Add(friendRequestId, fd);
 
             // Add to UI
             if (titleRef != null) {
-                titleRef.friendsMessenger.EnqueueMessengerEntryCreation(friendRequestId, fd.FriendUsername);
+                if (status == 2 && blocker == AuthScript.authHandler.user.UserId) {
+                    titleRef.friendsMessenger.EnqueueMessengerEntryCreation(friendRequestId, fd.FriendUsername);
+                }
             }
         }
+        globalChatClient.AddStatusListenersToFriends(usernameList);
         playerDataModifyLegalFlag = false;
     }
 
@@ -2366,7 +2386,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             string friendRequestId = args.Snapshot.Key;
             // Get details
             Dictionary<object, object> friendRequest = (Dictionary<object, object>)args.Snapshot.Value;
-            string friendId = friendRequest["requestor"].ToString() == AuthScript.authHandler.user.UserId ? friendRequest["requestee"].ToString() : friendRequest["requestor"].ToString();
+            string requestor = friendRequest["requestor"].ToString();
+            string requestee = friendRequest["requestee"].ToString();
+            string friendId = requestor == AuthScript.authHandler.user.UserId ? requestee : requestor;
             int status = Convert.ToInt32(friendRequest["status"]);
             string blocker = null;
             if (friendRequest.ContainsKey("blocker")) {
@@ -2392,17 +2414,22 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         fd.FriendRequestId = friendRequestId;
                         fd.FriendId = friendId;
                         fd.Status = status;
+                        fd.Requestor = requestor;
+                        fd.Requestee = requestee;
                         fd.Blocker = blocker;
 
                         // Add update callback
                         DAOScript.dao.dbRef.Child("fteam_ai/friends/" + friendRequestId).ChildChanged += HandleFriendUpdate;
 
                         // Add to friend list
+                        globalChatClient.AddStatusListenersToFriends(new List<string>(){fd.FriendUsername});
                         PlayerData.playerdata.friendsList.Add(friendRequestId, fd);
 
                         // Add to UI
                         if (titleRef != null) {
-                            titleRef.friendsMessenger.EnqueueMessengerEntryCreation(friendRequestId, fd.FriendUsername);
+                            if (status == 2 && blocker == AuthScript.authHandler.user.UserId) {
+                                titleRef.friendsMessenger.EnqueueMessengerEntryCreation(friendRequestId, fd.FriendUsername);
+                            }
                         }
                     } else {
                         Debug.LogError("Friend [" + friendId + "] could not be added because no username was found.");
@@ -3073,6 +3100,26 @@ public class FriendData : INotifyPropertyChanged {
         }
     }
 
+    private string requestor;
+    public string Requestor {
+        get { return requestor; }
+        set
+        {
+            requestor = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("requestor"));
+        }
+    }
+
+    private string requestee;
+    public string Requestee {
+        get { return requestee; }
+        set
+        {
+            requestee = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("requestee"));
+        }
+    }
+
     private string blocker;
     public string Blocker {
         get { return blocker; }
@@ -3094,5 +3141,15 @@ public class Rank {
         this.name = name;
         this.minExp = minExp;
         this.maxExp = maxExp;
+    }
+}
+
+public class CachedMessage {
+    public string cachedMessages;
+    public int previousMessageCount;
+    public CachedMessage()
+    {
+        cachedMessages = "";
+        previousMessageCount = 0;
     }
 }

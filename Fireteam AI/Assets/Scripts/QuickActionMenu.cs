@@ -46,16 +46,32 @@ public class QuickActionMenu : MonoBehaviour
         HandleClick();
     }
 
-    public void InitButtons(int status)
+    public void InitButtons(int status, bool online, string requestor, string requestee)
     {
+        sendMessageBtn.gameObject.SetActive(false);
+        joinBtn.gameObject.SetActive(false);
+        removeFriendBtn.gameObject.SetActive(false);
+        blockBtn.gameObject.SetActive(false);
+        unblockBtn.gameObject.SetActive(false);
+        acceptFriendBtn.gameObject.SetActive(false);
+        declineFriendBtn.gameObject.SetActive(false);
+
         if (status == 0) {
-
+            if (AuthScript.authHandler.user.UserId == requestee) {
+                acceptFriendBtn.gameObject.SetActive(true);
+                declineFriendBtn.gameObject.SetActive(true);
+            } else {
+                removeFriendBtn.gameObject.SetActive(true);
+            }
         } else if (status == 1) {
-            // If online
-
-            // If offline
+            removeFriendBtn.gameObject.SetActive(true);
+            blockBtn.gameObject.SetActive(true);
+            if (online) {
+                sendMessageBtn.gameObject.SetActive(true);
+                joinBtn.gameObject.SetActive(true);
+            }
         } else if (status == 2) {
-
+            unblockBtn.gameObject.SetActive(true);
         }
     }
 
@@ -71,14 +87,13 @@ public class QuickActionMenu : MonoBehaviour
 
     public void OnSendMessageButtonClicked()
     {
-        // TODO: Pop open the message panel
-        // Change chat channel to you and person you clicked on
+        actingOnEntry.ToggleNotification(false);
+        friendsMessenger.ToggleMessengerChatBox(true, actingOnEntry.GetFriendRequestId());
     }
 
     public void OnJoinButtonClicked()
     {
-        // TODO: Check if the player is in a match. If so, trigger alert popup, toggle block screen, manually enter lobby, then manually join game
-        // If not in a game, trigger alert popup saying so
+        friendsMessenger.JoinFriendGame(PlayerData.playerdata.friendsList[actingOnEntry.GetFriendRequestId()].FriendUsername);
     }
 
     public void OnRemoveFriendButtonClicked()
@@ -108,5 +123,10 @@ public class QuickActionMenu : MonoBehaviour
                 gameObject.SetActive(false);
             }
         }
+    }
+
+    public void ToggleMenu(bool b)
+    {
+        gameObject.SetActive(b);
     }
 }

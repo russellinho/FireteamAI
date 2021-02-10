@@ -6,6 +6,8 @@ using Photon.Pun;
 
 public class GlobalChatClient : MonoBehaviour, IChatClientListener
 {
+    private const string ROOM_REQUEST_MSG = "f@AC?3CSWGRvnv@J";
+    private const string ROOM_JOIN_MSG = "JOIN|";
     private const short MESSAGES_PER_MIN_LIMIT = 25; // This is the number of messages a user may send per minute. Prevents spam.
     public ChatClient chatClient;
     protected internal ChatAppSettings chatAppSettings;
@@ -54,6 +56,8 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
     public void OnConnected()
 	{
         Debug.Log("Successfully connected to Photon Chat.");
+        // Set online status
+        UpdateStatus("ONLINE");
 	}
 
     // Call this whenever you enter the campaign or versus matchmaking lobby
@@ -65,6 +69,26 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
                 this.chatClient.Subscribe("Versus");
             }
         }
+    }
+
+    public void UpdateStatus(string status)
+    {
+        chatClient.SetOnlineStatus(ChatUserStatus.Online, status);
+    }
+
+    public void AddStatusListenersToFriends(List<string> usernames)
+    {
+        chatClient.AddFriends(usernames.ToArray());
+    }
+
+    public void AskToJoinGame(string username)
+    {
+        SendPrivateMessageToUser(username, ROOM_REQUEST_MSG);
+    }
+
+    public void SendPrivateMessageToUser(string username, string message)
+    {
+        chatClient.SendPrivateMessage(username, message);
     }
 
     // Call this when you return to the home screen or leave the title scene
@@ -84,13 +108,58 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
 
     public void OnStatusUpdate(string user, int status, bool gotMessage, object message)
 	{
-		Debug.LogWarning("status: " + string.Format("{0} is {1}. Msg:{2}", user, status, message));
+		Debug.Log("status: " + string.Format("{0} is {1}. Msg:{2}", user, status, message));
+        // Update messenger entry scripts here
+        if (PlayerData.playerdata.titleRef != null) {
+            if (status == ChatUserStatus.Online) {
+                PlayerData.playerdata.titleRef.friendsMessenger.UpdateStatusForUsername(user, true, message.ToString());
+            } else if (status == ChatUserStatus.Offline) {
+                PlayerData.playerdata.titleRef.friendsMessenger.UpdateStatusForUsername(user, false, "OFFLINE");
+            }
+        }
 	}
 
     public void OnPrivateMessage(string sender, object message, string channelName)
 	{
-		// TODO: Fill out later
+        Debug.LogFormat( "OnPrivateMessage: {0} ({1}) > {2}", channelName, sender, message );
+
+        string sMessage = message.ToString();
+        // Only proceed with requests if on title and sender is a verified friend
+        if (PlayerData.playerdata.titleRef != null) {
+            if (PlayerData.playerdata.titleRef.friendsMessenger.CheckIsVerifiedFriendByUsername(sender)) {
+                // If it was a request to join my game, send back the room name to join if I'm in one
+                if (PhotonNetwork.InRoom && sMessage == ROOM_REQUEST_MSG) {
+                    chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG + PhotonNetwork.CurrentRoom.Name);
+                } else {
+                    // If it was a join code, then join that room
+                    if (sMessage.Substring(0, 5) == ROOM_JOIN_MSG) {
+                        PlayerData.playerdata.titleRef.WarpJoinGame(sMessage.Substring(5, sMessage.Length - 5));
+                    } else {
+                        string chattingWithUsername = PlayerData.playerdata.friendsList[PlayerData.playerdata.titleRef.friendsMessenger.GetChattingWithFriendRequestId()].FriendUsername;
+                        if (chattingWithUsername == sender) {
+                            PlayerData.playerdata.titleRef.friendsMessenger.SendMsg(false, message.ToString(), sender);
+                        } else {
+                            string thisFriendRequestId = PlayerData.playerdata.titleRef.friendsMessenger.GetFriendRequestIdByUsername(sender);
+                            PlayerData.playerdata.titleRef.friendsMessenger.GetMessengerEntry(thisFriendRequestId).ToggleNotification(true);
+                            PlayerData.playerdata.titleRef.friendsMessenger.ToggleNotification(true);
+                        }
+                    }
+                }
+            }
+        }
 	}
+
+    public List<object> GetCachedMessagesForUser(string username)
+    {
+        string channelName = chatClient.GetPrivateChannelNameByUser(username);
+        return chatClient.PrivateChannels[channelName].Messages;
+    }
+
+    public int GetMessageCountForUser(string username)
+    {
+        string channelName = chatClient.GetPrivateChannelNameByUser(username);
+        return chatClient.PrivateChannels[channelName].MessageCount;
+    }
 
     public void OnGetMessages(string channelName, string[] senders, object[] messages)
 	{

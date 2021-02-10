@@ -6,10 +6,24 @@ using TMPro;
 
 public class MessengerEntryScript : MonoBehaviour
 {
-    public FriendsMessenger friendsMessenger;
+    private const float NOTIFICATION_FLASH_TIME = 1.2f;
+    private Color GLOW_NORMAL_COLOR = new Color(99f / 255f, 198f / 255f, 255f / 255f, 50f / 255f);
+    private Color BORDER_NORMAL_COLOR = new Color(99f / 255f, 198f / 255f, 255f / 255f, 255f / 255f);
+    private Color GLOW_ALERT_COLOR = new Color(255f / 255f, 119f / 255f, 1f / 255f, 50f / 255f);
+    private Color BORDER_ALERT_COLOR = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
+    private FriendsMessenger friendsMessenger;
     private string friendRequestId;
     public TextMeshProUGUI nametag;
     public TextMeshProUGUI status;
+    private bool notificationFlashOn;
+    private float notificationFlashTimer;
+    public Image border;
+    public Image glow;
+
+    void Update()
+    {
+        HandleNotificationFlash();
+    }
 
     public void InitEntry(FriendsMessenger friendsMessenger, string friendRequestId, string username)
     {
@@ -18,6 +32,8 @@ public class MessengerEntryScript : MonoBehaviour
         this.nametag.text = username;
         // If still in friend request phase, then put in that section
         UpdateFriendStatus();
+        // Create a cached chat entry
+        PlayerData.playerdata.cachedConversations.Add(friendRequestId, new CachedMessage());
     }
 
     public void UpdateFriendStatus()
@@ -27,13 +43,12 @@ public class MessengerEntryScript : MonoBehaviour
         }
         int newStatus = PlayerData.playerdata.friendsList[friendRequestId].Status;
         if (newStatus == 0) {
-            this.status.text = "Offline";
+            UpdateSocialStatus("OFFLINE");
             transform.SetSiblingIndex(friendsMessenger.friendRequestSection.GetSiblingIndex() + 1);
         } else if (newStatus == 1) {
             transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + 1);
-            UpdateSocialStatus();
         } else {
-            this.status.text = "Offline";
+            UpdateSocialStatus("BLOCKED");
             transform.SetSiblingIndex(friendsMessenger.blockedSection.GetSiblingIndex() + 1);
             // If blocked, then show it only if the blocker is equal to current player ID
             string blocker = PlayerData.playerdata.friendsList[friendRequestId].Blocker;
@@ -43,10 +58,9 @@ public class MessengerEntryScript : MonoBehaviour
         }
     }
 
-    public void UpdateSocialStatus()
+    public void UpdateSocialStatus(string newStatus)
     {
-        // TODO: Fill out status based on online, offline, or in-game
-        this.status.text = "TODO";
+        this.status.text = newStatus;
     }
 
     public string GetFriendRequestId()
@@ -61,11 +75,49 @@ public class MessengerEntryScript : MonoBehaviour
 
     public void OnEntryClick()
     {
-        friendsMessenger.quickActionMenu.InitButtons(PlayerData.playerdata.friendsList[friendRequestId].Status);
+        friendsMessenger.quickActionMenu.InitButtons(PlayerData.playerdata.friendsList[friendRequestId].Status, status.text == "ONLINE", PlayerData.playerdata.friendsList[friendRequestId].Requestor, PlayerData.playerdata.friendsList[friendRequestId].Requestee);
         friendsMessenger.quickActionMenu.SetActingOnEntry(this);
         friendsMessenger.quickActionMenu.gameObject.SetActive(true);
         // Move menu to mouse position
         friendsMessenger.quickActionMenu.UpdatePosition();
+    }
+
+    public void ToggleNotification(bool b)
+    {
+        notificationFlashOn = b;
+        if (b) {
+            notificationFlashTimer = NOTIFICATION_FLASH_TIME;
+            ToggleNotificationFlashColor(true);
+        } else {
+            notificationFlashTimer = 0f;
+            ToggleNotificationFlashColor(false);
+        }
+    }
+
+    void HandleNotificationFlash()
+    {
+        if (notificationFlashOn) {
+            notificationFlashTimer -= Time.deltaTime;
+            if (notificationFlashTimer <= 0f) {
+                notificationFlashTimer = NOTIFICATION_FLASH_TIME;
+                if (border.color.Equals(BORDER_ALERT_COLOR)) {
+                    ToggleNotificationFlashColor(false);
+                } else {
+                    ToggleNotificationFlashColor(true);
+                }
+            }
+        }
+    }
+
+    void ToggleNotificationFlashColor(bool b)
+    {
+        if (b) {
+            border.color = BORDER_ALERT_COLOR;
+            glow.color = GLOW_ALERT_COLOR;
+        } else {
+            border.color = BORDER_NORMAL_COLOR;
+            glow.color = GLOW_NORMAL_COLOR;
+        }
     }
 
 }

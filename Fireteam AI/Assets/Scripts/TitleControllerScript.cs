@@ -3565,6 +3565,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	IEnumerator CreditsExit()
 	{
 		yield return new WaitForSeconds(1f);
+		ReturnToTitle();
+	}
+
+	public void ReturnToTitle()
+	{
 		mainPanelsAnimator.enabled = true;
 		mainPanels.alpha = 1f;
 		mainPanels.interactable = true;
@@ -3790,6 +3795,46 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		return (int)(cost * remainingDays * (1f - (0.5f / 3f)));
+	}
+
+	public void WarpJoinGame(string roomId)
+	{
+		StartCoroutine(WarpJoinGameRoutine(roomId));
+	}
+
+	IEnumerator WarpJoinGameRoutine(string roomId)
+	{
+		TriggerBlockScreen(true);
+		yield return new WaitForSeconds(1f);
+		// If currently in a match, leave it
+		if (PhotonNetwork.InRoom) {
+			PlayerData.playerdata.titleRef.connexion.OnLeaveGameButtonClicked();
+			yield return new WaitForSeconds(1f);
+		}
+		// Go home
+		PlayerData.playerdata.titleRef.ReturnToTitle();
+		yield return new WaitForSeconds(1f);
+		bool cont = true;
+		RoomInfo joiningRoomInfo = null; 
+		// Get room properties
+		try {
+			joiningRoomInfo = PlayerData.playerdata.titleRef.connexion.listRoom.cachedRoomList[roomId];
+		} catch (Exception e) {
+			TriggerAlertPopup("UNABLE TO JOIN ROOM.");
+			cont = false;
+		}
+		if (cont) {
+			// If versus, join versus lobby. Else, join campaign lobby.
+			if (joiningRoomInfo.CustomProperties["gameMode"] == "versus") {
+				PlayerData.playerdata.titleRef.mainPanelManager.OpenPanel("Versus");
+			} else {
+				PlayerData.playerdata.titleRef.mainPanelManager.OpenPanel("Campaign");
+			}
+			yield return new WaitForSeconds(1f);
+			PlayerData.playerdata.titleRef.connexion.theJoinRoom(roomId);
+			yield return new WaitForSeconds(0.1f);
+		}
+		TriggerBlockScreen(false);
 	}
 		
 }
