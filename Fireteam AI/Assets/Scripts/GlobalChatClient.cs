@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Chat;
@@ -8,6 +9,7 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
 {
     private const string ROOM_REQUEST_MSG = "f@AC?3CSWGRvnv@J";
     private const string ROOM_JOIN_MSG = "JOIN|";
+    private const string MY_DATA_MSG = "i|";
     private const short MESSAGES_PER_MIN_LIMIT = 25; // This is the number of messages a user may send per minute. Prevents spam.
     public ChatClient chatClient;
     protected internal ChatAppSettings chatAppSettings;
@@ -64,9 +66,9 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
     public void SubscribeToGlobalChat(char modeLobby) {
         if (this.chatClient.CanChat) {
             if (modeLobby == 'C') {
-                this.chatClient.Subscribe("Campaign");
+                this.chatClient.Subscribe("Campaign", creationOptions: new ChannelCreationOptions { PublishSubscribers = true });
             } else if (modeLobby == 'V') {
-                this.chatClient.Subscribe("Versus");
+                this.chatClient.Subscribe("Versus", creationOptions: new ChannelCreationOptions { PublishSubscribers = true });
             }
         }
     }
@@ -99,6 +101,8 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
     public void OnUserSubscribed(string channel, string user)
     {
         Debug.LogFormat("OnUserSubscribed: channel=\"{0}\" userId=\"{1}\"", channel, user);
+        // When a user subscribes to the chat, remind everyone of my current rank
+        SendMyPlayerData(channel);
     }
 
     public void OnUserUnsubscribed(string channel, string user)
@@ -166,11 +170,29 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
         if (PlayerData.playerdata.titleRef != null) {
             if (channelName.Equals("Campaign")) {
                 for (int i = 0; i < senders.Length; i++) {
-                    PlayerData.playerdata.titleRef.chatManagerCamp.PostMessage(true, senders[i], messages[i].ToString());
+                    string messageReceived = messages[i].ToString();
+                    if (messageReceived.Substring(0, 2) == MY_DATA_MSG) {
+                        // Take exp code and cache it if it's sent to you
+                        string[] playerDataParsed = messageReceived.Split('|');
+                        string parsedUsername = playerDataParsed[1];
+                        uint parsedExp = Convert.ToUInt32(playerDataParsed[2]);
+                        PlayerData.playerdata.titleRef.connexion.listRoom.AddPlayerListEntry(parsedUsername, parsedExp, 'C');
+                    } else {
+                        PlayerData.playerdata.titleRef.chatManagerCamp.PostMessage(true, senders[i], messageReceived);
+                    }
                 }
             } else if (channelName.Equals("Versus")) {
                 for (int i = 0; i < senders.Length; i++) {
-                    PlayerData.playerdata.titleRef.chatManagerVersus.PostMessage(true, senders[i], messages[i].ToString());
+                    string messageReceived = messages[i].ToString();
+                    if (messageReceived.Substring(0, 2) == MY_DATA_MSG) {
+                        // Take exp code and cache it if it's sent to you
+                        string[] playerDataParsed = messageReceived.Split('|');
+                        string parsedUsername = playerDataParsed[1];
+                        uint parsedExp = Convert.ToUInt32(playerDataParsed[2]);
+                        PlayerData.playerdata.titleRef.connexion.listRoom.AddPlayerListEntry(parsedUsername, parsedExp, 'V');
+                    } else {
+                        PlayerData.playerdata.titleRef.chatManagerVersus.PostMessage(true, senders[i], messageReceived);
+                    }
                 }
             }
         }
@@ -179,6 +201,10 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
     public void OnSubscribed(string[] channels, bool[] results)
 	{
 		Debug.Log("OnSubscribed: " + string.Join(", ", channels));
+        // When I join a channel, tell everyone of my current rank
+        foreach (string channel in channels) {
+            SendMyPlayerData(channel);
+        }
 	}
 
     public void OnUnsubscribed(string[] channels)
@@ -214,6 +240,11 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
 		{
 			Debug.Log(message);
 		}
+    }
+
+    public void SendMyPlayerData(string channelName)
+    {
+        this.chatClient.PublishMessage(channelName, MY_DATA_MSG + PhotonNetwork.NickName + '|' + PlayerData.playerdata.info.Exp);
     }
 
     public bool SendGlobalMessage(char modeLobby, string message) {

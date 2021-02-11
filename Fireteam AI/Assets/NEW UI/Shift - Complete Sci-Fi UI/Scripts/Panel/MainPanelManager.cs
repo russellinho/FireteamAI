@@ -125,12 +125,14 @@ namespace Michsky.UI.Shift
                     }
                 }
                 if (newPanel == "Settings") {
+                    titleController.LeaveGlobalChats();
                     titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
                     titleController.RefreshSavedAudioDevice();
                 } else if (newPanel == "Mod Shop") {
+                    titleController.LeaveGlobalChats();
                     titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(true);
@@ -140,6 +142,7 @@ namespace Michsky.UI.Shift
                     titleController.HandleRightSideButtonPress(titleController.modShopSuppressorsBtn);
                     titleController.OnSuppressorsBtnClicked();
                 } else if (newPanel == "Market") {
+                    titleController.LeaveGlobalChats();
                     titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);
@@ -150,6 +153,7 @@ namespace Michsky.UI.Shift
                     titleController.HandleRightSideButtonPress(titleController.shopCharacterBtn);
                     titleController.OnMarketplaceCharacterBtnClicked();
                 } else if (newPanel == "Loadout") {
+                    titleController.LeaveGlobalChats();
                     titleController.creditsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);
