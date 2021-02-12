@@ -35,6 +35,7 @@ public class ShopItemScript : MonoBehaviour
     public Button purchaseBtn;
     public Button equipBtn;
     public Button sellBtn;
+    public Button giftBtn;
     public Button modWeaponBtn;
     public Button modEquipBtn;
     public char titleType;
@@ -97,6 +98,11 @@ public class ShopItemScript : MonoBehaviour
 
     public void OnPurchaseBtnClicked() {
         ts.PreparePurchase(itemName, itemType, GetCurrencyTypeForItem(), thumbnailRef.texture);
+    }
+
+    public void OnGiftBtnClicked()
+    {
+        ts.PrepareGift(itemName, itemType, GetCurrencyTypeForItem(), thumbnailRef.texture);
     }
 
     public void OnSellBtnClicked()
@@ -308,6 +314,7 @@ public class ShopItemScript : MonoBehaviour
         priceTxt.gameObject.SetActive(true);
         previewBtn.gameObject.SetActive(ItemCanBePreviewed());
         purchaseBtn.gameObject.SetActive(true);
+        giftBtn.gameObject.SetActive(true);
         equipBtn.gameObject.SetActive(false);
         modWeaponBtn.gameObject.SetActive(false);
         modEquipBtn.gameObject.SetActive(false);
@@ -319,6 +326,7 @@ public class ShopItemScript : MonoBehaviour
         priceTxt.gameObject.SetActive(false);
         previewBtn.gameObject.SetActive(false);
         purchaseBtn.gameObject.SetActive(false);
+        giftBtn.gameObject.SetActive(false);
         equipBtn.gameObject.SetActive(true);
         sellBtn.gameObject.SetActive(true);
         modWeaponBtn.gameObject.SetActive(false);
@@ -345,6 +353,7 @@ public class ShopItemScript : MonoBehaviour
         previewBtn.gameObject.SetActive(false);
         purchaseBtn.gameObject.SetActive(false);
         equipBtn.gameObject.SetActive(false);
+        giftBtn.gameObject.SetActive(false);
         titleType = 's';
     }
 

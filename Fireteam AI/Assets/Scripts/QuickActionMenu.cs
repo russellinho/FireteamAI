@@ -10,7 +10,9 @@ public class QuickActionMenu : MonoBehaviour
     public RectTransform rectCanvas;
     public RectTransform rectTransform;
     public FriendsMessenger friendsMessenger;
+    public GiftInbox giftInbox;
     private MessengerEntryScript actingOnEntry;
+    private GiftEntryScript actingOnEntryGift;
     public Button sendMessageBtn;
     public Button joinBtn;
     public Button removeFriendBtn;
@@ -18,6 +20,7 @@ public class QuickActionMenu : MonoBehaviour
     public Button unblockBtn;
     public Button acceptFriendBtn;
     public Button declineFriendBtn;
+    public Button acceptGiftBtn;
 
     public void UpdatePosition() {
         Vector2 movePos;
@@ -46,8 +49,9 @@ public class QuickActionMenu : MonoBehaviour
         HandleClick();
     }
 
-    public void InitButtons(int status, bool online, string requestor, string requestee)
+    public void InitButtonsForMessenger(int status, bool online, string requestor, string requestee)
     {
+        acceptGiftBtn.gameObject.SetActive(false);
         sendMessageBtn.gameObject.SetActive(false);
         joinBtn.gameObject.SetActive(false);
         removeFriendBtn.gameObject.SetActive(false);
@@ -75,9 +79,28 @@ public class QuickActionMenu : MonoBehaviour
         }
     }
 
+    public void InitButtonsForGiftInbox()
+    {
+        acceptGiftBtn.gameObject.SetActive(true);
+        sendMessageBtn.gameObject.SetActive(false);
+        joinBtn.gameObject.SetActive(false);
+        removeFriendBtn.gameObject.SetActive(false);
+        blockBtn.gameObject.SetActive(false);
+        unblockBtn.gameObject.SetActive(false);
+        acceptFriendBtn.gameObject.SetActive(false);
+        declineFriendBtn.gameObject.SetActive(false);
+    }
+
     public void SetActingOnEntry(MessengerEntryScript m)
     {
         actingOnEntry = m;
+        actingOnEntryGift = null;
+    }
+
+    public void SetActingOnEntry(GiftEntryScript g)
+    {
+        actingOnEntry = null;
+        actingOnEntryGift = g;
     }
 
     public MessengerEntryScript GetActingOnEntry()
@@ -116,10 +139,17 @@ public class QuickActionMenu : MonoBehaviour
         friendsMessenger.UnblockFriend(actingOnEntry.GetFriendRequestId());
     }
 
+    public void OnAcceptGiftButtonClicked()
+    {
+        giftInbox.AcceptGift(actingOnEntryGift.GetGiftId());
+    }
+
     void HandleClick()
     {
         if (Input.GetKeyDown(KeyCode.Mouse1)) {
             if (!EventSystem.current.IsPointerOverGameObject()) {
+                actingOnEntry = null;
+                actingOnEntryGift = null;
                 gameObject.SetActive(false);
             }
         }

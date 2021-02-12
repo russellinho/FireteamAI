@@ -32,6 +32,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     private const float PERMANENT_COST_MULTIPLIER = 365f;
 	public Connexion connexion;
 	public FriendsMessenger friendsMessenger;
+	public GiftInbox giftInbox;
 	private AudioSourceModifier[] sceneAudioSources;
 
 	public GameObject itemDescriptionPopupRef;
@@ -79,6 +80,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public ModalWindowManager confirmPopup;
 	public ModalWindowManager keyBindingsPopup;
 	public ModalWindowManager makePurchasePopup;
+	public ModalWindowManager giftPopup;
 	public ModalWindowManager roomPasswordPopup;
 	public ModalWindowManager roomEnterPasswordPopup;
 	public ModalWindowManager addFriendPopup;
@@ -86,6 +88,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public TMP_InputField roomPasswordInput;
 	public TMP_InputField roomEnterPasswordInput;
 	public TMP_InputField addFriendInput;
+	public TMP_InputField giftUsernameInput;
+	public TMP_InputField giftMessageInput;
 	// Block screen used for blocking player interaction with screen while something is going on in the backgronud (example: if a transaction is in progress)
 	private bool blockScreenTrigger;
 	public GameObject blockScreen;
@@ -95,6 +99,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	private uint totalCostBeingPurchased;
 	private char currencyTypeBeingPurchased;
 	public bool confirmingTransaction;
+	public bool confirmingGift;
 	public bool confirmingSale;
 	private bool resettingKeysFlag;
 	private bool resettingGraphicsFlag;
@@ -147,7 +152,9 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Button modShopSuppressorsBtn;
 	public Button modShopSightsBtn;
 	public HorizontalSelector durationSelection;
-	public TextMeshProUGUI totalGpCostTxt;
+	public HorizontalSelector durationSelectionGift;
+	public TextMeshProUGUI totalCostTxt;
+	public TextMeshProUGUI totalGiftCostTxt;
 	public TextMeshProUGUI myGpTxt;
 	public TextMeshProUGUI myKashTxt;
 
@@ -221,6 +228,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public bool triggerConfirmPopupFlag;
 	public bool triggerKeyBindingsPopupFlag;
 	public bool triggerMakePurchasePopupFlag;
+	public bool triggerGiftPopupFlag;
 	public bool triggerRoomPasswordChangePopupFlag;
 	public bool triggerRoomPasswordEnterPopupFlag;
 	public bool triggerAddFriendPopupFlag;
@@ -385,6 +393,10 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		if (triggerMakePurchasePopupFlag) {
 			triggerMakePurchasePopupFlag = false;
 			makePurchasePopup.ModalWindowIn();
+		}
+		if (triggerGiftPopupFlag) {
+			triggerGiftPopupFlag = false;
+			giftPopup.ModalWindowIn();
 		}
 		if (triggerRoomPasswordEnterPopupFlag) {
 			triggerRoomPasswordEnterPopupFlag = false;
@@ -597,6 +609,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void TriggerMakePurchasePopup() {
 		triggerMakePurchasePopupFlag = true;
+	}
+
+	public void TriggerGiftPopup()
+	{
+		triggerGiftPopupFlag = true;
 	}
 
 	// Clears existing items from the shop panel
@@ -2982,6 +2999,19 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		TriggerMakePurchasePopup();
     }
 
+	public void PrepareGift(string itemName, string itemType, char currencyType, Texture thumb)
+	{
+		PrepareDurationDropdownGift(itemType == "Mod");
+		durationSelectionGift.index = 0;
+		durationSelectionGift.UpdateUI();
+		itemBeingPurchased = itemName;
+		typeBeingPurchased = itemType;
+		currencyTypeBeingPurchased = currencyType;
+		giftPopup.GetComponentInChildren<RawImage>().texture = thumb;
+		SetTotalCostGift(0, durationSelectionGift.GetCurrentItem());
+		TriggerGiftPopup();
+	}
+
 	void PrepareDurationDropdown(bool permOnly) {
 		durationSelection.ClearItems();
 		if (permOnly) {
@@ -2995,10 +3025,33 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	void PrepareDurationDropdownGift(bool permOnly)
+	{
+		durationSelectionGift.ClearItems();
+		if (permOnly) {
+			durationSelectionGift.CreateNewItem("Permanent");
+		} else {
+			durationSelectionGift.CreateNewItem("1 day");
+			durationSelectionGift.CreateNewItem("7 days");
+			durationSelectionGift.CreateNewItem("30 days");
+			durationSelectionGift.CreateNewItem("90 days");
+			durationSelectionGift.CreateNewItem("Permanent");
+		}
+	}
+
 	public void OnConfirmPreparePurchaseClicked() {
 		confirmingTransaction = true;
 		makePurchasePopup.ModalWindowOut();
 		TriggerConfirmPopup("ARE YOU SURE YOU WOULD LIKE TO BUY " + itemBeingPurchased + " FOR " + durationSelection.GetCurrentItem() + " FOR " + totalCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + "?");
+	}
+
+	public void OnConfirmPrepareGiftClicked()
+	{
+		confirmingGift = true;
+		giftPopup.ModalWindowOut();
+		TriggerConfirmPopup("PLEASE VERIFY THAT THE USERNAME IS CORRECT BEFORE PROCEEDING. THIS CANNOT BE REVERSED.\n" +
+			"YOU ARE ABOUT TO GIFT " + itemBeingPurchased + " TO " + giftUsernameInput.text +  " FOR " + durationSelectionGift.GetCurrentItem() + " FOR " + totalCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + ".\n" +
+			"ARE YOU SURE YOU WOULD LIKE TO PROCEED?");
 	}
 
 	public void OnConfirmPurchaseClicked() {
@@ -3011,21 +3064,40 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ConfirmSale();
 	}
 
+	public void OnConfirmGiftClicked()
+	{
+		TriggerBlockScreen(true);
+		ConfirmGift();
+	}
+
 	public void OnDurationSelect() {
 		int durationInput = durationSelection.index;
         SetTotalCost(durationInput, durationSelection.GetCurrentItem());
 	}
 
+	public void OnDurationGiftSelect()
+	{
+		int durationInput = durationSelectionGift.index;
+		SetTotalCostGift(durationInput, durationSelectionGift.GetCurrentItem());
+	}
+
     void SetTotalCost(int duration, string durationText)
     {
         totalCostBeingPurchased = GetCostForItemAndType(itemBeingPurchased, typeBeingPurchased, duration);
-        totalGpCostTxt.text = "YOU ARE BUYING [" + itemBeingPurchased + "] FOR [" + durationText + "] FOR " + totalCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + ".";
+        totalCostTxt.text = "YOU ARE BUYING [" + itemBeingPurchased + "] FOR [" + durationText + "] FOR " + totalCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + ".";
     }
+
+	void SetTotalCostGift(int duration, string durationText)
+	{
+		totalCostBeingPurchased = GetCostForItemAndType(itemBeingPurchased, typeBeingPurchased, duration);
+		totalGiftCostTxt.text = "YOU ARE BUYING [" + itemBeingPurchased + "] FOR [" + durationText + "] FOR " + totalCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + ".";
+	}
 
 	public void OnCancelPurchaseClicked() {
 		itemBeingPurchased = null;
 		typeBeingPurchased = null;
 		confirmingTransaction = false;
+		confirmingGift = false;
 		confirmingSale = false;
 		resettingKeysFlag = false;
 		resettingGraphicsFlag = false;
@@ -3055,7 +3127,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
         totalNewDuration = (Mathf.Approximately(totalNewDuration, -1f) ? totalNewDuration : totalNewDuration + hasDuplicateCheck);
 		if (currencyTypeBeingPurchased == 'G') {
 			if (PlayerData.playerdata.info.Gp >= totalCostBeingPurchased) {
-				PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, "gp");
+				PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true);
 				confirmPopup.ModalWindowOut();
 			} else {	
 				TriggerAlertPopup("You do not have enough GP to purchase this item.");
@@ -3064,7 +3136,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			}	
 		} else if (currencyTypeBeingPurchased == 'K') {
 			if (PlayerData.playerdata.info.Kash >= totalCostBeingPurchased) {
-				PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true, "kash");
+				PlayerData.playerdata.AddItemToInventory(itemBeingPurchased, typeBeingPurchased, totalNewDuration, true);
 				confirmPopup.ModalWindowOut();
 			} else {	
 				TriggerAlertPopup("You do not have enough KASH to purchase this item.");
@@ -3076,6 +3148,30 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	void ConfirmSale() {
 		PlayerData.playerdata.SellItemFromInventory(itemBeingPurchased, typeBeingPurchased);
+	}
+
+	void ConfirmGift()
+	{
+		float totalNewDuration = ConvertDurationInput(durationSelectionGift.index);
+		if (currencyTypeBeingPurchased == 'G') {
+			if (PlayerData.playerdata.info.Gp >= totalCostBeingPurchased) {
+				giftInbox.GiftItem(giftUsernameInput.text, itemBeingPurchased, typeBeingPurchased, totalNewDuration, giftMessageInput.text);
+				giftPopup.ModalWindowOut();
+			} else {	
+				TriggerAlertPopup("You do not have enough GP to gift this item.");
+				TriggerBlockScreen(false);
+				confirmingGift = false;
+			}	
+		} else if (currencyTypeBeingPurchased == 'K') {
+			if (PlayerData.playerdata.info.Kash >= totalCostBeingPurchased) {
+				giftInbox.GiftItem(giftUsernameInput.text, itemBeingPurchased, typeBeingPurchased, totalNewDuration, giftMessageInput.text);
+				giftPopup.ModalWindowOut();
+			} else {	
+				TriggerAlertPopup("You do not have enough KASH to gift this item.");
+				TriggerBlockScreen(false);
+				confirmingGift = false;
+			}	
+		}
 	}
 
 	float ConvertDurationInput(int durationSelection) {
@@ -3450,6 +3546,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnConfirmButtonClicked() {
 		if (confirmingTransaction) {
 			OnConfirmPurchaseClicked();
+		} else if (confirmingGift) {
+			OnConfirmGiftClicked();
 		} else if (confirmingSale) {
 			OnConfirmSaleClicked();
 		} else if (connexion.listPlayer.kickingPlayerFlag) {

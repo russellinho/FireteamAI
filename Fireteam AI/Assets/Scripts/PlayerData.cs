@@ -51,6 +51,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     public PlayerInfo info;
     public PlayerInventory inventory;
     public ObservableDict<string, FriendData> friendsList;
+    public ObservableDict<string, GiftData> giftList;
     public Dictionary<string, CachedMessage> cachedConversations;
     public ModInfo primaryModInfo;
     public ModInfo secondaryModInfo;
@@ -75,6 +76,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             this.secondaryModInfo = new ModInfo();
             this.supportModInfo = new ModInfo();
             friendsList = new ObservableDict<string, FriendData>();
+            giftList = new ObservableDict<string, GiftData>();
             cachedConversations = new Dictionary<string, CachedMessage>();
             playerdata = this;
 
@@ -132,6 +134,8 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             PlayerData.playerdata.info.PropertyChanged += OnPlayerInfoChange;
             friendsList.CollectionChanged += OnPlayerInfoChange;
             friendsList.PropertyChanged += OnPlayerInfoChange;
+            giftList.CollectionChanged += OnPlayerInfoChange;
+            giftList.PropertyChanged += OnPlayerInfoChange;
         }
         else if (playerdata != this)
         {
@@ -677,6 +681,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         supportModInfo.SightId = "";
                     }
                     LoadInventory(inventorySnap);
+                    if (playerDataSnap.ContainsKey("gifts")) {
+                        LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
+                    }
                     LoadFriends(friendsUsernameMap, friendData);
                     List<object> itemsExpired = (List<object>)results["itemsExpired"];
                     if (itemsExpired.Count > 0) {
@@ -937,6 +944,33 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             }
         }
         globalChatClient.AddStatusListenersToFriends(usernameList);
+        playerDataModifyLegalFlag = false;
+    }
+
+    public void LoadGifts(Dictionary<object, object> snapshot)
+    {
+        playerDataModifyLegalFlag = true;
+
+        foreach(KeyValuePair<object, object> entry in snapshot) {
+            string giftId = entry.Key.ToString();
+            Dictionary<object, object> gift = (Dictionary<object, object>)entry.Value;
+            GiftData g = new GiftData();
+            g.PropertyChanged += OnPlayerInfoChange;
+            g.GiftId = giftId;
+            g.Category = gift["category"].ToString();
+            g.Sender = gift["from"].ToString();
+            g.ItemName = gift["itemName"].ToString();
+            g.Duration = Convert.ToSingle(gift["duration"]);
+            g.Message = gift["message"].ToString();
+
+            giftList.Add(giftId, g);
+
+            // Add gift entry in gift inbox if on title screen
+            if (PlayerData.playerdata.titleRef != null) {
+                PlayerData.playerdata.titleRef.giftInbox.EnqueueGiftEntryCreation(giftId, g.Category, g.Sender, g.ItemName, g.Duration, g.Message);
+            }
+        }
+
         playerDataModifyLegalFlag = false;
     }
 
@@ -1205,7 +1239,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         return modInfo;
     }
 
-    public void AddItemToInventory(string itemName, string type, float duration, bool purchased, string purchaseWithCurrency) {
+    public void AddItemToInventory(string itemName, string type, float duration, bool purchased) {
         Dictionary<string, object> inputData = new Dictionary<string, object>();
         inputData["callHash"] = DAOScript.functionsCallHash;
         inputData["uid"] = AuthScript.authHandler.user.UserId;
@@ -1237,11 +1271,15 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             func.CallAsync(inputData).ContinueWith((taskA) => {
                 if (taskA.IsFaulted) {
                     TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+                    titleRef?.TriggerBlockScreen(false);
                 } else {
                     Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                    if (results["status"].ToString() != "200") {
+                    if (results["status"].ToString() == "200") {
+                        titleRef?.TriggerAlertPopup("The item has been added to your inventory!");
+                    } else {
                         TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                     }
+                    titleRef?.TriggerBlockScreen(false);
                 }
             });
         }
@@ -2369,6 +2407,68 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
     }
 
+    void HandleGiftAdded(object sender, ChildChangedEventArgs args)
+    {
+        if (bodyReference == null) return;
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+
+        if (args.Snapshot.Value != null) {
+            playerDataModifyLegalFlag = true;
+            
+            // Extract the gift ID
+            string giftId = args.Snapshot.Key;
+            // Get details
+            Dictionary<object, object> gift = (Dictionary<object, object>)args.Snapshot.Value;
+
+            GiftData g = new GiftData();
+            g.PropertyChanged += OnPlayerInfoChange;
+            g.GiftId = giftId;
+            g.Category = gift["category"].ToString();
+            g.Sender = gift["from"].ToString();
+            g.ItemName = gift["itemName"].ToString();
+            g.Duration = Convert.ToSingle(gift["duration"]);
+            g.Message = gift["message"].ToString();
+
+            giftList.Add(giftId, g);
+
+            // If on title, add gift to inbox
+            if (PlayerData.playerdata.titleRef != null) {
+                PlayerData.playerdata.titleRef.giftInbox.EnqueueGiftEntryCreation(giftId, g.Category, g.Sender, g.ItemName, g.Duration, g.Message);
+            }
+
+            playerDataModifyLegalFlag = false;
+        }
+    }
+
+    void HandleGiftRemoved(object sender, ChildChangedEventArgs args)
+    {
+        if (bodyReference == null) return;
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+
+        if (args.Snapshot.Value != null) {
+            playerDataModifyLegalFlag = true;
+
+            string giftId = args.Snapshot.Key;
+            GiftData g = PlayerData.playerdata.giftList[giftId];
+            g.PropertyChanged -= OnPlayerInfoChange;
+            PlayerData.playerdata.giftList.Remove(giftId);
+            // If on title, remove entry from gift inbox
+            if (PlayerData.playerdata.titleRef != null) {
+                PlayerData.playerdata.titleRef.giftInbox.DeleteGiftEntry(giftId);
+            }
+
+            playerDataModifyLegalFlag = false;
+        }
+    }
+
     void HandleFriendAdded(object sender, ChildChangedEventArgs args)
     {
         if (bodyReference == null) return;
@@ -2528,7 +2628,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         } else if (type.Equals("Mod")) {
             return "mods";
         }
-        return "";
+        return type;
     }
 
     bool IsNotInGame() {
@@ -3127,6 +3227,70 @@ public class FriendData : INotifyPropertyChanged {
         {
             blocker = value;
             PropertyChanged(this, new PropertyChangedEventArgs ("blocker"));
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
+}
+
+public class GiftData : INotifyPropertyChanged {
+    private string giftId;
+    public string GiftId {
+        get { return giftId; }
+        set
+        {
+            giftId = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("giftId"));
+        }
+    }
+
+    private string category;
+    public string Category {
+        get { return category; }
+        set
+        {
+            category = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("category"));
+        }
+    }
+
+    private string sender;
+    public string Sender {
+        get { return sender; }
+        set
+        {
+            sender = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("sender"));
+        }
+    }
+
+    private string itemName;
+    public string ItemName {
+        get { return itemName; }
+        set
+        {
+            itemName = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("itemName"));
+        }
+    }
+
+    private float duration;
+    public float Duration {
+        get { return duration; }
+        set
+        {
+            duration = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("duration"));
+        }
+    }
+
+    private string message;
+    public string Message {
+        get { return message; }
+        set
+        {
+            message = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("message"));
         }
     }
 
