@@ -166,12 +166,18 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
     public List<object> GetCachedMessagesForUser(string username)
     {
         string channelName = chatClient.GetPrivateChannelNameByUser(username);
+        if (!chatClient.PrivateChannels.ContainsKey(channelName)) {
+            return new List<object>();
+        }
         return chatClient.PrivateChannels[channelName].Messages;
     }
 
     public int GetMessageCountForUser(string username)
     {
         string channelName = chatClient.GetPrivateChannelNameByUser(username);
+        if (!chatClient.PrivateChannels.ContainsKey(channelName)) {
+            return 0;
+        }
         return chatClient.PrivateChannels[channelName].MessageCount;
     }
 
