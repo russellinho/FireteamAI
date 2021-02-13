@@ -235,7 +235,9 @@ public class FriendsMessenger : MonoBehaviour
     {
         if (messengerEntryCreateQueue.Count > 0) {
             QueueData q = messengerEntryCreateQueue.Dequeue();
-            CreateMessengerEntry(q.friendRequestId, q.username, q.exp);
+            if (!messengerEntries.ContainsKey(q.friendRequestId)) {
+                CreateMessengerEntry(q.friendRequestId, q.username, q.exp);
+            }
         }
     }
 

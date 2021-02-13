@@ -149,7 +149,8 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             InstantiatePlayer();
             titleRef.SetPlayerStatsForTitle();
             titleRef.ToggleLoadingScreen(false);
-            globalChatClient.RefreshStatusesForCurrentFriends();
+            // globalChatClient.RefreshStatusesForCurrentFriends();
+            Debug.Log("TWO");
             if (PhotonNetwork.InRoom) {
                 string gameModeWas = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
                 if (gameModeWas == "versus") {
@@ -397,7 +398,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
     void AddMyselfToPlayerList(PhotonView pView, GameObject playerRef)
     {
-        Debug.Log("Actor no: " + pView.Owner.ActorNumber);
+        // Debug.Log("Actor no: " + pView.Owner.ActorNumber);
         char team = 'N';
         if ((string)pView.Owner.CustomProperties["team"] == "red") {
             team = 'R';
