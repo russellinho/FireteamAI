@@ -2600,10 +2600,16 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             FriendData fd = PlayerData.playerdata.friendsList[key];
             if (args.Snapshot.Key == "status") {
                 fd.Status = Convert.ToInt32(args.Snapshot.Value);
-                if (fd.Status == 1) {
-                    PlayerData.playerdata.globalChatClient.AddStatusListenersToFriends(new List<string>(){fd.FriendUsername});
-                } else {
-                    PlayerData.playerdata.globalChatClient.RemoveStatusListenersForFriends(new List<string>(){fd.FriendUsername});
+                try {
+                    if (fd.Status == 1) {
+                        PlayerData.playerdata.globalChatClient.AddStatusListenersToFriends(new List<string>(){fd.FriendUsername});
+                    } else {
+                        PlayerData.playerdata.globalChatClient.RemoveStatusListenersForFriends(new List<string>(){fd.FriendUsername});
+                    }
+                } catch (Exception e) {
+                    Debug.LogWarning("Tried to add listeners to friends, but chat client wasn't initialized yet.");
+                    playerDataModifyLegalFlag = false;
+                    return;
                 }
             }
             if (args.Snapshot.Key == "blocker") {
