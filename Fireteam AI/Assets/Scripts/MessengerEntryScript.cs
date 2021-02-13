@@ -65,7 +65,7 @@ public class MessengerEntryScript : MonoBehaviour
     public void UpdateSocialStatus(string newStatus)
     {
         if (PlayerData.playerdata.friendsList[friendRequestId].Status == 1) {
-            if (newStatus == "ONLINE") {
+            if (newStatus == "ONLINE" || newStatus == "IN GAME") {
                 transform.SetSiblingIndex(friendsMessenger.onlineSection.GetSiblingIndex() + 1);
                 transform.SetSiblingIndex(friendsMessenger.onlineSection.GetSiblingIndex() + 1);
             } else {
