@@ -11,7 +11,7 @@ using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 public class FriendsMessenger : MonoBehaviour
 {
     private const float NOTIFICATION_FLASH_TIME = 0.6f;
-    private const int MAX_FRIENDS = 40;
+    private const int MAX_FRIENDS = 25;
     private Color GLOW_NORMAL_COLOR = new Color(99f / 255f, 198f / 255f, 255f / 255f, 50f / 255f);
     private Color GLOW_ALERT_COLOR = new Color(255f / 255f, 119f / 255f, 1f / 255f, 50f / 255f);
     public QuickActionMenu quickActionMenu;
