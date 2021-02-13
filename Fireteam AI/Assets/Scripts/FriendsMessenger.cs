@@ -193,7 +193,7 @@ public class FriendsMessenger : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Return) && isSelect && messengerInput.text.Length > 0)
         {
             OnSendPrivateMessage();
-            messengerInput.text = "";
+            // messengerInput.text = "";
             ToggleInputFieldSelected(true);
         }
         else if (Input.GetKeyDown(KeyCode.Return) && isSelect && messengerInput.text.Length == 0)
@@ -388,6 +388,7 @@ public class FriendsMessenger : MonoBehaviour
             SendServerMsg("THE USER IS CURRENTLY OFFLINE AND WILL NOT RECEIVE YOUR MESSAGES.");
         }
         PlayerData.playerdata.globalChatClient.SendPrivateMessageToUser(PlayerData.playerdata.friendsList[chattingWithFriendRequestId].FriendUsername, messengerInput.text);
+        messengerInput.text = "";
     }
 
     bool CanSendMessage(string friendRequestId)
