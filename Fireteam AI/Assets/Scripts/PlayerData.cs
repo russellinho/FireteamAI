@@ -149,7 +149,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             InstantiatePlayer();
             titleRef.SetPlayerStatsForTitle();
             titleRef.ToggleLoadingScreen(false);
-            // globalChatClient.RefreshStatusesForCurrentFriends();
+            globalChatClient.RefreshStatusesForCurrentFriends();
             Debug.Log("TWO");
             if (PhotonNetwork.InRoom) {
                 string gameModeWas = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];

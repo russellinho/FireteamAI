@@ -32,7 +32,9 @@ public class MessengerEntryScript : MonoBehaviour
         // If still in friend request phase, then put in that section
         UpdateFriendStatus();
         // Create a cached chat entry
-        PlayerData.playerdata.cachedConversations.Add(friendRequestId, new CachedMessage());
+        if (!PlayerData.playerdata.cachedConversations.ContainsKey(friendRequestId)) {
+            PlayerData.playerdata.cachedConversations.Add(friendRequestId, new CachedMessage());
+        }
     }
 
     public void UpdateRank(uint exp)
