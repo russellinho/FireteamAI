@@ -146,7 +146,7 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
                     chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG + PhotonNetwork.CurrentRoom.Name);
                 } else {
                     // If it was a join code, then join that room
-                    if (sMessage.Substring(0, 5) == ROOM_JOIN_MSG) {
+                    if (sMessage.Length >= 5 && sMessage.Substring(0, 5) == ROOM_JOIN_MSG) {
                         PlayerData.playerdata.titleRef.WarpJoinGame(sMessage.Substring(5, sMessage.Length - 5));
                     } else {
                         if (PlayerData.playerdata.titleRef.friendsMessenger.messengerChatBox.activeInHierarchy) {
@@ -189,7 +189,7 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
             if (channelName.Equals("Campaign")) {
                 for (int i = 0; i < senders.Length; i++) {
                     string messageReceived = messages[i].ToString();
-                    if (messageReceived.Substring(0, 2) == MY_DATA_MSG) {
+                    if (messageReceived.Length >= 2 && messageReceived.Substring(0, 2) == MY_DATA_MSG) {
                         // Take exp code and cache it if it's sent to you
                         string[] playerDataParsed = messageReceived.Split('|');
                         string parsedUsername = playerDataParsed[1];
@@ -202,7 +202,7 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
             } else if (channelName.Equals("Versus")) {
                 for (int i = 0; i < senders.Length; i++) {
                     string messageReceived = messages[i].ToString();
-                    if (messageReceived.Substring(0, 2) == MY_DATA_MSG) {
+                    if (messageReceived.Length >= 2 && messageReceived.Substring(0, 2) == MY_DATA_MSG) {
                         // Take exp code and cache it if it's sent to you
                         string[] playerDataParsed = messageReceived.Split('|');
                         string parsedUsername = playerDataParsed[1];
