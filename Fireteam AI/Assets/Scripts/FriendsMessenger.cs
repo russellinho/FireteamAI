@@ -273,6 +273,14 @@ public class FriendsMessenger : MonoBehaviour
         ToggleMessengerChatBox(false, null);
     }
 
+    bool MessageDisplayable(string message)
+    {
+        if (message == PlayerData.playerdata.globalChatClient.GetRoomRequestCode() || message.Substring(0, 5) == PlayerData.playerdata.globalChatClient.GetRoomJoinCode()) {
+            return false;
+        }
+        return true;
+    }
+
     public void ToggleMessengerChatBox(bool b, string friendRequestId)
     {
         string newFriendRequestId = null;
@@ -302,7 +310,9 @@ public class FriendsMessenger : MonoBehaviour
                 List<object> newCachedMessages = PlayerData.playerdata.globalChatClient.GetCachedMessagesForUser(newUsername);
                 for (int i = c.previousMessageCount; i < newMessageCount; i++) {
                     string newMessage = newCachedMessages[i].ToString();
-                    SendMsg(false, newMessage, newUsername);
+                    if (MessageDisplayable(newMessage)) {
+                        SendMsg(false, newMessage, newUsername);
+                    }
                 }
                 // Go ahead and cache the new data again
                 c.previousMessageCount = newMessageCount;

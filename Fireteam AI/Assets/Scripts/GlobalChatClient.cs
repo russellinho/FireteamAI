@@ -80,6 +80,14 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
         }
     }
 
+    public string GetRoomRequestCode() {
+        return ROOM_REQUEST_MSG;
+    }
+
+    public string GetRoomJoinCode() {
+        return ROOM_JOIN_MSG;
+    }
+
     public void UpdateStatus(string status)
     {
         chatClient?.SetOnlineStatus(ChatUserStatus.Online, status);
