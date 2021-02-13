@@ -60,6 +60,11 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
         Debug.Log("Successfully connected to Photon Chat.");
         // Set online status
         UpdateStatus("ONLINE");
+        RefreshStatusesForCurrentFriends();
+	}
+
+    public void RefreshStatusesForCurrentFriends()
+    {
         List<string> friendsToSub = new List<string>();
         foreach (KeyValuePair<string, FriendData> f in PlayerData.playerdata.friendsList) {
             if (f.Value.Status == 1) {
@@ -67,7 +72,7 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
             }
         }
         AddStatusListenersToFriends(friendsToSub);
-	}
+    }
 
     // Call this whenever you enter the campaign or versus matchmaking lobby
     public void SubscribeToGlobalChat(char modeLobby) {

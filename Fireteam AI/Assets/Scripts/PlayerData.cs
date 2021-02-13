@@ -149,7 +149,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             InstantiatePlayer();
             titleRef.SetPlayerStatsForTitle();
             titleRef.ToggleLoadingScreen(false);
-            titleRef.friendsMessenger.RefreshNotifications();
+            globalChatClient.RefreshStatusesForCurrentFriends();
             if (PhotonNetwork.InRoom) {
                 string gameModeWas = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
                 if (gameModeWas == "versus") {
@@ -169,6 +169,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     Debug.Log("Tried to leave Vivox voice channel, but encountered an error: " + e.Message);
                 }
             }
+            titleRef.friendsMessenger.RefreshNotifications();
             dataLoadedFlag = false;
         }
         if (triggerEmergencyExitFlag) {
