@@ -291,7 +291,7 @@ public class FriendsMessenger : MonoBehaviour
 
     bool MessageDisplayable(string message)
     {
-        if (message == PlayerData.playerdata.globalChatClient.GetRoomRequestCode() || message.Substring(0, 5) == PlayerData.playerdata.globalChatClient.GetRoomJoinCode()) {
+        if (message == PlayerData.playerdata.globalChatClient.GetRoomRequestCode() || (message.Length >= 5 && message.Substring(0, 5) == PlayerData.playerdata.globalChatClient.GetRoomJoinCode())) {
             return false;
         }
         return true;
