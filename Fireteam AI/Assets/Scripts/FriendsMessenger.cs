@@ -221,7 +221,10 @@ public class FriendsMessenger : MonoBehaviour
 
     public MessengerEntryScript GetMessengerEntry(string friendRequestId)
     {
-        return messengerEntries[friendRequestId];
+        if (messengerEntries.ContainsKey(friendRequestId)) {
+            return messengerEntries[friendRequestId];
+        }
+        return null;
     }
 
     public void DeleteMessengerEntry(string friendRequestId)
