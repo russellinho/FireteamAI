@@ -17,8 +17,7 @@ public class MessengerEntryScript : MonoBehaviour
     public TextMeshProUGUI status;
     private bool notificationFlashOn;
     private float notificationFlashTimer;
-    public Image border;
-    public Image glow;
+    public Image background;
 
     void Update()
     {
@@ -116,7 +115,7 @@ public class MessengerEntryScript : MonoBehaviour
             notificationFlashTimer -= Time.deltaTime;
             if (notificationFlashTimer <= 0f) {
                 notificationFlashTimer = NOTIFICATION_FLASH_TIME;
-                if (border.color.Equals(BORDER_ALERT_COLOR)) {
+                if (background.color.Equals(BORDER_ALERT_COLOR)) {
                     ToggleNotificationFlashColor(false);
                 } else {
                     ToggleNotificationFlashColor(true);
@@ -128,11 +127,9 @@ public class MessengerEntryScript : MonoBehaviour
     void ToggleNotificationFlashColor(bool b)
     {
         if (b) {
-            border.color = BORDER_ALERT_COLOR;
-            glow.color = GLOW_ALERT_COLOR;
+            background.color = GLOW_ALERT_COLOR;
         } else {
-            border.color = BORDER_NORMAL_COLOR;
-            glow.color = GLOW_NORMAL_COLOR;
+            background.color = GLOW_NORMAL_COLOR;
         }
     }
 
