@@ -149,9 +149,11 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
                     if (sMessage.Substring(0, 5) == ROOM_JOIN_MSG) {
                         PlayerData.playerdata.titleRef.WarpJoinGame(sMessage.Substring(5, sMessage.Length - 5));
                     } else {
-                        string chattingWithUsername = PlayerData.playerdata.friendsList[PlayerData.playerdata.titleRef.friendsMessenger.GetChattingWithFriendRequestId()].FriendUsername;
-                        if (chattingWithUsername == sender) {
-                            PlayerData.playerdata.titleRef.friendsMessenger.SendMsg(false, message.ToString(), sender);
+                        if (PlayerData.playerdata.titleRef.friendsMessenger.messengerChatBox.activeInHierarchy) {
+                            string chattingWithUsername = PlayerData.playerdata.friendsList[PlayerData.playerdata.titleRef.friendsMessenger.GetChattingWithFriendRequestId()].FriendUsername;
+                            if (chattingWithUsername == sender) {
+                                PlayerData.playerdata.titleRef.friendsMessenger.SendMsg(false, message.ToString(), sender);
+                            }
                         } else {
                             string thisFriendRequestId = PlayerData.playerdata.titleRef.friendsMessenger.GetFriendRequestIdByUsername(sender);
                             PlayerData.playerdata.titleRef.friendsMessenger.GetMessengerEntry(thisFriendRequestId).ToggleNotification(true);
