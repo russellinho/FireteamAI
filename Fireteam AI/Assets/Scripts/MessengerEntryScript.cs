@@ -46,6 +46,7 @@ public class MessengerEntryScript : MonoBehaviour
             friendsMessenger.quickActionMenu.gameObject.SetActive(false);
         }
         int newStatus = PlayerData.playerdata.friendsList[friendRequestId].Status;
+        ToggleVisible(true);
         if (newStatus == 0) {
             UpdateSocialStatus("OFFLINE");
             transform.SetSiblingIndex(friendsMessenger.friendRequestSection.GetSiblingIndex() + 1);
@@ -62,8 +63,6 @@ public class MessengerEntryScript : MonoBehaviour
             string blocker = PlayerData.playerdata.friendsList[friendRequestId].Blocker;
             if (blocker != AuthScript.authHandler.user.UserId) {
                 ToggleVisible(false);
-            } else {
-                ToggleVisible(true);
             }
         }
     }
