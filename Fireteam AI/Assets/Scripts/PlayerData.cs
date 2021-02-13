@@ -942,6 +942,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
                 // Add update callback
                 DAOScript.dao.dbRef.Child("fteam_ai/friends/" + friendRequestId).ChildChanged += HandleFriendUpdate;
+                DAOScript.dao.dbRef.Child("fteam_ai/friends/" + friendRequestId).ChildAdded += HandleFriendUpdate;
 
                 // Add to friend list
                 usernameList.Add(fd.FriendUsername);
@@ -2534,6 +2535,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
                         // Add update callback
                         DAOScript.dao.dbRef.Child("fteam_ai/friends/" + friendRequestId).ChildChanged += HandleFriendUpdate;
+                        DAOScript.dao.dbRef.Child("fteam_ai/friends/" + friendRequestId).ChildAdded += HandleFriendUpdate;
 
                         // Add to friend list
                         globalChatClient.AddStatusListenersToFriends(new List<string>(){fd.FriendUsername});
@@ -2597,9 +2599,11 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             string key = args.Snapshot.Reference.Parent.Key;
             FriendData fd = PlayerData.playerdata.friendsList[key];
             if (args.Snapshot.Key == "status") {
+                Debug.Log("one");
                 fd.Status = Convert.ToInt32(args.Snapshot.Value);
             }
             if (args.Snapshot.Key == "blocker") {
+                Debug.Log("two");
                 fd.Blocker = args.Snapshot.Value.ToString();
             }
             if (titleRef != null) {

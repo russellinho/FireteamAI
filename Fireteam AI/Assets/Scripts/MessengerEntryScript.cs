@@ -62,6 +62,8 @@ public class MessengerEntryScript : MonoBehaviour
             string blocker = PlayerData.playerdata.friendsList[friendRequestId].Blocker;
             if (blocker != AuthScript.authHandler.user.UserId) {
                 ToggleVisible(false);
+            } else {
+                ToggleVisible(true);
             }
         }
     }
