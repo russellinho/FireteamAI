@@ -10,7 +10,7 @@ using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 
 public class FriendsMessenger : MonoBehaviour
 {
-    private const float NOTIFICATION_FLASH_TIME = 1.2f;
+    private const float NOTIFICATION_FLASH_TIME = 0.6f;
     private const int MAX_FRIENDS = 40;
     private Color GLOW_NORMAL_COLOR = new Color(99f / 255f, 198f / 255f, 255f / 255f, 50f / 255f);
     private Color GLOW_ALERT_COLOR = new Color(255f / 255f, 119f / 255f, 1f / 255f, 50f / 255f);
@@ -384,7 +384,25 @@ public class FriendsMessenger : MonoBehaviour
     public void OnSendPrivateMessage()
     {
         SendMsg(true, messengerInput.text, PhotonNetwork.NickName);
+        if (!CanSendMessage(chattingWithFriendRequestId)) {
+            SendServerMsg("THE USER IS CURRENTLY OFFLINE AND WILL NOT RECEIVE YOUR MESSAGES.");
+        }
         PlayerData.playerdata.globalChatClient.SendPrivateMessageToUser(PlayerData.playerdata.friendsList[chattingWithFriendRequestId].FriendUsername, messengerInput.text);
+    }
+
+    bool CanSendMessage(string friendRequestId)
+    {
+        if (PlayerData.playerdata.friendsList[friendRequestId].Status != 1 || messengerEntries[friendRequestId].status.text == "OFFLINE") {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void SendServerMsg(string message)
+    {
+        messengerChatBoxTxt.text += "<color=#ffa500ff><b>SERVER: </b>" + message + "</color>\n";
+        myScrollRect.verticalNormalizedPosition = 0f;
     }
 
     public void SendMsg(bool master, string message, string user)

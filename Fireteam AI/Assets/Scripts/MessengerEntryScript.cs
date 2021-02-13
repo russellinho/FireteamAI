@@ -8,9 +8,7 @@ public class MessengerEntryScript : MonoBehaviour
 {
     private const float NOTIFICATION_FLASH_TIME = 0.6f;
     private Color GLOW_NORMAL_COLOR = new Color(99f / 255f, 198f / 255f, 255f / 255f, 50f / 255f);
-    private Color BORDER_NORMAL_COLOR = new Color(99f / 255f, 198f / 255f, 255f / 255f, 255f / 255f);
     private Color GLOW_ALERT_COLOR = new Color(255f / 255f, 119f / 255f, 1f / 255f, 50f / 255f);
-    private Color BORDER_ALERT_COLOR = new Color(255f / 255f, 119f / 255f, 1f / 255f, 255f / 255f);
     private FriendsMessenger friendsMessenger;
     private string friendRequestId;
     public TextMeshProUGUI nametag;
@@ -115,7 +113,7 @@ public class MessengerEntryScript : MonoBehaviour
             notificationFlashTimer -= Time.deltaTime;
             if (notificationFlashTimer <= 0f) {
                 notificationFlashTimer = NOTIFICATION_FLASH_TIME;
-                if (background.color.Equals(BORDER_ALERT_COLOR)) {
+                if (background.color.Equals(GLOW_ALERT_COLOR)) {
                     ToggleNotificationFlashColor(false);
                 } else {
                     ToggleNotificationFlashColor(true);
