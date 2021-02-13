@@ -62,7 +62,9 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
         UpdateStatus("ONLINE");
         List<string> friendsToSub = new List<string>();
         foreach (KeyValuePair<string, FriendData> f in PlayerData.playerdata.friendsList) {
-            friendsToSub.Add(f.Value.FriendUsername);
+            if (f.Value.Status == 1) {
+                friendsToSub.Add(f.Value.FriendUsername);
+            }
         }
         AddStatusListenersToFriends(friendsToSub);
 	}
@@ -142,12 +144,20 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
         if (PlayerData.playerdata.titleRef != null) {
             if (PlayerData.playerdata.titleRef.friendsMessenger.CheckIsVerifiedFriendByUsername(sender)) {
                 // If it was a request to join my game, send back the room name to join if I'm in one
-                if (PhotonNetwork.InRoom && sMessage == ROOM_REQUEST_MSG) {
-                    chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG + PhotonNetwork.CurrentRoom.Name);
+                if (sMessage == ROOM_REQUEST_MSG) {
+                    if (PhotonNetwork.InRoom) {
+                        chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG + PhotonNetwork.CurrentRoom.Name);
+                    } else {
+                        chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG);
+                    }
                 } else {
                     // If it was a join code, then join that room
                     if (sMessage.Length >= 5 && sMessage.Substring(0, 5) == ROOM_JOIN_MSG) {
-                        PlayerData.playerdata.titleRef.WarpJoinGame(sMessage.Substring(5, sMessage.Length - 5));
+                        if (sMessage.Length == 5) {
+                            PlayerData.playerdata.titleRef.TriggerAlertPopup("THE USER IS CURRENTLY NOT IN A ROOM!");
+                        } else {
+                            PlayerData.playerdata.titleRef.WarpJoinGame(sMessage.Substring(5, sMessage.Length - 5));
+                        }
                     } else {
                         if (PlayerData.playerdata.titleRef.friendsMessenger.messengerChatBox.activeInHierarchy) {
                             string chattingWithUsername = PlayerData.playerdata.friendsList[PlayerData.playerdata.titleRef.friendsMessenger.GetChattingWithFriendRequestId()].FriendUsername;

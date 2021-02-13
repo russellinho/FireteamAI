@@ -2597,7 +2597,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             }
             if (titleRef != null) {
                 MessengerEntryScript m = titleRef.friendsMessenger.GetMessengerEntry(key);
-                m.UpdateFriendStatus(false);
+                m.UpdateFriendStatus();
             }
 
             playerDataModifyLegalFlag = false;

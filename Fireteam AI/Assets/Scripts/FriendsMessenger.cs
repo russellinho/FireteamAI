@@ -126,6 +126,8 @@ public class FriendsMessenger : MonoBehaviour
                 Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
                 if (results["status"].ToString() != "200") {
                     titleController.TriggerAlertPopup("USER IS NOT ON YOUR FRIENDS LIST!");
+                } else {
+                    PlayerData.playerdata.globalChatClient.AddStatusListenersToFriends(new List<string>(){PlayerData.playerdata.friendsList[friendRequestId].FriendUsername});
                 }
             }
             titleController.TriggerBlockScreen(false);
@@ -148,6 +150,8 @@ public class FriendsMessenger : MonoBehaviour
                 Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
                 if (results["status"].ToString() != "200") {
                     titleController.TriggerAlertPopup("USER IS NOT ON YOUR FRIENDS LIST!");
+                } else {
+                    PlayerData.playerdata.globalChatClient.RemoveStatusListenersForFriends(new List<string>(){PlayerData.playerdata.friendsList[friendRequestId].FriendUsername});
                 }
             }
             titleController.TriggerBlockScreen(false);
@@ -170,6 +174,8 @@ public class FriendsMessenger : MonoBehaviour
                 Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
                 if (results["status"].ToString() != "200") {
                     titleController.TriggerAlertPopup("USER IS NOT ON YOUR FRIENDS LIST!");
+                } else {
+                    PlayerData.playerdata.globalChatClient.AddStatusListenersToFriends(new List<string>(){PlayerData.playerdata.friendsList[friendRequestId].FriendUsername});
                 }
             }
             titleController.TriggerBlockScreen(false);

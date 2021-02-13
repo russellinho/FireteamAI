@@ -31,12 +31,12 @@ public class MessengerEntryScript : MonoBehaviour
         this.friendRequestId = friendRequestId;
         this.nametag.text = username;
         // If still in friend request phase, then put in that section
-        UpdateFriendStatus(true);
+        UpdateFriendStatus();
         // Create a cached chat entry
         PlayerData.playerdata.cachedConversations.Add(friendRequestId, new CachedMessage());
     }
 
-    public void UpdateFriendStatus(bool init)
+    public void UpdateFriendStatus()
     {
         if (friendsMessenger.quickActionMenu.GetActingOnEntry() == this) {
             friendsMessenger.quickActionMenu.gameObject.SetActive(false);
@@ -44,13 +44,16 @@ public class MessengerEntryScript : MonoBehaviour
         int newStatus = PlayerData.playerdata.friendsList[friendRequestId].Status;
         if (newStatus == 0) {
             UpdateSocialStatus("OFFLINE");
-            transform.SetSiblingIndex(friendsMessenger.friendRequestSection.GetSiblingIndex() + (init ? 1 : 0));
+            transform.SetSiblingIndex(friendsMessenger.friendRequestSection.GetSiblingIndex() + 1);
+            transform.SetSiblingIndex(friendsMessenger.friendRequestSection.GetSiblingIndex() + 1);
         } else if (newStatus == 1) {
             UpdateSocialStatus("OFFLINE");
-            transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + (init ? 1 : 0));
+            transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + 1);
+            transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + 1);
         } else {
             UpdateSocialStatus("BLOCKED");
-            transform.SetSiblingIndex(friendsMessenger.blockedSection.GetSiblingIndex() + (init ? 1 : 0));
+            transform.SetSiblingIndex(friendsMessenger.blockedSection.GetSiblingIndex() + 1);
+            transform.SetSiblingIndex(friendsMessenger.blockedSection.GetSiblingIndex() + 1);
             // If blocked, then show it only if the blocker is equal to current player ID
             string blocker = PlayerData.playerdata.friendsList[friendRequestId].Blocker;
             if (blocker != AuthScript.authHandler.user.UserId) {
@@ -61,6 +64,15 @@ public class MessengerEntryScript : MonoBehaviour
 
     public void UpdateSocialStatus(string newStatus)
     {
+        if (PlayerData.playerdata.friendsList[friendRequestId].Status == 1) {
+            if (newStatus == "ONLINE") {
+                transform.SetSiblingIndex(friendsMessenger.onlineSection.GetSiblingIndex() + 1);
+                transform.SetSiblingIndex(friendsMessenger.onlineSection.GetSiblingIndex() + 1);
+            } else {
+                transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + 1);
+                transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + 1);
+            }
+        }
         this.status.text = newStatus;
     }
 
