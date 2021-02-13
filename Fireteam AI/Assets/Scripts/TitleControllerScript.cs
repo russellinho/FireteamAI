@@ -3711,6 +3711,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnAddFriend()
 	{
 		friendsMessenger.AddFriend(addFriendInput.text);
+		CloseAddFriend();
 	}
 
 	public void CloseRoomPasswordEnter()
@@ -3727,6 +3728,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	public void CloseAddFriend()
 	{
+		addFriendInput.text = "";
 		addFriendPopup.ModalWindowOut();
 		blurManager.BlurOutAnim();
 	}

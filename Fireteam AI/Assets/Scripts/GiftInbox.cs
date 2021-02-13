@@ -45,6 +45,9 @@ public class GiftInbox : MonoBehaviour
 
     public void ToggleNotification(bool b)
     {
+        if (giftInboxMain.activeInHierarchy) {
+            b = false;
+        }
         notificationFlashOn = b;
         if (b) {
             notificationFlashTimer = NOTIFICATION_FLASH_TIME;

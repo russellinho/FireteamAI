@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class QuickActionMenu : MonoBehaviour
+public class QuickActionMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Canvas parentCanvas;
     public RectTransform rectCanvas;
@@ -21,6 +21,7 @@ public class QuickActionMenu : MonoBehaviour
     public Button acceptFriendBtn;
     public Button declineFriendBtn;
     public Button acceptGiftBtn;
+    private bool pointerOn;
 
     public void UpdatePosition() {
         Vector2 movePos;
@@ -146,8 +147,8 @@ public class QuickActionMenu : MonoBehaviour
 
     void HandleClick()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse1)) {
-            if (!EventSystem.current.IsPointerOverGameObject()) {
+        if (Input.GetKeyDown(KeyCode.Mouse0)) {
+            if (!pointerOn) {
                 actingOnEntry = null;
                 actingOnEntryGift = null;
                 gameObject.SetActive(false);
@@ -158,5 +159,15 @@ public class QuickActionMenu : MonoBehaviour
     public void ToggleMenu(bool b)
     {
         gameObject.SetActive(b);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        pointerOn = true;
+    }
+    
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        pointerOn = false;
     }
 }

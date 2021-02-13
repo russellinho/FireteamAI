@@ -59,6 +59,11 @@ public class FriendsMessenger : MonoBehaviour
 
     public void AddFriend(string username)
     {
+        if (username.ToLower() == PhotonNetwork.NickName.ToLower()) {
+            titleController.TriggerAlertPopup("YOU CANNOT SEND A FRIEND REQUEST TO YOURSELF.");
+            titleController.TriggerBlockScreen(false);
+            return;
+        }
         Dictionary<string, object> inputData = new Dictionary<string, object>();
         inputData["callHash"] = DAOScript.functionsCallHash;
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
@@ -73,6 +78,8 @@ public class FriendsMessenger : MonoBehaviour
                 Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
                 if (results["status"].ToString() == "401") {
                     titleController.TriggerAlertPopup("USER [" + username + "] IS ALREADY YOUR FRIEND OR A REQUEST WITH THEM IS PENDING.");
+                } else if (results["status"].ToString() == "402") {
+                    titleController.TriggerAlertPopup("YOU CANNOT SEND A FRIEND REQUEST TO YOURSELF.");
                 } else if (results["status"].ToString() != "200") {
                     titleController.TriggerAlertPopup("USER [" + username + "] DOES NOT EXIST!");
                 }
@@ -388,6 +395,9 @@ public class FriendsMessenger : MonoBehaviour
 
     public void ToggleNotification(bool b)
     {
+        if (messengerMain.activeInHierarchy) {
+            b = false;
+        }
         notificationFlashOn = b;
         if (b) {
             notificationFlashTimer = NOTIFICATION_FLASH_TIME;

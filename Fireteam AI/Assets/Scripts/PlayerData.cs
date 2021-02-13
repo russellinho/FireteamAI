@@ -681,10 +681,15 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         supportModInfo.SightId = "";
                     }
                     LoadInventory(inventorySnap);
-                    if (playerDataSnap.ContainsKey("gifts")) {
-                        LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
+                    try {
+                        if (playerDataSnap.ContainsKey("gifts")) {
+                            LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
+                        }
+                        LoadFriends(friendsUsernameMap, friendData);
+                    } catch (Exception e) {
+                        Debug.Log(e.Message);
+                        return;
                     }
-                    LoadFriends(friendsUsernameMap, friendData);
                     List<object> itemsExpired = (List<object>)results["itemsExpired"];
                     if (itemsExpired.Count > 0) {
                         titleRef.TriggerExpirationPopup(itemsExpired);
@@ -938,12 +943,12 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
             // Add to UI
             if (titleRef != null) {
-                if (status == 2 && blocker == AuthScript.authHandler.user.UserId) {
+                if (status != 2 || (status == 2 && blocker == AuthScript.authHandler.user.UserId)) {
                     titleRef.friendsMessenger.EnqueueMessengerEntryCreation(friendRequestId, fd.FriendUsername);
                 }
             }
         }
-        globalChatClient.AddStatusListenersToFriends(usernameList);
+        // globalChatClient.AddStatusListenersToFriends(usernameList);
         playerDataModifyLegalFlag = false;
     }
 
@@ -2483,32 +2488,34 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             playerDataModifyLegalFlag = true;
             
             // Extract the friend request ID
-            string friendRequestId = args.Snapshot.Key;
-            // Get details
-            Dictionary<object, object> friendRequest = (Dictionary<object, object>)args.Snapshot.Value;
-            string requestor = friendRequest["requestor"].ToString();
-            string requestee = friendRequest["requestee"].ToString();
-            string friendId = requestor == AuthScript.authHandler.user.UserId ? requestee : requestor;
-            int status = Convert.ToInt32(friendRequest["status"]);
-            string blocker = null;
-            if (friendRequest.ContainsKey("blocker")) {
-                blocker = friendRequest["blocker"].ToString();
-            }
-            // Create friend data
-            FriendData fd = new FriendData();
+            string friendRequestId = args.Snapshot.Value.ToString();
 
             Dictionary<string, object> inputData = new Dictionary<string, object>();
             inputData["callHash"] = DAOScript.functionsCallHash;
-            inputData["uid"] = friendId;
+            inputData["uid"] = AuthScript.authHandler.user.UserId;
+            inputData["friendRequestId"] = friendRequestId;
 
-            HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("getUsernameForId");
+            HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("getNewlyAddedFriend");
             func.CallAsync(inputData).ContinueWith((task) => {
                 if (task.IsFaulted) {
-                    Debug.LogError("Friend [" + friendId + "] could not be added because no username was found.");
+                    Debug.LogError("Friend could not be added because no username was found.");
                 } else {
                     Dictionary<object, object> results = (Dictionary<object, object>)task.Result.Data;
                     if (results["status"].ToString() == "200") {
-                        fd.FriendUsername = results["message"].ToString();
+                        // Get details
+                        Dictionary<object, object> friendRequest = (Dictionary<object, object>)results["friendship"];
+                        string requestor = friendRequest["requestor"].ToString();
+                        string requestee = friendRequest["requestee"].ToString();
+                        string friendId = requestor == AuthScript.authHandler.user.UserId ? requestee : requestor;
+                        int status = Convert.ToInt32(friendRequest["status"]);
+                        string blocker = null;
+                        if (friendRequest.ContainsKey("blocker")) {
+                            blocker = friendRequest["blocker"].ToString();
+                        }
+                        // Create friend data
+                        FriendData fd = new FriendData();
+
+                        fd.FriendUsername = results["username"].ToString();
 
                         fd.PropertyChanged += OnPlayerInfoChange;
                         fd.FriendRequestId = friendRequestId;
@@ -2527,12 +2534,12 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
                         // Add to UI
                         if (titleRef != null) {
-                            if (status == 2 && blocker == AuthScript.authHandler.user.UserId) {
+                            if (status != 2 || (status == 2 && blocker == AuthScript.authHandler.user.UserId)) {
                                 titleRef.friendsMessenger.EnqueueMessengerEntryCreation(friendRequestId, fd.FriendUsername);
                             }
                         }
                     } else {
-                        Debug.LogError("Friend [" + friendId + "] could not be added because no username was found.");
+                        Debug.LogError("Friend could not be added because no username was found.");
                     }
                 }
                 playerDataModifyLegalFlag = false;
@@ -2549,13 +2556,16 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             return;
         }
 
-        // When friend item has been added, also add that item to this game session
+        // When friend item has been removed, also remove that item from this game session
         if (args.Snapshot.Value != null) {
             playerDataModifyLegalFlag = true;
             
-            string key = args.Snapshot.Key;
+            string key = args.Snapshot.Value.ToString();
             FriendData fd = PlayerData.playerdata.friendsList[key];
             fd.PropertyChanged -= OnPlayerInfoChange;
+
+            // Remove friend from list
+            globalChatClient.RemoveStatusListenersForFriends(new List<string>(){fd.FriendUsername});
             PlayerData.playerdata.friendsList.Remove(key);
             if (titleRef != null) {
                 titleRef.friendsMessenger.DeleteMessengerEntry(key);
@@ -2577,19 +2587,17 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         // When friend item has been added, also add that item to this game session
         if (args.Snapshot.Value != null) {
             playerDataModifyLegalFlag = true;
-            
-            string key = args.Snapshot.Key;
-            Dictionary<object, object> newVals = (Dictionary<object, object>)args.Snapshot.Value;
+            string key = args.Snapshot.Reference.Parent.Key;
             FriendData fd = PlayerData.playerdata.friendsList[key];
-            fd.Status = Convert.ToInt32(newVals["status"]);
-            string blocker = null;
-            if (newVals.ContainsKey("blocker")) {
-                blocker = newVals["blocker"].ToString();
+            if (args.Snapshot.Key == "status") {
+                fd.Status = Convert.ToInt32(args.Snapshot.Value);
             }
-            fd.Blocker = blocker;
+            if (args.Snapshot.Key == "blocker") {
+                fd.Blocker = args.Snapshot.Value.ToString();
+            }
             if (titleRef != null) {
                 MessengerEntryScript m = titleRef.friendsMessenger.GetMessengerEntry(key);
-                m.UpdateFriendStatus();
+                m.UpdateFriendStatus(false);
             }
 
             playerDataModifyLegalFlag = false;

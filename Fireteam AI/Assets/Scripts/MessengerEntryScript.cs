@@ -31,12 +31,12 @@ public class MessengerEntryScript : MonoBehaviour
         this.friendRequestId = friendRequestId;
         this.nametag.text = username;
         // If still in friend request phase, then put in that section
-        UpdateFriendStatus();
+        UpdateFriendStatus(true);
         // Create a cached chat entry
         PlayerData.playerdata.cachedConversations.Add(friendRequestId, new CachedMessage());
     }
 
-    public void UpdateFriendStatus()
+    public void UpdateFriendStatus(bool init)
     {
         if (friendsMessenger.quickActionMenu.GetActingOnEntry() == this) {
             friendsMessenger.quickActionMenu.gameObject.SetActive(false);
@@ -44,12 +44,13 @@ public class MessengerEntryScript : MonoBehaviour
         int newStatus = PlayerData.playerdata.friendsList[friendRequestId].Status;
         if (newStatus == 0) {
             UpdateSocialStatus("OFFLINE");
-            transform.SetSiblingIndex(friendsMessenger.friendRequestSection.GetSiblingIndex() + 1);
+            transform.SetSiblingIndex(friendsMessenger.friendRequestSection.GetSiblingIndex() + (init ? 1 : 0));
         } else if (newStatus == 1) {
-            transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + 1);
+            UpdateSocialStatus("OFFLINE");
+            transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + (init ? 1 : 0));
         } else {
             UpdateSocialStatus("BLOCKED");
-            transform.SetSiblingIndex(friendsMessenger.blockedSection.GetSiblingIndex() + 1);
+            transform.SetSiblingIndex(friendsMessenger.blockedSection.GetSiblingIndex() + (init ? 1 : 0));
             // If blocked, then show it only if the blocker is equal to current player ID
             string blocker = PlayerData.playerdata.friendsList[friendRequestId].Blocker;
             if (blocker != AuthScript.authHandler.user.UserId) {
@@ -84,6 +85,9 @@ public class MessengerEntryScript : MonoBehaviour
 
     public void ToggleNotification(bool b)
     {
+        if (friendsMessenger.GetChattingWithFriendRequestId() == friendRequestId) {
+            b = false;
+        }
         notificationFlashOn = b;
         if (b) {
             notificationFlashTimer = NOTIFICATION_FLASH_TIME;
