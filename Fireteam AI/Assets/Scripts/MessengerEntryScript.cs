@@ -13,6 +13,7 @@ public class MessengerEntryScript : MonoBehaviour
     private string friendRequestId;
     public TextMeshProUGUI nametag;
     public TextMeshProUGUI status;
+    public RawImage rankInsignia;
     private bool notificationFlashOn;
     private float notificationFlashTimer;
     public Image background;
@@ -22,15 +23,21 @@ public class MessengerEntryScript : MonoBehaviour
         HandleNotificationFlash();
     }
 
-    public void InitEntry(FriendsMessenger friendsMessenger, string friendRequestId, string username)
+    public void InitEntry(FriendsMessenger friendsMessenger, string friendRequestId, string username, uint exp)
     {
         this.friendsMessenger = friendsMessenger;
         this.friendRequestId = friendRequestId;
         this.nametag.text = username;
+        UpdateRank(exp);
         // If still in friend request phase, then put in that section
         UpdateFriendStatus();
         // Create a cached chat entry
         PlayerData.playerdata.cachedConversations.Add(friendRequestId, new CachedMessage());
+    }
+
+    public void UpdateRank(uint exp)
+    {
+        rankInsignia.texture = PlayerData.playerdata.GetRankInsigniaForRank(PlayerData.playerdata.GetRankFromExp(exp).name);
     }
 
     public void UpdateFriendStatus()

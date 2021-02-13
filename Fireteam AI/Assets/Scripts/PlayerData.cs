@@ -578,6 +578,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     Dictionary<object, object> playerDataSnap = (Dictionary<object, object>)results["playerData"];
                     Dictionary<object, object> inventorySnap = (Dictionary<object, object>)results["inventory"];
                     Dictionary<object, object> friendsUsernameMap = (Dictionary<object, object>)results["friendUsernameMap"];
+                    Dictionary<object, object> expMap = (Dictionary<object, object>)results["expMap"];
                     List<object> friendData = (List<object>)results["friendData"];
                     info.DefaultChar = playerDataSnap["defaultChar"].ToString();
                     info.DefaultWeapon = playerDataSnap["defaultWeapon"].ToString();
@@ -681,15 +682,10 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         supportModInfo.SightId = "";
                     }
                     LoadInventory(inventorySnap);
-                    try {
-                        if (playerDataSnap.ContainsKey("gifts")) {
-                            LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
-                        }
-                        LoadFriends(friendsUsernameMap, friendData);
-                    } catch (Exception e) {
-                        Debug.Log(e.Message);
-                        return;
+                    if (playerDataSnap.ContainsKey("gifts")) {
+                        LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
                     }
+                    LoadFriends(friendsUsernameMap, expMap, friendData);
                     List<object> itemsExpired = (List<object>)results["itemsExpired"];
                     if (itemsExpired.Count > 0) {
                         titleRef.TriggerExpirationPopup(itemsExpired);
@@ -906,45 +902,56 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
     }
 
-    void LoadFriends(Dictionary<object, object> friendsUsernamesMap, List<object> friendsDetails) {
+    void LoadFriends(Dictionary<object, object> friendsUsernamesMap, Dictionary<object, object> expMap, List<object> friendsDetails) {
         playerDataModifyLegalFlag = true;
         List<string> usernameList = new List<string>();
         foreach (object f in friendsDetails) {
             Dictionary<object, object> d = (Dictionary<object, object>)f;
             // Extract the friend request ID
             string friendRequestId = d["friendRequestId"].ToString();
-            // Get details
-            Dictionary<object, object> friendRequest = (Dictionary<object, object>)d["details"];
-            string requestor = friendRequest["requestor"].ToString();
-            string requestee = friendRequest["requestee"].ToString();
-            string friendId = requestor == AuthScript.authHandler.user.UserId ? requestee : requestor;
-            int status = Convert.ToInt32(friendRequest["status"]);
-            string blocker = null;
-            if (friendRequest.ContainsKey("blocker")) {
-                blocker = friendRequest["blocker"].ToString();
-            }
-            // Create friend data
-            FriendData fd = new FriendData();
-            fd.PropertyChanged += OnPlayerInfoChange;
-            fd.FriendRequestId = friendRequestId;
-            fd.FriendId = friendId;
-            fd.FriendUsername = friendsUsernamesMap[friendId].ToString();
-            fd.Status = status;
-            fd.Requestee = requestee;
-            fd.Requestor = requestor;
-            fd.Blocker = blocker;
+            if (PlayerData.playerdata.friendsList.ContainsKey(friendRequestId)) {
+                // If already loaded from DB, just add to UI
+                FriendData fd = PlayerData.playerdata.friendsList[friendRequestId];
+                if (titleRef != null) {
+                    if (fd.Status != 2 || (fd.Status == 2 && fd.Blocker == AuthScript.authHandler.user.UserId)) {
+                        titleRef.friendsMessenger.EnqueueMessengerEntryCreation(friendRequestId, fd.FriendUsername, fd.Exp);
+                    }
+                }
+            } else {
+                // Get details
+                Dictionary<object, object> friendRequest = (Dictionary<object, object>)d["details"];
+                string requestor = friendRequest["requestor"].ToString();
+                string requestee = friendRequest["requestee"].ToString();
+                string friendId = requestor == AuthScript.authHandler.user.UserId ? requestee : requestor;
+                int status = Convert.ToInt32(friendRequest["status"]);
+                string blocker = null;
+                if (friendRequest.ContainsKey("blocker")) {
+                    blocker = friendRequest["blocker"].ToString();
+                }
+                // Create friend data
+                FriendData fd = new FriendData();
+                fd.PropertyChanged += OnPlayerInfoChange;
+                fd.FriendRequestId = friendRequestId;
+                fd.FriendId = friendId;
+                fd.FriendUsername = friendsUsernamesMap[friendId].ToString();
+                fd.Exp = Convert.ToUInt32(expMap[friendId].ToString());
+                fd.Status = status;
+                fd.Requestee = requestee;
+                fd.Requestor = requestor;
+                fd.Blocker = blocker;
 
-            // Add update callback
-            DAOScript.dao.dbRef.Child("fteam_ai/friends/" + friendRequestId).ChildChanged += HandleFriendUpdate;
+                // Add update callback
+                DAOScript.dao.dbRef.Child("fteam_ai/friends/" + friendRequestId).ChildChanged += HandleFriendUpdate;
 
-            // Add to friend list
-            usernameList.Add(fd.FriendUsername);
-            PlayerData.playerdata.friendsList.Add(friendRequestId, fd);
+                // Add to friend list
+                usernameList.Add(fd.FriendUsername);
+                PlayerData.playerdata.friendsList.Add(friendRequestId, fd);
 
-            // Add to UI
-            if (titleRef != null) {
-                if (status != 2 || (status == 2 && blocker == AuthScript.authHandler.user.UserId)) {
-                    titleRef.friendsMessenger.EnqueueMessengerEntryCreation(friendRequestId, fd.FriendUsername);
+                // Add to UI
+                if (titleRef != null) {
+                    if (status != 2 || (status == 2 && blocker == AuthScript.authHandler.user.UserId)) {
+                        titleRef.friendsMessenger.EnqueueMessengerEntryCreation(friendRequestId, fd.FriendUsername, fd.Exp);
+                    }
                 }
             }
         }
@@ -2516,7 +2523,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         FriendData fd = new FriendData();
 
                         fd.FriendUsername = results["username"].ToString();
-
+                        fd.Exp = Convert.ToUInt32(results["exp"].ToString());
                         fd.PropertyChanged += OnPlayerInfoChange;
                         fd.FriendRequestId = friendRequestId;
                         fd.FriendId = friendId;
@@ -2535,7 +2542,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         // Add to UI
                         if (titleRef != null) {
                             if (status != 2 || (status == 2 && blocker == AuthScript.authHandler.user.UserId)) {
-                                titleRef.friendsMessenger.EnqueueMessengerEntryCreation(friendRequestId, fd.FriendUsername);
+                                titleRef.friendsMessenger.EnqueueMessengerEntryCreation(friendRequestId, fd.FriendUsername, fd.Exp);
                             }
                         }
                     } else {
@@ -3235,6 +3242,17 @@ public class FriendData : INotifyPropertyChanged {
         {
             blocker = value;
             PropertyChanged(this, new PropertyChangedEventArgs ("blocker"));
+        }
+    }
+
+    private uint exp;
+    public uint Exp
+    {
+        get { return exp; }
+        set
+        { 
+            exp = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("exp"));
         }
     }
 

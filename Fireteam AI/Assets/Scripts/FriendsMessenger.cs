@@ -234,24 +234,25 @@ public class FriendsMessenger : MonoBehaviour
     {
         if (messengerEntryCreateQueue.Count > 0) {
             QueueData q = messengerEntryCreateQueue.Dequeue();
-            CreateMessengerEntry(q.friendRequestId, q.username);
+            CreateMessengerEntry(q.friendRequestId, q.username, q.exp);
         }
     }
 
-    public void EnqueueMessengerEntryCreation(string friendRequestId, string username)
+    public void EnqueueMessengerEntryCreation(string friendRequestId, string username, uint exp)
     {
         QueueData q = new QueueData();
         q.friendRequestId = friendRequestId;
         q.username = username;
+        q.exp = exp;
         messengerEntryCreateQueue.Enqueue(q);
     }
 
-    public void CreateMessengerEntry(string friendRequestId, string username)
+    public void CreateMessengerEntry(string friendRequestId, string username, uint exp)
     {
         GameObject o = GameObject.Instantiate(messengerEntry, friendsListEntries);
         MessengerEntryScript m = o.GetComponent<MessengerEntryScript>();
         messengerEntries[friendRequestId] = m;
-        m.InitEntry(this, friendRequestId, username);
+        m.InitEntry(this, friendRequestId, username, exp);
     }
 
     public void ToggleMessenger()
@@ -475,5 +476,6 @@ public class FriendsMessenger : MonoBehaviour
     private struct QueueData {
         public string friendRequestId;
         public string username;
+        public uint exp;
     }
 }
