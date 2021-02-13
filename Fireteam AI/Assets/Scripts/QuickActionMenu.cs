@@ -113,6 +113,7 @@ public class QuickActionMenu : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         actingOnEntry.ToggleNotification(false);
         friendsMessenger.ToggleMessengerChatBox(true, actingOnEntry.GetFriendRequestId());
+        actingOnEntry.ToggleNotification(false);
     }
 
     public void OnJoinButtonClicked()

@@ -264,6 +264,7 @@ public class FriendsMessenger : MonoBehaviour
         } else {
             messengerMain.SetActive(true);
             messengerChatBox.SetActive(chatBoxOpen);
+            ToggleNotification(false);
         }
     }
 

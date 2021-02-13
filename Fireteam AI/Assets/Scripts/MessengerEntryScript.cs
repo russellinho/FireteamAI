@@ -6,7 +6,7 @@ using TMPro;
 
 public class MessengerEntryScript : MonoBehaviour
 {
-    private const float NOTIFICATION_FLASH_TIME = 1.2f;
+    private const float NOTIFICATION_FLASH_TIME = 0.6f;
     private Color GLOW_NORMAL_COLOR = new Color(99f / 255f, 198f / 255f, 255f / 255f, 50f / 255f);
     private Color BORDER_NORMAL_COLOR = new Color(99f / 255f, 198f / 255f, 255f / 255f, 255f / 255f);
     private Color GLOW_ALERT_COLOR = new Color(255f / 255f, 119f / 255f, 1f / 255f, 50f / 255f);
