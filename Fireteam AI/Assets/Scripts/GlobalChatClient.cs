@@ -167,15 +167,18 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
                             PlayerData.playerdata.titleRef.WarpJoinGame(sMessage.Substring(5, sMessage.Length - 5));
                         }
                     } else {
-                        if (PlayerData.playerdata.titleRef.friendsMessenger.messengerChatBox.activeInHierarchy) {
+                        if (PlayerData.playerdata.titleRef.friendsMessenger.GetChattingWithFriendRequestId() != null) {
                             string chattingWithUsername = PlayerData.playerdata.friendsList[PlayerData.playerdata.titleRef.friendsMessenger.GetChattingWithFriendRequestId()].FriendUsername;
                             if (chattingWithUsername == sender) {
                                 PlayerData.playerdata.titleRef.friendsMessenger.SendMsg(false, message.ToString(), sender);
                             }
-                        } else {
+                        }
+                        if (!PlayerData.playerdata.titleRef.friendsMessenger.messengerChatBox.activeInHierarchy) {
                             string thisFriendRequestId = PlayerData.playerdata.titleRef.friendsMessenger.GetFriendRequestIdByUsername(sender);
                             PlayerData.playerdata.titleRef.friendsMessenger.GetMessengerEntry(thisFriendRequestId).ToggleNotification(true);
-                            PlayerData.playerdata.titleRef.friendsMessenger.ToggleNotification(true);
+                            if (!PlayerData.playerdata.titleRef.friendsMessenger.messengerMain.activeInHierarchy) {
+                                PlayerData.playerdata.titleRef.friendsMessenger.ToggleNotification(true);
+                            }
                         }
                     }
                 }

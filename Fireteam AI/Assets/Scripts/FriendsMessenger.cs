@@ -254,6 +254,22 @@ public class FriendsMessenger : MonoBehaviour
         m.InitEntry(this, friendRequestId, username, exp);
     }
 
+    public void RefreshNotifications()
+    {
+        // Refresh every existing messenger entry
+        foreach (KeyValuePair<string, MessengerEntryScript> p in messengerEntries) {
+            string newUsername = PlayerData.playerdata.friendsList[p.Value.GetFriendRequestId()].FriendUsername;
+            CachedMessage c = PlayerData.playerdata.cachedConversations[p.Value.GetFriendRequestId()];
+            int newMessageCount = PlayerData.playerdata.globalChatClient.GetMessageCountForUser(newUsername);
+            if (c.previousMessageCount != newMessageCount) {
+                p.Value.ToggleNotification(true);
+                if (!notificationFlashOn) {
+                    ToggleNotification(true);
+                }
+            }
+        }
+    }
+
     public void ToggleMessenger()
     {
         if (messengerMain.activeInHierarchy) {
