@@ -139,6 +139,7 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
 	{
 		Debug.Log("status: " + string.Format("{0} is {1}. Msg:{2}", user, status, message));
         // Update messenger entry scripts here
+        PlayerData.playerdata.cachedSocialStatus[user] = ((message == null || message.ToString() == "") ? "OFFLINE" : message.ToString());
         if (PlayerData.playerdata.titleRef != null) {
             if (status == ChatUserStatus.Online) {
                 PlayerData.playerdata.titleRef.friendsMessenger.UpdateStatusForUsername(user, true, message.ToString());

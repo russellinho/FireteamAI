@@ -51,6 +51,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     public PlayerInfo info;
     public PlayerInventory inventory;
     public ObservableDict<string, FriendData> friendsList;
+    public Dictionary<string, string> cachedSocialStatus;
     public ObservableDict<string, GiftData> giftList;
     public Dictionary<string, CachedMessage> cachedConversations;
     public ModInfo primaryModInfo;
@@ -78,6 +79,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             friendsList = new ObservableDict<string, FriendData>();
             giftList = new ObservableDict<string, GiftData>();
             cachedConversations = new Dictionary<string, CachedMessage>();
+            cachedSocialStatus = new Dictionary<string, string>();
             playerdata = this;
 
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/loggedIn").ValueChanged += HandleForceLogoutEvent;
@@ -149,8 +151,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             InstantiatePlayer();
             titleRef.SetPlayerStatsForTitle();
             titleRef.ToggleLoadingScreen(false);
-            globalChatClient.RefreshStatusesForCurrentFriends();
-            Debug.Log("TWO");
             if (PhotonNetwork.InRoom) {
                 string gameModeWas = (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"];
                 if (gameModeWas == "versus") {

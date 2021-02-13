@@ -54,9 +54,16 @@ public class MessengerEntryScript : MonoBehaviour
             transform.SetSiblingIndex(friendsMessenger.friendRequestSection.GetSiblingIndex() + 1);
             transform.SetSiblingIndex(friendsMessenger.friendRequestSection.GetSiblingIndex() + 1);
         } else if (newStatus == 1) {
-            UpdateSocialStatus("OFFLINE");
-            transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + 1);
-            transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + 1);
+            string thisUsername = PlayerData.playerdata.friendsList[friendRequestId].FriendUsername;
+            if (!PlayerData.playerdata.cachedSocialStatus.ContainsKey(thisUsername) || PlayerData.playerdata.cachedSocialStatus[thisUsername] == "OFFLINE") {
+                UpdateSocialStatus("OFFLINE");
+                transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + 1);
+                transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + 1);
+            } else {
+                UpdateSocialStatus(PlayerData.playerdata.cachedSocialStatus[thisUsername]);
+                transform.SetSiblingIndex(friendsMessenger.onlineSection.GetSiblingIndex() + 1);
+                transform.SetSiblingIndex(friendsMessenger.onlineSection.GetSiblingIndex() + 1);
+            }
         } else {
             UpdateSocialStatus("BLOCKED");
             transform.SetSiblingIndex(friendsMessenger.blockedSection.GetSiblingIndex() + 1);
