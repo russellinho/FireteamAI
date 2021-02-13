@@ -111,34 +111,36 @@ public class QuickActionMenu : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void OnSendMessageButtonClicked()
     {
-        actingOnEntry.ToggleNotification(false);
-        friendsMessenger.ToggleMessengerChatBox(true, actingOnEntry.GetFriendRequestId());
-        actingOnEntry.ToggleNotification(false);
+        actingOnEntry?.ToggleNotification(false);
+        friendsMessenger.ToggleMessengerChatBox(true, actingOnEntry?.GetFriendRequestId());
+        actingOnEntry?.ToggleNotification(false);
     }
 
     public void OnJoinButtonClicked()
     {
-        friendsMessenger.JoinFriendGame(PlayerData.playerdata.friendsList[actingOnEntry.GetFriendRequestId()].FriendUsername);
+        if (PlayerData.playerdata.friendsList.ContainsKey(actingOnEntry?.GetFriendRequestId())) {
+            friendsMessenger.JoinFriendGame(PlayerData.playerdata.friendsList[actingOnEntry?.GetFriendRequestId()].FriendUsername);
+        }
     }
 
     public void OnRemoveFriendButtonClicked()
     {
-        friendsMessenger.RemoveFriend(actingOnEntry.GetFriendRequestId());
+        if (actingOnEntry != null) friendsMessenger.RemoveFriend(actingOnEntry.GetFriendRequestId());
     }
 
     public void OnAcceptFriendButtonClicked()
     {
-        friendsMessenger.AcceptFriendRequest(actingOnEntry.GetFriendRequestId());
+        if (actingOnEntry != null) friendsMessenger.AcceptFriendRequest(actingOnEntry.GetFriendRequestId());
     }
 
     public void OnBlockButtonClicked()
     {
-        friendsMessenger.BlockFriend(actingOnEntry.GetFriendRequestId());
+        if (actingOnEntry != null) friendsMessenger.BlockFriend(actingOnEntry.GetFriendRequestId());
     }
 
     public void OnUnblockButtonClicked()
     {
-        friendsMessenger.UnblockFriend(actingOnEntry.GetFriendRequestId());
+        if (actingOnEntry != null) friendsMessenger.UnblockFriend(actingOnEntry.GetFriendRequestId());
     }
 
     public void OnAcceptGiftButtonClicked()

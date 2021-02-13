@@ -127,7 +127,9 @@ public class FriendsMessenger : MonoBehaviour
                 if (results["status"].ToString() != "200") {
                     titleController.TriggerAlertPopup("USER IS NOT ON YOUR FRIENDS LIST!");
                 } else {
-                    PlayerData.playerdata.globalChatClient.AddStatusListenersToFriends(new List<string>(){PlayerData.playerdata.friendsList[friendRequestId].FriendUsername});
+                    if (PlayerData.playerdata.friendsList.ContainsKey(friendRequestId)) {
+                        PlayerData.playerdata.globalChatClient.AddStatusListenersToFriends(new List<string>(){PlayerData.playerdata.friendsList[friendRequestId].FriendUsername});
+                    }
                 }
             }
             titleController.TriggerBlockScreen(false);
@@ -258,13 +260,15 @@ public class FriendsMessenger : MonoBehaviour
     {
         // Refresh every existing messenger entry
         foreach (KeyValuePair<string, MessengerEntryScript> p in messengerEntries) {
-            string newUsername = PlayerData.playerdata.friendsList[p.Value.GetFriendRequestId()].FriendUsername;
-            CachedMessage c = PlayerData.playerdata.cachedConversations[p.Value.GetFriendRequestId()];
-            int newMessageCount = PlayerData.playerdata.globalChatClient.GetMessageCountForUser(newUsername);
-            if (c.previousMessageCount != newMessageCount) {
-                p.Value.ToggleNotification(true);
-                if (!notificationFlashOn) {
-                    ToggleNotification(true);
+            if (PlayerData.playerdata.friendsList.ContainsKey(p.Value.GetFriendRequestId())) {
+                string newUsername = PlayerData.playerdata.friendsList[p.Value.GetFriendRequestId()].FriendUsername;
+                CachedMessage c = PlayerData.playerdata.cachedConversations[p.Value.GetFriendRequestId()];
+                int newMessageCount = PlayerData.playerdata.globalChatClient.GetMessageCountForUser(newUsername);
+                if (c.previousMessageCount != newMessageCount) {
+                    p.Value.ToggleNotification(true);
+                    if (!notificationFlashOn) {
+                        ToggleNotification(true);
+                    }
                 }
             }
         }
@@ -299,11 +303,18 @@ public class FriendsMessenger : MonoBehaviour
 
     public void ToggleMessengerChatBox(bool b, string friendRequestId)
     {
+        if ((friendRequestId != null && !PlayerData.playerdata.friendsList.ContainsKey(friendRequestId)) || (chattingWithFriendRequestId != null && !PlayerData.playerdata.friendsList.ContainsKey(chattingWithFriendRequestId))) {
+            chattingWithFriendRequestId = null;
+            messengerChatBox.SetActive(false);
+            chatBoxOpen = false;
+            return;
+        }
+
         string newFriendRequestId = null;
         if (b) {
             newFriendRequestId = friendRequestId;
         }
-
+        
         // Save the previous chat
         if (chattingWithFriendRequestId != null) {
             if (chattingWithFriendRequestId != newFriendRequestId) {
@@ -412,6 +423,7 @@ public class FriendsMessenger : MonoBehaviour
         SendMsg(true, messengerInput.text, PhotonNetwork.NickName);
         if (!CanSendMessage(chattingWithFriendRequestId)) {
             SendServerMsg("THE USER IS CURRENTLY OFFLINE AND WILL NOT RECEIVE YOUR MESSAGES.");
+            return;
         }
         PlayerData.playerdata.globalChatClient.SendPrivateMessageToUser(PlayerData.playerdata.friendsList[chattingWithFriendRequestId].FriendUsername, messengerInput.text);
         messengerInput.text = "";
@@ -419,6 +431,7 @@ public class FriendsMessenger : MonoBehaviour
 
     bool CanSendMessage(string friendRequestId)
     {
+        if (friendRequestId == null) return false;
         if (PlayerData.playerdata.friendsList[friendRequestId].Status != 1 || messengerEntries[friendRequestId].status.text == "OFFLINE") {
             return false;
         }

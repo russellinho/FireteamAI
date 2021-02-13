@@ -175,9 +175,11 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
                         }
                         if (!PlayerData.playerdata.titleRef.friendsMessenger.messengerChatBox.activeInHierarchy) {
                             string thisFriendRequestId = PlayerData.playerdata.titleRef.friendsMessenger.GetFriendRequestIdByUsername(sender);
-                            PlayerData.playerdata.titleRef.friendsMessenger.GetMessengerEntry(thisFriendRequestId).ToggleNotification(true);
-                            if (!PlayerData.playerdata.titleRef.friendsMessenger.messengerMain.activeInHierarchy) {
-                                PlayerData.playerdata.titleRef.friendsMessenger.ToggleNotification(true);
+                            if (thisFriendRequestId != null) {
+                                PlayerData.playerdata.titleRef.friendsMessenger.GetMessengerEntry(thisFriendRequestId).ToggleNotification(true);
+                                if (!PlayerData.playerdata.titleRef.friendsMessenger.messengerMain.activeInHierarchy) {
+                                    PlayerData.playerdata.titleRef.friendsMessenger.ToggleNotification(true);
+                                }
                             }
                         }
                     }
