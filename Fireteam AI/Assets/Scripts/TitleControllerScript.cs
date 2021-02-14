@@ -3912,7 +3912,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			yield return new WaitForSeconds(2f);
 		}
 		// Go home
-		PlayerData.playerdata.titleRef.ReturnToTitle();
+		PlayerData.playerdata.titleRef.mainPanelManager.OpenPanel("Title");
 		yield return new WaitForSeconds(1f);
 		// If versus, join versus lobby. Else, join campaign lobby.
 		if (mode == 'C') {
