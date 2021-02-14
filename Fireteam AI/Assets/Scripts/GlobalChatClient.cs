@@ -161,6 +161,8 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
                 if (sMessage == ROOM_REQUEST_MSG) {
                     if (PhotonNetwork.InRoom) {
                         chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG + PhotonNetwork.CurrentRoom.Name + '|' + (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"]);
+                    } else {
+                        chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG);
                     }
                 } else {
                     // If it was a join code, then join that room
