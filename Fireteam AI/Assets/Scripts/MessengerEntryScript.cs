@@ -102,7 +102,12 @@ public class MessengerEntryScript : MonoBehaviour
 
     public void OnEntryClick()
     {
-        friendsMessenger.quickActionMenu.InitButtonsForMessenger(PlayerData.playerdata.friendsList[friendRequestId].Status, status.text == "ONLINE", PlayerData.playerdata.friendsList[friendRequestId].Requestor, PlayerData.playerdata.friendsList[friendRequestId].Requestee);
+        FriendData thisFriend = PlayerData.playerdata.friendsList[friendRequestId];
+        string currentFriendSocialStatus = null;
+        if (PlayerData.playerdata.cachedSocialStatus.ContainsKey(thisFriend.FriendUsername)) {
+            currentFriendSocialStatus = PlayerData.playerdata.cachedSocialStatus[thisFriend.FriendUsername];
+        }
+        friendsMessenger.quickActionMenu.InitButtonsForMessenger(thisFriend.Status, (currentFriendSocialStatus == "ONLINE" || currentFriendSocialStatus == "IN GAME"), thisFriend.Requestor, thisFriend.Requestee);
         friendsMessenger.quickActionMenu.SetActingOnEntry(this);
         friendsMessenger.quickActionMenu.gameObject.SetActive(true);
         // Move menu to mouse position
