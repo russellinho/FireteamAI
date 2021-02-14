@@ -972,17 +972,22 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
         foreach(KeyValuePair<object, object> entry in snapshot) {
             string giftId = entry.Key.ToString();
-            Dictionary<object, object> gift = (Dictionary<object, object>)entry.Value;
-            GiftData g = new GiftData();
-            g.PropertyChanged += OnPlayerInfoChange;
-            g.GiftId = giftId;
-            g.Category = gift["category"].ToString();
-            g.Sender = gift["from"].ToString();
-            g.ItemName = gift["itemName"].ToString();
-            g.Duration = Convert.ToSingle(gift["duration"]);
-            g.Message = gift["message"].ToString();
+            GiftData g = null;
+            if (PlayerData.playerdata.giftList.ContainsKey(giftId)) {
+                g = PlayerData.playerdata.giftList[giftId];
+            } else {
+                Dictionary<object, object> gift = (Dictionary<object, object>)entry.Value;
+                g = new GiftData();
+                g.PropertyChanged += OnPlayerInfoChange;
+                g.GiftId = giftId;
+                g.Category = gift["category"].ToString();
+                g.Sender = gift["from"].ToString();
+                g.ItemName = gift["itemName"].ToString();
+                g.Duration = Convert.ToSingle(gift["duration"]);
+                g.Message = gift["message"].ToString();
 
-            giftList.Add(giftId, g);
+                PlayerData.playerdata.giftList.Add(giftId, g);
+            }
 
             // Add gift entry in gift inbox if on title screen
             if (PlayerData.playerdata.titleRef != null) {
