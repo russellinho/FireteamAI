@@ -3090,7 +3090,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	void SetTotalCostGift(int duration, string durationText)
 	{
 		totalCostBeingPurchased = GetCostForItemAndType(itemBeingPurchased, typeBeingPurchased, duration);
-		totalGiftCostTxt.text = "YOU ARE BUYING [" + itemBeingPurchased + "] FOR [" + durationText + "] FOR " + totalCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + ".";
+		totalGiftCostTxt.text = "YOU ARE GIFTING [" + itemBeingPurchased + "] FOR [" + durationText + "] FOR " + totalCostBeingPurchased + " " + (currencyTypeBeingPurchased == 'G' ? "GP" : "KASH") + ".";
 	}
 
 	public void OnCancelPurchaseClicked() {
@@ -3152,6 +3152,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 
 	void ConfirmGift()
 	{
+		if (giftUsernameInput.text.ToLower() == PhotonNetwork.NickName.ToLower()) {
+            TriggerAlertPopup("YOU CANNOT SEND A GIFT TO YOURSELF.");
+            TriggerBlockScreen(false);
+            return;
+        }
 		float totalNewDuration = ConvertDurationInput(durationSelectionGift.index);
 		if (currencyTypeBeingPurchased == 'G') {
 			if (PlayerData.playerdata.info.Gp >= totalCostBeingPurchased) {

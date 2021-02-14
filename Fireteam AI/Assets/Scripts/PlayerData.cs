@@ -102,6 +102,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/friends").ChildAdded += HandleFriendAdded;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/friends").ChildRemoved += HandleFriendRemoved;
 
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/gifts").ChildAdded += HandleGiftAdded;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/gifts").ChildRemoved += HandleGiftRemoved;
+
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/facewear").ChildAdded += HandleInventoryAdded;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/headgear").ChildAdded += HandleInventoryAdded;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/footwear").ChildAdded += HandleInventoryAdded;
@@ -2633,7 +2636,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         });
     }
 
-    string ConvertTypeToFirebaseType(string type) {
+    public string ConvertTypeToFirebaseType(string type) {
         if (type.Equals("Weapon")) {
             return "weapons";
         } else if (type.Equals("Character")) {

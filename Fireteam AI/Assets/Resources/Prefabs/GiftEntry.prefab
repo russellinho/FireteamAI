@@ -1047,8 +1047,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AspectMode: 4
-  m_AspectRatio: 1.8
+  m_AspectMode: 3
+  m_AspectRatio: 1
 --- !u!1 &4834191806482165698
 GameObject:
   m_ObjectHideFlags: 0
@@ -1261,7 +1261,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4793642632809488818}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5670168196970318830}
+        m_MethodName: OnEntryClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &4793028633976339832
 MonoBehaviour:
   m_ObjectHideFlags: 0

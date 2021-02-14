@@ -21,6 +21,7 @@ public class GiftEntryScript : MonoBehaviour
 
     public void InitEntry(GiftInbox giftInbox, string giftId, string category, string sender, string itemName, float duration, string message)
     {
+        this.giftInbox = giftInbox;
         this.giftId = giftId;
         this.itemNameTxt.text = itemName;
         this.durationTxt.text = ConvertDurationToText(duration);

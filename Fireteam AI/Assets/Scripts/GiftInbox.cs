@@ -7,7 +7,7 @@ using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 
 public class GiftInbox : MonoBehaviour
 {
-    private const float NOTIFICATION_FLASH_TIME = 1.2f;
+    private const float NOTIFICATION_FLASH_TIME = 0.6f;
     private Color GLOW_NORMAL_COLOR = new Color(99f / 255f, 198f / 255f, 255f / 255f, 50f / 255f);
     private Color GLOW_ALERT_COLOR = new Color(255f / 255f, 119f / 255f, 1f / 255f, 50f / 255f);
     public GameObject giftInboxMain;
@@ -40,6 +40,7 @@ public class GiftInbox : MonoBehaviour
             ToggleNotification(false);
         } else {
             giftInboxMain.SetActive(true);
+            ToggleNotification(false);
         }
     }
 
@@ -129,7 +130,7 @@ public class GiftInbox : MonoBehaviour
 		inputData["uid"] = AuthScript.authHandler.user.UserId;
         inputData["username"] = username;
         inputData["itemName"] = itemName;
-        inputData["category"] = category;
+        inputData["category"] = PlayerData.playerdata.ConvertTypeToFirebaseType(category);
         inputData["duration"] = duration;
         inputData["message"] = message;
 
