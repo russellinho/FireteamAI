@@ -154,8 +154,47 @@ public class GiftInbox : MonoBehaviour
         });
     }
 
+    public void SellGift(string giftId)
+    {
+        if (!PlayerData.playerdata.giftList.ContainsKey(giftId)) {
+            titleController.TriggerAlertPopup("GIFT DOES NOT EXIST.");
+            return;
+        }
+
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+        inputData["uid"] = AuthScript.authHandler.user.UserId;
+		inputData["giftId"] = giftId;
+        
+        titleController.TriggerBlockScreen(true);
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("sellGift");
+		func.CallAsync(inputData).ContinueWith((taskA) => {
+            if (taskA.IsFaulted) {
+                PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
+            } else {
+                Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
+                if (results["status"].ToString() == "200") {
+                    titleController.TriggerAlertPopup("GIFT SOLD SUCCESSFULLY! THE GP HAS BEEN FUNDED TO YOUR ACCOUNT.");
+                } else if (results["status"].ToString() == "401") {
+                    titleController.TriggerAlertPopup("GIFT DOES NOT EXIST.");
+                } else {
+                    titleController.TriggerAlertPopup("AN ERROR HAS OCCURRED. PLEASE CONTACT AN ADMIN.");
+                }
+            }
+            titleController.TriggerBlockScreen(false);
+        });
+    }
+
     public void AcceptGift(string giftId)
     {
+        // Don't accept item if already own it for permanent
+        string itemName = PlayerData.playerdata.giftList[giftId].ItemName;
+        string itemCategory = PlayerData.playerdata.giftList[giftId].Category;
+        if (PlayerData.playerdata.GetCurrentDurationForItemAndType(itemName, itemCategory) == -1) {
+            titleController.TriggerAlertPopup("YOU ALREADY PERMANENTLY OWN THIS ITEM. YOU MAY SELL THE ITEM BACK FOR GP.");
+            return;
+        }
+
         Dictionary<string, object> inputData = new Dictionary<string, object>();
         inputData["callHash"] = DAOScript.functionsCallHash;
 		inputData["giftId"] = giftId;
@@ -172,7 +211,7 @@ public class GiftInbox : MonoBehaviour
                 } else if (results["status"].ToString() == "401") {
                     titleController.TriggerAlertPopup("GIFT DOES NOT EXIST.");
                 } else {
-                    titleController.TriggerAlertPopup("GIFT DOES NOT EXIST.");
+                    titleController.TriggerAlertPopup("AN ERROR HAS OCCURRED. PLEASE CONTACT AN ADMIN.");
                 }
             }
             titleController.TriggerBlockScreen(false);

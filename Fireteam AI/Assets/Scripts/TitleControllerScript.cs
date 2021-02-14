@@ -101,6 +101,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public bool confirmingTransaction;
 	public bool confirmingGift;
 	public bool confirmingSale;
+	public bool confirmingGiftSale;
 	private bool resettingKeysFlag;
 	private bool resettingGraphicsFlag;
 	public char currentCharGender;
@@ -3070,6 +3071,12 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		ConfirmGift();
 	}
 
+	public void OnConfirmGiftSaleClicked()
+	{
+		TriggerBlockScreen(true);
+		ConfirmGiftSale();
+	}
+
 	public void OnDurationSelect() {
 		int durationInput = durationSelection.index;
         SetTotalCost(durationInput, durationSelection.GetCurrentItem());
@@ -3099,6 +3106,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		confirmingTransaction = false;
 		confirmingGift = false;
 		confirmingSale = false;
+		confirmingGiftSale = false;
 		resettingKeysFlag = false;
 		resettingGraphicsFlag = false;
 		// confirmPurchasePopup.SetActive(false);
@@ -3110,6 +3118,14 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		itemBeingPurchased = id == null ? itemName : id;
 		typeBeingPurchased = itemType;
 		int salePrice = GetSalePriceForItem(acquireDate, duration, cost);
+		TriggerConfirmPopup("YOU MAY SELL [" + itemName + "] FOR [" + salePrice + "] GP.\n\nWOULD YOU LIKE TO PROCEED WITH THIS SALE?");
+	}
+
+	public void PrepareGiftSale(int duration, int cost, string itemName, string giftId)
+	{
+		confirmingGiftSale = true;
+		itemBeingPurchased = giftId;
+		int salePrice = GetSalePriceForItem(DateTime.Now, duration, cost);
 		TriggerConfirmPopup("YOU MAY SELL [" + itemName + "] FOR [" + salePrice + "] GP.\n\nWOULD YOU LIKE TO PROCEED WITH THIS SALE?");
 	}
 
@@ -3177,6 +3193,11 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 				confirmingGift = false;
 			}	
 		}
+	}
+
+	void ConfirmGiftSale()
+	{
+		giftInbox.SellGift(itemBeingPurchased);
 	}
 
 	float ConvertDurationInput(int durationSelection) {
@@ -3555,6 +3576,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			OnConfirmGiftClicked();
 		} else if (confirmingSale) {
 			OnConfirmSaleClicked();
+		} else if (confirmingGiftSale) {
+			OnConfirmGiftSaleClicked();
 		} else if (connexion.listPlayer.kickingPlayerFlag) {
 			connexion.listPlayer.KickPlayer(connexion.listPlayer.playerBeingKicked);
 		} else if (resettingKeysFlag) {

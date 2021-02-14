@@ -21,6 +21,7 @@ public class QuickActionMenu : MonoBehaviour, IPointerEnterHandler, IPointerExit
     public Button acceptFriendBtn;
     public Button declineFriendBtn;
     public Button acceptGiftBtn;
+    public Button sellGiftBtn;
     private bool pointerOn;
 
     public void UpdatePosition() {
@@ -52,6 +53,7 @@ public class QuickActionMenu : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void InitButtonsForMessenger(int status, bool online, string requestor, string requestee)
     {
+        sellGiftBtn.gameObject.SetActive(false);
         acceptGiftBtn.gameObject.SetActive(false);
         sendMessageBtn.gameObject.SetActive(false);
         joinBtn.gameObject.SetActive(false);
@@ -82,6 +84,7 @@ public class QuickActionMenu : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void InitButtonsForGiftInbox()
     {
+        sellGiftBtn.gameObject.SetActive(true);
         acceptGiftBtn.gameObject.SetActive(true);
         sendMessageBtn.gameObject.SetActive(false);
         joinBtn.gameObject.SetActive(false);
@@ -146,6 +149,29 @@ public class QuickActionMenu : MonoBehaviour, IPointerEnterHandler, IPointerExit
     public void OnAcceptGiftButtonClicked()
     {
         giftInbox.AcceptGift(actingOnEntryGift.GetGiftId());
+    }
+
+    public void OnSellGiftButtonClicked()
+    {
+        GiftData g = PlayerData.playerdata.giftList[actingOnEntryGift.GetGiftId()];
+        int cost = 0;
+        if (g.Category == "Character") {
+            Character c = InventoryScript.itemData.characterCatalog[g.ItemName];
+            cost = c.gpPrice == 0 ? c.kashPrice : c.gpPrice;
+        } else if (g.Category == "Armor") {
+            Armor a = InventoryScript.itemData.armorCatalog[g.ItemName];
+            cost = a.gpPrice == 0 ? a.kashPrice : a.gpPrice;
+        } else if (g.Category == "Weapon") {
+            Weapon w = InventoryScript.itemData.weaponCatalog[g.ItemName];
+            cost = w.gpPrice == 0 ? w.kashPrice : w.gpPrice;
+        } else if (g.Category == "Mod") {
+            Mod m = InventoryScript.itemData.modCatalog[g.ItemName];
+            cost = m.gpPrice == 0 ? m.kashPrice : m.gpPrice;
+        } else {
+            Equipment e = InventoryScript.itemData.equipmentCatalog[g.ItemName];
+            cost = e.gpPrice == 0 ? e.kashPrice : e.gpPrice;
+        }
+        giftInbox.titleController.PrepareGiftSale((int)g.Duration, cost, g.ItemName, actingOnEntryGift.GetGiftId());
     }
 
     void HandleClick()

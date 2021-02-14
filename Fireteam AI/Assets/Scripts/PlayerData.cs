@@ -2446,16 +2446,15 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             // Extract the gift ID
             string giftId = args.Snapshot.Key;
             // Get details
-            Dictionary<object, object> gift = (Dictionary<object, object>)args.Snapshot.Value;
 
             GiftData g = new GiftData();
             g.PropertyChanged += OnPlayerInfoChange;
             g.GiftId = giftId;
-            g.Category = gift["category"].ToString();
-            g.Sender = gift["from"].ToString();
-            g.ItemName = gift["itemName"].ToString();
-            g.Duration = Convert.ToSingle(gift["duration"]);
-            g.Message = gift["message"].ToString();
+            g.Category = args.Snapshot.Child("category").Value.ToString();
+            g.Sender = args.Snapshot.Child("from").Value.ToString();
+            g.ItemName = args.Snapshot.Child("itemName").Value.ToString();
+            g.Duration = Convert.ToSingle(args.Snapshot.Child("duration").Value);
+            g.Message = args.Snapshot.Child("message").Value.ToString();
 
             giftList.Add(giftId, g);
 
@@ -2686,6 +2685,49 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
         
         return false;
+    }
+
+    public int GetCurrentDurationForItemAndType(string itemName, string category)
+    {
+        int currentDuration = 0;
+        if (category == "Character") {
+            if (PlayerData.playerdata.inventory.myCharacters.ContainsKey(itemName)) {
+                currentDuration = int.Parse(PlayerData.playerdata.inventory.myCharacters[itemName].Duration);
+            }
+        } else if (category == "Armor") {
+            if (PlayerData.playerdata.inventory.myArmor.ContainsKey(itemName)) {
+                currentDuration = int.Parse(PlayerData.playerdata.inventory.myArmor[itemName].Duration);
+            }
+        } else if (category == "Weapon") {
+            if (PlayerData.playerdata.inventory.myWeapons.ContainsKey(itemName)) {
+                currentDuration = int.Parse(PlayerData.playerdata.inventory.myWeapons[itemName].Duration);
+            }
+        } else if (category == "Mod") {
+            if (PlayerData.playerdata.inventory.myMods.ContainsKey(itemName)) {
+                currentDuration = int.Parse(PlayerData.playerdata.inventory.myMods[itemName].Duration);
+            }
+        } else if (category == "Top") {
+            if (PlayerData.playerdata.inventory.myTops.ContainsKey(itemName)) {
+                currentDuration = int.Parse(PlayerData.playerdata.inventory.myTops[itemName].Duration);
+            }
+        } else if (category == "Bottom") {
+            if (PlayerData.playerdata.inventory.myBottoms.ContainsKey(itemName)) {
+                currentDuration = int.Parse(PlayerData.playerdata.inventory.myBottoms[itemName].Duration);
+            }
+        } else if (category == "Footwear") {
+            if (PlayerData.playerdata.inventory.myFootwear.ContainsKey(itemName)) {
+                currentDuration = int.Parse(PlayerData.playerdata.inventory.myFootwear[itemName].Duration);
+            }
+        } else if (category == "Facewear") {
+            if (PlayerData.playerdata.inventory.myFacewear.ContainsKey(itemName)) {
+                currentDuration = int.Parse(PlayerData.playerdata.inventory.myFacewear[itemName].Duration);
+            }
+        } else if (category == "Headgear") {
+            if (PlayerData.playerdata.inventory.myHeadgear.ContainsKey(itemName)) {
+                currentDuration = int.Parse(PlayerData.playerdata.inventory.myHeadgear[itemName].Duration);
+            }
+        }
+        return currentDuration;
     }
 }
 
