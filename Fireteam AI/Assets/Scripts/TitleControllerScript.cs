@@ -3922,7 +3922,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 		yield return new WaitForSeconds(2f);
 		PlayerData.playerdata.titleRef.connexion.theJoinRoom(roomId);
-		yield return new WaitForSeconds(0.1f);
+		yield return new WaitForSeconds(1f);
 		TriggerBlockScreen(false);
 	}
 		
