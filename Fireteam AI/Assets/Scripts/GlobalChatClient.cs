@@ -160,9 +160,7 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
                 // If it was a request to join my game, send back the room name to join if I'm in one
                 if (sMessage == ROOM_REQUEST_MSG) {
                     if (PhotonNetwork.InRoom) {
-                        chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG + PhotonNetwork.CurrentRoom.Name);
-                    } else {
-                        chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG);
+                        chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG + PhotonNetwork.CurrentRoom.Name + '|' + (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"]);
                     }
                 } else {
                     // If it was a join code, then join that room
@@ -170,7 +168,8 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
                         if (sMessage.Length == 5) {
                             PlayerData.playerdata.titleRef.TriggerAlertPopup("THE USER IS CURRENTLY NOT IN A ROOM!");
                         } else {
-                            PlayerData.playerdata.titleRef.WarpJoinGame(sMessage.Substring(5, sMessage.Length - 5));
+                            string[] joinRoomInfo = sMessage.Split('|');
+                            PlayerData.playerdata.titleRef.WarpJoinGame(joinRoomInfo[1], (joinRoomInfo[2] == "camp" ? 'C' : 'V'));
                         }
                     } else {
                         if (PlayerData.playerdata.titleRef.friendsMessenger.GetChattingWithFriendRequestId() != null) {

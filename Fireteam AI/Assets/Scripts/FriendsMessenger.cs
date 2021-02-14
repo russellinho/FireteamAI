@@ -227,6 +227,9 @@ public class FriendsMessenger : MonoBehaviour
 
     public void DeleteMessengerEntry(string friendRequestId)
     {
+        if (quickActionMenu.GetActingOnEntry() == messengerEntries[friendRequestId]) {
+            quickActionMenu.ToggleMenu(false);
+        }
         Destroy(messengerEntries[friendRequestId].gameObject);
         messengerEntries.Remove(friendRequestId);
     }

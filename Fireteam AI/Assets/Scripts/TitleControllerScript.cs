@@ -3897,43 +3897,32 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		return (int)(cost * remainingDays * (1f - (0.5f / 3f)));
 	}
 
-	public void WarpJoinGame(string roomId)
+	public void WarpJoinGame(string roomId, char mode)
 	{
-		StartCoroutine(WarpJoinGameRoutine(roomId));
+		StartCoroutine(WarpJoinGameRoutine(roomId, mode));
 	}
 
-	IEnumerator WarpJoinGameRoutine(string roomId)
+	IEnumerator WarpJoinGameRoutine(string roomId, char mode)
 	{
 		TriggerBlockScreen(true);
 		yield return new WaitForSeconds(1f);
 		// If currently in a match, leave it
 		if (PhotonNetwork.InRoom) {
 			PlayerData.playerdata.titleRef.connexion.OnLeaveGameButtonClicked();
-			yield return new WaitForSeconds(1f);
+			yield return new WaitForSeconds(2f);
 		}
 		// Go home
 		PlayerData.playerdata.titleRef.ReturnToTitle();
 		yield return new WaitForSeconds(1f);
-		bool cont = true;
-		RoomInfo joiningRoomInfo = null; 
-		// Get room properties
-		try {
-			joiningRoomInfo = PlayerData.playerdata.titleRef.connexion.listRoom.cachedRoomList[roomId];
-		} catch (Exception e) {
-			TriggerAlertPopup("UNABLE TO JOIN ROOM.");
-			cont = false;
+		// If versus, join versus lobby. Else, join campaign lobby.
+		if (mode == 'C') {
+			PlayerData.playerdata.titleRef.mainPanelManager.OpenPanel("Campaign");
+		} else {
+			PlayerData.playerdata.titleRef.mainPanelManager.OpenPanel("Versus");
 		}
-		if (cont) {
-			// If versus, join versus lobby. Else, join campaign lobby.
-			if (joiningRoomInfo.CustomProperties["gameMode"] == "versus") {
-				PlayerData.playerdata.titleRef.mainPanelManager.OpenPanel("Versus");
-			} else {
-				PlayerData.playerdata.titleRef.mainPanelManager.OpenPanel("Campaign");
-			}
-			yield return new WaitForSeconds(1f);
-			PlayerData.playerdata.titleRef.connexion.theJoinRoom(roomId);
-			yield return new WaitForSeconds(0.1f);
-		}
+		yield return new WaitForSeconds(2f);
+		PlayerData.playerdata.titleRef.connexion.theJoinRoom(roomId);
+		yield return new WaitForSeconds(0.1f);
 		TriggerBlockScreen(false);
 	}
 		
