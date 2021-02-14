@@ -370,22 +370,6 @@ public class FriendsMessenger : MonoBehaviour
         }
     }
 
-    public bool CheckIsVerifiedFriendByUsername(string username)
-    {
-        foreach (KeyValuePair<string, FriendData> entry in PlayerData.playerdata.friendsList)
-        {
-            if (entry.Value.FriendUsername == username) {
-                if (entry.Value.Status == 1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-        
-        return false;
-    }
-
     public string GetFriendRequestIdByUsername(string username)
     {
         string idToRet = null;

@@ -156,7 +156,7 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
         string sMessage = message.ToString();
         // Only proceed with requests if on title and sender is a verified friend
         if (PlayerData.playerdata.titleRef != null) {
-            if (PlayerData.playerdata.titleRef.friendsMessenger.CheckIsVerifiedFriendByUsername(sender)) {
+            if (PlayerData.playerdata.CheckIsVerifiedFriendByUsername(sender)) {
                 // If it was a request to join my game, send back the room name to join if I'm in one
                 if (sMessage == ROOM_REQUEST_MSG) {
                     if (PhotonNetwork.InRoom) {
@@ -189,6 +189,16 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
                                 }
                             }
                         }
+                    }
+                }
+            }
+        } else {
+            if (PlayerData.playerdata.CheckIsVerifiedFriendByUsername(sender)) {
+                if (sMessage == ROOM_REQUEST_MSG) {
+                    if (PhotonNetwork.InRoom) {
+                        chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG + PhotonNetwork.CurrentRoom.Name + '|' + (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"]);
+                    } else {
+                        chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG);
                     }
                 }
             }

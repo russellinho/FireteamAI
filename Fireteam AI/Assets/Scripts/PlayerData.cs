@@ -2663,6 +2663,22 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
         return false;
     }
+
+    public bool CheckIsVerifiedFriendByUsername(string username)
+    {
+        foreach (KeyValuePair<string, FriendData> entry in PlayerData.playerdata.friendsList)
+        {
+            if (entry.Value.FriendUsername == username) {
+                if (entry.Value.Status == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        
+        return false;
+    }
 }
 
 public class PlayerInfo : INotifyPropertyChanged
