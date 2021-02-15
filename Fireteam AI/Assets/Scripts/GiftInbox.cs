@@ -181,6 +181,7 @@ public class GiftInbox : MonoBehaviour
                     titleController.TriggerAlertPopup("AN ERROR HAS OCCURRED. PLEASE CONTACT AN ADMIN.");
                 }
             }
+            titleController.confirmingGiftSale = false;
             titleController.TriggerBlockScreen(false);
         });
     }
