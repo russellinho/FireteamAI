@@ -585,6 +585,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     Dictionary<object, object> inventorySnap = (Dictionary<object, object>)results["inventory"];
                     Dictionary<object, object> friendsUsernameMap = (Dictionary<object, object>)results["friendUsernameMap"];
                     Dictionary<object, object> expMap = (Dictionary<object, object>)results["expMap"];
+                    Dictionary<object, object> achievementMap = (Dictionary<object, object>)results["achievementMap"];
                     List<object> friendData = (List<object>)results["friendData"];
                     info.DefaultChar = playerDataSnap["defaultChar"].ToString();
                     info.DefaultWeapon = playerDataSnap["defaultWeapon"].ToString();
@@ -688,6 +689,11 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         supportModInfo.SightId = "";
                     }
                     LoadInventory(inventorySnap);
+                    if (playerDataSnap.ContainsKey("achievements")) {
+                        LoadAchievements((Dictionary<object, object>)playerDataSnap["achievements"], achievementMap);
+                    } else {
+                        LoadAchievements(null, achievementMap);
+                    }
                     if (playerDataSnap.ContainsKey("gifts")) {
                         LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
                     }
@@ -996,6 +1002,42 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
 
         playerDataModifyLegalFlag = false;
+    }
+
+    void LoadAchievements(Dictionary<object, object> myAchievements, Dictionary<object, object> achievementMap)
+    {
+        foreach(KeyValuePair<object, object> entry in achievementMap) {
+            // Get achievement info
+            string achievementId = entry.Key.ToString();
+            Dictionary<object, object> a = (Dictionary<object, object>)entry.Value;
+            string achievementName = a["name"].ToString();
+            int achievementIndex = Convert.ToInt32(a["index"]);
+
+            // For each achievement, populate progress on each one
+            if (myAchievements != null) {
+                if (myAchievements.ContainsKey(achievementId)) {
+                    // See if it contains a list of data or a single piece of data
+                    try {
+                        Dictionary<object, object> thisAchievementProgress = (Dictionary<object, object>)myAchievements[achievementId];
+                        int[] progressVals = new int[thisAchievementProgress.Count];
+                        int i = 0;
+                        foreach(KeyValuePair<object, object> progressEntry in thisAchievementProgress) {
+                            int progress = Convert.ToInt32(progressEntry.Value);
+                            progressVals[i++] = progress;
+                        }
+                        titleRef.achievementManager.achievements[achievementIndex].PopulateAchievement(achievementId, achievementName, progressVals);
+                    } catch (InvalidCastException e) {
+                        // Only single value progress
+                        int progress = Convert.ToInt32(myAchievements[achievementId]);
+                        titleRef.achievementManager.achievements[achievementIndex].PopulateAchievement(achievementId, achievementName, progress);
+                    }
+                } else {
+                    titleRef.achievementManager.achievements[achievementIndex].PopulateAchievement(achievementId, achievementName, 0);
+                }
+            } else {
+                titleRef.achievementManager.achievements[achievementIndex].PopulateAchievement(achievementId, achievementName, 0);
+            }
+        }
     }
 
     public void LoadInventory(Dictionary<object, object> snapshot) {
@@ -1566,6 +1608,34 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
     }
 
+    public Texture GetAchievementLogoForName(string achievementName)
+    {
+        switch(achievementName) {
+            case "Hunting the Hunters":
+                return Resources.Load("Sprites/Insignias/Achievements/00") as Texture;
+            case "Head Hunter I":
+                return Resources.Load("Sprites/Insignias/Achievements/01") as Texture;
+            case "Ghost: Badlands I":
+                return Resources.Load("Sprites/Insignias/Achievements/02") as Texture;
+            case "No One Left Behind":
+                return Resources.Load("Sprites/Insignias/Achievements/03") as Texture;
+            case "Time Trial I (Badlands I)":
+                return Resources.Load("Sprites/Insignias/Achievements/04") as Texture;
+            case "Time Trial II (Badlands I)":
+                return Resources.Load("Sprites/Insignias/Achievements/05") as Texture;
+            case "Time Trial III (Badlands I)":
+                return Resources.Load("Sprites/Insignias/Achievements/06") as Texture;
+            case "Time Trial I (Badlands II)":
+                return Resources.Load("Sprites/Insignias/Achievements/07") as Texture;
+            case "Time Trial II (Badlands II)":
+                return Resources.Load("Sprites/Insignias/Achievements/08") as Texture;
+            case "Time Trial III (Badlands II)":
+                return Resources.Load("Sprites/Insignias/Achievements/09") as Texture;
+            default:
+                return null;
+        }
+    }
+
     public Rank GetRankFromExp(uint exp) {
         if (exp >= 0 && exp <= 1999) {
             return new Rank("Trainee", 0, 1999);
@@ -1706,9 +1776,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
         // Display emergency popup depending on which screen you're on
         string currentScene = SceneManager.GetActiveScene().name;
-        if (currentScene.Equals("GameOverSuccess") || currentScene.Equals("GameOverFail")) {
+        if (gameOverControllerRef != null) {
             gameOverControllerRef.TriggerAlertPopup("A fatal error has occurred:\n" + emergencyExitMessage + "\nThe game will now close.");
-        } else if (currentScene.Equals("Title")) {
+        } else if (titleRef != null) {
             titleRef.TriggerEmergencyPopup("A fatal error has occurred:\n" + emergencyExitMessage + "\nThe game will now close.");
         }
         StartCoroutine("EmergencyExitGame");

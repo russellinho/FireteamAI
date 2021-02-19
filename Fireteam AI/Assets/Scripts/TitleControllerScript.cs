@@ -32,6 +32,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
     private const float PERMANENT_COST_MULTIPLIER = 365f;
 	public Connexion connexion;
 	public FriendsMessenger friendsMessenger;
+	public AchievementManager achievementManager;
 	public GiftInbox giftInbox;
 	private AudioSourceModifier[] sceneAudioSources;
 

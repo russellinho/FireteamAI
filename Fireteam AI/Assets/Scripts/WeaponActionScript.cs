@@ -131,6 +131,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     public float deployTimer;
     public bool deployInProgress;
     public bool switchWeaponBackToRight;
+    private EncryptedInt headshotCount;
     // Timer that prevents player from accidentally firing right after unpausing
     private float unpauseDelay;
 
@@ -508,6 +509,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         AddToTotalKills();
         if (isHeadshot) {
             hudScript.OnScreenEffect("HEADSHOT", true);
+            headshotCount++;
         } else {
             hudScript.OnScreenEffect(GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills + " KILLS", true);
         }
@@ -585,6 +587,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                         b.SetAlerted();
                         if (b.health <= 0 && beforeHp > 0)
                         {
+                            BetaEnemyScript.NUMBER_KILLED++;
                             RewardKill(false);
                             audioController.PlayKillSound();
                         }
@@ -646,6 +649,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                         b.SetAlerted();
                         if (b.health <= 0 && beforeHp > 0)
                         {
+                            BetaEnemyScript.NUMBER_KILLED++;
                             RewardKill(bodyPartIdHit == HEAD_TARGET);
                             if (bodyPartIdHit == HEAD_TARGET) {
                                 audioController.PlayHeadshotSound();
@@ -773,6 +777,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                         b.TakeDamage(thisDamageDealt, transform.position, 0, bodyPartIdHit);
                         if (b.health <= 0 && beforeHp > 0)
                         {
+                            BetaEnemyScript.NUMBER_KILLED++;
                             RewardKill(bodyPartIdHit == HEAD_TARGET);
                             if (bodyPartIdHit == HEAD_TARGET) {
                                 audioController.PlayHeadshotSound();
@@ -1681,6 +1686,11 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     public void SetUnpaused()
     {
         unpauseDelay = UNPAUSE_DELAY;
+    }
+
+    public int GetHeadshotCount()
+    {
+        return headshotCount;
     }
 
 }

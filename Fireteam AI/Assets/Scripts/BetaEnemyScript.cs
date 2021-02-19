@@ -11,7 +11,7 @@ using SpawnMode = GameControllerScript.SpawnMode;
 using UnityEngine.SceneManagement;
 
 public class BetaEnemyScript : MonoBehaviour, IPunObservable {
-
+	public static int NUMBER_KILLED;
 	private const float MELEE_DISTANCE = 1.7f;
 	private const float PLAYER_HEIGHT_OFFSET = 1f;
 	private const float DETECTION_OUTLINE_MAX_TIME = 10f;

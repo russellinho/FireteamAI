@@ -8,4 +8,5 @@ public class LevelUpPopupScript : MonoBehaviour
 {
     public RawImage rankInsigniaRef;
     public TextMeshProUGUI rankNameTxt;
+    public TextMeshProUGUI rewardsTxt;
 }
