@@ -50,6 +50,13 @@ public class GameOverController : MonoBehaviourPunCallbacks {
     public GameObject campaignPanel;
     private bool isVersus;
     public AudioSource rankUpSound;
+
+    private List<object> achievementList;
+    private List<object> rewardListAchievement;
+    private uint newRankExp;
+    private List<object> rewardListLevelUp;
+    private bool renderAchievements;
+    private bool renderRankUpRewards;
 	void Awake() {
         campaignExitButton.interactable = false;
         versusExitButton.interactable = false;
@@ -58,7 +65,7 @@ public class GameOverController : MonoBehaviourPunCallbacks {
         int mapIndex = GetMapNumberForCurrentMap();
         if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
             isVersus = true;
-            RecordAchievementProgress(GetTeamTotalDeaths('V'), MissionWasStealthed('V', mapIndex), mapIndex);
+            RecordAchievementProgress('V', GetTeamTotalDeaths('V'), MissionWasStealthed('V', mapIndex), mapIndex);
             if (PhotonNetwork.IsMasterClient) {
                 Hashtable h = new Hashtable();
                 h.Add("deads", null);
@@ -73,7 +80,7 @@ public class GameOverController : MonoBehaviourPunCallbacks {
             }
         } else if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp") {
             isVersus = false;
-            RecordAchievementProgress(GetTeamTotalDeaths('C'), MissionWasStealthed('C', mapIndex), mapIndex);
+            RecordAchievementProgress('C', GetTeamTotalDeaths('C'), MissionWasStealthed('C', mapIndex), mapIndex);
             if (PhotonNetwork.IsMasterClient) {
                 Hashtable h = new Hashtable();
                 h.Add("deads", null);
@@ -112,6 +119,8 @@ public class GameOverController : MonoBehaviourPunCallbacks {
     }
 
     void Update() {
+        HandleRenderAchievements();
+        HandleRenderLevelUp();
         if (triggerAlertPopup) {
             triggerAlertPopup = false;
             alertPopup.SetText(alertPopupMessage);
@@ -234,43 +243,64 @@ public class GameOverController : MonoBehaviourPunCallbacks {
 		GameControllerScript.playerList.Clear();
 	}
 
-    void ToggleLevelUpPopup(Rank r, List<object> rewardsList) {
-        LevelUpPopupScript levelUpPopupScript = levelUpPopup.GetComponent<LevelUpPopupScript>();
-        levelUpPopupScript.rankInsigniaRef.texture = PlayerData.playerdata.GetRankInsigniaForRank(r.name);
-        levelUpPopupScript.rankNameTxt.text = r.name;
-        if (rewardsList.Count > 0) {
-            levelUpPopupScript.rewardsTxt.text = ""+Convert.ToInt32(rewardsList[rewardsList.Count - 1]);
-            for (int i = 0; i < rewardsList.Count - 1; i++) {
-                levelUpPopupScript.rewardsTxt.text += ", " + rewardsList[i].ToString();
-            }
-        } else {
-            levelUpPopupScript.rewardsTxt.transform.parent.gameObject.SetActive(false);
-        }
-        blurManager.BlurInAnim();
-        levelUpPopup.ModalWindowIn();
-        rankUpSound.Play();
+    void ToggleLevelUpPopup(uint newExp, List<object> rewardsList) {
+        newRankExp = newExp;
+        rewardListLevelUp = rewardsList;
+        renderRankUpRewards = true;
     }
 
     void ToggleAchievementPopup(List<object> achievements, List<object> rewardsList)
     {
-        AchievementPopupScript achievementPopupScript = achievementPopup.GetComponent<AchievementPopupScript>();
-        for (int i = 0; i < achievements.Count; i++) {
-            string thisAchievementName = achievements[i].ToString();
-            GameObject o = Instantiate(achievementPopupScript.achievementEntry);
-            o.GetComponent<TextMeshProUGUI>().text = thisAchievementName;
-            o.GetComponentInChildren<RawImage>().texture = PlayerData.playerdata.GetAchievementLogoForName(thisAchievementName);
-            o.transform.SetParent(achievementPopupScript.achievementEntryParent);
-        }
-        if (rewardsList.Count > 0) {
-            achievementPopupScript.rewardsTxt.text = ""+Convert.ToInt32(rewardsList[rewardsList.Count - 1]);
-            for (int i = 0; i < rewardsList.Count - 1; i++) {
-                achievementPopupScript.rewardsTxt.text += ", " + rewardsList[i].ToString();
+        achievementList = achievements;
+        rewardListAchievement = rewardsList;
+        renderAchievements = true;
+    }
+
+    void HandleRenderAchievements()
+    {
+        if (renderAchievements) {
+            AchievementPopupScript achievementPopupScript = achievementPopup.GetComponent<AchievementPopupScript>();
+            for (int i = 0; i < achievementList.Count; i++) {
+                string thisAchievementName = achievementList[i].ToString();
+                GameObject o = Instantiate(achievementPopupScript.achievementEntry);
+                o.GetComponent<TextMeshProUGUI>().text = thisAchievementName;
+                o.GetComponentInChildren<RawImage>().texture = PlayerData.playerdata.GetAchievementLogoForName(thisAchievementName);
+                o.transform.SetParent(achievementPopupScript.achievementEntryParent);
             }
-        } else {
-            achievementPopupScript.rewardsTxt.transform.parent.gameObject.SetActive(false);
+            if (rewardListAchievement.Count > 0) {
+                achievementPopupScript.rewardsTxt.text = ""+Convert.ToInt32(rewardListAchievement[rewardListAchievement.Count - 1]) + " GP";
+                for (int i = 0; i < rewardListAchievement.Count - 1; i++) {
+                    achievementPopupScript.rewardsTxt.text += ", " + rewardListAchievement[i].ToString();
+                }
+            } else {
+                achievementPopupScript.rewardsTxt.transform.parent.gameObject.SetActive(false);
+            }
+            renderAchievements = false;
+            blurManager.BlurInAnim();
+            achievementPopup.ModalWindowIn();
         }
-        blurManager.BlurInAnim();
-        achievementPopup.ModalWindowIn();
+    }
+
+    void HandleRenderLevelUp()
+    {
+        if (renderRankUpRewards) {
+            LevelUpPopupScript levelUpPopupScript = levelUpPopup.GetComponent<LevelUpPopupScript>();
+            Rank r = PlayerData.playerdata.GetRankFromExp(newRankExp);
+            levelUpPopupScript.rankInsigniaRef.texture = PlayerData.playerdata.GetRankInsigniaForRank(r.name);
+            levelUpPopupScript.rankNameTxt.text = r.name;
+            if (rewardListLevelUp.Count > 0) {
+                levelUpPopupScript.rewardsTxt.text = ""+Convert.ToInt32(rewardListLevelUp[rewardListLevelUp.Count - 1]) + " GP";
+                for (int i = 0; i < rewardListLevelUp.Count - 1; i++) {
+                    levelUpPopupScript.rewardsTxt.text += ", " + rewardListLevelUp[i].ToString();
+                }
+            } else {
+                levelUpPopupScript.rewardsTxt.transform.parent.gameObject.SetActive(false);
+            }
+            renderRankUpRewards = false;
+            blurManager.BlurInAnim();
+            levelUpPopup.ModalWindowIn();
+            rankUpSound.Play();
+        }
     }
 
     public void TriggerAlertPopup(string message) {
@@ -286,7 +316,7 @@ public class GameOverController : MonoBehaviourPunCallbacks {
         }
     }
 
-    void RecordAchievementProgress(int teamTotalDeaths, bool stealthed, int mapIndex)
+    void RecordAchievementProgress(char gameMode, int teamTotalDeaths, bool stealthed, int mapIndex)
     {
         Dictionary<string, object> inputData = new Dictionary<string, object>();
         inputData["callHash"] = DAOScript.functionsCallHash;
@@ -298,6 +328,8 @@ public class GameOverController : MonoBehaviourPunCallbacks {
         inputData["stealthed"] = stealthed;
         inputData["time"] = (int)GameControllerScript.missionTime;
         inputData["teamDeaths"] = teamTotalDeaths;
+        inputData["gameMode"] = ""+gameMode;
+        inputData["win"] = SceneManager.GetActiveScene().name == "GameOverSuccess" ? true : false;
 
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("saveAchievementProgress");
 		func.CallAsync(inputData).ContinueWith((taskA) => {
@@ -309,7 +341,11 @@ public class GameOverController : MonoBehaviourPunCallbacks {
                     Debug.Log("Achievement progress update successful.");
                     List<object> achievementsUnlocked = (List<object>)results["achievementsReached"];
                     if (achievementsUnlocked.Count > 0) {
-                        ToggleAchievementPopup(achievementsUnlocked, (List<object>)results["rewards"]);
+                        try {
+                            ToggleAchievementPopup(achievementsUnlocked, (List<object>)results["rewards"]);
+                        } catch (Exception e) {
+                            Debug.LogError(e.Message);
+                        }
                     }
                 } else {
                     PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
@@ -342,7 +378,7 @@ public class GameOverController : MonoBehaviourPunCallbacks {
                     Debug.Log("Level progress update successful with no level up.");
                 } else if (results["status"].ToString() == "201") {
                     Debug.Log("Level progress update successful with a level up.");
-                    ToggleLevelUpPopup(PlayerData.playerdata.GetRankFromExp(Convert.ToUInt32(results["newExp"])), (List<object>)results["rewards"]);
+                    ToggleLevelUpPopup(Convert.ToUInt32(results["newExp"]), (List<object>)results["rewards"]);
                 } else {
                     PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
                 }

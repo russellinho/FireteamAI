@@ -16,7 +16,12 @@ public class AchievementButton : MonoBehaviour, IPointerEnterHandler, IPointerEx
     public Image defaultBackgroundHolder;
     public TextMeshProUGUI detailTitle;
     public TextMeshProUGUI detailDescription;
+    public GameObject completionTxtParent;
     public TextMeshProUGUI completionTxt;
+    private string achievementName;
+    private string progress;
+    private bool completed;
+    private bool inited;
     public Image backgroundColor;
     public Sprite achievementSprite;
     public string title;
@@ -24,100 +29,114 @@ public class AchievementButton : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
     public void PopulateAchievement(string achievementId, string achievementName, params int[] quantities)
     {
-        achievementLabel.text = achievementName;
+        this.achievementName = achievementName;
         switch(achievementId) {
             case "00":
                 if (quantities[0] == 1000) {
-                    completionTxt.text = "COMPLETE";
-                    backgroundColor.color = completedColor;
+                    progress = "COMPLETE";
+                    completed = true;
                 } else {
-                    completionTxt.text = quantities[0] + "/" + 1000;
-                    backgroundColor.color = defaultColor;
+                    progress = quantities[0] + "/" + 1000;
+                    completed = false;
                 }
                 break;
             case "01":
                 if (quantities[0] == 1000) {
-                    completionTxt.text = "COMPLETE";
-                    backgroundColor.color = completedColor;
+                    progress = "COMPLETE";
+                    completed = true;
                 } else {
-                    completionTxt.text = quantities[0] + "/" + 1000;
-                    backgroundColor.color = defaultColor;
+                    progress = quantities[0] + "/" + 1000;
+                    completed = false;
                 }
                 break;
             case "02":
                 if (quantities[0] == 1) {
-                    completionTxt.text = "COMPLETE";
-                    backgroundColor.color = completedColor;
+                    progress = "COMPLETE";
+                    completed = true;
                 } else {
-                    completionTxt.text = "INCOMPLETE";
-                    backgroundColor.color = defaultColor;
+                    progress = "INCOMPLETE";
+                    completed = false;
                 }
                 break;
             case "03":
                 if (quantities[0] == 1) {
-                    completionTxt.text = "COMPLETE";
-                    backgroundColor.color = completedColor;
+                    progress = "COMPLETE";
+                    completed = true;
                 } else {
-                    completionTxt.text = "INCOMPLETE";
-                    backgroundColor.color = defaultColor;
+                    progress = "INCOMPLETE";
+                    completed = false;
                 }
                 break;
             case "04":
                 if (quantities[0] == 1) {
-                    completionTxt.text = "COMPLETE";
-                    backgroundColor.color = completedColor;
+                    progress = "COMPLETE";
+                    completed = true;
                 } else {
-                    completionTxt.text = "INCOMPLETE";
-                    backgroundColor.color = defaultColor;
+                    progress = "INCOMPLETE";
+                    completed = false;
                 }
                 break;
             case "05":
                 if (quantities[0] == 1) {
-                    completionTxt.text = "COMPLETE";
-                    backgroundColor.color = completedColor;
+                    progress = "COMPLETE";
+                    completed = true;
                 } else {
-                    completionTxt.text = "INCOMPLETE";
-                    backgroundColor.color = defaultColor;
+                    progress = "INCOMPLETE";
+                    completed = false;
                 }
                 break;
             case "06":
                 if (quantities[0] == 1) {
-                    completionTxt.text = "COMPLETE";
-                    backgroundColor.color = completedColor;
+                    progress = "COMPLETE";
+                    completed = true;
                 } else {
-                    completionTxt.text = "INCOMPLETE";
-                    backgroundColor.color = defaultColor;
+                    progress = "INCOMPLETE";
+                    completed = false;
                 }
                 break;
             case "07":
                 if (quantities[0] == 1) {
-                    completionTxt.text = "COMPLETE";
-                    backgroundColor.color = completedColor;
+                    progress = "COMPLETE";
+                    completed = true;
                 } else {
-                    completionTxt.text = "INCOMPLETE";
-                    backgroundColor.color = defaultColor;
+                    progress = "INCOMPLETE";
+                    completed = false;
                 }
                 break;
             case "08":
                 if (quantities[0] == 1) {
-                    completionTxt.text = "COMPLETE";
-                    backgroundColor.color = completedColor;
+                    progress = "COMPLETE";
+                    completed = true;
                 } else {
-                    completionTxt.text = "INCOMPLETE";
-                    backgroundColor.color = defaultColor;
+                    progress = "INCOMPLETE";
+                    completed = false;
                 }
                 break;
             case "09":
                 if (quantities[0] == 1) {
-                    completionTxt.text = "COMPLETE";
-                    backgroundColor.color = completedColor;
+                    progress = "COMPLETE";
+                    completed = true;
                 } else {
-                    completionTxt.text = "INCOMPLETE";
-                    backgroundColor.color = defaultColor;
+                    progress = "INCOMPLETE";
+                    completed = false;
                 }
                 break;
             default:
                 break;
+        }
+        inited = false;
+    }
+
+    void Update()
+    {
+        if (!inited) {
+            inited = true;
+            achievementLabel.text = achievementName;
+            if (completed) {
+                backgroundColor.color = completedColor;
+            } else {
+                backgroundColor.color = defaultColor;
+            }
         }
     }
 
@@ -128,6 +147,8 @@ public class AchievementButton : MonoBehaviour, IPointerEnterHandler, IPointerEx
         achievementImageHolder.gameObject.SetActive(false);
         defaultImageHolder.gameObject.SetActive(true);
         defaultBackgroundHolder.gameObject.SetActive(true);
+        completionTxt.text = progress;
+        completionTxtParent.gameObject.SetActive(false);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -138,5 +159,7 @@ public class AchievementButton : MonoBehaviour, IPointerEnterHandler, IPointerEx
         defaultBackgroundHolder.gameObject.SetActive(false);
         achievementImageHolder.sprite = achievementSprite;
         achievementImageHolder.gameObject.SetActive(true);
+        completionTxt.text = progress;
+        completionTxtParent.gameObject.SetActive(true);
     }
 }

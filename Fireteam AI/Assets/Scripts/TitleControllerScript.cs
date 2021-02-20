@@ -77,6 +77,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Animator backgroundAnimator;
 	public Button creditsButton;
 	public Button creditsExitButton;
+	public Button achievementsButton;
 	public ModalWindowManager alertPopup;
 	public ModalWindowManager confirmPopup;
 	public ModalWindowManager keyBindingsPopup;

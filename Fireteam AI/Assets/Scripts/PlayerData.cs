@@ -689,10 +689,14 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         supportModInfo.SightId = "";
                     }
                     LoadInventory(inventorySnap);
-                    if (playerDataSnap.ContainsKey("achievements")) {
-                        LoadAchievements((Dictionary<object, object>)playerDataSnap["achievements"], achievementMap);
-                    } else {
-                        LoadAchievements(null, achievementMap);
+                    try {
+                        if (playerDataSnap.ContainsKey("achievements")) {
+                            LoadAchievements((Dictionary<object, object>)playerDataSnap["achievements"], achievementMap);
+                        } else {
+                            LoadAchievements(null, achievementMap);
+                        }
+                    } catch (Exception e) {
+                        Debug.Log(e.Message);
                     }
                     if (playerDataSnap.ContainsKey("gifts")) {
                         LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
