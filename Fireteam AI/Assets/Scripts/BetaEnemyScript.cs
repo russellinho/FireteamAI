@@ -2764,4 +2764,15 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         }
     }
 
+	private int CalculateDamageDropoff(float damage, float distance, float range)
+    {
+        float dropoffRange = range / 3f;
+        float sustainRange = 2f * range / 3f;
+        if (distance <= sustainRange) {
+            return 0;
+        }
+        float maxDropoffAmount = damage / 3f;
+        return (int)(((distance - sustainRange) / dropoffRange) * maxDropoffAmount);
+    }
+
 }

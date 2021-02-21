@@ -628,7 +628,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
                     pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, (bodyPartIdHit == HEAD_TARGET));
                     int beforeHp = n.health;
-                    int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit);
+                    int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit) - CalculateDamageDropoff(weaponStats.damage, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
                     if (beforeHp > 0)
                     {
                         n.TakeDamage(thisDamageDealt, transform.position, 0, bodyPartIdHit);
@@ -639,7 +639,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
                     pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, (bodyPartIdHit == HEAD_TARGET));
                     int beforeHp = b.health;
-                    int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit);
+                    int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit) - CalculateDamageDropoff(weaponStats.damage, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
                     if (beforeHp > 0)
                     {
                         hudScript.InstantiateHitmarker();
@@ -746,7 +746,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     if (n != null) {
                         int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
                         int beforeHp = 0;
-                        int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit, 8);
+                        int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit, 8) - CalculateDamageDropoff(weaponStats.damage / 8, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
                         beforeHp = n.health;
                         if (totalDamageDealt == 0f) {
@@ -761,7 +761,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     if (b != null) {
                         int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
                         int beforeHp = 0;
-                        int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit, 8);
+                        int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit, 8) - CalculateDamageDropoff(weaponStats.damage / 8, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, (bodyPartIdHit == HEAD_TARGET));
                         beforeHp = b.health;
                         if (totalDamageDealt == 0f) {
@@ -1691,6 +1691,17 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     public int GetHeadshotCount()
     {
         return headshotCount;
+    }
+
+    private int CalculateDamageDropoff(float damage, float distance, float range)
+    {
+        float dropoffRange = range / 3f;
+        float sustainRange = 2f * range / 3f;
+        if (distance <= sustainRange) {
+            return 0;
+        }
+        float maxDropoffAmount = damage / 3f;
+        return (int)(((distance - sustainRange) / dropoffRange) * maxDropoffAmount);
     }
 
 }
