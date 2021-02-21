@@ -1709,6 +1709,7 @@ GameObject:
   - component: {fileID: 8076955102610477549}
   - component: {fileID: 91026010099470123}
   - component: {fileID: 7973415184894193771}
+  - component: {fileID: 2905791188976740660}
   m_Layer: 14
   m_Name: mixamorig:Head
   m_TagString: Human
@@ -1820,6 +1821,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bodyPartId: 1
+--- !u!114 &2905791188976740660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6527639969203574296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4451a10e69dc44e5b964a7eae6011920, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyScript: {fileID: 5417910215186016291}
+  npcScript: {fileID: 0}
 --- !u!1 &6527639969203574298
 GameObject:
   m_ObjectHideFlags: 0

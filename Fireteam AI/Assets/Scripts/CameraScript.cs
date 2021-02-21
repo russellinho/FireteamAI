@@ -13,6 +13,7 @@ public class CameraScript : MonoBehaviour
     public AudioControllerScript audioController;
     public WeaponActionScript weaponActionScript;
     public WeaponScript weaponScript;
+    private float unlockAnimationsTimer;
 
     // Update is called once per frame
     // void LateUpdate()
@@ -29,19 +30,25 @@ public class CameraScript : MonoBehaviour
     //     }
     // }
 
+    void Update()
+    {
+        if (unlockAnimationsTimer > 0f) {
+            unlockAnimationsTimer -= Time.deltaTime;
+            if (fpc.fpcAnimator.GetBool("Swimming")) {
+                UnlockAnimations();
+            }
+        }
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == WATER_LAYER) {
             fpc.SetIsSwimming(true);
             // Enable FPS swim animation (put away weapon), reset FPC animator, reset full body animator, reset weapon animator
-            weaponActionScript.ResetMyActionStates();
-            fpc.ResetAnimationState();
-            fpc.ResetFPCAnimator(weaponScript.currentlyEquippedType);
-            fpc.SetSwimmingInFPCAnimator(true);
-            fpc.SetSwimmingInAnimator(true);
+            LockAnimations();
             // Player water enter sound
             audioController.PlayerWaterEnterSound();
-            // TODO: Enable underwater camera effect
+            audioController.ToggleWaterAmbience(true);
         }
     }
 
@@ -50,15 +57,33 @@ public class CameraScript : MonoBehaviour
         if (other.gameObject.layer == WATER_LAYER) {
             fpc.SetIsSwimming(false);
             // Disable FPS swim animation (draw weapon), reset FPC animator, reset full body animator, reset weapon animator
-            fpc.SetSwimmingInAnimator(false);
-            fpc.SetSwimmingInFPCAnimator(false);
-            weaponActionScript.ResetMyActionStates();
-            fpc.ResetAnimationState();
-            fpc.ResetFPCAnimator(weaponScript.currentlyEquippedType);
+            SetUnlockAnimationsTimer();
             // Player water exit sound
-            audioController.PlayerWaterExitSound();
-            // TODO: Disable underwater camera effect
+            audioController.ToggleWaterAmbience(false);
         }
+    }
+
+    void UnlockAnimations()
+    {
+        fpc.SetSwimmingInAnimator(false);
+        fpc.SetSwimmingInFPCAnimator(false);
+        weaponActionScript.ResetMyActionStates();
+        fpc.ResetAnimationState();
+        fpc.ResetFPCAnimator(weaponScript.currentlyEquippedType);
+    }
+
+    void SetUnlockAnimationsTimer()
+    {
+        unlockAnimationsTimer = 1.75f;
+    }
+
+    void LockAnimations()
+    {
+        weaponActionScript.ResetMyActionStates();
+        fpc.ResetAnimationState();
+        fpc.ResetFPCAnimator(weaponScript.currentlyEquippedType);
+        fpc.SetSwimmingInFPCAnimator(true);
+        fpc.SetSwimmingInAnimator(true);
     }
 
     void OnPostRender() {

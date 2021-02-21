@@ -699,12 +699,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
             animator.SetTrigger("Reloading");
         }
 
-        public void SyncAnimatorValues(int weaponType, int moving, bool weaponReady, bool crouching, bool sprinting, bool dead, bool walking) {
-            photonView.RPC("RpcSyncAnimatorValues", RpcTarget.Others, weaponType, moving, weaponReady, crouching, sprinting, dead, walking);
+        public void SyncAnimatorValues(int weaponType, int moving, bool weaponReady, bool crouching, bool sprinting, bool dead, bool walking, bool swimming) {
+            photonView.RPC("RpcSyncAnimatorValues", RpcTarget.Others, weaponType, moving, weaponReady, crouching, sprinting, dead, walking, swimming);
         }
 
         [PunRPC]
-        private void RpcSyncAnimatorValues(int weaponType, int moving, bool weaponReady, bool crouching, bool sprinting, bool dead, bool walking) {
+        private void RpcSyncAnimatorValues(int weaponType, int moving, bool weaponReady, bool crouching, bool sprinting, bool dead, bool walking, bool swimming) {
             animator.SetInteger("WeaponType", weaponType);
             animator.SetInteger("Moving", moving);
             animator.SetBool("weaponReady", weaponReady);
@@ -712,6 +712,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             animator.SetBool("isSprinting", sprinting);
             animator.SetBool("isDead", dead);
             animator.SetBool("isWalking", walking);
+            animator.SetBool("Swimming", swimming);
         }
 
         // private void OnControllerColliderHit(ControllerColliderHit hit)
@@ -822,6 +823,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 m_IsMoving = false;
                 m_Jump = false;
             }
+        }
+
+        public bool GetIsSwimming()
+        {
+            return m_IsSwimming;
         }
 
     }

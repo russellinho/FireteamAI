@@ -29,6 +29,7 @@ public class AudioControllerScript : MonoBehaviour {
 	private AudioSource fxSound5;
 	private AudioSource fxSound6;
 	private AudioSource fxSound7;
+	private AudioSource fxSound8;
 	private float flashbangRingTimer;
 	private float flashbangRingTotalTime;
 	private float flashbangRingThird;
@@ -45,7 +46,6 @@ public class AudioControllerScript : MonoBehaviour {
 	public AudioClip cautionSound;
 	public AudioClip detectedSound;
 	public AudioClip enterWater;
-	public AudioClip exitWater;
 	public AudioClip swimSound1;
 	public AudioClip swimSound2;
 
@@ -67,6 +67,7 @@ public class AudioControllerScript : MonoBehaviour {
 			fxSound5 = fxRefs [4];
 			fxSound6 = fxRefs [5];
 			fxSound7 = fxRefs [6];
+			fxSound8 = fxRefs [7];
 			PlayMissionStartSound ();
 		}
 		initialized = true;
@@ -92,6 +93,7 @@ public class AudioControllerScript : MonoBehaviour {
 			if (flashbangRingTimer == flashbangRingTotalTime) {
 				flashbangRingThird = flashbangRingTotalTime / 3f;
 				if (!fxSound7.isPlaying) {
+					audioEcho.reverbPreset = AudioReverbPreset.User;
 					audioMuffle.cutoffFrequency = (float)MUFFLE_START_VALUE;
 					audioEcho.reverbLevel = (float)ECHO_START_VALUE;
 					audioMuffle.enabled = true;
@@ -239,13 +241,19 @@ public class AudioControllerScript : MonoBehaviour {
 		fxSound1.Play ();
 	}
 
-	public void PlayerWaterExitSound()
+	public void ToggleWaterAmbience(bool b)
 	{
 		if (!pView.IsMine) {
 			return;
 		}
-		fxSound1.clip = exitWater;
-		fxSound1.Play ();
+		if (b) {
+			fxSound8.Play();
+			audioEcho.reverbPreset = AudioReverbPreset.Underwater;
+			audioEcho.enabled = true;
+		} else {
+			fxSound8.Stop();
+			audioEcho.enabled = false;
+		}
 	}
 
 }

@@ -15,6 +15,7 @@ using Koobando.AntiCheat;
 
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
+    const float UNDERWATER_TIMER = 20f;
     const float MAX_DETECTION_LEVEL = 100f;
     const float BASE_DETECTION_RATE = 20f;
     private const float EXPLOSION_FORCE = 75f;
@@ -134,7 +135,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private Vector3 lastHitFromPos;
 	private int lastHitBy;
 	private int lastBodyPartHit;
-    public EncryptedBool isSwimming; 
+    public EncryptedBool isSwimming;
+    private float underwaterTimer;
+    private float underwaterTakeDamageTimer;
+
 
     public void PreInitialize()
     {
@@ -207,6 +211,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hitTimer = 1f;
         healTimer = 1f;
         boostTimer = 1f;
+        underwaterTimer = UNDERWATER_TIMER;
         isRespawning = false;
         respawnTimer = 0f;
         escapeAvailablePopup = false;
@@ -275,6 +280,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         UnlockInteractionLock();
         UpdateEnvDamageTimer();
+        UpdateUnderwaterTimer();
         updatePlayerSpeed();
         // Instant respawn hack
         // if (Input.GetKeyDown (KeyCode.P)) {
@@ -1607,6 +1613,23 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 			envDamageTimer += Time.deltaTime;
 		}
 	}
+
+    void UpdateUnderwaterTimer()
+    {
+        if (fpc.GetIsSwimming())
+        {
+            if (underwaterTimer > 0f) {
+                underwaterTimer -= Time.deltaTime;
+            } else {
+                if (underwaterTakeDamageTimer <= 0f) {
+                    TakeDamage(2, false, Vector3.zero, 2, 0);
+                    underwaterTakeDamageTimer = 1.5f;
+                } else {
+                    underwaterTakeDamageTimer -= Time.deltaTime;
+                }
+            }
+        }
+    }
 
     void FallOffMapProtection() {
         if (transform.position.y <= gameController.outOfBoundsPoint.position.y) {
