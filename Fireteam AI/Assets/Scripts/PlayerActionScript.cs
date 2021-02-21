@@ -15,7 +15,7 @@ using Koobando.AntiCheat;
 
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
-    const float UNDERWATER_TIMER = 20f;
+    const float UNDERWATER_TIMER = 30f;
     const float MAX_DETECTION_LEVEL = 100f;
     const float BASE_DETECTION_RATE = 20f;
     private const float EXPLOSION_FORCE = 75f;
@@ -1628,6 +1628,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     underwaterTakeDamageTimer -= Time.deltaTime;
                 }
             }
+        } else {
+            underwaterTimer = UNDERWATER_TIMER;
         }
     }
 

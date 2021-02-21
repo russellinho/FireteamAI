@@ -13,7 +13,6 @@ public class CameraScript : MonoBehaviour
     public AudioControllerScript audioController;
     public WeaponActionScript weaponActionScript;
     public WeaponScript weaponScript;
-    private float unlockAnimationsTimer;
 
     // Update is called once per frame
     // void LateUpdate()
@@ -32,9 +31,8 @@ public class CameraScript : MonoBehaviour
 
     void Update()
     {
-        if (unlockAnimationsTimer > 0f) {
-            unlockAnimationsTimer -= Time.deltaTime;
-            if (fpc.fpcAnimator.GetBool("Swimming")) {
+        if (!fpc.GetIsSwimming() && fpc.fpcAnimator.GetBool("Swimming")) {
+            if (fpc.m_CharacterController.isGrounded) {
                 UnlockAnimations();
             }
         }
@@ -56,8 +54,6 @@ public class CameraScript : MonoBehaviour
     {
         if (other.gameObject.layer == WATER_LAYER) {
             fpc.SetIsSwimming(false);
-            // Disable FPS swim animation (draw weapon), reset FPC animator, reset full body animator, reset weapon animator
-            SetUnlockAnimationsTimer();
             // Player water exit sound
             audioController.ToggleWaterAmbience(false);
         }
@@ -72,18 +68,15 @@ public class CameraScript : MonoBehaviour
         fpc.ResetFPCAnimator(weaponScript.currentlyEquippedType);
     }
 
-    void SetUnlockAnimationsTimer()
-    {
-        unlockAnimationsTimer = 1.75f;
-    }
-
     void LockAnimations()
     {
-        weaponActionScript.ResetMyActionStates();
-        fpc.ResetAnimationState();
-        fpc.ResetFPCAnimator(weaponScript.currentlyEquippedType);
-        fpc.SetSwimmingInFPCAnimator(true);
-        fpc.SetSwimmingInAnimator(true);
+        if (!fpc.fpcAnimator.GetBool("Swimming")) {
+            weaponActionScript.ResetMyActionStates();
+            fpc.ResetAnimationState();
+            fpc.ResetFPCAnimator(weaponScript.currentlyEquippedType);
+            fpc.SetSwimmingInFPCAnimator(true);
+            fpc.SetSwimmingInAnimator(true);
+        }
     }
 
     void OnPostRender() {

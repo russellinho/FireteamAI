@@ -234,7 +234,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             unpauseDelay -= Time.deltaTime;
         }
 
-        if (!playerActionScript.canShoot || isWieldingThrowable || isWieldingBooster || isWieldingDeployable)
+        if (!playerActionScript.canShoot || fpc.GetIsSwimming() || isWieldingThrowable || isWieldingBooster || isWieldingDeployable)
         {
             return;
         }
@@ -1621,7 +1621,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     }
 
     bool CanInitiateReload() {
-        if (!playerActionScript.fpc.m_IsRunning && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && !IsPumpActionCocking() && !IsBoltActionCocking() && !isDrawing && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
+        if (!playerActionScript.fpc.m_IsRunning && !fpc.GetIsSwimming() && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && !IsPumpActionCocking() && !IsBoltActionCocking() && !isDrawing && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
             return true;
         }
         return false;

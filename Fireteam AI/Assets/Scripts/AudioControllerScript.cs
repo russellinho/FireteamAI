@@ -118,8 +118,10 @@ public class AudioControllerScript : MonoBehaviour {
 			flashbangRingTimer -= Time.deltaTime;
 		} else {
 			fxSound7.Stop();
-			audioMuffle.enabled = false;
-			audioEcho.enabled = false;
+			if (audioMuffle.enabled) {
+				audioMuffle.enabled = false;
+				audioEcho.enabled = false;
+			}
 		}
 
 		// Control BGM
@@ -134,6 +136,12 @@ public class AudioControllerScript : MonoBehaviour {
 			if (!fxSound6.isPlaying) {
 				fxSound6.Play ();
 			}
+		}
+
+		if (fxSound8.isPlaying) {
+			audioEcho.enabled = true;
+		} else {
+			audioEcho.enabled = false;
 		}
 	}
 

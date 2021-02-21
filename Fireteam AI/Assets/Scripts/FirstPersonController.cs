@@ -20,9 +20,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private EncryptedBool m_IsSwimming;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
         [SerializeField] private EncryptedFloat m_JumpSpeed;
-        private float m_SwimGravity = 4f;
+        private float m_SwimGravity = 3f;
         private float m_SwimSpeed = 2f;
-        private float m_SwimUpSpeed = 3f;
+        private float m_SwimUpSpeed = 4f;
         [SerializeField] private float m_StickToGroundForce;
         [SerializeField] private float m_GravityMultiplier;
         [SerializeField] public MouseLook m_MouseLook;
@@ -297,10 +297,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // Water physics
             if (m_IsSwimming) {
                 if (m_Jump) {
-                    m_MoveDir.y = m_SwimUpSpeed;
-                } else {
-                    m_MoveDir.y = -m_SwimGravity;
+                    m_MoveDir.y += (m_SwimUpSpeed);
+                    m_MoveDir.y = Math.Min(m_MoveDir.y, m_SwimUpSpeed);
+                    m_Jump = false;
                 }
+
+                m_MoveDir.y -= (Time.fixedDeltaTime * m_SwimGravity);
+                m_MoveDir.y = Math.Max(m_MoveDir.y, -m_SwimGravity);
             } else {
                 // Ground physics
                 if (m_CharacterController.isGrounded)

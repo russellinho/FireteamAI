@@ -193,6 +193,8 @@ public class WeaponScript : MonoBehaviour
     bool CheckCanSwitchWeapon() {
         if (!equipmentScript.isFirstPerson()) {
             return false;
+        } else if (playerActionScript.fpc.GetIsSwimming()) {
+            return false;
         } else if (weaponActionScript.isCockingGrenade) {
             return false;
         } else if (weaponActionScript.isUsingBooster) {
