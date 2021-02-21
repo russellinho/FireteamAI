@@ -26,6 +26,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public string teamMap;
 	public Terrain[] terrainMetaData;
 	public PostProcessVolume postProcessVolume;
+	public Color waterFogColor;
+	public float waterFogDensity = 0.25f;
+
+	public bool defFogEnabled;
+	public Color defFogColor;
+	public FogMode defFogMode;
+	public float defFogDensity;
 
     // variable for last gunshot position
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
@@ -125,6 +132,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		Physics.IgnoreLayerCollision (16, 19);
 		Physics.IgnoreLayerCollision (18, 19);
 		ClearEnemyTypesKilled();
+
+		defFogEnabled = RenderSettings.fog;
+		defFogColor = RenderSettings.fogColor;
+		defFogMode = RenderSettings.fogMode;
+		defFogDensity = RenderSettings.fogDensity;
 		
 		Bloom myBloom;
 		MotionBlur myMotionBlur;
@@ -1156,7 +1168,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		GameControllerScript.missionTime = missionTime;
 		
 		string[] parsedSerializations = serializedObjectives.Split('|');
-		// Sync objectives text - TODO: Sync formatting too
+		// Sync objectives text
 		string[] objectivesText = parsedSerializations[0].Split('#');
 		for (int i = 0; i < objectivesText.Length; i++) {
 			this.objectives.objectivesText[i] = objectivesText[i];

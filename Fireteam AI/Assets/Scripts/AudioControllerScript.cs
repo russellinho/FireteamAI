@@ -44,6 +44,10 @@ public class AudioControllerScript : MonoBehaviour {
 	public AudioClip missionStartSound;
 	public AudioClip cautionSound;
 	public AudioClip detectedSound;
+	public AudioClip enterWater;
+	public AudioClip exitWater;
+	public AudioClip swimSound1;
+	public AudioClip swimSound2;
 
 	private bool wasRunning;
 	private PhotonView pView;
@@ -224,6 +228,24 @@ public class AudioControllerScript : MonoBehaviour {
 		
 		flashbangRingTotalTime = flashbangTime;
 		flashbangRingTimer = flashbangTime;
+	}
+
+	public void PlayerWaterEnterSound()
+	{
+		if (!pView.IsMine) {
+			return;
+		}
+		fxSound1.clip = enterWater;
+		fxSound1.Play ();
+	}
+
+	public void PlayerWaterExitSound()
+	{
+		if (!pView.IsMine) {
+			return;
+		}
+		fxSound1.clip = exitWater;
+		fxSound1.Play ();
 	}
 
 }

@@ -17,8 +17,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] public bool m_IsCrouching;
     	[SerializeField] public bool m_IsRunning;
         [SerializeField] public bool m_IsMoving;
+        private EncryptedBool m_IsSwimming;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
         [SerializeField] private EncryptedFloat m_JumpSpeed;
+        private float m_SwimGravity = 4f;
+        private float m_SwimSpeed = 2f;
+        private float m_SwimUpSpeed = 3f;
         [SerializeField] private float m_StickToGroundForce;
         [SerializeField] private float m_GravityMultiplier;
         [SerializeField] public MouseLook m_MouseLook;
@@ -290,32 +294,43 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 m_MoveDir = m_DashDir;
             }
 
-            if (m_CharacterController.isGrounded)
-            {
-                m_MoveDir.y = -m_StickToGroundForce;
-
-                if (m_Jump)
+            // Water physics
+            if (m_IsSwimming) {
+                if (m_Jump) {
+                    m_MoveDir.y = m_SwimUpSpeed;
+                } else {
+                    m_MoveDir.y = -m_SwimGravity;
+                }
+            } else {
+                // Ground physics
+                if (m_CharacterController.isGrounded)
                 {
-                    if (m_IsCrouching)
+                    m_MoveDir.y = -m_StickToGroundForce;
+
+                    if (m_Jump)
                     {
-                        m_IsCrouching = false;
-                        playerActionScript.HandleJumpAfterCrouch();
+                        if (m_IsCrouching)
+                        {
+                            m_IsCrouching = false;
+                            playerActionScript.HandleJumpAfterCrouch();
+                        }
+                        else
+                        {
+                            m_MoveDir.y = m_JumpSpeed;
+                            PlayJumpSound();
+                            m_Jumping = true;
+                            // animator.SetTrigger("Jump");
+                            TriggerJumpInAnimator();
+                        }
+                        m_Jump = false;
                     }
-                    else
-                    {
-                        m_MoveDir.y = m_JumpSpeed;
-                        PlayJumpSound();
-                        m_Jumping = true;
-                        // animator.SetTrigger("Jump");
-                        TriggerJumpInAnimator();
-                    }
-                    m_Jump = false;
+                }
+                else
+                {
+                    m_MoveDir += Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime;
                 }
             }
-            else
-            {
-                m_MoveDir += Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime;
-            }
+            
             m_CollisionFlags = m_CharacterController.Move(m_MoveDir*Time.fixedDeltaTime);
 
             ProgressStepCycle(speed);
@@ -351,9 +366,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             m_NextStep = m_StepCycle + m_StepInterval;
 
-            PlayFootStepAudio();
+            if (m_IsSwimming) {
+                PlaySwimAudio();
+            } else {
+                PlayFootStepAudio();
+            }
         }
-
 
         private void PlayFootStepAudio()
         {
@@ -375,6 +393,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
         }
 
+        private void PlaySwimAudio()
+        {
+            if (m_AudioSource.clip == playerActionScript.audioController.swimSound1) {
+                m_AudioSource.clip = playerActionScript.audioController.swimSound2;
+            } else {
+                m_AudioSource.clip = playerActionScript.audioController.swimSound1;
+            }
+
+            m_AudioSource.PlayOneShot(m_AudioSource.clip);
+        }
 
         private void UpdateCameraPosition(float speed)
         {
@@ -451,7 +479,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             //     weaponActionScript = GetComponent<WeaponActionScript>();
             // }
 			if (weaponActionScript != null && (weaponActionScript.isAiming && weaponActionScript.weaponMetaData.steadyAim)) {
-				if (!m_IsCrouching) {
+				if (!m_IsCrouching && !m_IsSwimming) {
 					m_IsWalking = true;
 					m_IsRunning = false;
 				} else {
@@ -460,10 +488,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				}
 			} else {
 				if (!m_IsCrouching && m_CharacterController.isGrounded) {
-					if (PlayerPreferences.playerPreferences.KeyWasPressed("Walk", true)) {
+					if (!m_IsSwimming && PlayerPreferences.playerPreferences.KeyWasPressed("Walk", true)) {
 						m_IsWalking = true;
 						m_IsRunning = false;
-					} else if (PlayerPreferences.playerPreferences.KeyWasPressed("Sprint", true) && vertical > 0f && playerActionScript.sprintTime > 0f && !sprintLock && enableRunFlag) {
+					} else if (!m_IsSwimming && PlayerPreferences.playerPreferences.KeyWasPressed("Sprint", true) && vertical > 0f && playerActionScript.sprintTime > 0f && !sprintLock && enableRunFlag) {
 						m_IsWalking = false;
 						m_IsRunning = true;
                         // if (weaponActionScript.isReloading || weaponActionScript.isCocking) {
@@ -479,7 +507,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			// set the desired speed to be walking or running
 			//speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
 			speed = playerActionScript.totalSpeedBoost;
-			if (m_IsRunning) {
+            if (m_IsSwimming) {
+                speed = m_SwimSpeed;
+            } else if (m_IsRunning) {
 				speed = playerActionScript.totalSpeedBoost * 2f;
 			} else if (m_IsCrouching || m_IsWalking) {
                 speed = playerActionScript.totalSpeedBoost / 3f;
@@ -631,9 +661,23 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
         }
 
+        public void SetSwimmingInAnimator(bool x)
+        {
+            photonView.RPC("RpcSetSwimmingInAnimator", RpcTarget.All, x);
+        }
+
         [PunRPC]
         private void RpcSetWalkingInAnimator(bool x) {
             animator.SetBool("isWalking", x);
+        }
+
+        [PunRPC]
+        private void RpcSetSwimmingInAnimator(bool x)
+        {
+            if (x) {
+                animator.SetTrigger("EnteredWater");
+            }
+            animator.SetBool("Swimming", x);
         }
 
         public void TriggerJumpInAnimator() {
@@ -693,6 +737,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [PunRPC]
         void RpcResetAnimationState()
         {
+            animator.ResetTrigger("EnteredWater");
             animator.SetInteger("WeaponType", 1);
             animator.SetInteger("Moving", 0);
             animator.SetBool("weaponReady", false);
@@ -700,6 +745,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             animator.SetBool("isSprinting", false);
             animator.SetBool("isDead", false);
             animator.SetBool("isWalking", false);
+            animator.SetBool("Swimming", false);
             animator.Play("IdleAssaultRifle", 0);
             animator.Play("IdleAssaultRifle", 1);
         }
@@ -717,6 +763,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             fpcAnimator.SetBool("isDead", false);
             fpcAnimator.SetBool("isWalking", false);
             fpcAnimator.SetBool("Jumping", false);
+            fpcAnimator.SetBool("Swimming", false);
             fpcAnimator.SetInteger("WeaponType", currentlyEquippedType);
             fpcAnimator.SetInteger("MovingDir", 0);
             fpcAnimator.ResetTrigger("Reload");
@@ -726,6 +773,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
             fpcAnimator.ResetTrigger("ThrowGrenade");
             fpcAnimator.ResetTrigger("UseBooster");
             fpcAnimator.ResetTrigger("HolsterWeapon");
+            fpcAnimator.ResetTrigger("EnteredWater");
+        }
+
+        public void SetSwimmingInFPCAnimator(bool b)
+        {
+            if (b) {
+                fpcAnimator.SetTrigger("EnteredWater");
+            }
+            fpcAnimator.SetBool("Swimming", b);
         }
 
         void GetTerrainWalkingOn()
@@ -754,6 +810,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             if (terrainUnderneath == null) return -1;
             return (int)terrainUnderneath.terrainType;
+        }
+
+        public void SetIsSwimming(bool b)
+        {
+            m_IsSwimming = b;
+            if (b) {
+                m_IsWalking = false;
+                m_IsCrouching = false;
+    	        m_IsRunning = false;
+                m_IsMoving = false;
+                m_Jump = false;
+            }
         }
 
     }

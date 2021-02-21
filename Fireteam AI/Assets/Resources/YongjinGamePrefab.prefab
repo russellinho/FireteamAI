@@ -11148,7 +11148,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31aec6efb1df6344091734678c951904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  col: {fileID: 0}
+  rigid: {fileID: 0}
   fpc: {fileID: 6036109569261045585}
+  audioController: {fileID: 1373234588920935396}
 --- !u!114 &4104676683713817977
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22236,6 +22239,8 @@ MonoBehaviour:
   aud: {fileID: 9044645078735815823}
   radioAud: {fileID: 4797392498632426522}
   viewCam: {fileID: 8466880724220490126}
+  viewCamCol: {fileID: 0}
+  viewCamRigid: {fileID: 0}
   spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
     type: 3}
   thisSpectatorCam: {fileID: 0}
@@ -22320,6 +22325,12 @@ MonoBehaviour:
   hitLocation: {x: 0, y: 0, z: 0}
   cameraParent: {fileID: 6643017036246142225}
   waitingOnAccept: 0
+  isSwimming:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
 --- !u!114 &8946761223030793981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22362,6 +22373,9 @@ MonoBehaviour:
   missionStartSound: {fileID: 8300000, guid: d7c0f3c0f50863143a8e354f4786f6b5, type: 3}
   cautionSound: {fileID: 8300000, guid: 619aad4b55767445aa5d50082ec885da, type: 3}
   detectedSound: {fileID: 8300000, guid: 2921c9e78f7fe4665820f80e3128dbc4, type: 3}
+  enterWater: {fileID: 0}
+  exitWater: {fileID: 0}
+  inWater: {fileID: 0}
 --- !u!54 &6789832769074474075
 Rigidbody:
   m_ObjectHideFlags: 0

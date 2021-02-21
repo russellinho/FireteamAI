@@ -10,6 +10,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 using SpawnMode = GameControllerScript.SpawnMode;
 using NpcActionState = NpcScript.ActionStates;
 using FlightMode = BlackHawkScript.FlightMode;
+using UnityEngine.Rendering.PostProcessing;
 using Koobando.AntiCheat;
 
 public class PlayerActionScript : MonoBehaviourPunCallbacks
@@ -41,6 +42,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public AudioSource aud;
     public AudioSource radioAud;
     public Camera viewCam;
+    public SphereCollider viewCamCol;
+    public Rigidbody viewCamRigid;
     public GameObject spectatorCam;
     public GameObject thisSpectatorCam;
     public PlayerHUDScript hud;
@@ -131,6 +134,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private Vector3 lastHitFromPos;
 	private int lastHitBy;
 	private int lastBodyPartHit;
+    public EncryptedBool isSwimming; 
 
     public void PreInitialize()
     {
@@ -1845,5 +1849,24 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             ApplyForceModifiers();
         }
     }
+
+    // public void ToggleUnderwaterEffects(bool b)
+	// {
+	// 	if (b) {
+	// 		RenderSettings.fog = true;
+	// 		RenderSettings.fogColor = gameController.waterFogColor;
+	// 		RenderSettings.fogMode = FogMode.Exponential;
+	// 		RenderSettings.fogDensity = gameController.waterFogDensity;
+
+    //         // TODO: Set post processing for swimming
+	// 	} else {
+    //         RenderSettings.fog = gameController.defFogEnabled;
+	// 		RenderSettings.fogColor = gameController.defFogColor;
+	// 		RenderSettings.fogMode = gameController.defFogMode;
+	// 		RenderSettings.fogDensity = gameController.defFogDensity;
+
+    //         // TODO: Set default post processing back
+	// 	}
+	// }
 
 }
