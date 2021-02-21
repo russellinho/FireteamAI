@@ -10,6 +10,7 @@ using ExitGames.Client.Photon;
 
 public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 {
+    private const int WATER_LAYER = 4;
     private const byte LAUNCHER_SPAWN_CODE = 126;
     private const byte THROWABLE_SPAWN_CODE = 127;
     private const float SHELL_SPEED = 3f;
@@ -520,7 +521,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     }
 
     bool CanMelee() {
-        if (!fpc.m_CharacterController.isGrounded || isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || deployInProgress || isUsingBooster || isUsingDeployable || hudScript.container.pauseMenuGUI.pauseActive) {
+        if (!fpc.m_CharacterController.isGrounded || fpc.GetIsSwimming() || isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || deployInProgress || isUsingBooster || isUsingDeployable || hudScript.container.pauseMenuGUI.pauseActive) {
             return false;
         }
         return true;

@@ -26046,8 +26046,6 @@ MonoBehaviour:
   aud: {fileID: 4997301263046971760}
   radioAud: {fileID: 1337998552522121521}
   viewCam: {fileID: 4997301262654219521}
-  viewCamCol: {fileID: 0}
-  viewCamRigid: {fileID: 0}
   spectatorCam: {fileID: 1475774512443944, guid: 56c970cdfc0f67b4b881f98afc9286a9,
     type: 3}
   thisSpectatorCam: {fileID: 0}
@@ -26132,12 +26130,6 @@ MonoBehaviour:
   hitLocation: {x: 0, y: 0, z: 0}
   cameraParent: {fileID: 8395974561293240328}
   waitingOnAccept: 0
-  isSwimming:
-    currentCryptoKey: 0
-    hiddenValue: 0
-    initialized: 0
-    fakeValue: 0
-    fakeValueActive: 0
 --- !u!114 &4997301263046971764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26183,6 +26175,9 @@ MonoBehaviour:
   enterWater: {fileID: 8300000, guid: 42e26282cab6d41169d0293f796d7d9c, type: 3}
   swimSound1: {fileID: 8300000, guid: 6564c342d314a4469bb29e277e67f632, type: 3}
   swimSound2: {fileID: 8300000, guid: 6c740123084e9481ab8688aa7bcd4388, type: 3}
+  waterFootstep1: {fileID: 8300000, guid: b10585725c5984a269d04623e6c41719, type: 3}
+  waterFootstep2: {fileID: 8300000, guid: 66b51a0e307a94d928501ac0132f63d1, type: 3}
+  waterFootstep3: {fileID: 8300000, guid: 22e476a91509c4893901149be6105cdc, type: 3}
 --- !u!54 &4997301263046971754
 Rigidbody:
   m_ObjectHideFlags: 0

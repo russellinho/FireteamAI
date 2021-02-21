@@ -29,6 +29,13 @@ public class CameraScript : MonoBehaviour
     //     }
     // }
 
+    void Start()
+    {
+        if (!fpc.photonView.IsMine) {
+            this.enabled = false;
+        }
+    }
+
     void Update()
     {
         if (!fpc.GetIsSwimming() && fpc.fpcAnimator.GetBool("Swimming")) {

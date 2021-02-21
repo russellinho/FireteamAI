@@ -15,6 +15,7 @@ using Koobando.AntiCheat;
 
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
+    private const int WATER_LAYER = 4;
     const float UNDERWATER_TIMER = 30f;
     const float MAX_DETECTION_LEVEL = 100f;
     const float BASE_DETECTION_RATE = 20f;
@@ -43,8 +44,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public AudioSource aud;
     public AudioSource radioAud;
     public Camera viewCam;
-    public SphereCollider viewCamCol;
-    public Rigidbody viewCamRigid;
     public GameObject spectatorCam;
     public GameObject thisSpectatorCam;
     public PlayerHUDScript hud;
@@ -135,9 +134,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private Vector3 lastHitFromPos;
 	private int lastHitBy;
 	private int lastBodyPartHit;
-    public EncryptedBool isSwimming;
     private float underwaterTimer;
     private float underwaterTakeDamageTimer;
+    private bool isInWater;
 
 
     public void PreInitialize()
@@ -582,7 +581,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void HandleCrouch()
     {
-        if (PlayerPreferences.playerPreferences.KeyWasPressed("Crouch") && !fpc.m_IsRunning)
+        if (PlayerPreferences.playerPreferences.KeyWasPressed("Crouch") && !fpc.m_IsRunning && !fpc.GetIsSwimming())
         {
             fpc.m_IsCrouching = !fpc.m_IsCrouching;
             if (!fpc.IsFullyMobile()) {
@@ -1120,6 +1119,16 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         //         other.gameObject.GetComponent<PickupScript>().DestroyPickup();
         //     }
         // }
+        if (other.gameObject.layer == WATER_LAYER) {
+            isInWater = true;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.layer == WATER_LAYER) {
+            isInWater = false;
+        }
     }
 
     void OnTriggerStay(Collider other) {
@@ -1875,23 +1884,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    // public void ToggleUnderwaterEffects(bool b)
-	// {
-	// 	if (b) {
-	// 		RenderSettings.fog = true;
-	// 		RenderSettings.fogColor = gameController.waterFogColor;
-	// 		RenderSettings.fogMode = FogMode.Exponential;
-	// 		RenderSettings.fogDensity = gameController.waterFogDensity;
-
-    //         // TODO: Set post processing for swimming
-	// 	} else {
-    //         RenderSettings.fog = gameController.defFogEnabled;
-	// 		RenderSettings.fogColor = gameController.defFogColor;
-	// 		RenderSettings.fogMode = gameController.defFogMode;
-	// 		RenderSettings.fogDensity = gameController.defFogDensity;
-
-    //         // TODO: Set default post processing back
-	// 	}
-	// }
+    public bool IsInWater()
+    {
+        return isInWater;
+    }
 
 }

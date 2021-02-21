@@ -372,7 +372,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
             if (m_IsSwimming) {
                 PlaySwimAudio();
             } else {
-                PlayFootStepAudio();
+                if (playerActionScript.IsInWater()) {
+                    PlayWaterFootstepAudio();
+                } else {
+                    PlayFootStepAudio();
+                }
             }
         }
 
@@ -402,6 +406,25 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 m_AudioSource.clip = playerActionScript.audioController.swimSound2;
             } else {
                 m_AudioSource.clip = playerActionScript.audioController.swimSound1;
+            }
+
+            m_AudioSource.PlayOneShot(m_AudioSource.clip);
+        }
+
+        private void PlayWaterFootstepAudio()
+        {
+            if (!m_CharacterController.isGrounded)
+            {
+                return;
+            }
+
+            int r = Random.Range(0, 3);
+            if (r == 0) {
+                m_AudioSource.clip = playerActionScript.audioController.waterFootstep1;
+            } else if (r == 1) {
+                m_AudioSource.clip = playerActionScript.audioController.waterFootstep2;
+            } else {
+                m_AudioSource.clip = playerActionScript.audioController.waterFootstep3;
             }
 
             m_AudioSource.PlayOneShot(m_AudioSource.clip);

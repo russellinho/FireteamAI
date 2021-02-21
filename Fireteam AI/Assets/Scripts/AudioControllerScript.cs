@@ -48,6 +48,9 @@ public class AudioControllerScript : MonoBehaviour {
 	public AudioClip enterWater;
 	public AudioClip swimSound1;
 	public AudioClip swimSound2;
+	public AudioClip waterFootstep1;
+	public AudioClip waterFootstep2;
+	public AudioClip waterFootstep3;
 
 	private bool wasRunning;
 	private PhotonView pView;
