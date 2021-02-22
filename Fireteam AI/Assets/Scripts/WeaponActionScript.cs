@@ -49,6 +49,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     public Weapon weaponStats;
     public Weapon meleeStats;
     private WeaponMods weaponMods;
+    public GameObject WaterBulletEffect;
     public GameObject BloodEffect;
     public GameObject BloodEffectHeadshot;
 
@@ -665,8 +666,12 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                 }
             } else {
-                Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
-                pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index), PhotonNetwork.LocalPlayer.ActorNumber);
+                if (hit.transform.gameObject.layer == WATER_LAYER) {
+                    pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, -2, PhotonNetwork.LocalPlayer.ActorNumber);
+                } else {
+                    Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
+                    pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index), PhotonNetwork.LocalPlayer.ActorNumber);
+                }
             }
         }
         if (weaponMods.suppressorRef == null)
@@ -794,8 +799,12 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                     }
                 } else {
-                    Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
-                    pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index), PhotonNetwork.LocalPlayer.ActorNumber);
+                    if (hit.transform.gameObject.layer == WATER_LAYER) {
+                        pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, -2, PhotonNetwork.LocalPlayer.ActorNumber);
+                    } else {
+                        Terrain t = hit.transform.gameObject.GetComponent<Terrain>();
+                        pView.RPC("RpcHandleBulletVfx", RpcTarget.All, hit.point, -hit.normal, (t == null ? -1 : t.index), PhotonNetwork.LocalPlayer.ActorNumber);
+                    }
                 }
             }
         }
@@ -826,13 +835,17 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     void RpcHandleBulletVfx(Vector3 point, Vector3 normal, int terrainId, int shooterActorNo) {
         if (gameObject.layer == 0) return;
         if (terrainId == -1) return;
-        Terrain terrainHit = playerActionScript.gameController.terrainMetaData[terrainId];
-        GameObject bulletHoleEffect = Instantiate(terrainHit.GetRandomBulletHole(), point, Quaternion.FromToRotation(Vector3.forward, normal));
-        if (shooterActorNo == PhotonNetwork.LocalPlayer.ActorNumber) {
-            bulletHoleEffect.GetComponent<BulletHoleScript>().skipRicochetAmbient = true;
+        if (terrainId == -2) {
+            Destroy(Instantiate(WaterBulletEffect, point, Quaternion.FromToRotation(Vector3.forward, normal)), 4f);
+        } else {
+            Terrain terrainHit = playerActionScript.gameController.terrainMetaData[terrainId];
+            GameObject bulletHoleEffect = Instantiate(terrainHit.GetRandomBulletHole(), point, Quaternion.FromToRotation(Vector3.forward, normal));
+            if (shooterActorNo == PhotonNetwork.LocalPlayer.ActorNumber) {
+                bulletHoleEffect.GetComponent<BulletHoleScript>().skipRicochetAmbient = true;
+            }
+            bulletHoleEffect.transform.SetParent(terrainHit.gameObject.transform);
+            Destroy(bulletHoleEffect, 4f);
         }
-        bulletHoleEffect.transform.SetParent(terrainHit.gameObject.transform);
-        Destroy(bulletHoleEffect, 4f);
     }
 
     void InstantiateGunSmokeEffect(float duration) {

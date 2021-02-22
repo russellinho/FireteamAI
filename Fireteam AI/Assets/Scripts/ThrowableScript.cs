@@ -7,6 +7,7 @@ using Photon.Realtime;
 public class ThrowableScript : MonoBehaviour
 {
     public string rootWeapon;
+    private const int WATER_LAYER = 4;
     private const float THROW_FORCE_MULTIPLIER = 25f;
     public static float MAX_FLASHBANG_TIME = 9f; // 8 seconds max flashbang time
     private const float EXPLOSION_ACTIVE_DELAY = 0.8f;
@@ -14,6 +15,7 @@ public class ThrowableScript : MonoBehaviour
     public SphereCollider col;
     public MeshRenderer[] renderers;
     public ParticleSystem explosionEffect;
+    public ParticleSystem explosionWaterEffect;
     private float explosionActiveDelay;
     public float fuseTimer;
     public bool explosionDelay;
@@ -25,6 +27,7 @@ public class ThrowableScript : MonoBehaviour
     public int fromPlayerId;
     private ArrayList playersHit;
     public PhotonView pView;
+    private bool isInWater;
 
 
     // Start is called before the first frame update
@@ -32,6 +35,7 @@ public class ThrowableScript : MonoBehaviour
     {
         playersHit = new ArrayList();
         explosionEffect.Stop();
+        explosionWaterEffect.Stop();
         isLive = true;
         explosionActiveDelay = EXPLOSION_ACTIVE_DELAY;
     }
@@ -123,6 +127,9 @@ public class ThrowableScript : MonoBehaviour
         // Play the explosion sound
         explosionSound.Play();
         // Play the explosion particle effect
+        if (isInWater) {
+            explosionWaterEffect.Play();
+        }
         explosionEffect.Play();
         // Set nearby enemies on alert from explosion sound
         GameControllerScript gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameControllerScript>();
@@ -144,6 +151,9 @@ public class ThrowableScript : MonoBehaviour
         // Play the explosion sound
         explosionSound.Play();
         // Play the explosion particle effect
+        if (isInWater) {
+            explosionWaterEffect.Play();
+        }
         explosionEffect.Play();
         isLive = false;
         // Set nearby enemies on alert from explosion sound
@@ -170,6 +180,20 @@ public class ThrowableScript : MonoBehaviour
 
     public void PlayPinSound() {
         pinSound.Play();
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == WATER_LAYER) {
+            isInWater = true;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.layer == WATER_LAYER) {
+            isInWater = false;
+        }
     }
 
 }
