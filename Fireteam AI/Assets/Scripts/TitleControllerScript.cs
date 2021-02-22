@@ -116,7 +116,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject proTipContainer;
 	public TextMeshProUGUI mapTitleText;
 	public TextMeshProUGUI mapDescriptionText;
-	private string[] proTips = new string[2]{"Aim for the head for faster kills.", "Be on the lookout for ammo and health drops from enemies."};
+	private string[] proTips = new string[4]{"Aim for the head for faster kills.", "Be on the lookout for ammo and health drops from enemies.", "Some missions can be completely silently. Look at the top of your screen to determine whether your team has been detected or not.", "You can point out and mark enemies for your teammates to see by aiming at them and pressing the ACTION (F) key."};
 	private bool versionWarning;
 	// Marketplace menu
 	public Button clearPreviewBtn;
@@ -336,7 +336,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			} else if (mapName.Equals("The Badlands: Act II")) {
 				screenArt.texture = (Texture)Resources.Load ("MapImages/Loading/badlands2_load");
 			}
-			proTipText.text = proTips[Random.Range(0, 2)];
+			proTipText.text = proTips[Random.Range(0, proTips.Length)];
 			mapTitleText.text = mapName;
 			mapDescriptionText.text = mapDescription;
 			screenArtContainer.gameObject.SetActive(true);
