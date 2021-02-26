@@ -14,6 +14,7 @@ using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 
 public class GameOverController : MonoBehaviourPunCallbacks {
     private const string FUNCTIONS_CALL_HASH = "Au9aaFR*ajsU9UuP";
+    private const string JOB_HASH = "3Nfp&HGMg8WUpnW6";
     public Slider prevExpSlider;
     public Slider prevExpSliderVs;
     public Slider newExpSlider;
@@ -66,6 +67,7 @@ public class GameOverController : MonoBehaviourPunCallbacks {
         if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
             isVersus = true;
             RecordAchievementProgress('V', GetTeamTotalDeaths('V'), MissionWasStealthed('V', mapIndex), mapIndex);
+            RecordMatchStats('V', GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, mapIndex);
             if (PhotonNetwork.IsMasterClient) {
                 Hashtable h = new Hashtable();
                 h.Add("deads", null);
@@ -81,6 +83,7 @@ public class GameOverController : MonoBehaviourPunCallbacks {
         } else if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp") {
             isVersus = false;
             RecordAchievementProgress('C', GetTeamTotalDeaths('C'), MissionWasStealthed('C', mapIndex), mapIndex);
+            RecordMatchStats('C', GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, mapIndex);
             if (PhotonNetwork.IsMasterClient) {
                 Hashtable h = new Hashtable();
                 h.Add("deads", null);
@@ -353,6 +356,34 @@ public class GameOverController : MonoBehaviourPunCallbacks {
             }
             ClearAchievementData();
         });
+    }
+
+    void RecordMatchStats(char gameMode, int deaths, int kills, int mapIndex)
+    {
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = DAOScript.functionsCallHash;
+        inputData["gameOverHash"] = FUNCTIONS_CALL_HASH;
+		inputData["uid"] = AuthScript.authHandler.user.UserId;
+        inputData["level"] = mapIndex;
+        inputData["kills"] = kills;
+        inputData["deaths"] = deaths;
+        inputData["time"] = (int)GameControllerScript.missionTime;
+        inputData["gameMode"] = ""+gameMode;
+        inputData["status"] = (SceneManager.GetActiveScene().name == "GameOverSuccess" ? "W" : "L");
+        inputData["validTime"] = Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["starter"]);
+
+        DAOScript.dao.functions.GetHttpsCallable("recordMatchStats").CallAsync(inputData);
+        // DAOScript.dao.functions.GetHttpsCallable("recordMatchStats").CallAsync(inputData).ContinueWith((task) => {
+        //     UpdateLeaderboards();
+        // });
+    }
+
+    void UpdateLeaderboards()
+    {
+        Dictionary<string, object> inputData = new Dictionary<string, object>();
+        inputData["callHash"] = JOB_HASH;
+
+        DAOScript.dao.functions.GetHttpsCallable("updateLeaderboards").CallAsync(inputData);
     }
 
     void RecordExpProgress(uint exp, uint gp)

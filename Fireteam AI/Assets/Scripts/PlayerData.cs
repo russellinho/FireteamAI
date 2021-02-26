@@ -590,8 +590,8 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     info.DefaultChar = playerDataSnap["defaultChar"].ToString();
                     info.DefaultWeapon = playerDataSnap["defaultWeapon"].ToString();
                     info.Playername = playerDataSnap["username"].ToString();
-                    info.Exp = uint.Parse(playerDataSnap["exp"].ToString());
-                    info.Gp = uint.Parse(playerDataSnap["gp"].ToString());
+                    info.Exp = Convert.ToUInt32(playerDataSnap["exp"]);
+                    info.Gp = Convert.ToUInt32(playerDataSnap["gp"]);
                     info.Kash = Convert.ToUInt32(results["kash"]);
                     info.PrivilegeLevel = results["privilegeLevel"].ToString();
                     
@@ -950,7 +950,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 fd.FriendRequestId = friendRequestId;
                 fd.FriendId = friendId;
                 fd.FriendUsername = friendsUsernamesMap[friendId].ToString();
-                fd.Exp = Convert.ToUInt32(expMap[friendId].ToString());
+                fd.Exp = Convert.ToUInt32(expMap[friendId]);
                 fd.Status = status;
                 fd.Requestee = requestee;
                 fd.Requestor = requestor;
@@ -1813,7 +1813,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
         if (args.Snapshot.Value != null) {
             playerDataModifyLegalFlag = true;
-            PlayerData.playerdata.info.Gp = uint.Parse(args.Snapshot.Value.ToString());
+            PlayerData.playerdata.info.Gp = Convert.ToUInt32(args.Snapshot.Value);
             if (titleRef != null) {
                 titleRef.myGpTxt.text = ""+PlayerData.playerdata.info.Gp;
             }
@@ -2608,7 +2608,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         FriendData fd = new FriendData();
 
                         fd.FriendUsername = results["username"].ToString();
-                        fd.Exp = Convert.ToUInt32(results["exp"].ToString());
+                        fd.Exp = Convert.ToUInt32(results["exp"]);
                         fd.PropertyChanged += OnPlayerInfoChange;
                         fd.FriendRequestId = friendRequestId;
                         fd.FriendId = friendId;

@@ -149,6 +149,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				}
 
 				if (readyCount >= 1) {
+					SetMyselfAsStarter();
 					pView.RPC("RpcStartGameCountdown", RpcTarget.All);
 				} else {
 					titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("There must be at least two ready players to start the game!");
@@ -157,6 +158,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				ChangeReadyStatus ();
 				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
 					CampaignGameStart();
+				} else {
+					SetMyselfAsStarter();
 				}
 			}
 		}
@@ -183,6 +186,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				}
 
 				if (redReadyCount > 0 && blueReadyCount > 0) {
+					SetMyselfAsStarter();
 					pView.RPC("RpcStartVersusGameCountdown", RpcTarget.All);
 				} else {
 					titleController.GetComponent<TitleControllerScript>().TriggerAlertPopup("There must be at least two ready players to start the game!");
@@ -191,6 +195,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				ChangeReadyStatus ();
 				if (Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties["inGame"]) == 1) {
 					VersusGameStart();
+				} else {
+					SetMyselfAsStarter();
 				}
 			}
 		}
@@ -564,6 +570,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			Hashtable h = new Hashtable();
 			// h.Add("exp", (int)PlayerData.playerdata.info.Exp);
 			h.Add("readyStatus", 0);
+			h.Add("starter", 0);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 			// pView.RPC("RpcSetRank", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber, (int)PlayerData.playerdata.info.Exp);
 			if (!PhotonNetwork.IsMasterClient) {
@@ -1673,6 +1680,13 @@ namespace Photon.Pun.LobbySystemPhoton
 				r = Random.Range(97, 123);
 			}
 			return (char)r;
+		}
+
+		void SetMyselfAsStarter()
+		{
+			Hashtable h = new Hashtable();
+			h.Add("starter", true);
+			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 		}
 
 	}
