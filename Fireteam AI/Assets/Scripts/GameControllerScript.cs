@@ -17,6 +17,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public static float MAX_MISSION_TIME = 1800f;
 	public static float WAIT_TRIGGER_TIME = 30f;
 	private const float FORFEIT_CHECK_DELAY = 3f;
+	private const float STARTER_LIMIT_TIME = 90f;
 	private const float VOTE_TIME = 3f;
 	private const float VOTE_DELAY = 300f;
 
@@ -737,6 +738,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
     }
 
+	void SetMyselfAsStarter()
+	{
+		Hashtable h = new Hashtable();
+		h.Add("starter", 1);
+		PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+	}
+
 	void SetAssaultInProgressOverNetwork()
 	{
 		Hashtable h = new Hashtable();
@@ -1166,6 +1174,9 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		this.yesVotes = (short)yesVotes;
 		this.noVotes = (short)noVotes;
 		GameControllerScript.missionTime = missionTime;
+		if (missionTime <= STARTER_LIMIT_TIME) {
+			SetMyselfAsStarter();
+		}
 		
 		string[] parsedSerializations = serializedObjectives.Split('|');
 		// Sync objectives text

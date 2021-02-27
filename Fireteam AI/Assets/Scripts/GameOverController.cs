@@ -373,17 +373,6 @@ public class GameOverController : MonoBehaviourPunCallbacks {
         inputData["validTime"] = Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["starter"]);
 
         DAOScript.dao.functions.GetHttpsCallable("recordMatchStats").CallAsync(inputData);
-        // DAOScript.dao.functions.GetHttpsCallable("recordMatchStats").CallAsync(inputData).ContinueWith((task) => {
-        //     UpdateLeaderboards();
-        // });
-    }
-
-    void UpdateLeaderboards()
-    {
-        Dictionary<string, object> inputData = new Dictionary<string, object>();
-        inputData["callHash"] = JOB_HASH;
-
-        DAOScript.dao.functions.GetHttpsCallable("updateLeaderboards").CallAsync(inputData);
     }
 
     void RecordExpProgress(uint exp, uint gp)

@@ -1685,7 +1685,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		void SetMyselfAsStarter()
 		{
 			Hashtable h = new Hashtable();
-			h.Add("starter", true);
+			h.Add("starter", 1);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 		}
 
