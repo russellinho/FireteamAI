@@ -395,7 +395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43ba59572d6e3784e98eeadd473e2ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  developmentMode: 1
+  developmentMode: 0
   copyrightTxt: {fileID: 1841848859}
   versionTxt: {fileID: 188696561}
   popupAlert: {fileID: 4539363469535828523}
@@ -14018,7 +14018,7 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_RegexValue: 
   m_GlobalPointSize: 14
-  m_CharacterLimit: 20
+  m_CharacterLimit: 60
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
@@ -14114,7 +14114,7 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_RegexValue: 
   m_GlobalPointSize: 14
-  m_CharacterLimit: 20
+  m_CharacterLimit: 60
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
