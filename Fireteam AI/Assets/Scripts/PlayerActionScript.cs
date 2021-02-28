@@ -10,10 +10,13 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 using SpawnMode = GameControllerScript.SpawnMode;
 using NpcActionState = NpcScript.ActionStates;
 using FlightMode = BlackHawkScript.FlightMode;
+using UnityEngine.Rendering.PostProcessing;
 using Koobando.AntiCheat;
 
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
+    private const int WATER_LAYER = 4;
+    const float UNDERWATER_TIMER = 30f;
     const float MAX_DETECTION_LEVEL = 100f;
     const float BASE_DETECTION_RATE = 20f;
     private const float EXPLOSION_FORCE = 75f;
@@ -131,6 +134,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private Vector3 lastHitFromPos;
 	private int lastHitBy;
 	private int lastBodyPartHit;
+    private float underwaterTimer;
+    private float underwaterTakeDamageTimer;
+    private bool isInWater;
+
 
     public void PreInitialize()
     {
@@ -203,6 +210,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hitTimer = 1f;
         healTimer = 1f;
         boostTimer = 1f;
+        underwaterTimer = UNDERWATER_TIMER;
         isRespawning = false;
         respawnTimer = 0f;
         escapeAvailablePopup = false;
@@ -271,6 +279,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         UnlockInteractionLock();
         UpdateEnvDamageTimer();
+        UpdateUnderwaterTimer();
         updatePlayerSpeed();
         // Instant respawn hack
         // if (Input.GetKeyDown (KeyCode.P)) {
@@ -572,7 +581,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void HandleCrouch()
     {
-        if (PlayerPreferences.playerPreferences.KeyWasPressed("Crouch") && !fpc.m_IsRunning)
+        if (PlayerPreferences.playerPreferences.KeyWasPressed("Crouch") && !fpc.m_IsRunning && !fpc.GetIsSwimming())
         {
             fpc.m_IsCrouching = !fpc.m_IsCrouching;
             if (!fpc.IsFullyMobile()) {
@@ -1110,6 +1119,16 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         //         other.gameObject.GetComponent<PickupScript>().DestroyPickup();
         //     }
         // }
+        if (other.gameObject.layer == WATER_LAYER) {
+            isInWater = true;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.layer == WATER_LAYER) {
+            isInWater = false;
+        }
     }
 
     void OnTriggerStay(Collider other) {
@@ -1604,6 +1623,25 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 		}
 	}
 
+    void UpdateUnderwaterTimer()
+    {
+        if (fpc.GetIsSwimming())
+        {
+            if (underwaterTimer > 0f) {
+                underwaterTimer -= Time.deltaTime;
+            } else {
+                if (underwaterTakeDamageTimer <= 0f) {
+                    TakeDamage(2, false, Vector3.zero, 2, 0);
+                    underwaterTakeDamageTimer = 1.5f;
+                } else {
+                    underwaterTakeDamageTimer -= Time.deltaTime;
+                }
+            }
+        } else {
+            underwaterTimer = UNDERWATER_TIMER;
+        }
+    }
+
     void FallOffMapProtection() {
         if (transform.position.y <= gameController.outOfBoundsPoint.position.y) {
             transform.position = gameController.spawnLocation.position;
@@ -1844,6 +1882,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (b) {
             ApplyForceModifiers();
         }
+    }
+
+    public bool IsInWater()
+    {
+        return isInWater;
     }
 
 }

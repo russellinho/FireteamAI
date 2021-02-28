@@ -11,7 +11,7 @@ using SpawnMode = GameControllerScript.SpawnMode;
 using UnityEngine.SceneManagement;
 
 public class BetaEnemyScript : MonoBehaviour, IPunObservable {
-
+	public static int NUMBER_KILLED;
 	private const float MELEE_DISTANCE = 1.7f;
 	private const float PLAYER_HEIGHT_OFFSET = 1f;
 	private const float DETECTION_OUTLINE_MAX_TIME = 10f;
@@ -2762,6 +2762,17 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         if (b) {
             ApplyForceModifiers();
         }
+    }
+
+	private int CalculateDamageDropoff(float damage, float distance, float range)
+    {
+        float dropoffRange = range / 3f;
+        float sustainRange = 2f * range / 3f;
+        if (distance <= sustainRange) {
+            return 0;
+        }
+        float maxDropoffAmount = damage / 3f;
+        return (int)(((distance - sustainRange) / dropoffRange) * maxDropoffAmount);
     }
 
 }

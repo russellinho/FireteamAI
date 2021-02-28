@@ -57,11 +57,15 @@ namespace Michsky.UI.Shift
         {
             currentButton = panels[currentPanelIndex].buttonObject;
             currentButtonAnimator = currentButton.GetComponent<Animator>();
-            currentButtonAnimator.Play(buttonFadeIn);
+            if (currentButtonAnimator != null) {
+                currentButtonAnimator?.Play(buttonFadeIn);
+            }
 
             currentPanel = panels[currentPanelIndex].panelObject;
             currentPanelAnimator = currentPanel.GetComponent<Animator>();
-            currentPanelAnimator.Play(panelFadeIn);
+            if (currentPanelAnimator != null) {
+                currentPanelAnimator?.Play(panelFadeIn);
+            }
         }
 
         public void OpenFirstTab()
@@ -73,33 +77,45 @@ namespace Michsky.UI.Shift
             {
                 currentPanel = panels[currentPanelIndex].panelObject;
                 currentPanelAnimator = currentPanel.GetComponent<Animator>();
-                currentPanelAnimator.Play(panelFadeOut);
+                if (currentPanelAnimator != null) {
+                    currentPanelAnimator?.Play(panelFadeOut);
+                }
 
                 currentButton = panels[currentPanelIndex].buttonObject;
                 currentButtonAnimator = currentButton.GetComponent<Animator>();
-                currentButtonAnimator.Play(buttonFadeNormal);
+                if (currentButtonAnimator != null) {
+                    currentButtonAnimator?.Play(buttonFadeNormal);
+                }
 
                 currentPanelIndex = 0;
                 currentButtonIndex = 0;
 
                 currentPanel = panels[currentPanelIndex].panelObject;
                 currentPanelAnimator = currentPanel.GetComponent<Animator>();
-                currentPanelAnimator.Play(panelFadeIn);
+                if (currentPanelAnimator != null) {
+                    currentPanelAnimator?.Play(panelFadeIn);
+                }
 
                 currentButton = panels[currentButtonIndex].buttonObject;
                 currentButtonAnimator = currentButton.GetComponent<Animator>();
-                currentButtonAnimator.Play(buttonFadeIn);
+                if (currentButtonAnimator != null) {
+                    currentButtonAnimator?.Play(buttonFadeIn);
+                }
             }
 
             else if (currentPanelIndex == 0)
             {
                 currentPanel = panels[currentPanelIndex].panelObject;
                 currentPanelAnimator = currentPanel.GetComponent<Animator>();
-                currentPanelAnimator.Play(panelFadeIn);
+                if (currentPanelAnimator != null) {
+                    currentPanelAnimator?.Play(panelFadeIn);
+                }
 
                 currentButton = panels[currentButtonIndex].buttonObject;
                 currentButtonAnimator = currentButton.GetComponent<Animator>();
-                currentButtonAnimator.Play(buttonFadeIn);
+                if (currentButtonAnimator != null) {
+                    currentButtonAnimator?.Play(buttonFadeIn);
+                }
             }
         }
 
@@ -125,13 +141,23 @@ namespace Michsky.UI.Shift
                     }
                 }
                 if (newPanel == "Settings") {
+                    titleController.LeaveGlobalChats();
                     titleController.creditsButton.gameObject.SetActive(false);
+                    titleController.achievementsButton.gameObject.SetActive(true);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
                     titleController.RefreshSavedAudioDevice();
-                } else if (newPanel == "Mod Shop") {
+                } else if (newPanel == "Achievements") {
+                    titleController.LeaveGlobalChats();
                     titleController.creditsButton.gameObject.SetActive(false);
+                    titleController.TogglePlayerTemplate(false);
+                    titleController.ToggleWeaponPreview(false);
+                    titleController.DestroyOldWeaponTemplate();
+                } else if (newPanel == "Mod Shop") {
+                    titleController.LeaveGlobalChats();
+                    titleController.creditsButton.gameObject.SetActive(false);
+                    titleController.achievementsButton.gameObject.SetActive(true);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(true);
                     titleController.HandleLeftSideButtonPress(titleController.modShopPrimaryWepBtn);
@@ -140,7 +166,9 @@ namespace Michsky.UI.Shift
                     titleController.HandleRightSideButtonPress(titleController.modShopSuppressorsBtn);
                     titleController.OnSuppressorsBtnClicked();
                 } else if (newPanel == "Market") {
+                    titleController.LeaveGlobalChats();
                     titleController.creditsButton.gameObject.SetActive(false);
+                    titleController.achievementsButton.gameObject.SetActive(true);
                     titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
@@ -150,7 +178,9 @@ namespace Michsky.UI.Shift
                     titleController.HandleRightSideButtonPress(titleController.shopCharacterBtn);
                     titleController.OnMarketplaceCharacterBtnClicked();
                 } else if (newPanel == "Loadout") {
+                    titleController.LeaveGlobalChats();
                     titleController.creditsButton.gameObject.SetActive(false);
+                    titleController.achievementsButton.gameObject.SetActive(true);
                     titleController.TogglePlayerTemplate(true);
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
@@ -162,6 +192,7 @@ namespace Michsky.UI.Shift
                 } else if (newPanel == "Campaign") {
                     titleController.JoinCampaignGlobalChat();
                     titleController.creditsButton.gameObject.SetActive(false);
+                    titleController.achievementsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.JoinMatchmaking();
@@ -171,6 +202,7 @@ namespace Michsky.UI.Shift
                 } else if (newPanel == "Versus") {
                     titleController.JoinVersusGlobalChat();
                     titleController.creditsButton.gameObject.SetActive(false);
+                    titleController.achievementsButton.gameObject.SetActive(false);
                     titleController.TogglePlayerTemplate(false);
                     titleController.ToggleWeaponPreview(false);
                     titleController.JoinMatchmaking();
@@ -183,6 +215,7 @@ namespace Michsky.UI.Shift
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
                     titleController.creditsButton.gameObject.SetActive(true);
+                    titleController.achievementsButton.gameObject.SetActive(true);
                 }
             }
 
@@ -195,8 +228,12 @@ namespace Michsky.UI.Shift
                 currentPanelAnimator = currentPanel.GetComponent<Animator>();
                 nextPanelAnimator = nextPanel.GetComponent<Animator>();
 
-                currentPanelAnimator.Play(panelFadeOut);
-                nextPanelAnimator.Play(panelFadeIn);
+                if (currentPanelAnimator != null) {
+                    currentPanelAnimator?.Play(panelFadeOut);
+                }
+                if (nextPanelAnimator != null) {
+                    nextPanelAnimator?.Play(panelFadeIn);
+                }
 
                 currentButton = panels[currentButtonIndex].buttonObject;
                 currentButtonIndex = newPanelIndex;
@@ -205,8 +242,12 @@ namespace Michsky.UI.Shift
                 currentButtonAnimator = currentButton.GetComponent<Animator>();
                 nextButtonAnimator = nextButton.GetComponent<Animator>();
 
-                currentButtonAnimator.Play(buttonFadeOut);
-                nextButtonAnimator.Play(buttonFadeIn);
+                if (currentButtonAnimator != null) {
+                    currentButtonAnimator?.Play(buttonFadeOut);
+                }
+                if (nextButtonAnimator != null) {
+                    nextButtonAnimator?.Play(buttonFadeIn);
+                }
             }
 
             refresh = false;
@@ -228,8 +269,12 @@ namespace Michsky.UI.Shift
                 currentPanelAnimator = currentPanel.GetComponent<Animator>();
                 currentButtonAnimator = currentButton.GetComponent<Animator>();
 
-                currentButtonAnimator.Play(buttonFadeNormal);
-                currentPanelAnimator.Play(panelFadeOut);
+                if (currentButtonAnimator != null) {
+                    currentButtonAnimator?.Play(buttonFadeNormal);
+                }
+                if (currentPanelAnimator != null) {
+                    currentPanelAnimator?.Play(panelFadeOut);
+                }
 
                 currentPanelIndex += 1;
                 currentButtonIndex += 1;
@@ -237,8 +282,12 @@ namespace Michsky.UI.Shift
 
                 nextPanelAnimator = nextPanel.GetComponent<Animator>();
                 nextButtonAnimator = nextButton.GetComponent<Animator>();
-                nextPanelAnimator.Play(panelFadeIn);
-                nextButtonAnimator.Play(buttonFadeIn);
+                if (nextPanelAnimator != null) {
+                    nextPanelAnimator?.Play(panelFadeIn);
+                }
+                if (nextButtonAnimator != null) {
+                    nextButtonAnimator?.Play(buttonFadeIn);
+                }
             }
         }
 
@@ -253,8 +302,12 @@ namespace Michsky.UI.Shift
                 currentPanelAnimator = currentPanel.GetComponent<Animator>();
                 currentButtonAnimator = currentButton.GetComponent<Animator>();
 
-                currentButtonAnimator.Play(buttonFadeNormal);
-                currentPanelAnimator.Play(panelFadeOut);
+                if (currentButtonAnimator != null) {
+                    currentButtonAnimator?.Play(buttonFadeNormal);
+                }
+                if (currentPanelAnimator != null) {
+                    currentPanelAnimator?.Play(panelFadeOut);
+                }
 
                 currentPanelIndex -= 1;
                 currentButtonIndex -= 1;
@@ -262,8 +315,12 @@ namespace Michsky.UI.Shift
 
                 nextPanelAnimator = nextPanel.GetComponent<Animator>();
                 nextButtonAnimator = nextButton.GetComponent<Animator>();
-                nextPanelAnimator.Play(panelFadeIn);
-                nextButtonAnimator.Play(buttonFadeIn);
+                if (nextPanelAnimator != null) {
+                    nextPanelAnimator?.Play(panelFadeIn);
+                }
+                if (nextButtonAnimator != null) {
+                    nextButtonAnimator?.Play(buttonFadeIn);
+                }
             }
         }
 

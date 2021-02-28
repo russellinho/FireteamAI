@@ -1,8 +1,10 @@
 ﻿using System;
 using Photon.Realtime;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UITemplate;
+using TMPro;
 
 namespace Photon.Pun.LobbySystemPhoton
 {
@@ -19,10 +21,20 @@ namespace Photon.Pun.LobbySystemPhoton
 		public GameObject RoomListContentVs;
 		public GameObject RoomListEntryPrefab;
 
+		[Header("Lobby Players Panel")]
+		public GameObject LobbyPlayerEntryPrefab;
+		public GameObject LobbyPlayers;
+		public GameObject LobbyPlayersVs;
+		public TextMeshProUGUI PlayersOnlineCampaign;
+		public TextMeshProUGUI PlayersOnlineVersus;
+		private Dictionary<string, GameObject> lobbyPlayersList;
+
 		public void Awake()
 		{
 			cachedRoomList = new Dictionary<string, RoomInfo>();
 			roomListEntries = new Dictionary<string, GameObject>();
+			lobbyPlayersList = new Dictionary<string, GameObject>();
+			StartCoroutine("DeleteStalePlayers");
 		}
 
 		public override void OnRoomListUpdate(List<RoomInfo> roomList)
@@ -33,9 +45,62 @@ namespace Photon.Pun.LobbySystemPhoton
 				PhotonNetwork.AutomaticallySyncScene = false;
 			}
 			ClearRoomListView();
-
 			UpdateCachedRoomList(roomList);
 			UpdateRoomListView();
+		}
+
+		bool ChatClientConnectedToChannel(string channel)
+		{
+			if (PlayerData.playerdata.globalChatClient != null && PlayerData.playerdata.globalChatClient.chatClient != null && PlayerData.playerdata.globalChatClient.chatClient.CanChat) {
+				if (PlayerData.playerdata.globalChatClient.chatClient.CanChatInChannel(channel)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		IEnumerator DeleteStalePlayers()
+		{
+			if (ChatClientConnectedToChannel("Campaign")) {
+				PlayersOnlineCampaign.text = ""+PhotonNetwork.CountOfPlayersOnMaster;
+				HandleStalePlayers("Campaign");
+			} else if (ChatClientConnectedToChannel("Versus")) {
+				PlayersOnlineVersus.text = ""+PhotonNetwork.CountOfPlayersOnMaster;
+				HandleStalePlayers("Versus");
+			}
+			yield return new WaitForSeconds(8f);
+			StartCoroutine("DeleteStalePlayers");
+		}
+
+		void HandleStalePlayers(string connectedChannel)
+		{
+			// Iterate back through the current lobby players list and delete any entries that are no longer subscribed
+			HashSet<string> playersGone = new HashSet<string>(lobbyPlayersList.Keys);
+			playersGone.ExceptWith(PlayerData.playerdata.globalChatClient.chatClient.PublicChannels[connectedChannel].Subscribers);
+			HashSet<string>.Enumerator em = playersGone.GetEnumerator();
+			while (em.MoveNext()) {
+				RemovePlayerListEntry(em.Current);
+			}
+		}
+
+		public void AddPlayerListEntry(string playername, uint exp, char mode)
+		{
+			if (!lobbyPlayersList.ContainsKey(playername)) {
+				GameObject o = GameObject.Instantiate(LobbyPlayerEntryPrefab, (mode == 'C' ? LobbyPlayers.transform : LobbyPlayersVs.transform));
+				LobbyPlayerScript ls = o.GetComponent<LobbyPlayerScript>();
+				ls.InitEntry(playername, exp);
+				lobbyPlayersList.Add(playername, o);
+			}
+		}
+
+		void RemovePlayerListEntry(string playername)
+		{
+			try {
+				Destroy(lobbyPlayersList[playername]);
+				lobbyPlayersList.Remove(playername);
+			} catch (Exception e) {
+				Debug.LogError("Tried to remove [" + playername + "], but was not in the dictionary.");
+			}
 		}
 
 		public override void OnLeftLobby()

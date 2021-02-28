@@ -17,6 +17,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public static float MAX_MISSION_TIME = 1800f;
 	public static float WAIT_TRIGGER_TIME = 30f;
 	private const float FORFEIT_CHECK_DELAY = 3f;
+	private const float STARTER_LIMIT_TIME = 90f;
 	private const float VOTE_TIME = 3f;
 	private const float VOTE_DELAY = 300f;
 
@@ -26,6 +27,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public string teamMap;
 	public Terrain[] terrainMetaData;
 	public PostProcessVolume postProcessVolume;
+	public Color waterFogColor;
+	public float waterFogDensity = 0.25f;
+
+	public bool defFogEnabled;
+	public Color defFogColor;
+	public FogMode defFogMode;
+	public float defFogDensity;
 
     // variable for last gunshot position
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
@@ -124,6 +132,12 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		Physics.IgnoreLayerCollision (14, 19);
 		Physics.IgnoreLayerCollision (16, 19);
 		Physics.IgnoreLayerCollision (18, 19);
+		ClearEnemyTypesKilled();
+
+		defFogEnabled = RenderSettings.fog;
+		defFogColor = RenderSettings.fogColor;
+		defFogMode = RenderSettings.fogMode;
+		defFogDensity = RenderSettings.fogDensity;
 		
 		Bloom myBloom;
 		MotionBlur myMotionBlur;
@@ -287,7 +301,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				{
 					if (!gameOver)
 					{
-						pView.RPC("RpcEndGame", RpcTarget.All, 9f, null, false);
+						EndGameCampaign(9f, null, false);
 					}
 				}
 				else if (objectives.itemsRemaining == 0)
@@ -295,7 +309,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					if (!gameOver && CheckEscapeForCampaign(deadCount))
 					{
 						// If they can escape, end the game and bring up the stat board
-						pView.RPC("RpcEndGame", RpcTarget.All, 2f, null, true);
+						EndGameCampaign(2f, null, true);
 					}
 				}
 			}
@@ -306,19 +320,19 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				{
 					if (!gameOver)
 					{
-						pView.RPC("RpcEndGame", RpcTarget.All, 9f, null, false);
+						EndGameCampaign(9f, null, false);
 					}
 				} else if (vipRef.GetComponent<NpcScript>().actionState == NpcActionState.Dead) {
 					if (!gameOver)
 					{
-						pView.RPC("RpcEndGame", RpcTarget.All, 4f, "The VIP has been killed!", false);
+						EndGameCampaign(4f, "The VIP has been killed!", false);
 					}
 				} else if (objectives.stepsLeftToCompletion == 1 && objectives.escapeAvailable)
 				{
 					if (!gameOver && CheckEscapeForCampaign(deadCount))
 					{
 						// If they can escape, end the game and bring up the stat board
-						pView.RPC("RpcEndGame", RpcTarget.All, 2f, null, true);
+						EndGameCampaign(2f, null, true);
 					}
 				}
 			}
@@ -338,11 +352,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				{
 					if (!gameOver)
 					{
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!", "Your team has been eliminated!");
+						EndGameVersus(9f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!", "Your team has been eliminated!");
 					}
 				} else if (CheckOutOfTime()) {
 					if (!gameOver) {
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, "T", null, null);
+						EndGameVersus(9f, "T", null, null);
 					}
 				} else if (objectives.itemsRemaining == 0)
 				{
@@ -351,7 +365,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 						// Set completion to 100%
 						SetMyTeamScore(100);
 						// If they can escape, end the game and bring up the stat board
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 2f, teamMap, null, "The enemy team has reached victory!");
+						EndGameVersus(2f, teamMap, null, "The enemy team has reached victory!");
 					}
 				}
 				// Check to see if either team has forfeited
@@ -367,15 +381,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				{
 					if (!gameOver)
 					{
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!", "Your team has been eliminated!");
+						EndGameVersus(9f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!", "Your team has been eliminated!");
 					}
 				} else if (vipRef.GetComponent<NpcScript>().actionState == NpcActionState.Dead) {
 					if (!gameOver) {
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 4f, (teamMap == "R" ? "B" : "R"), "The enemy team's VIP has been killed!", "The VIP has been killed!");
+						EndGameVersus(4f, (teamMap == "R" ? "B" : "R"), "The enemy team's VIP has been killed!", "The VIP has been killed!");
 					} 
 				} else if (CheckOutOfTime()) {
 					if (!gameOver) {
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 9f, "T", null, null);
+						EndGameVersus(9f, "T", null, null);
 					}
 				} else if (objectives.stepsLeftToCompletion == 1 && objectives.escapeAvailable)
 				{
@@ -384,7 +398,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 						// Set completion to 100%
 						SetMyTeamScore(100);
 						// If they can escape, end the game and bring up the stat board
-						pView.RPC("RpcEndVersusGame", RpcTarget.All, 2f, teamMap, null, "The enemy team has reached victory!");
+						EndGameVersus(2f, teamMap, null, "The enemy team has reached victory!");
 					}
 				}
 				// Check to see if either team has forfeited
@@ -517,7 +531,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         // Check if the other team has forfeited - can be determine by any players left on the opposing team
 		if ((teamMap == "R" && blueTeamCount == 0) || (teamMap == "B" && redTeamCount == 0)) {
 			// Couldn't find another player on the other team. This means that they forfeit
-			pView.RPC("RpcEndVersusGame", RpcTarget.All, 3f, teamMap, "The enemy team has forfeited!", null);
+			EndGameVersus(3f, teamMap, "The enemy team has forfeited!", null);
 		}
     }
 
@@ -723,6 +737,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		h.Add(myTeam + "Score", (int)score);
 		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
     }
+
+	void SetMyselfAsStarter()
+	{
+		Hashtable h = new Hashtable();
+		h.Add("starter", 1);
+		PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+	}
 
 	void SetAssaultInProgressOverNetwork()
 	{
@@ -1153,9 +1174,12 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		this.yesVotes = (short)yesVotes;
 		this.noVotes = (short)noVotes;
 		GameControllerScript.missionTime = missionTime;
+		if (missionTime <= STARTER_LIMIT_TIME) {
+			SetMyselfAsStarter();
+		}
 		
 		string[] parsedSerializations = serializedObjectives.Split('|');
-		// Sync objectives text - TODO: Sync formatting too
+		// Sync objectives text
 		string[] objectivesText = parsedSerializations[0].Split('#');
 		for (int i = 0; i < objectivesText.Length; i++) {
 			this.objectives.objectivesText[i] = objectivesText[i];
@@ -1294,6 +1318,18 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			}
 		}
 		return total;
+	}
+
+	void EndGameCampaign(float f, string eventMessage, bool win)
+	{
+		RecordMatchStats();
+		pView.RPC("RpcEndGame", RpcTarget.All, f, eventMessage, win);
+	}
+
+	void EndGameVersus(float f, string winner, string winnerEventMessage, string loserEventMessage)
+	{
+		RecordMatchStats();
+		pView.RPC("RpcEndVersusGame", RpcTarget.All, f, winner, winnerEventMessage, loserEventMessage);
 	}
 
 	public void EndGameForAll() {
@@ -1570,6 +1606,18 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 		// Remove from HUD queue
 		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().DequeuePlayerJoining();
+	}
+
+	void RecordMatchStats()
+	{
+		Hashtable h = new Hashtable();
+		h.Add("headshots", PlayerData.playerdata.inGamePlayerReference.GetComponent<WeaponActionScript>().GetHeadshotCount());
+		PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+	}
+
+	void ClearEnemyTypesKilled()
+	{
+		BetaEnemyScript.NUMBER_KILLED = 0;
 	}
 
 }

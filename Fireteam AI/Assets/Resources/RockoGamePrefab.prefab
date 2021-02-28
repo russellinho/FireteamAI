@@ -14782,6 +14782,7 @@ GameObject:
   - component: {fileID: 1404547915528525099}
   - component: {fileID: 6957713481146457482}
   - component: {fileID: 4115026543705570437}
+  - component: {fileID: 8929529937123346694}
   m_Layer: 0
   m_Name: FX
   m_TagString: Untagged
@@ -15405,6 +15406,102 @@ AudioSource:
   rolloffMode: 0
   BypassEffects: 0
   BypassListenerEffects: 1
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!82 &8929529937123346694
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970748230797486523}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: ccd5d2a74dff44ff59a81a4aca81d717, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 3
+  DopplerLevel: 1
+  MinDistance: 5
+  MaxDistance: 20
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
   BypassReverbZones: 0
   rolloffCustomCurve:
     serializedVersion: 2
@@ -26702,6 +26799,8 @@ MonoBehaviour:
   animatorFpc: {fileID: 6353672516614802397}
   weaponMetaData: {fileID: 0}
   meleeMetaData: {fileID: 0}
+  WaterBulletEffect: {fileID: 4525035744233456465, guid: 15f4b32c4f030455b8672b08d753e9f1,
+    type: 3}
   BloodEffect: {fileID: 1175462165935484, guid: a5aeebbc9242b4a4cb24c32e945135f5,
     type: 3}
   BloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
@@ -26909,6 +27008,12 @@ MonoBehaviour:
   missionStartSound: {fileID: 8300000, guid: d7c0f3c0f50863143a8e354f4786f6b5, type: 3}
   cautionSound: {fileID: 8300000, guid: 619aad4b55767445aa5d50082ec885da, type: 3}
   detectedSound: {fileID: 8300000, guid: 2921c9e78f7fe4665820f80e3128dbc4, type: 3}
+  enterWater: {fileID: 8300000, guid: 42e26282cab6d41169d0293f796d7d9c, type: 3}
+  swimSound1: {fileID: 8300000, guid: 6564c342d314a4469bb29e277e67f632, type: 3}
+  swimSound2: {fileID: 8300000, guid: 6c740123084e9481ab8688aa7bcd4388, type: 3}
+  waterFootstep1: {fileID: 8300000, guid: b10585725c5984a269d04623e6c41719, type: 3}
+  waterFootstep2: {fileID: 8300000, guid: 66b51a0e307a94d928501ac0132f63d1, type: 3}
+  waterFootstep3: {fileID: 8300000, guid: 22e476a91509c4893901149be6105cdc, type: 3}
 --- !u!54 &4438309816932423725
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -35256,6 +35361,8 @@ GameObject:
   - component: {fileID: 2228433195514955786}
   - component: {fileID: 5600543077948046731}
   - component: {fileID: 2807440754271761772}
+  - component: {fileID: 8099236267144217082}
+  - component: {fileID: 6249896558331600746}
   m_Layer: 0
   m_Name: PlayerCam
   m_TagString: MainCamera
@@ -35397,7 +35504,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31aec6efb1df6344091734678c951904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  col: {fileID: 8099236267144217082}
+  rigid: {fileID: 6249896558331600746}
   fpc: {fileID: 5544096537164796722}
+  audioController: {fileID: 1118288448693787409}
+  weaponActionScript: {fileID: 3013381625263207047}
+  weaponScript: {fileID: 4783079562884953864}
 --- !u!114 &2807440754271761772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35413,7 +35525,7 @@ MonoBehaviour:
   volumeTrigger: {fileID: 3041540971459593745}
   volumeLayer:
     serializedVersion: 2
-    m_Bits: 1048576
+    m_Bits: 1048592
   stopNaNPropagation: 1
   finalBlitToCameraTarget: 0
   antialiasingMode: 0
@@ -35458,6 +35570,35 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles: []
+--- !u!135 &8099236267144217082
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6600387518737373866}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &6249896558331600746
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6600387518737373866}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6824508705996049641
 GameObject:
   m_ObjectHideFlags: 0

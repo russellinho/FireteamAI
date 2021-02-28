@@ -1,0 +1,157 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+public class MessengerEntryScript : MonoBehaviour
+{
+    private const float NOTIFICATION_FLASH_TIME = 0.6f;
+    private Color GLOW_NORMAL_COLOR = new Color(99f / 255f, 198f / 255f, 255f / 255f, 50f / 255f);
+    private Color GLOW_ALERT_COLOR = new Color(255f / 255f, 119f / 255f, 1f / 255f, 50f / 255f);
+    private FriendsMessenger friendsMessenger;
+    private string friendRequestId;
+    public TextMeshProUGUI nametag;
+    public TextMeshProUGUI status;
+    public RawImage rankInsignia;
+    private bool notificationFlashOn;
+    private float notificationFlashTimer;
+    public Image background;
+
+    void Update()
+    {
+        HandleNotificationFlash();
+    }
+
+    public void InitEntry(FriendsMessenger friendsMessenger, string friendRequestId, string username, uint exp)
+    {
+        this.friendsMessenger = friendsMessenger;
+        this.friendRequestId = friendRequestId;
+        this.nametag.text = username;
+        UpdateRank(exp);
+        // If still in friend request phase, then put in that section
+        UpdateFriendStatus();
+        // Create a cached chat entry
+        if (!PlayerData.playerdata.cachedConversations.ContainsKey(friendRequestId)) {
+            PlayerData.playerdata.cachedConversations.Add(friendRequestId, new CachedMessage());
+        }
+    }
+
+    public void UpdateRank(uint exp)
+    {
+        rankInsignia.texture = PlayerData.playerdata.GetRankInsigniaForRank(PlayerData.playerdata.GetRankFromExp(exp).name);
+    }
+
+    public void UpdateFriendStatus()
+    {
+        if (friendsMessenger.quickActionMenu.GetActingOnEntry() == this) {
+            friendsMessenger.quickActionMenu.gameObject.SetActive(false);
+        }
+        int newStatus = PlayerData.playerdata.friendsList[friendRequestId].Status;
+        ToggleVisible(true);
+        if (newStatus == 0) {
+            UpdateSocialStatus("OFFLINE");
+            transform.SetSiblingIndex(friendsMessenger.friendRequestSection.GetSiblingIndex() + 1);
+            transform.SetSiblingIndex(friendsMessenger.friendRequestSection.GetSiblingIndex() + 1);
+        } else if (newStatus == 1) {
+            string thisUsername = PlayerData.playerdata.friendsList[friendRequestId].FriendUsername;
+            if (!PlayerData.playerdata.cachedSocialStatus.ContainsKey(thisUsername) || PlayerData.playerdata.cachedSocialStatus[thisUsername] == "OFFLINE") {
+                UpdateSocialStatus("OFFLINE");
+                transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + 1);
+                transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + 1);
+            } else {
+                UpdateSocialStatus(PlayerData.playerdata.cachedSocialStatus[thisUsername]);
+                transform.SetSiblingIndex(friendsMessenger.onlineSection.GetSiblingIndex() + 1);
+                transform.SetSiblingIndex(friendsMessenger.onlineSection.GetSiblingIndex() + 1);
+            }
+        } else {
+            UpdateSocialStatus("BLOCKED");
+            transform.SetSiblingIndex(friendsMessenger.blockedSection.GetSiblingIndex() + 1);
+            transform.SetSiblingIndex(friendsMessenger.blockedSection.GetSiblingIndex() + 1);
+            // If blocked, then show it only if the blocker is equal to current player ID
+            string blocker = PlayerData.playerdata.friendsList[friendRequestId].Blocker;
+            if (blocker != AuthScript.authHandler.user.UserId) {
+                ToggleVisible(false);
+            }
+        }
+    }
+
+    public void UpdateSocialStatus(string newStatus)
+    {
+        if (PlayerData.playerdata.friendsList[friendRequestId].Status == 1) {
+            if (newStatus == "ONLINE" || newStatus == "IN GAME") {
+                transform.SetSiblingIndex(friendsMessenger.onlineSection.GetSiblingIndex() + 1);
+                transform.SetSiblingIndex(friendsMessenger.onlineSection.GetSiblingIndex() + 1);
+            } else {
+                transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + 1);
+                transform.SetSiblingIndex(friendsMessenger.offlineSection.GetSiblingIndex() + 1);
+            }
+        }
+        this.status.text = newStatus;
+    }
+
+    public string GetFriendRequestId()
+    {
+        return friendRequestId;
+    }
+
+    public void ToggleVisible(bool b)
+    {
+        gameObject.SetActive(b);
+    }
+
+    public void OnEntryClick()
+    {
+        FriendData thisFriend = PlayerData.playerdata.friendsList[friendRequestId];
+        string currentFriendSocialStatus = null;
+        if (PlayerData.playerdata.cachedSocialStatus.ContainsKey(thisFriend.FriendUsername)) {
+            currentFriendSocialStatus = PlayerData.playerdata.cachedSocialStatus[thisFriend.FriendUsername];
+        }
+        friendsMessenger.quickActionMenu.InitButtonsForMessenger(thisFriend.Status, (currentFriendSocialStatus == "ONLINE" || currentFriendSocialStatus == "IN GAME"), thisFriend.Requestor, thisFriend.Requestee);
+        friendsMessenger.quickActionMenu.SetActingOnEntry(this);
+        friendsMessenger.quickActionMenu.gameObject.SetActive(true);
+        // Move menu to mouse position
+        friendsMessenger.quickActionMenu.UpdatePosition();
+    }
+
+    public void ToggleNotification(bool b)
+    {
+        if (friendsMessenger.GetChattingWithFriendRequestId() == friendRequestId) {
+            b = false;
+        }
+        notificationFlashOn = b;
+        if (b) {
+            notificationFlashTimer = NOTIFICATION_FLASH_TIME;
+            ToggleNotificationFlashColor(true);
+        } else {
+            notificationFlashTimer = 0f;
+            ToggleNotificationFlashColor(false);
+        }
+    }
+
+    void HandleNotificationFlash()
+    {
+        if (notificationFlashOn) {
+            notificationFlashTimer -= Time.deltaTime;
+            if (notificationFlashTimer <= 0f) {
+                notificationFlashTimer = NOTIFICATION_FLASH_TIME;
+                if (background.color.Equals(GLOW_ALERT_COLOR)) {
+                    ToggleNotificationFlashColor(false);
+                } else {
+                    ToggleNotificationFlashColor(true);
+                }
+            }
+        }
+    }
+
+    void ToggleNotificationFlashColor(bool b)
+    {
+        if (b) {
+            background.color = GLOW_ALERT_COLOR;
+        } else {
+            background.color = GLOW_NORMAL_COLOR;
+        }
+    }
+
+}
+ 

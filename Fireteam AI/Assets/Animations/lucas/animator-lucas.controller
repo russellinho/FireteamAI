@@ -228,6 +228,31 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!1101 &-4024147456473938025
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: EnteredWater
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: 1102677996331794676}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.1
+  m_TransitionOffset: 0
+  m_ExitTime: 0.75
+  m_HasExitTime: 0
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 1
 --- !u!1101 &-4000083960518438891
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -444,6 +469,18 @@ AnimatorController:
     m_Controller: {fileID: 9100000}
   - m_Name: Melee
     m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: EnteredWater
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: Swimming
+    m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
@@ -1509,6 +1546,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: Moving
     m_EventTreshold: 1
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102600945110755326}
   m_Solo: 0
@@ -1874,6 +1914,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: Moving
     m_EventTreshold: 3
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102604893690406098}
   m_Solo: 0
@@ -1924,6 +1967,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: Moving
     m_EventTreshold: 5
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102488012483538542}
   m_Solo: 0
@@ -3389,6 +3435,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 2
     m_ConditionEvent: isWalking
     m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102510417719921594}
   m_Solo: 0
@@ -3548,6 +3597,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: Crouching
     m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102524410128989276}
   m_Solo: 0
@@ -3657,6 +3709,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: Moving
     m_EventTreshold: 3
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102280628633282882}
   m_Solo: 0
@@ -3685,6 +3740,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: Moving
     m_EventTreshold: 4
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102791613227631984}
   m_Solo: 0
@@ -3713,6 +3771,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: Moving
     m_EventTreshold: 7
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102171001654124270}
   m_Solo: 0
@@ -4546,6 +4607,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: Moving
     m_EventTreshold: 5
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102166081425769720}
   m_Solo: 0
@@ -5085,6 +5149,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 2
     m_ConditionEvent: isWalking
     m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102508801627423658}
   m_Solo: 0
@@ -5294,6 +5361,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: Moving
     m_EventTreshold: 8
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102557109513012494}
   m_Solo: 0
@@ -5927,6 +5997,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: Moving
     m_EventTreshold: 6
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102199518348230330}
   m_Solo: 0
@@ -6379,6 +6452,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: Moving
     m_EventTreshold: 2
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102762590485776116}
   m_Solo: 0
@@ -6407,6 +6483,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: Moving
     m_EventTreshold: 8
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102593351715169724}
   m_Solo: 0
@@ -7202,6 +7281,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: isSprinting
     m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102752900925401240}
   m_Solo: 0
@@ -7398,6 +7480,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: Moving
     m_EventTreshold: 6
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102641623271434730}
   m_Solo: 0
@@ -8031,6 +8116,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: Moving
     m_EventTreshold: 1
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102414144560406922}
   m_Solo: 0
@@ -8059,6 +8147,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: Moving
     m_EventTreshold: 2
+  - m_ConditionMode: 2
+    m_ConditionEvent: Swimming
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102063924308794776}
   m_Solo: 0
@@ -10231,11 +10322,12 @@ AnimatorStateMachine:
     m_State: {fileID: -2941987489935469026}
     m_Position: {x: 610, y: -160, z: 0}
   m_ChildStateMachines: []
-  m_AnyStateTransitions: []
+  m_AnyStateTransitions:
+  - {fileID: 6823054067669006399}
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 50, y: 20, z: 0}
+  m_AnyStatePosition: {x: 80, y: -100, z: 0}
   m_EntryPosition: {x: -288, y: -180, z: 0}
   m_ExitPosition: {x: 800, y: 120, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
@@ -10342,6 +10434,7 @@ AnimatorStateMachine:
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: 1101507620281658864}
+  - {fileID: -4024147456473938025}
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
@@ -10612,6 +10705,31 @@ AnimatorStateTransition:
   m_TransitionDuration: 0.05
   m_TransitionOffset: 0
   m_ExitTime: 0.659091
+  m_HasExitTime: 0
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 1
+--- !u!1101 &6823054067669006399
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: EnteredWater
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: 1102107442704409398}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.1
+  m_TransitionOffset: 0
+  m_ExitTime: 0.75
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0

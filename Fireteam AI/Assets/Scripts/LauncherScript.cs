@@ -7,6 +7,7 @@ using Photon.Realtime;
 public class LauncherScript : MonoBehaviour
 {
     public string rootWeapon;
+    private const int WATER_LAYER = 4;
     private const float LAUNCH_FORCE_MULTIPLIER = 45f;
     // RPG cannot be active for more than 12 seconds
     private const float MAX_ACTIVE_TIME = 12f;
@@ -15,6 +16,7 @@ public class LauncherScript : MonoBehaviour
     public SphereCollider col;
     public MeshRenderer[] projectileRenderer;
     public ParticleSystem explosionEffect;
+    public ParticleSystem explosionWaterEffect;
     public ParticleSystem smokeTrail;
     public float blastRadius;
     public AudioSource explosionSound;
@@ -25,12 +27,14 @@ public class LauncherScript : MonoBehaviour
     public PhotonView pView;
     private float explosionActiveDelay;
     private float activeTime;
+    private bool isInWater;
 
     // Start is called before the first frame update
     void Awake()
     {
         playersHit = new ArrayList();
         explosionEffect.Stop();
+        explosionWaterEffect.Stop();
         isLive = true;
         explosionActiveDelay = EXPLOSION_ACTIVE_DELAY;
         activeTime = 0f;
@@ -80,6 +84,9 @@ public class LauncherScript : MonoBehaviour
         // Play the explosion sound
         explosionSound.Play();
         // Play the explosion particle effect
+        if (isInWater) {
+            explosionWaterEffect.Play();
+        }
         explosionEffect.Play();
         // Set nearby enemies on alert from explosion sound
         GameControllerScript gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameControllerScript>();
@@ -127,4 +134,19 @@ public class LauncherScript : MonoBehaviour
     void SetPlayerLaunchedByReference(int playerViewId) {
         fromPlayerId = playerViewId;
     }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == WATER_LAYER) {
+            isInWater = true;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.layer == WATER_LAYER) {
+            isInWater = false;
+        }
+    }
+
 }

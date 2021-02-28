@@ -6529,6 +6529,7 @@ GameObject:
   - component: {fileID: 3348894890771729364}
   - component: {fileID: 5214298026464637624}
   - component: {fileID: 5395027591799762230}
+  - component: {fileID: 7609060408108169119}
   m_Layer: 14
   m_Name: mixamorig:Head
   m_TagString: Human
@@ -6640,6 +6641,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bodyPartId: 1
+--- !u!114 &7609060408108169119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8502661351813044417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4451a10e69dc44e5b964a7eae6011920, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyScript: {fileID: 624624113271357771}
+  npcScript: {fileID: 0}
 --- !u!1 &8502661351813044419
 GameObject:
   m_ObjectHideFlags: 0
