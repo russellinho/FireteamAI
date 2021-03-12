@@ -114,4 +114,11 @@ public class DatabaseUpdater : MonoBehaviour
 		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("kashFieldAdd");
 		func.CallAsync(inputData);
     }
+
+    public void AddSkillTableToAll()
+    {
+        Dictionary<string, object> inputData = new Dictionary<string, object>();        
+		HttpsCallableReference func = DAOScript.dao.functions.GetHttpsCallable("addSkillTreeToAll");
+		func.CallAsync(inputData);
+    }
 }

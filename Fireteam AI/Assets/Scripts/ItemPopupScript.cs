@@ -9,6 +9,7 @@ public class ItemPopupScript : MonoBehaviour
     public GameObject equipmentStatDescriptor;
     public GameObject weaponStatDescriptor;
     public GameObject modStatDescriptor;
+    public GameObject skillDescriptor;
 
     // Clothing stat labels
     public Text genderRestTxtClothing;
@@ -44,6 +45,11 @@ public class ItemPopupScript : MonoBehaviour
     public Text modClipCapacityStatTxt;
     public Text modMaxAmmoStatTxt;
     public Text equippedOnTxt;
+
+    // Skill stat labels
+    public Text currentLevelTxt;
+    public Text maxLevelTxt;
+    public Text prerequisitesTxt;
 
     public Text title;
     public RawImage thumbnail;
@@ -119,6 +125,11 @@ public class ItemPopupScript : MonoBehaviour
         modStatDescriptor.SetActive(b);
     }
 
+    public void ToggleSkillStatDescriptor(bool b)
+    {
+        skillDescriptor.SetActive(b);
+    }
+
     public void SetEquipmentStats(float armor, float speed, float stamina, char gender, string[] characterRestrictions) {
         armorStatTxt.text = ConvertToPercent(armor) + "%";
         speedStatTxt.text = ConvertToPercent(speed) + "%";
@@ -170,6 +181,13 @@ public class ItemPopupScript : MonoBehaviour
         modClipCapacityStatTxt.text = clipCapacity == -1f ? "-" : "" + clipCapacity;
         modMaxAmmoStatTxt.text = maxAmmo == -1f ? "-" : "" + maxAmmo;
         equippedOnTxt.text = ("".Equals(equippedOn) ? "-" : equippedOn);
+    }
+
+    public void SetSkillStats(int currLevel, int maxLevel, string prerequisites)
+    {
+        currentLevelTxt.text = ""+currLevel;
+        maxLevelTxt.text = ""+maxLevel;
+        prerequisitesTxt.text = prerequisites;
     }
 
     private int ConvertToPercent(float f) {

@@ -33,6 +33,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Connexion connexion;
 	public FriendsMessenger friendsMessenger;
 	public AchievementManager achievementManager;
+	public SkillManager skillManager;
 	public GiftInbox giftInbox;
 	private AudioSourceModifier[] sceneAudioSources;
 
@@ -160,6 +161,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public TextMeshProUGUI totalGiftCostTxt;
 	public TextMeshProUGUI myGpTxt;
 	public TextMeshProUGUI myKashTxt;
+	public TextMeshProUGUI availableSkillPointsTxt;
+	public TextMeshProUGUI primaryClassTxt;
 
 	// Customization menu
 	public GameObject contentPrefab;

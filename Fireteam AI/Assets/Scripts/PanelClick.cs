@@ -7,12 +7,15 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 {
     public ShopItemScript shopItemScript;
     public SetupItemScript setupItemScript;
+    public SkillSlot skillSlot;
 
     public void OnPointerEnter(PointerEventData eventData) {
         if (shopItemScript != null) {
             ShowShopItemData();
         } else if (setupItemScript != null) {
             ShowSetupItemData();
+        } else if (skillSlot != null) {
+            ShowSkillData();
         }
     }
     public void ShowShopItemData() {
@@ -20,6 +23,7 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         ips.SetTitle(shopItemScript.itemName);
         ips.SetThumbnail(shopItemScript.thumbnailRef);
         ips.SetDescription(shopItemScript.itemDescription);
+        ips.ToggleSkillStatDescriptor(false);
         if (shopItemScript.titleType == 'l') {
             shopItemScript.CalculateExpirationDate();
             ips.SetExpirationDate(shopItemScript.expirationDate);
@@ -86,6 +90,16 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             setupItemScript.itemDescriptionPopupRef.SetWeaponStats(w.damage, w.accuracy, w.recoil, w.fireRate, w.mobility, w.range, w.clipCapacity);
             setupItemScript.itemDescriptionPopupRef.weaponStatDescriptor.SetActive(true);
         }
+    }
+
+    public void ShowSkillData()
+    {
+        skillSlot.skillDescriptionPopupRef.SetTitle(skillSlot.skillName.text);
+        skillSlot.skillDescriptionPopupRef.SetDescription(skillSlot.GetCurrentSkillDescription());
+        skillSlot.skillDescriptionPopupRef.SetThumbnail(skillSlot.skillThumb.mainTexture);
+        skillSlot.skillDescriptionPopupRef.SetSkillStats(skillSlot.GetCurrentLevelForThisSkill(), skillSlot.GetMaxLevelForThisSkill(), skillSlot.GetPrerequisitesStringForThisSkill());
+        skillSlot.skillDescriptionPopupRef.ToggleSkillStatDescriptor(true);
+        skillSlot.skillDescriptionPopupRef.gameObject.SetActive(true);
     }
 
     public void OnPointerExit(PointerEventData eventData) {

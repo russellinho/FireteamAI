@@ -52,6 +52,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     public PlayerInventory inventory;
     public ObservableDict<string, FriendData> friendsList;
     public Dictionary<string, string> cachedSocialStatus;
+    public ObservableDict<string, SkillData> skillList;
     public ObservableDict<string, GiftData> giftList;
     public Dictionary<string, CachedMessage> cachedConversations;
     public ModInfo primaryModInfo;
@@ -77,6 +78,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             this.secondaryModInfo = new ModInfo();
             this.supportModInfo = new ModInfo();
             friendsList = new ObservableDict<string, FriendData>();
+            skillList = new ObservableDict<string, SkillData>();
             giftList = new ObservableDict<string, GiftData>();
             cachedConversations = new Dictionary<string, CachedMessage>();
             cachedSocialStatus = new Dictionary<string, string>();
@@ -85,6 +87,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/loggedIn").ValueChanged += HandleForceLogoutEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/gp").ValueChanged += HandleGpChangeEvent;
             DAOScript.dao.dbRef.Child("users/" + AuthScript.authHandler.user.UserId + "/kash").ValueChanged += HandleKashChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/availableSp").ValueChanged += HandleAvailableSkillPointsChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedArmor").ValueChanged += HandleArmorChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedBottom").ValueChanged += HandleBottomChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedCharacter").ValueChanged += HandleCharacterChangeEvent;
@@ -98,6 +101,14 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedTop").ValueChanged += HandleTopChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildAdded += HandleBanEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildChanged += HandleBanEvent;
+
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/skills/0").ChildChanged += HandleSkillUpdate;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/skills/1").ChildChanged += HandleSkillUpdate;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/skills/2").ChildChanged += HandleSkillUpdate;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/skills/3").ChildChanged += HandleSkillUpdate;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/skills/4").ChildChanged += HandleSkillUpdate;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/skills/5").ChildChanged += HandleSkillUpdate;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/skills/6").ChildChanged += HandleSkillUpdate;
 
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/friends").ChildAdded += HandleFriendAdded;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/friends").ChildRemoved += HandleFriendRemoved;
@@ -137,6 +148,8 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
             PlayerData.playerdata.info.PropertyChanged += OnPlayerInfoChange;
+            skillList.CollectionChanged += OnPlayerInfoChange;
+            skillList.PropertyChanged += OnPlayerInfoChange;
             friendsList.CollectionChanged += OnPlayerInfoChange;
             friendsList.PropertyChanged += OnPlayerInfoChange;
             giftList.CollectionChanged += OnPlayerInfoChange;
@@ -593,6 +606,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     info.Exp = Convert.ToUInt32(playerDataSnap["exp"]);
                     info.Gp = Convert.ToUInt32(playerDataSnap["gp"]);
                     info.Kash = Convert.ToUInt32(results["kash"]);
+                    info.AvailableSkillPoints = Convert.ToInt32(playerDataSnap["availableSkillPoints"]);
                     info.PrivilegeLevel = results["privilegeLevel"].ToString();
                     
                     if (playerDataSnap.ContainsKey("equipment")) {
@@ -690,13 +704,14 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     }
                     LoadInventory(inventorySnap);
                     try {
-                        if (playerDataSnap.ContainsKey("achievements")) {
-                            LoadAchievements((Dictionary<object, object>)playerDataSnap["achievements"], achievementMap);
-                        } else {
-                            LoadAchievements(null, achievementMap);
-                        }
+                        LoadSkills((Dictionary<object, object>)playerDataSnap["skills"]);
                     } catch (Exception e) {
                         Debug.Log(e.Message);
+                    }
+                    if (playerDataSnap.ContainsKey("achievements")) {
+                        LoadAchievements((Dictionary<object, object>)playerDataSnap["achievements"], achievementMap);
+                    } else {
+                        LoadAchievements(null, achievementMap);
                     }
                     if (playerDataSnap.ContainsKey("gifts")) {
                         LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
@@ -1006,6 +1021,33 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
 
         playerDataModifyLegalFlag = false;
+    }
+
+    void LoadSkills(Dictionary<object, object> mySkills)
+    {
+        int currentMax = 0;
+        int primaryTree = -1;
+        foreach(KeyValuePair<object, object> entry in mySkills) {
+            int treeId = int.Parse(entry.Key.ToString());
+            Dictionary<object, object> tree = (Dictionary<object, object>)entry.Value;
+            int thisMax = 0;
+            foreach(KeyValuePair<object, object> skillEntry in tree) {
+                int skillId = int.Parse(skillEntry.Key.ToString());
+                int skillLevel = Convert.ToInt32(skillEntry.Value);
+                SkillData sd = new SkillData();
+                sd.TreeId = treeId;
+                sd.SkillId = skillId;
+                sd.Level = skillLevel;
+                thisMax += skillLevel;
+                PlayerData.playerdata.skillList.Add(treeId + "/" + skillId, sd);
+                titleRef.skillManager.GetSkillSlot(treeId, skillId).Init(skillLevel);
+            }
+            if (thisMax > currentMax) {
+                currentMax = thisMax;
+                primaryTree = treeId;
+            }
+        }
+        titleRef.skillManager.SetPrimaryTree(primaryTree);
     }
 
     void LoadAchievements(Dictionary<object, object> myAchievements, Dictionary<object, object> achievementMap)
@@ -1833,6 +1875,23 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             PlayerData.playerdata.info.Kash = uint.Parse(args.Snapshot.Value.ToString());
             if (titleRef != null) {
                 titleRef.myKashTxt.text = ""+PlayerData.playerdata.info.Kash;
+            }
+            playerDataModifyLegalFlag = false;
+        }
+    }
+
+    void HandleAvailableSkillPointsChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) return;
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        if (args.Snapshot.Value != null) {
+            playerDataModifyLegalFlag = true;
+            PlayerData.playerdata.info.AvailableSkillPoints = Convert.ToInt32(args.Snapshot.Value);
+            if (titleRef != null) {
+                titleRef.availableSkillPointsTxt.text = ""+PlayerData.playerdata.info.AvailableSkillPoints;
             }
             playerDataModifyLegalFlag = false;
         }
@@ -2702,6 +2761,28 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
     }
 
+    void HandleSkillUpdate(object sender, ChildChangedEventArgs args)
+    {
+        if (bodyReference == null) return;
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+
+        if (args.Snapshot.Value != null) {
+            playerDataModifyLegalFlag = true;
+            int treeId = int.Parse(args.Snapshot.Reference.Parent.Key);
+            int skillId = int.Parse(args.Snapshot.Key);
+            SkillData sd = PlayerData.playerdata.skillList[treeId + "/" + skillId];
+            sd.Level = Convert.ToInt32(args.Snapshot.Value);
+            if (titleRef != null) {
+                titleRef.skillManager.GetSkillSlot(treeId, skillId).SetLevel(sd.Level);
+            }
+            playerDataModifyLegalFlag = false;
+        }
+    }
+
     IEnumerator EmergencyExitGame() {
         yield return new WaitForSeconds(5f);
         Dictionary<string, object> inputData = new Dictionary<string, object>();
@@ -2991,6 +3072,17 @@ public class PlayerInfo : INotifyPropertyChanged
         {
             kash = value;
             PropertyChanged(this, new PropertyChangedEventArgs ("kash"));
+        }
+    }
+
+    private int availableSkillPoints;
+    public int AvailableSkillPoints
+    {
+        get { return availableSkillPoints; }
+        set
+        {
+            availableSkillPoints = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("availableSkillPoints"));
         }
     }
 
@@ -3318,6 +3410,40 @@ public class CharacterData : INotifyPropertyChanged {
         { 
             duration = value;
             PropertyChanged(this, new PropertyChangedEventArgs ("duration"));
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
+}
+
+public class SkillData : INotifyPropertyChanged {
+    private int treeId;
+    public int TreeId {
+        get { return treeId; }
+        set
+        { 
+            treeId = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("treeId"));
+        }
+    }
+
+    private int skillId;
+    public int SkillId {
+        get { return skillId; }
+        set
+        { 
+            skillId = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("skillId"));
+        }
+    }
+
+    private int level;
+    public int Level {
+        get { return level; }
+        set
+        { 
+            level = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("level"));
         }
     }
 
