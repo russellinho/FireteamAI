@@ -69,7 +69,14 @@ public class SkillManager : MonoBehaviour
                 PlayerData.playerdata.TriggerEmergencyExit("Database is currently unavailable. Please try again later.");
             } else {
                 Dictionary<object, object> results = (Dictionary<object, object>)taskA.Result.Data;
-                if (results["status"].ToString() != "200") {
+                if (results["status"].ToString() == "200") {
+                    int[] potentialUnlocks = GetSkillsThisIsPrereqFor(treeId, skillId);
+                    for (int i = 0; i < potentialUnlocks.Length; i++) {
+                        if (SkillCanBeUnlocked(treeId, potentialUnlocks[i])) {
+                            GetSkillSlot(treeId, potentialUnlocks[i]).ToggleSkillEnabled(true);
+                        }
+                    }
+                } else {
                     titleController.TriggerAlertPopup("SKILL POINT COULD NOT BE ADDED.");
                 }
             }
@@ -472,6 +479,217 @@ public class SkillManager : MonoBehaviour
             }
         }
         return new int[0];
+    }
+
+    public int[] GetSkillsThisIsPrereqFor(int treeId, int skillId)
+    {
+        // Commando
+        if (treeId == 0) {
+            if (skillId == 0) {
+                return new int[1]{2};
+            } else if (skillId == 1) {
+                return new int[1]{3};
+            } else if (skillId == 2) {
+                return new int[3]{4, 5, 6};
+            } else if (skillId == 3) {
+                return new int[3]{4, 5, 6};
+            } else if (skillId == 4) {
+                return new int[3]{7, 8, 9};
+            } else if (skillId == 5) {
+                return new int[3]{7, 8, 9};
+            } else if (skillId == 6) {
+                return new int[3]{7, 8, 9};
+            } else if (skillId == 7) {
+                return new int[2]{10, 11};
+            } else if (skillId == 8) {
+                return new int[2]{10, 11};
+            } else if (skillId == 9) {
+                return new int[2]{10, 11};
+            } else if (skillId == 10) {
+                return new int[1]{12};
+            } else if (skillId == 11) {
+                return new int[1]{12};
+            } else if (skillId == 12) {
+            return new int[0];
+            }
+        // Recon
+        } else if (treeId == 1) {
+            if (skillId == 0) {
+                return new int[1]{2};
+            } else if (skillId == 1) {
+                return new int[1]{3};
+            } else if (skillId == 2) {
+                return new int[3]{4, 5, 6};
+            } else if (skillId == 3) {
+                return new int[3]{4, 5, 6};
+            } else if (skillId == 4) {
+                return new int[3]{7, 8, 9};
+            } else if (skillId == 5) {
+                return new int[3]{7, 8, 9};
+            } else if (skillId == 6) {
+                return new int[3]{7, 8, 9};
+            } else if (skillId == 7) {
+                return new int[3]{10, 11, 12};
+            } else if (skillId == 8) {
+                return new int[3]{10, 11, 12};
+            } else if (skillId == 9) {
+                return new int[3]{10, 11, 12};
+            } else if (skillId == 10) {
+                return new int[1]{13};
+            } else if (skillId == 11) {
+                return new int[1]{13};
+            } else if (skillId == 12) {
+                return new int[1]{13};
+            } else if (skillId == 13) {
+                return new int[0];
+            }
+        // Engineer
+        } else if (treeId == 2) {
+            if (skillId == 0) {
+                return new int[3]{2, 3, 4};
+            } else if (skillId == 1) {
+                return new int[3]{2, 3, 4};
+            } else if (skillId == 2) {
+                return new int[3]{5, 6, 7};
+            } else if (skillId == 3) {
+                return new int[3]{5, 6, 7};
+            } else if (skillId == 4) {
+                return new int[3]{5, 6, 7};
+            } else if (skillId == 5) {
+                return new int[3]{8, 9, 10};
+            } else if (skillId == 6) {
+                return new int[3]{8, 9, 10};
+            } else if (skillId == 7) {
+                return new int[3]{8, 9, 10};
+            } else if (skillId == 8) {
+                return new int[3]{11, 12, 13};
+            } else if (skillId == 9) {
+                return new int[3]{11, 12, 13};
+            } else if (skillId == 10) {
+                return new int[3]{11, 12, 13};
+            } else if (skillId == 11) {
+                return new int[0];
+            } else if (skillId == 12) {
+                return new int[0];
+            } else if (skillId == 13) {
+                return new int[0];
+            }
+        // Mastermind
+        } else if (treeId == 3) {
+            if (skillId == 0) {
+                return new int[4]{1, 2, 3, 4};
+            } else if (skillId == 1) {
+                return new int[3]{5, 6, 7};
+            } else if (skillId == 2) {
+                return new int[3]{5, 6, 7};
+            } else if (skillId == 3) {
+                return new int[3]{5, 6, 7};
+            } else if (skillId == 4) {
+                return new int[3]{5, 6, 7};
+            } else if (skillId == 5) {
+                return new int[2]{8, 9};
+            } else if (skillId == 6) {
+                return new int[2]{8, 9};
+            } else if (skillId == 7) {
+                return new int[2]{8, 9};
+            } else if (skillId == 8) {
+                return new int[1]{10};
+            } else if (skillId == 9) {
+                return new int[1]{10};
+            } else if (skillId == 10) {
+                return new int[0];
+            }
+        // Medic
+        } else if (treeId == 4) {
+            if (skillId == 0) {
+                return new int[3]{2, 3, 4};
+            } else if (skillId == 1) {
+                return new int[3]{2, 3, 4};
+            } else if (skillId == 2) {
+                return new int[3]{5, 6, 7};
+            } else if (skillId == 3) {
+                return new int[3]{5, 6, 7};
+            } else if (skillId == 4) {
+                return new int[3]{5, 6, 7};
+            } else if (skillId == 5) {
+                return new int[2]{8, 9};
+            } else if (skillId == 6) {
+                return new int[2]{8, 9};
+            } else if (skillId == 7) {
+                return new int[2]{8, 9};
+            } else if (skillId == 8) {
+                return new int[0];
+            } else if (skillId == 9) {
+                return new int[0];
+            }
+        // Marksman
+        } else if (treeId == 5) {
+            if (skillId == 0) {
+                return new int[1]{2};
+            } else if (skillId == 1) {
+                return new int[1]{3};
+            } else if (skillId == 2) {
+                return new int[3]{4, 5, 6};
+            } else if (skillId == 3) {
+                return new int[3]{4, 5, 6};
+            } else if (skillId == 4) {
+                return new int[3]{7, 8, 9};
+            } else if (skillId == 5) {
+                return new int[3]{7, 8, 9};
+            } else if (skillId == 6) {
+                return new int[3]{7, 8, 9};
+            } else if (skillId == 7) {
+                return new int[2]{10, 11};
+            } else if (skillId == 8) {
+                return new int[2]{10, 11};
+            } else if (skillId == 9) {
+                return new int[2]{10, 11};
+            } else if (skillId == 10) {
+                return new int[0];
+            } else if (skillId == 11) {
+                return new int[0];
+            }
+        // Heavy
+        } else if (treeId == 6) {
+            if (skillId == 0) {
+                return new int[0];
+            } else if (skillId == 1) {
+                return new int[0];
+            } else if (skillId == 2) {
+                return new int[1]{0};
+            } else if (skillId == 3) {
+                return new int[1]{1};
+            } else if (skillId == 4) {
+                return new int[2]{2, 3};
+            } else if (skillId == 5) {
+                return new int[2]{2, 3};
+            } else if (skillId == 6) {
+                return new int[2]{2, 3};
+            } else if (skillId == 7) {
+                return new int[3]{4, 5, 6};
+            } else if (skillId == 8) {
+                return new int[3]{4, 5, 6};
+            } else if (skillId == 9) {
+                return new int[3]{4, 5, 6};
+            } else if (skillId == 10) {
+                return new int[3]{7, 8, 9};
+            } else if (skillId == 11) {
+                return new int[3]{7, 8, 9};
+            }
+        }
+        return new int[0];
+    }
+
+    public bool SkillCanBeUnlocked(int treeId, int skillId)
+    {
+        int[] thisPrereqs = GetPrerequisitesForSkill(treeId, skillId);
+        for (int i = 0; i < thisPrereqs.Length; i++) {
+            int p = thisPrereqs[i];
+            if (PlayerData.playerdata.skillList[treeId + "/" + p].Level != GetMaxLevelForSkill(treeId, p)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void SetPrimaryTree(int treeId)
