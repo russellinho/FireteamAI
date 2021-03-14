@@ -50,12 +50,12 @@ public class ThrowableScript : MonoBehaviour
         return playersHit.Contains(vId);
     }
 
-    public void Launch(int thrownByPlayerViewId, float xForce, float yForce, float zForce) {
+    public void Launch(int thrownByPlayerViewId, float xForce, float yForce, float zForce, float skillBoost) {
         // Assign a reference to the player who threw this projectile
         // pView.RPC("RpcSetPlayerThrownByReference", RpcTarget.All, thrownByPlayer.GetComponent<PhotonView>().ViewID);
         SetPlayerThrownByReference(thrownByPlayerViewId);
         // Apply a force to the throwable that's equal to the forward position of the weapon holder
-        rBody.velocity = new Vector3(xForce * THROW_FORCE_MULTIPLIER, yForce * THROW_FORCE_MULTIPLIER, zForce * THROW_FORCE_MULTIPLIER);
+        rBody.velocity = new Vector3(xForce * THROW_FORCE_MULTIPLIER * skillBoost, yForce * THROW_FORCE_MULTIPLIER * skillBoost, zForce * THROW_FORCE_MULTIPLIER * skillBoost);
         //rBody.AddForce(xForce * THROW_FORCE_MULTIPLIER, yForce * THROW_FORCE_MULTIPLIER, zForce * THROW_FORCE_MULTIPLIER);
         isLive = true;
     }

@@ -101,7 +101,11 @@ public class WeaponScript : MonoBehaviour
         currentAmmoSupport = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].clipCapacity;
         totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo - currentAmmoPrimary;
         totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo - currentAmmoSecondary;
-        totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo - currentAmmoSupport;
+        int deployableMasterySkillBoost = playerActionScript.skillController.GetDeployableMasteryLevel();
+        if (InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].category != "Deployable") {
+            deployableMasterySkillBoost = 0;
+        }
+        totalSupportAmmoLeft = (InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo + deployableMasterySkillBoost) - currentAmmoSupport;
         equippedWepInGame = equippedPrimaryWeapon;
         //DrawWeapon(1);
         InitializeWeapon();
@@ -489,7 +493,9 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    playerActionScript.skillController.InitializePassiveSkills(0);
                     SetWeaponCulling(wepEquipped);
+                    weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
                 }
                 break;
             case "SMG":
@@ -514,7 +520,9 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    playerActionScript.skillController.InitializePassiveSkills(1);
                     SetWeaponCulling(wepEquipped);
+                    weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
                 }
                 break;
             case "LMG":
@@ -539,7 +547,9 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    playerActionScript.skillController.InitializePassiveSkills(2);
                     SetWeaponCulling(wepEquipped);
+                    weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
                 }
                 break;
             case "Shotgun":
@@ -564,7 +574,9 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    playerActionScript.skillController.InitializePassiveSkills(3);
                     SetWeaponCulling(wepEquipped);
+                    weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
                 }
                 break;
             case "Sniper Rifle":
@@ -589,7 +601,9 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    playerActionScript.skillController.InitializePassiveSkills(4);
                     SetWeaponCulling(wepEquipped);
+                    weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
                 }
                 break;
             case "Pistol":
@@ -614,7 +628,9 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    playerActionScript.skillController.InitializePassiveSkills(5);
                     SetWeaponCulling(wepEquipped);
+                    weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
                 }
                 break;
             case "Launcher":
@@ -633,6 +649,7 @@ public class WeaponScript : MonoBehaviour
                 weaponActionScript.SetCurrentAimDownSightPos(sightName);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
+                    playerActionScript.skillController.InitializePassiveSkills(6);
                     SetWeaponCulling(wepEquipped);
                 }
                 break;
@@ -652,6 +669,7 @@ public class WeaponScript : MonoBehaviour
                 weaponActionScript.SetCurrentAimDownSightPos(sightName);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
+                    playerActionScript.skillController.InitializePassiveSkills(7);
                     SetWeaponCulling(wepEquipped);
                 }
                 break;
@@ -671,6 +689,7 @@ public class WeaponScript : MonoBehaviour
                 weaponActionScript.SetCurrentAimDownSightPos(sightName);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
+                    playerActionScript.skillController.InitializePassiveSkills(8);
                     SetWeaponCulling(wepEquipped);
                 }
                 break;
@@ -692,6 +711,7 @@ public class WeaponScript : MonoBehaviour
                 weaponActionScript.SetCurrentAimDownSightPos(sightName);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
+                    playerActionScript.skillController.InitializePassiveSkills(9);
                     SetWeaponCulling(wepEquipped);
                 }
                 break;

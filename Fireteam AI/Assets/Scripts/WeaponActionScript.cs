@@ -15,7 +15,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     private const byte THROWABLE_SPAWN_CODE = 127;
     private const float SHELL_SPEED = 3f;
     private const float SHELL_TUMBLE = 4f;
-    private const float DEPLOY_BASE_TIME = 2f;
+    private const float DEPLOY_BASE_TIME = 3f;
     private const short DEPLOY_OFFSET = 2;
     private const float LUNGE_SPEED = 20f;
     private const float UNPAUSE_DELAY = 0.5f;
@@ -53,11 +53,6 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     public GameObject BloodEffect;
     public GameObject BloodEffectHeadshot;
 
-    // Projectile spread constants
-    public const float MAX_SPREAD = 0.15f;
-    public const float SPREAD_ACCELERATION = 0.05f;
-    public const float SPREAD_DECELERATION = 0.03f;
-
     // Projectile recoil constants
     public const float MAX_RECOIL_TIME = 1.4f;
     public const float RECOIL_ACCELERATION = 4.2f;
@@ -65,7 +60,10 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     private const float SWAY_ACCELERATION = 1.5f;
 
     // Projectile variables
-    public EncryptedFloat spread = 0f;
+    private EncryptedFloat spread = 0f;
+    public EncryptedFloat maxSpread = 0f;
+    public EncryptedFloat spreadAcceleration = 0f;
+    public EncryptedFloat spreadDeceleration = 0f;
     private EncryptedFloat recoilTime = 0f;
     private EncryptedFloat swayGauge = 0f;
     private bool voidRecoilRecover = true;
@@ -345,6 +343,15 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                 recoilTime = 0f;
             }
         }
+    }
+
+    public void SetSpread(float accuracy)
+    {
+        // Add accuracy boost from skills
+        accuracy += (accuracy * playerActionScript.skillController.accuracyBoost);
+        maxSpread = 1f - Mathf.Clamp((accuracy / 100f), 0f, 1f);
+        spreadAcceleration = maxSpread / 3f;
+        spreadDeceleration = maxSpread / 5f;
     }
     
     // If aim down sights lock is enabled, arms have free range movement apart from their animations
@@ -1102,12 +1109,12 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     private void IncreaseSpread()
     {
-        if (spread < MAX_SPREAD)
+        if (spread < maxSpread)
         {
-            spread += SPREAD_ACCELERATION * Time.deltaTime;
-            if (spread > MAX_SPREAD)
+            spread += spreadAcceleration * Time.deltaTime;
+            if (spread > maxSpread)
             {
-                spread = MAX_SPREAD;
+                spread = maxSpread;
             }
         }
     }
@@ -1116,7 +1123,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     {
         if (spread > 0f)
         {
-            spread -= SPREAD_DECELERATION * Time.deltaTime;
+            spread -= spreadDeceleration * Time.deltaTime;
             if (spread < 0f)
             {
                 spread = 0f;
@@ -1151,18 +1158,20 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     void UpdateRecoil(bool increase)
     {
+        float totalRecoil = weaponStats.recoil;
+        totalRecoil += (weaponStats.recoil * playerActionScript.skillController.recoilBoost);
         if (increase)
         {
             // mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(weaponStats.recoil, 0f, 0f);
             // mouseLook.m_FpcCharacterHorizontalTargetRot *= Quaternion.Euler(0f, (Random.Range(0, 2) == 0 ? 1f : -1f) * swayGauge, 0f);
-            mouseLook.SetRecoilInputs(weaponStats.recoil, (Random.Range(0, 2) == 0 ? 1f : -1f) * swayGauge);
+            mouseLook.SetRecoilInputs(totalRecoil, (Random.Range(0, 2) == 0 ? 1f : -1f) * swayGauge);
         }
         else
         {
             if (recoilTime > 0f)
             {
                 // mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(-weaponStats.recoil / weaponStats.recoveryConstant, 0f, 0f);
-                mouseLook.SetRecoilInputs(-weaponStats.recoil / weaponMetaData.recoveryConstant, 0f);
+                mouseLook.SetRecoilInputs(-totalRecoil / weaponMetaData.recoveryConstant, 0f);
             }
         }
     }
@@ -1204,7 +1213,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                 fpc.fpcAnimator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;
             }
             if (!w.type.Equals("Support")) {
-                SetReloadSpeed();
+                SetReloadSpeed(playerActionScript.skillController.GetReloadSpeedBoostForCurrentWeapon(weaponStats));
                 SetFiringSpeed();
             }
             if (weaponStats.type.Equals("Support")) {
@@ -1216,6 +1225,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     isWieldingThrowable = false;
                     isWieldingBooster = true;
                     isWieldingDeployable = false;
+                    SetFiringSpeed(playerActionScript.skillController.GetFiringSpeedBoostForCurrentWeapon(w));
                 } else if (weaponStats.category.Equals("Deployable")) {
                     isWieldingThrowable = false;
                     isWieldingBooster = false;
@@ -1240,19 +1250,19 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
     }
 
-    public void SetReloadSpeed(float multipler = 1f) {
-        animatorFpc.SetFloat("ReloadSpeed", weaponMetaData.defaultFpcReloadSpeed * multipler);
-        animatorFpc.SetFloat("DrawSpeed", weaponMetaData.defaultWeaponDrawSpeed * multipler);
-        weaponMetaData.weaponAnimator.SetFloat("ReloadSpeed", weaponMetaData.defaultWeaponReloadSpeed * multipler);
-        weaponMetaData.weaponAnimator.SetFloat("CockingSpeed", weaponMetaData.defaultWeaponCockingSpeed * multipler);
+    public void SetReloadSpeed(float multipler = 0f) {
+        animatorFpc.SetFloat("ReloadSpeed", weaponMetaData.defaultFpcReloadSpeed + multipler);
+        animatorFpc.SetFloat("DrawSpeed", weaponMetaData.defaultWeaponDrawSpeed + multipler);
+        weaponMetaData.weaponAnimator.SetFloat("ReloadSpeed", weaponMetaData.defaultWeaponReloadSpeed + multipler);
+        weaponMetaData.weaponAnimator.SetFloat("CockingSpeed", weaponMetaData.defaultWeaponCockingSpeed + multipler);
     }
 
-    public void SetFiringSpeed(float multiplier = 1f) {
-        animatorFpc.SetFloat("FireSpeed", weaponMetaData.defaultFireSpeed * multiplier);
+    public void SetFiringSpeed(float multiplier = 0f) {
+        animatorFpc.SetFloat("FireSpeed", weaponMetaData.defaultFireSpeed + multiplier);
     }
 
-    public void SetMeleeSpeed(float multiplier = 1f) {
-        animatorFpc.SetFloat("MeleeSpeed", meleeMetaData.defaultMeleeSpeed * multiplier);
+    public void SetMeleeSpeed(float multiplier = 0f) {
+        animatorFpc.SetFloat("MeleeSpeed", meleeMetaData.defaultMeleeSpeed + multiplier);
     }
 
     public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {
@@ -1334,7 +1344,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         if (isWieldingDeployable) {
             if (shootInput && !meleeInput && !isMeleeing && !isUsingDeployable) {
                 // Charge up deploy gauge
-                deployTimer += (Time.deltaTime / DEPLOY_BASE_TIME);
+                deployTimer += (Time.deltaTime / ((1f - playerActionScript.skillController.deploymentTimeBoost) * DEPLOY_BASE_TIME));
                 if (!deployInProgress) {
                     InstantiateDeployPlanMesh();
                     hudScript.ToggleActionBar(true, "DEPLOYING...");
@@ -1384,7 +1394,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             if (PhotonNetwork.AllocateViewID(thisPView))
             {
                 projectile.transform.forward = weaponHolderFpc.transform.forward;
-                projectile.GetComponent<ThrowableScript>().Launch(pView.ViewID, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
+                projectile.GetComponent<ThrowableScript>().Launch(pView.ViewID, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, 1f + playerActionScript.skillController.throwForceBoost);
                 currentAmmo--;
                 playerActionScript.weaponScript.SyncAmmoCounts();
                 fireTimer = 0.0f;
@@ -1436,7 +1446,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         PhotonView photonView = projectile.GetComponent<PhotonView>();
         object[] data = new object[]
         {
-            InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, weaponHolderFpc.transform.position.x, weaponHolderFpc.transform.position.y, weaponHolderFpc.transform.position.z, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, photonView.ViewID, playerActionScript.gameController.teamMap, pView.ViewID
+            InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, weaponHolderFpc.transform.position.x, weaponHolderFpc.transform.position.y, weaponHolderFpc.transform.position.z, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, photonView.ViewID, playerActionScript.gameController.teamMap, pView.ViewID, (1f + playerActionScript.skillController.throwForceBoost)
         };
 
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions
@@ -1521,7 +1531,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             Debug.Log("Spawned throwable projectile " + projectile.gameObject.name + " with view ID " + photonView.ViewID);
 
             projectile.transform.forward = forward;
-            projectile.GetComponent<ThrowableScript>().Launch((int) data[7], forward.x, forward.y, forward.z);
+            projectile.GetComponent<ThrowableScript>().Launch((int) data[7], forward.x, forward.y, forward.z, 1f + (float)data[10]);
             currentAmmo--;
             playerActionScript.weaponScript.SyncAmmoCounts();
             fireTimer = 0.0f;

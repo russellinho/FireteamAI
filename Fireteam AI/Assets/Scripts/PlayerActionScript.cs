@@ -34,6 +34,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     // Object references
     public PhotonView pView;
+    public SkillController skillController;
     public GameControllerScript gameController;
     public AudioControllerScript audioController;
     public CharacterController charController;
@@ -929,6 +930,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (gameObject.layer == 0) return;
         health = h;
+        if (pView.IsMine) {
+            skillController.HandleHealthChangeEvent(h);
+        }
     }
 
     public void SetHitLocation(Vector3 pos)
@@ -1396,9 +1400,20 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     public IEnumerator HealthBoostEffect(){
-        int healthIncrement = (int)(playerScript.health*.6f/5f);
+        float totalHealPortion = 0.6f;
+        int healAmounts = 5;
+        if (skillController.GetBoosterEffectLevel() == 1) {
+            totalHealPortion *= 1.15f;
+        } else if (skillController.GetBoosterEffectLevel() == 2) {
+            totalHealPortion = 1.3f;
+            healAmounts = 6;
+        } else if (skillController.GetBoosterEffectLevel() == 3) {
+            totalHealPortion = 1.5f;
+            healAmounts = 7;
+        }
+        int healthIncrement = (int)(playerScript.health * totalHealPortion / 5f);
         if (this.health < playerScript.health && this.health > 0){
-          for (int i = 0; i < 5; i++) {
+          for (int i = 0; i < healAmounts; i++) {
             if (this.health + healthIncrement > playerScript.health){
               this.health = playerScript.health;
             } else {
@@ -1415,7 +1430,15 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     public void InjectAdrenaphine() {
-        StartCoroutine(StaminaBoostEffect(10f, 1.5f));
+        float skillBoost = 1f;
+        if (skillController.GetBoosterEffectLevel() == 1) {
+            skillBoost = 1.15f;
+        } else if (skillController.GetBoosterEffectLevel() == 2) {
+            skillBoost = 1.3f;
+        } else if (skillController.GetBoosterEffectLevel() == 3) {
+            skillBoost = 1.5f;
+        }
+        StartCoroutine(StaminaBoostEffect(10f * skillBoost, 1.5f * skillBoost));
     }
 
     public IEnumerator StaminaBoostEffect(float staminaBoost, float speedBoost){
