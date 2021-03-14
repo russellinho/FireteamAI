@@ -1,11 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using HttpsCallableReference = Firebase.Functions.HttpsCallableReference;
 
 public class SkillManager : MonoBehaviour
 {
     public TitleControllerScript titleController;
+    public TextMeshProUGUI primaryTreeTxt;
+    private bool setPrimaryTreeFlag;
+    private int primaryTreeIndex;
+    private bool refreshActiveSkillsFlag;
     [SerializeField]
     private SkillSlot[] commandoSkills;
     public GameObject commandoClassIndicator;
@@ -27,6 +32,19 @@ public class SkillManager : MonoBehaviour
     [SerializeField]
     private SkillSlot[] heavySkills;
     public GameObject heavyClassIndicator;
+
+    void Update()
+    {
+        if (setPrimaryTreeFlag) {
+            SetPrimaryTree(primaryTreeIndex);
+            primaryTreeIndex = -1;
+            setPrimaryTreeFlag = false;
+        }
+        if (refreshActiveSkillsFlag) {
+            RefreshActiveSkills();
+            refreshActiveSkillsFlag = false;
+        }
+    }
 
     public SkillSlot GetSkillSlot(int tree, int skill)
     {
@@ -73,7 +91,7 @@ public class SkillManager : MonoBehaviour
                     int[] potentialUnlocks = GetSkillsThisIsPrereqFor(treeId, skillId);
                     for (int i = 0; i < potentialUnlocks.Length; i++) {
                         if (SkillCanBeUnlocked(treeId, potentialUnlocks[i])) {
-                            GetSkillSlot(treeId, potentialUnlocks[i]).ToggleSkillEnabled(true);
+                            GetSkillSlot(treeId, potentialUnlocks[i]).DelayToggleSkillEnabled(false);
                         }
                     }
                 } else {
@@ -692,6 +710,125 @@ public class SkillManager : MonoBehaviour
         return true;
     }
 
+    public void DelayRefreshActiveSkills()
+    {
+        refreshActiveSkillsFlag = true;
+    }
+
+    void RefreshActiveSkills()
+    {
+        foreach (SkillSlot s in commandoSkills) {
+            int[] prereqs = s.GetPrerequisitesForThisSkill();
+            bool met = true;
+            for (int i = 0; i < prereqs.Length; i++) {
+                if (PlayerData.playerdata.skillList["0/" + prereqs[i]].Level != GetMaxLevelForSkill(0, prereqs[i])) {
+                    s.ToggleSkillEnabled(true);
+                    met = false;
+                    break;
+                }
+            }
+            if (met) {
+                s.ToggleSkillEnabled(false);
+            }
+        }
+
+        foreach (SkillSlot s in reconSkills) {
+            int[] prereqs = s.GetPrerequisitesForThisSkill();
+            bool met = true;
+            for (int i = 0; i < prereqs.Length; i++) {
+                if (PlayerData.playerdata.skillList["1/" + prereqs[i]].Level != GetMaxLevelForSkill(1, prereqs[i])) {
+                    s.ToggleSkillEnabled(true);
+                    met = false;
+                    break;
+                }
+            }
+            if (met) {
+                s.ToggleSkillEnabled(false);
+            }
+        }
+
+        foreach (SkillSlot s in engineerSkills) {
+            int[] prereqs = s.GetPrerequisitesForThisSkill();
+            bool met = true;
+            for (int i = 0; i < prereqs.Length; i++) {
+                if (PlayerData.playerdata.skillList["2/" + prereqs[i]].Level != GetMaxLevelForSkill(2, prereqs[i])) {
+                    s.ToggleSkillEnabled(true);
+                    met = false;
+                    break;
+                }
+            }
+            if (met) {
+                s.ToggleSkillEnabled(false);
+            }
+        }
+
+        foreach (SkillSlot s in mastermindSkills) {
+            int[] prereqs = s.GetPrerequisitesForThisSkill();
+            bool met = true;
+            for (int i = 0; i < prereqs.Length; i++) {
+                if (PlayerData.playerdata.skillList["3/" + prereqs[i]].Level != GetMaxLevelForSkill(3, prereqs[i])) {
+                    s.ToggleSkillEnabled(true);
+                    met = false;
+                    break;
+                }
+            }
+            if (met) {
+                s.ToggleSkillEnabled(false);
+            }
+        }
+
+        foreach (SkillSlot s in medicSkills) {
+            int[] prereqs = s.GetPrerequisitesForThisSkill();
+            bool met = true;
+            for (int i = 0; i < prereqs.Length; i++) {
+                if (PlayerData.playerdata.skillList["4/" + prereqs[i]].Level != GetMaxLevelForSkill(4, prereqs[i])) {
+                    s.ToggleSkillEnabled(true);
+                    met = false;
+                    break;
+                }
+            }
+            if (met) {
+                s.ToggleSkillEnabled(false);
+            }
+        }
+
+        foreach (SkillSlot s in marksmanSkills) {
+            int[] prereqs = s.GetPrerequisitesForThisSkill();
+            bool met = true;
+            for (int i = 0; i < prereqs.Length; i++) {
+                if (PlayerData.playerdata.skillList["5/" + prereqs[i]].Level != GetMaxLevelForSkill(5, prereqs[i])) {
+                    s.ToggleSkillEnabled(true);
+                    met = false;
+                    break;
+                }
+            }
+            if (met) {
+                s.ToggleSkillEnabled(false);
+            }
+        }
+
+        foreach (SkillSlot s in heavySkills) {
+            int[] prereqs = s.GetPrerequisitesForThisSkill();
+            bool met = true;
+            for (int i = 0; i < prereqs.Length; i++) {
+                if (PlayerData.playerdata.skillList["6/" + prereqs[i]].Level != GetMaxLevelForSkill(6, prereqs[i])) {
+                    s.ToggleSkillEnabled(true);
+                    met = false;
+                    break;
+                }
+            }
+            if (met) {
+                s.ToggleSkillEnabled(false);
+            }
+        }
+    }
+
+    public void DelaySetPrimaryTree(int treeId)
+    {
+        setPrimaryTreeFlag = true;
+        primaryTreeIndex = treeId;
+    }
+
     public void SetPrimaryTree(int treeId)
     {
         commandoClassIndicator.SetActive(false);
@@ -704,24 +841,31 @@ public class SkillManager : MonoBehaviour
         switch (treeId) {
             case 0:
                 commandoClassIndicator.SetActive(true);
+                primaryTreeTxt.text = "COMMANDO";
                 break;
             case 1:
                 reconClassIndicator.SetActive(true);
+                primaryTreeTxt.text = "RECON";
                 break;
             case 2:
                 engineerClassIndicator.SetActive(true);
+                primaryTreeTxt.text = "ENGINEER";
                 break;
             case 3:
                 mastermindClassIndicator.SetActive(true);
+                primaryTreeTxt.text = "MASTERMIND";
                 break;
             case 4:
                 medicClassIndicator.SetActive(true);
+                primaryTreeTxt.text = "MEDIC";
                 break;
             case 5:
                 marksmanClassIndicator.SetActive(true);
+                primaryTreeTxt.text = "MARKSMAN";
                 break;
             case 6:
                 heavyClassIndicator.SetActive(true);
+                primaryTreeTxt.text = "HEAVY";
                 break;
             default:
                 break;

@@ -432,7 +432,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
     void AddMyselfToPlayerList(int actorNo)
     {
-        Debug.Log("Actor no: " + actorNo);
         Player playerBeingAdded = PhotonNetwork.CurrentRoom.GetPlayer(actorNo);
         char team = 'N';
         if ((string)playerBeingAdded.CustomProperties["team"] == "red") {
@@ -606,7 +605,8 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     info.Exp = Convert.ToUInt32(playerDataSnap["exp"]);
                     info.Gp = Convert.ToUInt32(playerDataSnap["gp"]);
                     info.Kash = Convert.ToUInt32(results["kash"]);
-                    info.AvailableSkillPoints = Convert.ToInt32(playerDataSnap["availableSkillPoints"]);
+                    info.AvailableSkillPoints = Convert.ToInt32(playerDataSnap["availableSp"]);
+                    titleRef.availableSkillPointsTxt.text = ""+info.AvailableSkillPoints;
                     info.PrivilegeLevel = results["privilegeLevel"].ToString();
                     
                     if (playerDataSnap.ContainsKey("equipment")) {
@@ -703,11 +703,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         supportModInfo.SightId = "";
                     }
                     LoadInventory(inventorySnap);
-                    try {
-                        LoadSkills((Dictionary<object, object>)playerDataSnap["skills"]);
-                    } catch (Exception e) {
-                        Debug.Log(e.Message);
-                    }
+                    LoadSkills((Dictionary<object, object>)playerDataSnap["skills"]);
                     if (playerDataSnap.ContainsKey("achievements")) {
                         LoadAchievements((Dictionary<object, object>)playerDataSnap["achievements"], achievementMap);
                     } else {
@@ -1025,6 +1021,8 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
     void LoadSkills(Dictionary<object, object> mySkills)
     {
+        playerDataModifyLegalFlag = true;
+
         int currentMax = 0;
         int primaryTree = -1;
         foreach(KeyValuePair<object, object> entry in mySkills) {
@@ -1035,19 +1033,23 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 int skillId = int.Parse(skillEntry.Key.ToString());
                 int skillLevel = Convert.ToInt32(skillEntry.Value);
                 SkillData sd = new SkillData();
+                sd.PropertyChanged += OnPlayerInfoChange;
                 sd.TreeId = treeId;
                 sd.SkillId = skillId;
                 sd.Level = skillLevel;
                 thisMax += skillLevel;
                 PlayerData.playerdata.skillList.Add(treeId + "/" + skillId, sd);
-                titleRef.skillManager.GetSkillSlot(treeId, skillId).Init(skillLevel);
+                titleRef.skillManager.GetSkillSlot(treeId, skillId).DelayInit(skillLevel);
             }
             if (thisMax > currentMax) {
                 currentMax = thisMax;
                 primaryTree = treeId;
             }
         }
-        titleRef.skillManager.SetPrimaryTree(primaryTree);
+        titleRef.skillManager.DelayRefreshActiveSkills();
+        titleRef.skillManager.DelaySetPrimaryTree(primaryTree);
+
+        playerDataModifyLegalFlag = false;
     }
 
     void LoadAchievements(Dictionary<object, object> myAchievements, Dictionary<object, object> achievementMap)

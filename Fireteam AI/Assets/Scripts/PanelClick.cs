@@ -107,6 +107,8 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             shopItemScript.itemDescriptionPopupRef.SetActive(false);
         } else if (setupItemScript != null) {
             setupItemScript.itemDescriptionPopupRef.gameObject.SetActive(false);
+        } else if (skillSlot != null) {
+            skillSlot.skillDescriptionPopupRef.gameObject.SetActive(false);
         }
     }
 }

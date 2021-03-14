@@ -15,18 +15,33 @@ public class SkillSlot : MonoBehaviour
     public TextMeshProUGUI skillName;
     public GameObject disableOverlay;
     public string[] skillDescription;
+    private bool delayInitFlag;
+    private int initLevel;
+    private bool delayToggleSkillEnabledFlag;
+    private bool delayToggleSkillEnabledVal;
+
+    public void DelayInit(int level)
+    {
+        delayInitFlag = true;
+        initLevel = level;
+    }
 
     public void Init(int level)
     {
         SetLevel(level);
-        int[] prereqs = skillManager.GetPrerequisitesForSkill(treeId, skillId);
-        for (int i = 0; i < prereqs.Length; i++) {
-            if (PlayerData.playerdata.skillList[treeId + "/" + prereqs[i]].Level != skillManager.GetMaxLevelForSkill(treeId, prereqs[i])) {
-                ToggleSkillEnabled(true);
-                return;
-            }
+    }
+
+    void Update()
+    {
+        if (delayInitFlag) {
+            Init(initLevel);
+            initLevel = 0;
+            delayInitFlag = false;
         }
-        ToggleSkillEnabled(false);
+        if (delayToggleSkillEnabledFlag) {
+            ToggleSkillEnabled(delayToggleSkillEnabledVal);
+            delayToggleSkillEnabledFlag = false;
+        }
     }
 
     public void OnAddSkillPointClicked()
@@ -41,6 +56,12 @@ public class SkillSlot : MonoBehaviour
             // Disable button if maxed
             GetComponentInChildren<Button>().interactable = false;
         }
+    }
+
+    public void DelayToggleSkillEnabled(bool b)
+    {
+        delayToggleSkillEnabledFlag = true;
+        delayToggleSkillEnabledVal = b;
     }
 
     public void ToggleSkillEnabled(bool b)
@@ -59,6 +80,11 @@ public class SkillSlot : MonoBehaviour
             }
         }
         return s;
+    }
+
+    public int[] GetPrerequisitesForThisSkill()
+    {
+        return skillManager.GetPrerequisitesForSkill(treeId, skillId);
     }
 
     public int GetCurrentLevelForThisSkill()
