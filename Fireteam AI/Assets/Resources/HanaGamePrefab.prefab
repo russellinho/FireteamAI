@@ -328,6 +328,7 @@ GameObject:
   - component: {fileID: 1582878853075224123}
   - component: {fileID: 1954192166151958394}
   - component: {fileID: 2027933525081748335}
+  - component: {fileID: 6291643589836044682}
   m_Layer: 9
   m_Name: HanaGamePrefab
   m_TagString: Player
@@ -838,9 +839,31 @@ MonoBehaviour:
     type: 3}
   BloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 3}
-  spread:
-    currentCryptoKey: 1512307951
-    hiddenValue: 1526473711
+  maxSpread:
+    currentCryptoKey: 1004133632
+    hiddenValue: 1004394752
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 1
+    fakeValue: 0
+    fakeValueActive: 1
+  spreadAcceleration:
+    currentCryptoKey: 1436585062
+    hiddenValue: 1435279462
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 1
+    fakeValue: 0
+    fakeValueActive: 1
+  spreadDeceleration:
+    currentCryptoKey: 1005408789
+    hiddenValue: 995290389
     hiddenValueOldByte4:
       b1: 0
       b2: 0
@@ -905,6 +928,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pView: {fileID: 580623507002314522}
+  skillController: {fileID: 6291643589836044682}
   gameController: {fileID: 0}
   audioController: {fileID: 580623507002314510}
   charController: {fileID: 580623507002314516}
@@ -1417,6 +1441,73 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6291643589836044682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580623507002314506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bc0ab733702348ea9b34defd0b0aebb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageBoost:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  recoilBoost:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  accuracyBoost:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  throwForceBoost:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  deploymentTimeBoost:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
 --- !u!1 &580623507404202083
 GameObject:
   m_ObjectHideFlags: 0

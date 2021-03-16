@@ -23,7 +23,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 	private const float BULLET_FORCE = 50f;
     const float INTERACTION_DISTANCE = 4.5f;
     const float BOMB_DEFUSE_TIME = 8f;
-    const float DEPLOY_USE_TIME = 3f;
+    const float DEPLOY_USE_TIME = 4f;
     const float NPC_INTERACT_TIME = 5f;
     private const float ENV_DAMAGE_DELAY = 0.5f;
     private const float MINIMUM_FALL_DMG_VELOCITY = 25f;
@@ -534,6 +534,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         // Send over network
         pView.RPC("RpcTakeDamage", RpcTarget.All, d, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit);
+
+        skillController.HandleHealthChangeEvent(health);
     }
 
     [PunRPC]
@@ -1403,12 +1405,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         float totalHealPortion = 0.6f;
         int healAmounts = 5;
         if (skillController.GetBoosterEffectLevel() == 1) {
-            totalHealPortion *= 1.15f;
+            totalHealPortion *= 1f + SkillController.BOOSTER_LVL1_EFFECT;
         } else if (skillController.GetBoosterEffectLevel() == 2) {
-            totalHealPortion = 1.3f;
+            totalHealPortion = 1 + SkillController.BOOSTER_LVL2_EFFECT;
             healAmounts = 6;
         } else if (skillController.GetBoosterEffectLevel() == 3) {
-            totalHealPortion = 1.5f;
+            totalHealPortion = 1 + SkillController.BOOSTER_LVL3_EFFECT;
             healAmounts = 7;
         }
         int healthIncrement = (int)(playerScript.health * totalHealPortion / 5f);
@@ -1432,11 +1434,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public void InjectAdrenaphine() {
         float skillBoost = 1f;
         if (skillController.GetBoosterEffectLevel() == 1) {
-            skillBoost = 1.15f;
+            skillBoost += SkillController.BOOSTER_LVL1_EFFECT;
         } else if (skillController.GetBoosterEffectLevel() == 2) {
-            skillBoost = 1.3f;
+            skillBoost = SkillController.BOOSTER_LVL2_EFFECT;
         } else if (skillController.GetBoosterEffectLevel() == 3) {
-            skillBoost = 1.5f;
+            skillBoost = SkillController.BOOSTER_LVL3_EFFECT;
         }
         StartCoroutine(StaminaBoostEffect(10f * skillBoost, 1.5f * skillBoost));
     }

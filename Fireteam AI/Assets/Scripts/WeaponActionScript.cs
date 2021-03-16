@@ -15,7 +15,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     private const byte THROWABLE_SPAWN_CODE = 127;
     private const float SHELL_SPEED = 3f;
     private const float SHELL_TUMBLE = 4f;
-    private const float DEPLOY_BASE_TIME = 3f;
+    private const float DEPLOY_BASE_TIME = 4f;
     private const short DEPLOY_OFFSET = 2;
     private const float LUNGE_SPEED = 20f;
     private const float UNPAUSE_DELAY = 0.5f;
@@ -137,6 +137,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     // Use this for initialization
     private bool initialized;
+    public float qq;
 
     void Awake()
     {
@@ -348,10 +349,9 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     public void SetSpread(float accuracy)
     {
         // Add accuracy boost from skills
-        accuracy += (accuracy * playerActionScript.skillController.accuracyBoost);
-        maxSpread = 1f - Mathf.Clamp((accuracy / 100f), 0f, 1f);
-        spreadAcceleration = maxSpread / 3f;
-        spreadDeceleration = maxSpread / 5f;
+        maxSpread = (1f - Mathf.Clamp((accuracy / 100f), 0f, 1f)) * (1f - playerActionScript.skillController.accuracyBoost);
+        spreadAcceleration = maxSpread;
+        spreadDeceleration = maxSpread / 2f;
     }
     
     // If aim down sights lock is enabled, arms have free range movement apart from their animations
@@ -591,7 +591,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                         hudScript.InstantiateHitmarker();
                         // audioController.PlayHitmarkerSound();
-                        b.TakeDamage((int)meleeStats.damage, transform.position, 2, 0);
+                        b.TakeDamage((int)(meleeStats.damage * playerActionScript.skillController.GetDamageBoost()), transform.position, 2, 0);
                         b.PlayGruntSound();
                         b.SetAlerted();
                         if (b.health <= 0 && beforeHp > 0)
@@ -648,12 +648,17 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
                     pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, (bodyPartIdHit == HEAD_TARGET));
                     int beforeHp = b.health;
-                    int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit) - CalculateDamageDropoff(weaponStats.damage, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
+                    int thisDamageDealt = 0;
+                    if (playerActionScript.skillController.WasCriticalHit()) {
+                        thisDamageDealt = 100;
+                    } else {
+                        thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit) - CalculateDamageDropoff(weaponStats.damage, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
+                    }
                     if (beforeHp > 0)
                     {
                         hudScript.InstantiateHitmarker();
                         // audioController.PlayHitmarkerSound();
-                        b.TakeDamage(thisDamageDealt, transform.position, 0, bodyPartIdHit);
+                        b.TakeDamage((int)(thisDamageDealt * playerActionScript.skillController.GetDamageBoost()), transform.position, 0, bodyPartIdHit);
                         b.PlayGruntSound();
                         b.SetAlerted();
                         if (b.health <= 0 && beforeHp > 0)
@@ -742,14 +747,15 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         UpdateRecoil(true);
         RaycastHit hit;
         // 8 shots for shotgun
-        bool headshotDetected = false;
         float totalDamageDealt = 0f;
+        bool critialHit = playerActionScript.skillController.WasCriticalHit();
+        bool headHit = false;
         for (int i = 0; i < 8; i++) {
-            float xSpread = Random.Range(-0.03f, 0.03f);
-            float ySpread = Random.Range(-0.03f, 0.03f);
-            float zSpread = Random.Range(-0.03f, 0.03f);
+            float xSpread = Random.Range(-maxSpread, maxSpread);
+            float ySpread = Random.Range(-maxSpread, maxSpread);
+            float zSpread = Random.Range(-maxSpread, maxSpread);
             Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
-            if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, FIRE_IGNORE_MASK) && !headshotDetected)
+            if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, FIRE_IGNORE_MASK))
             {
                 // Debug.DrawRay(fpcShootPoint.position, impactDir, Color.blue, 10f, false);
                 if (hit.transform.tag.Equals("Human"))
@@ -757,49 +763,58 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     BetaEnemyScript b = hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>();
                     NpcScript n = hit.transform.gameObject.GetComponentInParent<NpcScript>();
                     if (n != null) {
-                        int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
-                        int beforeHp = 0;
-                        int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit, 8) - CalculateDamageDropoff(weaponStats.damage / 8, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
-                        pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
-                        beforeHp = n.health;
-                        if (totalDamageDealt == 0f) {
-                            if (beforeHp > 0)
-                            {
-                                n.PlayGruntSound(playerActionScript.gameController.teamMap);
+                        if (n.health > 0) {
+                            int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
+                            if (bodyPartIdHit == HEAD_TARGET) {
+                                headHit = true;
+                            }
+                            int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit) - CalculateDamageDropoff(weaponStats.damage, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
+                            totalDamageDealt += thisDamageDealt;
+                            if (i == 7) {
+                                if (totalDamageDealt > 0)
+                                {
+                                    pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
+                                    n.PlayGruntSound(playerActionScript.gameController.teamMap);
+                                    n.TakeDamage((int)totalDamageDealt, transform.position, 0, (headHit ? HEAD_TARGET : bodyPartIdHit));
+                                }
                             }
                         }
-                        n.TakeDamage(thisDamageDealt, transform.position, 0, bodyPartIdHit);
-                        totalDamageDealt += thisDamageDealt;
                     }
                     if (b != null) {
-                        int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
-                        int beforeHp = 0;
-                        int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit, 8) - CalculateDamageDropoff(weaponStats.damage / 8, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
-                        pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, (bodyPartIdHit == HEAD_TARGET));
-                        beforeHp = b.health;
-                        if (totalDamageDealt == 0f) {
-                            if (beforeHp > 0)
-                            {
-                                hudScript.InstantiateHitmarker();
-                                // audioController.PlayHitmarkerSound();
-                                //hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
-                                b.PlayGruntSound();
-                                b.SetAlerted();
-                            }
-                        }
-                        b.TakeDamage(thisDamageDealt, transform.position, 0, bodyPartIdHit);
-                        if (b.health <= 0 && beforeHp > 0)
-                        {
-                            BetaEnemyScript.NUMBER_KILLED++;
-                            RewardKill(bodyPartIdHit == HEAD_TARGET);
+                        if (b.health > 0) {
+                            int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
                             if (bodyPartIdHit == HEAD_TARGET) {
-                                audioController.PlayHeadshotSound();
-                                headshotDetected = true;
+                                headHit = true;
+                            }
+                            int thisDamageDealt = 0;
+                            if (critialHit) {
+                                thisDamageDealt = 100;
                             } else {
-                                audioController.PlayKillSound();
+                                thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit) - CalculateDamageDropoff(weaponStats.damage, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
+                            }
+                            totalDamageDealt += thisDamageDealt;
+                            if (i == 7) {
+                                if (totalDamageDealt > 0)
+                                {
+                                    Debug.Log("TOTAL: " + totalDamageDealt);
+                                    hudScript.InstantiateHitmarker();
+                                    pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, (bodyPartIdHit == HEAD_TARGET));
+                                    b.PlayGruntSound();
+                                    b.SetAlerted();
+                                    b.TakeDamage((int)(totalDamageDealt * playerActionScript.skillController.GetDamageBoost()), transform.position, 0, (headHit ? HEAD_TARGET : bodyPartIdHit));
+                                    if (b.health <= 0)
+                                    {
+                                        BetaEnemyScript.NUMBER_KILLED++;
+                                        RewardKill(headHit);
+                                        if (headHit) {
+                                            audioController.PlayHeadshotSound();
+                                        } else {
+                                            audioController.PlayKillSound();
+                                        }
+                                    }
+                                }
                             }
                         }
-                        totalDamageDealt += thisDamageDealt;
                     }
                 } else if (hit.transform.tag.Equals("Player")) {
                     if (hit.transform != gameObject.transform) {
@@ -867,29 +882,29 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
     }
 
-    public int CalculateDamageDealt(float initialDamage, int bodyPartHit, int divisor = 1) {
+    public int CalculateDamageDealt(float initialDamage, int bodyPartHit) {
         if (bodyPartHit == HEAD_TARGET) {
             return 100;
         } else if (bodyPartHit == TORSO_TARGET) {
-            return (int)(initialDamage / (float)divisor);
+            return (int)initialDamage;
         } else if (bodyPartHit == LEFT_ARM_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 2f);
+            return (int)(initialDamage / 2f);
         } else if (bodyPartHit == LEFT_FOREARM_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 3f);
+            return (int)(initialDamage / 3f);
         } else if (bodyPartHit == RIGHT_ARM_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 2f);
+            return (int)(initialDamage / 2f);
         } else if (bodyPartHit == RIGHT_FOREARM_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 3f);
+            return (int)(initialDamage / 3f);
         } else if (bodyPartHit == PELVIS_TARGET) {
-            return (int)(initialDamage / (float)divisor);
+            return (int)initialDamage;
         } else if (bodyPartHit == LEFT_UPPER_LEG_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 1.5f);
+            return (int)(initialDamage / 1.5f);
         } else if (bodyPartHit == LEFT_LOWER_LEG_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 2f);
+            return (int)(initialDamage / 2f);
         } else if (bodyPartHit == RIGHT_UPPER_LEG_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 1.5f);
+            return (int)(initialDamage / 1.5f);
         } else if (bodyPartHit == RIGHT_LOWER_LEG_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 2f);
+            return (int)(initialDamage / 2f);
         }
         return 0;
     }
@@ -1158,8 +1173,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     void UpdateRecoil(bool increase)
     {
-        float totalRecoil = weaponStats.recoil;
-        totalRecoil += (weaponStats.recoil * playerActionScript.skillController.recoilBoost);
+        float totalRecoil = weaponStats.recoil * (1f - playerActionScript.skillController.recoilBoost);
         if (increase)
         {
             // mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(weaponStats.recoil, 0f, 0f);
@@ -1251,10 +1265,10 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     }
 
     public void SetReloadSpeed(float multipler = 0f) {
-        animatorFpc.SetFloat("ReloadSpeed", weaponMetaData.defaultFpcReloadSpeed + multipler);
-        animatorFpc.SetFloat("DrawSpeed", weaponMetaData.defaultWeaponDrawSpeed + multipler);
-        weaponMetaData.weaponAnimator.SetFloat("ReloadSpeed", weaponMetaData.defaultWeaponReloadSpeed + multipler);
-        weaponMetaData.weaponAnimator.SetFloat("CockingSpeed", weaponMetaData.defaultWeaponCockingSpeed + multipler);
+        animatorFpc.SetFloat("ReloadSpeed", weaponMetaData.defaultFpcReloadSpeed * (1f + multipler));
+        animatorFpc.SetFloat("DrawSpeed", weaponMetaData.defaultWeaponDrawSpeed * (1f + multipler));
+        weaponMetaData.weaponAnimator.SetFloat("ReloadSpeed", weaponMetaData.defaultWeaponReloadSpeed * (1f + multipler));
+        weaponMetaData.weaponAnimator.SetFloat("CockingSpeed", weaponMetaData.defaultWeaponCockingSpeed);
     }
 
     public void SetFiringSpeed(float multiplier = 0f) {
@@ -1694,7 +1708,15 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     public void DeployDeployable(Vector3 pos, Quaternion rot) {
         GameObject o = GameObject.Instantiate(weaponMetaData.deployRef, pos, rot);
         DeployableScript d = o.GetComponent<DeployableScript>();
-        int dId = d.InstantiateDeployable();
+        int skillBoost = 0;
+        if (PlayerData.playerdata.skillList["4/0"].Level == 1) {
+            skillBoost = 1;
+        } else if (PlayerData.playerdata.skillList["4/0"].Level == 2) {
+            skillBoost = 2;
+        } else if (PlayerData.playerdata.skillList["4/0"].Level == 3) {
+            skillBoost = 3;
+        }
+        int dId = d.InstantiateDeployable(skillBoost);
 		playerActionScript.gameController.DeployDeployable(dId, o);
 		pView.RPC("RpcDeployDeployable", RpcTarget.Others, dId, playerActionScript.gameController.teamMap, pos.x, pos.y, pos.z, rot.eulerAngles.x, rot.eulerAngles.y, rot.eulerAngles.z);
     }

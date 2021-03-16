@@ -5,12 +5,14 @@ using Koobando.AntiCheat;
 
 public class SkillController : MonoBehaviour
 {
-    public EncryptedFloat damageBoost;
+    public static float BOOSTER_LVL1_EFFECT = 0.05f;
+    public static float BOOSTER_LVL2_EFFECT = 0.1f;
+    public static float BOOSTER_LVL3_EFFECT = 0.2f;
+    private EncryptedFloat damageBoost;
     public EncryptedFloat recoilBoost;
     public EncryptedFloat accuracyBoost;
     public EncryptedFloat throwForceBoost;
     public EncryptedFloat deploymentTimeBoost;
-
 
     public void InitializePassiveSkills(int weaponCategory)
     {
@@ -20,13 +22,13 @@ public class SkillController : MonoBehaviour
             throwForceBoost = 0f;
             SkillData s = PlayerData.playerdata.skillList["0/0"];
             if (s.Level == 1) {
-                accuracyBoost = 0.05f;
+                accuracyBoost = 0.1f;
                 recoilBoost = 0.05f;
             } else if (s.Level == 2) {
-                accuracyBoost = 0.1f;
+                accuracyBoost = 0.2f;
                 recoilBoost = 0.1f;
             } else if (s.Level == 3) {
-                accuracyBoost = 0.2f;
+                accuracyBoost = 0.4f;
                 recoilBoost = 0.2f;
             }
         } else if (weaponCategory == 1) {
@@ -35,13 +37,13 @@ public class SkillController : MonoBehaviour
             // SMG Mastery (10)
             SkillData s = PlayerData.playerdata.skillList["1/0"];
             if (s.Level == 1) {
-                accuracyBoost = 0.05f;
+                accuracyBoost = 0.1f;
                 recoilBoost = 0.05f;
             } else if (s.Level == 2) {
-                accuracyBoost = 0.1f;
+                accuracyBoost = 0.2f;
                 recoilBoost = 0.1f;
             } else if (s.Level == 3) {
-                accuracyBoost = 0.2f;
+                accuracyBoost = 0.4f;
                 recoilBoost = 0.2f;
             }
         } else if (weaponCategory == 2) {
@@ -50,13 +52,13 @@ public class SkillController : MonoBehaviour
             // LMG Mastery (6/0)
             SkillData s = PlayerData.playerdata.skillList["6/0"];
             if (s.Level == 1) {
-                accuracyBoost = 0.05f;
+                accuracyBoost = 0.1f;
                 recoilBoost = 0.05f;
             } else if (s.Level == 2) {
-                accuracyBoost = 0.1f;
+                accuracyBoost = 0.2f;
                 recoilBoost = 0.1f;
             } else if (s.Level == 3) {
-                accuracyBoost = 0.2f;
+                accuracyBoost = 0.4f;
                 recoilBoost = 0.2f;
             }
         } else if (weaponCategory == 3) {
@@ -65,13 +67,13 @@ public class SkillController : MonoBehaviour
             // Shotgun Mastery (1/1)
             SkillData s = PlayerData.playerdata.skillList["1/1"];
             if (s.Level == 1) {
-                accuracyBoost = 0.05f;
+                accuracyBoost = 0.1f;
                 recoilBoost = 0.05f;
             } else if (s.Level == 2) {
-                accuracyBoost = 0.1f;
+                accuracyBoost = 0.2f;
                 recoilBoost = 0.1f;
             } else if (s.Level == 3) {
-                accuracyBoost = 0.2f;
+                accuracyBoost = 0.4f;
                 recoilBoost = 0.2f;
             }
         } else if (weaponCategory == 4) {
@@ -95,13 +97,13 @@ public class SkillController : MonoBehaviour
             // Pistol (0/1)
             SkillData s = PlayerData.playerdata.skillList["0/1"];
             if (s.Level == 1) {
-                accuracyBoost = 0.05f;
+                accuracyBoost = 0.1f;
                 recoilBoost = 0.05f;
             } else if (s.Level == 2) {
-                accuracyBoost = 0.1f;
+                accuracyBoost = 0.2f;
                 recoilBoost = 0.1f;
             } else if (s.Level == 3) {
-                accuracyBoost = 0.2f;
+                accuracyBoost = 0.4f;
                 recoilBoost = 0.2f;
             }
         } else if (weaponCategory == 6) {
@@ -126,11 +128,11 @@ public class SkillController : MonoBehaviour
             accuracyBoost = 0f;
             recoilBoost = 0f;
             if (s.Level == 0) {
-                throwForceBoost = 0.1f;
-            } else if (s.Level == 1) {
-                throwForceBoost = 0.2f;
-            } else if (s.Level == 2) {
                 throwForceBoost = 0.4f;
+            } else if (s.Level == 1) {
+                throwForceBoost = 0.6f;
+            } else if (s.Level == 2) {
+                throwForceBoost = 1f;
             }
         } else if (weaponCategory == 8) {
             deploymentTimeBoost = 0f;
@@ -158,13 +160,13 @@ public class SkillController : MonoBehaviour
             // Rifle Mastery (5/1)
             SkillData s = PlayerData.playerdata.skillList["5/1"];
             if (s.Level == 1) {
-                accuracyBoost = 0.05f;
+                accuracyBoost = 0.1f;
                 recoilBoost = 0.05f;
             } else if (s.Level == 2) {
-                accuracyBoost = 0.1f;
+                accuracyBoost = 0.2f;
                 recoilBoost = 0.1f;
             } else if (s.Level == 3) {
-                accuracyBoost = 0.2f;
+                accuracyBoost = 0.4f;
                 recoilBoost = 0.2f;
             }
         }
@@ -193,7 +195,7 @@ public class SkillController : MonoBehaviour
             } else if (PlayerData.playerdata.skillList["1/2"].Level == 3) {
                 return 1f;
             }
-        } else if (w.category == "Handgun") {
+        } else if (w.category == "Pistol") {
             if (PlayerData.playerdata.skillList["0/3"].Level == 1) {
                 return 0.25f;
             } else if (PlayerData.playerdata.skillList["0/3"].Level == 2) {
@@ -284,5 +286,31 @@ public class SkillController : MonoBehaviour
 
         newDamageBoost /= 100f;
         damageBoost = newDamageBoost;
+    }
+
+    public float GetDamageBoost()
+    {
+        return 1f + damageBoost;
+    }
+
+    public bool WasCriticalHit()
+    {
+        if (PlayerData.playerdata.skillList["0/8"].Level == 1) {
+            int r = Random.Range(0, 100);
+            if (r == 0) {
+                return true;
+            }
+        } else if (PlayerData.playerdata.skillList["0/8"].Level == 2) {
+            int r = Random.Range(0, 100);
+            if (r == 0 || r == 1) {
+                return true;
+            }
+        } else if (PlayerData.playerdata.skillList["0/8"].Level == 3) {
+            int r = Random.Range(0, 100);
+            if (r >= 0 && r <= 3) {
+                return true;
+            }
+        }
+        return false;
     }
 }

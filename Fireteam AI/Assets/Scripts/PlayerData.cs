@@ -702,6 +702,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         supportModInfo.SuppressorId = "";
                         supportModInfo.SightId = "";
                     }
+                    try {
                     LoadInventory(inventorySnap);
                     LoadSkills((Dictionary<object, object>)playerDataSnap["skills"]);
                     if (playerDataSnap.ContainsKey("achievements")) {
@@ -716,6 +717,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     List<object> itemsExpired = (List<object>)results["itemsExpired"];
                     if (itemsExpired.Count > 0) {
                         titleRef.TriggerExpirationPopup(itemsExpired);
+                    }
+                    } catch (Exception e) {
+                        Debug.LogError(e.Message);
                     }
                     playerDataModifyLegalFlag = false;
                     dataLoadedFlag = true;

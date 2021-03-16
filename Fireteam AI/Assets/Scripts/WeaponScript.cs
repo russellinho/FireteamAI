@@ -101,11 +101,7 @@ public class WeaponScript : MonoBehaviour
         currentAmmoSupport = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].clipCapacity;
         totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo - currentAmmoPrimary;
         totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo - currentAmmoSecondary;
-        int deployableMasterySkillBoost = playerActionScript.skillController.GetDeployableMasteryLevel();
-        if (InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].category != "Deployable") {
-            deployableMasterySkillBoost = 0;
-        }
-        totalSupportAmmoLeft = (InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo + deployableMasterySkillBoost) - currentAmmoSupport;
+        totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo - currentAmmoSupport;
         equippedWepInGame = equippedPrimaryWeapon;
         //DrawWeapon(1);
         InitializeWeapon();

@@ -12,11 +12,11 @@ public class DeployableScript : MonoBehaviour
     public short usesRemaining;
     // Determines if deployable can be stuck to any surface
 
-    public int InstantiateDeployable() {
+    public int InstantiateDeployable(int skillBoost = 0) {
         if (deployableName.Equals("First Aid Kit")) {
-            usesRemaining = MAX_FIRST_AID_KIT_USES;
+            usesRemaining = (short)(MAX_FIRST_AID_KIT_USES + (short)skillBoost);
         } else if (deployableName.Equals("Ammo Bag")) {
-            usesRemaining = MAX_AMMO_BAG_USES;
+            usesRemaining = (short)(MAX_AMMO_BAG_USES + (short)skillBoost);
         }
         deployableId = gameObject.GetInstanceID();
         return deployableId;

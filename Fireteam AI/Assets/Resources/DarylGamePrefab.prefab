@@ -45925,6 +45925,7 @@ GameObject:
   - component: {fileID: 6966216837115666800}
   - component: {fileID: 6865735247083531462}
   - component: {fileID: 5336643647603646089}
+  - component: {fileID: 1497069528004889868}
   m_Layer: 9
   m_Name: DarylGamePrefab
   m_TagString: Player
@@ -46435,9 +46436,31 @@ MonoBehaviour:
     type: 3}
   BloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 3}
-  spread:
-    currentCryptoKey: 1185432192
-    hiddenValue: 1178773632
+  maxSpread:
+    currentCryptoKey: 1830364032
+    hiddenValue: 1831016832
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 1
+    fakeValue: 0
+    fakeValueActive: 1
+  spreadAcceleration:
+    currentCryptoKey: 1926014179
+    hiddenValue: 1923402979
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 1
+    fakeValue: 0
+    fakeValueActive: 1
+  spreadDeceleration:
+    currentCryptoKey: 1128576049
+    hiddenValue: 1135887409
     hiddenValueOldByte4:
       b1: 0
       b2: 0
@@ -46502,6 +46525,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pView: {fileID: 9158664062041186699}
+  skillController: {fileID: 1497069528004889868}
   gameController: {fileID: 0}
   audioController: {fileID: 9158664062041186719}
   charController: {fileID: 9158664062041186693}
@@ -47014,3 +47038,70 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9de92ef681b7148efa1bcaea72f4a180, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1497069528004889868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9158664062041186715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bc0ab733702348ea9b34defd0b0aebb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageBoost:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  recoilBoost:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  accuracyBoost:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  throwForceBoost:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  deploymentTimeBoost:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
