@@ -313,4 +313,28 @@ public class SkillController : MonoBehaviour
         }
         return false;
     }
+
+    public float GetMeleeDamageBoost()
+    {
+        if (PlayerData.playerdata.skillList["0/4"].Level == 1) {
+            return 0.15f;
+        } else if (PlayerData.playerdata.skillList["0/4"].Level == 2) {
+            return 0.3f;
+        } else if (PlayerData.playerdata.skillList["0/4"].Level == 3) {
+            return 0.5f;
+        }
+        return 0f;
+    }
+
+    public float GetMeleeLungeBoost()
+    {
+        if (PlayerData.playerdata.skillList["0/5"].Level == 1) {
+            return 0.15f;
+        } else if (PlayerData.playerdata.skillList["0/5"].Level == 2) {
+            return 0.3f;
+        } else if (PlayerData.playerdata.skillList["0/5"].Level == 3) {
+            return 0.5f;
+        }
+        return 0f;
+    }
 }

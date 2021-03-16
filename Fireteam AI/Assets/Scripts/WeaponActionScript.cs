@@ -554,7 +554,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         isMeleeing = true;
         int enemyMask = 1 << 14;
         RaycastHit hit;
-        if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, meleeStats.lungeRange, enemyMask)) {
+        if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, meleeStats.lungeRange * (1f + playerActionScript.skillController.GetMeleeLungeBoost()), enemyMask)) {
             // Dash/warp to the enemyTarget position
             meleeStartingPos = transform.position;
             meleeTargetPos = hit.transform.GetComponentInParent<BetaEnemyScript>().gameObject.transform.position;
@@ -591,7 +591,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                         hudScript.InstantiateHitmarker();
                         // audioController.PlayHitmarkerSound();
-                        b.TakeDamage((int)(meleeStats.damage * playerActionScript.skillController.GetDamageBoost()), transform.position, 2, 0);
+                        Debug.LogError("TOTAL MELEE DMG: " + (int)(meleeStats.damage * (1f + playerActionScript.skillController.GetMeleeDamageBoost())));
+                        b.TakeDamage((int)(meleeStats.damage * (1f + playerActionScript.skillController.GetMeleeDamageBoost())), transform.position, 2, 0);
                         b.PlayGruntSound();
                         b.SetAlerted();
                         if (b.health <= 0 && beforeHp > 0)
@@ -796,7 +797,6 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                             if (i == 7) {
                                 if (totalDamageDealt > 0)
                                 {
-                                    Debug.Log("TOTAL: " + totalDamageDealt);
                                     hudScript.InstantiateHitmarker();
                                     pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, (bodyPartIdHit == HEAD_TARGET));
                                     b.PlayGruntSound();
