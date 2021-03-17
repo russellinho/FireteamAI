@@ -1541,7 +1541,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         // Debug.Log("total fall damage: " + totalFallDamage);
         totalFallDamage = Mathf.Clamp(totalFallDamage, 0f, 100f);
-        TakeDamage((int)totalFallDamage, false, Vector3.zero, 2, 0);
+        TakeDamage((int)(totalFallDamage * (1f - skillController.GetFallDamageReduction())), false, Vector3.zero, 2, 0);
     }
 
     public void UpdateVerticalVelocityBeforeLanding() {

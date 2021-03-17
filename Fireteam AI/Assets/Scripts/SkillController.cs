@@ -247,6 +247,20 @@ public class SkillController : MonoBehaviour
         return 0f;
     }
 
+    public float GetStaminaBoost()
+    {
+        // Cardio Conditioning (1/5)
+        if (PlayerData.playerdata.skillList["1/5"].Level == 1) {
+            return 0.25f;
+        } else if (PlayerData.playerdata.skillList["1/5"].Level == 2) {
+            return 0.5f;
+        } else if (PlayerData.playerdata.skillList["1/5"].Level == 3) {
+            return 0.8f;
+        }
+        
+        return 0f;
+    }
+
     public int GetBoosterEffectLevel()
     {
         return PlayerData.playerdata.skillList["4/1"].Level;
@@ -333,6 +347,16 @@ public class SkillController : MonoBehaviour
         } else if (PlayerData.playerdata.skillList["0/5"].Level == 2) {
             return 0.3f;
         } else if (PlayerData.playerdata.skillList["0/5"].Level == 3) {
+            return 0.5f;
+        }
+        return 0f;
+    }
+
+    public float GetFallDamageReduction()
+    {
+        if (PlayerData.playerdata.skillList["1/4"].Level == 1) {
+            return 0.25f;
+        } else if (PlayerData.playerdata.skillList["1/4"].Level == 2) {
             return 0.5f;
         }
         return 0f;
