@@ -591,7 +591,6 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                         hudScript.InstantiateHitmarker();
                         // audioController.PlayHitmarkerSound();
-                        Debug.LogError("TOTAL MELEE DMG: " + (int)(meleeStats.damage * (1f + playerActionScript.skillController.GetMeleeDamageBoost())));
                         b.TakeDamage((int)(meleeStats.damage * (1f + playerActionScript.skillController.GetMeleeDamageBoost())), transform.position, 2, 0);
                         b.PlayGruntSound();
                         b.SetAlerted();
@@ -659,7 +658,15 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     {
                         hudScript.InstantiateHitmarker();
                         // audioController.PlayHitmarkerSound();
-                        b.TakeDamage((int)(thisDamageDealt * playerActionScript.skillController.GetDamageBoost()), transform.position, 0, bodyPartIdHit);
+                        float sniperAmplificationBoost = 1f;
+                        if (weaponStats.isSniper && hudScript.container.SniperOverlay.activeInHierarchy) {
+                            sniperAmplificationBoost += playerActionScript.skillController.GetSniperAmplification();
+                        }
+                        float shootToKillBoost = 1f;
+                        if (bodyPartIdHit != HEAD_TARGET && bodyPartIdHit != TORSO_TARGET && bodyPartIdHit != PELVIS_TARGET) {
+                            shootToKillBoost += playerActionScript.skillController.GetShootToKillBoost();
+                        }
+                        b.TakeDamage((int)(thisDamageDealt * playerActionScript.skillController.GetDamageBoost() * sniperAmplificationBoost * shootToKillBoost), transform.position, 0, bodyPartIdHit);
                         b.PlayGruntSound();
                         b.SetAlerted();
                         if (b.health <= 0 && beforeHp > 0)

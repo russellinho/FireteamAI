@@ -171,6 +171,19 @@ public class SkillController : MonoBehaviour
                 recoilBoost = 0.2f;
             }
         }
+
+        // Accuracy Mastery
+        if (PlayerData.playerdata.skillList["5/6"].Level == 1) {
+            accuracyBoost += 0.1f;
+        } else if (PlayerData.playerdata.skillList["5/6"].Level == 2) {
+            accuracyBoost += 0.2f;
+        } else if (PlayerData.playerdata.skillList["5/6"].Level == 3) {
+            accuracyBoost += 0.3f;
+        } else if (PlayerData.playerdata.skillList["5/6"].Level == 4) {
+            accuracyBoost += 0.4f;
+        }
+
+        accuracyBoost = Mathf.Clamp(accuracyBoost, 0f, 0.9f);
     }
 
     public int GetDeployableMasteryLevel()
@@ -503,6 +516,18 @@ public class SkillController : MonoBehaviour
         return boost;
     }
 
+    public float GetDexterityBoost()
+    {
+        if (PlayerData.playerdata.skillList["2/2"].Level == 1) {
+            return 0.25f;
+        } else if (PlayerData.playerdata.skillList["2/2"].Level == 2) {
+            return 0.5f;
+        } else if (PlayerData.playerdata.skillList["2/2"].Level == 3) {
+            return 0.75f;
+        }
+        return 0f;
+    }
+
     public float GetTechMasteryBoost()
     {
         float boost = 0f;
@@ -553,5 +578,53 @@ public class SkillController : MonoBehaviour
             return 8;
         }
         return 1;
+    }
+
+    public float GetSniperAmplification()
+    {
+        if (PlayerData.playerdata.skillList["5/5"].Level == 1) {
+            return 0.2f;
+        } else if (PlayerData.playerdata.skillList["5/5"].Level == 2) {
+            return 0.3f;
+        } else if (PlayerData.playerdata.skillList["5/5"].Level == 3) {
+            return 0.5f;
+        }
+        return 0f;
+    }
+
+    public float GetShootToKillBoost()
+    {
+        if (PlayerData.playerdata.skillList["5/11"].Level == 1) {
+            return 0.02f;
+        } else if (PlayerData.playerdata.skillList["5/11"].Level == 2) {
+            return 0.05f;
+        } else if (PlayerData.playerdata.skillList["5/11"].Level == 3) {
+            return 0.1f;
+        }
+        return 0f;
+    }
+
+    public bool BulletSpongeAbsorbed()
+    {
+        if (PlayerData.playerdata.skillList["6/10"].Level == 1) {
+            int r = Random.Range(0, 100);
+            if (r == 0) {
+                return true;
+            }
+            return false;
+        } else if (PlayerData.playerdata.skillList["6/10"].Level == 1) {
+            int r = Random.Range(0, 100);
+            if (r >= 0 && r <= 3) {
+                return true;
+            }
+            return false;
+        } else if (PlayerData.playerdata.skillList["6/10"].Level == 1) {
+            int r = Random.Range(0, 100);
+            if (r >= 0 && r <= 7) {
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 }

@@ -530,6 +530,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public void TakeDamage(int d, bool useArmor, Vector3 hitFromPos, int hitBy, int bodyPartHit)
     {
         if (d <= 0) return;
+        // See if Bullet Sponge skill absorbed the gunshot (hitBy == 0 is a gunshot)
+        if (hitBy == 0 && skillController.BulletSpongeAbsorbed()) {
+            return;
+        }
         // Calculate damage done including armor
         if (useArmor) {
             float damageReduction = playerScript.armor - 1f;
@@ -698,7 +702,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             // Handle interaction timer
             if (interactingWith == "Bomb") {
                 hud.ToggleActionBar(true, "DEFUSING...");
-                interactionTimer += (Time.deltaTime / BOMB_DEFUSE_TIME);
+                interactionTimer += (Time.deltaTime / (BOMB_DEFUSE_TIME * (1f - skillController.GetDexterityBoost())));
                 hud.SetActionBarSlider(interactionTimer);
                 if (interactionTimer >= 1f)
                 {
@@ -710,7 +714,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             } else if (interactingWith == "Deploy") {
                 hud.ToggleActionBar(true, "USING...");
-                interactionTimer += (Time.deltaTime / DEPLOY_USE_TIME);
+                interactionTimer += (Time.deltaTime / (DEPLOY_USE_TIME * (1f - skillController.GetDexterityBoost())));
                 hud.SetActionBarSlider(interactionTimer);
                 if (interactionTimer >= 1f) {
                     DeployableScript d = activeInteractable.GetComponent<DeployableScript>();
@@ -724,7 +728,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             } else if (interactingWith == "Flare") {
                 hud.ToggleActionBar(true, "POPPING FLARE...");
-                interactionTimer += (Time.deltaTime / DEPLOY_USE_TIME);
+                interactionTimer += (Time.deltaTime / (DEPLOY_USE_TIME * (1f - skillController.GetDexterityBoost())));
                 hud.SetActionBarSlider(interactionTimer);
                 if (interactionTimer >= 1f)
                 {
@@ -736,7 +740,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             } else if (interactingWith == "Npc") {
                 hud.ToggleActionBar(true, "INTERACTING...");
-                interactionTimer += (Time.deltaTime / NPC_INTERACT_TIME);
+                interactionTimer += (Time.deltaTime / (NPC_INTERACT_TIME * (1f - skillController.GetDexterityBoost())));
                 hud.SetActionBarSlider(interactionTimer);
                 if (interactionTimer >= 1f)
                 {
