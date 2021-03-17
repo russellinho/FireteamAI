@@ -8,6 +8,7 @@ public class SkillController : MonoBehaviour
     public static float BOOSTER_LVL1_EFFECT = 0.05f;
     public static float BOOSTER_LVL2_EFFECT = 0.1f;
     public static float BOOSTER_LVL3_EFFECT = 0.2f;
+    private EncryptedFloat speedBoost;
     private EncryptedFloat damageBoost;
     public EncryptedFloat recoilBoost;
     public EncryptedFloat accuracyBoost;
@@ -261,6 +262,34 @@ public class SkillController : MonoBehaviour
         return 0f;
     }
 
+    public float GetNinjaSpeedBoost()
+    {
+        int equippedSuppressorCount = 0;
+        if (PlayerData.playerdata.primaryModInfo.SuppressorId != null && PlayerData.playerdata.primaryModInfo.SuppressorId != "") {
+            equippedSuppressorCount++;
+        }
+        if (PlayerData.playerdata.secondaryModInfo.SuppressorId != null && PlayerData.playerdata.secondaryModInfo.SuppressorId != "") {
+            equippedSuppressorCount++;
+        }
+        float totalSpeedBoost = 0f;
+        // Ninja (1/8)
+        if (PlayerData.playerdata.skillList["1/8"].Level == 1) {
+            for (int i = 0; i < equippedSuppressorCount; i++) {
+                totalSpeedBoost += 0.02f;
+            }
+        } else if (PlayerData.playerdata.skillList["1/8"].Level == 2) {
+            for (int i = 0; i < equippedSuppressorCount; i++) {
+                totalSpeedBoost += 0.04f;
+            }
+        } else if (PlayerData.playerdata.skillList["1/8"].Level == 3) {
+            for (int i = 0; i < equippedSuppressorCount; i++) {
+                totalSpeedBoost += 0.06f;
+            }
+        }
+        
+        return totalSpeedBoost;
+    }
+
     public int GetBoosterEffectLevel()
     {
         return PlayerData.playerdata.skillList["4/1"].Level;
@@ -298,13 +327,51 @@ public class SkillController : MonoBehaviour
             }
         }
 
+        float newSpeedBoost = 0f;
+        // Running on E (1/9)
+        if (PlayerData.playerdata.skillList["1/9"].Level == 1) {
+            if (health < 20) {
+                newSpeedBoost = Mathf.Clamp(Mathf.Pow(1.1f, 20 - health), 0f, 5f);
+            }
+        } else if (PlayerData.playerdata.skillList["1/9"].Level == 2) {
+            if (health < 40) {
+                newSpeedBoost = Mathf.Clamp(Mathf.Pow(1.09f, 40 - health), 0f, 15f);
+            }
+        } else if (PlayerData.playerdata.skillList["1/9"].Level == 3) {
+            if (health < 60) {
+                newSpeedBoost = Mathf.Clamp(Mathf.Pow(1.07f, 60 - health), 0f, 30f);
+            }
+        }
+
         newDamageBoost /= 100f;
         damageBoost = newDamageBoost;
+
+        newSpeedBoost /= 100f;
+        speedBoost = newSpeedBoost;
     }
 
     public float GetDamageBoost()
     {
         return 1f + damageBoost;
+    }
+
+    public float GetSpeedBoost()
+    {
+        return 1f + speedBoost;
+    }
+
+    public float GetArmorBoost()
+    {
+        if (PlayerData.playerdata.skillList["6/4"].Level == 1) {
+            return 0.1f;
+        } else if (PlayerData.playerdata.skillList["6/4"].Level == 2) {
+            return 0.2f;
+        } else if (PlayerData.playerdata.skillList["6/4"].Level == 3) {
+            return 0.3f;
+        } else if (PlayerData.playerdata.skillList["6/4"].Level == 4) {
+            return 0.4f;
+        }
+        return 0f;
     }
 
     public bool WasCriticalHit()
@@ -352,6 +419,18 @@ public class SkillController : MonoBehaviour
         return 0f;
     }
 
+    public float GetJumpBoost()
+    {
+        if (PlayerData.playerdata.skillList["1/6"].Level == 1) {
+            return 0.05f;
+        } else if (PlayerData.playerdata.skillList["1/6"].Level == 2) {
+            return 0.1f;
+        } else if (PlayerData.playerdata.skillList["1/6"].Level == 3) {
+            return 0.2f;
+        }
+        return 0f;
+    }
+
     public float GetFallDamageReduction()
     {
         if (PlayerData.playerdata.skillList["1/4"].Level == 1) {
@@ -360,5 +439,119 @@ public class SkillController : MonoBehaviour
             return 0.5f;
         }
         return 0f;
+    }
+
+    public float HandleAllyDeath()
+    {
+        float totalSpeedBoost = 0f;
+        // Contingency Time (0/11)
+        if (PlayerData.playerdata.skillList["0/11"].Level == 1) {
+            int deadPlayerCount = GetComponent<PlayerActionScript>().gameController.GetDeadPlayerCount();
+            for (int i = 0; i < deadPlayerCount; i++) {
+                totalSpeedBoost += 0.02f;
+            }
+        } else if (PlayerData.playerdata.skillList["0/11"].Level == 2) {
+            int deadPlayerCount = GetComponent<PlayerActionScript>().gameController.GetDeadPlayerCount();
+            for (int i = 0; i < deadPlayerCount; i++) {
+                totalSpeedBoost += 0.03f;
+            }
+        } else if (PlayerData.playerdata.skillList["0/11"].Level == 3) {
+            int deadPlayerCount = GetComponent<PlayerActionScript>().gameController.GetDeadPlayerCount();
+            for (int i = 0; i < deadPlayerCount; i++) {
+                totalSpeedBoost += 0.05f;
+            }
+        }
+        return totalSpeedBoost;
+    }
+
+    public int GetHealthCaddyBoost()
+    {
+        int boost = 0;
+        if (PlayerData.playerdata.skillList["4/4"].Level == 1) {
+            boost = 1;
+        } else if (PlayerData.playerdata.skillList["4/4"].Level == 2) {
+            boost = 2;
+        } else if (PlayerData.playerdata.skillList["4/4"].Level == 3) {
+            boost = 3;
+        }
+        return boost;
+    }
+
+    public int GetAmmoCaddyBoost()
+    {
+        int boost = 0;
+        if (PlayerData.playerdata.skillList["6/9"].Level == 1) {
+            boost = 1;
+        } else if (PlayerData.playerdata.skillList["6/9"].Level == 2) {
+            boost = 2;
+        } else if (PlayerData.playerdata.skillList["6/9"].Level == 3) {
+            boost = 3;
+        }
+        return boost;
+    }
+
+    public int GetDigitalNomadBoost()
+    {
+        int boost = 0;
+        if (PlayerData.playerdata.skillList["2/8"].Level == 1) {
+            boost = 1;
+        } else if (PlayerData.playerdata.skillList["2/8"].Level == 2) {
+            boost = 2;
+        } else if (PlayerData.playerdata.skillList["2/8"].Level == 3) {
+            boost = 3;
+        }
+        return boost;
+    }
+
+    public float GetTechMasteryBoost()
+    {
+        float boost = 0f;
+        if (PlayerData.playerdata.skillList["2/1"].Level == 1) {
+            return 0.1f;
+        } else if (PlayerData.playerdata.skillList["2/1"].Level == 2) {
+            return 0.2f;
+        } else if (PlayerData.playerdata.skillList["2/1"].Level == 3) {
+            return 0.3f;
+        }
+        return boost;
+    }
+
+    public float GetTechDeploySpeedBoost()
+    {
+        float boost = 0f;
+        if (PlayerData.playerdata.skillList["2/1"].Level == 1) {
+            return 0.25f;
+        } else if (PlayerData.playerdata.skillList["2/1"].Level == 2) {
+            return 0.5f;
+        } else if (PlayerData.playerdata.skillList["2/1"].Level == 3) {
+            return 1f;
+        }
+        return boost;
+    }
+
+    public float GetMeleeResistance()
+    {
+        if (PlayerData.playerdata.skillList["6/6"].Level == 1) {
+            return 0.1f;
+        } else if (PlayerData.playerdata.skillList["6/6"].Level == 2) {
+            return 0.25f;
+        } else if (PlayerData.playerdata.skillList["6/6"].Level == 3) {
+            return 0.5f;
+        }
+        return 0f;
+    }
+
+    public int GetKeenEyesMultiplier()
+    {
+        if (PlayerData.playerdata.skillList["5/9"].Level == 1) {
+            return 2;
+        } else if (PlayerData.playerdata.skillList["5/9"].Level == 2) {
+            return 3;
+        } else if (PlayerData.playerdata.skillList["5/9"].Level == 3) {
+            return 5;
+        } else if (PlayerData.playerdata.skillList["5/9"].Level == 4) {
+            return 8;
+        }
+        return 1;
     }
 }

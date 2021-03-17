@@ -12,6 +12,7 @@ using NpcActionState = NpcScript.ActionStates;
 using FlightMode = BlackHawkScript.FlightMode;
 using UnityEngine.Rendering.PostProcessing;
 using Koobando.AntiCheat;
+using StatBoosts = EquipmentScript.StatBoosts;
 
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
@@ -138,7 +139,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private float underwaterTimer;
     private float underwaterTakeDamageTimer;
     private bool isInWater;
-
+    public float deadTest;
 
     public void PreInitialize()
     {
@@ -163,6 +164,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void SyncDataOnJoin(bool init) {
         pView.RPC("RpcAskServerForDataPlayer", RpcTarget.Others, init);
+        if (init) {
+            UpdateSpeedBoostFromSkills();
+        }
     }
 
     public void Initialize()
@@ -533,13 +537,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 
         // Send over network
-        pView.RPC("RpcTakeDamage", RpcTarget.All, d, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit);
+        pView.RPC("RpcTakeDamage", RpcTarget.All, d, useArmor, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit);
 
         skillController.HandleHealthChangeEvent(health);
     }
 
     [PunRPC]
-    void RpcTakeDamage(int d, float hitFromX, float hitFromY, float hitFromZ, int hitBy, int bodyPartHit)
+    void RpcTakeDamage(int d, bool useArmor, float hitFromX, float hitFromY, float hitFromZ, int hitBy, int bodyPartHit)
     {
         if (gameObject.layer == 0) return;
         ResetHitTimer();
@@ -547,6 +551,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (pView.IsMine)
         {
             audioController.PlayHitSound();
+            // If it was a melee attack, apply heavyweight skill effect
+            if (hitBy == 2 && useArmor) {
+                d = (int)((float)d * (1f - skillController.GetMeleeResistance()));
+            }
         }
         // if (!godMode)
         // {
@@ -1205,6 +1213,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             RemovePlayerAsHost(otherPlayer.ActorNumber);
             SetTeamHost();
         }
+        UpdateSpeedBoostFromSkills();
     }
     
     void RemovePlayerAsHost(int pId) {
@@ -1299,6 +1308,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // transform.position = gameController.spawnLocation.position;
         fpc.m_MouseLook.Init(fpc.charTransform, fpc.spineTransform, fpc.fpcTransformSpine, fpc.fpcTransformBody);
         LeaveSpectatorMode();
+        UpdateSpeedBoostFromSkills();
         transform.position = gameController.spawnLocation.position;
         //weaponScript.DrawWeapon(1);
         StartCoroutine(SpawnInvincibilityRoutine());
@@ -1454,7 +1464,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void updatePlayerSpeed(){
         originalSpeed = playerScript.speed;
-        totalSpeedBoost = originalSpeed * itemSpeedModifier * weaponSpeedModifier;
+        totalSpeedBoost = originalSpeed * skillController.GetSpeedBoost() * itemSpeedModifier * weaponSpeedModifier;
     }
 
     public float GetDetectionRate() {
@@ -1561,7 +1571,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 if (hit.transform.gameObject.layer == ENEMY_LAYER) {
                     BetaEnemyScript b = hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>();
                     if (b != null) {
-                        b.MarkEnemyOutline();
+                        b.MarkEnemyOutline(skillController.GetKeenEyesMultiplier());
                     }
                 }
             }
@@ -1636,6 +1646,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcTriggerPlayerDownAlert(string playerDownName) {
         if (gameObject.layer == 0) return;
         hud.MessagePopup(playerDownName + " is down!");
+        UpdateSpeedBoostFromSkills();
     }
 
     void ResetEnvDamageTimer() {
@@ -1862,6 +1873,27 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 			}
 		}
 	}
+
+    public void OnPlayerLeftMatch()
+    {
+        pView.RPC("RpcOnPlayerLeftMatch", RpcTarget.Others);
+    }
+
+    [PunRPC]
+    void RpcOnPlayerLeftMatch()
+    {
+        if (gameObject.layer == 0) return;
+        UpdateSpeedBoostFromSkills();
+    }
+
+    // Called when a player dies, leaves the game, or this player respawns
+    public void UpdateSpeedBoostFromSkills()
+    {
+        float skillSpeedBoost = skillController.HandleAllyDeath();
+        StatBoosts newTotalStatBoosts = equipmentScript.CalculateStatBoostsWithCurrentEquips();
+        playerScript.stats.setSpeed(newTotalStatBoosts.speedBoost + skillSpeedBoost);
+        playerScript.updateStats();
+    }
 
     void ToggleHumanCollision(bool b)
 	{

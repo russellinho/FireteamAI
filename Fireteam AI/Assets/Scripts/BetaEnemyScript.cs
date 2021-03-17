@@ -2430,14 +2430,14 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	// Use when a player marks an enemy in stealth mode
-	public void MarkEnemyOutline() {
-		pView.RPC("RpcMarkEnemyOutline", RpcTarget.All, gameControllerScript.teamMap);
+	public void MarkEnemyOutline(int timeMultiplier) {
+		pView.RPC("RpcMarkEnemyOutline", RpcTarget.All, gameControllerScript.teamMap, timeMultiplier);
 	}
 
 	[PunRPC]
-	void RpcMarkEnemyOutline(string team) {
+	void RpcMarkEnemyOutline(string team, int timeMultiplier) {
         if (team != gameControllerScript.teamMap) return;
-        detectionOutlineTimer = DETECTION_OUTLINE_MAX_TIME;
+        detectionOutlineTimer = DETECTION_OUTLINE_MAX_TIME * timeMultiplier;
 	}
 
 	void DropAmmoPickup() {

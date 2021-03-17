@@ -917,7 +917,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
 
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), newTotalStatBoosts.armorBoost, 0);
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), newTotalStatBoosts.armorBoost + playerActionScript.skillController.GetArmorBoost(), 0);
         playerScript.updateStats();
     }
 
@@ -942,7 +942,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
 
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), newTotalStatBoosts.armorBoost, 0);
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), newTotalStatBoosts.armorBoost + playerActionScript.skillController.GetArmorBoost(), 0);
         playerScript.updateStats();
     }
 
@@ -975,7 +975,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
 
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), newTotalStatBoosts.armorBoost, 0);
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), newTotalStatBoosts.armorBoost + playerActionScript.skillController.GetArmorBoost(), 0);
         playerScript.updateStats();
     }
 
@@ -1115,7 +1115,7 @@ public class EquipmentScript : MonoBehaviour
     //     pView.RPC("RpcDespawnPlayer", RpcTarget.All);
     // }
 
-    StatBoosts CalculateStatBoostsWithCurrentEquips() {
+    public StatBoosts CalculateStatBoostsWithCurrentEquips() {
         float totalArmorBoost = 0f;
         float totalSpeedBoost = 0f;
         float totalStaminaBoost = 0f;

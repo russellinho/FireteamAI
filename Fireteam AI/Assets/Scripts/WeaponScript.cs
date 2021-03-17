@@ -101,7 +101,17 @@ public class WeaponScript : MonoBehaviour
         currentAmmoSupport = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].clipCapacity;
         totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo - currentAmmoPrimary;
         totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo - currentAmmoSecondary;
-        totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo - currentAmmoSupport;
+        int supportAmmoBoost = 0;
+        if (PlayerData.playerdata.info.EquippedSupport == "First Aid Kit") {
+            supportAmmoBoost = playerActionScript.skillController.GetHealthCaddyBoost();
+        }
+        if (PlayerData.playerdata.info.EquippedSupport == "Ammo Bag") {
+            supportAmmoBoost = playerActionScript.skillController.GetAmmoCaddyBoost();
+        }
+        if (PlayerData.playerdata.info.EquippedSupport == "Bubble Shield") {
+            supportAmmoBoost = playerActionScript.skillController.GetDigitalNomadBoost();
+        }
+        totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo + supportAmmoBoost - currentAmmoSupport;
         equippedWepInGame = equippedPrimaryWeapon;
         //DrawWeapon(1);
         InitializeWeapon();

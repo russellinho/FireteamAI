@@ -319,7 +319,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                         }
                         else
                         {
-                            m_MoveDir.y = m_JumpSpeed;
+                            m_MoveDir.y = m_JumpSpeed * (1f + playerActionScript.skillController.GetJumpBoost());
                             PlayJumpSound();
                             m_Jumping = true;
                             // animator.SetTrigger("Jump");

@@ -1620,6 +1620,17 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		BetaEnemyScript.NUMBER_KILLED = 0;
 	}
 
+	public int GetDeadPlayerCount()
+	{
+		int count = 0;
+		foreach (PlayerStat stat in GameControllerScript.playerList.Values) {
+			if (stat != null && stat.objRef != null && stat.objRef.GetComponent<PlayerActionScript>().health <= 0) {
+				count++;
+			}
+		}
+		return count;
+	}
+
 }
 
 public class PlayerStat {
