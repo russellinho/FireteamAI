@@ -1763,7 +1763,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // Sync skill boosts
         if (skillController.GetThisPlayerHackerBoost() == 0) {
             skillController.SetThisPlayerHackerBoost(myHackerBoost);
-            skillController.AddHackerBoost(myHackerBoost);
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddHackerBoost(myHackerBoost);
         }
 
         if (health <= 0) {
