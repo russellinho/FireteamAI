@@ -24,7 +24,7 @@ public class SkillController : MonoBehaviour
     {
         MunitionsEngineeringRefresh();
         if (Input.GetKeyDown(KeyCode.H)) {
-            Debug.LogError("Boost: " + GetHackerBoost());
+            Debug.LogError("Boost: " + GetHackerBoost() + " | This stored: " + GetThisPlayerHackerBoost());
         }
     }
 
