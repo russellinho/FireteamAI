@@ -698,9 +698,9 @@ public class SkillController : MonoBehaviour
     {
         if (PlayerData.playerdata.skillList["2/5"].Level == 1) {
             return 5;
-        } else if (PlayerData.playerdata.skillList["2/5"].Level == 1) {
+        } else if (PlayerData.playerdata.skillList["2/5"].Level == 2) {
             return 8;
-        } else if (PlayerData.playerdata.skillList["2/5"].Level == 1) {
+        } else if (PlayerData.playerdata.skillList["2/5"].Level == 3) {
             return 12;
         }
         return 0;
