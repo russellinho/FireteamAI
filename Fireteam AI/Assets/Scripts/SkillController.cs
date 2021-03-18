@@ -14,6 +14,19 @@ public class SkillController : MonoBehaviour
     public EncryptedFloat accuracyBoost;
     public EncryptedFloat throwForceBoost;
     public EncryptedFloat deploymentTimeBoost;
+    private float munitionsEngineeringTimer;
+
+    // Collective boosts
+    private EncryptedInt hackerBoost;
+    private EncryptedInt storedHackerBoost;
+
+    void Update()
+    {
+        MunitionsEngineeringRefresh();
+        if (Input.GetKeyDown(KeyCode.H)) {
+            Debug.LogError("Boost: " + GetHackerBoost());
+        }
+    }
 
     public void InitializePassiveSkills(int weaponCategory)
     {
@@ -627,4 +640,80 @@ public class SkillController : MonoBehaviour
         }
         return false;
     }
+
+    public int GetMunitionsEngineeringLevel()
+    {
+        return PlayerData.playerdata.skillList["2/3"].Level;
+    }
+
+    public bool MunitionsEngineeringFlag()
+    {
+        if (PlayerData.playerdata.skillList["2/3"].Level == 1) {
+            if (munitionsEngineeringTimer > 20f) {
+                return true;
+            }
+            return false;
+        } else if (PlayerData.playerdata.skillList["2/3"].Level == 2) {
+            if (munitionsEngineeringTimer > 18f) {
+                return true;
+            }
+            return false;
+        } else if (PlayerData.playerdata.skillList["2/3"].Level == 3) {
+            if (munitionsEngineeringTimer > 15f) {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    public void MunitionsEngineeringRefresh()
+    {
+        munitionsEngineeringTimer += Time.deltaTime;
+    }
+
+    public void MunitionsEngineeringReset()
+    {
+        munitionsEngineeringTimer = 0f;
+    }
+
+    // Collective boosts
+
+    public void AddHackerBoost(int val)
+    {
+        hackerBoost += val;
+    }
+
+    public void RemoveHackerBoost(int val)
+    {
+        hackerBoost -= val;
+    }
+
+    public int GetHackerBoost()
+    {
+        return hackerBoost;
+    }
+
+    public int GetMyHackerBoost()
+    {
+        if (PlayerData.playerdata.skillList["2/5"].Level == 1) {
+            return 5;
+        } else if (PlayerData.playerdata.skillList["2/5"].Level == 1) {
+            return 8;
+        } else if (PlayerData.playerdata.skillList["2/5"].Level == 1) {
+            return 12;
+        }
+        return 0;
+    }
+
+    public void SetThisPlayerHackerBoost(int val)
+    {
+        storedHackerBoost = val;
+    }
+
+    public int GetThisPlayerHackerBoost()
+    {
+        return storedHackerBoost;
+    }
+
 }

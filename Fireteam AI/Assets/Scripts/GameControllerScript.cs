@@ -687,6 +687,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		if (GameControllerScript.playerList[otherPlayer.ActorNumber].objRef != null) {
+			// Remove collective skill boosts here before destroying
+			SkillController theirSkills = GameControllerScript.playerList[otherPlayer.ActorNumber].objRef.GetComponent<SkillController>();
+			SkillController mySkills = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>();
+			mySkills.RemoveHackerBoost(theirSkills.GetThisPlayerHackerBoost());
+
 			Destroy (GameControllerScript.playerList[otherPlayer.ActorNumber].objRef);
 		}
 		GameControllerScript.playerList.Remove (otherPlayer.ActorNumber);

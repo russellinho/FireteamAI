@@ -1747,16 +1747,25 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             }
         }
-		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept);
+		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept,
+                    skillController.GetMyHackerBoost());
 	}
 
 	[PunRPC]
-	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept) {
+	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept,
+        int myHackerBoost) {
         this.health = health;
         this.escapeValueSent = escapeValueSent;
         GameControllerScript.playerList[pView.OwnerActorNr].kills = kills;
         GameControllerScript.playerList[pView.OwnerActorNr].deaths = deaths;
         this.escapeAvailablePopup = escapeAvailablePopup;
+
+        // Sync skill boosts
+        if (skillController.GetThisPlayerHackerBoost() == 0) {
+            skillController.SetThisPlayerHackerBoost(myHackerBoost);
+            skillController.AddHackerBoost(myHackerBoost);
+        }
+
         if (health <= 0) {
             SetPlayerDead();
         } else if (waitForAccept) {

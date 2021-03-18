@@ -187,6 +187,8 @@ public class WeaponScript : MonoBehaviour
         // Debug.Log("isCockingGrenade: " + weaponActionScript.isCockingGrenade);
         // Debug.Log("isCocking: " + weaponActionScript.isCocking);
         // Debug.Log("isUsingBooster: " + weaponActionScript.isUsingBooster);
+        UpdateMunitionsEngineering();
+
         if (CheckCanSwitchWeapon()) {
             if (PlayerPreferences.playerPreferences.KeyWasPressed("Primary") || (currentlyEquippedType == 4 && weaponActionScript.totalAmmoLeft <= 0 && weaponActionScript.currentAmmo <= 0)) {
                 DrawPrimary();
@@ -197,6 +199,42 @@ public class WeaponScript : MonoBehaviour
             }
         }
         HideMeleeWeapon();
+    }
+
+    void UpdateMunitionsEngineering()
+    {
+        if (playerActionScript.skillController.MunitionsEngineeringFlag()) {
+            int lvl = playerActionScript.skillController.GetMunitionsEngineeringLevel();
+            if (lvl == 1) {
+                RegenerateAmmo(1);
+            } else if (lvl == 2) {
+                RegenerateAmmo(2);
+            } else if (lvl == 3) {
+                RegenerateAmmo(3);
+            }
+            playerActionScript.skillController.MunitionsEngineeringReset();
+        }
+    }
+
+    void RegenerateAmmo(int ammo)
+    {
+        if (currentlyEquippedType == 1) {
+            int maxAmmo = GetLoadedMaxAmmoForCurrentWep();
+            weaponActionScript.totalAmmoLeft += ammo;
+            if (weaponActionScript.totalAmmoLeft > maxAmmo) {
+                weaponActionScript.totalAmmoLeft = maxAmmo;
+            }
+            SyncAmmoCounts();
+        } else if (currentlyEquippedType == 2) {
+            if (weaponActionScript.weaponStats.category != "Launcher") {
+                int maxAmmo = GetLoadedMaxAmmoForCurrentWep();
+                weaponActionScript.totalAmmoLeft += ammo;
+                if (weaponActionScript.totalAmmoLeft > maxAmmo) {
+                    weaponActionScript.totalAmmoLeft = maxAmmo;
+                }
+                SyncAmmoCounts();
+            }
+        }
     }
 
     // If the user has a grenade cocked or is currently loading a weapon, don't let him switch weapons
@@ -1172,6 +1210,11 @@ public class WeaponScript : MonoBehaviour
 
     void SyncWeps(string equippedSuppressor, string equippedSight) {
         WeaponRefresh(equippedSuppressor, equippedSight);
+    }
+
+    public int GetLoadedMaxAmmoForCurrentWep()
+    {
+        return weaponActionScript.weaponStats.maxAmmo - weaponActionScript.weaponStats.clipCapacity;
     }
 
 }

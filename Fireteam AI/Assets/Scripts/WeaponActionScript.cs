@@ -808,7 +808,11 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                                     pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, (bodyPartIdHit == HEAD_TARGET));
                                     b.PlayGruntSound();
                                     b.SetAlerted();
-                                    b.TakeDamage((int)(totalDamageDealt * playerActionScript.skillController.GetDamageBoost()), transform.position, 0, (headHit ? HEAD_TARGET : bodyPartIdHit));
+                                    float shootToKillBoost = 1f;
+                                    if (bodyPartIdHit != HEAD_TARGET && bodyPartIdHit != TORSO_TARGET && bodyPartIdHit != PELVIS_TARGET) {
+                                        shootToKillBoost += playerActionScript.skillController.GetShootToKillBoost();
+                                    }
+                                    b.TakeDamage((int)(totalDamageDealt * playerActionScript.skillController.GetDamageBoost() * shootToKillBoost), transform.position, 0, (headHit ? HEAD_TARGET : bodyPartIdHit));
                                     if (b.health <= 0)
                                     {
                                         BetaEnemyScript.NUMBER_KILLED++;

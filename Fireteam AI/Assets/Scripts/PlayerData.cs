@@ -549,6 +549,11 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().gameController.ResetEscapeValues ();
             PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().OnPlayerLeftRoom(PhotonNetwork.CurrentRoom.GetPlayer(actorNo));
             if (playerToDestroy != null) {
+                // Remove collective skill boosts here before destroying
+                SkillController theirSkills = playerToDestroy.GetComponent<SkillController>();
+                SkillController mySkills = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>();
+                mySkills.RemoveHackerBoost(theirSkills.GetThisPlayerHackerBoost());
+
                 Destroy(playerToDestroy);
             }
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
