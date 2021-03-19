@@ -522,6 +522,27 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         } else {
             hudScript.OnScreenEffect(GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills + " KILLS", true);
         }
+        // Recover health from Blood Leech skill
+        if (playerActionScript.health > 0 && playerActionScript.health < 100) {
+            int lvl = playerActionScript.skillController.GetBloodLeechLevel();
+            if (lvl == 1) {
+                if (GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills % 10 == 0) {
+                    playerActionScript.SetHealth(playerActionScript.health + 2);
+                }
+            } else if (lvl == 2) {
+                if (GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills % 8 == 0) {
+                    playerActionScript.SetHealth(playerActionScript.health + 3);
+                }
+            } else if (lvl == 3) {
+                if (GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills % 6 == 0) {
+                    playerActionScript.SetHealth(playerActionScript.health + 4);
+                }
+            } else if (lvl == 4) {
+                if (GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills % 4 == 0) {
+                    playerActionScript.SetHealth(playerActionScript.health + 5);
+                }
+            }
+        }
     }
 
     public void SetMouseDynamicsForMelee(bool b) {
@@ -591,7 +612,11 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                         hudScript.InstantiateHitmarker();
                         // audioController.PlayHitmarkerSound();
-                        b.TakeDamage((int)(meleeStats.damage * (1f + playerActionScript.skillController.GetMeleeDamageBoost())), transform.position, 2, 0);
+                        float hitmanDamageBoost = 1f;
+                        if (b.isOutlined) {
+                            hitmanDamageBoost += playerActionScript.skillController.GetHitmanDamageBoost();
+                        }
+                        b.TakeDamage((int)(meleeStats.damage * (1f + playerActionScript.skillController.GetMeleeDamageBoost()) * hitmanDamageBoost), transform.position, 2, 0, playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
                         b.PlayGruntSound();
                         b.SetAlerted();
                         if (b.health <= 0 && beforeHp > 0)
@@ -666,7 +691,20 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                         if (bodyPartIdHit != HEAD_TARGET && bodyPartIdHit != TORSO_TARGET && bodyPartIdHit != PELVIS_TARGET) {
                             shootToKillBoost += playerActionScript.skillController.GetShootToKillBoost();
                         }
-                        b.TakeDamage((int)(thisDamageDealt * playerActionScript.skillController.GetDamageBoost() * sniperAmplificationBoost * shootToKillBoost), transform.position, 0, bodyPartIdHit);
+                        float silentKillerBoost = 1f;
+                        if (weaponMods.suppressorRef != null) {
+                            silentKillerBoost += playerActionScript.skillController.GetSilentKillerBoost();
+                        }
+                        float hitmanDamageBoost = 1f;
+                        if (b.isOutlined) {
+                            hitmanDamageBoost += playerActionScript.skillController.GetHitmanDamageBoost();
+                        }
+                        float oneShotOneKillBoost = 1f;
+                        if (playerActionScript.skillController.OneShotOneKillReady()) {
+                            oneShotOneKillBoost += playerActionScript.skillController.GetOneShotOneKillDamageBoost();
+                            playerActionScript.skillController.ResetOneShotOneKillTimer();
+                        }
+                        b.TakeDamage((int)(thisDamageDealt * playerActionScript.skillController.GetDamageBoost() * sniperAmplificationBoost * shootToKillBoost * silentKillerBoost * hitmanDamageBoost * oneShotOneKillBoost), transform.position, 0, bodyPartIdHit, playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
                         b.PlayGruntSound();
                         b.SetAlerted();
                         if (b.health <= 0 && beforeHp > 0)
@@ -812,7 +850,20 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                                     if (bodyPartIdHit != HEAD_TARGET && bodyPartIdHit != TORSO_TARGET && bodyPartIdHit != PELVIS_TARGET) {
                                         shootToKillBoost += playerActionScript.skillController.GetShootToKillBoost();
                                     }
-                                    b.TakeDamage((int)(totalDamageDealt * playerActionScript.skillController.GetDamageBoost() * shootToKillBoost), transform.position, 0, (headHit ? HEAD_TARGET : bodyPartIdHit));
+                                    float silentKillerBoost = 1f;
+                                    if (weaponMods.suppressorRef != null) {
+                                        silentKillerBoost += playerActionScript.skillController.GetSilentKillerBoost();
+                                    }
+                                    float hitmanDamageBoost = 1f;
+                                    if (b.isOutlined) {
+                                        hitmanDamageBoost += playerActionScript.skillController.GetHitmanDamageBoost();
+                                    }
+                                    float oneShotOneKillBoost = 1f;
+                                    if (playerActionScript.skillController.OneShotOneKillReady()) {
+                                        oneShotOneKillBoost += playerActionScript.skillController.GetOneShotOneKillDamageBoost();
+                                        playerActionScript.skillController.ResetOneShotOneKillTimer();
+                                    }
+                                    b.TakeDamage((int)(totalDamageDealt * playerActionScript.skillController.GetDamageBoost() * shootToKillBoost * silentKillerBoost * hitmanDamageBoost * oneShotOneKillBoost), transform.position, 0, (headHit ? HEAD_TARGET : bodyPartIdHit), playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
                                     if (b.health <= 0)
                                     {
                                         BetaEnemyScript.NUMBER_KILLED++;

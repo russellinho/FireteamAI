@@ -1139,6 +1139,12 @@ public class WeaponScript : MonoBehaviour
         totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo - currentAmmoPrimary;
     }
 
+    public void RefillAmmoOnPrimary(int amt)
+    {
+        totalPrimaryAmmoLeft += amt;
+        totalPrimaryAmmoLeft = Mathf.Min(InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo - currentAmmoPrimary, totalPrimaryAmmoLeft);
+    }
+
     public void MaxRefillAmmoOnSecondary() {
         totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo - currentAmmoSecondary;
     }

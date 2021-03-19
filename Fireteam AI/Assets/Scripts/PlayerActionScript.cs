@@ -282,6 +282,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
 
+        UpdateRegeneration();
         UnlockInteractionLock();
         UpdateEnvDamageTimer();
         UpdateUnderwaterTimer();
@@ -534,9 +535,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (hitBy == 0 && skillController.BulletSpongeAbsorbed()) {
             return;
         }
+        skillController.RegenerationReset();
         // Calculate damage done including armor
         if (useArmor) {
-            float damageReduction = playerScript.armor - 1f;
+            float damageReduction = ((playerScript.armor + skillController.GetHeadstrongBoost()) * skillController.GetArmorBoost()) - 1f;
+            damageReduction = Mathf.Clamp(damageReduction, 0f, 1f);
             d = Mathf.RoundToInt((float)d * (1f - damageReduction));
         }
 
@@ -939,6 +942,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         boostTimer = 0f;
     }
 
+    public void SetHealth(int h)
+    {
+        pView.RPC("RpcSetHealth", RpcTarget.All, h);
+    }
+
     [PunRPC]
     void RpcSetHealth(int h)
     {
@@ -1084,10 +1092,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         {
             aud.clip = ammoPickupSound;
             aud.Play();
+            int loadedMaxAmmo = InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedPrimary].maxAmmo - InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedPrimary].clipCapacity;
+            int restoreAmt = Mathf.Max(1, (int)((float)(loadedMaxAmmo / 10) * (1f + skillController.GetResourcefulBoost())));
             if (weaponScript.currentlyEquippedType == 1) {
-                wepActionScript.totalAmmoLeft = wepActionScript.weaponStats.maxAmmo - wepActionScript.currentAmmo;
+                wepActionScript.totalAmmoLeft += restoreAmt;
+                wepActionScript.totalAmmoLeft = Mathf.Min(wepActionScript.totalAmmoLeft, loadedMaxAmmo);
             } else {
-                weaponScript.MaxRefillAmmoOnPrimary();
+                weaponScript.RefillAmmoOnPrimary(restoreAmt);
             }
             pView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId, gameController.teamMap);
         }
@@ -1748,12 +1759,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             }
         }
 		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept,
-                    skillController.GetMyHackerBoost());
+                    skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost());
 	}
 
 	[PunRPC]
 	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept,
-        int myHackerBoost) {
+        int myHackerBoost, float myHeadstrongBoost, float myResourcefulBoost) {
         this.health = health;
         this.escapeValueSent = escapeValueSent;
         GameControllerScript.playerList[pView.OwnerActorNr].kills = kills;
@@ -1764,6 +1775,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (skillController.GetThisPlayerHackerBoost() == 0) {
             skillController.SetThisPlayerHackerBoost(myHackerBoost);
             PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddHackerBoost(myHackerBoost);
+        }
+        if (skillController.GetThisPlayerHeadstrongBoost() == 0f) {
+            skillController.SetThisPlayerHeadstrongBoost(myHeadstrongBoost);
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddHeadstrongBoost(myHeadstrongBoost);
+        }
+        if (skillController.GetThisPlayerResourcefulBoost() == 0F) {
+            skillController.SetThisPlayerResourcefulBoost(myResourcefulBoost);
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddResourcefulBoost(myResourcefulBoost);
         }
 
         if (health <= 0) {
@@ -1957,6 +1976,34 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public bool IsInWater()
     {
         return isInWater;
+    }
+
+    void UpdateRegeneration()
+    {
+        if (skillController.RegenerationFlag()) {
+            int lvl = skillController.GetRegenerationLevel();
+            if (lvl == 1) {
+                RegenerateHealth(2);
+            } else if (lvl == 2) {
+                RegenerateHealth(4);
+            } else if (lvl == 3) {
+                RegenerateHealth(6);
+            } else if (lvl == 4) {
+                RegenerateHealth(8);
+            } else if (lvl == 5) {
+                RegenerateHealth(10);
+            }
+            skillController.RegenerationReset();
+        }
+    }
+
+    void RegenerateHealth(int health)
+    {
+        if (this.health < 100 && this.health > 0) {
+            this.health += health;
+            int newHealth = this.health;
+            pView.RPC("RpcSetHealth", RpcTarget.Others, newHealth);
+        }
     }
 
 }

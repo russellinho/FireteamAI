@@ -5,27 +5,34 @@ using Koobando.AntiCheat;
 
 public class SkillController : MonoBehaviour
 {
+    private const float ONE_SHOT_ONE_KILL_TIME = 10f;
     public static float BOOSTER_LVL1_EFFECT = 0.05f;
     public static float BOOSTER_LVL2_EFFECT = 0.1f;
     public static float BOOSTER_LVL3_EFFECT = 0.2f;
     private EncryptedFloat speedBoost;
     private EncryptedFloat damageBoost;
+    private EncryptedFloat armorBoost;
     public EncryptedFloat recoilBoost;
     public EncryptedFloat accuracyBoost;
     public EncryptedFloat throwForceBoost;
     public EncryptedFloat deploymentTimeBoost;
     private float munitionsEngineeringTimer;
+    private float regenerationTimer;
+    private float oneShotOneKillTimer;
 
     // Collective boosts
     private EncryptedInt hackerBoost;
     private EncryptedInt storedHackerBoost;
+    private EncryptedFloat headstrongBoost;
+    private EncryptedFloat storedHeadstrongBoost;
+    private EncryptedFloat resourcefulBoost;
+    private EncryptedFloat storedResourcefulBoost;
 
     void Update()
     {
         MunitionsEngineeringRefresh();
-        if (Input.GetKeyDown(KeyCode.H)) {
-            Debug.LogError("Boost: " + GetHackerBoost() + " | This stored: " + GetThisPlayerHackerBoost());
-        }
+        RegenerationRefresh();
+        UpdateOneShotOneKillTimer();
     }
 
     public void InitializePassiveSkills(int weaponCategory)
@@ -369,11 +376,30 @@ public class SkillController : MonoBehaviour
             }
         }
 
+        float newArmorBoost = 0f;
+        // Crunch Time (6/7)
+        if (PlayerData.playerdata.skillList["6/7"].Level == 1) {
+            if (health < 20) {
+                newArmorBoost = Mathf.Clamp(Mathf.Pow(1.15f, 20 - health), 0f, 10f);
+            }
+        } else if (PlayerData.playerdata.skillList["6/7"].Level == 2) {
+            if (health < 40) {
+                newArmorBoost = Mathf.Clamp(Mathf.Pow(1.09f, 40 - health), 0f, 20f);
+            }
+        } else if (PlayerData.playerdata.skillList["6/7"].Level == 3) {
+            if (health < 60) {
+                newArmorBoost = Mathf.Clamp(Mathf.Pow(1.065f, 60 - health), 0f, 30f);
+            }
+        }
+
         newDamageBoost /= 100f;
         damageBoost = newDamageBoost;
 
         newSpeedBoost /= 100f;
         speedBoost = newSpeedBoost;
+
+        newArmorBoost /= 100f;
+        armorBoost = newArmorBoost;
     }
 
     public float GetDamageBoost()
@@ -388,6 +414,11 @@ public class SkillController : MonoBehaviour
 
     public float GetArmorBoost()
     {
+        return 1f + armorBoost;
+    }
+
+    public float GetOverallArmorBoost()
+    {
         if (PlayerData.playerdata.skillList["6/4"].Level == 1) {
             return 0.1f;
         } else if (PlayerData.playerdata.skillList["6/4"].Level == 2) {
@@ -396,6 +427,30 @@ public class SkillController : MonoBehaviour
             return 0.3f;
         } else if (PlayerData.playerdata.skillList["6/4"].Level == 4) {
             return 0.4f;
+        }
+        return 0f;
+    }
+
+    public float GetArmorAmplificationBoost()
+    {
+        if (PlayerData.playerdata.skillList["6/5"].Level == 1) {
+            return 0.5f;
+        } else if (PlayerData.playerdata.skillList["6/5"].Level == 2) {
+            return 1f;
+        } else if (PlayerData.playerdata.skillList["6/5"].Level == 3) {
+            return 2f;
+        }
+        return 0f;
+    }
+
+    public float GetSilentKillerBoost()
+    {
+        if (PlayerData.playerdata.skillList["5/4"].Level == 1) {
+            return 0.1f;
+        } else if (PlayerData.playerdata.skillList["5/4"].Level == 2) {
+            return 0.2f;
+        } else if (PlayerData.playerdata.skillList["5/4"].Level == 3) {
+            return 0.3f;
         }
         return 0f;
     }
@@ -646,6 +701,11 @@ public class SkillController : MonoBehaviour
         return PlayerData.playerdata.skillList["2/3"].Level;
     }
 
+    public int GetRegenerationLevel()
+    {
+        return PlayerData.playerdata.skillList["4/2"].Level;
+    }
+
     public bool MunitionsEngineeringFlag()
     {
         if (PlayerData.playerdata.skillList["2/3"].Level == 1) {
@@ -667,14 +727,55 @@ public class SkillController : MonoBehaviour
         return false;
     }
 
+    public bool RegenerationFlag()
+    {
+        if (PlayerData.playerdata.skillList["4/2"].Level == 1) {
+            if (regenerationTimer > 20f) {
+                return true;
+            }
+            return false;
+        } else if (PlayerData.playerdata.skillList["4/2"].Level == 2) {
+            if (regenerationTimer > 20f) {
+                return true;
+            }
+            return false;
+        } else if (PlayerData.playerdata.skillList["4/2"].Level == 3) {
+            if (regenerationTimer > 18f) {
+                return true;
+            }
+            return false;
+        } else if (PlayerData.playerdata.skillList["4/2"].Level == 4) {
+            if (regenerationTimer > 17f) {
+                return true;
+            }
+            return false;
+        } else if (PlayerData.playerdata.skillList["4/2"].Level == 5) {
+            if (regenerationTimer > 15f) {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
     public void MunitionsEngineeringRefresh()
     {
         munitionsEngineeringTimer += Time.deltaTime;
     }
 
+    public void RegenerationRefresh()
+    {
+        regenerationTimer += Time.deltaTime;
+    }
+
     public void MunitionsEngineeringReset()
     {
         munitionsEngineeringTimer = 0f;
+    }
+
+    public void RegenerationReset()
+    {
+        regenerationTimer = 0f;
     }
 
     // Collective boosts
@@ -714,6 +815,156 @@ public class SkillController : MonoBehaviour
     public int GetThisPlayerHackerBoost()
     {
         return storedHackerBoost;
+    }
+
+    public void AddHeadstrongBoost(float val)
+    {
+        headstrongBoost += val;
+    }
+
+    public void RemoveHeadstrongBoost(float val)
+    {
+        headstrongBoost -= val;
+    }
+
+    public float GetHeadstrongBoost()
+    {
+        return headstrongBoost;
+    }
+
+    public float GetMyHeadstrongBoost()
+    {
+        if (PlayerData.playerdata.skillList["3/1"].Level == 1) {
+            return 0.01f;
+        } else if (PlayerData.playerdata.skillList["3/1"].Level == 2) {
+            return 0.02f;
+        } else if (PlayerData.playerdata.skillList["3/1"].Level == 3) {
+            return 0.04f;
+        } else if (PlayerData.playerdata.skillList["3/1"].Level == 4) {
+            return 0.06f;
+        }
+        return 0f;
+    }
+
+    public void SetThisPlayerHeadstrongBoost(float val)
+    {
+        storedHeadstrongBoost = val;
+    }
+
+    public float GetThisPlayerHeadstrongBoost()
+    {
+        return storedHeadstrongBoost;
+    }
+
+    public void AddResourcefulBoost(float val)
+    {
+        resourcefulBoost += val;
+    }
+
+    public void RemoveResourcefulBoost(float val)
+    {
+        resourcefulBoost -= val;
+    }
+
+    public float GetResourcefulBoost()
+    {
+        return resourcefulBoost;
+    }
+
+    public float GetMyResourcefulBoost()
+    {
+        if (PlayerData.playerdata.skillList["3/4"].Level == 1) {
+            return 0.5f;
+        } else if (PlayerData.playerdata.skillList["3/4"].Level == 2) {
+            return 1f;
+        } else if (PlayerData.playerdata.skillList["3/4"].Level == 3) {
+            return 2f;
+        }
+        return 0f;
+    }
+
+    public void SetThisPlayerResourcefulBoost(float val)
+    {
+        storedResourcefulBoost = val;
+    }
+
+    public float GetThisPlayerResourcefulBoost()
+    {
+        return storedResourcefulBoost;
+    }
+
+    // End collective boosts
+
+    public int GetHealthDropChanceBoost()
+    {
+        if (PlayerData.playerdata.skillList["4/3"].Level == 1) {
+            return 2;
+        } else if (PlayerData.playerdata.skillList["4/3"].Level == 2) {
+            return 5;
+        } else if (PlayerData.playerdata.skillList["4/3"].Level == 3) {
+            return 10;
+        }
+        return 0;
+    }
+
+    public int GetAmmoDropChanceBoost()
+    {
+        if (PlayerData.playerdata.skillList["6/8"].Level == 1) {
+            return 4;
+        } else if (PlayerData.playerdata.skillList["6/8"].Level == 2) {
+            return 8;
+        } else if (PlayerData.playerdata.skillList["6/8"].Level == 3) {
+            return 15;
+        }
+        return 0;
+    }
+
+    public float GetHitmanDamageBoost()
+    {
+        if (PlayerData.playerdata.skillList["5/7"].Level == 1) {
+            return 0.15f;
+        } else if (PlayerData.playerdata.skillList["5/7"].Level == 2) {
+            return 0.3f;
+        } else if (PlayerData.playerdata.skillList["5/7"].Level == 3) {
+            return 0.45f;
+        }
+        return 0f;
+    }
+
+    public float GetOneShotOneKillDamageBoost()
+    {
+        if (PlayerData.playerdata.skillList["5/8"].Level == 1) {
+            return 0.25f;
+        } else if (PlayerData.playerdata.skillList["5/8"].Level == 2) {
+            return 0.5f;
+        } else if (PlayerData.playerdata.skillList["5/8"].Level == 3) {
+            return 0.8f;
+        } else if (PlayerData.playerdata.skillList["5/8"].Level == 4) {
+            return 1f;
+        }
+        return 0f;
+    }
+
+    public void UpdateOneShotOneKillTimer()
+    {
+        if (oneShotOneKillTimer < ONE_SHOT_ONE_KILL_TIME) {
+            oneShotOneKillTimer += Time.deltaTime;
+        }
+    }
+
+    public void ResetOneShotOneKillTimer()
+    {
+        oneShotOneKillTimer = 0f;
+    }
+
+    public bool OneShotOneKillReady()
+    {
+        return oneShotOneKillTimer >= ONE_SHOT_ONE_KILL_TIME;
+    }
+
+    public int GetBloodLeechLevel()
+    {
+        return PlayerData.playerdata.skillList["4/7"].Level;
     }
 
 }

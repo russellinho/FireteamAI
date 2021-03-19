@@ -553,6 +553,8 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 SkillController theirSkills = playerToDestroy.GetComponent<SkillController>();
                 SkillController mySkills = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>();
                 mySkills.RemoveHackerBoost(theirSkills.GetThisPlayerHackerBoost());
+                mySkills.RemoveHeadstrongBoost(theirSkills.GetThisPlayerHeadstrongBoost());
+                mySkills.RemoveResourcefulBoost(theirSkills.GetThisPlayerResourcefulBoost());
 
                 Destroy(playerToDestroy);
             }
@@ -1971,7 +1973,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             titleRef.equippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
         }
 
-        thisEquipScript.UpdateStats();
+        thisEquipScript.UpdateStatsOnTitle();
     }
 
     void HandleTopChangeEvent(object sender, ValueChangedEventArgs args) {
@@ -2236,7 +2238,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             titleRef.equippedFaceSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
         }
 
-        thisEquipScript.UpdateStats();
+        thisEquipScript.UpdateStatsOnTitle();
     }
 
     void HandleFootwearChangeEvent(object sender, ValueChangedEventArgs args) {
@@ -2333,7 +2335,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             titleRef.equippedHeadSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
         }
 
-        thisEquipScript.UpdateStats();
+        thisEquipScript.UpdateStatsOnTitle();
     }
 
     void HandleMeleeChangeEvent(object sender, ValueChangedEventArgs args) {

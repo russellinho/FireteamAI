@@ -23,6 +23,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private const int OBSCURE_IGNORE = ~(1 << 14 | 1 << 15 | 1 << 16 | 1 << 17);
 	private const float EXPLOSION_FORCE = 75;
 	private const float BULLET_FORCE = 50f;
+	private int HEALTH_KIT_DROP_CHANCE = 33;
+	private int AMMO_KIT_DROP_CHANCE = 17;
 
 	// Prefab references
 	public GameObject ammoBoxPickup;
@@ -69,6 +71,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	public bool sniper;
 	public float rotationSpeed = 6f;
 	public int health;
+	private int thisHealthDropChanceBoost;
+	private int thisAmmoDropChanceBoost;
 	private int lastHitBy;
 	private int lastBodyPartHit;
 	public float disorientationTime;
@@ -79,7 +83,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private bool wasMasterClient;
 	public GameObject gameController;
 	public GameControllerScript gameControllerScript;
-	private bool isOutlined;
+	public bool isOutlined;
 	public float initialSpawnTime;
 
 	// Finite state machine states
@@ -1093,15 +1097,15 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		// Check for death first
 		if (health <= 0 && actionState != ActionStates.Dead) {
 			// Spawn a drop box
-			int r = Random.Range (1,12);
-			if (r == 6) {
+			int r = Random.Range(0, 100);
+			int healthKitDropChance = HEALTH_KIT_DROP_CHANCE + thisHealthDropChanceBoost;
+			int ammoKitDropChance = AMMO_KIT_DROP_CHANCE + thisAmmoDropChanceBoost;
+			if (r >= 0 && r <= healthKitDropChance) {
 				// 1/6 chance of getting a health box
 				DropHealthPickup();
-				// PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
-			} else if (r >= 1 && r < 5) {
+			} else if (r >= (healthKitDropChance + 1) && r <= (ammoKitDropChance + healthKitDropChance)) {
 				// 1/3 chance of getting ammo box
 				DropAmmoPickup();
-				// PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			}
 
 			if (playerTargeting != null) {
@@ -1226,7 +1230,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (other.gameObject.tag.Equals("Fire")) {
 			FireScript f = other.gameObject.GetComponent<FireScript>();
 			int damageReceived = (int)(f.damage);
-			TakeDamage(damageReceived, other.gameObject.transform.position, 2, 0);
+			TakeDamage(damageReceived, other.gameObject.transform.position, 2, 0, 0, 0);
 			ResetEnvDamageTimer();
 		}
 	}
@@ -1252,7 +1256,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[t.rootWeapon];
 					int damageReceived = (int)(grenadeStats.damage * scale);
 					// Deal damage to the enemy
-					TakeDamage(damageReceived, other.gameObject.transform.position, 1, 0);
+					TakeDamage(damageReceived, other.gameObject.transform.position, 1, 0, 0, 0);
 					// Validate that this enemy has already been affected
 					t.AddHitPlayer(pView.ViewID);
 					if (health <= 0) {
@@ -1272,7 +1276,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					Weapon projectileStats = InventoryScript.itemData.weaponCatalog[l.rootWeapon];
 					int damageReceived = (int)(projectileStats.damage * scale);
 					// Deal damage to the enemy
-					TakeDamage(damageReceived, other.gameObject.transform.position, 1, 0);
+					TakeDamage(damageReceived, other.gameObject.transform.position, 1, 0, 0, 0);
 					// Validate that this enemy has already been affected
 					l.AddHitPlayer(pView.ViewID);
 					if (health <= 0) {
@@ -1459,15 +1463,16 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		// Check for death first
 		if (health <= 0 && actionState != ActionStates.Dead)
 		{
-			int r = Random.Range (1,12);
-			if (r == 6) {
+			// Spawn a drop box
+			int r = Random.Range(0, 100);
+			int healthKitDropChance = HEALTH_KIT_DROP_CHANCE + thisHealthDropChanceBoost;
+			int ammoKitDropChance = AMMO_KIT_DROP_CHANCE + thisAmmoDropChanceBoost;
+			if (r >= 0 && r <= healthKitDropChance) {
 				// 1/6 chance of getting a health box
 				DropHealthPickup();
-				// PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
-			} else if (r >= 1 && r < 5) {
+			} else if (r >= (healthKitDropChance + 1) && r <= (ammoKitDropChance + healthKitDropChance)) {
 				// 1/3 chance of getting ammo box
 				DropAmmoPickup();
-				// PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			}
 			
 			if (playerTargeting != null) {
@@ -2211,17 +2216,19 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 	}
 
-	public void TakeDamage(int d, Vector3 hitFromPos, int hitBy, int bodyPartHit) {
-		pView.RPC ("RpcTakeDamage", RpcTarget.All, d, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit, gameControllerScript.teamMap);
+	public void TakeDamage(int d, Vector3 hitFromPos, int hitBy, int bodyPartHit, int healthDropChanceBoost, int ammoDropChanceBoost) {
+		pView.RPC ("RpcTakeDamage", RpcTarget.All, d, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit, healthDropChanceBoost, ammoDropChanceBoost, gameControllerScript.teamMap);
 	}
 
 	[PunRPC]
-	public void RpcTakeDamage(int d, float hitFromX, float hitFromY, float hitFromZ, int hitBy, int bodyPartHit, string team) {
+	public void RpcTakeDamage(int d, float hitFromX, float hitFromY, float hitFromZ, int hitBy, int bodyPartHit, int healthDropChanceBoost, int ammoDropChanceBoost, string team) {
         if (team != gameControllerScript.teamMap) return;
         health -= d;
 		lastHitFromPos = new Vector3(hitFromX, hitFromY, hitFromZ);
 		lastHitBy = hitBy;
 		lastBodyPartHit = bodyPartHit;
+		thisHealthDropChanceBoost = healthDropChanceBoost;
+		thisAmmoDropChanceBoost = ammoDropChanceBoost;
 	}
 
 	void UpdateActionState(ActionStates action) {
@@ -2341,6 +2348,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			marker.enabled = true;
 			ToggleWeaponMesh(true);
 
+			thisAmmoDropChanceBoost = 0;
+			thisHealthDropChanceBoost = 0;
+
 			if (enemyType == EnemyType.Patrol) {
 				navMesh.enabled = true;
 				navMeshObstacle.enabled = false;
@@ -2388,6 +2398,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		modeler.RespawnPlayer();
 		marker.enabled = true;
 		ToggleWeaponMesh(true);
+
+		thisHealthDropChanceBoost = 0;
+		thisAmmoDropChanceBoost = 0;
 
 		if (enemyType == EnemyType.Patrol) {
 			navMesh.enabled = true;
