@@ -20,6 +20,11 @@ public class SkillController : MonoBehaviour
     private float regenerationTimer;
     private float oneShotOneKillTimer;
 
+    // Timed boosts
+    private float bloodLustActiveTimer;
+    private float bloodLustActivateTimer;
+    private short bloodLustActivateCount;
+
     // Collective boosts
     private EncryptedInt hackerBoost;
     private EncryptedInt storedHackerBoost;
@@ -33,6 +38,8 @@ public class SkillController : MonoBehaviour
         MunitionsEngineeringRefresh();
         RegenerationRefresh();
         UpdateOneShotOneKillTimer();
+        UpdateBloodLustActivation();
+        UpdateBloodLustActive();
     }
 
     public void InitializePassiveSkills(int weaponCategory)
@@ -965,6 +972,87 @@ public class SkillController : MonoBehaviour
     public int GetBloodLeechLevel()
     {
         return PlayerData.playerdata.skillList["4/7"].Level;
+    }
+
+    public void RegisterKillForKillstreak()
+    {
+        // Blood Lust (0/6)
+        int bloodLustLvl = PlayerData.playerdata.skillList["0/6"].Level;
+        if (bloodLustLvl > 0) {
+            if (bloodLustActiveTimer <= 0f) {
+                if (bloodLustActivateCount == 0) {
+                    if (bloodLustLvl == 1) {
+                        bloodLustActivateTimer = 4f;
+                    } else if (bloodLustLvl == 2) {
+                        bloodLustActivateTimer = 4f;
+                    } else if (bloodLustLvl == 3) {
+                        bloodLustActivateTimer = 5f;
+                    } else if (bloodLustLvl == 4) {
+                        bloodLustActivateTimer = 5f;
+                    }
+                }
+                bloodLustActivateCount++;
+                if (bloodLustLvl == 1) {
+                    if (bloodLustActivateCount >= 10) {
+                        bloodLustActivateCount = 0;
+                        bloodLustActivateTimer = 0f;
+                        bloodLustActiveTimer = 10f;
+                    }
+                } else if (bloodLustLvl == 2) {
+                    if (bloodLustActivateCount >= 8) {
+                        bloodLustActivateCount = 0;
+                        bloodLustActivateTimer = 0f;
+                        bloodLustActiveTimer = 15f;
+                    }
+                } else if (bloodLustLvl == 3) {
+                    if (bloodLustActivateCount >= 6) {
+                        bloodLustActivateCount = 0;
+                        bloodLustActivateTimer = 0f;
+                        bloodLustActiveTimer = 20f;
+                    }
+                } else if (bloodLustLvl == 4) {
+                    if (bloodLustActivateCount >= 4) {
+                        bloodLustActivateCount = 0;
+                        bloodLustActivateTimer = 0f;
+                        bloodLustActiveTimer = 25f;
+                    }
+                }
+            }
+        }
+    }
+
+    private void UpdateBloodLustActive()
+    {
+        if (bloodLustActiveTimer > 0f) {
+            bloodLustActiveTimer -= Time.deltaTime;
+        }
+    }
+
+    private void UpdateBloodLustActivation()
+    {
+        if (bloodLustActivateTimer > 0f) {
+            bloodLustActivateTimer -= Time.deltaTime;
+            if (bloodLustActivateTimer <= 0f) {
+                bloodLustActivateTimer = 0f;
+                bloodLustActivateCount = 0;
+            }
+        }
+    }
+
+    public float GetBloodLustDamageBoost()
+    {
+        if (bloodLustActiveTimer > 0f) {
+            if (PlayerData.playerdata.skillList["0/6"].Level == 1) {
+                return 0.04f;
+            } else if (PlayerData.playerdata.skillList["0/6"].Level == 2) {
+                return 0.06f;
+            } else if (PlayerData.playerdata.skillList["0/6"].Level == 3) {
+                return 0.08f;
+            } else if (PlayerData.playerdata.skillList["0/6"].Level == 4) {
+                return 0.1f;
+            }
+        }
+        return 0f;
     }
 
 }
