@@ -1467,14 +1467,13 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			int r = Random.Range(0, 100);
 			int healthKitDropChance = HEALTH_KIT_DROP_CHANCE + thisHealthDropChanceBoost;
 			int ammoKitDropChance = AMMO_KIT_DROP_CHANCE + thisAmmoDropChanceBoost;
-			DropAmmoPickup();
-			// if (r >= 0 && r <= healthKitDropChance) {
-			// 	// 1/6 chance of getting a health box
-			// 	DropHealthPickup();
-			// } else if (r >= (healthKitDropChance + 1) && r <= (ammoKitDropChance + healthKitDropChance)) {
-			// 	// 1/3 chance of getting ammo box
-			// 	DropAmmoPickup();
-			// }
+			if (r >= 0 && r <= healthKitDropChance) {
+				// 1/6 chance of getting a health box
+				DropHealthPickup();
+			} else if (r >= (healthKitDropChance + 1) && r <= (ammoKitDropChance + healthKitDropChance)) {
+				// 1/3 chance of getting ammo box
+				DropAmmoPickup();
+			}
 			
 			if (playerTargeting != null) {
 				PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript>();
