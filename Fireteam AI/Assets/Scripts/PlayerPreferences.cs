@@ -170,7 +170,7 @@ public class PlayerPreferences : MonoBehaviour
                 BinaryFormatter bf = new BinaryFormatter();
                 file = File.Open(Application.persistentDataPath + "/keyMappings.dat", FileMode.Open);
                 keyMappings = (Dictionary<string, KeyMapping>) bf.Deserialize(file);
-                if (keyMappings.Count != 25) {
+                if (keyMappings.Count != 26) {
                     // For when new keys are added
                     Debug.Log("More keys were added since last update, setting all to default.");
                     SetDefaultKeyMappings();
@@ -305,6 +305,7 @@ public class PlayerPreferences : MonoBehaviour
         keyMappings.Add("Pause", new KeyMapping(KeyCode.Escape, 19));
         keyMappings.Add("Fire", new KeyMapping(KeyCode.Mouse0, 10));
         keyMappings.Add("Aim", new KeyMapping(KeyCode.Mouse1, 11));
+        keyMappings.Add("Skills", new KeyMapping(KeyCode.E, 25));
     }
 
     public void ResetKeyMappings()
@@ -359,6 +360,8 @@ public class PlayerPreferences : MonoBehaviour
         keyMappings["Fire"].scrollWheelFlag = 0;
         keyMappings["Aim"].key = KeyCode.Mouse1;
         keyMappings["Aim"].scrollWheelFlag = 0;
+        keyMappings["Skills"].key = KeyCode.E;
+        keyMappings["Skills"].scrollWheelFlag = 0;
     }
 
     public bool KeyWasPressed(string key, bool hold = false, bool up = false) {

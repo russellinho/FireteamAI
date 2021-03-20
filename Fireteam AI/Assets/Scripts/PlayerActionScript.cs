@@ -668,6 +668,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 hud.SetCarryingText(null);
                 TriggerPlayerDownAlert();
                 hud.container.voiceCommandsPanel.SetActive(false);
+                hud.container.skillPanel.SetActive(false);
             }
             fpc.enabled = false;
             if (!rotationSaved)
@@ -2024,6 +2025,19 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             int newHealth = this.health;
             pView.RPC("RpcSetHealth", RpcTarget.Others, newHealth);
         }
+    }
+
+    public void ActivateSkill(int skill)
+    {
+        if (skill == 1) {
+            skillController.ActivateFirmGrip();
+        } else if (skill == 4) {
+            skillController.ActivateSnipersDel();
+        } else if (skill == 5) {
+            skillController.ActivateBulletStream();
+        }
+        // Skill effect
+        PlayBoostParticleEffect();
     }
 
 }

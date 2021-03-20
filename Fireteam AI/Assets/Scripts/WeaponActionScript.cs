@@ -743,11 +743,11 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         if (weaponMods.suppressorRef == null)
         {
             playerActionScript.gameController.SetLastGunshotHeardPos(false, transform.position);
-            pView.RPC("FireEffects", RpcTarget.All);
+            pView.RPC("FireEffects", RpcTarget.All, DetermineAmmoDeductSkip());
         }
         else
         {
-            pView.RPC("FireEffectsSuppressed", RpcTarget.All);
+            pView.RPC("FireEffectsSuppressed", RpcTarget.All, DetermineAmmoDeductSkip());
         }
     }
 
@@ -904,7 +904,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
 
         playerActionScript.gameController.SetLastGunshotHeardPos(false, transform.position);
-        pView.RPC("FireEffects", RpcTarget.All);
+        pView.RPC("FireEffects", RpcTarget.All, DetermineAmmoDeductSkip());
     }
 
     [PunRPC]
@@ -988,7 +988,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     }
 
     [PunRPC]
-    void FireEffects()
+    void FireEffects(bool ammoDeductExempt)
     {
         if (gameObject.layer == 0) return;
         PlayMuzzleFlash();
@@ -998,14 +998,16 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             weaponMetaData.bulletTracer.Play();
         }
         PlayShootSound();
-        currentAmmo--;
+        if (!ammoDeductExempt) {
+            currentAmmo--;
+        }
         playerActionScript.weaponScript.SyncAmmoCounts();
         // Reset fire timer
         fireTimer = 0.0f;
     }
 
     [PunRPC]
-    void FireEffectsSuppressed()
+    void FireEffectsSuppressed(bool ammoDeductExempt)
     {
         if (gameObject.layer == 0) return;
         InstantiateGunSmokeEffect(1.5f);
@@ -1014,7 +1016,9 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             weaponMetaData.bulletTracer.Play();
         }
         PlaySuppressedShootSound();
-        currentAmmo--;
+        if (!ammoDeductExempt) {
+            currentAmmo--;
+        }
         playerActionScript.weaponScript.SyncAmmoCounts();
         // Reset fire timer
         fireTimer = 0.0f;
@@ -1245,7 +1249,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     void UpdateRecoil(bool increase)
     {
-        float totalRecoil = weaponStats.recoil * (1f - playerActionScript.skillController.recoilBoost) * (1f - playerActionScript.skillController.GetInspireBoost());
+        float totalRecoil = weaponStats.recoil * (1f - playerActionScript.skillController.recoilBoost) * (1f - playerActionScript.skillController.GetInspireBoost()) * (1f - playerActionScript.skillController.GetFirmGripBoost());
         if (increase)
         {
             // mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(weaponStats.recoil, 0f, 0f);
@@ -1819,6 +1823,16 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
         float maxDropoffAmount = damage / 3f;
         return (int)(((distance - sustainRange) / dropoffRange) * maxDropoffAmount);
+    }
+
+    bool DetermineAmmoDeductSkip()
+    {
+        if (playerActionScript.skillController.GetSnipersDelBoost() && weaponStats.category == "Sniper Rifle") {
+            return true;
+        } else if (playerActionScript.skillController.GetBulletStreamBoost() && weaponStats.category != "Sniper Rifle") {
+            return true;
+        }
+        return false;
     }
 
 }

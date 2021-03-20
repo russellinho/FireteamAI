@@ -12,6 +12,26 @@ public class SkillController : MonoBehaviour
     public static float MARTIAL_ARTS_ATTACK_CAP = 0.15f;
     public static float MARTIAL_ARTS_DEFENSE_CAP = 0.3f;
     private const float FIRETEAM_BOOST_CAP = 0.1f;
+    private const float FIRM_GRIP_TIME_1 = 10f;
+    private const float FIRM_GRIP_TIME_2 = 20f;
+    private const float FIRM_GRIP_TIME_3 = 30f;
+    private const float FIRM_GRIP_COOLDOWN_1 = 720f;
+    private const float FIRM_GRIP_COOLDOWN_2 = 600f;
+    private const float FIRM_GRIP_COOLDOWN_3 = 480f;
+    private const float SNIPERS_DEL_TIME_1 = 10f;
+    private const float SNIPERS_DEL_TIME_2 = 20f;
+    private const float SNIPERS_DEL_TIME_3 = 30f;
+    private const float SNIPERS_DEL_COOLDOWN_1 = 300f;
+    private const float SNIPERS_DEL_COOLDOWN_2 = 240f;
+    private const float SNIPERS_DEL_COOLDOWN_3 = 180f;
+    private const float BULLET_STREAM_TIME_1 = 10f;
+    private const float BULLET_STREAM_TIME_2 = 15f;
+    private const float BULLET_STREAM_TIME_3 = 20f;
+    private const float BULLET_STREAM_TIME_4 = 30f;
+    private const float BULLET_STREAM_COOLDOWN_1 = 480f;
+    private const float BULLET_STREAM_COOLDOWN_2 = 420f;
+    private const float BULLET_STREAM_COOLDOWN_3 = 360f;
+    private const float BULLET_STREAM_COOLDOWN_4 = 300f;
     private EncryptedFloat speedBoost;
     private EncryptedFloat damageBoost;
     private EncryptedFloat armorBoost;
@@ -22,6 +42,14 @@ public class SkillController : MonoBehaviour
     private float munitionsEngineeringTimer;
     private float regenerationTimer;
     private float oneShotOneKillTimer;
+
+    // Active boosts
+    private float firmGripTimer;
+    private float firmGripCooldown;
+    private float snipersDelTimer;
+    private float snipersDelCooldown;
+    private float bulletStreamTimer;
+    private float bulletStreamCooldown;
 
     // Timed boosts
     private float bloodLustActiveTimer;
@@ -46,6 +74,11 @@ public class SkillController : MonoBehaviour
     private EncryptedFloat storedMartialArtsAttackBoost;
     private EncryptedFloat storedMartialArtsDefenseBoost;
 
+    void Awake()
+    {
+
+    }
+
     void Update()
     {
         MunitionsEngineeringRefresh();
@@ -53,6 +86,9 @@ public class SkillController : MonoBehaviour
         UpdateOneShotOneKillTimer();
         UpdateBloodLustActivation();
         UpdateBloodLustActive();
+        UpdateFirmGrip();
+        UpdateSnipersDel();
+        UpdateBulletStream();
     }
 
     public void InitializePassiveSkills(int weaponCategory)
@@ -1278,5 +1314,148 @@ public class SkillController : MonoBehaviour
         }
         return 0f;
     }
+
+    // ACTIVE SKILLS
+
+    public bool SkillIsAvailable(int skill)
+    {
+        if (skill == 1) {
+            return firmGripCooldown <= 0f;
+        } else if (skill == 4) {
+            return snipersDelCooldown <= 0f;
+        } else if (skill == 5) {
+            return bulletStreamCooldown <= 0f;
+        }
+        return false;
+    }
+
+    public bool HasSkill(int skill)
+    {
+        if (skill == 1) {
+            return PlayerData.playerdata.skillList["0/9"].Level > 0;
+        } else if (skill == 4) {
+            return PlayerData.playerdata.skillList["5/10"].Level > 0;
+        } else if (skill == 5) {
+            return PlayerData.playerdata.skillList["6/11"].Level > 0;
+        }
+        return false;
+    }
+
+    public void ActivateFirmGrip()
+    {
+        if (firmGripCooldown <= 0f) {
+            if (PlayerData.playerdata.skillList["0/9"].Level == 1) {
+                firmGripCooldown = FIRM_GRIP_COOLDOWN_1;
+                firmGripTimer = FIRM_GRIP_TIME_1;
+            } else if (PlayerData.playerdata.skillList["0/9"].Level == 2) {
+                firmGripCooldown = FIRM_GRIP_COOLDOWN_2;
+                firmGripTimer = FIRM_GRIP_TIME_2;
+            } else if (PlayerData.playerdata.skillList["0/9"].Level == 3) {
+                firmGripCooldown = FIRM_GRIP_COOLDOWN_3;
+                firmGripTimer = FIRM_GRIP_TIME_3;
+            }
+        }
+    }
+
+    public void ActivateSnipersDel()
+    {
+        if (snipersDelCooldown <= 0f) {
+            if (PlayerData.playerdata.skillList["5/10"].Level == 1) {
+                snipersDelCooldown = SNIPERS_DEL_COOLDOWN_1;
+                snipersDelTimer = SNIPERS_DEL_TIME_1;
+            } else if (PlayerData.playerdata.skillList["5/10"].Level == 2) {
+                snipersDelCooldown = SNIPERS_DEL_COOLDOWN_2;
+                snipersDelTimer = SNIPERS_DEL_TIME_2;
+            } else if (PlayerData.playerdata.skillList["5/10"].Level == 3) {
+                snipersDelCooldown = SNIPERS_DEL_COOLDOWN_3;
+                snipersDelTimer = SNIPERS_DEL_TIME_3;
+            }
+        }
+    }
+
+    public void ActivateBulletStream()
+    {
+        if (bulletStreamCooldown <= 0f) {
+            if (PlayerData.playerdata.skillList["6/11"].Level == 1) {
+                bulletStreamCooldown = BULLET_STREAM_COOLDOWN_1;
+                bulletStreamTimer = BULLET_STREAM_TIME_1;
+            } else if (PlayerData.playerdata.skillList["6/11"].Level == 2) {
+                bulletStreamCooldown = BULLET_STREAM_COOLDOWN_2;
+                bulletStreamTimer = BULLET_STREAM_TIME_2;
+            } else if (PlayerData.playerdata.skillList["6/11"].Level == 3) {
+                bulletStreamCooldown = BULLET_STREAM_COOLDOWN_3;
+                bulletStreamTimer = BULLET_STREAM_TIME_3;
+            } else if (PlayerData.playerdata.skillList["6/11"].Level == 4) {
+                bulletStreamCooldown = BULLET_STREAM_COOLDOWN_4;
+                bulletStreamTimer = BULLET_STREAM_TIME_4;
+            }
+        }
+    }
+
+    void UpdateFirmGrip()
+    {
+        if (firmGripTimer > 0f) {
+            firmGripTimer -= Time.deltaTime;
+        }
+        if (firmGripCooldown > 0f && firmGripTimer <= 0f) {
+            firmGripCooldown -= Time.deltaTime;
+        }
+    }
+
+    void UpdateSnipersDel()
+    {
+        if (snipersDelTimer > 0f) {
+            snipersDelTimer -= Time.deltaTime;
+        }
+        if (snipersDelCooldown > 0f && snipersDelTimer <= 0f) {
+            snipersDelCooldown -= Time.deltaTime;
+        }
+    }
+
+    void UpdateBulletStream()
+    {
+        if (bulletStreamTimer > 0f) {
+            bulletStreamTimer -= Time.deltaTime;
+        }
+        if (bulletStreamCooldown > 0f && bulletStreamTimer <= 0f) {
+            bulletStreamCooldown -= Time.deltaTime;
+        }
+    }
+
+    public float GetFirmGripBoost()
+    {
+        if (firmGripTimer > 0f) {
+            if (PlayerData.playerdata.skillList["0/9"].Level == 1) {
+                return 0.5f;
+            } else if (PlayerData.playerdata.skillList["0/9"].Level == 2) {
+                return 0.7f;
+            } else if (PlayerData.playerdata.skillList["0/9"].Level == 3) {
+                return 0.95f;
+            }
+        }
+        return 0f;
+    }
+
+    public bool GetSnipersDelBoost()
+    {
+        if (snipersDelTimer > 0f) {
+            if (PlayerData.playerdata.skillList["5/10"].Level > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool GetBulletStreamBoost()
+    {
+        if (bulletStreamTimer > 0f) {
+            if (PlayerData.playerdata.skillList["6/11"].Level > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // END ACTIVE SKILLS
 
 }

@@ -34,6 +34,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	// Other vars
 	public float commandDelay;
+	public float skillDelay;
 	private float killPopupTimer;
 	private bool popupIsStarting;
 	private bool roundStartFadeIn;
@@ -111,6 +112,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		screenGrab = false;
 		enemyMarkersCleared = false;
 
+		UpdateSkills();
 		LoadHUDForMission ();
 		StartMatchCameraFade ();
 		StartCoroutine("UpdatePlayerMarkers");
@@ -249,6 +251,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 		HandleVoiceChat();
 		HandleVoiceCommands();
+		HandleSkills();
 		UpdateVoteUI();
 		UpdateHealth();
 		if (container.staminaGroup.alpha == 1f) {
@@ -1079,6 +1082,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     void Pause()
     {
 		container.voiceCommandsPanel.SetActive(false);
+		container.skillPanel.SetActive(false);
         if (!container.pauseMenuManager.pauseActive)
         {
             container.pauseMenuManager.OpenPause();
@@ -1606,6 +1610,15 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		return true;
 	}
 
+	bool CanActivateSkill()
+	{
+		if (container.pauseMenuManager.pauseActive) return false;
+		if (!container.skillPanel.activeInHierarchy) return false;
+		if (playerActionScript.health <= 0) return false;
+		if (gameController.gameOver) return false;
+		return true;
+	}
+
 	public AudioClip GetVoiceCommandAudio(char type, int i, char gender)
 	{
 		if (type == 'r') {
@@ -1628,8 +1641,83 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	bool CanUseVoiceCommands()
 	{
-		if (playerActionScript.health <= 0 || container.inGameMessenger.inputText.enabled) return false;
+		if (playerActionScript.health <= 0 || container.inGameMessenger.inputText.enabled || PauseIsActive()) return false;
 		return true;
+	}
+
+	void HandleSkills()
+	{
+		if (skillDelay > 0f) {
+			skillDelay -= Time.deltaTime;
+			return;
+		}
+		if (!CanUseVoiceCommands()) {
+			container.skillPanel.SetActive(false);
+			return;
+		}
+		// Open/closing menu
+		if (PlayerPreferences.playerPreferences.KeyWasPressed("Skills")) {
+			container.voiceCommandsPanel.SetActive(false);
+			if (!container.skillPanel.activeInHierarchy) {
+				UpdateSkills();
+				container.skillPanel.SetActive(true);
+			} else {
+				container.skillPanel.SetActive(false);
+			}
+		}
+
+		// Activating skills
+		if (container.skillPanel.activeInHierarchy) {
+			if (Input.GetKeyDown(KeyCode.Alpha1)) {
+				if (CanActivateSkill()) {
+					playerActionScript.ActivateSkill(1);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+				if (CanActivateSkill()) {
+					playerActionScript.ActivateSkill(2);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+				if (CanActivateSkill()) {
+					playerActionScript.ActivateSkill(3);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+				if (CanActivateSkill()) {
+					playerActionScript.ActivateSkill(4);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha5)) {
+				if (CanActivateSkill()) {
+					playerActionScript.ActivateSkill(5);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha6)) {
+				if (CanActivateSkill()) {
+					playerActionScript.ActivateSkill(6);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha7)) {
+				if (CanActivateSkill()) {
+					playerActionScript.ActivateSkill(7);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha8)) {
+				if (CanActivateSkill()) {
+					playerActionScript.ActivateSkill(8);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			}
+		}
 	}
 
 	void HandleVoiceCommands()
@@ -1644,6 +1732,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 		// Open/closing menu
 		if (PlayerPreferences.playerPreferences.KeyWasPressed("VCReport")) {
+			container.skillPanel.SetActive(false);
 			if (!container.voiceCommandsPanel.activeInHierarchy) {
 				container.voiceCommandsReport.SetActive(true);
 				container.voiceCommandsSocial.SetActive(false);
@@ -1659,6 +1748,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		} else if (PlayerPreferences.playerPreferences.KeyWasPressed("VCTactical")) {
+			container.skillPanel.SetActive(false);
 			if (!container.voiceCommandsPanel.activeInHierarchy) {
 				container.voiceCommandsReport.SetActive(false);
 				container.voiceCommandsSocial.SetActive(false);
@@ -1674,6 +1764,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		} else if (PlayerPreferences.playerPreferences.KeyWasPressed("VCSocial")) {
+			container.skillPanel.SetActive(false);
 			if (!container.voiceCommandsPanel.activeInHierarchy) {
 				container.voiceCommandsReport.SetActive(false);
 				container.voiceCommandsSocial.SetActive(true);
@@ -1792,6 +1883,24 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		RectTransform[] j = container.acceptPlayerSlots.GetComponentsInChildren<RectTransform>();
 		if (j.Length > 1) {
 			GameObject.Destroy(j[1].gameObject);
+		}
+	}
+
+	void UpdateSkills()
+	{
+		int i = 1;
+		foreach (GameObject s in container.skills) {
+			if (!playerActionScript.skillController.HasSkill(i)) {
+				s.SetActive(false);
+			} else {
+				s.SetActive(true);
+				if (playerActionScript.skillController.SkillIsAvailable(i)) {
+					s.GetComponentsInChildren<Transform>(true)[1].gameObject.SetActive(false);
+				} else {
+					s.GetComponentsInChildren<Transform>(true)[1].gameObject.SetActive(true);
+				}
+			}
+			i++;
 		}
 	}
 

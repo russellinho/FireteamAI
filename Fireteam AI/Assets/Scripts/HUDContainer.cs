@@ -99,6 +99,8 @@ public class HUDContainer : MonoBehaviour {
 	public VoiceCommandScript[] reportCommands;
 	public VoiceCommandScript[] tacticalCommands;
 	public VoiceCommandScript[] supportCommands;
+	public GameObject skillPanel;
+	public GameObject[] skills;
 	public GameObject acceptPlayerTemplate;
 	public Transform acceptPlayerSlots;
 
