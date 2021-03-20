@@ -1096,7 +1096,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             int restoreAmt = Mathf.Max(1, (int)((float)(loadedMaxAmmo / 10) * (1f + skillController.GetResourcefulBoost())));
             if (weaponScript.currentlyEquippedType == 1) {
                 wepActionScript.totalAmmoLeft += restoreAmt;
-                wepActionScript.totalAmmoLeft = Mathf.Min(wepActionScript.totalAmmoLeft, loadedMaxAmmo);
+                wepActionScript.totalAmmoLeft = Mathf.Min(wepActionScript.totalAmmoLeft, (InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedPrimary].maxAmmo + (InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedPrimary].clipCapacity * skillController.GetProviderBoost())) - wepActionScript.currentAmmo);
+                weaponScript.SyncAmmoCounts();
             } else {
                 weaponScript.RefillAmmoOnPrimary(restoreAmt);
             }

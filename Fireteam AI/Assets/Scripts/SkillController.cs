@@ -34,7 +34,7 @@ public class SkillController : MonoBehaviour
     private EncryptedFloat storedResourcefulBoost;
     private EncryptedFloat inspireBoost;
     private EncryptedFloat storedInspireBoost;
-    private int[] providerBoost;
+    private int[] providerBoost = new int[4];
     private EncryptedInt storedProviderBoost;
 
     void Update()
@@ -215,6 +215,24 @@ public class SkillController : MonoBehaviour
         }
 
         accuracyBoost = Mathf.Clamp(accuracyBoost, 0f, 0.9f);
+    }
+
+    public void InitializeCollectiveBoosts()
+    {
+        SetThisPlayerHackerBoost(GetMyHackerBoost());
+        AddHackerBoost(GetMyHackerBoost());
+
+        SetThisPlayerHeadstrongBoost(GetMyHeadstrongBoost());
+        AddHeadstrongBoost(GetMyHeadstrongBoost());
+
+        SetThisPlayerResourcefulBoost(GetMyResourcefulBoost());
+        AddResourcefulBoost(GetMyResourcefulBoost());
+
+        SetThisPlayerInspireBoost(GetMyInspireBoost());
+        AddInspireBoost(GetMyInspireBoost());
+
+        SetThisPlayerProviderBoost(GetMyProviderBoost());
+        AddProviderBoost(GetMyProviderBoost());
     }
 
     public int GetDeployableMasteryLevel()
@@ -945,17 +963,11 @@ public class SkillController : MonoBehaviour
 
     public void AddProviderBoost(int val)
     {
-        if (providerBoost == null) {
-            providerBoost = new int[4];
-        }
         providerBoost[val]++;
     }
 
     public void RemoveProviderBoost(int val)
     {
-        if (providerBoost == null) {
-            providerBoost = new int[4];
-        }
         providerBoost[val]--;
     }
 

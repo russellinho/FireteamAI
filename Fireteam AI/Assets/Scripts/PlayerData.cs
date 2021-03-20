@@ -567,6 +567,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void InitPlayerInGame(GameObject player) {
+        player.GetComponent<SkillController>().InitializeCollectiveBoosts();
         player.GetComponent<EquipmentScript>().PreInitialize();
         player.GetComponent<EquipmentScript>().Initialize();
         player.GetComponent<PlayerHUDScript>().Initialize();
