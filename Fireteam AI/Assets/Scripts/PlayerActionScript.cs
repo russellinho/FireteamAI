@@ -295,6 +295,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // if (Input.GetKeyDown(KeyCode.O)) {
         //     transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
         // }
+        if (Input.GetKeyDown(KeyCode.I)) {
+            Debug.LogError("FTEAM DMG BOOST: " + skillController.GetFireteamBoost(gameController.GetAvgDistanceBetweenTeam()));
+        }
 
          if (enterSpectatorModeTimer > 0f)
          {

@@ -53,6 +53,9 @@ public class SkillController : MonoBehaviour
         UpdateOneShotOneKillTimer();
         UpdateBloodLustActivation();
         UpdateBloodLustActive();
+        if (Input.GetKeyDown(KeyCode.U)) {
+            Debug.LogError("FTEAM BOOST: " + fireteamBoost);
+        }
     }
 
     public void InitializePassiveSkills(int weaponCategory)
