@@ -117,7 +117,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject proTipContainer;
 	public TextMeshProUGUI mapTitleText;
 	public TextMeshProUGUI mapDescriptionText;
-	private string[] proTips = new string[4]{"Aim for the head for faster kills.", "Be on the lookout for ammo and health drops from enemies.", "Some missions can be completely silently. Look at the top of your screen to determine whether your team has been detected or not.", "In stealth, you can point out and mark enemies for your teammates to see by aiming at them and pressing the ACTION (F) key."};
+	private string[] proTips = new string[4]{"Aim for the head for faster kills.", "Be on the lookout for ammo and health drops from enemies.", "Some missions can be completed silently. Look at the top of your screen to determine whether your team has been detected or not.", "In stealth, you can point out and mark enemies for your teammates to see by aiming at them and pressing the ACTION (F) key."};
 	private bool versionWarning;
 	// Marketplace menu
 	public Button clearPreviewBtn;
