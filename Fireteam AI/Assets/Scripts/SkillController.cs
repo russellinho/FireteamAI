@@ -32,6 +32,10 @@ public class SkillController : MonoBehaviour
     private EncryptedFloat storedHeadstrongBoost;
     private EncryptedFloat resourcefulBoost;
     private EncryptedFloat storedResourcefulBoost;
+    private EncryptedFloat inspireBoost;
+    private EncryptedFloat storedInspireBoost;
+    private int[] providerBoost;
+    private EncryptedInt storedProviderBoost;
 
     void Update()
     {
@@ -898,6 +902,86 @@ public class SkillController : MonoBehaviour
     public float GetThisPlayerResourcefulBoost()
     {
         return storedResourcefulBoost;
+    }
+
+    public void AddInspireBoost(float val)
+    {
+        inspireBoost += val;
+    }
+
+    public void RemoveInspireBoost(float val)
+    {
+        inspireBoost -= val;
+    }
+
+    public float GetInspireBoost()
+    {
+        return inspireBoost;
+    }
+
+    public float GetMyInspireBoost()
+    {
+        if (PlayerData.playerdata.skillList["3/2"].Level == 1) {
+            return 0.01f;
+        } else if (PlayerData.playerdata.skillList["3/2"].Level == 2) {
+            return 0.02f;
+        } else if (PlayerData.playerdata.skillList["3/2"].Level == 3) {
+            return 0.04f;
+        } else if (PlayerData.playerdata.skillList["3/2"].Level == 4) {
+            return 0.06f;
+        }
+        return 0f;
+    }
+
+    public void SetThisPlayerInspireBoost(float val)
+    {
+        storedInspireBoost = val;
+    }
+
+    public float GetThisPlayerInspireBoost()
+    {
+        return storedInspireBoost;
+    }
+
+    public void AddProviderBoost(int val)
+    {
+        if (providerBoost == null) {
+            providerBoost = new int[4];
+        }
+        providerBoost[val]++;
+    }
+
+    public void RemoveProviderBoost(int val)
+    {
+        if (providerBoost == null) {
+            providerBoost = new int[4];
+        }
+        providerBoost[val]--;
+    }
+
+    public int GetProviderBoost()
+    {
+        for (int i = 3; i >= 0; i--) {
+            if (providerBoost[i] > 0) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    public int GetMyProviderBoost()
+    {
+        return PlayerData.playerdata.skillList["3/5"].Level;
+    }
+
+    public void SetThisPlayerProviderBoost(int val)
+    {
+        storedProviderBoost = val;
+    }
+
+    public int GetThisPlayerProviderBoost()
+    {
+        return storedProviderBoost;
     }
 
     // End collective boosts

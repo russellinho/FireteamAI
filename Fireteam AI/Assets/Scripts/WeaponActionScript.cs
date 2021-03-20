@@ -349,7 +349,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     public void SetSpread(float accuracy)
     {
         // Add accuracy boost from skills
-        maxSpread = (1f - Mathf.Clamp((accuracy / 100f), 0f, 1f)) * (1f - playerActionScript.skillController.accuracyBoost);
+        maxSpread = (1f - Mathf.Clamp((accuracy / 100f), 0f, 1f)) * (1f - playerActionScript.skillController.accuracyBoost) * (1f - playerActionScript.skillController.GetInspireBoost());
         spreadAcceleration = maxSpread;
         spreadDeceleration = maxSpread / 2f;
     }
@@ -1241,7 +1241,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     void UpdateRecoil(bool increase)
     {
-        float totalRecoil = weaponStats.recoil * (1f - playerActionScript.skillController.recoilBoost);
+        float totalRecoil = weaponStats.recoil * (1f - playerActionScript.skillController.recoilBoost) * (1f - playerActionScript.skillController.GetInspireBoost());
         if (increase)
         {
             // mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(weaponStats.recoil, 0f, 0f);
@@ -1347,13 +1347,12 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         animatorFpc.SetFloat("MeleeSpeed", meleeMetaData.defaultMeleeSpeed + multiplier);
     }
 
-    public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {
+    public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity) {
         weaponStats.damage += damage;
         weaponStats.accuracy += accuracy;
         weaponStats.recoil += recoil;
         weaponStats.range += range;
         weaponStats.clipCapacity += clipCapacity;
-        weaponStats.maxAmmo += maxAmmo;
     }
 
     public WeaponMeta GetWeaponMeta() {

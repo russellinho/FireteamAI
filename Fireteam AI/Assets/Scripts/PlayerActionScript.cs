@@ -1759,12 +1759,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             }
         }
 		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept,
-                    skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost());
+                    skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost(), skillController.GetMyInspireBoost(), skillController.GetMyProviderBoost());
 	}
 
 	[PunRPC]
 	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept,
-        int myHackerBoost, float myHeadstrongBoost, float myResourcefulBoost) {
+        int myHackerBoost, float myHeadstrongBoost, float myResourcefulBoost, float myInspireBoost, int myProviderBoost) {
         this.health = health;
         this.escapeValueSent = escapeValueSent;
         GameControllerScript.playerList[pView.OwnerActorNr].kills = kills;
@@ -1780,9 +1780,17 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             skillController.SetThisPlayerHeadstrongBoost(myHeadstrongBoost);
             PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddHeadstrongBoost(myHeadstrongBoost);
         }
-        if (skillController.GetThisPlayerResourcefulBoost() == 0F) {
+        if (skillController.GetThisPlayerResourcefulBoost() == 0f) {
             skillController.SetThisPlayerResourcefulBoost(myResourcefulBoost);
             PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddResourcefulBoost(myResourcefulBoost);
+        }
+        if (skillController.GetThisPlayerInspireBoost() == 0f) {
+            skillController.SetThisPlayerInspireBoost(myInspireBoost);
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddInspireBoost(myInspireBoost);
+        }
+        if (skillController.GetThisPlayerProviderBoost() == 0) {
+            skillController.SetThisPlayerProviderBoost(myProviderBoost);
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddProviderBoost(myProviderBoost);
         }
 
         if (health <= 0) {

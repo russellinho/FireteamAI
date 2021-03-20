@@ -99,8 +99,8 @@ public class WeaponScript : MonoBehaviour
         currentAmmoPrimary = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].clipCapacity;
         currentAmmoSecondary = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
         currentAmmoSupport = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].clipCapacity;
-        totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo - currentAmmoPrimary;
-        totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo - currentAmmoSecondary;
+        totalPrimaryAmmoLeft = (InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo + (currentAmmoPrimary * playerActionScript.skillController.GetProviderBoost())) - currentAmmoPrimary;
+        totalSecondaryAmmoLeft = (InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo + (currentAmmoSecondary * playerActionScript.skillController.GetProviderBoost())) - currentAmmoSecondary;
         int supportAmmoBoost = 0;
         if (PlayerData.playerdata.info.EquippedSupport == "First Aid Kit") {
             supportAmmoBoost = playerActionScript.skillController.GetHealthCaddyBoost();
@@ -111,7 +111,7 @@ public class WeaponScript : MonoBehaviour
         if (PlayerData.playerdata.info.EquippedSupport == "Bubble Shield") {
             supportAmmoBoost = playerActionScript.skillController.GetDigitalNomadBoost();
         }
-        totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo + supportAmmoBoost - currentAmmoSupport;
+        totalSupportAmmoLeft = (InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo + (currentAmmoSupport * playerActionScript.skillController.GetProviderBoost())) + supportAmmoBoost - currentAmmoSupport;
         equippedWepInGame = equippedPrimaryWeapon;
         //DrawWeapon(1);
         InitializeWeapon();
@@ -923,7 +923,7 @@ public class WeaponScript : MonoBehaviour
             wm.EquipSuppressor(modName);
             // drawnSuppressorReference = wm.suppressorRef;
             Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-            weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost);
         } else if (equipOnWeapon.Equals(equippedSecondaryWeapon)) {
             // If secondary, only attach to weapon if in-game
             WeaponMods wm = null;
@@ -934,7 +934,7 @@ public class WeaponScript : MonoBehaviour
             }
             wm.EquipSuppressor(modName);
             Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-            weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost);
         }
     }
 
@@ -954,7 +954,7 @@ public class WeaponScript : MonoBehaviour
                 wm = weaponHolder.GetComponentInChildren<WeaponMods>();
             }
             Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-            weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost*.03f, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost, -suppressorBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost*.03f, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost);
             wm.UnequipSuppressor();
         } else if (unequipFromWeapon.Equals(equippedSecondaryWeapon)) {
             WeaponMods wm = null;
@@ -964,7 +964,7 @@ public class WeaponScript : MonoBehaviour
                 wm = weaponHolder.GetComponentInChildren<WeaponMods>();
             }
             Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-            weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost*.03f, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost, -suppressorBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost*.03f, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost);
             wm.UnequipSuppressor();
         }
     }
@@ -986,7 +986,7 @@ public class WeaponScript : MonoBehaviour
             }
             wm.EquipSight(modName);
             Mod sightBoosts = wm.GetEquippedSightStats();
-            weaponActionScript.ModifyWeaponStats(sightBoosts.damageBoost, sightBoosts.accuracyBoost, sightBoosts.recoilBoost, sightBoosts.rangeBoost, sightBoosts.clipCapacityBoost, sightBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(sightBoosts.damageBoost, sightBoosts.accuracyBoost, sightBoosts.recoilBoost, sightBoosts.rangeBoost, sightBoosts.clipCapacityBoost);
             weaponActionScript.hudScript.EquipSightCrosshair(true);
             weaponActionScript.hudScript.SetSightCrosshairForSight(modName);
         } else if (equipOnWeapon.Equals(equippedSecondaryWeapon)) {
@@ -999,7 +999,7 @@ public class WeaponScript : MonoBehaviour
             }
             wm.EquipSight(modName);
             Mod sightBoosts = wm.GetEquippedSightStats();
-            weaponActionScript.ModifyWeaponStats(sightBoosts.damageBoost, sightBoosts.accuracyBoost, sightBoosts.recoilBoost*.03f, sightBoosts.rangeBoost, sightBoosts.clipCapacityBoost, sightBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(sightBoosts.damageBoost, sightBoosts.accuracyBoost, sightBoosts.recoilBoost*.03f, sightBoosts.rangeBoost, sightBoosts.clipCapacityBoost);
             weaponActionScript.hudScript.EquipSightCrosshair(true);
             weaponActionScript.hudScript.SetSightCrosshairForSight(modName);
         }
@@ -1021,7 +1021,7 @@ public class WeaponScript : MonoBehaviour
                 wm = weaponHolder.GetComponentInChildren<WeaponMods>();
             }
             Mod sightBoosts = wm.GetEquippedSightStats();
-            weaponActionScript.ModifyWeaponStats(-sightBoosts.damageBoost, -sightBoosts.accuracyBoost, -sightBoosts.recoilBoost*.03f, -sightBoosts.rangeBoost, -sightBoosts.clipCapacityBoost, -sightBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(-sightBoosts.damageBoost, -sightBoosts.accuracyBoost, -sightBoosts.recoilBoost*.03f, -sightBoosts.rangeBoost, -sightBoosts.clipCapacityBoost);
             wm.UnequipSight();
         } else if (unequipFromWeapon.Equals(equippedSecondaryWeapon)) {
             WeaponMods wm = null;
@@ -1031,7 +1031,7 @@ public class WeaponScript : MonoBehaviour
                 wm = weaponHolder.GetComponentInChildren<WeaponMods>();
             }
             Mod sightBoosts = wm.GetEquippedSightStats();
-            weaponActionScript.ModifyWeaponStats(-sightBoosts.damageBoost, -sightBoosts.accuracyBoost, -sightBoosts.recoilBoost*.03f, -sightBoosts.rangeBoost, -sightBoosts.clipCapacityBoost, -sightBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(-sightBoosts.damageBoost, -sightBoosts.accuracyBoost, -sightBoosts.recoilBoost*.03f, -sightBoosts.rangeBoost, -sightBoosts.clipCapacityBoost);
             wm.UnequipSight();
         }
     }
@@ -1136,21 +1136,21 @@ public class WeaponScript : MonoBehaviour
     }
 
     public void MaxRefillAmmoOnPrimary() {
-        totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo - currentAmmoPrimary;
+        totalPrimaryAmmoLeft = (InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo + (InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedPrimary].clipCapacity * playerActionScript.skillController.GetProviderBoost())) - currentAmmoPrimary;
     }
 
     public void RefillAmmoOnPrimary(int amt)
     {
         totalPrimaryAmmoLeft += amt;
-        totalPrimaryAmmoLeft = Mathf.Min(InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo - currentAmmoPrimary, totalPrimaryAmmoLeft);
+        totalPrimaryAmmoLeft = Mathf.Min((InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo + (InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedPrimary].clipCapacity * playerActionScript.skillController.GetProviderBoost())) - currentAmmoPrimary, totalPrimaryAmmoLeft);
     }
 
     public void MaxRefillAmmoOnSecondary() {
-        totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo - currentAmmoSecondary;
+        totalSecondaryAmmoLeft = (InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo + (InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedSecondary].clipCapacity * playerActionScript.skillController.GetProviderBoost())) - currentAmmoSecondary;
     }
 
     public void MaxRefillAmmoOnSupport() {
-        totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo - currentAmmoSupport;
+        totalSupportAmmoLeft = (InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo + (InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedSupport].clipCapacity * playerActionScript.skillController.GetProviderBoost())) - currentAmmoSupport;
     }
 
     public void EquipWeaponForSetup(string weaponName, string characterSelected) {
@@ -1220,7 +1220,7 @@ public class WeaponScript : MonoBehaviour
 
     public int GetLoadedMaxAmmoForCurrentWep()
     {
-        return weaponActionScript.weaponStats.maxAmmo - weaponActionScript.weaponStats.clipCapacity;
+        return (weaponActionScript.weaponStats.maxAmmo + (weaponActionScript.weaponStats.clipCapacity * playerActionScript.skillController.GetProviderBoost())) - weaponActionScript.weaponStats.clipCapacity;
     }
 
 }

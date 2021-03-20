@@ -693,6 +693,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			mySkills.RemoveHackerBoost(theirSkills.GetThisPlayerHackerBoost());
 			mySkills.RemoveHeadstrongBoost(theirSkills.GetThisPlayerHeadstrongBoost());
 			mySkills.RemoveResourcefulBoost(theirSkills.GetThisPlayerResourcefulBoost());
+			mySkills.RemoveInspireBoost(theirSkills.GetThisPlayerInspireBoost());
+			mySkills.RemoveProviderBoost(theirSkills.GetThisPlayerProviderBoost());
 
 			Destroy (GameControllerScript.playerList[otherPlayer.ActorNumber].objRef);
 		}
