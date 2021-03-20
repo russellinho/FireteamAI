@@ -53,9 +53,6 @@ public class SkillController : MonoBehaviour
         UpdateOneShotOneKillTimer();
         UpdateBloodLustActivation();
         UpdateBloodLustActive();
-        if (Input.GetKeyDown(KeyCode.U)) {
-            Debug.LogError("FTEAM BOOST: " + fireteamBoost);
-        }
     }
 
     public void InitializePassiveSkills(int weaponCategory)
@@ -1028,7 +1025,7 @@ public class SkillController : MonoBehaviour
     public float GetFireteamBoost(float avgDistanceBetweenTeam)
     {
         if (avgDistanceBetweenTeam > 0f) {
-            float distMultiplier = Mathf.Min(1f, Mathf.Pow((8f / avgDistanceBetweenTeam), 2f));
+            float distMultiplier = Mathf.Min(1f, Mathf.Pow((8f / avgDistanceBetweenTeam), 1.5f));
             if (distMultiplier < 0.1f) {
                 distMultiplier = 0f;
             }
