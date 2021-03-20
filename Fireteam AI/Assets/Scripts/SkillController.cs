@@ -9,6 +9,9 @@ public class SkillController : MonoBehaviour
     public static float BOOSTER_LVL1_EFFECT = 0.05f;
     public static float BOOSTER_LVL2_EFFECT = 0.1f;
     public static float BOOSTER_LVL3_EFFECT = 0.2f;
+    public static float MARTIAL_ARTS_ATTACK_CAP = 0.15f;
+    public static float MARTIAL_ARTS_DEFENSE_CAP = 0.3f;
+    private const float FIRETEAM_BOOST_CAP = 0.1f;
     private EncryptedFloat speedBoost;
     private EncryptedFloat damageBoost;
     private EncryptedFloat armorBoost;
@@ -36,6 +39,12 @@ public class SkillController : MonoBehaviour
     private EncryptedFloat storedInspireBoost;
     private int[] providerBoost = new int[4];
     private EncryptedInt storedProviderBoost;
+    private EncryptedFloat fireteamBoost;
+    private EncryptedFloat storedFireteamBoost;
+    private EncryptedFloat martialArtsAttackBoost;
+    private EncryptedFloat martialArtsDefenseBoost;
+    private EncryptedFloat storedMartialArtsAttackBoost;
+    private EncryptedFloat storedMartialArtsDefenseBoost;
 
     void Update()
     {
@@ -233,6 +242,13 @@ public class SkillController : MonoBehaviour
 
         SetThisPlayerProviderBoost(GetMyProviderBoost());
         AddProviderBoost(GetMyProviderBoost());
+
+        SetThisPlayerFireteamBoost(GetMyFireteamBoost());
+        AddFireteamBoost(GetMyFireteamBoost());
+
+        SetThisPlayerMartialArtsAttackBoost(GetMyMartialArtsAttackBoost());
+        SetThisPlayerMartialArtsDefenseBoost(GetMyMartialArtsDefenseBoost());
+        AddMartialArtsBoost(GetMyMartialArtsAttackBoost(), GetMyMartialArtsDefenseBoost());
     }
 
     public int GetDeployableMasteryLevel()
@@ -994,6 +1010,118 @@ public class SkillController : MonoBehaviour
     public int GetThisPlayerProviderBoost()
     {
         return storedProviderBoost;
+    }
+
+    public void AddFireteamBoost(float val)
+    {
+        fireteamBoost += val;
+    }
+
+    public void RemoveFireteamBoost(float val)
+    {
+        fireteamBoost -= val;
+    }
+
+    public float GetFireteamBoost(float avgDistanceBetweenTeam)
+    {
+        if (avgDistanceBetweenTeam > 0f) {
+            float distMultiplier = Mathf.Min(1f, Mathf.Pow((8f / avgDistanceBetweenTeam), 2f));
+            if (distMultiplier < 0.1f) {
+                distMultiplier = 0f;
+            }
+            return Mathf.Min(fireteamBoost, FIRETEAM_BOOST_CAP) * distMultiplier;
+        }
+        return 0f;
+    }
+
+    public float GetMyFireteamBoost()
+    {
+        if (PlayerData.playerdata.skillList["3/10"].Level == 1) {
+            return 0.01f;
+        } else if (PlayerData.playerdata.skillList["3/10"].Level == 2) {
+            return 0.02f;
+        } else if (PlayerData.playerdata.skillList["3/10"].Level == 3) {
+            return 0.03f;
+        } else if (PlayerData.playerdata.skillList["3/10"].Level == 4) {
+            return 0.04f;
+        }
+        return 0f;
+    }
+
+    public void SetThisPlayerFireteamBoost(float val)
+    {
+        storedFireteamBoost = val;
+    }
+
+    public float GetThisPlayerFireteamBoost()
+    {
+        return storedFireteamBoost;
+    }
+
+    public void AddMartialArtsBoost(float attackVal, float defenseVal)
+    {
+        martialArtsAttackBoost += attackVal;
+        martialArtsDefenseBoost += defenseVal;
+    }
+
+    public void RemoveMartialArtsBoost(float attackVal, float defenseVal)
+    {
+        martialArtsAttackBoost -= attackVal;
+        martialArtsDefenseBoost -= defenseVal;
+    }
+
+    public float GetMartialArtsAttackBoost()
+    {
+        return Mathf.Min(martialArtsAttackBoost, MARTIAL_ARTS_ATTACK_CAP);
+    }
+
+    public float GetMartialArtsDefenseBoost()
+    {
+        return Mathf.Min(martialArtsDefenseBoost, MARTIAL_ARTS_DEFENSE_CAP);
+    }
+
+    public float GetMyMartialArtsAttackBoost()
+    {
+        if (PlayerData.playerdata.skillList["3/7"].Level == 1) {
+            return 0.01f;
+        } else if (PlayerData.playerdata.skillList["3/7"].Level == 2) {
+            return 0.02f;
+        } else if (PlayerData.playerdata.skillList["3/7"].Level == 3) {
+            return 0.05f;
+        }
+        return 0f;
+    }
+
+    public float GetMyMartialArtsDefenseBoost()
+    {
+        if (PlayerData.playerdata.skillList["3/7"].Level == 1) {
+            return 0.05f;
+        } else if (PlayerData.playerdata.skillList["3/7"].Level == 2) {
+            return 0.1f;
+        } else if (PlayerData.playerdata.skillList["3/7"].Level == 3) {
+            return 0.15f;
+        }
+        return 0f;
+    }
+
+    public void SetThisPlayerMartialArtsAttackBoost(float val)
+    {
+        storedMartialArtsAttackBoost = val;
+    }
+
+    public void SetThisPlayerMartialArtsDefenseBoost(float val)
+    {
+        storedMartialArtsDefenseBoost = val;
+    }
+
+    public float GetThisPlayerMartialArtsAttackBoost()
+    {
+        return storedMartialArtsAttackBoost;
+    }
+
+    public float GetThisPlayerMartialArtsDefenseBoost()
+    {
+        return storedMartialArtsDefenseBoost;
     }
 
     // End collective boosts

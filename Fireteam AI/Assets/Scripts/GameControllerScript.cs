@@ -95,6 +95,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public short noVotes;
 	private float voteDelay;
 	private float waitTriggerTimer;
+	private float avgDistanceBetweenTeam;
 
 	// Use this for initialization
 	void Awake() {
@@ -196,6 +197,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		if (isVersusHostForThisTeam()) {
 			ResetAssaultInProgressOverNetwork();
 		}
+		StartCoroutine("UpdateAvgDistanceBetweenTeam");
 		if (matchType == 'C') {
 			StartCoroutine("GameOverCheckForCampaign");
 		} else if (matchType == 'V') {
@@ -695,6 +697,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			mySkills.RemoveResourcefulBoost(theirSkills.GetThisPlayerResourcefulBoost());
 			mySkills.RemoveInspireBoost(theirSkills.GetThisPlayerInspireBoost());
 			mySkills.RemoveProviderBoost(theirSkills.GetThisPlayerProviderBoost());
+			mySkills.RemoveFireteamBoost(theirSkills.GetThisPlayerFireteamBoost());
+			mySkills.RemoveMartialArtsBoost(theirSkills.GetThisPlayerMartialArtsAttackBoost(), theirSkills.GetThisPlayerMartialArtsDefenseBoost());
 
 			Destroy (GameControllerScript.playerList[otherPlayer.ActorNumber].objRef);
 		}
@@ -1638,6 +1642,49 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			}
 		}
 		return count;
+	}
+
+	IEnumerator UpdateAvgDistanceBetweenTeam()
+	{
+		yield return new WaitForSeconds(10f);
+		try {
+			CalculateAvgDistanceBetweenTeam();
+		} catch (Exception e) {
+			Debug.LogError("Exception caught during UpdateAvgDistanceBetweenTeam()");
+		}
+		StartCoroutine("UpdateAvgDistanceBetweenTeam");
+	}
+
+	private void CalculateAvgDistanceBetweenTeam()
+	{
+		int start = 0;
+		int pairs = 0;
+		float totalDistances = 0f;
+		int[] keys = GameControllerScript.playerList.Keys.ToArray();
+		while (start < keys.Length) {
+			int k = keys[start];
+			if (!GameControllerScript.playerList.ContainsKey(k) || GameControllerScript.playerList[k].objRef == null) {
+				start++;
+				continue;
+			}
+			Vector3 thisPos = GameControllerScript.playerList[k].objRef.transform.position;
+			for (int i = start + 1; i < keys.Length; i++) {
+				Vector3 p = GameControllerScript.playerList[keys[i]].objRef.transform.position;
+				totalDistances += Vector3.Distance(thisPos, p);
+				pairs++;
+			}
+			start++;
+		}
+		if (pairs == 0) {
+			avgDistanceBetweenTeam = 0f;
+		} else {
+			avgDistanceBetweenTeam = totalDistances / (float)pairs;
+		}
+	}
+
+	public float GetAvgDistanceBetweenTeam()
+	{
+		return avgDistanceBetweenTeam;
 	}
 
 }

@@ -558,9 +558,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (pView.IsMine)
         {
             audioController.PlayHitSound();
-            // If it was a melee attack, apply heavyweight skill effect
+            // If it was a melee attack, apply heavyweight and martial arts skill effect
             if (hitBy == 2 && useArmor) {
-                d = (int)((float)d * (1f - skillController.GetMeleeResistance()));
+                d = (int)((float)d * (1f - skillController.GetMeleeResistance()) * (1f - skillController.GetMartialArtsDefenseBoost()));
             }
         }
         // if (!godMode)
@@ -1760,12 +1760,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             }
         }
 		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept,
-                    skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost(), skillController.GetMyInspireBoost(), skillController.GetMyProviderBoost());
+                    skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost(), skillController.GetMyInspireBoost(), skillController.GetMyProviderBoost(),
+                    skillController.GetMyMartialArtsAttackBoost(), skillController.GetMyMartialArtsDefenseBoost(), skillController.GetMyFireteamBoost());
 	}
 
 	[PunRPC]
 	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept,
-        int myHackerBoost, float myHeadstrongBoost, float myResourcefulBoost, float myInspireBoost, int myProviderBoost) {
+        int myHackerBoost, float myHeadstrongBoost, float myResourcefulBoost, float myInspireBoost, int myProviderBoost, float myMartialArtsAttackBoost, float myMartialArtsDefenseBoost,
+        float myFireteamBoost) {
         this.health = health;
         this.escapeValueSent = escapeValueSent;
         GameControllerScript.playerList[pView.OwnerActorNr].kills = kills;
@@ -1792,6 +1794,15 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (skillController.GetThisPlayerProviderBoost() == 0) {
             skillController.SetThisPlayerProviderBoost(myProviderBoost);
             PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddProviderBoost(myProviderBoost);
+        }
+        if (skillController.GetThisPlayerFireteamBoost() == 0) {
+            skillController.SetThisPlayerFireteamBoost(myFireteamBoost);
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddFireteamBoost(myFireteamBoost);
+        }
+        if (skillController.GetThisPlayerMartialArtsAttackBoost() == 0f) {
+            skillController.SetThisPlayerMartialArtsAttackBoost(myMartialArtsAttackBoost);
+            skillController.SetThisPlayerMartialArtsDefenseBoost(myMartialArtsDefenseBoost);
+            PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddMartialArtsBoost(myMartialArtsAttackBoost, myMartialArtsDefenseBoost);
         }
 
         if (health <= 0) {

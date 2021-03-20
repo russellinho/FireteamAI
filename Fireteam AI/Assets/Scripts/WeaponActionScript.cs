@@ -620,7 +620,9 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                             hitmanDamageBoost += playerActionScript.skillController.GetHitmanDamageBoost();
                         }
                         float bloodLustDamageBoost = 1f + playerActionScript.skillController.GetBloodLustDamageBoost();
-                        b.TakeDamage((int)(meleeStats.damage * (1f + playerActionScript.skillController.GetMeleeDamageBoost()) * hitmanDamageBoost * bloodLustDamageBoost), transform.position, 2, 0, playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
+                        float martialArtsDamageBoost = 1f + playerActionScript.skillController.GetMartialArtsAttackBoost();
+                        float fireteamDamageBoost = 1f + playerActionScript.skillController.GetFireteamBoost(playerActionScript.gameController.GetAvgDistanceBetweenTeam());
+                        b.TakeDamage((int)(meleeStats.damage * (1f + playerActionScript.skillController.GetMeleeDamageBoost()) * hitmanDamageBoost * bloodLustDamageBoost * martialArtsDamageBoost * fireteamDamageBoost), transform.position, 2, 0, playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
                         b.PlayGruntSound();
                         b.SetAlerted();
                         if (b.health <= 0 && beforeHp > 0)
@@ -709,7 +711,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                             playerActionScript.skillController.ResetOneShotOneKillTimer();
                         }
                         float bloodLustDamageBoost = 1f + playerActionScript.skillController.GetBloodLustDamageBoost();
-                        b.TakeDamage((int)(thisDamageDealt * playerActionScript.skillController.GetDamageBoost() * sniperAmplificationBoost * shootToKillBoost * silentKillerBoost * hitmanDamageBoost * oneShotOneKillBoost * bloodLustDamageBoost), transform.position, 0, bodyPartIdHit, playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
+                        float fireteamDamageBoost = 1f + playerActionScript.skillController.GetFireteamBoost(playerActionScript.gameController.GetAvgDistanceBetweenTeam());
+                        b.TakeDamage((int)(thisDamageDealt * playerActionScript.skillController.GetDamageBoost() * sniperAmplificationBoost * shootToKillBoost * silentKillerBoost * hitmanDamageBoost * oneShotOneKillBoost * bloodLustDamageBoost * fireteamDamageBoost), transform.position, 0, bodyPartIdHit, playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
                         b.PlayGruntSound();
                         b.SetAlerted();
                         if (b.health <= 0 && beforeHp > 0)
@@ -869,7 +872,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                                         playerActionScript.skillController.ResetOneShotOneKillTimer();
                                     }
                                     float bloodLustDamageBoost = 1f + playerActionScript.skillController.GetBloodLustDamageBoost();
-                                    b.TakeDamage((int)(totalDamageDealt * playerActionScript.skillController.GetDamageBoost() * shootToKillBoost * silentKillerBoost * hitmanDamageBoost * oneShotOneKillBoost * bloodLustDamageBoost), transform.position, 0, (headHit ? HEAD_TARGET : bodyPartIdHit), playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
+                                    float fireteamDamageBoost = 1f + playerActionScript.skillController.GetFireteamBoost(playerActionScript.gameController.GetAvgDistanceBetweenTeam());
+                                    b.TakeDamage((int)(totalDamageDealt * playerActionScript.skillController.GetDamageBoost() * shootToKillBoost * silentKillerBoost * hitmanDamageBoost * oneShotOneKillBoost * bloodLustDamageBoost * fireteamDamageBoost), transform.position, 0, (headHit ? HEAD_TARGET : bodyPartIdHit), playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
                                     if (b.health <= 0)
                                     {
                                         BetaEnemyScript.NUMBER_KILLED++;
