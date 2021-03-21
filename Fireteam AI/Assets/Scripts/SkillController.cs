@@ -1584,6 +1584,7 @@ public class SkillController : MonoBehaviour
                 } else if (GetThisRegeneratorLevel() == 4) {
                     thisRegeneratorTimer = REGENERATOR_TIMER_4;
                 } else if (GetThisRegeneratorLevel() == 5) {
+                    Debug.LogError("ACTIVATED REGENERATOR 5");
                     thisRegeneratorTimer = REGENERATOR_TIMER_5;
                 }
                 thisRegeneratorActive = true;

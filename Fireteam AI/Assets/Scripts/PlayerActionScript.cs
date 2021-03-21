@@ -2071,7 +2071,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             skillController.ActivateBulletStream();
         }
         // Skill effect
-        PlayBoostParticleEffect();
+        PlayBoostParticleEffect(true);
     }
 
     IEnumerator RegeneratorRecover()
@@ -2087,6 +2087,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     regeneratorSkillController.ActivateRegenerator(true);
                     int recoverAmt = regeneratorSkillController.GetRegeneratorRecoveryAmount();
                     if (recoverAmt > 0) {
+                        Debug.LogError("HEALED: " + recoverAmt);
                         SetHealth(health + recoverAmt, true);
                     }
                 } else {

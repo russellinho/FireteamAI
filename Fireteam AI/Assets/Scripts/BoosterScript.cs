@@ -33,7 +33,7 @@ public class BoosterScript : MonoBehaviour
 
     public void UseAdrenaphine() {
       playerActionScript.ResetBoostTimer();
-      playerActionScript.PlayBoostParticleEffect();
+      playerActionScript.PlayBoostParticleEffect(true);
       playerActionScript.audioController.PlayGruntSound();
       playerActionScript.InjectAdrenaphine();
     }
