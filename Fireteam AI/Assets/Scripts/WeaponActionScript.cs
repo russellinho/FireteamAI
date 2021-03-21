@@ -542,19 +542,19 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             int lvl = playerActionScript.skillController.GetBloodLeechLevel();
             if (lvl == 1) {
                 if (GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills % 10 == 0) {
-                    playerActionScript.SetHealth(playerActionScript.health + 2);
+                    playerActionScript.SetHealth(playerActionScript.health + 2, true);
                 }
             } else if (lvl == 2) {
                 if (GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills % 8 == 0) {
-                    playerActionScript.SetHealth(playerActionScript.health + 3);
+                    playerActionScript.SetHealth(playerActionScript.health + 3, true);
                 }
             } else if (lvl == 3) {
                 if (GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills % 6 == 0) {
-                    playerActionScript.SetHealth(playerActionScript.health + 4);
+                    playerActionScript.SetHealth(playerActionScript.health + 4, true);
                 }
             } else if (lvl == 4) {
                 if (GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills % 4 == 0) {
-                    playerActionScript.SetHealth(playerActionScript.health + 5);
+                    playerActionScript.SetHealth(playerActionScript.health + 5, true);
                 }
             }
         }

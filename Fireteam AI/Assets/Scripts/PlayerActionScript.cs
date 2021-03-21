@@ -228,6 +228,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         ToggleRagdoll(false);
 
         StartCoroutine(SpawnInvincibilityRoutine());
+        StartCoroutine("RegeneratorRecover");
         initialized = true;
     }
 
@@ -955,16 +956,19 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         boostTimer = 0f;
     }
 
-    public void SetHealth(int h)
+    public void SetHealth(int h, bool useParticleEffect)
     {
-        pView.RPC("RpcSetHealth", RpcTarget.All, h);
+        pView.RPC("RpcSetHealth", RpcTarget.All, h, useParticleEffect);
     }
 
     [PunRPC]
-    void RpcSetHealth(int h)
+    void RpcSetHealth(int h, bool useParticleEffect)
     {
         if (gameObject.layer == 0) return;
         health = h;
+        if (useParticleEffect) {
+            PlayHealParticleEffect();
+        }
         if (pView.IsMine) {
             skillController.HandleHealthChangeEvent(h);
         }
@@ -1121,7 +1125,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             aud.clip = healthPickupSound;
             aud.Play();
             ResetHealTimer();
-            pView.RPC("RpcSetHealth", RpcTarget.All, 100);
+            pView.RPC("RpcSetHealth", RpcTarget.All, 100, false);
             pView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId, gameController.teamMap);
         }
     }
@@ -1274,7 +1278,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             isRespawning = true;
         } else {
             health = 100;
-            pView.RPC("RpcSetHealth", RpcTarget.Others, 100);
+            pView.RPC("RpcSetHealth", RpcTarget.Others, 100, false);
         }
     }
 
@@ -1296,7 +1300,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         health = 100;
         waitingOnAccept = false;
-        pView.RPC("RpcSetHealth", RpcTarget.Others, 100);
+        pView.RPC("RpcSetHealth", RpcTarget.Others, 100, false);
         viewCam.transform.SetParent(cameraParent);
         viewCam.transform.GetComponent<Camera>().fieldOfView = 60;
         hud.ToggleHUD(true);
@@ -1432,7 +1436,16 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         healParticleEffect.Play();
     }
 
-    public void PlayBoostParticleEffect() {
+    public void PlayBoostParticleEffect(bool sendOverNetwork) {
+        boostParticleEffect.Play();
+        if (sendOverNetwork) {
+            pView.RPC("RpcBoostParticleEffect", RpcTarget.Others);
+        }
+    }
+
+    [PunRPC]
+    public void RpcBoostParticleEffect()
+    {
         boostParticleEffect.Play();
     }
 
@@ -1460,11 +1473,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             } else {
               this.health += healthIncrement;
             }
-            pView.RPC("RpcSetHealth", RpcTarget.Others, this.health);
+            pView.RPC("RpcSetHealth", RpcTarget.Others, this.health, false);
             yield return new WaitForSeconds(2);
-
           }
-
          } else {
            yield return null;
          }
@@ -1774,13 +1785,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept,
                     skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost(), skillController.GetMyInspireBoost(), skillController.GetMyProviderBoost(),
-                    skillController.GetMyMartialArtsAttackBoost(), skillController.GetMyMartialArtsDefenseBoost(), skillController.GetMyFireteamBoost(), skillController.GetSilhouetteBoost());
+                    skillController.GetMyMartialArtsAttackBoost(), skillController.GetMyMartialArtsDefenseBoost(), skillController.GetMyFireteamBoost(), skillController.GetSilhouetteBoost(), skillController.GetRegeneratorLevel());
 	}
 
 	[PunRPC]
 	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept,
         int myHackerBoost, float myHeadstrongBoost, float myResourcefulBoost, float myInspireBoost, int myProviderBoost, float myMartialArtsAttackBoost, float myMartialArtsDefenseBoost,
-        float myFireteamBoost, int silhouetteBoost) {
+        float myFireteamBoost, int silhouetteBoost, int regeneratorLevel) {
         this.health = health;
         this.escapeValueSent = escapeValueSent;
         GameControllerScript.playerList[pView.OwnerActorNr].kills = kills;
@@ -1819,6 +1830,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         if (skillController.GetThisSilhouetteBoost() == 0) {
             skillController.SetThisSilhouetteBoost(silhouetteBoost);
+        }
+        if (skillController.GetThisRegeneratorLevel() == 0) {
+            skillController.SetThisRegeneratorLevel(regeneratorLevel);
+            if (regeneratorLevel > 0) {
+                PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddRegenerator(pView.Owner.ActorNumber);
+            }
         }
 
         if (health <= 0) {
@@ -2038,7 +2055,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (this.health < 100 && this.health > 0) {
             this.health += health;
             int newHealth = this.health;
-            pView.RPC("RpcSetHealth", RpcTarget.Others, newHealth);
+            pView.RPC("RpcSetHealth", RpcTarget.Others, newHealth, false);
         }
     }
 
@@ -2055,6 +2072,32 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         // Skill effect
         PlayBoostParticleEffect();
+    }
+
+    IEnumerator RegeneratorRecover()
+    {
+        // For every regenerator on your team, determine if they're within proper range
+        LinkedList<int>.Enumerator ids = skillController.regeneratorPlayerIds.GetEnumerator();
+        try {
+            while (ids.MoveNext()) {
+                int thisPlayerId = ids.Current;
+                GameObject regenerator = GameControllerScript.playerList[thisPlayerId].objRef;
+                SkillController regeneratorSkillController = regenerator.GetComponent<SkillController>();
+                if (Vector3.Distance(regenerator.transform.position, transform.position) <= SkillController.REGENERATOR_MAX_DISTANCE) {
+                    regeneratorSkillController.ActivateRegenerator(true);
+                    int recoverAmt = regeneratorSkillController.GetRegeneratorRecoveryAmount();
+                    if (recoverAmt > 0) {
+                        SetHealth(health + recoverAmt, true);
+                    }
+                } else {
+                    regeneratorSkillController.ActivateRegenerator(false);
+                }
+            }
+        } catch (Exception e) {
+            Debug.LogError("Caught error in [RegeneratorRecover]: " + e.Message);
+        }
+        yield return new WaitForSeconds(2f);
+        StartCoroutine("RegeneratorRecover");
     }
 
 }

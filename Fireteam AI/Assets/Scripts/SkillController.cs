@@ -38,6 +38,17 @@ public class SkillController : MonoBehaviour
     private const float RAMPAGE_COOLDOWN_1 = 600f;
     private const float RAMPAGE_COOLDOWN_2 = 480f;
     private const float RAMPAGE_COOLDOWN_3 = 360f;
+    public static float REGENERATOR_MAX_DISTANCE = 8f;
+    private const float REGENERATOR_TIMER_1 = 30f;
+    private const float REGENERATOR_TIMER_2 = 28f;
+    private const float REGENERATOR_TIMER_3 = 26f;
+    private const float REGENERATOR_TIMER_4 = 24f;
+    private const float REGENERATOR_TIMER_5 = 22f;
+    private const int REGENERATOR_RECOVER_1 = 2;
+    private const int REGENERATOR_RECOVER_2 = 3;
+    private const int REGENERATOR_RECOVER_3 = 4;
+    private const int REGENERATOR_RECOVER_4 = 5;
+    private const int REGENERATOR_RECOVER_5 = 6;
     private EncryptedFloat speedBoost;
     private EncryptedFloat damageBoost;
     private EncryptedFloat armorBoost;
@@ -49,6 +60,10 @@ public class SkillController : MonoBehaviour
     private float munitionsEngineeringTimer;
     private float regenerationTimer;
     private float oneShotOneKillTimer;
+    public LinkedList<int> regeneratorPlayerIds = new LinkedList<int>();
+    private float thisRegeneratorTimer;
+    private bool thisRegeneratorActive;
+    private EncryptedInt thisRegeneratorLevel;
 
     // Active boosts
     private float firmGripTimer;
@@ -83,11 +98,6 @@ public class SkillController : MonoBehaviour
     private EncryptedFloat storedMartialArtsAttackBoost;
     private EncryptedFloat storedMartialArtsDefenseBoost;
 
-    void Awake()
-    {
-
-    }
-
     void Update()
     {
         MunitionsEngineeringRefresh();
@@ -99,6 +109,7 @@ public class SkillController : MonoBehaviour
         UpdateSnipersDel();
         UpdateBulletStream();
         UpdateRampage();
+        UpdateRegenerator();
     }
 
     public void InitializePassiveSkills(int weaponCategory)
@@ -297,6 +308,7 @@ public class SkillController : MonoBehaviour
         AddMartialArtsBoost(GetMyMartialArtsAttackBoost(), GetMyMartialArtsDefenseBoost());
 
         SetThisSilhouetteBoost(GetSilhouetteBoost());
+        SetThisRegeneratorLevel(GetRegeneratorLevel());
     }
 
     public int GetDeployableMasteryLevel()
@@ -1543,5 +1555,84 @@ public class SkillController : MonoBehaviour
     }
 
     // END ACTIVE SKILLS
+
+    public int GetRegeneratorLevel()
+    {
+        return PlayerData.playerdata.skillList["4/5"].Level;
+    }
+
+    public int GetThisRegeneratorLevel()
+    {
+        return thisRegeneratorLevel;
+    }
+
+    public void SetThisRegeneratorLevel(int val)
+    {
+        thisRegeneratorLevel = val;
+    }
+
+    public void ActivateRegenerator(bool b)
+    {
+        if (b) {
+            if (!thisRegeneratorActive) {
+                if (GetThisRegeneratorLevel() == 1) {
+                    thisRegeneratorTimer = REGENERATOR_TIMER_1;
+                } else if (GetThisRegeneratorLevel() == 2) {
+                    thisRegeneratorTimer = REGENERATOR_TIMER_2;
+                } else if (GetThisRegeneratorLevel() == 3) {
+                    thisRegeneratorTimer = REGENERATOR_TIMER_3;
+                } else if (GetThisRegeneratorLevel() == 4) {
+                    thisRegeneratorTimer = REGENERATOR_TIMER_4;
+                } else if (GetThisRegeneratorLevel() == 5) {
+                    thisRegeneratorTimer = REGENERATOR_TIMER_5;
+                }
+                thisRegeneratorActive = true;
+            }
+        } else {
+            thisRegeneratorTimer = 0f;
+            thisRegeneratorActive = false;
+        }
+    }
+
+    public int GetRegeneratorRecoveryAmount()
+    {
+        int retAmt = 0;
+        if (thisRegeneratorTimer <= 0f) {
+            if (GetThisRegeneratorLevel() == 1) {
+                retAmt = REGENERATOR_RECOVER_1;
+                thisRegeneratorTimer = REGENERATOR_TIMER_1;
+            } else if (GetThisRegeneratorLevel() == 2) {
+                retAmt = REGENERATOR_RECOVER_2;
+                thisRegeneratorTimer = REGENERATOR_TIMER_2;
+            } else if (GetThisRegeneratorLevel() == 3) {
+                retAmt = REGENERATOR_RECOVER_3;
+                thisRegeneratorTimer = REGENERATOR_TIMER_3;
+            } else if (GetThisRegeneratorLevel() == 4) {
+                retAmt = REGENERATOR_RECOVER_4;
+                thisRegeneratorTimer = REGENERATOR_TIMER_4;
+            } else if (GetThisRegeneratorLevel() == 5) {
+                retAmt = REGENERATOR_RECOVER_5;
+                thisRegeneratorTimer = REGENERATOR_TIMER_5;
+            }
+        }
+        return retAmt;
+    }
+
+    public void AddRegenerator(int playerId)
+    {
+        regeneratorPlayerIds.AddLast(playerId);
+    }
+
+    public void RemoveRegenerator(int playerId)
+    {
+        regeneratorPlayerIds.Remove(playerId);
+    }
+
+    void UpdateRegenerator()
+    {
+        if (thisRegeneratorActive) {
+            thisRegeneratorTimer -= Time.deltaTime;
+        }
+    }
 
 }
