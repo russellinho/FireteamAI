@@ -2116,6 +2116,13 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					GameObject p = playerStat.objRef;
 					if (p == null || p.GetComponent<PlayerActionScript>().health <= 0)
 						continue;
+					// Silhouette skill boost
+					if (gameControllerScript.assaultMode) {
+						int silhouette = p.GetComponent<SkillController>().GetThisSilhouetteBoost();
+						if (Random.Range(0, 100) < silhouette) {
+							continue;
+						}
+					}
 					if (Vector3.Distance (transform.position, p.transform.position) < range + 20f) {
 						Vector3 toPlayer = p.transform.position - transform.position;
 						float angleBetween = Vector3.Angle (transform.forward, toPlayer);

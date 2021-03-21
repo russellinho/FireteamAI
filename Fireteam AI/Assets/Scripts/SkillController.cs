@@ -45,6 +45,7 @@ public class SkillController : MonoBehaviour
     public EncryptedFloat accuracyBoost;
     public EncryptedFloat throwForceBoost;
     public EncryptedFloat deploymentTimeBoost;
+    private EncryptedInt silhouetteBoost; 
     private float munitionsEngineeringTimer;
     private float regenerationTimer;
     private float oneShotOneKillTimer;
@@ -294,6 +295,8 @@ public class SkillController : MonoBehaviour
         SetThisPlayerMartialArtsAttackBoost(GetMyMartialArtsAttackBoost());
         SetThisPlayerMartialArtsDefenseBoost(GetMyMartialArtsDefenseBoost());
         AddMartialArtsBoost(GetMyMartialArtsAttackBoost(), GetMyMartialArtsDefenseBoost());
+
+        SetThisSilhouetteBoost(GetSilhouetteBoost());
     }
 
     public int GetDeployableMasteryLevel()
@@ -411,6 +414,28 @@ public class SkillController : MonoBehaviour
         }
         
         return totalSpeedBoost;
+    }
+
+    public int GetSilhouetteBoost()
+    {
+        if (PlayerData.playerdata.skillList["1/11"].Level == 1) {
+            return 25;
+        } else if (PlayerData.playerdata.skillList["1/11"].Level == 2) {
+            return 50;
+        } else if (PlayerData.playerdata.skillList["1/11"].Level == 3) {
+            return 75;
+        }
+        return 0;
+    }
+
+    public void SetThisSilhouetteBoost(int val)
+    {
+        silhouetteBoost = val;
+    }
+
+    public int GetThisSilhouetteBoost()
+    {
+        return silhouetteBoost;
     }
 
     public int GetBoosterEffectLevel()

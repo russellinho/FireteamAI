@@ -1774,13 +1774,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept,
                     skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost(), skillController.GetMyInspireBoost(), skillController.GetMyProviderBoost(),
-                    skillController.GetMyMartialArtsAttackBoost(), skillController.GetMyMartialArtsDefenseBoost(), skillController.GetMyFireteamBoost());
+                    skillController.GetMyMartialArtsAttackBoost(), skillController.GetMyMartialArtsDefenseBoost(), skillController.GetMyFireteamBoost(), skillController.GetSilhouetteBoost());
 	}
 
 	[PunRPC]
 	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept,
         int myHackerBoost, float myHeadstrongBoost, float myResourcefulBoost, float myInspireBoost, int myProviderBoost, float myMartialArtsAttackBoost, float myMartialArtsDefenseBoost,
-        float myFireteamBoost) {
+        float myFireteamBoost, int silhouetteBoost) {
         this.health = health;
         this.escapeValueSent = escapeValueSent;
         GameControllerScript.playerList[pView.OwnerActorNr].kills = kills;
@@ -1816,6 +1816,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             skillController.SetThisPlayerMartialArtsAttackBoost(myMartialArtsAttackBoost);
             skillController.SetThisPlayerMartialArtsDefenseBoost(myMartialArtsDefenseBoost);
             PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddMartialArtsBoost(myMartialArtsAttackBoost, myMartialArtsDefenseBoost);
+        }
+        if (skillController.GetThisSilhouetteBoost() == 0) {
+            skillController.SetThisSilhouetteBoost(silhouetteBoost);
         }
 
         if (health <= 0) {
