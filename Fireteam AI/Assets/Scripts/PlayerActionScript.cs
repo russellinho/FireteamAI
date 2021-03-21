@@ -229,6 +229,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         StartCoroutine(SpawnInvincibilityRoutine());
         StartCoroutine("RegeneratorRecover");
+        StartCoroutine("PainkillerCompound");
         initialized = true;
     }
 
@@ -559,6 +560,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             }
         }
+        // Painkiller skill damage dampening
+        d = (int)((float)d * (1f - skillController.GetPainkillerTotalAmount()));
 
         // Send over network
         pView.RPC("RpcTakeDamage", RpcTarget.All, d, useArmor, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit);
@@ -1786,13 +1789,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept,
                     skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost(), skillController.GetMyInspireBoost(), skillController.GetMyProviderBoost(),
-                    skillController.GetMyMartialArtsAttackBoost(), skillController.GetMyMartialArtsDefenseBoost(), skillController.GetMyFireteamBoost(), skillController.GetSilhouetteBoost(), skillController.GetRegeneratorLevel());
+                    skillController.GetMyMartialArtsAttackBoost(), skillController.GetMyMartialArtsDefenseBoost(), skillController.GetMyFireteamBoost(), skillController.GetSilhouetteBoost(), skillController.GetRegeneratorLevel(), skillController.GetPainkillerLevel());
 	}
 
 	[PunRPC]
 	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept,
         int myHackerBoost, float myHeadstrongBoost, float myResourcefulBoost, float myInspireBoost, int myProviderBoost, float myMartialArtsAttackBoost, float myMartialArtsDefenseBoost,
-        float myFireteamBoost, int silhouetteBoost, int regeneratorLevel) {
+        float myFireteamBoost, int silhouetteBoost, int regeneratorLevel, int painkillerLevel) {
         this.health = health;
         this.escapeValueSent = escapeValueSent;
         GameControllerScript.playerList[pView.OwnerActorNr].kills = kills;
@@ -1836,6 +1839,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             skillController.SetThisRegeneratorLevel(regeneratorLevel);
             if (regeneratorLevel > 0) {
                 PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddRegenerator(pView.Owner.ActorNumber);
+            }
+        }
+        if (skillController.GetThisPainkillerLevel() == 0) {
+            skillController.SetThisPainkillerLevel(painkillerLevel);
+            if (painkillerLevel > 0) {
+                PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddPainkiller(pView.Owner.ActorNumber);
             }
         }
 
@@ -2099,6 +2108,28 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         yield return new WaitForSeconds(2f);
         StartCoroutine("RegeneratorRecover");
+    }
+
+    IEnumerator PainkillerCompound()
+    {
+        // For every painkiller on your team, determine if they're within proper range
+        LinkedList<int>.Enumerator ids = skillController.painkillerPlayerIds.GetEnumerator();
+        try {
+            while (ids.MoveNext()) {
+                int thisPlayerId = ids.Current;
+                GameObject painkiller = GameControllerScript.playerList[thisPlayerId].objRef;
+                SkillController painkillerSkillController = painkiller.GetComponent<SkillController>();
+                if (Vector3.Distance(painkiller.transform.position, transform.position) <= (SkillController.REGENERATOR_MAX_DISTANCE + 5f)) {
+                    painkillerSkillController.ActivatePainkiller(true);
+                } else {
+                    painkillerSkillController.ActivatePainkiller(false);
+                }
+            }
+        } catch (Exception e) {
+            Debug.LogError("Caught error in [PainkillerCompound]: " + e.Message);
+        }
+        yield return new WaitForSeconds(3f);
+        StartCoroutine("PainkillerCompound");
     }
 
 }

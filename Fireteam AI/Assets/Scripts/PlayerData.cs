@@ -560,6 +560,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 mySkills.RemoveFireteamBoost(theirSkills.GetThisPlayerFireteamBoost());
                 mySkills.RemoveMartialArtsBoost(theirSkills.GetThisPlayerMartialArtsAttackBoost(), theirSkills.GetThisPlayerMartialArtsDefenseBoost());
                 mySkills.RemoveRegenerator(actorNo);
+                mySkills.RemovePainkiller(actorNo);
 
                 Destroy(playerToDestroy);
             }

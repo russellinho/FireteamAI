@@ -702,6 +702,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			mySkills.RemoveFireteamBoost(theirSkills.GetThisPlayerFireteamBoost());
 			mySkills.RemoveMartialArtsBoost(theirSkills.GetThisPlayerMartialArtsAttackBoost(), theirSkills.GetThisPlayerMartialArtsDefenseBoost());
 			mySkills.RemoveRegenerator(otherPlayer.ActorNumber);
+			mySkills.RemovePainkiller(otherPlayer.ActorNumber);
 
 			Destroy (GameControllerScript.playerList[otherPlayer.ActorNumber].objRef);
 		}

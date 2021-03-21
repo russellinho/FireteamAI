@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Koobando.AntiCheat;
+using Random = UnityEngine.Random;
 
 public class SkillController : MonoBehaviour
 {
@@ -44,6 +46,10 @@ public class SkillController : MonoBehaviour
     private const float REGENERATOR_TIMER_3 = 26f;
     private const float REGENERATOR_TIMER_4 = 24f;
     private const float REGENERATOR_TIMER_5 = 22f;
+    private const float PAINKILLERS_TIMER_1 = 30f;
+    private const float PAINKILLERS_TIMER_2 = 27f;
+    private const float PAINKILLERS_TIMER_3 = 24f;
+    private const float PAINKILLERS_TIMER_4 = 20f;
     private const int REGENERATOR_RECOVER_1 = 2;
     private const int REGENERATOR_RECOVER_2 = 3;
     private const int REGENERATOR_RECOVER_3 = 4;
@@ -61,9 +67,13 @@ public class SkillController : MonoBehaviour
     private float regenerationTimer;
     private float oneShotOneKillTimer;
     public LinkedList<int> regeneratorPlayerIds = new LinkedList<int>();
+    public LinkedList<int> painkillerPlayerIds = new LinkedList<int>();
     private float thisRegeneratorTimer;
     private bool thisRegeneratorActive;
     private EncryptedInt thisRegeneratorLevel;
+    private float thisPainkillerTimer;
+    private bool thisPainkillerActive;
+    private EncryptedInt thisPainkillerLevel;
 
     // Active boosts
     private float firmGripTimer;
@@ -110,6 +120,7 @@ public class SkillController : MonoBehaviour
         UpdateBulletStream();
         UpdateRampage();
         UpdateRegenerator();
+        UpdatePainkiller();
     }
 
     public void InitializePassiveSkills(int weaponCategory)
@@ -309,6 +320,7 @@ public class SkillController : MonoBehaviour
 
         SetThisSilhouetteBoost(GetSilhouetteBoost());
         SetThisRegeneratorLevel(GetRegeneratorLevel());
+        SetThisPainkillerLevel(GetPainkillerLevel());
     }
 
     public int GetDeployableMasteryLevel()
@@ -1632,6 +1644,93 @@ public class SkillController : MonoBehaviour
     {
         if (thisRegeneratorActive) {
             thisRegeneratorTimer -= Time.deltaTime;
+        }
+    }
+
+    public int GetPainkillerLevel()
+    {
+        return PlayerData.playerdata.skillList["4/6"].Level;
+    }
+
+    private float GetPainkillerAmount()
+    {
+        if (thisPainkillerActive && thisPainkillerTimer <= 0f) {
+            if (GetThisPainkillerLevel() == 1) {
+                return 0.01f;
+            } else if (GetThisPainkillerLevel() == 2) {
+                return 0.02f;
+            } else if (GetThisPainkillerLevel() == 3) {
+                return 0.04f;
+            } else if (GetThisPainkillerLevel() == 4) {
+                return 0.05f;
+            }
+        }
+        return 0f;
+    }
+
+    public int GetThisPainkillerLevel()
+    {
+        return thisPainkillerLevel;
+    }
+
+    public void SetThisPainkillerLevel(int val)
+    {
+        thisPainkillerLevel = val;
+    }
+
+    public void ActivatePainkiller(bool b)
+    {
+        if (b) {
+            if (!thisPainkillerActive) {
+                if (GetThisPainkillerLevel() == 1) {
+                    thisPainkillerTimer = PAINKILLERS_TIMER_1;
+                } else if (GetThisPainkillerLevel() == 2) {
+                    thisPainkillerTimer = PAINKILLERS_TIMER_2;
+                } else if (GetThisPainkillerLevel() == 3) {
+                    thisPainkillerTimer = PAINKILLERS_TIMER_3;
+                } else if (GetThisPainkillerLevel() == 4) {
+                    thisPainkillerTimer = PAINKILLERS_TIMER_4;
+                }
+                thisPainkillerActive = true;
+            }
+        } else {
+            thisPainkillerTimer = 0f;
+            thisPainkillerActive = false;
+        }
+    }
+
+    public float GetPainkillerTotalAmount()
+    {
+        float totalAmt = 0f;
+        LinkedList<int>.Enumerator ids = painkillerPlayerIds.GetEnumerator();
+        try {
+            while (ids.MoveNext()) {
+                SkillController painkillerSkillController = GameControllerScript.playerList[ids.Current].objRef.GetComponent<SkillController>();
+                totalAmt += painkillerSkillController.GetPainkillerAmount();
+            }
+        } catch (Exception e) {
+            Debug.LogError("Exception occurred in [GetPainkillerTotalAmount]: " + e.Message);
+        }
+        Debug.LogError("Total painkiller dampening: " + totalAmt);
+        return Mathf.Min(0.95f, totalAmt);
+    }
+
+    public void AddPainkiller(int playerId)
+    {
+        painkillerPlayerIds.AddLast(playerId);
+    }
+
+    public void RemovePainkiller(int playerId)
+    {
+        painkillerPlayerIds.Remove(playerId);
+    }
+
+    void UpdatePainkiller()
+    {
+        if (thisPainkillerActive) {
+            if (thisPainkillerTimer > 0f) {
+                thisPainkillerTimer -= Time.deltaTime;
+            }
         }
     }
 
