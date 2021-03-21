@@ -965,6 +965,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcSetHealth(int h, bool useParticleEffect)
     {
         if (gameObject.layer == 0) return;
+        h = Mathf.Min(100, h);
         health = h;
         if (useParticleEffect) {
             PlayHealParticleEffect();
@@ -2086,8 +2087,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 if (Vector3.Distance(regenerator.transform.position, transform.position) <= SkillController.REGENERATOR_MAX_DISTANCE) {
                     regeneratorSkillController.ActivateRegenerator(true);
                     int recoverAmt = regeneratorSkillController.GetRegeneratorRecoveryAmount();
-                    if (recoverAmt > 0) {
-                        Debug.LogError("HEALED: " + recoverAmt);
+                    if (recoverAmt > 0 && health < 100 && health > 0) {
                         SetHealth(health + recoverAmt, true);
                     }
                 } else {

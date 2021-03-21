@@ -38,7 +38,7 @@ public class SkillController : MonoBehaviour
     private const float RAMPAGE_COOLDOWN_1 = 600f;
     private const float RAMPAGE_COOLDOWN_2 = 480f;
     private const float RAMPAGE_COOLDOWN_3 = 360f;
-    public static float REGENERATOR_MAX_DISTANCE = 8f;
+    public static float REGENERATOR_MAX_DISTANCE = 15f;
     private const float REGENERATOR_TIMER_1 = 30f;
     private const float REGENERATOR_TIMER_2 = 28f;
     private const float REGENERATOR_TIMER_3 = 26f;
@@ -1584,7 +1584,6 @@ public class SkillController : MonoBehaviour
                 } else if (GetThisRegeneratorLevel() == 4) {
                     thisRegeneratorTimer = REGENERATOR_TIMER_4;
                 } else if (GetThisRegeneratorLevel() == 5) {
-                    Debug.LogError("ACTIVATED REGENERATOR 5");
                     thisRegeneratorTimer = REGENERATOR_TIMER_5;
                 }
                 thisRegeneratorActive = true;
