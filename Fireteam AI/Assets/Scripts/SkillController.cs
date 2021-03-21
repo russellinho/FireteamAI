@@ -1162,6 +1162,18 @@ public class SkillController : MonoBehaviour
 
     // End collective boosts
 
+    public int GetNanoparticulatesChanceBoost()
+    {
+        if (PlayerData.playerdata.skillList["2/6"].Level == 1) {
+            return 10;
+        } else if (PlayerData.playerdata.skillList["2/6"].Level == 2) {
+            return 20;
+        } else if (PlayerData.playerdata.skillList["2/6"].Level == 3) {
+            return 30;
+        }
+        return 0;
+    }
+
     public int GetHealthDropChanceBoost()
     {
         if (PlayerData.playerdata.skillList["4/3"].Level == 1) {

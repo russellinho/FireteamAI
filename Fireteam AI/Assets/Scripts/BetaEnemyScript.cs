@@ -25,6 +25,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private const float BULLET_FORCE = 50f;
 	private int HEALTH_KIT_DROP_CHANCE = 33;
 	private int AMMO_KIT_DROP_CHANCE = 17;
+	private const int POISONED_DMG = 5;
+	private const float POISONED_INTERVAL = 1f;
 
 	// Prefab references
 	public GameObject ammoBoxPickup;
@@ -80,6 +82,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	// The alert state for the enemy. None = enemy is neutral; Suspicious = enemy is suspicious (?); alert = enemy is alerted (!)
 	public enum AlertStatus {Neutral, Suspicious, Alert};
 	public AlertStatus alertStatus;
+	private enum HealthStatus {Neutral, Poisoned};
+	private HealthStatus healthStatus;
 	private bool wasMasterClient;
 	public GameObject gameController;
 	public GameControllerScript gameControllerScript;
@@ -143,6 +147,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private CrouchMode crouchMode;
 	private float coverScanRange = 22f;
 	private Vector3 lastHitFromPos;
+	private float poisonTimer;
+	private int poisonedById;
 	// public Transform pNav;
 
     // Testing mode - set in inspector
@@ -182,6 +188,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
     void StartForCampaign () {
 		playerScanTimer = PLAYER_SCAN_DELAY;
 		alertStatus = AlertStatus.Neutral;
+		healthStatus = HealthStatus.Neutral;
 		crouchMode = CrouchMode.Natural;
 		coverWaitTimer = Random.Range (2f, 7f);
 		coverSwitchPositionsTimer = Random.Range (12f, 18f);
@@ -241,6 +248,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
     {
 		playerScanTimer = PLAYER_SCAN_DELAY;
         alertStatus = AlertStatus.Neutral;
+		healthStatus = HealthStatus.Neutral;
 		crouchMode = CrouchMode.Natural;
         coverWaitTimer = Random.Range(2f, 7f);
         coverSwitchPositionsTimer = Random.Range(12f, 18f);
@@ -392,6 +400,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			return;
 		}
 
+		HandleHealthStatus();
 		CheckForGunfireSounds ();
 		CheckTargetDead ();
 
@@ -1120,6 +1129,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			SetAlertStatus(AlertStatus.Neutral);
 
 			UpdateActionState(ActionStates.Dead);
+			UpdateHealthStatus(HealthStatus.Neutral, 0);
 
 			float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
 			pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
@@ -1488,6 +1498,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 			SetNavMeshStopped(true);
 			UpdateActionState(ActionStates.Dead);
+			UpdateHealthStatus(HealthStatus.Neutral, 0);
 
 			float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
 			pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
@@ -2217,7 +2228,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	public void TakeDamage(int d, Vector3 hitFromPos, int hitBy, int bodyPartHit, int healthDropChanceBoost, int ammoDropChanceBoost) {
-		pView.RPC ("RpcTakeDamage", RpcTarget.All, d, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit, healthDropChanceBoost, ammoDropChanceBoost, gameControllerScript.teamMap);
+		if (health > 0) {
+			pView.RPC ("RpcTakeDamage", RpcTarget.All, d, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit, healthDropChanceBoost, ammoDropChanceBoost, gameControllerScript.teamMap);
+		}
 	}
 
 	[PunRPC]
@@ -2229,6 +2242,21 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		lastBodyPartHit = bodyPartHit;
 		thisHealthDropChanceBoost = healthDropChanceBoost;
 		thisAmmoDropChanceBoost = ammoDropChanceBoost;
+		if (healthStatus == HealthStatus.Poisoned && hitBy == 2) {
+			PlayGruntSound();
+			// Put hitmarker on poisoner's screen to let the player know this is poisoned
+			GameObject poisoner = null;
+			if (GameControllerScript.playerList.ContainsKey(poisonedById)) {
+				poisoner = GameControllerScript.playerList[poisonedById].objRef;
+				poisoner.GetComponent<WeaponActionScript>().ExternalInstantiateHitmarker();
+			}
+			if (health <= 0) {
+				// Death from poison - award kill to whoever poisoned this
+				if (poisoner != null) {
+					poisoner.GetComponent<WeaponActionScript>().ExternalRewardKill();
+				}
+			}
+		}
 	}
 
 	void UpdateActionState(ActionStates action) {
@@ -2787,5 +2815,38 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         float maxDropoffAmount = damage / 3f;
         return (int)(((distance - sustainRange) / dropoffRange) * maxDropoffAmount);
     }
+
+	public void SetPoisoned(int fromPlayerId)
+	{
+		UpdateHealthStatus(HealthStatus.Poisoned, fromPlayerId);
+	}
+
+	void UpdateHealthStatus(HealthStatus h, int fromPlayerId)
+	{
+		if (healthStatus == h) return;
+		pView.RPC("RpcUpdateHealthStatus", RpcTarget.All, h, fromPlayerId, gameControllerScript.teamMap);
+	}
+
+	[PunRPC]
+	void RpcUpdateHealthStatus(HealthStatus h, int fromPlayerId, string team)
+	{
+		if (team != gameControllerScript.teamMap) return;
+		healthStatus = h;
+		if (h == HealthStatus.Poisoned) {
+			poisonTimer = POISONED_INTERVAL;
+			poisonedById = fromPlayerId;
+		}
+	}
+
+	void HandleHealthStatus()
+	{
+		if (healthStatus == HealthStatus.Poisoned) {
+			poisonTimer -= Time.deltaTime;
+			if (poisonTimer <= 0f) {
+				poisonTimer = POISONED_INTERVAL;
+				TakeDamage(POISONED_DMG, transform.position, 2, 0, 0, 0);
+			}
+		}
+	}
 
 }

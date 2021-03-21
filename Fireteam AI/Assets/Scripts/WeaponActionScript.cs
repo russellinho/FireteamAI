@@ -513,6 +513,21 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         playerActionScript.gameController.AddToTotalKills(PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
+    public void ExternalInstantiateHitmarker()
+    {
+        if (pView.IsMine) {
+            hudScript.InstantiateHitmarker();
+        }
+    }
+
+    public void ExternalRewardKill()
+    {
+        if (pView.IsMine) {
+            BetaEnemyScript.NUMBER_KILLED++;
+            RewardKill(false);
+        }
+    }
+
     // Increment kill count and display HUD popup for kill
     public void RewardKill(bool isHeadshot) {
         AddToTotalKills();
@@ -713,6 +728,14 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                         float bloodLustDamageBoost = 1f + playerActionScript.skillController.GetBloodLustDamageBoost();
                         float fireteamDamageBoost = 1f + playerActionScript.skillController.GetFireteamBoost(playerActionScript.gameController.GetAvgDistanceBetweenTeam());
                         b.TakeDamage((int)(thisDamageDealt * playerActionScript.skillController.GetDamageBoost() * sniperAmplificationBoost * shootToKillBoost * silentKillerBoost * hitmanDamageBoost * oneShotOneKillBoost * bloodLustDamageBoost * fireteamDamageBoost), transform.position, 0, bodyPartIdHit, playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
+                        int nanoparticulatesChance = playerActionScript.skillController.GetNanoparticulatesChanceBoost();
+                        if (nanoparticulatesChance > 0) {
+                            int r = Random.Range(0, 100);
+                            if (r < nanoparticulatesChance) {
+                                // Poison the enemy
+                                b.SetPoisoned(PhotonNetwork.LocalPlayer.ActorNumber);
+                            }
+                        }
                         b.PlayGruntSound();
                         b.SetAlerted();
                         if (b.health <= 0 && beforeHp > 0)
@@ -874,6 +897,14 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                                     float bloodLustDamageBoost = 1f + playerActionScript.skillController.GetBloodLustDamageBoost();
                                     float fireteamDamageBoost = 1f + playerActionScript.skillController.GetFireteamBoost(playerActionScript.gameController.GetAvgDistanceBetweenTeam());
                                     b.TakeDamage((int)(totalDamageDealt * playerActionScript.skillController.GetDamageBoost() * shootToKillBoost * silentKillerBoost * hitmanDamageBoost * oneShotOneKillBoost * bloodLustDamageBoost * fireteamDamageBoost), transform.position, 0, (headHit ? HEAD_TARGET : bodyPartIdHit), playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
+                                    int nanoparticulatesChance = playerActionScript.skillController.GetNanoparticulatesChanceBoost();
+                                    if (nanoparticulatesChance > 0) {
+                                        int r = Random.Range(0, 100);
+                                        if (r < nanoparticulatesChance) {
+                                            // Poison the enemy
+                                            b.SetPoisoned(PhotonNetwork.LocalPlayer.ActorNumber);
+                                        }
+                                    }
                                     if (b.health <= 0)
                                     {
                                         BetaEnemyScript.NUMBER_KILLED++;
