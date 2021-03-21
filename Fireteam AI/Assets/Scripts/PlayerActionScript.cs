@@ -13,6 +13,7 @@ using FlightMode = BlackHawkScript.FlightMode;
 using UnityEngine.Rendering.PostProcessing;
 using Koobando.AntiCheat;
 using StatBoosts = EquipmentScript.StatBoosts;
+using Random = UnityEngine.Random;
 
 public class PlayerActionScript : MonoBehaviourPunCallbacks
 {
@@ -537,10 +538,25 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         skillController.RegenerationReset();
         // Calculate damage done including armor
+        // Apply Rampage skill effect
         if (useArmor) {
-            float damageReduction = ((playerScript.armor + skillController.GetHeadstrongBoost()) * skillController.GetArmorBoost()) - 1f;
-            damageReduction = Mathf.Clamp(damageReduction, 0f, 1f);
-            d = Mathf.RoundToInt((float)d * (1f - damageReduction));
+            if (skillController.GetRampageBoost()) {
+                // 5% chance the damage isn't fully absorbed - will do 1 damage if not
+                int r = Random.Range(0, 100);
+                if (r < 5) {
+                    d = 1;
+                } else {
+                    d = 0;
+                }
+            } else {
+                if (hitBy == 2) {
+                    d = (int)((float)d * (1f - skillController.GetMeleeResistance()) * (1f - skillController.GetMartialArtsDefenseBoost()));
+                } else {
+                    float damageReduction = ((playerScript.armor + skillController.GetHeadstrongBoost()) * skillController.GetArmorBoost()) - 1f;
+                    damageReduction = Mathf.Clamp(damageReduction, 0f, 1f);
+                    d = Mathf.RoundToInt((float)d * (1f - damageReduction));
+                }
+            }
         }
 
         // Send over network
@@ -558,10 +574,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (pView.IsMine)
         {
             audioController.PlayHitSound();
-            // If it was a melee attack, apply heavyweight and martial arts skill effect
-            if (hitBy == 2 && useArmor) {
-                d = (int)((float)d * (1f - skillController.GetMeleeResistance()) * (1f - skillController.GetMartialArtsDefenseBoost()));
-            }
         }
         // if (!godMode)
         // {
@@ -2031,6 +2043,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (skill == 1) {
             skillController.ActivateFirmGrip();
+        } else if (skill == 2) {
+            skillController.ActivateRampage();
         } else if (skill == 4) {
             skillController.ActivateSnipersDel();
         } else if (skill == 5) {

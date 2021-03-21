@@ -32,6 +32,12 @@ public class SkillController : MonoBehaviour
     private const float BULLET_STREAM_COOLDOWN_2 = 420f;
     private const float BULLET_STREAM_COOLDOWN_3 = 360f;
     private const float BULLET_STREAM_COOLDOWN_4 = 300f;
+    private const float RAMPAGE_TIME_1 = 10f;
+    private const float RAMPAGE_TIME_2 = 20f;
+    private const float RAMPAGE_TIME_3 = 30f;
+    private const float RAMPAGE_COOLDOWN_1 = 600f;
+    private const float RAMPAGE_COOLDOWN_2 = 480f;
+    private const float RAMPAGE_COOLDOWN_3 = 360f;
     private EncryptedFloat speedBoost;
     private EncryptedFloat damageBoost;
     private EncryptedFloat armorBoost;
@@ -50,6 +56,8 @@ public class SkillController : MonoBehaviour
     private float snipersDelCooldown;
     private float bulletStreamTimer;
     private float bulletStreamCooldown;
+    private float rampageTimer;
+    private float rampageCooldown;
 
     // Timed boosts
     private float bloodLustActiveTimer;
@@ -89,6 +97,7 @@ public class SkillController : MonoBehaviour
         UpdateFirmGrip();
         UpdateSnipersDel();
         UpdateBulletStream();
+        UpdateRampage();
     }
 
     public void InitializePassiveSkills(int weaponCategory)
@@ -1333,6 +1342,8 @@ public class SkillController : MonoBehaviour
     {
         if (skill == 1) {
             return firmGripCooldown <= 0f;
+        } else if (skill == 2) {
+            return rampageCooldown <= 0f;
         } else if (skill == 4) {
             return snipersDelCooldown <= 0f;
         } else if (skill == 5) {
@@ -1345,6 +1356,8 @@ public class SkillController : MonoBehaviour
     {
         if (skill == 1) {
             return PlayerData.playerdata.skillList["0/9"].Level > 0;
+        } else if (skill == 2) {
+            return PlayerData.playerdata.skillList["0/10"].Level > 0;
         } else if (skill == 4) {
             return PlayerData.playerdata.skillList["5/10"].Level > 0;
         } else if (skill == 5) {
@@ -1404,6 +1417,22 @@ public class SkillController : MonoBehaviour
         }
     }
 
+    public void ActivateRampage()
+    {
+        if (rampageCooldown <= 0f) {
+            if (PlayerData.playerdata.skillList["0/10"].Level == 1) {
+                rampageCooldown = RAMPAGE_COOLDOWN_1;
+                rampageTimer = RAMPAGE_TIME_1;
+            } else if (PlayerData.playerdata.skillList["0/10"].Level == 2) {
+                rampageCooldown = RAMPAGE_COOLDOWN_2;
+                rampageTimer = RAMPAGE_TIME_2;
+            } else if (PlayerData.playerdata.skillList["0/10"].Level == 3) {
+                rampageCooldown = RAMPAGE_COOLDOWN_3;
+                rampageTimer = RAMPAGE_TIME_3;
+            }
+        }
+    }
+
     void UpdateFirmGrip()
     {
         if (firmGripTimer > 0f) {
@@ -1431,6 +1460,16 @@ public class SkillController : MonoBehaviour
         }
         if (bulletStreamCooldown > 0f && bulletStreamTimer <= 0f) {
             bulletStreamCooldown -= Time.deltaTime;
+        }
+    }
+
+    void UpdateRampage()
+    {
+        if (rampageTimer > 0f) {
+            rampageTimer -= Time.deltaTime;
+        }
+        if (rampageCooldown > 0f && rampageTimer <= 0f) {
+            rampageCooldown -= Time.deltaTime;
         }
     }
 
@@ -1462,6 +1501,16 @@ public class SkillController : MonoBehaviour
     {
         if (bulletStreamTimer > 0f) {
             if (PlayerData.playerdata.skillList["6/11"].Level > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool GetRampageBoost()
+    {
+        if (rampageTimer > 0f) {
+            if (PlayerData.playerdata.skillList["0/10"].Level > 0) {
                 return true;
             }
         }
