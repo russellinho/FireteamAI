@@ -1711,7 +1711,6 @@ public class SkillController : MonoBehaviour
         } catch (Exception e) {
             Debug.LogError("Exception occurred in [GetPainkillerTotalAmount]: " + e.Message);
         }
-        Debug.LogError("Total painkiller dampening: " + totalAmt);
         return Mathf.Min(0.95f, totalAmt);
     }
 
