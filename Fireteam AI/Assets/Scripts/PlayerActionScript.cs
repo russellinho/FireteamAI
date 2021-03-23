@@ -167,7 +167,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         pView.RPC("RpcAskServerForDataPlayer", RpcTarget.Others, init);
         if (init) {
             UpdateSpeedBoostFromSkills();
-            InitializeGuardianAngel();
         }
     }
 
@@ -227,6 +226,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         originalSpeed = playerScript.speed;
         totalSpeedBoost = originalSpeed;
         ToggleRagdoll(false);
+        InitializeGuardianAngel();
 
         StartCoroutine(SpawnInvincibilityRoutine());
         StartCoroutine("RegeneratorRecover");
@@ -292,9 +292,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         UpdateUnderwaterTimer();
         updatePlayerSpeed();
         // Instant respawn hack
-        // if (Input.GetKeyDown (KeyCode.P)) {
-        //     BeginRespawn ();
-        // }
+        if (Input.GetKeyDown (KeyCode.P)) {
+            BeginRespawn ();
+        }
         // Physics sky drop test hack
         // if (Input.GetKeyDown(KeyCode.O)) {
         //     transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
@@ -2083,18 +2083,30 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public void ActivateSkill(int skill)
     {
         if (skill == 1) {
-            skillController.ActivateFirmGrip();
+            if (skillController.ActivateFirmGrip()) {
+                // Skill effect
+                PlayBoostParticleEffect(true);
+            }
         } else if (skill == 2) {
-            skillController.ActivateRampage();
+            if (skillController.ActivateRampage()) {
+                // Skill effect
+                PlayBoostParticleEffect(true);
+            }
         } else if (skill == 4) {
-            skillController.ActivateSnipersDel();
+            if (skillController.ActivateSnipersDel()) {
+                // Skill effect
+                PlayBoostParticleEffect(true);
+            }
         } else if (skill == 5) {
-            skillController.ActivateBulletStream();
+            if (skillController.ActivateBulletStream()) {
+                // Skill effect
+                PlayBoostParticleEffect(true);
+            }
         } else if (skill == 9) {
-            hud.ActivateGuardianAngel();
+            if (skillController.CanCallGuardianAngel()) {
+                hud.ActivateGuardianAngel();
+            }
         }
-        // Skill effect
-        PlayBoostParticleEffect(true);
     }
 
     IEnumerator RegeneratorRecover()

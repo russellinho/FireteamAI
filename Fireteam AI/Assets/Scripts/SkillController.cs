@@ -1419,71 +1419,88 @@ public class SkillController : MonoBehaviour
         return false;
     }
 
-    public void ActivateFirmGrip()
+    public bool ActivateFirmGrip()
     {
         if (firmGripCooldown <= 0f) {
             if (PlayerData.playerdata.skillList["0/9"].Level == 1) {
                 firmGripCooldown = FIRM_GRIP_COOLDOWN_1;
                 firmGripTimer = FIRM_GRIP_TIME_1;
+                return true;
             } else if (PlayerData.playerdata.skillList["0/9"].Level == 2) {
                 firmGripCooldown = FIRM_GRIP_COOLDOWN_2;
                 firmGripTimer = FIRM_GRIP_TIME_2;
+                return true;
             } else if (PlayerData.playerdata.skillList["0/9"].Level == 3) {
                 firmGripCooldown = FIRM_GRIP_COOLDOWN_3;
                 firmGripTimer = FIRM_GRIP_TIME_3;
+                return true;
             }
         }
+        return false;
     }
 
-    public void ActivateSnipersDel()
+    public bool ActivateSnipersDel()
     {
         if (snipersDelCooldown <= 0f) {
             if (PlayerData.playerdata.skillList["5/10"].Level == 1) {
                 snipersDelCooldown = SNIPERS_DEL_COOLDOWN_1;
                 snipersDelTimer = SNIPERS_DEL_TIME_1;
+                return true;
             } else if (PlayerData.playerdata.skillList["5/10"].Level == 2) {
                 snipersDelCooldown = SNIPERS_DEL_COOLDOWN_2;
                 snipersDelTimer = SNIPERS_DEL_TIME_2;
+                return true;
             } else if (PlayerData.playerdata.skillList["5/10"].Level == 3) {
                 snipersDelCooldown = SNIPERS_DEL_COOLDOWN_3;
                 snipersDelTimer = SNIPERS_DEL_TIME_3;
+                return true;
             }
         }
+        return false;
     }
 
-    public void ActivateBulletStream()
+    public bool ActivateBulletStream()
     {
         if (bulletStreamCooldown <= 0f) {
             if (PlayerData.playerdata.skillList["6/11"].Level == 1) {
                 bulletStreamCooldown = BULLET_STREAM_COOLDOWN_1;
                 bulletStreamTimer = BULLET_STREAM_TIME_1;
+                return true;
             } else if (PlayerData.playerdata.skillList["6/11"].Level == 2) {
                 bulletStreamCooldown = BULLET_STREAM_COOLDOWN_2;
                 bulletStreamTimer = BULLET_STREAM_TIME_2;
+                return true;
             } else if (PlayerData.playerdata.skillList["6/11"].Level == 3) {
                 bulletStreamCooldown = BULLET_STREAM_COOLDOWN_3;
                 bulletStreamTimer = BULLET_STREAM_TIME_3;
+                return true;
             } else if (PlayerData.playerdata.skillList["6/11"].Level == 4) {
                 bulletStreamCooldown = BULLET_STREAM_COOLDOWN_4;
                 bulletStreamTimer = BULLET_STREAM_TIME_4;
+                return true;
             }
         }
+        return false;
     }
 
-    public void ActivateRampage()
+    public bool ActivateRampage()
     {
         if (rampageCooldown <= 0f) {
             if (PlayerData.playerdata.skillList["0/10"].Level == 1) {
                 rampageCooldown = RAMPAGE_COOLDOWN_1;
                 rampageTimer = RAMPAGE_TIME_1;
+                return true;
             } else if (PlayerData.playerdata.skillList["0/10"].Level == 2) {
                 rampageCooldown = RAMPAGE_COOLDOWN_2;
                 rampageTimer = RAMPAGE_TIME_2;
+                return true;
             } else if (PlayerData.playerdata.skillList["0/10"].Level == 3) {
                 rampageCooldown = RAMPAGE_COOLDOWN_3;
                 rampageTimer = RAMPAGE_TIME_3;
+                return true;
             }
         }
+        return false;
     }
 
     void UpdateFirmGrip()
