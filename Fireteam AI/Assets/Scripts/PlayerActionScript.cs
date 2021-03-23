@@ -586,7 +586,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // {
         //     health -= d;
         // }
-        Debug.LogError("subtracting " + d);
         health -= d;
         lastHitFromPos = new Vector3(hitFromX, hitFromY, hitFromZ);
 		lastHitBy = hitBy;
