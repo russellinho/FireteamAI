@@ -785,6 +785,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     PlayerActionScript p = activeInteractable.GetComponent<PlayerActionScript>();
                     interactionTimer = 0f;
                     p.SetHealth(p.health + skillController.GetFlatlineHealAmount(), true);
+                    SetHealth(health - skillController.GetFlatlineSacrificeAmount(), false);
                     activeInteractable = null;
                     interactionLock = true;
                 } else {
