@@ -257,6 +257,8 @@ public class WeaponScript : MonoBehaviour
             return false;
         } else if (weaponActionScript.hudScript.skillDelay > 0f) {
             return false;
+        } else if (weaponActionScript.hudScript.guardianAngelDelay > 0f) {
+            return false;
         }
         return true;
     }

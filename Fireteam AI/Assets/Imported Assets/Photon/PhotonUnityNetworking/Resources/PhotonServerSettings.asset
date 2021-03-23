@@ -195,6 +195,8 @@ MonoBehaviour:
   - RpcOnPlayerLeftMatch
   - RpcUpdateHealthStatus
   - RpcBoostParticleEffect
+  - RpcCallRevive
+  - RpcKillMyself
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

@@ -167,6 +167,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         pView.RPC("RpcAskServerForDataPlayer", RpcTarget.Others, init);
         if (init) {
             UpdateSpeedBoostFromSkills();
+            InitializeGuardianAngel();
         }
     }
 
@@ -685,6 +686,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 TriggerPlayerDownAlert();
                 hud.container.voiceCommandsPanel.SetActive(false);
                 hud.container.skillPanel.SetActive(false);
+                hud.container.revivePlayerPanel.SetActive(false);
             }
             fpc.enabled = false;
             if (!rotationSaved)
@@ -957,6 +959,15 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void ResetBoostTimer() {
         boostTimer = 0f;
+    }
+
+    [PunRPC]
+    void RpcKillMyself()
+    {
+        health = 0;
+        lastHitFromPos = transform.position;
+		lastHitBy = 2;
+		lastBodyPartHit = 0;
     }
 
     public void SetHealth(int h, bool useParticleEffect)
@@ -1595,7 +1606,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         // Debug.Log("total fall damage: " + totalFallDamage);
         totalFallDamage = Mathf.Clamp(totalFallDamage, 0f, 100f);
-        TakeDamage((int)(totalFallDamage * (1f - skillController.GetFallDamageReduction())), false, Vector3.zero, 2, 0);
+        TakeDamage((int)(totalFallDamage * (1f - skillController.GetFallDamageReduction())), false, transform.position, 2, 0);
     }
 
     public void UpdateVerticalVelocityBeforeLanding() {
@@ -2079,6 +2090,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             skillController.ActivateSnipersDel();
         } else if (skill == 5) {
             skillController.ActivateBulletStream();
+        } else if (skill == 9) {
+            hud.ActivateGuardianAngel();
         }
         // Skill effect
         PlayBoostParticleEffect(true);
@@ -2130,6 +2143,60 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         yield return new WaitForSeconds(3f);
         StartCoroutine("PainkillerCompound");
+    }
+
+    void InitializeGuardianAngel()
+    {
+        string key = PhotonNetwork.LocalPlayer.NickName + "GA";
+        if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(key)) {
+            Hashtable h = new Hashtable();
+            h.Add(key, skillController.GetMaxGuardianAngels());
+            PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+        }
+    }
+
+    public int GetGuardianAngelsRemaining()
+    {
+        return Convert.ToInt32(PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.NickName + "GA"]);
+    }
+
+    public void CallGuardianAngel(int actorNo)
+    {
+        if (!skillController.CanCallGuardianAngel()) return;
+        if (!GameControllerScript.playerList.ContainsKey(actorNo)) return;
+        if (GameControllerScript.playerList[actorNo].objRef == null) return;
+        PlayerActionScript thisPlayerActionScript = GameControllerScript.playerList[actorNo].objRef.GetComponent<PlayerActionScript>();
+        if (thisPlayerActionScript.health > 0) return;
+        thisPlayerActionScript.CallRevive(PhotonNetwork.LocalPlayer.NickName + " HAS REVIVED YOU!", true);
+        hud.MessagePopup("YOU HAVE REVIVED " + GameControllerScript.playerList[actorNo].name);
+        pView.RPC("RpcKillMyself", RpcTarget.All);
+        int guardianAngelsRemaining = GetGuardianAngelsRemaining() - 1;
+        Hashtable h = new Hashtable();
+        h.Add(PhotonNetwork.LocalPlayer.NickName + "GA", guardianAngelsRemaining);
+        PhotonNetwork.CurrentRoom.SetCustomProperties(h);
+    }
+
+    void Revive(string reason)
+    {
+        hud.MessagePopup(reason);
+        BeginRespawn();
+    }
+
+    public void CallRevive(string reason, bool sendOverNetwork)
+    {
+        if (sendOverNetwork) {
+            pView.RPC("RpcCallRevive", RpcTarget.All, reason);
+        } else {
+            Revive(reason);
+        }
+    }
+
+    [PunRPC]
+    void RpcCallRevive(string reason)
+    {
+        if (pView.IsMine) {
+            Revive(reason);
+        }
     }
 
 }

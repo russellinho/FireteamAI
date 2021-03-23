@@ -422,6 +422,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
 		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.voiceCommandsPanel.SetActive(false);
 		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.skillPanel.SetActive(false);
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.revivePlayerPanel.SetActive(false);
 		pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths));
 	}
 
@@ -460,6 +461,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.voiceCommandsPanel.SetActive(false);
 		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.skillPanel.SetActive(false);
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.revivePlayerPanel.SetActive(false);
 		int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
 		pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths, (winner == teamMap)), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths, (winner == teamMap)));
     }

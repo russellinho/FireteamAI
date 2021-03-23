@@ -35,6 +35,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	// Other vars
 	public float commandDelay;
 	public float skillDelay;
+	public float guardianAngelDelay;
 	private float killPopupTimer;
 	private bool popupIsStarting;
 	private bool roundStartFadeIn;
@@ -252,8 +253,10 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		HandleVoiceChat();
 		HandleVoiceCommands();
 		HandleSkills();
+		HandleGuardianAngel();
 		UpdateVoteUI();
 		UpdateHealth();
+		
 		if (container.staminaGroup.alpha == 1f) {
 			float f = (playerActionScript.sprintTime / playerActionScript.playerScript.stamina);
 			container.staminaBar.value = f;
@@ -1083,6 +1086,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     {
 		container.voiceCommandsPanel.SetActive(false);
 		container.skillPanel.SetActive(false);
+		container.revivePlayerPanel.SetActive(false);
         if (!container.pauseMenuManager.pauseActive)
         {
             container.pauseMenuManager.OpenPause();
@@ -1619,6 +1623,15 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		return true;
 	}
 
+	bool CanCallGuardianAngel()
+	{
+		if (container.pauseMenuManager.pauseActive) return false;
+		if (!container.revivePlayerPanel.activeInHierarchy) return false;
+		if (playerActionScript.health <= 0) return false;
+		if (gameController.gameOver) return false;
+		return true;
+	}
+
 	public AudioClip GetVoiceCommandAudio(char type, int i, char gender)
 	{
 		if (type == 'r') {
@@ -1645,6 +1658,111 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		return true;
 	}
 
+	public void ActivateGuardianAngel()
+	{
+		for (int j = 0; j < container.revivePlayerSlots.Length; j++) {
+			container.revivePlayerSlots[j].SetActive(false);
+		}
+		int i = 1;
+		foreach (KeyValuePair<int, PlayerStat> p in GameControllerScript.playerList) {
+			if (i <= 8) {
+				PlayerStat pDetails = p.Value;
+				if (pDetails.objRef != null) {
+					if (pDetails.objRef.GetComponent<PlayerActionScript>().health <= 0) {
+						container.revivePlayerSlots[i - 1].SetActive(true);
+						container.revivePlayerSlots[i - 1].GetComponent<TextMeshProUGUI>().text = (i + ": " + pDetails.name);
+						container.revivePlayerSlots[i - 1].GetComponentInChildren<Text>(true).text = (""+p.Key);
+						i++;
+					}
+				}
+			}
+		}
+		container.revivePlayerPanel.SetActive(true);
+	}
+
+	void HandleGuardianAngel()
+	{
+		if (guardianAngelDelay > 0f) {
+			guardianAngelDelay -= Time.deltaTime;
+			return;
+		}
+		if (!CanUseVoiceCommands()) {
+			container.revivePlayerPanel.SetActive(false);
+			return;
+		}
+		// Reviving players
+		if (container.revivePlayerPanel.activeInHierarchy) {
+			if (Input.GetKeyDown(KeyCode.Alpha1)) {
+				if (container.revivePlayerSlots[0].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[0].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+				if (container.revivePlayerSlots[1].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[1].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+				if (container.revivePlayerSlots[2].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[2].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+				if (container.revivePlayerSlots[3].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[3].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha5)) {
+				if (container.revivePlayerSlots[4].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[4].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha6)) {
+				if (container.revivePlayerSlots[5].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[5].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha7)) {
+				if (container.revivePlayerSlots[6].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[6].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha8)) {
+				if (container.revivePlayerSlots[7].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[7].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha0)) {
+				container.revivePlayerPanel.SetActive(false);
+				guardianAngelDelay = COMMAND_DELAY;
+			}
+		}
+	}
+
 	void HandleSkills()
 	{
 		if (skillDelay > 0f) {
@@ -1658,6 +1776,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		// Open/closing menu
 		if (PlayerPreferences.playerPreferences.KeyWasPressed("Skills")) {
 			container.voiceCommandsPanel.SetActive(false);
+			container.revivePlayerPanel.SetActive(false);
 			if (!container.skillPanel.activeInHierarchy) {
 				UpdateSkills();
 				container.skillPanel.SetActive(true);
@@ -1716,6 +1835,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				}
 				container.skillPanel.SetActive(false);
 				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha9)) {
+				if (CanActivateSkill()) {
+					playerActionScript.ActivateSkill(9);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
 			}
 		}
 	}
@@ -1733,6 +1858,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		// Open/closing menu
 		if (PlayerPreferences.playerPreferences.KeyWasPressed("VCReport")) {
 			container.skillPanel.SetActive(false);
+			container.revivePlayerPanel.SetActive(false);
 			if (!container.voiceCommandsPanel.activeInHierarchy) {
 				container.voiceCommandsReport.SetActive(true);
 				container.voiceCommandsSocial.SetActive(false);
@@ -1749,6 +1875,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			}
 		} else if (PlayerPreferences.playerPreferences.KeyWasPressed("VCTactical")) {
 			container.skillPanel.SetActive(false);
+			container.revivePlayerPanel.SetActive(false);
 			if (!container.voiceCommandsPanel.activeInHierarchy) {
 				container.voiceCommandsReport.SetActive(false);
 				container.voiceCommandsSocial.SetActive(false);
@@ -1765,6 +1892,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			}
 		} else if (PlayerPreferences.playerPreferences.KeyWasPressed("VCSocial")) {
 			container.skillPanel.SetActive(false);
+			container.revivePlayerPanel.SetActive(false);
 			if (!container.voiceCommandsPanel.activeInHierarchy) {
 				container.voiceCommandsReport.SetActive(false);
 				container.voiceCommandsSocial.SetActive(true);

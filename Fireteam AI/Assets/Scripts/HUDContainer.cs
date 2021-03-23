@@ -101,6 +101,8 @@ public class HUDContainer : MonoBehaviour {
 	public VoiceCommandScript[] supportCommands;
 	public GameObject skillPanel;
 	public GameObject[] skills;
+	public GameObject revivePlayerPanel;
+	public GameObject[] revivePlayerSlots;
 	public GameObject acceptPlayerTemplate;
 	public Transform acceptPlayerSlots;
 

@@ -1397,6 +1397,8 @@ public class SkillController : MonoBehaviour
             return snipersDelCooldown <= 0f;
         } else if (skill == 5) {
             return bulletStreamCooldown <= 0f;
+        } else if (skill == 9) {
+            return CanCallGuardianAngel();
         }
         return false;
     }
@@ -1411,6 +1413,8 @@ public class SkillController : MonoBehaviour
             return PlayerData.playerdata.skillList["5/10"].Level > 0;
         } else if (skill == 5) {
             return PlayerData.playerdata.skillList["6/11"].Level > 0;
+        } else if (skill == 9) {
+            return PlayerData.playerdata.skillList["4/9"].Level > 0;
         }
         return false;
     }
@@ -1731,6 +1735,25 @@ public class SkillController : MonoBehaviour
                 thisPainkillerTimer -= Time.deltaTime;
             }
         }
+    }
+
+    public bool CanCallGuardianAngel()
+    {
+        return PlayerData.playerdata.skillList["4/9"].Level > 0 && GetComponent<PlayerActionScript>().GetGuardianAngelsRemaining() > 0;
+    }
+
+    public int GetMaxGuardianAngels()
+    {
+        if (PlayerData.playerdata.skillList["4/9"].Level == 1) {
+            return 1;
+        } else if (PlayerData.playerdata.skillList["4/9"].Level == 2) {
+            return 2;
+        } else if (PlayerData.playerdata.skillList["4/9"].Level == 3) {
+            return 3;
+        } else if (PlayerData.playerdata.skillList["4/9"].Level == 4) {
+            return 4;
+        }
+        return 0;
     }
 
 }
