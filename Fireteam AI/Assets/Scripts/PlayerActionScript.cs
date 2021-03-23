@@ -563,6 +563,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         // Painkiller skill damage dampening
         d = (int)((float)d * (1f - skillController.GetPainkillerTotalAmount()));
+        Debug.LogError("HEALTH BEFORE: " + health + " | MELEE TOTAL: " + d);
 
         // Send over network
         pView.RPC("RpcTakeDamage", RpcTarget.All, d, useArmor, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit);
@@ -584,6 +585,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // {
         //     health -= d;
         // }
+        Debug.LogError("subtracting " + d);
         health -= d;
         lastHitFromPos = new Vector3(hitFromX, hitFromY, hitFromZ);
 		lastHitBy = hitBy;
