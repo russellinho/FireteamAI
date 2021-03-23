@@ -535,7 +535,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public void TakeDamage(int d, bool useArmor, Vector3 hitFromPos, int hitBy, int bodyPartHit)
     {
         if (d <= 0) return;
-        if (!pView.IsMine) return;
+        // If registering a gun shot (hit by = 0), then the server must register it.
+        if (!pView.IsMine && hitBy != 0) return;
         // See if Bullet Sponge skill absorbed the gunshot (hitBy == 0 is a gunshot)
         if (hitBy == 0 && skillController.BulletSpongeAbsorbed()) {
             return;
@@ -564,7 +565,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         // Painkiller skill damage dampening
         d = (int)((float)d * (1f - skillController.GetPainkillerTotalAmount()));
-        Debug.LogError("HEALTH BEFORE: " + health + " | MELEE TOTAL: " + d);
 
         // Send over network
         pView.RPC("RpcTakeDamage", RpcTarget.All, d, useArmor, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit);
