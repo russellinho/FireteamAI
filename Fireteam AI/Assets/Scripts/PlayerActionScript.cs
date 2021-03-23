@@ -154,6 +154,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void InitPlayer() {
         gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
+        gameController.reviveWindowTimer = -100f;
         if (pView.IsMine) {
             if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
                 string myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
@@ -292,9 +293,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         UpdateUnderwaterTimer();
         updatePlayerSpeed();
         // Instant respawn hack
-        if (Input.GetKeyDown (KeyCode.P)) {
-            BeginRespawn ();
-        }
+        // if (Input.GetKeyDown (KeyCode.P)) {
+        //     BeginRespawn ();
+        // }
         // Physics sky drop test hack
         // if (Input.GetKeyDown(KeyCode.O)) {
         //     transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
@@ -413,7 +414,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 gameController.sectorsCleared++;
                 hud.OnScreenEffect("SECTOR CLEARED!", false);
                 gameController.ClearDeadPlayersList();
-                BeginRespawn();
+                BeginRespawn(false);
             }
 
             if (gameController.objectives.itemsRemaining == 0 && !escapeAvailablePopup)
@@ -464,7 +465,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 gameController.sectorsCleared++;
                 hud.OnScreenEffect("SECTOR CLEARED!", false);
                 gameController.ClearDeadPlayersList();
-                BeginRespawn();
+                BeginRespawn(false);
                 hud.ComBoxPopup(1f, "Red Ruby", "There are Cicadas all over the damn place!", "HUD/redruby");
                 hud.ComBoxPopup(4f, "Democko", "We’re about half way there; just hang in there!", "HUD/democko");
             }
@@ -1281,7 +1282,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         Destroy(gameObject);
     }
 
-    void BeginRespawn()
+    void BeginRespawn(bool wasRevive)
     {
         enterSpectatorModeTimer = 0f;
         if (health <= 0)
@@ -1291,8 +1292,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             // Flash the respawn time bar on the screen
             hud.RespawnBar();
             // Then, actually start the respawn process
-            respawnTimer = 5f;
+            respawnTimer = 4f;
             isRespawning = true;
+            if (wasRevive) {
+                gameController.ClearReviveWindowTimer();
+            }
         } else {
             health = 100;
             pView.RPC("RpcSetHealth", RpcTarget.Others, 100, false);
@@ -1360,6 +1364,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         LeaveSpectatorMode();
         UpdateSpeedBoostFromSkills();
         transform.position = gameController.spawnLocation.position;
+        if (gameController.reviveWindowTimer > -50f) {
+            gameController.ClearReviveWindowTimer();
+        }
         //weaponScript.DrawWeapon(1);
         StartCoroutine(SpawnInvincibilityRoutine());
     }
@@ -2196,7 +2203,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void Revive(string reason)
     {
         hud.MessagePopup(reason);
-        BeginRespawn();
+        BeginRespawn(true);
     }
 
     public void CallRevive(string reason, bool sendOverNetwork)

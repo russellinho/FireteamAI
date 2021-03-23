@@ -20,6 +20,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private const float STARTER_LIMIT_TIME = 90f;
 	private const float VOTE_TIME = 3f;
 	private const float VOTE_DELAY = 300f;
+	private const float REVIVE_WINDOW_TIME = 6f;
 
 	// A number value to the maps/missions starting with 1. The number correlates with the time it was released, so the lower the number, the earlier it was released.
 	// 1 = The Badlands: Act 1; 2 = The Badlands: Act 2
@@ -39,6 +40,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
 	private float lastGunshotTimer = 0f;
     public float endGameTimer = 0f;
+	public float reviveWindowTimer = 0f;
 	private bool loadExitCalled;
 	public static Dictionary<int, PlayerStat> playerList = new Dictionary<int, PlayerStat> ();
 	public Dictionary<int, GameObject> npcList = new Dictionary<int, GameObject>();
@@ -246,6 +248,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void UpdateTimers() {
+		UpdateReviveWindowTimer();
 		if (PhotonNetwork.IsMasterClient) {
 			ResetLastGunshotPos ();
 			UpdateEndGameTimer();
@@ -299,11 +302,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		if (currentMap == 1) {
 			if (PhotonNetwork.IsMasterClient) {
 				// Check if the mission is over or if all players eliminated or out of time
-				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime())
+				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count)
 				{
-					if (!gameOver)
+					if (reviveWindowTimer < -50f) {
+						SetReviveWindowTimer();
+					} else if (!gameOver && reviveWindowTimer <= 0f)
 					{
-						EndGameCampaign(9f, null, false);
+						EndGameCampaign(4f, null, false);
 					}
 				}
 				else if (objectives.itemsRemaining == 0)
@@ -314,15 +319,23 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 						EndGameCampaign(2f, null, true);
 					}
 				}
+				else if (CheckOutOfTime()) {
+					if (!gameOver)
+					{
+						EndGameCampaign(4f, "Out of time!", false);
+					}
+				}
 			}
 		} else if (currentMap == 2) {
 			if (PhotonNetwork.IsMasterClient) {
 				// Check if the mission is over or if all players eliminated or out of time
 				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count)
 				{
-					if (!gameOver)
+					if (reviveWindowTimer < -50f) {
+						SetReviveWindowTimer();
+					} else if (!gameOver && reviveWindowTimer <= 0f)
 					{
-						EndGameCampaign(9f, null, false);
+						EndGameCampaign(4f, null, false);
 					}
 				} else if (vipRef.GetComponent<NpcScript>().actionState == NpcActionState.Dead) {
 					if (!gameOver)
@@ -352,13 +365,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				int playerCount = (teamMap == "R" ? redTeamCount : blueTeamCount);
 				if (deadCount == playerCount)
 				{
-					if (!gameOver)
+					if (reviveWindowTimer < -50f) {
+						SetReviveWindowTimer();
+					} else if (!gameOver && reviveWindowTimer <= 0f)
 					{
-						EndGameVersus(9f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!", "Your team has been eliminated!");
+						EndGameVersus(4f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!", "Your team has been eliminated!");
 					}
 				} else if (CheckOutOfTime()) {
 					if (!gameOver) {
-						EndGameVersus(9f, "T", null, null);
+						EndGameVersus(4f, "T", null, null);
 					}
 				} else if (objectives.itemsRemaining == 0)
 				{
@@ -381,9 +396,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				int playerCount = (teamMap == "R" ? redTeamCount : blueTeamCount);
 				if (deadCount == playerCount)
 				{
-					if (!gameOver)
+					if (reviveWindowTimer < -50f) {
+						SetReviveWindowTimer();
+					} else if (!gameOver && reviveWindowTimer <= 0f)
 					{
-						EndGameVersus(9f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!", "Your team has been eliminated!");
+						EndGameVersus(4f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!", "Your team has been eliminated!");
 					}
 				} else if (vipRef.GetComponent<NpcScript>().actionState == NpcActionState.Dead) {
 					if (!gameOver) {
@@ -391,7 +408,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					} 
 				} else if (CheckOutOfTime()) {
 					if (!gameOver) {
-						EndGameVersus(9f, "T", null, null);
+						EndGameVersus(4f, "T", null, null);
 					}
 				} else if (objectives.stepsLeftToCompletion == 1 && objectives.escapeAvailable)
 				{
@@ -408,6 +425,30 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			}
 		}
 		StartCoroutine("GameOverCheckForVersus");
+	}
+
+	void SetReviveWindowTimer()
+	{
+		pView.RPC("RpcSetReviveWindowTimer", RpcTarget.All, teamMap);
+	}
+
+	public void ClearReviveWindowTimer()
+	{
+		pView.RPC("RpcClearReviveWindowTimer", RpcTarget.All, teamMap);
+	}
+
+	[PunRPC]
+	void RpcSetReviveWindowTimer(string team)
+	{
+		if (team != teamMap) return;
+		reviveWindowTimer = REVIVE_WINDOW_TIME;
+	}
+
+	[PunRPC]
+	void RpcClearReviveWindowTimer(string team)
+	{
+		if (team != teamMap) return;
+		reviveWindowTimer = -100f;
 	}
 
 	[PunRPC]
@@ -740,7 +781,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         if (team != teamMap) return;
         exitLevelLoaded = true;
 		exitLevelLoadedTimer = 4f;
-		// LockRoom();
+
 	}
 
 	void SetWaitPeriodDone()
@@ -785,7 +826,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                 endGameTimer -= Time.deltaTime;
 				pView.RPC ("RpcUpdateEndGameTimer", RpcTarget.Others, endGameTimer, teamMap);
             }
-
             if (endGameTimer <= 0f) {
 				if (!exitLevelLoaded) {
 					pView.RPC ("RpcSetExitLevelLoaded", RpcTarget.All, teamMap);
@@ -800,6 +840,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             }
         }
     }
+
+	void UpdateReviveWindowTimer()
+	{
+		if (reviveWindowTimer > 0f) {
+			reviveWindowTimer -= Time.deltaTime;
+		}
+	}
 
 	public override void OnDisconnected(DisconnectCause cause) {
 		PlayerData.playerdata.disconnectedFromServer = true;
@@ -1162,14 +1209,14 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				}
 			}
 			int playerBeingKickedId = playerBeingKicked == null ? -1 : playerBeingKicked.ActorNumber;
-			pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
+			pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, reviveWindowTimer, loadExitCalled,
 				spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin, assaultModeChangedIndicator, serializedObjectives, GameControllerScript.missionTime, 
 				currentVoteAction, playerBeingKickedId, playerBeingKickedName, voteInProgress, voteTimer, (int)yesVotes, (int)noVotes, SerializeDeployables(), teamMap);
 		}
 	}
 
 	[PunRPC]
-	void RpcSyncDataGc(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer,
+	void RpcSyncDataGc(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer, float reviveWindowTimer,
 		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, bool assaultMode, bool enemyTeamNearingVictoryTrigger, 
 		bool endGameWithWin, bool assaultModeChangedIndicator, string serializedObjectives, float missionTime, VoteActions currentVoteAction,
 		int playerBeingKickedId, string playerBeingKickedName, bool voteInProgress, float voteTimer, int yesVotes, int noVotes, string serializedDeployables, string team) {
@@ -1177,6 +1224,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     	lastGunshotHeardPos = new Vector3(lastGunshotHeardPosX, lastGunshotHeardPosY, lastGunshotHeardPosZ);
 		this.lastGunshotTimer = lastGunshotTimer;
 		this.endGameTimer = endGameTimer;
+		this.reviveWindowTimer = reviveWindowTimer;
 		this.loadExitCalled = loadExitCalled;
 		this.spawnMode = spawnMode;
 		this.gameOver = gameOver;
@@ -1364,6 +1412,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	{
 		if (PhotonNetwork.IsMasterClient) {
 			PhotonNetwork.CurrentRoom.IsOpen = false;
+		}
+	}
+
+	public void UnlockRoom()
+	{
+		if (PhotonNetwork.IsMasterClient) {
+			PhotonNetwork.CurrentRoom.IsOpen = true;
 		}
 	}
 
