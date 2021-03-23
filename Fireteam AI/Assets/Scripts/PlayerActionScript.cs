@@ -535,6 +535,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public void TakeDamage(int d, bool useArmor, Vector3 hitFromPos, int hitBy, int bodyPartHit)
     {
         if (d <= 0) return;
+        if (!pView.IsMine) return;
         // See if Bullet Sponge skill absorbed the gunshot (hitBy == 0 is a gunshot)
         if (hitBy == 0 && skillController.BulletSpongeAbsorbed()) {
             return;
