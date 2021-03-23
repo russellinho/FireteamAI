@@ -56,6 +56,7 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject hudPlayerMarker;
 
 	// On-screen indication HUD
+	public GameObject proceduralInfoText;
 	public GameObject objectivesTextParent;
 	public GameObject objectiveTextEntry;
 	public TextMeshProUGUI[] objectivesText;

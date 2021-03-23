@@ -366,10 +366,10 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         };
 
         if (initial) {
-            // Spawning myself locally
+            // Spawning myself on others when joining the game
             PhotonNetwork.RaiseEvent(SPAWN_INIT_CODE, data, raiseEventOptions, sendOptions);
         } else {
-            // Spawning myself on other machines
+            // Spawning myself on others when they join the game
             PhotonNetwork.RaiseEvent(SPAWN_CODE, data, raiseEventOptions, sendOptions);
         }
     }

@@ -1773,4 +1773,37 @@ public class SkillController : MonoBehaviour
         return 0;
     }
 
+    public bool CanHealPlayers()
+    {
+        return PlayerData.playerdata.skillList["4/8"].Level > 0;
+    }
+
+    public int GetFlatlineHealAmount()
+    {
+        if (PlayerData.playerdata.skillList["4/8"].Level == 1) {
+            return 5;
+        } else if (PlayerData.playerdata.skillList["4/8"].Level == 2) {
+            return 6;
+        } else if (PlayerData.playerdata.skillList["4/8"].Level == 3) {
+            return 7;
+        } else if (PlayerData.playerdata.skillList["4/8"].Level == 4) {
+            return 8;
+        }
+        return 0;
+    }
+
+    public int GetFlatlineSacrificeAmount()
+    {
+        if (PlayerData.playerdata.skillList["4/8"].Level == 1) {
+            return 14;
+        } else if (PlayerData.playerdata.skillList["4/8"].Level == 2) {
+            return 12;
+        } else if (PlayerData.playerdata.skillList["4/8"].Level == 3) {
+            return 10;
+        } else if (PlayerData.playerdata.skillList["4/8"].Level == 4) {
+            return 8;
+        }
+        return 0;
+    }
+
 }

@@ -27,6 +27,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     const float BOMB_DEFUSE_TIME = 8f;
     const float DEPLOY_USE_TIME = 4f;
     const float NPC_INTERACT_TIME = 5f;
+    const float HEAL_TIME = 5f;
     private const float ENV_DAMAGE_DELAY = 0.5f;
     private const float MINIMUM_FALL_DMG_VELOCITY = 25f;
     private const float MINIMUM_FALL_DMG = 10f;
@@ -93,6 +94,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private bool escapeAvailablePopup;
     private bool isInteracting;
     private string interactingWith;
+    private int interactedOnById;
     private GameObject activeInteractable;
     private float interactionTimer;
     private bool interactionLock;
@@ -140,7 +142,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private float underwaterTimer;
     private float underwaterTakeDamageTimer;
     private bool isInWater;
-    public float deadTest;
 
     public void PreInitialize()
     {
@@ -166,9 +167,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void SyncDataOnJoin(bool init) {
         pView.RPC("RpcAskServerForDataPlayer", RpcTarget.Others, init);
-        if (init) {
-            UpdateSpeedBoostFromSkills();
-        }
     }
 
     public void Initialize()
@@ -232,6 +230,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         StartCoroutine(SpawnInvincibilityRoutine());
         StartCoroutine("RegeneratorRecover");
         StartCoroutine("PainkillerCompound");
+        StartCoroutine("UpdateContingencyTimeBoost");
         initialized = true;
     }
 
@@ -776,6 +775,24 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     activeInteractable = null;
                     interactionLock = true;
                 }
+            } else if (interactingWith == "Player") {
+                hud.ToggleActionBar(true, "HEALING TEAMMATE...");
+                bool startedHealing = (interactionTimer == 0f);
+                interactionTimer += (Time.deltaTime / HEAL_TIME);
+                hud.SetActionBarSlider(interactionTimer);
+                if (interactionTimer >= 1f)
+                {
+                    PlayerActionScript p = activeInteractable.GetComponent<PlayerActionScript>();
+                    interactionTimer = 0f;
+                    p.SetHealth(p.health + skillController.GetFlatlineHealAmount(), true);
+                    activeInteractable = null;
+                    interactionLock = true;
+                } else {
+                    if (startedHealing) {
+                        PlayerActionScript p = activeInteractable.GetComponent<PlayerActionScript>();
+                        p.ToggleProceduralInfo("PLEASE STAND STILL WHILE YOUR TEAMMATE HEALS YOU", true, PhotonNetwork.LocalPlayer.ActorNumber);
+                    }
+                }
             }
         } else {
             if (!hud.container.inGameMessenger.inputText.enabled) {
@@ -790,6 +807,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     void InteractCheck() {
+        HealPlayerCheck();
         if (gameController.currentMap == 1) {
             BombDefuseCheck();
         } else if (gameController.currentMap == 2) {
@@ -823,6 +841,32 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     // Stop using the deployable
                     SetInteracting(false, null);
                     hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO DEFUSE");
+                }
+            }
+        } else {
+            // Stop using the deployable
+            SetInteracting(false, null);
+            hud.ToggleHintText(null);
+        }
+    }
+
+    void HealPlayerCheck()
+    {
+        if (activeInteractable != null && !hud.PauseIsActive() && health > 0 && skillController.GetFlatlineSacrificeAmount() < health) {
+            PlayerActionScript p = activeInteractable.GetComponent<PlayerActionScript>();
+            if (p != null) {
+                if (p.health <= 0 || p.health >= 100) {
+                    SetInteracting(false, null);
+                    return;
+                }
+                if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact", true) && !interactionLock) {
+                    // Use the deployable
+                    SetInteracting(true, "Player");
+                    hud.ToggleHintText(null);
+                } else {
+                    // Stop using the deployable
+                    SetInteracting(false, null);
+                    hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO HEAL TEAMMATE");
                 }
             }
         } else {
@@ -933,7 +977,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void CheckForInteractables() {
         RaycastHit hit;
-        int interactableMask = (1 << 18 | 1 << 15);
+        int interactableMask = (1 << 18 | 1 << 15 | 1 << 9);
         if (Physics.Raycast(viewCam.transform.position, viewCam.transform.forward, out hit, INTERACTION_DISTANCE, interactableMask)) {
             if (hit.transform.gameObject.tag == "Human") {
                 NpcScript n = hit.transform.GetComponentInParent<NpcScript>();
@@ -942,10 +986,20 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                         activeInteractable = n.transform.gameObject;
                     }
                 }
+            } else if (hit.transform.gameObject.tag == "Player") {
+                if (skillController.CanHealPlayers()) {
+                    activeInteractable = hit.transform.gameObject;
+                }
             } else {
                 activeInteractable = hit.transform.gameObject;
             }
         } else {
+            if (activeInteractable != null) {
+                PlayerActionScript p = activeInteractable.GetComponent<PlayerActionScript>();
+                if (p != null) {
+                    p.ToggleProceduralInfo(null, true, 0);
+                }
+            }
             activeInteractable = null;
         }
     }
@@ -986,9 +1040,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         health = h;
         if (useParticleEffect) {
             PlayHealParticleEffect();
+            // ResetHealTimer();
         }
         if (pView.IsMine) {
             skillController.HandleHealthChangeEvent(h);
+            ToggleProceduralInfo(null, false, 0);
         }
     }
 
@@ -1264,7 +1320,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             RemovePlayerAsHost(otherPlayer.ActorNumber);
             SetTeamHost();
         }
-        UpdateSpeedBoostFromSkills();
+        if (pView.IsMine) {
+            if (otherPlayer.ActorNumber == interactedOnById) {
+                ToggleProceduralInfo(null, false, 0);
+            }
+        }
     }
     
     void RemovePlayerAsHost(int pId) {
@@ -1362,7 +1422,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // transform.position = gameController.spawnLocation.position;
         fpc.m_MouseLook.Init(fpc.charTransform, fpc.spineTransform, fpc.fpcTransformSpine, fpc.fpcTransformBody);
         LeaveSpectatorMode();
-        UpdateSpeedBoostFromSkills();
         transform.position = gameController.spawnLocation.position;
         if (gameController.reviveWindowTimer > -50f) {
             gameController.ClearReviveWindowTimer();
@@ -1709,10 +1768,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcTriggerPlayerDownAlert(string playerDownName) {
         if (gameObject.layer == 0) return;
-        if (PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().health > 0) {
+        PlayerActionScript p = PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>();
+        if (p.health > 0) {
             hud.MessagePopup(playerDownName + " is down!");
         }
-        UpdateSpeedBoostFromSkills();
     }
 
     void ResetEnvDamageTimer() {
@@ -2000,11 +2059,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcOnPlayerLeftMatch()
     {
         if (gameObject.layer == 0) return;
-        UpdateSpeedBoostFromSkills();
+        PlayerActionScript p = PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>();
+        if (pView.Owner.ActorNumber == p.interactedOnById) {
+            p.ToggleProceduralInfo(null, false, 0);
+        }
     }
 
     // Called when a player dies, leaves the game, or this player respawns
-    public void UpdateSpeedBoostFromSkills()
+    void UpdateSpeedBoostFromSkills()
     {
         float skillSpeedBoost = skillController.HandleAllyDeath();
         StatBoosts newTotalStatBoosts = equipmentScript.CalculateStatBoostsWithCurrentEquips();
@@ -2221,6 +2283,32 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (pView.IsMine) {
             Revive(reason);
         }
+    }
+
+    void ToggleProceduralInfo(string s, bool sendOverNetwork, int interactedOnById)
+    {
+        if (sendOverNetwork) {
+            pView.RPC("RpcToggleProceduralInfo", RpcTarget.All, s, interactedOnById);
+        } else {
+            hud.SetProceduralInfo(s);
+            this.interactedOnById = interactedOnById;
+        }
+    }
+
+    [PunRPC]
+    void RpcToggleProceduralInfo(string s, int interactedOnById)
+    {
+        if (pView.IsMine) {
+            hud.SetProceduralInfo(s);
+            this.interactedOnById = interactedOnById;
+        }
+    }
+
+    IEnumerator UpdateContingencyTimeBoost()
+    {
+        UpdateSpeedBoostFromSkills();
+        yield return new WaitForSeconds(4f);
+        StartCoroutine("UpdateContingencyTimeBoost");
     }
 
 }

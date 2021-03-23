@@ -2032,6 +2032,16 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	public void SetProceduralInfo(string s)
+	{
+		if (s == null) {
+			container.proceduralInfoText.SetActive(false);
+		} else {
+			container.proceduralInfoText.GetComponent<TextMeshProUGUI>().text = s;
+			container.proceduralInfoText.SetActive(true);
+		}
+	}
+
 }
 
 public class AlertMarker {
