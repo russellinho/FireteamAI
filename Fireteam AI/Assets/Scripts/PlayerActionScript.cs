@@ -1700,7 +1700,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcTriggerPlayerDownAlert(string playerDownName) {
         if (gameObject.layer == 0) return;
-        hud.MessagePopup(playerDownName + " is down!");
+        if (PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().health > 0) {
+            hud.MessagePopup(playerDownName + " is down!");
+        }
         UpdateSpeedBoostFromSkills();
     }
 
@@ -2175,6 +2177,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public void CallGuardianAngel(int actorNo)
     {
         if (!skillController.CanCallGuardianAngel()) return;
+        if (health <= 0) return;
         if (!GameControllerScript.playerList.ContainsKey(actorNo)) return;
         if (GameControllerScript.playerList[actorNo].objRef == null) return;
         PlayerActionScript thisPlayerActionScript = GameControllerScript.playerList[actorNo].objRef.GetComponent<PlayerActionScript>();
