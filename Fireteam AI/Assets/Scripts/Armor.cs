@@ -14,12 +14,13 @@ public class Armor
     public float speed;
     public float stamina;
     public float armor;
+    public float avoidability;
     public bool purchasable;
     public int gpPrice;
     public int kashPrice;
     public bool deleteable;
 
-    public Armor(string name, int malePrefabPathTop, int malePrefabPathBottom, int femalePrefabPathTop, int femalePrefabPathBottom, string thumbnailPath, string description, float speed, float stamina, float armor, int gpPrice, int kashPrice, bool purchasable, bool deleteable) {
+    public Armor(string name, int malePrefabPathTop, int malePrefabPathBottom, int femalePrefabPathTop, int femalePrefabPathBottom, string thumbnailPath, string description, float speed, float stamina, float armor, float avoidability, int gpPrice, int kashPrice, bool purchasable, bool deleteable) {
         this.name = name;
         this.malePrefabPathTop = malePrefabPathTop;
         this.malePrefabPathBottom = malePrefabPathBottom;
@@ -30,6 +31,7 @@ public class Armor
         this.speed = speed;
         this.stamina = stamina;
         this.armor = armor;
+        this.avoidability = avoidability;
         this.gpPrice = gpPrice;
         this.kashPrice = kashPrice;
         this.purchasable = purchasable;

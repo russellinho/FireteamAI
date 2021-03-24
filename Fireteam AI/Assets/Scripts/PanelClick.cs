@@ -49,13 +49,13 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             shopItemScript.itemDescriptionPopupRef.SetActive(true);
             if (shopItemScript.itemType.Equals("Headgear") || shopItemScript.itemType.Equals("Facewear")) {
                 ips.ToggleWeaponStatDescriptor(false);
-                ips.SetEquipmentStats(shopItemScript.equipmentDetails.armor, shopItemScript.equipmentDetails.speed, shopItemScript.equipmentDetails.stamina, shopItemScript.equipmentDetails.gender, shopItemScript.equipmentDetails.characterRestrictions);
+                ips.SetEquipmentStats(shopItemScript.equipmentDetails.armor, shopItemScript.equipmentDetails.speed, shopItemScript.equipmentDetails.stamina, shopItemScript.equipmentDetails.avoidability, shopItemScript.equipmentDetails.gender, shopItemScript.equipmentDetails.characterRestrictions);
                 ips.ToggleEquipmentStatDescriptor(true);
                 ips.SetRestrictions(shopItemScript.equipmentDetails.gender, shopItemScript.equipmentDetails.characterRestrictions);
                 ips.ToggleClothingStatDescriptor(false);
             } else if (shopItemScript.itemType.Equals("Armor")) {
                 ips.ToggleWeaponStatDescriptor(false);
-                ips.SetArmorStats(shopItemScript.armorDetails.armor, shopItemScript.armorDetails.speed, shopItemScript.armorDetails.stamina);
+                ips.SetArmorStats(shopItemScript.armorDetails.armor, shopItemScript.armorDetails.speed, shopItemScript.armorDetails.stamina, shopItemScript.armorDetails.avoidability);
                 ips.ToggleEquipmentStatDescriptor(true);
                 ips.ToggleClothingStatDescriptor(false);
             } else if (shopItemScript.itemType.Equals("Weapon")) {

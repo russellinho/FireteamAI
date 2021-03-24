@@ -1805,7 +1805,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					PlayerActionScript ps = hit.transform.GetComponent<PlayerActionScript> ();
 					ps.TakeDamage(CalculateDamageDealt(InventoryScript.itemData.weaponCatalog[gunRef.weaponName].damage / 2f, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CharacterController>().height), true, transform.position, 0, Random.Range(1, 12));
 					//ps.ResetHitTimer ();
-					ps.SetHitLocation (transform.position);
 				} else if (hit.transform.tag.Equals ("Human")) {
 					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					// BetaEnemyScript b = hit.transform.GetComponent<BetaEnemyScript>();
@@ -1898,7 +1897,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			if (ps != null) {
 				ps.TakeDamage (50, true, transform.position, 2, 0);
 				//ps.ResetHitTimer();
-				ps.SetHitLocation (transform.position);
 			}
 		}
 	}

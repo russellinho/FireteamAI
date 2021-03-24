@@ -8,6 +8,7 @@ public class Stats
     public EncryptedFloat speed;
     public EncryptedFloat stamina;
     public EncryptedFloat armor;
+    public EncryptedFloat avoidability;
     public EncryptedInt health;
 
     public Stats() {
@@ -18,6 +19,7 @@ public class Stats
         this.speed = 1f;
         this.stamina = 1f;
         this.armor = 1f;
+        this.avoidability = 1f;
         this.health = 0;
     }
 
@@ -41,12 +43,17 @@ public class Stats
         this.health = value;
     }
 
-    public void setStats(float speed, float stamina, float armor, int health)
+    public void setAvoidability(float value)
+    {
+        this.avoidability = 1f + value;
+    }
+
+    public void setStats(float speed, float stamina, float armor, float avoidability, int health)
     {
         setSpeed(speed);
         setStamina(stamina);
         setArmor(armor);
+        setAvoidability(avoidability);
         setHealth(health);
-
     }
 }

@@ -21,6 +21,7 @@ public class ItemPopupScript : MonoBehaviour
     public Text armorStatTxt;
     public Text speedStatTxt;
     public Text staminaStatTxt;
+    public Text avoidabilityStatTxt;
     public Text genderRestTxt;
     public Text characterRestTxt;
     public Text expirationDateEquipTxt;
@@ -130,10 +131,11 @@ public class ItemPopupScript : MonoBehaviour
         skillDescriptor.SetActive(b);
     }
 
-    public void SetEquipmentStats(float armor, float speed, float stamina, char gender, string[] characterRestrictions) {
+    public void SetEquipmentStats(float armor, float speed, float stamina, float avoidability, char gender, string[] characterRestrictions) {
         armorStatTxt.text = ConvertToPercent(armor) + "%";
         speedStatTxt.text = ConvertToPercent(speed) + "%";
         staminaStatTxt.text = ConvertToPercent(stamina) + "%";
+        avoidabilityStatTxt.text = ConvertToPercent(avoidability) + "%";
     }
 
     public void SetRestrictions(char gender, string[] characterRestrictions) {
@@ -157,10 +159,11 @@ public class ItemPopupScript : MonoBehaviour
         }
     }
 
-    public void SetArmorStats(float armor, float speed, float stamina) {
+    public void SetArmorStats(float armor, float speed, float stamina, float avoidability) {
         armorStatTxt.text = ConvertToPercent(armor) + "%";
         speedStatTxt.text = ConvertToPercent(speed) + "%";
         staminaStatTxt.text = ConvertToPercent(stamina) + "%";
+        avoidabilityStatTxt.text = ConvertToPercent(avoidability) + "%";
     }
 
     public void SetWeaponStats(float damage, float accuracy, float recoil, float fireRate, float mobility, float range, float clipCapacity) {
@@ -198,6 +201,7 @@ public class ItemPopupScript : MonoBehaviour
         armorStatTxt.text = "-";
         speedStatTxt.text = "-";
         staminaStatTxt.text = "-";
+        avoidabilityStatTxt.text = "-";
         damageStatTxt.text = "-";
         accuracyStatTxt.text = "-";
         recoilStatTxt.text = "-";

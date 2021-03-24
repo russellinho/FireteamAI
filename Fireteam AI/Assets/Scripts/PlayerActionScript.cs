@@ -129,7 +129,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public float healTimer;
     public float boostTimer;
     private float envDamageTimer;
-    public Vector3 hitLocation;
     public Transform cameraParent;
 
     // Mission references
@@ -137,7 +136,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     private bool initialized;
     public bool waitingOnAccept;
-    private Vector3 lastHitFromPos;
+    public Vector3 lastHitFromPos;
 	private int lastHitBy;
 	private int lastBodyPartHit;
     private float underwaterTimer;
@@ -535,6 +534,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hud.UpdateObjectives();
     }
 
+    [PunRPC]
+    void RpcPlayTakeDamageGrunt()
+    {
+        audioController.PlayGruntSound();
+    }
+
     public void TakeDamage(int d, bool useArmor, Vector3 hitFromPos, int hitBy, int bodyPartHit)
     {
         if (d <= 0) return;
@@ -542,34 +547,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (health <= 0f) return;
         // If registering a gun shot (hit by = 0), then the server must register it.
         if (!pView.IsMine && hitBy != 0) return;
-        // See if Bullet Sponge skill absorbed the gunshot (hitBy == 0 is a gunshot)
-        if (hitBy == 0 && skillController.BulletSpongeAbsorbed()) {
-            return;
-        }
-        skillController.RegenerationReset();
-        // Calculate damage done including armor
-        // Apply Rampage skill effect
-        if (useArmor) {
-            if (skillController.GetRampageBoost()) {
-                // 5% chance the damage isn't fully absorbed - will do 1 damage if not
-                int r = Random.Range(0, 100);
-                if (r < 5) {
-                    d = 1;
-                } else {
-                    d = 0;
-                }
-            } else {
-                if (hitBy == 2) {
-                    d = (int)((float)d * (1f - skillController.GetMeleeResistance()) * (1f - skillController.GetMartialArtsDefenseBoost()));
-                } else {
-                    float damageReduction = ((playerScript.armor + skillController.GetHeadstrongBoost()) * skillController.GetArmorBoost()) - 1f;
-                    damageReduction = Mathf.Clamp(damageReduction, 0f, 1f);
-                    d = Mathf.RoundToInt((float)d * (1f - damageReduction));
-                }
-            }
-        }
-        // Painkiller skill damage dampening
-        d = (int)((float)d * (1f - skillController.GetPainkillerTotalAmount()));
 
         // Send over network
         pView.RPC("RpcTakeDamage", RpcTarget.All, d, useArmor, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit);
@@ -579,41 +556,60 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcTakeDamage(int d, bool useArmor, float hitFromX, float hitFromY, float hitFromZ, int hitBy, int bodyPartHit)
     {
         if (gameObject.layer == 0) return;
+        if (d <= 0) return;
         if (fightingSpiritTimer > 0f) return;
         if (health <= 0f) return;
+        
         ResetHitTimer();
-        audioController.PlayGruntSound();
         if (pView.IsMine)
         {
-            audioController.PlayHitSound();
-        }
-        // if (!godMode)
-        // {
-        //     health -= d;
-        // }
-        if ((health - d) <= 0 && fightingSpiritTimer <= 0f) {
-            ActivateFightingSpirit();
-        }
-        int prevHealth = health;
-        health -= d;
-        lastHitFromPos = new Vector3(hitFromX, hitFromY, hitFromZ);
-		lastHitBy = hitBy;
-		lastBodyPartHit = bodyPartHit;
-        
-        if (pView.IsMine) {
-            skillController.HandleHealthChangeEvent(health);
-            // Motivate boost
-            // If the player is dead, remove the boost from everyone
-            // If health went down and is now less than the trigger when it previously wasn't, then send the boost to everyone
-            // Else if health went up and is now above the trigger when it previously wasn't, then remove the boost from everyone
-            int trigger = skillController.GetMotivateHealthTrigger();
-            if (health <= 0) {
-                pView.RPC("RpcDeactivateMotivateSkillFromThisPlayer", RpcTarget.All);
-            } else if (prevHealth > trigger && health <= trigger) {
-                pView.RPC("RpcActivateMotivateSkillFromThisPlayer", RpcTarget.All, skillController.GetMotivateDamageBoost());
-            } else if (prevHealth <= trigger && health > trigger) {
-                pView.RPC("RpcDeactivateMotivateSkillFromThisPlayer", RpcTarget.All);
+            // See if you dodged the bullet first (avoidability). Return if you did
+            if (hitBy == 0) {
+                int avoidChance = (int)(Mathf.Clamp(playerScript.avoidability - 1f, 0f, 1f) * 100f);
+                if (Random.Range(0, 100) < avoidChance) {
+                    return;
+                }
             }
+            skillController.RegenerationReset();
+            // Calculate damage done including armor
+            // Apply Rampage skill effect
+            if (useArmor) {
+                // See if you absorbed the gunshot through Bullet Sponge skill
+                if (hitBy == 0 && skillController.BulletSpongeAbsorbed()) {
+                    d = 0;
+                } else {
+                    if (skillController.GetRampageBoost()) {
+                        // 5% chance the damage isn't fully absorbed - will do 1 damage if not
+                        int r = Random.Range(0, 100);
+                        if (r < 5) {
+                            d = 1;
+                        } else {
+                            d = 0;
+                        }
+                    } else {
+                        if (hitBy == 2) {
+                            d = (int)((float)d * (1f - skillController.GetMeleeResistance()) * (1f - skillController.GetMartialArtsDefenseBoost()));
+                        } else {
+                            float damageReduction = ((playerScript.armor + skillController.GetHeadstrongBoost()) * skillController.GetArmorBoost()) - 1f;
+                            damageReduction = Mathf.Clamp(damageReduction, 0f, 1f);
+                            d = Mathf.RoundToInt((float)d * (1f - damageReduction));
+                        }
+                    }
+                }
+            }
+            // Painkiller skill damage dampening
+            d = (int)((float)d * (1f - skillController.GetPainkillerTotalAmount()));
+            audioController.PlayHitSound();
+
+            // if (godMode)
+            // {
+            //     d = 0;
+            // }
+            lastHitFromPos = new Vector3(hitFromX, hitFromY, hitFromZ);
+            lastHitBy = hitBy;
+            lastBodyPartHit = bodyPartHit;
+            pView.RPC("RpcPlayTakeDamageGrunt", RpcTarget.All);
+            SetHealth(health - d, false);
         }
     }
 
@@ -1065,9 +1061,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (gameObject.layer == 0) return;
         if (fightingSpiritTimer > 0f) return;
-        h = Mathf.Min(100, h);
+        h = Mathf.Clamp(h, 0, 100);
         int prevHealth = health;
-        if (h <= 0 && fightingSpiritTimer <= 0f) {
+        if (pView.IsMine && h <= 0 && fightingSpiritTimer <= 0f) {
             ActivateFightingSpirit();
         }
         health = h;
@@ -1111,11 +1107,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         SkillController mySkillController = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>();
         float dmgRemoval = mySkillController.RemoveMotivateBoost(actorNo);
         mySkillController.RemoveFromMotivateDamageBoost(dmgRemoval);
-    }
-
-    public void SetHitLocation(Vector3 pos)
-    {
-        hitLocation = pos;
     }
 
     void DetermineEscaped()
@@ -1174,7 +1165,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 // Deal damage to the player
                 TakeDamage(damageReceived, false, other.gameObject.transform.position, 1, 0);
                 //ResetHitTimer();
-                SetHitLocation(other.transform.position);
             }
         }
         else if (other.gameObject.name.Contains("XM84"))
@@ -1223,7 +1213,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 // Deal damage to the player
                 TakeDamage(damageReceived, false, other.gameObject.transform.position, 1, 0);
                 //ResetHitTimer();
-                SetHitLocation(other.transform.position);
             }
         }
     }
@@ -1238,7 +1227,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 			int damageReceived = (int)(f.damage);
 			TakeDamage(damageReceived, false, other.gameObject.transform.position, 2, 0);
 			ResetEnvDamageTimer();
-            SetHitLocation(other.transform.position);
 		}
 	}
 
@@ -1264,7 +1252,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             aud.clip = healthPickupSound;
             aud.Play();
             ResetHealTimer();
-            pView.RPC("RpcSetHealth", RpcTarget.All, 100, false);
+            SetHealth(100, false);
             pView.RPC("RpcDestroyPickup", RpcTarget.All, other.gameObject.GetComponent<PickupScript>().pickupId, gameController.teamMap);
         }
     }
@@ -1426,8 +1414,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 gameController.ClearReviveWindowTimer();
             }
         } else {
-            health = 100;
-            pView.RPC("RpcSetHealth", RpcTarget.Others, 100, false);
+            SetHealth(100, false);
         }
     }
 
@@ -1447,9 +1434,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     // Reset character health, scale, rotation, position, ammo, disabled HUD components, disabled scripts, death variables, etc.
     public void Respawn()
     {
-        health = 100;
         waitingOnAccept = false;
-        pView.RPC("RpcSetHealth", RpcTarget.Others, 100, false);
+        SetHealth(100, false);
         viewCam.transform.SetParent(cameraParent);
         viewCam.transform.GetComponent<Camera>().fieldOfView = 60;
         hud.ToggleHUD(true);
@@ -1619,12 +1605,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         int healthIncrement = (int)(playerScript.health * totalHealPortion / 5f);
         if (this.health < playerScript.health && this.health > 0 && fightingSpiritTimer <= 0f){
           for (int i = 0; i < healAmounts; i++) {
+            int newHealth = 0;
             if (this.health + healthIncrement > playerScript.health){
-              this.health = playerScript.health;
+              newHealth = playerScript.health;
             } else {
-              this.health += healthIncrement;
+              newHealth = this.health + healthIncrement;
             }
-            pView.RPC("RpcSetHealth", RpcTarget.Others, this.health, false);
+            SetHealth(newHealth, true);
             yield return new WaitForSeconds(2);
           }
          } else {
@@ -2248,9 +2235,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RegenerateHealth(int health)
     {
         if (this.health < 100 && this.health > 0 && fightingSpiritTimer <= 0f) {
-            this.health += health;
-            int newHealth = this.health;
-            pView.RPC("RpcSetHealth", RpcTarget.Others, newHealth, false);
+            int newHealth = this.health + health;
+            SetHealth(newHealth, false);
         }
     }
 

@@ -189,6 +189,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public TextMeshProUGUI armorBoostPercent;
 	public TextMeshProUGUI speedBoostPercent;
 	public TextMeshProUGUI staminaBoostPercent;
+	public TextMeshProUGUI avoidabilityBoostPercent;
 	public Button primaryWepBtn;
 	public Button secondaryWepBtn;
 	public Button supportWepBtn;
@@ -2758,10 +2759,24 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	public void SetStatBoosts(int armor, int speed, int stamina) {
+	public void SetAvoidabilityBoostPercent(int avoidability) {
+		if (avoidability == 0) {
+			avoidabilityBoostPercent.color = Color.white;
+			avoidabilityBoostPercent.text = "+" + avoidability + "%";
+		} else if (avoidability > 0) {
+			avoidabilityBoostPercent.color = Color.green;
+			avoidabilityBoostPercent.text = "+" + avoidability + "%";
+		} else {
+			avoidabilityBoostPercent.color = Color.red;
+			avoidabilityBoostPercent.text = avoidability + "%";
+		}
+	}
+
+	public void SetStatBoosts(int armor, int speed, int stamina, int avoidability) {
 		SetArmorBoostPercent(armor);
 		SetSpeedBoostPercent(speed);
 		SetStaminaBoostPercent(stamina);
+		SetAvoidabilityBoostPercent(avoidability);
 	}
 
 	public void LoadWeaponForModding(ShopItemScript s) {

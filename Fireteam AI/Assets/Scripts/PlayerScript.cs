@@ -13,6 +13,8 @@ public class PlayerScript : MonoBehaviour
     public EncryptedFloat stamina;
     // Armor allows you to take less damage all around
     public EncryptedFloat armor;
+    // Avoidability gives you a percent chance of dodging a bullet
+    public EncryptedFloat avoidability;
     // Health modifier
     public EncryptedInt health;
     // Stat multipliers
@@ -21,6 +23,7 @@ public class PlayerScript : MonoBehaviour
     public const float baseSpeed = 6f;
     public const float baseStamina = 4f;
     public const float baseArmor = 1f;
+    public const float baseAvoidability = 1f;
     public const int baseHealth = 100;
 
 
@@ -28,6 +31,7 @@ public class PlayerScript : MonoBehaviour
         stats = new Stats();
         speed = baseSpeed;
         stamina = baseStamina;
+        avoidability = baseAvoidability;
         armor = baseArmor;
         health = baseHealth;
     }
@@ -54,11 +58,17 @@ public class PlayerScript : MonoBehaviour
         this.health = baseHealth + stats.health;
     }
 
+    public void setAvoidability()
+    {
+        this.avoidability = baseAvoidability * stats.avoidability;
+    }
+
     public void updateStats()
     {
         setSpeed();
         setStamina();
         setArmor();
+        setAvoidability();
         setHealth();
     }
 

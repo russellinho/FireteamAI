@@ -994,9 +994,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 			// Enable hit flare
 			container.hitFlare.GetComponent<RawImage> ().enabled = true;
-			// Vector3 hitDirectionVector = transform.position - playerActionScript.hitLocation;
+			// Vector3 hitDirectionVector = transform.position - playerActionScript.lastHitFromPos;
 			if (!playerActionScript.skipHitDir) {
-				Vector3 hitDirectionVector = playerActionScript.hitLocation - transform.position;
+				Vector3 hitDirectionVector = playerActionScript.lastHitFromPos - transform.position;
 				float a = Vector3.Angle (playerActionScript.viewCam.gameObject.transform.forward, hitDirectionVector);
 				float dir = GetAngleSide(playerActionScript.viewCam.gameObject.transform.forward, hitDirectionVector, playerActionScript.viewCam.gameObject.transform.up);
 				if (dir == 1) {

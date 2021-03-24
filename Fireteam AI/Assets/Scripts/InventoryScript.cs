@@ -71,16 +71,18 @@ public class InventoryScript : MonoBehaviour
                     object speed = d.Child("speed").Value;
                     object stamina = d.Child("stamina").Value;
                     object armor = d.Child("armor").Value;
+                    object avoidability = d.Child("avoidability").Value;
                     float speedFloat = (speed == null ? 0f : float.Parse(speed.ToString()));
                     float staminaFloat = (stamina == null ? 0f : float.Parse(stamina.ToString()));
                     float armorFloat = (armor == null ? 0f : float.Parse(armor.ToString()));
+                    float avoidabilityFloat = (avoidability == null ? 0f : float.Parse(avoidability.ToString()));
                     object gender = d.Child("gender").Value;
                     char genderChar = (gender == null ? 'N' : char.Parse(gender.ToString()));
                     object characterRestrictions = d.Child("characterRestrictions").Value;
                     string[] characterRestrictionsString = (characterRestrictions == null ? new string[0]{} : characterRestrictions.ToString().Split(','));
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Top", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
+                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Top", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, avoidabilityFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
                 }
 
                 // Get bottoms
@@ -100,16 +102,18 @@ public class InventoryScript : MonoBehaviour
                     object speed = d.Child("speed").Value;
                     object stamina = d.Child("stamina").Value;
                     object armor = d.Child("armor").Value;
+                    object avoidability = d.Child("avoidability").Value;
                     float speedFloat = (speed == null ? 0f : float.Parse(speed.ToString()));
                     float staminaFloat = (stamina == null ? 0f : float.Parse(stamina.ToString()));
                     float armorFloat = (armor == null ? 0f : float.Parse(armor.ToString()));
+                    float avoidabilityFloat = (avoidability == null ? 0f : float.Parse(avoidability.ToString()));
                     object gender = d.Child("gender").Value;
                     char genderChar = (gender == null ? 'N' : char.Parse(gender.ToString()));
                     object characterRestrictions = d.Child("characterRestrictions").Value;
                     string[] characterRestrictionsString = (characterRestrictions == null ? new string[0]{} : characterRestrictions.ToString().Split(','));
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Bottom", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
+                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Bottom", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, avoidabilityFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
                 }
 
                 // Get footwear
@@ -129,16 +133,18 @@ public class InventoryScript : MonoBehaviour
                     object speed = d.Child("speed").Value;
                     object stamina = d.Child("stamina").Value;
                     object armor = d.Child("armor").Value;
+                    object avoidability = d.Child("avoidability").Value;
                     float speedFloat = (speed == null ? 0f : float.Parse(speed.ToString()));
                     float staminaFloat = (stamina == null ? 0f : float.Parse(stamina.ToString()));
                     float armorFloat = (armor == null ? 0f : float.Parse(armor.ToString()));
+                    float avoidabilityFloat = (avoidability == null ? 0f : float.Parse(avoidability.ToString()));
                     object gender = d.Child("gender").Value;
                     char genderChar = (gender == null ? 'N' : char.Parse(gender.ToString()));
                     object characterRestrictions = d.Child("characterRestrictions").Value;
                     string[] characterRestrictionsString = (characterRestrictions == null ? new string[0]{} : characterRestrictions.ToString().Split(','));
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Footwear", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
+                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Footwear", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, avoidabilityFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
                 }
 
                 // Get facewear
@@ -158,16 +164,18 @@ public class InventoryScript : MonoBehaviour
                     object speed = d.Child("speed").Value;
                     object stamina = d.Child("stamina").Value;
                     object armor = d.Child("armor").Value;
+                    object avoidability = d.Child("avoidability").Value;
                     float speedFloat = (speed == null ? 0f : float.Parse(speed.ToString()));
                     float staminaFloat = (stamina == null ? 0f : float.Parse(stamina.ToString()));
                     float armorFloat = (armor == null ? 0f : float.Parse(armor.ToString()));
+                    float avoidabilityFloat = (avoidability == null ? 0f : float.Parse(avoidability.ToString()));
                     object gender = d.Child("gender").Value;
                     char genderChar = (gender == null ? 'N' : char.Parse(gender.ToString()));
                     object characterRestrictions = d.Child("characterRestrictions").Value;
                     string[] characterRestrictionsString = (characterRestrictions == null ? new string[0]{} : characterRestrictions.ToString().Split(','));
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Facewear", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
+                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Facewear", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, avoidabilityFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
                 }
 
                 // Get headgear
@@ -187,16 +195,18 @@ public class InventoryScript : MonoBehaviour
                     object speed = d.Child("speed").Value;
                     object stamina = d.Child("stamina").Value;
                     object armor = d.Child("armor").Value;
+                    object avoidability = d.Child("avoidability").Value;
                     float speedFloat = (speed == null ? 0f : float.Parse(speed.ToString()));
                     float staminaFloat = (stamina == null ? 0f : float.Parse(stamina.ToString()));
                     float armorFloat = (armor == null ? 0f : float.Parse(armor.ToString()));
+                    float avoidabilityFloat = (avoidability == null ? 0f : float.Parse(avoidability.ToString()));
                     object gender = d.Child("gender").Value;
                     char genderChar = (gender == null ? 'N' : char.Parse(gender.ToString()));
                     object characterRestrictions = d.Child("characterRestrictions").Value;
                     string[] characterRestrictionsString = (characterRestrictions == null ? new string[0]{} : characterRestrictions.ToString().Split(','));
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Headgear", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
+                    equipmentCatalog.Add(itemName, new Equipment(itemName, "Headgear", (malePrefabPath == null ? -1 : int.Parse(malePrefabPath.ToString())), (femalePrefabPath == null ? -1 : int.Parse(femalePrefabPath.ToString())), (maleFpcPrefabPath == null ? -1 : int.Parse(maleFpcPrefabPath.ToString())), (femaleFpcPrefabPath == null ? -1 : int.Parse(femaleFpcPrefabPath.ToString())), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), hideHairFlagBool, skinTypeInt, speedFloat, staminaFloat, armorFloat, avoidabilityFloat, genderChar, characterRestrictionsString, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
                 }
 
                 // Get armor
@@ -212,12 +222,14 @@ public class InventoryScript : MonoBehaviour
                     object speed = d.Child("speed").Value;
                     object stamina = d.Child("stamina").Value;
                     object armor = d.Child("armor").Value;
+                    object avoidability = d.Child("avoidability").Value;
                     float speedFloat = (speed == null ? 0f : float.Parse(speed.ToString()));
                     float staminaFloat = (stamina == null ? 0f : float.Parse(stamina.ToString()));
                     float armorFloat = (armor == null ? 0f : float.Parse(armor.ToString()));
+                    float avoidabilityFloat = (avoidability == null ? 0f : float.Parse(avoidability.ToString()));
                     bool purchasable = d.Child("purchasable").Value.ToString() == "1";
                     bool deleteable = d.Child("deleteable").Value.ToString() == "1";
-                    armorCatalog.Add(itemName, new Armor(itemName, int.Parse(malePrefabPathTop.ToString()), int.Parse(malePrefabPathBottom.ToString()), int.Parse(femalePrefabPathTop.ToString()), int.Parse(femalePrefabPathBottom.ToString()), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), speedFloat, staminaFloat, armorFloat, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
+                    armorCatalog.Add(itemName, new Armor(itemName, int.Parse(malePrefabPathTop.ToString()), int.Parse(malePrefabPathBottom.ToString()), int.Parse(femalePrefabPathTop.ToString()), int.Parse(femalePrefabPathBottom.ToString()), d.Child("thumbnailPath").Value.ToString(), d.Child("description").Value.ToString(), speedFloat, staminaFloat, armorFloat, avoidabilityFloat, int.Parse(d.Child("gpPrice").Value.ToString()), int.Parse(d.Child("kashPrice").Value.ToString()), purchasable, deleteable));
                 }
 
                 // Get weapons
