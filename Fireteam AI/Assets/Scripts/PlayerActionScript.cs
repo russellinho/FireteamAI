@@ -1920,10 +1920,16 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 }
             }
         }
+        float motivateDmg = -1f;
+        string motivates = null;
+        if (gameController.isVersusHostForThisTeam()) {
+            motivateDmg = skillController.GetMyMotivateDamageBoost();
+            motivates = skillController.SerializeMotivateBoosts();
+        }
 		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept,
                     skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost(), skillController.GetMyInspireBoost(), skillController.GetMyProviderBoost(),
                     skillController.GetMyMartialArtsAttackBoost(), skillController.GetMyMartialArtsDefenseBoost(), skillController.GetMyFireteamBoost(), skillController.GetSilhouetteBoost(), skillController.GetRegeneratorLevel(), skillController.GetPainkillerLevel(),
-                    skillController.GetMyMotivateDamageBoost(), skillController.SerializeMotivateBoosts());
+                    motivateDmg, motivates);
 	}
 
 	[PunRPC]
@@ -1981,8 +1987,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddPainkiller(pView.Owner.ActorNumber);
             }
         }
-        if (skillController.GetMyMotivateDamageBoost() == 0f && motivateDamageBoost != 0f) {
+        if (skillController.GetMyMotivateDamageBoost() == 0f && motivateDamageBoost != -1f) {
             try {
+                Debug.LogError("SNYINC: " + motivateDamageBoost + " | " + serializedMotivateBoosts);
                 ArrayList newMotivateBoosts = new ArrayList();
                 string[] boosts = serializedMotivateBoosts.Split(',');
                 foreach (string boost in boosts) {
