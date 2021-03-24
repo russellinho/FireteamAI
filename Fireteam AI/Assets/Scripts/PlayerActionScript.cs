@@ -1990,7 +1990,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         if (mySkillController.GetMyMotivateDamageBoost() == 0f && motivateDamageBoost != -1f) {
             try {
-                Debug.LogError("SNYINC: " + motivateDamageBoost + " | " + serializedMotivateBoosts);
                 ArrayList newMotivateBoosts = new ArrayList();
                 string[] boosts = serializedMotivateBoosts.Split(',');
                 foreach (string boost in boosts) {

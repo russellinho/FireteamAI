@@ -1868,19 +1868,16 @@ public class SkillController : MonoBehaviour
 
     public void AddToMotivateDamageBoost(float dmg)
     {
-        Debug.LogError("FUCK");
         motivateDamageBoost += dmg;
     }
 
     public void RemoveFromMotivateDamageBoost(float dmg)
     {
-        Debug.LogError("FUCK2");
         motivateDamageBoost -= dmg;
     }
 
     public float GetMyMotivateDamageBoost()
     {
-        Debug.LogError("TOTAL MOTIVATE BOOST : " + motivateDamageBoost);
         return Mathf.Clamp(motivateDamageBoost, 0f, MOTIVATE_BOOST_CAP);
     }
 
@@ -1899,10 +1896,8 @@ public class SkillController : MonoBehaviour
 
     public void SyncMotivateBoost(ArrayList motivateNodes, float motivateDamageBoost)
     {
-        Debug.LogError("IN SYNC NOW: " + motivateDamageBoost);
         motivateBoosts = motivateNodes;
         this.motivateDamageBoost = motivateDamageBoost;
-        Debug.LogError("NEW ONE: " + this.motivateDamageBoost);
     }
 
     public struct MotivateNode {
