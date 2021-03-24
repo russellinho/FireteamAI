@@ -1943,34 +1943,35 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         this.escapeAvailablePopup = escapeAvailablePopup;
 
         // Sync skill boosts
+        SkillController mySkillController = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>();
         if (skillController.GetThisPlayerHackerBoost() == 0) {
             skillController.SetThisPlayerHackerBoost(myHackerBoost);
-            PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddHackerBoost(myHackerBoost);
+            mySkillController.AddHackerBoost(myHackerBoost);
         }
         if (skillController.GetThisPlayerHeadstrongBoost() == 0f) {
             skillController.SetThisPlayerHeadstrongBoost(myHeadstrongBoost);
-            PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddHeadstrongBoost(myHeadstrongBoost);
+            mySkillController.AddHeadstrongBoost(myHeadstrongBoost);
         }
         if (skillController.GetThisPlayerResourcefulBoost() == 0f) {
             skillController.SetThisPlayerResourcefulBoost(myResourcefulBoost);
-            PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddResourcefulBoost(myResourcefulBoost);
+            mySkillController.AddResourcefulBoost(myResourcefulBoost);
         }
         if (skillController.GetThisPlayerInspireBoost() == 0f) {
             skillController.SetThisPlayerInspireBoost(myInspireBoost);
-            PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddInspireBoost(myInspireBoost);
+            mySkillController.AddInspireBoost(myInspireBoost);
         }
         if (skillController.GetThisPlayerProviderBoost() == 0) {
             skillController.SetThisPlayerProviderBoost(myProviderBoost);
-            PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddProviderBoost(myProviderBoost);
+            mySkillController.AddProviderBoost(myProviderBoost);
         }
         if (skillController.GetThisPlayerFireteamBoost() == 0) {
             skillController.SetThisPlayerFireteamBoost(myFireteamBoost);
-            PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddFireteamBoost(myFireteamBoost);
+            mySkillController.AddFireteamBoost(myFireteamBoost);
         }
         if (skillController.GetThisPlayerMartialArtsAttackBoost() == 0f) {
             skillController.SetThisPlayerMartialArtsAttackBoost(myMartialArtsAttackBoost);
             skillController.SetThisPlayerMartialArtsDefenseBoost(myMartialArtsDefenseBoost);
-            PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddMartialArtsBoost(myMartialArtsAttackBoost, myMartialArtsDefenseBoost);
+            mySkillController.AddMartialArtsBoost(myMartialArtsAttackBoost, myMartialArtsDefenseBoost);
         }
         if (skillController.GetThisSilhouetteBoost() == 0) {
             skillController.SetThisSilhouetteBoost(silhouetteBoost);
@@ -1978,16 +1979,16 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (skillController.GetThisRegeneratorLevel() == 0) {
             skillController.SetThisRegeneratorLevel(regeneratorLevel);
             if (regeneratorLevel > 0) {
-                PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddRegenerator(pView.Owner.ActorNumber);
+                mySkillController.AddRegenerator(pView.Owner.ActorNumber);
             }
         }
         if (skillController.GetThisPainkillerLevel() == 0) {
             skillController.SetThisPainkillerLevel(painkillerLevel);
             if (painkillerLevel > 0) {
-                PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddPainkiller(pView.Owner.ActorNumber);
+                mySkillController.AddPainkiller(pView.Owner.ActorNumber);
             }
         }
-        if (skillController.GetMyMotivateDamageBoost() == 0f && motivateDamageBoost != -1f) {
+        if (mySkillController.GetMyMotivateDamageBoost() == 0f && motivateDamageBoost != -1f) {
             try {
                 Debug.LogError("SNYINC: " + motivateDamageBoost + " | " + serializedMotivateBoosts);
                 ArrayList newMotivateBoosts = new ArrayList();
@@ -2001,7 +2002,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     n.damageBoost = thisDmgBoost;
                     newMotivateBoosts.Add(n);
                 }
-                skillController.SyncMotivateBoost(newMotivateBoosts, motivateDamageBoost);
+                mySkillController.SyncMotivateBoost(newMotivateBoosts, motivateDamageBoost);
             } catch (Exception e) {
                 Debug.LogError("Exception caught while syncing motivate boosts: " + e.Message);
             }
