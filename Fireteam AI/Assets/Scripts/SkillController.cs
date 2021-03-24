@@ -299,7 +299,9 @@ public class SkillController : MonoBehaviour
 
     public void InitializeCollectiveBoosts()
     {
-        motivateBoosts = new ArrayList();
+        if (motivateBoosts == null) {
+            motivateBoosts = new ArrayList();
+        }
         SetThisPlayerHackerBoost(GetMyHackerBoost());
         AddHackerBoost(GetMyHackerBoost());
 
@@ -1895,6 +1897,7 @@ public class SkillController : MonoBehaviour
 
     public void SyncMotivateBoost(ArrayList motivateNodes, float motivateDamageBoost)
     {
+        Debug.LogError("IN SYNC NOW: " + motivateDamageBoost);
         motivateBoosts = motivateNodes;
         this.motivateDamageBoost = motivateDamageBoost;
     }
