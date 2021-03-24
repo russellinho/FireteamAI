@@ -1880,7 +1880,26 @@ public class SkillController : MonoBehaviour
         return Mathf.Clamp(motivateDamageBoost, 0f, MOTIVATE_BOOST_CAP);
     }
 
-    struct MotivateNode {
+    public string SerializeMotivateBoosts()
+    {
+        string s = "";
+        for (int i = 0; i < motivateBoosts.Count; i++) {
+            if (i != 0) {
+                s += ",";
+            }
+            MotivateNode n = (MotivateNode)motivateBoosts[i];
+            s += (n.actorNo + "|" + n.damageBoost);
+        }
+        return s;
+    }
+
+    public void SyncMotivateBoost(ArrayList motivateNodes, float motivateDamageBoost)
+    {
+        motivateBoosts = motivateNodes;
+        this.motivateDamageBoost = motivateDamageBoost;
+    }
+
+    public struct MotivateNode {
         public int actorNo;
         public float damageBoost;
     }

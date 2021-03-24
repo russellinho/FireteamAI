@@ -1922,13 +1922,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept,
                     skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost(), skillController.GetMyInspireBoost(), skillController.GetMyProviderBoost(),
-                    skillController.GetMyMartialArtsAttackBoost(), skillController.GetMyMartialArtsDefenseBoost(), skillController.GetMyFireteamBoost(), skillController.GetSilhouetteBoost(), skillController.GetRegeneratorLevel(), skillController.GetPainkillerLevel());
+                    skillController.GetMyMartialArtsAttackBoost(), skillController.GetMyMartialArtsDefenseBoost(), skillController.GetMyFireteamBoost(), skillController.GetSilhouetteBoost(), skillController.GetRegeneratorLevel(), skillController.GetPainkillerLevel(),
+                    skillController.GetMyMotivateDamageBoost(), skillController.SerializeMotivateBoosts());
 	}
 
 	[PunRPC]
 	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept,
         int myHackerBoost, float myHeadstrongBoost, float myResourcefulBoost, float myInspireBoost, int myProviderBoost, float myMartialArtsAttackBoost, float myMartialArtsDefenseBoost,
-        float myFireteamBoost, int silhouetteBoost, int regeneratorLevel, int painkillerLevel) {
+        float myFireteamBoost, int silhouetteBoost, int regeneratorLevel, int painkillerLevel, float motivateDamageBoost, string serializedMotivateBoosts) {
         this.health = health;
         this.escapeValueSent = escapeValueSent;
         GameControllerScript.playerList[pView.OwnerActorNr].kills = kills;
@@ -1978,6 +1979,24 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             skillController.SetThisPainkillerLevel(painkillerLevel);
             if (painkillerLevel > 0) {
                 PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().AddPainkiller(pView.Owner.ActorNumber);
+            }
+        }
+        if (skillController.GetMyMotivateDamageBoost() == 0f && motivateDamageBoost != 0f) {
+            try {
+                ArrayList newMotivateBoosts = new ArrayList();
+                string[] boosts = serializedMotivateBoosts.Split(',');
+                foreach (string boost in boosts) {
+                    string[] thisBoost = boost.Split('|');
+                    int thisActorNo = int.Parse(thisBoost[0]);
+                    float thisDmgBoost = float.Parse(thisBoost[1]);
+                    SkillController.MotivateNode n = new SkillController.MotivateNode();
+                    n.actorNo = thisActorNo;
+                    n.damageBoost = thisDmgBoost;
+                    newMotivateBoosts.Add(n);
+                }
+                skillController.SyncMotivateBoost(newMotivateBoosts, motivateDamageBoost);
+            } catch (Exception e) {
+                Debug.LogError("Exception caught while syncing motivate boosts: " + e.Message);
             }
         }
 
