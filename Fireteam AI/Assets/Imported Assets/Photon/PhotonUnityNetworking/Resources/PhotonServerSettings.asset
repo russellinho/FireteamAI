@@ -202,6 +202,8 @@ MonoBehaviour:
   - RpcToggleProceduralInfo
   - RpcActivateMotivateSkillFromThisPlayer
   - RpcDeactivateMotivateSkillFromThisPlayer
+  - RpcActivateFightingSpirit
+  - RpcDeactivateFightingSpirit
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

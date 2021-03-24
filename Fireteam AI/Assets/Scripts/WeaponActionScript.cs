@@ -538,7 +538,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             hudScript.OnScreenEffect(GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills + " KILLS", true);
         }
         // Recover health from Blood Leech skill
-        if (playerActionScript.health > 0 && playerActionScript.health < 100) {
+        if (playerActionScript.health > 0 && playerActionScript.health < 100 && playerActionScript.fightingSpiritTimer <= 0f) {
             int lvl = playerActionScript.skillController.GetBloodLeechLevel();
             if (lvl == 1) {
                 if (GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills % 10 == 0) {
@@ -1427,6 +1427,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     }
 
     void FireBooster() {
+        if (playerActionScript.fightingSpiritTimer > 0f) return;
         if (fireTimer < weaponStats.fireRate || hudScript.container.pauseMenuGUI.pauseActive)
         {
             ResetBoosterState();

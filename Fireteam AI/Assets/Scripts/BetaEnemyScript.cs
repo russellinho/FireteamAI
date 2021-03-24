@@ -2105,16 +2105,27 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		return 0;
 	}
 
+	float GetFightingSpiritTimerOfCurrentTarget()
+	{
+		if (playerTargeting != null) {
+			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript>();
+			if (a != null) {
+				return a.fightingSpiritTimer;
+			}
+		}
+		return 0f;
+	}
+
 	void PlayerScan() {
 		if (playerScanTimer <= 0f) {
 			playerScanTimer = PLAYER_SCAN_DELAY;
 			// If we do not have a target player, try to find one
 			int entityTargetingHealth = GetHealthOfCurrentTarget();
-			if (playerTargeting == null || entityTargetingHealth <= 0) {
+			if (playerTargeting == null || (entityTargetingHealth <= 0 && GetFightingSpiritTimerOfCurrentTarget() <= 0f)) {
 				ArrayList keysNearBy = new ArrayList ();
 				foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
 					GameObject p = playerStat.objRef;
-					if (p == null || p.GetComponent<PlayerActionScript>().health <= 0)
+					if (p == null || (p.GetComponent<PlayerActionScript>().health <= 0 && p.GetComponent<PlayerActionScript>().fightingSpiritTimer <= 0f))
 						continue;
 					// Silhouette skill boost
 					if (gameControllerScript.assaultMode) {
@@ -2304,7 +2315,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (playerTargeting != null) {
 			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript> ();
 			NpcScript n = playerTargeting.GetComponent<NpcScript> ();
-			if (a != null && a.health <= 0f) {
+			if (a != null && a.health <= 0f && a.fightingSpiritTimer <= 0f) {
 				pView.RPC ("RpcSetTarget", RpcTarget.All, -1, gameControllerScript.teamMap);
 			}
 			if (n != null && n.health <= 0f) {

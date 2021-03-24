@@ -1900,6 +1900,20 @@ public class SkillController : MonoBehaviour
         this.motivateDamageBoost = motivateDamageBoost;
     }
 
+    public float GetFightingSpiritTime()
+    {
+        if (PlayerData.playerdata.skillList["3/8"].Level == 1) {
+            return 5f;
+        } else if (PlayerData.playerdata.skillList["3/8"].Level == 2) {
+            return 10f;
+        } else if (PlayerData.playerdata.skillList["3/8"].Level == 3) {
+            return 20f;
+        } else if (PlayerData.playerdata.skillList["3/8"].Level == 4) {
+            return 30f;
+        }
+        return 0f;
+    }
+
     public struct MotivateNode {
         public int actorNo;
         public float damageBoost;

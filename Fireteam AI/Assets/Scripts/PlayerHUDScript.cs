@@ -834,7 +834,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				if (renderCheck <= 0)
 					continue;
 				// If the player is alive and on camera, then render the player name and health bar
-				if (p.GetComponent<PlayerActionScript>().health > 0)
+				if (p.GetComponent<PlayerActionScript>().health > 0 || p.GetComponent<PlayerActionScript>().fightingSpiritTimer > 0f)
 				{
 					playerMarkers [actorNo].SetActive (true);
 					playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().healthbarRef.value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
@@ -844,7 +844,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					Vector3 startPoint = playerMarkerTrans.position;
 					playerMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
 				}
-				if (playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().nametagRef.enabled && p.GetComponent<PlayerActionScript>().health <= 0)
+				if (playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().nametagRef.enabled && p.GetComponent<PlayerActionScript>().health <= 0 && p.GetComponent<PlayerActionScript>().fightingSpiritTimer <= 0f)
 				{
 					playerMarkers [actorNo].SetActive (false);
 				}
@@ -853,7 +853,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				if (renderCheck <= 0)
 					continue;
 				// If the player is alive and on camera, then render the player name and health bar
-				if (p.GetComponent<PlayerActionScript>().health > 0)
+				if (p.GetComponent<PlayerActionScript>().health > 0 || p.GetComponent<PlayerActionScript>().fightingSpiritTimer > 0f)
 				{
 					playerMarkers [actorNo].SetActive (true);
 					playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().healthbarRef.value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
@@ -863,7 +863,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 					Vector3 startPoint = playerMarkerTrans.position;
 					playerMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
 				}
-				if (playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().nametagRef.enabled && p.GetComponent<PlayerActionScript>().health <= 0)
+				if (playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().nametagRef.enabled && p.GetComponent<PlayerActionScript>().health <= 0 && p.GetComponent<PlayerActionScript>().fightingSpiritTimer <= 0f)
 				{
 					playerMarkers [actorNo].SetActive (false);
 				}
@@ -995,16 +995,20 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			// Enable hit flare
 			container.hitFlare.GetComponent<RawImage> ().enabled = true;
 			// Vector3 hitDirectionVector = transform.position - playerActionScript.hitLocation;
-			Vector3 hitDirectionVector = playerActionScript.hitLocation - transform.position;
-			float a = Vector3.Angle (playerActionScript.viewCam.gameObject.transform.forward, hitDirectionVector);
-			float dir = GetAngleSide(playerActionScript.viewCam.gameObject.transform.forward, hitDirectionVector, playerActionScript.viewCam.gameObject.transform.up);
-			if (dir == 1) {
-				a = 360f - a;
+			if (!playerActionScript.skipHitDir) {
+				Vector3 hitDirectionVector = playerActionScript.hitLocation - transform.position;
+				float a = Vector3.Angle (playerActionScript.viewCam.gameObject.transform.forward, hitDirectionVector);
+				float dir = GetAngleSide(playerActionScript.viewCam.gameObject.transform.forward, hitDirectionVector, playerActionScript.viewCam.gameObject.transform.up);
+				if (dir == 1) {
+					a = 360f - a;
+				}
+				// Debug.Log(a);
+				Vector3 temp = container.hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
+				container.hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(0f,0f,a));
+				container.hitDir.GetComponent<RawImage> ().enabled = true;
+			} else {
+				container.hitDir.GetComponent<RawImage> ().enabled = false;
 			}
-			// Debug.Log(a);
-			Vector3 temp = container.hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
-			container.hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(0f,0f,a));
-			container.hitDir.GetComponent<RawImage> ().enabled = true;
 			playerActionScript.hitTimer += Time.deltaTime;
 		} else {
 			container.hitFlare.GetComponent<RawImage> ().enabled = false;

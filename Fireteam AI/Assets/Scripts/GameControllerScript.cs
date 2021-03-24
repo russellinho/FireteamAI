@@ -1356,7 +1356,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		{
 			GameObject p = entry.Value.objRef;
 			if (p == null) continue;
-			if (p.GetComponent<PlayerActionScript>().health <= 0) {
+			if (p.GetComponent<PlayerActionScript>().health <= 0 && p.GetComponent<PlayerActionScript>().fightingSpiritTimer <= 0f) {
 				total++;
 			}
 		}
