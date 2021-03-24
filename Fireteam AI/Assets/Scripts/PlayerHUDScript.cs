@@ -1062,7 +1062,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleScoreboard(bool b)
     {
-		if (playerActionScript.health <= 0) {
+		if (playerActionScript.health <= 0 && playerActionScript.fightingSpiritTimer <= 0f) {
 			container.healthGroup.alpha = 0f;
 			container.staminaGroup.alpha = 0f;
 			container.weaponLabelTxt.gameObject.SetActive(false);
@@ -1613,7 +1613,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	{
 		if (container.pauseMenuManager.pauseActive) return false;
 		if (!container.voiceCommandsPanel.activeInHierarchy) return false;
-		if (playerActionScript.health <= 0) return false;
+		if (playerActionScript.health <= 0 && playerActionScript.fightingSpiritTimer <= 0f) return false;
 		if (gameController.gameOver) return false;
 		return true;
 	}
@@ -1658,7 +1658,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	bool CanUseVoiceCommands()
 	{
-		if (playerActionScript.health <= 0 || container.inGameMessenger.inputText.enabled || PauseIsActive()) return false;
+		if ((playerActionScript.health <= 0 && playerActionScript.fightingSpiritTimer <= 0f) || container.inGameMessenger.inputText.enabled || PauseIsActive()) return false;
 		return true;
 	}
 
@@ -1672,7 +1672,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (i <= 8) {
 				PlayerStat pDetails = p.Value;
 				if (pDetails.objRef != null) {
-					if (pDetails.objRef.GetComponent<PlayerActionScript>().health <= 0) {
+					if (pDetails.objRef.GetComponent<PlayerActionScript>().health <= 0 && pDetails.objRef.GetComponent<PlayerActionScript>().fightingSpiritTimer <= 0f) {
 						container.revivePlayerSlots[i - 1].SetActive(true);
 						container.revivePlayerSlots[i - 1].GetComponent<TextMeshProUGUI>().text = (i + ": " + pDetails.name);
 						container.revivePlayerSlots[i - 1].GetComponentInChildren<Text>(true).text = (""+p.Key);

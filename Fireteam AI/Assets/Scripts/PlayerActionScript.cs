@@ -1954,6 +1954,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         float myFireteamBoost, int silhouetteBoost, int regeneratorLevel, int painkillerLevel, float motivateDamageBoost, string serializedMotivateBoosts, float fightingSpiritTimer) {
         this.health = health;
         this.fightingSpiritTimer = fightingSpiritTimer;
+        if (fightingSpiritTimer > 0f) {
+            this.health = 0;
+        }
         this.escapeValueSent = escapeValueSent;
         GameControllerScript.playerList[pView.OwnerActorNr].kills = kills;
         GameControllerScript.playerList[pView.OwnerActorNr].deaths = deaths;
