@@ -568,8 +568,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         // Send over network
         pView.RPC("RpcTakeDamage", RpcTarget.All, d, useArmor, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit);
-
-        skillController.HandleHealthChangeEvent(health);
     }
 
     [PunRPC]
@@ -586,10 +584,27 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // {
         //     health -= d;
         // }
+        int prevHealth = health;
         health -= d;
         lastHitFromPos = new Vector3(hitFromX, hitFromY, hitFromZ);
 		lastHitBy = hitBy;
 		lastBodyPartHit = bodyPartHit;
+        
+        if (pView.IsMine) {
+            skillController.HandleHealthChangeEvent(health);
+            // Motivate boost
+            // If the player is dead, remove the boost from everyone
+            // If health went down and is now less than the trigger when it previously wasn't, then send the boost to everyone
+            // Else if health went up and is now above the trigger when it previously wasn't, then remove the boost from everyone
+            int trigger = skillController.GetMotivateHealthTrigger();
+            if (health <= 0) {
+                pView.RPC("RpcDeactivateMotivateSkillFromThisPlayer", RpcTarget.All);
+            } else if (prevHealth > trigger && health <= trigger) {
+                pView.RPC("RpcActivateMotivateSkillFromThisPlayer", RpcTarget.All, skillController.GetMotivateDamageBoost());
+            } else if (prevHealth <= trigger && health > trigger) {
+                pView.RPC("RpcDeactivateMotivateSkillFromThisPlayer", RpcTarget.All);
+            }
+        }
     }
 
     [PunRPC]
@@ -1038,6 +1053,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (gameObject.layer == 0) return;
         h = Mathf.Min(100, h);
+        int prevHealth = health;
         health = h;
         if (useParticleEffect) {
             PlayHealParticleEffect();
@@ -1046,7 +1062,39 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (pView.IsMine) {
             skillController.HandleHealthChangeEvent(h);
             ToggleProceduralInfo(null, false, 0);
+            // Motivate boost
+            // If the player is dead, remove the boost from everyone
+            // If health went down and is now less than the trigger when it previously wasn't, then send the boost to everyone
+            // Else if health went up and is now above the trigger when it previously wasn't, then remove the boost from everyone
+            int trigger = skillController.GetMotivateHealthTrigger();
+            if (health <= 0) {
+                pView.RPC("RpcDeactivateMotivateSkillFromThisPlayer", RpcTarget.All);
+            } else if (prevHealth > trigger && health <= trigger) {
+                pView.RPC("RpcActivateMotivateSkillFromThisPlayer", RpcTarget.All, skillController.GetMotivateDamageBoost());
+            } else if (prevHealth <= trigger && health > trigger) {
+                pView.RPC("RpcDeactivateMotivateSkillFromThisPlayer", RpcTarget.All);
+            }
         }
+    }
+
+    [PunRPC]
+    void RpcActivateMotivateSkillFromThisPlayer(float damageBoost)
+    {
+        if (gameObject.layer == 0) return;
+        int actorNo = pView.Owner.ActorNumber;
+        SkillController mySkillController = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>();
+        mySkillController.AddMotivateBoost(actorNo, damageBoost);
+        mySkillController.AddToMotivateDamageBoost(damageBoost);
+    }
+
+    [PunRPC]
+    void RpcDeactivateMotivateSkillFromThisPlayer()
+    {
+        if (gameObject.layer == 0) return;
+        int actorNo = pView.Owner.ActorNumber;
+        SkillController mySkillController = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>();
+        float dmgRemoval = mySkillController.RemoveMotivateBoost(actorNo);
+        mySkillController.RemoveFromMotivateDamageBoost(dmgRemoval);
     }
 
     public void SetHitLocation(Vector3 pos)
@@ -1325,6 +1373,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (otherPlayer.ActorNumber == interactedOnById) {
                 ToggleProceduralInfo(null, false, 0);
             }
+            SkillController mySkillController = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>();
+            float dmgRemoval = mySkillController.RemoveMotivateBoost(otherPlayer.ActorNumber);
+            mySkillController.RemoveFromMotivateDamageBoost(dmgRemoval);
         }
     }
     
@@ -2064,6 +2115,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (pView.Owner.ActorNumber == p.interactedOnById) {
             p.ToggleProceduralInfo(null, false, 0);
         }
+        SkillController mySkillController = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>();
+        float dmgRemoval = mySkillController.RemoveMotivateBoost(pView.Owner.ActorNumber);
+        mySkillController.RemoveFromMotivateDamageBoost(dmgRemoval);
     }
 
     // Called when a player dies, leaves the game, or this player respawns

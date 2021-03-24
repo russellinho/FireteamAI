@@ -55,6 +55,7 @@ public class SkillController : MonoBehaviour
     private const int REGENERATOR_RECOVER_3 = 4;
     private const int REGENERATOR_RECOVER_4 = 5;
     private const int REGENERATOR_RECOVER_5 = 6;
+    private const float MOTIVATE_BOOST_CAP = 0.2f;
     private EncryptedFloat speedBoost;
     private EncryptedFloat damageBoost;
     private EncryptedFloat armorBoost;
@@ -107,6 +108,8 @@ public class SkillController : MonoBehaviour
     private EncryptedFloat martialArtsDefenseBoost;
     private EncryptedFloat storedMartialArtsAttackBoost;
     private EncryptedFloat storedMartialArtsDefenseBoost;
+    private ArrayList motivateBoosts;
+    private EncryptedFloat motivateDamageBoost;
 
     void Update()
     {
@@ -296,6 +299,7 @@ public class SkillController : MonoBehaviour
 
     public void InitializeCollectiveBoosts()
     {
+        motivateBoosts = new ArrayList();
         SetThisPlayerHackerBoost(GetMyHackerBoost());
         AddHackerBoost(GetMyHackerBoost());
 
@@ -1804,6 +1808,81 @@ public class SkillController : MonoBehaviour
             return 8;
         }
         return 0;
+    }
+
+    public int GetMotivateHealthTrigger()
+    {
+        if (PlayerData.playerdata.skillList["3/3"].Level == 1) {
+            return 20;
+        } else if (PlayerData.playerdata.skillList["3/3"].Level == 2) {
+            return 30;
+        } else if (PlayerData.playerdata.skillList["3/3"].Level == 3) {
+            return 50;
+        } else if (PlayerData.playerdata.skillList["3/3"].Level == 4) {
+            return 60;
+        }
+        return 0;
+    }
+
+    public float GetMotivateDamageBoost()
+    {
+        if (PlayerData.playerdata.skillList["3/3"].Level == 1) {
+            return 0.01f;
+        } else if (PlayerData.playerdata.skillList["3/3"].Level == 2) {
+            return 0.02f;
+        } else if (PlayerData.playerdata.skillList["3/3"].Level == 3) {
+            return 0.03f;
+        } else if (PlayerData.playerdata.skillList["3/3"].Level == 4) {
+            return 0.04f;
+        }
+        return 0f;
+    }
+
+    public void AddMotivateBoost(int fromActorNo, float damageBoost)
+    {
+        MotivateNode n = new MotivateNode();
+        n.actorNo = fromActorNo;
+        n.damageBoost = damageBoost;
+        motivateBoosts.Add(n);
+    }
+
+    public float RemoveMotivateBoost(int actorNo)
+    {
+        int removeIndex = -1;
+        float retVal = 0f;
+        for (int i = 0; i < motivateBoosts.Count; i++) {
+            MotivateNode n = (MotivateNode)motivateBoosts[i];
+            if (n.actorNo == actorNo) {
+                removeIndex = i;
+                retVal = n.damageBoost;
+                break;
+            }
+        }
+        if (removeIndex != -1) {
+            motivateBoosts.RemoveAt(removeIndex);
+        }
+        return retVal;
+    }
+
+    public void AddToMotivateDamageBoost(float dmg)
+    {
+        motivateDamageBoost += dmg;
+    }
+
+    public void RemoveFromMotivateDamageBoost(float dmg)
+    {
+        motivateDamageBoost -= dmg;
+    }
+
+    public float GetMyMotivateDamageBoost()
+    {
+        Debug.LogError("TOTAL MOTIVATE BOOST : " + motivateDamageBoost);
+        return Mathf.Clamp(motivateDamageBoost, 0f, MOTIVATE_BOOST_CAP);
+    }
+
+    struct MotivateNode {
+        public int actorNo;
+        public float damageBoost;
     }
 
 }
