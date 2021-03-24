@@ -2419,6 +2419,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         fightingSpiritTimer = skillController.GetFightingSpiritTime();
         if (fightingSpiritTimer > 0f) {
             hud.MessagePopup("Fighting Spirit!");
+            PlayBoostParticleEffect(false);
             skipHitDir = true;
             pView.RPC("RpcActivateFightingSpirit", RpcTarget.Others, fightingSpiritTimer);
         }
@@ -2428,6 +2429,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcActivateFightingSpirit(float t)
     {
         fightingSpiritTimer = t;
+        PlayBoostParticleEffect(false);
     }
 
     void DeactivateFightingSpirit()
