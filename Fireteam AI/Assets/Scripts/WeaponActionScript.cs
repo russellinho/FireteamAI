@@ -263,7 +263,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     }
 
     bool AutoReloadCheck() {
-        if (isDrawing || isFiring || isMeleeing || isReloading || isCockingGrenade || isUsingBooster || isUsingDeployable || deployInProgress || isCocking || fpc.m_IsRunning) {
+        if (isDrawing || isFiring || isMeleeing || isReloading || isCockingGrenade || isUsingBooster || isUsingDeployable || deployInProgress || isCocking || (fpc.m_IsRunning && !playerActionScript.skillController.HasRunNGun())) {
             return false;
         }
         return true;
@@ -1769,7 +1769,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     }
 
     bool CanInitiateReload() {
-        if (!playerActionScript.fpc.m_IsRunning && !fpc.GetIsSwimming() && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && !IsPumpActionCocking() && !IsBoltActionCocking() && !isDrawing && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
+        if ((!playerActionScript.fpc.m_IsRunning || (playerActionScript.fpc.m_IsRunning && playerActionScript.skillController.HasRunNGun())) && !fpc.GetIsSwimming() && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && !IsPumpActionCocking() && !IsBoltActionCocking() && !isDrawing && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
             return true;
         }
         return false;

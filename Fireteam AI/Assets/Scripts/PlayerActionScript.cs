@@ -318,7 +318,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (health > 0 && fpc.enabled && fpc.m_IsRunning)
         {
             audioController.PlaySprintSound(true);
-            canShoot = false;
+            if (!skillController.HasRunNGun()) {
+                canShoot = false;
+            }
             //animator.SetBool("isSprinting", true);
             fpc.SetSprintingInAnimator(true);
             if (sprintTime > 0f && !unlimitedStamina)

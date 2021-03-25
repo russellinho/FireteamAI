@@ -651,6 +651,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetSprintingInAnimator(bool x) {
+            if (playerActionScript.skillController.HasRunNGun()) {
+                if (x) {
+                    fpcAnimator.SetFloat("MoveSpeed", 4f);
+                } else {
+                    fpcAnimator.SetFloat("MoveSpeed", 2f);
+                }
+                return;
+            }
             if (fpcAnimator.GetBool("Sprinting") == x) return;
             fpcAnimator.SetBool("Sprinting", x);
             photonView.RPC("RpcSetSprintingInAnimator", RpcTarget.Others, x);
