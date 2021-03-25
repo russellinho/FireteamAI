@@ -56,6 +56,7 @@ public class SkillController : MonoBehaviour
     private const int REGENERATOR_RECOVER_4 = 5;
     private const int REGENERATOR_RECOVER_5 = 6;
     private const float MOTIVATE_BOOST_CAP = 0.2f;
+    private const float INTIMIDATION_BOOST_CAP = 0.2f;
     private EncryptedFloat speedBoost;
     private EncryptedFloat damageBoost;
     private EncryptedFloat armorBoost;
@@ -63,7 +64,7 @@ public class SkillController : MonoBehaviour
     public EncryptedFloat accuracyBoost;
     public EncryptedFloat throwForceBoost;
     public EncryptedFloat deploymentTimeBoost;
-    private EncryptedInt silhouetteBoost; 
+    private EncryptedInt silhouetteBoost;
     private float munitionsEngineeringTimer;
     private float regenerationTimer;
     private float oneShotOneKillTimer;
@@ -100,6 +101,9 @@ public class SkillController : MonoBehaviour
     private EncryptedFloat storedResourcefulBoost;
     private EncryptedFloat inspireBoost;
     private EncryptedFloat storedInspireBoost;
+    private EncryptedFloat intimidationBoost;
+    private EncryptedFloat storedIntimidationBoost;
+    private EncryptedFloat avoidabilityBoost;
     private int[] providerBoost = new int[4];
     private EncryptedInt storedProviderBoost;
     private EncryptedFloat fireteamBoost;
@@ -302,6 +306,7 @@ public class SkillController : MonoBehaviour
         if (motivateBoosts == null) {
             motivateBoosts = new ArrayList();
         }
+        InitializeShadowSightBoost();
         SetThisPlayerHackerBoost(GetMyHackerBoost());
         AddHackerBoost(GetMyHackerBoost());
 
@@ -313,6 +318,9 @@ public class SkillController : MonoBehaviour
 
         SetThisPlayerInspireBoost(GetMyInspireBoost());
         AddInspireBoost(GetMyInspireBoost());
+
+        SetThisPlayerIntimidationBoost(GetMyIntimidationBoost());
+        AddIntimidationBoost(GetMyIntimidationBoost());
 
         SetThisPlayerProviderBoost(GetMyProviderBoost());
         AddProviderBoost(GetMyProviderBoost());
@@ -1075,6 +1083,45 @@ public class SkillController : MonoBehaviour
     public float GetThisPlayerInspireBoost()
     {
         return storedInspireBoost;
+    }
+
+    public void AddIntimidationBoost(float val)
+    {
+        intimidationBoost += val;
+    }
+
+    public void RemoveIntimidationBoost(float val)
+    {
+        intimidationBoost -= val;
+    }
+
+    public float GetIntimidationBoost()
+    {
+        return Math.Min(intimidationBoost, INTIMIDATION_BOOST_CAP);
+    }
+
+    public float GetMyIntimidationBoost()
+    {
+        if (PlayerData.playerdata.skillList["3/6"].Level == 1) {
+            return 0.01f;
+        } else if (PlayerData.playerdata.skillList["3/6"].Level == 2) {
+            return 0.02f;
+        } else if (PlayerData.playerdata.skillList["3/6"].Level == 3) {
+            return 0.04f;
+        } else if (PlayerData.playerdata.skillList["3/6"].Level == 4) {
+            return 0.06f;
+        }
+        return 0f;
+    }
+
+    public void SetThisPlayerIntimidationBoost(float val)
+    {
+        storedIntimidationBoost = val;
+    }
+
+    public float GetThisPlayerIntimidationBoost()
+    {
+        return storedIntimidationBoost;
     }
 
     public void AddProviderBoost(int val)
@@ -1912,6 +1959,24 @@ public class SkillController : MonoBehaviour
             return 30f;
         }
         return 0f;
+    }
+
+    public float GetAvoidabilityBoost()
+    {
+        return avoidabilityBoost;
+    }
+
+    void InitializeShadowSightBoost()
+    {
+        if (PlayerData.playerdata.skillList["1/12"].Level == 1) {
+            avoidabilityBoost = 0.1f;
+        } else if (PlayerData.playerdata.skillList["1/12"].Level == 2) {
+            avoidabilityBoost = 0.2f;
+        } else if (PlayerData.playerdata.skillList["1/12"].Level == 3) {
+            avoidabilityBoost = 0.3f;
+        } else {
+            avoidabilityBoost = 0f;
+        }
     }
 
     public struct MotivateNode {

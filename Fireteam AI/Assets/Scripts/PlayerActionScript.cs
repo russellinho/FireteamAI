@@ -564,7 +564,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (health <= 0f) return;
             // See if you dodged the bullet first (avoidability). Return if you did
             if (hitBy == 0) {
-                int avoidChance = (int)(Mathf.Clamp(playerScript.avoidability - 1f, 0f, MAX_AVOID) * 100f);
+                Debug.LogError(skillController.GetIntimidationBoost());
+                int avoidChance = (int)(Mathf.Clamp((playerScript.avoidability - 1f) + skillController.GetAvoidabilityBoost() + skillController.GetIntimidationBoost(), 0f, MAX_AVOID) * 100f);
                 if (Random.Range(0, 100) < avoidChance) {
                     return;
                 }
@@ -1930,14 +1931,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             motivates = skillController.SerializeMotivateBoosts();
         }
 		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept,
-                    skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost(), skillController.GetMyInspireBoost(), skillController.GetMyProviderBoost(),
+                    skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost(), skillController.GetMyInspireBoost(), skillController.GetMyIntimidationBoost(), skillController.GetMyProviderBoost(),
                     skillController.GetMyMartialArtsAttackBoost(), skillController.GetMyMartialArtsDefenseBoost(), skillController.GetMyFireteamBoost(), skillController.GetSilhouetteBoost(), skillController.GetRegeneratorLevel(), skillController.GetPainkillerLevel(),
                     motivateDmg, motivates, fightingSpiritTimer);
 	}
 
 	[PunRPC]
 	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept,
-        int myHackerBoost, float myHeadstrongBoost, float myResourcefulBoost, float myInspireBoost, int myProviderBoost, float myMartialArtsAttackBoost, float myMartialArtsDefenseBoost,
+        int myHackerBoost, float myHeadstrongBoost, float myResourcefulBoost, float myInspireBoost, float myIntimidationBoost, int myProviderBoost, float myMartialArtsAttackBoost, float myMartialArtsDefenseBoost,
         float myFireteamBoost, int silhouetteBoost, int regeneratorLevel, int painkillerLevel, float motivateDamageBoost, string serializedMotivateBoosts, float fightingSpiritTimer) {
         this.health = health;
         this.fightingSpiritTimer = fightingSpiritTimer;
@@ -1966,6 +1967,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (skillController.GetThisPlayerInspireBoost() == 0f) {
             skillController.SetThisPlayerInspireBoost(myInspireBoost);
             mySkillController.AddInspireBoost(myInspireBoost);
+        }
+        if (skillController.GetThisPlayerIntimidationBoost() == 0f) {
+            skillController.SetThisPlayerIntimidationBoost(myIntimidationBoost);
+            mySkillController.AddIntimidationBoost(myIntimidationBoost);
         }
         if (skillController.GetThisPlayerProviderBoost() == 0) {
             skillController.SetThisPlayerProviderBoost(myProviderBoost);

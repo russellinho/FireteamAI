@@ -741,6 +741,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			mySkills.RemoveHeadstrongBoost(theirSkills.GetThisPlayerHeadstrongBoost());
 			mySkills.RemoveResourcefulBoost(theirSkills.GetThisPlayerResourcefulBoost());
 			mySkills.RemoveInspireBoost(theirSkills.GetThisPlayerInspireBoost());
+			mySkills.RemoveIntimidationBoost(theirSkills.GetThisPlayerIntimidationBoost());
 			mySkills.RemoveProviderBoost(theirSkills.GetThisPlayerProviderBoost());
 			mySkills.RemoveFireteamBoost(theirSkills.GetThisPlayerFireteamBoost());
 			mySkills.RemoveMartialArtsBoost(theirSkills.GetThisPlayerMartialArtsAttackBoost(), theirSkills.GetThisPlayerMartialArtsDefenseBoost());
