@@ -997,7 +997,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		// How far away you are relative to max detection distance - the lower, the closer
 		float percentOfRange = maxRange / distanceFromTarget;
 		// Calculate distance multiplier
-		float d = Mathf.Clamp(percentOfRange, 0.25f, 10f);
+		float d = Mathf.Clamp(percentOfRange, 0.05f, 10f);
 		// Calculate rotation multiplier
 		Vector3 toPlayer = pos - transform.position;
 		float angleBetween = Vector3.Angle (transform.forward, toPlayer);
@@ -1013,7 +1013,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 		// Calculate total suspicion increase
 		// Debug.Log("dist: " + d + " rot: " + r);
-		return Time.deltaTime * total * d * r;
+		return Time.deltaTime * total * d * r / 2f;
 	}
 
 	// void PlayVoiceClip(int n) {

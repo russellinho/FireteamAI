@@ -22,6 +22,7 @@ public class ItemPopupScript : MonoBehaviour
     public Text speedStatTxt;
     public Text staminaStatTxt;
     public Text avoidabilityStatTxt;
+    public Text detectionEquipmentTxt;
     public Text genderRestTxt;
     public Text characterRestTxt;
     public Text expirationDateEquipTxt;
@@ -35,6 +36,7 @@ public class ItemPopupScript : MonoBehaviour
     public Text mobilityTxt;
     public Text rangeTxt;
     public Text clipCapacityTxt;
+    public Text detectionWeaponTxt;
     public Text expirationDateWeaponTxt;
     public GameObject expirationDateWeapon;
 
@@ -45,6 +47,7 @@ public class ItemPopupScript : MonoBehaviour
     public Text modRangeStatTxt;
     public Text modClipCapacityStatTxt;
     public Text modMaxAmmoStatTxt;
+    public Text detectionModTxt;
     public Text equippedOnTxt;
 
     // Skill stat labels
@@ -131,11 +134,12 @@ public class ItemPopupScript : MonoBehaviour
         skillDescriptor.SetActive(b);
     }
 
-    public void SetEquipmentStats(float armor, float speed, float stamina, float avoidability, char gender, string[] characterRestrictions) {
+    public void SetEquipmentStats(float armor, float speed, float stamina, float avoidability, int detection, char gender, string[] characterRestrictions) {
         armorStatTxt.text = ConvertToPercent(armor) + "%";
         speedStatTxt.text = ConvertToPercent(speed) + "%";
         staminaStatTxt.text = ConvertToPercent(stamina) + "%";
         avoidabilityStatTxt.text = ConvertToPercent(avoidability) + "%";
+        detectionEquipmentTxt.text = "" + detection;
     }
 
     public void SetRestrictions(char gender, string[] characterRestrictions) {
@@ -159,14 +163,15 @@ public class ItemPopupScript : MonoBehaviour
         }
     }
 
-    public void SetArmorStats(float armor, float speed, float stamina, float avoidability) {
+    public void SetArmorStats(float armor, float speed, float stamina, float avoidability, int detection) {
         armorStatTxt.text = ConvertToPercent(armor) + "%";
         speedStatTxt.text = ConvertToPercent(speed) + "%";
         staminaStatTxt.text = ConvertToPercent(stamina) + "%";
         avoidabilityStatTxt.text = ConvertToPercent(avoidability) + "%";
+        detectionEquipmentTxt.text = "" + detection;
     }
 
-    public void SetWeaponStats(float damage, float accuracy, float recoil, float fireRate, float mobility, float range, float clipCapacity) {
+    public void SetWeaponStats(float damage, float accuracy, float recoil, float fireRate, float mobility, float range, float clipCapacity, int detection) {
         damageStatTxt.text = damage == -1f ? "-" : "" + (int)damage;
         accuracyStatTxt.text = accuracy == -1f ? "-" : "" + (int)accuracy;
         recoilStatTxt.text = recoil == -1f ? "-" : "" + (int)recoil;
@@ -174,9 +179,10 @@ public class ItemPopupScript : MonoBehaviour
         mobilityTxt.text = mobility == -1f ? "-" : "" + (int)mobility;
         rangeTxt.text = range == -1f ? "-" : "" + (int)range;
         clipCapacityTxt.text = clipCapacity == -1f ? "-" : "" + (int)clipCapacity;
+        detectionWeaponTxt.text = "" + detection;
     }
 
-    public void SetModStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo, string equippedOn) {
+    public void SetModStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo, int detection, string equippedOn) {
         modDamageStatTxt.text = damage == -1f ? "-" : "" + (int)damage;
         modAccuracyStatTxt.text = accuracy == -1f ? "-" : "" + (int)accuracy;
         modRecoilStatTxt.text = recoil == -1f ? "-" : "" + (int)recoil;
@@ -184,6 +190,7 @@ public class ItemPopupScript : MonoBehaviour
         modClipCapacityStatTxt.text = clipCapacity == -1f ? "-" : "" + clipCapacity;
         modMaxAmmoStatTxt.text = maxAmmo == -1f ? "-" : "" + maxAmmo;
         equippedOnTxt.text = ("".Equals(equippedOn) ? "-" : equippedOn);
+        detectionModTxt.text = "" + detection;
     }
 
     public void SetSkillStats(int currLevel, int maxLevel, string prerequisites)
@@ -208,6 +215,9 @@ public class ItemPopupScript : MonoBehaviour
         fireRateTxt.text = "-";
         mobilityTxt.text = "-";
         rangeTxt.text = "-";
+        detectionEquipmentTxt.text = "-";
+        detectionWeaponTxt.text = "-";
+        detectionModTxt.text = "-";
         clipCapacityTxt.text = "-";
         genderRestTxt.text = "";
         characterRestTxt.text = "";

@@ -785,16 +785,16 @@ public class EquipmentScript : MonoBehaviour
 
     public void UpdateStatsOnTitle() {
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, newTotalStatBoosts.avoidabilityBoost, 0);
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
         playerScript.updateStats();
-        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.avoidability - 1.0f) * 100.0f));
+        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.avoidability - 1.0f) * 100.0f), playerScript.stats.detection);
     }
 
     public void ResetStats() {
         // Clear all equipment stats
         playerScript.stats.SetDefaults();
         playerScript.updateStats();
-        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.avoidability - 1.0f) * 100.0f));
+        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.avoidability - 1.0f) * 100.0f), playerScript.stats.detection);
     }
 
     public void RemoveHeadgear() {
@@ -917,7 +917,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
 
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, 0);
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
         playerScript.updateStats();
     }
 
@@ -942,7 +942,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
 
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, 0);
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
         playerScript.updateStats();
     }
 
@@ -975,7 +975,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
 
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, 0);
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
         playerScript.updateStats();
     }
 
@@ -1120,27 +1120,49 @@ public class EquipmentScript : MonoBehaviour
         float totalSpeedBoost = 0f;
         float totalStaminaBoost = 0f;
         float totalAvoidabilityBoost = 0f;
+        int totalDetection = 0;
 
         if (equippedArmor != null && equippedArmor != "") {
             totalArmorBoost += InventoryScript.itemData.armorCatalog[equippedArmor].armor;
             totalSpeedBoost += InventoryScript.itemData.armorCatalog[equippedArmor].speed;
             totalStaminaBoost += InventoryScript.itemData.armorCatalog[equippedArmor].stamina;
             totalAvoidabilityBoost += InventoryScript.itemData.armorCatalog[equippedArmor].avoidability;
+            totalDetection += InventoryScript.itemData.armorCatalog[equippedArmor].detection;
         }
         if (equippedHeadgear != null && equippedHeadgear != "") {
             totalArmorBoost += InventoryScript.itemData.equipmentCatalog[equippedHeadgear].armor;
             totalSpeedBoost += InventoryScript.itemData.equipmentCatalog[equippedHeadgear].speed;
             totalStaminaBoost += InventoryScript.itemData.equipmentCatalog[equippedHeadgear].stamina;
             totalAvoidabilityBoost += InventoryScript.itemData.equipmentCatalog[equippedHeadgear].avoidability;
+            totalDetection += InventoryScript.itemData.equipmentCatalog[equippedHeadgear].detection;
         }
         if (equippedFacewear != null && equippedFacewear != "") {
             totalArmorBoost += InventoryScript.itemData.equipmentCatalog[equippedFacewear].armor;
             totalSpeedBoost += InventoryScript.itemData.equipmentCatalog[equippedFacewear].speed;
             totalStaminaBoost += InventoryScript.itemData.equipmentCatalog[equippedFacewear].stamina;
             totalAvoidabilityBoost += InventoryScript.itemData.equipmentCatalog[equippedFacewear].avoidability;
+            totalDetection += InventoryScript.itemData.equipmentCatalog[equippedFacewear].detection;
+        }
+        
+        totalDetection += InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedPrimary].detection;
+        totalDetection += InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedSecondary].detection;
+        totalDetection += InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedSupport].detection;
+        totalDetection += InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedMelee].detection;
+
+        if (PlayerData.playerdata.primaryModInfo.SightId != null && PlayerData.playerdata.primaryModInfo.SightId != "") {
+            totalDetection += InventoryScript.itemData.modCatalog[PlayerData.playerdata.primaryModInfo.EquippedSight].detection;
+        }
+        if (PlayerData.playerdata.primaryModInfo.SuppressorId != null && PlayerData.playerdata.primaryModInfo.SuppressorId != "") {
+            totalDetection += InventoryScript.itemData.modCatalog[PlayerData.playerdata.primaryModInfo.EquippedSuppressor].detection;
+        }
+        if (PlayerData.playerdata.secondaryModInfo.SightId != null && PlayerData.playerdata.secondaryModInfo.SightId != "") {
+            totalDetection += InventoryScript.itemData.modCatalog[PlayerData.playerdata.secondaryModInfo.EquippedSight].detection;
+        }
+        if (PlayerData.playerdata.secondaryModInfo.SuppressorId != null && PlayerData.playerdata.secondaryModInfo.SuppressorId != "") {
+            totalDetection += InventoryScript.itemData.modCatalog[PlayerData.playerdata.secondaryModInfo.EquippedSuppressor].detection;
         }
 
-        return new StatBoosts(totalArmorBoost, totalSpeedBoost, totalStaminaBoost, totalAvoidabilityBoost);
+        return new StatBoosts(totalArmorBoost, totalSpeedBoost, totalStaminaBoost, totalAvoidabilityBoost, totalDetection);
     }
 
     public void SyncDataOnJoin() {
@@ -1234,12 +1256,14 @@ public class EquipmentScript : MonoBehaviour
         public float speedBoost;
         public float staminaBoost;
         public float avoidabilityBoost;
+        public int detection;
 
-        public StatBoosts(float armorBoost, float speedBoost, float staminaBoost, float avoidabilityBoost) {
+        public StatBoosts(float armorBoost, float speedBoost, float staminaBoost, float avoidabilityBoost, int detection) {
             this.armorBoost = armorBoost;
             this.speedBoost = speedBoost;
             this.staminaBoost = staminaBoost;
             this.avoidabilityBoost = avoidabilityBoost;
+            this.detection = detection;
         }
     }
 

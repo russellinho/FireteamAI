@@ -18,6 +18,7 @@ public class Weapon
     public float range;
     public int clipCapacity;
     public int maxAmmo;
+    public int detection;
     public float sway; // M
     public float lungeRange; // M
     public bool isSniper; // M
@@ -30,7 +31,7 @@ public class Weapon
     public int kashPrice;
     public int[] firingModes;
 
-    public Weapon(string name, string type, string category, int prefabPath, string projectilePath, string thumbnailPath, string description, float damage, float mobility, float fireRate, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo, float sway, float lungeRange, bool isSniper, bool canBeModded, bool suppressorCompatible, bool sightCompatible, int gpPrice, int kashPrice, bool purchasable, bool deleteable, int[] firingModes) {
+    public Weapon(string name, string type, string category, int prefabPath, string projectilePath, string thumbnailPath, string description, float damage, float mobility, float fireRate, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo, int detection, float sway, float lungeRange, bool isSniper, bool canBeModded, bool suppressorCompatible, bool sightCompatible, int gpPrice, int kashPrice, bool purchasable, bool deleteable, int[] firingModes) {
         this.name = name;
         this.type = type;
         this.category = category;
@@ -46,6 +47,7 @@ public class Weapon
         this.range = range;
         this.clipCapacity = clipCapacity;
         this.maxAmmo = maxAmmo;
+        this.detection = detection;
         this.sway = sway;
         this.lungeRange = lungeRange;
         this.isSniper = isSniper;

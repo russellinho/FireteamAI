@@ -114,6 +114,7 @@ public class SkillController : MonoBehaviour
     private EncryptedFloat storedMartialArtsDefenseBoost;
     private ArrayList motivateBoosts;
     private EncryptedFloat motivateDamageBoost;
+    private EncryptedFloat storedAvoidabilityBoost;
 
     void Update()
     {
@@ -335,6 +336,8 @@ public class SkillController : MonoBehaviour
         SetThisSilhouetteBoost(GetSilhouetteBoost());
         SetThisRegeneratorLevel(GetRegeneratorLevel());
         SetThisPainkillerLevel(GetPainkillerLevel());
+
+        SetThisPlayerAvoidabilityBoost(GetMyAvoidabilityBoost());
     }
 
     public int GetDeployableMasteryLevel()
@@ -1977,6 +1980,28 @@ public class SkillController : MonoBehaviour
         } else {
             avoidabilityBoost = 0f;
         }
+    }
+
+    public float GetMyAvoidabilityBoost()
+    {
+        if (PlayerData.playerdata.skillList["1/7"].Level == 1) {
+            return 0.1f;
+        } else if (PlayerData.playerdata.skillList["1/7"].Level == 2) {
+            return 0.25f;
+        } else if (PlayerData.playerdata.skillList["1/7"].Level == 3) {
+            return 0.5f;
+        }
+        return 0f;
+    }
+
+    public void SetThisPlayerAvoidabilityBoost(float val)
+    {
+        storedAvoidabilityBoost = val;
+    }
+
+    public float GetThisPlayerAvoidabilityBoost()
+    {
+        return storedAvoidabilityBoost;
     }
 
     public struct MotivateNode {

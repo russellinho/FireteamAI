@@ -19,6 +19,7 @@ public class Equipment
     public float stamina;
     public float armor;
     public float avoidability;
+    public int detection;
     public char gender;
     public string[] characterRestrictions;
     public bool purchasable;
@@ -26,7 +27,7 @@ public class Equipment
     public int gpPrice;
     public int kashPrice;
 
-    public Equipment(string name, string category, int malePrefabPath, int femalePrefabPath, int maleFpcPrefabPath, int femaleFpcPrefabPath, string thumbnailPath, string description, bool hideHairFlag, int skinType, float speed, float stamina, float armor, float avoidability, char gender, string[] characterRestrictions, int gpPrice, int kashPrice, bool purchasable, bool deleteable) {
+    public Equipment(string name, string category, int malePrefabPath, int femalePrefabPath, int maleFpcPrefabPath, int femaleFpcPrefabPath, string thumbnailPath, string description, bool hideHairFlag, int skinType, float speed, float stamina, float armor, float avoidability, int detection, char gender, string[] characterRestrictions, int gpPrice, int kashPrice, bool purchasable, bool deleteable) {
         this.name = name;
         this.category = category;
         this.malePrefabPath = malePrefabPath;
@@ -41,6 +42,7 @@ public class Equipment
         this.stamina = stamina;
         this.armor = armor;
         this.avoidability = avoidability;
+        this.detection = detection;
         this.gender = gender;
         this.characterRestrictions = characterRestrictions;
         this.gpPrice = gpPrice;
