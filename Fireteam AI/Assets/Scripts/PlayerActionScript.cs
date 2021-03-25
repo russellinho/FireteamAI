@@ -283,10 +283,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             gameController = gc.GetComponent<GameControllerScript>();
         }
 
-        if (Input.GetKeyDown(KeyCode.X)) {
-            Debug.LogError(gameObject.name + " " + GetDetectionRate());
-        }
-
         if (!pView.IsMine)
         {
             return;
