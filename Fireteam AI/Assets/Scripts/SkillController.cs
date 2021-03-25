@@ -116,6 +116,7 @@ public class SkillController : MonoBehaviour
     private EncryptedFloat motivateDamageBoost;
     private EncryptedFloat storedAvoidabilityBoost;
     private EncryptedBool runNGun;
+    private EncryptedBool jetpackBoost;
 
     void Update()
     {
@@ -310,6 +311,7 @@ public class SkillController : MonoBehaviour
         }
         InitializeShadowSightBoost();
         InitializeRunNGun();
+        InitializeJetpackBoost();
         SetThisPlayerHackerBoost(GetMyHackerBoost());
         AddHackerBoost(GetMyHackerBoost());
 
@@ -2014,6 +2016,16 @@ public class SkillController : MonoBehaviour
     public bool HasRunNGun()
     {
         return runNGun;
+    }
+
+    private void InitializeJetpackBoost()
+    {
+        jetpackBoost = (PlayerData.playerdata.skillList["2/13"].Level > 0);
+    }
+
+    public bool HasJetpackBoost()
+    {
+        return jetpackBoost;
     }
 
     public struct MotivateNode {

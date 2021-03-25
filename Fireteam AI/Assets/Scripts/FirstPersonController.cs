@@ -13,6 +13,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
     [RequireComponent(typeof (AudioSource))]
     public class FirstPersonController : MonoBehaviour
     {
+        private const float MAX_JETPACK_BOOST_TIME = 1.5f;
+        private const float JETPACK_DELAY = 0.2f;
         [SerializeField] public bool m_IsWalking;
         [SerializeField] public bool m_IsCrouching;
     	[SerializeField] public bool m_IsRunning;
@@ -69,6 +71,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private int networkDelay = 5;
         private int networkDelayCount = 0;
         private bool meleeSlowActive;
+        // Time after initial jump you must wait before using the booster
+        private float jetpackBoostDelay;
+        // Holds the time you've been using the boost for. Can't go past max time
+        private float jetpackBoostTimer;
 
         private bool initialized;
 
@@ -308,6 +314,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 // Ground physics
                 if (m_CharacterController.isGrounded)
                 {
+                    playerActionScript.ToggleJetpackParticleEffect(false);
                     m_MoveDir.y = -m_StickToGroundForce;
 
                     if (m_Jump)
@@ -324,13 +331,23 @@ namespace UnityStandardAssets.Characters.FirstPerson
                             m_Jumping = true;
                             // animator.SetTrigger("Jump");
                             TriggerJumpInAnimator();
+                            jetpackBoostTimer = MAX_JETPACK_BOOST_TIME;
+                            jetpackBoostDelay = JETPACK_DELAY;
                         }
                         m_Jump = false;
                     }
                 }
                 else
                 {
-                    m_MoveDir += Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime;
+                    jetpackBoostDelay -= Time.fixedDeltaTime;
+                    if (playerActionScript.skillController.HasJetpackBoost() && jetpackBoostDelay <= 0f && jetpackBoostTimer > 0f && PlayerPreferences.playerPreferences.KeyWasPressed("Jump", true)) {
+                        playerActionScript.ToggleJetpackParticleEffect(true);
+                        m_MoveDir -= Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime/2f;
+                        jetpackBoostTimer -= Time.fixedDeltaTime;
+                    } else {
+                        playerActionScript.ToggleJetpackParticleEffect(false);
+                        m_MoveDir += Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime;
+                    }
                 }
             }
             

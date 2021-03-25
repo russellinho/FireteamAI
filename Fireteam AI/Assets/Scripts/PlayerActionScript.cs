@@ -60,6 +60,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public PlayerScript playerScript;
     public ParticleSystem healParticleEffect;
     public ParticleSystem boostParticleEffect;
+    public ParticleSystem jetpackParticleEffect;
     public SpriteRenderer hudMarker;
     public SpriteRenderer hudMarker2;
     public GameObject fpcBodyRef;
@@ -1586,6 +1587,23 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public void RpcBoostParticleEffect()
     {
         boostParticleEffect.Play();
+    }
+
+    public void ToggleJetpackParticleEffect(bool b)
+    {
+        if (b && jetpackParticleEffect.isPlaying) return;
+        if (!b && !jetpackParticleEffect.IsAlive()) return;
+        pView.RPC("RpcToggleJetpackParticleEffect", RpcTarget.All, b);
+    }
+
+    [PunRPC]
+    void RpcToggleJetpackParticleEffect(bool b)
+    {
+        if (b) {
+            jetpackParticleEffect.Play();
+        } else {
+            jetpackParticleEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
     }
 
     public void InjectMedkit() {
