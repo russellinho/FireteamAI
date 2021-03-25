@@ -204,6 +204,7 @@ MonoBehaviour:
   - RpcDeactivateMotivateSkillFromThisPlayer
   - RpcActivateFightingSpirit
   - RpcDeactivateFightingSpirit
+  - RpcPlayTakeDamageGrunt
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

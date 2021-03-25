@@ -20,6 +20,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private const int WATER_LAYER = 4;
     const float UNDERWATER_TIMER = 30f;
     const float MAX_DETECTION_LEVEL = 100f;
+    const float MAX_AVOID = 0.9f;
     const float BASE_DETECTION_RATE = 20f;
     private const float EXPLOSION_FORCE = 75f;
 	private const float BULLET_FORCE = 50f;
@@ -556,20 +557,19 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcTakeDamage(int d, bool useArmor, float hitFromX, float hitFromY, float hitFromZ, int hitBy, int bodyPartHit)
     {
         if (gameObject.layer == 0) return;
-        if (d <= 0) return;
-        if (fightingSpiritTimer > 0f) return;
-        if (health <= 0f) return;
-        
-        ResetHitTimer();
         if (pView.IsMine)
         {
+            if (d <= 0) return;
+            if (fightingSpiritTimer > 0f) return;
+            if (health <= 0f) return;
             // See if you dodged the bullet first (avoidability). Return if you did
             if (hitBy == 0) {
-                int avoidChance = (int)(Mathf.Clamp(playerScript.avoidability - 1f, 0f, 1f) * 100f);
+                int avoidChance = (int)(Mathf.Clamp(playerScript.avoidability - 1f, 0f, MAX_AVOID) * 100f);
                 if (Random.Range(0, 100) < avoidChance) {
                     return;
                 }
             }
+            ResetHitTimer();
             skillController.RegenerationReset();
             // Calculate damage done including armor
             // Apply Rampage skill effect

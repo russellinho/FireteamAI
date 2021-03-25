@@ -785,7 +785,7 @@ public class EquipmentScript : MonoBehaviour
 
     public void UpdateStatsOnTitle() {
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.armorBoost, 0);
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, newTotalStatBoosts.avoidabilityBoost, 0);
         playerScript.updateStats();
         ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.avoidability - 1.0f) * 100.0f));
     }
