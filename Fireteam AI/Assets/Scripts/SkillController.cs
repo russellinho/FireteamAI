@@ -1206,15 +1206,15 @@ public class SkillController : MonoBehaviour
         return 0f;
     }
 
-    public int GetDdosDelayTime()
+    public float GetDdosDelayTime()
     {
         int level = GetDdosLevel();
         if (level == 1) {
-            return 1;
+            return 0.5f;
         } else if (level == 2) {
-            return 2;
+            return 1f;
         } else if (level == 3) {
-            return 3;
+            return 2f;
         }
         return 0;
     }
@@ -1223,11 +1223,11 @@ public class SkillController : MonoBehaviour
     {
         int level = GetDdosLevel();
         if (level == 1) {
-            return 4;
+            return 2;
         } else if (level == 2) {
-            return 8;
+            return 4;
         } else if (level == 3) {
-            return 15;
+            return 6;
         }
         return 0;
     }

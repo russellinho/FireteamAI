@@ -485,7 +485,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		// Shoot at player
 		// Add !isCrouching if you don't want the AI to fire while crouched behind cover
 		if (actionState == ActionStates.Firing || (actionState == ActionStates.InCover && playerTargeting != null)) {
-			if (currentBullets > 0) {
+			if (currentBullets > 0 && actionTransitionDelay <= 0f) {
 				Fire ();
 			}
 		}
@@ -697,6 +697,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         if (team != gameControllerScript.teamMap) return;
 		alertStatus = (AlertStatus)statusNumber;
 		AdjustRangeForAlertStatus();
+		actionTransitionDelay = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().GetDdosDelayTime();
 	}
 
 	void AdjustRangeForAlertStatus() {
@@ -1518,7 +1519,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 		// Melee attack, death, disorientation trumps all. Also check if action transition is delayed because of DDoS Attack skill
 		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented || actionState == ActionStates.Dead || actionTransitionDelay > 0f) {
-			Debug.LogError("actionTrans: " + actionTransitionDelay);
 			return;
 		}
 
