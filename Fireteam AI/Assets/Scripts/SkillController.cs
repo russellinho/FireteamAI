@@ -1185,7 +1185,7 @@ public class SkillController : MonoBehaviour
 
     private int GetDdosLevel()
     {
-        for (int i = 2; i >= 0; i--) {
+        for (int i = 3; i >= 0; i--) {
             if (ddosBoost[i] > 0) {
                 return i;
             }
