@@ -191,6 +191,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             return;
         }
 
+        mouseLook.UpdateFlinch();
+
         if (playerActionScript.health <= 0 || playerActionScript.gameController.gameOver) {
             hudScript.toggleSniperOverlay(false);
             hudScript.ToggleSightCrosshair(false);

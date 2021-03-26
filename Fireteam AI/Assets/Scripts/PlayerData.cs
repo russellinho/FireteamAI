@@ -558,6 +558,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 mySkills.RemoveInspireBoost(theirSkills.GetThisPlayerInspireBoost());
                 mySkills.RemoveIntimidationBoost(theirSkills.GetThisPlayerIntimidationBoost());
                 mySkills.RemoveProviderBoost(theirSkills.GetThisPlayerProviderBoost());
+                mySkills.RemoveDdosBoost(theirSkills.GetThisPlayerDdosLevel());
                 mySkills.RemoveFireteamBoost(theirSkills.GetThisPlayerFireteamBoost());
                 mySkills.RemoveMartialArtsBoost(theirSkills.GetThisPlayerMartialArtsAttackBoost(), theirSkills.GetThisPlayerMartialArtsDefenseBoost());
                 mySkills.RemoveRegenerator(actorNo);

@@ -106,6 +106,8 @@ public class SkillController : MonoBehaviour
     private EncryptedFloat avoidabilityBoost;
     private int[] providerBoost = new int[4];
     private EncryptedInt storedProviderBoost;
+    private int[] ddosBoost = new int[3];
+    private EncryptedInt storedDdosBoost;
     private EncryptedFloat fireteamBoost;
     private EncryptedFloat storedFireteamBoost;
     private EncryptedFloat martialArtsAttackBoost;
@@ -117,6 +119,7 @@ public class SkillController : MonoBehaviour
     private EncryptedFloat storedAvoidabilityBoost;
     private EncryptedBool runNGun;
     private EncryptedBool jetpackBoost;
+    private EncryptedBool rusticCowboy;
 
     void Update()
     {
@@ -312,6 +315,7 @@ public class SkillController : MonoBehaviour
         InitializeShadowSightBoost();
         InitializeRunNGun();
         InitializeJetpackBoost();
+        InitializeRusticCowboy();
         SetThisPlayerHackerBoost(GetMyHackerBoost());
         AddHackerBoost(GetMyHackerBoost());
 
@@ -329,6 +333,9 @@ public class SkillController : MonoBehaviour
 
         SetThisPlayerProviderBoost(GetMyProviderBoost());
         AddProviderBoost(GetMyProviderBoost());
+
+        SetThisPlayerDdosLevel(GetMyDdosLevel());
+        AddDdosBoost(GetMyDdosLevel());
 
         SetThisPlayerFireteamBoost(GetMyFireteamBoost());
         AddFireteamBoost(GetMyFireteamBoost());
@@ -1164,6 +1171,80 @@ public class SkillController : MonoBehaviour
     public int GetThisPlayerProviderBoost()
     {
         return storedProviderBoost;
+    }
+
+    public void AddDdosBoost(int val)
+    {
+        ddosBoost[val]++;
+    }
+
+    public void RemoveDdosBoost(int val)
+    {
+        ddosBoost[val]--;
+    }
+
+    private int GetDdosLevel()
+    {
+        for (int i = 2; i >= 0; i--) {
+            if (ddosBoost[i] > 0) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    public float GetDdosAccuracyReduction()
+    {
+        int level = GetDdosLevel();
+        if (level == 1) {
+            return 0.03f;
+        } else if (level == 2) {
+            return 0.05f;
+        } else if (level == 3) {
+            return 0.1f;
+        }
+        return 0f;
+    }
+
+    public int GetDdosDelayTime()
+    {
+        int level = GetDdosLevel();
+        if (level == 1) {
+            return 1;
+        } else if (level == 2) {
+            return 2;
+        } else if (level == 3) {
+            return 3;
+        }
+        return 0;
+    }
+
+    public int GetDdosDetectionBoost()
+    {
+        int level = GetDdosLevel();
+        if (level == 1) {
+            return 4;
+        } else if (level == 2) {
+            return 8;
+        } else if (level == 3) {
+            return 15;
+        }
+        return 0;
+    }
+
+    public int GetMyDdosLevel()
+    {
+        return PlayerData.playerdata.skillList["4/7"].Level;
+    }
+
+    public void SetThisPlayerDdosLevel(int val)
+    {
+        storedDdosBoost = val;
+    }
+
+    public int GetThisPlayerDdosLevel()
+    {
+        return storedDdosBoost;
     }
 
     public void AddFireteamBoost(float val)
@@ -2026,6 +2107,16 @@ public class SkillController : MonoBehaviour
     public bool HasJetpackBoost()
     {
         return jetpackBoost;
+    }
+
+    private void InitializeRusticCowboy()
+    {
+        rusticCowboy = (PlayerData.playerdata.skillList["0/12"].Level > 0);
+    }
+
+    public bool HasRusticCowboy()
+    {
+        return rusticCowboy;
     }
 
     public struct MotivateNode {

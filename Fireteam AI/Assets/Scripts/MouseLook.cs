@@ -9,6 +9,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
     [Serializable]
     public class MouseLook
     {
+        const float FLINCH_CONSTANT = 0.5f;
         public float XSensitivity = 2f;
         public float YSensitivity = 2f;
         public float originalXSensitivity;
@@ -30,6 +31,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public Quaternion m_FpcCharacterHorizontalTargetRot;
         private bool m_cursorIsLocked = true;
         private float spineRotationRange;
+        private float flinchTimer;
+        private bool flinchActive;
 
         public PhotonView pView;
 
@@ -69,6 +72,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             yRot += swayInput;
             xRot += recoilInput;
+            
+            if (flinchActive) {
+                yRot += Mathf.Lerp(yRot, yRot - 8f, flinchTimer);
+                xRot += Mathf.Lerp(xRot, xRot + 8f, flinchTimer);
+            } else {
+                yRot += Mathf.Lerp(yRot, yRot + 8f, flinchTimer);
+                xRot += Mathf.Lerp(xRot, xRot - 8f, flinchTimer);
+            }
 
             ResetRecoilInputs();
 
@@ -250,6 +261,33 @@ namespace UnityStandardAssets.Characters.FirstPerson
         void ResetRecoilInputs() {
             recoilInput = 0f;
             swayInput = 0f;
+        }
+
+        public void UpdateFlinch()
+        {
+            if (flinchActive) {
+                flinchTimer += Time.deltaTime;
+                if (flinchTimer >= 0.1f) {
+                    DeactivateFlinch();
+                }
+            } else {
+                if (flinchTimer > 0f) {
+                    flinchTimer -= Time.deltaTime;
+                    if (flinchTimer < 0f) {
+                        flinchTimer = 0f;
+                    }
+                }
+            }
+        }
+
+        public void ActivateFlinch() {
+            flinchActive = true;
+            flinchTimer = 0f;
+        }
+
+        void DeactivateFlinch() {
+            flinchActive = false;
+            flinchTimer = 0.1f;
         }
     }
 

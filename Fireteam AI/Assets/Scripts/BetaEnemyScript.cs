@@ -134,6 +134,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	// Time to wait before the enemy can start becoming suspicious again
     private float increaseSuspicionDelay = 0f;
     private float alertTeamAfterAlertedTimer = 6f;
+	private float actionTransitionDelay = 0f;
 	// Responsible for putting a delay between damage done by the environment like fire, gas, etc.
 	private float envDamageTimer;
 	private bool syncSuspicionValuesSemiphore = false;
@@ -388,6 +389,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			navMeshObstacle.enabled = false;
 		}
 
+		UpdateActionTransitionDelay();
 		UpdateEnvDamageTimer();
 		UpdateDisorientationTime();
 		ReplenishFireRate ();
@@ -453,6 +455,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			navMeshObstacle.enabled = false;
 		}
 
+		UpdateActionTransitionDelay();
+		UpdateEnvDamageTimer();
 		UpdateDisorientationTime();
 		ReplenishFireRate ();
 		UpdateFiringModeTimer ();
@@ -632,6 +636,13 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	void UpdateDisorientationTime() {
 		if (disorientationTime > 0f) {
 			disorientationTime -= Time.deltaTime;
+		}
+	}
+
+	void UpdateActionTransitionDelay()
+	{
+		if (actionTransitionDelay > 0f) {
+			actionTransitionDelay -= Time.deltaTime;
 		}
 	}
 
@@ -1136,8 +1147,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			return;
 		}
 
-		// Melee attack, disorientation, death trumps all
-		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
+		// Melee attack, disorientation, death trumps all. Also check if action transition is delayed because of DDoS Attack skill
+		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented || actionState == ActionStates.Dead || actionTransitionDelay > 0f) {
 			return;
 		}
 
@@ -1505,8 +1516,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			return;
 		}
 
-		// Melee attack, death, disorientation trumps all
-		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
+		// Melee attack, death, disorientation trumps all. Also check if action transition is delayed because of DDoS Attack skill
+		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented || actionState == ActionStates.Dead || actionTransitionDelay > 0f) {
 			return;
 		}
 
@@ -2294,11 +2305,10 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		// 	}
 		// }
 		// Play grunt when enemy dies or hit by flashbang
-		if (action == ActionStates.Dead) {
+		if (action == ActionStates.Dead || action == ActionStates.Disoriented) {
 			PlayGruntSound();
-		}
-		if (action == ActionStates.Disoriented) {
-			PlayGruntSound();
+		} else {
+			actionTransitionDelay = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().GetDdosDelayTime();
 		}
 		actionState = action;
 	}
