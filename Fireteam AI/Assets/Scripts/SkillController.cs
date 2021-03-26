@@ -106,7 +106,7 @@ public class SkillController : MonoBehaviour
     private EncryptedFloat avoidabilityBoost;
     private int[] providerBoost = new int[4];
     private EncryptedInt storedProviderBoost;
-    private int[] ddosBoost = new int[3];
+    private int[] ddosBoost = new int[4];
     private EncryptedInt storedDdosBoost;
     private EncryptedFloat fireteamBoost;
     private EncryptedFloat storedFireteamBoost;
