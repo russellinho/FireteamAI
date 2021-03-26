@@ -289,6 +289,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
 
+        if (Input.GetKeyDown(KeyCode.L)) {
+            Debug.LogError("skill: " + skillController.GetDdosDetectionBoost() + " | " + skillController.GetDdosAccuracyReduction());
+        }
+
         UpdateFightingSpirit();
         UpdateRegeneration();
         UnlockInteractionLock();

@@ -1518,6 +1518,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 		// Melee attack, death, disorientation trumps all. Also check if action transition is delayed because of DDoS Attack skill
 		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented || actionState == ActionStates.Dead || actionTransitionDelay > 0f) {
+			Debug.LogError("actionTrans: " + actionTransitionDelay);
 			return;
 		}
 
