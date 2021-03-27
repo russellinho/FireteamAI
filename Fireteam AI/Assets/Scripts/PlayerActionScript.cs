@@ -60,6 +60,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public PlayerScript playerScript;
     public ParticleSystem healParticleEffect;
     public ParticleSystem boostParticleEffect;
+    public ParticleSystem overshieldBreakEffect;
     public ParticleSystem overshieldRecoverParticleEffect;
     public ParticleSystem jetpackParticleEffect;
     public SpriteRenderer hudMarker;
@@ -1138,7 +1139,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             }
         }
         if (o <= 0f && playPopEffect) {
-            wepActionScript.OvershieldBreakEffect.GetComponent<ParticleSystem>().Play();
+            overshieldBreakEffect.Play();
         }
     }
 
