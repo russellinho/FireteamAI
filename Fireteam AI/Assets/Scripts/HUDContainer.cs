@@ -13,6 +13,8 @@ public class HUDContainer : MonoBehaviour {
 	public TextMeshProUGUI healthPercentTxt;
 	public TextMeshProUGUI staminaPercentTxt;
 	public Slider healthBar;
+	public Slider overshieldBar;
+	public Image overshieldBarColor;
 	public Slider staminaBar;
 	public Image flashbangOverlay;
 	public RawImage flashbangScreenCap;

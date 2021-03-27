@@ -12,6 +12,12 @@ using AlertStatus = BetaEnemyScript.AlertStatus;
 
 public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private const float COMMAND_DELAY = 0.5f;
+	private const float OVERSHIELD_NORMAL_R = 255f;
+	private const float OVERSHIELD_NORMAL_G = 150f;
+	private const float OVERSHIELD_NORMAL_B = 0f;
+	private const float OVERSHIELD_WARNING_R = 120f;
+	private const float OVERSHIELD_WARNING_G = 0f;
+	private const float OVERSHIELD_WARNING_B = 0f;
 	// HUD object reference
 	public HUDContainer container;
 	public InGameMessengerHUD inGameMessenger;
@@ -33,6 +39,9 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private Dictionary<int, AlertMarker> enemyMarkers = new Dictionary<int, AlertMarker> ();
 
 	// Other vars
+	public bool overshieldFlashActive;
+	private float overshieldFlashTimer;
+	private bool overshieldFlashDirection;
 	public float commandDelay;
 	public float skillDelay;
 	public float guardianAngelDelay;
@@ -297,7 +306,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		FlashbangUpdate();
 		UpdateDetectedText();
 		UpdateCarryingText();
-
+		UpdateOvershield();
+		UpdateOvershieldWarning();
     }
 
 	void FixedUpdate() {
@@ -1486,9 +1496,51 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		return container.pauseMenuGUI.pauseActive;
 	}
 
-	public void UpdateHealth() {
+	void UpdateHealth() {
 		container.healthBar.value = playerActionScript.health / 100f;
 		container.healthPercentTxt.text = playerActionScript.health + "%";
+	}
+
+	void UpdateOvershield() {
+		container.overshieldBar.value = playerActionScript.overshield / 100f;
+	}
+
+	public void ToggleOvershieldWarningFlash(bool b)
+	{
+		if (b) {
+			overshieldFlashActive = true;
+		} else {
+			overshieldFlashActive = false;
+			container.overshieldBarColor.color = new Color(OVERSHIELD_NORMAL_R / 255f, OVERSHIELD_NORMAL_G / 255f, OVERSHIELD_NORMAL_B / 255f, 1f);
+		}
+		overshieldFlashTimer = 0f;
+		overshieldFlashDirection = false;
+	}
+
+	void UpdateOvershieldWarning()
+	{
+		// Oscillate between normal color and warning color
+		if (overshieldFlashActive) {
+			// Go from normal to warning
+			if (!overshieldFlashDirection) {
+				// Switches back to going back to normal when it reaches the end
+				overshieldFlashTimer += Time.deltaTime;
+				if (overshieldFlashTimer >= 1f) {
+					overshieldFlashTimer = 1f;
+					overshieldFlashDirection = true;
+				}
+			} else {
+				// Go from warning to normal
+				// Switches back to going back to warning when it reaches the end
+				overshieldFlashTimer -= Time.deltaTime;
+				if (overshieldFlashTimer <= 0f) {
+					overshieldFlashTimer = 0f;
+					overshieldFlashDirection = false;
+				}
+			}
+			Vector3 newColor = Vector3.Lerp(new Vector3(OVERSHIELD_NORMAL_R, OVERSHIELD_NORMAL_G, OVERSHIELD_NORMAL_B), new Vector3(OVERSHIELD_WARNING_R, OVERSHIELD_WARNING_G, OVERSHIELD_WARNING_B), overshieldFlashTimer);
+			container.overshieldBarColor.color = new Color(newColor.x / 255f, newColor.y / 255f, newColor.z / 255f, 1f);
+		}
 	}
 
 	void InitHealth() {

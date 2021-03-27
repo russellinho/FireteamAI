@@ -60,6 +60,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public PlayerScript playerScript;
     public ParticleSystem healParticleEffect;
     public ParticleSystem boostParticleEffect;
+    public ParticleSystem overshieldRecoverParticleEffect;
     public ParticleSystem jetpackParticleEffect;
     public SpriteRenderer hudMarker;
     public SpriteRenderer hudMarker2;
@@ -84,6 +85,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     // Player variables
     public EncryptedInt health;
+    public EncryptedFloat overshield;
     public float sprintTime;
     private EncryptedBool spawnInvincibilityActive;
     // public bool godMode;
@@ -130,6 +132,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public bool skipHitDir;
     public float healTimer;
     public float boostTimer;
+    private float overshieldRecoverTimer;
+    private float overshieldRecoverAmount;
     private float envDamageTimer;
     public Transform cameraParent;
 
@@ -205,6 +209,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // gameController = GameObject.FindWithTag("GameController").GetComponent<GameControllerScript>();
 
         // Initialize variables
+        SetOvershield(skillController.GetOvershield(), false);
         canShoot = true;
 
         crouchPosY = 0.3f;
@@ -357,6 +362,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             fpc.sprintLock = false;
         }
 
+        UpdateOvershieldRecovery();
         DeathCheck();
         if (health <= 0 && fightingSpiritTimer <= 0f)
         {
@@ -544,7 +550,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         audioController.PlayGruntSound();
     }
 
-    public void TakeDamage(int d, bool useArmor, Vector3 hitFromPos, int hitBy, int bodyPartHit)
+    public void TakeDamage(int d, bool useArmor, bool useOvershield, Vector3 hitFromPos, int hitBy, int bodyPartHit)
     {
         if (d <= 0) return;
         if (fightingSpiritTimer > 0f) return;
@@ -553,11 +559,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (!pView.IsMine && hitBy != 0) return;
 
         // Send over network
-        pView.RPC("RpcTakeDamage", RpcTarget.All, d, useArmor, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit);
+        pView.RPC("RpcTakeDamage", RpcTarget.All, d, useArmor, useOvershield, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit);
     }
 
     [PunRPC]
-    void RpcTakeDamage(int d, bool useArmor, float hitFromX, float hitFromY, float hitFromZ, int hitBy, int bodyPartHit)
+    void RpcTakeDamage(int d, bool useArmor, bool useOvershield, float hitFromX, float hitFromY, float hitFromZ, int hitBy, int bodyPartHit)
     {
         if (gameObject.layer == 0) return;
         if (pView.IsMine)
@@ -572,9 +578,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     return;
                 }
             }
+            bool usingOvershield = skillController.GetOvershield() > 0 && (int)overshield > 0;
             ResetHitTimer();
             skillController.RegenerationReset();
-            if (!skillController.HasRusticCowboy()) {
+            if (!skillController.HasRusticCowboy() && !usingOvershield) {
                 wepActionScript.mouseLook.ActivateFlinch();
             }
             // Calculate damage done including armor
@@ -605,7 +612,17 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             }
             // Painkiller skill damage dampening
             d = (int)((float)d * (1f - skillController.GetPainkillerTotalAmount()));
-            audioController.PlayHitSound();
+
+            if (usingOvershield) {
+                if (overshield - d <= 0f) {
+                    audioController.PlayOvershieldPopSound();
+                } else {
+                    audioController.PlayHitSound(true);
+                }
+            } else {
+                audioController.PlayHitSound(false);
+                pView.RPC("RpcPlayTakeDamageGrunt", RpcTarget.All);
+            }
 
             // if (godMode)
             // {
@@ -614,8 +631,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             lastHitFromPos = new Vector3(hitFromX, hitFromY, hitFromZ);
             lastHitBy = hitBy;
             lastBodyPartHit = bodyPartHit;
-            pView.RPC("RpcPlayTakeDamageGrunt", RpcTarget.All);
-            SetHealth(health - d, false);
+
+            if (usingOvershield) {
+                SetOvershield(Mathf.Max(0, overshield - d), true);
+                overshieldRecoverTimer = skillController.GetOvershieldRecoverTime();
+                overshieldRecoverAmount = 0f;
+            } else {
+                SetHealth(health - d, false);
+            }
         }
     }
 
@@ -1095,6 +1118,30 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
+    void SetOvershield(float o, bool playPopEffect)
+    {
+        pView.RPC("RpcSetOvershield", RpcTarget.All, o, playPopEffect);
+    }
+
+    [PunRPC]
+    void RpcSetOvershield(float o, bool playPopEffect)
+    {
+        if (gameObject.layer == 0) return;
+        overshield = o;
+        if (pView.IsMine) {
+            // If overshield is less than 20% of full overshield, then start playing the warning color flashes
+            if (overshield < (skillController.GetOvershield() / 5f)) {
+                if (!hud.overshieldFlashActive) {
+                    hud.ToggleOvershieldWarningFlash(true);
+                    audioController.PlayOvershieldWarningSound(true);
+                }
+            }
+        }
+        if (o <= 0f && playPopEffect) {
+            wepActionScript.OvershieldBreakEffect.GetComponent<ParticleSystem>().Play();
+        }
+    }
+
     [PunRPC]
     void RpcActivateMotivateSkillFromThisPlayer(float damageBoost)
     {
@@ -1169,7 +1216,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 // Validate that this enemy has already been affected
                 t.AddHitPlayer(pView.ViewID);
                 // Deal damage to the player
-                TakeDamage(damageReceived, false, other.gameObject.transform.position, 1, 0);
+                TakeDamage(damageReceived, false, true, other.gameObject.transform.position, 1, 0);
                 //ResetHitTimer();
             }
         }
@@ -1217,7 +1264,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 // Validate that this enemy has already been affected
                 l.AddHitPlayer(pView.ViewID);
                 // Deal damage to the player
-                TakeDamage(damageReceived, false, other.gameObject.transform.position, 1, 0);
+                TakeDamage(damageReceived, false, true, other.gameObject.transform.position, 1, 0);
                 //ResetHitTimer();
             }
         }
@@ -1231,7 +1278,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 		if (other.gameObject.tag.Equals("Fire")) {
 			FireScript f = other.gameObject.GetComponent<FireScript>();
 			int damageReceived = (int)(f.damage);
-			TakeDamage(damageReceived, false, other.gameObject.transform.position, 2, 0);
+			TakeDamage(damageReceived, false, true, other.gameObject.transform.position, 2, 0);
 			ResetEnvDamageTimer();
 		}
 	}
@@ -1587,9 +1634,15 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void RpcBoostParticleEffect()
+    void RpcBoostParticleEffect()
     {
         boostParticleEffect.Play();
+    }
+
+    [PunRPC]
+    void RpcOvershieldRegenParticleEffect()
+    {
+        overshieldRecoverParticleEffect.Play();
     }
 
     public void ToggleJetpackParticleEffect(bool b)
@@ -1752,7 +1805,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         // Debug.Log("total fall damage: " + totalFallDamage);
         totalFallDamage = Mathf.Clamp(totalFallDamage, 0f, 100f);
-        TakeDamage((int)(totalFallDamage * (1f - skillController.GetFallDamageReduction())), false, transform.position, 2, 0);
+        TakeDamage((int)(totalFallDamage * (1f - skillController.GetFallDamageReduction())), false, false, transform.position, 2, 0);
     }
 
     public void UpdateVerticalVelocityBeforeLanding() {
@@ -1862,6 +1915,28 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 		}
 	}
 
+    void UpdateOvershieldRecovery()
+    {
+        if (overshieldRecoverTimer > 0f) {
+            overshieldRecoverTimer -= Time.deltaTime;
+            if (overshieldRecoverTimer <= 0f) {
+                overshieldRecoverTimer = 0f;
+                hud.ToggleOvershieldWarningFlash(false);
+                audioController.PlayOvershieldWarningSound(false);
+                audioController.PlayOvershieldRecoverSound(true);
+                pView.RPC("RpcOvershieldRegenParticleEffect", RpcTarget.All);
+            }
+        }
+
+        if (overshieldRecoverTimer <= 0f && overshield < skillController.GetOvershield()) {
+            overshield += skillController.GetOvershield() * Time.deltaTime / 3f;
+            if (overshield >= skillController.GetOvershield()) {
+                SetOvershield(skillController.GetOvershield(), false);
+                audioController.PlayOvershieldRecoverSound(false);
+            }
+        }
+    }
+
     void UpdateUnderwaterTimer()
     {
         if (fpc.GetIsSwimming())
@@ -1870,7 +1945,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 underwaterTimer -= Time.deltaTime;
             } else {
                 if (underwaterTakeDamageTimer <= 0f) {
-                    TakeDamage(2, false, Vector3.zero, 2, 0);
+                    TakeDamage(2, false, false, Vector3.zero, 2, 0);
                     underwaterTakeDamageTimer = 1.5f;
                 } else {
                     underwaterTakeDamageTimer -= Time.deltaTime;
@@ -1924,6 +1999,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 	void RpcAskServerForDataPlayer(bool init) {
         if (!pView.IsMine) return;
         int healthToSend = health;
+        float overshieldToSend = overshield;
         string playersDead = (string)PhotonNetwork.CurrentRoom.CustomProperties["deads"];
         string[] playersDeadList = null;
         if (playersDead != null) {
@@ -1952,17 +2028,18 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             motivateDmg = skillController.GetMyMotivateDamageBoost();
             motivates = skillController.SerializeMotivateBoosts();
         }
-		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept,
+		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, overshieldToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept,
                     skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost(), skillController.GetMyInspireBoost(), skillController.GetMyAvoidabilityBoost(), skillController.GetMyIntimidationBoost(), skillController.GetMyProviderBoost(), skillController.GetMyDdosLevel(),
                     skillController.GetMyMartialArtsAttackBoost(), skillController.GetMyMartialArtsDefenseBoost(), skillController.GetMyFireteamBoost(), skillController.GetSilhouetteBoost(), skillController.GetRegeneratorLevel(), skillController.GetPainkillerLevel(),
                     motivateDmg, motivates, fightingSpiritTimer);
 	}
 
 	[PunRPC]
-	void RpcSyncDataPlayer(int health, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept,
+	void RpcSyncDataPlayer(int health, float overshield, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept,
         int myHackerBoost, float myHeadstrongBoost, float myResourcefulBoost, float myInspireBoost, float myAvoidabilityBoost, float myIntimidationBoost, int myProviderBoost, int myDdosLevel, float myMartialArtsAttackBoost, float myMartialArtsDefenseBoost,
         float myFireteamBoost, int silhouetteBoost, int regeneratorLevel, int painkillerLevel, float motivateDamageBoost, string serializedMotivateBoosts, float fightingSpiritTimer) {
         this.health = health;
+        this.overshield = overshield;
         this.fightingSpiritTimer = fightingSpiritTimer;
         if (fightingSpiritTimer > 0f) {
             this.health = 0;

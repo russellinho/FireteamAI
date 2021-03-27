@@ -35,6 +35,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	public AudioClip[] gruntSounds;
 	public GameObject bloodEffect;
 	public GameObject bloodEffectHeadshot;
+	public GameObject overshieldHitEffect;
 
 	// Body/Component references
 	public AudioSource audioSource;
@@ -1813,12 +1814,12 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			//Debug.DrawRay (gunRef.weaponShootPoint.position, dir * range, Color.red);
 			if (Physics.Raycast (headTransform.position, dir, out hit, Mathf.Infinity, ENEMY_FIRE_IGNORE)) {
 				if (hit.transform.tag.Equals ("Player")) {
-					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					PlayerActionScript ps = hit.transform.GetComponent<PlayerActionScript> ();
-					ps.TakeDamage(CalculateDamageDealt(InventoryScript.itemData.weaponCatalog[gunRef.weaponName].damage / 2f, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CharacterController>().height), true, transform.position, 0, Random.Range(1, 12));
+					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, ps.overshield > 0f, gameControllerScript.teamMap);
+					ps.TakeDamage(CalculateDamageDealt(InventoryScript.itemData.weaponCatalog[gunRef.weaponName].damage / 2f, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CharacterController>().height), true, true, transform.position, 0, Random.Range(1, 12));
 					//ps.ResetHitTimer ();
 				} else if (hit.transform.tag.Equals ("Human")) {
-					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
+					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false, gameControllerScript.teamMap);
 					// BetaEnemyScript b = hit.transform.GetComponent<BetaEnemyScript>();
 					NpcScript n = hit.transform.GetComponentInParent<NpcScript>();
 					if (n != null) {
@@ -1839,11 +1840,16 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	[PunRPC]
-	void RpcInstantiateBloodSpill(Vector3 point, Vector3 normal, string team) {
+	void RpcInstantiateBloodSpill(Vector3 point, Vector3 normal, bool overshield, string team) {
         if (team != gameControllerScript.teamMap) return;
-        GameObject bloodSpill = Instantiate(bloodEffect, point, Quaternion.FromToRotation (Vector3.forward, normal));
-		bloodSpill.transform.Rotate (180f, 0f, 0f);
-		Destroy (bloodSpill, 1.5f);
+		GameObject hitEffect = null;
+		if (overshield) {
+			hitEffect = Instantiate(overshieldHitEffect, point, Quaternion.FromToRotation (Vector3.forward, normal));
+		} else {
+			hitEffect = Instantiate(bloodEffect, point, Quaternion.FromToRotation (Vector3.forward, normal));
+		}
+		hitEffect.transform.Rotate (180f, 0f, 0f);
+		Destroy (hitEffect, 1.5f);
 	}
 
 	[PunRPC]
@@ -1907,7 +1913,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				n.TakeDamage(50, transform.position, 2, 0);
 			}
 			if (ps != null) {
-				ps.TakeDamage (50, true, transform.position, 2, 0);
+				ps.TakeDamage (50, true, true, transform.position, 2, 0);
 				//ps.ResetHitTimer();
 			}
 		}

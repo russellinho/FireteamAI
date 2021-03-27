@@ -65,6 +65,7 @@ public class SkillController : MonoBehaviour
     public EncryptedFloat throwForceBoost;
     public EncryptedFloat deploymentTimeBoost;
     private EncryptedInt silhouetteBoost;
+    private EncryptedInt overshield;
     private float munitionsEngineeringTimer;
     private float regenerationTimer;
     private float oneShotOneKillTimer;
@@ -316,6 +317,7 @@ public class SkillController : MonoBehaviour
         InitializeRunNGun();
         InitializeJetpackBoost();
         InitializeRusticCowboy();
+        InitializeOvershield();
         SetThisPlayerHackerBoost(GetMyHackerBoost());
         AddHackerBoost(GetMyHackerBoost());
 
@@ -2117,6 +2119,34 @@ public class SkillController : MonoBehaviour
     public bool HasRusticCowboy()
     {
         return rusticCowboy;
+    }
+
+    void InitializeOvershield()
+    {
+        if (PlayerData.playerdata.skillList["4/4"].Level == 1) {
+            overshield = 25;
+        } else if (PlayerData.playerdata.skillList["4/4"].Level == 2) {
+            overshield = 50;
+        } else if (PlayerData.playerdata.skillList["4/4"].Level == 3) {
+            overshield = 100;
+        }
+    }
+
+    public int GetOvershield()
+    {
+        return overshield;
+    }
+
+    public int GetOvershieldRecoverTime()
+    {
+        if (PlayerData.playerdata.skillList["4/4"].Level == 1) {
+            return 7;
+        } else if (PlayerData.playerdata.skillList["4/4"].Level == 2) {
+            return 5;
+        } else if (PlayerData.playerdata.skillList["4/4"].Level == 3) {
+            return 4;
+        }
+        return 0;
     }
 
     public struct MotivateNode {

@@ -30,6 +30,7 @@ public class AudioControllerScript : MonoBehaviour {
 	private AudioSource fxSound6;
 	private AudioSource fxSound7;
 	private AudioSource fxSound8;
+	private AudioSource fxSound9;
 	private float flashbangRingTimer;
 	private float flashbangRingTotalTime;
 	private float flashbangRingThird;
@@ -38,6 +39,10 @@ public class AudioControllerScript : MonoBehaviour {
 	public AudioClip headshotSound;
 	public AudioClip killSound;
 	public AudioClip playerHitSound;
+	public AudioClip overshieldHitSound;
+	public AudioClip overshieldPopSound;
+	public AudioClip overshieldWarningSound;
+	public AudioClip overshieldRecoverSound;
 	public AudioClip playerGruntSound1;
 	public AudioClip playerGruntSound2;
 	public AudioClip hitmarkerSound;
@@ -71,6 +76,7 @@ public class AudioControllerScript : MonoBehaviour {
 			fxSound6 = fxRefs [5];
 			fxSound7 = fxRefs [6];
 			fxSound8 = fxRefs [7];
+			fxSound9 = fxRefs [8];
 			PlayMissionStartSound ();
 		}
 		initialized = true;
@@ -218,6 +224,36 @@ public class AudioControllerScript : MonoBehaviour {
 		}
 	}
 
+	public void PlayOvershieldWarningSound(bool b)
+	{
+		if (!pView.IsMine) {
+			return;
+		}
+		fxSound9.clip = overshieldWarningSound;
+		if (b) {
+			if (!fxSound9.isPlaying) {
+				fxSound9.Play ();
+			}
+		} else {
+			fxSound9.Stop();
+		}
+	}
+
+	public void PlayOvershieldRecoverSound(bool b)
+	{
+		if (!pView.IsMine) {
+			return;
+		}
+		fxSound9.clip = overshieldRecoverSound;
+		if (b) {
+			if (!fxSound9.isPlaying) {
+				fxSound9.Play ();
+			}
+		} else {
+			fxSound9.Stop();
+		}
+	}
+
 	public void PlayHitmarkerSound() {
 		if (!pView.IsMine) {
 			return;
@@ -226,11 +262,24 @@ public class AudioControllerScript : MonoBehaviour {
 		fxSound3.Play ();
 	}
 
-	public void PlayHitSound() {
+	public void PlayHitSound(bool overshield) {
 		if (!pView.IsMine) {
 			return;
 		}
-		fxSound4.clip = playerHitSound;
+		if (overshield) {
+			fxSound4.clip = overshieldHitSound;
+		} else {
+			fxSound4.clip = playerHitSound;
+		}
+		fxSound4.Play ();
+	}
+
+	public void PlayOvershieldPopSound()
+	{
+		if (!pView.IsMine) {
+			return;
+		}
+		fxSound4.clip = overshieldPopSound;
 		fxSound4.Play ();
 	}
 

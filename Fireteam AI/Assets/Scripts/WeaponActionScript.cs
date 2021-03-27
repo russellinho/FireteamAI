@@ -52,6 +52,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     public GameObject WaterBulletEffect;
     public GameObject BloodEffect;
     public GameObject BloodEffectHeadshot;
+    public GameObject OvershieldHitEffect;
+    public GameObject OvershieldBreakEffect;
 
     // Projectile recoil constants
     public const float MAX_RECOIL_TIME = 1.4f;

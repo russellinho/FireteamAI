@@ -7412,6 +7412,8 @@ MonoBehaviour:
     type: 3}
   bloodEffectHeadshot: {fileID: 1175462165935484, guid: ceb3b8297aaaeca42ba92f609dd84d39,
     type: 3}
+  overshieldHitEffect: {fileID: 5622047170237180970, guid: 4f3cfd8361ada48d19c1d7154c957b3f,
+    type: 3}
   audioSource: {fileID: 4036572419614156457}
   pView: {fileID: 1797082000122076369}
   mainCol: {fileID: 6794830770159409565}
@@ -7457,6 +7459,7 @@ MonoBehaviour:
   alertStatus: 0
   gameController: {fileID: 0}
   gameControllerScript: {fileID: 0}
+  isOutlined: 0
   initialSpawnTime: 0
   range: 27
   bulletsPerMag: 30
