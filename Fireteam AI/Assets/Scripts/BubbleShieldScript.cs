@@ -5,7 +5,7 @@ using UnityEngine;
 public class BubbleShieldScript : MonoBehaviour
 {
     private const float BASE_DURATION = 30f;
-    private const short MAX_SIZE = 20;
+    private const short MAX_SIZE = 10;
     public GameObject deviceRef;
     private float timer;
     private float duration;
