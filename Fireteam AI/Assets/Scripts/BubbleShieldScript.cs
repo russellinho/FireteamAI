@@ -27,7 +27,7 @@ public class BubbleShieldScript : MonoBehaviour
     void Update() {
         if (initializing) {
             timer += Time.deltaTime * 1.5f;
-            transform.localScale = Vector3.Lerp(Vector3.zero, new Vector3(20, 20, 20), timer);
+            transform.localScale = Vector3.Lerp(Vector3.zero, new Vector3(MAX_SIZE, MAX_SIZE, MAX_SIZE), timer);
             if (timer >= 1f) {
                 initializing = false;
             }
