@@ -25,9 +25,6 @@ public class BubbleShieldScript : MonoBehaviour
     }
 
     void Update() {
-        if (Input.GetKeyDown(KeyCode.L)) {
-            Debug.LogError("dur: " + duration);
-        }
         if (initializing) {
             timer += Time.deltaTime * 1.5f;
             transform.localScale = Vector3.Lerp(Vector3.zero, new Vector3(20, 20, 20), timer);

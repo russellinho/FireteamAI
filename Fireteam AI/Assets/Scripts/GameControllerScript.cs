@@ -156,6 +156,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		Physics.IgnoreLayerCollision (18, 22);
 		Physics.IgnoreLayerCollision (19, 22);
 		Physics.IgnoreLayerCollision (20, 22);
+		Physics.IgnoreLayerCollision (22, 22);
 		ClearEnemyTypesKilled();
 
 		defFogEnabled = RenderSettings.fog;
