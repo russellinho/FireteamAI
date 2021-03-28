@@ -34,12 +34,15 @@ public class SkillController : MonoBehaviour
     private const float BULLET_STREAM_COOLDOWN_2 = 420f;
     private const float BULLET_STREAM_COOLDOWN_3 = 360f;
     private const float BULLET_STREAM_COOLDOWN_4 = 300f;
+    private const float BUBBLE_SHIELD_COOLDOWN_1 = 480f;
+    private const float BUBBLE_SHIELD_COOLDOWN_2 = 480f;
+    private const float BUBBLE_SHIELD_COOLDOWN_3 = 480f;
     private const float RAMPAGE_TIME_1 = 10f;
     private const float RAMPAGE_TIME_2 = 20f;
     private const float RAMPAGE_TIME_3 = 30f;
     private const float RAMPAGE_COOLDOWN_1 = 600f;
-    private const float RAMPAGE_COOLDOWN_2 = 480f;
-    private const float RAMPAGE_COOLDOWN_3 = 360f;
+    private const float RAMPAGE_COOLDOWN_2 = 360f;
+    private const float RAMPAGE_COOLDOWN_3 = 300f;
     public static float REGENERATOR_MAX_DISTANCE = 15f;
     private const float REGENERATOR_TIMER_1 = 30f;
     private const float REGENERATOR_TIMER_2 = 28f;
@@ -57,6 +60,7 @@ public class SkillController : MonoBehaviour
     private const int REGENERATOR_RECOVER_5 = 6;
     private const float MOTIVATE_BOOST_CAP = 0.2f;
     private const float INTIMIDATION_BOOST_CAP = 0.2f;
+    public GameObject bubbleShieldDeployRef;
     private EncryptedFloat speedBoost;
     private EncryptedFloat damageBoost;
     private EncryptedFloat armorBoost;
@@ -85,6 +89,7 @@ public class SkillController : MonoBehaviour
     private float snipersDelCooldown;
     private float bulletStreamTimer;
     private float bulletStreamCooldown;
+    private float bubbleShieldCooldown;
     private float rampageTimer;
     private float rampageCooldown;
 
@@ -132,6 +137,7 @@ public class SkillController : MonoBehaviour
         UpdateFirmGrip();
         UpdateSnipersDel();
         UpdateBulletStream();
+        UpdateBubbleShield();
         UpdateRampage();
         UpdateRegenerator();
         UpdatePainkiller();
@@ -1540,6 +1546,8 @@ public class SkillController : MonoBehaviour
             return snipersDelCooldown <= 0f;
         } else if (skill == 5) {
             return bulletStreamCooldown <= 0f;
+        } else if (skill == 7) {
+            return bubbleShieldCooldown <= 0f;
         } else if (skill == 9) {
             return CanCallGuardianAngel();
         }
@@ -1556,6 +1564,8 @@ public class SkillController : MonoBehaviour
             return PlayerData.playerdata.skillList["5/10"].Level > 0;
         } else if (skill == 5) {
             return PlayerData.playerdata.skillList["6/11"].Level > 0;
+        } else if (skill == 7) {
+            return PlayerData.playerdata.skillList["2/11"].Level > 0;
         } else if (skill == 9) {
             return PlayerData.playerdata.skillList["4/9"].Level > 0;
         }
@@ -1626,6 +1636,19 @@ public class SkillController : MonoBehaviour
         return false;
     }
 
+    public void ActivateBubbleShield()
+    {
+        if (bubbleShieldCooldown <= 0f) {
+            if (PlayerData.playerdata.skillList["2/11"].Level == 1) {
+                bubbleShieldCooldown = BUBBLE_SHIELD_COOLDOWN_1;
+            } else if (PlayerData.playerdata.skillList["2/11"].Level == 2) {
+                bubbleShieldCooldown = BUBBLE_SHIELD_COOLDOWN_2;
+            } else if (PlayerData.playerdata.skillList["2/11"].Level == 3) {
+                bubbleShieldCooldown = BUBBLE_SHIELD_COOLDOWN_3;
+            }
+        }
+    }
+
     public bool ActivateRampage()
     {
         if (rampageCooldown <= 0f) {
@@ -1673,6 +1696,13 @@ public class SkillController : MonoBehaviour
         }
         if (bulletStreamCooldown > 0f && bulletStreamTimer <= 0f) {
             bulletStreamCooldown -= Time.deltaTime;
+        }
+    }
+
+    void UpdateBubbleShield()
+    {
+        if (bubbleShieldCooldown > 0f) {
+            bubbleShieldCooldown -= Time.deltaTime;
         }
     }
 

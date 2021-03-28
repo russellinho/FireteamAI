@@ -1230,6 +1230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc0ab733702348ea9b34defd0b0aebb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bubbleShieldDeployRef: {fileID: 0}
   recoilBoost:
     currentCryptoKey: 0
     hiddenValue: 0
@@ -6268,7 +6269,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 456503
+    m_Bits: 6747959
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0

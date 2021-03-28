@@ -24,6 +24,8 @@ public class DrawWeaponBehavior : StateMachineBehaviour
           }
        } else if (ws.currentlyEquippedType == 4) {
           ws.EquipWeapon(ws.equippedSupportWeapon, PlayerData.playerdata.supportModInfo.EquippedSuppressor, PlayerData.playerdata.supportModInfo.EquippedSight, null);
+       } else if (ws.currentlyEquippedType == -1) {
+          ws.EquipWeapon("Bubble Shield (Skill)", PlayerData.playerdata.supportModInfo.EquippedSuppressor, PlayerData.playerdata.supportModInfo.EquippedSight, null);
        }
     }
 

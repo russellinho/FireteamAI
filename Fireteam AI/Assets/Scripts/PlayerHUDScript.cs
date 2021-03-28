@@ -1049,6 +1049,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	public void ToggleWeaponLabel(bool b)
+	{
+		container.ammoTxt.gameObject.SetActive(b);
+		container.weaponLabelTxt.gameObject.SetActive(b);
+	}
+
 	public void ToggleHUD(bool b)
     {
 		if (b && container.timeGroup.activeInHierarchy) {
@@ -1844,55 +1850,55 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		// Activating skills
 		if (container.skillPanel.activeInHierarchy) {
 			if (Input.GetKeyDown(KeyCode.Alpha1)) {
-				if (CanActivateSkill()) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(1)) {
 					playerActionScript.ActivateSkill(1);
 				}
 				container.skillPanel.SetActive(false);
 				skillDelay = COMMAND_DELAY;
 			} else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-				if (CanActivateSkill()) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(2)) {
 					playerActionScript.ActivateSkill(2);
 				}
 				container.skillPanel.SetActive(false);
 				skillDelay = COMMAND_DELAY;
 			} else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-				if (CanActivateSkill()) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(3)) {
 					playerActionScript.ActivateSkill(3);
 				}
 				container.skillPanel.SetActive(false);
 				skillDelay = COMMAND_DELAY;
 			} else if (Input.GetKeyDown(KeyCode.Alpha4)) {
-				if (CanActivateSkill()) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(4)) {
 					playerActionScript.ActivateSkill(4);
 				}
 				container.skillPanel.SetActive(false);
 				skillDelay = COMMAND_DELAY;
 			} else if (Input.GetKeyDown(KeyCode.Alpha5)) {
-				if (CanActivateSkill()) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(5)) {
 					playerActionScript.ActivateSkill(5);
 				}
 				container.skillPanel.SetActive(false);
 				skillDelay = COMMAND_DELAY;
 			} else if (Input.GetKeyDown(KeyCode.Alpha6)) {
-				if (CanActivateSkill()) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(6)) {
 					playerActionScript.ActivateSkill(6);
 				}
 				container.skillPanel.SetActive(false);
 				skillDelay = COMMAND_DELAY;
 			} else if (Input.GetKeyDown(KeyCode.Alpha7)) {
-				if (CanActivateSkill()) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(7)) {
 					playerActionScript.ActivateSkill(7);
 				}
 				container.skillPanel.SetActive(false);
 				skillDelay = COMMAND_DELAY;
 			} else if (Input.GetKeyDown(KeyCode.Alpha8)) {
-				if (CanActivateSkill()) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(8)) {
 					playerActionScript.ActivateSkill(8);
 				}
 				container.skillPanel.SetActive(false);
 				skillDelay = COMMAND_DELAY;
 			} else if (Input.GetKeyDown(KeyCode.Alpha9)) {
-				if (CanActivateSkill()) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(9)) {
 					playerActionScript.ActivateSkill(9);
 				}
 				container.skillPanel.SetActive(false);

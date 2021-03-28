@@ -155,7 +155,7 @@ public class WeaponScript : MonoBehaviour
         EquipWeapon(equippedWep, equippedSuppressor, equippedSight, null);
     }
 
-    void DrawPrimary()
+    public void DrawPrimary()
     {
         if (currentlyEquippedType == 1) return;
         DrawWeapon(1);
@@ -174,6 +174,15 @@ public class WeaponScript : MonoBehaviour
         if (currentlyEquippedType == 4 || (totalSupportAmmoLeft <= 0 && currentAmmoSupport <= 0)) return;
         DrawWeapon(4);
         currentlyEquippedType = 4;
+    }
+
+    public void DrawBubbleShieldSkill()
+    {
+        if (CheckCanSwitchWeapon()) {
+            if (currentlyEquippedType == -1) return;
+            DrawWeapon(-1);
+            currentlyEquippedType = -1;
+        }
     }
 
     void Update() {
@@ -337,6 +346,11 @@ public class WeaponScript : MonoBehaviour
             HideWeapon(false);
             equippedWep = equippedSupportWeapon;
             modInfo = PlayerData.playerdata.supportModInfo;
+        } else if (weaponCat == -1)
+        {
+            weaponActionScript.hudScript.ToggleCrosshair(false);
+            equippedWep = "Bubble Shield (Skill)";
+            modInfo = PlayerData.playerdata.supportModInfo;
         }
         pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, modInfo.EquippedSuppressor, modInfo.EquippedSight);
     }
@@ -345,6 +359,7 @@ public class WeaponScript : MonoBehaviour
     private void RpcDrawWeapon(int weaponCat, string equippedWep, string equippedSuppressor, string equippedSight) {
         weaponReady = false;
         currentlyEquippedType = weaponCat;
+        if (weaponCat == -1) weaponCat = 4;
         if (!equipmentScript.isFirstPerson()) {
             animator.SetInteger("WeaponType", weaponCat);
             EquipWeapon(equippedWep, equippedSuppressor, equippedSight, null);
@@ -389,6 +404,11 @@ public class WeaponScript : MonoBehaviour
         {
             weaponActionScript.currentAmmo = currentAmmoSupport;
             weaponActionScript.totalAmmoLeft = totalSupportAmmoLeft;
+        }
+        else if (weaponCat == -1)
+        {
+            weaponActionScript.currentAmmo = 1;
+            weaponActionScript.totalAmmoLeft = 1;
         }
     }
 

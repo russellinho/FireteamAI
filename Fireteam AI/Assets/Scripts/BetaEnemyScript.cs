@@ -1856,11 +1856,16 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	void RpcHandleBulletVfxEnemy(Vector3 point, Vector3 normal, int terrainId, string team) {
         if (team != gameControllerScript.teamMap) return;
 		if (gameObject.layer == 0) return;
-        if (terrainId == -1) return;
-        Terrain terrainHit = gameControllerScript.terrainMetaData[terrainId];
-        GameObject bulletHoleEffect = Instantiate(terrainHit.GetRandomBulletHole(), point, Quaternion.FromToRotation(Vector3.forward, normal));
-        bulletHoleEffect.transform.SetParent(terrainHit.gameObject.transform);
-        Destroy(bulletHoleEffect, 4f);
+        if (terrainId == -1) {
+			GameObject bulletHoleEffect = Instantiate(overshieldHitEffect, point, Quaternion.FromToRotation(Vector3.forward, normal));
+			bulletHoleEffect.GetComponent<AudioSource>().Play();
+			Destroy(bulletHoleEffect, 1.5f);
+		} else {
+			Terrain terrainHit = gameControllerScript.terrainMetaData[terrainId];
+			GameObject bulletHoleEffect = Instantiate(terrainHit.GetRandomBulletHole(), point, Quaternion.FromToRotation(Vector3.forward, normal));
+			bulletHoleEffect.transform.SetParent(terrainHit.gameObject.transform);
+			Destroy(bulletHoleEffect, 4f);
+		}
 	}
 
 	[PunRPC]

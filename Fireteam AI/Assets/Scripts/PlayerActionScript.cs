@@ -2374,6 +2374,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 // Skill effect
                 PlayBoostParticleEffect(true);
             }
+        } else if (skill == 7) {
+            weaponScript.DrawBubbleShieldSkill();
         } else if (skill == 9) {
             if (skillController.CanCallGuardianAngel()) {
                 hud.ActivateGuardianAngel();

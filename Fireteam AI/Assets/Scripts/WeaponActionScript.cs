@@ -965,7 +965,12 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     [PunRPC]
     void RpcHandleBulletVfx(Vector3 point, Vector3 normal, int terrainId, int shooterActorNo) {
         if (gameObject.layer == 0) return;
-        if (terrainId == -1) return;
+        if (terrainId == -1) {
+            GameObject bulletHoleEffect = Instantiate(OvershieldHitEffect, point, Quaternion.FromToRotation(Vector3.forward, normal));
+			bulletHoleEffect.GetComponent<AudioSource>().Play();
+			Destroy(bulletHoleEffect, 1.5f);
+            return;
+        }
         if (terrainId == -2) {
             Destroy(Instantiate(WaterBulletEffect, point, Quaternion.FromToRotation(Vector3.forward, normal)), 4f);
         } else {
@@ -1540,10 +1545,17 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             playerActionScript.weaponScript.SyncAmmoCounts();
             fireTimer = 0.0f;
         } else if (weaponStats.category.Equals("Deployable")) {
-            DeployDeployable(deployPos, deployRot);
-            currentAmmo--;
-            playerActionScript.weaponScript.SyncAmmoCounts();
-            fireTimer = 0.0f;
+            if (weaponStats.name.EndsWith("(Skill)")) {
+                DeployDeployable(deployPos, deployRot, true);
+                // ResetDeployableState();
+                playerActionScript.weaponScript.DrawPrimary();
+                playerActionScript.skillController.ActivateBubbleShield();
+            } else {
+                DeployDeployable(deployPos, deployRot, false);
+                currentAmmo--;
+                playerActionScript.weaponScript.SyncAmmoCounts();
+                fireTimer = 0.0f;
+            }
         }
     }
 
@@ -1818,16 +1830,20 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
     }
 
-    public void DeployDeployable(Vector3 pos, Quaternion rot) {
+    public void DeployDeployable(Vector3 pos, Quaternion rot, bool fromSkill) {
         GameObject o = GameObject.Instantiate(weaponMetaData.deployRef, pos, rot);
         DeployableScript d = o.GetComponent<DeployableScript>();
         int skillBoost = 0;
-        if (PlayerData.playerdata.skillList["4/0"].Level == 1) {
-            skillBoost = 1;
-        } else if (PlayerData.playerdata.skillList["4/0"].Level == 2) {
-            skillBoost = 2;
-        } else if (PlayerData.playerdata.skillList["4/0"].Level == 3) {
-            skillBoost = 3;
+        if (fromSkill) {
+            if (PlayerData.playerdata.skillList["4/0"].Level == 1) {
+                skillBoost = 1;
+            } else if (PlayerData.playerdata.skillList["4/0"].Level == 2) {
+                skillBoost = 2;
+            } else if (PlayerData.playerdata.skillList["4/0"].Level == 3) {
+                skillBoost = 3;
+            }
+        } else {
+            skillBoost = PlayerData.playerdata.skillList["2/11"].Level;
         }
         int dId = d.InstantiateDeployable(skillBoost);
 		playerActionScript.gameController.DeployDeployable(dId, o);
