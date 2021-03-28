@@ -968,6 +968,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         if (terrainId == -1) {
             GameObject bulletHoleEffect = Instantiate(OvershieldHitEffect, point, Quaternion.FromToRotation(Vector3.forward, normal));
 			bulletHoleEffect.GetComponent<AudioSource>().Play();
+            Debug.LogError("YAA");
 			Destroy(bulletHoleEffect, 1.5f);
             return;
         }
