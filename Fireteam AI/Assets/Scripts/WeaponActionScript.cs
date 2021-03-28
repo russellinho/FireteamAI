@@ -1847,14 +1847,16 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
         int dId = d.InstantiateDeployable(skillBoost);
 		playerActionScript.gameController.DeployDeployable(dId, o);
-		pView.RPC("RpcDeployDeployable", RpcTarget.Others, dId, playerActionScript.gameController.teamMap, pos.x, pos.y, pos.z, rot.eulerAngles.x, rot.eulerAngles.y, rot.eulerAngles.z);
+		pView.RPC("RpcDeployDeployable", RpcTarget.Others, dId, skillBoost, playerActionScript.gameController.teamMap, pos.x, pos.y, pos.z, rot.eulerAngles.x, rot.eulerAngles.y, rot.eulerAngles.z);
     }
 
     [PunRPC]
-    public void RpcDeployDeployable(int deployableId, string team, float posX, float posY, float posZ, float rotX, float rotY, float rotZ) {
+    public void RpcDeployDeployable(int deployableId, int skillBoost, string team, float posX, float posY, float posZ, float rotX, float rotY, float rotZ) {
         if (team != playerActionScript.gameController.teamMap) return;
 		GameObject o = GameObject.Instantiate(weaponMetaData.deployRef, new Vector3(posX, posY, posZ), Quaternion.Euler(rotX, rotY, rotZ));
-		o.GetComponent<DeployableScript>().deployableId = deployableId;
+        DeployableScript d = o.GetComponent<DeployableScript>();
+		d.deployableId = deployableId;
+        d.InstantiateDeployable(skillBoost);
 		playerActionScript.gameController.DeployDeployable(deployableId, o);
     }
 
