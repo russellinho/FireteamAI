@@ -1835,6 +1835,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         DeployableScript d = o.GetComponent<DeployableScript>();
         int skillBoost = 0;
         if (fromSkill) {
+            skillBoost = PlayerData.playerdata.skillList["2/11"].Level;
+        } else {
             if (PlayerData.playerdata.skillList["4/0"].Level == 1) {
                 skillBoost = 1;
             } else if (PlayerData.playerdata.skillList["4/0"].Level == 2) {
@@ -1842,8 +1844,6 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             } else if (PlayerData.playerdata.skillList["4/0"].Level == 3) {
                 skillBoost = 3;
             }
-        } else {
-            skillBoost = PlayerData.playerdata.skillList["2/11"].Level;
         }
         int dId = d.InstantiateDeployable(skillBoost);
 		playerActionScript.gameController.DeployDeployable(dId, o);

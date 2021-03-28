@@ -16,13 +16,6 @@ public class DeployableScript : MonoBehaviour
     public AudioClip breakSound;
     // Determines if deployable can be stuck to any surface
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.L)) {
-            Debug.LogError("USES REMAINING: " + usesRemaining);
-        }
-    }
-
     public int InstantiateDeployable(int skillBoost = 0) {
         if (deployableName.Equals("First Aid Kit")) {
             usesRemaining = (short)(MAX_FIRST_AID_KIT_USES + (short)skillBoost);
