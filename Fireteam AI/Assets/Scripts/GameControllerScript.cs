@@ -1161,7 +1161,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			}
 			DeployableScript d = k.Value.GetComponent<DeployableScript>();
 			// Add id, uses remaining, position
-			s += d.deployableId + '|' + d.usesRemaining + '|' + d.gameObject.transform.position.x + '|' + d.gameObject.transform.position.y + '|' + d.gameObject.transform.position.z + '|' + d.gameObject.transform.rotation.eulerAngles.x + '|' + d.gameObject.transform.rotation.eulerAngles.y + '|' + d.gameObject.transform.rotation.eulerAngles.z + '|' + d.refString;
+			BubbleShieldScript b = null;
+			if (d.initializeRef != null) {
+				b = d.initializeRef.GetComponent<BubbleShieldScript>();
+			}
+			s += d.deployableId + '|' + d.usesRemaining + '|' + d.gameObject.transform.position.x + '|' + d.gameObject.transform.position.y + '|' + d.gameObject.transform.position.z + '|' + d.gameObject.transform.rotation.eulerAngles.x + '|' + d.gameObject.transform.rotation.eulerAngles.y + '|' + d.gameObject.transform.rotation.eulerAngles.z + '|' + d.refString + '|' + (b == null ? 0f : b.duration);
 			first = false;
 		}
 		return s;
@@ -1361,6 +1365,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				DeployableScript dScript = o.GetComponent<DeployableScript>();
 				dScript.deployableId = int.Parse(dDetails[0]);
 				dScript.usesRemaining = short.Parse(dDetails[1]);
+				if (dScript.initializeRef != null) {
+					BubbleShieldScript b = dScript.initializeRef.GetComponent<BubbleShieldScript>();
+					if (b != null) {
+						dScript.initializeRef.SetActive(true);
+						b.SyncShield(float.Parse(dDetails[9]));
+					}
+				}
 				DeployDeployable(dScript.deployableId, o);
 			}
 		}

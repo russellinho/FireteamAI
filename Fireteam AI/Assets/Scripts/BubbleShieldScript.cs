@@ -8,7 +8,7 @@ public class BubbleShieldScript : MonoBehaviour
     private const short MAX_SIZE = 10;
     public GameObject deviceRef;
     private float timer;
-    private float duration;
+    public float duration;
     private bool initializing;
     public void Initialize(int level = 0)
     {
@@ -39,6 +39,17 @@ public class BubbleShieldScript : MonoBehaviour
                 d.BeginDestroyItem();
                 gameObject.SetActive(false);
             }
+        }
+    }
+
+    public void SyncShield(float duration)
+    {
+        initializing = false;
+        this.duration = duration;
+        if (duration <= 0f) {
+            gameObject.SetActive(false);
+        } else {
+            transform.localScale = new Vector3(MAX_SIZE, MAX_SIZE, MAX_SIZE);
         }
     }
 }
