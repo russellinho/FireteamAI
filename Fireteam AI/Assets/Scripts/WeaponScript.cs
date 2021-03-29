@@ -408,7 +408,7 @@ public class WeaponScript : MonoBehaviour
         else if (weaponCat == -1)
         {
             weaponActionScript.currentAmmo = 1;
-            weaponActionScript.totalAmmoLeft = 1;
+            weaponActionScript.totalAmmoLeft = 0;
         }
     }
 

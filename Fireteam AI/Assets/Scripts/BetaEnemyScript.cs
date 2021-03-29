@@ -63,6 +63,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	public WeaponMeta gunRef;
 	private Vector3 prevNavDestination;
 	private bool prevWasStopped;
+	private bool insideBubbleShield;
 
 	// Enemy variables
 	public EnemyType enemyType;
@@ -1226,6 +1227,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	bool EnvObstructionExists(Vector3 a, Vector3 b) {
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
+		if (insideBubbleShield) {
+			return true;
+		}
 		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 17) | (1 << 18);
 		ignoreLayers = ~ignoreLayers;
 		RaycastHit hitInfo;
@@ -1380,6 +1384,18 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			PlayerData.playerdata.inGamePlayerReference.GetComponent<AudioControllerScript>().PlayKillSound();
 		}
 	}
+
+	void OnCollisionEnter(Collision collision) {
+        if (collision.gameObject.layer == 22) {
+            insideBubbleShield = true;
+        }
+    }
+
+    void OnCollisionExit(Collision collision) {
+        if (collision.gameObject.layer == 22) {
+            insideBubbleShield = false;
+        }
+    }
 
 	void OnTriggerEnter(Collider other) {
 		if (gameControllerScript.matchType == 'V') {
@@ -2382,6 +2398,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			ToggleRagdoll(false);
 			navMesh.enabled = false;
 			navMeshObstacle.enabled = false;
+			insideBubbleShield = false;
 			transform.position = pos;
 			transform.rotation = Quaternion.identity;
 			ToggleHumanCollision(true);
@@ -2433,6 +2450,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		ToggleRagdoll(false);
 		navMesh.enabled = false;
 		navMeshObstacle.enabled = false;
+		insideBubbleShield = false;
 		transform.position = new Vector3(respawnPosX, respawnPosY, respawnPosZ);
 		transform.rotation = Quaternion.identity;
 		ToggleHumanCollision(true);

@@ -105,6 +105,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private bool interactionLock;
     private float enterSpectatorModeTimer;
     private bool unlimitedStamina;
+    public bool insideBubbleShield;
     private EncryptedFloat originalSpeed;
     public EncryptedFloat totalSpeedBoost;
     private float itemSpeedModifier;
@@ -1181,6 +1182,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 	bool EnvObstructionExists(Vector3 a, Vector3 b) {
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
+        if (insideBubbleShield) {
+            return true;
+        }
 		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 17) | (1 << 18);
         ignoreLayers = ~ignoreLayers;
         RaycastHit hitInfo;
@@ -1323,6 +1327,18 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         LauncherScript l = hit.collider.gameObject.GetComponent<LauncherScript>();
         if (l != null) {
             l.Explode();
+        }
+    }
+
+    void OnCollisionEnter(Collision collision) {
+        if (collision.gameObject.layer == 22) {
+            insideBubbleShield = true;
+        }
+    }
+
+    void OnCollisionExit(Collision collision) {
+        if (collision.gameObject.layer == 22) {
+            insideBubbleShield = false;
         }
     }
 
@@ -1507,6 +1523,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hitTimer = 1f;
         healTimer = 1f;
         boostTimer = 1f;
+        insideBubbleShield = false;
         SetInteracting(false, null);
         interactionTimer = 0f;
         wepActionScript.deployInProgress = false;

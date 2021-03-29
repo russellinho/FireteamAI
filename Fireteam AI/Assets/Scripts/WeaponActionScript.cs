@@ -1466,6 +1466,9 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             return;
         }
         if (currentAmmo == 0) {
+            if (playerActionScript.weaponScript.currentlyEquippedType == -1) {
+                return;
+            }
             ReloadSupportItem();
         }
         if (currentAmmo <= 0) {
@@ -1547,6 +1550,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         } else if (weaponStats.category.Equals("Deployable")) {
             if (weaponStats.name.EndsWith("(Skill)")) {
                 DeployDeployable(deployPos, deployRot, true);
+                currentAmmo--;
                 // ResetDeployableState();
                 playerActionScript.weaponScript.DrawPrimary();
                 playerActionScript.skillController.ActivateBubbleShield();
@@ -1567,7 +1571,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         {
             // projectile.transform.right = -weaponHolderFpc.transform.forward;
             projectile.transform.right = -camTransform.forward;
-            projectile.GetComponent<LauncherScript>().Launch(pView.ViewID, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
+            projectile.GetComponent<LauncherScript>().Launch(pView.ViewID, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, playerActionScript.insideBubbleShield);
             currentAmmo--;
             playerActionScript.weaponScript.SyncAmmoCounts();
             fireTimer = 0.0f;
@@ -1607,7 +1611,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         PhotonView photonView = projectile.GetComponent<PhotonView>();
         object[] data = new object[]
         {
-            InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, camTransform.position.x, camTransform.position.y, camTransform.position.z, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, photonView.ViewID, playerActionScript.gameController.teamMap, pView.ViewID
+            InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, camTransform.position.x, camTransform.position.y, camTransform.position.z, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, photonView.ViewID, playerActionScript.gameController.teamMap, pView.ViewID, playerActionScript.insideBubbleShield
         };
 
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions
@@ -1647,7 +1651,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             
             // projectile.transform.right = -weaponHolderFpc.transform.forward;
             projectile.transform.right = -forward;
-            projectile.GetComponent<LauncherScript>().Launch((int) data[7], forward.x, forward.y, forward.z);
+            projectile.GetComponent<LauncherScript>().Launch((int) data[7], forward.x, forward.y, forward.z, (bool)data[10]);
             currentAmmo--;
             playerActionScript.weaponScript.SyncAmmoCounts();
             fireTimer = 0.0f;

@@ -28,6 +28,7 @@ public class LauncherScript : MonoBehaviour
     private float explosionActiveDelay;
     private float activeTime;
     private bool isInWater;
+    private bool insideBubbleShield;
 
     // Start is called before the first frame update
     void Awake()
@@ -60,9 +61,15 @@ public class LauncherScript : MonoBehaviour
 
     void OnCollisionEnter(Collision collision) {
         if (PhotonNetwork.IsMasterClient) {
-            if (isLive && collision.gameObject.layer != 4) {
+            if (isLive && collision.gameObject.layer != 4 && !insideBubbleShield) {
                 Explode();
             }
+        }
+    }
+
+    void OnCollisionExit(Collision collision) {
+        if (collision.gameObject.layer == 22) {
+            insideBubbleShield = false;
         }
     }
 
@@ -116,7 +123,7 @@ public class LauncherScript : MonoBehaviour
         return playersHit.Contains(vId);
     }
 
-    public void Launch(int thrownByPlayerViewId, float xForce, float yForce, float zForce) {
+    public void Launch(int thrownByPlayerViewId, float xForce, float yForce, float zForce, bool insideBubbleShield) {
         // Assign a reference to the player who launched this projectile
         // pView.RPC("RpcSetPlayerLaunchedByReference", RpcTarget.All, thrownByPlayer.GetComponent<PhotonView>().ViewID);
         SetPlayerLaunchedByReference(thrownByPlayerViewId);
@@ -124,6 +131,7 @@ public class LauncherScript : MonoBehaviour
         rBody.velocity = new Vector3(xForce * LAUNCH_FORCE_MULTIPLIER, yForce * LAUNCH_FORCE_MULTIPLIER, zForce * LAUNCH_FORCE_MULTIPLIER);
         isLive = true;
         rBody.freezeRotation = true;
+        this.insideBubbleShield = insideBubbleShield;
     }
 
     [PunRPC]
