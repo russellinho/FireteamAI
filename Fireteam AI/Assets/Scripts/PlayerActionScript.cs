@@ -296,6 +296,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
 
+        if (Input.GetKeyDown(KeyCode.L)) {
+            Debug.LogError("hey " + gameObject.name + " " + insideBubbleShield);
+        }
+
         UpdateFightingSpirit();
         UpdateRegeneration();
         UnlockInteractionLock();
