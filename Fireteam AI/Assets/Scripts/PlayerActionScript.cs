@@ -291,10 +291,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             gameController = gc.GetComponent<GameControllerScript>();
         }
 
-        if (Input.GetKeyDown(KeyCode.L)) {
-            Debug.LogError("hey " + gameObject.name + " " + insideBubbleShield);
-        }
-
         if (!pView.IsMine)
         {
             return;
@@ -412,7 +408,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (!pView.IsMine) {
             return;
         }
-        insideBubbleShield = false;
         if (!fpc.m_CharacterController.isGrounded) {
             UpdateVerticalVelocityBeforeLanding();
         }
@@ -1345,6 +1340,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             HandleExplosiveEffects(other);
             HandlePickups(other);
         }
+        if (other.GetComponentInParent<BubbleShieldScript>() != null) {
+            insideBubbleShield = true;
+        }
         // else
         // {
         //     if (other.gameObject.tag.Equals("AmmoBox"))
@@ -1363,6 +1361,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void OnTriggerExit(Collider other)
     {
+        if (other.GetComponentInParent<BubbleShieldScript>() != null) {
+            insideBubbleShield = false;
+        }
         if (other.gameObject.layer == WATER_LAYER) {
             isInWater = false;
         }
@@ -1375,9 +1376,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 return;
             }
             HandleEnvironmentEffects(other);
-        }
-        if (!insideBubbleShield && other.GetComponentInParent<BubbleShieldScript>() != null) {
-            insideBubbleShield = true;
         }
     }
 

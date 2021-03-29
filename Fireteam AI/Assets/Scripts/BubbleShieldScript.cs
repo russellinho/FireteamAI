@@ -10,6 +10,7 @@ public class BubbleShieldScript : MonoBehaviour
     private float timer;
     public float duration;
     private bool initializing;
+    public Transform childcol;
     public void Initialize(int level = 0)
     {
         initializing = true;
@@ -37,7 +38,9 @@ public class BubbleShieldScript : MonoBehaviour
                 DeployableScript d = deviceRef.GetComponent<DeployableScript>();
                 d.PlayBreakSound();
                 d.BeginDestroyItem();
-                gameObject.SetActive(false);
+                childcol.localPosition = new Vector3(-1000, -1000, -1000);
+                // gameObject.SetActive(false);
+                StartCoroutine("DeactivateMyself");
             }
         }
     }
@@ -51,5 +54,11 @@ public class BubbleShieldScript : MonoBehaviour
         } else {
             transform.localScale = new Vector3(MAX_SIZE, MAX_SIZE, MAX_SIZE);
         }
+    }
+
+    IEnumerator DeactivateMyself()
+    {
+        yield return new WaitForSeconds(0.75f);
+        gameObject.SetActive(false);
     }
 }
