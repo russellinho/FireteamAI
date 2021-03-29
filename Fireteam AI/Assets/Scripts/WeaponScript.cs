@@ -762,7 +762,11 @@ public class WeaponScript : MonoBehaviour
                 }
                 break;
             case "Deployable":
-                currentlyEquippedType = 4;
+                if (weaponName.EndsWith("(Skill)")) {
+                    currentlyEquippedType = -1;
+                } else {
+                    currentlyEquippedType = 4;
+                }
                 if (equipmentScript.isFirstPerson()) {
                     wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
                     weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
