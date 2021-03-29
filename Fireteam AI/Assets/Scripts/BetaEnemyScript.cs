@@ -20,7 +20,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private const float PLAYER_SCAN_DELAY = 0.8f;
 	private const float ENV_DAMAGE_DELAY = 0.5f;
 	private const int ENEMY_FIRE_IGNORE = ~(1 << 14 | 1 << 13);
-	private const int OBSCURE_IGNORE = ~(1 << 14 | 1 << 15 | 1 << 16 | 1 << 17);
+	private const int OBSCURE_IGNORE = ~(1 << 14 | 1 << 15 | 1 << 16 | 1 << 17 | 1 << 22);
 	private const float EXPLOSION_FORCE = 75;
 	private const float BULLET_FORCE = 50f;
 	private int HEALTH_KIT_DROP_CHANCE = 33;
