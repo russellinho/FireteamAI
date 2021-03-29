@@ -283,7 +283,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		UpdateHitmarker ();
 
-		container.ammoTxt.textObject.text = "" + wepActionScript.currentAmmo + '/' + wepActionScript.totalAmmoLeft;
+		container.ammoTxt.textObject.text = "" + wepActionScript.currentAmmo + "/" + wepActionScript.totalAmmoLeft;
 		
 		UpdateCursorStatus ();
 		if (gameController.matchType == 'V') {

@@ -1626,7 +1626,7 @@ namespace Photon.Pun.LobbySystemPhoton
 					serializedSpeakers += ",";
 				}
 				serializedSpeakers += p.Key + "|" + (p.Value.GetComponent<PlayerEntryPrefab>().campaignVoiceActiveIndicator.activeInHierarchy || p.Value.GetComponent<PlayerEntryPrefab>().blueVoiceActiveIndicator.activeInHierarchy || p.Value.GetComponent<PlayerEntryPrefab>().redVoiceActiveIndicator.activeInHierarchy)
-								+ '|' + (p.Value.GetComponent<PlayerEntryPrefab>().campaignReady.activeInHierarchy || p.Value.GetComponent<PlayerEntryPrefab>().blueReady.activeInHierarchy || p.Value.GetComponent<PlayerEntryPrefab>().redReady.activeInHierarchy);
+								+ "|" + (p.Value.GetComponent<PlayerEntryPrefab>().campaignReady.activeInHierarchy || p.Value.GetComponent<PlayerEntryPrefab>().blueReady.activeInHierarchy || p.Value.GetComponent<PlayerEntryPrefab>().redReady.activeInHierarchy);
 				first = false;
 			}
 
