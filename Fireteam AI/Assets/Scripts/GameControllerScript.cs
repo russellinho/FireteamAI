@@ -1166,7 +1166,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				b = d.initializeRef.GetComponent<BubbleShieldScript>();
 			}
 			s += d.deployableId + "|" + d.usesRemaining + "|" + d.gameObject.transform.position.x + "|" + d.gameObject.transform.position.y + "|" + d.gameObject.transform.position.z + "|" + d.gameObject.transform.rotation.eulerAngles.x + "|" + d.gameObject.transform.rotation.eulerAngles.y + "|" + d.gameObject.transform.rotation.eulerAngles.z + "|" + d.refString + "|" + (b == null ? 0f : b.duration);
-			Debug.LogError("MAKING " + s);
 			first = false;
 		}
 		return s;
@@ -1360,22 +1359,23 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			parsedSerializations = serializedDeployables.Split(',');
 			foreach (string d in parsedSerializations)
 			{
-				Debug.LogError("parsedS: " + parsedSerializations[0]);
 				string[] dDetails = d.Split('|');
-				Debug.LogError("dDetails : " + dDetails.Length);
-				// Sync deployable
-				GameObject o = GameObject.Instantiate((GameObject)Resources.Load(dDetails[8]), new Vector3(float.Parse(dDetails[2]), float.Parse(dDetails[3]), float.Parse(dDetails[4])), Quaternion.Euler(float.Parse(dDetails[5]), float.Parse(dDetails[6]), float.Parse(dDetails[7])));
-				DeployableScript dScript = o.GetComponent<DeployableScript>();
-				dScript.deployableId = int.Parse(dDetails[0]);
-				dScript.usesRemaining = short.Parse(dDetails[1]);
-				if (dScript.initializeRef != null) {
-					BubbleShieldScript b = dScript.initializeRef.GetComponent<BubbleShieldScript>();
-					if (b != null) {
-						dScript.initializeRef.SetActive(true);
-						b.SyncShield(float.Parse(dDetails[9]));
+				int parsedId = int.Parse(dDetails[0]);
+				if (!deployableList.ContainsKey(parsedId)) {
+					// Sync deployable
+					GameObject o = GameObject.Instantiate((GameObject)Resources.Load(dDetails[8]), new Vector3(float.Parse(dDetails[2]), float.Parse(dDetails[3]), float.Parse(dDetails[4])), Quaternion.Euler(float.Parse(dDetails[5]), float.Parse(dDetails[6]), float.Parse(dDetails[7])));
+					DeployableScript dScript = o.GetComponent<DeployableScript>();
+					dScript.deployableId = parsedId;
+					dScript.usesRemaining = short.Parse(dDetails[1]);
+					if (dScript.initializeRef != null) {
+						BubbleShieldScript b = dScript.initializeRef.GetComponent<BubbleShieldScript>();
+						if (b != null) {
+							dScript.initializeRef.SetActive(true);
+							b.SyncShield(float.Parse(dDetails[9]));
+						}
 					}
+					DeployDeployable(dScript.deployableId, o);
 				}
-				DeployDeployable(dScript.deployableId, o);
 			}
 		}
 	}
