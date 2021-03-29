@@ -1571,7 +1571,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         {
             // projectile.transform.right = -weaponHolderFpc.transform.forward;
             projectile.transform.right = -camTransform.forward;
-            projectile.GetComponent<LauncherScript>().Launch(pView.ViewID, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, playerActionScript.insideBubbleShield);
+            projectile.GetComponent<LauncherScript>().Launch(pView.ViewID, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
             currentAmmo--;
             playerActionScript.weaponScript.SyncAmmoCounts();
             fireTimer = 0.0f;
@@ -1611,7 +1611,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         PhotonView photonView = projectile.GetComponent<PhotonView>();
         object[] data = new object[]
         {
-            InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, camTransform.position.x, camTransform.position.y, camTransform.position.z, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, photonView.ViewID, playerActionScript.gameController.teamMap, pView.ViewID, playerActionScript.insideBubbleShield
+            InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, camTransform.position.x, camTransform.position.y, camTransform.position.z, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, photonView.ViewID, playerActionScript.gameController.teamMap, pView.ViewID
         };
 
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions
@@ -1651,7 +1651,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             
             // projectile.transform.right = -weaponHolderFpc.transform.forward;
             projectile.transform.right = -forward;
-            projectile.GetComponent<LauncherScript>().Launch((int) data[7], forward.x, forward.y, forward.z, (bool)data[10]);
+            projectile.GetComponent<LauncherScript>().Launch((int) data[7], forward.x, forward.y, forward.z);
             currentAmmo--;
             playerActionScript.weaponScript.SyncAmmoCounts();
             fireTimer = 0.0f;

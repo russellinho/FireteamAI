@@ -408,6 +408,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (!pView.IsMine) {
             return;
         }
+        insideBubbleShield = false;
         if (!fpc.m_CharacterController.isGrounded) {
             UpdateVerticalVelocityBeforeLanding();
         }
@@ -1330,18 +1331,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    void OnCollisionEnter(Collision collision) {
-        if (collision.gameObject.layer == 22) {
-            insideBubbleShield = true;
-        }
-    }
-
-    void OnCollisionExit(Collision collision) {
-        if (collision.gameObject.layer == 22) {
-            insideBubbleShield = false;
-        }
-    }
-
     void OnTriggerEnter(Collider other)
     {
         if (pView.IsMine)
@@ -1382,6 +1371,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 return;
             }
             HandleEnvironmentEffects(other);
+        }
+        if (!insideBubbleShield && other.GetComponentInParent<BubbleShieldScript>() != null) {
+            insideBubbleShield = true;
         }
     }
 

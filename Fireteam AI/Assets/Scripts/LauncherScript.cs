@@ -69,6 +69,7 @@ public class LauncherScript : MonoBehaviour
 
     void OnCollisionExit(Collision collision) {
         if (collision.gameObject.layer == 22) {
+            Debug.LogError("exited");
             insideBubbleShield = false;
         }
     }
@@ -123,7 +124,7 @@ public class LauncherScript : MonoBehaviour
         return playersHit.Contains(vId);
     }
 
-    public void Launch(int thrownByPlayerViewId, float xForce, float yForce, float zForce, bool insideBubbleShield) {
+    public void Launch(int thrownByPlayerViewId, float xForce, float yForce, float zForce) {
         // Assign a reference to the player who launched this projectile
         // pView.RPC("RpcSetPlayerLaunchedByReference", RpcTarget.All, thrownByPlayer.GetComponent<PhotonView>().ViewID);
         SetPlayerLaunchedByReference(thrownByPlayerViewId);
@@ -131,7 +132,6 @@ public class LauncherScript : MonoBehaviour
         rBody.velocity = new Vector3(xForce * LAUNCH_FORCE_MULTIPLIER, yForce * LAUNCH_FORCE_MULTIPLIER, zForce * LAUNCH_FORCE_MULTIPLIER);
         isLive = true;
         rBody.freezeRotation = true;
-        this.insideBubbleShield = insideBubbleShield;
     }
 
     [PunRPC]

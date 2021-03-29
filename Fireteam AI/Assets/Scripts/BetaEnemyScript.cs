@@ -513,6 +513,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		} else if (gameControllerScript.matchType == 'V') {
 			FixedUpdateForVersus();
 		}
+		insideBubbleShield = false;
 	}
 
 	void FixedUpdateForCampaign() {
@@ -1385,18 +1386,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 	}
 
-	void OnCollisionEnter(Collision collision) {
-        if (collision.gameObject.layer == 22) {
-            insideBubbleShield = true;
-        }
-    }
-
-    void OnCollisionExit(Collision collision) {
-        if (collision.gameObject.layer == 22) {
-            insideBubbleShield = false;
-        }
-    }
-
 	void OnTriggerEnter(Collider other) {
 		if (gameControllerScript.matchType == 'V') {
 			OnTriggerEnterForVersus(other);
@@ -1425,6 +1414,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		} else {
 			OnTriggerStayForCampaign(other);
 		}
+		if (!insideBubbleShield && other.GetComponentInParent<BubbleShieldScript>() != null) {
+            insideBubbleShield = true;
+        }
 	}
 
 	void OnTriggerStayForCampaign(Collider other) {
