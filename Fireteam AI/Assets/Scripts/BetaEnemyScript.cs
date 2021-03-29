@@ -2762,7 +2762,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					navMesh.enabled, navMesh.speed, navMeshObstacle.enabled, 
 					gunRef.weaponParts[0].enabled, prevNavDestination.x, prevNavDestination.y, prevNavDestination.z, prevWasStopped, actionState, firingState, isCrouching, health, disorientationTime,
 					spawnPos.x, spawnPos.y, spawnPos.z, alertStatus, wasMasterClient, currentBullets, fireTimer, playerTargetingId, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z,
-					suspicionMeter, suspicionCoolDownDelay, increaseSuspicionDelay, alertTeamAfterAlertedTimer, inCover, crouchMode, gameControllerScript.teamMap);
+					suspicionMeter, suspicionCoolDownDelay, increaseSuspicionDelay, alertTeamAfterAlertedTimer, inCover, crouchMode, detectionOutlineTimer, gameControllerScript.teamMap);
 		}
 	}
 
@@ -2772,7 +2772,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					float preNavDestZ, bool prevWasStopped, ActionStates acState, FiringStates fiState, bool isCrouching, int health, float disorientationTime,
 					float spawnPosX, float spawnPosY, float spawnPosZ, AlertStatus alertStatus, bool wasMasterClient, int currentBullets, float fireTimer,
 					int playerTargetingId, float lastSeenPlayerPosX, float lastSeenPlayerPosY, float lastSeenPlayerPosZ, float suspicionMeter, float suspicionCoolDownDelay,
-					float increaseSuspicionDelay, float alertTeamAfterAlertedTimer, bool inCover, CrouchMode crouchMode, string team) {
+					float increaseSuspicionDelay, float alertTeamAfterAlertedTimer, bool inCover, CrouchMode crouchMode, float detectionOutlineTimer, string team) {
 		if (team != gameControllerScript.teamMap) return;
 		// if (playerDespawned) {
 		// 	modeler.DespawnPlayer();
@@ -2803,6 +2803,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		this.wasMasterClient = wasMasterClient;
 		this.currentBullets = currentBullets;
 		this.fireTimer = fireTimer;
+		this.detectionOutlineTimer = detectionOutlineTimer;
 		if (playerTargetingId == -1) {
 			playerTargeting = null;
 		} else if (playerTargetingId == -2) {
