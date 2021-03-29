@@ -291,13 +291,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             gameController = gc.GetComponent<GameControllerScript>();
         }
 
+        if (Input.GetKeyDown(KeyCode.L)) {
+            Debug.LogError("hey " + gameObject.name + " " + insideBubbleShield);
+        }
+
         if (!pView.IsMine)
         {
             return;
-        }
-
-        if (Input.GetKeyDown(KeyCode.L)) {
-            Debug.LogError("hey " + gameObject.name + " " + insideBubbleShield);
         }
 
         UpdateFightingSpirit();
