@@ -433,7 +433,7 @@ public class WeaponScript : MonoBehaviour
             weaponActionScript.currentAmmo = currentAmmoSupport;
             weaponActionScript.totalAmmoLeft = totalSupportAmmoLeft;
         }
-        else if (weaponCat == -1)
+        else if (weaponCat == -1 || weaponCat == -2 || weaponCat == -3)
         {
             weaponActionScript.currentAmmo = 1;
             weaponActionScript.totalAmmoLeft = 0;

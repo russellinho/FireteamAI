@@ -308,6 +308,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             return;
         }
         if (weaponStats.category.Equals("Etc")) {
+            Debug.LogError("WAS ETC");
             FireEtc();
             return;
         }
@@ -1357,7 +1358,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     isWieldingThrowable = true;
                     isWieldingBooster = false;
                     isWieldingDeployable = false;
-                } else if (weaponStats.category.Equals("Booster")) {
+                } else if (weaponStats.category.Equals("Booster") || weaponStats.category.Equals("Etc")) {
                     isWieldingThrowable = false;
                     isWieldingBooster = true;
                     isWieldingDeployable = false;
