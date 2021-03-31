@@ -4,19 +4,13 @@ using UnityEngine;
 
 public class BoosterScript : MonoBehaviour
 {
-    private PlayerActionScript playerActionScript;
 
-    void Start()
-    {
-      playerActionScript = transform.GetComponentInParent<PlayerActionScript>();
-    }
-
-    public void UseBoosterItem(string boosterName) {
+    public void UseBoosterItem(string boosterName, PlayerActionScript playerActionScript) {
       if (boosterName.Equals("Medkit")) {
-              UseMedKit();
+              UseMedKit(playerActionScript);
           }
       else if (boosterName.Equals("Adrenaphine")) {
-              UseAdrenaphine();
+              UseAdrenaphine(playerActionScript);
           }
       else {
         Debug.Log("Hello" + boosterName);
@@ -24,14 +18,14 @@ public class BoosterScript : MonoBehaviour
     }
 
 
-    public void UseMedKit() {
+    public void UseMedKit(PlayerActionScript playerActionScript) {
       playerActionScript.ResetHealTimer();
       playerActionScript.PlayHealParticleEffect();
       playerActionScript.audioController.PlayGruntSound();
       playerActionScript.InjectMedkit();
     }
 
-    public void UseAdrenaphine() {
+    public void UseAdrenaphine(PlayerActionScript playerActionScript) {
       playerActionScript.ResetBoostTimer();
       playerActionScript.PlayBoostParticleEffect(true);
       playerActionScript.audioController.PlayGruntSound();

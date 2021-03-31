@@ -185,6 +185,24 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
+    public void DrawEcmFeedbackSkill()
+    {
+        if (CheckCanSwitchWeapon()) {
+            if (currentlyEquippedType == -2) return;
+            DrawWeapon(-2);
+            currentlyEquippedType = -2;
+        }
+    }
+
+    public void DrawInfraredScanSkill()
+    {
+        if (CheckCanSwitchWeapon()) {
+            if (currentlyEquippedType == -3) return;
+            DrawWeapon(-3);
+            currentlyEquippedType = -3;
+        }
+    }
+
     void Update() {
         if (!initialized) {
             return;
@@ -351,6 +369,16 @@ public class WeaponScript : MonoBehaviour
             weaponActionScript.hudScript.ToggleCrosshair(false);
             equippedWep = "Bubble Shield (Skill)";
             modInfo = PlayerData.playerdata.supportModInfo;
+        } else if (weaponCat == -2)
+        {
+            weaponActionScript.hudScript.ToggleCrosshair(false);
+            equippedWep = "ECM Feedback (Skill)";
+            modInfo = PlayerData.playerdata.supportModInfo;
+        } else if (weaponCat == -3)
+        {
+            weaponActionScript.hudScript.ToggleCrosshair(false);
+            equippedWep = "Infrared Scan (Skill)";
+            modInfo = PlayerData.playerdata.supportModInfo;
         }
         pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, modInfo.EquippedSuppressor, modInfo.EquippedSight);
     }
@@ -359,7 +387,7 @@ public class WeaponScript : MonoBehaviour
     private void RpcDrawWeapon(int weaponCat, string equippedWep, string equippedSuppressor, string equippedSight) {
         weaponReady = false;
         currentlyEquippedType = weaponCat;
-        if (weaponCat == -1) weaponCat = 4;
+        if (weaponCat == -1 || weaponCat == -2 || weaponCat == -3) weaponCat = 4;
         if (!equipmentScript.isFirstPerson()) {
             animator.SetInteger("WeaponType", weaponCat);
             EquipWeapon(equippedWep, equippedSuppressor, equippedSight, null);
@@ -477,6 +505,14 @@ public class WeaponScript : MonoBehaviour
     }
 
     void EquipBoosterInGame() {
+        if (equipmentScript.isFirstPerson()) {
+            weaponHolderFpc.SetWeaponPosition(true);
+        } else {
+            weaponHolder.SetWeaponPosition(false);
+        }
+    }
+
+    void EquipEtcInGame() {
         if (equipmentScript.isFirstPerson()) {
             weaponHolderFpc.SetWeaponPosition(true);
         } else {
@@ -784,6 +820,32 @@ public class WeaponScript : MonoBehaviour
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
                     playerActionScript.skillController.InitializePassiveSkills(9);
+                    SetWeaponCulling(wepEquipped);
+                }
+                break;
+            case "Etc":
+                if (weaponName.EndsWith("k (Skill)")) {
+                    currentlyEquippedType = -2;
+                } else if (weaponName.EndsWith("n (Skill)")) {
+                    currentlyEquippedType = -3;
+                } else {
+                    currentlyEquippedType = 4;
+                }
+                if (equipmentScript.isFirstPerson()) {
+                    wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
+                    weaponActionScript.animatorFpc.SetBool("isShotgun", false);
+                    weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                    SetWeaponCulling(wepEquipped);
+                } else {
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                }
+                equippedWepInGame = weaponName;
+                EquipEtcInGame();
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
+                weaponActionScript.SetCurrentAimDownSightPos(sightName);
+                weaponActionScript.hudScript.EquipSightCrosshair(false);
+                if (equipmentScript.isFirstPerson()) {
                     SetWeaponCulling(wepEquipped);
                 }
                 break;

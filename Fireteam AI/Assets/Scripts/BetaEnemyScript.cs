@@ -1355,6 +1355,14 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 	}
 
+	public void SetThisEnemyDisoriented(float time)
+	{
+		disorientationTime = time;
+		actionState = ActionStates.Disoriented;
+		PlayGruntSound();
+		isCrouching = false;
+	}
+
 	bool TargetIsWithinMeleeDistance() {
 		RaycastHit hit;
 		Vector3 meleeTargetPos = new Vector3(playerTargeting.transform.position.x, playerTargeting.transform.position.y + 0.5f, playerTargeting.transform.position.z);
@@ -2502,14 +2510,14 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	void HandleDetectionOutline() {
-		if (gameControllerScript.assaultMode) {
-			if (isOutlined) {
-				detectionOutlineTimer = 0f;
-				isOutlined = false;
-				ToggleDetectionOutline(false);
-			}
-			return;
-		}
+		// if (gameControllerScript.assaultMode) {
+		// 	if (isOutlined) {
+		// 		detectionOutlineTimer = 0f;
+		// 		isOutlined = false;
+		// 		ToggleDetectionOutline(false);
+		// 	}
+		// 	return;
+		// }
 		if (detectionOutlineTimer <= 0f) {
 			if (isOutlined) {
 				isOutlined = false;
@@ -2533,6 +2541,11 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	void RpcMarkEnemyOutline(string team, int timeMultiplier) {
         if (team != gameControllerScript.teamMap) return;
         detectionOutlineTimer = DETECTION_OUTLINE_MAX_TIME * timeMultiplier;
+	}
+
+	public void MarkEnemyOutlineInstant(float duration)
+	{
+		detectionOutlineTimer = duration;
 	}
 
 	void DropAmmoPickup() {

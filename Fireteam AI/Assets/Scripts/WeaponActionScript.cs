@@ -307,6 +307,10 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             FireBooster();
             return;
         }
+        if (weaponStats.category.Equals("Etc")) {
+            FireEtc();
+            return;
+        }
         if (weaponStats.category.Equals("Deployable")) {
             FireDeployable();
             return;
@@ -1459,6 +1463,30 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
     }
 
+    void FireEtc()
+    {
+        if (fireTimer < weaponStats.fireRate || hudScript.container.pauseMenuGUI.pauseActive)
+        {
+            ResetBoosterState();
+            return;
+        }
+        if (currentAmmo == 0) {
+            if (playerActionScript.weaponScript.currentlyEquippedType == -2 || playerActionScript.weaponScript.currentlyEquippedType == -3) {
+                return;
+            }
+            ReloadSupportItem();
+        }
+        if (currentAmmo <= 0) {
+            ResetBoosterState();
+            return;
+        }
+        if (isWieldingBooster && PlayerPreferences.playerPreferences.KeyWasPressed("Fire")) {
+            pView.RPC("RpcUseBooster", RpcTarget.All);
+            animatorFpc.SetTrigger("UseBooster");
+            isUsingBooster = true;
+        }
+    }
+
     void FireDeployable() {
         if (fireTimer < weaponStats.fireRate || hudScript.container.pauseMenuGUI.pauseActive)
         {
@@ -1543,7 +1571,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         } else if (weaponStats.category.Equals("Booster")) {
             // Reset fire timer and subtract ammo used
             BoosterScript boosterScript = weaponMetaData.GetComponentInChildren<BoosterScript>();
-            boosterScript.UseBoosterItem(weaponStats.name);
+            boosterScript.UseBoosterItem(weaponStats.name, playerActionScript);
             currentAmmo--;
             playerActionScript.weaponScript.SyncAmmoCounts();
             fireTimer = 0.0f;
@@ -1559,6 +1587,18 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                 currentAmmo--;
                 playerActionScript.weaponScript.SyncAmmoCounts();
                 fireTimer = 0.0f;
+            }
+        } else if (weaponStats.category.Equals("Etc")) {
+            if (weaponStats.name.EndsWith("(Skill)")) {
+                PhoneDeviceScript p = weaponMetaData.GetComponentInChildren<PhoneDeviceScript>();
+                p.UseDevice(playerActionScript);
+                if (playerActionScript.weaponScript.currentlyEquippedType == -2) {
+                    playerActionScript.skillController.ActivateEcmFeedback();
+                } else if (playerActionScript.weaponScript.currentlyEquippedType == -3) {
+                    playerActionScript.skillController.ActivateInfraredScan();
+                }
+                currentAmmo--;
+                playerActionScript.weaponScript.DrawPrimary();
             }
         }
     }

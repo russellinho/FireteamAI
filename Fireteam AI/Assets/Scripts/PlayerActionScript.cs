@@ -1275,6 +1275,90 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
+    public void TriggerEcmFeedback(int level, float duration)
+    {
+        string s = "";
+        int aliveCount = 0;
+        int[] aliveIds = new int[gameController.enemyList.Count];
+        foreach (KeyValuePair<int, GameObject> p in gameController.enemyList) {
+            if (p.Value.GetComponent<BetaEnemyScript>().health > 0) {
+                aliveIds[aliveCount++] = p.Key;
+            }
+        }
+        if (level == 1) {
+            int aliveToTrigger = aliveCount / 3;
+            if (aliveCount > 0 && aliveCount <= 2) {
+                aliveCount = 1;
+            }
+        } else if (level == 2) {
+            int aliveToTrigger = aliveCount / 2;
+            if (aliveCount > 0 && aliveCount <= 1) {
+                aliveCount = 1;
+            }
+        } else if (level == 3) {
+            int aliveToTrigger = 7 * aliveCount / 10;
+            if (aliveCount > 0 && aliveCount <= 7) {
+                aliveCount = 1;
+            }
+        }
+        for (int i = 0; i < aliveCount; i++) {
+            if (i != 0) {
+                s += ",";
+            }
+            s += aliveIds[i];
+        }
+        pView.RPC("RpcSyncEcmFeedback", RpcTarget.All, s, duration);
+    }
+
+    [PunRPC]
+    void RpcSyncEcmFeedback(string enemyIds, float duration)
+    {
+        if (gameObject.layer == 0) return;
+        string[] ss = enemyIds.Split(',');
+        foreach (string s in ss) {
+            int i = int.Parse(s);
+            GameObject o = gameController.enemyList[i];
+            BetaEnemyScript b = o.GetComponent<BetaEnemyScript>();
+            if (b.health > 0) {
+                b.SetThisEnemyDisoriented(duration);
+            }
+        }
+    }
+    
+    public void TriggerInfraredScan(float duration)
+    {
+        string s = "";
+        int aliveCount = 0;
+        int[] aliveIds = new int[gameController.enemyList.Count];
+        foreach (KeyValuePair<int, GameObject> p in gameController.enemyList) {
+            if (p.Value.GetComponent<BetaEnemyScript>().health > 0) {
+                aliveIds[aliveCount++] = p.Key;
+            }
+        }
+        for (int i = 0; i < aliveCount; i++) {
+            if (i != 0) {
+                s += ",";
+            }
+            s += aliveIds[i];
+        }
+        pView.RPC("RpcSyncInfraredScan", RpcTarget.All, s, duration);
+    }
+
+    [PunRPC]
+    void RpcSyncInfraredScan(string enemyIds, float duration)
+    {
+        if (gameObject.layer == 0) return;
+        string[] ss = enemyIds.Split(',');
+        foreach (string s in ss) {
+            int i = int.Parse(s);
+            GameObject o = gameController.enemyList[i];
+            BetaEnemyScript b = o.GetComponent<BetaEnemyScript>();
+            if (b.health > 0) {
+                b.MarkEnemyOutlineInstant(duration);
+            }
+        }
+    }
+
     void HandleEnvironmentEffects(Collider other) {
 		if (health <= 0 || envDamageTimer < ENV_DAMAGE_DELAY || fightingSpiritTimer > 0f) {
 			return;
@@ -2385,8 +2469,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 // Skill effect
                 PlayBoostParticleEffect(true);
             }
+        } else if (skill == 6) {
+            weaponScript.DrawEcmFeedbackSkill();
         } else if (skill == 7) {
             weaponScript.DrawBubbleShieldSkill();
+        } else if (skill == 8) {
+            weaponScript.DrawInfraredScanSkill();
         } else if (skill == 9) {
             if (skillController.CanCallGuardianAngel()) {
                 hud.ActivateGuardianAngel();

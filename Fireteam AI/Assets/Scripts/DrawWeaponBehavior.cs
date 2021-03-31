@@ -26,6 +26,10 @@ public class DrawWeaponBehavior : StateMachineBehaviour
           ws.EquipWeapon(ws.equippedSupportWeapon, PlayerData.playerdata.supportModInfo.EquippedSuppressor, PlayerData.playerdata.supportModInfo.EquippedSight, null);
        } else if (ws.currentlyEquippedType == -1) {
           ws.EquipWeapon("Bubble Shield (Skill)", PlayerData.playerdata.supportModInfo.EquippedSuppressor, PlayerData.playerdata.supportModInfo.EquippedSight, null);
+       } else if (ws.currentlyEquippedType == -2) {
+          ws.EquipWeapon("ECM Feedback (Skill)", PlayerData.playerdata.supportModInfo.EquippedSuppressor, PlayerData.playerdata.supportModInfo.EquippedSight, null);
+       } else if (ws.currentlyEquippedType == -3) {
+          ws.EquipWeapon("Infrared Scan (Skill)", PlayerData.playerdata.supportModInfo.EquippedSuppressor, PlayerData.playerdata.supportModInfo.EquippedSight, null);
        }
     }
 

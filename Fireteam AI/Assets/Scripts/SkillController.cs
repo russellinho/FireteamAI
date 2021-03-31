@@ -37,6 +37,12 @@ public class SkillController : MonoBehaviour
     private const float BUBBLE_SHIELD_COOLDOWN_1 = 480f;
     private const float BUBBLE_SHIELD_COOLDOWN_2 = 480f;
     private const float BUBBLE_SHIELD_COOLDOWN_3 = 480f;
+    private const float ECM_FEEDBACK_COOLDOWN_1 = 900f;
+    private const float ECM_FEEDBACK_COOLDOWN_2 = 720f;
+    private const float ECM_FEEDBACK_COOLDOWN_3 = 600f;
+    private const float INFRARED_SCAN_COOLDOWN_1 = 1200f;
+    private const float INFRARED_SCAN_COOLDOWN_2 = 1080f;
+    private const float INFRARED_SCAN_COOLDOWN_3 = 900f;
     private const float RAMPAGE_TIME_1 = 10f;
     private const float RAMPAGE_TIME_2 = 20f;
     private const float RAMPAGE_TIME_3 = 30f;
@@ -90,6 +96,8 @@ public class SkillController : MonoBehaviour
     private float bulletStreamTimer;
     private float bulletStreamCooldown;
     private float bubbleShieldCooldown;
+    private float ecmFeedbackCooldown;
+    private float infraredScanCooldown;
     private float rampageTimer;
     private float rampageCooldown;
 
@@ -138,6 +146,8 @@ public class SkillController : MonoBehaviour
         UpdateSnipersDel();
         UpdateBulletStream();
         UpdateBubbleShield();
+        UpdateEcmFeedback();
+        UpdateInfraredScan();
         UpdateRampage();
         UpdateRegenerator();
         UpdatePainkiller();
@@ -1546,8 +1556,12 @@ public class SkillController : MonoBehaviour
             return snipersDelCooldown <= 0f;
         } else if (skill == 5) {
             return bulletStreamCooldown <= 0f;
+        } else if (skill == 6) {
+            return ecmFeedbackCooldown <= 0f;
         } else if (skill == 7) {
             return bubbleShieldCooldown <= 0f;
+        } else if (skill == 8) {
+            return infraredScanCooldown <= 0f;
         } else if (skill == 9) {
             return CanCallGuardianAngel();
         }
@@ -1564,8 +1578,12 @@ public class SkillController : MonoBehaviour
             return PlayerData.playerdata.skillList["5/10"].Level > 0;
         } else if (skill == 5) {
             return PlayerData.playerdata.skillList["6/11"].Level > 0;
+        } else if (skill == 6) {
+            return PlayerData.playerdata.skillList["2/10"].Level > 0;
         } else if (skill == 7) {
             return PlayerData.playerdata.skillList["2/11"].Level > 0;
+        } else if (skill == 8) {
+            return PlayerData.playerdata.skillList["2/9"].Level > 0;
         } else if (skill == 9) {
             return PlayerData.playerdata.skillList["4/9"].Level > 0;
         }
@@ -1649,6 +1667,32 @@ public class SkillController : MonoBehaviour
         }
     }
 
+    public void ActivateEcmFeedback()
+    {
+        if (ecmFeedbackCooldown <= 0f) {
+            if (PlayerData.playerdata.skillList["2/10"].Level == 1) {
+                ecmFeedbackCooldown = ECM_FEEDBACK_COOLDOWN_1;
+            } else if (PlayerData.playerdata.skillList["2/10"].Level == 2) {
+                ecmFeedbackCooldown = ECM_FEEDBACK_COOLDOWN_2;
+            } else if (PlayerData.playerdata.skillList["2/10"].Level == 3) {
+                ecmFeedbackCooldown = ECM_FEEDBACK_COOLDOWN_3;
+            }
+        }
+    }
+
+    public void ActivateInfraredScan()
+    {
+        if (infraredScanCooldown <= 0f) {
+            if (PlayerData.playerdata.skillList["2/9"].Level == 1) {
+                infraredScanCooldown = INFRARED_SCAN_COOLDOWN_1;
+            } else if (PlayerData.playerdata.skillList["2/9"].Level == 2) {
+                infraredScanCooldown = INFRARED_SCAN_COOLDOWN_2;
+            } else if (PlayerData.playerdata.skillList["2/9"].Level == 3) {
+                infraredScanCooldown = INFRARED_SCAN_COOLDOWN_3;
+            }
+        }
+    }
+
     public bool ActivateRampage()
     {
         if (rampageCooldown <= 0f) {
@@ -1703,6 +1747,20 @@ public class SkillController : MonoBehaviour
     {
         if (bubbleShieldCooldown > 0f) {
             bubbleShieldCooldown -= Time.deltaTime;
+        }
+    }
+
+    void UpdateEcmFeedback()
+    {
+        if (ecmFeedbackCooldown > 0f) {
+            ecmFeedbackCooldown -= Time.deltaTime;
+        }
+    }
+
+    void UpdateInfraredScan()
+    {
+        if (infraredScanCooldown > 0f) {
+            infraredScanCooldown -= Time.deltaTime;
         }
     }
 
@@ -2165,6 +2223,30 @@ public class SkillController : MonoBehaviour
     public int GetOvershield()
     {
         return overshield;
+    }
+
+    public float GetEcmFeedbackTime()
+    {
+        if (PlayerData.playerdata.skillList["2/10"].Level == 1) {
+            return 8f;
+        } else if (PlayerData.playerdata.skillList["2/10"].Level == 2) {
+            return 12f;
+        } else if (PlayerData.playerdata.skillList["2/10"].Level == 3) {
+            return 15f;
+        }
+        return 0f;
+    }
+
+    public float GetInfraredScanTime()
+    {
+        if (PlayerData.playerdata.skillList["2/9"].Level == 1) {
+            return 10f;
+        } else if (PlayerData.playerdata.skillList["2/9"].Level == 2) {
+            return 15f;
+        } else if (PlayerData.playerdata.skillList["2/9"].Level == 3) {
+            return 20f;
+        }
+        return 0f;
     }
 
     public int GetOvershieldRecoverTime()
