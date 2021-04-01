@@ -308,7 +308,6 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             return;
         }
         if (weaponStats.category.Equals("Etc")) {
-            Debug.LogError("WAS ETC");
             FireEtc();
             return;
         }

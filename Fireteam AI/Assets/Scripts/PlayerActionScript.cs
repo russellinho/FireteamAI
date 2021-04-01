@@ -1315,6 +1315,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (gameObject.layer == 0) return;
         string[] ss = enemyIds.Split(',');
+        Debug.LogError("enemies disorint: " + enemyIds);
         foreach (string s in ss) {
             int i = int.Parse(s);
             GameObject o = gameController.enemyList[i];
@@ -2470,11 +2471,17 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 PlayBoostParticleEffect(true);
             }
         } else if (skill == 6) {
-            weaponScript.DrawEcmFeedbackSkill();
+            if (skillController.HasSkill(6)) {
+                weaponScript.DrawEcmFeedbackSkill();
+            }
         } else if (skill == 7) {
-            weaponScript.DrawBubbleShieldSkill();
+            if (skillController.HasSkill(7)) {
+                weaponScript.DrawBubbleShieldSkill();
+            }
         } else if (skill == 8) {
-            weaponScript.DrawInfraredScanSkill();
+            if (skillController.HasSkill(8)) {
+                weaponScript.DrawInfraredScanSkill();
+            }
         } else if (skill == 9) {
             if (skillController.CanCallGuardianAngel()) {
                 hud.ActivateGuardianAngel();

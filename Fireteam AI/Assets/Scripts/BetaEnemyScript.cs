@@ -1361,6 +1361,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		actionState = ActionStates.Disoriented;
 		PlayGruntSound();
 		isCrouching = false;
+		alertStatus = AlertStatus.Alert;
+		AdjustRangeForAlertStatus();
 	}
 
 	bool TargetIsWithinMeleeDistance() {
