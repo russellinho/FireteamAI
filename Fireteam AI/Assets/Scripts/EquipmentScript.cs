@@ -142,6 +142,7 @@ public class EquipmentScript : MonoBehaviour
         pView.RPC("RpcEquipFootwearInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedFootwear);
         pView.RPC("RpcEquipArmorInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedArmor);
         SetOriginalFpcMaterials();
+        SetOriginalMaterials();
 
         initialized = true;
     }
@@ -1076,12 +1077,10 @@ public class EquipmentScript : MonoBehaviour
     [PunRPC]
     private void RpcEquipArmorInGame(string armor) {
         if (armor == null || armor.Equals("")) {
-            SetOriginalMaterials();
             return;
         }
         equippedArmor = armor;
         EquipArmorInGame();
-        SetOriginalMaterials();
     }
 
     void EquipArmorInGame() {
@@ -1316,6 +1315,7 @@ public class EquipmentScript : MonoBehaviour
         this.equippedCharacter = equippedCharacter;
         if (equippedSkinRef == null) {
             SyncEquips();
+            SetOriginalMaterials();
         }
 	}
 
