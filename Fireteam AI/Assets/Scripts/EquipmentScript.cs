@@ -261,7 +261,6 @@ public class EquipmentScript : MonoBehaviour
         originalBottomMat = equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
         originalFootwearMat = equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
         originalSkinMat = equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
-        Debug.LogError(gameObject.name + " " + originalSkinMat.name);
         if (renderHair) {
             originalHairMat = myHairRenderer.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
         }
