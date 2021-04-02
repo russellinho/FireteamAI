@@ -16,6 +16,9 @@ public class EquipmentScript : MonoBehaviour
     public WeaponScript tws;
     public GameObject fullBodyRef;
     public GameObject firstPersonRef;
+    public Material camoMat;
+    public GameObject reflectionProbe;
+    public GameObject reflectionProbeFpc;
 
     public string equippedCharacter;
     public string characterGender;
@@ -53,6 +56,21 @@ public class EquipmentScript : MonoBehaviour
     public GameObject myFpcSkinRenderer;
     public GameObject myFpcTopRenderer;
     public GameObject myFpcGlovesRenderer;
+    private Material originalEyeMat;
+    private Material originalEyelashMat;
+    private Material originalGlovesMat;
+    private Material originalTopMat;
+    private Material originalBottomMat;
+    private Material originalFootwearMat;
+    private Material originalSkinMat;
+    private Material originalHairMat;
+    private Material originalFacewearMat;
+    private Material originalHeadgearMat;
+    private Material originalArmorTopMat;
+    private Material originalArmorBottomMat;
+    private Material originalFpcSkinMat;
+    private Material originalFpcTopMat;
+    private Material originalFpcGloveMat;
 
     public bool renderHair;
 
@@ -123,6 +141,7 @@ public class EquipmentScript : MonoBehaviour
         pView.RPC("RpcEquipBottomInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedBottom);
         pView.RPC("RpcEquipFootwearInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedFootwear);
         pView.RPC("RpcEquipArmorInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedArmor);
+        SetOriginalFpcMaterials();
 
         initialized = true;
     }
@@ -158,6 +177,113 @@ public class EquipmentScript : MonoBehaviour
         if (equippedArmorBottomRef != null) {
             equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = b;
         }
+    }
+
+    public void CamouflageMesh(bool b)
+    {
+        if (b) {
+            myEyesRenderer.GetComponent<SkinnedMeshRenderer>().material = camoMat;
+            myEyelashRenderer.GetComponent<SkinnedMeshRenderer>().material = camoMat;
+            myGlovesRenderer.GetComponent<SkinnedMeshRenderer>().material = camoMat;
+            equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            if (renderHair) {
+                myHairRenderer.GetComponent<SkinnedMeshRenderer>().material = camoMat;
+            }
+            if (equippedFacewearRef != null) {
+                equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            }
+            if (equippedHeadgearRef != null) {
+                equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            }
+            if (equippedArmorTopRef != null) {
+                equippedArmorTopRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            }
+            if (equippedArmorBottomRef != null) {
+                equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            }
+            reflectionProbe.SetActive(true);
+        } else {
+            myEyesRenderer.GetComponent<SkinnedMeshRenderer>().material = originalEyeMat;
+            myEyelashRenderer.GetComponent<SkinnedMeshRenderer>().material = originalEyelashMat;
+            myGlovesRenderer.GetComponent<SkinnedMeshRenderer>().material = originalGlovesMat;
+            equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalTopMat;
+            equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalBottomMat;
+            equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalFootwearMat;
+            equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalSkinMat;
+            if (renderHair) {
+                myHairRenderer.GetComponent<SkinnedMeshRenderer>().material = originalHairMat;
+            }
+            if (equippedFacewearRef != null) {
+                equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalFacewearMat;
+            }
+            if (equippedHeadgearRef != null) {
+                equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalHeadgearMat;
+            }
+            if (equippedArmorTopRef != null) {
+                equippedArmorTopRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalArmorTopMat;
+            }
+            if (equippedArmorBottomRef != null) {
+                equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalArmorBottomMat;
+            }
+            reflectionProbe.SetActive(false);
+        }
+    }
+
+    public void CamouflageFpcMesh(bool b)
+    {
+        if (b) {
+            if (equippedFpcSkinRef != null) {
+                equippedFpcSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            }
+            equippedFpcTopRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            myFpcGlovesRenderer.GetComponent<SkinnedMeshRenderer>().material = camoMat;
+            reflectionProbeFpc.SetActive(true);
+        } else {
+            if (equippedFpcSkinRef != null) {
+                equippedFpcSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalFpcSkinMat;
+            }
+            equippedFpcTopRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalFpcTopMat;
+            myFpcGlovesRenderer.GetComponent<SkinnedMeshRenderer>().material = originalFpcGloveMat;
+            reflectionProbeFpc.SetActive(false);
+        }
+    }
+
+    void SetOriginalMaterials()
+    {
+        originalEyeMat = myEyesRenderer.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
+        originalEyelashMat = myEyelashRenderer.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
+        originalGlovesMat = myGlovesRenderer.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
+        originalTopMat = equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        originalBottomMat = equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        originalFootwearMat = equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        originalSkinMat = equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        if (renderHair) {
+            originalHairMat = myHairRenderer.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
+        }
+        if (equippedFacewearRef != null) {
+            originalFacewearMat = equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        }
+        if (equippedHeadgearRef != null) {
+            originalHeadgearMat = equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        }
+        if (equippedArmorTopRef != null) {
+            originalArmorTopMat = equippedArmorTopRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        }
+        if (equippedArmorBottomRef != null) {
+            originalArmorBottomMat = equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        }
+    }
+
+    void SetOriginalFpcMaterials()
+    {
+        if (equippedFpcSkinRef != null) {
+            originalFpcSkinMat = equippedFpcSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        }
+        originalFpcTopMat = equippedFpcTopRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        originalFpcGloveMat = myFpcGlovesRenderer.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
     }
 
     public void ToggleFpcMesh(bool b) {
@@ -949,10 +1075,12 @@ public class EquipmentScript : MonoBehaviour
     [PunRPC]
     private void RpcEquipArmorInGame(string armor) {
         if (armor == null || armor.Equals("")) {
+            SetOriginalMaterials();
             return;
         }
         equippedArmor = armor;
         EquipArmorInGame();
+        SetOriginalMaterials();
     }
 
     void EquipArmorInGame() {

@@ -87,6 +87,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     // Player variables
     public EncryptedInt health;
     public EncryptedFloat overshield;
+    public bool activeCamo;
     public float sprintTime;
     private EncryptedBool spawnInvincibilityActive;
     // public bool godMode;
@@ -151,6 +152,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private float underwaterTakeDamageTimer;
     private bool isInWater;
     public float fightingSpiritTimer;
+    private float activeCamoTimer;
 
     public void PreInitialize()
     {
@@ -297,6 +299,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 
         UpdateFightingSpirit();
+        UpdateActiveCamouflage();
         UpdateRegeneration();
         UnlockInteractionLock();
         UpdateEnvDamageTimer();
@@ -728,6 +731,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (health <= 0 && fightingSpiritTimer <= 0f)
         {
             if (fpc.enabled) {
+                ToggleActiveCamo(false, 0f);
                 equipmentScript.ToggleFirstPersonBody(false);
                 equipmentScript.ToggleFullBody(true);
                 equipmentScript.ToggleMesh(true);
@@ -2070,6 +2074,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void SetPlayerDead() 
     {
         health = 0;
+        activeCamoTimer = 0f;
+        ToggleActiveCamo(false, 0f);
         equipmentScript.ToggleFirstPersonBody(false);
         equipmentScript.ToggleFullBody(false);
         equipmentScript.ToggleMesh(false);
@@ -2128,13 +2134,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, overshieldToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept,
                     skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost(), skillController.GetMyInspireBoost(), skillController.GetMyAvoidabilityBoost(), skillController.GetMyIntimidationBoost(), skillController.GetMyProviderBoost(), skillController.GetMyDdosLevel(),
                     skillController.GetMyMartialArtsAttackBoost(), skillController.GetMyMartialArtsDefenseBoost(), skillController.GetMyFireteamBoost(), skillController.GetSilhouetteBoost(), skillController.GetRegeneratorLevel(), skillController.GetPainkillerLevel(),
-                    motivateDmg, motivates, fightingSpiritTimer);
+                    motivateDmg, motivates, fightingSpiritTimer, activeCamo, activeCamoTimer);
 	}
 
 	[PunRPC]
 	void RpcSyncDataPlayer(int health, float overshield, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept,
         int myHackerBoost, float myHeadstrongBoost, float myResourcefulBoost, float myInspireBoost, float myAvoidabilityBoost, float myIntimidationBoost, int myProviderBoost, int myDdosLevel, float myMartialArtsAttackBoost, float myMartialArtsDefenseBoost,
-        float myFireteamBoost, int silhouetteBoost, int regeneratorLevel, int painkillerLevel, float motivateDamageBoost, string serializedMotivateBoosts, float fightingSpiritTimer) {
+        float myFireteamBoost, int silhouetteBoost, int regeneratorLevel, int painkillerLevel, float motivateDamageBoost, string serializedMotivateBoosts, float fightingSpiritTimer, bool activeCamo, float activeCamoTimer) {
         this.health = health;
         this.overshield = overshield;
         this.fightingSpiritTimer = fightingSpiritTimer;
@@ -2220,6 +2226,12 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             } catch (Exception e) {
                 Debug.LogError("Exception caught while syncing motivate boosts: " + e.Message);
             }
+        }
+
+        this.activeCamo = activeCamo;
+        this.activeCamoTimer = activeCamoTimer;
+        if (this.activeCamo) {
+            ToggleActiveCamo(true, activeCamoTimer);
         }
 
         if (health <= 0 && fightingSpiritTimer <= 0f) {
@@ -2460,6 +2472,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 // Skill effect
                 PlayBoostParticleEffect(true);
             }
+        } else if (skill == 3) {
+            if (skillController.ActivateActiveCamouflage()) {
+                ToggleActiveCamo(true, skillController.GetActiveCamoTime());
+                PlayBoostParticleEffect(true);
+            }
         } else if (skill == 4) {
             if (skillController.ActivateSnipersDel()) {
                 // Skill effect
@@ -2657,6 +2674,35 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             health = (int)(100f * (fightingSpiritTimer / skillController.GetFightingSpiritTime()));
             if (health < 0) health = 0;
         }
+    }
+
+    void UpdateActiveCamouflage()
+    {
+        if (activeCamoTimer > 0f) {
+            activeCamoTimer -= Time.deltaTime;
+            if (activeCamoTimer <= 0f) {
+                activeCamoTimer = 0f;
+                ToggleActiveCamo(false, 0f);
+            }
+        }
+    }
+
+    void ToggleActiveCamo(bool b, float duration)
+    {
+        if (b) {
+            activeCamoTimer = duration;
+            audioController.PlayCamouflageSound();
+        }
+        activeCamo = b;
+        equipmentScript.CamouflageFpcMesh(b);
+        pView.RPC("RpcToggleActiveCamo", RpcTarget.Others, b);
+    }
+
+    [PunRPC]
+    void RpcToggleActiveCamo(bool b)
+    {
+        activeCamo = b;
+        equipmentScript.CamouflageMesh(b);
     }
 
 }

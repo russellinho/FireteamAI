@@ -43,6 +43,7 @@ public class AudioControllerScript : MonoBehaviour {
 	public AudioClip overshieldPopSound;
 	public AudioClip overshieldWarningSound;
 	public AudioClip overshieldRecoverSound;
+	public AudioClip activeCamoSound;
 	public AudioClip playerGruntSound1;
 	public AudioClip playerGruntSound2;
 	public AudioClip hitmarkerSound;
@@ -251,6 +252,17 @@ public class AudioControllerScript : MonoBehaviour {
 			}
 		} else {
 			fxSound9.Stop();
+		}
+	}
+
+	public void PlayCamouflageSound()
+	{
+		if (!pView.IsMine) {
+			return;
+		}
+		if (!fxSound9.isPlaying) {
+			fxSound9.clip = activeCamoSound;
+			fxSound9.Play ();
 		}
 	}
 

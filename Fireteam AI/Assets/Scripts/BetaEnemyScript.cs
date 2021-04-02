@@ -407,6 +407,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		HandleHealthStatus();
 		CheckForGunfireSounds ();
 		CheckTargetDead ();
+		CheckTargetDisappear();
 
 		if (enemyType == EnemyType.Patrol) {
 			DecideActionPatrolInCombat();
@@ -470,8 +471,10 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			return;
 		}
 
+		HandleHealthStatus();
 		CheckForGunfireSounds ();
 		CheckTargetDead ();
+		CheckTargetDisappear();
 
 		if (enemyType == EnemyType.Patrol) {
 			DecideActionPatrolInCombat();
@@ -2161,16 +2164,25 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		return 0f;
 	}
 
+	bool GetCurrentTargetHasActiveCamo()
+	{
+		if (playerTargeting != null) {
+			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript>();
+			return a.activeCamo;
+		}
+		return true;
+	}
+
 	void PlayerScan() {
 		if (playerScanTimer <= 0f) {
 			playerScanTimer = PLAYER_SCAN_DELAY;
 			// If we do not have a target player, try to find one
 			int entityTargetingHealth = GetHealthOfCurrentTarget();
-			if (playerTargeting == null || (entityTargetingHealth <= 0 && GetFightingSpiritTimerOfCurrentTarget() <= 0f)) {
+			if (playerTargeting == null || (entityTargetingHealth <= 0 && GetFightingSpiritTimerOfCurrentTarget() <= 0f) || GetCurrentTargetHasActiveCamo()) {
 				ArrayList keysNearBy = new ArrayList ();
 				foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
 					GameObject p = playerStat.objRef;
-					if (p == null || (p.GetComponent<PlayerActionScript>().health <= 0 && p.GetComponent<PlayerActionScript>().fightingSpiritTimer <= 0f))
+					if (p == null || (p.GetComponent<PlayerActionScript>().health <= 0 && p.GetComponent<PlayerActionScript>().fightingSpiritTimer <= 0f) || p.GetComponent<PlayerActionScript>().activeCamo)
 						continue;
 					// Silhouette skill boost
 					if (gameControllerScript.assaultMode) {
@@ -2364,6 +2376,16 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			}
 			if (n != null && n.health <= 0f) {
 				pView.RPC ("RpcSetTarget", RpcTarget.All, -1, gameControllerScript.teamMap);
+			}
+		}
+	}
+
+	void CheckTargetDisappear()
+	{
+		if (playerTargeting != null) {
+			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript> ();
+			if (a != null && a.activeCamo) {
+				UnseeTarget();
 			}
 		}
 	}

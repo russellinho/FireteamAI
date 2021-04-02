@@ -46,9 +46,15 @@ public class SkillController : MonoBehaviour
     private const float RAMPAGE_TIME_1 = 10f;
     private const float RAMPAGE_TIME_2 = 20f;
     private const float RAMPAGE_TIME_3 = 30f;
+    private const float ACTIVE_CAMOUFLAGE_TIME_1 = 15f;
+    private const float ACTIVE_CAMOUFLAGE_TIME_2 = 30f;
+    private const float ACTIVE_CAMOUFLAGE_TIME_3 = 45f;
     private const float RAMPAGE_COOLDOWN_1 = 600f;
     private const float RAMPAGE_COOLDOWN_2 = 360f;
     private const float RAMPAGE_COOLDOWN_3 = 300f;
+    private const float ACTIVE_CAMOUFLAGE_COOLDOWN_1 = 720f;
+    private const float ACTIVE_CAMOUFLAGE_COOLDOWN_2 = 600f;
+    private const float ACTIVE_CAMOUFLAGE_COOLDOWN_3 = 480f;
     public static float REGENERATOR_MAX_DISTANCE = 15f;
     private const float REGENERATOR_TIMER_1 = 30f;
     private const float REGENERATOR_TIMER_2 = 28f;
@@ -98,6 +104,7 @@ public class SkillController : MonoBehaviour
     private float bubbleShieldCooldown;
     private float ecmFeedbackCooldown;
     private float infraredScanCooldown;
+    private float activeCamouflageCooldown;
     private float rampageTimer;
     private float rampageCooldown;
 
@@ -149,6 +156,7 @@ public class SkillController : MonoBehaviour
         UpdateEcmFeedback();
         UpdateInfraredScan();
         UpdateRampage();
+        UpdateActiveCamouflage();
         UpdateRegenerator();
         UpdatePainkiller();
     }
@@ -1552,6 +1560,8 @@ public class SkillController : MonoBehaviour
             return firmGripCooldown <= 0f;
         } else if (skill == 2) {
             return rampageCooldown <= 0f;
+        } else if (skill == 3) {
+            return activeCamouflageCooldown <= 0f;
         } else if (skill == 4) {
             return snipersDelCooldown <= 0f;
         } else if (skill == 5) {
@@ -1574,6 +1584,8 @@ public class SkillController : MonoBehaviour
             return PlayerData.playerdata.skillList["0/9"].Level > 0;
         } else if (skill == 2) {
             return PlayerData.playerdata.skillList["0/10"].Level > 0;
+        } else if (skill == 3) {
+            return PlayerData.playerdata.skillList["1/10"].Level > 0;
         } else if (skill == 4) {
             return PlayerData.playerdata.skillList["5/10"].Level > 0;
         } else if (skill == 5) {
@@ -1696,17 +1708,34 @@ public class SkillController : MonoBehaviour
     public bool ActivateRampage()
     {
         if (rampageCooldown <= 0f) {
-            if (PlayerData.playerdata.skillList["0/10"].Level == 1) {
+            if (PlayerData.playerdata.skillList["1/10"].Level == 1) {
                 rampageCooldown = RAMPAGE_COOLDOWN_1;
                 rampageTimer = RAMPAGE_TIME_1;
                 return true;
-            } else if (PlayerData.playerdata.skillList["0/10"].Level == 2) {
+            } else if (PlayerData.playerdata.skillList["1/10"].Level == 2) {
                 rampageCooldown = RAMPAGE_COOLDOWN_2;
                 rampageTimer = RAMPAGE_TIME_2;
                 return true;
-            } else if (PlayerData.playerdata.skillList["0/10"].Level == 3) {
+            } else if (PlayerData.playerdata.skillList["1/10"].Level == 3) {
                 rampageCooldown = RAMPAGE_COOLDOWN_3;
                 rampageTimer = RAMPAGE_TIME_3;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool ActivateActiveCamouflage()
+    {
+        if (activeCamouflageCooldown <= 0f) {
+            if (PlayerData.playerdata.skillList["1/10"].Level == 1) {
+                activeCamouflageCooldown = ACTIVE_CAMOUFLAGE_COOLDOWN_1;
+                return true;
+            } else if (PlayerData.playerdata.skillList["1/10"].Level == 2) {
+                activeCamouflageCooldown = ACTIVE_CAMOUFLAGE_COOLDOWN_2;
+                return true;
+            } else if (PlayerData.playerdata.skillList["1/10"].Level == 3) {
+                activeCamouflageCooldown = ACTIVE_CAMOUFLAGE_COOLDOWN_3;
                 return true;
             }
         }
@@ -1772,6 +1801,25 @@ public class SkillController : MonoBehaviour
         if (rampageCooldown > 0f && rampageTimer <= 0f) {
             rampageCooldown -= Time.deltaTime;
         }
+    }
+
+    void UpdateActiveCamouflage()
+    {
+        if (activeCamouflageCooldown > 0f) {
+            activeCamouflageCooldown -= Time.deltaTime;
+        }
+    }
+
+    public float GetActiveCamoTime()
+    {
+        if (PlayerData.playerdata.skillList["1/10"].Level == 1) {
+            return ACTIVE_CAMOUFLAGE_TIME_1;
+        } else if (PlayerData.playerdata.skillList["1/10"].Level == 2) {
+            return ACTIVE_CAMOUFLAGE_TIME_2;
+        } else if (PlayerData.playerdata.skillList["1/10"].Level == 3) {
+            return ACTIVE_CAMOUFLAGE_TIME_3;
+        }
+        return 0f;
     }
 
     public float GetFirmGripBoost()
