@@ -40585,7 +40585,7 @@ MonoBehaviour:
   tws: {fileID: 4783079562884953864}
   fullBodyRef: {fileID: 4137640897938875693}
   firstPersonRef: {fileID: 1778510742253090394}
-  camoMat: {fileID: 0}
+  camoMat: {fileID: 2100000, guid: 6215caacc1645408e88b47f6dc2cdb37, type: 2}
   reflectionProbe: {fileID: 1153934463200860056}
   reflectionProbeFpc: {fileID: 6448053030972444896}
   equippedCharacter: Rocko
@@ -41315,6 +41315,7 @@ MonoBehaviour:
   overshieldRecoverSound: {fileID: 8300000, guid: 276c2be6804db4d9f803e611d05e1c7d,
     type: 3}
   activeCamoSound: {fileID: 8300000, guid: 2862b663797ed44ebb522431ceeed251, type: 3}
+  activeCamoOffSound: {fileID: 8300000, guid: 784404eae18304835a66ceef54b47cf3, type: 3}
   playerGruntSound1: {fileID: 8300000, guid: b0373ecb26c24f648b2a4d609e3aee10, type: 3}
   playerGruntSound2: {fileID: 8300000, guid: b6e687a85b07c034dad210cc74ba7de7, type: 3}
   hitmarkerSound: {fileID: 8300000, guid: f5f9c7f44fd0db94fb7457a968a1def7, type: 3}

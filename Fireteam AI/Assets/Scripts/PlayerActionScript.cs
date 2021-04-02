@@ -2692,6 +2692,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (b) {
             activeCamoTimer = duration;
             audioController.PlayCamouflageSound();
+        } else {
+            audioController.PlayCamouflageOffSound();
         }
         activeCamo = b;
         equipmentScript.CamouflageFpcMesh(b);

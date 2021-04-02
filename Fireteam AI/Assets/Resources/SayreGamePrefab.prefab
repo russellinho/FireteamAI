@@ -185,7 +185,7 @@ MonoBehaviour:
   tws: {fileID: 1029626021163347196}
   fullBodyRef: {fileID: 2450817521813425937}
   firstPersonRef: {fileID: 4385194215173556366}
-  camoMat: {fileID: 0}
+  camoMat: {fileID: 2100000, guid: 6215caacc1645408e88b47f6dc2cdb37, type: 2}
   reflectionProbe: {fileID: 1123403965330364658}
   reflectionProbeFpc: {fileID: 8236201443516743554}
   equippedCharacter: Codename Sayre
@@ -915,6 +915,7 @@ MonoBehaviour:
   overshieldRecoverSound: {fileID: 8300000, guid: 276c2be6804db4d9f803e611d05e1c7d,
     type: 3}
   activeCamoSound: {fileID: 8300000, guid: 2862b663797ed44ebb522431ceeed251, type: 3}
+  activeCamoOffSound: {fileID: 8300000, guid: 784404eae18304835a66ceef54b47cf3, type: 3}
   playerGruntSound1: {fileID: 8300000, guid: b0373ecb26c24f648b2a4d609e3aee10, type: 3}
   playerGruntSound2: {fileID: 8300000, guid: b6e687a85b07c034dad210cc74ba7de7, type: 3}
   hitmarkerSound: {fileID: 8300000, guid: f5f9c7f44fd0db94fb7457a968a1def7, type: 3}
