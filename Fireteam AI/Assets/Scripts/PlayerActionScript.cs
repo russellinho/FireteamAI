@@ -2231,7 +2231,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         this.activeCamo = activeCamo;
         this.activeCamoTimer = activeCamoTimer;
         if (this.activeCamo) {
-            ToggleActiveCamo(true, activeCamoTimer);
+            ToggleActiveCamoSync();
         }
 
         if (health <= 0 && fightingSpiritTimer <= 0f) {
@@ -2705,6 +2705,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         activeCamo = b;
         equipmentScript.CamouflageMesh(b);
+    }
+
+    void ToggleActiveCamoSync()
+    {
+        equipmentScript.CamouflageMesh(true);
     }
 
 }
