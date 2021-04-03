@@ -2697,6 +2697,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         activeCamo = b;
         equipmentScript.CamouflageFpcMesh(b);
+        weaponScript.CamouflageFpcMesh(b);
         pView.RPC("RpcToggleActiveCamo", RpcTarget.Others, b);
     }
 
@@ -2705,11 +2706,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         activeCamo = b;
         equipmentScript.CamouflageMesh(b);
+        weaponScript.CamouflageMesh(b);
     }
 
     void ToggleActiveCamoSync()
     {
         equipmentScript.CamouflageMesh(true);
+        weaponScript.CamouflageMesh(true);
     }
 
 }

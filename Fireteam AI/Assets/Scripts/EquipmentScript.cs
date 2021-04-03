@@ -17,8 +17,6 @@ public class EquipmentScript : MonoBehaviour
     public GameObject fullBodyRef;
     public GameObject firstPersonRef;
     public Material camoMat;
-    public GameObject reflectionProbe;
-    public GameObject reflectionProbeFpc;
 
     public string equippedCharacter;
     public string characterGender;
@@ -205,7 +203,6 @@ public class EquipmentScript : MonoBehaviour
             if (equippedArmorBottomRef != null) {
                 equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
             }
-            reflectionProbe.SetActive(true);
         } else {
             myEyesRenderer.GetComponent<SkinnedMeshRenderer>().material = originalEyeMat;
             myEyelashRenderer.GetComponent<SkinnedMeshRenderer>().material = originalEyelashMat;
@@ -229,7 +226,6 @@ public class EquipmentScript : MonoBehaviour
             if (equippedArmorBottomRef != null) {
                 equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalArmorBottomMat;
             }
-            reflectionProbe.SetActive(false);
         }
     }
 
@@ -241,14 +237,12 @@ public class EquipmentScript : MonoBehaviour
             }
             equippedFpcTopRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
             myFpcGlovesRenderer.GetComponent<SkinnedMeshRenderer>().material = camoMat;
-            reflectionProbeFpc.SetActive(true);
         } else {
             if (equippedFpcSkinRef != null) {
                 equippedFpcSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalFpcSkinMat;
             }
             equippedFpcTopRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalFpcTopMat;
             myFpcGlovesRenderer.GetComponent<SkinnedMeshRenderer>().material = originalFpcGloveMat;
-            reflectionProbeFpc.SetActive(false);
         }
     }
 

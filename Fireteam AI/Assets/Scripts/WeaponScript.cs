@@ -21,6 +21,10 @@ public class WeaponScript : MonoBehaviour
     public TitleControllerScript ts;
     public Animation titleAnimFemale;
     public Animation titleAnimMale;
+    private Material[] originalWeaponMats;
+    private Material[] originalSuppressorMats;
+    private Material[] originalSightMats;
+    private Material[] originalMountMats;
     
     public string equippedPrimaryWeapon;
     public string equippedSecondaryWeapon;
@@ -597,9 +601,12 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
                     playerActionScript.skillController.InitializePassiveSkills(0);
                     SetWeaponCulling(wepEquipped);
                     weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "SMG":
@@ -624,9 +631,12 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
                     playerActionScript.skillController.InitializePassiveSkills(1);
                     SetWeaponCulling(wepEquipped);
                     weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "LMG":
@@ -651,9 +661,12 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
                     playerActionScript.skillController.InitializePassiveSkills(2);
                     SetWeaponCulling(wepEquipped);
                     weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Shotgun":
@@ -678,9 +691,12 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
                     playerActionScript.skillController.InitializePassiveSkills(3);
                     SetWeaponCulling(wepEquipped);
                     weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Sniper Rifle":
@@ -705,9 +721,12 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
                     playerActionScript.skillController.InitializePassiveSkills(4);
                     SetWeaponCulling(wepEquipped);
                     weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Pistol":
@@ -732,9 +751,12 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
                     playerActionScript.skillController.InitializePassiveSkills(5);
                     SetWeaponCulling(wepEquipped);
                     weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Launcher":
@@ -753,8 +775,11 @@ public class WeaponScript : MonoBehaviour
                 weaponActionScript.SetCurrentAimDownSightPos(sightName);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
                     playerActionScript.skillController.InitializePassiveSkills(6);
                     SetWeaponCulling(wepEquipped);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Explosive":
@@ -773,8 +798,11 @@ public class WeaponScript : MonoBehaviour
                 weaponActionScript.SetCurrentAimDownSightPos(sightName);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
                     playerActionScript.skillController.InitializePassiveSkills(7);
                     SetWeaponCulling(wepEquipped);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Booster":
@@ -793,8 +821,11 @@ public class WeaponScript : MonoBehaviour
                 weaponActionScript.SetCurrentAimDownSightPos(sightName);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
                     playerActionScript.skillController.InitializePassiveSkills(8);
                     SetWeaponCulling(wepEquipped);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Deployable":
@@ -819,8 +850,11 @@ public class WeaponScript : MonoBehaviour
                 weaponActionScript.SetCurrentAimDownSightPos(sightName);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
                     playerActionScript.skillController.InitializePassiveSkills(9);
                     SetWeaponCulling(wepEquipped);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Etc":
@@ -846,7 +880,10 @@ public class WeaponScript : MonoBehaviour
                 weaponActionScript.SetCurrentAimDownSightPos(sightName);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
                     SetWeaponCulling(wepEquipped);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Knife":
@@ -1135,6 +1172,166 @@ public class WeaponScript : MonoBehaviour
         //         weaponHolder.SetWeaponPositionForTitle(new Vector3(-0.01f, 0.02f, 0.02f));
         //     }
         // }
+    }
+
+    void SyncCamouflageMesh()
+    {
+        if (playerActionScript.activeCamo) {
+            CamouflageMesh(true);
+        }
+    }
+
+    void SyncCamouflageFpcMesh()
+    {
+        if (playerActionScript.activeCamo) {
+            CamouflageFpcMesh(true);
+        }
+    }
+
+    public void CamouflageMesh(bool b)
+    {
+        if (b) {
+            int i = 0;
+            WeaponMeta ws = weaponHolder.weapon.GetComponent<WeaponMeta>();
+            WeaponMods wsm = weaponHolder.weapon.GetComponent<WeaponMods>();
+            originalWeaponMats = new Material[ws.weaponParts.Length];
+            foreach (MeshRenderer part in ws.weaponParts) {
+                originalWeaponMats[i++] = part.sharedMaterial;
+                part.material = equipmentScript.camoMat;
+            }
+            if (wsm != null) {
+                if (wsm.suppressorRef != null) {
+                    i = 0;
+                    MeshRenderer[] suppressorRenderers = wsm.suppressorRef.GetComponentsInChildren<MeshRenderer>();
+                    originalSuppressorMats = new Material[suppressorRenderers.Length];
+                    foreach (MeshRenderer part in suppressorRenderers) {
+                        originalSuppressorMats[i++] = part.sharedMaterial;
+                        part.material = equipmentScript.camoMat;
+                    }
+                }
+                if (wsm.sightRef != null) {
+                    i = 0;
+                    MeshRenderer[] sightRenderers = wsm.sightRef.GetComponentsInChildren<MeshRenderer>();
+                    originalSightMats = new Material[sightRenderers.Length];
+                    foreach (MeshRenderer part in sightRenderers) {
+                        originalSightMats[i++] = part.sharedMaterial;
+                        part.material = equipmentScript.camoMat;
+                    }
+                }
+                if (wsm.sightMountRef != null) {
+                    i = 0;
+                    MeshRenderer[] mountRenderers = wsm.sightMountRef.GetComponentsInChildren<MeshRenderer>();
+                    originalMountMats = new Material[mountRenderers.Length];
+                    foreach (MeshRenderer part in mountRenderers) {
+                        originalMountMats[i++] = part.sharedMaterial;
+                        part.material = equipmentScript.camoMat;
+                    }
+                }
+            }
+        } else {
+            int i = 0;
+            WeaponMeta ws = weaponHolder.weapon.GetComponent<WeaponMeta>();
+            WeaponMods wsm = weaponHolder.weapon.GetComponent<WeaponMods>();
+            foreach (MeshRenderer part in ws.weaponParts) {
+                part.material = originalWeaponMats[i++];
+            }
+            if (wsm != null) {
+                if (wsm.suppressorRef != null) {
+                    i = 0;
+                    MeshRenderer[] suppressorRenderers = wsm.suppressorRef.GetComponentsInChildren<MeshRenderer>();
+                    foreach (MeshRenderer part in suppressorRenderers) {
+                        part.material = originalSuppressorMats[i++];
+                    }
+                }
+                if (wsm.sightRef != null) {
+                    i = 0;
+                    MeshRenderer[] sightRenderers = wsm.sightRef.GetComponentsInChildren<MeshRenderer>();
+                    foreach (MeshRenderer part in sightRenderers) {
+                        part.material = originalSightMats[i++];
+                    }
+                }
+                if (wsm.sightMountRef != null) {
+                    i = 0;
+                    MeshRenderer[] mountRenderers = wsm.sightMountRef.GetComponentsInChildren<MeshRenderer>();
+                    foreach (MeshRenderer part in mountRenderers) {
+                        part.material = originalMountMats[i++];
+                    }
+                }
+            }
+        }
+    }
+
+    public void CamouflageFpcMesh(bool b)
+    {
+        if (b) {
+            int i = 0;
+            WeaponMeta ws = weaponHolderFpc.weapon.GetComponent<WeaponMeta>();
+            WeaponMods wsm = weaponHolderFpc.weapon.GetComponent<WeaponMods>();
+            originalWeaponMats = new Material[ws.weaponParts.Length];
+            foreach (MeshRenderer part in ws.weaponParts) {
+                originalWeaponMats[i++] = part.sharedMaterial;
+                part.material = equipmentScript.camoMat;
+            }
+            if (wsm != null) {
+                if (wsm.suppressorRef != null) {
+                    i = 0;
+                    MeshRenderer[] suppressorRenderers = wsm.suppressorRef.GetComponentsInChildren<MeshRenderer>();
+                    originalSuppressorMats = new Material[suppressorRenderers.Length];
+                    foreach (MeshRenderer part in suppressorRenderers) {
+                        originalSuppressorMats[i++] = part.sharedMaterial;
+                        part.material = equipmentScript.camoMat;
+                    }
+                }
+                if (wsm.sightRef != null) {
+                    i = 0;
+                    MeshRenderer[] sightRenderers = wsm.sightRef.GetComponentsInChildren<MeshRenderer>();
+                    originalSightMats = new Material[sightRenderers.Length];
+                    foreach (MeshRenderer part in sightRenderers) {
+                        originalSightMats[i++] = part.sharedMaterial;
+                        part.material = equipmentScript.camoMat;
+                    }
+                }
+                if (wsm.sightMountRef != null) {
+                    i = 0;
+                    MeshRenderer[] mountRenderers = wsm.sightMountRef.GetComponentsInChildren<MeshRenderer>();
+                    originalMountMats = new Material[mountRenderers.Length];
+                    foreach (MeshRenderer part in mountRenderers) {
+                        originalMountMats[i++] = part.sharedMaterial;
+                        part.material = equipmentScript.camoMat;
+                    }
+                }
+            }
+        } else {
+            int i = 0;
+            WeaponMeta ws = weaponHolderFpc.weapon.GetComponent<WeaponMeta>();
+            WeaponMods wsm = weaponHolderFpc.weapon.GetComponent<WeaponMods>();
+            foreach (MeshRenderer part in ws.weaponParts) {
+                part.material = originalWeaponMats[i++];
+            }
+            if (wsm != null) {
+                if (wsm.suppressorRef != null) {
+                    i = 0;
+                    MeshRenderer[] suppressorRenderers = wsm.suppressorRef.GetComponentsInChildren<MeshRenderer>();
+                    foreach (MeshRenderer part in suppressorRenderers) {
+                        part.material = originalSuppressorMats[i++];
+                    }
+                }
+                if (wsm.sightRef != null) {
+                    i = 0;
+                    MeshRenderer[] sightRenderers = wsm.sightRef.GetComponentsInChildren<MeshRenderer>();
+                    foreach (MeshRenderer part in sightRenderers) {
+                        part.material = originalSightMats[i++];
+                    }
+                }
+                if (wsm.sightMountRef != null) {
+                    i = 0;
+                    MeshRenderer[] mountRenderers = wsm.sightMountRef.GetComponentsInChildren<MeshRenderer>();
+                    foreach (MeshRenderer part in mountRenderers) {
+                        part.material = originalMountMats[i++];
+                    }
+                }
+            }
+        }
     }
 
     public void DespawnPlayer()
