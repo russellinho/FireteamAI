@@ -2246,7 +2246,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             this.health = 0;
             fpc.SetIsIncapacitated(true);
             fpc.SetIncapacitatedInAnimator(true);
-            charController.height = 0.85f;
+            charController.height = 0.9f;
             charController.center = new Vector3(0f, 0.27f, 0f);
         }
         this.interactedOnById = interactedOnById;
@@ -2758,7 +2758,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             interactedOnById = -1;
             DropCarrying();
             // Set FPC controller to be in last stand mode
-            charController.height = 0.85f;
+            charController.height = 0.9f;
             charController.center = new Vector3(0f, 0.27f, 0f);
             FpcCrouch('p');
             pView.RPC("RpcCrouch", RpcTarget.Others, 0.5f, 0.27f);
@@ -2803,7 +2803,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcActivateLastStand(float t, string playerName)
     {
         lastStandTimer = t;
-        equipmentScript.fullBodyRef.transform.localPosition = new Vector3(0f, -0.55f, 0f);
+        equipmentScript.fullBodyRef.transform.localPosition = new Vector3(0f, -0.9f, 0f);
         TriggerPlayerIncapacitatedAlert(playerName);
     }
 
