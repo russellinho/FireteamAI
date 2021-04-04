@@ -896,6 +896,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 // hud.ToggleChatText(true);
             }
             if (interactionTimer > 0f) {
+                Debug.Log("Clearing interacting on");
                 pView.RPC("RpcClearInteractingOn", RpcTarget.All);
             }
             interactionTimer = 0f;
@@ -905,8 +906,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcClearInteractingOn()
     {
-        if (pView.Owner.ActorNumber == PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().interactedOnById) {
-            interactedOnById = -1;
+        PlayerActionScript p = PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>();
+        if (pView.Owner.ActorNumber == p.interactedOnById) {
+            p.interactedOnById = -1;
         }
     }
 
@@ -2783,6 +2785,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             SetHealth(80, false);
             FpcCrouch('s');
         }
+        equipmentScript.fullBodyRef.transform.localPosition = Vector3.zero;
         charController.height = charHeightOriginal;
         charController.center = new Vector3(0f, charCenterYOriginal, 0f);
         fpc.SetIsIncapacitated(false);
@@ -2800,6 +2803,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcActivateLastStand(float t, string playerName)
     {
         lastStandTimer = t;
+        equipmentScript.fullBodyRef.transform.localPosition = new Vector3(0f, -0.5f, 0f);
         TriggerPlayerIncapacitatedAlert(playerName);
     }
 
@@ -2824,6 +2828,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcDeactivateLastStand()
     {
         lastStandTimer = 0f;
+        equipmentScript.fullBodyRef.transform.localPosition = Vector3.zero;
     }
 
     void UpdateFightingSpirit()
