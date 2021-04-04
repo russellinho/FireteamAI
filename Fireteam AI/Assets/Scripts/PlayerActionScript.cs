@@ -301,6 +301,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
 
+        if (Input.GetKeyDown(KeyCode.J)) {
+            Debug.LogError("height: " + charController.height + ", center: " + charController.center.y);
+        }
+
         UpdateFightingSpirit();
         UpdateLastStand();
         UpdateActiveCamouflage();
@@ -686,7 +690,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 fpc.m_IsCrouching = false;
             }
 
-            FpcCrouch(fpc.m_IsCrouching);
+            FpcCrouch(fpc.m_IsCrouching ? 'c' : 's');
             fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
 
             // Collect the original y position of the FPS controller since we're going to move it downwards to crouch
@@ -707,7 +711,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public void HandleJumpAfterCrouch() {
         fpc.m_IsCrouching = false;
 
-        FpcCrouch(fpc.m_IsCrouching);
+        FpcCrouch(fpc.m_IsCrouching ? 'c' : 's');
         fpc.SetCrouchingInAnimator(fpc.m_IsCrouching);
 
         charController.height = charHeightOriginal;
@@ -716,9 +720,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         pView.RPC("RpcCrouch", RpcTarget.Others, charHeightOriginal, charCenterYOriginal);
     }
 
-    void FpcCrouch(bool crouch) {
-        if (crouch) {
+    void FpcCrouch(char mode) {
+        if (mode == 'c') {
             fpcBodyRef.transform.localPosition = new Vector3(fpcBodyRef.transform.localPosition.x, -0.5f, fpcBodyRef.transform.localPosition.z);
+        } else if (mode == 'p') {
+            fpcBodyRef.transform.localPosition = new Vector3(fpcBodyRef.transform.localPosition.x, -1f, fpcBodyRef.transform.localPosition.z);
         } else {
             fpcBodyRef.transform.localPosition = new Vector3(fpcBodyRef.transform.localPosition.x, originalFpcBodyPosY, fpcBodyRef.transform.localPosition.z);
         }
@@ -737,7 +743,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (health <= 0 && fightingSpiritTimer <= 0f && lastStandTimer <= 0f)
         {
             if (fpc.enabled) {
-                ToggleActiveCamo(false, 0f);
+                if (activeCamo) {
+                    ToggleActiveCamo(false, 0f);
+                }
                 equipmentScript.ToggleFirstPersonBody(false);
                 equipmentScript.ToggleFullBody(true);
                 equipmentScript.ToggleMesh(true);
@@ -1658,7 +1666,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hud.ToggleSpectatorMessage(false);
         fpc.m_IsCrouching = false;
         fpc.m_IsWalking = false;
-        FpcCrouch(false);
+        FpcCrouch('s');
         fpc.SetIsIncapacitated(false);
         escapeValueSent = false;
         canShoot = true;
@@ -2741,6 +2749,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             // Set FPC controller to be in last stand mode
             charController.height = 0.5f;
             charController.center = new Vector3(0f, 0.27f, 0f);
+            FpcCrouch('p');
             pView.RPC("RpcCrouch", RpcTarget.Others, 0.5f, 0.27f);
             fpc.SetIsIncapacitated(true);
             fpc.SetIncapacitatedInAnimator(true);
@@ -2752,16 +2761,19 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void LastStandRevive()
     {
-        pView.RPC("RpcLastStandRevive", RpcTarget.All, pView.Owner.ActorNumber);
+        pView.RPC("RpcLastStandRevive", RpcTarget.All);
         fpc.SetIncapacitatedInAnimator(false);
     }
 
     [PunRPC]
-    void RpcLastStandRevive(int playerId)
+    void RpcLastStandRevive()
     {
         lastStandTimer = 0f;
         interactedOnById = -1;
-        SetHealth(80, false);
+        if (pView.IsMine) {
+            SetHealth(80, false);
+            FpcCrouch('s');
+        }
         charController.height = charHeightOriginal;
         charController.center = new Vector3(0f, charCenterYOriginal, 0f);
         fpc.SetIsIncapacitated(false);
@@ -2795,6 +2807,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void DeactivateLastStand()
     {
+        FpcCrouch('s');
         pView.RPC("RpcDeactivateLastStand", RpcTarget.All);
     }
 
@@ -2818,7 +2831,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (lastStandTimer > 0f) {
             ResetHitTimer();
-            if (interactedOnById != -1) {
+            if (interactedOnById == -1) {
                 lastStandTimer -= Time.deltaTime;
                 health = (int)(100f * (lastStandTimer / skillController.GetLastStandTime()));
                 if (health < 0) health = 0;

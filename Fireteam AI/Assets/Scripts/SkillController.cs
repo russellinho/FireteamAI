@@ -113,6 +113,7 @@ public class SkillController : MonoBehaviour
     private float bloodLustActiveTimer;
     private float bloodLustActivateTimer;
     private short bloodLustActivateCount;
+    private short resilienceActivateCount;
 
     // Collective boosts
     private EncryptedInt hackerBoost;
@@ -1472,7 +1473,7 @@ public class SkillController : MonoBehaviour
         return PlayerData.playerdata.skillList["4/7"].Level;
     }
 
-    public void RegisterKillForKillstreak()
+    public void RegisterKillForKillstreak(bool inLastStand)
     {
         // Blood Lust (0/6)
         int bloodLustLvl = PlayerData.playerdata.skillList["0/6"].Level;
@@ -1517,6 +1518,29 @@ public class SkillController : MonoBehaviour
                 }
             }
         }
+
+        // Resilience (3/9)
+        int resilienceLevel = PlayerData.playerdata.skillList["3/9"].Level;
+        if (resilienceLevel > 0) {
+            resilienceActivateCount++;
+        }
+    }
+
+    public void ResetResilienceKillCount()
+    {
+        resilienceActivateCount = 0;
+    }
+
+    public bool CanSelfRevive()
+    {
+        if (PlayerData.playerdata.skillList["3/9"].Level == 1) {
+            return resilienceActivateCount >= 5;
+        } else if (PlayerData.playerdata.skillList["3/9"].Level == 2) {
+            return resilienceActivateCount >= 4;
+        } else if (PlayerData.playerdata.skillList["3/9"].Level == 3) {
+            return resilienceActivateCount >= 3;
+        }
+        return false;
     }
 
     private void UpdateBloodLustActive()

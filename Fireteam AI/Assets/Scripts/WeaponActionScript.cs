@@ -567,7 +567,11 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
 
         // Register kill for killstreak skills
-        playerActionScript.skillController.RegisterKillForKillstreak();
+        playerActionScript.skillController.RegisterKillForKillstreak(playerActionScript.lastStandTimer > 0f);
+        if (playerActionScript.lastStandTimer > 0f && playerActionScript.skillController.CanSelfRevive()) {
+            playerActionScript.LastStandRevive();
+            playerActionScript.skillController.ResetResilienceKillCount();
+        }
     }
 
     public void SetMouseDynamicsForMelee(bool b) {
