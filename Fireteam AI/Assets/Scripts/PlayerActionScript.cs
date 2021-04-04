@@ -895,7 +895,18 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 hud.ToggleActionBar(false, null);
                 // hud.ToggleChatText(true);
             }
+            if (interactionTimer > 0f) {
+                pView.RPC("RpcClearInteractingOn", RpcTarget.All);
+            }
             interactionTimer = 0f;
+        }
+    }
+
+    [PunRPC]
+    void RpcClearInteractingOn()
+    {
+        if (pView.Owner.ActorNumber == PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().interactedOnById) {
+            interactedOnById = -1;
         }
     }
 
