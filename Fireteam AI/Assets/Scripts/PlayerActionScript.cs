@@ -908,7 +908,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         PlayerActionScript p = PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>();
         if (pView.Owner.ActorNumber == p.interactedOnById) {
-            p.interactedOnById = -1;
+            p.ToggleProceduralInfo(null, true, -1);
         }
     }
 
@@ -2729,8 +2729,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (pView.IsMine) {
             hud.SetProceduralInfo(s);
-            this.interactedOnById = interactedOnById;
         }
+        this.interactedOnById = interactedOnById;
     }
 
     IEnumerator UpdateContingencyTimeBoost()
@@ -2803,7 +2803,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcActivateLastStand(float t, string playerName)
     {
         lastStandTimer = t;
-        equipmentScript.fullBodyRef.transform.localPosition = new Vector3(0f, -0.5f, 0f);
+        equipmentScript.fullBodyRef.transform.localPosition = new Vector3(0f, -0.55f, 0f);
         TriggerPlayerIncapacitatedAlert(playerName);
     }
 
