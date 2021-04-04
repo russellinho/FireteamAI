@@ -946,7 +946,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void HealPlayerCheck()
     {
-        if (activeInteractable != null && !hud.PauseIsActive() && health > 0 && skillController.GetFlatlineSacrificeAmount() < health && lastStandTimer <= 0f) {
+        if (skillController.CanHealPlayers() && activeInteractable != null && !hud.PauseIsActive() && health > 0 && skillController.GetFlatlineSacrificeAmount() < health && lastStandTimer <= 0f) {
             PlayerActionScript p = activeInteractable.GetComponent<PlayerActionScript>();
             if (p != null && skillController.GetFlatlineHealAmount() > 0) {
                 if (p.health <= 0 || p.health >= 100 || p.fightingSpiritTimer > 0f || p.lastStandTimer > 0f) {
@@ -1107,9 +1107,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     }
                 }
             } else if (hit.transform.gameObject.tag == "Player") {
-                if (skillController.CanHealPlayers()) {
-                    activeInteractable = hit.transform.gameObject;
-                }
+                activeInteractable = hit.transform.gameObject;
             } else {
                 activeInteractable = hit.transform.gameObject;
             }
