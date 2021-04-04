@@ -10,6 +10,6 @@ public class PlayerMarkerScript : MonoBehaviour
     public TextMeshProUGUI nametagRef;
     public Slider healthbarRef;
     public RawImage rankInsigniaRef;
-
+    public GameObject reviveIndicator;
 
 }

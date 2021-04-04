@@ -545,7 +545,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             hudScript.OnScreenEffect(GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills + " KILLS", true);
         }
         // Recover health from Blood Leech skill
-        if (playerActionScript.health > 0 && playerActionScript.health < 100 && playerActionScript.fightingSpiritTimer <= 0f) {
+        if (playerActionScript.health > 0 && playerActionScript.health < 100 && playerActionScript.fightingSpiritTimer <= 0f && playerActionScript.lastStandTimer <= 0f) {
             int lvl = playerActionScript.skillController.GetBloodLeechLevel();
             if (lvl == 1) {
                 if (GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills % 10 == 0) {
@@ -575,7 +575,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     }
 
     bool CanMelee() {
-        if (!fpc.m_CharacterController.isGrounded || fpc.GetIsSwimming() || isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || deployInProgress || isUsingBooster || isUsingDeployable || hudScript.container.pauseMenuGUI.pauseActive) {
+        if (!fpc.m_CharacterController.isGrounded || fpc.GetIsSwimming() || isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || deployInProgress || isUsingBooster || isUsingDeployable || hudScript.container.pauseMenuGUI.pauseActive || fpc.GetIsIncapacitated()) {
             return false;
         }
         return true;
@@ -1439,7 +1439,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     }
 
     void FireBooster() {
-        if (playerActionScript.fightingSpiritTimer > 0f) return;
+        if (playerActionScript.fightingSpiritTimer > 0f || playerActionScript.lastStandTimer > 0f) return;
         if (fireTimer < weaponStats.fireRate || hudScript.container.pauseMenuGUI.pauseActive)
         {
             ResetBoosterState();

@@ -211,6 +211,10 @@ MonoBehaviour:
   - RpcSyncEcmFeedback
   - RpcSyncInfraredScan
   - RpcToggleActiveCamo
+  - RpcActivateLastStand
+  - RpcDeactivateLastStand
+  - RpcLastStandRevive
+  - RpcSetIncapacitatedInAnimator
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

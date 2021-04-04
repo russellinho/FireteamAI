@@ -1394,7 +1394,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		{
 			GameObject p = entry.Value.objRef;
 			if (p == null) continue;
-			if (p.GetComponent<PlayerActionScript>().health <= 0 && p.GetComponent<PlayerActionScript>().fightingSpiritTimer <= 0f) {
+			PlayerActionScript pa = p.GetComponent<PlayerActionScript>();
+			if (pa.health <= 0 && pa.fightingSpiritTimer <= 0f && pa.lastStandTimer <= 0f) {
 				total++;
 			}
 		}
@@ -1736,7 +1737,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	{
 		int count = 0;
 		foreach (PlayerStat stat in GameControllerScript.playerList.Values) {
-			if (stat != null && stat.objRef != null && stat.objRef.GetComponent<PlayerActionScript>().health <= 0 && stat.objRef.GetComponent<PlayerActionScript>().fightingSpiritTimer <= 0f) {
+			PlayerActionScript pa = stat.objRef.GetComponent<PlayerActionScript>();
+			if (stat != null && stat.objRef != null && pa.health <= 0 && pa.fightingSpiritTimer <= 0f && pa.lastStandTimer <= 0f) {
 				count++;
 			}
 		}

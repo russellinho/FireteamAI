@@ -29,6 +29,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     const float DEPLOY_USE_TIME = 4f;
     const float NPC_INTERACT_TIME = 5f;
     const float HEAL_TIME = 5f;
+    const float REVIVE_TIME = 6f;
     private const float ENV_DAMAGE_DELAY = 0.5f;
     private const float MINIMUM_FALL_DMG_VELOCITY = 25f;
     private const float MINIMUM_FALL_DMG = 10f;
@@ -100,7 +101,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private bool escapeAvailablePopup;
     private bool isInteracting;
     private string interactingWith;
-    private int interactedOnById;
+    private int interactedOnById = -1;
     private GameObject activeInteractable;
     private float interactionTimer;
     private bool interactionLock;
@@ -152,6 +153,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private float underwaterTakeDamageTimer;
     private bool isInWater;
     public float fightingSpiritTimer;
+    public float lastStandTimer;
     private float activeCamoTimer;
 
     public void PreInitialize()
@@ -238,6 +240,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         totalSpeedBoost = originalSpeed;
         ToggleRagdoll(false);
         InitializeGuardianAngel();
+        skillController.SetLastStand();
 
         StartCoroutine(SpawnInvincibilityRoutine());
         StartCoroutine("RegeneratorRecover");
@@ -299,6 +302,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 
         UpdateFightingSpirit();
+        UpdateLastStand();
         UpdateActiveCamouflage();
         UpdateRegeneration();
         UnlockInteractionLock();
@@ -369,7 +373,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         UpdateOvershieldRecovery();
         DeathCheck();
-        if (health <= 0 && fightingSpiritTimer <= 0f)
+        if (health <= 0 && fightingSpiritTimer <= 0f && lastStandTimer <= 0f)
         {
             hud.ToggleHintText(null);
             SetInteracting(false, null);
@@ -559,6 +563,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (d <= 0) return;
         if (fightingSpiritTimer > 0f) return;
+        if (lastStandTimer > 0f) return;
         if (health <= 0f) return;
         // If registering a gun shot (hit by = 0), then the server must register it.
         if (!pView.IsMine && hitBy != 0) return;
@@ -575,6 +580,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         {
             if (d <= 0) return;
             if (fightingSpiritTimer > 0f) return;
+            if (lastStandTimer > 0f) return;
             if (health <= 0f) return;
             // See if you dodged the bullet first (avoidability). Return if you did
             if (hitBy == 0) {
@@ -673,7 +679,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void HandleCrouch()
     {
-        if (PlayerPreferences.playerPreferences.KeyWasPressed("Crouch") && !fpc.m_IsRunning && !fpc.GetIsSwimming())
+        if (PlayerPreferences.playerPreferences.KeyWasPressed("Crouch") && !fpc.m_IsRunning && !fpc.GetIsSwimming() && !fpc.GetIsIncapacitated())
         {
             fpc.m_IsCrouching = !fpc.m_IsCrouching;
             if (!fpc.IsFullyMobile()) {
@@ -728,7 +734,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void DeathCheck()
     {
-        if (health <= 0 && fightingSpiritTimer <= 0f)
+        if (health <= 0 && fightingSpiritTimer <= 0f && lastStandTimer <= 0f)
         {
             if (fpc.enabled) {
                 ToggleActiveCamo(false, 0f);
@@ -740,9 +746,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 StartCoroutine(DelayToggleRagdoll(0.2f, true));
                 SetInteracting(false, null);
                 DropCarrying();
+                fpc.SetIsIncapacitated(false);
                 hud.SetCarryingText(null);
                 TriggerPlayerDownAlert();
                 DeactivateFightingSpirit();
+                DeactivateLastStand();
                 hud.container.voiceCommandsPanel.SetActive(false);
                 hud.container.skillPanel.SetActive(false);
                 hud.container.revivePlayerPanel.SetActive(false);
@@ -833,7 +841,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     activeInteractable = null;
                     interactionLock = true;
                 }
-            } else if (interactingWith == "Player") {
+            } else if (interactingWith == "PlayerHeal") {
                 hud.ToggleActionBar(true, "HEALING TEAMMATE...");
                 bool startedHealing = (interactionTimer == 0f);
                 interactionTimer += (Time.deltaTime / HEAL_TIME);
@@ -852,6 +860,24 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                         p.ToggleProceduralInfo("PLEASE STAND STILL WHILE YOUR TEAMMATE HEALS YOU", true, PhotonNetwork.LocalPlayer.ActorNumber);
                     }
                 }
+            } else if (interactingWith == "PlayerRevive") {
+                hud.ToggleActionBar(true, "REVIVING TEAMMATE...");
+                bool startedReviving = (interactionTimer == 0f);
+                interactionTimer += (Time.deltaTime / (REVIVE_TIME * (1f - skillController.GetDexterityBoost())));
+                hud.SetActionBarSlider(interactionTimer);
+                if (interactionTimer >= 1f)
+                {
+                    PlayerActionScript p = activeInteractable.GetComponent<PlayerActionScript>();
+                    interactionTimer = 0f;
+                    p.LastStandRevive();
+                    activeInteractable = null;
+                    interactionLock = true;
+                } else {
+                    if (startedReviving) {
+                        PlayerActionScript p = activeInteractable.GetComponent<PlayerActionScript>();
+                        p.ToggleProceduralInfo("PLEASE STAY STILL WHILE YOUR TEAMMATE REVIVES YOU", true, PhotonNetwork.LocalPlayer.ActorNumber);
+                    }
+                }
             }
         } else {
             if (!hud.container.inGameMessenger.inputText.enabled) {
@@ -867,6 +893,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void InteractCheck() {
         HealPlayerCheck();
+        RevivePlayerCheck();
         if (gameController.currentMap == 1) {
             BombDefuseCheck();
         } else if (gameController.currentMap == 2) {
@@ -885,7 +912,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 
         // Is near and looking at a bomb that can be defused
-        if (activeInteractable != null && !hud.PauseIsActive() && health > 0) {
+        if (activeInteractable != null && !hud.PauseIsActive() && health > 0 && lastStandTimer <= 0f) {
             BombScript b = activeInteractable.GetComponent<BombScript>();
             if (b != null) {
                 if (b.defused) {
@@ -911,21 +938,47 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void HealPlayerCheck()
     {
-        if (activeInteractable != null && !hud.PauseIsActive() && health > 0 && skillController.GetFlatlineSacrificeAmount() < health) {
+        if (activeInteractable != null && !hud.PauseIsActive() && health > 0 && skillController.GetFlatlineSacrificeAmount() < health && lastStandTimer <= 0f) {
             PlayerActionScript p = activeInteractable.GetComponent<PlayerActionScript>();
-            if (p != null) {
-                if (p.health <= 0 || p.health >= 100 || p.fightingSpiritTimer > 0f) {
+            if (p != null && skillController.GetFlatlineHealAmount() > 0) {
+                if (p.health <= 0 || p.health >= 100 || p.fightingSpiritTimer > 0f || p.lastStandTimer > 0f) {
                     SetInteracting(false, null);
                     return;
                 }
                 if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact", true) && !interactionLock) {
                     // Use the deployable
-                    SetInteracting(true, "Player");
+                    SetInteracting(true, "PlayerHeal");
                     hud.ToggleHintText(null);
                 } else {
                     // Stop using the deployable
                     SetInteracting(false, null);
                     hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO HEAL TEAMMATE");
+                }
+            }
+        } else {
+            // Stop using the deployable
+            SetInteracting(false, null);
+            hud.ToggleHintText(null);
+        }
+    }
+
+    void RevivePlayerCheck()
+    {
+        if (activeInteractable != null && !hud.PauseIsActive() && health > 0 && lastStandTimer <= 0f) {
+            PlayerActionScript p = activeInteractable.GetComponent<PlayerActionScript>();
+            if (p != null && p.lastStandTimer > 0f) {
+                if (p.lastStandTimer <= 0f) {
+                    SetInteracting(false, null);
+                    return;
+                }
+                if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact", true) && !interactionLock) {
+                    // Use the deployable
+                    SetInteracting(true, "PlayerRevive");
+                    hud.ToggleHintText(null);
+                } else {
+                    // Stop using the deployable
+                    SetInteracting(false, null);
+                    hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO REVIVE TEAMMATE");
                 }
             }
         } else {
@@ -941,7 +994,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
 
         // Is near and looking at a flare
-        if (activeInteractable != null && !hud.PauseIsActive() && health > 0) {
+        if (activeInteractable != null && !hud.PauseIsActive() && health > 0 && lastStandTimer <= 0f) {
             FlareScript f = activeInteractable.GetComponent<FlareScript>();
             if (f != null) {
                 if (gameController.objectives.selectedEvacIndex >= 0) {
@@ -971,7 +1024,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (activeInteractable != null && !hud.PauseIsActive() && health > 0) {
+        if (activeInteractable != null && !hud.PauseIsActive() && health > 0 && lastStandTimer <= 0f) {
             NpcScript n = activeInteractable.GetComponent<NpcScript>();
             if (n != null) {
                 if (n.actionState == NpcActionState.Carried || n.actionState == NpcActionState.Dead) {
@@ -1014,7 +1067,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void DeployUseCheck() {
         // If we are looking at the deploy item and near it, we can use it
-        if (activeInteractable != null && !hud.PauseIsActive() && health > 0) {
+        if (activeInteractable != null && !hud.PauseIsActive() && health > 0 && lastStandTimer <= 0f) {
             DeployableScript d = activeInteractable.GetComponent<DeployableScript>();
             if (d != null) {
                 if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact", true) && !interactionLock) {
@@ -1056,7 +1109,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (activeInteractable != null) {
                 PlayerActionScript p = activeInteractable.GetComponent<PlayerActionScript>();
                 if (p != null) {
-                    p.ToggleProceduralInfo(null, true, 0);
+                    p.ToggleProceduralInfo(null, true, -1);
                 }
             }
             activeInteractable = null;
@@ -1096,10 +1149,17 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (gameObject.layer == 0) return;
         if (fightingSpiritTimer > 0f) return;
+        if (lastStandTimer > 0f) return;
         h = Mathf.Clamp(h, 0, 100);
         int prevHealth = health;
-        if (pView.IsMine && h <= 0 && fightingSpiritTimer <= 0f) {
-            ActivateFightingSpirit();
+        if (pView.IsMine && h <= 0) {
+            if (skillController.UseLastStand()) {
+                ActivateLastStand();
+            } else {
+                if (fightingSpiritTimer <= 0f) {
+                    ActivateFightingSpirit();
+                }
+            }
         }
         health = h;
         if (useParticleEffect) {
@@ -1108,7 +1168,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         if (pView.IsMine) {
             skillController.HandleHealthChangeEvent(h);
-            ToggleProceduralInfo(null, false, 0);
+            ToggleProceduralInfo(null, false, -1);
             // Motivate boost
             // If the player is dead, remove the boost from everyone
             // If health went down and is now less than the trigger when it previously wasn't, then send the boost to everyone
@@ -1365,7 +1425,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     void HandleEnvironmentEffects(Collider other) {
-		if (health <= 0 || envDamageTimer < ENV_DAMAGE_DELAY || fightingSpiritTimer > 0f) {
+		if (health <= 0 || envDamageTimer < ENV_DAMAGE_DELAY || fightingSpiritTimer > 0f || lastStandTimer > 0f) {
 			return;
 		}
 
@@ -1423,7 +1483,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (pView.IsMine)
         {
-            if (health <= 0 || fightingSpiritTimer > 0f) {
+            if (health <= 0 || fightingSpiritTimer > 0f || lastStandTimer > 0f) {
                 return;
             }
             HandleExplosiveEffects(other);
@@ -1461,7 +1521,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void OnTriggerStay(Collider other) {
         if (pView.IsMine)
         {
-            if (health <= 0 || fightingSpiritTimer > 0f) {
+            if (health <= 0 || fightingSpiritTimer > 0f || lastStandTimer > 0f) {
                 return;
             }
             HandleEnvironmentEffects(other);
@@ -1502,6 +1562,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (!status) {
             equipmentScript.DespawnPlayer();
             weaponScript.DespawnPlayer();
+        } else {
+            charController.height = 1f;
+            charController.center = new Vector3(0f, charCenterYOriginal, 0f);
         }
         hudMarker.enabled = status;
         hudMarker2.enabled = status;
@@ -1528,7 +1591,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         if (pView.IsMine) {
             if (otherPlayer.ActorNumber == interactedOnById) {
-                ToggleProceduralInfo(null, false, 0);
+                ToggleProceduralInfo(null, false, -1);
             }
             SkillController mySkillController = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>();
             float dmgRemoval = mySkillController.RemoveMotivateBoost(otherPlayer.ActorNumber);
@@ -1596,6 +1659,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         fpc.m_IsCrouching = false;
         fpc.m_IsWalking = false;
         FpcCrouch(false);
+        fpc.SetIsIncapacitated(false);
         escapeValueSent = false;
         canShoot = true;
         fpc.canMove = true;
@@ -1624,6 +1688,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         wepActionScript.ResetMyActionStates();
         fpc.ResetAnimationState();
         fpc.ResetFPCAnimator(weaponScript.currentlyEquippedType);
+        skillController.SetLastStand();
 
         // Send player back to spawn position, reset rotation, leave spectator mode
         //transform.rotation = Quaternion.Euler(Vector3.zero);
@@ -1780,7 +1845,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             healAmounts = 7;
         }
         int healthIncrement = (int)(playerScript.health * totalHealPortion / 5f);
-        if (this.health < playerScript.health && this.health > 0 && fightingSpiritTimer <= 0f){
+        if (this.health < playerScript.health && this.health > 0 && fightingSpiritTimer <= 0f && lastStandTimer <= 0f) {
           for (int i = 0; i < healAmounts; i++) {
             int newHealth = 0;
             if (this.health + healthIncrement > playerScript.health){
@@ -2006,6 +2071,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
+    void TriggerPlayerIncapacitatedAlert(string playerName)
+    {
+        PlayerActionScript p = PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>();
+        if (p.health > 0) {
+            hud.MessagePopup(playerName + " needs to be helped up!");
+        }
+    }
+
     void ResetEnvDamageTimer() {
 		envDamageTimer = 0f;
 	}
@@ -2075,6 +2148,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         health = 0;
         activeCamoTimer = 0f;
+        lastStandTimer = 0f;
+        fightingSpiritTimer = 0f;
         ToggleActiveCamo(false, 0f);
         equipmentScript.ToggleFirstPersonBody(false);
         equipmentScript.ToggleFullBody(false);
@@ -2134,19 +2209,28 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 		pView.RPC("RpcSyncDataPlayer", RpcTarget.All, healthToSend, overshieldToSend, escapeValueSent, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills, GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].deaths, escapeAvailablePopup, waitForAccept,
                     skillController.GetMyHackerBoost(), skillController.GetMyHeadstrongBoost(), skillController.GetMyResourcefulBoost(), skillController.GetMyInspireBoost(), skillController.GetMyAvoidabilityBoost(), skillController.GetMyIntimidationBoost(), skillController.GetMyProviderBoost(), skillController.GetMyDdosLevel(),
                     skillController.GetMyMartialArtsAttackBoost(), skillController.GetMyMartialArtsDefenseBoost(), skillController.GetMyFireteamBoost(), skillController.GetSilhouetteBoost(), skillController.GetRegeneratorLevel(), skillController.GetPainkillerLevel(),
-                    motivateDmg, motivates, fightingSpiritTimer, activeCamo, activeCamoTimer);
+                    motivateDmg, motivates, fightingSpiritTimer, lastStandTimer, activeCamo, activeCamoTimer, interactedOnById);
 	}
 
 	[PunRPC]
 	void RpcSyncDataPlayer(int health, float overshield, bool escapeValueSent, int kills, int deaths, bool escapeAvailablePopup, bool waitForAccept,
         int myHackerBoost, float myHeadstrongBoost, float myResourcefulBoost, float myInspireBoost, float myAvoidabilityBoost, float myIntimidationBoost, int myProviderBoost, int myDdosLevel, float myMartialArtsAttackBoost, float myMartialArtsDefenseBoost,
-        float myFireteamBoost, int silhouetteBoost, int regeneratorLevel, int painkillerLevel, float motivateDamageBoost, string serializedMotivateBoosts, float fightingSpiritTimer, bool activeCamo, float activeCamoTimer) {
+        float myFireteamBoost, int silhouetteBoost, int regeneratorLevel, int painkillerLevel, float motivateDamageBoost, string serializedMotivateBoosts, float fightingSpiritTimer, float lastStandTimer, bool activeCamo, float activeCamoTimer, int interactedOnById) {
         this.health = health;
         this.overshield = overshield;
         this.fightingSpiritTimer = fightingSpiritTimer;
         if (fightingSpiritTimer > 0f) {
             this.health = 0;
         }
+        this.lastStandTimer = lastStandTimer;
+        if (lastStandTimer > 0f) {
+            this.health = 0;
+            fpc.SetIsIncapacitated(true);
+            fpc.SetIncapacitatedInAnimator(true);
+            charController.height = 0.5f;
+            charController.center = new Vector3(0f, 0.27f, 0f);
+        }
+        this.interactedOnById = interactedOnById;
         this.escapeValueSent = escapeValueSent;
         GameControllerScript.playerList[pView.OwnerActorNr].kills = kills;
         GameControllerScript.playerList[pView.OwnerActorNr].deaths = deaths;
@@ -2234,7 +2318,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             ToggleActiveCamoSync();
         }
 
-        if (health <= 0 && fightingSpiritTimer <= 0f) {
+        if (health <= 0 && fightingSpiritTimer <= 0f && lastStandTimer <= 0f) {
             SetPlayerDead();
         } else if (waitForAccept) {
             waitingOnAccept = true;
@@ -2366,7 +2450,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (gameObject.layer == 0) return;
         PlayerActionScript p = PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>();
         if (pView.Owner.ActorNumber == p.interactedOnById) {
-            p.ToggleProceduralInfo(null, false, 0);
+            p.ToggleProceduralInfo(null, false, -1);
         }
         SkillController mySkillController = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>();
         float dmgRemoval = mySkillController.RemoveMotivateBoost(pView.Owner.ActorNumber);
@@ -2454,7 +2538,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void RegenerateHealth(int health)
     {
-        if (this.health < 100 && this.health > 0 && fightingSpiritTimer <= 0f) {
+        if (this.health < 100 && this.health > 0 && fightingSpiritTimer <= 0f && lastStandTimer <= 0f) {
             int newHealth = this.health + health;
             SetHealth(newHealth, false);
         }
@@ -2508,7 +2592,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     IEnumerator RegeneratorRecover()
     {
-        if (fightingSpiritTimer <= 0f) {
+        if (fightingSpiritTimer <= 0f && lastStandTimer <= 0f) {
             // For every regenerator on your team, determine if they're within proper range
             LinkedList<int>.Enumerator ids = skillController.regeneratorPlayerIds.GetEnumerator();
             try {
@@ -2574,7 +2658,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public void CallGuardianAngel(int actorNo)
     {
         if (!skillController.CanCallGuardianAngel()) return;
-        if (health <= 0 || fightingSpiritTimer > 0f) return;
+        if (health <= 0 || fightingSpiritTimer > 0f || lastStandTimer > 0f) return;
         if (!GameControllerScript.playerList.ContainsKey(actorNo)) return;
         if (GameControllerScript.playerList[actorNo].objRef == null) return;
         PlayerActionScript thisPlayerActionScript = GameControllerScript.playerList[actorNo].objRef.GetComponent<PlayerActionScript>();
@@ -2648,11 +2732,54 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
+    void ActivateLastStand()
+    {
+        lastStandTimer = skillController.GetLastStandTime();
+        if (lastStandTimer > 0f) {
+            interactedOnById = -1;
+            DropCarrying();
+            // Set FPC controller to be in last stand mode
+            charController.height = 0.5f;
+            charController.center = new Vector3(0f, 0.27f, 0f);
+            pView.RPC("RpcCrouch", RpcTarget.Others, 0.5f, 0.27f);
+            fpc.SetIsIncapacitated(true);
+            fpc.SetIncapacitatedInAnimator(true);
+            hud.MessagePopup("Last Stand!");
+            skipHitDir = true;
+            pView.RPC("RpcActivateLastStand", RpcTarget.Others, lastStandTimer, PhotonNetwork.NickName);
+        }
+    }
+
+    public void LastStandRevive()
+    {
+        pView.RPC("RpcLastStandRevive", RpcTarget.All, pView.Owner.ActorNumber);
+        fpc.SetIncapacitatedInAnimator(false);
+    }
+
+    [PunRPC]
+    void RpcLastStandRevive(int playerId)
+    {
+        lastStandTimer = 0f;
+        interactedOnById = -1;
+        SetHealth(80, false);
+        charController.height = charHeightOriginal;
+        charController.center = new Vector3(0f, charCenterYOriginal, 0f);
+        fpc.SetIsIncapacitated(false);
+        skipHitDir = false;
+    }
+
     [PunRPC]
     void RpcActivateFightingSpirit(float t)
     {
         fightingSpiritTimer = t;
         PlayBoostParticleEffect(false);
+    }
+
+    [PunRPC]
+    void RpcActivateLastStand(float t, string playerName)
+    {
+        lastStandTimer = t;
+        TriggerPlayerIncapacitatedAlert(playerName);
     }
 
     void DeactivateFightingSpirit()
@@ -2666,6 +2793,17 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         fightingSpiritTimer = 0f;
     }
 
+    void DeactivateLastStand()
+    {
+        pView.RPC("RpcDeactivateLastStand", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void RpcDeactivateLastStand()
+    {
+        lastStandTimer = 0f;
+    }
+
     void UpdateFightingSpirit()
     {
         if (fightingSpiritTimer > 0f) {
@@ -2673,6 +2811,18 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             ResetHitTimer();
             health = (int)(100f * (fightingSpiritTimer / skillController.GetFightingSpiritTime()));
             if (health < 0) health = 0;
+        }
+    }
+
+    void UpdateLastStand()
+    {
+        if (lastStandTimer > 0f) {
+            ResetHitTimer();
+            if (interactedOnById != -1) {
+                lastStandTimer -= Time.deltaTime;
+                health = (int)(100f * (lastStandTimer / skillController.GetLastStandTime()));
+                if (health < 0) health = 0;
+            }
         }
     }
 

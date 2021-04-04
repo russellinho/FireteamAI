@@ -93,6 +93,7 @@ public class SkillController : MonoBehaviour
     private float thisPainkillerTimer;
     private bool thisPainkillerActive;
     private EncryptedInt thisPainkillerLevel;
+    private EncryptedInt lastStandRevivesRemaining;
 
     // Active boosts
     private float firmGripTimer;
@@ -2307,6 +2308,48 @@ public class SkillController : MonoBehaviour
             return 4;
         }
         return 0;
+    }
+
+    public float GetLastStandTime()
+    {
+        if (PlayerData.playerdata.skillList["3/0"].Level == 1) {
+            return 12f;
+        } else if (PlayerData.playerdata.skillList["3/0"].Level == 2) {
+            return 25f;
+        } else if (PlayerData.playerdata.skillList["3/0"].Level == 3) {
+            return 40f;
+        } else if (PlayerData.playerdata.skillList["3/0"].Level == 4) {
+            return 60f;
+        }
+        return 0;
+    }
+
+    private int GetLastStandRevivalCount()
+    {
+        if (PlayerData.playerdata.skillList["3/0"].Level == 1) {
+            return 1;
+        } else if (PlayerData.playerdata.skillList["3/0"].Level == 2) {
+            return 1;
+        } else if (PlayerData.playerdata.skillList["3/0"].Level == 3) {
+            return 2;
+        } else if (PlayerData.playerdata.skillList["3/0"].Level == 4) {
+            return 2;
+        }
+        return 0;
+    }
+
+    public void SetLastStand()
+    {
+        lastStandRevivesRemaining = GetLastStandRevivalCount();
+    }
+
+    public bool UseLastStand()
+    {
+        if (lastStandRevivesRemaining > 0) {
+            lastStandRevivesRemaining--;
+            return true;
+        }
+        return false;
     }
 
     public struct MotivateNode {

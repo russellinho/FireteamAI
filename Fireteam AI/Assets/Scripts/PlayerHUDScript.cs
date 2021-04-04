@@ -844,17 +844,25 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				if (renderCheck <= 0)
 					continue;
 				// If the player is alive and on camera, then render the player name and health bar
-				if (p.GetComponent<PlayerActionScript>().health > 0 || p.GetComponent<PlayerActionScript>().fightingSpiritTimer > 0f)
+				PlayerActionScript pa = p.GetComponent<PlayerActionScript>();
+				PlayerMarkerScript pm = playerMarkers[actorNo].GetComponent<PlayerMarkerScript>();
+				if (pa.health > 0 || pa.fightingSpiritTimer > 0f || pa.lastStandTimer > 0f)
 				{
 					playerMarkers [actorNo].SetActive (true);
-					playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().healthbarRef.value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
+					pm.healthbarRef.value = (((float)pa.health) / 100.0f);
 					Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + HEIGHT_OFFSET, p.transform.position.z);
 					RectTransform playerMarkerTrans = playerMarkers[actorNo].GetComponent<RectTransform>();
 					Vector3 destPoint = playerActionScript.viewCam.WorldToScreenPoint(o);
 					Vector3 startPoint = playerMarkerTrans.position;
 					playerMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
+					// Toggle revive indicator
+					if (pa.lastStandTimer > 0f) {
+						pm.reviveIndicator.SetActive(true);
+					} else {
+						pm.reviveIndicator.SetActive(false);
+					}
 				}
-				if (playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().nametagRef.enabled && p.GetComponent<PlayerActionScript>().health <= 0 && p.GetComponent<PlayerActionScript>().fightingSpiritTimer <= 0f)
+				if (pm.nametagRef.enabled && pa.health <= 0 && pa.fightingSpiritTimer <= 0f && pa.lastStandTimer <= 0f)
 				{
 					playerMarkers [actorNo].SetActive (false);
 				}
@@ -863,17 +871,25 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				if (renderCheck <= 0)
 					continue;
 				// If the player is alive and on camera, then render the player name and health bar
-				if (p.GetComponent<PlayerActionScript>().health > 0 || p.GetComponent<PlayerActionScript>().fightingSpiritTimer > 0f)
+				PlayerActionScript pa = p.GetComponent<PlayerActionScript>();
+				PlayerMarkerScript pm = playerMarkers[actorNo].GetComponent<PlayerMarkerScript>();
+				if (pa.health > 0 || pa.fightingSpiritTimer > 0f || pa.lastStandTimer > 0f)
 				{
 					playerMarkers [actorNo].SetActive (true);
-					playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().healthbarRef.value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
+					pm.healthbarRef.value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
 					Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + HEIGHT_OFFSET, p.transform.position.z);
 					RectTransform playerMarkerTrans = playerMarkers[actorNo].GetComponent<RectTransform>();
 					Vector3 destPoint = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
 					Vector3 startPoint = playerMarkerTrans.position;
 					playerMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
+					// Toggle revive indicator
+					if (pa.lastStandTimer > 0f) {
+						pm.reviveIndicator.SetActive(true);
+					} else {
+						pm.reviveIndicator.SetActive(false);
+					}
 				}
-				if (playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().nametagRef.enabled && p.GetComponent<PlayerActionScript>().health <= 0 && p.GetComponent<PlayerActionScript>().fightingSpiritTimer <= 0f)
+				if (pm.nametagRef.enabled && pa.health <= 0 && pa.fightingSpiritTimer <= 0f && pa.lastStandTimer <= 0f)
 				{
 					playerMarkers [actorNo].SetActive (false);
 				}
@@ -1078,7 +1094,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleScoreboard(bool b)
     {
-		if (playerActionScript.health <= 0 && playerActionScript.fightingSpiritTimer <= 0f) {
+		if (playerActionScript.health <= 0 && playerActionScript.fightingSpiritTimer <= 0f && playerActionScript.lastStandTimer <= 0f) {
 			container.healthGroup.alpha = 0f;
 			container.staminaGroup.alpha = 0f;
 			container.weaponLabelTxt.gameObject.SetActive(false);
@@ -1671,7 +1687,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	{
 		if (container.pauseMenuManager.pauseActive) return false;
 		if (!container.voiceCommandsPanel.activeInHierarchy) return false;
-		if (playerActionScript.health <= 0 && playerActionScript.fightingSpiritTimer <= 0f) return false;
+		if (playerActionScript.health <= 0 && playerActionScript.fightingSpiritTimer <= 0f && playerActionScript.lastStandTimer <= 0f) return false;
 		if (gameController.gameOver) return false;
 		return true;
 	}
@@ -1716,7 +1732,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	bool CanUseVoiceCommands()
 	{
-		if ((playerActionScript.health <= 0 && playerActionScript.fightingSpiritTimer <= 0f) || container.inGameMessenger.inputText.enabled || PauseIsActive()) return false;
+		if ((playerActionScript.health <= 0 && playerActionScript.fightingSpiritTimer <= 0f && playerActionScript.lastStandTimer <= 0f) || container.inGameMessenger.inputText.enabled || PauseIsActive()) return false;
 		return true;
 	}
 
@@ -1730,7 +1746,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (i <= 8) {
 				PlayerStat pDetails = p.Value;
 				if (pDetails.objRef != null) {
-					if (pDetails.objRef.GetComponent<PlayerActionScript>().health <= 0 && pDetails.objRef.GetComponent<PlayerActionScript>().fightingSpiritTimer <= 0f) {
+					PlayerActionScript pa = pDetails.objRef.GetComponent<PlayerActionScript>();
+					if (pa.health <= 0 && pa.fightingSpiritTimer <= 0f && pa.lastStandTimer <= 0f) {
 						container.revivePlayerSlots[i - 1].SetActive(true);
 						container.revivePlayerSlots[i - 1].GetComponent<TextMeshProUGUI>().text = (i + ": " + pDetails.name);
 						container.revivePlayerSlots[i - 1].GetComponentInChildren<Text>(true).text = (""+p.Key);
