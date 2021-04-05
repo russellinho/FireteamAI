@@ -1794,6 +1794,7 @@ public class PlayerStat {
 	public GameObject objRef;
 	public int actorId;
 	public string name;
+	public string className;
 	public char team;
 	public int kills;
 	public int deaths;
@@ -1801,10 +1802,11 @@ public class PlayerStat {
 	public uint expGained;
 	public uint gpGained;
 
-	public PlayerStat(GameObject objRef, int actorId, string name, char team, uint exp) {
+	public PlayerStat(GameObject objRef, int actorId, string name, string className, char team, uint exp) {
 		this.objRef = objRef;
 		this.actorId = actorId;
 		this.name = name;
+		this.className = className;
 		this.team = team;
 		this.exp = exp;
 	}

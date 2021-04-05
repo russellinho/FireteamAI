@@ -423,7 +423,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             team = 'B';
             Debug.Log(pView.Owner.NickName + " joined blue team.");
         }
-        PlayerStat p = new PlayerStat(playerRef, pView.Owner.ActorNumber, pView.Owner.NickName, team, Convert.ToUInt32(pView.Owner.CustomProperties["exp"]));
+        PlayerStat p = new PlayerStat(playerRef, pView.Owner.ActorNumber, pView.Owner.NickName, (string)pView.Owner.CustomProperties["class"], team, Convert.ToUInt32(pView.Owner.CustomProperties["exp"]));
         if (GameControllerScript.playerList == null) {
             GameControllerScript.playerList = new Dictionary<int, PlayerStat>();
         }
@@ -441,7 +441,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             team = 'B';
             Debug.Log(playerBeingAdded.NickName + " joined blue team.");
         }
-        PlayerStat p = new PlayerStat(null, actorNo, playerBeingAdded.NickName, team, Convert.ToUInt32(playerBeingAdded.CustomProperties["exp"]));
+        PlayerStat p = new PlayerStat(null, actorNo, playerBeingAdded.NickName, (string)playerBeingAdded.CustomProperties["class"], team, Convert.ToUInt32(playerBeingAdded.CustomProperties["exp"]));
         if (GameControllerScript.playerList == null) {
             GameControllerScript.playerList = new Dictionary<int, PlayerStat>();
         }
@@ -1547,6 +1547,28 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 }
             }
         });
+    }
+
+    public string GetClassNameForTreeIndex(int index)
+    {
+        switch (index) {
+            case 0:
+                return "COMMANDO";
+            case 1:
+                return "RECON";
+            case 2:
+                return "ENGINEER";
+            case 3:
+                return "MASTERMIND";
+            case 4:
+                return "MEDIC";
+            case 5:
+                return "MARKSMAN";
+            case 6:
+                return "HEAVY";
+            default:
+                return "N/A";
+        }
     }
 
     public Texture GetRankInsigniaForRank(string rank) {

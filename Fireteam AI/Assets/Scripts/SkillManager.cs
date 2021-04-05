@@ -829,6 +829,11 @@ public class SkillManager : MonoBehaviour
         primaryTreeIndex = treeId;
     }
 
+    public int GetPrimaryTree()
+    {
+        return primaryTreeIndex;
+    }
+
     public void SetPrimaryTree(int treeId)
     {
         commandoClassIndicator.SetActive(false);

@@ -551,6 +551,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.info.Playername;
 			Hashtable h = new Hashtable();
 			h.Add("exp", (int)PlayerData.playerdata.info.Exp);
+			h.Add("class", PlayerData.playerdata.GetClassNameForTreeIndex(skillManager.GetPrimaryTree()));
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 			PhotonNetwork.ConnectUsingSettings();
 		}

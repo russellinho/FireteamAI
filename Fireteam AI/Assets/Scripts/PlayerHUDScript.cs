@@ -833,6 +833,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				GameObject marker = GameObject.Instantiate (container.hudPlayerMarker);
 				PlayerMarkerScript pms = marker.GetComponent<PlayerMarkerScript>();
 				pms.nametagRef.text = p.GetComponent<PhotonView> ().Owner.NickName;
+				pms.classIndicator.text = stat.className;
 				pms.rankInsigniaRef.texture = PlayerData.playerdata.GetRankInsigniaForRank(PlayerData.playerdata.GetRankFromExp(stat.exp).name);
 				marker.GetComponent<RectTransform> ().SetParent (container.playerMarkers.transform);
 				marker.SetActive(false);
