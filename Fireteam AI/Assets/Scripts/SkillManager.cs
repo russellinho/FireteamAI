@@ -37,7 +37,6 @@ public class SkillManager : MonoBehaviour
     {
         if (setPrimaryTreeFlag) {
             SetPrimaryTree(primaryTreeIndex);
-            primaryTreeIndex = -1;
             setPrimaryTreeFlag = false;
         }
         if (refreshActiveSkillsFlag) {
