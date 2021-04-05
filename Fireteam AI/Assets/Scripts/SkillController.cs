@@ -2353,11 +2353,11 @@ public class SkillController : MonoBehaviour
         if (PlayerData.playerdata.skillList["3/0"].Level == 1) {
             return 1;
         } else if (PlayerData.playerdata.skillList["3/0"].Level == 2) {
-            return 1;
+            return 2;
         } else if (PlayerData.playerdata.skillList["3/0"].Level == 3) {
             return 2;
         } else if (PlayerData.playerdata.skillList["3/0"].Level == 4) {
-            return 2;
+            return 3;
         }
         return 0;
     }
