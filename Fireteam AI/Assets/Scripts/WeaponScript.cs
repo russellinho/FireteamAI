@@ -218,7 +218,9 @@ public class WeaponScript : MonoBehaviour
         // Debug.Log("isCockingGrenade: " + weaponActionScript.isCockingGrenade);
         // Debug.Log("isCocking: " + weaponActionScript.isCocking);
         // Debug.Log("isUsingBooster: " + weaponActionScript.isUsingBooster);
-        UpdateMunitionsEngineering();
+        if (playerActionScript.health > 0) {
+            UpdateMunitionsEngineering();
+        }
 
         if (CheckCanSwitchWeapon()) {
             if (PlayerPreferences.playerPreferences.KeyWasPressed("Primary") || (currentlyEquippedType == 4 && weaponActionScript.totalAmmoLeft <= 0 && weaponActionScript.currentAmmo <= 0)) {
@@ -243,6 +245,7 @@ public class WeaponScript : MonoBehaviour
             } else if (lvl == 3) {
                 RegenerateAmmo(3);
             }
+            playerActionScript.hud.AddActiveSkill("23", 0f);
             playerActionScript.skillController.MunitionsEngineeringReset();
         }
     }

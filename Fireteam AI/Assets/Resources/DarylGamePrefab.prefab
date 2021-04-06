@@ -98222,8 +98222,6 @@ MonoBehaviour:
   fullBodyRef: {fileID: 7370182251486739549}
   firstPersonRef: {fileID: 5586924236429968885}
   camoMat: {fileID: 2100000, guid: 6215caacc1645408e88b47f6dc2cdb37, type: 2}
-  reflectionProbe: {fileID: 7250728129266877450}
-  reflectionProbeFpc: {fileID: 350473157739710478}
   equippedCharacter: Daryl
   characterGender: M
   equippedHeadgear: 
@@ -98909,6 +98907,7 @@ MonoBehaviour:
   waitingOnAccept: 0
   lastHitFromPos: {x: 0, y: 0, z: 0}
   fightingSpiritTimer: 0
+  lastStandTimer: 0
 --- !u!114 &9158664062041186688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99350,7 +99349,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc0ab733702348ea9b34defd0b0aebb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bubbleShieldDeployRef: {fileID: 0}
+  hud: {fileID: 9158664062041186716}
   recoilBoost:
     currentCryptoKey: 0
     hiddenValue: 0
@@ -99469,12 +99468,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a62b292ff8a6f40e79404d65c994a121, type: 3}
---- !u!1 &350473157739710478 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1815784988160043785, guid: a62b292ff8a6f40e79404d65c994a121,
-    type: 3}
-  m_PrefabInstance: {fileID: 2157179869021512455}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &350473157739710476 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1815784988160043787, guid: a62b292ff8a6f40e79404d65c994a121,
@@ -99558,12 +99551,6 @@ PrefabInstance:
 --- !u!4 &7250728129266877448 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1815784988160043787, guid: a62b292ff8a6f40e79404d65c994a121,
-    type: 3}
-  m_PrefabInstance: {fileID: 9055951612331601667}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &7250728129266877450 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1815784988160043785, guid: a62b292ff8a6f40e79404d65c994a121,
     type: 3}
   m_PrefabInstance: {fileID: 9055951612331601667}
   m_PrefabAsset: {fileID: 0}

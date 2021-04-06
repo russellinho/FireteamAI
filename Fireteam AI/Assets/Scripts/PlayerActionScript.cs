@@ -756,6 +756,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 DropCarrying();
                 fpc.SetIsIncapacitated(false);
                 hud.SetCarryingText(null);
+                hud.ClearAllSkills();
+                skillController.ClearActiveSkills();
                 TriggerPlayerDownAlert();
                 DeactivateFightingSpirit();
                 DeactivateLastStand();
@@ -1391,6 +1393,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             s += aliveIds[i];
         }
         pView.RPC("RpcSyncEcmFeedback", RpcTarget.All, s, duration);
+        hud.AddActiveSkill("210", duration);
     }
 
     [PunRPC]
@@ -1426,6 +1429,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             s += aliveIds[i];
         }
         pView.RPC("RpcSyncInfraredScan", RpcTarget.All, s, duration);
+        hud.AddActiveSkill("29", duration);
     }
 
     [PunRPC]
@@ -1707,6 +1711,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         wepActionScript.ResetMyActionStates();
         fpc.ResetAnimationState();
         fpc.ResetFPCAnimator(weaponScript.currentlyEquippedType);
+        skillController.MunitionsEngineeringReset();
+        skillController.RegenerationReset();
         skillController.SetLastStand();
 
         // Send player back to spawn position, reset rotation, leave spectator mode
@@ -2480,6 +2486,13 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void UpdateSpeedBoostFromSkills()
     {
         float skillSpeedBoost = skillController.HandleAllyDeath();
+        if (health > 0 && skillSpeedBoost > 0f) {
+            if (skillSpeedBoost > 0f) {
+                hud.AddActiveSkill("011", 0f);
+            } else {
+                hud.RemoveActiveSkill("011");
+            }
+        }
         StatBoosts newTotalStatBoosts = equipmentScript.CalculateStatBoostsWithCurrentEquips();
         playerScript.stats.setSpeed(newTotalStatBoosts.speedBoost + skillSpeedBoost);
         playerScript.updateStats();
@@ -2538,7 +2551,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void UpdateRegeneration()
     {
-        if (skillController.RegenerationFlag()) {
+        if (skillController.RegenerationFlag() && health > 0) {
             int lvl = skillController.GetRegenerationLevel();
             if (lvl == 1) {
                 RegenerateHealth(2);
@@ -2560,6 +2573,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (this.health < 100 && this.health > 0 && fightingSpiritTimer <= 0f && lastStandTimer <= 0f) {
             int newHealth = this.health + health;
             SetHealth(newHealth, false);
+            hud.AddActiveSkill("42", 0f);
         }
     }
 
@@ -2578,6 +2592,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         } else if (skill == 3) {
             if (skillController.ActivateActiveCamouflage()) {
                 ToggleActiveCamo(true, skillController.GetActiveCamoTime());
+                hud.AddActiveSkill("110", activeCamoTimer);
                 PlayBoostParticleEffect(true);
             }
         } else if (skill == 4) {
@@ -2746,6 +2761,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (fightingSpiritTimer > 0f) {
             hud.MessagePopup("Fighting Spirit!");
             PlayBoostParticleEffect(false);
+            hud.AddActiveSkill("38", 0f);
             skipHitDir = true;
             pView.RPC("RpcActivateFightingSpirit", RpcTarget.Others, fightingSpiritTimer);
         }
@@ -2764,6 +2780,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             pView.RPC("RpcCrouch", RpcTarget.Others, 0.5f, 0.27f);
             fpc.SetIsIncapacitated(true);
             fpc.SetIncapacitatedInAnimator(true);
+            hud.AddActiveSkill("30", 0f);
             hud.MessagePopup("Last Stand!");
             skipHitDir = true;
             pView.RPC("RpcActivateLastStand", RpcTarget.Others, lastStandTimer, PhotonNetwork.NickName);
@@ -2784,6 +2801,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (pView.IsMine) {
             SetHealth(80, false);
             FpcCrouch('s');
+            hud.RemoveActiveSkill("30");
         }
         equipmentScript.fullBodyRef.transform.localPosition = Vector3.zero;
         charController.height = charHeightOriginal;
@@ -2829,6 +2847,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         lastStandTimer = 0f;
         equipmentScript.fullBodyRef.transform.localPosition = Vector3.zero;
+        if (pView.IsMine) {
+            hud.RemoveActiveSkill("30");
+        }
     }
 
     void UpdateFightingSpirit()
@@ -2869,8 +2890,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (b) {
             activeCamoTimer = duration;
             audioController.PlayCamouflageSound();
+            hud.AddActiveSkill("110", activeCamoTimer);
         } else {
+            activeCamoTimer = 0f;
             audioController.PlayCamouflageOffSound();
+            hud.RemoveActiveSkill("110");
         }
         activeCamo = b;
         equipmentScript.CamouflageFpcMesh(b);

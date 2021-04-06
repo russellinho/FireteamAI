@@ -115629,8 +115629,6 @@ MonoBehaviour:
   fullBodyRef: {fileID: 1072883147271152842}
   firstPersonRef: {fileID: 5740449511319056765}
   camoMat: {fileID: 2100000, guid: 6215caacc1645408e88b47f6dc2cdb37, type: 2}
-  reflectionProbe: {fileID: 2453480902689481082}
-  reflectionProbeFpc: {fileID: 7641307055597192211}
   equippedCharacter: Dani
   characterGender: F
   equippedHeadgear: 
@@ -116316,6 +116314,7 @@ MonoBehaviour:
   waitingOnAccept: 0
   lastHitFromPos: {x: 0, y: 0, z: 0}
   fightingSpiritTimer: 0
+  lastStandTimer: 0
 --- !u!114 &5740449512303423532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116757,7 +116756,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc0ab733702348ea9b34defd0b0aebb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bubbleShieldDeployRef: {fileID: 0}
+  hud: {fileID: 5740449512303423528}
   recoilBoost:
     currentCryptoKey: 0
     hiddenValue: 0
@@ -138716,12 +138715,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a62b292ff8a6f40e79404d65c994a121, type: 3}
---- !u!1 &2453480902689481082 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1815784988160043785, guid: a62b292ff8a6f40e79404d65c994a121,
-    type: 3}
-  m_PrefabInstance: {fileID: 4268978355539724915}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2453480902689481080 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1815784988160043787, guid: a62b292ff8a6f40e79404d65c994a121,
@@ -138805,12 +138798,6 @@ PrefabInstance:
 --- !u!4 &7641307055597192209 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1815784988160043787, guid: a62b292ff8a6f40e79404d65c994a121,
-    type: 3}
-  m_PrefabInstance: {fileID: 8302832983103680282}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &7641307055597192211 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1815784988160043785, guid: a62b292ff8a6f40e79404d65c994a121,
     type: 3}
   m_PrefabInstance: {fileID: 8302832983103680282}
   m_PrefabAsset: {fileID: 0}

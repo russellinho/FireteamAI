@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 
 public class SkillController : MonoBehaviour
 {
+    public PlayerHUDScript hud;
     private const float ONE_SHOT_ONE_KILL_TIME = 10f;
     public static float BOOSTER_LVL1_EFFECT = 0.05f;
     public static float BOOSTER_LVL2_EFFECT = 0.1f;
@@ -72,7 +73,6 @@ public class SkillController : MonoBehaviour
     private const int REGENERATOR_RECOVER_5 = 6;
     private const float MOTIVATE_BOOST_CAP = 0.2f;
     private const float INTIMIDATION_BOOST_CAP = 0.2f;
-    public GameObject bubbleShieldDeployRef;
     private EncryptedFloat speedBoost;
     private EncryptedFloat damageBoost;
     private EncryptedFloat armorBoost;
@@ -544,14 +544,23 @@ public class SkillController : MonoBehaviour
         if (PlayerData.playerdata.skillList["0/7"].Level == 1) {
             if (health < 20) {
                 newDamageBoost = Mathf.Clamp(Mathf.Pow(1.2f, 20 - health), 0f, 15f);
+                hud.AddActiveSkill("07", 0f);
+            } else {
+                hud.RemoveActiveSkill("07");
             }
         } else if (PlayerData.playerdata.skillList["0/7"].Level == 2) {
             if (health < 40) {
                 newDamageBoost = Mathf.Clamp(Mathf.Pow(1.1f, 40 - health), 0f, 30f);
+                hud.AddActiveSkill("07", 0f);
+            } else {
+                hud.RemoveActiveSkill("07");
             }
         } else if (PlayerData.playerdata.skillList["0/7"].Level == 3) {
             if (health < 60) {
                 newDamageBoost = Mathf.Clamp(Mathf.Pow(1.07f, 60 - health), 0f, 50f);
+                hud.AddActiveSkill("07", 0f);
+            } else {
+                hud.RemoveActiveSkill("07");
             }
         }
 
@@ -560,14 +569,23 @@ public class SkillController : MonoBehaviour
         if (PlayerData.playerdata.skillList["1/9"].Level == 1) {
             if (health < 20) {
                 newSpeedBoost = Mathf.Clamp(Mathf.Pow(1.1f, 20 - health), 0f, 5f);
+                hud.AddActiveSkill("19", 0f);
+            } else {
+                hud.RemoveActiveSkill("19");
             }
         } else if (PlayerData.playerdata.skillList["1/9"].Level == 2) {
             if (health < 40) {
                 newSpeedBoost = Mathf.Clamp(Mathf.Pow(1.09f, 40 - health), 0f, 15f);
+                hud.AddActiveSkill("19", 0f);
+            } else {
+                hud.RemoveActiveSkill("19");
             }
         } else if (PlayerData.playerdata.skillList["1/9"].Level == 3) {
             if (health < 60) {
                 newSpeedBoost = Mathf.Clamp(Mathf.Pow(1.07f, 60 - health), 0f, 30f);
+                hud.AddActiveSkill("19", 0f);
+            } else {
+                hud.RemoveActiveSkill("19");
             }
         }
 
@@ -576,14 +594,23 @@ public class SkillController : MonoBehaviour
         if (PlayerData.playerdata.skillList["6/7"].Level == 1) {
             if (health < 20) {
                 newArmorBoost = Mathf.Clamp(Mathf.Pow(1.15f, 20 - health), 0f, 10f);
+                hud.AddActiveSkill("67", 0f);
+            } else {
+                hud.RemoveActiveSkill("67");
             }
         } else if (PlayerData.playerdata.skillList["6/7"].Level == 2) {
             if (health < 40) {
                 newArmorBoost = Mathf.Clamp(Mathf.Pow(1.09f, 40 - health), 0f, 20f);
+                hud.AddActiveSkill("67", 0f);
+            } else {
+                hud.RemoveActiveSkill("67");
             }
         } else if (PlayerData.playerdata.skillList["6/7"].Level == 3) {
             if (health < 60) {
                 newArmorBoost = Mathf.Clamp(Mathf.Pow(1.065f, 60 - health), 0f, 30f);
+                hud.AddActiveSkill("67", 0f);
+            } else {
+                hud.RemoveActiveSkill("67");
             }
         }
 
@@ -1024,6 +1051,11 @@ public class SkillController : MonoBehaviour
 
     public float GetHeadstrongBoost()
     {
+        if (headstrongBoost > 0f) {
+            hud.AddActiveSkill("31", 0f);
+        } else {
+            hud.RemoveActiveSkill("31");
+        }
         return headstrongBoost;
     }
 
@@ -1100,6 +1132,11 @@ public class SkillController : MonoBehaviour
 
     public float GetInspireBoost()
     {
+        if (inspireBoost > 0f) {
+            hud.AddActiveSkill("32", 0f);
+        } else {
+            hud.RemoveActiveSkill("32");
+        }
         return inspireBoost;
     }
 
@@ -1139,6 +1176,11 @@ public class SkillController : MonoBehaviour
 
     public float GetIntimidationBoost()
     {
+        if (intimidationBoost > 0f) {
+            hud.AddActiveSkill("36", 0f);
+        } else {
+            hud.RemoveActiveSkill("36");
+        }
         return Math.Min(intimidationBoost, INTIMIDATION_BOOST_CAP);
     }
 
@@ -1215,9 +1257,15 @@ public class SkillController : MonoBehaviour
     {
         for (int i = 3; i >= 0; i--) {
             if (ddosBoost[i] > 0) {
+                if (i > 0) {
+                    hud.AddActiveSkill("27", 0f);
+                } else {
+                    hud.RemoveActiveSkill("27");
+                }
                 return i;
             }
         }
+        hud.RemoveActiveSkill("27");
         return 0;
     }
 
@@ -1292,8 +1340,10 @@ public class SkillController : MonoBehaviour
             if (distMultiplier < 0.1f) {
                 distMultiplier = 0f;
             }
+            hud.AddActiveSkill("310", 0f);
             return Mathf.Min(fireteamBoost, FIRETEAM_BOOST_CAP) * distMultiplier;
         }
+        hud.RemoveActiveSkill("310");
         return 0f;
     }
 
@@ -1335,11 +1385,21 @@ public class SkillController : MonoBehaviour
 
     public float GetMartialArtsAttackBoost()
     {
+        if (martialArtsAttackBoost > 0f) {
+            hud.AddActiveSkill("37", 0f);
+        } else {
+            hud.RemoveActiveSkill("37");
+        }
         return Mathf.Min(martialArtsAttackBoost, MARTIAL_ARTS_ATTACK_CAP);
     }
 
     public float GetMartialArtsDefenseBoost()
     {
+        if (martialArtsDefenseBoost > 0f) {
+            hud.AddActiveSkill("37", 0f);
+        } else {
+            hud.RemoveActiveSkill("37");
+        }
         return Mathf.Min(martialArtsDefenseBoost, MARTIAL_ARTS_DEFENSE_CAP);
     }
 
@@ -1496,24 +1556,28 @@ public class SkillController : MonoBehaviour
                         bloodLustActivateCount = 0;
                         bloodLustActivateTimer = 0f;
                         bloodLustActiveTimer = 10f;
+                        hud.AddActiveSkill("06", bloodLustActiveTimer);
                     }
                 } else if (bloodLustLvl == 2) {
                     if (bloodLustActivateCount >= 8) {
                         bloodLustActivateCount = 0;
                         bloodLustActivateTimer = 0f;
                         bloodLustActiveTimer = 15f;
+                        hud.AddActiveSkill("06", bloodLustActiveTimer);
                     }
                 } else if (bloodLustLvl == 3) {
                     if (bloodLustActivateCount >= 6) {
                         bloodLustActivateCount = 0;
                         bloodLustActivateTimer = 0f;
                         bloodLustActiveTimer = 20f;
+                        hud.AddActiveSkill("06", bloodLustActiveTimer);
                     }
                 } else if (bloodLustLvl == 4) {
                     if (bloodLustActivateCount >= 4) {
                         bloodLustActivateCount = 0;
                         bloodLustActivateTimer = 0f;
                         bloodLustActiveTimer = 25f;
+                        hud.AddActiveSkill("06", bloodLustActiveTimer);
                     }
                 }
             }
@@ -1547,6 +1611,9 @@ public class SkillController : MonoBehaviour
     {
         if (bloodLustActiveTimer > 0f) {
             bloodLustActiveTimer -= Time.deltaTime;
+            if (bloodLustActiveTimer <= 0f) {
+                hud.RemoveActiveSkill("06");
+            }
         }
     }
 
@@ -1633,14 +1700,17 @@ public class SkillController : MonoBehaviour
             if (PlayerData.playerdata.skillList["0/9"].Level == 1) {
                 firmGripCooldown = FIRM_GRIP_COOLDOWN_1;
                 firmGripTimer = FIRM_GRIP_TIME_1;
+                hud.AddActiveSkill("09", firmGripTimer);
                 return true;
             } else if (PlayerData.playerdata.skillList["0/9"].Level == 2) {
                 firmGripCooldown = FIRM_GRIP_COOLDOWN_2;
                 firmGripTimer = FIRM_GRIP_TIME_2;
+                hud.AddActiveSkill("09", firmGripTimer);
                 return true;
             } else if (PlayerData.playerdata.skillList["0/9"].Level == 3) {
                 firmGripCooldown = FIRM_GRIP_COOLDOWN_3;
                 firmGripTimer = FIRM_GRIP_TIME_3;
+                hud.AddActiveSkill("09", firmGripTimer);
                 return true;
             }
         }
@@ -1653,14 +1723,17 @@ public class SkillController : MonoBehaviour
             if (PlayerData.playerdata.skillList["5/10"].Level == 1) {
                 snipersDelCooldown = SNIPERS_DEL_COOLDOWN_1;
                 snipersDelTimer = SNIPERS_DEL_TIME_1;
+                hud.AddActiveSkill("510", snipersDelTimer);
                 return true;
             } else if (PlayerData.playerdata.skillList["5/10"].Level == 2) {
                 snipersDelCooldown = SNIPERS_DEL_COOLDOWN_2;
                 snipersDelTimer = SNIPERS_DEL_TIME_2;
+                hud.AddActiveSkill("510", snipersDelTimer);
                 return true;
             } else if (PlayerData.playerdata.skillList["5/10"].Level == 3) {
                 snipersDelCooldown = SNIPERS_DEL_COOLDOWN_3;
                 snipersDelTimer = SNIPERS_DEL_TIME_3;
+                hud.AddActiveSkill("510", snipersDelTimer);
                 return true;
             }
         }
@@ -1673,18 +1746,22 @@ public class SkillController : MonoBehaviour
             if (PlayerData.playerdata.skillList["6/11"].Level == 1) {
                 bulletStreamCooldown = BULLET_STREAM_COOLDOWN_1;
                 bulletStreamTimer = BULLET_STREAM_TIME_1;
+                hud.AddActiveSkill("611", bulletStreamTimer);
                 return true;
             } else if (PlayerData.playerdata.skillList["6/11"].Level == 2) {
                 bulletStreamCooldown = BULLET_STREAM_COOLDOWN_2;
                 bulletStreamTimer = BULLET_STREAM_TIME_2;
+                hud.AddActiveSkill("611", bulletStreamTimer);
                 return true;
             } else if (PlayerData.playerdata.skillList["6/11"].Level == 3) {
                 bulletStreamCooldown = BULLET_STREAM_COOLDOWN_3;
                 bulletStreamTimer = BULLET_STREAM_TIME_3;
+                hud.AddActiveSkill("611", bulletStreamTimer);
                 return true;
             } else if (PlayerData.playerdata.skillList["6/11"].Level == 4) {
                 bulletStreamCooldown = BULLET_STREAM_COOLDOWN_4;
                 bulletStreamTimer = BULLET_STREAM_TIME_4;
+                hud.AddActiveSkill("611", bulletStreamTimer);
                 return true;
             }
         }
@@ -1733,17 +1810,20 @@ public class SkillController : MonoBehaviour
     public bool ActivateRampage()
     {
         if (rampageCooldown <= 0f) {
-            if (PlayerData.playerdata.skillList["1/10"].Level == 1) {
+            if (PlayerData.playerdata.skillList["0/10"].Level == 1) {
                 rampageCooldown = RAMPAGE_COOLDOWN_1;
                 rampageTimer = RAMPAGE_TIME_1;
+                hud.AddActiveSkill("010", RAMPAGE_TIME_1);
                 return true;
-            } else if (PlayerData.playerdata.skillList["1/10"].Level == 2) {
+            } else if (PlayerData.playerdata.skillList["0/10"].Level == 2) {
                 rampageCooldown = RAMPAGE_COOLDOWN_2;
                 rampageTimer = RAMPAGE_TIME_2;
+                hud.AddActiveSkill("010", RAMPAGE_TIME_2);
                 return true;
-            } else if (PlayerData.playerdata.skillList["1/10"].Level == 3) {
+            } else if (PlayerData.playerdata.skillList["0/10"].Level == 3) {
                 rampageCooldown = RAMPAGE_COOLDOWN_3;
                 rampageTimer = RAMPAGE_TIME_3;
+                hud.AddActiveSkill("010", RAMPAGE_TIME_3);
                 return true;
             }
         }
@@ -1771,6 +1851,9 @@ public class SkillController : MonoBehaviour
     {
         if (firmGripTimer > 0f) {
             firmGripTimer -= Time.deltaTime;
+            if (firmGripTimer <= 0f) {
+                hud.RemoveActiveSkill("09");
+            }
         }
         if (firmGripCooldown > 0f && firmGripTimer <= 0f) {
             firmGripCooldown -= Time.deltaTime;
@@ -1781,6 +1864,9 @@ public class SkillController : MonoBehaviour
     {
         if (snipersDelTimer > 0f) {
             snipersDelTimer -= Time.deltaTime;
+            if (snipersDelTimer <= 0f) {
+                hud.RemoveActiveSkill("510");
+            }
         }
         if (snipersDelCooldown > 0f && snipersDelTimer <= 0f) {
             snipersDelCooldown -= Time.deltaTime;
@@ -1791,6 +1877,9 @@ public class SkillController : MonoBehaviour
     {
         if (bulletStreamTimer > 0f) {
             bulletStreamTimer -= Time.deltaTime;
+            if (bulletStreamTimer <= 0f) {
+                hud.RemoveActiveSkill("611");
+            }
         }
         if (bulletStreamCooldown > 0f && bulletStreamTimer <= 0f) {
             bulletStreamCooldown -= Time.deltaTime;
@@ -1822,10 +1911,23 @@ public class SkillController : MonoBehaviour
     {
         if (rampageTimer > 0f) {
             rampageTimer -= Time.deltaTime;
+            if (rampageTimer <= 0f) {
+                hud.RemoveActiveSkill("010");
+            }
         }
         if (rampageCooldown > 0f && rampageTimer <= 0f) {
             rampageCooldown -= Time.deltaTime;
         }
+    }
+
+    public void ClearActiveSkills()
+    {
+        rampageTimer = 0f;
+        bloodLustActiveTimer = 0f;
+        firmGripTimer = 0f;
+        snipersDelTimer = 0f;
+        oneShotOneKillTimer = 0f;
+        bulletStreamTimer = 0f;
     }
 
     void UpdateActiveCamouflage()
@@ -1924,10 +2026,12 @@ public class SkillController : MonoBehaviour
                     thisRegeneratorTimer = REGENERATOR_TIMER_5;
                 }
                 thisRegeneratorActive = true;
+                hud.AddActiveSkill("45", 0f);
             }
         } else {
             thisRegeneratorTimer = 0f;
             thisRegeneratorActive = false;
+            hud.RemoveActiveSkill("45");
         }
     }
 
@@ -2017,10 +2121,12 @@ public class SkillController : MonoBehaviour
                     thisPainkillerTimer = PAINKILLERS_TIMER_4;
                 }
                 thisPainkillerActive = true;
+                hud.AddActiveSkill("46", 0f);
             }
         } else {
             thisPainkillerTimer = 0f;
             thisPainkillerActive = false;
+            hud.RemoveActiveSkill("46");
         }
     }
 
@@ -2127,14 +2233,19 @@ public class SkillController : MonoBehaviour
     public float GetMotivateDamageBoost()
     {
         if (PlayerData.playerdata.skillList["3/3"].Level == 1) {
+            hud.AddActiveSkill("33", 0f);
             return 0.01f;
         } else if (PlayerData.playerdata.skillList["3/3"].Level == 2) {
+            hud.AddActiveSkill("33", 0f);
             return 0.02f;
         } else if (PlayerData.playerdata.skillList["3/3"].Level == 3) {
+            hud.AddActiveSkill("33", 0f);
             return 0.03f;
         } else if (PlayerData.playerdata.skillList["3/3"].Level == 4) {
+            hud.AddActiveSkill("33", 0f);
             return 0.04f;
         }
+        hud.RemoveActiveSkill("33");
         return 0f;
     }
 

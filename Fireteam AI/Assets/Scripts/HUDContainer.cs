@@ -109,6 +109,7 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject acceptPlayerTemplate;
 	public Transform acceptPlayerSlots;
 	public GameObject activeSkillPrefab;
+	public Transform activeSkillContainer;
 
     // Versus mode HUD
     public GameObject redScore;

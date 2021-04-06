@@ -316,6 +316,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 if (m_CharacterController.isGrounded)
                 {
                     playerActionScript.ToggleJetpackParticleEffect(false);
+                    playerActionScript.hud.RemoveActiveSkill("213");
                     m_MoveDir.y = -m_StickToGroundForce;
 
                     if (m_Jump)
@@ -343,10 +344,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     jetpackBoostDelay -= Time.fixedDeltaTime;
                     if (playerActionScript.skillController.HasJetpackBoost() && jetpackBoostDelay <= 0f && jetpackBoostTimer > 0f && PlayerPreferences.playerPreferences.KeyWasPressed("Jump", true)) {
                         playerActionScript.ToggleJetpackParticleEffect(true);
+                        playerActionScript.hud.AddActiveSkill("213", 0f);
                         m_MoveDir -= Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime/2f;
                         jetpackBoostTimer -= Time.fixedDeltaTime;
                     } else {
                         playerActionScript.ToggleJetpackParticleEffect(false);
+                        playerActionScript.hud.RemoveActiveSkill("213");
                         m_MoveDir += Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime;
                     }
                 }

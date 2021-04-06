@@ -59571,8 +59571,6 @@ MonoBehaviour:
   fullBodyRef: {fileID: 491551631584598179}
   firstPersonRef: {fileID: 2812304601226351315}
   camoMat: {fileID: 2100000, guid: 6215caacc1645408e88b47f6dc2cdb37, type: 2}
-  reflectionProbe: {fileID: 794621274180090368}
-  reflectionProbeFpc: {fileID: 2564678893495095230}
   equippedCharacter: Yongjin
   characterGender: M
   equippedHeadgear: 
@@ -60258,6 +60256,7 @@ MonoBehaviour:
   waitingOnAccept: 0
   lastHitFromPos: {x: 0, y: 0, z: 0}
   fightingSpiritTimer: 0
+  lastStandTimer: 0
 --- !u!114 &8946761223030793981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60699,7 +60698,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc0ab733702348ea9b34defd0b0aebb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bubbleShieldDeployRef: {fileID: 0}
+  hud: {fileID: 136864808513462720}
   recoilBoost:
     currentCryptoKey: 0
     hiddenValue: 0
@@ -99443,12 +99442,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a62b292ff8a6f40e79404d65c994a121, type: 3}
---- !u!1 &794621274180090368 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1815784988160043785, guid: a62b292ff8a6f40e79404d65c994a121,
-    type: 3}
-  m_PrefabInstance: {fileID: 1312228667354304777}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &794621274180090370 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1815784988160043787, guid: a62b292ff8a6f40e79404d65c994a121,
@@ -99532,12 +99525,6 @@ PrefabInstance:
 --- !u!4 &2564678893495095228 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1815784988160043787, guid: a62b292ff8a6f40e79404d65c994a121,
-    type: 3}
-  m_PrefabInstance: {fileID: 4225897135426741431}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &2564678893495095230 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1815784988160043785, guid: a62b292ff8a6f40e79404d65c994a121,
     type: 3}
   m_PrefabInstance: {fileID: 4225897135426741431}
   m_PrefabAsset: {fileID: 0}

@@ -5,12 +5,14 @@ using UnityEngine.UI;
 
 public class ActiveSkill : MonoBehaviour
 {
+    public RawImage skillImage;
     public Image durationOverlay;
     private float duration;
     private float timeElapsed;
 
-    public void Initialize(float t)
+    public void Initialize(Texture r, float t)
     {
+        skillImage.texture = r;
         duration = t;
         timeElapsed = 0f;
     }
@@ -18,14 +20,24 @@ public class ActiveSkill : MonoBehaviour
     void Update()
     {
         if (duration > 0f) {
-            timeElapsed += Time.deltaTime;
             UpdateTimeElapsed();
         }
     }
 
     void UpdateTimeElapsed()
     {
+        timeElapsed += Time.deltaTime;
         RectTransform r = durationOverlay.rectTransform;
-        r.sizeDelta = new Vector2(r.sizeDelta.x, 25f * (timeElapsed / duration));
+        float t = timeElapsed / duration;
+        r.sizeDelta = new Vector2(r.sizeDelta.x, 25f * t);
+        if (t >= 1f) {
+            ExpireSkill();
+        }
     }
+
+    public void ExpireSkill()
+    {
+        Destroy(gameObject);
+    }
+
 }

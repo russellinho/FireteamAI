@@ -37,6 +37,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private ArrayList missionWaypoints;
 	private Dictionary<int, GameObject> playerMarkers = new Dictionary<int, GameObject> ();
 	private Dictionary<int, AlertMarker> enemyMarkers = new Dictionary<int, AlertMarker> ();
+	private Dictionary<string, ActiveSkill> activeSkills = new Dictionary<string, ActiveSkill>();
 
 	// Other vars
 	public bool overshieldFlashActive;
@@ -2119,6 +2120,42 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		} else {
 			container.proceduralInfoText.GetComponent<TextMeshProUGUI>().text = s;
 			container.proceduralInfoText.SetActive(true);
+		}
+	}
+
+	public void AddActiveSkill(string skillHash, float t)
+	{
+		if (playerActionScript.health <= 0f) return;
+		if (activeSkills.ContainsKey(skillHash)) {
+			if (activeSkills[skillHash] == null) {
+				GameObject o = Instantiate(container.activeSkillPrefab, container.activeSkillContainer);
+				o.transform.localPosition = Vector3.zero;
+				ActiveSkill a = o.GetComponent<ActiveSkill>();
+				a.Initialize(Resources.Load("Sprites/Insignias/Skills/" + skillHash) as Texture, t);
+				activeSkills[skillHash] = a;
+			}
+		} else {
+			GameObject o = Instantiate(container.activeSkillPrefab, container.activeSkillContainer);
+			o.transform.localPosition = Vector3.zero;
+			ActiveSkill a = o.GetComponent<ActiveSkill>();
+			a.Initialize(Resources.Load("Sprites/Insignias/Skills/" + skillHash) as Texture, t);
+			activeSkills.Add(skillHash, a);
+		}
+	}
+
+	public void RemoveActiveSkill(string skillHash)
+	{
+		if (activeSkills.ContainsKey(skillHash)) {
+			activeSkills[skillHash].ExpireSkill();
+		}
+	}
+
+	public void ClearAllSkills()
+	{
+		foreach (KeyValuePair<string, ActiveSkill> p in activeSkills) {
+			if (p.Value != null) {
+				p.Value.ExpireSkill();
+			}
 		}
 	}
 

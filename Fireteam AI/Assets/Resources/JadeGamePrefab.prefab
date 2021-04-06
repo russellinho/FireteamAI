@@ -58553,8 +58553,6 @@ MonoBehaviour:
   fullBodyRef: {fileID: 6545086241112781409}
   firstPersonRef: {fileID: 4997301263449882118}
   camoMat: {fileID: 2100000, guid: 6215caacc1645408e88b47f6dc2cdb37, type: 2}
-  reflectionProbe: {fileID: 8949193633111275501}
-  reflectionProbeFpc: {fileID: 7081117748361498384}
   equippedCharacter: Jade
   characterGender: F
   equippedHeadgear: 
@@ -59240,6 +59238,7 @@ MonoBehaviour:
   waitingOnAccept: 0
   lastHitFromPos: {x: 0, y: 0, z: 0}
   fightingSpiritTimer: 0
+  lastStandTimer: 0
 --- !u!114 &4997301263046971764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59681,7 +59680,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc0ab733702348ea9b34defd0b0aebb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bubbleShieldDeployRef: {fileID: 0}
+  hud: {fileID: 4997301263046971752}
   recoilBoost:
     currentCryptoKey: 0
     hiddenValue: 0
@@ -99461,12 +99460,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a62b292ff8a6f40e79404d65c994a121, type: 3}
---- !u!1 &8949193633111275501 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1815784988160043785, guid: a62b292ff8a6f40e79404d65c994a121,
-    type: 3}
-  m_PrefabInstance: {fileID: 7278690981800369380}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8949193633111275503 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1815784988160043787, guid: a62b292ff8a6f40e79404d65c994a121,
@@ -99550,12 +99543,6 @@ PrefabInstance:
 --- !u!4 &7081117748361498386 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1815784988160043787, guid: a62b292ff8a6f40e79404d65c994a121,
-    type: 3}
-  m_PrefabInstance: {fileID: 8896819010302714905}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &7081117748361498384 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1815784988160043785, guid: a62b292ff8a6f40e79404d65c994a121,
     type: 3}
   m_PrefabInstance: {fileID: 8896819010302714905}
   m_PrefabAsset: {fileID: 0}
