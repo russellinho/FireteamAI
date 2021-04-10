@@ -382,6 +382,7 @@ public class EquipmentScript : MonoBehaviour
         Weapon w = InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedPrimary];
         string weaponType = w.category;
         GameObject wepEquipped = previewCharEquips.tws.weaponHolder.LoadWeapon(w.prefabPath);
+        WeaponMeta wm = wepEquipped.GetComponent<WeaponMeta>();
         previewCharEquips.tws.equippedPrimaryWeapon = PlayerData.playerdata.info.EquippedPrimary;
         
         if (w.suppressorCompatible) {
@@ -392,9 +393,9 @@ public class EquipmentScript : MonoBehaviour
         }
 
         if (c.gender == 'M') {
-            previewCharEquips.tws.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
+            previewCharEquips.tws.SetTitleWeaponPositions(wm.fullPosMale, wm.fullRotMale, 'M');
         } else {
-            previewCharEquips.tws.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
+            previewCharEquips.tws.SetTitleWeaponPositions(wm.fullPosFemale, wm.fullRotFemale, 'F');
         }
     }
 

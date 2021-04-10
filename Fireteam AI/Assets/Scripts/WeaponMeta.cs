@@ -17,8 +17,6 @@ public class WeaponMeta : MonoBehaviour
     public Vector3 defaultRightCollarPosFemale;
     public float aimDownSightSpeed;
     public float aimDownSightClipping;
-    public Vector3 titleHandPositionsMale;
-    public Vector3 titleHandPositionsFemale;
     public float recoveryConstant;
     public AudioSource fireSound;
     public AudioSource suppressedFireSound;

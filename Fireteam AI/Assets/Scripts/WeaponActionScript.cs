@@ -1349,8 +1349,10 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             playerActionScript.weaponSpeedModifier = w.mobility/100f;
             if (playerActionScript.equipmentScript.GetGender() == 'M') {
                 fpc.fpcAnimator.runtimeAnimatorController = ws.maleOverrideController as RuntimeAnimatorController;
+                animator.runtimeAnimatorController = ws.maleOverrideControllerFullBody as RuntimeAnimatorController;
             } else {
                 fpc.fpcAnimator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;
+                animator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;
             }
             if (!w.type.Equals("Support")) {
                 SetReloadSpeed(playerActionScript.skillController.GetReloadSpeedBoostForCurrentWeapon(weaponStats));
@@ -1821,8 +1823,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     [PunRPC]
     void RpcUseDeployable() {
         if (gameObject.layer == 0) return;
-        // TODO: This needs to be changed later to a different animation
-        animator.SetTrigger("useBooster");
+        animator.SetTrigger("Fire");
     }
 
     void UseDeployable() {

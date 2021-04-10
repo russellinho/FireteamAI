@@ -2209,6 +2209,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         thisWepScript.equippedSecondaryWeapon = info.EquippedSecondary;
         thisWepScript.equippedSupportWeapon = info.EquippedSupport;
         thisWepScript.equippedMeleeWeapon = info.EquippedMelee;
+        WeaponMeta wm = wepEquipped.GetComponent<WeaponMeta>();
         
         if (w.suppressorCompatible) {
             thisWepScript.EquipMod("Suppressor", primaryModInfo.EquippedSuppressor, info.EquippedPrimary, null);
@@ -2218,9 +2219,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
 
         if (titleRef.currentCharGender == 'M') {
-            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
+            thisWepScript.SetTitleWeaponPositions(wm.fullPosMale, wm.fullRotMale, 'M');
         } else {
-            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
+            thisWepScript.SetTitleWeaponPositions(wm.fullPosFemale, wm.fullRotFemale, 'F');
         }
     }
 
@@ -2432,6 +2433,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemEquipped);
         PlayerData.playerdata.primaryModInfo = modInfo;
         GameObject wepEquipped = thisWepScript.weaponHolder.LoadWeapon(w.prefabPath);
+        WeaponMeta wm = wepEquipped.GetComponent<WeaponMeta>();
         
         if (w.suppressorCompatible) {
             thisWepScript.EquipMod("Suppressor", modInfo.EquippedSuppressor, itemEquipped, null);
@@ -2441,9 +2443,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
 
         if (titleRef.currentCharGender == 'M') {
-            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
+            thisWepScript.SetTitleWeaponPositions(wm.fullPosMale, wm.fullRotMale, 'M');
         } else {
-            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
+            thisWepScript.SetTitleWeaponPositions(wm.fullPosFemale, wm.fullRotFemale, 'F');
         }
 
         // Puts the item that you just equipped in its proper slot

@@ -264,8 +264,6 @@ MonoBehaviour:
   defaultRightCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   aimDownSightSpeed: 6
   aimDownSightClipping: 0.03
-  titleHandPositionsMale: {x: -0.02, y: 0.05, z: 0.03}
-  titleHandPositionsFemale: {x: -0.01, y: 0.02, z: 0.02}
   recoveryConstant: 15
   fireSound: {fileID: 7432849298330809401}
   suppressedFireSound: {fileID: 0}
@@ -298,7 +296,7 @@ MonoBehaviour:
   fullPosMale: {x: -0.038, y: 0.127, z: 0.036}
   fullRotMale: {x: -8.268001, y: 180, z: -88.95801}
   fullScaleMale: {x: 0.015, y: 0.015, z: 0.015}
-  fullPosFemale: {x: -0.018, y: 0.093, z: 0.006}
+  fullPosFemale: {x: -0.0082, y: 0.0918, z: 0.0428}
   fullRotFemale: {x: -3.37, y: 180.135, z: -95.925}
   fullScaleFemale: {x: 0.015, y: 0.015, z: 0.015}
   maleOverrideController: {fileID: 22100000, guid: 424fe20f131562948a358cf09ba6c0ee,

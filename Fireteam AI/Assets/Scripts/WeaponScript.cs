@@ -558,14 +558,15 @@ public class WeaponScript : MonoBehaviour
         Weapon w = InventoryScript.itemData.weaponCatalog[name];
         string weaponType = w.category;
         GameObject wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+        WeaponMeta wm = wepEquipped.GetComponent<WeaponMeta>();
         if (w.type == "Primary") {
             equippedPrimaryWeapon = name;
         }
 
         if (c.gender == 'M') {
-            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
+            SetTitleWeaponPositions(wm.fullPosMale, wm.fullRotMale, 'M');
         } else {
-            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
+            SetTitleWeaponPositions(wm.fullPosFemale, wm.fullRotFemale, 'F');
         }
     }
 
@@ -1166,15 +1167,14 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
-    public void SetTitleWeaponPositions(Vector3 p) {
-        weaponHolder.SetWeaponPositionForTitle(p);
-        // if (ts != null) {
-        //     if (ts.currentCharGender == 'M') {
-        //         weaponHolder.SetWeaponPositionForTitle(new Vector3(-0.02f, 0.05f, 0.03f));
-        //     } else {
-        //         weaponHolder.SetWeaponPositionForTitle(new Vector3(-0.01f, 0.02f, 0.02f));
-        //     }
-        // }
+    public void SetTitleWeaponPositions(Vector3 p, Vector3 rot, char gender) {
+        weaponHolder.SetWeaponPositionForTitle(p, rot);
+        WeaponMeta wm = weaponHolder.weapon.GetComponent<WeaponMeta>();
+        if (gender == 'M') {
+            animator.runtimeAnimatorController = wm.maleOverrideControllerFullBody as RuntimeAnimatorController;
+        } else {
+            animator.runtimeAnimatorController = wm.femaleOverrideControllerFullBody as RuntimeAnimatorController;
+        }
     }
 
     void SyncCamouflageMesh()
@@ -1448,11 +1448,12 @@ public class WeaponScript : MonoBehaviour
         char chararacterGender = InventoryScript.itemData.characterCatalog[characterSelected].gender;
         Weapon w = InventoryScript.itemData.weaponCatalog[weaponName];
         GameObject wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+        WeaponMeta wm = wepEquipped.GetComponent<WeaponMeta>();
 
         if (chararacterGender == 'M') {
-            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
+            SetTitleWeaponPositions(wm.fullPosMale, wm.fullRotMale, 'M');
         } else {
-            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
+            SetTitleWeaponPositions(wm.fullPosFemale, wm.fullRotFemale, 'F');
         }
     }
 
