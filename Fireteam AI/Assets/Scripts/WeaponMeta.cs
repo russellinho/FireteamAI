@@ -51,6 +51,8 @@ public class WeaponMeta : MonoBehaviour
     public Vector3 fullScaleFemale;
     public AnimatorOverrideController maleOverrideController;
     public AnimatorOverrideController femaleOverrideController;
+    public AnimatorOverrideController maleOverrideControllerFullBody;
+    public AnimatorOverrideController femaleOverrideControllerFullBody;
     public Animator weaponAnimator;
     public float defaultFpcReloadSpeed;
     public float defaultWeaponReloadSpeed;

@@ -10437,6 +10437,10 @@ MonoBehaviour:
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: 683d52a6c039ec749bd14b689ad5146c,
     type: 2}
+  maleOverrideControllerFullBody: {fileID: 22100000, guid: 5ecba5149b70eca43843c57fe0cce63e,
+    type: 2}
+  femaleOverrideControllerFullBody: {fileID: 22100000, guid: bec3da724758dca4688297168af45379,
+    type: 2}
   weaponAnimator: {fileID: 4425799576184219594}
   defaultFpcReloadSpeed: 0.75
   defaultWeaponReloadSpeed: 0.375
