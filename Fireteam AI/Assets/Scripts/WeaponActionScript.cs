@@ -1355,7 +1355,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                 animator.runtimeAnimatorController = ws.maleOverrideControllerFullBody as RuntimeAnimatorController;
             } else {
                 fpc.fpcAnimator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;
-                animator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;
+                animator.runtimeAnimatorController = ws.femaleOverrideControllerFullBody as RuntimeAnimatorController;
             }
             if (!w.type.Equals("Support")) {
                 SetReloadSpeed(playerActionScript.skillController.GetReloadSpeedBoostForCurrentWeapon(weaponStats));
