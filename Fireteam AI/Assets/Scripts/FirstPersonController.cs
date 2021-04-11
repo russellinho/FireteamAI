@@ -731,6 +731,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void SetWalkingInAnimator(bool x) {
             if (fpcAnimator.GetBool("isWalking") == x) return;
+            fpcAnimator.SetBool("isWalking", x);
             photonView.RPC("RpcSetWalkingInAnimator", RpcTarget.Others, x);
             if (x) {
                 fpcAnimator.SetFloat("MoveSpeed", 0.5f);

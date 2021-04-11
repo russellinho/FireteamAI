@@ -161,6 +161,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	void Awake() {
 		npcLook.Init(gameObject.transform, spineTransform);
+		animator.SetFloat("FireSpeed", gunRef.defaultFireSpeedFullBody);
+		// animator.runtimeAnimatorController = gunRef.maleOverrideController as RuntimeAnimatorController;
 		ToggleRagdoll(false);
 		if (gameControllerScript.matchType == 'C')
         {
@@ -400,7 +402,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		ReplenishFireRate ();
 		UpdateFiringModeTimer ();
 
-		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
+		if (!PhotonNetwork.IsMasterClient || health <= 0) {
 			// if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
 			// 	StopVoices();
 			// }
@@ -467,10 +469,10 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		ReplenishFireRate ();
 		UpdateFiringModeTimer ();
 
-		if (!gameControllerScript.isVersusHostForThisTeam() || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
-			if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
+		if (!gameControllerScript.isVersusHostForThisTeam() || health <= 0) {
+			// if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
 				// StopVoices();
-			}
+			// }
 			return;
 		}
 
@@ -536,26 +538,24 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			//removeFromMarkerList();
 			if (!PhotonNetwork.IsMasterClient) {
 				actionState = ActionStates.Dead;
-			}
-		}
-
-		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
-			if (PhotonNetwork.IsMasterClient && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
-				SetNavMeshStopped(true);
+			} else {
+				if (navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
+					SetNavMeshStopped(true);
+				}
 			}
 			return;
 		}
 		// Handle animations and detection outline independent of frame rate
 		DecideAnimation ();
 		HandleDetectionOutline();
-		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Disoriented")) {
+		if (actionState == ActionStates.Disoriented) {
 			if (PhotonNetwork.IsMasterClient && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				SetNavMeshStopped(true);
 			}
 			return;
 		}
-		AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo (0);
-		isReloading = (info.IsName ("Reloading") || info.IsName("CrouchReload"));
+		AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo (1);
+		isReloading = (info.IsName ("Reload") || info.IsName("ReloadCrouched"));
 	}
 
 	void FixedUpdateForVersus() {
@@ -573,26 +573,23 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			//removeFromMarkerList();
 			if (!gameControllerScript.isVersusHostForThisTeam()) {
 				actionState = ActionStates.Dead;
+			} else {
+				if (navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
+					SetNavMeshStopped(true);
+				}
 			}
-		}
-
-		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
-			if (gameControllerScript.isVersusHostForThisTeam() && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
-				SetNavMeshStopped(true);
-			}
-			return;
 		}
 		// Handle animations and detection outline independent of frame rate
 		DecideAnimation ();
 		HandleDetectionOutline();
-		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Disoriented")) {
+		if (actionState == ActionStates.Disoriented) {
 			if (gameControllerScript.isVersusHostForThisTeam() && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				SetNavMeshStopped(true);
 			}
 			return;
 		}
-		AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo (0);
-		isReloading = (info.IsName ("Reloading") || info.IsName("CrouchReload"));
+		AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo (1);
+		isReloading = (info.IsName ("Reload") || info.IsName("ReloadCrouched"));
 	}
 
 	void LateUpdate() {
@@ -861,7 +858,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
 				SetNavMeshDestination(GameControllerScript.lastGunshotHeardPos);
-				if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint")) {
+				if (animator.GetBool("isSprinting")) {
 					UpdateNavMeshSpeed(6f);
 				} else {
 					UpdateNavMeshSpeed(4f);
@@ -1685,67 +1682,54 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	void DecideAnimation() {
 		if (actionState == ActionStates.Seeking) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Moving") && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint")) {
+			if (animator.GetInteger("Moving") == 0 && !animator.GetBool("isSprinting")) {
 				int r = Random.Range (1, 4);
 				if (r >= 1 && r <= 2) {
-					animator.Play ("Moving");
+					animator.SetInteger("Moving", 1);
 				} else {
-					animator.Play ("Sprint");
+					animator.SetBool("isSprinting", true);
 				}
 			}
 		}
 
 		if (actionState == ActionStates.Wander) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
-				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
-					animator.Play ("Idle");
+				if (!animator.GetBool("onTitle")) {
+					animator.SetBool ("onTitle", true);
+					animator.Play("Title", 0);
+					animator.Play("Title", 1);
+				}
 			} else {
-				if (alertStatus != AlertStatus.Alert && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Walk")) {
-					animator.Play ("Walk");
-				} else if (alertStatus == AlertStatus.Alert && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Moving")) {
-					animator.Play ("Moving");
+				animator.SetBool ("onTitle", false);
+				if (alertStatus != AlertStatus.Alert && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Patrol")) {
+					animator.SetTrigger ("Patrol");
+				} else if (alertStatus == AlertStatus.Alert && animator.GetInteger("Moving") == 0) {
+					animator.Play ("Idle");
+					animator.Play ("IdleAssaultRifle");
+					animator.SetInteger("Moving", 1);
 				}
 			}
-
 		}
 
 		if (actionState == ActionStates.TakingCover) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint"))
-				animator.Play ("Sprint");
-		}
-
-		if (actionState == ActionStates.Dead) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") && !animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")
-			&& !animator.GetCurrentAnimatorStateInfo (0).IsName ("Die2") && !animator.GetCurrentAnimatorStateInfo (0).IsName ("DieExplosion")) {
-				// If killed by an explosion, play the explosion death animation. Else, play a random regular death animation
-				if (lastHitBy == 1) {
-					animator.Play("DieExplosion");
-				} else {
-					int r = Random.Range (1, 4);
-					if (r == 1) {
-						animator.Play ("Die");
-					} else if (r == 2) {
-						animator.Play ("DieHeadshot");
-					} else {
-						animator.Play("Die2");
-					}
-				}
-			}
+			if (!animator.GetBool("isSprinting"))
+				animator.SetBool ("isSprinting", true);
 		}
 
 		if (actionState == ActionStates.Pursue) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint"))
-				animator.Play ("Sprint");
+			if (!animator.GetBool("isSprinting"))
+				animator.SetBool("isSprinting", true);
 		}
 
 		if (actionState == ActionStates.Idle) {
 			if (alertStatus == AlertStatus.Alert) {
-				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Firing")) {
-					animator.Play ("Firing");
+				if (!animator.GetCurrentAnimatorStateInfo (1).IsName ("Idle")) {
+					animator.SetBool("onTitle", false);
+					animator.Play("Idle");
 				}
 			} else {
-				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
-					animator.Play ("Idle");
+				if (!animator.GetCurrentAnimatorStateInfo (1).IsName ("Patrol"))
+					animator.SetTrigger("Patrol");
 			}
 		}
 
@@ -1753,31 +1737,15 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			// Set proper animation
 			if (actionState == ActionStates.Firing && currentBullets > 0) {
 				if (firingState == FiringStates.StandingStill) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Firing"))
-						animator.Play ("Firing");
+					animator.SetInteger("Moving", 0);
 				} else if (firingState == FiringStates.Forward) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Moving"))
-						animator.Play ("Moving");
+					animator.SetInteger("Moving", 1);
 				} else if (firingState == FiringStates.Backpedal) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Backpedal"))
-						animator.Play ("Backpedal");
+					animator.SetInteger("Moving", 4);
 				} else if (firingState == FiringStates.StrafeLeft) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("StrafeLeft"))
-						animator.Play ("StrafeLeft");
+					animator.SetInteger("Moving", 2);
 				} else if (firingState == FiringStates.StrafeRight) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("StrafeRight"))
-						animator.Play ("StrafeRight");
-				}
-			} else if (actionState == ActionStates.InCover && currentBullets > 0) {
-				if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
-					navMesh.isStopped = true;
-				}
-				if (isCrouching) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Crouching"))
-						animator.Play ("Crouching");
-				} else {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Aim"))
-						animator.Play ("Aim");
+					animator.SetInteger("Moving", 3);
 				}
 			} else if (currentBullets <= 0) {
 				if (enemyType != EnemyType.Scout) {
@@ -1785,27 +1753,19 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 						SetNavMeshStopped(true);
 					}
 				}
-				if (isCrouching) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("CrouchReload"))
-						animator.Play ("CrouchReload");
-				} else {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Reloading"))
-						animator.Play ("Reloading");
-				}
+				animator.SetTrigger("Reload");
 			}
 		}
+
+		animator.SetBool("isCrouching", isCrouching);
 
 		if (actionState == ActionStates.Melee) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Melee")) {
-				animator.Play ("Melee");
+			if (!animator.GetCurrentAnimatorStateInfo (1).IsName ("Melee")) {
+				animator.SetTrigger("Melee");
 			}
 		}
 
-		if (actionState == ActionStates.Disoriented) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Disoriented")) {
-				animator.Play ("Disoriented");
-			}
-		}
+		animator.SetBool("Disoriented", actionState == ActionStates.Disoriented);
 	}
 
 	float ScaleOffset(float dist) {
