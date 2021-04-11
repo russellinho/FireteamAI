@@ -1092,7 +1092,7 @@ Animator:
   m_GameObject: {fileID: 6527639969203574290}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: f51b27f5e62d74ed48d58a17b9c89e0e, type: 3}
-  m_Controller: {fileID: 9100000, guid: 484e64a35dc38bc4f916067d8b8d67aa, type: 2}
+  m_Controller: {fileID: 9100000, guid: 73dea433833b04aa0887a388c4c66a18, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1243,6 +1243,13 @@ MonoBehaviour:
     type: 3}
   overshieldHitEffect: {fileID: 5622047170237180970, guid: 4f3cfd8361ada48d19c1d7154c957b3f,
     type: 3}
+  npcLook:
+    MinimumX: -90
+    MaximumX: 35
+    XSensitivity: 2
+    YSensitivity: 2
+    m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
+  spineTransform: {fileID: 6527639969203407800}
   audioSource: {fileID: 7809470204563867249}
   pView: {fileID: 5569050124725493036}
   mainCol: {fileID: 6989152029328278264}

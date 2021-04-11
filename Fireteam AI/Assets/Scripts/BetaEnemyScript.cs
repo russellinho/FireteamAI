@@ -38,6 +38,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	public GameObject overshieldHitEffect;
 
 	// Body/Component references
+	public NpcLook npcLook;
+	public Transform spineTransform;
 	public AudioSource audioSource;
 	public PhotonView pView;
 	public Collider mainCol;
@@ -158,6 +160,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
     //public bool testingMode;
 
 	void Awake() {
+		npcLook.Init(gameObject.transform, spineTransform);
 		ToggleRagdoll(false);
 		if (gameControllerScript.matchType == 'C')
         {
@@ -725,7 +728,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		Quaternion lookRot = Quaternion.LookRotation (rotDir);
 		Quaternion tempQuat = Quaternion.Slerp (transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
 		Vector3 tempRot = tempQuat.eulerAngles;
-		transform.rotation = Quaternion.Euler (new Vector3 (0f, tempRot.y, 0f));
+		// transform.rotation = Quaternion.Euler (new Vector3 (0f, tempRot.y, 0f));
+		npcLook.LookRotation (gameObject.transform, spineTransform, tempRot.x, tempRot.y);
 	}
 
 	[PunRPC]
@@ -1957,7 +1961,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		Quaternion tempQuat = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
 		Vector3 tempRot = tempQuat.eulerAngles;
 		tempRot = new Vector3 (0f, tempRot.y, 0f);
-		transform.rotation = Quaternion.Euler(tempRot);
+		// transform.rotation = Quaternion.Euler(tempRot);
+		npcLook.LookRotation(gameObject.transform, spineTransform, tempRot.x, tempRot.y);
 	}
 
 	IEnumerator Despawn(float respawnTime) {
@@ -2425,6 +2430,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (syncWithClientsAgain) {
 			pView.RPC("RpcRespawnAtPosition", RpcTarget.All, gameControllerScript.teamMap, pos.x, pos.y, pos.z);
 		} else {
+			npcLook.ResetRot();
 			ToggleRagdoll(false);
 			navMesh.enabled = false;
 			navMeshObstacle.enabled = false;
@@ -2477,6 +2483,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	[PunRPC]
 	void RpcRespawnAtPosition(string team, float respawnPosX, float respawnPosY, float respawnPosZ) {
 		if (team != gameControllerScript.teamMap) return;
+		npcLook.ResetRot();
 		ToggleRagdoll(false);
 		navMesh.enabled = false;
 		navMeshObstacle.enabled = false;

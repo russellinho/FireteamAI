@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+[Serializable]
 public class NpcLook
 {
     public float MinimumX;
@@ -10,7 +11,7 @@ public class NpcLook
     private Quaternion m_CharacterTargetRot;
     public Quaternion m_SpineTargetRot;
     private float spineRotationRange;
-    public void Init(Transform character, Transform spineTransform, Transform fpcCharacterVertical, Transform fpcCharacterHorizontal)
+    public void Init(Transform character, Transform spineTransform)
     {
         spineRotationRange = 0f;
         m_CharacterTargetRot = character.localRotation;
@@ -46,6 +47,9 @@ public class NpcLook
             }
         }
 
+        m_SpineTargetRot *= Quaternion.Euler(xRot, 0f, 0f);
+        m_SpineTargetRot = ClampRotationAroundXAxis(m_SpineTargetRot);
+
         spineTransform.localRotation = m_SpineTargetRot;
         m_CharacterTargetRot = Quaternion.Euler(0f, m_CharacterTargetRot.eulerAngles.y, 0f);
         character.localRotation = m_CharacterTargetRot;
@@ -57,7 +61,7 @@ public class NpcLook
         }
     }
 
-    public Quaternion ClampRotationAroundXAxis(Quaternion q)
+    private Quaternion ClampRotationAroundXAxis(Quaternion q)
     {
         q.x /= q.w;
         q.y /= q.w;
