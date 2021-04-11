@@ -673,8 +673,6 @@ MonoBehaviour:
   defaultRightCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   aimDownSightSpeed: 5
   aimDownSightClipping: 0.01
-  titleHandPositionsMale: {x: -0.047, y: 0.145, z: 0.022}
-  titleHandPositionsFemale: {x: -0.047, y: 0.145, z: 0.022}
   recoveryConstant: 34
   fireSound: {fileID: 3195845319259767631}
   suppressedFireSound: {fileID: 3195845319259767630}
@@ -723,6 +721,7 @@ MonoBehaviour:
   defaultWeaponCockingSpeed: 0
   defaultWeaponDrawSpeed: 3.5
   defaultFireSpeed: 0.6
+  defaultFireSpeedFullBody: 5
   defaultMeleeSpeed: 0
   reloadTransitionSpeed: 0.02
   reloadSound1Time: 0.45

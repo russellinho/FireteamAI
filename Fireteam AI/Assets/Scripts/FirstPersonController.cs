@@ -774,7 +774,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         [PunRPC]
         private void RpcTriggerReloadingInAnimator() {
-            animator.SetTrigger("Reloading");
+            animator.SetTrigger("Reload");
         }
 
         public void SyncAnimatorValues(int weaponType, int moving, bool weaponReady, bool crouching, bool sprinting, bool dead, bool walking, bool swimming) {

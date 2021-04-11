@@ -1047,6 +1047,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         {
             weaponMetaData.bulletTracer.Play();
         }
+        animator.SetTrigger("Fire");
         PlayShootSound();
         if (!ammoDeductExempt) {
             currentAmmo--;
@@ -1065,6 +1066,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         {
             weaponMetaData.bulletTracer.Play();
         }
+        animator.SetTrigger("Fire");
         PlaySuppressedShootSound();
         if (!ammoDeductExempt) {
             currentAmmo--;
@@ -1079,6 +1081,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     {
         if (gameObject.layer == 0) return;
         InstantiateGunSmokeEffect(3f);
+        animator.SetTrigger("Fire");
         PlayShootSound();
         // UseLauncherItem();
         playerActionScript.weaponScript.SyncAmmoCounts();
@@ -1151,7 +1154,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         //     animator.SetTrigger("Reloading");
         // } else {
             //animator.CrossFadeInFixedTime("Reload", 0.1f);
-            animator.SetTrigger("Reloading");
+            animator.SetTrigger("Reload");
         // }
     }
 
@@ -1385,6 +1388,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                 }
             }
 
+            SetFiringSpeedFullBody();
+
             if (pView.IsMine) {
                 hudScript.SetFireMode(w.firingModes == null ? null : firingMode.ToString().ToUpper());
                 hudScript.SetWeaponLabel();
@@ -1401,6 +1406,10 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     public void SetFiringSpeed(float multiplier = 0f) {
         animatorFpc.SetFloat("FireSpeed", weaponMetaData.defaultFireSpeed + multiplier);
+    }
+
+    public void SetFiringSpeedFullBody() {
+        animator.SetFloat("FireSpeed", weaponMetaData.defaultFireSpeedFullBody);
     }
 
     public void SetMeleeSpeed(float multiplier = 0f) {
@@ -1434,13 +1443,12 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
         if (isCockingGrenade) {
             animatorFpc.SetTrigger("isCockingGrenade");
-            pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
             // return;
         }
         if (isCockingGrenade && throwGrenade) {
             animatorFpc.SetTrigger("ThrowGrenade");
+            pView.RPC("RpcUseBooster", RpcTarget.Others);
             throwGrenade = false;
-            pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
         }
     }
 
@@ -1463,7 +1471,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             return;
         }
         if (isWieldingBooster && PlayerPreferences.playerPreferences.KeyWasPressed("Fire")) {
-            pView.RPC("RpcUseBooster", RpcTarget.All);
+            pView.RPC("RpcUseBooster", RpcTarget.Others);
             animatorFpc.SetTrigger("UseBooster");
             isUsingBooster = true;
         }
@@ -1487,7 +1495,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             return;
         }
         if (isWieldingBooster && PlayerPreferences.playerPreferences.KeyWasPressed("Fire")) {
-            pView.RPC("RpcUseBooster", RpcTarget.All);
+            pView.RPC("RpcUseBooster", RpcTarget.Others);
             animatorFpc.SetTrigger("UseBooster");
             isUsingBooster = true;
         }
@@ -1530,7 +1538,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                         deployRot = deployPlanMesh.gameObject.transform.rotation;
                         isUsingDeployable = true;
                         deployInProgress = false;
-                        pView.RPC("RpcUseDeployable", RpcTarget.All);
+                        pView.RPC("RpcUseDeployable", RpcTarget.Others);
                         UseDeployable();
                         if (currentAmmo <= 0) {
                             playerActionScript.weaponScript.HideWeapon(true);
@@ -1807,17 +1815,22 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         animatorFpc.ResetTrigger("UseDeployable");
     }
 
+    public void CockGrenadeAnim()
+    {
+        pView.RPC("RpcCockGrenade", RpcTarget.Others);
+    }
+
     [PunRPC]
-    void RpcCockGrenade(bool cocking) {
+    void RpcCockGrenade() {
         if (gameObject.layer == 0) return;
         //GetComponentInChildren<ThrowableScript>().PlayPinSound();
-        animator.SetBool("isCockingGrenade", cocking);
+        animator.SetTrigger("Cock");
     }
 
     [PunRPC]
     void RpcUseBooster() {
         if (gameObject.layer == 0) return;
-        animator.SetTrigger("useBooster");
+        animator.SetTrigger("Fire");
     }
 
     [PunRPC]

@@ -57,6 +57,7 @@ public class WeaponMeta : MonoBehaviour
     public float defaultWeaponCockingSpeed;
     public float defaultWeaponDrawSpeed;
     public float defaultFireSpeed;
+    public float defaultFireSpeedFullBody;
     public float defaultMeleeSpeed;
     public float reloadTransitionSpeed;
     public float reloadSound1Time;

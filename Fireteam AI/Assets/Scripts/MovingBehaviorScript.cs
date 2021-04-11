@@ -16,6 +16,9 @@ public class MovingBehaviorScript : StateMachineBehaviour
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if (was.isWieldingThrowable && (PlayerPreferences.playerPreferences.KeyWasPressed("Fire") || PlayerPreferences.playerPreferences.KeyWasPressed("Fire", true))) {
+            if (!was.isCockingGrenade) {
+                was.CockGrenadeAnim();
+            }
             was.isCockingGrenade = true;
         }
         if (was.isWieldingThrowable && (PlayerPreferences.playerPreferences.KeyWasPressed("Fire", false, true))) {
