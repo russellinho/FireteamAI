@@ -10,55 +10,59 @@ public class NpcLook
     public float YSensitivity = 2f;
     private Quaternion m_CharacterTargetRot;
     public Quaternion m_SpineTargetRot;
-    private float spineRotationRange;
+    private float currentSpineX;
+    private float currentSpineY;
     public void Init(Transform character, Transform spineTransform)
     {
-        spineRotationRange = 0f;
-        m_CharacterTargetRot = character.localRotation;
+        m_CharacterTargetRot = character.rotation;
         m_SpineTargetRot = spineTransform.localRotation;
     }
 
     public void ResetRot() {
-        spineRotationRange = 0f;
+        currentSpineX = 0f;
+        currentSpineY = 0f;
         m_CharacterTargetRot = Quaternion.identity;
         m_SpineTargetRot = Quaternion.identity;
     }
 
     // TODO: Needs to be networked
     public void LookRotation(Transform character, Transform spineTransform, float xRot, float yRot) {
-        float angleX = 2.0f * Mathf.Rad2Deg * Mathf.Atan (m_SpineTargetRot.x);
+        if (xRot > MaximumX) {
+            xRot = -(360f - xRot);
+        }
 
+        Debug.LogError("FUCK " + yRot);
+
+        if (yRot >= 80f) {
+            yRot = -(360f - yRot);
+        }
+        
         if (yRot < 0f) {
             // If max spine rotation has been reached to the left, rotate character instead
-            if (spineRotationRange > -50f && angleX < 10f && angleX > -20f) {
-                spineRotationRange += yRot;
-                m_SpineTargetRot *= Quaternion.Euler(0f, yRot, 0f);
+            if (currentSpineY > -40f) {
+                currentSpineY += yRot;
             } else {
                 m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
             }
         } else {
             // If turning right
             // If max spine rotation has been reached to the right, rotate character instead
-            if (spineRotationRange < 20f && angleX < 10f && angleX > -20f) {
-                spineRotationRange += yRot;
-                m_SpineTargetRot *= Quaternion.Euler(0f, yRot, 0f);
+            if (currentSpineY < 40f) {
+                currentSpineY += yRot;
             } else {
                 m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
             }
         }
+        
+        currentSpineX = Mathf.Clamp(currentSpineX + xRot, MinimumX, MaximumX);
+        // currentSpineY = Mathf.Clamp(currentSpineY + yRot, -40f, 40f);
 
-        m_SpineTargetRot *= Quaternion.Euler(xRot, 0f, 0f);
+        m_SpineTargetRot = Quaternion.Euler(currentSpineX / 3f, currentSpineY / 3f, 0f);
         m_SpineTargetRot = ClampRotationAroundXAxis(m_SpineTargetRot);
 
         spineTransform.localRotation = m_SpineTargetRot;
-        m_CharacterTargetRot = Quaternion.Euler(0f, m_CharacterTargetRot.eulerAngles.y, 0f);
-        character.localRotation = m_CharacterTargetRot;
-
-        if (xRot != 0f || yRot != 0f)
-        {
-            Vector3 spineRotRet = new Vector3(m_SpineTargetRot.eulerAngles.x, m_SpineTargetRot.eulerAngles.y, m_SpineTargetRot.eulerAngles.x);
-            Vector3 charRotRet = new Vector3(m_CharacterTargetRot.eulerAngles.x, m_CharacterTargetRot.eulerAngles.y, m_CharacterTargetRot.eulerAngles.z);
-        }
+        // m_CharacterTargetRot = Quaternion.Euler(0f, m_CharacterTargetRot.eulerAngles.y, 0f);
+        // character.rotation = m_CharacterTargetRot;
     }
 
     private Quaternion ClampRotationAroundXAxis(Quaternion q)

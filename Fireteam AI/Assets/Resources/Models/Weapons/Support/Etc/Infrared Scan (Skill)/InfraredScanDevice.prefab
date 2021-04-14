@@ -141,8 +141,14 @@ MonoBehaviour:
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: 9691ca373c9ef1e4e961e9a45f178723,
     type: 2}
-  maleOverrideControllerFullBody: {fileID: 0}
-  femaleOverrideControllerFullBody: {fileID: 0}
+  maleOverrideControllerFullBody: {fileID: 22100000, guid: 655a09a6389bd454fadbb43e20268820,
+    type: 2}
+  femaleOverrideControllerFullBody: {fileID: 22100000, guid: 45af0895a31b68f4b862b24b33a1a5ad,
+    type: 2}
+  maleNpcOverrideController: {fileID: 22100000, guid: baf01b36198234c0aaac933bfa807040,
+    type: 2}
+  femaleNpcOverrideController: {fileID: 22100000, guid: 4f950de0ab5824f1387c403e1d8b4ea1,
+    type: 2}
   weaponAnimator: {fileID: 0}
   defaultFpcReloadSpeed: 0
   defaultWeaponReloadSpeed: 0

@@ -828,7 +828,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             animator.SetBool("isWalking", false);
             animator.SetBool("Swimming", false);
             animator.Play("IdleAssaultRifle", 0);
-            animator.Play("IdleAssaultRifle", 1);
+            animator.Play("Idle", 1);
         }
 
         public void SetAiminginFPCAnimator(bool x) {

@@ -97,7 +97,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	// Finite state machine states
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Disoriented};
 	// FSM used for determining movement while attacking and not in cover
-	enum FiringStates {StandingStill, StrafeLeft, StrafeRight, Backpedal, Forward};
+	public enum FiringStates {StandingStill, StrafeLeft, StrafeRight, Backpedal, Forward};
 
 	// Type of enemy
 	public enum EnemyType {Patrol, Scout};
@@ -162,7 +162,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	void Awake() {
 		npcLook.Init(gameObject.transform, spineTransform);
 		animator.SetFloat("FireSpeed", gunRef.defaultFireSpeedFullBody);
-		// animator.runtimeAnimatorController = gunRef.maleOverrideController as RuntimeAnimatorController;
+		animator.runtimeAnimatorController = gunRef.maleNpcOverrideController as RuntimeAnimatorController;
+		animator.SetInteger("WeaponType", 1);
 		ToggleRagdoll(false);
 		if (gameControllerScript.matchType == 'C')
         {
@@ -406,7 +407,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			// if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
 			// 	StopVoices();
 			// }
-			return;
+			if (actionState == ActionStates.Dead) {
+				return;
+			}
 		}
 
 		HandleHealthStatus();
@@ -473,7 +476,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			// if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
 				// StopVoices();
 			// }
-			return;
+			if (actionState == ActionStates.Dead) {
+				return;
+			}
 		}
 
 		HandleHealthStatus();
@@ -578,6 +583,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					SetNavMeshStopped(true);
 				}
 			}
+			return;
 		}
 		// Handle animations and detection outline independent of frame rate
 		DecideAnimation ();
@@ -1682,10 +1688,11 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	void DecideAnimation() {
 		if (actionState == ActionStates.Seeking) {
-			if (animator.GetInteger("Moving") == 0 && !animator.GetBool("isSprinting")) {
+			if (animator.GetInteger("Moving") == 0) {
 				int r = Random.Range (1, 4);
 				if (r >= 1 && r <= 2) {
 					animator.SetInteger("Moving", 1);
+					animator.SetBool("isSprinting", false);
 				} else {
 					animator.SetBool("isSprinting", true);
 				}
@@ -1694,21 +1701,21 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 		if (actionState == ActionStates.Wander) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
-				if (!animator.GetBool("onTitle")) {
-					animator.SetBool ("onTitle", true);
-					animator.Play("Title", 0);
-					animator.Play("Title", 1);
-				}
+				animator.SetBool ("onTitle", true);
+				animator.SetInteger("Moving", 0);
+				animator.SetBool("Patrol", false);
 			} else {
 				animator.SetBool ("onTitle", false);
-				if (alertStatus != AlertStatus.Alert && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Patrol")) {
-					animator.SetTrigger ("Patrol");
+				if (alertStatus != AlertStatus.Alert && !animator.GetBool("Patrol")) {
+					animator.SetInteger("Moving", 0);
+					animator.SetBool ("Patrol", true);
 				} else if (alertStatus == AlertStatus.Alert && animator.GetInteger("Moving") == 0) {
-					animator.Play ("Idle");
-					animator.Play ("IdleAssaultRifle");
+					animator.SetBool ("Patrol", false);
 					animator.SetInteger("Moving", 1);
 				}
 			}
+		} else {
+			animator.SetBool("Patrol", false);
 		}
 
 		if (actionState == ActionStates.TakingCover) {
@@ -1722,19 +1729,19 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 
 		if (actionState == ActionStates.Idle) {
+			animator.SetInteger("Moving", 0);
 			if (alertStatus == AlertStatus.Alert) {
-				if (!animator.GetCurrentAnimatorStateInfo (1).IsName ("Idle")) {
-					animator.SetBool("onTitle", false);
-					animator.Play("Idle");
-				}
+				animator.SetBool("onTitle", false);
 			} else {
-				if (!animator.GetCurrentAnimatorStateInfo (1).IsName ("Patrol"))
-					animator.SetTrigger("Patrol");
+				animator.SetBool("Patrol", true);
 			}
 		}
 
 		if (actionState == ActionStates.Firing || actionState == ActionStates.Reloading || actionState == ActionStates.InCover) {
 			// Set proper animation
+			animator.SetBool("onTitle", false);
+			animator.SetBool("Patrol", false);
+			animator.SetBool("isSprinting", false);
 			if (actionState == ActionStates.Firing && currentBullets > 0) {
 				if (firingState == FiringStates.StandingStill) {
 					animator.SetInteger("Moving", 0);
@@ -1757,7 +1764,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			}
 		}
 
-		animator.SetBool("isCrouching", isCrouching);
+		animator.SetBool("Crouching", isCrouching);
 
 		if (actionState == ActionStates.Melee) {
 			if (!animator.GetCurrentAnimatorStateInfo (1).IsName ("Melee")) {
@@ -1864,6 +1871,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         if (team != gameControllerScript.teamMap) return;
         PlayMuzzleFlash();
 		PlayShootSound();
+		animator.SetTrigger("Fire");
 		currentBullets--;
 		// Reset fire timer
 		fireTimer = 0.0f;
@@ -1922,7 +1930,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		Vector3 tempRot = tempQuat.eulerAngles;
 		tempRot = new Vector3 (0f, tempRot.y, 0f);
 		// transform.rotation = Quaternion.Euler(tempRot);
-		npcLook.LookRotation(gameObject.transform, spineTransform, tempRot.x, tempRot.y);
+		npcLook.LookRotation(gameObject.transform, spineTransform, tempRot.x, 0.001f);
 	}
 
 	IEnumerator Despawn(float respawnTime) {
@@ -2414,7 +2422,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			lastSeenPlayerPos = Vector3.negativeInfinity;
 
 			actionState = ActionStates.Idle;
-			animator.Play ("Idle");
+			ResetAnimator();
 			firingState = FiringStates.StandingStill;
 			firingModeTimer = 0f;
 
@@ -2467,7 +2475,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		lastSeenPlayerPos = Vector3.negativeInfinity;
 
 		actionState = ActionStates.Idle;
-		animator.Play ("Idle");
+		ResetAnimator();
 		firingState = FiringStates.StandingStill;
 		firingModeTimer = 0f;
 
@@ -2906,6 +2914,30 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				TakeDamage(POISONED_DMG, transform.position, 2, 0, 0, 0);
 			}
 		}
+	}
+
+	void ResetAnimator()
+	{
+		animator.SetBool("Incapacitated", false);
+		animator.ResetTrigger("EnteredWater");
+		animator.SetInteger("WeaponType", 1);
+		animator.SetInteger("Moving", 0);
+		animator.SetBool("weaponReady", false);
+		animator.SetBool("Crouching", false);
+		animator.SetBool("isSprinting", false);
+		animator.SetBool("isDead", false);
+		animator.SetBool("isWalking", false);
+		animator.SetBool("Swimming", false);
+		animator.Play("IdleAssaultRifle", 0);
+		animator.Play("Idle", 1);
+		animator.SetBool("onTitle", false);
+		animator.ResetTrigger("Jump");
+		animator.ResetTrigger("Reload");
+		animator.ResetTrigger("Fire");
+		animator.ResetTrigger("Cock");
+		animator.ResetTrigger("Melee");
+		animator.SetBool("Disoriented", false);
+		animator.SetBool("Patrol", false);
 	}
 
 }
