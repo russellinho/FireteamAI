@@ -33,6 +33,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public Connexion connexion;
 	public FriendsMessenger friendsMessenger;
 	public AchievementManager achievementManager;
+	public SkillManager skillManager;
 	public GiftInbox giftInbox;
 	private AudioSourceModifier[] sceneAudioSources;
 
@@ -116,7 +117,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public GameObject proTipContainer;
 	public TextMeshProUGUI mapTitleText;
 	public TextMeshProUGUI mapDescriptionText;
-	private string[] proTips = new string[4]{"Aim for the head for faster kills.", "Be on the lookout for ammo and health drops from enemies.", "Some missions can be completely silently. Look at the top of your screen to determine whether your team has been detected or not.", "In stealth, you can point out and mark enemies for your teammates to see by aiming at them and pressing the ACTION (F) key."};
+	private string[] proTips = new string[4]{"Aim for the head for faster kills.", "Be on the lookout for ammo and health drops from enemies.", "Some missions can be completed silently. Look at the top of your screen to determine whether your team has been detected or not.", "In stealth, you can point out and mark enemies for your teammates to see by aiming at them and pressing the ACTION (F) key."};
 	private bool versionWarning;
 	// Marketplace menu
 	public Button clearPreviewBtn;
@@ -160,6 +161,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public TextMeshProUGUI totalGiftCostTxt;
 	public TextMeshProUGUI myGpTxt;
 	public TextMeshProUGUI myKashTxt;
+	public TextMeshProUGUI availableSkillPointsTxt;
+	public TextMeshProUGUI primaryClassTxt;
 
 	// Customization menu
 	public GameObject contentPrefab;
@@ -186,6 +189,8 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public TextMeshProUGUI armorBoostPercent;
 	public TextMeshProUGUI speedBoostPercent;
 	public TextMeshProUGUI staminaBoostPercent;
+	public TextMeshProUGUI avoidabilityBoostPercent;
+	public TextMeshProUGUI detectionLevel;
 	public Button primaryWepBtn;
 	public Button secondaryWepBtn;
 	public Button supportWepBtn;
@@ -546,6 +551,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 			PhotonNetwork.LocalPlayer.NickName = PlayerData.playerdata.info.Playername;
 			Hashtable h = new Hashtable();
 			h.Add("exp", (int)PlayerData.playerdata.info.Exp);
+			h.Add("class", PlayerData.playerdata.GetClassNameForTreeIndex(skillManager.GetPrimaryTree()));
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 			PhotonNetwork.ConnectUsingSettings();
 		}
@@ -2755,10 +2761,35 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
-	public void SetStatBoosts(int armor, int speed, int stamina) {
+	public void SetAvoidabilityBoostPercent(int avoidability) {
+		if (avoidability == 0) {
+			avoidabilityBoostPercent.color = Color.white;
+			avoidabilityBoostPercent.text = "+" + avoidability + "%";
+		} else if (avoidability > 0) {
+			avoidabilityBoostPercent.color = Color.green;
+			avoidabilityBoostPercent.text = "+" + avoidability + "%";
+		} else {
+			avoidabilityBoostPercent.color = Color.red;
+			avoidabilityBoostPercent.text = avoidability + "%";
+		}
+	}
+
+	public void SetDetectionLevel(int detection) {
+		if (detection > (PlayerActionScript.MAX_DETECTION_LEVEL / 2)) {
+			detectionLevel.color = Color.red;
+			detectionLevel.text = "" + detection;
+		} else {
+			detectionLevel.color = Color.green;
+			detectionLevel.text = "" + detection;
+		}
+	}
+
+	public void SetStatBoosts(int armor, int speed, int stamina, int avoidability, int detection) {
 		SetArmorBoostPercent(armor);
 		SetSpeedBoostPercent(speed);
 		SetStaminaBoostPercent(stamina);
+		SetAvoidabilityBoostPercent(avoidability);
+		SetDetectionLevel(detection);
 	}
 
 	public void LoadWeaponForModding(ShopItemScript s) {

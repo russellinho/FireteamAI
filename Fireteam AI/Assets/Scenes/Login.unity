@@ -395,7 +395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43ba59572d6e3784e98eeadd473e2ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  developmentMode: 0
+  developmentMode: 1
   copyrightTxt: {fileID: 1841848859}
   versionTxt: {fileID: 188696561}
   popupAlert: {fileID: 4539363469535828523}
@@ -635,6 +635,9 @@ MonoBehaviour:
   - {fileID: 3860504239686808909, guid: 26dbe834c31440e4aa4fbdd9abb76414, type: 3}
   - {fileID: 6406873327239066714, guid: 106e9f4f6429efd47a983c9e8865ccea, type: 3}
   - {fileID: 8485904087546327385, guid: 98822d48cb260f24cad8ee66a9eba868, type: 3}
+  - {fileID: 6115766216291179084, guid: 5ea363175cc1d4ffabf345338b5e2668, type: 3}
+  - {fileID: 732636072019793740, guid: 017b87432764d47f69b7a8d652cfbfbf, type: 3}
+  - {fileID: 732636072019793740, guid: 4b86cea3709614716a40ccc05b90210e, type: 3}
 --- !u!114 &1820121354
 MonoBehaviour:
   m_ObjectHideFlags: 0

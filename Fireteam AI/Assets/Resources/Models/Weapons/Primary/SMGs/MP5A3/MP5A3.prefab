@@ -637,8 +637,6 @@ MonoBehaviour:
   defaultRightCollarPosFemale: {x: -0.0001552451, y: 0.001210224, z: -0.000001173626}
   aimDownSightSpeed: 6.5
   aimDownSightClipping: 0.01
-  titleHandPositionsMale: {x: 0.09606443, y: 0.2172284, z: 0.01300057}
-  titleHandPositionsFemale: {x: 0.09606443, y: 0.2172284, z: 0.01300057}
   recoveryConstant: 3
   fireSound: {fileID: 134961559763851575}
   suppressedFireSound: {fileID: 5090137998641266065}
@@ -678,12 +676,21 @@ MonoBehaviour:
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: 524b231cc3157bf449081cc33505e55e,
     type: 2}
+  maleOverrideControllerFullBody: {fileID: 22100000, guid: a3dd234cef8dee947bea2e2ff3c7e69d,
+    type: 2}
+  femaleOverrideControllerFullBody: {fileID: 22100000, guid: 91a1fb8b06a9adc4cabf45cfa702d652,
+    type: 2}
+  maleNpcOverrideController: {fileID: 22100000, guid: 48a495b6e3c9547939d46dbcdfe3e3b9,
+    type: 2}
+  femaleNpcOverrideController: {fileID: 22100000, guid: 8d801e83535b744d983449ef2ec753ec,
+    type: 2}
   weaponAnimator: {fileID: 2105729878731182303}
   defaultFpcReloadSpeed: 1
   defaultWeaponReloadSpeed: 0.5
   defaultWeaponCockingSpeed: 0
   defaultWeaponDrawSpeed: 3.7
   defaultFireSpeed: 2
+  defaultFireSpeedFullBody: 5
   defaultMeleeSpeed: 0
   reloadTransitionSpeed: 0.02
   reloadSound1Time: 0.2625

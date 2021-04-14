@@ -20,6 +20,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private const float STARTER_LIMIT_TIME = 90f;
 	private const float VOTE_TIME = 3f;
 	private const float VOTE_DELAY = 300f;
+	private const float REVIVE_WINDOW_TIME = 6f;
 
 	// A number value to the maps/missions starting with 1. The number correlates with the time it was released, so the lower the number, the earlier it was released.
 	// 1 = The Badlands: Act 1; 2 = The Badlands: Act 2
@@ -39,6 +40,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     public static Vector3 lastGunshotHeardPos = Vector3.negativeInfinity;
 	private float lastGunshotTimer = 0f;
     public float endGameTimer = 0f;
+	public float reviveWindowTimer = 0f;
 	private bool loadExitCalled;
 	public static Dictionary<int, PlayerStat> playerList = new Dictionary<int, PlayerStat> ();
 	public Dictionary<int, GameObject> npcList = new Dictionary<int, GameObject>();
@@ -95,6 +97,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public short noVotes;
 	private float voteDelay;
 	private float waitTriggerTimer;
+	private float avgDistanceBetweenTeam;
 
 	// Use this for initialization
 	void Awake() {
@@ -132,6 +135,28 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		Physics.IgnoreLayerCollision (14, 19);
 		Physics.IgnoreLayerCollision (16, 19);
 		Physics.IgnoreLayerCollision (18, 19);
+		Physics.IgnoreLayerCollision (0, 22);
+		Physics.IgnoreLayerCollision (1, 22);
+		Physics.IgnoreLayerCollision (2, 22);
+		Physics.IgnoreLayerCollision (3, 22);
+		Physics.IgnoreLayerCollision (4, 22);
+		Physics.IgnoreLayerCollision (5, 22);
+		Physics.IgnoreLayerCollision (6, 22);
+		Physics.IgnoreLayerCollision (7, 22);
+		Physics.IgnoreLayerCollision (8, 22);
+		Physics.IgnoreLayerCollision (9, 22);
+		Physics.IgnoreLayerCollision (10, 22);
+		Physics.IgnoreLayerCollision (11, 22);
+		Physics.IgnoreLayerCollision (12, 22);
+		Physics.IgnoreLayerCollision (13, 22);
+		Physics.IgnoreLayerCollision (14, 22);
+		Physics.IgnoreLayerCollision (15, 22);
+		Physics.IgnoreLayerCollision (16, 22);
+		Physics.IgnoreLayerCollision (17, 22);
+		Physics.IgnoreLayerCollision (18, 22);
+		Physics.IgnoreLayerCollision (19, 22);
+		Physics.IgnoreLayerCollision (20, 22);
+		Physics.IgnoreLayerCollision (22, 22);
 		ClearEnemyTypesKilled();
 
 		defFogEnabled = RenderSettings.fog;
@@ -196,6 +221,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		if (isVersusHostForThisTeam()) {
 			ResetAssaultInProgressOverNetwork();
 		}
+		StartCoroutine("UpdateAvgDistanceBetweenTeam");
 		if (matchType == 'C') {
 			StartCoroutine("GameOverCheckForCampaign");
 		} else if (matchType == 'V') {
@@ -244,6 +270,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	}
 
 	void UpdateTimers() {
+		UpdateReviveWindowTimer();
 		if (PhotonNetwork.IsMasterClient) {
 			ResetLastGunshotPos ();
 			UpdateEndGameTimer();
@@ -297,11 +324,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		if (currentMap == 1) {
 			if (PhotonNetwork.IsMasterClient) {
 				// Check if the mission is over or if all players eliminated or out of time
-				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count || CheckOutOfTime())
+				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count)
 				{
-					if (!gameOver)
+					if (reviveWindowTimer < -50f) {
+						SetReviveWindowTimer();
+					} else if (!gameOver && reviveWindowTimer <= 0f)
 					{
-						EndGameCampaign(9f, null, false);
+						EndGameCampaign(4f, null, false);
 					}
 				}
 				else if (objectives.itemsRemaining == 0)
@@ -312,15 +341,23 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 						EndGameCampaign(2f, null, true);
 					}
 				}
+				else if (CheckOutOfTime()) {
+					if (!gameOver)
+					{
+						EndGameCampaign(4f, "Out of time!", false);
+					}
+				}
 			}
 		} else if (currentMap == 2) {
 			if (PhotonNetwork.IsMasterClient) {
 				// Check if the mission is over or if all players eliminated or out of time
 				if (deadCount == PhotonNetwork.CurrentRoom.Players.Count)
 				{
-					if (!gameOver)
+					if (reviveWindowTimer < -50f) {
+						SetReviveWindowTimer();
+					} else if (!gameOver && reviveWindowTimer <= 0f)
 					{
-						EndGameCampaign(9f, null, false);
+						EndGameCampaign(4f, null, false);
 					}
 				} else if (vipRef.GetComponent<NpcScript>().actionState == NpcActionState.Dead) {
 					if (!gameOver)
@@ -350,13 +387,15 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				int playerCount = (teamMap == "R" ? redTeamCount : blueTeamCount);
 				if (deadCount == playerCount)
 				{
-					if (!gameOver)
+					if (reviveWindowTimer < -50f) {
+						SetReviveWindowTimer();
+					} else if (!gameOver && reviveWindowTimer <= 0f)
 					{
-						EndGameVersus(9f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!", "Your team has been eliminated!");
+						EndGameVersus(4f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!", "Your team has been eliminated!");
 					}
 				} else if (CheckOutOfTime()) {
 					if (!gameOver) {
-						EndGameVersus(9f, "T", null, null);
+						EndGameVersus(4f, "T", null, null);
 					}
 				} else if (objectives.itemsRemaining == 0)
 				{
@@ -379,9 +418,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				int playerCount = (teamMap == "R" ? redTeamCount : blueTeamCount);
 				if (deadCount == playerCount)
 				{
-					if (!gameOver)
+					if (reviveWindowTimer < -50f) {
+						SetReviveWindowTimer();
+					} else if (!gameOver && reviveWindowTimer <= 0f)
 					{
-						EndGameVersus(9f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!", "Your team has been eliminated!");
+						EndGameVersus(4f, (teamMap == "R" ? "B" : "R"), "The enemy team has been eliminated!", "Your team has been eliminated!");
 					}
 				} else if (vipRef.GetComponent<NpcScript>().actionState == NpcActionState.Dead) {
 					if (!gameOver) {
@@ -389,7 +430,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 					} 
 				} else if (CheckOutOfTime()) {
 					if (!gameOver) {
-						EndGameVersus(9f, "T", null, null);
+						EndGameVersus(4f, "T", null, null);
 					}
 				} else if (objectives.stepsLeftToCompletion == 1 && objectives.escapeAvailable)
 				{
@@ -408,6 +449,30 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		StartCoroutine("GameOverCheckForVersus");
 	}
 
+	void SetReviveWindowTimer()
+	{
+		pView.RPC("RpcSetReviveWindowTimer", RpcTarget.All, teamMap);
+	}
+
+	public void ClearReviveWindowTimer()
+	{
+		pView.RPC("RpcClearReviveWindowTimer", RpcTarget.All, teamMap);
+	}
+
+	[PunRPC]
+	void RpcSetReviveWindowTimer(string team)
+	{
+		if (team != teamMap) return;
+		reviveWindowTimer = REVIVE_WINDOW_TIME;
+	}
+
+	[PunRPC]
+	void RpcClearReviveWindowTimer(string team)
+	{
+		if (team != teamMap) return;
+		reviveWindowTimer = -100f;
+	}
+
 	[PunRPC]
 	void RpcEndGame(float f, string eventMessage, bool win) {
 		LockRoom();
@@ -419,6 +484,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 		int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
 		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.voiceCommandsPanel.SetActive(false);
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.skillPanel.SetActive(false);
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.revivePlayerPanel.SetActive(false);
 		pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths));
 	}
 
@@ -456,6 +523,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 
 		PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.voiceCommandsPanel.SetActive(false);
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.skillPanel.SetActive(false);
+		PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().container.revivePlayerPanel.SetActive(false);
 		int myActorId = PhotonNetwork.LocalPlayer.ActorNumber;
 		pView.RPC("RpcSetMyExpAndGpGained", RpcTarget.All, myActorId, (int)CalculateExpGained(playerList[myActorId].kills, playerList[myActorId].deaths, (winner == teamMap)), (int)CalculateGpGained(playerList[myActorId].kills, playerList[myActorId].deaths, (winner == teamMap)));
     }
@@ -687,6 +756,21 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		}
 
 		if (GameControllerScript.playerList[otherPlayer.ActorNumber].objRef != null) {
+			// Remove collective skill boosts here before destroying
+			SkillController theirSkills = GameControllerScript.playerList[otherPlayer.ActorNumber].objRef.GetComponent<SkillController>();
+			SkillController mySkills = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>();
+			mySkills.RemoveHackerBoost(theirSkills.GetThisPlayerHackerBoost());
+			mySkills.RemoveHeadstrongBoost(theirSkills.GetThisPlayerHeadstrongBoost());
+			mySkills.RemoveResourcefulBoost(theirSkills.GetThisPlayerResourcefulBoost());
+			mySkills.RemoveInspireBoost(theirSkills.GetThisPlayerInspireBoost());
+			mySkills.RemoveIntimidationBoost(theirSkills.GetThisPlayerIntimidationBoost());
+			mySkills.RemoveProviderBoost(theirSkills.GetThisPlayerProviderBoost());
+			mySkills.RemoveDdosBoost(theirSkills.GetThisPlayerDdosLevel());
+			mySkills.RemoveFireteamBoost(theirSkills.GetThisPlayerFireteamBoost());
+			mySkills.RemoveMartialArtsBoost(theirSkills.GetThisPlayerMartialArtsAttackBoost(), theirSkills.GetThisPlayerMartialArtsDefenseBoost());
+			mySkills.RemoveRegenerator(otherPlayer.ActorNumber);
+			mySkills.RemovePainkiller(otherPlayer.ActorNumber);
+
 			Destroy (GameControllerScript.playerList[otherPlayer.ActorNumber].objRef);
 		}
 		GameControllerScript.playerList.Remove (otherPlayer.ActorNumber);
@@ -721,7 +805,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
         if (team != teamMap) return;
         exitLevelLoaded = true;
 		exitLevelLoadedTimer = 4f;
-		// LockRoom();
+
 	}
 
 	void SetWaitPeriodDone()
@@ -766,7 +850,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
                 endGameTimer -= Time.deltaTime;
 				pView.RPC ("RpcUpdateEndGameTimer", RpcTarget.Others, endGameTimer, teamMap);
             }
-
             if (endGameTimer <= 0f) {
 				if (!exitLevelLoaded) {
 					pView.RPC ("RpcSetExitLevelLoaded", RpcTarget.All, teamMap);
@@ -781,6 +864,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
             }
         }
     }
+
+	void UpdateReviveWindowTimer()
+	{
+		if (reviveWindowTimer > 0f) {
+			reviveWindowTimer -= Time.deltaTime;
+		}
+	}
 
 	public override void OnDisconnected(DisconnectCause cause) {
 		PlayerData.playerdata.disconnectedFromServer = true;
@@ -1071,7 +1161,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			}
 			DeployableScript d = k.Value.GetComponent<DeployableScript>();
 			// Add id, uses remaining, position
-			s += d.deployableId + '|' + d.usesRemaining + '|' + d.gameObject.transform.position.x + '|' + d.gameObject.transform.position.y + '|' + d.gameObject.transform.position.z + '|' + d.gameObject.transform.rotation.eulerAngles.x + '|' + d.gameObject.transform.rotation.eulerAngles.y + '|' + d.gameObject.transform.rotation.eulerAngles.z + '|' + d.refString;
+			BubbleShieldScript b = null;
+			if (d.initializeRef != null) {
+				b = d.initializeRef.GetComponent<BubbleShieldScript>();
+			}
+			s += d.deployableId + "|" + d.usesRemaining + "|" + d.gameObject.transform.position.x + "|" + d.gameObject.transform.position.y + "|" + d.gameObject.transform.position.z + "|" + d.gameObject.transform.rotation.eulerAngles.x + "|" + d.gameObject.transform.rotation.eulerAngles.y + "|" + d.gameObject.transform.rotation.eulerAngles.z + "|" + d.refString + "|" + (b == null ? 0f : b.duration);
 			first = false;
 		}
 		return s;
@@ -1143,14 +1237,14 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 				}
 			}
 			int playerBeingKickedId = playerBeingKicked == null ? -1 : playerBeingKicked.ActorNumber;
-			pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, loadExitCalled,
+			pView.RPC("RpcSyncDataGc", RpcTarget.All, lastGunshotHeardPos.x, lastGunshotHeardPos.y, lastGunshotHeardPos.z, lastGunshotTimer, endGameTimer, reviveWindowTimer, loadExitCalled,
 				spawnMode, gameOver, (int)sectorsCleared, assaultMode, enemyTeamNearingVictoryTrigger, endGameWithWin, assaultModeChangedIndicator, serializedObjectives, GameControllerScript.missionTime, 
 				currentVoteAction, playerBeingKickedId, playerBeingKickedName, voteInProgress, voteTimer, (int)yesVotes, (int)noVotes, SerializeDeployables(), teamMap);
 		}
 	}
 
 	[PunRPC]
-	void RpcSyncDataGc(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer,
+	void RpcSyncDataGc(float lastGunshotHeardPosX, float lastGunshotHeardPosY, float lastGunshotHeardPosZ, float lastGunshotTimer, float endGameTimer, float reviveWindowTimer,
 		bool loadExitCalled, SpawnMode spawnMode, bool gameOver, int sectorsCleared, bool assaultMode, bool enemyTeamNearingVictoryTrigger, 
 		bool endGameWithWin, bool assaultModeChangedIndicator, string serializedObjectives, float missionTime, VoteActions currentVoteAction,
 		int playerBeingKickedId, string playerBeingKickedName, bool voteInProgress, float voteTimer, int yesVotes, int noVotes, string serializedDeployables, string team) {
@@ -1158,6 +1252,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
     	lastGunshotHeardPos = new Vector3(lastGunshotHeardPosX, lastGunshotHeardPosY, lastGunshotHeardPosZ);
 		this.lastGunshotTimer = lastGunshotTimer;
 		this.endGameTimer = endGameTimer;
+		this.reviveWindowTimer = reviveWindowTimer;
 		this.loadExitCalled = loadExitCalled;
 		this.spawnMode = spawnMode;
 		this.gameOver = gameOver;
@@ -1265,12 +1360,22 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			foreach (string d in parsedSerializations)
 			{
 				string[] dDetails = d.Split('|');
-				// Sync deployable
-				GameObject o = GameObject.Instantiate((GameObject)Resources.Load(dDetails[8]), new Vector3(float.Parse(dDetails[2]), float.Parse(dDetails[3]), float.Parse(dDetails[4])), Quaternion.Euler(float.Parse(dDetails[5]), float.Parse(dDetails[6]), float.Parse(dDetails[7])));
-				DeployableScript dScript = o.GetComponent<DeployableScript>();
-				dScript.deployableId = int.Parse(dDetails[0]);
-				dScript.usesRemaining = short.Parse(dDetails[1]);
-				DeployDeployable(dScript.deployableId, o);
+				int parsedId = int.Parse(dDetails[0]);
+				if (!deployableList.ContainsKey(parsedId)) {
+					// Sync deployable
+					GameObject o = GameObject.Instantiate((GameObject)Resources.Load(dDetails[8]), new Vector3(float.Parse(dDetails[2]), float.Parse(dDetails[3]), float.Parse(dDetails[4])), Quaternion.Euler(float.Parse(dDetails[5]), float.Parse(dDetails[6]), float.Parse(dDetails[7])));
+					DeployableScript dScript = o.GetComponent<DeployableScript>();
+					dScript.deployableId = parsedId;
+					dScript.usesRemaining = short.Parse(dDetails[1]);
+					if (dScript.initializeRef != null) {
+						BubbleShieldScript b = dScript.initializeRef.GetComponent<BubbleShieldScript>();
+						if (b != null) {
+							dScript.initializeRef.SetActive(true);
+							b.SyncShield(float.Parse(dDetails[9]));
+						}
+					}
+					DeployDeployable(dScript.deployableId, o);
+				}
 			}
 		}
 	}
@@ -1289,7 +1394,8 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		{
 			GameObject p = entry.Value.objRef;
 			if (p == null) continue;
-			if (p.GetComponent<PlayerActionScript>().health <= 0) {
+			PlayerActionScript pa = p.GetComponent<PlayerActionScript>();
+			if (pa.health <= 0 && pa.fightingSpiritTimer <= 0f && pa.lastStandTimer <= 0f) {
 				total++;
 			}
 		}
@@ -1345,6 +1451,13 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	{
 		if (PhotonNetwork.IsMasterClient) {
 			PhotonNetwork.CurrentRoom.IsOpen = false;
+		}
+	}
+
+	public void UnlockRoom()
+	{
+		if (PhotonNetwork.IsMasterClient) {
+			PhotonNetwork.CurrentRoom.IsOpen = true;
 		}
 	}
 
@@ -1406,7 +1519,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		if (string.IsNullOrEmpty(currentKickedPlayers)) {
 			currentKickedPlayers = playerBeingKickedName;
 		} else {
-			currentKickedPlayers += ',' + playerBeingKickedName;
+			currentKickedPlayers += "," + playerBeingKickedName;
 		}
 		Hashtable h = new Hashtable();
 		h.Add("kickedPlayers", currentKickedPlayers);
@@ -1433,7 +1546,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			if (string.IsNullOrEmpty(currentKickedPlayers)) {
 				currentKickedPlayers = nickname;
 			} else {
-				currentKickedPlayers += ',' + nickname;
+				currentKickedPlayers += "," + nickname;
 			}
 			Hashtable h = new Hashtable();
 			h.Add("kickedPlayers", currentKickedPlayers);
@@ -1620,12 +1733,68 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		BetaEnemyScript.NUMBER_KILLED = 0;
 	}
 
+	public int GetDeadPlayerCount()
+	{
+		int count = 0;
+		foreach (PlayerStat stat in GameControllerScript.playerList.Values) {
+			PlayerActionScript pa = stat.objRef.GetComponent<PlayerActionScript>();
+			if (stat != null && stat.objRef != null && pa.health <= 0 && pa.fightingSpiritTimer <= 0f && pa.lastStandTimer <= 0f) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	IEnumerator UpdateAvgDistanceBetweenTeam()
+	{
+		yield return new WaitForSeconds(10f);
+		try {
+			CalculateAvgDistanceBetweenTeam();
+		} catch (Exception e) {
+			Debug.LogError("Exception caught during UpdateAvgDistanceBetweenTeam()");
+		}
+		StartCoroutine("UpdateAvgDistanceBetweenTeam");
+	}
+
+	private void CalculateAvgDistanceBetweenTeam()
+	{
+		int start = 0;
+		int pairs = 0;
+		float totalDistances = 0f;
+		int[] keys = GameControllerScript.playerList.Keys.ToArray();
+		while (start < keys.Length) {
+			int k = keys[start];
+			if (!GameControllerScript.playerList.ContainsKey(k) || GameControllerScript.playerList[k].objRef == null) {
+				start++;
+				continue;
+			}
+			Vector3 thisPos = GameControllerScript.playerList[k].objRef.transform.position;
+			for (int i = start + 1; i < keys.Length; i++) {
+				Vector3 p = GameControllerScript.playerList[keys[i]].objRef.transform.position;
+				totalDistances += Vector3.Distance(thisPos, p);
+				pairs++;
+			}
+			start++;
+		}
+		if (pairs == 0) {
+			avgDistanceBetweenTeam = 0f;
+		} else {
+			avgDistanceBetweenTeam = totalDistances / (float)pairs;
+		}
+	}
+
+	public float GetAvgDistanceBetweenTeam()
+	{
+		return avgDistanceBetweenTeam;
+	}
+
 }
 
 public class PlayerStat {
 	public GameObject objRef;
 	public int actorId;
 	public string name;
+	public string className;
 	public char team;
 	public int kills;
 	public int deaths;
@@ -1633,10 +1802,11 @@ public class PlayerStat {
 	public uint expGained;
 	public uint gpGained;
 
-	public PlayerStat(GameObject objRef, int actorId, string name, char team, uint exp) {
+	public PlayerStat(GameObject objRef, int actorId, string name, string className, char team, uint exp) {
 		this.objRef = objRef;
 		this.actorId = actorId;
 		this.name = name;
+		this.className = className;
 		this.team = team;
 		this.exp = exp;
 	}

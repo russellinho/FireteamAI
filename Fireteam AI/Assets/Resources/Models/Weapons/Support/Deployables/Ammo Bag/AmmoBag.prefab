@@ -138,8 +138,6 @@ MonoBehaviour:
   defaultRightCollarPosFemale: {x: 0, y: 0, z: 0}
   aimDownSightSpeed: 0
   aimDownSightClipping: 0.02
-  titleHandPositionsMale: {x: 0, y: 0, z: 0}
-  titleHandPositionsFemale: {x: 0, y: 0, z: 0}
   recoveryConstant: 0
   fireSound: {fileID: 0}
   suppressedFireSound: {fileID: 0}
@@ -174,12 +172,21 @@ MonoBehaviour:
     type: 2}
   femaleOverrideController: {fileID: 22100000, guid: 262f050b2c2b6104cac47d1cdffdc18c,
     type: 2}
+  maleOverrideControllerFullBody: {fileID: 22100000, guid: e3c004ff1c1656944ad704df37d024ab,
+    type: 2}
+  femaleOverrideControllerFullBody: {fileID: 22100000, guid: c32dc8cedfadffc4d90e86969ec3b80e,
+    type: 2}
+  maleNpcOverrideController: {fileID: 22100000, guid: 95b780f8e6f58414388780b020bf6e48,
+    type: 2}
+  femaleNpcOverrideController: {fileID: 22100000, guid: ef64ec924e3484580aab4238c60b5e83,
+    type: 2}
   weaponAnimator: {fileID: 0}
   defaultFpcReloadSpeed: 0
   defaultWeaponReloadSpeed: 0
   defaultWeaponCockingSpeed: 0
   defaultWeaponDrawSpeed: 2
   defaultFireSpeed: 0
+  defaultFireSpeedFullBody: 1
   defaultMeleeSpeed: 0
   reloadTransitionSpeed: 0
   reloadSound1Time: -1
@@ -217,6 +224,10 @@ MonoBehaviour:
   deployableName: Ammo Bag
   refString: 
   usesRemaining: 0
+  initializeRef: {fileID: 0}
+  audioSource: {fileID: 0}
+  deploySound: {fileID: 0}
+  breakSound: {fileID: 0}
 --- !u!82 &5224945847822451869
 AudioSource:
   m_ObjectHideFlags: 0

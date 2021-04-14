@@ -52,6 +52,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     public PlayerInventory inventory;
     public ObservableDict<string, FriendData> friendsList;
     public Dictionary<string, string> cachedSocialStatus;
+    public ObservableDict<string, SkillData> skillList;
     public ObservableDict<string, GiftData> giftList;
     public Dictionary<string, CachedMessage> cachedConversations;
     public ModInfo primaryModInfo;
@@ -77,6 +78,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             this.secondaryModInfo = new ModInfo();
             this.supportModInfo = new ModInfo();
             friendsList = new ObservableDict<string, FriendData>();
+            skillList = new ObservableDict<string, SkillData>();
             giftList = new ObservableDict<string, GiftData>();
             cachedConversations = new Dictionary<string, CachedMessage>();
             cachedSocialStatus = new Dictionary<string, string>();
@@ -85,6 +87,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/loggedIn").ValueChanged += HandleForceLogoutEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/gp").ValueChanged += HandleGpChangeEvent;
             DAOScript.dao.dbRef.Child("users/" + AuthScript.authHandler.user.UserId + "/kash").ValueChanged += HandleKashChangeEvent;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/availableSp").ValueChanged += HandleAvailableSkillPointsChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedArmor").ValueChanged += HandleArmorChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedBottom").ValueChanged += HandleBottomChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedCharacter").ValueChanged += HandleCharacterChangeEvent;
@@ -98,6 +101,14 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/equipment/equippedTop").ValueChanged += HandleTopChangeEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildAdded += HandleBanEvent;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/ban").ChildChanged += HandleBanEvent;
+
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/skills/0").ChildChanged += HandleSkillUpdate;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/skills/1").ChildChanged += HandleSkillUpdate;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/skills/2").ChildChanged += HandleSkillUpdate;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/skills/3").ChildChanged += HandleSkillUpdate;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/skills/4").ChildChanged += HandleSkillUpdate;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/skills/5").ChildChanged += HandleSkillUpdate;
+            DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/skills/6").ChildChanged += HandleSkillUpdate;
 
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/friends").ChildAdded += HandleFriendAdded;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_users/" + AuthScript.authHandler.user.UserId + "/friends").ChildRemoved += HandleFriendRemoved;
@@ -137,6 +148,8 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
             PlayerData.playerdata.info.PropertyChanged += OnPlayerInfoChange;
+            skillList.CollectionChanged += OnPlayerInfoChange;
+            skillList.PropertyChanged += OnPlayerInfoChange;
             friendsList.CollectionChanged += OnPlayerInfoChange;
             friendsList.PropertyChanged += OnPlayerInfoChange;
             giftList.CollectionChanged += OnPlayerInfoChange;
@@ -353,10 +366,10 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         };
 
         if (initial) {
-            // Spawning myself locally
+            // Spawning myself on others when joining the game
             PhotonNetwork.RaiseEvent(SPAWN_INIT_CODE, data, raiseEventOptions, sendOptions);
         } else {
-            // Spawning myself on other machines
+            // Spawning myself on others when they join the game
             PhotonNetwork.RaiseEvent(SPAWN_CODE, data, raiseEventOptions, sendOptions);
         }
     }
@@ -410,7 +423,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             team = 'B';
             Debug.Log(pView.Owner.NickName + " joined blue team.");
         }
-        PlayerStat p = new PlayerStat(playerRef, pView.Owner.ActorNumber, pView.Owner.NickName, team, Convert.ToUInt32(pView.Owner.CustomProperties["exp"]));
+        PlayerStat p = new PlayerStat(playerRef, pView.Owner.ActorNumber, pView.Owner.NickName, (string)pView.Owner.CustomProperties["class"], team, Convert.ToUInt32(pView.Owner.CustomProperties["exp"]));
         if (GameControllerScript.playerList == null) {
             GameControllerScript.playerList = new Dictionary<int, PlayerStat>();
         }
@@ -419,7 +432,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
 
     void AddMyselfToPlayerList(int actorNo)
     {
-        Debug.Log("Actor no: " + actorNo);
         Player playerBeingAdded = PhotonNetwork.CurrentRoom.GetPlayer(actorNo);
         char team = 'N';
         if ((string)playerBeingAdded.CustomProperties["team"] == "red") {
@@ -429,7 +441,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             team = 'B';
             Debug.Log(playerBeingAdded.NickName + " joined blue team.");
         }
-        PlayerStat p = new PlayerStat(null, actorNo, playerBeingAdded.NickName, team, Convert.ToUInt32(playerBeingAdded.CustomProperties["exp"]));
+        PlayerStat p = new PlayerStat(null, actorNo, playerBeingAdded.NickName, (string)playerBeingAdded.CustomProperties["class"], team, Convert.ToUInt32(playerBeingAdded.CustomProperties["exp"]));
         if (GameControllerScript.playerList == null) {
             GameControllerScript.playerList = new Dictionary<int, PlayerStat>();
         }
@@ -537,6 +549,21 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().gameController.ResetEscapeValues ();
             PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().OnPlayerLeftRoom(PhotonNetwork.CurrentRoom.GetPlayer(actorNo));
             if (playerToDestroy != null) {
+                // Remove collective skill boosts here before destroying
+                SkillController theirSkills = playerToDestroy.GetComponent<SkillController>();
+                SkillController mySkills = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>();
+                mySkills.RemoveHackerBoost(theirSkills.GetThisPlayerHackerBoost());
+                mySkills.RemoveHeadstrongBoost(theirSkills.GetThisPlayerHeadstrongBoost());
+                mySkills.RemoveResourcefulBoost(theirSkills.GetThisPlayerResourcefulBoost());
+                mySkills.RemoveInspireBoost(theirSkills.GetThisPlayerInspireBoost());
+                mySkills.RemoveIntimidationBoost(theirSkills.GetThisPlayerIntimidationBoost());
+                mySkills.RemoveProviderBoost(theirSkills.GetThisPlayerProviderBoost());
+                mySkills.RemoveDdosBoost(theirSkills.GetThisPlayerDdosLevel());
+                mySkills.RemoveFireteamBoost(theirSkills.GetThisPlayerFireteamBoost());
+                mySkills.RemoveMartialArtsBoost(theirSkills.GetThisPlayerMartialArtsAttackBoost(), theirSkills.GetThisPlayerMartialArtsDefenseBoost());
+                mySkills.RemoveRegenerator(actorNo);
+                mySkills.RemovePainkiller(actorNo);
+
                 Destroy(playerToDestroy);
             }
         } else if (photonEvent.Code == ASK_OTHERS_FOR_THEM)
@@ -546,6 +573,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     }
 
     void InitPlayerInGame(GameObject player) {
+        if (player.GetComponent<PhotonView>().IsMine) {
+            player.GetComponent<SkillController>().InitializeCollectiveBoosts();
+        }
         player.GetComponent<EquipmentScript>().PreInitialize();
         player.GetComponent<EquipmentScript>().Initialize();
         player.GetComponent<PlayerHUDScript>().Initialize();
@@ -593,6 +623,8 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     info.Exp = Convert.ToUInt32(playerDataSnap["exp"]);
                     info.Gp = Convert.ToUInt32(playerDataSnap["gp"]);
                     info.Kash = Convert.ToUInt32(results["kash"]);
+                    info.AvailableSkillPoints = Convert.ToInt32(playerDataSnap["availableSp"]);
+                    titleRef.availableSkillPointsTxt.text = ""+info.AvailableSkillPoints;
                     info.PrivilegeLevel = results["privilegeLevel"].ToString();
                     
                     if (playerDataSnap.ContainsKey("equipment")) {
@@ -688,15 +720,13 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         supportModInfo.SuppressorId = "";
                         supportModInfo.SightId = "";
                     }
+                    // try {
                     LoadInventory(inventorySnap);
-                    try {
-                        if (playerDataSnap.ContainsKey("achievements")) {
-                            LoadAchievements((Dictionary<object, object>)playerDataSnap["achievements"], achievementMap);
-                        } else {
-                            LoadAchievements(null, achievementMap);
-                        }
-                    } catch (Exception e) {
-                        Debug.Log(e.Message);
+                    LoadSkills((Dictionary<object, object>)playerDataSnap["skills"]);
+                    if (playerDataSnap.ContainsKey("achievements")) {
+                        LoadAchievements((Dictionary<object, object>)playerDataSnap["achievements"], achievementMap);
+                    } else {
+                        LoadAchievements(null, achievementMap);
                     }
                     if (playerDataSnap.ContainsKey("gifts")) {
                         LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
@@ -706,6 +736,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     if (itemsExpired.Count > 0) {
                         titleRef.TriggerExpirationPopup(itemsExpired);
                     }
+                    // } catch (Exception e) {
+                    //     Debug.LogError(e.Message);
+                    // }
                     playerDataModifyLegalFlag = false;
                     dataLoadedFlag = true;
                 } else {
@@ -1004,6 +1037,39 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 PlayerData.playerdata.titleRef.giftInbox.EnqueueGiftEntryCreation(giftId, g.Category, g.Sender, g.ItemName, g.Duration, g.Message);
             }
         }
+
+        playerDataModifyLegalFlag = false;
+    }
+
+    void LoadSkills(Dictionary<object, object> mySkills)
+    {
+        playerDataModifyLegalFlag = true;
+
+        int currentMax = 0;
+        int primaryTree = -1;
+        foreach(KeyValuePair<object, object> entry in mySkills) {
+            int treeId = int.Parse(entry.Key.ToString());
+            Dictionary<object, object> tree = (Dictionary<object, object>)entry.Value;
+            int thisMax = 0;
+            foreach(KeyValuePair<object, object> skillEntry in tree) {
+                int skillId = int.Parse(skillEntry.Key.ToString());
+                int skillLevel = Convert.ToInt32(skillEntry.Value);
+                SkillData sd = new SkillData();
+                sd.PropertyChanged += OnPlayerInfoChange;
+                sd.TreeId = treeId;
+                sd.SkillId = skillId;
+                sd.Level = skillLevel;
+                thisMax += skillLevel;
+                PlayerData.playerdata.skillList.Add(treeId + "/" + skillId, sd);
+                titleRef.skillManager.GetSkillSlot(treeId, skillId).DelayInit(skillLevel);
+            }
+            if (thisMax > currentMax) {
+                currentMax = thisMax;
+                primaryTree = treeId;
+            }
+        }
+        titleRef.skillManager.DelayRefreshActiveSkills();
+        titleRef.skillManager.DelaySetPrimaryTree(primaryTree);
 
         playerDataModifyLegalFlag = false;
     }
@@ -1483,6 +1549,28 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         });
     }
 
+    public string GetClassNameForTreeIndex(int index)
+    {
+        switch (index) {
+            case 0:
+                return "COMMANDO";
+            case 1:
+                return "RECON";
+            case 2:
+                return "ENGINEER";
+            case 3:
+                return "MASTERMIND";
+            case 4:
+                return "MEDIC";
+            case 5:
+                return "MARKSMAN";
+            case 6:
+                return "HEAVY";
+            default:
+                return "N/A";
+        }
+    }
+
     public Texture GetRankInsigniaForRank(string rank) {
         switch (rank) {
             case "Trainee":
@@ -1838,6 +1926,23 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
     }
 
+    void HandleAvailableSkillPointsChangeEvent(object sender, ValueChangedEventArgs args) {
+        if (bodyReference == null) return;
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+        if (args.Snapshot.Value != null) {
+            playerDataModifyLegalFlag = true;
+            PlayerData.playerdata.info.AvailableSkillPoints = Convert.ToInt32(args.Snapshot.Value);
+            if (titleRef != null) {
+                titleRef.availableSkillPointsTxt.text = ""+PlayerData.playerdata.info.AvailableSkillPoints;
+            }
+            playerDataModifyLegalFlag = false;
+        }
+    }
+
     void HandleArmorChangeEvent(object sender, ValueChangedEventArgs args) {
         if (bodyReference == null) return;
         if (args.DatabaseError != null) {
@@ -1901,7 +2006,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             titleRef.equippedArmorSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
         }
 
-        thisEquipScript.UpdateStats();
+        thisEquipScript.UpdateStatsOnTitle();
     }
 
     void HandleTopChangeEvent(object sender, ValueChangedEventArgs args) {
@@ -2104,6 +2209,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         thisWepScript.equippedSecondaryWeapon = info.EquippedSecondary;
         thisWepScript.equippedSupportWeapon = info.EquippedSupport;
         thisWepScript.equippedMeleeWeapon = info.EquippedMelee;
+        WeaponMeta wm = wepEquipped.GetComponent<WeaponMeta>();
         
         if (w.suppressorCompatible) {
             thisWepScript.EquipMod("Suppressor", primaryModInfo.EquippedSuppressor, info.EquippedPrimary, null);
@@ -2113,9 +2219,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
 
         if (titleRef.currentCharGender == 'M') {
-            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
+            thisWepScript.SetTitleWeaponPositions(wm.fullPosMale, wm.fullRotMale, 'M');
         } else {
-            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
+            thisWepScript.SetTitleWeaponPositions(wm.fullPosFemale, wm.fullRotFemale, 'F');
         }
     }
 
@@ -2166,7 +2272,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             titleRef.equippedFaceSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
         }
 
-        thisEquipScript.UpdateStats();
+        thisEquipScript.UpdateStatsOnTitle();
     }
 
     void HandleFootwearChangeEvent(object sender, ValueChangedEventArgs args) {
@@ -2263,7 +2369,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             titleRef.equippedHeadSlot.GetComponent<SlotScript>().ToggleThumbnail(false, null);
         }
 
-        thisEquipScript.UpdateStats();
+        thisEquipScript.UpdateStatsOnTitle();
     }
 
     void HandleMeleeChangeEvent(object sender, ValueChangedEventArgs args) {
@@ -2327,6 +2433,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         ModInfo modInfo = PlayerData.playerdata.LoadModDataForWeapon(itemEquipped);
         PlayerData.playerdata.primaryModInfo = modInfo;
         GameObject wepEquipped = thisWepScript.weaponHolder.LoadWeapon(w.prefabPath);
+        WeaponMeta wm = wepEquipped.GetComponent<WeaponMeta>();
         
         if (w.suppressorCompatible) {
             thisWepScript.EquipMod("Suppressor", modInfo.EquippedSuppressor, itemEquipped, null);
@@ -2336,9 +2443,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
 
         if (titleRef.currentCharGender == 'M') {
-            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
+            thisWepScript.SetTitleWeaponPositions(wm.fullPosMale, wm.fullRotMale, 'M');
         } else {
-            thisWepScript.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
+            thisWepScript.SetTitleWeaponPositions(wm.fullPosFemale, wm.fullRotFemale, 'F');
         }
 
         // Puts the item that you just equipped in its proper slot
@@ -2702,6 +2809,28 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         }
     }
 
+    void HandleSkillUpdate(object sender, ChildChangedEventArgs args)
+    {
+        if (bodyReference == null) return;
+        if (args.DatabaseError != null) {
+            Debug.LogError(args.DatabaseError.Message);
+            TriggerEmergencyExit(args.DatabaseError.Message);
+            return;
+        }
+
+        if (args.Snapshot.Value != null) {
+            playerDataModifyLegalFlag = true;
+            int treeId = int.Parse(args.Snapshot.Reference.Parent.Key);
+            int skillId = int.Parse(args.Snapshot.Key);
+            SkillData sd = PlayerData.playerdata.skillList[treeId + "/" + skillId];
+            sd.Level = Convert.ToInt32(args.Snapshot.Value);
+            if (titleRef != null) {
+                titleRef.skillManager.GetSkillSlot(treeId, skillId).SetLevel(sd.Level);
+            }
+            playerDataModifyLegalFlag = false;
+        }
+    }
+
     IEnumerator EmergencyExitGame() {
         yield return new WaitForSeconds(5f);
         Dictionary<string, object> inputData = new Dictionary<string, object>();
@@ -2991,6 +3120,17 @@ public class PlayerInfo : INotifyPropertyChanged
         {
             kash = value;
             PropertyChanged(this, new PropertyChangedEventArgs ("kash"));
+        }
+    }
+
+    private int availableSkillPoints;
+    public int AvailableSkillPoints
+    {
+        get { return availableSkillPoints; }
+        set
+        {
+            availableSkillPoints = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("availableSkillPoints"));
         }
     }
 
@@ -3318,6 +3458,40 @@ public class CharacterData : INotifyPropertyChanged {
         { 
             duration = value;
             PropertyChanged(this, new PropertyChangedEventArgs ("duration"));
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged = (sender, args) => { };
+}
+
+public class SkillData : INotifyPropertyChanged {
+    private int treeId;
+    public int TreeId {
+        get { return treeId; }
+        set
+        { 
+            treeId = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("treeId"));
+        }
+    }
+
+    private int skillId;
+    public int SkillId {
+        get { return skillId; }
+        set
+        { 
+            skillId = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("skillId"));
+        }
+    }
+
+    private int level;
+    public int Level {
+        get { return level; }
+        set
+        { 
+            level = value;
+            PropertyChanged(this, new PropertyChangedEventArgs ("level"));
         }
     }
 

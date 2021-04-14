@@ -566,10 +566,10 @@ Animator:
   m_GameObject: {fileID: 1613183513911759790}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 913bf74750507d340a0afb2f667d20e1, type: 3}
-  m_Controller: {fileID: 9100000, guid: 2f82745f8f594744ba3016475a2f4fef, type: 2}
+  m_Controller: {fileID: 9100000, guid: b719a341a509a0b4a942f1127ecb0ff4, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -593,6 +593,7 @@ MonoBehaviour:
   tws: {fileID: 5778522028767220910}
   fullBodyRef: {fileID: 0}
   firstPersonRef: {fileID: 0}
+  camoMat: {fileID: 0}
   equippedCharacter: Dani
   characterGender: F
   equippedHeadgear: 
@@ -746,6 +747,23 @@ MonoBehaviour:
       b3: 0
       b4: 0
     initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  avoidability:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    initialized: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  detection:
+    currentCryptoKey: 0
+    initialized: 0
+    hiddenValue: 0
     fakeValue: 0
     fakeValueActive: 0
   health:

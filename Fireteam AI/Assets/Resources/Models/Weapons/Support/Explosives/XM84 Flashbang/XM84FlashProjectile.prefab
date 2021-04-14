@@ -9983,7 +9983,7 @@ GameObject:
   - component: {fileID: 3272891355027485827}
   - component: {fileID: 3898767583115738824}
   - component: {fileID: 4354498385483937620}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: XM84FlashProjectile
   m_TagString: Flashbang
   m_Icon: {fileID: 0}
@@ -10063,6 +10063,7 @@ MonoBehaviour:
   - {fileID: 6406873327241063070}
   - {fileID: 6406873327241063068}
   explosionEffect: {fileID: 3350588218773017290}
+  explosionWaterEffect: {fileID: 0}
   fuseTimer: 2.5
   explosionDelay: 1
   blastRadius: 170

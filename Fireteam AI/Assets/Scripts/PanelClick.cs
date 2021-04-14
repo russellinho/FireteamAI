@@ -7,12 +7,15 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 {
     public ShopItemScript shopItemScript;
     public SetupItemScript setupItemScript;
+    public SkillSlot skillSlot;
 
     public void OnPointerEnter(PointerEventData eventData) {
         if (shopItemScript != null) {
             ShowShopItemData();
         } else if (setupItemScript != null) {
             ShowSetupItemData();
+        } else if (skillSlot != null) {
+            ShowSkillData();
         }
     }
     public void ShowShopItemData() {
@@ -20,6 +23,7 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         ips.SetTitle(shopItemScript.itemName);
         ips.SetThumbnail(shopItemScript.thumbnailRef);
         ips.SetDescription(shopItemScript.itemDescription);
+        ips.ToggleSkillStatDescriptor(false);
         if (shopItemScript.titleType == 'l') {
             shopItemScript.CalculateExpirationDate();
             ips.SetExpirationDate(shopItemScript.expirationDate);
@@ -32,7 +36,7 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return;
             }
             shopItemScript.itemDescriptionPopupRef.SetActive(true);
-            ips.SetModStats(shopItemScript.modDetails.damageBoost, shopItemScript.modDetails.accuracyBoost, shopItemScript.modDetails.recoilBoost, shopItemScript.modDetails.rangeBoost, shopItemScript.modDetails.clipCapacityBoost, shopItemScript.modDetails.maxAmmoBoost, shopItemScript.equippedOn);
+            ips.SetModStats(shopItemScript.modDetails.damageBoost, shopItemScript.modDetails.accuracyBoost, shopItemScript.modDetails.recoilBoost, shopItemScript.modDetails.rangeBoost, shopItemScript.modDetails.clipCapacityBoost, shopItemScript.modDetails.maxAmmoBoost, shopItemScript.modDetails.detection, shopItemScript.equippedOn);
             ips.ToggleModStatDescriptor(true);
             ips.ToggleEquipmentStatDescriptor(false);
             ips.ToggleWeaponStatDescriptor(false);
@@ -45,18 +49,18 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             shopItemScript.itemDescriptionPopupRef.SetActive(true);
             if (shopItemScript.itemType.Equals("Headgear") || shopItemScript.itemType.Equals("Facewear")) {
                 ips.ToggleWeaponStatDescriptor(false);
-                ips.SetEquipmentStats(shopItemScript.equipmentDetails.armor, shopItemScript.equipmentDetails.speed, shopItemScript.equipmentDetails.stamina, shopItemScript.equipmentDetails.gender, shopItemScript.equipmentDetails.characterRestrictions);
+                ips.SetEquipmentStats(shopItemScript.equipmentDetails.armor, shopItemScript.equipmentDetails.speed, shopItemScript.equipmentDetails.stamina, shopItemScript.equipmentDetails.avoidability, shopItemScript.equipmentDetails.detection, shopItemScript.equipmentDetails.gender, shopItemScript.equipmentDetails.characterRestrictions);
                 ips.ToggleEquipmentStatDescriptor(true);
                 ips.SetRestrictions(shopItemScript.equipmentDetails.gender, shopItemScript.equipmentDetails.characterRestrictions);
                 ips.ToggleClothingStatDescriptor(false);
             } else if (shopItemScript.itemType.Equals("Armor")) {
                 ips.ToggleWeaponStatDescriptor(false);
-                ips.SetArmorStats(shopItemScript.armorDetails.armor, shopItemScript.armorDetails.speed, shopItemScript.armorDetails.stamina);
+                ips.SetArmorStats(shopItemScript.armorDetails.armor, shopItemScript.armorDetails.speed, shopItemScript.armorDetails.stamina, shopItemScript.armorDetails.avoidability, shopItemScript.armorDetails.detection);
                 ips.ToggleEquipmentStatDescriptor(true);
                 ips.ToggleClothingStatDescriptor(false);
             } else if (shopItemScript.itemType.Equals("Weapon")) {
                 ips.ToggleEquipmentStatDescriptor(false);
-                ips.SetWeaponStats(shopItemScript.weaponDetails.damage, shopItemScript.weaponDetails.accuracy, shopItemScript.weaponDetails.recoil, shopItemScript.weaponDetails.fireRate, shopItemScript.weaponDetails.mobility, shopItemScript.weaponDetails.range, shopItemScript.weaponDetails.clipCapacity);
+                ips.SetWeaponStats(shopItemScript.weaponDetails.damage, shopItemScript.weaponDetails.accuracy, shopItemScript.weaponDetails.recoil, shopItemScript.weaponDetails.fireRate, shopItemScript.weaponDetails.mobility, shopItemScript.weaponDetails.range, shopItemScript.weaponDetails.clipCapacity, shopItemScript.weaponDetails.detection);
                 ips.ToggleWeaponStatDescriptor(true);
                 ips.ToggleClothingStatDescriptor(false);
             } else {
@@ -83,9 +87,19 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             setupItemScript.itemDescriptionPopupRef.SetTitle(w.name);
             setupItemScript.itemDescriptionPopupRef.SetThumbnail((Texture)Resources.Load(w.thumbnailPath));
             setupItemScript.itemDescriptionPopupRef.SetDescription(w.description);
-            setupItemScript.itemDescriptionPopupRef.SetWeaponStats(w.damage, w.accuracy, w.recoil, w.fireRate, w.mobility, w.range, w.clipCapacity);
+            setupItemScript.itemDescriptionPopupRef.SetWeaponStats(w.damage, w.accuracy, w.recoil, w.fireRate, w.mobility, w.range, w.clipCapacity, w.detection);
             setupItemScript.itemDescriptionPopupRef.weaponStatDescriptor.SetActive(true);
         }
+    }
+
+    public void ShowSkillData()
+    {
+        skillSlot.skillDescriptionPopupRef.SetTitle(skillSlot.skillName.text);
+        skillSlot.skillDescriptionPopupRef.SetDescription(skillSlot.GetCurrentSkillDescription());
+        skillSlot.skillDescriptionPopupRef.SetThumbnail(skillSlot.skillThumb.mainTexture);
+        skillSlot.skillDescriptionPopupRef.SetSkillStats(skillSlot.GetCurrentLevelForThisSkill(), skillSlot.GetMaxLevelForThisSkill(), skillSlot.GetPrerequisitesStringForThisSkill());
+        skillSlot.skillDescriptionPopupRef.ToggleSkillStatDescriptor(true);
+        skillSlot.skillDescriptionPopupRef.gameObject.SetActive(true);
     }
 
     public void OnPointerExit(PointerEventData eventData) {
@@ -93,6 +107,8 @@ public class PanelClick : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             shopItemScript.itemDescriptionPopupRef.SetActive(false);
         } else if (setupItemScript != null) {
             setupItemScript.itemDescriptionPopupRef.gameObject.SetActive(false);
+        } else if (skillSlot != null) {
+            skillSlot.skillDescriptionPopupRef.gameObject.SetActive(false);
         }
     }
 }

@@ -28,6 +28,9 @@ public class IdleBehavior : StateMachineBehaviour
             was.isFiring = false;
         }
         if (was.isWieldingThrowable && (PlayerPreferences.playerPreferences.KeyWasPressed("Fire") || PlayerPreferences.playerPreferences.KeyWasPressed("Fire", true))) {
+            if (!was.isCockingGrenade) {
+                was.CockGrenadeAnim();
+            }
             was.isCockingGrenade = true;
         }
         if (was.isWieldingThrowable && (PlayerPreferences.playerPreferences.KeyWasPressed("Fire", false, true))) {

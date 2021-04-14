@@ -81,6 +81,14 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 				h.Add("redStatus", null);
 				h.Add("blueStatus", null);
 			}
+			IEnumerator<DictionaryEntry> j = PhotonNetwork.CurrentRoom.CustomProperties.GetEnumerator();
+			while (j.MoveNext()) {
+				string thisKey = j.Current.Key.ToString();
+				if (thisKey.EndsWith("GA")) {
+					Debug.LogError("Resetting " + thisKey);
+					h.Add(thisKey, null);
+				}
+			}
 			PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 			gameController.EndGameForAll();
 		} else {
@@ -101,6 +109,7 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 				h.Add("deads", currentDeads);
 				PhotonNetwork.CurrentRoom.SetCustomProperties(h);
 			}
+			PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>().OnPlayerLeftMatch();
 			if (gameController.vipRef != null) {
 				gameController.vipRef.GetComponent<NpcScript>().OnPlayerLeftGame(PhotonNetwork.LocalPlayer.ActorNumber);
 			}

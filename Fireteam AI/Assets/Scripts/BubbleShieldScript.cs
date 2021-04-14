@@ -1,0 +1,64 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class BubbleShieldScript : MonoBehaviour
+{
+    private const float BASE_DURATION = 30f;
+    private const short MAX_SIZE = 15;
+    public GameObject deviceRef;
+    private float timer;
+    public float duration;
+    private bool initializing;
+    public Transform childcol;
+    public void Initialize(int level = 0)
+    {
+        initializing = true;
+        if (level == 0) {
+            duration = BASE_DURATION;
+        } else if (level == 1) {
+            duration = 30;
+        } else if (level == 2) {
+            duration = 50;
+        } else if (level == 3) {
+            duration = 100;
+        }
+    }
+
+    void Update() {
+        if (initializing) {
+            timer += Time.deltaTime * 1.5f;
+            transform.localScale = Vector3.Lerp(Vector3.zero, new Vector3(MAX_SIZE, MAX_SIZE, MAX_SIZE), timer);
+            if (timer >= 1f) {
+                initializing = false;
+            }
+        } else {
+            duration -= Time.deltaTime;
+            if (duration <= 0f) {
+                DeployableScript d = deviceRef.GetComponent<DeployableScript>();
+                d.PlayBreakSound();
+                d.BeginDestroyItem();
+                childcol.localPosition = new Vector3(-1000, -1000, -1000);
+                // gameObject.SetActive(false);
+                StartCoroutine("DeactivateMyself");
+            }
+        }
+    }
+
+    public void SyncShield(float duration)
+    {
+        initializing = false;
+        this.duration = duration;
+        if (duration <= 0f) {
+            gameObject.SetActive(false);
+        } else {
+            transform.localScale = new Vector3(MAX_SIZE, MAX_SIZE, MAX_SIZE);
+        }
+    }
+
+    IEnumerator DeactivateMyself()
+    {
+        yield return new WaitForSeconds(0.75f);
+        gameObject.SetActive(false);
+    }
+}

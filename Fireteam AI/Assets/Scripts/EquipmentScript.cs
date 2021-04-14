@@ -16,6 +16,7 @@ public class EquipmentScript : MonoBehaviour
     public WeaponScript tws;
     public GameObject fullBodyRef;
     public GameObject firstPersonRef;
+    public Material camoMat;
 
     public string equippedCharacter;
     public string characterGender;
@@ -53,6 +54,21 @@ public class EquipmentScript : MonoBehaviour
     public GameObject myFpcSkinRenderer;
     public GameObject myFpcTopRenderer;
     public GameObject myFpcGlovesRenderer;
+    private Material originalEyeMat;
+    private Material originalEyelashMat;
+    private Material originalGlovesMat;
+    private Material originalTopMat;
+    private Material originalBottomMat;
+    private Material originalFootwearMat;
+    private Material originalSkinMat;
+    private Material originalHairMat;
+    private Material originalFacewearMat;
+    private Material originalHeadgearMat;
+    private Material originalArmorTopMat;
+    private Material originalArmorBottomMat;
+    private Material originalFpcSkinMat;
+    private Material originalFpcTopMat;
+    private Material originalFpcGloveMat;
 
     public bool renderHair;
 
@@ -123,6 +139,8 @@ public class EquipmentScript : MonoBehaviour
         pView.RPC("RpcEquipBottomInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedBottom);
         pView.RPC("RpcEquipFootwearInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedFootwear);
         pView.RPC("RpcEquipArmorInGame", RpcTarget.All, PlayerData.playerdata.info.EquippedArmor);
+        SetOriginalFpcMaterials();
+        SetOriginalMaterials();
 
         initialized = true;
     }
@@ -158,6 +176,109 @@ public class EquipmentScript : MonoBehaviour
         if (equippedArmorBottomRef != null) {
             equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled = b;
         }
+    }
+
+    public void CamouflageMesh(bool b)
+    {
+        if (b) {
+            myEyesRenderer.GetComponent<SkinnedMeshRenderer>().material = camoMat;
+            myEyelashRenderer.GetComponent<SkinnedMeshRenderer>().material = camoMat;
+            myGlovesRenderer.GetComponent<SkinnedMeshRenderer>().material = camoMat;
+            equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            if (renderHair) {
+                myHairRenderer.GetComponent<SkinnedMeshRenderer>().material = camoMat;
+            }
+            if (equippedFacewearRef != null) {
+                equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            }
+            if (equippedHeadgearRef != null) {
+                equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            }
+            if (equippedArmorTopRef != null) {
+                equippedArmorTopRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            }
+            if (equippedArmorBottomRef != null) {
+                equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            }
+        } else {
+            myEyesRenderer.GetComponent<SkinnedMeshRenderer>().material = originalEyeMat;
+            myEyelashRenderer.GetComponent<SkinnedMeshRenderer>().material = originalEyelashMat;
+            myGlovesRenderer.GetComponent<SkinnedMeshRenderer>().material = originalGlovesMat;
+            equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalTopMat;
+            equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalBottomMat;
+            equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalFootwearMat;
+            equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalSkinMat;
+            if (renderHair) {
+                myHairRenderer.GetComponent<SkinnedMeshRenderer>().material = originalHairMat;
+            }
+            if (equippedFacewearRef != null) {
+                equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalFacewearMat;
+            }
+            if (equippedHeadgearRef != null) {
+                equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalHeadgearMat;
+            }
+            if (equippedArmorTopRef != null) {
+                equippedArmorTopRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalArmorTopMat;
+            }
+            if (equippedArmorBottomRef != null) {
+                equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalArmorBottomMat;
+            }
+        }
+    }
+
+    public void CamouflageFpcMesh(bool b)
+    {
+        if (b) {
+            if (equippedFpcSkinRef != null) {
+                equippedFpcSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            }
+            equippedFpcTopRef.GetComponentInChildren<SkinnedMeshRenderer>().material = camoMat;
+            myFpcGlovesRenderer.GetComponent<SkinnedMeshRenderer>().material = camoMat;
+        } else {
+            if (equippedFpcSkinRef != null) {
+                equippedFpcSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalFpcSkinMat;
+            }
+            equippedFpcTopRef.GetComponentInChildren<SkinnedMeshRenderer>().material = originalFpcTopMat;
+            myFpcGlovesRenderer.GetComponent<SkinnedMeshRenderer>().material = originalFpcGloveMat;
+        }
+    }
+
+    void SetOriginalMaterials()
+    {
+        originalEyeMat = myEyesRenderer.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
+        originalEyelashMat = myEyelashRenderer.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
+        originalGlovesMat = myGlovesRenderer.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
+        originalTopMat = equippedTopRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        originalBottomMat = equippedBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        originalFootwearMat = equippedFootwearRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        originalSkinMat = equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        if (renderHair) {
+            originalHairMat = myHairRenderer.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
+        }
+        if (equippedFacewearRef != null) {
+            originalFacewearMat = equippedFacewearRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        }
+        if (equippedHeadgearRef != null) {
+            originalHeadgearMat = equippedHeadgearRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        }
+        if (equippedArmorTopRef != null) {
+            originalArmorTopMat = equippedArmorTopRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        }
+        if (equippedArmorBottomRef != null) {
+            originalArmorBottomMat = equippedArmorBottomRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        }
+    }
+
+    void SetOriginalFpcMaterials()
+    {
+        if (equippedFpcSkinRef != null) {
+            originalFpcSkinMat = equippedFpcSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        }
+        originalFpcTopMat = equippedFpcTopRef.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial;
+        originalFpcGloveMat = myFpcGlovesRenderer.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
     }
 
     public void ToggleFpcMesh(bool b) {
@@ -261,6 +382,7 @@ public class EquipmentScript : MonoBehaviour
         Weapon w = InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedPrimary];
         string weaponType = w.category;
         GameObject wepEquipped = previewCharEquips.tws.weaponHolder.LoadWeapon(w.prefabPath);
+        WeaponMeta wm = wepEquipped.GetComponent<WeaponMeta>();
         previewCharEquips.tws.equippedPrimaryWeapon = PlayerData.playerdata.info.EquippedPrimary;
         
         if (w.suppressorCompatible) {
@@ -271,9 +393,9 @@ public class EquipmentScript : MonoBehaviour
         }
 
         if (c.gender == 'M') {
-            previewCharEquips.tws.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
+            previewCharEquips.tws.SetTitleWeaponPositions(wm.fullPosMale, wm.fullRotMale, 'M');
         } else {
-            previewCharEquips.tws.SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
+            previewCharEquips.tws.SetTitleWeaponPositions(wm.fullPosFemale, wm.fullRotFemale, 'F');
         }
     }
 
@@ -783,18 +905,18 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
     }
 
-    public void UpdateStats() {
+    public void UpdateStatsOnTitle() {
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
         playerScript.updateStats();
-        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
+        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.avoidability - 1.0f) * 100.0f), playerScript.stats.detection);
     }
 
     public void ResetStats() {
         // Clear all equipment stats
         playerScript.stats.SetDefaults();
         playerScript.updateStats();
-        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f));
+        ts.SetStatBoosts(Mathf.RoundToInt((playerScript.stats.armor - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.speed - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.stamina - 1.0f) * 100.0f), Mathf.RoundToInt((playerScript.stats.avoidability - 1.0f) * 100.0f), playerScript.stats.detection);
     }
 
     public void RemoveHeadgear() {
@@ -917,7 +1039,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
 
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
         playerScript.updateStats();
     }
 
@@ -942,7 +1064,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
 
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
         playerScript.updateStats();
     }
 
@@ -975,7 +1097,7 @@ public class EquipmentScript : MonoBehaviour
         m.AdaptMesh();
 
         StatBoosts newTotalStatBoosts = CalculateStatBoostsWithCurrentEquips();
-        playerScript.stats.setStats(newTotalStatBoosts.speedBoost, newTotalStatBoosts.staminaBoost, newTotalStatBoosts.armorBoost, 0);
+        playerScript.stats.setStats(newTotalStatBoosts.speedBoost + playerActionScript.skillController.GetNinjaSpeedBoost(), newTotalStatBoosts.staminaBoost + playerActionScript.skillController.GetStaminaBoost(), (newTotalStatBoosts.armorBoost * (1f + playerActionScript.skillController.GetArmorAmplificationBoost())) + playerActionScript.skillController.GetOverallArmorBoost(), newTotalStatBoosts.avoidabilityBoost, newTotalStatBoosts.detection, 0);
         playerScript.updateStats();
     }
 
@@ -1115,28 +1237,54 @@ public class EquipmentScript : MonoBehaviour
     //     pView.RPC("RpcDespawnPlayer", RpcTarget.All);
     // }
 
-    StatBoosts CalculateStatBoostsWithCurrentEquips() {
+    public StatBoosts CalculateStatBoostsWithCurrentEquips() {
         float totalArmorBoost = 0f;
         float totalSpeedBoost = 0f;
         float totalStaminaBoost = 0f;
+        float totalAvoidabilityBoost = 0f;
+        int totalDetection = 0;
 
         if (equippedArmor != null && equippedArmor != "") {
             totalArmorBoost += InventoryScript.itemData.armorCatalog[equippedArmor].armor;
             totalSpeedBoost += InventoryScript.itemData.armorCatalog[equippedArmor].speed;
             totalStaminaBoost += InventoryScript.itemData.armorCatalog[equippedArmor].stamina;
+            totalAvoidabilityBoost += InventoryScript.itemData.armorCatalog[equippedArmor].avoidability;
+            totalDetection += InventoryScript.itemData.armorCatalog[equippedArmor].detection;
         }
         if (equippedHeadgear != null && equippedHeadgear != "") {
             totalArmorBoost += InventoryScript.itemData.equipmentCatalog[equippedHeadgear].armor;
             totalSpeedBoost += InventoryScript.itemData.equipmentCatalog[equippedHeadgear].speed;
             totalStaminaBoost += InventoryScript.itemData.equipmentCatalog[equippedHeadgear].stamina;
+            totalAvoidabilityBoost += InventoryScript.itemData.equipmentCatalog[equippedHeadgear].avoidability;
+            totalDetection += InventoryScript.itemData.equipmentCatalog[equippedHeadgear].detection;
         }
         if (equippedFacewear != null && equippedFacewear != "") {
             totalArmorBoost += InventoryScript.itemData.equipmentCatalog[equippedFacewear].armor;
             totalSpeedBoost += InventoryScript.itemData.equipmentCatalog[equippedFacewear].speed;
             totalStaminaBoost += InventoryScript.itemData.equipmentCatalog[equippedFacewear].stamina;
+            totalAvoidabilityBoost += InventoryScript.itemData.equipmentCatalog[equippedFacewear].avoidability;
+            totalDetection += InventoryScript.itemData.equipmentCatalog[equippedFacewear].detection;
+        }
+        
+        totalDetection += InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedPrimary].detection;
+        totalDetection += InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedSecondary].detection;
+        totalDetection += InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedSupport].detection;
+        totalDetection += InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedMelee].detection;
+
+        if (PlayerData.playerdata.primaryModInfo.SightId != null && PlayerData.playerdata.primaryModInfo.SightId != "") {
+            totalDetection += InventoryScript.itemData.modCatalog[PlayerData.playerdata.primaryModInfo.EquippedSight].detection;
+        }
+        if (PlayerData.playerdata.primaryModInfo.SuppressorId != null && PlayerData.playerdata.primaryModInfo.SuppressorId != "") {
+            totalDetection += InventoryScript.itemData.modCatalog[PlayerData.playerdata.primaryModInfo.EquippedSuppressor].detection;
+        }
+        if (PlayerData.playerdata.secondaryModInfo.SightId != null && PlayerData.playerdata.secondaryModInfo.SightId != "") {
+            totalDetection += InventoryScript.itemData.modCatalog[PlayerData.playerdata.secondaryModInfo.EquippedSight].detection;
+        }
+        if (PlayerData.playerdata.secondaryModInfo.SuppressorId != null && PlayerData.playerdata.secondaryModInfo.SuppressorId != "") {
+            totalDetection += InventoryScript.itemData.modCatalog[PlayerData.playerdata.secondaryModInfo.EquippedSuppressor].detection;
         }
 
-        return new StatBoosts(totalArmorBoost, totalSpeedBoost, totalStaminaBoost);
+        return new StatBoosts(totalArmorBoost, totalSpeedBoost, totalStaminaBoost, totalAvoidabilityBoost, totalDetection);
     }
 
     public void SyncDataOnJoin() {
@@ -1161,6 +1309,7 @@ public class EquipmentScript : MonoBehaviour
         this.equippedCharacter = equippedCharacter;
         if (equippedSkinRef == null) {
             SyncEquips();
+            SetOriginalMaterials();
         }
 	}
 
@@ -1229,11 +1378,15 @@ public class EquipmentScript : MonoBehaviour
         public float armorBoost;
         public float speedBoost;
         public float staminaBoost;
+        public float avoidabilityBoost;
+        public int detection;
 
-        public StatBoosts(float armorBoost, float speedBoost, float staminaBoost) {
+        public StatBoosts(float armorBoost, float speedBoost, float staminaBoost, float avoidabilityBoost, int detection) {
             this.armorBoost = armorBoost;
             this.speedBoost = speedBoost;
             this.staminaBoost = staminaBoost;
+            this.avoidabilityBoost = avoidabilityBoost;
+            this.detection = detection;
         }
     }
 

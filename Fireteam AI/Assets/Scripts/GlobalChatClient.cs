@@ -160,7 +160,7 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
                 // If it was a request to join my game, send back the room name to join if I'm in one
                 if (sMessage == ROOM_REQUEST_MSG) {
                     if (PhotonNetwork.InRoom) {
-                        chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG + PhotonNetwork.CurrentRoom.Name + '|' + (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"]);
+                        chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG + PhotonNetwork.CurrentRoom.Name + "|" + (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"]);
                     } else {
                         chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG);
                     }
@@ -196,7 +196,7 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
             if (PlayerData.playerdata.CheckIsVerifiedFriendByUsername(sender)) {
                 if (sMessage == ROOM_REQUEST_MSG) {
                     if (PhotonNetwork.InRoom) {
-                        chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG + PhotonNetwork.CurrentRoom.Name + '|' + (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"]);
+                        chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG + PhotonNetwork.CurrentRoom.Name + "|" + (string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"]);
                     } else {
                         chatClient.SendPrivateMessage(sender, ROOM_JOIN_MSG);
                     }
@@ -302,7 +302,7 @@ public class GlobalChatClient : MonoBehaviour, IChatClientListener
 
     public void SendMyPlayerData(string channelName)
     {
-        this.chatClient.PublishMessage(channelName, MY_DATA_MSG + PhotonNetwork.NickName + '|' + PlayerData.playerdata.info.Exp);
+        this.chatClient.PublishMessage(channelName, MY_DATA_MSG + PhotonNetwork.NickName + "|" + PlayerData.playerdata.info.Exp);
     }
 
     public bool SendGlobalMessage(char modeLobby, string message) {

@@ -14,6 +14,10 @@ public class DatabaseUpdaterEditor : Editor
         {
             myScript.AddItemToAllAccounts();
         }
+        if(GUILayout.Button("Add Skill Table to All"))
+        {
+            myScript.AddSkillTableToAll();
+        }
         // if (GUILayout.Button("Add Melee Category To All Accounts")) {
         //     myScript.AddEquippedMeleeFieldToAllAccounts();
         // }

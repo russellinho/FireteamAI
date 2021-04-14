@@ -17,8 +17,6 @@ public class WeaponMeta : MonoBehaviour
     public Vector3 defaultRightCollarPosFemale;
     public float aimDownSightSpeed;
     public float aimDownSightClipping;
-    public Vector3 titleHandPositionsMale;
-    public Vector3 titleHandPositionsFemale;
     public float recoveryConstant;
     public AudioSource fireSound;
     public AudioSource suppressedFireSound;
@@ -51,12 +49,17 @@ public class WeaponMeta : MonoBehaviour
     public Vector3 fullScaleFemale;
     public AnimatorOverrideController maleOverrideController;
     public AnimatorOverrideController femaleOverrideController;
+    public AnimatorOverrideController maleOverrideControllerFullBody;
+    public AnimatorOverrideController femaleOverrideControllerFullBody;
+    public AnimatorOverrideController maleNpcOverrideController;
+    public AnimatorOverrideController femaleNpcOverrideController;
     public Animator weaponAnimator;
     public float defaultFpcReloadSpeed;
     public float defaultWeaponReloadSpeed;
     public float defaultWeaponCockingSpeed;
     public float defaultWeaponDrawSpeed;
     public float defaultFireSpeed;
+    public float defaultFireSpeedFullBody;
     public float defaultMeleeSpeed;
     public float reloadTransitionSpeed;
     public float reloadSound1Time;

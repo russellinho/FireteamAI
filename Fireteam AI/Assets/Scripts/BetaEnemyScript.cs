@@ -20,9 +20,13 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private const float PLAYER_SCAN_DELAY = 0.8f;
 	private const float ENV_DAMAGE_DELAY = 0.5f;
 	private const int ENEMY_FIRE_IGNORE = ~(1 << 14 | 1 << 13);
-	private const int OBSCURE_IGNORE = ~(1 << 14 | 1 << 15 | 1 << 16 | 1 << 17);
+	private const int OBSCURE_IGNORE = ~(1 << 14 | 1 << 15 | 1 << 16 | 1 << 17 | 1 << 22);
 	private const float EXPLOSION_FORCE = 75;
 	private const float BULLET_FORCE = 50f;
+	private int HEALTH_KIT_DROP_CHANCE = 33;
+	private int AMMO_KIT_DROP_CHANCE = 17;
+	private const int POISONED_DMG = 5;
+	private const float POISONED_INTERVAL = 1f;
 
 	// Prefab references
 	public GameObject ammoBoxPickup;
@@ -31,6 +35,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	public AudioClip[] gruntSounds;
 	public GameObject bloodEffect;
 	public GameObject bloodEffectHeadshot;
+	public GameObject overshieldHitEffect;
 
 	// Body/Component references
 	public AudioSource audioSource;
@@ -58,6 +63,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	public WeaponMeta gunRef;
 	private Vector3 prevNavDestination;
 	private bool prevWasStopped;
+	private bool insideBubbleShield;
 
 	// Enemy variables
 	public EnemyType enemyType;
@@ -69,6 +75,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	public bool sniper;
 	public float rotationSpeed = 6f;
 	public int health;
+	private int thisHealthDropChanceBoost;
+	private int thisAmmoDropChanceBoost;
 	private int lastHitBy;
 	private int lastBodyPartHit;
 	public float disorientationTime;
@@ -76,16 +84,18 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	// The alert state for the enemy. None = enemy is neutral; Suspicious = enemy is suspicious (?); alert = enemy is alerted (!)
 	public enum AlertStatus {Neutral, Suspicious, Alert};
 	public AlertStatus alertStatus;
+	private enum HealthStatus {Neutral, Poisoned};
+	private HealthStatus healthStatus;
 	private bool wasMasterClient;
 	public GameObject gameController;
 	public GameControllerScript gameControllerScript;
-	private bool isOutlined;
+	public bool isOutlined;
 	public float initialSpawnTime;
 
 	// Finite state machine states
 	public enum ActionStates {Idle, Wander, Firing, Moving, Dead, Reloading, Melee, Pursue, TakingCover, InCover, Seeking, Disoriented};
 	// FSM used for determining movement while attacking and not in cover
-	enum FiringStates {StandingStill, StrafeLeft, StrafeRight, Backpedal, Forward};
+	public enum FiringStates {StandingStill, StrafeLeft, StrafeRight, Backpedal, Forward};
 
 	// Type of enemy
 	public enum EnemyType {Patrol, Scout};
@@ -126,6 +136,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	// Time to wait before the enemy can start becoming suspicious again
     private float increaseSuspicionDelay = 0f;
     private float alertTeamAfterAlertedTimer = 6f;
+	private float actionTransitionDelay = 0f;
 	// Responsible for putting a delay between damage done by the environment like fire, gas, etc.
 	private float envDamageTimer;
 	private bool syncSuspicionValuesSemiphore = false;
@@ -139,12 +150,17 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private CrouchMode crouchMode;
 	private float coverScanRange = 22f;
 	private Vector3 lastHitFromPos;
+	private float poisonTimer;
+	private int poisonedById;
 	// public Transform pNav;
 
     // Testing mode - set in inspector
     //public bool testingMode;
 
 	void Awake() {
+		animator.SetFloat("FireSpeed", gunRef.defaultFireSpeedFullBody);
+		animator.runtimeAnimatorController = gunRef.maleNpcOverrideController as RuntimeAnimatorController;
+		animator.SetInteger("WeaponType", 1);
 		ToggleRagdoll(false);
 		if (gameControllerScript.matchType == 'C')
         {
@@ -178,6 +194,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
     void StartForCampaign () {
 		playerScanTimer = PLAYER_SCAN_DELAY;
 		alertStatus = AlertStatus.Neutral;
+		healthStatus = HealthStatus.Neutral;
 		crouchMode = CrouchMode.Natural;
 		coverWaitTimer = Random.Range (2f, 7f);
 		coverSwitchPositionsTimer = Random.Range (12f, 18f);
@@ -237,6 +254,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
     {
 		playerScanTimer = PLAYER_SCAN_DELAY;
         alertStatus = AlertStatus.Neutral;
+		healthStatus = HealthStatus.Neutral;
 		crouchMode = CrouchMode.Natural;
         coverWaitTimer = Random.Range(2f, 7f);
         coverSwitchPositionsTimer = Random.Range(12f, 18f);
@@ -376,20 +394,25 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			navMeshObstacle.enabled = false;
 		}
 
+		UpdateActionTransitionDelay();
 		UpdateEnvDamageTimer();
 		UpdateDisorientationTime();
 		ReplenishFireRate ();
 		UpdateFiringModeTimer ();
 
-		if (!PhotonNetwork.IsMasterClient || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
+		if (!PhotonNetwork.IsMasterClient || health <= 0) {
 			// if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
 			// 	StopVoices();
 			// }
-			return;
+			if (actionState == ActionStates.Dead) {
+				return;
+			}
 		}
 
+		HandleHealthStatus();
 		CheckForGunfireSounds ();
 		CheckTargetDead ();
+		CheckTargetDisappear();
 
 		if (enemyType == EnemyType.Patrol) {
 			DecideActionPatrolInCombat();
@@ -440,19 +463,25 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			navMeshObstacle.enabled = false;
 		}
 
+		UpdateActionTransitionDelay();
+		UpdateEnvDamageTimer();
 		UpdateDisorientationTime();
 		ReplenishFireRate ();
 		UpdateFiringModeTimer ();
 
-		if (!gameControllerScript.isVersusHostForThisTeam() || animator.GetCurrentAnimatorStateInfo(0).IsName("Die") || animator.GetCurrentAnimatorStateInfo(0).IsName("DieHeadshot")) {
-			if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
+		if (!gameControllerScript.isVersusHostForThisTeam() || health <= 0) {
+			// if (actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
 				// StopVoices();
+			// }
+			if (actionState == ActionStates.Dead) {
+				return;
 			}
-			return;
 		}
 
+		HandleHealthStatus();
 		CheckForGunfireSounds ();
 		CheckTargetDead ();
+		CheckTargetDisappear();
 
 		if (enemyType == EnemyType.Patrol) {
 			DecideActionPatrolInCombat();
@@ -468,7 +497,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		// Shoot at player
 		// Add !isCrouching if you don't want the AI to fire while crouched behind cover
 		if (actionState == ActionStates.Firing || (actionState == ActionStates.InCover && playerTargeting != null)) {
-			if (currentBullets > 0) {
+			if (currentBullets > 0 && actionTransitionDelay <= 0f) {
 				Fire ();
 			}
 		}
@@ -511,26 +540,24 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			//removeFromMarkerList();
 			if (!PhotonNetwork.IsMasterClient) {
 				actionState = ActionStates.Dead;
-			}
-		}
-
-		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
-			if (PhotonNetwork.IsMasterClient && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
-				SetNavMeshStopped(true);
+			} else {
+				if (navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
+					SetNavMeshStopped(true);
+				}
 			}
 			return;
 		}
 		// Handle animations and detection outline independent of frame rate
 		DecideAnimation ();
 		HandleDetectionOutline();
-		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Disoriented")) {
+		if (actionState == ActionStates.Disoriented) {
 			if (PhotonNetwork.IsMasterClient && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				SetNavMeshStopped(true);
 			}
 			return;
 		}
-		AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo (0);
-		isReloading = (info.IsName ("Reloading") || info.IsName("CrouchReload"));
+		AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo (1);
+		isReloading = (info.IsName ("Reload") || info.IsName("ReloadCrouched"));
 	}
 
 	void FixedUpdateForVersus() {
@@ -548,26 +575,24 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			//removeFromMarkerList();
 			if (!gameControllerScript.isVersusHostForThisTeam()) {
 				actionState = ActionStates.Dead;
-			}
-		}
-
-		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") || animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")) {
-			if (gameControllerScript.isVersusHostForThisTeam() && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
-				SetNavMeshStopped(true);
+			} else {
+				if (navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
+					SetNavMeshStopped(true);
+				}
 			}
 			return;
 		}
 		// Handle animations and detection outline independent of frame rate
 		DecideAnimation ();
 		HandleDetectionOutline();
-		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Disoriented")) {
+		if (actionState == ActionStates.Disoriented) {
 			if (gameControllerScript.isVersusHostForThisTeam() && navMesh && navMesh.isOnNavMesh && !navMesh.isStopped) {
 				SetNavMeshStopped(true);
 			}
 			return;
 		}
-		AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo (0);
-		isReloading = (info.IsName ("Reloading") || info.IsName("CrouchReload"));
+		AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo (1);
+		isReloading = (info.IsName ("Reload") || info.IsName("ReloadCrouched"));
 	}
 
 	void LateUpdate() {
@@ -622,6 +647,13 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 	}
 
+	void UpdateActionTransitionDelay()
+	{
+		if (actionTransitionDelay > 0f) {
+			actionTransitionDelay -= Time.deltaTime;
+		}
+	}
+
 	void ToggleRagdoll(bool b)
 	{
 		animator.enabled = !b;
@@ -673,6 +705,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         if (team != gameControllerScript.teamMap) return;
 		alertStatus = (AlertStatus)statusNumber;
 		AdjustRangeForAlertStatus();
+		actionTransitionDelay = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().GetDdosDelayTime();
 	}
 
 	void AdjustRangeForAlertStatus() {
@@ -691,11 +724,11 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	void RotateTowardsPlayer() {
-		Vector3 rotDir = (playerTargeting.transform.position - transform.position).normalized;
-		Quaternion lookRot = Quaternion.LookRotation (rotDir);
-		Quaternion tempQuat = Quaternion.Slerp (transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
-		Vector3 tempRot = tempQuat.eulerAngles;
-		transform.rotation = Quaternion.Euler (new Vector3 (0f, tempRot.y, 0f));
+		transform.LookAt(playerTargeting.transform);
+		transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+
+		torsoTransform.forward = (playerTargeting.transform.position - torsoTransform.position).normalized;
+		torsoTransform.localRotation = Quaternion.Euler(torsoTransform.localRotation.eulerAngles.x - 15f, 0f, 0f);
 	}
 
 	[PunRPC]
@@ -827,7 +860,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
 				SetNavMeshDestination(GameControllerScript.lastGunshotHeardPos);
-				if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint")) {
+				if (animator.GetBool("isSprinting")) {
 					UpdateNavMeshSpeed(6f);
 				} else {
 					UpdateNavMeshSpeed(4f);
@@ -984,7 +1017,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		// How far away you are relative to max detection distance - the lower, the closer
 		float percentOfRange = maxRange / distanceFromTarget;
 		// Calculate distance multiplier
-		float d = Mathf.Clamp(percentOfRange, 0.25f, 10f);
+		float d = Mathf.Clamp(percentOfRange, 0.05f, 10f);
 		// Calculate rotation multiplier
 		Vector3 toPlayer = pos - transform.position;
 		float angleBetween = Vector3.Angle (transform.forward, toPlayer);
@@ -1000,7 +1033,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 		// Calculate total suspicion increase
 		// Debug.Log("dist: " + d + " rot: " + r);
-		return Time.deltaTime * total * d * r;
+		return Time.deltaTime * total * d * r / 2f;
 	}
 
 	// void PlayVoiceClip(int n) {
@@ -1093,15 +1126,15 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		// Check for death first
 		if (health <= 0 && actionState != ActionStates.Dead) {
 			// Spawn a drop box
-			int r = Random.Range (1,12);
-			if (r == 6) {
+			int r = Random.Range(0, 100);
+			int healthKitDropChance = HEALTH_KIT_DROP_CHANCE + thisHealthDropChanceBoost;
+			int ammoKitDropChance = AMMO_KIT_DROP_CHANCE + thisAmmoDropChanceBoost;
+			if (r >= 0 && r <= healthKitDropChance) {
 				// 1/6 chance of getting a health box
 				DropHealthPickup();
-				// PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
-			} else if (r >= 1 && r < 5) {
+			} else if (r >= (healthKitDropChance + 1) && r <= (ammoKitDropChance + healthKitDropChance)) {
 				// 1/3 chance of getting ammo box
 				DropAmmoPickup();
-				// PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			}
 
 			if (playerTargeting != null) {
@@ -1116,14 +1149,15 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			SetAlertStatus(AlertStatus.Neutral);
 
 			UpdateActionState(ActionStates.Dead);
+			UpdateHealthStatus(HealthStatus.Neutral, 0);
 
 			float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
 			pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
 			return;
 		}
 
-		// Melee attack, disorientation, death trumps all
-		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
+		// Melee attack, disorientation, death trumps all. Also check if action transition is delayed because of DDoS Attack skill
+		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented || actionState == ActionStates.Dead || actionTransitionDelay > 0f) {
 			return;
 		}
 
@@ -1199,6 +1233,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	bool EnvObstructionExists(Vector3 a, Vector3 b) {
 		// Ignore other enemy/player colliders
 		// Layer mask (layers/objects to ignore in explosion that don't count as defensive)
+		if (insideBubbleShield) {
+			return true;
+		}
 		int ignoreLayers = (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 17) | (1 << 18);
 		ignoreLayers = ~ignoreLayers;
 		RaycastHit hitInfo;
@@ -1226,7 +1263,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (other.gameObject.tag.Equals("Fire")) {
 			FireScript f = other.gameObject.GetComponent<FireScript>();
 			int damageReceived = (int)(f.damage);
-			TakeDamage(damageReceived, other.gameObject.transform.position, 2, 0);
+			TakeDamage(damageReceived, other.gameObject.transform.position, 2, 0, 0, 0);
 			ResetEnvDamageTimer();
 		}
 	}
@@ -1252,7 +1289,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					Weapon grenadeStats = InventoryScript.itemData.weaponCatalog[t.rootWeapon];
 					int damageReceived = (int)(grenadeStats.damage * scale);
 					// Deal damage to the enemy
-					TakeDamage(damageReceived, other.gameObject.transform.position, 1, 0);
+					TakeDamage(damageReceived, other.gameObject.transform.position, 1, 0, 0, 0);
 					// Validate that this enemy has already been affected
 					t.AddHitPlayer(pView.ViewID);
 					if (health <= 0) {
@@ -1272,7 +1309,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					Weapon projectileStats = InventoryScript.itemData.weaponCatalog[l.rootWeapon];
 					int damageReceived = (int)(projectileStats.damage * scale);
 					// Deal damage to the enemy
-					TakeDamage(damageReceived, other.gameObject.transform.position, 1, 0);
+					TakeDamage(damageReceived, other.gameObject.transform.position, 1, 0, 0, 0);
 					// Validate that this enemy has already been affected
 					l.AddHitPlayer(pView.ViewID);
 					if (health <= 0) {
@@ -1324,6 +1361,16 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 	}
 
+	public void SetThisEnemyDisoriented(float time)
+	{
+		disorientationTime = time;
+		actionState = ActionStates.Disoriented;
+		PlayGruntSound();
+		isCrouching = false;
+		alertStatus = AlertStatus.Alert;
+		AdjustRangeForAlertStatus();
+	}
+
 	bool TargetIsWithinMeleeDistance() {
 		RaycastHit hit;
 		Vector3 meleeTargetPos = new Vector3(playerTargeting.transform.position.x, playerTargeting.transform.position.y + 0.5f, playerTargeting.transform.position.z);
@@ -1360,6 +1407,16 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		} else {
 			OnTriggerEnterForCampaign(other);
 		}
+		if (other.GetComponentInParent<BubbleShieldScript>() != null) {
+            insideBubbleShield = true;
+        }
+	}
+
+	void OnTriggerExit(Collider other)
+	{
+		if (other.GetComponentInParent<BubbleShieldScript>() != null) {
+            insideBubbleShield = false;
+        }
 	}
 
 	void OnTriggerEnterForCampaign(Collider other) {
@@ -1459,15 +1516,16 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		// Check for death first
 		if (health <= 0 && actionState != ActionStates.Dead)
 		{
-			int r = Random.Range (1,12);
-			if (r == 6) {
+			// Spawn a drop box
+			int r = Random.Range(0, 100);
+			int healthKitDropChance = HEALTH_KIT_DROP_CHANCE + thisHealthDropChanceBoost;
+			int ammoKitDropChance = AMMO_KIT_DROP_CHANCE + thisAmmoDropChanceBoost;
+			if (r >= 0 && r <= healthKitDropChance) {
 				// 1/6 chance of getting a health box
 				DropHealthPickup();
-				// PhotonNetwork.Instantiate(healthBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
-			} else if (r >= 1 && r < 5) {
+			} else if (r >= (healthKitDropChance + 1) && r <= (ammoKitDropChance + healthKitDropChance)) {
 				// 1/3 chance of getting ammo box
 				DropAmmoPickup();
-				// PhotonNetwork.Instantiate(ammoBoxPickup.name, transform.position, Quaternion.Euler(Vector3.zero));
 			}
 			
 			if (playerTargeting != null) {
@@ -1483,14 +1541,15 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 			SetNavMeshStopped(true);
 			UpdateActionState(ActionStates.Dead);
+			UpdateHealthStatus(HealthStatus.Neutral, 0);
 
 			float respawnTime = Random.Range(0f, gameControllerScript.aIController.enemyRespawnSecs);
 			pView.RPC ("StartDespawn", RpcTarget.All, respawnTime, gameControllerScript.teamMap);
 			return;
 		}
 
-		// Melee attack, death, disorientation trumps all
-		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented || actionState == ActionStates.Dead) {
+		// Melee attack, death, disorientation trumps all. Also check if action transition is delayed because of DDoS Attack skill
+		if (actionState == ActionStates.Melee || actionState == ActionStates.Disoriented || actionState == ActionStates.Dead || actionTransitionDelay > 0f) {
 			return;
 		}
 
@@ -1625,127 +1684,86 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	void DecideAnimation() {
 		if (actionState == ActionStates.Seeking) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Moving") && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint")) {
+			if (animator.GetInteger("Moving") == 0) {
 				int r = Random.Range (1, 4);
 				if (r >= 1 && r <= 2) {
-					animator.Play ("Moving");
+					animator.SetInteger("Moving", 1);
+					animator.SetBool("isSprinting", false);
 				} else {
-					animator.Play ("Sprint");
+					animator.SetBool("isSprinting", true);
 				}
 			}
 		}
 
 		if (actionState == ActionStates.Wander) {
 			if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && navMesh.isStopped) {
-				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
-					animator.Play ("Idle");
+				animator.SetBool ("onTitle", true);
+				animator.SetInteger("Moving", 0);
+				animator.SetBool("Patrol", false);
 			} else {
-				if (alertStatus != AlertStatus.Alert && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Walk")) {
-					animator.Play ("Walk");
-				} else if (alertStatus == AlertStatus.Alert && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Moving")) {
-					animator.Play ("Moving");
+				animator.SetBool ("onTitle", false);
+				if (alertStatus != AlertStatus.Alert && !animator.GetBool("Patrol")) {
+					animator.SetInteger("Moving", 0);
+					animator.SetBool ("Patrol", true);
+				} else if (alertStatus == AlertStatus.Alert && animator.GetInteger("Moving") == 0) {
+					animator.SetBool ("Patrol", false);
+					animator.SetInteger("Moving", 1);
 				}
 			}
-
+		} else {
+			animator.SetBool("Patrol", false);
 		}
 
 		if (actionState == ActionStates.TakingCover) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint"))
-				animator.Play ("Sprint");
-		}
-
-		if (actionState == ActionStates.Dead) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Die") && !animator.GetCurrentAnimatorStateInfo (0).IsName ("DieHeadshot")
-			&& !animator.GetCurrentAnimatorStateInfo (0).IsName ("Die2") && !animator.GetCurrentAnimatorStateInfo (0).IsName ("DieExplosion")) {
-				// If killed by an explosion, play the explosion death animation. Else, play a random regular death animation
-				if (lastHitBy == 1) {
-					animator.Play("DieExplosion");
-				} else {
-					int r = Random.Range (1, 4);
-					if (r == 1) {
-						animator.Play ("Die");
-					} else if (r == 2) {
-						animator.Play ("DieHeadshot");
-					} else {
-						animator.Play("Die2");
-					}
-				}
-			}
+			if (!animator.GetBool("isSprinting"))
+				animator.SetBool ("isSprinting", true);
 		}
 
 		if (actionState == ActionStates.Pursue) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Sprint"))
-				animator.Play ("Sprint");
+			if (!animator.GetBool("isSprinting"))
+				animator.SetBool("isSprinting", true);
 		}
 
 		if (actionState == ActionStates.Idle) {
+			animator.SetInteger("Moving", 0);
 			if (alertStatus == AlertStatus.Alert) {
-				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Firing")) {
-					animator.Play ("Firing");
-				}
+				animator.SetBool("onTitle", false);
 			} else {
-				if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Idle"))
-					animator.Play ("Idle");
+				animator.SetBool("onTitle", true);
 			}
 		}
 
 		if (actionState == ActionStates.Firing || actionState == ActionStates.Reloading || actionState == ActionStates.InCover) {
 			// Set proper animation
+			animator.SetBool("onTitle", false);
+			animator.SetBool("Patrol", false);
+			animator.SetBool("isSprinting", false);
 			if (actionState == ActionStates.Firing && currentBullets > 0) {
 				if (firingState == FiringStates.StandingStill) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Firing"))
-						animator.Play ("Firing");
+					animator.SetInteger("Moving", 0);
 				} else if (firingState == FiringStates.Forward) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Moving"))
-						animator.Play ("Moving");
+					animator.SetInteger("Moving", 1);
 				} else if (firingState == FiringStates.Backpedal) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Backpedal"))
-						animator.Play ("Backpedal");
+					animator.SetInteger("Moving", 4);
 				} else if (firingState == FiringStates.StrafeLeft) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("StrafeLeft"))
-						animator.Play ("StrafeLeft");
+					animator.SetInteger("Moving", 2);
 				} else if (firingState == FiringStates.StrafeRight) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("StrafeRight"))
-						animator.Play ("StrafeRight");
-				}
-			} else if (actionState == ActionStates.InCover && currentBullets > 0) {
-				if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh) {
-					navMesh.isStopped = true;
-				}
-				if (isCrouching) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Crouching"))
-						animator.Play ("Crouching");
-				} else {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Aim"))
-						animator.Play ("Aim");
+					animator.SetInteger("Moving", 3);
 				}
 			} else if (currentBullets <= 0) {
-				if (enemyType != EnemyType.Scout) {
-					if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
-						SetNavMeshStopped(true);
-					}
-				}
-				if (isCrouching) {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("CrouchReload"))
-						animator.Play ("CrouchReload");
-				} else {
-					if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Reloading"))
-						animator.Play ("Reloading");
-				}
+				animator.SetTrigger("Reload");
 			}
 		}
+
+		animator.SetBool("Crouching", isCrouching);
 
 		if (actionState == ActionStates.Melee) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Melee")) {
-				animator.Play ("Melee");
+			if (!animator.GetCurrentAnimatorStateInfo (1).IsName ("Melee")) {
+				animator.SetTrigger("Melee");
 			}
 		}
 
-		if (actionState == ActionStates.Disoriented) {
-			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Disoriented")) {
-				animator.Play ("Disoriented");
-			}
-		}
+		animator.SetBool("Disoriented", actionState == ActionStates.Disoriented);
 	}
 
 	float ScaleOffset(float dist) {
@@ -1785,13 +1803,12 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			//Debug.DrawRay (gunRef.weaponShootPoint.position, dir * range, Color.red);
 			if (Physics.Raycast (headTransform.position, dir, out hit, Mathf.Infinity, ENEMY_FIRE_IGNORE)) {
 				if (hit.transform.tag.Equals ("Player")) {
-					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
 					PlayerActionScript ps = hit.transform.GetComponent<PlayerActionScript> ();
-					ps.TakeDamage(CalculateDamageDealt(InventoryScript.itemData.weaponCatalog[gunRef.weaponName].damage / 2f, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CharacterController>().height), true, transform.position, 0, Random.Range(1, 12));
+					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, ps.overshield > 0f, gameControllerScript.teamMap);
+					ps.TakeDamage(CalculateDamageDealt(InventoryScript.itemData.weaponCatalog[gunRef.weaponName].damage / 2f, hit.transform.position.y, hit.point.y, hit.transform.gameObject.GetComponent<CharacterController>().height), true, true, transform.position, 0, Random.Range(1, 12));
 					//ps.ResetHitTimer ();
-					ps.SetHitLocation (transform.position);
 				} else if (hit.transform.tag.Equals ("Human")) {
-					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, gameControllerScript.teamMap);
+					pView.RPC ("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false, gameControllerScript.teamMap);
 					// BetaEnemyScript b = hit.transform.GetComponent<BetaEnemyScript>();
 					NpcScript n = hit.transform.GetComponentInParent<NpcScript>();
 					if (n != null) {
@@ -1812,22 +1829,32 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	[PunRPC]
-	void RpcInstantiateBloodSpill(Vector3 point, Vector3 normal, string team) {
+	void RpcInstantiateBloodSpill(Vector3 point, Vector3 normal, bool overshield, string team) {
         if (team != gameControllerScript.teamMap) return;
-        GameObject bloodSpill = Instantiate(bloodEffect, point, Quaternion.FromToRotation (Vector3.forward, normal));
-		bloodSpill.transform.Rotate (180f, 0f, 0f);
-		Destroy (bloodSpill, 1.5f);
+		GameObject hitEffect = null;
+		if (overshield) {
+			hitEffect = Instantiate(overshieldHitEffect, point, Quaternion.FromToRotation (Vector3.forward, normal));
+		} else {
+			hitEffect = Instantiate(bloodEffect, point, Quaternion.FromToRotation (Vector3.forward, normal));
+		}
+		hitEffect.transform.Rotate (180f, 0f, 0f);
+		Destroy (hitEffect, 1.5f);
 	}
 
 	[PunRPC]
 	void RpcHandleBulletVfxEnemy(Vector3 point, Vector3 normal, int terrainId, string team) {
         if (team != gameControllerScript.teamMap) return;
 		if (gameObject.layer == 0) return;
-        if (terrainId == -1) return;
-        Terrain terrainHit = gameControllerScript.terrainMetaData[terrainId];
-        GameObject bulletHoleEffect = Instantiate(terrainHit.GetRandomBulletHole(), point, Quaternion.FromToRotation(Vector3.forward, normal));
-        bulletHoleEffect.transform.SetParent(terrainHit.gameObject.transform);
-        Destroy(bulletHoleEffect, 4f);
+        if (terrainId == -1) {
+			GameObject bulletHoleEffect = Instantiate(overshieldHitEffect, point, Quaternion.FromToRotation(Vector3.forward, normal));
+			bulletHoleEffect.GetComponent<AudioSource>().Play();
+			Destroy(bulletHoleEffect, 1.5f);
+		} else {
+			Terrain terrainHit = gameControllerScript.terrainMetaData[terrainId];
+			GameObject bulletHoleEffect = Instantiate(terrainHit.GetRandomBulletHole(), point, Quaternion.FromToRotation(Vector3.forward, normal));
+			bulletHoleEffect.transform.SetParent(terrainHit.gameObject.transform);
+			Destroy(bulletHoleEffect, 4f);
+		}
 	}
 
 	[PunRPC]
@@ -1835,6 +1862,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         if (team != gameControllerScript.teamMap) return;
         PlayMuzzleFlash();
 		PlayShootSound();
+		animator.SetTrigger("Fire");
 		currentBullets--;
 		// Reset fire timer
 		fireTimer = 0.0f;
@@ -1880,20 +1908,16 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 				n.TakeDamage(50, transform.position, 2, 0);
 			}
 			if (ps != null) {
-				ps.TakeDamage (50, true, transform.position, 2, 0);
+				ps.TakeDamage (50, true, true, transform.position, 2, 0);
 				//ps.ResetHitTimer();
-				ps.SetHitLocation (transform.position);
 			}
 		}
 	}
 
 	private void RotateTowards(Vector3 r) {
-		Vector3 rotDir = (r - transform.position).normalized;
-		Quaternion lookRot = Quaternion.LookRotation (rotDir);
-		Quaternion tempQuat = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
-		Vector3 tempRot = tempQuat.eulerAngles;
-		tempRot = new Vector3 (0f, tempRot.y, 0f);
-		transform.rotation = Quaternion.Euler(tempRot);
+		transform.LookAt(r);
+		transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+		torsoTransform.localRotation = Quaternion.identity;
 	}
 
 	IEnumerator Despawn(float respawnTime) {
@@ -2089,17 +2113,44 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		return 0;
 	}
 
+	float GetFightingSpiritTimerOfCurrentTarget()
+	{
+		if (playerTargeting != null) {
+			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript>();
+			if (a != null) {
+				return a.fightingSpiritTimer;
+			}
+		}
+		return 0f;
+	}
+
+	bool GetCurrentTargetHasActiveCamo()
+	{
+		if (playerTargeting != null) {
+			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript>();
+			return a.activeCamo;
+		}
+		return true;
+	}
+
 	void PlayerScan() {
 		if (playerScanTimer <= 0f) {
 			playerScanTimer = PLAYER_SCAN_DELAY;
 			// If we do not have a target player, try to find one
 			int entityTargetingHealth = GetHealthOfCurrentTarget();
-			if (playerTargeting == null || entityTargetingHealth <= 0) {
+			if (playerTargeting == null || (entityTargetingHealth <= 0 && GetFightingSpiritTimerOfCurrentTarget() <= 0f) || GetCurrentTargetHasActiveCamo()) {
 				ArrayList keysNearBy = new ArrayList ();
 				foreach (PlayerStat playerStat in GameControllerScript.playerList.Values) {
 					GameObject p = playerStat.objRef;
-					if (p == null || p.GetComponent<PlayerActionScript>().health <= 0)
+					if (p == null || (p.GetComponent<PlayerActionScript>().health <= 0 && p.GetComponent<PlayerActionScript>().fightingSpiritTimer <= 0f) || p.GetComponent<PlayerActionScript>().activeCamo)
 						continue;
+					// Silhouette skill boost
+					if (gameControllerScript.assaultMode) {
+						int silhouette = p.GetComponent<SkillController>().GetThisSilhouetteBoost();
+						if (Random.Range(0, 100) < silhouette) {
+							continue;
+						}
+					}
 					if (Vector3.Distance (transform.position, p.transform.position) < range + 20f) {
 						Vector3 toPlayer = p.transform.position - transform.position;
 						float angleBetween = Vector3.Angle (transform.forward, toPlayer);
@@ -2211,17 +2262,36 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 	}
 
-	public void TakeDamage(int d, Vector3 hitFromPos, int hitBy, int bodyPartHit) {
-		pView.RPC ("RpcTakeDamage", RpcTarget.All, d, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit, gameControllerScript.teamMap);
+	public void TakeDamage(int d, Vector3 hitFromPos, int hitBy, int bodyPartHit, int healthDropChanceBoost, int ammoDropChanceBoost) {
+		if (health > 0) {
+			pView.RPC ("RpcTakeDamage", RpcTarget.All, d, hitFromPos.x, hitFromPos.y, hitFromPos.z, hitBy, bodyPartHit, healthDropChanceBoost, ammoDropChanceBoost, gameControllerScript.teamMap);
+		}
 	}
 
 	[PunRPC]
-	public void RpcTakeDamage(int d, float hitFromX, float hitFromY, float hitFromZ, int hitBy, int bodyPartHit, string team) {
+	public void RpcTakeDamage(int d, float hitFromX, float hitFromY, float hitFromZ, int hitBy, int bodyPartHit, int healthDropChanceBoost, int ammoDropChanceBoost, string team) {
         if (team != gameControllerScript.teamMap) return;
         health -= d;
 		lastHitFromPos = new Vector3(hitFromX, hitFromY, hitFromZ);
 		lastHitBy = hitBy;
 		lastBodyPartHit = bodyPartHit;
+		thisHealthDropChanceBoost = healthDropChanceBoost;
+		thisAmmoDropChanceBoost = ammoDropChanceBoost;
+		if (healthStatus == HealthStatus.Poisoned && hitBy == 2) {
+			PlayGruntSound();
+			// Put hitmarker on poisoner's screen to let the player know this is poisoned
+			GameObject poisoner = null;
+			if (GameControllerScript.playerList.ContainsKey(poisonedById)) {
+				poisoner = GameControllerScript.playerList[poisonedById].objRef;
+				poisoner.GetComponent<WeaponActionScript>().ExternalInstantiateHitmarker();
+			}
+			if (health <= 0) {
+				// Death from poison - award kill to whoever poisoned this
+				if (poisoner != null) {
+					poisoner.GetComponent<WeaponActionScript>().ExternalRewardKill();
+				}
+			}
+		}
 	}
 
 	void UpdateActionState(ActionStates action) {
@@ -2243,11 +2313,10 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		// 	}
 		// }
 		// Play grunt when enemy dies or hit by flashbang
-		if (action == ActionStates.Dead) {
+		if (action == ActionStates.Dead || action == ActionStates.Disoriented) {
 			PlayGruntSound();
-		}
-		if (action == ActionStates.Disoriented) {
-			PlayGruntSound();
+		} else {
+			actionTransitionDelay = PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().GetDdosDelayTime();
 		}
 		actionState = action;
 	}
@@ -2262,11 +2331,21 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (playerTargeting != null) {
 			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript> ();
 			NpcScript n = playerTargeting.GetComponent<NpcScript> ();
-			if (a != null && a.health <= 0f) {
+			if (a != null && a.health <= 0f && a.fightingSpiritTimer <= 0f) {
 				pView.RPC ("RpcSetTarget", RpcTarget.All, -1, gameControllerScript.teamMap);
 			}
 			if (n != null && n.health <= 0f) {
 				pView.RPC ("RpcSetTarget", RpcTarget.All, -1, gameControllerScript.teamMap);
+			}
+		}
+	}
+
+	void CheckTargetDisappear()
+	{
+		if (playerTargeting != null) {
+			PlayerActionScript a = playerTargeting.GetComponent<PlayerActionScript> ();
+			if (a != null && a.activeCamo) {
+				UnseeTarget();
 			}
 		}
 	}
@@ -2286,7 +2365,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	// Reset values to respawn
 	IEnumerator Respawn(float respawnTime, bool syncWithClientsAgain) {
 		if (actionState != ActionStates.Dead) yield return null;
-		yield return new WaitForSeconds (respawnTime);
+		yield return new WaitForSeconds (respawnTime + PlayerData.playerdata.inGamePlayerReference.GetComponent<SkillController>().GetHackerBoost());
 		if (gameControllerScript.assaultMode && gameControllerScript.spawnMode != SpawnMode.Paused) {
 			RespawnAction (syncWithClientsAgain);
 		} else {
@@ -2309,6 +2388,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			ToggleRagdoll(false);
 			navMesh.enabled = false;
 			navMeshObstacle.enabled = false;
+			insideBubbleShield = false;
 			transform.position = pos;
 			transform.rotation = Quaternion.identity;
 			ToggleHumanCollision(true);
@@ -2328,7 +2408,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			lastSeenPlayerPos = Vector3.negativeInfinity;
 
 			actionState = ActionStates.Idle;
-			animator.Play ("Idle");
+			ResetAnimator();
 			firingState = FiringStates.StandingStill;
 			firingModeTimer = 0f;
 
@@ -2340,6 +2420,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			modeler.RespawnPlayer();
 			marker.enabled = true;
 			ToggleWeaponMesh(true);
+
+			thisAmmoDropChanceBoost = 0;
+			thisHealthDropChanceBoost = 0;
 
 			if (enemyType == EnemyType.Patrol) {
 				navMesh.enabled = true;
@@ -2357,6 +2440,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		ToggleRagdoll(false);
 		navMesh.enabled = false;
 		navMeshObstacle.enabled = false;
+		insideBubbleShield = false;
 		transform.position = new Vector3(respawnPosX, respawnPosY, respawnPosZ);
 		transform.rotation = Quaternion.identity;
 		ToggleHumanCollision(true);
@@ -2376,7 +2460,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		lastSeenPlayerPos = Vector3.negativeInfinity;
 
 		actionState = ActionStates.Idle;
-		animator.Play ("Idle");
+		ResetAnimator();
 		firingState = FiringStates.StandingStill;
 		firingModeTimer = 0f;
 
@@ -2388,6 +2472,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		modeler.RespawnPlayer();
 		marker.enabled = true;
 		ToggleWeaponMesh(true);
+
+		thisHealthDropChanceBoost = 0;
+		thisAmmoDropChanceBoost = 0;
 
 		if (enemyType == EnemyType.Patrol) {
 			navMesh.enabled = true;
@@ -2407,14 +2494,14 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	void HandleDetectionOutline() {
-		if (gameControllerScript.assaultMode) {
-			if (isOutlined) {
-				detectionOutlineTimer = 0f;
-				isOutlined = false;
-				ToggleDetectionOutline(false);
-			}
-			return;
-		}
+		// if (gameControllerScript.assaultMode) {
+		// 	if (isOutlined) {
+		// 		detectionOutlineTimer = 0f;
+		// 		isOutlined = false;
+		// 		ToggleDetectionOutline(false);
+		// 	}
+		// 	return;
+		// }
 		if (detectionOutlineTimer <= 0f) {
 			if (isOutlined) {
 				isOutlined = false;
@@ -2430,14 +2517,19 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	// Use when a player marks an enemy in stealth mode
-	public void MarkEnemyOutline() {
-		pView.RPC("RpcMarkEnemyOutline", RpcTarget.All, gameControllerScript.teamMap);
+	public void MarkEnemyOutline(int timeMultiplier) {
+		pView.RPC("RpcMarkEnemyOutline", RpcTarget.All, gameControllerScript.teamMap, timeMultiplier);
 	}
 
 	[PunRPC]
-	void RpcMarkEnemyOutline(string team) {
+	void RpcMarkEnemyOutline(string team, int timeMultiplier) {
         if (team != gameControllerScript.teamMap) return;
-        detectionOutlineTimer = DETECTION_OUTLINE_MAX_TIME;
+        detectionOutlineTimer = DETECTION_OUTLINE_MAX_TIME * timeMultiplier;
+	}
+
+	public void MarkEnemyOutlineInstant(float duration)
+	{
+		detectionOutlineTimer = duration;
 	}
 
 	void DropAmmoPickup() {
@@ -2683,7 +2775,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					navMesh.enabled, navMesh.speed, navMeshObstacle.enabled, 
 					gunRef.weaponParts[0].enabled, prevNavDestination.x, prevNavDestination.y, prevNavDestination.z, prevWasStopped, actionState, firingState, isCrouching, health, disorientationTime,
 					spawnPos.x, spawnPos.y, spawnPos.z, alertStatus, wasMasterClient, currentBullets, fireTimer, playerTargetingId, lastSeenPlayerPos.x, lastSeenPlayerPos.y, lastSeenPlayerPos.z,
-					suspicionMeter, suspicionCoolDownDelay, increaseSuspicionDelay, alertTeamAfterAlertedTimer, inCover, crouchMode, gameControllerScript.teamMap);
+					suspicionMeter, suspicionCoolDownDelay, increaseSuspicionDelay, alertTeamAfterAlertedTimer, inCover, crouchMode, detectionOutlineTimer, gameControllerScript.teamMap);
 		}
 	}
 
@@ -2693,7 +2785,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					float preNavDestZ, bool prevWasStopped, ActionStates acState, FiringStates fiState, bool isCrouching, int health, float disorientationTime,
 					float spawnPosX, float spawnPosY, float spawnPosZ, AlertStatus alertStatus, bool wasMasterClient, int currentBullets, float fireTimer,
 					int playerTargetingId, float lastSeenPlayerPosX, float lastSeenPlayerPosY, float lastSeenPlayerPosZ, float suspicionMeter, float suspicionCoolDownDelay,
-					float increaseSuspicionDelay, float alertTeamAfterAlertedTimer, bool inCover, CrouchMode crouchMode, string team) {
+					float increaseSuspicionDelay, float alertTeamAfterAlertedTimer, bool inCover, CrouchMode crouchMode, float detectionOutlineTimer, string team) {
 		if (team != gameControllerScript.teamMap) return;
 		// if (playerDespawned) {
 		// 	modeler.DespawnPlayer();
@@ -2724,6 +2816,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		this.wasMasterClient = wasMasterClient;
 		this.currentBullets = currentBullets;
 		this.fireTimer = fireTimer;
+		this.detectionOutlineTimer = detectionOutlineTimer;
 		if (playerTargetingId == -1) {
 			playerTargeting = null;
 		} else if (playerTargetingId == -2) {
@@ -2774,5 +2867,62 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         float maxDropoffAmount = damage / 3f;
         return (int)(((distance - sustainRange) / dropoffRange) * maxDropoffAmount);
     }
+
+	public void SetPoisoned(int fromPlayerId)
+	{
+		UpdateHealthStatus(HealthStatus.Poisoned, fromPlayerId);
+	}
+
+	void UpdateHealthStatus(HealthStatus h, int fromPlayerId)
+	{
+		if (healthStatus == h) return;
+		pView.RPC("RpcUpdateHealthStatus", RpcTarget.All, h, fromPlayerId, gameControllerScript.teamMap);
+	}
+
+	[PunRPC]
+	void RpcUpdateHealthStatus(HealthStatus h, int fromPlayerId, string team)
+	{
+		if (team != gameControllerScript.teamMap) return;
+		healthStatus = h;
+		if (h == HealthStatus.Poisoned) {
+			poisonTimer = POISONED_INTERVAL;
+			poisonedById = fromPlayerId;
+		}
+	}
+
+	void HandleHealthStatus()
+	{
+		if (healthStatus == HealthStatus.Poisoned) {
+			poisonTimer -= Time.deltaTime;
+			if (poisonTimer <= 0f) {
+				poisonTimer = POISONED_INTERVAL;
+				TakeDamage(POISONED_DMG, transform.position, 2, 0, 0, 0);
+			}
+		}
+	}
+
+	void ResetAnimator()
+	{
+		animator.SetBool("Incapacitated", false);
+		animator.ResetTrigger("EnteredWater");
+		animator.SetInteger("WeaponType", 1);
+		animator.SetInteger("Moving", 0);
+		animator.SetBool("weaponReady", false);
+		animator.SetBool("Crouching", false);
+		animator.SetBool("isSprinting", false);
+		animator.SetBool("isDead", false);
+		animator.SetBool("isWalking", false);
+		animator.SetBool("Swimming", false);
+		animator.Play("IdleAssaultRifle", 0);
+		animator.Play("Idle", 1);
+		animator.SetBool("onTitle", false);
+		animator.ResetTrigger("Jump");
+		animator.ResetTrigger("Reload");
+		animator.ResetTrigger("Fire");
+		animator.ResetTrigger("Cock");
+		animator.ResetTrigger("Melee");
+		animator.SetBool("Disoriented", false);
+		animator.SetBool("Patrol", false);
+	}
 
 }

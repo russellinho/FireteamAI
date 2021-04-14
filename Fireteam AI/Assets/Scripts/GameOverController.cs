@@ -78,6 +78,14 @@ public class GameOverController : MonoBehaviourPunCallbacks {
                 h.Add("blueStatus", null);
                 h.Add("RAssault", null);
                 h.Add("BAssault", null);
+                IEnumerator<DictionaryEntry> j = PhotonNetwork.CurrentRoom.CustomProperties.GetEnumerator();
+                while (j.MoveNext()) {
+                    string thisKey = j.Current.Key.ToString();
+                    if (thisKey.EndsWith("GA")) {
+                        Debug.LogError("Resetting " + thisKey);
+                        h.Add(thisKey, null);
+                    }
+                }
                 PhotonNetwork.CurrentRoom.SetCustomProperties(h);
             }
         } else if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp") {

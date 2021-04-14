@@ -10,13 +10,21 @@ public class DeployableScript : MonoBehaviour
     public string deployableName;
     public string refString;
     public short usesRemaining;
+    public GameObject initializeRef;
+    public AudioSource audioSource;
+    public AudioClip deploySound;
+    public AudioClip breakSound;
     // Determines if deployable can be stuck to any surface
 
-    public int InstantiateDeployable() {
+    public int InstantiateDeployable(int skillBoost = 0) {
         if (deployableName.Equals("First Aid Kit")) {
-            usesRemaining = MAX_FIRST_AID_KIT_USES;
+            usesRemaining = (short)(MAX_FIRST_AID_KIT_USES + (short)skillBoost);
         } else if (deployableName.Equals("Ammo Bag")) {
-            usesRemaining = MAX_AMMO_BAG_USES;
+            usesRemaining = (short)(MAX_AMMO_BAG_USES + (short)skillBoost);
+        } else if (deployableName.Equals("Bubble Shield (Skill)")) {
+            PlayDeploySound();
+            initializeRef.SetActive(true);
+            initializeRef.GetComponent<BubbleShieldScript>().Initialize(skillBoost);
         }
         deployableId = gameObject.GetInstanceID();
         return deployableId;
@@ -28,6 +36,29 @@ public class DeployableScript : MonoBehaviour
 
     public bool CheckOutOfUses() {
         return (usesRemaining == 0 ? true : false);
+    }
+
+    public void PlayDeploySound()
+    {
+        audioSource.clip = deploySound;
+        audioSource.Play();
+    }
+
+    public void PlayBreakSound()
+    {
+        audioSource.clip = breakSound;
+        audioSource.Play();
+    }
+
+    public void BeginDestroyItem()
+    {
+        StartCoroutine("DestroyItem");
+    }
+
+    IEnumerator DestroyItem()
+    {
+        yield return new WaitForSeconds(10);
+        Destroy(gameObject);
     }
 
 }

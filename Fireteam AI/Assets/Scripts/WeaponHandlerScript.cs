@@ -62,10 +62,9 @@ public class WeaponHandlerScript : MonoBehaviour
         }
     }
 
-    public void SetWeaponPositionForTitle(Vector3 pos) {
-        //weapon.localPosition = new Vector3(weapon.localPosition.x + (-handle.localPosition.x) + offset.x, weapon.localPosition.y + (-handle.localPosition.y) + offset.y, weapon.localPosition.z + (-handle.localPosition.z) + offset.z);
+    public void SetWeaponPositionForTitle(Vector3 pos, Vector3 rot) {
         weapon.localPosition = new Vector3(pos.x, pos.y, pos.z);
-        weapon.localRotation = Quaternion.Euler(13.891f, 177.759f, -92.145f);
+        weapon.localRotation = Quaternion.Euler(rot);
     }
 
     public void SwitchWeaponToLeftHand() {

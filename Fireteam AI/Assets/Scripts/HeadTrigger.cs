@@ -14,7 +14,7 @@ public class HeadTrigger : MonoBehaviour
             if (npcScript != null) {
                 npcScript.TakeDamage(100, transform.position, 2, 0);
             } else if (enemyScript != null) {
-                enemyScript.TakeDamage(100, transform.position, 2, 0);
+                enemyScript.TakeDamage(100, transform.position, 2, 0, 0, 0);
             }
         }
     }

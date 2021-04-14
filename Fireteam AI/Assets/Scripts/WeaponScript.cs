@@ -21,6 +21,10 @@ public class WeaponScript : MonoBehaviour
     public TitleControllerScript ts;
     public Animation titleAnimFemale;
     public Animation titleAnimMale;
+    private Material[] originalWeaponMats;
+    private Material[] originalSuppressorMats;
+    private Material[] originalSightMats;
+    private Material[] originalMountMats;
     
     public string equippedPrimaryWeapon;
     public string equippedSecondaryWeapon;
@@ -99,9 +103,19 @@ public class WeaponScript : MonoBehaviour
         currentAmmoPrimary = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].clipCapacity;
         currentAmmoSecondary = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].clipCapacity;
         currentAmmoSupport = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].clipCapacity;
-        totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo - currentAmmoPrimary;
-        totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo - currentAmmoSecondary;
-        totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo - currentAmmoSupport;
+        totalPrimaryAmmoLeft = (InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo + (currentAmmoPrimary * playerActionScript.skillController.GetProviderBoost())) - currentAmmoPrimary;
+        totalSecondaryAmmoLeft = (InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo + (currentAmmoSecondary * playerActionScript.skillController.GetProviderBoost())) - currentAmmoSecondary;
+        int supportAmmoBoost = 0;
+        if (PlayerData.playerdata.info.EquippedSupport == "First Aid Kit") {
+            supportAmmoBoost = playerActionScript.skillController.GetHealthCaddyBoost();
+        }
+        if (PlayerData.playerdata.info.EquippedSupport == "Ammo Bag") {
+            supportAmmoBoost = playerActionScript.skillController.GetAmmoCaddyBoost();
+        }
+        if (PlayerData.playerdata.info.EquippedSupport == "Bubble Shield") {
+            supportAmmoBoost = playerActionScript.skillController.GetDigitalNomadBoost();
+        }
+        totalSupportAmmoLeft = (InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo + (currentAmmoSupport * playerActionScript.skillController.GetProviderBoost())) + supportAmmoBoost - currentAmmoSupport;
         equippedWepInGame = equippedPrimaryWeapon;
         //DrawWeapon(1);
         InitializeWeapon();
@@ -145,7 +159,7 @@ public class WeaponScript : MonoBehaviour
         EquipWeapon(equippedWep, equippedSuppressor, equippedSight, null);
     }
 
-    void DrawPrimary()
+    public void DrawPrimary()
     {
         if (currentlyEquippedType == 1) return;
         DrawWeapon(1);
@@ -166,6 +180,33 @@ public class WeaponScript : MonoBehaviour
         currentlyEquippedType = 4;
     }
 
+    public void DrawBubbleShieldSkill()
+    {
+        if (CheckCanSwitchWeapon()) {
+            if (currentlyEquippedType == -1) return;
+            DrawWeapon(-1);
+            currentlyEquippedType = -1;
+        }
+    }
+
+    public void DrawEcmFeedbackSkill()
+    {
+        if (CheckCanSwitchWeapon()) {
+            if (currentlyEquippedType == -2) return;
+            DrawWeapon(-2);
+            currentlyEquippedType = -2;
+        }
+    }
+
+    public void DrawInfraredScanSkill()
+    {
+        if (CheckCanSwitchWeapon()) {
+            if (currentlyEquippedType == -3) return;
+            DrawWeapon(-3);
+            currentlyEquippedType = -3;
+        }
+    }
+
     void Update() {
         if (!initialized) {
             return;
@@ -177,6 +218,10 @@ public class WeaponScript : MonoBehaviour
         // Debug.Log("isCockingGrenade: " + weaponActionScript.isCockingGrenade);
         // Debug.Log("isCocking: " + weaponActionScript.isCocking);
         // Debug.Log("isUsingBooster: " + weaponActionScript.isUsingBooster);
+        if (playerActionScript.health > 0) {
+            UpdateMunitionsEngineering();
+        }
+
         if (CheckCanSwitchWeapon()) {
             if (PlayerPreferences.playerPreferences.KeyWasPressed("Primary") || (currentlyEquippedType == 4 && weaponActionScript.totalAmmoLeft <= 0 && weaponActionScript.currentAmmo <= 0)) {
                 DrawPrimary();
@@ -187,6 +232,43 @@ public class WeaponScript : MonoBehaviour
             }
         }
         HideMeleeWeapon();
+    }
+
+    void UpdateMunitionsEngineering()
+    {
+        if (playerActionScript.skillController.MunitionsEngineeringFlag()) {
+            int lvl = playerActionScript.skillController.GetMunitionsEngineeringLevel();
+            if (lvl == 1) {
+                RegenerateAmmo(1);
+            } else if (lvl == 2) {
+                RegenerateAmmo(2);
+            } else if (lvl == 3) {
+                RegenerateAmmo(3);
+            }
+            playerActionScript.hud.AddActiveSkill("23", 0f);
+            playerActionScript.skillController.MunitionsEngineeringReset();
+        }
+    }
+
+    void RegenerateAmmo(int ammo)
+    {
+        if (currentlyEquippedType == 1) {
+            int maxAmmo = GetLoadedMaxAmmoForCurrentWep();
+            weaponActionScript.totalAmmoLeft += ammo;
+            if (weaponActionScript.totalAmmoLeft > maxAmmo) {
+                weaponActionScript.totalAmmoLeft = maxAmmo;
+            }
+            SyncAmmoCounts();
+        } else if (currentlyEquippedType == 2) {
+            if (weaponActionScript.weaponStats.category != "Launcher") {
+                int maxAmmo = GetLoadedMaxAmmoForCurrentWep();
+                weaponActionScript.totalAmmoLeft += ammo;
+                if (weaponActionScript.totalAmmoLeft > maxAmmo) {
+                    weaponActionScript.totalAmmoLeft = maxAmmo;
+                }
+                SyncAmmoCounts();
+            }
+        }
     }
 
     // If the user has a grenade cocked or is currently loading a weapon, don't let him switch weapons
@@ -206,6 +288,10 @@ public class WeaponScript : MonoBehaviour
         } else if (weaponActionScript.hudScript.container.pauseMenuGUI.pauseActive) {
             return false;
         } else if (weaponActionScript.hudScript.commandDelay > 0f) {
+            return false;
+        } else if (weaponActionScript.hudScript.skillDelay > 0f) {
+            return false;
+        } else if (weaponActionScript.hudScript.guardianAngelDelay > 0f) {
             return false;
         }
         return true;
@@ -285,6 +371,21 @@ public class WeaponScript : MonoBehaviour
             HideWeapon(false);
             equippedWep = equippedSupportWeapon;
             modInfo = PlayerData.playerdata.supportModInfo;
+        } else if (weaponCat == -1)
+        {
+            weaponActionScript.hudScript.ToggleCrosshair(false);
+            equippedWep = "Bubble Shield (Skill)";
+            modInfo = PlayerData.playerdata.supportModInfo;
+        } else if (weaponCat == -2)
+        {
+            weaponActionScript.hudScript.ToggleCrosshair(false);
+            equippedWep = "ECM Feedback (Skill)";
+            modInfo = PlayerData.playerdata.supportModInfo;
+        } else if (weaponCat == -3)
+        {
+            weaponActionScript.hudScript.ToggleCrosshair(false);
+            equippedWep = "Infrared Scan (Skill)";
+            modInfo = PlayerData.playerdata.supportModInfo;
         }
         pView.RPC("RpcDrawWeapon", RpcTarget.All, weaponCat, equippedWep, modInfo.EquippedSuppressor, modInfo.EquippedSight);
     }
@@ -293,6 +394,7 @@ public class WeaponScript : MonoBehaviour
     private void RpcDrawWeapon(int weaponCat, string equippedWep, string equippedSuppressor, string equippedSight) {
         weaponReady = false;
         currentlyEquippedType = weaponCat;
+        if (weaponCat == -1 || weaponCat == -2 || weaponCat == -3) weaponCat = 4;
         if (!equipmentScript.isFirstPerson()) {
             animator.SetInteger("WeaponType", weaponCat);
             EquipWeapon(equippedWep, equippedSuppressor, equippedSight, null);
@@ -337,6 +439,11 @@ public class WeaponScript : MonoBehaviour
         {
             weaponActionScript.currentAmmo = currentAmmoSupport;
             weaponActionScript.totalAmmoLeft = totalSupportAmmoLeft;
+        }
+        else if (weaponCat == -1 || weaponCat == -2 || weaponCat == -3)
+        {
+            weaponActionScript.currentAmmo = 1;
+            weaponActionScript.totalAmmoLeft = 0;
         }
     }
 
@@ -412,6 +519,14 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
+    void EquipEtcInGame() {
+        if (equipmentScript.isFirstPerson()) {
+            weaponHolderFpc.SetWeaponPosition(true);
+        } else {
+            weaponHolder.SetWeaponPosition(false);
+        }
+    }
+
     void EquipDeployableInGame() {
         if (equipmentScript.isFirstPerson()) {
             weaponHolderFpc.SetWeaponPosition(true);
@@ -443,14 +558,15 @@ public class WeaponScript : MonoBehaviour
         Weapon w = InventoryScript.itemData.weaponCatalog[name];
         string weaponType = w.category;
         GameObject wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+        WeaponMeta wm = wepEquipped.GetComponent<WeaponMeta>();
         if (w.type == "Primary") {
             equippedPrimaryWeapon = name;
         }
 
         if (c.gender == 'M') {
-            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
+            SetTitleWeaponPositions(wm.fullPosMale, wm.fullRotMale, 'M');
         } else {
-            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
+            SetTitleWeaponPositions(wm.fullPosFemale, wm.fullRotFemale, 'F');
         }
     }
 
@@ -489,7 +605,12 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
+                    playerActionScript.skillController.InitializePassiveSkills(0);
                     SetWeaponCulling(wepEquipped);
+                    weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "SMG":
@@ -514,7 +635,12 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
+                    playerActionScript.skillController.InitializePassiveSkills(1);
                     SetWeaponCulling(wepEquipped);
+                    weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "LMG":
@@ -539,7 +665,12 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
+                    playerActionScript.skillController.InitializePassiveSkills(2);
                     SetWeaponCulling(wepEquipped);
+                    weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Shotgun":
@@ -564,7 +695,12 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
+                    playerActionScript.skillController.InitializePassiveSkills(3);
                     SetWeaponCulling(wepEquipped);
+                    weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Sniper Rifle":
@@ -589,7 +725,12 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
+                    playerActionScript.skillController.InitializePassiveSkills(4);
                     SetWeaponCulling(wepEquipped);
+                    weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Pistol":
@@ -614,7 +755,12 @@ public class WeaponScript : MonoBehaviour
                     EquipMod("Sight", sightName, weaponName, null);
                 }
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
+                    playerActionScript.skillController.InitializePassiveSkills(5);
                     SetWeaponCulling(wepEquipped);
+                    weaponActionScript.SetSpread(weaponActionScript.weaponStats.accuracy);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Launcher":
@@ -633,7 +779,11 @@ public class WeaponScript : MonoBehaviour
                 weaponActionScript.SetCurrentAimDownSightPos(sightName);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
+                    playerActionScript.skillController.InitializePassiveSkills(6);
                     SetWeaponCulling(wepEquipped);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Explosive":
@@ -652,7 +802,11 @@ public class WeaponScript : MonoBehaviour
                 weaponActionScript.SetCurrentAimDownSightPos(sightName);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
+                    playerActionScript.skillController.InitializePassiveSkills(7);
                     SetWeaponCulling(wepEquipped);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Booster":
@@ -671,11 +825,19 @@ public class WeaponScript : MonoBehaviour
                 weaponActionScript.SetCurrentAimDownSightPos(sightName);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
+                    playerActionScript.skillController.InitializePassiveSkills(8);
                     SetWeaponCulling(wepEquipped);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Deployable":
-                currentlyEquippedType = 4;
+                if (weaponName.EndsWith("(Skill)")) {
+                    currentlyEquippedType = -1;
+                } else {
+                    currentlyEquippedType = 4;
+                }
                 if (equipmentScript.isFirstPerson()) {
                     wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
                     weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
@@ -692,7 +854,40 @@ public class WeaponScript : MonoBehaviour
                 weaponActionScript.SetCurrentAimDownSightPos(sightName);
                 weaponActionScript.hudScript.EquipSightCrosshair(false);
                 if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
+                    playerActionScript.skillController.InitializePassiveSkills(9);
                     SetWeaponCulling(wepEquipped);
+                } else {
+                    SyncCamouflageMesh();
+                }
+                break;
+            case "Etc":
+                if (weaponName.EndsWith("k (Skill)")) {
+                    currentlyEquippedType = -2;
+                } else if (weaponName.EndsWith("n (Skill)")) {
+                    currentlyEquippedType = -3;
+                } else {
+                    currentlyEquippedType = 4;
+                }
+                if (equipmentScript.isFirstPerson()) {
+                    wepEquipped = weaponHolderFpc.LoadWeapon(w.prefabPath);
+                    weaponActionScript.animatorFpc.SetInteger("WeaponType", 4);
+                    weaponActionScript.animatorFpc.SetBool("isShotgun", false);
+                    weaponActionScript.animatorFpc.SetBool("isBoltAction", false);
+                    SetWeaponCulling(wepEquipped);
+                } else {
+                    wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+                }
+                equippedWepInGame = weaponName;
+                EquipEtcInGame();
+                weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
+                weaponActionScript.SetCurrentAimDownSightPos(sightName);
+                weaponActionScript.hudScript.EquipSightCrosshair(false);
+                if (equipmentScript.isFirstPerson()) {
+                    SyncCamouflageFpcMesh();
+                    SetWeaponCulling(wepEquipped);
+                } else {
+                    SyncCamouflageMesh();
                 }
                 break;
             case "Knife":
@@ -859,7 +1054,7 @@ public class WeaponScript : MonoBehaviour
             wm.EquipSuppressor(modName);
             // drawnSuppressorReference = wm.suppressorRef;
             Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-            weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost);
         } else if (equipOnWeapon.Equals(equippedSecondaryWeapon)) {
             // If secondary, only attach to weapon if in-game
             WeaponMods wm = null;
@@ -870,7 +1065,7 @@ public class WeaponScript : MonoBehaviour
             }
             wm.EquipSuppressor(modName);
             Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-            weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost, suppressorBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(suppressorBoosts.damageBoost, suppressorBoosts.accuracyBoost, suppressorBoosts.recoilBoost*.03f, suppressorBoosts.rangeBoost, suppressorBoosts.clipCapacityBoost);
         }
     }
 
@@ -890,7 +1085,7 @@ public class WeaponScript : MonoBehaviour
                 wm = weaponHolder.GetComponentInChildren<WeaponMods>();
             }
             Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-            weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost*.03f, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost, -suppressorBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost*.03f, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost);
             wm.UnequipSuppressor();
         } else if (unequipFromWeapon.Equals(equippedSecondaryWeapon)) {
             WeaponMods wm = null;
@@ -900,7 +1095,7 @@ public class WeaponScript : MonoBehaviour
                 wm = weaponHolder.GetComponentInChildren<WeaponMods>();
             }
             Mod suppressorBoosts = wm.GetEquippedSuppressorStats();
-            weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost*.03f, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost, -suppressorBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(-suppressorBoosts.damageBoost, -suppressorBoosts.accuracyBoost, -suppressorBoosts.recoilBoost*.03f, -suppressorBoosts.rangeBoost, -suppressorBoosts.clipCapacityBoost);
             wm.UnequipSuppressor();
         }
     }
@@ -922,7 +1117,7 @@ public class WeaponScript : MonoBehaviour
             }
             wm.EquipSight(modName);
             Mod sightBoosts = wm.GetEquippedSightStats();
-            weaponActionScript.ModifyWeaponStats(sightBoosts.damageBoost, sightBoosts.accuracyBoost, sightBoosts.recoilBoost, sightBoosts.rangeBoost, sightBoosts.clipCapacityBoost, sightBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(sightBoosts.damageBoost, sightBoosts.accuracyBoost, sightBoosts.recoilBoost, sightBoosts.rangeBoost, sightBoosts.clipCapacityBoost);
             weaponActionScript.hudScript.EquipSightCrosshair(true);
             weaponActionScript.hudScript.SetSightCrosshairForSight(modName);
         } else if (equipOnWeapon.Equals(equippedSecondaryWeapon)) {
@@ -935,7 +1130,7 @@ public class WeaponScript : MonoBehaviour
             }
             wm.EquipSight(modName);
             Mod sightBoosts = wm.GetEquippedSightStats();
-            weaponActionScript.ModifyWeaponStats(sightBoosts.damageBoost, sightBoosts.accuracyBoost, sightBoosts.recoilBoost*.03f, sightBoosts.rangeBoost, sightBoosts.clipCapacityBoost, sightBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(sightBoosts.damageBoost, sightBoosts.accuracyBoost, sightBoosts.recoilBoost*.03f, sightBoosts.rangeBoost, sightBoosts.clipCapacityBoost);
             weaponActionScript.hudScript.EquipSightCrosshair(true);
             weaponActionScript.hudScript.SetSightCrosshairForSight(modName);
         }
@@ -957,7 +1152,7 @@ public class WeaponScript : MonoBehaviour
                 wm = weaponHolder.GetComponentInChildren<WeaponMods>();
             }
             Mod sightBoosts = wm.GetEquippedSightStats();
-            weaponActionScript.ModifyWeaponStats(-sightBoosts.damageBoost, -sightBoosts.accuracyBoost, -sightBoosts.recoilBoost*.03f, -sightBoosts.rangeBoost, -sightBoosts.clipCapacityBoost, -sightBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(-sightBoosts.damageBoost, -sightBoosts.accuracyBoost, -sightBoosts.recoilBoost*.03f, -sightBoosts.rangeBoost, -sightBoosts.clipCapacityBoost);
             wm.UnequipSight();
         } else if (unequipFromWeapon.Equals(equippedSecondaryWeapon)) {
             WeaponMods wm = null;
@@ -967,20 +1162,179 @@ public class WeaponScript : MonoBehaviour
                 wm = weaponHolder.GetComponentInChildren<WeaponMods>();
             }
             Mod sightBoosts = wm.GetEquippedSightStats();
-            weaponActionScript.ModifyWeaponStats(-sightBoosts.damageBoost, -sightBoosts.accuracyBoost, -sightBoosts.recoilBoost*.03f, -sightBoosts.rangeBoost, -sightBoosts.clipCapacityBoost, -sightBoosts.maxAmmoBoost);
+            weaponActionScript.ModifyWeaponStats(-sightBoosts.damageBoost, -sightBoosts.accuracyBoost, -sightBoosts.recoilBoost*.03f, -sightBoosts.rangeBoost, -sightBoosts.clipCapacityBoost);
             wm.UnequipSight();
         }
     }
 
-    public void SetTitleWeaponPositions(Vector3 p) {
-        weaponHolder.SetWeaponPositionForTitle(p);
-        // if (ts != null) {
-        //     if (ts.currentCharGender == 'M') {
-        //         weaponHolder.SetWeaponPositionForTitle(new Vector3(-0.02f, 0.05f, 0.03f));
-        //     } else {
-        //         weaponHolder.SetWeaponPositionForTitle(new Vector3(-0.01f, 0.02f, 0.02f));
-        //     }
-        // }
+    public void SetTitleWeaponPositions(Vector3 p, Vector3 rot, char gender) {
+        weaponHolder.SetWeaponPositionForTitle(p, rot);
+        WeaponMeta wm = weaponHolder.weapon.GetComponent<WeaponMeta>();
+        if (gender == 'M') {
+            animator.runtimeAnimatorController = wm.maleOverrideControllerFullBody as RuntimeAnimatorController;
+        } else {
+            animator.runtimeAnimatorController = wm.femaleOverrideControllerFullBody as RuntimeAnimatorController;
+        }
+    }
+
+    void SyncCamouflageMesh()
+    {
+        if (playerActionScript.activeCamo) {
+            CamouflageMesh(true);
+        }
+    }
+
+    void SyncCamouflageFpcMesh()
+    {
+        if (playerActionScript.activeCamo) {
+            CamouflageFpcMesh(true);
+        }
+    }
+
+    public void CamouflageMesh(bool b)
+    {
+        if (b) {
+            int i = 0;
+            WeaponMeta ws = weaponHolder.weapon.GetComponent<WeaponMeta>();
+            WeaponMods wsm = weaponHolder.weapon.GetComponent<WeaponMods>();
+            originalWeaponMats = new Material[ws.weaponParts.Length];
+            foreach (MeshRenderer part in ws.weaponParts) {
+                originalWeaponMats[i++] = part.sharedMaterial;
+                part.material = equipmentScript.camoMat;
+            }
+            if (wsm != null) {
+                if (wsm.suppressorRef != null) {
+                    i = 0;
+                    MeshRenderer[] suppressorRenderers = wsm.suppressorRef.GetComponentsInChildren<MeshRenderer>();
+                    originalSuppressorMats = new Material[suppressorRenderers.Length];
+                    foreach (MeshRenderer part in suppressorRenderers) {
+                        originalSuppressorMats[i++] = part.sharedMaterial;
+                        part.material = equipmentScript.camoMat;
+                    }
+                }
+                if (wsm.sightRef != null) {
+                    i = 0;
+                    MeshRenderer[] sightRenderers = wsm.sightRef.GetComponentsInChildren<MeshRenderer>();
+                    originalSightMats = new Material[sightRenderers.Length];
+                    foreach (MeshRenderer part in sightRenderers) {
+                        originalSightMats[i++] = part.sharedMaterial;
+                        part.material = equipmentScript.camoMat;
+                    }
+                }
+                if (wsm.sightMountRef != null) {
+                    i = 0;
+                    MeshRenderer[] mountRenderers = wsm.sightMountRef.GetComponentsInChildren<MeshRenderer>();
+                    originalMountMats = new Material[mountRenderers.Length];
+                    foreach (MeshRenderer part in mountRenderers) {
+                        originalMountMats[i++] = part.sharedMaterial;
+                        part.material = equipmentScript.camoMat;
+                    }
+                }
+            }
+        } else {
+            int i = 0;
+            WeaponMeta ws = weaponHolder.weapon.GetComponent<WeaponMeta>();
+            WeaponMods wsm = weaponHolder.weapon.GetComponent<WeaponMods>();
+            foreach (MeshRenderer part in ws.weaponParts) {
+                part.material = originalWeaponMats[i++];
+            }
+            if (wsm != null) {
+                if (wsm.suppressorRef != null) {
+                    i = 0;
+                    MeshRenderer[] suppressorRenderers = wsm.suppressorRef.GetComponentsInChildren<MeshRenderer>();
+                    foreach (MeshRenderer part in suppressorRenderers) {
+                        part.material = originalSuppressorMats[i++];
+                    }
+                }
+                if (wsm.sightRef != null) {
+                    i = 0;
+                    MeshRenderer[] sightRenderers = wsm.sightRef.GetComponentsInChildren<MeshRenderer>();
+                    foreach (MeshRenderer part in sightRenderers) {
+                        part.material = originalSightMats[i++];
+                    }
+                }
+                if (wsm.sightMountRef != null) {
+                    i = 0;
+                    MeshRenderer[] mountRenderers = wsm.sightMountRef.GetComponentsInChildren<MeshRenderer>();
+                    foreach (MeshRenderer part in mountRenderers) {
+                        part.material = originalMountMats[i++];
+                    }
+                }
+            }
+        }
+    }
+
+    public void CamouflageFpcMesh(bool b)
+    {
+        if (b) {
+            int i = 0;
+            WeaponMeta ws = weaponHolderFpc.weapon.GetComponent<WeaponMeta>();
+            WeaponMods wsm = weaponHolderFpc.weapon.GetComponent<WeaponMods>();
+            originalWeaponMats = new Material[ws.weaponParts.Length];
+            foreach (MeshRenderer part in ws.weaponParts) {
+                originalWeaponMats[i++] = part.sharedMaterial;
+                part.material = equipmentScript.camoMat;
+            }
+            if (wsm != null) {
+                if (wsm.suppressorRef != null) {
+                    i = 0;
+                    MeshRenderer[] suppressorRenderers = wsm.suppressorRef.GetComponentsInChildren<MeshRenderer>();
+                    originalSuppressorMats = new Material[suppressorRenderers.Length];
+                    foreach (MeshRenderer part in suppressorRenderers) {
+                        originalSuppressorMats[i++] = part.sharedMaterial;
+                        part.material = equipmentScript.camoMat;
+                    }
+                }
+                if (wsm.sightRef != null) {
+                    i = 0;
+                    MeshRenderer[] sightRenderers = wsm.sightRef.GetComponentsInChildren<MeshRenderer>();
+                    originalSightMats = new Material[sightRenderers.Length];
+                    foreach (MeshRenderer part in sightRenderers) {
+                        originalSightMats[i++] = part.sharedMaterial;
+                        part.material = equipmentScript.camoMat;
+                    }
+                }
+                if (wsm.sightMountRef != null) {
+                    i = 0;
+                    MeshRenderer[] mountRenderers = wsm.sightMountRef.GetComponentsInChildren<MeshRenderer>();
+                    originalMountMats = new Material[mountRenderers.Length];
+                    foreach (MeshRenderer part in mountRenderers) {
+                        originalMountMats[i++] = part.sharedMaterial;
+                        part.material = equipmentScript.camoMat;
+                    }
+                }
+            }
+        } else {
+            int i = 0;
+            WeaponMeta ws = weaponHolderFpc.weapon.GetComponent<WeaponMeta>();
+            WeaponMods wsm = weaponHolderFpc.weapon.GetComponent<WeaponMods>();
+            foreach (MeshRenderer part in ws.weaponParts) {
+                part.material = originalWeaponMats[i++];
+            }
+            if (wsm != null) {
+                if (wsm.suppressorRef != null) {
+                    i = 0;
+                    MeshRenderer[] suppressorRenderers = wsm.suppressorRef.GetComponentsInChildren<MeshRenderer>();
+                    foreach (MeshRenderer part in suppressorRenderers) {
+                        part.material = originalSuppressorMats[i++];
+                    }
+                }
+                if (wsm.sightRef != null) {
+                    i = 0;
+                    MeshRenderer[] sightRenderers = wsm.sightRef.GetComponentsInChildren<MeshRenderer>();
+                    foreach (MeshRenderer part in sightRenderers) {
+                        part.material = originalSightMats[i++];
+                    }
+                }
+                if (wsm.sightMountRef != null) {
+                    i = 0;
+                    MeshRenderer[] mountRenderers = wsm.sightMountRef.GetComponentsInChildren<MeshRenderer>();
+                    foreach (MeshRenderer part in mountRenderers) {
+                        part.material = originalMountMats[i++];
+                    }
+                }
+            }
+        }
     }
 
     public void DespawnPlayer()
@@ -1072,15 +1426,21 @@ public class WeaponScript : MonoBehaviour
     }
 
     public void MaxRefillAmmoOnPrimary() {
-        totalPrimaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo - currentAmmoPrimary;
+        totalPrimaryAmmoLeft = (InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo + (InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedPrimary].clipCapacity * playerActionScript.skillController.GetProviderBoost())) - currentAmmoPrimary;
+    }
+
+    public void RefillAmmoOnPrimary(int amt)
+    {
+        totalPrimaryAmmoLeft += amt;
+        totalPrimaryAmmoLeft = Mathf.Min((InventoryScript.itemData.weaponCatalog[equippedPrimaryWeapon].maxAmmo + (InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedPrimary].clipCapacity * playerActionScript.skillController.GetProviderBoost())) - currentAmmoPrimary, totalPrimaryAmmoLeft);
     }
 
     public void MaxRefillAmmoOnSecondary() {
-        totalSecondaryAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo - currentAmmoSecondary;
+        totalSecondaryAmmoLeft = (InventoryScript.itemData.weaponCatalog[equippedSecondaryWeapon].maxAmmo + (InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedSecondary].clipCapacity * playerActionScript.skillController.GetProviderBoost())) - currentAmmoSecondary;
     }
 
     public void MaxRefillAmmoOnSupport() {
-        totalSupportAmmoLeft = InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo - currentAmmoSupport;
+        totalSupportAmmoLeft = (InventoryScript.itemData.weaponCatalog[equippedSupportWeapon].maxAmmo + (InventoryScript.itemData.weaponCatalog[PlayerData.playerdata.info.EquippedSupport].clipCapacity * playerActionScript.skillController.GetProviderBoost())) - currentAmmoSupport;
     }
 
     public void EquipWeaponForSetup(string weaponName, string characterSelected) {
@@ -1088,11 +1448,12 @@ public class WeaponScript : MonoBehaviour
         char chararacterGender = InventoryScript.itemData.characterCatalog[characterSelected].gender;
         Weapon w = InventoryScript.itemData.weaponCatalog[weaponName];
         GameObject wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
+        WeaponMeta wm = wepEquipped.GetComponent<WeaponMeta>();
 
         if (chararacterGender == 'M') {
-            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsMale);
+            SetTitleWeaponPositions(wm.fullPosMale, wm.fullRotMale, 'M');
         } else {
-            SetTitleWeaponPositions(wepEquipped.GetComponent<WeaponMeta>().titleHandPositionsFemale);
+            SetTitleWeaponPositions(wm.fullPosFemale, wm.fullRotFemale, 'F');
         }
     }
 
@@ -1146,6 +1507,11 @@ public class WeaponScript : MonoBehaviour
 
     void SyncWeps(string equippedSuppressor, string equippedSight) {
         WeaponRefresh(equippedSuppressor, equippedSight);
+    }
+
+    public int GetLoadedMaxAmmoForCurrentWep()
+    {
+        return (weaponActionScript.weaponStats.maxAmmo + (weaponActionScript.weaponStats.clipCapacity * playerActionScript.skillController.GetProviderBoost())) - weaponActionScript.weaponStats.clipCapacity;
     }
 
 }

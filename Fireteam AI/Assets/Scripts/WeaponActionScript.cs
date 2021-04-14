@@ -15,7 +15,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     private const byte THROWABLE_SPAWN_CODE = 127;
     private const float SHELL_SPEED = 3f;
     private const float SHELL_TUMBLE = 4f;
-    private const float DEPLOY_BASE_TIME = 2f;
+    private const float DEPLOY_BASE_TIME = 4f;
     private const short DEPLOY_OFFSET = 2;
     private const float LUNGE_SPEED = 20f;
     private const float UNPAUSE_DELAY = 0.5f;
@@ -52,11 +52,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     public GameObject WaterBulletEffect;
     public GameObject BloodEffect;
     public GameObject BloodEffectHeadshot;
-
-    // Projectile spread constants
-    public const float MAX_SPREAD = 0.15f;
-    public const float SPREAD_ACCELERATION = 0.05f;
-    public const float SPREAD_DECELERATION = 0.03f;
+    public GameObject OvershieldHitEffect;
 
     // Projectile recoil constants
     public const float MAX_RECOIL_TIME = 1.4f;
@@ -65,7 +61,10 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     private const float SWAY_ACCELERATION = 1.5f;
 
     // Projectile variables
-    public EncryptedFloat spread = 0f;
+    private EncryptedFloat spread = 0f;
+    public EncryptedFloat maxSpread = 0f;
+    public EncryptedFloat spreadAcceleration = 0f;
+    public EncryptedFloat spreadDeceleration = 0f;
     private EncryptedFloat recoilTime = 0f;
     private EncryptedFloat swayGauge = 0f;
     private bool voidRecoilRecover = true;
@@ -139,6 +138,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     // Use this for initialization
     private bool initialized;
+    public float qq;
 
     void Awake()
     {
@@ -191,6 +191,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         {
             return;
         }
+
+        mouseLook.UpdateFlinch();
 
         if (playerActionScript.health <= 0 || playerActionScript.gameController.gameOver) {
             hudScript.toggleSniperOverlay(false);
@@ -264,7 +266,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     }
 
     bool AutoReloadCheck() {
-        if (isDrawing || isFiring || isMeleeing || isReloading || isCockingGrenade || isUsingBooster || isUsingDeployable || deployInProgress || isCocking || fpc.m_IsRunning) {
+        if (isDrawing || isFiring || isMeleeing || isReloading || isCockingGrenade || isUsingBooster || isUsingDeployable || deployInProgress || isCocking || (fpc.m_IsRunning && !playerActionScript.skillController.HasRunNGun())) {
             return false;
         }
         return true;
@@ -303,6 +305,10 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
         if (weaponStats.category.Equals("Booster")) {
             FireBooster();
+            return;
+        }
+        if (weaponStats.category.Equals("Etc")) {
+            FireEtc();
             return;
         }
         if (weaponStats.category.Equals("Deployable")) {
@@ -345,6 +351,14 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                 recoilTime = 0f;
             }
         }
+    }
+
+    public void SetSpread(float accuracy)
+    {
+        // Add accuracy boost from skills
+        maxSpread = (1f - Mathf.Clamp((accuracy / 100f), 0f, 1f)) * (1f - playerActionScript.skillController.accuracyBoost) * (1f - playerActionScript.skillController.GetInspireBoost());
+        spreadAcceleration = maxSpread;
+        spreadDeceleration = maxSpread / 2f;
     }
     
     // If aim down sights lock is enabled, arms have free range movement apart from their animations
@@ -506,6 +520,21 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         playerActionScript.gameController.AddToTotalKills(PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
+    public void ExternalInstantiateHitmarker()
+    {
+        if (pView.IsMine) {
+            hudScript.InstantiateHitmarker();
+        }
+    }
+
+    public void ExternalRewardKill()
+    {
+        if (pView.IsMine) {
+            BetaEnemyScript.NUMBER_KILLED++;
+            RewardKill(false);
+        }
+    }
+
     // Increment kill count and display HUD popup for kill
     public void RewardKill(bool isHeadshot) {
         AddToTotalKills();
@@ -515,6 +544,34 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         } else {
             hudScript.OnScreenEffect(GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills + " KILLS", true);
         }
+        // Recover health from Blood Leech skill
+        if (playerActionScript.health > 0 && playerActionScript.health < 100 && playerActionScript.fightingSpiritTimer <= 0f && playerActionScript.lastStandTimer <= 0f) {
+            int lvl = playerActionScript.skillController.GetBloodLeechLevel();
+            if (lvl == 1) {
+                if (GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills % 10 == 0) {
+                    playerActionScript.SetHealth(playerActionScript.health + 2, true);
+                }
+            } else if (lvl == 2) {
+                if (GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills % 8 == 0) {
+                    playerActionScript.SetHealth(playerActionScript.health + 3, true);
+                }
+            } else if (lvl == 3) {
+                if (GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills % 6 == 0) {
+                    playerActionScript.SetHealth(playerActionScript.health + 4, true);
+                }
+            } else if (lvl == 4) {
+                if (GameControllerScript.playerList[PhotonNetwork.LocalPlayer.ActorNumber].kills % 4 == 0) {
+                    playerActionScript.SetHealth(playerActionScript.health + 5, true);
+                }
+            }
+        }
+
+        // Register kill for killstreak skills
+        playerActionScript.skillController.RegisterKillForKillstreak(playerActionScript.lastStandTimer > 0f);
+        if (playerActionScript.lastStandTimer > 0f && playerActionScript.skillController.CanSelfRevive()) {
+            playerActionScript.LastStandRevive();
+            playerActionScript.skillController.ResetResilienceKillCount();
+        }
     }
 
     public void SetMouseDynamicsForMelee(bool b) {
@@ -522,7 +579,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     }
 
     bool CanMelee() {
-        if (!fpc.m_CharacterController.isGrounded || fpc.GetIsSwimming() || isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || deployInProgress || isUsingBooster || isUsingDeployable || hudScript.container.pauseMenuGUI.pauseActive) {
+        if (!fpc.m_CharacterController.isGrounded || fpc.GetIsSwimming() || isCocking || isDrawing || isMeleeing || isFiring || isAiming || isCockingGrenade || deployInProgress || isUsingBooster || isUsingDeployable || hudScript.container.pauseMenuGUI.pauseActive || fpc.GetIsIncapacitated()) {
             return false;
         }
         return true;
@@ -547,7 +604,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         isMeleeing = true;
         int enemyMask = 1 << 14;
         RaycastHit hit;
-        if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, meleeStats.lungeRange, enemyMask)) {
+        if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, meleeStats.lungeRange * (1f + playerActionScript.skillController.GetMeleeLungeBoost()), enemyMask)) {
             // Dash/warp to the enemyTarget position
             meleeStartingPos = transform.position;
             meleeTargetPos = hit.transform.GetComponentInParent<BetaEnemyScript>().gameObject.transform.position;
@@ -584,7 +641,15 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                         pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, false);
                         hudScript.InstantiateHitmarker();
                         // audioController.PlayHitmarkerSound();
-                        b.TakeDamage((int)meleeStats.damage, transform.position, 2, 0);
+                        float hitmanDamageBoost = 1f;
+                        if (b.isOutlined) {
+                            hitmanDamageBoost += playerActionScript.skillController.GetHitmanDamageBoost();
+                        }
+                        float bloodLustDamageBoost = 1f + playerActionScript.skillController.GetBloodLustDamageBoost();
+                        float martialArtsDamageBoost = 1f + playerActionScript.skillController.GetMartialArtsAttackBoost();
+                        float fireteamDamageBoost = 1f + playerActionScript.skillController.GetFireteamBoost(playerActionScript.gameController.GetAvgDistanceBetweenTeam());
+                        float motivateDamageBoost = 1f + playerActionScript.skillController.GetMyMotivateDamageBoost();
+                        b.TakeDamage((int)(meleeStats.damage * (1f + playerActionScript.skillController.GetMeleeDamageBoost()) * hitmanDamageBoost * bloodLustDamageBoost * martialArtsDamageBoost * fireteamDamageBoost * motivateDamageBoost), transform.position, 2, 0, playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
                         b.PlayGruntSound();
                         b.SetAlerted();
                         if (b.health <= 0 && beforeHp > 0)
@@ -641,12 +706,49 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
                     pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, (bodyPartIdHit == HEAD_TARGET));
                     int beforeHp = b.health;
-                    int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit) - CalculateDamageDropoff(weaponStats.damage, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
+                    int thisDamageDealt = 0;
+                    if (playerActionScript.skillController.WasCriticalHit()) {
+                        thisDamageDealt = 100;
+                    } else {
+                        thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit) - CalculateDamageDropoff(weaponStats.damage, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
+                    }
                     if (beforeHp > 0)
                     {
                         hudScript.InstantiateHitmarker();
                         // audioController.PlayHitmarkerSound();
-                        b.TakeDamage(thisDamageDealt, transform.position, 0, bodyPartIdHit);
+                        float sniperAmplificationBoost = 1f;
+                        if (weaponStats.isSniper && hudScript.container.SniperOverlay.activeInHierarchy) {
+                            sniperAmplificationBoost += playerActionScript.skillController.GetSniperAmplification();
+                        }
+                        float shootToKillBoost = 1f;
+                        if (bodyPartIdHit != HEAD_TARGET && bodyPartIdHit != TORSO_TARGET && bodyPartIdHit != PELVIS_TARGET) {
+                            shootToKillBoost += playerActionScript.skillController.GetShootToKillBoost();
+                        }
+                        float silentKillerBoost = 1f;
+                        if (weaponMods.suppressorRef != null) {
+                            silentKillerBoost += playerActionScript.skillController.GetSilentKillerBoost();
+                        }
+                        float hitmanDamageBoost = 1f;
+                        if (b.isOutlined) {
+                            hitmanDamageBoost += playerActionScript.skillController.GetHitmanDamageBoost();
+                        }
+                        float oneShotOneKillBoost = 1f;
+                        if (playerActionScript.skillController.OneShotOneKillReady()) {
+                            oneShotOneKillBoost += playerActionScript.skillController.GetOneShotOneKillDamageBoost();
+                            playerActionScript.skillController.ResetOneShotOneKillTimer();
+                        }
+                        float bloodLustDamageBoost = 1f + playerActionScript.skillController.GetBloodLustDamageBoost();
+                        float fireteamDamageBoost = 1f + playerActionScript.skillController.GetFireteamBoost(playerActionScript.gameController.GetAvgDistanceBetweenTeam());
+                        float motivateDamageBoost = 1f + playerActionScript.skillController.GetMyMotivateDamageBoost();
+                        b.TakeDamage((int)(thisDamageDealt * playerActionScript.skillController.GetDamageBoost() * sniperAmplificationBoost * shootToKillBoost * silentKillerBoost * hitmanDamageBoost * oneShotOneKillBoost * bloodLustDamageBoost * fireteamDamageBoost * motivateDamageBoost), transform.position, 0, bodyPartIdHit, playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
+                        int nanoparticulatesChance = playerActionScript.skillController.GetNanoparticulatesChanceBoost();
+                        if (nanoparticulatesChance > 0) {
+                            int r = Random.Range(0, 100);
+                            if (r < nanoparticulatesChance) {
+                                // Poison the enemy
+                                b.SetPoisoned(PhotonNetwork.LocalPlayer.ActorNumber);
+                            }
+                        }
                         b.PlayGruntSound();
                         b.SetAlerted();
                         if (b.health <= 0 && beforeHp > 0)
@@ -677,11 +779,11 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         if (weaponMods.suppressorRef == null)
         {
             playerActionScript.gameController.SetLastGunshotHeardPos(false, transform.position);
-            pView.RPC("FireEffects", RpcTarget.All);
+            pView.RPC("FireEffects", RpcTarget.All, DetermineAmmoDeductSkip());
         }
         else
         {
-            pView.RPC("FireEffectsSuppressed", RpcTarget.All);
+            pView.RPC("FireEffectsSuppressed", RpcTarget.All, DetermineAmmoDeductSkip());
         }
     }
 
@@ -735,14 +837,15 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         UpdateRecoil(true);
         RaycastHit hit;
         // 8 shots for shotgun
-        bool headshotDetected = false;
         float totalDamageDealt = 0f;
+        bool critialHit = playerActionScript.skillController.WasCriticalHit();
+        bool headHit = false;
         for (int i = 0; i < 8; i++) {
-            float xSpread = Random.Range(-0.03f, 0.03f);
-            float ySpread = Random.Range(-0.03f, 0.03f);
-            float zSpread = Random.Range(-0.03f, 0.03f);
+            float xSpread = Random.Range(-maxSpread, maxSpread);
+            float ySpread = Random.Range(-maxSpread, maxSpread);
+            float zSpread = Random.Range(-maxSpread, maxSpread);
             Vector3 impactDir = new Vector3(fpcShootPoint.transform.forward.x + xSpread, fpcShootPoint.transform.forward.y + ySpread, fpcShootPoint.transform.forward.z + zSpread);
-            if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, FIRE_IGNORE_MASK) && !headshotDetected)
+            if (Physics.Raycast(fpcShootPoint.position, impactDir, out hit, weaponStats.range, FIRE_IGNORE_MASK))
             {
                 // Debug.DrawRay(fpcShootPoint.position, impactDir, Color.blue, 10f, false);
                 if (hit.transform.tag.Equals("Human"))
@@ -750,49 +853,85 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     BetaEnemyScript b = hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>();
                     NpcScript n = hit.transform.gameObject.GetComponentInParent<NpcScript>();
                     if (n != null) {
-                        int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
-                        int beforeHp = 0;
-                        int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit, 8) - CalculateDamageDropoff(weaponStats.damage / 8, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
-                        pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
-                        beforeHp = n.health;
-                        if (totalDamageDealt == 0f) {
-                            if (beforeHp > 0)
-                            {
-                                n.PlayGruntSound(playerActionScript.gameController.teamMap);
+                        if (n.health > 0) {
+                            int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
+                            if (bodyPartIdHit == HEAD_TARGET) {
+                                headHit = true;
+                            }
+                            int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit) - CalculateDamageDropoff(weaponStats.damage, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
+                            totalDamageDealt += thisDamageDealt;
+                            if (i == 7) {
+                                if (totalDamageDealt > 0)
+                                {
+                                    pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, true);
+                                    n.PlayGruntSound(playerActionScript.gameController.teamMap);
+                                    n.TakeDamage((int)totalDamageDealt, transform.position, 0, (headHit ? HEAD_TARGET : bodyPartIdHit));
+                                }
                             }
                         }
-                        n.TakeDamage(thisDamageDealt, transform.position, 0, bodyPartIdHit);
-                        totalDamageDealt += thisDamageDealt;
                     }
                     if (b != null) {
-                        int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
-                        int beforeHp = 0;
-                        int thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit, 8) - CalculateDamageDropoff(weaponStats.damage / 8, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
-                        pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, (bodyPartIdHit == HEAD_TARGET));
-                        beforeHp = b.health;
-                        if (totalDamageDealt == 0f) {
-                            if (beforeHp > 0)
-                            {
-                                hudScript.InstantiateHitmarker();
-                                // audioController.PlayHitmarkerSound();
-                                //hit.transform.gameObject.GetComponent<BetaEnemyScript>().TakeDamage((int)weaponStats.damage);
-                                b.PlayGruntSound();
-                                b.SetAlerted();
-                            }
-                        }
-                        b.TakeDamage(thisDamageDealt, transform.position, 0, bodyPartIdHit);
-                        if (b.health <= 0 && beforeHp > 0)
-                        {
-                            BetaEnemyScript.NUMBER_KILLED++;
-                            RewardKill(bodyPartIdHit == HEAD_TARGET);
+                        if (b.health > 0) {
+                            int bodyPartIdHit = hit.transform.gameObject.GetComponent<BodyPartId>().bodyPartId;
                             if (bodyPartIdHit == HEAD_TARGET) {
-                                audioController.PlayHeadshotSound();
-                                headshotDetected = true;
+                                headHit = true;
+                            }
+                            int thisDamageDealt = 0;
+                            if (critialHit) {
+                                thisDamageDealt = 100;
                             } else {
-                                audioController.PlayKillSound();
+                                thisDamageDealt = CalculateDamageDealt(weaponStats.damage, bodyPartIdHit) - CalculateDamageDropoff(weaponStats.damage, Vector3.Distance(fpcShootPoint.position, hit.transform.position), weaponStats.range);
+                            }
+                            totalDamageDealt += thisDamageDealt;
+                            if (i == 7) {
+                                if (totalDamageDealt > 0)
+                                {
+                                    hudScript.InstantiateHitmarker();
+                                    pView.RPC("RpcInstantiateBloodSpill", RpcTarget.All, hit.point, hit.normal, (bodyPartIdHit == HEAD_TARGET));
+                                    b.PlayGruntSound();
+                                    b.SetAlerted();
+                                    float shootToKillBoost = 1f;
+                                    if (bodyPartIdHit != HEAD_TARGET && bodyPartIdHit != TORSO_TARGET && bodyPartIdHit != PELVIS_TARGET) {
+                                        shootToKillBoost += playerActionScript.skillController.GetShootToKillBoost();
+                                    }
+                                    float silentKillerBoost = 1f;
+                                    if (weaponMods.suppressorRef != null) {
+                                        silentKillerBoost += playerActionScript.skillController.GetSilentKillerBoost();
+                                    }
+                                    float hitmanDamageBoost = 1f;
+                                    if (b.isOutlined) {
+                                        hitmanDamageBoost += playerActionScript.skillController.GetHitmanDamageBoost();
+                                    }
+                                    float oneShotOneKillBoost = 1f;
+                                    if (playerActionScript.skillController.OneShotOneKillReady()) {
+                                        oneShotOneKillBoost += playerActionScript.skillController.GetOneShotOneKillDamageBoost();
+                                        playerActionScript.skillController.ResetOneShotOneKillTimer();
+                                    }
+                                    float bloodLustDamageBoost = 1f + playerActionScript.skillController.GetBloodLustDamageBoost();
+                                    float fireteamDamageBoost = 1f + playerActionScript.skillController.GetFireteamBoost(playerActionScript.gameController.GetAvgDistanceBetweenTeam());
+                                    float motivateDamageBoost = 1f + playerActionScript.skillController.GetMyMotivateDamageBoost();
+                                    b.TakeDamage((int)(totalDamageDealt * playerActionScript.skillController.GetDamageBoost() * shootToKillBoost * silentKillerBoost * hitmanDamageBoost * oneShotOneKillBoost * bloodLustDamageBoost * fireteamDamageBoost * motivateDamageBoost), transform.position, 0, (headHit ? HEAD_TARGET : bodyPartIdHit), playerActionScript.skillController.GetHealthDropChanceBoost(), playerActionScript.skillController.GetAmmoDropChanceBoost());
+                                    int nanoparticulatesChance = playerActionScript.skillController.GetNanoparticulatesChanceBoost();
+                                    if (nanoparticulatesChance > 0) {
+                                        int r = Random.Range(0, 100);
+                                        if (r < nanoparticulatesChance) {
+                                            // Poison the enemy
+                                            b.SetPoisoned(PhotonNetwork.LocalPlayer.ActorNumber);
+                                        }
+                                    }
+                                    if (b.health <= 0)
+                                    {
+                                        BetaEnemyScript.NUMBER_KILLED++;
+                                        RewardKill(headHit);
+                                        if (headHit) {
+                                            audioController.PlayHeadshotSound();
+                                        } else {
+                                            audioController.PlayKillSound();
+                                        }
+                                    }
+                                }
                             }
                         }
-                        totalDamageDealt += thisDamageDealt;
                     }
                 } else if (hit.transform.tag.Equals("Player")) {
                     if (hit.transform != gameObject.transform) {
@@ -810,7 +949,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
 
         playerActionScript.gameController.SetLastGunshotHeardPos(false, transform.position);
-        pView.RPC("FireEffects", RpcTarget.All);
+        pView.RPC("FireEffects", RpcTarget.All, DetermineAmmoDeductSkip());
     }
 
     [PunRPC]
@@ -834,7 +973,12 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     [PunRPC]
     void RpcHandleBulletVfx(Vector3 point, Vector3 normal, int terrainId, int shooterActorNo) {
         if (gameObject.layer == 0) return;
-        if (terrainId == -1) return;
+        if (terrainId == -1) {
+            GameObject bulletHoleEffect = Instantiate(OvershieldHitEffect, point, Quaternion.FromToRotation(Vector3.forward, normal));
+			bulletHoleEffect.GetComponent<AudioSource>().Play();
+			Destroy(bulletHoleEffect, 1.5f);
+            return;
+        }
         if (terrainId == -2) {
             Destroy(Instantiate(WaterBulletEffect, point, Quaternion.FromToRotation(Vector3.forward, normal)), 4f);
         } else {
@@ -860,29 +1004,29 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
     }
 
-    public int CalculateDamageDealt(float initialDamage, int bodyPartHit, int divisor = 1) {
+    public int CalculateDamageDealt(float initialDamage, int bodyPartHit) {
         if (bodyPartHit == HEAD_TARGET) {
             return 100;
         } else if (bodyPartHit == TORSO_TARGET) {
-            return (int)(initialDamage / (float)divisor);
+            return (int)initialDamage;
         } else if (bodyPartHit == LEFT_ARM_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 2f);
+            return (int)(initialDamage / 2f);
         } else if (bodyPartHit == LEFT_FOREARM_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 3f);
+            return (int)(initialDamage / 3f);
         } else if (bodyPartHit == RIGHT_ARM_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 2f);
+            return (int)(initialDamage / 2f);
         } else if (bodyPartHit == RIGHT_FOREARM_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 3f);
+            return (int)(initialDamage / 3f);
         } else if (bodyPartHit == PELVIS_TARGET) {
-            return (int)(initialDamage / (float)divisor);
+            return (int)initialDamage;
         } else if (bodyPartHit == LEFT_UPPER_LEG_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 1.5f);
+            return (int)(initialDamage / 1.5f);
         } else if (bodyPartHit == LEFT_LOWER_LEG_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 2f);
+            return (int)(initialDamage / 2f);
         } else if (bodyPartHit == RIGHT_UPPER_LEG_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 1.5f);
+            return (int)(initialDamage / 1.5f);
         } else if (bodyPartHit == RIGHT_LOWER_LEG_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 2f);
+            return (int)(initialDamage / 2f);
         }
         return 0;
     }
@@ -894,7 +1038,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     }
 
     [PunRPC]
-    void FireEffects()
+    void FireEffects(bool ammoDeductExempt)
     {
         if (gameObject.layer == 0) return;
         PlayMuzzleFlash();
@@ -903,15 +1047,18 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         {
             weaponMetaData.bulletTracer.Play();
         }
+        animator.SetTrigger("Fire");
         PlayShootSound();
-        currentAmmo--;
+        if (!ammoDeductExempt) {
+            currentAmmo--;
+        }
         playerActionScript.weaponScript.SyncAmmoCounts();
         // Reset fire timer
         fireTimer = 0.0f;
     }
 
     [PunRPC]
-    void FireEffectsSuppressed()
+    void FireEffectsSuppressed(bool ammoDeductExempt)
     {
         if (gameObject.layer == 0) return;
         InstantiateGunSmokeEffect(1.5f);
@@ -919,8 +1066,11 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         {
             weaponMetaData.bulletTracer.Play();
         }
+        animator.SetTrigger("Fire");
         PlaySuppressedShootSound();
-        currentAmmo--;
+        if (!ammoDeductExempt) {
+            currentAmmo--;
+        }
         playerActionScript.weaponScript.SyncAmmoCounts();
         // Reset fire timer
         fireTimer = 0.0f;
@@ -931,6 +1081,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     {
         if (gameObject.layer == 0) return;
         InstantiateGunSmokeEffect(3f);
+        animator.SetTrigger("Fire");
         PlayShootSound();
         // UseLauncherItem();
         playerActionScript.weaponScript.SyncAmmoCounts();
@@ -1003,7 +1154,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         //     animator.SetTrigger("Reloading");
         // } else {
             //animator.CrossFadeInFixedTime("Reload", 0.1f);
-            animator.SetTrigger("Reloading");
+            animator.SetTrigger("Reload");
         // }
     }
 
@@ -1102,12 +1253,12 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     private void IncreaseSpread()
     {
-        if (spread < MAX_SPREAD)
+        if (spread < maxSpread)
         {
-            spread += SPREAD_ACCELERATION * Time.deltaTime;
-            if (spread > MAX_SPREAD)
+            spread += spreadAcceleration * Time.deltaTime;
+            if (spread > maxSpread)
             {
-                spread = MAX_SPREAD;
+                spread = maxSpread;
             }
         }
     }
@@ -1116,7 +1267,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     {
         if (spread > 0f)
         {
-            spread -= SPREAD_DECELERATION * Time.deltaTime;
+            spread -= spreadDeceleration * Time.deltaTime;
             if (spread < 0f)
             {
                 spread = 0f;
@@ -1151,18 +1302,19 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     void UpdateRecoil(bool increase)
     {
+        float totalRecoil = weaponStats.recoil * (1f - playerActionScript.skillController.recoilBoost) * (1f - playerActionScript.skillController.GetInspireBoost()) * (1f - playerActionScript.skillController.GetFirmGripBoost());
         if (increase)
         {
             // mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(weaponStats.recoil, 0f, 0f);
             // mouseLook.m_FpcCharacterHorizontalTargetRot *= Quaternion.Euler(0f, (Random.Range(0, 2) == 0 ? 1f : -1f) * swayGauge, 0f);
-            mouseLook.SetRecoilInputs(weaponStats.recoil, (Random.Range(0, 2) == 0 ? 1f : -1f) * swayGauge);
+            mouseLook.SetRecoilInputs(totalRecoil, (Random.Range(0, 2) == 0 ? 1f : -1f) * swayGauge);
         }
         else
         {
             if (recoilTime > 0f)
             {
                 // mouseLook.m_FpcCharacterVerticalTargetRot *= Quaternion.Euler(-weaponStats.recoil / weaponStats.recoveryConstant, 0f, 0f);
-                mouseLook.SetRecoilInputs(-weaponStats.recoil / weaponMetaData.recoveryConstant, 0f);
+                mouseLook.SetRecoilInputs(-totalRecoil / weaponMetaData.recoveryConstant, 0f);
             }
         }
     }
@@ -1200,11 +1352,13 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             playerActionScript.weaponSpeedModifier = w.mobility/100f;
             if (playerActionScript.equipmentScript.GetGender() == 'M') {
                 fpc.fpcAnimator.runtimeAnimatorController = ws.maleOverrideController as RuntimeAnimatorController;
+                animator.runtimeAnimatorController = ws.maleOverrideControllerFullBody as RuntimeAnimatorController;
             } else {
                 fpc.fpcAnimator.runtimeAnimatorController = ws.femaleOverrideController as RuntimeAnimatorController;
+                animator.runtimeAnimatorController = ws.femaleOverrideControllerFullBody as RuntimeAnimatorController;
             }
             if (!w.type.Equals("Support")) {
-                SetReloadSpeed();
+                SetReloadSpeed(playerActionScript.skillController.GetReloadSpeedBoostForCurrentWeapon(weaponStats));
                 SetFiringSpeed();
             }
             if (weaponStats.type.Equals("Support")) {
@@ -1212,10 +1366,11 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                     isWieldingThrowable = true;
                     isWieldingBooster = false;
                     isWieldingDeployable = false;
-                } else if (weaponStats.category.Equals("Booster")) {
+                } else if (weaponStats.category.Equals("Booster") || weaponStats.category.Equals("Etc")) {
                     isWieldingThrowable = false;
                     isWieldingBooster = true;
                     isWieldingDeployable = false;
+                    SetFiringSpeed(playerActionScript.skillController.GetFiringSpeedBoostForCurrentWeapon(w));
                 } else if (weaponStats.category.Equals("Deployable")) {
                     isWieldingThrowable = false;
                     isWieldingBooster = false;
@@ -1233,6 +1388,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                 }
             }
 
+            SetFiringSpeedFullBody();
+
             if (pView.IsMine) {
                 hudScript.SetFireMode(w.firingModes == null ? null : firingMode.ToString().ToUpper());
                 hudScript.SetWeaponLabel();
@@ -1240,28 +1397,31 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
     }
 
-    public void SetReloadSpeed(float multipler = 1f) {
-        animatorFpc.SetFloat("ReloadSpeed", weaponMetaData.defaultFpcReloadSpeed * multipler);
-        animatorFpc.SetFloat("DrawSpeed", weaponMetaData.defaultWeaponDrawSpeed * multipler);
-        weaponMetaData.weaponAnimator.SetFloat("ReloadSpeed", weaponMetaData.defaultWeaponReloadSpeed * multipler);
-        weaponMetaData.weaponAnimator.SetFloat("CockingSpeed", weaponMetaData.defaultWeaponCockingSpeed * multipler);
+    public void SetReloadSpeed(float multipler = 0f) {
+        animatorFpc.SetFloat("ReloadSpeed", weaponMetaData.defaultFpcReloadSpeed * (1f + multipler));
+        animatorFpc.SetFloat("DrawSpeed", weaponMetaData.defaultWeaponDrawSpeed * (1f + multipler));
+        weaponMetaData.weaponAnimator.SetFloat("ReloadSpeed", weaponMetaData.defaultWeaponReloadSpeed * (1f + multipler));
+        weaponMetaData.weaponAnimator.SetFloat("CockingSpeed", weaponMetaData.defaultWeaponCockingSpeed);
     }
 
-    public void SetFiringSpeed(float multiplier = 1f) {
-        animatorFpc.SetFloat("FireSpeed", weaponMetaData.defaultFireSpeed * multiplier);
+    public void SetFiringSpeed(float multiplier = 0f) {
+        animatorFpc.SetFloat("FireSpeed", weaponMetaData.defaultFireSpeed + multiplier);
     }
 
-    public void SetMeleeSpeed(float multiplier = 1f) {
-        animatorFpc.SetFloat("MeleeSpeed", meleeMetaData.defaultMeleeSpeed * multiplier);
+    public void SetFiringSpeedFullBody() {
+        animator.SetFloat("FireSpeed", weaponMetaData.defaultFireSpeedFullBody);
     }
 
-    public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity, int maxAmmo) {
+    public void SetMeleeSpeed(float multiplier = 0f) {
+        animatorFpc.SetFloat("MeleeSpeed", meleeMetaData.defaultMeleeSpeed + multiplier);
+    }
+
+    public void ModifyWeaponStats(float damage, float accuracy, float recoil, float range, int clipCapacity) {
         weaponStats.damage += damage;
         weaponStats.accuracy += accuracy;
         weaponStats.recoil += recoil;
         weaponStats.range += range;
         weaponStats.clipCapacity += clipCapacity;
-        weaponStats.maxAmmo += maxAmmo;
     }
 
     public WeaponMeta GetWeaponMeta() {
@@ -1283,17 +1443,17 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
         if (isCockingGrenade) {
             animatorFpc.SetTrigger("isCockingGrenade");
-            pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
             // return;
         }
         if (isCockingGrenade && throwGrenade) {
             animatorFpc.SetTrigger("ThrowGrenade");
+            pView.RPC("RpcUseBooster", RpcTarget.Others);
             throwGrenade = false;
-            pView.RPC("RpcCockGrenade", RpcTarget.Others, isCockingGrenade);
         }
     }
 
     void FireBooster() {
+        if (playerActionScript.fightingSpiritTimer > 0f || playerActionScript.lastStandTimer > 0f) return;
         if (fireTimer < weaponStats.fireRate || hudScript.container.pauseMenuGUI.pauseActive)
         {
             ResetBoosterState();
@@ -1311,7 +1471,31 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             return;
         }
         if (isWieldingBooster && PlayerPreferences.playerPreferences.KeyWasPressed("Fire")) {
-            pView.RPC("RpcUseBooster", RpcTarget.All);
+            pView.RPC("RpcUseBooster", RpcTarget.Others);
+            animatorFpc.SetTrigger("UseBooster");
+            isUsingBooster = true;
+        }
+    }
+
+    void FireEtc()
+    {
+        if (fireTimer < weaponStats.fireRate || hudScript.container.pauseMenuGUI.pauseActive)
+        {
+            ResetBoosterState();
+            return;
+        }
+        if (currentAmmo == 0) {
+            if (playerActionScript.weaponScript.currentlyEquippedType == -2 || playerActionScript.weaponScript.currentlyEquippedType == -3) {
+                return;
+            }
+            ReloadSupportItem();
+        }
+        if (currentAmmo <= 0) {
+            ResetBoosterState();
+            return;
+        }
+        if (isWieldingBooster && PlayerPreferences.playerPreferences.KeyWasPressed("Fire")) {
+            pView.RPC("RpcUseBooster", RpcTarget.Others);
             animatorFpc.SetTrigger("UseBooster");
             isUsingBooster = true;
         }
@@ -1324,6 +1508,9 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             return;
         }
         if (currentAmmo == 0) {
+            if (playerActionScript.weaponScript.currentlyEquippedType == -1) {
+                return;
+            }
             ReloadSupportItem();
         }
         if (currentAmmo <= 0) {
@@ -1334,7 +1521,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         if (isWieldingDeployable) {
             if (shootInput && !meleeInput && !isMeleeing && !isUsingDeployable) {
                 // Charge up deploy gauge
-                deployTimer += (Time.deltaTime / DEPLOY_BASE_TIME);
+                deployTimer += (Time.deltaTime / ((1f - playerActionScript.skillController.deploymentTimeBoost) * DEPLOY_BASE_TIME));
                 if (!deployInProgress) {
                     InstantiateDeployPlanMesh();
                     hudScript.ToggleActionBar(true, "DEPLOYING...");
@@ -1351,7 +1538,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                         deployRot = deployPlanMesh.gameObject.transform.rotation;
                         isUsingDeployable = true;
                         deployInProgress = false;
-                        pView.RPC("RpcUseDeployable", RpcTarget.All);
+                        pView.RPC("RpcUseDeployable", RpcTarget.Others);
                         UseDeployable();
                         if (currentAmmo <= 0) {
                             playerActionScript.weaponScript.HideWeapon(true);
@@ -1384,7 +1571,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             if (PhotonNetwork.AllocateViewID(thisPView))
             {
                 projectile.transform.forward = weaponHolderFpc.transform.forward;
-                projectile.GetComponent<ThrowableScript>().Launch(pView.ViewID, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z);
+                projectile.GetComponent<ThrowableScript>().Launch(pView.ViewID, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, 1f + playerActionScript.skillController.throwForceBoost);
                 currentAmmo--;
                 playerActionScript.weaponScript.SyncAmmoCounts();
                 fireTimer = 0.0f;
@@ -1398,15 +1585,35 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         } else if (weaponStats.category.Equals("Booster")) {
             // Reset fire timer and subtract ammo used
             BoosterScript boosterScript = weaponMetaData.GetComponentInChildren<BoosterScript>();
-            boosterScript.UseBoosterItem(weaponStats.name);
+            boosterScript.UseBoosterItem(weaponStats.name, playerActionScript);
             currentAmmo--;
             playerActionScript.weaponScript.SyncAmmoCounts();
             fireTimer = 0.0f;
         } else if (weaponStats.category.Equals("Deployable")) {
-            DeployDeployable(deployPos, deployRot);
-            currentAmmo--;
-            playerActionScript.weaponScript.SyncAmmoCounts();
-            fireTimer = 0.0f;
+            if (weaponStats.name.EndsWith("(Skill)")) {
+                DeployDeployable(deployPos, deployRot, true);
+                currentAmmo--;
+                // ResetDeployableState();
+                playerActionScript.weaponScript.DrawPrimary();
+                playerActionScript.skillController.ActivateBubbleShield();
+            } else {
+                DeployDeployable(deployPos, deployRot, false);
+                currentAmmo--;
+                playerActionScript.weaponScript.SyncAmmoCounts();
+                fireTimer = 0.0f;
+            }
+        } else if (weaponStats.category.Equals("Etc")) {
+            if (weaponStats.name.EndsWith("(Skill)")) {
+                PhoneDeviceScript p = weaponMetaData.GetComponentInChildren<PhoneDeviceScript>();
+                p.UseDevice(playerActionScript);
+                if (playerActionScript.weaponScript.currentlyEquippedType == -2) {
+                    playerActionScript.skillController.ActivateEcmFeedback();
+                } else if (playerActionScript.weaponScript.currentlyEquippedType == -3) {
+                    playerActionScript.skillController.ActivateInfraredScan();
+                }
+                currentAmmo--;
+                playerActionScript.weaponScript.DrawPrimary();
+            }
         }
     }
 
@@ -1436,7 +1643,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         PhotonView photonView = projectile.GetComponent<PhotonView>();
         object[] data = new object[]
         {
-            InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, weaponHolderFpc.transform.position.x, weaponHolderFpc.transform.position.y, weaponHolderFpc.transform.position.z, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, photonView.ViewID, playerActionScript.gameController.teamMap, pView.ViewID
+            InventoryScript.itemData.weaponCatalog[weaponStats.name].projectilePath, weaponHolderFpc.transform.position.x, weaponHolderFpc.transform.position.y, weaponHolderFpc.transform.position.z, camTransform.forward.x, camTransform.forward.y, camTransform.forward.z, photonView.ViewID, playerActionScript.gameController.teamMap, pView.ViewID, (1f + playerActionScript.skillController.throwForceBoost)
         };
 
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions
@@ -1521,7 +1728,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             Debug.Log("Spawned throwable projectile " + projectile.gameObject.name + " with view ID " + photonView.ViewID);
 
             projectile.transform.forward = forward;
-            projectile.GetComponent<ThrowableScript>().Launch((int) data[7], forward.x, forward.y, forward.z);
+            projectile.GetComponent<ThrowableScript>().Launch((int) data[7], forward.x, forward.y, forward.z, 1f + (float)data[10]);
             currentAmmo--;
             playerActionScript.weaponScript.SyncAmmoCounts();
             fireTimer = 0.0f;
@@ -1608,24 +1815,28 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         animatorFpc.ResetTrigger("UseDeployable");
     }
 
+    public void CockGrenadeAnim()
+    {
+        pView.RPC("RpcCockGrenade", RpcTarget.Others);
+    }
+
     [PunRPC]
-    void RpcCockGrenade(bool cocking) {
+    void RpcCockGrenade() {
         if (gameObject.layer == 0) return;
         //GetComponentInChildren<ThrowableScript>().PlayPinSound();
-        animator.SetBool("isCockingGrenade", cocking);
+        animator.SetTrigger("Cock");
     }
 
     [PunRPC]
     void RpcUseBooster() {
         if (gameObject.layer == 0) return;
-        animator.SetTrigger("useBooster");
+        animator.SetTrigger("Fire");
     }
 
     [PunRPC]
     void RpcUseDeployable() {
         if (gameObject.layer == 0) return;
-        // TODO: This needs to be changed later to a different animation
-        animator.SetTrigger("useBooster");
+        animator.SetTrigger("Fire");
     }
 
     void UseDeployable() {
@@ -1635,7 +1846,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
     }
 
     bool CanInitiateReload() {
-        if (!playerActionScript.fpc.m_IsRunning && !fpc.GetIsSwimming() && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && !IsPumpActionCocking() && !IsBoltActionCocking() && !isDrawing && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
+        if ((!playerActionScript.fpc.m_IsRunning || (playerActionScript.fpc.m_IsRunning && playerActionScript.skillController.HasRunNGun())) && !fpc.GetIsSwimming() && currentAmmo < weaponStats.clipCapacity && totalAmmoLeft > 0 && !IsPumpActionCocking() && !IsBoltActionCocking() && !isDrawing && !isReloading && (playerActionScript.weaponScript.currentlyEquippedType == 1 || playerActionScript.weaponScript.currentlyEquippedType == 2)) {
             return true;
         }
         return false;
@@ -1681,19 +1892,33 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
     }
 
-    public void DeployDeployable(Vector3 pos, Quaternion rot) {
+    public void DeployDeployable(Vector3 pos, Quaternion rot, bool fromSkill) {
         GameObject o = GameObject.Instantiate(weaponMetaData.deployRef, pos, rot);
         DeployableScript d = o.GetComponent<DeployableScript>();
-        int dId = d.InstantiateDeployable();
+        int skillBoost = 0;
+        if (fromSkill) {
+            skillBoost = PlayerData.playerdata.skillList["2/11"].Level;
+        } else {
+            if (PlayerData.playerdata.skillList["4/0"].Level == 1) {
+                skillBoost = 1;
+            } else if (PlayerData.playerdata.skillList["4/0"].Level == 2) {
+                skillBoost = 2;
+            } else if (PlayerData.playerdata.skillList["4/0"].Level == 3) {
+                skillBoost = 3;
+            }
+        }
+        int dId = d.InstantiateDeployable(skillBoost);
 		playerActionScript.gameController.DeployDeployable(dId, o);
-		pView.RPC("RpcDeployDeployable", RpcTarget.Others, dId, playerActionScript.gameController.teamMap, pos.x, pos.y, pos.z, rot.eulerAngles.x, rot.eulerAngles.y, rot.eulerAngles.z);
+		pView.RPC("RpcDeployDeployable", RpcTarget.Others, dId, skillBoost, playerActionScript.gameController.teamMap, pos.x, pos.y, pos.z, rot.eulerAngles.x, rot.eulerAngles.y, rot.eulerAngles.z);
     }
 
     [PunRPC]
-    public void RpcDeployDeployable(int deployableId, string team, float posX, float posY, float posZ, float rotX, float rotY, float rotZ) {
+    public void RpcDeployDeployable(int deployableId, int skillBoost, string team, float posX, float posY, float posZ, float rotX, float rotY, float rotZ) {
         if (team != playerActionScript.gameController.teamMap) return;
 		GameObject o = GameObject.Instantiate(weaponMetaData.deployRef, new Vector3(posX, posY, posZ), Quaternion.Euler(rotX, rotY, rotZ));
-		o.GetComponent<DeployableScript>().deployableId = deployableId;
+        DeployableScript d = o.GetComponent<DeployableScript>();
+		d.deployableId = deployableId;
+        d.InstantiateDeployable(skillBoost);
 		playerActionScript.gameController.DeployDeployable(deployableId, o);
     }
 
@@ -1716,6 +1941,16 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
         float maxDropoffAmount = damage / 3f;
         return (int)(((distance - sustainRange) / dropoffRange) * maxDropoffAmount);
+    }
+
+    bool DetermineAmmoDeductSkip()
+    {
+        if (playerActionScript.skillController.GetSnipersDelBoost() && weaponStats.category == "Sniper Rifle") {
+            return true;
+        } else if (playerActionScript.skillController.GetBulletStreamBoost() && weaponStats.category != "Sniper Rifle") {
+            return true;
+        }
+        return false;
     }
 
 }

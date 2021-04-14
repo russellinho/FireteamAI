@@ -13,6 +13,8 @@ public class HUDContainer : MonoBehaviour {
 	public TextMeshProUGUI healthPercentTxt;
 	public TextMeshProUGUI staminaPercentTxt;
 	public Slider healthBar;
+	public Slider overshieldBar;
+	public Image overshieldBarColor;
 	public Slider staminaBar;
 	public Image flashbangOverlay;
 	public RawImage flashbangScreenCap;
@@ -56,6 +58,7 @@ public class HUDContainer : MonoBehaviour {
 	public GameObject hudPlayerMarker;
 
 	// On-screen indication HUD
+	public GameObject proceduralInfoText;
 	public GameObject objectivesTextParent;
 	public GameObject objectiveTextEntry;
 	public TextMeshProUGUI[] objectivesText;
@@ -99,8 +102,14 @@ public class HUDContainer : MonoBehaviour {
 	public VoiceCommandScript[] reportCommands;
 	public VoiceCommandScript[] tacticalCommands;
 	public VoiceCommandScript[] supportCommands;
+	public GameObject skillPanel;
+	public GameObject[] skills;
+	public GameObject revivePlayerPanel;
+	public GameObject[] revivePlayerSlots;
 	public GameObject acceptPlayerTemplate;
 	public Transform acceptPlayerSlots;
+	public GameObject activeSkillPrefab;
+	public Transform activeSkillContainer;
 
     // Versus mode HUD
     public GameObject redScore;

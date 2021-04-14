@@ -12,6 +12,12 @@ using AlertStatus = BetaEnemyScript.AlertStatus;
 
 public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private const float COMMAND_DELAY = 0.5f;
+	private const float OVERSHIELD_NORMAL_R = 255f;
+	private const float OVERSHIELD_NORMAL_G = 150f;
+	private const float OVERSHIELD_NORMAL_B = 0f;
+	private const float OVERSHIELD_WARNING_R = 120f;
+	private const float OVERSHIELD_WARNING_G = 0f;
+	private const float OVERSHIELD_WARNING_B = 0f;
 	// HUD object reference
 	public HUDContainer container;
 	public InGameMessengerHUD inGameMessenger;
@@ -31,9 +37,15 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	private ArrayList missionWaypoints;
 	private Dictionary<int, GameObject> playerMarkers = new Dictionary<int, GameObject> ();
 	private Dictionary<int, AlertMarker> enemyMarkers = new Dictionary<int, AlertMarker> ();
+	private Dictionary<string, ActiveSkill> activeSkills = new Dictionary<string, ActiveSkill>();
 
 	// Other vars
+	public bool overshieldFlashActive;
+	private float overshieldFlashTimer;
+	private bool overshieldFlashDirection;
 	public float commandDelay;
+	public float skillDelay;
+	public float guardianAngelDelay;
 	private float killPopupTimer;
 	private bool popupIsStarting;
 	private bool roundStartFadeIn;
@@ -111,6 +123,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		screenGrab = false;
 		enemyMarkersCleared = false;
 
+		UpdateSkills();
 		LoadHUDForMission ();
 		StartMatchCameraFade ();
 		StartCoroutine("UpdatePlayerMarkers");
@@ -249,8 +262,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 		HandleVoiceChat();
 		HandleVoiceCommands();
+		HandleSkills();
+		HandleGuardianAngel();
 		UpdateVoteUI();
 		UpdateHealth();
+		
 		if (container.staminaGroup.alpha == 1f) {
 			float f = (playerActionScript.sprintTime / playerActionScript.playerScript.stamina);
 			container.staminaBar.value = f;
@@ -268,7 +284,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 		UpdateHitmarker ();
 
-		container.ammoTxt.textObject.text = "" + wepActionScript.currentAmmo + '/' + wepActionScript.totalAmmoLeft;
+		container.ammoTxt.textObject.text = "" + wepActionScript.currentAmmo + "/" + wepActionScript.totalAmmoLeft;
 		
 		UpdateCursorStatus ();
 		if (gameController.matchType == 'V') {
@@ -291,7 +307,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		FlashbangUpdate();
 		UpdateDetectedText();
 		UpdateCarryingText();
-
+		UpdateOvershield();
+		UpdateOvershieldWarning();
     }
 
 	void FixedUpdate() {
@@ -817,6 +834,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				GameObject marker = GameObject.Instantiate (container.hudPlayerMarker);
 				PlayerMarkerScript pms = marker.GetComponent<PlayerMarkerScript>();
 				pms.nametagRef.text = p.GetComponent<PhotonView> ().Owner.NickName;
+				pms.classIndicator.text = stat.className;
 				pms.rankInsigniaRef.texture = PlayerData.playerdata.GetRankInsigniaForRank(PlayerData.playerdata.GetRankFromExp(stat.exp).name);
 				marker.GetComponent<RectTransform> ().SetParent (container.playerMarkers.transform);
 				marker.SetActive(false);
@@ -828,17 +846,25 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				if (renderCheck <= 0)
 					continue;
 				// If the player is alive and on camera, then render the player name and health bar
-				if (p.GetComponent<PlayerActionScript>().health > 0)
+				PlayerActionScript pa = p.GetComponent<PlayerActionScript>();
+				PlayerMarkerScript pm = playerMarkers[actorNo].GetComponent<PlayerMarkerScript>();
+				if (pa.health > 0 || pa.fightingSpiritTimer > 0f || pa.lastStandTimer > 0f)
 				{
 					playerMarkers [actorNo].SetActive (true);
-					playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().healthbarRef.value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
+					pm.healthbarRef.value = (((float)pa.health) / 100.0f);
 					Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + HEIGHT_OFFSET, p.transform.position.z);
 					RectTransform playerMarkerTrans = playerMarkers[actorNo].GetComponent<RectTransform>();
 					Vector3 destPoint = playerActionScript.viewCam.WorldToScreenPoint(o);
 					Vector3 startPoint = playerMarkerTrans.position;
 					playerMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
+					// Toggle revive indicator
+					if (pa.lastStandTimer > 0f) {
+						pm.reviveIndicator.SetActive(true);
+					} else {
+						pm.reviveIndicator.SetActive(false);
+					}
 				}
-				if (playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().nametagRef.enabled && p.GetComponent<PlayerActionScript>().health <= 0)
+				if (pm.nametagRef.enabled && pa.health <= 0 && pa.fightingSpiritTimer <= 0f && pa.lastStandTimer <= 0f)
 				{
 					playerMarkers [actorNo].SetActive (false);
 				}
@@ -847,17 +873,25 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				if (renderCheck <= 0)
 					continue;
 				// If the player is alive and on camera, then render the player name and health bar
-				if (p.GetComponent<PlayerActionScript>().health > 0)
+				PlayerActionScript pa = p.GetComponent<PlayerActionScript>();
+				PlayerMarkerScript pm = playerMarkers[actorNo].GetComponent<PlayerMarkerScript>();
+				if (pa.health > 0 || pa.fightingSpiritTimer > 0f || pa.lastStandTimer > 0f)
 				{
 					playerMarkers [actorNo].SetActive (true);
-					playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().healthbarRef.value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
+					pm.healthbarRef.value = (((float)p.GetComponent<PlayerActionScript>().health) / 100.0f);
 					Vector3 o = new Vector3(p.transform.position.x, p.transform.position.y + HEIGHT_OFFSET, p.transform.position.z);
 					RectTransform playerMarkerTrans = playerMarkers[actorNo].GetComponent<RectTransform>();
 					Vector3 destPoint = playerActionScript.thisSpectatorCam.GetComponent<Camera>().WorldToScreenPoint(o);
 					Vector3 startPoint = playerMarkerTrans.position;
 					playerMarkerTrans.position = Vector3.Slerp(startPoint, destPoint, Time.deltaTime * 20f);
+					// Toggle revive indicator
+					if (pa.lastStandTimer > 0f) {
+						pm.reviveIndicator.SetActive(true);
+					} else {
+						pm.reviveIndicator.SetActive(false);
+					}
 				}
-				if (playerMarkers[actorNo].GetComponent<PlayerMarkerScript>().nametagRef.enabled && p.GetComponent<PlayerActionScript>().health <= 0)
+				if (pm.nametagRef.enabled && pa.health <= 0 && pa.fightingSpiritTimer <= 0f && pa.lastStandTimer <= 0f)
 				{
 					playerMarkers [actorNo].SetActive (false);
 				}
@@ -988,17 +1022,21 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 			// Enable hit flare
 			container.hitFlare.GetComponent<RawImage> ().enabled = true;
-			// Vector3 hitDirectionVector = transform.position - playerActionScript.hitLocation;
-			Vector3 hitDirectionVector = playerActionScript.hitLocation - transform.position;
-			float a = Vector3.Angle (playerActionScript.viewCam.gameObject.transform.forward, hitDirectionVector);
-			float dir = GetAngleSide(playerActionScript.viewCam.gameObject.transform.forward, hitDirectionVector, playerActionScript.viewCam.gameObject.transform.up);
-			if (dir == 1) {
-				a = 360f - a;
+			// Vector3 hitDirectionVector = transform.position - playerActionScript.lastHitFromPos;
+			if (!playerActionScript.skipHitDir) {
+				Vector3 hitDirectionVector = playerActionScript.lastHitFromPos - transform.position;
+				float a = Vector3.Angle (playerActionScript.viewCam.gameObject.transform.forward, hitDirectionVector);
+				float dir = GetAngleSide(playerActionScript.viewCam.gameObject.transform.forward, hitDirectionVector, playerActionScript.viewCam.gameObject.transform.up);
+				if (dir == 1) {
+					a = 360f - a;
+				}
+				// Debug.Log(a);
+				Vector3 temp = container.hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
+				container.hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(0f,0f,a));
+				container.hitDir.GetComponent<RawImage> ().enabled = true;
+			} else {
+				container.hitDir.GetComponent<RawImage> ().enabled = false;
 			}
-			// Debug.Log(a);
-			Vector3 temp = container.hitDir.GetComponent<RectTransform> ().rotation.eulerAngles;
-			container.hitDir.GetComponent<RectTransform> ().rotation = Quaternion.Euler (new Vector3(0f,0f,a));
-			container.hitDir.GetComponent<RawImage> ().enabled = true;
 			playerActionScript.hitTimer += Time.deltaTime;
 		} else {
 			container.hitFlare.GetComponent<RawImage> ().enabled = false;
@@ -1029,6 +1067,12 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 	}
 
+	public void ToggleWeaponLabel(bool b)
+	{
+		container.ammoTxt.gameObject.SetActive(b);
+		container.weaponLabelTxt.gameObject.SetActive(b);
+	}
+
 	public void ToggleHUD(bool b)
     {
 		if (b && container.timeGroup.activeInHierarchy) {
@@ -1052,7 +1096,7 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	public void ToggleScoreboard(bool b)
     {
-		if (playerActionScript.health <= 0) {
+		if (playerActionScript.health <= 0 && playerActionScript.fightingSpiritTimer <= 0f && playerActionScript.lastStandTimer <= 0f) {
 			container.healthGroup.alpha = 0f;
 			container.staminaGroup.alpha = 0f;
 			container.weaponLabelTxt.gameObject.SetActive(false);
@@ -1079,6 +1123,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
     void Pause()
     {
 		container.voiceCommandsPanel.SetActive(false);
+		container.skillPanel.SetActive(false);
+		container.revivePlayerPanel.SetActive(false);
         if (!container.pauseMenuManager.pauseActive)
         {
             container.pauseMenuManager.OpenPause();
@@ -1474,9 +1520,51 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		return container.pauseMenuGUI.pauseActive;
 	}
 
-	public void UpdateHealth() {
+	void UpdateHealth() {
 		container.healthBar.value = playerActionScript.health / 100f;
 		container.healthPercentTxt.text = playerActionScript.health + "%";
+	}
+
+	void UpdateOvershield() {
+		container.overshieldBar.value = playerActionScript.overshield / 100f;
+	}
+
+	public void ToggleOvershieldWarningFlash(bool b)
+	{
+		if (b) {
+			overshieldFlashActive = true;
+		} else {
+			overshieldFlashActive = false;
+			container.overshieldBarColor.color = new Color(OVERSHIELD_NORMAL_R / 255f, OVERSHIELD_NORMAL_G / 255f, OVERSHIELD_NORMAL_B / 255f, 1f);
+		}
+		overshieldFlashTimer = 0f;
+		overshieldFlashDirection = false;
+	}
+
+	void UpdateOvershieldWarning()
+	{
+		// Oscillate between normal color and warning color
+		if (overshieldFlashActive) {
+			// Go from normal to warning
+			if (!overshieldFlashDirection) {
+				// Switches back to going back to normal when it reaches the end
+				overshieldFlashTimer += Time.deltaTime;
+				if (overshieldFlashTimer >= 1f) {
+					overshieldFlashTimer = 1f;
+					overshieldFlashDirection = true;
+				}
+			} else {
+				// Go from warning to normal
+				// Switches back to going back to warning when it reaches the end
+				overshieldFlashTimer -= Time.deltaTime;
+				if (overshieldFlashTimer <= 0f) {
+					overshieldFlashTimer = 0f;
+					overshieldFlashDirection = false;
+				}
+			}
+			Vector3 newColor = Vector3.Lerp(new Vector3(OVERSHIELD_NORMAL_R, OVERSHIELD_NORMAL_G, OVERSHIELD_NORMAL_B), new Vector3(OVERSHIELD_WARNING_R, OVERSHIELD_WARNING_G, OVERSHIELD_WARNING_B), overshieldFlashTimer);
+			container.overshieldBarColor.color = new Color(newColor.x / 255f, newColor.y / 255f, newColor.z / 255f, 1f);
+		}
 	}
 
 	void InitHealth() {
@@ -1601,6 +1689,24 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 	{
 		if (container.pauseMenuManager.pauseActive) return false;
 		if (!container.voiceCommandsPanel.activeInHierarchy) return false;
+		if (playerActionScript.health <= 0 && playerActionScript.fightingSpiritTimer <= 0f && playerActionScript.lastStandTimer <= 0f) return false;
+		if (gameController.gameOver) return false;
+		return true;
+	}
+
+	bool CanActivateSkill()
+	{
+		if (container.pauseMenuManager.pauseActive) return false;
+		if (!container.skillPanel.activeInHierarchy) return false;
+		if (playerActionScript.health <= 0) return false;
+		if (gameController.gameOver) return false;
+		return true;
+	}
+
+	bool CanCallGuardianAngel()
+	{
+		if (container.pauseMenuManager.pauseActive) return false;
+		if (!container.revivePlayerPanel.activeInHierarchy) return false;
 		if (playerActionScript.health <= 0) return false;
 		if (gameController.gameOver) return false;
 		return true;
@@ -1628,8 +1734,196 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 
 	bool CanUseVoiceCommands()
 	{
-		if (playerActionScript.health <= 0 || container.inGameMessenger.inputText.enabled) return false;
+		if ((playerActionScript.health <= 0 && playerActionScript.fightingSpiritTimer <= 0f && playerActionScript.lastStandTimer <= 0f) || container.inGameMessenger.inputText.enabled || PauseIsActive()) return false;
 		return true;
+	}
+
+	public void ActivateGuardianAngel()
+	{
+		for (int j = 0; j < container.revivePlayerSlots.Length; j++) {
+			container.revivePlayerSlots[j].SetActive(false);
+		}
+		int i = 1;
+		foreach (KeyValuePair<int, PlayerStat> p in GameControllerScript.playerList) {
+			if (i <= 8) {
+				PlayerStat pDetails = p.Value;
+				if (pDetails.objRef != null) {
+					PlayerActionScript pa = pDetails.objRef.GetComponent<PlayerActionScript>();
+					if (pa.health <= 0 && pa.fightingSpiritTimer <= 0f && pa.lastStandTimer <= 0f) {
+						container.revivePlayerSlots[i - 1].SetActive(true);
+						container.revivePlayerSlots[i - 1].GetComponent<TextMeshProUGUI>().text = (i + ": " + pDetails.name);
+						container.revivePlayerSlots[i - 1].GetComponentInChildren<Text>(true).text = (""+p.Key);
+						i++;
+					}
+				}
+			}
+		}
+		container.revivePlayerPanel.SetActive(true);
+	}
+
+	void HandleGuardianAngel()
+	{
+		if (guardianAngelDelay > 0f) {
+			guardianAngelDelay -= Time.deltaTime;
+			return;
+		}
+		if (!CanUseVoiceCommands()) {
+			container.revivePlayerPanel.SetActive(false);
+			return;
+		}
+		// Reviving players
+		if (container.revivePlayerPanel.activeInHierarchy) {
+			if (Input.GetKeyDown(KeyCode.Alpha1)) {
+				if (container.revivePlayerSlots[0].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[0].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+				if (container.revivePlayerSlots[1].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[1].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+				if (container.revivePlayerSlots[2].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[2].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+				if (container.revivePlayerSlots[3].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[3].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha5)) {
+				if (container.revivePlayerSlots[4].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[4].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha6)) {
+				if (container.revivePlayerSlots[5].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[5].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha7)) {
+				if (container.revivePlayerSlots[6].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[6].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha8)) {
+				if (container.revivePlayerSlots[7].activeInHierarchy) {
+					if (CanCallGuardianAngel()) {
+						playerActionScript.CallGuardianAngel(int.Parse(container.revivePlayerSlots[7].GetComponentInChildren<Text>(true).text));
+					}
+					container.revivePlayerPanel.SetActive(false);
+					guardianAngelDelay = COMMAND_DELAY;
+				}
+			} else if (Input.GetKeyDown(KeyCode.Alpha0)) {
+				container.revivePlayerPanel.SetActive(false);
+				guardianAngelDelay = COMMAND_DELAY;
+			}
+		}
+	}
+
+	void HandleSkills()
+	{
+		if (skillDelay > 0f) {
+			skillDelay -= Time.deltaTime;
+			return;
+		}
+		if (!CanUseVoiceCommands()) {
+			container.skillPanel.SetActive(false);
+			return;
+		}
+		// Open/closing menu
+		if (PlayerPreferences.playerPreferences.KeyWasPressed("Skills")) {
+			container.voiceCommandsPanel.SetActive(false);
+			container.revivePlayerPanel.SetActive(false);
+			if (!container.skillPanel.activeInHierarchy) {
+				UpdateSkills();
+				container.skillPanel.SetActive(true);
+			} else {
+				container.skillPanel.SetActive(false);
+			}
+		}
+
+		// Activating skills
+		if (container.skillPanel.activeInHierarchy) {
+			if (Input.GetKeyDown(KeyCode.Alpha1)) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(1)) {
+					playerActionScript.ActivateSkill(1);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(2)) {
+					playerActionScript.ActivateSkill(2);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(3)) {
+					playerActionScript.ActivateSkill(3);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(4)) {
+					playerActionScript.ActivateSkill(4);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha5)) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(5)) {
+					playerActionScript.ActivateSkill(5);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha6)) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(6)) {
+					playerActionScript.ActivateSkill(6);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha7)) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(7)) {
+					playerActionScript.ActivateSkill(7);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha8)) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(8)) {
+					playerActionScript.ActivateSkill(8);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			} else if (Input.GetKeyDown(KeyCode.Alpha9)) {
+				if (CanActivateSkill() && playerActionScript.skillController.SkillIsAvailable(9)) {
+					playerActionScript.ActivateSkill(9);
+				}
+				container.skillPanel.SetActive(false);
+				skillDelay = COMMAND_DELAY;
+			}
+		}
 	}
 
 	void HandleVoiceCommands()
@@ -1644,6 +1938,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		}
 		// Open/closing menu
 		if (PlayerPreferences.playerPreferences.KeyWasPressed("VCReport")) {
+			container.skillPanel.SetActive(false);
+			container.revivePlayerPanel.SetActive(false);
 			if (!container.voiceCommandsPanel.activeInHierarchy) {
 				container.voiceCommandsReport.SetActive(true);
 				container.voiceCommandsSocial.SetActive(false);
@@ -1659,6 +1955,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		} else if (PlayerPreferences.playerPreferences.KeyWasPressed("VCTactical")) {
+			container.skillPanel.SetActive(false);
+			container.revivePlayerPanel.SetActive(false);
 			if (!container.voiceCommandsPanel.activeInHierarchy) {
 				container.voiceCommandsReport.SetActive(false);
 				container.voiceCommandsSocial.SetActive(false);
@@ -1674,6 +1972,8 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 				}
 			}
 		} else if (PlayerPreferences.playerPreferences.KeyWasPressed("VCSocial")) {
+			container.skillPanel.SetActive(false);
+			container.revivePlayerPanel.SetActive(false);
 			if (!container.voiceCommandsPanel.activeInHierarchy) {
 				container.voiceCommandsReport.SetActive(false);
 				container.voiceCommandsSocial.SetActive(true);
@@ -1792,6 +2092,70 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		RectTransform[] j = container.acceptPlayerSlots.GetComponentsInChildren<RectTransform>();
 		if (j.Length > 1) {
 			GameObject.Destroy(j[1].gameObject);
+		}
+	}
+
+	void UpdateSkills()
+	{
+		int i = 1;
+		foreach (GameObject s in container.skills) {
+			if (!playerActionScript.skillController.HasSkill(i)) {
+				s.SetActive(false);
+			} else {
+				s.SetActive(true);
+				if (playerActionScript.skillController.SkillIsAvailable(i)) {
+					s.GetComponentsInChildren<Transform>(true)[1].gameObject.SetActive(false);
+				} else {
+					s.GetComponentsInChildren<Transform>(true)[1].gameObject.SetActive(true);
+				}
+			}
+			i++;
+		}
+	}
+
+	public void SetProceduralInfo(string s)
+	{
+		if (s == null) {
+			container.proceduralInfoText.SetActive(false);
+		} else {
+			container.proceduralInfoText.GetComponent<TextMeshProUGUI>().text = s;
+			container.proceduralInfoText.SetActive(true);
+		}
+	}
+
+	public void AddActiveSkill(string skillHash, float t)
+	{
+		if (playerActionScript.health <= 0f) return;
+		if (activeSkills.ContainsKey(skillHash)) {
+			if (activeSkills[skillHash] == null) {
+				GameObject o = Instantiate(container.activeSkillPrefab, container.activeSkillContainer);
+				o.transform.localPosition = Vector3.zero;
+				ActiveSkill a = o.GetComponent<ActiveSkill>();
+				a.Initialize(Resources.Load("Sprites/Insignias/Skills/" + skillHash) as Texture, t);
+				activeSkills[skillHash] = a;
+			}
+		} else {
+			GameObject o = Instantiate(container.activeSkillPrefab, container.activeSkillContainer);
+			o.transform.localPosition = Vector3.zero;
+			ActiveSkill a = o.GetComponent<ActiveSkill>();
+			a.Initialize(Resources.Load("Sprites/Insignias/Skills/" + skillHash) as Texture, t);
+			activeSkills.Add(skillHash, a);
+		}
+	}
+
+	public void RemoveActiveSkill(string skillHash)
+	{
+		if (activeSkills.ContainsKey(skillHash)) {
+			activeSkills[skillHash].ExpireSkill();
+		}
+	}
+
+	public void ClearAllSkills()
+	{
+		foreach (KeyValuePair<string, ActiveSkill> p in activeSkills) {
+			if (p.Value != null) {
+				p.Value.ExpireSkill();
+			}
 		}
 	}
 

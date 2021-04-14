@@ -13,11 +13,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
     [RequireComponent(typeof (AudioSource))]
     public class FirstPersonController : MonoBehaviour
     {
+        private const float MAX_JETPACK_BOOST_TIME = 1.5f;
+        private const float JETPACK_DELAY = 0.2f;
         [SerializeField] public bool m_IsWalking;
         [SerializeField] public bool m_IsCrouching;
     	[SerializeField] public bool m_IsRunning;
         [SerializeField] public bool m_IsMoving;
-        private EncryptedBool m_IsSwimming;
+        private bool m_IsIncapacitated;
+        private bool m_IsSwimming;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
         [SerializeField] private EncryptedFloat m_JumpSpeed;
         private float m_SwimGravity = 3f;
@@ -69,6 +72,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private int networkDelay = 5;
         private int networkDelayCount = 0;
         private bool meleeSlowActive;
+        // Time after initial jump you must wait before using the booster
+        private float jetpackBoostDelay;
+        // Holds the time you've been using the boost for. Can't go past max time
+        private float jetpackBoostTimer;
 
         private bool initialized;
 
@@ -112,7 +119,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             //RotateView();
             // the jump state needs to read here to make sure it is not missed
-			if (!m_Jump && canMove && !playerActionScript.hud.container.pauseMenuGUI.pauseActive && IsFullyMobile())
+			if (!m_Jump && canMove && !playerActionScript.hud.container.pauseMenuGUI.pauseActive && IsFullyMobile() && playerActionScript.lastStandTimer <= 0f)
             {
                 m_Jump = PlayerPreferences.playerPreferences.KeyWasPressed("Jump");
             }
@@ -308,6 +315,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 // Ground physics
                 if (m_CharacterController.isGrounded)
                 {
+                    playerActionScript.ToggleJetpackParticleEffect(false);
+                    playerActionScript.hud.RemoveActiveSkill("213");
                     m_MoveDir.y = -m_StickToGroundForce;
 
                     if (m_Jump)
@@ -319,18 +328,30 @@ namespace UnityStandardAssets.Characters.FirstPerson
                         }
                         else
                         {
-                            m_MoveDir.y = m_JumpSpeed;
+                            m_MoveDir.y = m_JumpSpeed * (1f + playerActionScript.skillController.GetJumpBoost());
                             PlayJumpSound();
                             m_Jumping = true;
                             // animator.SetTrigger("Jump");
                             TriggerJumpInAnimator();
+                            jetpackBoostTimer = MAX_JETPACK_BOOST_TIME;
+                            jetpackBoostDelay = JETPACK_DELAY;
                         }
                         m_Jump = false;
                     }
                 }
                 else
                 {
-                    m_MoveDir += Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime;
+                    jetpackBoostDelay -= Time.fixedDeltaTime;
+                    if (playerActionScript.skillController.HasJetpackBoost() && jetpackBoostDelay <= 0f && jetpackBoostTimer > 0f && PlayerPreferences.playerPreferences.KeyWasPressed("Jump", true)) {
+                        playerActionScript.ToggleJetpackParticleEffect(true);
+                        playerActionScript.hud.AddActiveSkill("213", 0f);
+                        m_MoveDir -= Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime/2f;
+                        jetpackBoostTimer -= Time.fixedDeltaTime;
+                    } else {
+                        playerActionScript.ToggleJetpackParticleEffect(false);
+                        playerActionScript.hud.RemoveActiveSkill("213");
+                        m_MoveDir += Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime;
+                    }
                 }
             }
             
@@ -505,7 +526,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             //     weaponActionScript = GetComponent<WeaponActionScript>();
             // }
 			if (weaponActionScript != null && (weaponActionScript.isAiming && weaponActionScript.weaponMetaData.steadyAim)) {
-				if (!m_IsCrouching && !m_IsSwimming) {
+				if (!m_IsCrouching && !m_IsSwimming && !m_IsIncapacitated) {
 					m_IsWalking = true;
 					m_IsRunning = false;
 				} else {
@@ -514,10 +535,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				}
 			} else {
 				if (!m_IsCrouching && m_CharacterController.isGrounded) {
-					if (!m_IsSwimming && PlayerPreferences.playerPreferences.KeyWasPressed("Walk", true)) {
+					if (!m_IsSwimming && !m_IsIncapacitated && PlayerPreferences.playerPreferences.KeyWasPressed("Walk", true)) {
 						m_IsWalking = true;
 						m_IsRunning = false;
-					} else if (!m_IsSwimming && PlayerPreferences.playerPreferences.KeyWasPressed("Sprint", true) && vertical > 0f && playerActionScript.sprintTime > 0f && !sprintLock && enableRunFlag) {
+					} else if (!m_IsSwimming && !m_IsIncapacitated && PlayerPreferences.playerPreferences.KeyWasPressed("Sprint", true) && vertical > 0f && playerActionScript.sprintTime > 0f && !sprintLock && enableRunFlag) {
 						m_IsWalking = false;
 						m_IsRunning = true;
                         // if (weaponActionScript.isReloading || weaponActionScript.isCocking) {
@@ -535,6 +556,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			speed = playerActionScript.totalSpeedBoost;
             if (m_IsSwimming) {
                 speed = m_SwimSpeed;
+            } else if (m_IsIncapacitated) {
+                speed = playerActionScript.totalSpeedBoost / 4f;
             } else if (m_IsRunning) {
 				speed = playerActionScript.totalSpeedBoost * 2f;
 			} else if (m_IsCrouching || m_IsWalking) {
@@ -609,6 +632,27 @@ namespace UnityStandardAssets.Characters.FirstPerson
             animator.SetInteger("Moving", x);
         }
 
+        public void SetIncapacitatedInAnimator(bool x)
+        {
+            if (animator.GetBool("Incapacitated") == x) return;
+            photonView.RPC("RpcSetIncapacitatedInAnimator", RpcTarget.All, x);
+        }
+
+        [PunRPC]
+        void RpcSetIncapacitatedInAnimator(bool x)
+        {
+            animator.SetBool("Incapacitated", x);
+            if (x) {
+                animator.ResetTrigger("EnteredWater");
+                animator.SetInteger("Moving", 0);
+                animator.SetBool("Crouching", false);
+                animator.SetBool("isSprinting", false);
+                animator.SetBool("isDead", false);
+                animator.SetBool("isWalking", false);
+                animator.SetBool("Swimming", false);
+            }
+        }
+
         public void SetWeaponTypeInAnimator(int x) {
             if (fpcAnimator.GetInteger("WeaponType") == x) return;
             photonView.RPC("RpcSetWeaponTypeInAnimator", RpcTarget.Others, x);
@@ -651,6 +695,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public void SetSprintingInAnimator(bool x) {
+            if (playerActionScript.skillController.HasRunNGun()) {
+                if (x) {
+                    fpcAnimator.SetFloat("MoveSpeed", 4f);
+                } else {
+                    fpcAnimator.SetFloat("MoveSpeed", 2f);
+                }
+                return;
+            }
             if (fpcAnimator.GetBool("Sprinting") == x) return;
             fpcAnimator.SetBool("Sprinting", x);
             photonView.RPC("RpcSetSprintingInAnimator", RpcTarget.Others, x);
@@ -679,6 +731,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void SetWalkingInAnimator(bool x) {
             if (fpcAnimator.GetBool("isWalking") == x) return;
+            fpcAnimator.SetBool("isWalking", x);
             photonView.RPC("RpcSetWalkingInAnimator", RpcTarget.Others, x);
             if (x) {
                 fpcAnimator.SetFloat("MoveSpeed", 0.5f);
@@ -722,7 +775,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         [PunRPC]
         private void RpcTriggerReloadingInAnimator() {
-            animator.SetTrigger("Reloading");
+            animator.SetTrigger("Reload");
         }
 
         public void SyncAnimatorValues(int weaponType, int moving, bool weaponReady, bool crouching, bool sprinting, bool dead, bool walking, bool swimming) {
@@ -764,6 +817,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [PunRPC]
         void RpcResetAnimationState()
         {
+            animator.SetBool("Incapacitated", false);
             animator.ResetTrigger("EnteredWater");
             animator.SetInteger("WeaponType", 1);
             animator.SetInteger("Moving", 0);
@@ -774,7 +828,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             animator.SetBool("isWalking", false);
             animator.SetBool("Swimming", false);
             animator.Play("IdleAssaultRifle", 0);
-            animator.Play("IdleAssaultRifle", 1);
+            animator.Play("Idle", 1);
         }
 
         public void SetAiminginFPCAnimator(bool x) {
@@ -841,6 +895,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void SetIsSwimming(bool b)
         {
+            if (m_IsIncapacitated) {
+                b = false;
+            }
             m_IsSwimming = b;
             if (b) {
                 m_IsWalking = false;
@@ -854,6 +911,24 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public bool GetIsSwimming()
         {
             return m_IsSwimming;
+        }
+
+        public void SetIsIncapacitated(bool b)
+        {
+            m_IsIncapacitated = b;
+            if (b) {
+                m_IsSwimming = false;
+                m_IsWalking = false;
+                m_IsCrouching = false;
+                m_IsRunning = false;
+                m_IsMoving = false;
+                m_Jump = false;
+            }
+        }
+
+        public bool GetIsIncapacitated()
+        {
+            return m_IsIncapacitated;
         }
 
     }

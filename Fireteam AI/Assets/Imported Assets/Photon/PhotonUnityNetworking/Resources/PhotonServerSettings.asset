@@ -192,6 +192,31 @@ MonoBehaviour:
   - RpcToggleRagdollNpc
   - RpcToggleRagdollEnemy
   - RpcSetSwimmingInAnimator
+  - RpcOnPlayerLeftMatch
+  - RpcUpdateHealthStatus
+  - RpcBoostParticleEffect
+  - RpcCallRevive
+  - RpcKillMyself
+  - RpcClearReviveWindowTimer
+  - RpcSetReviveWindowTimer
+  - RpcToggleProceduralInfo
+  - RpcActivateMotivateSkillFromThisPlayer
+  - RpcDeactivateMotivateSkillFromThisPlayer
+  - RpcActivateFightingSpirit
+  - RpcDeactivateFightingSpirit
+  - RpcPlayTakeDamageGrunt
+  - RpcToggleJetpackParticleEffect
+  - RpcSetOvershield
+  - RpcOvershieldRegenParticleEffect
+  - RpcSyncEcmFeedback
+  - RpcSyncInfraredScan
+  - RpcToggleActiveCamo
+  - RpcActivateLastStand
+  - RpcDeactivateLastStand
+  - RpcLastStandRevive
+  - RpcSetIncapacitatedInAnimator
+  - RpcClearInteractingOn
+  - RpcTriggerGrenadeCockInAnimator
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

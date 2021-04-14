@@ -189,6 +189,13 @@ namespace Michsky.UI.Shift
                     titleController.OpenPrimaryWeaponTabs();
                     titleController.HandleRightSideButtonPress(titleController.characterBtn);
                     titleController.OnCharacterBtnClicked();
+                } else if (newPanel == "Skills") {
+                    titleController.LeaveGlobalChats();
+                    titleController.creditsButton.gameObject.SetActive(false);
+                    titleController.achievementsButton.gameObject.SetActive(true);
+                    titleController.TogglePlayerTemplate(false);
+                    titleController.ToggleWeaponPreview(false);
+                    titleController.DestroyOldWeaponTemplate();
                 } else if (newPanel == "Campaign") {
                     titleController.JoinCampaignGlobalChat();
                     titleController.creditsButton.gameObject.SetActive(false);
