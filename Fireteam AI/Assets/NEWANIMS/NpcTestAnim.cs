@@ -26,7 +26,6 @@ public class NpcTestAnim : MonoBehaviour
     
 	void Start()
 	{
-		// npcLook.Init(gameObject.transform, spineTransform);
 		StartCoroutine("DetermineResetRotLerp");
 	}
 
@@ -55,16 +54,16 @@ public class NpcTestAnim : MonoBehaviour
             ResetRot();
         }
         if (Input.GetKey(KeyCode.A)) {
-            npcLook.LookRotation (gameObject.transform, spineTransform, 0f, -0.2f);
+            npcLook.LookRotation (gameObject.transform, spineTransform, Vector3.negativeInfinity, 0f, -0.2f);
         } else if (Input.GetKey(KeyCode.D)) {
-            npcLook.LookRotation (gameObject.transform, spineTransform, 0f, 0.2f);
+            npcLook.LookRotation (gameObject.transform, spineTransform, Vector3.negativeInfinity, 0f, 0.2f);
         } else if (Input.GetKey(KeyCode.W)) {
-            npcLook.LookRotation (gameObject.transform, spineTransform, 0.2f, 0f);
+            npcLook.LookRotation (gameObject.transform, spineTransform, Vector3.negativeInfinity, 0.2f, 0f);
             // spineTransform.rotation = Quaternion.Euler(50f, 0f, 0f);
         } else if (Input.GetKey(KeyCode.S)) {
-            npcLook.LookRotation (gameObject.transform, spineTransform, -0.2f, 0f);
+            npcLook.LookRotation (gameObject.transform, spineTransform, Vector3.negativeInfinity, -0.2f, 0f);
         } else {
-            npcLook.LookRotation (gameObject.transform, spineTransform, 0f, 0f);
+            npcLook.LookRotation (gameObject.transform, spineTransform, Vector3.negativeInfinity, 0f, 0f);
         }
 
         // if (Input.GetKeyDown(KeyCode.G)) {
@@ -83,7 +82,7 @@ public class NpcTestAnim : MonoBehaviour
 			}
 			Quaternion tempQuat = Quaternion.Slerp (transform.rotation, lookRot, rotationLerp);
 			Vector3 tempRot = tempQuat.eulerAngles;
-			npcLook.LookRotation (gameObject.transform, spineTransform, tempRot.x, tempRot.y);
+			npcLook.LookRotation (gameObject.transform, spineTransform, targetPos.position, tempRot.x, tempRot.y);
 		}
 	}
 

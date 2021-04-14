@@ -12,11 +12,6 @@ public class NpcLook
     public Quaternion m_SpineTargetRot;
     private float currentSpineX;
     private float currentSpineY;
-    public void Init(Transform character, Transform spineTransform)
-    {
-        m_CharacterTargetRot = character.rotation;
-        m_SpineTargetRot = spineTransform.localRotation;
-    }
 
     public void ResetRot() {
         currentSpineX = 0f;
@@ -26,14 +21,12 @@ public class NpcLook
     }
 
     // TODO: Needs to be networked
-    public void LookRotation(Transform character, Transform spineTransform, float xRot, float yRot) {
-        if (xRot > MaximumX) {
+    public void LookRotation(Transform character, Transform spineTransform, Vector3 target, float xRot, float yRot) {
+        if (xRot > 180f) {
             xRot = -(360f - xRot);
         }
 
-        Debug.LogError("FUCK " + yRot);
-
-        if (yRot >= 80f) {
+        if (yRot > 180f) {
             yRot = -(360f - yRot);
         }
         
@@ -42,7 +35,11 @@ public class NpcLook
             if (currentSpineY > -40f) {
                 currentSpineY += yRot;
             } else {
-                m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
+                // m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
+                if (!Vector3.Equals(target, Vector3.negativeInfinity)) {
+                    character.LookAt(target);
+                    character.rotation = Quaternion.Euler(0f, character.rotation.eulerAngles.y, 0f);
+                }
             }
         } else {
             // If turning right
@@ -50,7 +47,11 @@ public class NpcLook
             if (currentSpineY < 40f) {
                 currentSpineY += yRot;
             } else {
-                m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
+                // m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
+                if (!Vector3.Equals(target, Vector3.negativeInfinity)) {
+                    character.LookAt(target);
+                    character.rotation = Quaternion.Euler(0f, character.rotation.eulerAngles.y, 0f);
+                }
             }
         }
         
