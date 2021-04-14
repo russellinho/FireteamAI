@@ -38,8 +38,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	public GameObject overshieldHitEffect;
 
 	// Body/Component references
-	public NpcLook npcLook;
-	public Transform spineTransform;
 	public AudioSource audioSource;
 	public PhotonView pView;
 	public Collider mainCol;
@@ -160,7 +158,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
     //public bool testingMode;
 
 	void Awake() {
-		npcLook.Init(gameObject.transform, spineTransform);
 		animator.SetFloat("FireSpeed", gunRef.defaultFireSpeedFullBody);
 		animator.runtimeAnimatorController = gunRef.maleNpcOverrideController as RuntimeAnimatorController;
 		animator.SetInteger("WeaponType", 1);
@@ -727,12 +724,11 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	void RotateTowardsPlayer() {
-		Vector3 rotDir = (playerTargeting.transform.position - transform.position).normalized;
-		Quaternion lookRot = Quaternion.LookRotation (rotDir);
-		Quaternion tempQuat = Quaternion.Slerp (transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
-		Vector3 tempRot = tempQuat.eulerAngles;
-		// transform.rotation = Quaternion.Euler (new Vector3 (0f, tempRot.y, 0f));
-		npcLook.LookRotation (gameObject.transform, spineTransform, tempRot.x, tempRot.y);
+		transform.LookAt(playerTargeting.transform);
+		transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+
+		torsoTransform.forward = (playerTargeting.transform.position - torsoTransform.position).normalized;
+		torsoTransform.localRotation = Quaternion.Euler(torsoTransform.localRotation.eulerAngles.x - 15f, 0f, 0f);
 	}
 
 	[PunRPC]
@@ -1733,7 +1729,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			if (alertStatus == AlertStatus.Alert) {
 				animator.SetBool("onTitle", false);
 			} else {
-				animator.SetBool("Patrol", true);
+				animator.SetBool("onTitle", true);
 			}
 		}
 
@@ -1755,11 +1751,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					animator.SetInteger("Moving", 3);
 				}
 			} else if (currentBullets <= 0) {
-				if (enemyType != EnemyType.Scout) {
-					if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
-						SetNavMeshStopped(true);
-					}
-				}
 				animator.SetTrigger("Reload");
 			}
 		}
@@ -1924,13 +1915,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	private void RotateTowards(Vector3 r) {
-		Vector3 rotDir = (r - transform.position).normalized;
-		Quaternion lookRot = Quaternion.LookRotation (rotDir);
-		Quaternion tempQuat = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
-		Vector3 tempRot = tempQuat.eulerAngles;
-		tempRot = new Vector3 (0f, tempRot.y, 0f);
-		// transform.rotation = Quaternion.Euler(tempRot);
-		npcLook.LookRotation(gameObject.transform, spineTransform, tempRot.x, 0.001f);
+		transform.LookAt(r);
+		transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+		torsoTransform.localRotation = Quaternion.identity;
 	}
 
 	IEnumerator Despawn(float respawnTime) {
@@ -2398,7 +2385,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (syncWithClientsAgain) {
 			pView.RPC("RpcRespawnAtPosition", RpcTarget.All, gameControllerScript.teamMap, pos.x, pos.y, pos.z);
 		} else {
-			npcLook.ResetRot();
 			ToggleRagdoll(false);
 			navMesh.enabled = false;
 			navMeshObstacle.enabled = false;
@@ -2451,7 +2437,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	[PunRPC]
 	void RpcRespawnAtPosition(string team, float respawnPosX, float respawnPosY, float respawnPosZ) {
 		if (team != gameControllerScript.teamMap) return;
-		npcLook.ResetRot();
 		ToggleRagdoll(false);
 		navMesh.enabled = false;
 		navMeshObstacle.enabled = false;

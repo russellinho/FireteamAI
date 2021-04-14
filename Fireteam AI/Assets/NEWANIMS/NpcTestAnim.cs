@@ -11,23 +11,16 @@ public class NpcTestAnim : MonoBehaviour
     public AlertStatus alertStatus;
     public ActionStates actionState;
 	public FiringStates firingState;
-    public NpcLook npcLook;
     public bool navMeshActiveAndEnabled;
     public bool navMeshIsOn;
     public bool navMeshStopped;
     public int currentBullets;
     public bool isCrouching;
 
-	private Vector3 prevTargetPos;
     public Transform targetPos;
     public Transform spineTransform;
     private float rotationSpeed = 6f;
-	private float rotationLerp;
-    
-	void Start()
-	{
-		StartCoroutine("DetermineResetRotLerp");
-	}
+
 
     // Update is called once per frame
     void Update()
@@ -38,58 +31,18 @@ public class NpcTestAnim : MonoBehaviour
         DecideAnimation();
     }
 
-	IEnumerator DetermineResetRotLerp()
-	{
-		if (!Vector3.Equals(prevTargetPos, targetPos.position)) {
-			rotationLerp = 0f;
-			prevTargetPos = targetPos.position;
-		}
-		yield return new WaitForSeconds(0.1f);
-		StartCoroutine("DetermineResetRotLerp");
-	}
-
     void LateUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.Period)) {
-            ResetRot();
-        }
-        if (Input.GetKey(KeyCode.A)) {
-            npcLook.LookRotation (gameObject.transform, spineTransform, Vector3.negativeInfinity, 0f, -0.2f);
-        } else if (Input.GetKey(KeyCode.D)) {
-            npcLook.LookRotation (gameObject.transform, spineTransform, Vector3.negativeInfinity, 0f, 0.2f);
-        } else if (Input.GetKey(KeyCode.W)) {
-            npcLook.LookRotation (gameObject.transform, spineTransform, Vector3.negativeInfinity, 0.2f, 0f);
-            // spineTransform.rotation = Quaternion.Euler(50f, 0f, 0f);
-        } else if (Input.GetKey(KeyCode.S)) {
-            npcLook.LookRotation (gameObject.transform, spineTransform, Vector3.negativeInfinity, -0.2f, 0f);
-        } else {
-            npcLook.LookRotation (gameObject.transform, spineTransform, Vector3.negativeInfinity, 0f, 0f);
-        }
-
-        // if (Input.GetKeyDown(KeyCode.G)) {
-            // RotateTowardsPlayer();
-        // }
 		RotateTowardsPlayer();
     }
 
     void RotateTowardsPlayer() {
-		Vector3 rotDir = (targetPos.position - transform.position).normalized;
-		Quaternion lookRot = Quaternion.LookRotation (rotDir);
-		if (rotationLerp < 1f) {
-			rotationLerp += 0.2f;
-			if (rotationLerp > 1f) {
-				rotationLerp = 1f;
-			}
-			Quaternion tempQuat = Quaternion.Slerp (transform.rotation, lookRot, rotationLerp);
-			Vector3 tempRot = tempQuat.eulerAngles;
-			npcLook.LookRotation (gameObject.transform, spineTransform, targetPos.position, tempRot.x, tempRot.y);
-		}
-	}
+		transform.LookAt(targetPos.position);
+		transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
 
-    void ResetRot()
-    {
-        npcLook.ResetRot();
-    }
+		spineTransform.forward = (targetPos.position - spineTransform.position).normalized;
+		spineTransform.localRotation = Quaternion.Euler(spineTransform.localRotation.eulerAngles.x, 0f, 0f);
+	}
 
     void DecideAnimation() {
 		if (actionState == ActionStates.Seeking) {
