@@ -38,7 +38,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	public GameObject overshieldHitEffect;
 
 	// Body/Component references
-	public NpcLook npcLook;
 	public Transform spineTransform;
 	public AudioSource audioSource;
 	public PhotonView pView;
@@ -726,12 +725,11 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	void RotateTowardsPlayer() {
-		Vector3 rotDir = (playerTargeting.transform.position - transform.position).normalized;
-		Quaternion lookRot = Quaternion.LookRotation (rotDir);
-		Quaternion tempQuat = Quaternion.Slerp (transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
-		Vector3 tempRot = tempQuat.eulerAngles;
-		// transform.rotation = Quaternion.Euler (new Vector3 (0f, tempRot.y, 0f));
-		npcLook.LookRotation (gameObject.transform, spineTransform, playerTargeting.transform.position, tempRot.x, tempRot.y);
+		transform.LookAt(playerTargeting.transform);
+		transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+
+		spineTransform.LookAt(playerTargeting.transform);
+		spineTransform.localRotation = Quaternion.Euler(spineTransform.localRotation.eulerAngles.x, 0f, 0f);
 	}
 
 	[PunRPC]
@@ -1923,13 +1921,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	private void RotateTowards(Vector3 r) {
-		Vector3 rotDir = (r - transform.position).normalized;
-		Quaternion lookRot = Quaternion.LookRotation (rotDir);
-		Quaternion tempQuat = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
-		Vector3 tempRot = tempQuat.eulerAngles;
-		tempRot = new Vector3 (0f, tempRot.y, 0f);
-		// transform.rotation = Quaternion.Euler(tempRot);
-		npcLook.LookRotation(gameObject.transform, spineTransform, r, tempRot.x, 0.001f);
+		transform.LookAt(r);
+		transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
 	}
 
 	IEnumerator Despawn(float respawnTime) {
@@ -2397,7 +2390,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		if (syncWithClientsAgain) {
 			pView.RPC("RpcRespawnAtPosition", RpcTarget.All, gameControllerScript.teamMap, pos.x, pos.y, pos.z);
 		} else {
-			npcLook.ResetRot();
 			ToggleRagdoll(false);
 			navMesh.enabled = false;
 			navMeshObstacle.enabled = false;
@@ -2450,7 +2442,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	[PunRPC]
 	void RpcRespawnAtPosition(string team, float respawnPosX, float respawnPosY, float respawnPosZ) {
 		if (team != gameControllerScript.teamMap) return;
-		npcLook.ResetRot();
 		ToggleRagdoll(false);
 		navMesh.enabled = false;
 		navMeshObstacle.enabled = false;

@@ -44,10 +44,10 @@ public class TestAnims : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.J)) {
             anim.SetBool("Incapacitated", true);
         }
-        // if (Input.GetKeyDown(KeyCode.Mouse0)) {
-        //     anim.SetTrigger("Fire");
-        // }
-        if (Input.GetKeyDown(KeyCode.Mouse1)) {
+        if (Input.GetKeyDown(KeyCode.Mouse0)) {
+            anim.SetTrigger("Fire");
+        }
+        if (Input.GetKeyDown(KeyCode.U)) {
             anim.SetTrigger("Cock");
         }
         if (Input.GetKeyDown(KeyCode.R)) {
