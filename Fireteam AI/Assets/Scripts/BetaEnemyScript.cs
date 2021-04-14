@@ -160,7 +160,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
     //public bool testingMode;
 
 	void Awake() {
-		npcLook.Init(gameObject.transform, spineTransform);
 		animator.SetFloat("FireSpeed", gunRef.defaultFireSpeedFullBody);
 		animator.runtimeAnimatorController = gunRef.maleNpcOverrideController as RuntimeAnimatorController;
 		animator.SetInteger("WeaponType", 1);
@@ -732,7 +731,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		Quaternion tempQuat = Quaternion.Slerp (transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
 		Vector3 tempRot = tempQuat.eulerAngles;
 		// transform.rotation = Quaternion.Euler (new Vector3 (0f, tempRot.y, 0f));
-		npcLook.LookRotation (gameObject.transform, spineTransform, tempRot.x, tempRot.y);
+		npcLook.LookRotation (gameObject.transform, spineTransform, playerTargeting.transform.position, tempRot.x, tempRot.y);
 	}
 
 	[PunRPC]
@@ -1930,7 +1929,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		Vector3 tempRot = tempQuat.eulerAngles;
 		tempRot = new Vector3 (0f, tempRot.y, 0f);
 		// transform.rotation = Quaternion.Euler(tempRot);
-		npcLook.LookRotation(gameObject.transform, spineTransform, tempRot.x, 0.001f);
+		npcLook.LookRotation(gameObject.transform, spineTransform, r, tempRot.x, 0.001f);
 	}
 
 	IEnumerator Despawn(float respawnTime) {
