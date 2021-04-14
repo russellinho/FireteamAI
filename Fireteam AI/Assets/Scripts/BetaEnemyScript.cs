@@ -38,7 +38,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	public GameObject overshieldHitEffect;
 
 	// Body/Component references
-	public Transform spineTransform;
 	public AudioSource audioSource;
 	public PhotonView pView;
 	public Collider mainCol;
@@ -728,8 +727,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		transform.LookAt(playerTargeting.transform);
 		transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
 
-		spineTransform.LookAt(playerTargeting.transform);
-		spineTransform.localRotation = Quaternion.Euler(spineTransform.localRotation.eulerAngles.x, 0f, 0f);
+		torsoTransform.forward = (playerTargeting.transform.position - torsoTransform.position).normalized;
+		torsoTransform.localRotation = Quaternion.Euler(torsoTransform.localRotation.eulerAngles.x - 15f, 0f, 0f);
 	}
 
 	[PunRPC]
@@ -1730,7 +1729,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			if (alertStatus == AlertStatus.Alert) {
 				animator.SetBool("onTitle", false);
 			} else {
-				animator.SetBool("Patrol", true);
+				animator.SetBool("onTitle", true);
 			}
 		}
 
@@ -1752,11 +1751,6 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					animator.SetInteger("Moving", 3);
 				}
 			} else if (currentBullets <= 0) {
-				if (enemyType != EnemyType.Scout) {
-					if (navMesh.isActiveAndEnabled && navMesh.isOnNavMesh && !navMesh.isStopped) {
-						SetNavMeshStopped(true);
-					}
-				}
 				animator.SetTrigger("Reload");
 			}
 		}
@@ -1923,6 +1917,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	private void RotateTowards(Vector3 r) {
 		transform.LookAt(r);
 		transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+		torsoTransform.localRotation = Quaternion.identity;
 	}
 
 	IEnumerator Despawn(float respawnTime) {

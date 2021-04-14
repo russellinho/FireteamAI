@@ -40,8 +40,8 @@ public class NpcTestAnim : MonoBehaviour
 		transform.LookAt(targetPos.position);
 		transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
 
-		spineTransform.LookAt(targetPos.position);
-		spineTransform.localRotation = Quaternion.Euler(spineTransform.localRotation.x, 0f, 0f);
+		spineTransform.forward = (targetPos.position - spineTransform.position).normalized;
+		spineTransform.localRotation = Quaternion.Euler(spineTransform.localRotation.eulerAngles.x, 0f, 0f);
 	}
 
     void DecideAnimation() {
