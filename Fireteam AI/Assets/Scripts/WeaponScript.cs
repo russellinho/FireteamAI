@@ -924,7 +924,7 @@ public class WeaponScript : MonoBehaviour
                 }
                 EquipKnifeInGame();
                 weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
-                HideMeleeWeapon(true);
+                HideMeleeWeapon(false);
                 wepEquipped = null;
                 break;
         }
