@@ -342,11 +342,15 @@ public class WeaponScript : MonoBehaviour
     [PunRPC]
     void RpcHideMeleeWeapon(bool b)
     {
+        Debug.LogError("oof");
         if (weaponActionScript != null) {
             WeaponMeta ws = weaponActionScript.meleeMetaData;
+            Debug.LogError("oof2");
             if (ws == null) return;
+            Debug.LogError("oof3");
             for (int i = 0; i < ws.weaponParts.Length; i++) {
                 ws.weaponParts[i].enabled = b;
+                Debug.LogError("oof4");
             }
         }
     }
