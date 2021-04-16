@@ -9,8 +9,6 @@ AnimatorOverrideController:
   m_Name: animator-npc-male_Medkit
   m_Controller: {fileID: 9100000, guid: 73dea433833b04aa0887a388c4c66a18, type: 2}
   m_Clips:
-  - m_OriginalClip: {fileID: 7400000, guid: 513918b893fd1974facfdec8786afc9a, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: e3ae1a8f9d52f4d48b012f7dee403c20, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: c219d7b9422bc56438c47e69380db25c, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: ccafe09ed3c10354fabcc5b2d6d6e8c6, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: ad2024caef9c53141b40261d837a8afa, type: 2}
@@ -23,3 +21,5 @@ AnimatorOverrideController:
     m_OverrideClip: {fileID: 7400000, guid: 99c5c2ba28049104298ccc590618c301, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: ebe6ea0826ee5234b9706dbbac97c02d, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 2bb84a14d02d15d4c8968d6ddc606528, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 513918b893fd1974facfdec8786afc9a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: e3ae1a8f9d52f4d48b012f7dee403c20, type: 2}

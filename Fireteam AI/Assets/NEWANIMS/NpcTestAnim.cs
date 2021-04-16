@@ -21,6 +21,11 @@ public class NpcTestAnim : MonoBehaviour
     public Transform spineTransform;
     private float rotationSpeed = 6f;
 
+	void Start()
+	{
+		WeaponMeta w = GetComponentInChildren<WeaponMeta>();
+		animator.runtimeAnimatorController = w.maleNpcOverrideController as RuntimeAnimatorController;
+	}
 
     // Update is called once per frame
     void Update()

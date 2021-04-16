@@ -9,8 +9,6 @@ AnimatorOverrideController:
   m_Name: animator-npc-male_M4A1
   m_Controller: {fileID: 9100000, guid: 73dea433833b04aa0887a388c4c66a18, type: 2}
   m_Clips:
-  - m_OriginalClip: {fileID: 7400000, guid: 513918b893fd1974facfdec8786afc9a, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 106acf89184144c48bc729dcc3ab5587, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: c219d7b9422bc56438c47e69380db25c, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: cdb666614fcde194886f47140b3da8a4, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: ad2024caef9c53141b40261d837a8afa, type: 2}
@@ -25,3 +23,5 @@ AnimatorOverrideController:
     m_OverrideClip: {fileID: 7400000, guid: c30d739e0df4c8b48adc6b32fcf6a9c5, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: ebe6ea0826ee5234b9706dbbac97c02d, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: ebe6ea0826ee5234b9706dbbac97c02d, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 513918b893fd1974facfdec8786afc9a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 106acf89184144c48bc729dcc3ab5587, type: 2}

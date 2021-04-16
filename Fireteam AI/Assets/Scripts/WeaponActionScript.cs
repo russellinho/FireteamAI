@@ -616,6 +616,13 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             isLunging = false;
             animatorFpc.Play("MeleeSwing");
         }
+        pView.RPC("RpcPlayMeleeAnimation", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void RpcPlayMeleeAnimation()
+    {
+        animator.SetTrigger("Melee");
     }
 
     // Scans for melee

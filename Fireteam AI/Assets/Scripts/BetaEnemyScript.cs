@@ -160,6 +160,9 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	void Awake() {
 		animator.SetFloat("FireSpeed", gunRef.defaultFireSpeedFullBody);
 		animator.runtimeAnimatorController = gunRef.maleNpcOverrideController as RuntimeAnimatorController;
+		gunRef.transform.localPosition = gunRef.fullPosMale;
+		gunRef.transform.localRotation = Quaternion.Euler(gunRef.fullRotMale);
+		gunRef.transform.localScale = gunRef.fullScaleMale;
 		animator.SetInteger("WeaponType", 1);
 		ToggleRagdoll(false);
 		if (gameControllerScript.matchType == 'C')
@@ -1683,6 +1686,10 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	}
 
 	void DecideAnimation() {
+		if (alertStatus == AlertStatus.Alert) {
+			animator.SetBool ("onTitle", false);
+		}
+
 		if (actionState == ActionStates.Seeking) {
 			if (animator.GetInteger("Moving") == 0) {
 				int r = Random.Range (1, 4);
@@ -1758,7 +1765,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		animator.SetBool("Crouching", isCrouching);
 
 		if (actionState == ActionStates.Melee) {
-			if (!animator.GetCurrentAnimatorStateInfo (1).IsName ("Melee")) {
+			if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Melee")) {
 				animator.SetTrigger("Melee");
 			}
 		}

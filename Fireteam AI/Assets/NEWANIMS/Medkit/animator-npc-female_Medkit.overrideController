@@ -7,8 +7,10 @@ AnimatorOverrideController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: animator-npc-female_Medkit
-  m_Controller: {fileID: 9100000, guid: b48777691bd5443928c84b429921d3a4, type: 2}
+  m_Controller: {fileID: 9100000, guid: 343aee72e9dcc45b4b3fbaf5f2aef770, type: 2}
   m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: c219d7b9422bc56438c47e69380db25c, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ccafe09ed3c10354fabcc5b2d6d6e8c6, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: ad2024caef9c53141b40261d837a8afa, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 99c5c2ba28049104298ccc590618c301, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 9db58516464192a479b022fecac087b7, type: 2}
@@ -19,7 +21,5 @@ AnimatorOverrideController:
     m_OverrideClip: {fileID: 7400000, guid: 99c5c2ba28049104298ccc590618c301, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: ebe6ea0826ee5234b9706dbbac97c02d, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 2bb84a14d02d15d4c8968d6ddc606528, type: 2}
-  - m_OriginalClip: {fileID: 7400000, guid: beb3281986ab1c04c97686a05232d11d, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 513918b893fd1974facfdec8786afc9a, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: e3ae1a8f9d52f4d48b012f7dee403c20, type: 2}
-  - m_OriginalClip: {fileID: 7400000, guid: be0269e55260d804587685f753c493f3, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: ccafe09ed3c10354fabcc5b2d6d6e8c6, type: 2}

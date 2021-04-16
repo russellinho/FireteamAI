@@ -9,8 +9,6 @@ AnimatorOverrideController:
   m_Name: animator-male_RPG-7
   m_Controller: {fileID: 9100000, guid: 8d8a3acabf4d9834bb13e9ff078787f9, type: 2}
   m_Clips:
-  - m_OriginalClip: {fileID: 7400000, guid: 513918b893fd1974facfdec8786afc9a, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 76128020d24b1c14e95c62164b28833d, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: c219d7b9422bc56438c47e69380db25c, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 55aecbb249c573d48b880e5f5b2dfcc4, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: ad2024caef9c53141b40261d837a8afa, type: 2}
@@ -23,3 +21,5 @@ AnimatorOverrideController:
     m_OverrideClip: {fileID: 7400000, guid: c30d739e0df4c8b48adc6b32fcf6a9c5, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: ebe6ea0826ee5234b9706dbbac97c02d, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: ebe6ea0826ee5234b9706dbbac97c02d, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: beb3281986ab1c04c97686a05232d11d, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 76128020d24b1c14e95c62164b28833d, type: 2}

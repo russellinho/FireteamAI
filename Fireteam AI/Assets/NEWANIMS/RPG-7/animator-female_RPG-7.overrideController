@@ -7,8 +7,10 @@ AnimatorOverrideController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: animator-female_RPG-7
-  m_Controller: {fileID: 9100000, guid: b719a341a509a0b4a942f1127ecb0ff4, type: 2}
+  m_Controller: {fileID: 9100000, guid: db926ac60a8354422903ebaf6a3dd793, type: 2}
   m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: c219d7b9422bc56438c47e69380db25c, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 55aecbb249c573d48b880e5f5b2dfcc4, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: ad2024caef9c53141b40261d837a8afa, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 3bf3aa75d08acb649a8484dd080244a1, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 9db58516464192a479b022fecac087b7, type: 2}
@@ -21,5 +23,3 @@ AnimatorOverrideController:
     m_OverrideClip: {fileID: 7400000, guid: ebe6ea0826ee5234b9706dbbac97c02d, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: beb3281986ab1c04c97686a05232d11d, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 76128020d24b1c14e95c62164b28833d, type: 2}
-  - m_OriginalClip: {fileID: 7400000, guid: be0269e55260d804587685f753c493f3, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 55aecbb249c573d48b880e5f5b2dfcc4, type: 2}
