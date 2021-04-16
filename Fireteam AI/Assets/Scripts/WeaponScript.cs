@@ -326,13 +326,27 @@ public class WeaponScript : MonoBehaviour
                     for (int i = 0; i < ws.weaponParts.Length; i++) {
                         ws.weaponParts[i].enabled = true;
                     }
+                    pView.RPC("RpcHideMeleeWeapon", RpcTarget.Others, true);
                 }
             } else {
                 if (ws.weaponParts[0].enabled) {
                     for (int i = 0; i < ws.weaponParts.Length; i++) {
                         ws.weaponParts[i].enabled = false;
                     }
+                    pView.RPC("RpcHideMeleeWeapon", RpcTarget.Others, false);
                 }
+            }
+        }
+    }
+
+    [PunRPC]
+    void RpcHideMeleeWeapon(bool b)
+    {
+        if (weaponActionScript != null) {
+            WeaponMeta ws = weaponActionScript.meleeMetaData;
+            if (ws == null) return;
+            for (int i = 0; i < ws.weaponParts.Length; i++) {
+                ws.weaponParts[i].enabled = b;
             }
         }
     }
