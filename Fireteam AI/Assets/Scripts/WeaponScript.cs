@@ -231,7 +231,7 @@ public class WeaponScript : MonoBehaviour
                 DrawSupport();
             }
         }
-        HideMeleeWeapon();
+        HideMeleeWeapon(true);
     }
 
     void UpdateMunitionsEngineering()
@@ -317,7 +317,7 @@ public class WeaponScript : MonoBehaviour
         }
     }
 
-    void HideMeleeWeapon() {
+    void HideMeleeWeapon(bool sendOverNetwork) {
         if (weaponActionScript != null) {
             WeaponMeta ws = weaponActionScript.meleeMetaData;
             if (ws == null) return;
@@ -326,14 +326,18 @@ public class WeaponScript : MonoBehaviour
                     for (int i = 0; i < ws.weaponParts.Length; i++) {
                         ws.weaponParts[i].enabled = true;
                     }
-                    pView.RPC("RpcHideMeleeWeapon", RpcTarget.Others, true);
+                    if (sendOverNetwork) {
+                        pView.RPC("RpcHideMeleeWeapon", RpcTarget.Others, true);
+                    }
                 }
             } else {
                 if (ws.weaponParts[0].enabled) {
                     for (int i = 0; i < ws.weaponParts.Length; i++) {
                         ws.weaponParts[i].enabled = false;
                     }
-                    pView.RPC("RpcHideMeleeWeapon", RpcTarget.Others, false);
+                    if (sendOverNetwork) {
+                        pView.RPC("RpcHideMeleeWeapon", RpcTarget.Others, false);
+                    }
                 }
             }
         }
@@ -342,15 +346,11 @@ public class WeaponScript : MonoBehaviour
     [PunRPC]
     void RpcHideMeleeWeapon(bool b)
     {
-        Debug.LogError("oof");
         if (weaponActionScript != null) {
             WeaponMeta ws = weaponActionScript.meleeMetaData;
-            Debug.LogError("oof2");
             if (ws == null) return;
-            Debug.LogError("oof3");
             for (int i = 0; i < ws.weaponParts.Length; i++) {
                 ws.weaponParts[i].enabled = b;
-                Debug.LogError("oof4");
             }
         }
     }
@@ -446,6 +446,7 @@ public class WeaponScript : MonoBehaviour
         wepEquipped = meleeHolder.LoadWeapon(w.prefabPath);
         weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), w);
         meleeHolder.SetWeaponPosition(false);
+        HideMeleeWeapon(false);
     }
 
     void SetCurrentAmmo(int weaponCat) {
@@ -923,7 +924,7 @@ public class WeaponScript : MonoBehaviour
                 }
                 EquipKnifeInGame();
                 weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[weaponName]);
-                HideMeleeWeapon();
+                HideMeleeWeapon(true);
                 wepEquipped = null;
                 break;
         }
