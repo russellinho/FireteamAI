@@ -1345,6 +1345,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     public void SetWeaponStats(WeaponMeta ws, Weapon w) {
         if (w.type.Equals("Melee")) {
+            Debug.LogError(gameObject.name + " EQUIPPING KNIFE");
             meleeMetaData = ws;
             meleeStats = w;
             SetMeleeSpeed();

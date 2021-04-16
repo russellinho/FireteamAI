@@ -426,7 +426,7 @@ public class WeaponScript : MonoBehaviour
         animator.SetInteger("WeaponType", currentlyEquippedType);
         Weapon w = InventoryScript.itemData.weaponCatalog[equippedWepInGame];
         GameObject wepEquipped = weaponHolder.LoadWeapon(w.prefabPath);
-        weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), InventoryScript.itemData.weaponCatalog[equippedWepInGame]);
+        weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), w);
         weaponHolder.SetWeaponPosition(false);
         WeaponMods wm = weaponHolder.weapon.GetComponentInChildren<WeaponMods>();
         if (w.suppressorCompatible) {
@@ -440,6 +440,12 @@ public class WeaponScript : MonoBehaviour
             }
         }
         drawnWeaponReference = wepEquipped;
+
+        // Melee
+        w = InventoryScript.itemData.weaponCatalog[equippedMeleeWeapon];
+        wepEquipped = meleeHolder.LoadWeapon(w.prefabPath);
+        weaponActionScript.SetWeaponStats(wepEquipped.GetComponent<WeaponMeta>(), w);
+        meleeHolder.SetWeaponPosition(false);
     }
 
     void SetCurrentAmmo(int weaponCat) {
