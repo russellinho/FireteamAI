@@ -7,6 +7,7 @@ public class DeployableScript : MonoBehaviour
     public int deployableId;
     private const short MAX_FIRST_AID_KIT_USES = 6;
     private const short MAX_AMMO_BAG_USES = 8;
+    private const short MAX_BODY_BAG_USES = 4;
     public string deployableName;
     public string refString;
     public short usesRemaining;
@@ -25,6 +26,8 @@ public class DeployableScript : MonoBehaviour
             PlayDeploySound();
             initializeRef.SetActive(true);
             initializeRef.GetComponent<BubbleShieldScript>().Initialize(skillBoost);
+        } else if (deployableName.Equals("Body Bag Case")) {
+            usesRemaining = MAX_BODY_BAG_USES;
         }
         deployableId = gameObject.GetInstanceID();
         return deployableId;

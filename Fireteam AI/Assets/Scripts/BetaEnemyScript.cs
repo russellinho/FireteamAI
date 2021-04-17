@@ -1930,13 +1930,30 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 	IEnumerator Despawn(float respawnTime) {
 		if (actionState != ActionStates.Dead) yield return null;
 		DespawnAction();
-		StartCoroutine(DelayToggleRagdoll(0.2f, true));
+		if (mainRigid.useGravity) {
+			StartCoroutine(DelayToggleRagdoll(0.2f, true));
+		}
 		// RemoveHitboxes ();
 		yield return new WaitForSeconds(5f);
-		DespawnRenderers();
-		if (!sniper) {
-			StartCoroutine (Respawn(respawnTime, false));
+		if (gameControllerScript.assaultMode) {
+			DespawnRenderers();
+			if (!sniper) {
+				StartCoroutine (Respawn(respawnTime, false));
+			}
+		} else {
+			StartCoroutine(Despawn(respawnTime));
 		}
+	}
+
+	public void BagBody()
+	{
+		pView.RPC("RpcBagBody", RpcTarget.All);
+	}
+
+	[PunRPC]
+	void RpcBagBody()
+	{
+		DespawnRenderers();
 	}
 
 	void DespawnAction() {

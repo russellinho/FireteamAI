@@ -48,6 +48,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public Dictionary<int, GameObject> enemyList = new Dictionary<int, GameObject> ();
 	private Dictionary<int, GameObject> pickupList = new Dictionary<int, GameObject>();
 	private Dictionary<int, GameObject> deployableList = new Dictionary<int, GameObject>();
+	private Dictionary<int, GameObject> carryableList = new Dictionary<int, GameObject>();
 	private Queue<int> acceptPlayerQueue;
 
     // Mission variables
@@ -98,7 +99,10 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	private float waitTriggerTimer;
 	private float avgDistanceBetweenTeam;
 
-	// Use this for initialization
+	// Prefabs
+	public GameObject bodyBagPrefab;
+	public GameObject duffleBagPrefab;
+
 	void Awake() {
 		Physics.IgnoreLayerCollision (9, 17);
 		Physics.IgnoreLayerCollision (17, 13);
@@ -990,6 +994,21 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 		return deployableList[deployableId];
 	}
 
+	public void CreateCarryable(int carryableId, GameObject carryableRef)
+	{
+		carryableList.Add(carryableId, carryableRef);
+	}
+
+	public void DestroyCarryable(int carryableId)
+	{
+		GameObject.Destroy(carryableList[carryableId]);
+		carryableList.Remove(carryableId);
+	}
+
+	public GameObject GetCarryable(int carryableId){
+		return carryableList[carryableId];
+	}
+
 	public void MarkAIReadyForRespawn(int pViewId, bool syncWithClientsAgain) {
 		if (syncWithClientsAgain) {
 			pView.RPC("RpcMarkAIReadyForRespawn", RpcTarget.All, teamMap, pViewId);
@@ -1801,6 +1820,24 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			return Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1][0];
 		}
 		return Vector3.zero;
+	}
+
+	public int SpawnBodyBag(Vector3 pos)
+	{
+		GameObject o = GameObject.Instantiate(bodyBagPrefab, pos, Quaternion.Euler(Vector3.zero));
+		o.GetComponent<Carryable>().carryableId = o.GetInstanceID();
+		CreateCarryable(o.GetInstanceID(), o);
+		pView.RPC("RpcSpawnBodyBag", RpcTarget.Others, o.GetInstanceID(), pos.x, pos.y, pos.z, teamMap);
+		return o.GetInstanceID();
+	}
+
+	[PunRPC]
+	void RpcSpawnBodyBag(int carryableId, float posX, float posY, float posZ, string team)
+	{
+		if (team != teamMap) return;
+		GameObject o = GameObject.Instantiate(bodyBagPrefab, new Vector3(posX, posY, posZ), Quaternion.Euler(Vector3.zero));
+		o.GetComponent<PickupScript>().pickupId = carryableId;
+		CreateCarryable(carryableId, o);
 	}
 
 }

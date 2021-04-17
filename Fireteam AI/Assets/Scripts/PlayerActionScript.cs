@@ -28,6 +28,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     const float BOMB_DEFUSE_TIME = 8f;
     const float DEPLOY_USE_TIME = 4f;
     const float NPC_INTERACT_TIME = 5f;
+    const float BODY_BAG_TIME = 9f;
     const float HEAL_TIME = 5f;
     const float REVIVE_TIME = 6f;
     private const float ENV_DAMAGE_DELAY = 0.5f;
@@ -36,6 +37,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     private const float FALL_DMG_MULTIPLIER = 2f;
     private const float FALL_DMG_DIVISOR = 9f;
     private const int ENEMY_LAYER = 14;
+    private const int DEAD_ENEMY_LAYER = 12;
 
     // Object references
     public PhotonView pView;
@@ -88,6 +90,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     // Player variables
     public EncryptedInt health;
     public EncryptedFloat overshield;
+    private char bodyBags;
     public bool activeCamo;
     public float sprintTime;
     private EncryptedBool spawnInvincibilityActive;
@@ -238,6 +241,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         itemSpeedModifier = 1f;
         originalSpeed = playerScript.speed;
         totalSpeedBoost = originalSpeed;
+        bodyBags = (char)3;
         ToggleRagdoll(false);
         InitializeGuardianAngel();
         skillController.SetLastStand();
@@ -553,6 +557,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     [PunRPC]
     void RpcUpdateObjectives() {
+        if (gameObject.layer == 0) return;
         gameController.UpdateObjectives();
         hud.UpdateObjectives();
     }
@@ -560,6 +565,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcPlayTakeDamageGrunt()
     {
+        if (gameObject.layer == 0) return;
         audioController.PlayGruntSound();
     }
 
@@ -823,6 +829,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                         wepActionScript.UseAmmoBag(d.deployableId);
                     } else if (d.deployableName == "First Aid Kit") {
                         wepActionScript.UseFirstAidKit(d.deployableId);
+                    } else if (d.deployableName == "Body Bag Case") {
+                        wepActionScript.UseBodyBagCase(d.deployableId);
                     }
                     interactionLock = true;
                 }
@@ -847,6 +855,22 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     NpcScript n = activeInteractable.GetComponent<NpcScript>();
                     interactionTimer = 0f;
                     pView.RPC("RpcCarryNpc", RpcTarget.All, pView.Owner.ActorNumber);
+                    fpc.m_IsCrouching = false;
+                    activeInteractable = null;
+                    interactionLock = true;
+                }
+            } else if (interactingWith == "Body") {
+                hud.ToggleActionBar(true, "DISPOSING...");
+                interactionTimer += (Time.deltaTime / (BODY_BAG_TIME * (1f - skillController.GetDexterityBoost())));
+                hud.SetActionBarSlider(interactionTimer);
+                if (interactionTimer >= 1f)
+                {
+                    BetaEnemyScript b = activeInteractable.GetComponentInParent<BetaEnemyScript>();
+                    interactionTimer = 0f;
+                    bodyBags--;
+                    b.BagBody();
+                    int carryableId = gameController.SpawnBodyBag(b.transform.position);
+                    pView.RPC("RpcCarryItem", RpcTarget.All, carryableId, pView.Owner.ActorNumber);
                     fpc.m_IsCrouching = false;
                     activeInteractable = null;
                     interactionLock = true;
@@ -908,6 +932,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcClearInteractingOn()
     {
+        if (gameObject.layer == 0) return;
         PlayerActionScript p = PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerActionScript>();
         if (pView.Owner.ActorNumber == p.interactedOnById) {
             p.ToggleProceduralInfo(null, true, -1);
@@ -917,13 +942,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void InteractCheck() {
         HealPlayerCheck();
         RevivePlayerCheck();
+        BagBodyCheck();
         if (gameController.currentMap == 1) {
             BombDefuseCheck();
         } else if (gameController.currentMap == 2) {
             CarryNpcCheck();
-            DropOffNpcCheck();
             PopFlareCheck();
         }
+        DropOffCheck();
     }
 
     // If map objective is defusing bombs, this method checks if the player is near any bombs
@@ -1042,7 +1068,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     void CarryNpcCheck() {
-        if (gameController == null || gameController.vipRef == null)
+        if (objectCarrying != null || gameController == null || gameController.vipRef == null)
         {
             return;
         }
@@ -1070,20 +1096,57 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    void DropOffNpcCheck() {
+    void BagBodyCheck()
+    {
+        if (objectCarrying != null || gameController == null) {
+            return;
+        }
+
+        if (!gameController.assaultMode && bodyBags > 0 && activeInteractable != null && !hud.PauseIsActive() && health > 0 && lastStandTimer <= 0f) {
+            BetaEnemyScript b = activeInteractable.GetComponentInParent<BetaEnemyScript>();
+            if (b != null) {
+                if (b.modeler.BodyIsDespawned()) {
+                    SetInteracting(false, null);
+                    return;
+                }
+                if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact", true) && !interactionLock) {
+                    SetInteracting(true, "Body");
+                    hud.ToggleHintText(null);
+                } else {
+                    SetInteracting(false, null);
+                    hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO BAG BODY");
+                }
+            }
+        } else {
+            SetInteracting(false, null);
+            hud.ToggleHintText(null);
+        }
+    }
+
+    void DropOffCheck() {
         if (gameController == null || gameController.vipRef == null)
         {
             return;
         }
 
-        if (objectCarrying != null && objectCarrying.GetComponent<NpcScript>().carriedByPlayerId == pView.Owner.ActorNumber && !hud.PauseIsActive()) {
+        if (objectCarrying != null) {
             NpcScript n = objectCarrying.GetComponent<NpcScript>();
-            if (n != null) {
+            if (n != null && n.carriedByPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && !hud.PauseIsActive()) {
                 if (PlayerPreferences.playerPreferences.KeyWasPressed("Drop") && !interactionLock) {
                     // Drop off the NPC
                     DropCarrying();
                     hud.SetCarryingText(null);
                 }
+                return;
+            }
+            Carryable c = objectCarrying.GetComponent<Carryable>();
+            if (c != null && c.carriedByPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && !hud.PauseIsActive()) {
+                if (PlayerPreferences.playerPreferences.KeyWasPressed("Drop") && !interactionLock) {
+                    // Drop off the item
+                    DropCarrying();
+                    hud.SetCarryingText(null);
+                }
+                return;
             }
         }
     }
@@ -1093,6 +1156,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (activeInteractable != null && !hud.PauseIsActive() && health > 0 && lastStandTimer <= 0f) {
             DeployableScript d = activeInteractable.GetComponent<DeployableScript>();
             if (d != null) {
+                if (d.deployableName == "Body Bag Case" && bodyBags >= 3) {
+                    SetInteracting(false, null);
+                    hud.ToggleHintText(null);
+                    return;
+                }
                 if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact", true) && !interactionLock) {
                     // Use the deployable
                     SetInteracting(true, "Deploy");
@@ -1112,19 +1180,26 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void CheckForInteractables() {
         RaycastHit hit;
-        int interactableMask = (1 << 18 | 1 << 15 | 1 << 9);
+        int interactableMask = (1 << 18 | 1 << 15 | 1 << 9 | 1 << DEAD_ENEMY_LAYER);
         if (Physics.Raycast(viewCam.transform.position, viewCam.transform.forward, out hit, INTERACTION_DISTANCE, interactableMask)) {
-            if (hit.transform.gameObject.tag == "Human") {
-                NpcScript n = hit.transform.GetComponentInParent<NpcScript>();
-                if (n != null) {
-                    if (n.actionState == NpcActionState.Incapacitated) {
-                        activeInteractable = n.transform.gameObject;
-                    }
+            if (hit.transform.gameObject.layer == DEAD_ENEMY_LAYER) {
+                BetaEnemyScript b = hit.transform.GetComponentInParent<BetaEnemyScript>();
+                if (!b.modeler.BodyIsDespawned()) {
+                    activeInteractable = b.transform.gameObject;
                 }
-            } else if (hit.transform.gameObject.tag == "Player") {
-                activeInteractable = hit.transform.gameObject;
             } else {
-                activeInteractable = hit.transform.gameObject;
+                if (hit.transform.gameObject.tag == "Human") {
+                    NpcScript n = hit.transform.GetComponentInParent<NpcScript>();
+                    if (n != null) {
+                        if (n.actionState == NpcActionState.Incapacitated) {
+                            activeInteractable = n.transform.gameObject;
+                        }
+                    }
+                } else if (hit.transform.gameObject.tag == "Player") {
+                    activeInteractable = hit.transform.gameObject;
+                } else {
+                    activeInteractable = hit.transform.gameObject;
+                }
             }
         } else {
             if (activeInteractable != null) {
@@ -1154,6 +1229,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcKillMyself()
     {
+        if (gameObject.layer == 0) return;
         health = 0;
         lastHitFromPos = transform.position;
 		lastHitBy = 2;
@@ -1742,15 +1818,39 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
+    void RpcCarryItem(int carryableId, int playerId)
+    {
+        if (gameObject.layer == 0) return;
+        // Put item in carrying slot
+        Carryable c = gameController.GetCarryable(carryableId).GetComponent<Carryable>();
+        c.ToggleIsCarrying(true, playerId);
+        objectCarrying = c.gameObject;        
+        if (playerId == PhotonNetwork.LocalPlayer.ActorNumber) {
+            hud.SetCarryingText("BODY BAG");
+        }
+    }
+
+    [PunRPC]
     void RpcCarryNpc(int playerId) {
         if (gameObject.layer == 0) return;
         NpcScript n = gameController.vipRef.GetComponent<NpcScript>();
         n.ToggleIsCarrying(true, playerId);
         // If is local player, set to is carrying
+        objectCarrying = gameController.vipRef;
         if (playerId == PhotonNetwork.LocalPlayer.ActorNumber) {
-            objectCarrying = gameController.vipRef;
             hud.SetCarryingText("PERSON");
         }
+    }
+
+    [PunRPC]
+    void RpcDropItem()
+    {
+        if (gameObject.layer == 0) return;
+        Carryable c = objectCarrying.GetComponent<Carryable>();
+        int droppedOffBy = c.carriedByPlayerId;
+        c.ToggleIsCarrying(false, -1);
+        c.Launch(viewCam.transform.forward.x, viewCam.transform.forward.y, viewCam.transform.forward.z);
+        objectCarrying = null;
     }
 
     [PunRPC]
@@ -1759,9 +1859,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         NpcScript n = gameController.vipRef.GetComponent<NpcScript>();
         int droppedOffBy = n.carriedByPlayerId;
         n.ToggleIsCarrying(false, -1);
-        if (droppedOffBy == pView.Owner.ActorNumber) {
-            objectCarrying = null;
-        }
+        objectCarrying = null;
     }
 
     void HandlePopFlareForMission(int mission, int i) {
@@ -1826,12 +1924,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcBoostParticleEffect()
     {
+        if (gameObject.layer == 0) return;
         boostParticleEffect.Play();
     }
 
     [PunRPC]
     void RpcOvershieldRegenParticleEffect()
     {
+        if (gameObject.layer == 0) return;
         overshieldRecoverParticleEffect.Play();
     }
 
@@ -1845,6 +1945,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcToggleJetpackParticleEffect(bool b)
     {
+        if (gameObject.layer == 0) return;
         if (b) {
             jetpackParticleEffect.Play();
         } else {
@@ -2078,7 +2179,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void DropCarrying() {
         if (objectCarrying != null) {
-            pView.RPC("RpcDropOffNpc", RpcTarget.All);
+            if (objectCarrying.GetComponent<NpcScript>() != null) {
+                pView.RPC("RpcDropOffNpc", RpcTarget.All);
+            } else {
+                pView.RPC("RpcDropItem", RpcTarget.All);
+            }
         }
     }
 
@@ -2360,6 +2465,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     [PunRPC]
     void RpcNetworkComBoxMessage(string speaker, string message, string picPath) {
+        if (gameObject.layer == 0) return;
         PlayerData.playerdata.inGamePlayerReference.GetComponent<PlayerHUDScript>().DisplayComBox(speaker, message, picPath);
     }
 
@@ -2723,6 +2829,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcCallRevive(string reason)
     {
+        if (gameObject.layer == 0) return;
         if (pView.IsMine) {
             Revive(reason);
         }
@@ -2741,6 +2848,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcToggleProceduralInfo(string s, int interactedOnById)
     {
+        if (gameObject.layer == 0) return;
         if (pView.IsMine) {
             hud.SetProceduralInfo(s);
         }
@@ -2795,6 +2903,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcLastStandRevive()
     {
+        if (gameObject.layer == 0) return;
         lastStandTimer = 0f;
         interactedOnById = -1;
         if (pView.IsMine) {
@@ -2812,6 +2921,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcActivateFightingSpirit(float t)
     {
+        if (gameObject.layer == 0) return;
         fightingSpiritTimer = t;
         PlayBoostParticleEffect(false);
     }
@@ -2819,6 +2929,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcActivateLastStand(float t, string playerName)
     {
+        if (gameObject.layer == 0) return;
         lastStandTimer = t;
         equipmentScript.fullBodyRef.transform.localPosition = new Vector3(0f, -0.9f, 0f);
         TriggerPlayerIncapacitatedAlert(playerName);
@@ -2832,6 +2943,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcDeactivateFightingSpirit()
     {
+        if (gameObject.layer == 0) return;
         fightingSpiritTimer = 0f;
     }
 
@@ -2844,6 +2956,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcDeactivateLastStand()
     {
+        if (gameObject.layer == 0) return;
         lastStandTimer = 0f;
         equipmentScript.fullBodyRef.transform.localPosition = Vector3.zero;
         if (pView.IsMine) {
@@ -2904,6 +3017,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     [PunRPC]
     void RpcToggleActiveCamo(bool b)
     {
+        if (gameObject.layer == 0) return;
         activeCamo = b;
         equipmentScript.CamouflageMesh(b);
         weaponScript.CamouflageMesh(b);
@@ -2913,6 +3027,11 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         equipmentScript.CamouflageMesh(true);
         weaponScript.CamouflageMesh(true);
+    }
+
+    public void GiveBodyBag()
+    {
+        bodyBags++;
     }
 
 }

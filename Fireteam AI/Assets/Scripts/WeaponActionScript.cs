@@ -1900,6 +1900,22 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         }
     }
 
+    public void UseBodyBagCase(int deployableId)
+    {
+        pView.RPC("RpcUseBodyBagCase", RpcTarget.All, deployableId);
+    }
+
+    [PunRPC]
+    void RpcUseBodyBagCase(int deployableId)
+    {
+        playerActionScript.GiveBodyBag();
+        DeployableScript d = playerActionScript.gameController.GetDeployable(deployableId).GetComponent<DeployableScript>();
+        d.UseDeployableItem();
+        if (d.CheckOutOfUses()) {
+            playerActionScript.gameController.DestroyDeployable(d.deployableId);
+        }
+    }
+
     public void DeployDeployable(Vector3 pos, Quaternion rot, bool fromSkill) {
         GameObject o = GameObject.Instantiate(weaponMetaData.deployRef, pos, rot);
         DeployableScript d = o.GetComponent<DeployableScript>();

@@ -590,6 +590,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 if (n != null) {
                     speed *= n.weightSpeedReduction;
                 }
+                Carryable c = playerActionScript.objectCarrying.GetComponent<Carryable>();
+                if (c != null) {
+                    speed *= c.weightSpeedReduction;
+                }
             }
         }
 

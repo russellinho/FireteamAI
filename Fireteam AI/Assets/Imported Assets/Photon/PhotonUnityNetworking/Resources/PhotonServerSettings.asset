@@ -219,6 +219,11 @@ MonoBehaviour:
   - RpcTriggerGrenadeCockInAnimator
   - RpcPlayMeleeAnimation
   - RpcHideMeleeWeapon
+  - RpcBagBody
+  - RpcCarryItem
+  - RpcDropItem
+  - RpcSpawnBodyBag
+  - RpcUseBodyBagCase
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
