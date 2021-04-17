@@ -63,7 +63,6 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public short sectorsCleared;
 
 	public GameObject exitPoint;
-	public Transform spawnLocation;
 	public Transform outOfBoundsPoint;
 
 	public bool assaultMode;
@@ -1786,6 +1785,22 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public float GetAvgDistanceBetweenTeam()
 	{
 		return avgDistanceBetweenTeam;
+	}
+
+	public Vector3 GetMySpawnLocation()
+	{
+		string sceneName = SceneManager.GetActiveScene().name;
+		int insertIndex = Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["insertionPoint"]);
+		if (sceneName.StartsWith("Badlands1")) {
+			if (insertIndex < Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0].Length) {
+				return Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0][insertIndex];
+			} else {
+				return Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0][0];
+			}
+		} else if (sceneName.StartsWith("Badlands2")) {
+			return Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1][0];
+		}
+		return Vector3.zero;
 	}
 
 }

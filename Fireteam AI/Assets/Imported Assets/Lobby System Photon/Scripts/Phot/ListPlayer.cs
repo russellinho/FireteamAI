@@ -62,8 +62,6 @@ namespace Photon.Pun.LobbySystemPhoton
 		public TextMeshProUGUI passwordDisplayTextVs;
 		public Button sendMsgBtn;
 		public Button sendMsgBtnVs;
-		// public Button emojiBtn;
-		// public Button emojiBtnVs;
 		public Button leaveGameBtn;
 		public Button leaveGameBtnVs;
 		public Button switchTeamsBtnVs;
@@ -73,18 +71,26 @@ namespace Photon.Pun.LobbySystemPhoton
 		public Button voteKickBtnVs;
 		public Button changePasswordBtn;
 		public Button changePasswordBtnVs;
+		public Button preplanningBtn;
+		public Button preplanningBtnVs;
+		public Button selectInsertionBtn;
+		public Button selectInsertionBtnVs;
 		public GameObject titleController;
 		public AudioClip countdownSfx;
 		public GameObject mainMenuCampaign;
 		public GameObject mainMenuVersus;
 		public GameObject gameOptionsMenuCampaign;
 		public GameObject gameOptionsMenuVersus;
+		public GameObject preplanningMenuCampaign;
+		public GameObject preplanningMenuVersus;
 		public GameObject gameMusicMenuCampaign;
 		public GameObject gameMusicMenuVersus;
 		public GameObject kickPlayerMenuCampaign;
 		public GameObject kickPlayerMenuVersus;
 		public GameObject privacyMenuCampaign;
 		public GameObject privacyMenuVersus;
+		public GameObject selectInsertionMenu;
+		public GameObject[] insertionPointMaps;
 		public PlayerKick[] playerKickSlotsCampaign;
 		public PlayerKick[] playerKickSlotsRed;
 		public PlayerKick[] playerKickSlotsBlue;
@@ -94,7 +100,10 @@ namespace Photon.Pun.LobbySystemPhoton
 		private string[] mapStrings = new string[]{"MapImages/badlands1", "MapImages/badlands2"};
 		private string[] mapDescriptions = new string[]{"A local cannibal insurgent group in the de-facto midwest of the New States of America known as the Cicadas has taken over a local refugee outpost in order to develop chemical warheads. Disrupt their operation and salvage the outpost.", 
 			"The local Cicadas have shot down one of our evac choppers in the badlands. Rescue the surviving pilot and defend her until evac arrives."};
-		public static Vector3[] mapSpawnPoints = new Vector3[]{ new Vector3(1298f,10.53f,954.459f), new Vector3(119f, 0.17f, 116f) };
+		public static Vector3[][] mapSpawnPoints = new Vector3[][]{ 
+			new Vector3[3]{new Vector3(1298f,10.53f,954.459f), new Vector3(1655.3f,10.12f,992.6f), new Vector3(1223.4f,11.766f,1174.12f)},
+			new Vector3[1]{new Vector3(119f, 0.17f, 116f)}
+		};
 
 		// Ready status
 		private GameObject myPlayerListEntry;
@@ -217,12 +226,16 @@ namespace Photon.Pun.LobbySystemPhoton
 			switchTeamsBtnVs.interactable = status;
 			gameOptionsBtn.interactable = status;
 			gameOptionsBtnVs.interactable = status;
+			preplanningBtn.interactable = status;
+			preplanningBtnVs.interactable = status;
 			ToggleMapChangeButtons(status);
 			if (!status) {
 				kickPlayerMenuCampaign.SetActive(false);
 				kickPlayerMenuVersus.SetActive(false);
 				gameOptionsMenuCampaign.SetActive(false);
 				gameOptionsMenuVersus.SetActive(false);
+				preplanningMenuCampaign.SetActive(false);
+				preplanningMenuVersus.SetActive(false);
 				gameMusicMenuCampaign.SetActive(false);
 				gameMusicMenuVersus.SetActive(false);
 				privacyMenuCampaign.SetActive(false);
@@ -248,12 +261,16 @@ namespace Photon.Pun.LobbySystemPhoton
 			switchTeamsBtnVs.interactable = status;
 			gameOptionsBtn.interactable = status;
 			gameOptionsBtnVs.interactable = status;
+			preplanningBtn.interactable = status;
+			preplanningBtnVs.interactable = status;
 			ToggleMapChangeButtons(status);
 			if (!status) {
 				kickPlayerMenuCampaign.SetActive(false);
 				kickPlayerMenuVersus.SetActive(false);
 				gameOptionsMenuCampaign.SetActive(false);
 				gameOptionsMenuVersus.SetActive(false);
+				preplanningMenuCampaign.SetActive(false);
+				preplanningMenuVersus.SetActive(false);
 				gameMusicMenuCampaign.SetActive(false);
 				gameMusicMenuVersus.SetActive(false);
 				privacyMenuCampaign.SetActive(false);
@@ -505,6 +522,8 @@ namespace Photon.Pun.LobbySystemPhoton
 				mapDescriptionVs.text = mapDescriptions[i];
 				mapSelectorVs.UpdateUI();
 			}
+			UpdatePreplanningMenu(i);
+			ResetMyInsertionPoint();
 		}
 
 		[PunRPC]
@@ -512,6 +531,18 @@ namespace Photon.Pun.LobbySystemPhoton
 			if (playerListEntries == null || !playerListEntries.ContainsKey(actorId) || playerListEntries[actorId].GetComponent<PlayerEntryPrefab>() == null) return;
 			PlayerEntryPrefab p = playerListEntries[actorId].GetComponent<PlayerEntryPrefab>();
 			p.SetRank(PlayerData.playerdata.GetRankFromExp((uint)exp).name);
+		}
+
+		void UpdatePreplanningMenu(int newMap)
+		{
+			if (newMap == 0) {
+				selectInsertionBtn.interactable = true;
+				selectInsertionBtnVs.interactable = true;
+			} else {
+				selectInsertionBtn.interactable = false;
+				selectInsertionBtnVs.interactable = false;
+				ToggleSelectInsertionMenu(false);
+			}
 		}
 
 		void ResetMapSelector()
@@ -1031,6 +1062,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			templateUIClass.ChatText.text = "";
             templateUIClassVs.ChatText.text = "";
             ToggleButtons(true);
+			ToggleSelectInsertionMenu(false);
 			PhotonNetwork.JoinLobby();
 			mainPanelManager.ToggleTopBar(true);
 			mainPanelManager.ReopenCurrentPanel();
@@ -1375,6 +1407,26 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 		}
 
+		public void TogglePreplanningMenuCampaign(bool on) {
+			preplanningMenuCampaign.SetActive(on);
+		}
+
+		public void TogglePreplanningMenuVersus(bool on) {
+			preplanningMenuVersus.SetActive(on);
+		}
+
+		public void ToggleSelectInsertionMenu(bool on)
+		{
+			selectInsertionMenu.SetActive(on);
+			if (on) {
+				if (currentMode == 'C') {
+					SetInsertionPointSelectionMap(mapSelector.index);
+				} else if (currentMode == 'V') {
+					SetInsertionPointSelectionMap(mapSelectorVs.index);
+				}
+			}
+		}
+
 		public void ToggleGameMusicMenuCampaign(bool on) {
 			gameMusicMenuCampaign.SetActive(on);
 			if (!on) {
@@ -1686,6 +1738,71 @@ namespace Photon.Pun.LobbySystemPhoton
 		{
 			Hashtable h = new Hashtable();
 			h.Add("starter", 1);
+			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+		}
+
+		public void SetInsertionPointSelectionMap(int index)
+		{
+			for (int i = 0; i < insertionPointMaps.Length; i++) {
+				if (insertionPointMaps[i] == null) continue;
+				if (i == index) {
+					insertionPointMaps[i].SetActive(true);
+					ResetSelectedInsertionPoints();
+				} else {
+					insertionPointMaps[i].SetActive(false);
+				}
+			}
+		}
+
+		void ResetSelectedInsertionPoints()
+		{
+			int i = currentMode == 'C' ? mapSelector.index : mapSelectorVs.index;
+			InsertionPoint[] insertionPoints = insertionPointMaps[i].GetComponentsInChildren<InsertionPoint>();
+			foreach (InsertionPoint p in insertionPoints) {
+				if (p.index == 0) {
+					p.SelectButton(true);
+				} else {
+					p.DeselectButton();
+				}
+			}
+		}
+
+		public void OnSelectInsertionPoint(int index)
+		{
+			int i = currentMode == 'C' ? mapSelector.index : mapSelectorVs.index;
+			InsertionPoint[] insertionPoints = insertionPointMaps[i].GetComponentsInChildren<InsertionPoint>();
+			foreach (InsertionPoint p in insertionPoints) {
+				if (p.index == index) {
+					p.SelectButton(false);
+				} else {
+					p.DeselectButton();
+				}
+			}
+		}
+
+		int GetSelectedInsertionPoint()
+		{
+			int i = currentMode == 'C' ? mapSelector.index : mapSelectorVs.index;
+			InsertionPoint[] insertionPoints = insertionPointMaps[i].GetComponentsInChildren<InsertionPoint>();
+			foreach (InsertionPoint p in insertionPoints) {
+				if (p.IsSelected()) {
+					return p.index;
+				}
+			}
+			return 0;
+		}
+
+		public void SetMyInsertionPoint()
+		{
+			Hashtable h = new Hashtable();
+			h.Add("insertionPoint", GetSelectedInsertionPoint());
+			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
+		}
+
+		void ResetMyInsertionPoint()
+		{
+			Hashtable h = new Hashtable();
+			h.Add("insertionPoint", 0);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 		}
 

@@ -1717,10 +1717,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
         // Send player back to spawn position, reset rotation, leave spectator mode
         //transform.rotation = Quaternion.Euler(Vector3.zero);
-        // transform.position = gameController.spawnLocation.position;
         fpc.m_MouseLook.Init(fpc.charTransform, fpc.spineTransform, fpc.fpcTransformSpine, fpc.fpcTransformBody);
         LeaveSpectatorMode();
-        transform.position = gameController.spawnLocation.position;
+        transform.position = gameController.GetMySpawnLocation();
         if (gameController.reviveWindowTimer > -50f) {
             gameController.ClearReviveWindowTimer();
         }
@@ -2157,7 +2156,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     void FallOffMapProtection() {
         if (transform.position.y <= gameController.outOfBoundsPoint.position.y) {
-            transform.position = gameController.spawnLocation.position;
+            transform.position = gameController.GetMySpawnLocation();
         }
     }
 

@@ -263,9 +263,14 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         string levelName = SceneManager.GetActiveScene().name;
         if (levelName.Equals("Badlands1") || levelName.Equals("Badlands1_Red") || levelName.Equals("Badlands1_Blue"))
         {
+            int spawnPointIndex = Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["insertionPoint"]);
             globalChatClient.UnsubscribeFromGlobalChat();
             string characterPrefabName = GetCharacterPrefabName();
-            SpawnPlayer(characterPrefabName, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0]);
+            if (spawnPointIndex < Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0].Length) {
+                SpawnPlayer(characterPrefabName, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0][spawnPointIndex]);
+            } else {
+                SpawnPlayer(characterPrefabName, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0][0]);
+            }
             AskOthersForThemselves();
             if (PlayerData.playerdata.globalChatClient != null) {
                 PlayerData.playerdata.globalChatClient.UpdateStatus("IN GAME");
@@ -275,9 +280,10 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             //     Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[0],
             //     Quaternion.Euler(Vector3.zero));
         } else if (levelName.Equals("Badlands2") || levelName.Equals("Badlands2_Red") || levelName.Equals("Badlands2_Blue")) {
+            int spawnPointIndex = Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["insertionPoint"]);
             globalChatClient.UnsubscribeFromGlobalChat();
             string characterPrefabName = GetCharacterPrefabName();
-            SpawnPlayer(characterPrefabName, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1]);
+            SpawnPlayer(characterPrefabName, Photon.Pun.LobbySystemPhoton.ListPlayer.mapSpawnPoints[1][0]);
             AskOthersForThemselves();
             if (PlayerData.playerdata.globalChatClient != null) {
                 PlayerData.playerdata.globalChatClient.UpdateStatus("IN GAME");
