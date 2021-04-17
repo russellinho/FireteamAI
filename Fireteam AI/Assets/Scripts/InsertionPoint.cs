@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class InsertionPoint : MonoBehaviour
@@ -11,13 +12,12 @@ public class InsertionPoint : MonoBehaviour
     public void DeselectButton()
     {
         isSelected = false;
-        EventSystem.current.GetComponent<EventSystem>().SetSelectedGameObject(null);
     }
 
-    public void SelectButton(bool highlight)
+    public void SelectButton()
     {
         isSelected = true;
-        if (highlight) EventSystem.current.GetComponent<EventSystem>().SetSelectedGameObject(gameObject);
+        gameObject.GetComponent<Button>().Select();
     }
 
     public bool IsSelected()

@@ -1747,7 +1747,7 @@ namespace Photon.Pun.LobbySystemPhoton
 				if (insertionPointMaps[i] == null) continue;
 				if (i == index) {
 					insertionPointMaps[i].SetActive(true);
-					ResetSelectedInsertionPoints();
+					OnSelectInsertionPoint(Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["insertionPoint"]));
 				} else {
 					insertionPointMaps[i].SetActive(false);
 				}
@@ -1760,7 +1760,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			InsertionPoint[] insertionPoints = insertionPointMaps[i].GetComponentsInChildren<InsertionPoint>();
 			foreach (InsertionPoint p in insertionPoints) {
 				if (p.index == 0) {
-					p.SelectButton(true);
+					p.SelectButton();
 				} else {
 					p.DeselectButton();
 				}
@@ -1773,7 +1773,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			InsertionPoint[] insertionPoints = insertionPointMaps[i].GetComponentsInChildren<InsertionPoint>();
 			foreach (InsertionPoint p in insertionPoints) {
 				if (p.index == index) {
-					p.SelectButton(false);
+					p.SelectButton();
 				} else {
 					p.DeselectButton();
 				}

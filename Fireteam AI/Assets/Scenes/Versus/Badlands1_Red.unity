@@ -1361,7 +1361,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 79862038}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 4.3, y: -0.30843806, z: 1.6164911}
+  m_LocalPosition: {x: 5.8, y: -0.30843806, z: 1.6164911}
   m_LocalScale: {x: 0.014179741, y: 9.5, z: 12.3885145}
   m_Children: []
   m_Father: {fileID: 460163949}
@@ -67396,6 +67396,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7758033297272854682, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7799063460885989284, guid: 1cdbefa86996e46a089959ed114f2e2a,
         type: 3}
       propertyPath: m_AnchorMin.x
@@ -77066,7 +77071,6 @@ MonoBehaviour:
   exitLevelLoaded: 0
   sectorsCleared: 0
   exitPoint: {fileID: 164129224}
-  spawnLocation: {fileID: 256642450}
   outOfBoundsPoint: {fileID: 2003344821}
   assaultMode: 0
   pView: {fileID: 114769893195814381}
@@ -77085,6 +77089,8 @@ MonoBehaviour:
   voteTimer: 0
   yesVotes: 0
   noVotes: 0
+  bodyBagPrefab: {fileID: 0}
+  duffleBagPrefab: {fileID: 0}
 --- !u!114 &114769893195814381
 MonoBehaviour:
   m_ObjectHideFlags: 0

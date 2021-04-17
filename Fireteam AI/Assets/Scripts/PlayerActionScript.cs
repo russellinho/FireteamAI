@@ -242,6 +242,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         originalSpeed = playerScript.speed;
         totalSpeedBoost = originalSpeed;
         bodyBags = (char)3;
+        hud.SetBodyBagAmmo(3);
         ToggleRagdoll(false);
         InitializeGuardianAngel();
         skillController.SetLastStand();
@@ -868,6 +869,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     BetaEnemyScript b = activeInteractable.GetComponentInParent<BetaEnemyScript>();
                     interactionTimer = 0f;
                     bodyBags--;
+                    hud.SetBodyBagAmmo(bodyBags);
                     b.BagBody();
                     int carryableId = gameController.SpawnBodyBag(b.transform.position);
                     pView.RPC("RpcCarryItem", RpcTarget.All, carryableId, pView.Owner.ActorNumber);
@@ -3031,7 +3033,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public void GiveBodyBag()
     {
-        bodyBags++;
+        if (pView.IsMine) {
+            bodyBags++;
+            hud.SetBodyBagAmmo(bodyBags);
+        }
     }
 
 }

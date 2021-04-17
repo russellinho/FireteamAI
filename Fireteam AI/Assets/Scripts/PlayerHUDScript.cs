@@ -658,6 +658,17 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 		// }
 	}
 
+	public void SetBodyBagAmmo(int a)
+	{
+		for (int i = 0; i < 3; i++) {
+			if (i < a) {
+				container.bodyBagAmmo[i].gameObject.SetActive(true);
+			} else {
+				container.bodyBagAmmo[i].gameObject.SetActive(false);
+			}
+		}
+	}
+
 	IEnumerator UpdateWaypoints() {
 		HandleWaypointsForMission();
 		yield return new WaitForSeconds(0.025f);

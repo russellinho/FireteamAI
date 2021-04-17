@@ -35,6 +35,7 @@ public class HUDContainer : MonoBehaviour {
 	public CanvasGroup itemCarryingGroup;
 	public Text itemCarryingKeyText;
 	public Text itemCarryingText;
+	public Image[] bodyBagAmmo;
 
 	// Pause/in-game menu HUD
 	public PauseMenuManager pauseMenuGUI;
