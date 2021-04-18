@@ -1420,9 +1420,9 @@ namespace Photon.Pun.LobbySystemPhoton
 			selectInsertionMenu.SetActive(on);
 			if (on) {
 				if (currentMode == 'C') {
-					SetInsertionPointSelectionMap(mapSelector.index);
+					SetInsertionPointSelectionMap(mapSelector.index, false);
 				} else if (currentMode == 'V') {
-					SetInsertionPointSelectionMap(mapSelectorVs.index);
+					SetInsertionPointSelectionMap(mapSelectorVs.index, true);
 				}
 			}
 		}
@@ -1741,13 +1741,14 @@ namespace Photon.Pun.LobbySystemPhoton
 			PhotonNetwork.LocalPlayer.SetCustomProperties(h);
 		}
 
-		public void SetInsertionPointSelectionMap(int index)
+		public void SetInsertionPointSelectionMap(int index, bool versus)
 		{
 			for (int i = 0; i < insertionPointMaps.Length; i++) {
 				if (insertionPointMaps[i] == null) continue;
 				if (i == index) {
 					insertionPointMaps[i].SetActive(true);
 					OnSelectInsertionPoint(Convert.ToInt32(PhotonNetwork.LocalPlayer.CustomProperties["insertionPoint"]));
+					LoadTeamMembersSpawningPoints(i, versus);
 				} else {
 					insertionPointMaps[i].SetActive(false);
 				}
@@ -1763,6 +1764,40 @@ namespace Photon.Pun.LobbySystemPhoton
 					p.SelectButton();
 				} else {
 					p.DeselectButton();
+				}
+			}
+		}
+
+		void LoadTeamMembersSpawningPoints(int index, bool versus)
+		{
+			InsertionPoint[] insertionPoints = insertionPointMaps[index].GetComponentsInChildren<InsertionPoint>();
+			for (int i = 0; i < insertionPoints.Length; i++) {
+				insertionPoints[i].teamMembers.text = "";
+			}
+			
+			if (versus) {
+				string myTeam = (string)PhotonNetwork.LocalPlayer.CustomProperties["team"];
+				foreach (Player p in PhotonNetwork.PlayerList) {
+					string theirTeam = (string)p.CustomProperties["team"];
+					if (theirTeam == myTeam) {
+						int spawnPoint = 0;
+						try {
+							spawnPoint = Convert.ToInt32(p.CustomProperties["insertionPoint"]);
+						} catch (Exception e) {
+							spawnPoint = 0;
+						}
+						insertionPoints[spawnPoint].teamMembers.text += p.NickName + "\n";
+					}
+				}
+			} else {
+				foreach (Player p in PhotonNetwork.PlayerList) {
+					int spawnPoint = 0;
+					try {
+						spawnPoint = Convert.ToInt32(p.CustomProperties["insertionPoint"]);
+					} catch (Exception e) {
+						spawnPoint = 0;
+					}
+					insertionPoints[spawnPoint].teamMembers.text += p.NickName + "\n";
 				}
 			}
 		}
