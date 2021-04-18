@@ -449,7 +449,7 @@ public class EnemyModelCreator : MonoBehaviourPunCallbacks
 
     public bool BodyIsDespawned()
     {
-        return equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled;
+        return !equippedSkinRef.GetComponentInChildren<SkinnedMeshRenderer>().enabled;
     }
 
     public void DespawnPlayer() {

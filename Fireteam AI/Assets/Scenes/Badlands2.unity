@@ -55368,6 +55368,21 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3687282825990557352, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3687282825990557352, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3687282825990557352, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3701726834666515573, guid: 1cdbefa86996e46a089959ed114f2e2a,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -55484,6 +55499,31 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4241305786138081896, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4302174218828832368, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4302174218828832368, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4302174218828832368, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4302174218828832368, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4302174218828832368, guid: 1cdbefa86996e46a089959ed114f2e2a,
         type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
@@ -55801,7 +55841,7 @@ PrefabInstance:
     - target: {fileID: 5546923512492627112, guid: 1cdbefa86996e46a089959ed114f2e2a,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.00012207031
+      value: 1076.0624
       objectReference: {fileID: 0}
     - target: {fileID: 5546923512532273451, guid: 1cdbefa86996e46a089959ed114f2e2a,
         type: 3}
@@ -56006,7 +56046,7 @@ PrefabInstance:
     - target: {fileID: 5546923513576804488, guid: 1cdbefa86996e46a089959ed114f2e2a,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -73.24914
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5546923513598160597, guid: 1cdbefa86996e46a089959ed114f2e2a,
         type: 3}
@@ -56819,6 +56859,11 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7602408393941472502, guid: 1cdbefa86996e46a089959ed114f2e2a,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7758033297272854682, guid: 1cdbefa86996e46a089959ed114f2e2a,
         type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
@@ -61936,7 +61981,14 @@ MonoBehaviour:
   - {fileID: 7926926131478402606}
   - {fileID: 7926926131478402607}
   postProcessVolume: {fileID: 826696601}
+  waterFogColor: {r: 0, g: 0, b: 0, a: 0}
+  waterFogDensity: 0.25
+  defFogEnabled: 0
+  defFogColor: {r: 0, g: 0, b: 0, a: 0}
+  defFogMode: 0
+  defFogDensity: 0
   endGameTimer: 0
+  reviveWindowTimer: 0
   aIController: {fileID: 1443852014832712}
   spawnMode: 0
   updateObjectivesFlag: 0
@@ -61948,7 +62000,6 @@ MonoBehaviour:
   exitLevelLoaded: 0
   sectorsCleared: 0
   exitPoint: {fileID: 164129224}
-  spawnLocation: {fileID: 256642450}
   outOfBoundsPoint: {fileID: 273067543}
   assaultMode: 1
   pView: {fileID: 114769893195814381}
@@ -61967,6 +62018,9 @@ MonoBehaviour:
   voteTimer: 0
   yesVotes: 0
   noVotes: 0
+  bodyBagPrefab: {fileID: 8400967552685208887, guid: 11b160551f89a4d33b2458be4c47d394,
+    type: 3}
+  duffleBagPrefab: {fileID: 0}
 --- !u!114 &114769893195814381
 MonoBehaviour:
   m_ObjectHideFlags: 0

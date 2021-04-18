@@ -306,10 +306,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.J)) {
-            Debug.LogError("height: " + charController.height + ", center: " + charController.center.y);
-        }
-
         UpdateFightingSpirit();
         UpdateLastStand();
         UpdateActiveCamouflage();
@@ -873,7 +869,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     b.BagBody();
                     int carryableId = gameController.SpawnBodyBag(b.transform.position);
                     pView.RPC("RpcCarryItem", RpcTarget.All, carryableId, pView.Owner.ActorNumber);
-                    fpc.m_IsCrouching = false;
                     activeInteractable = null;
                     interactionLock = true;
                 }
@@ -914,6 +909,17 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                         p.ToggleProceduralInfo("PLEASE STAY STILL WHILE YOUR TEAMMATE REVIVES YOU", true, PhotonNetwork.LocalPlayer.ActorNumber);
                     }
                 }
+            } else if (interactingWith == "Carryable") {
+                hud.ToggleActionBar(true, "PICKING UP...");
+                interactionTimer += (Time.deltaTime / (DEPLOY_USE_TIME * (1f - skillController.GetDexterityBoost())));
+                hud.SetActionBarSlider(interactionTimer);
+                if (interactionTimer >= 1f) {
+                    Carryable c = activeInteractable.GetComponent<Carryable>();
+                    interactionTimer = 0f;
+                    pView.RPC("RpcCarryItem", RpcTarget.All, c.carryableId, pView.Owner.ActorNumber);
+                    activeInteractable = null;
+                    interactionLock = true;
+                }
             }
         } else {
             if (!hud.container.inGameMessenger.inputText.enabled) {
@@ -924,7 +930,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 // hud.ToggleChatText(true);
             }
             if (interactionTimer > 0f) {
-                Debug.Log("Clearing interacting on");
                 pView.RPC("RpcClearInteractingOn", RpcTarget.All);
             }
             interactionTimer = 0f;
@@ -944,7 +949,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void InteractCheck() {
         HealPlayerCheck();
         RevivePlayerCheck();
-        BagBodyCheck();
+        DeadBodyCheck();
+        CarryableCheck();
         if (gameController.currentMap == 1) {
             BombDefuseCheck();
         } else if (gameController.currentMap == 2) {
@@ -1098,7 +1104,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
-    void BagBodyCheck()
+    void DeadBodyCheck()
     {
         if (objectCarrying != null || gameController == null) {
             return;
@@ -1125,8 +1131,35 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
     }
 
+    void CarryableCheck()
+    {
+        if (objectCarrying != null || gameController == null) {
+            return;
+        }
+
+        if (activeInteractable != null && !hud.PauseIsActive() && health > 0 && lastStandTimer <= 0f) {
+            Carryable c = activeInteractable.GetComponent<Carryable>();
+            if (c != null) {
+                if (c.carriedByTransform != null) {
+                    SetInteracting(false, null);
+                    return;
+                }
+                if (PlayerPreferences.playerPreferences.KeyWasPressed("Interact", true) && !interactionLock) {
+                    SetInteracting(true, "Carryable");
+                    hud.ToggleHintText(null);
+                } else {
+                    SetInteracting(false, null);
+                    hud.ToggleHintText("HOLD [" + PlayerPreferences.playerPreferences.keyMappings["Interact"].key.ToString() + "] TO PICK UP " + c.carryableName);
+                }
+            }
+        } else {
+            SetInteracting(false, null);
+            hud.ToggleHintText(null);
+        }
+    }
+
     void DropOffCheck() {
-        if (gameController == null || gameController.vipRef == null)
+        if (gameController == null)
         {
             return;
         }
@@ -1479,7 +1512,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     {
         if (gameObject.layer == 0) return;
         string[] ss = enemyIds.Split(',');
-        Debug.LogError("enemies disorint: " + enemyIds);
         foreach (string s in ss) {
             int i = int.Parse(s);
             GameObject o = gameController.enemyList[i];
@@ -1826,7 +1858,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         // Put item in carrying slot
         Carryable c = gameController.GetCarryable(carryableId).GetComponent<Carryable>();
         c.ToggleIsCarrying(true, playerId);
-        objectCarrying = c.gameObject;        
+        objectCarrying = c.gameObject;
         if (playerId == PhotonNetwork.LocalPlayer.ActorNumber) {
             hud.SetCarryingText("BODY BAG");
         }
@@ -1845,13 +1877,14 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void RpcDropItem()
+    void RpcDropItem(float startPosX, float startPosY, float startPosZ, float launchX, float launchY, float launchZ)
     {
         if (gameObject.layer == 0) return;
         Carryable c = objectCarrying.GetComponent<Carryable>();
         int droppedOffBy = c.carriedByPlayerId;
         c.ToggleIsCarrying(false, -1);
-        c.Launch(viewCam.transform.forward.x, viewCam.transform.forward.y, viewCam.transform.forward.z);
+        c.transform.position = new Vector3(startPosX + launchX, startPosY + launchY, startPosZ + launchZ);
+        c.Launch(launchX, launchY, launchZ);
         objectCarrying = null;
     }
 
@@ -2016,7 +2049,17 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 
     public int GetDetectionRate() {
         int baseDetection = playerScript.detection;
-        return (int)Mathf.Clamp((((float)baseDetection * (1f - skillController.GetThisPlayerAvoidabilityBoost())) - skillController.GetDdosDetectionBoost()), MIN_DETECTION_LEVEL, MAX_DETECTION_LEVEL);
+        float carryingPenalty = 0f;
+        if (carryingSlot != null) {
+            Carryable c = carryingSlot.GetComponent<Carryable>();
+            NpcScript n = carryingSlot.GetComponent<NpcScript>();
+            if (n != null) {
+                carryingPenalty = n.detectionRatePenalty;
+            } else if (c != null) {
+                carryingPenalty = c.detectionRatePenalty;
+            }
+        }
+        return (int)Mathf.Clamp((((float)baseDetection * (1f - skillController.GetThisPlayerAvoidabilityBoost())) - skillController.GetDdosDetectionBoost() + carryingPenalty), MIN_DETECTION_LEVEL, MAX_DETECTION_LEVEL);
     }
 
     public void SetEnemySeenBy(int enemyPViewId) {
@@ -2184,7 +2227,8 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             if (objectCarrying.GetComponent<NpcScript>() != null) {
                 pView.RPC("RpcDropOffNpc", RpcTarget.All);
             } else {
-                pView.RPC("RpcDropItem", RpcTarget.All);
+                pView.RPC("RpcDropItem", RpcTarget.All, viewCam.transform.position.x, viewCam.transform.position.y, viewCam.transform.position.z,
+                    viewCam.transform.forward.x, viewCam.transform.forward.y, viewCam.transform.forward.z);
             }
         }
     }

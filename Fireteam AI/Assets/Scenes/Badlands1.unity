@@ -66409,7 +66409,7 @@ PrefabInstance:
     - target: {fileID: 5546923512492627112, guid: 1cdbefa86996e46a089959ed114f2e2a,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 1842.054
       objectReference: {fileID: 0}
     - target: {fileID: 5546923512532273451, guid: 1cdbefa86996e46a089959ed114f2e2a,
         type: 3}
@@ -66614,7 +66614,7 @@ PrefabInstance:
     - target: {fileID: 5546923513576804488, guid: 1cdbefa86996e46a089959ed114f2e2a,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -0.000030517578
       objectReference: {fileID: 0}
     - target: {fileID: 5546923513598160597, guid: 1cdbefa86996e46a089959ed114f2e2a,
         type: 3}
@@ -77089,7 +77089,8 @@ MonoBehaviour:
   voteTimer: 0
   yesVotes: 0
   noVotes: 0
-  bodyBagPrefab: {fileID: 0}
+  bodyBagPrefab: {fileID: 8400967552685208887, guid: 11b160551f89a4d33b2458be4c47d394,
+    type: 3}
   duffleBagPrefab: {fileID: 0}
 --- !u!114 &114769893195814381
 MonoBehaviour:

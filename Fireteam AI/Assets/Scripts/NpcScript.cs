@@ -26,6 +26,7 @@ public class NpcScript : MonoBehaviourPunCallbacks {
 	public bool immobileWhileCarrying;
 	// Amount of speed to reduce while carrying
 	public float weightSpeedReduction;
+	public float detectionRatePenalty;
 	public NpcType npcType;
 	public AudioClip[] gruntSounds;
 	public AudioSource audioSource;

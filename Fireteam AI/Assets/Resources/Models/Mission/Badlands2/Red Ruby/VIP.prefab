@@ -2583,6 +2583,7 @@ MonoBehaviour:
   actionState: 15
   immobileWhileCarrying: 1
   weightSpeedReduction: 0.6
+  detectionRatePenalty: 0.1
   npcType: 1
   gruntSounds:
   - {fileID: 8300000, guid: e98db1f95cd932f42ba9e89ae577a739, type: 3}
