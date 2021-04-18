@@ -48,7 +48,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	public Dictionary<int, GameObject> enemyList = new Dictionary<int, GameObject> ();
 	private Dictionary<int, GameObject> pickupList = new Dictionary<int, GameObject>();
 	private Dictionary<int, GameObject> deployableList = new Dictionary<int, GameObject>();
-	private Dictionary<int, GameObject> carryableList = new Dictionary<int, GameObject>();
+	public Dictionary<int, GameObject> carryableList = new Dictionary<int, GameObject>();
 	private Queue<int> acceptPlayerQueue;
 
     // Mission variables

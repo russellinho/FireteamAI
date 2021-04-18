@@ -247,6 +247,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 			wasMasterClient = true;
 		}
 
+		StartCoroutine("ScanForSuspects");
+
 		if (gameControllerScript.spawnMode == SpawnMode.Paused) {
 			StartCoroutine (Respawn(initialSpawnTime, false));
 		}
@@ -315,6 +317,8 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         {
             wasMasterClient = true;
         }
+
+		StartCoroutine("ScanForSuspects");
 
 		if (gameControllerScript.spawnMode == SpawnMode.Paused) {
 			StartCoroutine (Respawn(initialSpawnTime, false));
@@ -1013,17 +1017,16 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         }
 	}
 
-	float CalculateSuspicionLevelForPos(Vector3 pos) {
+	float CalculateSuspicionLevelForPos(Vector3 pos, float maxRange) {
 		// Suspicion will depend on distance from the position and degree turned towards it
-		float maxRange = range + 20f;
 		float distanceFromTarget = Vector3.Distance (transform.position, pos);
 		// How far away you are relative to max detection distance - the lower, the closer
 		float percentOfRange = maxRange / distanceFromTarget;
 		// Calculate distance multiplier
 		float d = Mathf.Clamp(percentOfRange, 0.05f, 10f);
 		// Calculate rotation multiplier
-		Vector3 toPlayer = pos - transform.position;
-		float angleBetween = Vector3.Angle (transform.forward, toPlayer);
+		Vector3 toTarget = pos - transform.position;
+		float angleBetween = Vector3.Angle (transform.forward, toTarget);
 		float r = 1f;
 		if (angleBetween <= 90f) {
 			float ang = 90f - angleBetween;
@@ -1031,8 +1034,10 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 		// Get base detection rate for player
 		float total = 10f;
-		if (playerTargeting.GetComponent<PlayerActionScript>() != null) {
-			total = playerTargeting.GetComponent<PlayerActionScript>().GetDetectionRate();
+		if (playerTargeting != null) {
+			if (playerTargeting.GetComponent<PlayerActionScript>() != null) {
+				total = playerTargeting.GetComponent<PlayerActionScript>().GetDetectionRate();
+			}
 		}
 		// Calculate total suspicion increase
 		// Debug.Log("dist: " + d + " rot: " + r);
@@ -1201,12 +1206,12 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		} else {
 			// Else, remain on lookout
 			UpdateActionState(ActionStates.Idle);
-			if (playerTargeting != null) {
-				if (!gameControllerScript.assaultMode) {
+			if (!gameControllerScript.assaultMode) {
+				if (playerTargeting != null) {
 					if (suspicionMeter < MAX_SUSPICION_LEVEL) {
 						SetAlertStatus(AlertStatus.Suspicious);
 						// Increase suspicion level
-						float suspicionIncrease = CalculateSuspicionLevelForPos(playerTargeting.transform.position);
+						float suspicionIncrease = CalculateSuspicionLevelForPos(playerTargeting.transform.position, range + 20f);
 						IncreaseSuspicionLevel(suspicionIncrease);
 						// Alert the local player if he's the one being seen only if this enemy has the greatest suspicion level
 						if (playerTargeting.GetComponent<PlayerActionScript>() != null) {
@@ -1216,19 +1221,15 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 						SetAlertStatus(AlertStatus.Alert);
 					}
 				} else {
-					SetAlertStatus(AlertStatus.Alert);
-				}
-			} else {
-				if (!gameControllerScript.assaultMode) {
 					if (suspicionMeter > 0f) {
 						DecreaseSuspicionLevel();
 						SetAlertStatus(AlertStatus.Suspicious);
 					} else {
 						SetAlertStatus(AlertStatus.Neutral);
 					}
-				} else {
-					SetAlertStatus(AlertStatus.Alert);
 				}
+			} else {
+				SetAlertStatus(AlertStatus.Alert);
 			}
 		}
 	}
@@ -1653,12 +1654,12 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		} else {
 			// Else, wander around the patrol points until alerted or enemy seen
 			UpdateActionState(ActionStates.Wander);
-			if (playerTargeting != null) {
-				if (!gameControllerScript.assaultMode) {
+			if (!gameControllerScript.assaultMode) {
+				if (playerTargeting != null) {
 					if (suspicionMeter < MAX_SUSPICION_LEVEL) {
 						SetAlertStatus(AlertStatus.Suspicious);
 						// Increase suspicion level
-						float suspicionIncrease = CalculateSuspicionLevelForPos(playerTargeting.transform.position);
+						float suspicionIncrease = CalculateSuspicionLevelForPos(playerTargeting.transform.position, range + 20f);
 						IncreaseSuspicionLevel(suspicionIncrease);
 						// Alert the local player if he's the one being seen only if this enemy has the greatest suspicion level
 						if (playerTargeting.GetComponent<PlayerActionScript>() != null) {
@@ -1668,19 +1669,15 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 						SetAlertStatus(AlertStatus.Alert);
 					}
 				} else {
-					SetAlertStatus(AlertStatus.Alert);
-				}
-			} else {
-				if (!gameControllerScript.assaultMode) {
 					if (suspicionMeter > 0f) {
 						DecreaseSuspicionLevel();
 						SetAlertStatus(AlertStatus.Suspicious);
 					} else {
 						SetAlertStatus(AlertStatus.Neutral);
 					}
-				} else {
-					SetAlertStatus(AlertStatus.Alert);
 				}
+			} else {
+				SetAlertStatus(AlertStatus.Alert);
 			}
 		}
 	}
@@ -2157,6 +2154,50 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		return true;
 	}
 
+	void SuspectScan()
+	{
+		// If currently targeting a player, ignore the other objects that they see
+		if (playerTargeting != null) return;
+
+		// Scan for other enemy allies in sight that are suspicious or dead and not disposed of
+		foreach (KeyValuePair<int, GameObject> o in gameControllerScript.enemyList) {
+			BetaEnemyScript b = o.Value.GetComponent<BetaEnemyScript>();
+			if (b.alertStatus == AlertStatus.Alert || (b.actionState == ActionStates.Dead && !b.modeler.BodyIsDespawned())) {
+				if (Vector3.Distance (transform.position, b.transform.position) < range + 10f) {
+					Vector3 toTarget = b.transform.position - transform.position;
+					float angleBetween = Vector3.Angle (transform.forward, toTarget);
+					if (angleBetween <= 90f) {
+						if (TargetIsObscured(o.Value, true)) {
+							continue;
+						}
+						// Increase suspicion level by constant level for this
+						float suspicionIncrease = CalculateSuspicionLevelForPos(b.transform.position, range + 10f);
+						IncreaseSuspicionLevel(suspicionIncrease);
+					}
+				}
+			}
+		}
+
+		// Scan for carryables that are in sight
+		foreach (KeyValuePair<int, GameObject> o in gameControllerScript.carryableList) {
+			Carryable c = o.Value.GetComponent<Carryable>();
+			if (c.carriedByTransform == null) {
+				if (Vector3.Distance (transform.position, c.transform.position) < range + 10f) {
+					Vector3 toTarget = c.transform.position - transform.position;
+					float angleBetween = Vector3.Angle (transform.forward, toTarget);
+					if (angleBetween <= 90f) {
+						if (TargetIsObscured(o.Value, false)) {
+							continue;
+						}
+						// Increase suspicion level by constant level for this
+						float suspicionIncrease = CalculateSuspicionLevelForPos(c.transform.position, range + 10f);
+						IncreaseSuspicionLevel(suspicionIncrease);
+					}
+				}
+			}
+		}
+	}
+
 	void PlayerScan() {
 		if (playerScanTimer <= 0f) {
 			playerScanTimer = PLAYER_SCAN_DELAY;
@@ -2179,7 +2220,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 						Vector3 toPlayer = p.transform.position - transform.position;
 						float angleBetween = Vector3.Angle (transform.forward, toPlayer);
 						if (angleBetween <= 90f) {
-							if (TargetIsObscured(p)) {
+							if (TargetIsObscured(p, true)) {
 								continue;
 							}
 							keysNearBy.Add (p.GetComponent<PhotonView>().Owner.ActorNumber);
@@ -2195,7 +2236,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 						Vector3 toNpc = npcP.transform.position - transform.position;
 						float angleBetween = Vector3.Angle (transform.forward, toNpc);
 						if (angleBetween <= 90f) {
-							if (!TargetIsObscured(npcP)) {
+							if (!TargetIsObscured(npcP, true)) {
 								keysNearBy.Add (-2);
 							}
 						}
@@ -2215,7 +2256,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 					float angleBetween = Vector3.Angle (transform.forward, toPlayer);
 					if (angleBetween <= 90f) {
 						// If still in eye view, check if there's something obscuring the player
-						if (TargetIsObscured(playerTargeting)) {
+						if (TargetIsObscured(playerTargeting, true)) {
 							UnseeTarget();
 						}
 					} else {
@@ -2228,43 +2269,55 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		}
 	}
 
-	bool TargetIsObscured(GameObject targetRef) {
-		// Cast a ray to make sure there's nothing in between the player and the enemy
-		// Debug.DrawRay (headTransform.position, toPlayer, Color.blue);
-		FirstPersonController targetPlayerCheck = targetRef.GetComponent<FirstPersonController>();
-		Transform playerHead = null;
-		Vector3 middleHalfCheck = Vector3.zero;
-		Vector3 topHalfCheck = Vector3.zero;
-		if (targetPlayerCheck != null) {
-			playerHead = targetPlayerCheck.headTransform;
-			middleHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y - 0.1f, playerHead.position.z);
-			topHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y, playerHead.position.z);
-		} else {
-			middleHalfCheck = new Vector3(targetRef.transform.position.x, targetRef.transform.position.y + 0.1f, targetRef.transform.position.z);
-			topHalfCheck = new Vector3(targetRef.transform.position.x, targetRef.transform.position.y + 0.2f, targetRef.transform.position.z);
-		}
-		RaycastHit hit1;
-		RaycastHit hit2;
+	bool TargetIsObscured(GameObject targetRef, bool isHuman) {
+		if (isHuman) {
+			// Cast a ray to make sure there's nothing in between the player and the enemy
+			// Debug.DrawRay (headTransform.position, toPlayer, Color.blue);
+			FirstPersonController targetPlayerCheck = targetRef.GetComponent<FirstPersonController>();
+			Transform playerHead = null;
+			Vector3 middleHalfCheck = Vector3.zero;
+			Vector3 topHalfCheck = Vector3.zero;
+			if (targetPlayerCheck != null) {
+				playerHead = targetPlayerCheck.headTransform;
+				middleHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y - 0.1f, playerHead.position.z);
+				topHalfCheck = new Vector3 (playerHead.position.x, playerHead.position.y, playerHead.position.z);
+			} else {
+				middleHalfCheck = new Vector3(targetRef.transform.position.x, targetRef.transform.position.y + 0.1f, targetRef.transform.position.z);
+				topHalfCheck = new Vector3(targetRef.transform.position.x, targetRef.transform.position.y + 0.2f, targetRef.transform.position.z);
+			}
+			RaycastHit hit1;
+			RaycastHit hit2;
 
-		if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2, OBSCURE_IGNORE))
-		{
-			return true;
-		}
-		if (!Physics.Linecast (headTransform.position, topHalfCheck, out hit1, OBSCURE_IGNORE))
-		{
-			return true;
-		}
-		
-		if (hit1.transform.gameObject == null || hit2.transform.gameObject == null)
-		{
-			return true;
-		}
-		if (targetPlayerCheck != null) {
-			if (!hit1.transform.gameObject.tag.Equals("Player") && !hit2.transform.gameObject.tag.Equals("Player")) {
+			if (!Physics.Linecast (headTransform.position, middleHalfCheck, out hit2, OBSCURE_IGNORE))
+			{
 				return true;
 			}
+			if (!Physics.Linecast (headTransform.position, topHalfCheck, out hit1, OBSCURE_IGNORE))
+			{
+				return true;
+			}
+			
+			if (hit1.transform.gameObject == null || hit2.transform.gameObject == null)
+			{
+				return true;
+			}
+			if (targetPlayerCheck != null) {
+				if (!hit1.transform.gameObject.tag.Equals("Player") && !hit2.transform.gameObject.tag.Equals("Player")) {
+					return true;
+				}
+			} else {
+				if (!hit1.transform.gameObject.tag.Equals("Human") && !hit2.transform.gameObject.tag.Equals("Human")) {
+					return true;
+				}
+			}
 		} else {
-			if (!hit1.transform.gameObject.tag.Equals("Human") && !hit2.transform.gameObject.tag.Equals("Human")) {
+			// Only check direct hit, no upper and lower half for non-humans
+			RaycastHit hit;
+			if (Physics.Linecast(headTransform.position, targetRef.transform.position, out hit, OBSCURE_IGNORE)) {
+				return true;
+			}
+			Carryable c = hit.transform.GetComponent<Carryable>();
+			if (c == null) {
 				return true;
 			}
 		}
@@ -2947,6 +3000,17 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 		animator.ResetTrigger("Melee");
 		animator.SetBool("Disoriented", false);
 		animator.SetBool("Patrol", false);
+	}
+
+	IEnumerator ScanForSuspects()
+	{
+		if (PhotonNetwork.LocalPlayer.IsMasterClient && !gameControllerScript.assaultMode) {
+			SuspectScan();
+		}
+		yield return new WaitForSeconds(1f);
+		if (!gameControllerScript.assaultMode) {
+			StartCoroutine("ScanForSuspects");
+		}
 	}
 
 }
