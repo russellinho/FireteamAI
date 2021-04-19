@@ -1017,23 +1017,23 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
         } else if (bodyPartHit == TORSO_TARGET) {
             return (int)initialDamage;
         } else if (bodyPartHit == LEFT_ARM_TARGET) {
-            return (int)(initialDamage / 2f);
+            return (int)(initialDamage / 1.2f);
         } else if (bodyPartHit == LEFT_FOREARM_TARGET) {
-            return (int)(initialDamage / 3f);
+            return (int)(initialDamage / 1.3f);
         } else if (bodyPartHit == RIGHT_ARM_TARGET) {
-            return (int)(initialDamage / 2f);
+            return (int)(initialDamage / 1.2f);
         } else if (bodyPartHit == RIGHT_FOREARM_TARGET) {
-            return (int)(initialDamage / 3f);
+            return (int)(initialDamage / 1.3f);
         } else if (bodyPartHit == PELVIS_TARGET) {
             return (int)initialDamage;
         } else if (bodyPartHit == LEFT_UPPER_LEG_TARGET) {
-            return (int)(initialDamage / 1.5f);
+            return (int)(initialDamage / 1.2f);
         } else if (bodyPartHit == LEFT_LOWER_LEG_TARGET) {
-            return (int)(initialDamage / 2f);
+            return (int)(initialDamage / 1.4f);
         } else if (bodyPartHit == RIGHT_UPPER_LEG_TARGET) {
-            return (int)(initialDamage / 1.5f);
+            return (int)(initialDamage / 1.2f);
         } else if (bodyPartHit == RIGHT_LOWER_LEG_TARGET) {
-            return (int)(initialDamage / 2f);
+            return (int)(initialDamage / 1.4f);
         }
         return 0;
     }

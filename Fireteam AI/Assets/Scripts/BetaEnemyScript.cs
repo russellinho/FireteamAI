@@ -2658,23 +2658,23 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
         } else if (bodyPartHit == WeaponActionScript.TORSO_TARGET) {
             return (int)(initialDamage / (float)divisor);
         } else if (bodyPartHit == WeaponActionScript.LEFT_ARM_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 2f);
+            return (int)((initialDamage / (float)divisor) / 1.2f);
         } else if (bodyPartHit == WeaponActionScript.LEFT_FOREARM_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 3f);
+            return (int)((initialDamage / (float)divisor) / 1.3f);
         } else if (bodyPartHit == WeaponActionScript.RIGHT_ARM_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 2f);
+            return (int)((initialDamage / (float)divisor) / 1.2f);
         } else if (bodyPartHit == WeaponActionScript.RIGHT_FOREARM_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 3f);
+            return (int)((initialDamage / (float)divisor) / 1.3f);
         } else if (bodyPartHit == WeaponActionScript.PELVIS_TARGET) {
             return (int)(initialDamage / (float)divisor);
         } else if (bodyPartHit == WeaponActionScript.LEFT_UPPER_LEG_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 1.5f);
+            return (int)((initialDamage / (float)divisor) / 1.2f);
         } else if (bodyPartHit == WeaponActionScript.LEFT_LOWER_LEG_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 2f);
+            return (int)((initialDamage / (float)divisor) / 1.4f);
         } else if (bodyPartHit == WeaponActionScript.RIGHT_UPPER_LEG_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 1.5f);
+            return (int)((initialDamage / (float)divisor) / 1.2f);
         } else if (bodyPartHit == WeaponActionScript.RIGHT_LOWER_LEG_TARGET) {
-            return (int)((initialDamage / (float)divisor) / 2f);
+            return (int)((initialDamage / (float)divisor) / 1.4f);
         }
         return 0;
     }
