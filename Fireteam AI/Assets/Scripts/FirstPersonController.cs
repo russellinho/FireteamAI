@@ -548,7 +548,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 						m_IsWalking = false;
 						m_IsRunning = false;
 					}
-				}
+				} else {
+                    m_IsWalking = false;
+                    m_IsRunning = false;
+                }
 			}
 #endif
 			// set the desired speed to be walking or running
