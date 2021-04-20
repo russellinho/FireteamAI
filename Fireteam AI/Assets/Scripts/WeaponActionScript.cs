@@ -369,28 +369,35 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             }
             // If going to center
             if (isAiming) {
-                if (fpc.equipmentScript.GetGender() == 'M') {
-                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, currentAimStableHandPos, aimDownSightsTimer);
-                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, currentAimDownSightPos, aimDownSightsTimer);
-                } else if (fpc.equipmentScript.GetGender() == 'F') {
-                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, currentAimStableHandPos, aimDownSightsTimer);
-                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, currentAimDownSightPos, aimDownSightsTimer);
-                }
+                // if (fpc.equipmentScript.GetGender() == 'M') {
+                //     leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, currentAimStableHandPos, aimDownSightsTimer);
+                //     rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, currentAimDownSightPos, aimDownSightsTimer);
+                // } else if (fpc.equipmentScript.GetGender() == 'F') {
+                //     leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, currentAimStableHandPos, aimDownSightsTimer);
+                //     rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, currentAimDownSightPos, aimDownSightsTimer);
+                // }
+                leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, currentAimStableHandPos, aimDownSightsTimer);
+                rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, currentAimDownSightPos, aimDownSightsTimer);
             // If coming back to normal
             } else {
                 // If the player is back in the normal position, then disable the lock
-                if (fpc.equipmentScript.GetGender() == 'M') {
-                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, leftCollar.localPosition, aimDownSightsTimer);
-                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, rightCollar.localPosition, aimDownSightsTimer);
-                    if (aimDownSightsLock && aimDownSightsTimer >= 1f) {
-                        aimDownSightsLock = false;
-                    }
-                } else if (fpc.equipmentScript.GetGender() == 'F') {
-                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponMetaData.defaultLeftCollarPosFemale, aimDownSightsTimer);
-                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponMetaData.defaultRightCollarPosFemale, aimDownSightsTimer);
-                    if (aimDownSightsLock && aimDownSightsTimer >= 1f) {
-                        aimDownSightsLock = false;
-                    }
+                // if (fpc.equipmentScript.GetGender() == 'M') {
+                //     leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, leftCollar.localPosition, aimDownSightsTimer);
+                //     rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, rightCollar.localPosition, aimDownSightsTimer);
+                //     if (aimDownSightsLock && aimDownSightsTimer >= 1f) {
+                //         aimDownSightsLock = false;
+                //     }
+                // } else if (fpc.equipmentScript.GetGender() == 'F') {
+                //     leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponMetaData.defaultLeftCollarPosFemale, aimDownSightsTimer);
+                //     rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponMetaData.defaultRightCollarPosFemale, aimDownSightsTimer);
+                //     if (aimDownSightsLock && aimDownSightsTimer >= 1f) {
+                //         aimDownSightsLock = false;
+                //     }
+                // }
+                leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, leftCollar.localPosition, aimDownSightsTimer);
+                rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, rightCollar.localPosition, aimDownSightsTimer);
+                if (aimDownSightsLock && aimDownSightsTimer >= 1f) {
+                    aimDownSightsLock = false;
                 }
             }
         }
