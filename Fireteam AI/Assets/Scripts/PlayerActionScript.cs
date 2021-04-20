@@ -1673,6 +1673,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (thisSpectatorCam == null) {
             pView.RPC("RpcChangePlayerDisableStatus", RpcTarget.All, false);
             thisSpectatorCam = Instantiate(spectatorCam, Vector3.zero, Quaternion.Euler(Vector3.zero));
+            thisSpectatorCam.GetComponent<SpectatorScript>().SetDeathPos(viewCam.transform.position);
             thisSpectatorCam.transform.SetParent(null);
         }
     }

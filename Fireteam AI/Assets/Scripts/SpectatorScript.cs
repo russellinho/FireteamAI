@@ -28,6 +28,7 @@ public class SpectatorScript : MonoBehaviour {
 	private bool rotationLock = false;
 	private int playerListKey = -1;
 	private bool gameOverLock = false;
+	private Vector3 deathPos;
 
 	// Use this for initialization
 	void Start () {
@@ -48,6 +49,10 @@ public class SpectatorScript : MonoBehaviour {
 		transform.localPosition = Vector3.zero;
 		transform.localRotation = Quaternion.Euler (Vector3.zero);
 	}
+
+	public void SetDeathPos(Vector3 pos) {
+		deathPos = pos;
+	}
 	
 	// Update is called once per frame
 	void Update () {
@@ -58,7 +63,7 @@ public class SpectatorScript : MonoBehaviour {
 			if (!following) {
 				followingHead = null;
 				rotationLock = true;
-				transform.position = new Vector3 (0f, 10f, 0f);
+				transform.position = deathPos;
 				transform.rotation = Quaternion.Euler (new Vector3 (0f, 45f, 0f));
 			}
 		}
