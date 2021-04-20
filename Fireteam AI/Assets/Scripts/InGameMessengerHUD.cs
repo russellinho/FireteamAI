@@ -49,17 +49,21 @@ public class InGameMessengerHUD : MonoBehaviour {
 		}
 
 		// Handle message completion and sending
-		if (container.inGameMessenger.inputText.enabled && Input.GetKeyDown(KeyCode.Return)) {
-			// If the message is empty, then just close the chat. Else, send the message over RPC.
-			if (container.inGameMessenger.inputText.text.Length != 0) {
-				SendChatMessage (container.inGameMessenger.inputText.text);
-				container.inGameMessenger.inputText.text = "";
+		if (container.inGameMessenger.inputText.enabled) {
+			if (Input.GetKeyDown(KeyCode.Return)) {
+				// If the message is empty, then just close the chat. Else, send the message over RPC.
+				if (container.inGameMessenger.inputText.text.Length != 0) {
+					SendChatMessage (container.inGameMessenger.inputText.text);
+					container.inGameMessenger.inputText.text = "";
+				}
+				CloseTextChat();
+			} else if (Input.GetKeyDown(KeyCode.Escape)) {
+				CloseTextChat();
 			}
-			CloseTextChat();
 		}
 	}
 
-	public void CloseTextChat()
+	void CloseTextChat()
 	{
 		container.inGameMessenger.inputText.enabled = false;
 		// playerScript.fpc.canMove = true;
