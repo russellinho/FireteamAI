@@ -31,6 +31,7 @@ public class InGameMessengerHUD : MonoBehaviour {
 
 	public bool IsChatting()
 	{
+		if (container == null) return false;
 		return container.inGameMessenger.inputText.enabled;
 	}
 
