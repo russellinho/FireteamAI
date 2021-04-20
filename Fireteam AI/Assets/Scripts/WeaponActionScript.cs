@@ -497,8 +497,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                 fpc.SetAiminginFPCAnimator(false);
                 if (isAiming) {
                     isAiming = false;
-                    leftCollarCurrentPos = leftCollar.localPosition;
-                    rightCollarCurrentPos = rightCollar.localPosition;
+                    // leftCollarCurrentPos = leftCollar.localPosition;
+                    // rightCollarCurrentPos = rightCollar.localPosition;
                     aimDownSightsTimer = 0f;
                 }
 

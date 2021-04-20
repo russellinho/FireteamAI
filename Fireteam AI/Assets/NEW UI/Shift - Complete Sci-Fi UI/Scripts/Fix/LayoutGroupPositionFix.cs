@@ -7,7 +7,7 @@ namespace Michsky.UI.Shift
     {
         void Start()
         {
-            StartCoroutine(FixPosAfter(1f));
+            StartCoroutine(FixPosAfter(0.7f));
         }
 
         IEnumerator FixPosAfter(float secs)
