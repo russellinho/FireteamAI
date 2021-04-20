@@ -365,6 +365,7 @@ public class PlayerPreferences : MonoBehaviour
     }
 
     public bool KeyWasPressed(string key, bool hold = false, bool up = false) {
+        if (PlayerData.playerdata.inGamePlayerReference != null && PlayerData.playerdata.inGamePlayerReference.GetComponent<InGameMessengerHUD>().IsChatting()) return false;
         KeyMapping k = keyMappings[key];
         if (k.scrollWheelFlag == 1) {
             if (Input.GetAxis("Mouse ScrollWheel") > 0f) {

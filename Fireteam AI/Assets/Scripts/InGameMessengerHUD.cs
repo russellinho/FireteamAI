@@ -29,6 +29,11 @@ public class InGameMessengerHUD : MonoBehaviour {
 		}
 	}
 
+	public bool IsChatting()
+	{
+		return container.inGameMessenger.inputText.enabled;
+	}
+
 	void HandleChat() {
 		// Handle activating the input box
 		if (PlayerPreferences.playerPreferences.KeyWasPressed("AllChat")) {
@@ -36,7 +41,7 @@ public class InGameMessengerHUD : MonoBehaviour {
 				container.inGameMessenger.inputText.text = "";
 				// Enable
 				container.inGameMessenger.inputText.enabled = true;
-				playerScript.fpc.canMove = false;
+				// playerScript.fpc.canMove = false;
 				// Select the input box
 				EventSystem.current.SetSelectedGameObject(container.inGameMessenger.inputText.gameObject, null);
 				container.inGameMessenger.inputText.OnPointerClick (new PointerEventData(EventSystem.current));
@@ -57,7 +62,7 @@ public class InGameMessengerHUD : MonoBehaviour {
 	public void CloseTextChat()
 	{
 		container.inGameMessenger.inputText.enabled = false;
-		playerScript.fpc.canMove = true;
+		// playerScript.fpc.canMove = true;
 	}
 
 	void SendChatMessage(string message) {
