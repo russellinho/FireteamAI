@@ -380,8 +380,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             } else {
                 // If the player is back in the normal position, then disable the lock
                 if (fpc.equipmentScript.GetGender() == 'M') {
-                    leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponMetaData.defaultLeftCollarPosMale, aimDownSightsTimer);
-                    rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponMetaData.defaultRightCollarPosMale, aimDownSightsTimer);
+                    // leftCollar.localPosition = Vector3.Lerp(leftCollarCurrentPos, weaponMetaData.defaultLeftCollarPosMale, aimDownSightsTimer);
+                    // rightCollar.localPosition = Vector3.Lerp(rightCollarCurrentPos, weaponMetaData.defaultRightCollarPosMale, aimDownSightsTimer);
                     if (aimDownSightsLock && aimDownSightsTimer >= 1f) {
                         aimDownSightsLock = false;
                     }
@@ -497,8 +497,8 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
                 fpc.SetAiminginFPCAnimator(false);
                 if (isAiming) {
                     isAiming = false;
-                    // leftCollarCurrentPos = leftCollar.localPosition;
-                    // rightCollarCurrentPos = rightCollar.localPosition;
+                    leftCollarCurrentPos = leftCollar.localPosition;
+                    rightCollarCurrentPos = rightCollar.localPosition;
                     aimDownSightsTimer = 0f;
                 }
 
