@@ -51,7 +51,7 @@ public class SpectatorScript : MonoBehaviour {
 	}
 
 	public void SetDeathPos(Vector3 pos) {
-		deathPos = pos;
+		deathPos = new Vector3(pos.x, pos.y + 1f, pos.z);
 	}
 	
 	// Update is called once per frame
