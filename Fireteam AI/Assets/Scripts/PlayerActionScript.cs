@@ -2158,11 +2158,22 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void MarkEnemy() {
         if (!isInteracting && !gameController.assaultMode) {
             RaycastHit hit;
-            if (Physics.SphereCast(wepActionScript.fpcShootPoint.position, 3f, wepActionScript.fpcShootPoint.transform.forward, out hit, Mathf.Infinity)) {
-                if (hit.transform.gameObject.layer == ENEMY_LAYER) {
-                    BetaEnemyScript b = hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>();
-                    if (b != null) {
-                        b.MarkEnemyOutline(skillController.GetKeenEyesMultiplier());
+            if (wepActionScript.isAiming) {
+                if (Physics.Raycast(wepActionScript.fpcShootPoint.position, wepActionScript.fpcShootPoint.transform.forward, out hit, Mathf.Infinity)) {
+                    if (hit.transform.gameObject.layer == ENEMY_LAYER) {
+                        BetaEnemyScript b = hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>();
+                        if (b != null) {
+                            b.MarkEnemyOutline(skillController.GetKeenEyesMultiplier());
+                        }
+                    }
+                }
+            } else {
+                if (Physics.SphereCast(wepActionScript.fpcShootPoint.position, 1.5f, wepActionScript.fpcShootPoint.transform.forward, out hit, Mathf.Infinity)) {
+                    if (hit.transform.gameObject.layer == ENEMY_LAYER) {
+                        BetaEnemyScript b = hit.transform.gameObject.GetComponentInParent<BetaEnemyScript>();
+                        if (b != null) {
+                            b.MarkEnemyOutline(skillController.GetKeenEyesMultiplier());
+                        }
                     }
                 }
             }
