@@ -8,39 +8,39 @@ using Photon.Pun;
 public class ScoreboardScript : MonoBehaviour {
 
     private const float SCOREBOARD_UPDATE_DELAY = 0.25f;
-	private int index;
-    private int redIndex;
-    private int blueIndex;
     private char mode;
     // Amount of time remaining before next scoreboard update
     private float scoreboardUpdateTimer;
 
 	private IEnumerator playerIterator;
-    public GameObject versusPanel;
+    public GameObject versusPanelRed;
+    public GameObject versusPanelBlue;
     public GameObject campaignPanel;
-	public Text[] names;
-	public Text[] kills;
-	public Text[] deaths;
-
-    public Text[] redNames;
-	public Text[] redKills;
-	public Text[] redDeaths;
-
-    public Text[] blueNames;
-	public Text[] blueKills;
-	public Text[] blueDeaths;
+    public Transform campaignParent;
+    public Transform versusRedParent;
+    public Transform versusBlueParent;
+	private Dictionary<int, ScoreboardEntryScript> redEntries;
+    private Dictionary<int, ScoreboardEntryScript> blueEntries;
+    public GameObject scoreboardEntryPrefab;
+    public GameObject scoreboardEntryRedPrefab;
+    public GameObject scoreboardEntryBluePrefab;
 
 	// Use this for initialization
 	void Awake () {
         scoreboardUpdateTimer = SCOREBOARD_UPDATE_DELAY;
 		if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "versus") {
+            redEntries = new Dictionary<int, ScoreboardEntryScript>();
+            blueEntries = new Dictionary<int, ScoreboardEntryScript>();
             mode = 'V';
             campaignPanel.SetActive(false);
-            versusPanel.SetActive(true);
+            versusPanelRed.SetActive(true);
+            versusPanelBlue.SetActive(true);
         } else if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gameMode"] == "camp") {
+            redEntries = new Dictionary<int, ScoreboardEntryScript>();
             mode = 'C';
             campaignPanel.SetActive(true);
-            versusPanel.SetActive(false);
+            versusPanelRed.SetActive(false);
+            versusPanelBlue.SetActive(false);
         }
 	}
 	
@@ -57,7 +57,6 @@ public class ScoreboardScript : MonoBehaviour {
         if (scoreboardUpdateTimer <= 0f) {
             scoreboardUpdateTimer = SCOREBOARD_UPDATE_DELAY;
             if (playerIterator == null) {
-                index = 0;
                 playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
                 return;
             }
@@ -66,31 +65,28 @@ public class ScoreboardScript : MonoBehaviour {
                 // This mean that is has reached the end
                 if (!playerIterator.MoveNext())
                 {
-                    if (index < 8)
-                    {
-                        names[index].text = "";
-                        kills[index].text = "";
-                        deaths[index].text = "";
-                        index++;
-                    }
-                    else
-                    {
-                        index = 0;
-                        playerIterator.Reset();
-                    }
+                    playerIterator.Reset();
                 }
                 else
                 {
                     PlayerStat curr = (PlayerStat)playerIterator.Current;
-                    names[index].text = curr.name;
-                    kills[index].text = "" + curr.kills;
-                    deaths[index].text = "" + curr.deaths;
-                    index++;
+                    if (!redEntries.ContainsKey(curr.actorId)) {
+                        GameObject o = Instantiate(scoreboardEntryPrefab, campaignParent);
+                        ScoreboardEntryScript s = o.GetComponent<ScoreboardEntryScript>();
+                        Rank rank = PlayerData.playerdata.GetRankFromExp(curr.exp);
+                        s.InitSlot(curr.actorId, curr.team, curr.name, PlayerData.playerdata.GetRankInsigniaForRank(rank.name), this);
+                        redEntries.Add(curr.actorId, s);
+                        o.transform.localPosition = Vector3.zero;
+                        o.transform.localRotation = Quaternion.identity;
+                    } else {
+                        ScoreboardEntryScript s = redEntries[curr.actorId];
+                        s.SetKills(curr.kills);
+                        s.SetDeaths(curr.deaths);
+                    }
                 }
             } catch (InvalidOperationException e)
             {
                 playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
-                index = 0;
                 playerIterator.Reset();
             }
         } else {
@@ -102,8 +98,6 @@ public class ScoreboardScript : MonoBehaviour {
         if (scoreboardUpdateTimer <= 0f) {
             scoreboardUpdateTimer = SCOREBOARD_UPDATE_DELAY;
             if (playerIterator == null) {
-                redIndex = 0;
-                blueIndex = 0;
                 playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
                 return;
             }
@@ -112,51 +106,57 @@ public class ScoreboardScript : MonoBehaviour {
                 // This mean that is has reached the end
                 if (!playerIterator.MoveNext())
                 {
-                    if (redIndex < 8)
-                    {
-                        redNames[redIndex].text = "";
-                        redKills[redIndex].text = "";
-                        redDeaths[redIndex].text = "";
-                        redIndex++;
-                    }
-
-                    if (blueIndex < 8) {
-                        blueNames[blueIndex].text = "";
-                        blueKills[blueIndex].text = "";
-                        blueDeaths[blueIndex].text = "";
-                        blueIndex++;
-                    }
-
-                    if (redIndex >= 8 && blueIndex >= 8) {
-                        redIndex = 0;
-                        blueIndex = 0;
-                        playerIterator.Reset();
-                    }
+                    playerIterator.Reset();
                 }
                 else
                 {
                     PlayerStat curr = (PlayerStat)playerIterator.Current;
                     if (curr.team == 'R') {
-                        redNames[redIndex].text = curr.name;
-                        redKills[redIndex].text = "" + curr.kills;
-                        redDeaths[redIndex].text = "" + curr.deaths;
-                        redIndex++;
+                        if (!redEntries.ContainsKey(curr.actorId)) {
+                            GameObject o = Instantiate(scoreboardEntryRedPrefab, versusRedParent);
+                            ScoreboardEntryScript s = o.GetComponent<ScoreboardEntryScript>();
+                            Rank rank = PlayerData.playerdata.GetRankFromExp(curr.exp);
+                            s.InitSlot(curr.actorId, curr.team, curr.name, PlayerData.playerdata.GetRankInsigniaForRank(rank.name), this);
+                            redEntries.Add(curr.actorId, s);
+                            o.transform.localPosition = Vector3.zero;
+                            o.transform.localRotation = Quaternion.identity;
+                        } else {
+                            ScoreboardEntryScript s = redEntries[curr.actorId];
+                            s.SetKills(curr.kills);
+                            s.SetDeaths(curr.deaths);
+                        }
                     } else if (curr.team == 'B') {
-                        blueNames[blueIndex].text = curr.name;
-                        blueKills[blueIndex].text = "" + curr.kills;
-                        blueDeaths[blueIndex].text = "" + curr.deaths;
-                        blueIndex++;
+                        if (!blueEntries.ContainsKey(curr.actorId)) {
+                            GameObject o = Instantiate(scoreboardEntryBluePrefab, versusBlueParent);
+                            ScoreboardEntryScript s = o.GetComponent<ScoreboardEntryScript>();
+                            Rank rank = PlayerData.playerdata.GetRankFromExp(curr.exp);
+                            s.InitSlot(curr.actorId, curr.team, curr.name, PlayerData.playerdata.GetRankInsigniaForRank(rank.name), this);
+                            blueEntries.Add(curr.actorId, s);
+                            o.transform.localPosition = Vector3.zero;
+                            o.transform.localRotation = Quaternion.identity;
+                        } else {
+                            ScoreboardEntryScript s = blueEntries[curr.actorId];
+                            s.SetKills(curr.kills);
+                            s.SetDeaths(curr.deaths);
+                        }
                     }
                 }
             } catch (InvalidOperationException e)
             {
                 playerIterator = GameControllerScript.playerList.Values.GetEnumerator();
-                redIndex = 0;
-                blueIndex = 0;
                 playerIterator.Reset();
             }
         } else {
             scoreboardUpdateTimer -= Time.deltaTime;
+        }
+    }
+
+    public void RemoveEntry(char team, int actorNo)
+    {
+        if (team == 'R' || team == 'N') {
+            redEntries.Remove(actorNo);
+        } else if (team == 'B') {
+            blueEntries.Remove(actorNo);
         }
     }
 }
