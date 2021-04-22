@@ -1788,9 +1788,11 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 			}
 			Vector3 thisPos = GameControllerScript.playerList[k].objRef.transform.position;
 			for (int i = start + 1; i < keys.Length; i++) {
-				Vector3 p = GameControllerScript.playerList[keys[i]].objRef.transform.position;
-				totalDistances += Vector3.Distance(thisPos, p);
-				pairs++;
+				if (GameControllerScript.playerList[keys[i]].objRef != null) {
+					Vector3 p = GameControllerScript.playerList[keys[i]].objRef.transform.position;
+					totalDistances += Vector3.Distance(thisPos, p);
+					pairs++;
+				}
 			}
 			start++;
 		}
