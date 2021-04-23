@@ -5,7 +5,7 @@ using UnityEngine;
 public class FreeFormCameraScript : MonoBehaviour {
 
 	float flySpeed = 0.5f;
-	GameObject defaultCam;
+	public GameObject defaultCam;
 	GameObject playerObject;
 	bool isEnabled;
 	bool shift;
