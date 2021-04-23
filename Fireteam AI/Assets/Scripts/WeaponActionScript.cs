@@ -1719,7 +1719,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             
             // projectile.transform.right = -weaponHolderFpc.transform.forward;
             projectile.transform.right = -forward;
-            projectile.GetComponent<LauncherScript>().Launch((int) data[7], forward.x, forward.y, forward.z);
+            projectile.GetComponent<LauncherScript>().Launch(fromViewId, forward.x, forward.y, forward.z);
             currentAmmo--;
             playerActionScript.weaponScript.SyncAmmoCounts();
             fireTimer = 0.0f;
@@ -1742,7 +1742,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             Debug.Log("Spawned throwable projectile " + projectile.gameObject.name + " with view ID " + photonView.ViewID);
 
             projectile.transform.forward = forward;
-            projectile.GetComponent<ThrowableScript>().Launch((int) data[7], forward.x, forward.y, forward.z, 1f + (float)data[10]);
+            projectile.GetComponent<ThrowableScript>().Launch(fromViewId, forward.x, forward.y, forward.z, 1f + (float)data[10]);
             currentAmmo--;
             playerActionScript.weaponScript.SyncAmmoCounts();
             fireTimer = 0.0f;
