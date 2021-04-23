@@ -2750,7 +2750,7 @@ public class BetaEnemyScript : MonoBehaviour, IPunObservable {
 
 	IEnumerator SyncSuspicionValuesProcessor() {
         syncSuspicionValuesSemiphore = true;
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(0.7f);
         pView.RPC("RpcSyncSuspicionValues", RpcTarget.Others, gameControllerScript.teamMap, suspicionMeter, increaseSuspicionDelay, suspicionCoolDownDelay);
         syncSuspicionValuesSemiphore = false;
     }

@@ -502,6 +502,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 		bool audioDeviceValid = false;
         string currentAudioDevice = PlayerPreferences.playerPreferences.preferenceData.audioInputName;
         foreach (IAudioDevice p in VivoxVoiceManager.Instance.AudioInputDevices.AvailableDevices) {
+			if (p.Name == "No Device") continue;
 			if (!audioInputDevicesInitialized) {
 				audioInputSelector.CreateNewItem(p.Name);
 			}
