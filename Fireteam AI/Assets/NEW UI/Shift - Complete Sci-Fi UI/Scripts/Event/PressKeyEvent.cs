@@ -31,7 +31,7 @@ namespace Michsky.UI.Shift
             {
                 if (keyMappingInput != null) {
                     keyPressDelay += Time.deltaTime;
-                    if (Input.anyKeyDown) {
+                    if (Input.anyKeyDown || Input.GetAxis("Mouse ScrollWheel") != 0f) {
                         if (keyPressDelay >= KEY_PRESS_DELAY && GetComponent<ModalWindowManager>().isOn) {
                             keyMappingInput.HandleKeyChange();
                             pressAction.Invoke();
