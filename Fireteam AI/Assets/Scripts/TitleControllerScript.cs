@@ -3827,6 +3827,7 @@ public class TitleControllerScript : MonoBehaviourPunCallbacks {
 	public void OnResolutionSelect()
 	{
 		Resolution r = Screen.resolutions[resolutionSelector.index];
+		PlayerPreferences.playerPreferences.preferenceData.screenResolution = resolutionSelector.index;
 		Screen.SetResolution(r.width, r.height, true);
 	}
 

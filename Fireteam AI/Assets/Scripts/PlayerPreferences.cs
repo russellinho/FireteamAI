@@ -100,6 +100,10 @@ public class PlayerPreferences : MonoBehaviour
                 if (info.assaultTrack < 0 || info.assaultTrack >= ASSAULT_TRACK_COUNT) {
                     playerPreferences.preferenceData.assaultTrack = 0;
                 }
+                playerPreferences.preferenceData.screenResolution = info.screenResolution;
+                if (info.screenResolution >= Screen.resolutions.Length) {
+                    playerPreferences.preferenceData.screenResolution = 0;
+                }
                 playerPreferences.preferenceData.qualityPreset = info.qualityPreset;
                 if (info.qualityPreset < MIN_QUALITY_PRESET || info.qualityPreset > MAX_QUALITY_PRESET) {
                     playerPreferences.preferenceData.qualityPreset = DEFAULT_QUALITY_PRESET;
@@ -205,6 +209,7 @@ public class PlayerPreferences : MonoBehaviour
         info.audioInputName = playerPreferences.preferenceData.audioInputName;
         info.stealthTrack = playerPreferences.preferenceData.stealthTrack;
         info.assaultTrack = playerPreferences.preferenceData.assaultTrack;
+        info.screenResolution = playerPreferences.preferenceData.screenResolution;
         info.qualityPreset = playerPreferences.preferenceData.qualityPreset;
         info.vSyncCount = playerPreferences.preferenceData.vSyncCount;
         info.lodBias = playerPreferences.preferenceData.lodBias;
@@ -251,6 +256,7 @@ public class PlayerPreferences : MonoBehaviour
 
     public void SetDefaultGraphics()
     {
+        playerPreferences.preferenceData.screenResolution = 0;
         playerPreferences.preferenceData.qualityPreset = DEFAULT_QUALITY_PRESET;
         playerPreferences.preferenceData.vSyncCount = DEFAULT_VSYNC;
         playerPreferences.preferenceData.lodBias = DEFAULT_LOD_BIAS;
@@ -267,6 +273,7 @@ public class PlayerPreferences : MonoBehaviour
 
     public void SetGraphicsSettings()
     {
+        Screen.SetResolution(Screen.resolutions[playerPreferences.preferenceData.screenResolution].width, Screen.resolutions[playerPreferences.preferenceData.screenResolution].height, true);
         QualitySettings.SetQualityLevel(playerPreferences.preferenceData.qualityPreset);
         QualitySettings.vSyncCount = playerPreferences.preferenceData.vSyncCount;
         QualitySettings.lodBias = playerPreferences.preferenceData.lodBias;
@@ -422,6 +429,7 @@ public class PlayerPreferences : MonoBehaviour
         public string audioInputName;
         public int stealthTrack;
         public int assaultTrack;
+        public int screenResolution;
         public int qualityPreset;
         public int vSyncCount;
         public float lodBias;
