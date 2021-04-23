@@ -768,6 +768,17 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 hud.container.skillPanel.SetActive(false);
                 hud.container.revivePlayerPanel.SetActive(false);
                 skipHitDir = false;
+                wepActionScript.isCocking = false;
+                wepActionScript.isDrawing = false;
+                wepActionScript.isMeleeing = false;
+                wepActionScript.isFiring = false;
+                wepActionScript.isAiming = false;
+                wepActionScript.isCockingGrenade = false;
+                wepActionScript.deployInProgress = false;
+                wepActionScript.isUsingBooster = false;
+                wepActionScript.isUsingDeployable = false;
+                wepActionScript.isReloading = false;
+                wepActionScript.fpc.m_IsRunning = false;
             }
             fpc.enabled = false;
             if (!rotationSaved)
