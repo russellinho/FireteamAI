@@ -726,18 +726,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             animator.SetBool("isSprinting", x);
         }
 
-        public void SetIsDeadInAnimator(bool x) {
-            if (fpcAnimator.GetBool("isDead") == x) return;
-            photonView.RPC("RpcSetIsDeadInAnimator", RpcTarget.All, x);
-        }
-
-        [PunRPC]
-        private void RpcSetIsDeadInAnimator(bool x) {
-            animator.SetBool("isDead", x);
-            animator.Play("Death", 0);
-            animator.Play("Death", 1);
-        }
-
         public void SetWalkingInAnimator(bool x) {
             if (fpcAnimator.GetBool("isWalking") == x) return;
             fpcAnimator.SetBool("isWalking", x);

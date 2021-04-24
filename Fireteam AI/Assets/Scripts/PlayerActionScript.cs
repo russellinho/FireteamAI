@@ -753,8 +753,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 equipmentScript.ToggleFullBody(true);
                 equipmentScript.ToggleMesh(true);
                 //weaponScript.SwitchWeaponToFullBody();
-                fpc.SetIsDeadInAnimator(true);
-                StartCoroutine(DelayToggleRagdoll(0.1f, true));
+                pView.RPC("RpcToggleRagdollPlayer", RpcTarget.All, true);
                 SetInteracting(false, null);
                 DropCarrying();
                 fpc.SetIsIncapacitated(false);
@@ -2700,12 +2699,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 			rightLowerLegTransform.gameObject.layer = 15;
 		}
 	}
-
-    IEnumerator DelayToggleRagdoll(float seconds, bool b)
-    {
-        yield return new WaitForSeconds(seconds);
-        pView.RPC("RpcToggleRagdollPlayer", RpcTarget.All, b);
-    }
 
     [PunRPC]
     void RpcToggleRagdollPlayer(bool b)
