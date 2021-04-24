@@ -780,7 +780,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 wepActionScript.isReloading = false;
                 wepActionScript.fpc.m_IsRunning = false;
             }
-            // fpc.enabled = false;
+            fpc.enabled = false;
             if (!rotationSaved)
             {
                 if (escapeValueSent)
@@ -1713,7 +1713,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         hudMarker.enabled = status;
         hudMarker2.enabled = status;
-        fpc.canMove = status;
         // charController.enabled = status;
         // ToggleRagdoll(!status);
         if (pView.IsMine)
@@ -2712,7 +2711,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcToggleRagdollPlayer(bool b)
     {
         if (gameObject.layer == 0) return;
-        fpc.enabled = !b;
+        // fpc.enabled = !b;
         ToggleRagdoll(b);
         ToggleHumanCollision(!b);
         if (b) {

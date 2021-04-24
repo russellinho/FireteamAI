@@ -152,7 +152,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             if (photonView != null && !photonView.IsMine)
             {
-                ClientRotateView();
+                if (playerActionScript.health > 0) {
+                    ClientRotateView();
+                }
                 return;
             }
             if (playerActionScript.health > 0) {
