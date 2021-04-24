@@ -243,7 +243,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         totalSpeedBoost = originalSpeed;
         bodyBags = (char)3;
         hud.SetBodyBagAmmo(3);
-        ToggleRagdoll(false);
+        // ToggleRagdoll(false);
         InitializeGuardianAngel();
         skillController.SetLastStand();
 
@@ -1715,7 +1715,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hudMarker2.enabled = status;
         fpc.canMove = status;
         // charController.enabled = status;
-        ToggleRagdoll(!status);
+        // ToggleRagdoll(!status);
         if (pView.IsMine)
         {
             fpc.enabled = status;
@@ -2570,7 +2570,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void ToggleRagdoll(bool b) {
 		animator.enabled = !b;
 		charController.enabled = !b;
-		// mainRigid.useGravity = !b;
+		mainRigid.useGravity = !b;
 
 		foreach (Rigidbody rb in ragdollBodies)
 		{
