@@ -1715,9 +1715,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hudMarker2.enabled = status;
         // charController.enabled = status;
         ToggleRagdoll(!status);
+        fpc.enabled = status;
         if (pView.IsMine)
         {
-            fpc.enabled = status;
+            // fpc.enabled = status;
             fpc.m_MouseLook.ResetRot();
             viewCam.GetComponent<AudioListener>().enabled = status;
             viewCam.transform.localPosition = new Vector3(0.001179763f, 0.003319679f, -0.000299095f);
