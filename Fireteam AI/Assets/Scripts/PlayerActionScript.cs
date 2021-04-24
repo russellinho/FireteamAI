@@ -1708,7 +1708,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             equipmentScript.DespawnPlayer();
             weaponScript.DespawnPlayer();
         } else {
-            charController.height = 1f;
+            charController.height = charHeightOriginal;
             charController.center = new Vector3(0f, charCenterYOriginal, 0f);
         }
         hudMarker.enabled = status;
