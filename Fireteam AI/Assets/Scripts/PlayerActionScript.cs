@@ -780,7 +780,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 wepActionScript.isReloading = false;
                 wepActionScript.fpc.m_IsRunning = false;
             }
-            fpc.enabled = false;
+            // fpc.enabled = false;
             if (!rotationSaved)
             {
                 if (escapeValueSent)
@@ -790,7 +790,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 hud.ToggleHUD(false);
                 hud.ToggleSpectatorMessage(true);
                 // deathCameraLerpPos = new Vector3(headTransform.localPosition.x, headTransform.localPosition.y + 2.5f, headTransform.localPosition.z - 4.5f);
-                // enterSpectatorModeTimer = 6f;
+                enterSpectatorModeTimer = 6f;
                 viewCam.transform.SetParent(transform);
                 viewCam.fieldOfView = 60;
                 rotationSaved = true;
@@ -2712,6 +2712,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcToggleRagdollPlayer(bool b)
     {
         if (gameObject.layer == 0) return;
+        fpc.enabled = !b;
         ToggleRagdoll(b);
         ToggleHumanCollision(!b);
         if (b) {
