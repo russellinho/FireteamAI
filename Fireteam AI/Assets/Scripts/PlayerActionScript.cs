@@ -1714,7 +1714,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         hudMarker.enabled = status;
         hudMarker2.enabled = status;
         // charController.enabled = status;
-        // ToggleRagdoll(!status);
+        ToggleRagdoll(!status);
         if (pView.IsMine)
         {
             fpc.enabled = status;
@@ -2713,7 +2713,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         if (gameObject.layer == 0) return;
         // fpc.enabled = !b;
         ToggleRagdoll(b);
-        ToggleHumanCollision(!b);
+        // ToggleHumanCollision(!b);
         if (b) {
             ApplyForceModifiers();
         }
