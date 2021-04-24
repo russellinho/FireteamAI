@@ -11,7 +11,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 {
     [RequireComponent(typeof (CharacterController))]
     [RequireComponent(typeof (AudioSource))]
-    public class FirstPersonController : MonoBehaviour
+    public class FirstPersonController : MonoBehaviour, IPunObservable
     {
         private const float MAX_JETPACK_BOOST_TIME = 1.5f;
         private const float JETPACK_DELAY = 0.2f;
@@ -158,17 +158,74 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 return;
             }
             if (playerActionScript.health > 0) {
-                Rotations rotAngles = RotateView();
-                if (networkDelayCount < 3)
-                {
-                    networkDelayCount++;
-                }
-                if (!Vector3.Equals(rotAngles.spineRot, Vector3.negativeInfinity) && networkDelayCount == 3)
-                {
-                    networkDelayCount = 0;
-                    photonView.RPC("RpcUpdateSpineRotation", RpcTarget.Others, rotAngles.spineRot.x, rotAngles.spineRot.y, rotAngles.spineRot.z,
-                    rotAngles.charRot.x, rotAngles.charRot.y, rotAngles.charRot.z);
-                }
+                // Rotations rotAngles = RotateView();
+                // if (networkDelayCount < 3)
+                // {
+                //     networkDelayCount++;
+                // }
+                // if (!Vector3.Equals(rotAngles.spineRot, Vector3.negativeInfinity) && networkDelayCount == 3)
+                // {
+                //     networkDelayCount = 0;
+                //     photonView.RPC("RpcUpdateSpineRotation", RpcTarget.Others, rotAngles.spineRot.x, rotAngles.spineRot.y, rotAngles.spineRot.z,
+                //     rotAngles.charRot.x, rotAngles.charRot.y, rotAngles.charRot.z);
+                // }
+                RotateView();
+            }
+        }
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
+            if (playerActionScript.gameController != null && playerActionScript.gameController.matchType == 'V') {
+                SerializeViewVersus(stream, info);
+            } else {
+                SerializeViewCampaign(stream, info);
+            }
+        }
+
+        void SerializeViewCampaign(PhotonStream stream, PhotonMessageInfo info) {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(this.m_MouseLook.m_SpineTargetRot.eulerAngles.x);
+                stream.SendNext(this.m_MouseLook.m_SpineTargetRot.eulerAngles.y);
+                stream.SendNext(this.m_MouseLook.m_SpineTargetRot.eulerAngles.z);
+                stream.SendNext(this.m_MouseLook.m_CharacterTargetRot.eulerAngles.x);
+                stream.SendNext(this.m_MouseLook.m_CharacterTargetRot.eulerAngles.y);
+                stream.SendNext(this.m_MouseLook.m_CharacterTargetRot.eulerAngles.z);
+            }
+            else
+            {
+                float xSpineRot = (float)stream.ReceiveNext();
+                float ySpineRot = (float)stream.ReceiveNext();
+                float zSpineRot = (float)stream.ReceiveNext();
+                float xCharRot = (float)stream.ReceiveNext();
+                float yCharRot = (float)stream.ReceiveNext();
+                float zCharRot = (float)stream.ReceiveNext();
+                m_MouseLook.NetworkedLookRotation(spineTransform, xSpineRot, ySpineRot, zSpineRot, charTransform, xCharRot, yCharRot, zCharRot);
+            }
+        }
+
+        void SerializeViewVersus(PhotonStream stream, PhotonMessageInfo info) {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(playerActionScript.gameController.teamMap);
+                stream.SendNext(this.m_MouseLook.m_SpineTargetRot.eulerAngles.y);
+                stream.SendNext(this.m_MouseLook.m_SpineTargetRot.eulerAngles.z);
+                stream.SendNext(this.m_MouseLook.m_CharacterTargetRot.eulerAngles.x);
+                stream.SendNext(this.m_MouseLook.m_CharacterTargetRot.eulerAngles.y);
+                stream.SendNext(this.m_MouseLook.m_CharacterTargetRot.eulerAngles.z);
+            }
+            else
+            {
+                string team = stream.ReceiveNext().ToString();
+
+                if (team != playerActionScript.gameController.teamMap) return;
+
+                float xSpineRot = (float)stream.ReceiveNext();
+                float ySpineRot = (float)stream.ReceiveNext();
+                float zSpineRot = (float)stream.ReceiveNext();
+                float xCharRot = (float)stream.ReceiveNext();
+                float yCharRot = (float)stream.ReceiveNext();
+                float zCharRot = (float)stream.ReceiveNext();
+                m_MouseLook.NetworkedLookRotation(spineTransform, xSpineRot, ySpineRot, zSpineRot, charTransform, xCharRot, yCharRot, zCharRot);
             }
         }
 

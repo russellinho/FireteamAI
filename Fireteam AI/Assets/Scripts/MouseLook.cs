@@ -25,7 +25,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public float recoilInput;
         public float swayInput;
 
-        private Quaternion m_CharacterTargetRot;
+        public Quaternion m_CharacterTargetRot;
         public Quaternion m_SpineTargetRot;
         public Quaternion m_FpcCharacterVerticalTargetRot;
         public Quaternion m_FpcCharacterHorizontalTargetRot;
