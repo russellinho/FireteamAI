@@ -583,6 +583,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     void RpcTakeDamage(int d, bool useArmor, bool useOvershield, float hitFromX, float hitFromY, float hitFromZ, int hitBy, int bodyPartHit)
     {
         if (gameObject.layer == 0) return;
+        lastHitFromPos = new Vector3(hitFromX, hitFromY, hitFromZ);
+        lastHitBy = hitBy;
+        lastBodyPartHit = bodyPartHit;
         if (pView.IsMine)
         {
             if (d <= 0) return;
@@ -646,9 +649,6 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
             // {
             //     d = 0;
             // }
-            lastHitFromPos = new Vector3(hitFromX, hitFromY, hitFromZ);
-            lastHitBy = hitBy;
-            lastBodyPartHit = bodyPartHit;
 
             if (usingOvershield) {
                 SetOvershield(Mathf.Max(0, overshield - d), true);
