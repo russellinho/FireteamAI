@@ -11,7 +11,7 @@ public class LauncherScript : MonoBehaviour
     private const float LAUNCH_FORCE_MULTIPLIER = 45f;
     // RPG cannot be active for more than 12 seconds
     private const float MAX_ACTIVE_TIME = 12f;
-    private const float EXPLOSION_ACTIVE_DELAY = 0.3f;
+    private const float EXPLOSION_ACTIVE_DELAY = 0.25f;
     public Rigidbody rBody;
     public SphereCollider col;
     public MeshRenderer[] projectileRenderer;

@@ -10,7 +10,7 @@ public class ThrowableScript : MonoBehaviour
     private const int WATER_LAYER = 4;
     private const float THROW_FORCE_MULTIPLIER = 25f;
     public static float MAX_FLASHBANG_TIME = 9f; // 8 seconds max flashbang time
-    private const float EXPLOSION_ACTIVE_DELAY = 0.3f;
+    private const float EXPLOSION_ACTIVE_DELAY = 0.25f;
     public Rigidbody rBody;
     public SphereCollider col;
     public MeshRenderer[] renderers;
