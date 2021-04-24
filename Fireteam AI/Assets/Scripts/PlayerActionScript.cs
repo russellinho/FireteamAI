@@ -94,7 +94,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
     public bool activeCamo;
     public float sprintTime;
     private EncryptedBool spawnInvincibilityActive;
-    // public bool godMode;
+    public bool godMode;
     public bool canShoot;
     private float charHeightOriginal;
     private float charCenterYOriginal;
@@ -315,9 +315,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         UpdateUnderwaterTimer();
         updatePlayerSpeed();
         // Instant respawn hack
-        // if (Input.GetKeyDown (KeyCode.P)) {
-        //     BeginRespawn ();
-        // }
+        if (Input.GetKeyDown (KeyCode.P)) {
+            BeginRespawn ();
+        }
         // Physics sky drop test hack
         // if (Input.GetKeyDown(KeyCode.O)) {
         //     transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
@@ -642,10 +642,10 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 pView.RPC("RpcPlayTakeDamageGrunt", RpcTarget.All);
             }
 
-            // if (godMode)
-            // {
-            //     d = 0;
-            // }
+            if (godMode)
+            {
+                d = 0;
+            }
             lastHitFromPos = new Vector3(hitFromX, hitFromY, hitFromZ);
             lastHitBy = hitBy;
             lastBodyPartHit = bodyPartHit;
