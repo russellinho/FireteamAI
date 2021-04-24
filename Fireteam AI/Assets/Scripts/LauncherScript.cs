@@ -69,7 +69,6 @@ public class LauncherScript : MonoBehaviour
 
     void OnCollisionExit(Collision collision) {
         if (collision.gameObject.layer == 22) {
-            Debug.LogError("exited");
             insideBubbleShield = false;
         }
     }
