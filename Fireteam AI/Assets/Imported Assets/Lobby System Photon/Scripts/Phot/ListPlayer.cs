@@ -661,7 +661,6 @@ namespace Photon.Pun.LobbySystemPhoton
 		}
 
 		void OnJoinedRoomCampaign() {
-			Debug.LogError("one");
 			templateUIClass.ListRoomPanel.SetActive(false);
 			templateUIClass.RoomPanel.SetActive(true);
             templateUIClass.TitleRoom.text = PhotonNetwork.CurrentRoom.Name;

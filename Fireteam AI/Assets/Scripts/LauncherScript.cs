@@ -11,7 +11,7 @@ public class LauncherScript : MonoBehaviour
     private const float LAUNCH_FORCE_MULTIPLIER = 45f;
     // RPG cannot be active for more than 12 seconds
     private const float MAX_ACTIVE_TIME = 12f;
-    private const float EXPLOSION_ACTIVE_DELAY = 0.8f;
+    private const float EXPLOSION_ACTIVE_DELAY = 0.3f;
     public Rigidbody rBody;
     public SphereCollider col;
     public MeshRenderer[] projectileRenderer;
@@ -37,7 +37,6 @@ public class LauncherScript : MonoBehaviour
         explosionEffect.Stop();
         explosionWaterEffect.Stop();
         isLive = true;
-        explosionActiveDelay = EXPLOSION_ACTIVE_DELAY;
         activeTime = 0f;
     }
 
@@ -107,6 +106,7 @@ public class LauncherScript : MonoBehaviour
     void EnableBlastCollider() {
         col.isTrigger = true;
         col.radius = blastRadius;
+        explosionActiveDelay = EXPLOSION_ACTIVE_DELAY;
     }
 
     void DestroySelf() {

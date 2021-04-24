@@ -89,22 +89,22 @@ public class VivoxVoiceManager : MonoBehaviour
         {
             lock (m_Lock)
             {
-                if (m_Instance == null)
-                {
-                    // Search for existing instance.
-                    m_Instance = (VivoxVoiceManager)FindObjectOfType(typeof(VivoxVoiceManager));
+                // if (m_Instance == null)
+                // {
+                //     // Search for existing instance.
+                //     m_Instance = (VivoxVoiceManager)FindObjectOfType(typeof(VivoxVoiceManager));
 
-                    // Create new instance if one doesn't already exist.
-                    if (m_Instance == null)
-                    {
-                        // Need to create a new GameObject to attach the singleton to.
-                        var singletonObject = new GameObject();
-                        m_Instance = singletonObject.AddComponent<VivoxVoiceManager>();
-                        singletonObject.name = typeof(VivoxVoiceManager).ToString() + " (Singleton)";
-                    }
-                }
-                // Make instance persistent even if its already in the scene
-                DontDestroyOnLoad(m_Instance.gameObject);
+                //     // Create new instance if one doesn't already exist.
+                //     if (m_Instance == null)
+                //     {
+                //         // Need to create a new GameObject to attach the singleton to.
+                //         var singletonObject = new GameObject();
+                //         m_Instance = singletonObject.AddComponent<VivoxVoiceManager>();
+                //         singletonObject.name = typeof(VivoxVoiceManager).ToString() + " (Singleton)";
+                //     }
+                // }
+                // // Make instance persistent even if its already in the scene
+                // DontDestroyOnLoad(m_Instance.gameObject);
                 return m_Instance;
             }
         }
@@ -144,12 +144,14 @@ public class VivoxVoiceManager : MonoBehaviour
 
     private void Awake()
     {
-        if (m_Instance != this)
+        if (m_Instance != this && m_Instance != null)
         {
             Debug.LogWarning("Multiple VivoxVoiceManager detected in the scene. Only one VivoxVoiceManager can exist at a time. The duplicate VivoxVoiceManager will be destroyed.");
             Destroy(this);
             return;
         }
+        m_Instance = this;
+        DontDestroyOnLoad(gameObject);
 	}
 
     private void Start()
@@ -164,6 +166,7 @@ public class VivoxVoiceManager : MonoBehaviour
 		_client.Uninitialize();
 
         _client.Initialize();
+        Login(PlayerData.playerdata.info.Playername);
     }
 
     private void OnApplicationQuit()
@@ -180,6 +183,7 @@ public class VivoxVoiceManager : MonoBehaviour
 
     public void Login(string displayName = null)
     {
+        Debug.Log("Logging in as " + displayName);
         string uniqueId = Guid.NewGuid().ToString();
         //for proto purposes only, need to get a real token from server eventually
         _accountId = new AccountId(_tokenIssuer, uniqueId, _domain, displayName);
@@ -190,6 +194,7 @@ public class VivoxVoiceManager : MonoBehaviour
             try
             {
                 LoginSession.EndLogin(ar);
+                Debug.Log("Vivox login successful." );
             }
             catch (Exception e)
             {

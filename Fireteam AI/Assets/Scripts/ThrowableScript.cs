@@ -10,7 +10,7 @@ public class ThrowableScript : MonoBehaviour
     private const int WATER_LAYER = 4;
     private const float THROW_FORCE_MULTIPLIER = 25f;
     public static float MAX_FLASHBANG_TIME = 9f; // 8 seconds max flashbang time
-    private const float EXPLOSION_ACTIVE_DELAY = 0.8f;
+    private const float EXPLOSION_ACTIVE_DELAY = 0.3f;
     public Rigidbody rBody;
     public SphereCollider col;
     public MeshRenderer[] renderers;
@@ -37,7 +37,6 @@ public class ThrowableScript : MonoBehaviour
         explosionEffect.Stop();
         explosionWaterEffect.Stop();
         isLive = true;
-        explosionActiveDelay = EXPLOSION_ACTIVE_DELAY;
     }
 
     public void AddHitPlayer(int vId)
@@ -172,6 +171,7 @@ public class ThrowableScript : MonoBehaviour
     void EnableBlastCollider() {
         col.isTrigger = true;
         col.radius = blastRadius;
+        explosionActiveDelay = EXPLOSION_ACTIVE_DELAY;
     }
 
     void DestroySelf() {
