@@ -114,6 +114,8 @@ public class ThrowableScript : MonoBehaviour
     void RpcExplode() {
         // Freeze the physics
         isLive = false;
+        explosionDelayTimer = 0f;
+        fuseTimer = 0f;
         rBody.useGravity = false;
         rBody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
         rBody.isKinematic = true;
@@ -155,6 +157,8 @@ public class ThrowableScript : MonoBehaviour
         }
         explosionEffect.Play();
         isLive = false;
+        explosionDelayTimer = 0f;
+        fuseTimer = 0f;
         // Set nearby enemies on alert from explosion sound
         GameControllerScript gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameControllerScript>();
         gameController.SetLastGunshotHeardPos(false, transform.position);
