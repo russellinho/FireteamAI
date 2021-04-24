@@ -70,7 +70,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public Animator fpcAnimator;
 
         private int networkDelay = 5;
-        private int networkDelayCount = 0;
+        // private int networkDelayCount = 0;
         private bool meleeSlowActive;
         // Time after initial jump you must wait before using the booster
         private float jetpackBoostDelay;
