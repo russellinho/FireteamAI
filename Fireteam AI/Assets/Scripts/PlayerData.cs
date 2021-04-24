@@ -44,6 +44,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
     public bool disconnectedFromServer;
     public string disconnectReason;
     private bool dataLoadedFlag;
+    private bool updateSpFlag;
     private bool triggerEmergencyExitFlag;
     private string emergencyExitMessage;
     private bool playerDataModifyLegalFlag;
@@ -187,7 +188,14 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 }
             }
             titleRef.friendsMessenger.RefreshNotifications();
+            titleRef.availableSkillPointsTxt.text = ""+PlayerData.playerdata.info.AvailableSkillPoints;
             dataLoadedFlag = false;
+        }
+        if (updateSpFlag) {
+            if (titleRef != null) {
+                titleRef.availableSkillPointsTxt.text = ""+PlayerData.playerdata.info.AvailableSkillPoints;
+            }
+            updateSpFlag = false;
         }
         if (triggerEmergencyExitFlag) {
             DoEmergencyExit();
@@ -630,7 +638,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     info.Gp = Convert.ToUInt32(playerDataSnap["gp"]);
                     info.Kash = Convert.ToUInt32(results["kash"]);
                     info.AvailableSkillPoints = Convert.ToInt32(playerDataSnap["availableSp"]);
-                    titleRef.availableSkillPointsTxt.text = ""+info.AvailableSkillPoints;
                     info.PrivilegeLevel = results["privilegeLevel"].ToString();
                     
                     if (playerDataSnap.ContainsKey("equipment")) {
@@ -726,7 +733,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         supportModInfo.SuppressorId = "";
                         supportModInfo.SightId = "";
                     }
-                    // try {
                     LoadInventory(inventorySnap);
                     LoadSkills((Dictionary<object, object>)playerDataSnap["skills"]);
                     if (playerDataSnap.ContainsKey("achievements")) {
@@ -742,9 +748,6 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     if (itemsExpired.Count > 0) {
                         titleRef.TriggerExpirationPopup(itemsExpired);
                     }
-                    // } catch (Exception e) {
-                    //     Debug.LogError(e.Message);
-                    // }
                     playerDataModifyLegalFlag = false;
                     dataLoadedFlag = true;
                 } else {
@@ -1060,13 +1063,16 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             foreach(KeyValuePair<object, object> skillEntry in tree) {
                 int skillId = int.Parse(skillEntry.Key.ToString());
                 int skillLevel = Convert.ToInt32(skillEntry.Value);
-                SkillData sd = new SkillData();
-                sd.PropertyChanged += OnPlayerInfoChange;
-                sd.TreeId = treeId;
-                sd.SkillId = skillId;
-                sd.Level = skillLevel;
-                thisMax += skillLevel;
-                PlayerData.playerdata.skillList.Add(treeId + "/" + skillId, sd);
+                string skillKey = treeId + "/" + skillId;
+                if (!PlayerData.playerdata.skillList.ContainsKey(skillKey)) {
+                    SkillData sd = new SkillData();
+                    sd.PropertyChanged += OnPlayerInfoChange;
+                    sd.TreeId = treeId;
+                    sd.SkillId = skillId;
+                    sd.Level = skillLevel;
+                    thisMax += skillLevel;
+                    PlayerData.playerdata.skillList.Add(skillKey, sd);
+                }
                 titleRef.skillManager.GetSkillSlot(treeId, skillId).DelayInit(skillLevel);
             }
             if (thisMax > currentMax) {
@@ -1942,9 +1948,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         if (args.Snapshot.Value != null) {
             playerDataModifyLegalFlag = true;
             PlayerData.playerdata.info.AvailableSkillPoints = Convert.ToInt32(args.Snapshot.Value);
-            if (titleRef != null) {
-                titleRef.availableSkillPointsTxt.text = ""+PlayerData.playerdata.info.AvailableSkillPoints;
-            }
+            updateSpFlag = true;
             playerDataModifyLegalFlag = false;
         }
     }

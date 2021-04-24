@@ -85,7 +85,6 @@ public class PauseMenuScript : MonoBehaviourPunCallbacks {
 			while (j.MoveNext()) {
 				string thisKey = j.Current.Key.ToString();
 				if (thisKey.EndsWith("GA")) {
-					Debug.LogError("Resetting " + thisKey);
 					h.Add(thisKey, null);
 				}
 			}
