@@ -2575,7 +2575,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
 		foreach (Rigidbody rb in ragdollBodies)
 		{
 			rb.isKinematic = !b;
-			rb.useGravity = b;
+			// rb.useGravity = b;
 		}
 
 		headTransform.GetComponent<Collider>().enabled = b;
