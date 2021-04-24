@@ -316,7 +316,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         updatePlayerSpeed();
         // Instant respawn hack
         if (Input.GetKeyDown (KeyCode.P)) {
-            BeginRespawn ();
+            BeginRespawn (false);
         }
         // Physics sky drop test hack
         // if (Input.GetKeyDown(KeyCode.O)) {
