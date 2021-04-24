@@ -5604,6 +5604,7 @@ MonoBehaviour:
     lockCursor: 1
     recoilInput: 0
     swayInput: 0
+    m_CharacterTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_FpcCharacterVerticalTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_FpcCharacterHorizontalTargetRot: {x: 0, y: 0, z: 0, w: 0}
@@ -5726,6 +5727,7 @@ MonoBehaviour:
     lockCursor: 1
     recoilInput: 0
     swayInput: 0
+    m_CharacterTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_SpineTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_FpcCharacterVerticalTargetRot: {x: 0, y: 0, z: 0, w: 0}
     m_FpcCharacterHorizontalTargetRot: {x: 0, y: 0, z: 0, w: 0}
@@ -6255,6 +6257,7 @@ MonoBehaviour:
   OwnershipTransfer: 1
   ObservedComponents:
   - {fileID: 1582878853075224123}
+  - {fileID: 580623507002314514}
   viewIdField: 0
   InstantiationId: 33
   isRuntimeInstantiated: 0
