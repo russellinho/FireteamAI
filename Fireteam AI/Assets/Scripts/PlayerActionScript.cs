@@ -315,9 +315,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         UpdateUnderwaterTimer();
         updatePlayerSpeed();
         // Instant respawn hack
-        if (Input.GetKeyDown (KeyCode.P)) {
-            BeginRespawn (false);
-        }
+        // if (Input.GetKeyDown (KeyCode.P)) {
+        //     BeginRespawn (false);
+        // }
         // Physics sky drop test hack
         // if (Input.GetKeyDown(KeyCode.O)) {
         //     transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
@@ -790,7 +790,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                 hud.ToggleHUD(false);
                 hud.ToggleSpectatorMessage(true);
                 // deathCameraLerpPos = new Vector3(headTransform.localPosition.x, headTransform.localPosition.y + 2.5f, headTransform.localPosition.z - 4.5f);
-                enterSpectatorModeTimer = 6f;
+                // enterSpectatorModeTimer = 6f;
                 viewCam.transform.SetParent(transform);
                 viewCam.fieldOfView = 60;
                 rotationSaved = true;
