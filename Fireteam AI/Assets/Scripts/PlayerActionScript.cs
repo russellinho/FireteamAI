@@ -1713,6 +1713,7 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         }
         hudMarker.enabled = status;
         hudMarker2.enabled = status;
+        fpc.canMove = status;
         // charController.enabled = status;
         ToggleRagdoll(!status);
         if (pView.IsMine)
