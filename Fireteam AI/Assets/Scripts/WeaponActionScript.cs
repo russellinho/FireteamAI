@@ -618,10 +618,12 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             isLunging = true;
             // Lunge
             animatorFpc.Play("MeleeLunge");
+            PlayMeleeSound('L');
         } else {
             // Slash
             isLunging = false;
             animatorFpc.Play("MeleeSwing");
+            PlayMeleeSound('S');
         }
         pView.RPC("RpcPlayMeleeAnimation", RpcTarget.All);
     }
@@ -1254,6 +1256,16 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
 
     public void PlaySupportActionSound() {
         pView.RPC("RpcPlaySupportActionSound", RpcTarget.All);
+    }
+
+    void PlayMeleeSound(char meleeType)
+    {
+        if (meleeType == 'S') {
+            meleeMetaData.fireSound.clip = meleeMetaData.meleeSwingSound;
+        } else if (meleeType == 'L') {
+            meleeMetaData.fireSound.clip = meleeMetaData.meleeLungeSound;
+        }
+        meleeMetaData.fireSound.Play();
     }
 
     private void PlayShootSound()
