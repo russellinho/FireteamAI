@@ -382,35 +382,35 @@ namespace Photon.Pun
         /// </summary>
         public void SetOwnerInternal(Player newOwner, int newOwnerId)
         {
-           this.ownerActorNr = newOwnerId;
+           this.OwnerActorNr = newOwnerId;
 
-           //// If this is the first set, run regardless of change, otherwise exit if this is not changing the owner.
-           //if ((this.ownershipCacheIsValid & OwnershipCacheState.OwnerValid) != 0)
-           //{
-           //    if (this.ownerActorNr == newOwnerId)
-           //    {
-           //        RebuildControllerCache(false);
-           //        return;
-           //    }
-           //}
-           //else
-           //{
-           //    this.ownershipCacheIsValid = OwnershipCacheState.OwnerValid;
-           //}
+           // If this is the first set, run regardless of change, otherwise exit if this is not changing the owner.
+        //    if ((this.ownershipCacheIsValid & OwnershipCacheState.OwnerValid) != 0)
+        //    {
+        //       if (this.OwnerActorNr == newOwnerId)
+        //       {
+        //           RebuildControllerCache(false);
+        //           return;
+        //       }
+        //    }
+        //    else
+        //    {
+        //       this.ownershipCacheIsValid = OwnershipCacheState.OwnerValid;
+        //    }
 
-           //Player prevOwner = this.owner;
-           //this.owner = newOwner;
-           //this.ownerActorNr = newOwnerId;
-           //this.AmOwner = newOwner == PhotonNetwork.LocalPlayer;
+           Player prevOwner = this.Owner;
+           this.Owner = newOwner;
+           this.OwnerActorNr = newOwnerId;
+           this.AmOwner = newOwner == PhotonNetwork.LocalPlayer;
 
-           //this.UpdateCallbackLists();
+           this.UpdateCallbackLists();
 
-           //if (newOwner != prevOwner)
-           //    if (!ReferenceEquals(this.OnOwnerChangeCallbacks, null))
-           //        for (int i = 0, cnt = this.OnOwnerChangeCallbacks.Count; i < cnt; ++i)
-           //            this.OnOwnerChangeCallbacks[i].OnOwnerChange(newOwner, prevOwner);
+           if (newOwner != prevOwner)
+              if (!ReferenceEquals(this.OnOwnerChangeCallbacks, null))
+                  for (int i = 0, cnt = this.OnOwnerChangeCallbacks.Count; i < cnt; ++i)
+                      this.OnOwnerChangeCallbacks[i].OnOwnerChange(newOwner, prevOwner);
 
-           //RebuildControllerCache(true);
+           RebuildControllerCache(true);
         }
 
         ///// Called by NetMaster.ReceiveMessage
