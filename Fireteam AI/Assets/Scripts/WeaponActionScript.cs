@@ -1938,6 +1938,7 @@ public class WeaponActionScript : MonoBehaviour, IOnEventCallback
             }
         }
         int dId = d.InstantiateDeployable(skillBoost);
+        d.deployableId = dId;
 		playerActionScript.gameController.DeployDeployable(dId, o);
 		pView.RPC("RpcDeployDeployable", RpcTarget.Others, dId, skillBoost, playerActionScript.gameController.teamMap, pos.x, pos.y, pos.z, rot.eulerAngles.x, rot.eulerAngles.y, rot.eulerAngles.z);
     }

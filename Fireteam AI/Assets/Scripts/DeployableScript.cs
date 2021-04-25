@@ -29,8 +29,7 @@ public class DeployableScript : MonoBehaviour
         } else if (deployableName.Equals("Body Bag Case")) {
             usesRemaining = MAX_BODY_BAG_USES;
         }
-        deployableId = gameObject.GetInstanceID();
-        return deployableId;
+        return gameObject.GetInstanceID();
     }
 
     public void UseDeployableItem() {

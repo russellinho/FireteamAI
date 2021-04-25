@@ -1838,7 +1838,7 @@ public class GameControllerScript : MonoBehaviourPunCallbacks {
 	{
 		if (team != teamMap) return;
 		GameObject o = GameObject.Instantiate(bodyBagPrefab, new Vector3(posX, posY, posZ), Quaternion.Euler(Vector3.zero));
-		o.GetComponent<PickupScript>().pickupId = carryableId;
+		o.GetComponent<Carryable>().carryableId = carryableId;
 		CreateCarryable(carryableId, o);
 	}
 
