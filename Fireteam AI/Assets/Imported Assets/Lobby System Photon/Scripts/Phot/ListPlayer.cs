@@ -643,7 +643,8 @@ namespace Photon.Pun.LobbySystemPhoton
             }
 			// Voice chat handling
 			if (VivoxVoiceManager.Instance.TransmittingSession == null) {
-				VivoxVoiceManager.Instance.JoinChannel(PhotonNetwork.CurrentRoom.Name, ChannelType.NonPositional, VivoxVoiceManager.ChatCapability.AudioOnly);
+				string vivoxChannelName = PhotonNetwork.CurrentRoom.Name.Replace(' ', '_');
+				VivoxVoiceManager.Instance.JoinChannel(vivoxChannelName, ChannelType.NonPositional, VivoxVoiceManager.ChatCapability.AudioOnly);
 				VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
 				VivoxVoiceManager.Instance.AudioInputDevices.VolumeAdjustment = ((int)(titleController.GetComponent<TitleControllerScript>().voiceInputVolumeSlider.value * 100f) - 50);
 				VivoxVoiceManager.Instance.AudioOutputDevices.VolumeAdjustment = ((int)(titleController.GetComponent<TitleControllerScript>().voiceOutputVolumeSlider.value * 100f) - 50);
