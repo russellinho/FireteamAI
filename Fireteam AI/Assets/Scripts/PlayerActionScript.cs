@@ -315,9 +315,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
         UpdateUnderwaterTimer();
         updatePlayerSpeed();
         // Instant respawn hack
-        if (Input.GetKeyDown (KeyCode.P)) {
-            BeginRespawn (false);
-        }
+        // if (Input.GetKeyDown (KeyCode.P)) {
+        //     BeginRespawn (false);
+        // }
         // Physics sky drop test hack
         // if (Input.GetKeyDown(KeyCode.O)) {
         //     transform.position = new Vector3(transform.position.x, transform.position.y + 20f, transform.position.z);
