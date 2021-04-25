@@ -13,7 +13,7 @@ using Random = UnityEngine.Random;
 
 namespace Photon.Pun.LobbySystemPhoton
 {
-	public class Connexion : MonoBehaviourPunCallbacks
+	public class Connexion : MonoBehaviourPunCallbacks, IMatchmakingCallbacks
 	{
 		public Template templateUIClass;
         public Template templateUIVersusClass;
@@ -91,14 +91,14 @@ namespace Photon.Pun.LobbySystemPhoton
 			PhotonNetwork.CreateRoom(roomName, options, null);
 		}
 
-		void OnCreateRoomFailed(short returnCode, string message)
+		public override void OnCreateRoomFailed(short returnCode, string message)
 		{
 			templateUIClass.BtnCreatRoom.interactable = true;
 			templateUIVersusClass.BtnCreatRoom.interactable = true;
 			titleController.TriggerAlertPopup("A ROOM WITH THIS NAME ALREADY EXISTS. PLEASE CHOOSE ANOTHER.");
 		}
 
-		void OnCreatedRoom()
+		public override void OnCreatedRoom()
 		{
 			titleController.CloseCreateRoom();
 		}
@@ -141,7 +141,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		{
 			templateUIClass.BtnCreatRoom.interactable = false;
 			templateUIVersusClass.BtnCreatRoom.interactable = false;
-			Regex regex = new Regex(@"^[a-zA-Z0-9]+$");
+			Regex regex = new Regex(@"^[\sa-zA-Z0-9]+$");
 			if (roomName.Length == 0 || roomName.Length > 30 || regex.Matches(roomName).Count == 0) {
 				titleController.TriggerAlertPopup("The room name must only consist of alphanumeric characters!");
 				templateUIClass.BtnCreatRoom.interactable = true;

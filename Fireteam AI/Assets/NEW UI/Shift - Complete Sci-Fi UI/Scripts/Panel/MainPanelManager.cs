@@ -197,6 +197,11 @@ namespace Michsky.UI.Shift
                     titleController.ToggleWeaponPreview(false);
                     titleController.DestroyOldWeaponTemplate();
                 } else if (newPanel == "Campaign") {
+                    if (!PhotonNetwork.InLobby) {
+                        titleController.connexion.templateUIClass.BtnCreatRoom.interactable = false;
+                    } else {
+                        titleController.connexion.templateUIClass.BtnCreatRoom.interactable = true;
+                    }
                     titleController.JoinCampaignGlobalChat();
                     titleController.creditsButton.gameObject.SetActive(false);
                     titleController.achievementsButton.gameObject.SetActive(false);
@@ -207,6 +212,11 @@ namespace Michsky.UI.Shift
                     versusLobby.SetActive(false);
                     VivoxVoiceManager.Instance.SetAudioInput(PlayerPreferences.playerPreferences.preferenceData.audioInputName);
                 } else if (newPanel == "Versus") {
+                    if (!PhotonNetwork.InLobby) {
+                        titleController.connexion.templateUIVersusClass.BtnCreatRoom.interactable = false;
+                    } else {
+                        titleController.connexion.templateUIVersusClass.BtnCreatRoom.interactable = true;
+                    }
                     titleController.JoinVersusGlobalChat();
                     titleController.creditsButton.gameObject.SetActive(false);
                     titleController.achievementsButton.gameObject.SetActive(false);
