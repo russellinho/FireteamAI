@@ -342,6 +342,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
         PlayerData.playerdata.inGamePlayerReference = player;
         PhotonView photonView = player.GetComponent<PhotonView>();
         // photonView.ViewID = PhotonNetwork.LocalPlayer.ActorNumber;
+        photonView.TransferOwnership(PhotonNetwork.LocalPlayer.ActorNumber);
         photonView.SetOwnerInternal(PhotonNetwork.LocalPlayer, PhotonNetwork.LocalPlayer.ActorNumber);
         VivoxVoiceManager.Instance.AudioInputDevices.Muted = true;
 
@@ -477,6 +478,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             if (gameMode == "camp") {
                 GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
                 PhotonView photonView = player.GetComponent<PhotonView>();
+                photonView.TransferOwnership(ownerActorNr);
                 photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
                 photonView.ViewID = (int) data[3];
                 Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID);
@@ -492,6 +494,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 if ((currentMapName.EndsWith("_Red") && team == "red") || (currentMapName.EndsWith("_Blue") && team == "blue")) {
                     GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
                     PhotonView photonView = player.GetComponent<PhotonView>();
+                    photonView.TransferOwnership(ownerActorNr);
                     photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
                     photonView.ViewID = (int) data[3];
                     Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID + " on team [" + team + "]");
@@ -516,6 +519,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             if (gameMode == "camp") {
                 GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
                 PhotonView photonView = player.GetComponent<PhotonView>();
+                photonView.TransferOwnership(ownerActorNr);
                 photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
                 photonView.ViewID = (int) data[3];
                 Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID);
@@ -531,6 +535,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 if ((currentMapName.EndsWith("_Red") && team == "red") || (currentMapName.EndsWith("_Blue") && team == "blue")) {
                     GameObject player = (GameObject) Instantiate((GameObject)Resources.Load(((string)data[0])), (Vector3) data[1], (Quaternion) data[2]);
                     PhotonView photonView = player.GetComponent<PhotonView>();
+                    photonView.TransferOwnership(ownerActorNr);
                     photonView.SetOwnerInternal(PhotonNetwork.CurrentRoom.GetPlayer(ownerActorNr), ownerActorNr);
                     photonView.ViewID = (int) data[3];
                     Debug.Log("Spawned character " + player.gameObject.name + " with owner " + ownerActorNr + " and view ID " + photonView.ViewID + " on team [" + team + "]");
