@@ -4,6 +4,7 @@ using System;
 using UITemplate;
 using System.Collections;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine.UI;
 using Firebase.Database;
 using ExitGames.Client.Photon;
@@ -45,13 +46,13 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
         }
 
-		public void OnCreateCampaignRoomButtonClicked()
+		public void OnCreateRoomButtonClicked()
 		{
-			// ToggleLobbyLoadingScreen(true);
-			templateUIClass.BtnCreatRoom.interactable = false;
-			string roomName = "Camp_"+ Random.Range(1000, 10000);
-			roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
+			titleController.TriggerCreateRoomPopup();
+		}
 
+		void CreateCampaignRoom(string roomName)
+		{
 			RoomOptions options = new RoomOptions { MaxPlayers = 8 };
             Hashtable h = new Hashtable();
             h.Add("gameMode", "camp");
@@ -68,13 +69,8 @@ namespace Photon.Pun.LobbySystemPhoton
             PhotonNetwork.CreateRoom(roomName, options, null);
 		}
 
-		public void OnCreateVersusRoomButtonClicked()
+		void CreateVersusRoom(string roomName)
 		{
-			// ToggleLobbyLoadingScreen(true);
-			templateUIVersusClass.BtnCreatRoom.interactable = false;
-			string roomName = "Vs_"+ Random.Range(1000, 10000);
-			roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
-
 			RoomOptions options = new RoomOptions { MaxPlayers = 16 };
             Hashtable h = new Hashtable();
             h.Add("gameMode", "versus");
@@ -93,6 +89,18 @@ namespace Photon.Pun.LobbySystemPhoton
             options.CustomRoomPropertiesForLobby = lobbyProperties;
 
 			PhotonNetwork.CreateRoom(roomName, options, null);
+		}
+
+		void OnCreateRoomFailed(short returnCode, string message)
+		{
+			templateUIClass.BtnCreatRoom.interactable = true;
+			templateUIVersusClass.BtnCreatRoom.interactable = true;
+			titleController.TriggerAlertPopup("A ROOM WITH THIS NAME ALREADY EXISTS. PLEASE CHOOSE ANOTHER.");
+		}
+
+		void OnCreatedRoom()
+		{
+			titleController.CloseCreateRoom();
 		}
 		
 		public void OnLeaveGameButtonClicked()
@@ -126,6 +134,24 @@ namespace Photon.Pun.LobbySystemPhoton
 				titleController.CloseRoomPasswordEnter();
 			} else {
 				titleController.TriggerAlertPopup("THIS PASSWORD IS INCORRECT. PLEASE TRY AGAIN.");
+			}
+		}
+
+		public void AttemptCreateRoom(string roomName)
+		{
+			templateUIClass.BtnCreatRoom.interactable = false;
+			templateUIVersusClass.BtnCreatRoom.interactable = false;
+			Regex regex = new Regex(@"^[a-zA-Z0-9]+$");
+			if (roomName.Length == 0 || roomName.Length > 30 || regex.Matches(roomName).Count == 0) {
+				titleController.TriggerAlertPopup("The room name must only consist of alphanumeric characters!");
+				templateUIClass.BtnCreatRoom.interactable = true;
+				templateUIVersusClass.BtnCreatRoom.interactable = true;
+				return;
+        	}
+			if (templateUIClass.gameObject.activeInHierarchy) {
+				CreateCampaignRoom(roomName);
+			} else if (templateUIVersusClass.gameObject.activeInHierarchy) {
+				CreateVersusRoom(roomName);
 			}
 		}
 
