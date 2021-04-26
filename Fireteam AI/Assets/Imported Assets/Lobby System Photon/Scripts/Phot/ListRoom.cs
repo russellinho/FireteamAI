@@ -39,6 +39,7 @@ namespace Photon.Pun.LobbySystemPhoton
 		public SwitchManager badlands1FilterVs;
 		public SwitchManager badlands2Filter;
 		public SwitchManager badlands2FilterVs;
+		private bool filtersChanged;
 
 		public void Awake()
 		{
@@ -46,6 +47,7 @@ namespace Photon.Pun.LobbySystemPhoton
 			roomListEntries = new Dictionary<string, GameObject>();
 			lobbyPlayersList = new Dictionary<string, GameObject>();
 			StartCoroutine("DeleteStalePlayers");
+			StartCoroutine("DetectFilterChange");
 		}
 
 		public override void OnRoomListUpdate(List<RoomInfo> roomList)
@@ -57,6 +59,12 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 			ClearRoomListView();
 			UpdateCachedRoomList(roomList);
+			UpdateRoomListView();
+		}
+
+		void RefreshRoomListView()
+		{
+			ClearRoomListView();
 			UpdateRoomListView();
 		}
 
@@ -81,6 +89,17 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 			yield return new WaitForSeconds(8f);
 			StartCoroutine("DeleteStalePlayers");
+		}
+
+		IEnumerator DetectFilterChange()
+		{
+			if (filtersChanged) {
+				RefreshRoomListView();
+				filtersChanged = false;
+			}
+			yield return new WaitForSeconds(1.5f);
+			StopCoroutine("DetectFilterChange");
+			StartCoroutine("DetectFilterChange");
 		}
 
 		void HandleStalePlayers(string connectedChannel)
@@ -129,6 +148,11 @@ namespace Photon.Pun.LobbySystemPhoton
 			}
 
 			roomListEntries.Clear();
+		}
+
+		public void SetFiltersChanged()
+		{
+			filtersChanged = true;
 		}
 
 		private void UpdateCachedRoomList(List<RoomInfo> roomList)
