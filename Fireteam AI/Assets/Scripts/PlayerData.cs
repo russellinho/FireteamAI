@@ -1712,6 +1712,8 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                 return rankInsignias[59];
             case "Commander in Chief V":
                 return rankInsignias[60];
+            case "Game Master":
+                return rankInsignias[61];
             default:
                 return rankInsignias[0];
         }
@@ -1866,10 +1868,22 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             return new Rank("Commander in Chief III", 41500000, 45719999);
         } else if (exp >= 45720000 && exp <= 49999999) {
             return new Rank("Commander in Chief IV", 45720000, 49999999);
-        } else if (exp >= 50000000) {
-            return new Rank("Commander in Chief V", 50000000, uint.MaxValue);
+        } else if (exp == 50000000) {
+            return new Rank("Commander in Chief V", 50000000, 50000000);
+        } else if (exp == 90000000) {
+            return new Rank("Game Master", 90000000, 90000000);
         }
         return new Rank("Trainee", 0, 1999);
+    }
+
+    public bool CanGainExp(uint exp)
+    {
+        return exp < 50000000;
+    }
+
+    public bool IsGameMaster(uint exp)
+    {
+        return exp == 90000000;
     }
 
     public void TriggerEmergencyExit(string message) {

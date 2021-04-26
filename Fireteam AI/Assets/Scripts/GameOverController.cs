@@ -144,24 +144,44 @@ public class GameOverController : MonoBehaviourPunCallbacks {
     {
         foreach (PlayerStat s in GameControllerScript.playerList.Values)
         {
-            uint newExp = s.exp + s.expGained;
+            uint newExp = s.exp;
+            if (PlayerData.playerdata.CanGainExp(newExp)) {
+                newExp += s.expGained;
+                if (newExp > 50000000) {
+                    newExp = 50000000;
+                }
+            }
             Rank newRank = PlayerData.playerdata.GetRankFromExp(newExp);
             // If these are my scores, save the earned EXP and GP
             if (s.actorId == PhotonNetwork.LocalPlayer.ActorNumber) {
-                Rank oldRank = PlayerData.playerdata.GetRankFromExp(s.exp);
-                if (oldRank.minExp != newRank.minExp) {
-                    prevExpSlider.value = 0f;
+                if (PlayerData.playerdata.CanGainExp(newExp)) {
+                    Rank oldRank = PlayerData.playerdata.GetRankFromExp(s.exp);
+                    if (oldRank.minExp != newRank.minExp) {
+                        prevExpSlider.value = 0f;
+                    } else {
+                        prevExpSlider.value = (float)(s.exp - oldRank.minExp) / (float)(oldRank.maxExp - oldRank.minExp);
+                    }
+                    newExpSlider.value = (float)(newExp - newRank.minExp) / (float)(newRank.maxExp - newRank.minExp);
+                    uint toNextLevel = newRank.maxExp - newExp;
+                    expGainedTxt.text = s.expGained + " / " + toNextLevel;
                 } else {
-                    prevExpSlider.value = (float)(s.exp - oldRank.minExp) / (float)(oldRank.maxExp - oldRank.minExp);
+                    prevExpSlider.value = 0f;
+                    newExpSlider.value = 0f;
+                    expGainedTxt.text = "0 / 0";
                 }
-                newExpSlider.value = (float)(newExp - newRank.minExp) / (float)(newRank.maxExp - newRank.minExp);
-                uint toNextLevel = newRank.maxExp - newExp;
-                expGainedTxt.text = s.expGained + " / " + toNextLevel;
             }
             GameObject thisPlayerEntry = GameObject.Instantiate(PlayerEntryPrefab);
             GameOverPlayerEntry g = thisPlayerEntry.GetComponent<GameOverPlayerEntry>();
-            g.nametagText.text = s.name;
-            g.expGainedText.text = "+"+s.expGained + " EXP";
+            if (PlayerData.playerdata.IsGameMaster(newExp)) {
+                g.nametagText.text = "<color=#ffff00ff>[GM]" + s.name + "</color>";
+            } else {
+                g.nametagText.text = s.name;
+            }
+            if (PlayerData.playerdata.CanGainExp(newExp)) {
+                g.expGainedText.text = "+"+s.expGained + " EXP";
+            } else {
+                g.expGainedText.text = "+0 EXP";
+            }
             g.gpGainedText.text = "+"+s.gpGained + " GP";
             GameObject killsEntry = GameObject.Instantiate(KDPrefab);
             killsEntry.GetComponent<TextMeshProUGUI>().text = ""+s.kills;
@@ -182,27 +202,46 @@ public class GameOverController : MonoBehaviourPunCallbacks {
     void PopulateVersusFinalStats()
     {
         foreach (PlayerStat s in GameControllerScript.playerList.Values) {
-            uint newExp = s.exp + s.expGained;
+            uint newExp = s.exp;
+            if (PlayerData.playerdata.CanGainExp(newExp)) {
+                newExp += s.expGained;
+                if (newExp > 50000000) {
+                    newExp = 50000000;
+                }
+            }
             Rank newRank = PlayerData.playerdata.GetRankFromExp(newExp);
             // If these are my scores, save the earned EXP and GP
             if (s.actorId == PhotonNetwork.LocalPlayer.ActorNumber) {
-
-                Rank oldRank = PlayerData.playerdata.GetRankFromExp(s.exp);
-                if (oldRank.minExp != newRank.minExp) {
-                    prevExpSliderVs.value = 0f;
+                if (PlayerData.playerdata.CanGainExp(newExp)) {
+                    Rank oldRank = PlayerData.playerdata.GetRankFromExp(s.exp);
+                    if (oldRank.minExp != newRank.minExp) {
+                        prevExpSliderVs.value = 0f;
+                    } else {
+                        prevExpSliderVs.value = (float)(s.exp - oldRank.minExp) / (float)(oldRank.maxExp - oldRank.minExp);
+                    }
+                    newExpSliderVs.value = (float)(newExp - newRank.minExp) / (float)(newRank.maxExp - newRank.minExp);
+                    uint toNextLevel = newRank.maxExp - newExp;
+                    expGainedTxtVs.text = s.expGained + " / " + toNextLevel;
                 } else {
-                    prevExpSliderVs.value = (float)(s.exp - oldRank.minExp) / (float)(oldRank.maxExp - oldRank.minExp);
+                    prevExpSlider.value = 0f;
+                    newExpSlider.value = 0f;
+                    expGainedTxt.text = "0 / 0";
                 }
-                newExpSliderVs.value = (float)(newExp - newRank.minExp) / (float)(newRank.maxExp - newRank.minExp);
-                uint toNextLevel = newRank.maxExp - newExp;
-                expGainedTxtVs.text = s.expGained + " / " + toNextLevel;
             }
             GameObject thisPlayerEntry = GameObject.Instantiate(PlayerEntryPrefab);
             GameOverPlayerEntry g = thisPlayerEntry.GetComponent<GameOverPlayerEntry>();
             GameObject killsEntry = GameObject.Instantiate(KDPrefab);
             GameObject deathsEntry = GameObject.Instantiate(KDPrefab);
-            g.nametagText.text = s.name;
-            g.expGainedText.text = "+"+s.expGained + " EXP";
+            if (PlayerData.playerdata.IsGameMaster(newExp)) {
+                g.nametagText.text = "<color=#ffff00ff>[GM]" + s.name + "</color>";
+            } else {
+                g.nametagText.text = s.name;
+            }
+            if (PlayerData.playerdata.CanGainExp(newExp)) {
+                g.expGainedText.text = "+"+s.expGained + " EXP";
+            } else {
+                g.expGainedText.text = "+0 EXP";
+            }
             g.gpGainedText.text = "+"+s.gpGained + " GP";
             
             if (s.exp < newRank.minExp) {

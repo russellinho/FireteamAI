@@ -840,7 +840,11 @@ public class PlayerHUDScript : MonoBehaviourPunCallbacks {
 			if (!playerMarkers.ContainsKey (actorNo)) {
 				GameObject marker = GameObject.Instantiate (container.hudPlayerMarker);
 				PlayerMarkerScript pms = marker.GetComponent<PlayerMarkerScript>();
-				pms.nametagRef.text = p.GetComponent<PhotonView> ().Owner.NickName;
+				if (PlayerData.playerdata.IsGameMaster(stat.exp)) {
+					pms.nametagRef.text = "<color=#ffff00ff>[GM]" + p.GetComponent<PhotonView>().Owner.NickName + "</color>";
+				} else {
+					pms.nametagRef.text = p.GetComponent<PhotonView>().Owner.NickName;
+				}
 				pms.classIndicator.text = stat.className;
 				pms.rankInsigniaRef.texture = PlayerData.playerdata.GetRankInsigniaForRank(PlayerData.playerdata.GetRankFromExp(stat.exp).name);
 				marker.GetComponent<RectTransform> ().SetParent (container.playerMarkers.transform);

@@ -11,7 +11,11 @@ public class LobbyPlayerScript : MonoBehaviour
 
     public void InitEntry(string playername, uint exp)
     {
-        nametag.text = playername;
+        if (PlayerData.playerdata.IsGameMaster(exp)) {
+            nametag.text = "<color=#ffff00ff>[GM]" + playername + "</color>";
+        } else {
+            nametag.text = playername;
+        }
         UpdateRank(exp);
     }
 

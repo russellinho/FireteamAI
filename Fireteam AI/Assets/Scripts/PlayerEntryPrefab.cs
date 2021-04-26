@@ -32,7 +32,7 @@ public class PlayerEntryPrefab : MonoBehaviour
     public GameObject blueVoiceActiveIndicator;
 
     public void CreateEntry(string nametag, string rank, int actorId, char team) {
-        SetNameTag(nametag);
+        SetNameTag(nametag, rank == "Game Master");
         SetRank(rank);
         this.actorId = actorId;
         InitializeData();
@@ -102,8 +102,12 @@ public class PlayerEntryPrefab : MonoBehaviour
         }
     }
 
-    void SetNameTag(string nametag) {
-        this.nametag = nametag;
+    void SetNameTag(string nametag, bool isGameMaster) {
+        if (isGameMaster) {
+            this.nametag = "<color=#ffff00ff>[GM]" + nametag + "</color>";
+        } else {
+            this.nametag = nametag;
+        }
     }
 
     public void SetRank(string rank) {

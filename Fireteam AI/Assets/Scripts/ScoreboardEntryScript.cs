@@ -15,12 +15,16 @@ public class ScoreboardEntryScript : MonoBehaviour
     public TextMeshProUGUI deathsTxt;
     private float destroyCheckTimer;
 
-    public void InitSlot(int actorNo, char team, string playerName, Texture rankTexture, ScoreboardScript scoreboardRef)
+    public void InitSlot(int actorNo, char team, string playerName, Texture rankTexture, ScoreboardScript scoreboardRef, bool isGameMaster)
     {
         this.scoreboardRef = scoreboardRef;
         this.actorNo = actorNo;
         this.team = team;
-        playerNameTxt.text = playerName;
+        if (isGameMaster) {
+            playerNameTxt.text = "<color=#ffff00ff>[GM]" + playerName + "</color>";
+        } else {
+            playerNameTxt.text = playerName;
+        }
         rankImg.texture = rankTexture;
         killsTxt.text = "0";
         deathsTxt.text = "0";

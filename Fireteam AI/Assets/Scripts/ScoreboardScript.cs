@@ -74,7 +74,7 @@ public class ScoreboardScript : MonoBehaviour {
                         GameObject o = Instantiate(scoreboardEntryPrefab, campaignParent);
                         ScoreboardEntryScript s = o.GetComponent<ScoreboardEntryScript>();
                         Rank rank = PlayerData.playerdata.GetRankFromExp(curr.exp);
-                        s.InitSlot(curr.actorId, curr.team, curr.name, PlayerData.playerdata.GetRankInsigniaForRank(rank.name), this);
+                        s.InitSlot(curr.actorId, curr.team, curr.name, PlayerData.playerdata.GetRankInsigniaForRank(rank.name), this, PlayerData.playerdata.IsGameMaster(curr.exp));
                         redEntries.Add(curr.actorId, s);
                         o.transform.localPosition = Vector3.zero;
                         o.transform.localRotation = Quaternion.identity;
@@ -116,7 +116,7 @@ public class ScoreboardScript : MonoBehaviour {
                             GameObject o = Instantiate(scoreboardEntryRedPrefab, versusRedParent);
                             ScoreboardEntryScript s = o.GetComponent<ScoreboardEntryScript>();
                             Rank rank = PlayerData.playerdata.GetRankFromExp(curr.exp);
-                            s.InitSlot(curr.actorId, curr.team, curr.name, PlayerData.playerdata.GetRankInsigniaForRank(rank.name), this);
+                            s.InitSlot(curr.actorId, curr.team, curr.name, PlayerData.playerdata.GetRankInsigniaForRank(rank.name), this, PlayerData.playerdata.IsGameMaster(curr.exp));
                             redEntries.Add(curr.actorId, s);
                             o.transform.localPosition = Vector3.zero;
                             o.transform.localRotation = Quaternion.identity;
@@ -130,7 +130,7 @@ public class ScoreboardScript : MonoBehaviour {
                             GameObject o = Instantiate(scoreboardEntryBluePrefab, versusBlueParent);
                             ScoreboardEntryScript s = o.GetComponent<ScoreboardEntryScript>();
                             Rank rank = PlayerData.playerdata.GetRankFromExp(curr.exp);
-                            s.InitSlot(curr.actorId, curr.team, curr.name, PlayerData.playerdata.GetRankInsigniaForRank(rank.name), this);
+                            s.InitSlot(curr.actorId, curr.team, curr.name, PlayerData.playerdata.GetRankInsigniaForRank(rank.name), this, PlayerData.playerdata.IsGameMaster(curr.exp));
                             blueEntries.Add(curr.actorId, s);
                             o.transform.localPosition = Vector3.zero;
                             o.transform.localRotation = Quaternion.identity;
