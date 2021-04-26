@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UITemplate;
+using Michsky.UI.Shift;
 using TMPro;
 
 namespace Photon.Pun.LobbySystemPhoton
@@ -28,6 +29,16 @@ namespace Photon.Pun.LobbySystemPhoton
 		public TextMeshProUGUI PlayersOnlineCampaign;
 		public TextMeshProUGUI PlayersOnlineVersus;
 		private Dictionary<string, GameObject> lobbyPlayersList;
+
+		[Header("Filters")]
+		public TMP_InputField roomNameFilter;
+		public TMP_InputField roomNameFilterVs;
+		public SwitchManager freeSlotsFilter;
+		public SwitchManager freeSlotsFilterVs;
+		public SwitchManager badlands1Filter;
+		public SwitchManager badlands1FilterVs;
+		public SwitchManager badlands2Filter;
+		public SwitchManager badlands2FilterVs;
 
 		public void Awake()
 		{
@@ -155,19 +166,64 @@ namespace Photon.Pun.LobbySystemPhoton
 		{
 			foreach (RoomInfo info in cachedRoomList.Values)
 			{
-				GameObject entry = Instantiate(RoomListEntryPrefab);
+				string mapName = (string)info.CustomProperties["mapName"];
+				string roomName = info.Name;
+				int currPlayers = (byte)info.PlayerCount;
+				int maxPlayers = info.MaxPlayers;
+				// Handle
 				char gameMode = ' ';
                 if ((string)info.CustomProperties["gameMode"] == "camp")
                 {
-                    entry.transform.SetParent(RoomListContent.transform, false);
 					gameMode = 'C';
+					// Handle free slots filter
+					if (freeSlotsFilter.isOn && currPlayers >= maxPlayers) {
+						continue;
+					}
+					bool goodMap = false;
+					// Handle map filters
+					if (!goodMap && badlands1Filter.isOn && mapName == "The Badlands: Act I") {
+						goodMap = true;
+					}
+					if (!goodMap && badlands2Filter.isOn && mapName == "The Badlands: Act II") {
+						goodMap = true;
+					}
+					if (!goodMap) {
+						continue;
+					}
+					// Handle name filter
+					if (roomNameFilter.text.Length > 0 && !roomName.Contains(roomNameFilter.text)) {
+						continue;
+					}
                 } else if ((string)info.CustomProperties["gameMode"] == "versus")
                 {
-                    entry.transform.SetParent(RoomListContentVs.transform, false);
 					gameMode = 'V';
+					// Handle free slots filter
+					if (freeSlotsFilterVs.isOn && currPlayers >= maxPlayers) {
+						continue;
+					}
+					bool goodMap = false;
+					// Handle map filters
+					if (!goodMap && badlands1FilterVs.isOn && mapName == "The Badlands: Act I") {
+						goodMap = true;
+					}
+					if (!goodMap && badlands2FilterVs.isOn && mapName == "The Badlands: Act II") {
+						goodMap = true;
+					}
+					if (!goodMap) {
+						continue;
+					}
+					// Handle name filter
+					if (roomNameFilterVs.text.Length > 0 && !roomName.Contains(roomNameFilterVs.text)) {
+						continue;
+					}
                 }
+				GameObject entry = Instantiate(RoomListEntryPrefab);
+				if (gameMode == 'C') {
+					entry.transform.SetParent(RoomListContent.transform, false);
+				} else if (gameMode == 'V') {
+					entry.transform.SetParent(RoomListContentVs.transform, false);
+				}
 				entry.transform.localScale = Vector3.one;
-				string mapName = (string)info.CustomProperties["mapName"];
 				int ping = Convert.ToInt32(info.CustomProperties["ping"]);
 				entry.GetComponent<InitializeRoomStats>().Init(listPlayer.connexion, info.Name, (byte)info.PlayerCount, info.MaxPlayers, mapName, listPlayer.GetMapImageFromMapName(mapName), gameMode, ping);
 
