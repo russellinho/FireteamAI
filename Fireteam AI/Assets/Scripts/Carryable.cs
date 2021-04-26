@@ -6,6 +6,7 @@ public class Carryable : MonoBehaviour
 {
     public float throwForceMultiplier;
     public float weightSpeedReduction;
+	public bool immobileWhileCarrying;
     public float detectionRatePenalty;
     public string carryableName;
     public int carryableId;

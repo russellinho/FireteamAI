@@ -125,6 +125,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   throwForceMultiplier: 4
   weightSpeedReduction: 0.65
+  immobileWhileCarrying: 1
   detectionRatePenalty: 0.1
   carryableName: Body Bag
   carryableId: 0

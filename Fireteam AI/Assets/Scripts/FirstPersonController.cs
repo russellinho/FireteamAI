@@ -542,11 +542,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         public bool IsFullyMobile() {
-            NpcScript n = null;
             if (playerActionScript.objectCarrying != null) {
-                n = playerActionScript.objectCarrying.GetComponent<NpcScript>();
+                NpcScript n = playerActionScript.objectCarrying.GetComponent<NpcScript>();
                 if (n != null) {
                     return !n.immobileWhileCarrying;
+                }
+                Carryable c = playerActionScript.objectCarrying.GetComponent<Carryable>();
+                if (c != null) {
+                    return !c.immobileWhileCarrying;
                 }
             }
             return true;

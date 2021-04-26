@@ -927,6 +927,9 @@ public class PlayerActionScript : MonoBehaviourPunCallbacks
                     Carryable c = activeInteractable.GetComponent<Carryable>();
                     interactionTimer = 0f;
                     pView.RPC("RpcCarryItem", RpcTarget.All, c.carryableId, pView.Owner.ActorNumber);
+                    if (c.immobileWhileCarrying) {
+                        fpc.m_IsCrouching = false;
+                    }
                     activeInteractable = null;
                     interactionLock = true;
                 }
