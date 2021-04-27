@@ -745,6 +745,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                     } else {
                         LoadAchievements(null, achievementMap);
                     }
+                    Debug.LogError("passs");
                     // if (playerDataSnap.ContainsKey("gifts")) {
                     //     LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
                     // }
