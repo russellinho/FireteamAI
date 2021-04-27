@@ -147,6 +147,7 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/mods").ChildChanged += HandleInventoryChanged;
             DAOScript.dao.dbRef.Child("fteam_ai/fteam_ai_inventory/" + AuthScript.authHandler.user.UserId + "/armor").ChildChanged += HandleInventoryChanged;
 
+            Debug.LogError("not again");
             SceneManager.sceneLoaded += OnSceneFinishedLoading;
             PlayerData.playerdata.info.PropertyChanged += OnPlayerInfoChange;
             skillList.CollectionChanged += OnPlayerInfoChange;
@@ -746,9 +747,9 @@ public class PlayerData : MonoBehaviour, IOnEventCallback
                         LoadAchievements(null, achievementMap);
                     }
                     Debug.LogError("passs");
-                    // if (playerDataSnap.ContainsKey("gifts")) {
-                    //     LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
-                    // }
+                    if (playerDataSnap.ContainsKey("gifts")) {
+                        LoadGifts((Dictionary<object, object>)playerDataSnap["gifts"]);
+                    }
                     LoadFriends(friendsUsernameMap, expMap, friendData);
                     List<object> itemsExpired = (List<object>)results["itemsExpired"];
                     if (itemsExpired.Count > 0) {
